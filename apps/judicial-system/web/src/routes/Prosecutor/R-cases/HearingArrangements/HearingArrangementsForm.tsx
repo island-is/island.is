@@ -1,19 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Case, Institution, User } from '@island.is/judicial-system/types'
 import {
+  DateTime,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
-import RequestedCourtDate from '../../SharedComponents/RequestedCourtDate/RequestedCourtDate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface Props {
   workingCase: Case
@@ -40,6 +42,11 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     setWorkingCase,
     validations,
   )
+  const [, setRequestedCourtDateIsValid] = useState<boolean>(
+    workingCase.requestedCourtDate !== null,
+  )
+
+  const { updateCase } = useCase()
 
   return (
     <>
@@ -68,10 +75,44 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
           </Box>
         )}
         <Box component="section" marginBottom={10}>
-          <RequestedCourtDate
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              Ósk um fyrirtökudag og tíma{' '}
+              <Box data-testid="requested-court-date-tooltip" component="span">
+                <Tooltip text="Dómstóll hefur þennan tíma til hliðsjónar þegar fyrirtökutíma er úthlutað og mun leitast við að taka málið fyrir í tæka tíð en ekki fyrir þennan tíma." />
+              </Box>
+            </Text>
+          </Box>
+          <DateTime
+            name="reqCourtDate"
+            selectedDate={
+              workingCase.requestedCourtDate
+                ? new Date(workingCase.requestedCourtDate)
+                : undefined
+            }
+            onChange={(date: Date | undefined, valid: boolean) =>
+              newSetAndSendDateToServer(
+                'requestedCourtDate',
+                date,
+                valid,
+                workingCase,
+                setWorkingCase,
+                setRequestedCourtDateIsValid,
+                updateCase,
+              )
+            }
+            timeLabel="Ósk um tíma (kk:mm)"
+            locked={workingCase.courtDate !== null}
+            minDate={new Date()}
+            required
           />
+          {workingCase.courtDate && (
+            <Box marginTop={1}>
+              <Text variant="eyebrow">
+                Fyrirtökudegi og tíma hefur verið úthlutað
+              </Text>
+            </Box>
+          )}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
