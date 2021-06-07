@@ -77,7 +77,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
-  @Delete('public/delegations/custom/delete/from/:id')
+  @Delete('custom/delete/from/:id')
   @ApiCreatedResponse()
   async deleteFrom(
     @CurrentUser() user: User,
@@ -87,7 +87,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
-  @Delete('public/delegations/custom/delete/to/:id')
+  @Delete('custom/delete/to/:id')
   @ApiCreatedResponse()
   async deleteTo(
     @CurrentUser() user: User,
@@ -97,7 +97,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
-  @Get('public/delegations/custom/findone/:id')
+  @Get('custom/findone/:id')
   @ApiOkResponse({ type: DelegationDTO })
   async findOne(
     @CurrentUser() user: User,
@@ -136,7 +136,7 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
-  @Get('public/delegations/custom/from')
+  @Get('custom/from')
   @ApiOkResponse({ type: [DelegationDTO] })
   async findAllCustomFrom(
     @CurrentUser() user: User,
