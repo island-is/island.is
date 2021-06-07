@@ -15,7 +15,7 @@ export enum DelegationProvider {
 }
 
 export class DelegationDTO {
-  @ApiProperty()
+  @ApiPropertyOptional()
   id?: string
 
   @IsString()
@@ -37,7 +37,7 @@ export class DelegationDTO {
   provider!: DelegationProvider
 
   @IsOptional()
-  @ApiProperty({ type: [DelegationScopeDTO] })
+  @ApiPropertyOptional({ type: [DelegationScopeDTO] })
   @IsArray()
   scopes?: DelegationScopeDTO[]
 }

@@ -5,6 +5,7 @@ import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import * as styles from './Requests.treat'
 import { mapCaseStateToTagVariant } from './utils'
 import {
+  AllCaseTypes,
   Case,
   CaseState,
   CaseType,
@@ -191,7 +192,9 @@ const ActiveRequests: React.FC<Props> = (props) => {
             <td className={styles.td}>
               <Box component="span" display="flex" flexDirection="column">
                 <Text as="span">
-                  {c.type === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'}
+                  {AllCaseTypes.map((caseType) => {
+                    if (caseType.value === c.type) return caseType.label
+                  })}
                 </Text>
                 {c.parentCase && (
                   <Text as="span" variant="small" color="dark400">
