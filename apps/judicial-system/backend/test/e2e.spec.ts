@@ -120,6 +120,7 @@ const minimalCaseData = {
 
 function remainingCreateCaseData() {
   return {
+    description: 'Descriptioni',
     accusedName: 'Accused Name',
     accusedAddress: 'Accused Address',
     accusedGender: CaseGender.OTHER,
@@ -150,6 +151,8 @@ function remainingProsecutorCaseData() {
     requestedOtherRestrictions: 'Requested Other Restrictions',
     caseFacts: 'Case Facts',
     legalArguments: 'Legal Arguments',
+    requestProsecutorOnlySession: true,
+    prosecutorOnlySessionRequest: 'Prosecutor Only Session Request',
     comments: 'Comments',
     caseFilesComments: 'Case Files Comments',
     prosecutorId: prosecutor.id,
@@ -314,6 +317,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.created).toBe(caseTwo.created)
   expect(caseOne.modified).toBe(caseTwo.modified)
   expect(caseOne.type).toBe(caseTwo.type)
+  expect(caseOne.decision || null).toBe(caseTwo.decision || null)
   expect(caseOne.state).toBe(caseTwo.state)
   expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
   expect(caseOne.accusedNationalId).toBe(caseTwo.accusedNationalId)
@@ -353,6 +357,12 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.caseFacts || null).toBe(caseTwo.caseFacts || null)
   expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)
+  expect(caseOne.requestProsecutorOnlySession || null).toBe(
+    caseTwo.requestProsecutorOnlySession || null,
+  )
+  expect(caseOne.prosecutorOnlySessionRequest || null).toBe(
+    caseTwo.prosecutorOnlySessionRequest || null,
+  )
   expect(caseOne.comments || null).toBe(caseTwo.comments || null)
   expect(caseOne.caseFilesComments || null).toBe(
     caseTwo.caseFilesComments || null,
@@ -661,7 +671,7 @@ describe('Case', () => {
   })
 
   it('PUT /api/case/:id should update prosecutor fields of a case by id', async () => {
-    const data = getCaseData(false, true, true)
+    const data = getCaseData(true, true, true)
     let dbCase: CCase
     let apiCase: CCase
 
