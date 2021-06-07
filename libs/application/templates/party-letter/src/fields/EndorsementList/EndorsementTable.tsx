@@ -30,13 +30,28 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
       : 'white'
     return (
       <T.Row key={endorsement.id}>
-        <T.Data key={endorsement.id + endorsement.date}>
+        <T.Data
+          key={endorsement.id + endorsement.date}
+          box={{
+            background: rowBackground
+          }}
+        >
           {formatDate(endorsement.date)}
         </T.Data>
-        <T.Data key={endorsement.id + endorsement.name}>
+        <T.Data
+          key={endorsement.id + endorsement.name}
+          box={{
+            background: rowBackground
+          }}
+        >
           {endorsement.name}
         </T.Data>
-        <T.Data key={endorsement.id + endorsement.nationalId}>
+        <T.Data
+          key={endorsement.id + endorsement.nationalId}
+          box={{
+            background: rowBackground
+          }}
+        >
           {formatKennitala(endorsement.nationalId)}
         </T.Data>
         <T.Data
@@ -46,15 +61,17 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
             textAlign: 'right',
           }}
         >
-          {endorsement.hasWarning ? (
+          {endorsement.hasWarning || endorsement.bulkImported ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
               {endorsement.address}
               <Box marginLeft={2}>
-                <Tooltip
-                  color="blue400"
-                  iconSize="medium"
-                  text={formatMessage(m.validationMessages.signatureInvalid)}
-                />
+                {endorsement.hasWarning && (
+                  <Tooltip
+                    color="blue400"
+                    iconSize="medium"
+                    text={formatMessage(m.validationMessages.signatureInvalid)}
+                  />
+                )}
                 {endorsement.bulkImported && (
                   <Icon icon="attach" color="blue400" />
                 )}

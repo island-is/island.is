@@ -56,6 +56,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             address: x.meta.address ? x.meta.address.streetAddress : '',
             hasWarning: x.meta.invalidated ?? false,
             id: x.id,
+            bulkImported: x.meta?.bulkEndorsement ?? false,
           }))
         : undefined
     setEndorsements((_) => {
@@ -63,7 +64,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         updateApplicationWithEndorsements(mapToEndorsementList)
       return mapToEndorsementList
     })
-  }, [endorsementsHook])
+  }, [endorsementsHook, updateOnBulkImport])
 
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1
@@ -132,7 +133,6 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         <Box marginY={5}>
           <BulkUpload
             application={application}
-            endorsements={endorsements}
             onSuccess={() => {
               setUpdateOnBulkImport(true)
             }}
