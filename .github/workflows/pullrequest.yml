@@ -241,7 +241,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     timeout-minutes: 25
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
