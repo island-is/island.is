@@ -13,18 +13,11 @@ import type { User } from '@island.is/auth-nest-tools'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver('PartyLetterRegistryResolver')
 export class PartyLetterRegistryResolver {
-  constructor (
-    private partyLetterRegistryService: PartyLetterRegistryService,
-  ) {}
+  constructor(private partyLetterRegistryService: PartyLetterRegistryService) {}
 
   @Mutation(() => PartyLetterRegistry, { nullable: true })
-<<<<<<< Updated upstream
   async partyLetterRegistryCreate(
-    @CurrentUser() { nationalId }: User,
-=======
-  async partyLetterRegistryCreate (
     @CurrentUser() auth: User, // TODO: Make sure system toke persists original user
->>>>>>> Stashed changes
     @Args('input') input: CreatePartyLetterDto,
   ): Promise<PartyLetterRegistry> {
     return this.partyLetterRegistryService.partyLetterRegistryControllerCreate(
@@ -33,15 +26,9 @@ export class PartyLetterRegistryResolver {
     )
   }
 
-<<<<<<< Updated upstream
-  @Query(() => PartyLetterRegistry)
-  async partyLetterRegistryFindLetter(
-    @CurrentUser() { nationalId }: User,
-=======
   @Query(() => PartyLetterRegistry, { nullable: true })
-  async partyLetterRegistryFindLetter (
+  async partyLetterRegistryFindLetter(
     @CurrentUser() auth: User, // TODO: Make sure system token persists original user
->>>>>>> Stashed changes
   ): Promise<PartyLetterRegistry> {
     return this.partyLetterRegistryService.partyLetterRegistryControllerFindByManager(
       auth,
