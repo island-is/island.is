@@ -3,7 +3,7 @@ export default {
   port: process.env.NODE_ENV === 'production' ? 3333 : 3369,
   audit: {
     defaultNamespace: '@island.is/documents',
-    groupName: process.env.AUDIT_GROUP_NAME ?? undefined,
+    groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'services-documents',
   },
   auth: {
