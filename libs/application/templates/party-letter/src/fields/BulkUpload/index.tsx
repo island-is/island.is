@@ -59,7 +59,7 @@ const BulkUpload: FC<BulkUploadProps> = ({ application, onSuccess }) => {
     fileReader.onload = () => {
       try {
         const workbook = XLSX.read(fileReader.result, { type: 'binary' })
-        let data = [] as any
+        let data = [] as object[]
         for (const sheet in workbook.Sheets) {
           if (workbook.Sheets.hasOwnProperty(sheet)) {
             data = data.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]))
