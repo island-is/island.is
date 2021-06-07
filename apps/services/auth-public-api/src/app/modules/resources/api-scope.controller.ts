@@ -5,7 +5,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('api-scope')
-@Controller('api-scope')
+@Controller('public/api-scope')
 export class ApiScopeController {
   constructor(private readonly resourcesService: ResourcesService) {}
 

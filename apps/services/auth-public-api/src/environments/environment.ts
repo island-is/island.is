@@ -32,7 +32,7 @@ const devConfig = {
 const prodConfig = {
   production: true,
   auth: {
-    audience: '@island.is/auth/public',
+    audience: '@island.is',
     issuer: process.env.IDS_ISSUER,
   },
   port: 3333,
