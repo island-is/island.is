@@ -75,21 +75,22 @@
 /apps/financial-aid/                                                                          @island-is/kolibri-robin-hood
 /libs/financial-aid/                                                                          @island-is/kolibri-robin-hood
 
-/apps/service-portal*/                                                                        @island-is/sendiradid
-/apps/services/user-profile/                                                                  @island-is/sendiradid
-/libs/api/domains/documents/                                                                  @island-is/sendiradid
-/libs/api/domains/national-registry/                                                          @island-is/sendiradid
-/libs/clients/national-registry/v1/                                                           @island-is/sendiradid
-/libs/service-portal/applications/                                                            @island-is/sendiradid
-/libs/service-portal/assets/                                                                  @island-is/sendiradid
-/libs/service-portal/constants/                                                               @island-is/sendiradid
-/libs/service-portal/core/                                                                    @island-is/sendiradid
-/libs/service-portal/documents/                                                               @island-is/sendiradid
-/libs/service-portal/family/                                                                  @island-is/sendiradid
-/libs/service-portal/finance/                                                                 @island-is/sendiradid
-/libs/service-portal/graphql/                                                                 @island-is/sendiradid
-/libs/service-portal/health/                                                                  @island-is/sendiradid
-/libs/service-portal/settings/personal-information                                            @island-is/sendiradid
+/apps/service-portal*/                                                                        @island-is/hugsmidjan
+/apps/services/user-profile/                                                                  @island-is/hugsmidjan
+/libs/api/domains/documents/                                                                  @island-is/hugsmidjan
+/libs/api/domains/national-registry/                                                          @island-is/hugsmidjan
+/libs/clients/national-registry/v1/                                                           @island-is/hugsmidjan
+/libs/service-portal/applications/                                                            @island-is/hugsmidjan
+/libs/service-portal/assets/                                                                  @island-is/hugsmidjan
+/libs/service-portal/constants/                                                               @island-is/hugsmidjan
+/libs/service-portal/core/                                                                    @island-is/hugsmidjan
+/libs/service-portal/documents/                                                               @island-is/hugsmidjan
+/libs/service-portal/family/                                                                  @island-is/hugsmidjan
+/libs/service-portal/finance/                                                                 @island-is/hugsmidjan
+/libs/service-portal/graphql/                                                                 @island-is/hugsmidjan
+/libs/service-portal/health/                                                                  @island-is/hugsmidjan
+/libs/service-portal/settings/personal-information                                            @island-is/hugsmidjan
+
 /libs/application/templates/data-protection-complaint/                                        @island-is/sendiradid
 /libs/application/templates/institution-collaboration/                                        @island-is/sendiradid
 /libs/application/templates/login-service/                                                    @island-is/sendiradid

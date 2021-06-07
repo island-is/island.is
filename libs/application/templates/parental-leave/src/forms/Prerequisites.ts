@@ -104,6 +104,7 @@ export const PrerequisitesForm: Form = buildForm({
             buildExternalDataProvider({
               id: 'approveExternalData',
               title: parentalLeaveFormMessages.shared.introductionProvider,
+              checkboxLabel: parentalLeaveFormMessages.shared.checkboxProvider,
               dataProviders: [
                 buildDataProviderItem({
                   id: 'userProfile',
@@ -173,13 +174,6 @@ export const PrerequisitesForm: Form = buildForm({
               title: '',
               description: '',
             }),
-            // TODO: Custom component with a lot more explanation of why you may not see any children
-            // buildDescriptionField({
-            //   id: 'notEligible',
-            //   title: parentalLeaveFormMessages.selectChild.notEligibleTitle,
-            //   description:
-            //     parentalLeaveFormMessages.selectChild.notEligibleDescription,
-            // }),
           ],
         }),
       ],

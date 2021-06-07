@@ -3,7 +3,7 @@ import get from 'lodash/get'
 
 import { EmailTemplateGenerator } from '../../../../types'
 
-export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
+export const generateApplicationApprovedByEmployerEmail: EmailTemplateGenerator = (
   props,
 ) => {
   const {
@@ -16,26 +16,14 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
     get(application.externalData, 'userProfile.data.email')
 
   // TODO translate using locale
-  const subject =
-    locale === 'is'
-      ? 'Umsókn um fæðingarorlof samþykkt'
-      : 'Paternity leave application approved'
-  const body =
-    locale === 'is'
-      ? dedent(`Góðan dag.
+  const subject = 'Umsókn um fæðingarorlof samþykkt af atvinnuveitanda'
+  const body = dedent(`Góðan dag.
 
-        Umsókn þín um fæðingarorlof hefur verið samþykkt.
+    Atvinnuveitandi hefur samþykkt umsókn þína og hefur hún nú verið send áfram til úrvinnslu.
 
-        Með kveðju,
-        Fæðingarorlofssjóðsjóður
-      `)
-      : dedent(`Hello.
-
-        Your application for paternity leave has been approved.
-
-        Best regards,
-        Fæðingarorlofssjóðsjóður
-      `)
+    Með kveðju,
+    Fæðingarorlofssjóðsjóður
+  `)
 
   return {
     from: {
