@@ -27,7 +27,7 @@ export type ExtMinistryId = number & { [_ExtMinistryId__Brand]: true }
 declare const _RegulationDraftId__Brand: unique symbol
 export type RegulationDraftId = number & { [_RegulationDraftId__Brand]: true }
 
-type DB_RegulationDraft = {
+export type DB_RegulationDraft = {
   /** Primary key */
   id: RegulationDraftId
 
@@ -76,7 +76,7 @@ type DB_RegulationDraft = {
 declare const _DraftAuthorId__Brand: unique symbol
 export type DraftAuthorId = number & { [_DraftAuthorId__Brand]: true }
 
-type DB_DraftAuthor = {
+export type DB_DraftAuthor = {
   /** Primary key */
   id: DraftAuthorId
   draftId: RegulationDraftId
@@ -89,7 +89,7 @@ type DB_DraftAuthor = {
 declare const _DraftLawChapterId__Brand: unique symbol
 export type DraftLawChapterId = number & { [_DraftLawChapterId__Brand]: true }
 
-type DB_DraftLawChapter = {
+export type DB_DraftLawChapter = {
   /** Primary key */
   id: DraftLawChapterId
   draftId: RegulationDraftId
