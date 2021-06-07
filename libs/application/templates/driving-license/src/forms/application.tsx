@@ -36,7 +36,7 @@ export const application: Form = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'type',
+      id: 'externalData',
       title: m.externalDataSection,
       children: [
         buildExternalDataProvider({
@@ -79,6 +79,33 @@ export const application: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'requirements',
+      title: 'Skilyrði umsóknar',
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.informationMultiFieldTitle,
+          children: [
+            buildKeyValueField({
+              label: m.informationApplicant,
+              value: ({ externalData: { nationalRegistry } }) =>
+                (nationalRegistry.data as NationalRegistryUser).fullName,
+            }),
+            buildDividerField({
+              title: '',
+              color: 'dark400',
+            }),
+            buildCustomField({
+              title: 'XXYYZZ',
+              component: 'EligibilitySummary',
+              id: 'eligsummary',
+            }),
+          ],
+        })
+      ],
+    }),
+
     buildSection({
       id: 'user',
       title: m.informationSectionTitle,

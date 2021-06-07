@@ -338,4 +338,9 @@ export const m = defineMessages({
     defaultMessage: 'Má ekki sækja um valin réttindi skv ökuskírteinaskrá',
     description: 'requirement unmet api returned false',
   },
+  errorDataProvider: {
+    id: 'dl.application:error.dataProvider',
+    defaultMessage: 'Villa kom upp við að sækja upplýsingar úr vefþjónustu. Reyndu aftur síðar',
+    description: 'Unhandled error in driving license data provider',
+  },
 })

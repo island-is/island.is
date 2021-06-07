@@ -53,39 +53,29 @@ export class EligibilityProvider extends BasicDataProvider {
       }
     `
 
-    return this.useGraphqlGateway(query, { drivingLicenseType: 'B' }).then(
-      async (res: Response) => {
-        if (!res.ok) {
-          console.error('failed http request', { res })
-          return Promise.reject({
-            reason: 'Náði ekki sambandi við vefþjónustu',
-          })
-        }
+    const res = await this.useGraphqlGateway(query, { drivingLicenseType: 'B' })
 
-        const response = await res.json()
+    if (!res.ok) {
+      console.error('failed http request', { res })
 
-        if (response.errors) {
-          console.error('response errors', { response })
-          return Promise.reject({ reason: 'Ekki tókst að sækja gögn' })
-        }
+      return Promise.reject({
+        reason: 'Náði ekki sambandi við vefþjónustu',
+      })
+    }
 
-        const eligibility = response.data.drivingLicenseApplicationEligibility
+    const response = await res.json()
 
-        if (eligibility.isEligible) {
-          return Promise.resolve(eligibility.isEligible)
-        } else {
-          return Promise.reject({
-            reason: extractReason(eligibility.requirements),
-          })
-        }
-      },
-    )
+    if (response.errors) {
+      return Promise.reject({ error: response.errors })
+    }
+
+    return response.data.drivingLicenseApplicationEligibility
   }
 
-  onProvideError({ reason }: { reason: string }): FailedDataProviderResult {
+  onProvideError (): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: reason,
+      reason: m.errorDataProvider,
       status: 'failure',
       data: {},
     }
