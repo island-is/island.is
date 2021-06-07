@@ -114,6 +114,13 @@ export class Application extends Model<Application> {
   })
   @ApiPropertyOptional()
   pruneAt?: Date
+  
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  paymentReference?: string
 }
 
 ///Payment table to hold onto fulfilled payments and expiring payments.
@@ -122,11 +129,11 @@ export class Application extends Model<Application> {
   timestamps: true,
   indexes: [
     {
-      fields: ['applicationId', 'fulfilled'],
+      fields: ['applicationId'],
     },
   ],
 })
-export class Payment {
+export class Payment extends Model<Application> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -135,22 +142,14 @@ export class Payment {
   })
   @ApiProperty()
   id!: string
-
-  @Column({
-      type: DataType.DATE,
-      allowNull: false,
-      defaultValue: DataType.NOW,
-  })
-  @ApiProperty()
-  expiresAt!: Date
-
+  
   @ForeignKey(() => Application)
   @Column({
-      type: DataType.UUID,
-      allowNull: false,
+    type: DataType.UUID,
+    allowNull: false,
   })
   ApplicationId!: string
-
+  
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
@@ -158,32 +157,38 @@ export class Payment {
   })
   @ApiProperty()
   fulfilled!: boolean
-
+  
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
   @ApiProperty()
   referenceId!: string
-
+  
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  arkUrl!: string
-
+  user4!: string
+  
   @Column({
     type: DataType.JSONB,
     defaultValue: {},
   })
   @ApiPropertyOptional()
   definition?: object
-
+  
   @Column({
     type: DataType.NUMBER,
     allowNull: false,
   })
   @ApiProperty()
   amount!: number
+
+  @Column({
+      type: DataType.DATE,
+  })
+  @ApiProperty()
+  expiresAt!: Date
 }
