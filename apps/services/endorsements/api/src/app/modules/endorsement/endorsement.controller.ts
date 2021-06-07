@@ -1,5 +1,4 @@
-import type { User } from '@island.is/auth-nest-tools'
-import { CurrentUser } from '@island.is/auth-nest-tools'
+import { CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -26,8 +25,10 @@ import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementLis
 import { IsEndorsementListOwnerValidationPipe } from '../endorsementList/pipes/isEndorsementListOwnerValidation.pipe'
 import { BulkEndorsementDto } from './dto/bulkEndorsement.dto'
 import { Endorsement } from './models/endorsement.model'
-import { EndorsementService, NationalIdError } from './endorsement.service'
+import { EndorsementService } from './endorsement.service'
+import { Endorsement as EndorsementScope } from '@island.is/auth/scopes'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
+import type { User } from '@island.is/auth-nest-tools'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 
@@ -45,6 +46,7 @@ export class EndorsementController {
     type: [Endorsement],
   })
   @ApiParam({ name: 'listId', type: String })
+  @Scopes(EndorsementScope.endorsementRead)
   @Get()
   @Audit<Endorsement[]>({
     namespace: auditNamespace,
@@ -57,6 +59,7 @@ export class EndorsementController {
       'listId',
       new ParseUUIDPipe({ version: '4' }),
       EndorsementListByIdPipe,
+      IsEndorsementListOwnerValidationPipe,
     )
     endorsementList: EndorsementList,
   ): Promise<Endorsement[]> {
@@ -71,13 +74,14 @@ export class EndorsementController {
     type: Endorsement,
   })
   @ApiParam({ name: 'listId', type: String })
+  @Scopes(EndorsementScope.endorsementRead)
   @Get('/exists')
   @Audit<Endorsement>({
     namespace: auditNamespace,
-    action: 'findByUser',
+    action: 'findByAuth',
     resources: (endorsement) => endorsement.id,
   })
-  async findByUser(
+  async findByAuth(
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -98,6 +102,7 @@ export class EndorsementController {
     type: Endorsement,
   })
   @ApiParam({ name: 'listId', type: String })
+  @Scopes(EndorsementScope.endorsementWrite)
   @Post()
   @Audit<Endorsement>({
     namespace: auditNamespace,
@@ -127,6 +132,7 @@ export class EndorsementController {
   @ApiBody({
     type: BulkEndorsementDto,
   })
+  @Scopes(EndorsementScope.endorsementWrite)
   @Post('/bulk')
   @Audit<EndorsementBulkCreate>({
     namespace: auditNamespace,
@@ -155,6 +161,7 @@ export class EndorsementController {
       'Uses the authenticated users national id to remove endorsement form a given list',
   })
   @ApiParam({ name: 'listId', type: String })
+  @Scopes(EndorsementScope.endorsementWrite)
   @Delete()
   @HttpCode(204)
   async delete(

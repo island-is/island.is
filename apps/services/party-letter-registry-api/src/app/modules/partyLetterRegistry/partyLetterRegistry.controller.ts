@@ -1,4 +1,4 @@
-import { CurrentUser, Scopes, User } from '@island.is/auth-nest-tools'
+import { CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { Body, Controller, Get, NotFoundException, Post } from '@nestjs/common'
 import {
   ApiBody,
@@ -13,13 +13,14 @@ import { CreateDto } from './dto/create.dto'
 import { PartyLetterRegistry } from './partyLetterRegistry.model'
 import { PartyLetterRegistryService } from './partyLetterRegistry.service'
 import { environment } from '../../../environments'
+import type { User } from '@island.is/auth-nest-tools'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/party-letter-registry`
 @Controller('party-letter-registry')
 @ApiOAuth2([])
 @ApiTags('partyLetterRegistry')
 export class PartyLetterRegistryController {
-  constructor (
+  constructor(
     private readonly partyLetterRegistryService: PartyLetterRegistryService,
   ) {}
 
@@ -34,7 +35,7 @@ export class PartyLetterRegistryController {
   })
   @Scopes(PartyLetterRegistryScope.read)
   @Get('manager')
-  async findAsManagerByAuth (
+  async findAsManagerByAuth(
     @CurrentUser() user: User,
   ): Promise<PartyLetterRegistry> {
     const resource = await this.partyLetterRegistryService.findByManager(
@@ -59,10 +60,11 @@ export class PartyLetterRegistryController {
     namespace: auditNamespace,
     action: 'create',
     resources: (voterRegistry) => voterRegistry.partyLetter,
+    meta: (voterRegistry) => ({ owner: voterRegistry.owner }),
   })
   @Scopes(PartyLetterRegistryScope.write)
   @Post()
-  async create (
+  async create(
     @Body() input: CreateDto,
     @CurrentUser() user: User,
   ): Promise<PartyLetterRegistry> {

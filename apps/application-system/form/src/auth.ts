@@ -6,6 +6,7 @@ import {
   PartyLetterRegistry,
   TemporaryVoterRegistry,
   UserProfileScope,
+  Endorsement,
 } from '@island.is/auth/scopes'
 
 const userMocked = process.env.API_MOCKS === 'true'
@@ -21,7 +22,7 @@ if (userMocked) {
     redirectPathSilent: '/silent/signin-oidc',
     authority: environment.identityServer.authority,
     client_id: 'island-is-1',
-    scope: `openid profile api_resource.scope ${ApplicationScope.read} ${ApplicationScope.write} ${UserProfileScope.read} ${TemporaryVoterRegistry.read} ${PartyLetterRegistry.read} ${NationalRegistryScope.individuals}`,
+    scope: `openid profile api_resource.scope ${ApplicationScope.read} ${ApplicationScope.write} ${UserProfileScope.read} ${NationalRegistryScope.individuals} ${TemporaryVoterRegistry.read} ${PartyLetterRegistry.read} ${Endorsement.endorsementListWrite} ${Endorsement.endorsementListRead} ${Endorsement.endorsementRead} ${Endorsement.endorsementWrite}`,
     post_logout_redirect_uri: `${window.location.origin}`,
   })
 }

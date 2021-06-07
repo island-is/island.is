@@ -8,7 +8,7 @@ import type { User } from './user'
 export class MockAuthGuard implements CanActivate {
   auth: Auth
 
-  constructor (user: Partial<Auth>) {
+  constructor(user: Partial<Auth>) {
     this.auth = {
       nationalId: '1234567890',
       authorization: '',
@@ -18,7 +18,7 @@ export class MockAuthGuard implements CanActivate {
     }
   }
 
-  canActivate (context: ExecutionContext): boolean {
+  canActivate(context: ExecutionContext): boolean {
     const request = getRequest(context)
     request.auth = this.auth
     if (this.auth.nationalId) {

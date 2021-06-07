@@ -1,10 +1,6 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { Endorsement } from './models/endorsement.model'
 import { EndorsementSystemService } from './endorsementSystem.service'
@@ -15,7 +11,7 @@ import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
 import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard)
 @Resolver('EndorsementSystemResolver')
 export class EndorsementSystemResolver {
   constructor(private endorsementSystemService: EndorsementSystemService) {}
@@ -26,7 +22,7 @@ export class EndorsementSystemResolver {
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
-    return await this.endorsementSystemService.endorsementControllerFindByUser(
+    return await this.endorsementSystemService.endorsementControllerFindByAuth(
       input,
       user,
     )

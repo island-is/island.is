@@ -5,8 +5,8 @@ import {
   TemporaryVoterRegistry,
   UserProfileScope,
   NationalRegistryScope,
+  Endorsement,
 } from '@island.is/auth/scopes'
-
 import { environment } from './environments'
 
 const userMocked = process.env.API_MOCKS === 'true'
@@ -21,7 +21,7 @@ if (userMocked) {
     redirectPathSilent: '/silent/signin-oidc',
     authority: environment.identityServer.authority,
     client_id: 'island-is-1',
-    scope: `openid profile api_resource.scope ${ApplicationScope.read} ${UserProfileScope.read} ${UserProfileScope.write} ${AuthScope.actorDelegations} ${AuthScope.readDelegations} ${AuthScope.writeDelegations} ${TemporaryVoterRegistry.read} ${NationalRegistryScope.individuals}`,
+    scope: `openid profile api_resource.scope ${ApplicationScope.read} ${UserProfileScope.read} ${UserProfileScope.write} ${AuthScope.actorDelegations} ${AuthScope.readDelegations} ${AuthScope.writeDelegations} ${NationalRegistryScope.individuals} ${TemporaryVoterRegistry.read} ${Endorsement.endorsementListRead} ${Endorsement.endorsementRead} ${Endorsement.endorsementWrite}`,
     post_logout_redirect_uri: `${window.location.origin}`,
   })
 }

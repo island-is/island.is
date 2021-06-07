@@ -13,7 +13,7 @@ const auditNamespace = `${environment.audit.defaultNamespace}/voter-registry`
 @ApiOAuth2([])
 @ApiTags('temporaryVoterRegistry')
 export class VoterRegistryController {
-  constructor (private readonly voterRegistryService: VoterRegistryService) {}
+  constructor(private readonly voterRegistryService: VoterRegistryService) {}
 
   @ApiOkResponse({
     description: 'Finds voter registry entry given user authentication',
@@ -26,7 +26,7 @@ export class VoterRegistryController {
   })
   @Scopes(TemporaryVoterRegistry.read)
   @Get()
-  async findByAuth (@CurrentUser() user: User): Promise<VoterRegistry> {
+  async findByAuth(@CurrentUser() user: User): Promise<VoterRegistry> {
     const resource = await this.voterRegistryService.findByNationalId(
       user.nationalId,
     )
@@ -51,7 +51,7 @@ export class VoterRegistryController {
     type: VoterRegistry,
   })
   @Get('/system')
-  async findByNationalId (
+  async findByNationalId(
     @Query() { nationalId }: FindOneDto,
   ): Promise<VoterRegistry> {
     const resource = await this.voterRegistryService.findByNationalId(

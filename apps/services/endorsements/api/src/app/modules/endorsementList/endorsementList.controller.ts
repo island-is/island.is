@@ -21,10 +21,11 @@ import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
-import { BypassAuth, CurrentUser } from '@island.is/auth-nest-tools'
+import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { IsEndorsementListOwnerValidationPipe } from './pipes/isEndorsementListOwnerValidation.pipe'
 import { environment } from '../../../environments'
+import { Endorsement as EndorsementScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement-list`
@@ -38,7 +39,7 @@ export class EndorsementListController {
   ) {}
 
   @ApiOkResponse({
-    description: 'Finds all endorsement lists belonging to a given tag',
+    description: 'Finds all endorsement lists belonging to given tags',
     type: [EndorsementList],
   })
   @Get()
@@ -59,6 +60,7 @@ export class EndorsementListController {
     description: 'Finds all endorsements for the currently authenticated user',
     type: [Endorsement],
   })
+  @Scopes(EndorsementScope.endorsementRead)
   @Get('/endorsements')
   @Audit<Endorsement[]>({
     namespace: auditNamespace,
@@ -78,6 +80,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
+  @Scopes(EndorsementScope.endorsementListRead)
   @Get(':listId')
   @Audit<EndorsementList>({
     namespace: auditNamespace,
@@ -100,6 +103,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
+  @Scopes(EndorsementScope.endorsementListJusticeDepartment)
   @Put(':listId/close')
   @Audit<EndorsementList>({
     namespace: auditNamespace,
@@ -146,6 +150,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiBody({ type: EndorsementListDto })
+  @Scopes(EndorsementScope.endorsementListWrite)
   @Post()
   @Audit<EndorsementList>({
     namespace: auditNamespace,
