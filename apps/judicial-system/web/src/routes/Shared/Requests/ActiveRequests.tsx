@@ -2,7 +2,7 @@ import React, { useContext, useMemo, useState } from 'react'
 import cn from 'classnames'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 
-import * as styles from './CustodyPetitions.treat'
+import * as styles from './Requests.treat'
 import { mapCaseStateToTagVariant } from './utils'
 import {
   Case,
@@ -26,7 +26,7 @@ interface Props {
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
 }
 
-const ActiveCustodyPetitions: React.FC<Props> = (props) => {
+const ActiveRequests: React.FC<Props> = (props) => {
   const { cases, onRowClick, onDeleteCase } = props
 
   const { user } = useContext(UserContext)
@@ -278,4 +278,4 @@ const ActiveCustodyPetitions: React.FC<Props> = (props) => {
   )
 }
 
-export default ActiveCustodyPetitions
+export default ActiveRequests

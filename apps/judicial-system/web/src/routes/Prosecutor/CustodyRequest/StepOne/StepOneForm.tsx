@@ -1,15 +1,12 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
-
 import { Text, Input, Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-
-import { Case, CaseType, UpdateCase } from '@island.is/judicial-system/types'
-
+import { Case, CaseType } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,

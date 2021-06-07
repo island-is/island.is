@@ -21,13 +21,13 @@ import {
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import * as styles from './CustodyPetitions.treat'
-import ActiveCustodyPetitions from './ActiveCustodyPetitions'
-import PastCustodyPetitions from './PastCustodyPetitions'
+import ActiveRequests from './ActiveRequests'
+import PastRequests from './PastRequests'
 import router from 'next/router'
+import * as styles from './Requests.treat'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
-export const CustodyPetitions: React.FC = () => {
+export const Requests: React.FC = () => {
   const [activeCases, setActiveCases] = useState<Case[]>()
   const [pastCases, setPastCases] = useState<Case[]>()
 
@@ -165,7 +165,7 @@ export const CustodyPetitions: React.FC = () => {
   }
 
   return (
-    <div className={styles.custodyPetitionsContainer}>
+    <div className={styles.requestsContainer}>
       {user && (
         <div className={styles.logoContainer}>
           <Logo />
@@ -205,7 +205,7 @@ export const CustodyPetitions: React.FC = () => {
             </Text>
           </Box>
           {activeCases && activeCases.length > 0 ? (
-            <ActiveCustodyPetitions
+            <ActiveRequests
               cases={activeCases}
               onRowClick={handleRowClick}
               onDeleteCase={deleteCase}
@@ -230,10 +230,7 @@ export const CustodyPetitions: React.FC = () => {
             </Text>
           </Box>
           {pastCases && pastCases.length > 0 ? (
-            <PastCustodyPetitions
-              cases={pastCases}
-              onRowClick={handleRowClick}
-            />
+            <PastRequests cases={pastCases} onRowClick={handleRowClick} />
           ) : (
             <div className={styles.activeRequestsTableInfo}>
               <AlertMessage
@@ -246,7 +243,7 @@ export const CustodyPetitions: React.FC = () => {
         </>
       ) : error ? (
         <div
-          className={styles.custodyPetitionsError}
+          className={styles.requestsError}
           data-testid="custody-petitions-error"
         >
           <AlertMessage
@@ -264,4 +261,4 @@ export const CustodyPetitions: React.FC = () => {
   )
 }
 
-export default CustodyPetitions
+export default Requests

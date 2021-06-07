@@ -12,7 +12,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { CustodyPetitions } from './CustodyPetitions'
+import Requests from './Requests'
 
 const mockCasesQuery = [
   {
@@ -109,7 +109,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
@@ -128,7 +128,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
@@ -145,7 +145,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
@@ -164,7 +164,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
@@ -181,7 +181,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
@@ -200,7 +200,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
@@ -219,7 +219,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
@@ -236,7 +236,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
@@ -253,7 +253,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
@@ -278,7 +278,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
@@ -303,7 +303,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
@@ -328,7 +328,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
@@ -361,7 +361,7 @@ describe('Custody petitions route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <CustodyPetitions />
+          <Requests />
         </UserProvider>
       </MockedProvider>,
     )
