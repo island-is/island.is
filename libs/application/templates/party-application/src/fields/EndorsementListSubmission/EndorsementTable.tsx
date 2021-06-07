@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Box, Table as T, Tooltip, Checkbox } from '@island.is/island-ui/core'
+import { Box, Table as T, Tooltip, Checkbox, Icon } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
@@ -30,7 +30,11 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
   const { formatMessage } = useLocale()
 
   const renderRow = (endorsement: Endorsement) => {
-    const rowBackground = endorsement.hasWarning ? 'yellow200' : 'white'
+    const rowBackground = endorsement.bulkImported
+      ? 'blue200'
+      : endorsement.hasWarning
+      ? 'yellow200'
+      : 'white'
     return (
       <T.Row key={endorsement.id}>
         <T.Data
@@ -65,12 +69,15 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
               {endorsement.address}
               <Box marginLeft={2}>
                 <Tooltip
-                  color="yellow600"
+                  color="blue400"
                   iconSize="medium"
                   text={formatMessage(
                     m.endorsementListSubmission.invalidEndorsement,
                   )}
                 />
+                {endorsement.bulkImported && (
+                  <Icon icon="attach" color="blue400" />
+                )}
               </Box>
             </Box>
           ) : (

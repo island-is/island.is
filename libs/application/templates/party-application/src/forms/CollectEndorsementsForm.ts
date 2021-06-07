@@ -32,7 +32,7 @@ export const CollectEndorsementsForm: Form = buildForm({
               title: m.endorsementList.title,
               component: 'EndorsementList',
             }),
-            buildCheckboxField({
+            /*buildCheckboxField({
               id: 'includePapers',
               title: '',
               strong: true,
@@ -59,7 +59,7 @@ export const CollectEndorsementsForm: Form = buildForm({
               uploadHeader: m.collectEndorsements.fileUploadHeader,
               uploadDescription: m.collectEndorsements.uploadDescription,
               uploadButtonLabel: m.collectEndorsements.uploadButtonLabel,
-            }),
+            }),*/
           ],
         }),
       ],
