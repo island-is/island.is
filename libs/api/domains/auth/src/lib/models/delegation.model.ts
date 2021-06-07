@@ -65,9 +65,6 @@ export class CustomDelegation extends Delegation {
   @Field((type) => Date, { nullable: true })
   validTo?: Date
 
-  @Field((type) => [String])
-  scopesNames!: string[]
-
   @Field((type) => [DelegationScope])
   scopes!: DelegationScope[]
 }
