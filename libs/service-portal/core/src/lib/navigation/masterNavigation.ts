@@ -25,6 +25,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Rafraen skjol
       {
+        heading: defineMessage({
+          id: 'service.portal:service',
+          defaultMessage: 'Þjónusta',
+        }),
         name: defineMessage({
           id: 'service.portal:documents',
           defaultMessage: 'Pósthólf',
@@ -51,12 +55,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Min Gogn
       {
+        heading: defineMessage({
+          id: 'service.portal:my-info',
+          defaultMessage: 'Mín gögn',
+        }),
         name: defineMessage({
           id: 'service.portal:user-info',
           defaultMessage: 'Mínar upplýsingar',
         }),
         path: ServicePortalPath.MyInfoRoot,
-        divider: true,
         icon: {
           type: 'outline',
           icon: 'person',
@@ -93,6 +100,19 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       //   },
       // },
 
+      // Starfsleyfi
+      {
+        name: defineMessage({
+          id: 'service.portal:educationLicense',
+          defaultMessage: 'Starfsleyfi',
+        }),
+        path: ServicePortalPath.EducationLicense,
+        icon: {
+          type: 'outline',
+          icon: 'receipt',
+        },
+      },
+
       // Menntun
       {
         name: defineMessage({
@@ -104,23 +124,17 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'school',
         },
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:educationLicense',
-              defaultMessage: 'Starfsleyfi',
-            }),
-            path: ServicePortalPath.EducationLicense,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:educationCareer',
-              defaultMessage: 'Námsferill',
-            }),
-            path: ServicePortalPath.EducationCareer,
-          },
-        ],
+        // children: [
+        //   {
+        //     name: defineMessage({
+        //       id: 'service.portal:educationCareer',
+        //       defaultMessage: 'Námsferill',
+        //     }),
+        //     path: ServicePortalPath.EducationCareer,
+        //   },
+        // ],
       },
+
       {
         name: defineMessage({
           id: 'service.portal:document-provider',
@@ -243,6 +257,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Fasteignir
       {
+        heading: defineMessage({
+          id: 'service.portal:coming-soon',
+          defaultMessage: 'Annað',
+        }),
         name: defineMessage({
           id: 'service.portal:real-estate',
           defaultMessage: 'Fasteignir',
