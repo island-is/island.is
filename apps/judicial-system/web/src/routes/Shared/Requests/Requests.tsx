@@ -9,6 +9,7 @@ import {
   Case,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import { UserRole } from '@island.is/judicial-system/types'
@@ -149,7 +150,7 @@ export const Requests: React.FC = () => {
     }
   }
 
-  const openCase = (caseToOpen: Case, role: UserRole): void => {
+  const openCase = (caseToOpen: Case, role: UserRole) => {
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
       caseToOpen.state === CaseState.REJECTED
@@ -160,7 +161,14 @@ export const Requests: React.FC = () => {
         `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${caseToOpen.id}`,
       )
     } else {
-      router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
+      if (
+        caseToOpen.type === CaseType.CUSTODY ||
+        caseToOpen.type === CaseType.TRAVEL_BAN
+      ) {
+        router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
+      } else {
+        router.push(`${Constants.R_CASE_DEFENDANT_ROUTE}/${caseToOpen.id}`)
+      }
     }
   }
 

@@ -7,7 +7,7 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseState } from '@island.is/judicial-system/types'
 import { useRouter } from 'next/router'
 import DefendantForm from './DefendantForm'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
@@ -72,14 +72,12 @@ const Defendant = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      {workingCase ? (
+      {workingCase && (
         <DefendantForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           handleNextButtonClick={handleNextButtonClick}
         />
-      ) : (
-        'working case missing'
       )}
     </PageLayout>
   )

@@ -26,7 +26,7 @@ export const CaseQuery = gql`
       leadInvestigator
       arrestDate
       requestedCourtDate
-      requestedCustodyEndDate
+      requestedValidToDate
       otherDemands
       lawsBroken
       custodyProvisions
@@ -70,8 +70,8 @@ export const CaseQuery = gql`
       courtLegalArguments
       ruling
       decision
-      custodyEndDate
-      isCustodyEndDateInThePast
+      validToDate
+      isValidToDateInThePast
       custodyRestrictions
       otherRestrictions
       isolationTo
@@ -94,7 +94,7 @@ export const CaseQuery = gql`
       }
       parentCase {
         id
-        custodyEndDate
+        requestedValidToDate
         decision
         courtCaseNumber
         ruling

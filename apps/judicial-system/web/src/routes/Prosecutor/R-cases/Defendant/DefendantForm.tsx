@@ -5,10 +5,9 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { Case, RCaseTypes } from '@island.is/judicial-system/types'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
-import { petitionTypes } from './PetitionTypes'
 import {
   removeTabsValidateAndSet,
   setAndSendToServer,
@@ -86,7 +85,7 @@ const DefendantForm: React.FC<Props> = (props) => {
             <Box marginBottom={2}>
               <Select
                 name="petition-type"
-                options={petitionTypes}
+                options={RCaseTypes}
                 label="Tegund kröfu"
                 placeholder="Veldu tegund kröfu"
                 onChange={(selectedOption: ValueType<ReactSelectOption>) =>

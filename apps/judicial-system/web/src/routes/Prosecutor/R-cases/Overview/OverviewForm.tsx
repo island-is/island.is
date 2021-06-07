@@ -88,12 +88,12 @@ const OverviewForm: React.FC<Props> = (props) => {
                 value: workingCase.parentCase
                   ? `${capitalize(
                       formatDate(
-                        workingCase.parentCase.custodyEndDate,
+                        workingCase.parentCase.requestedValidToDate,
                         'PPPP',
                         true,
                       ) || '',
                     )} kl. ${formatDate(
-                      workingCase.parentCase.custodyEndDate,
+                      workingCase.parentCase.requestedValidToDate,
                       TIME_FORMAT,
                     )}`
                   : workingCase.arrestDate
