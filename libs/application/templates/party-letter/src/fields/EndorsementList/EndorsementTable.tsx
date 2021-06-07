@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Application } from '@island.is/application/core'
 import { Endorsement } from '../../lib/dataSchema'
-import { Box, Table as T, Tooltip } from '@island.is/island-ui/core'
+import { Box, Table as T, Tooltip, Icon } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
@@ -23,6 +23,11 @@ interface EndorsementTableProps {
 const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
   const { formatMessage } = useLocale()
   const renderRow = (endorsement: Endorsement) => {
+    const rowBackground = endorsement.bulkImported
+      ? 'blue200'
+      : endorsement.hasWarning
+      ? 'yellow200'
+      : 'white'
     return (
       <T.Row key={endorsement.id}>
         <T.Data key={endorsement.id + endorsement.date}>
@@ -37,7 +42,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
         <T.Data
           key={endorsement.id}
           box={{
-            background: endorsement.hasWarning ? 'yellow200' : 'white',
+            background: rowBackground,
             textAlign: 'right',
           }}
         >
@@ -50,6 +55,9 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
                   iconSize="medium"
                   text={formatMessage(m.validationMessages.signatureInvalid)}
                 />
+                {endorsement.bulkImported && (
+                  <Icon icon="attach" color="blue400" />
+                )}
               </Box>
             </Box>
           ) : (

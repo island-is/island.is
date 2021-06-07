@@ -14,6 +14,7 @@ const EndorsementSchema = z.object({
   nationalId: z.string(),
   address: z.string(),
   hasWarning: z.boolean(),
+  bulkImported: z.boolean(),
 })
 
 export const PartyLetterSchema = z.object({

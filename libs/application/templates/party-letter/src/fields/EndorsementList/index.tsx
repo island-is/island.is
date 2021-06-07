@@ -11,6 +11,7 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import set from 'lodash/set'
 import cloneDeep from 'lodash/cloneDeep'
 import { useEndorsements } from '../../hooks/useFetchEndorsements'
+import BulkUpload from '../BulkUpload'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { lang: locale, formatMessage } = useLocale()
@@ -19,6 +20,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const answers = application.answers as PartyLetter
   const [searchTerm, setSearchTerm] = useState('')
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
+  const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
   const [showWarning, setShowWarning] = useState(false)
   const endorsementsHook = useEndorsements(endorsementListId, true)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
@@ -127,6 +129,15 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
           application={application}
           endorsements={endorsements}
         />
+        <Box marginY={5}>
+          <BulkUpload
+            application={application}
+            endorsements={endorsements}
+            onSuccess={() => {
+              setUpdateOnBulkImport(true)
+            }}
+          />
+        </Box>
       </Box>
     </Box>
   )
