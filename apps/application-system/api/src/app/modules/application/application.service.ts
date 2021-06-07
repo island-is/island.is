@@ -7,13 +7,11 @@ import {
   ApplicationStatus,
 } from '@island.is/application/core'
 
-import { Application, Payment } from './application.model'
+import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 
 import { ApplicationLifecycle } from './types'
-import { CreatePaymentDto } from './dto/createPayment.dto'
-import { PaymentService } from '@island.is/api/domains/payment'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -35,7 +33,6 @@ export class ApplicationService {
   constructor(
     @InjectModel(Application)
     private applicationModel: typeof Application,
-    private paymentModel: typeof Payment
   ) {}
 
   async findOneById(
@@ -168,14 +165,5 @@ export class ApplicationService {
 
   async delete(id: string) {
     return this.applicationModel.destroy({ where: { id } })
-  }
-
-  async createPayment(payment: CreatePaymentDto): Promise<Payment> {
-    return this.paymentModel.create(payment)
-  }
-
-  async recreatedPayment(payment: CreatePaymentDto): Promise<Payment> {
-    payment.definition = {'description': 'this payment was recreated by user.'}
-    return this.paymentModel.create(payment)
   }
 }

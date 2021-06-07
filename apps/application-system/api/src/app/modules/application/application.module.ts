@@ -21,6 +21,7 @@ import {
   ApplicationConfig,
 } from './application.configuration'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
+import { PaymentModule } from '../payment/payment.module'
 
 let BullModule: DynamicModule
 
@@ -53,6 +54,7 @@ if (process.env.INIT_SCHEMA === 'true') {
     BullModule,
     SigningModule.register(environment.signingOptions),
     TranslationsModule,
+    PaymentModule,
   ],
   controllers: [ApplicationController],
   providers: [
