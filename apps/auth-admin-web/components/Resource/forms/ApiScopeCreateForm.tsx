@@ -10,6 +10,8 @@ import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
 import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
 import ApiScopeGroupCreateFormModal from './ApiScopeGroupCreateFormModal'
+import { Domain } from './../../../entities/models/domain.model'
+import { getDisplayName } from 'next/dist/next-server/lib/utils'
 
 interface Props {
   handleSave?: (object: ApiScopeDTO) => void
@@ -24,16 +26,26 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   const [available, setAvailable] = useState<boolean>(false)
   const [groups, setGroups] = useState<ApiScopeGroup[]>([])
   const [nameLength, setNameLength] = useState(0)
+  const [domains, setDomains] = useState<Domain[]>([])
+
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeCreateForm'),
   )
 
   useEffect(() => {
+    async function getDomains() {
+      const response = await ResourcesService.findAllDomains()
+      if (response) {
+        setDomains(response as Domain[])
+      }
+    }
+
     if (props.apiScope && props.apiScope.name) {
       setIsEditing(true)
       setAvailable(true)
     }
     getGroups()
+    getDomains()
   }, [props.apiScope])
 
   const getGroups = async () => {
