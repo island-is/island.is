@@ -111,7 +111,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                       name="redirectUri"
                       ref={register({
                         required: true,
-                        validate: ValidationUtils.validateUrl,
+                        validate: ValidationUtils.validateUri,
                       })}
                       defaultValue={defaultUrl ?? ''}
                       className="client-redirect__input"
