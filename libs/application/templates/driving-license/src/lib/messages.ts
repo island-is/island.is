@@ -8,6 +8,11 @@ export const m = defineMessages({
   },
   externalDataTitle: {
     id: 'dl.system:externalData.title',
+    defaultMessage: 'Umsókn um fullnaðarskírteini',
+    description: 'Title of the application',
+  },
+  externalDataSubTitle: {
+    id: 'dl.system:externalData.subTitle',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'The following data will be retrieved electronically',
   },

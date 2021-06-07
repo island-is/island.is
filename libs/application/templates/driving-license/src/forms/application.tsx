@@ -40,9 +40,9 @@ export const application: Form = buildForm({
       title: m.externalDataSection,
       children: [
         buildExternalDataProvider({
-          title: 'Umsókn um fullnaðarskírteini',
+          title: m.externalDataTitle,
           id: 'approveExternalData',
-          subTitle: m.externalDataTitle,
+          subTitle: m.externalDataSubTitle,
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
