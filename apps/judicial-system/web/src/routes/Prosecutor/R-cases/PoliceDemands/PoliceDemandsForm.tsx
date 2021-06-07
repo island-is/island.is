@@ -25,9 +25,10 @@ interface Props {
 
 const PoliceDemandsForm: React.FC<Props> = (props) => {
   const validations: FormSettings = {
-    policeDemands: {
-      validations: ['empty'],
-    },
+    // TODO: Add police demands
+    // policeDemands: {
+    //   validations: ['empty'],
+    // },
     lawsBroken: {
       validations: ['empty'],
     },

@@ -86,14 +86,14 @@ export const getRCaseProsecutorSection = (
             ? `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${caseId}`
             : undefined,
       },
-      // {
-      //   type: 'SUB_SECTION',
-      //   name: 'Greinargerð',
-      //   href:
-      //     activeSubSection && activeSubSection > 3
-      //       ? `${Constants.STEP_FOUR_ROUTE}/${caseId}`
-      //       : undefined,
-      // },
+      {
+        type: 'SUB_SECTION',
+        name: 'Greinargerð',
+        href:
+          activeSubSection && activeSubSection > 3
+            ? `${Constants.R_CASE_POLICE_REPORT_ROUTE}/${caseId}`
+            : undefined,
+      },
       // {
       //   type: 'SUB_SECTION',
       //   name: 'Rannsóknargögn',
