@@ -1,7 +1,6 @@
 import React, { useContext, useMemo } from 'react'
 import { Box, Text, Tag } from '@island.is/island-ui/core'
 
-import * as styles from './CustodyPetitions.treat'
 import { mapCaseStateToTagVariant } from './utils'
 import {
   Case,
@@ -14,13 +13,14 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Table } from '@island.is/judicial-system-web/src/shared-components'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
+import * as styles from './Requests.treat'
 
 interface Props {
   cases: Case[]
   onRowClick: (id: string) => void
 }
 
-const PastCustodyPetitions: React.FC<Props> = (props) => {
+const PastRequests: React.FC<Props> = (props) => {
   const { cases, onRowClick } = props
   const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
 
@@ -169,4 +169,4 @@ const PastCustodyPetitions: React.FC<Props> = (props) => {
   )
 }
 
-export default PastCustodyPetitions
+export default PastRequests
