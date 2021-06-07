@@ -25,7 +25,7 @@ export class CreatePaymentResponseDto {
   @ApiProperty()
   @Expose()
   @IsObject()
-  definition?: object
+  definition?: string
 
   @ApiProperty()
   @Expose()

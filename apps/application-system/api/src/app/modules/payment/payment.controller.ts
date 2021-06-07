@@ -102,7 +102,7 @@ export class PaymentController {
       fulfilled: false,
       referenceId: "",
       user4: "",
-      definition: {},
+      definition: "",
       amount: application.amount,
       expiresAt: application.expiresAt,
     }

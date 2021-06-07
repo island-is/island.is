@@ -20,7 +20,7 @@ export class PaymentService {
   }
 
   async recreatedPayment(payment: CreatePaymentDto): Promise<Payment> {
-    payment.definition = {'description': 'this payment was recreated by user.'}
+    payment.definition = 'this payment was recreated by user.'
     return this.paymentModel.create(payment)
   }
 }

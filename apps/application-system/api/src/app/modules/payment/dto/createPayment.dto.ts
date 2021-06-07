@@ -16,7 +16,7 @@ export class CreatePaymentDto {
 
 	@IsObject()
 	@ApiProperty()
-	definition?: object
+	definition?: string
 
 	@IsNumber()
 	@ApiProperty()

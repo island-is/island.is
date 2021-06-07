@@ -32,7 +32,7 @@ module.exports = {
           allowNull: false,
         },
         definition: {
-          type: Sequelize.OBJECT,
+          type: Sequelize.STRING,
         },
         amount: {
           type: Sequelize.STRING,

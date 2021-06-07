@@ -4,7 +4,7 @@ export interface PaymentType {
   fulfilled: boolean,
   referenceId: string,
   user4: string,
-  definition: object,
+  definition: string,
   amount: number,
   expiresAt: Date,
 }
