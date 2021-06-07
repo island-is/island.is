@@ -29,6 +29,7 @@ import {
   getSelectedChild,
   createRange,
   calculatePeriodPercentage,
+  requiresOtherParentApproval,
 } from '../parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -632,6 +633,19 @@ export const ParentalLeaveForm: Form = buildForm({
                   value: NO,
                 },
               ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'otherParentEmailQuestion',
+          title: parentalLeaveFormMessages.shared.otherParentEmailSubSection,
+          condition: (answers) => requiresOtherParentApproval(answers),
+          children: [
+            buildTextField({
+              id: 'otherParentEmail',
+              title: parentalLeaveFormMessages.shared.otherParentEmailTitle,
+              description:
+                parentalLeaveFormMessages.shared.otherParentEmailDescription,
             }),
           ],
         }),

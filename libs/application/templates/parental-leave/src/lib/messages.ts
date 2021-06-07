@@ -101,6 +101,23 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hitt foreldrið er {spouseName} (kt. {spouseId})',
       description: `The other parent is {spouseName} (kt. {spouseId})`,
     },
+    otherParentEmailSubSection: {
+      id: 'pl.application:otherParentEmail.subSection',
+      defaultMessage: 'Netfang hins foreldris',
+      description: 'Other parent email',
+    },
+    otherParentEmailTitle: {
+      id: 'pl.application:otherParentEmail.title',
+      defaultMessage: 'Hvert er netfang hins foreldrisins?',
+      description: 'Asking about the email address of the other parent',
+    },
+    otherParentEmailDescription: {
+      id: 'pl.application:otherParentEmail.description',
+      defaultMessage:
+        'Þú ert að óska eftir réttindum frá hinu foreldrinu sem það þarf að samþykkja.',
+      description:
+        'We need the email if you are requesting days or personal discount from the other parent for them to verify',
+    },
     paymentInformationSubSection: {
       id: 'pl.application:payment.information.subsection',
       defaultMessage: 'Greiðsluupplýsingar',
@@ -1337,6 +1354,16 @@ export const otherParentApprovalFormMessages = defineMessages({
       'Þú ert greinilega að búast við barni með einhverjum einstaklingi sem vill nota einn mánuð af réttindum þínum. Það þýðir að réttindi þín verða í mesta lagi 5 mánuðir. Ertu sammála?',
     description:
       'You are apparently expecting a baby with some person that wishes to use one month of your rights. That means your rights will be 5 months at most. Do you agree?',
+  },
+  labelDays: {
+    id: 'pl.application:otherParent.label.days',
+    defaultMessage: 'Fjöldi umbeðinna daga',
+    description: 'Number of requested days',
+  },
+  labelPersonalDiscount: {
+    id: 'pl.application:otherParent.label.personalDiscount',
+    defaultMessage: 'Nýting á þínum persónuafslætti',
+    description: 'Usage of your personald discount',
   },
   finalTitle: {
     id: 'pl.application:otherParent.final.title',
