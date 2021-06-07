@@ -48,7 +48,7 @@ const Defendant = () => {
         defenderEmail: '',
         sendRequestToDefender: false,
         accusedGender: undefined,
-      })
+      } as Case)
     }
   }, [id, workingCase, setWorkingCase, data])
 

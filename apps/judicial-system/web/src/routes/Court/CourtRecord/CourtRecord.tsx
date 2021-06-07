@@ -271,9 +271,7 @@ export const CourtRecord: React.FC = () => {
                 </Text>
               </Box>
               <CourtDocuments
-                title={`Krafa um ${
-                  caseTypes[workingCase.type ?? CaseType.OTHER]
-                }`}
+                title={`Krafa um ${caseTypes[workingCase.type]}`}
                 tagText="Þingmerkt nr. 1"
                 tagVariant="darkerBlue"
                 text="Rannsóknargögn málsins liggja frammi."
