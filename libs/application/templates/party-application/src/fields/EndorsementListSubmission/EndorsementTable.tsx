@@ -2,9 +2,9 @@ import React, { FC } from 'react'
 import { Box, Table as T, Tooltip, Checkbox } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { Endorsement } from '../../lib/PartyApplicationTemplate'
 import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
+import { Endorsement } from '../../lib/dataSchema'
 
 const formatDate = (date: string) => {
   try {

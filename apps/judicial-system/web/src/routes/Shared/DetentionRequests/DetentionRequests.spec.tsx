@@ -108,7 +108,7 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <DetentionRequests />
         </UserProvider>
       </MockedProvider>,
@@ -127,7 +127,7 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <DetentionRequests />
         </UserProvider>
       </MockedProvider>,
@@ -180,7 +180,7 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <DetentionRequests />
         </UserProvider>
       </MockedProvider>,
@@ -199,7 +199,7 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <DetentionRequests />
         </UserProvider>
       </MockedProvider>,
@@ -218,7 +218,7 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <DetentionRequests />
         </UserProvider>
       </MockedProvider>,
@@ -235,7 +235,7 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <DetentionRequests />
         </UserProvider>
       </MockedProvider>,
@@ -252,7 +252,7 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <DetentionRequests />
         </UserProvider>
       </MockedProvider>,
@@ -277,7 +277,7 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <DetentionRequests />
         </UserProvider>
       </MockedProvider>,
@@ -302,7 +302,7 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <DetentionRequests />
         </UserProvider>
       </MockedProvider>,
@@ -327,7 +327,7 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <DetentionRequests />
         </UserProvider>
       </MockedProvider>,

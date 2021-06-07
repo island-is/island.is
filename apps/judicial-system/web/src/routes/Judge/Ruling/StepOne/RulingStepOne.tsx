@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   Accordion,
   AccordionItem,
@@ -48,6 +48,7 @@ import CheckboxList from '@island.is/judicial-system-web/src/shared-components/C
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -67,6 +68,7 @@ export const RulingStepOne: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
+  const { user } = useContext(UserContext)
   const { updateCase, autofill } = useCase()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -172,6 +174,10 @@ export const RulingStepOne: React.FC = () => {
                   <CaseFileList
                     caseId={workingCase.id}
                     files={workingCase.files || []}
+                    canOpenFiles={
+                      workingCase.judge !== null &&
+                      workingCase.judge?.id === user?.id
+                    }
                   />
                 </AccordionItem>
               </Accordion>

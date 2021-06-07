@@ -3,11 +3,12 @@ import { EndorsementMetadata } from './endorsementMetadata.model'
 import {
   EndorsementSystemSignedListsResponse,
   EndorsementSystemSignedListsService,
-} from './providers/endorsementSystemSignedLists.service'
+} from './providers/endorsementSystem/endorsementSystemSignedLists.service'
 import {
   NationalRegistryUserResponse,
   NationalRegistryUserService,
-} from './providers/nationalRegistryUser.service'
+} from './providers/nationalRegistry/nationalRegistryUser.service'
+
 import {
   EndorsementMetaField,
   MetadataInput,
@@ -15,12 +16,18 @@ import {
   MetadataProviderResponse,
   MetadataProviderService,
 } from './types'
+import {
+  TemporaryVoterRegistryResponse,
+  TemporaryVoterRegistryService,
+} from './providers/temporaryVoterRegistry/temporaryVoterRegistry.service'
+
 @Injectable()
 export class EndorsementMetadataService {
   fieldToProviderMap: MetadataProviderField
   constructor(
     private readonly nationalRegistryUserService: NationalRegistryUserService,
     private readonly endorsementSystemSignedListsService: EndorsementSystemSignedListsService,
+    private readonly temporaryVoterRegistryService: TemporaryVoterRegistryService,
   ) {
     /**
      * We should assign minimal data to each metadata field since they optionally get appended to endorsements
@@ -42,6 +49,11 @@ export class EndorsementMetadataService {
         dataResolver: ({ endorsementListSignedTags }) =>
           (endorsementListSignedTags as EndorsementSystemSignedListsResponse)
             .tags,
+      },
+      [EndorsementMetaField.VOTER_REGION]: {
+        provider: this.temporaryVoterRegistryService,
+        dataResolver: ({ temporaryVoterRegistry }) =>
+          temporaryVoterRegistry as TemporaryVoterRegistryResponse,
       },
     }
   }

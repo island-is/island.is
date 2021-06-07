@@ -48,9 +48,9 @@ export const m: MessageDir = {
       description: 'External data island.is subtitle',
     },
     agree: {
-      id: 'ple.application:island.agree',
-      defaultMessage: 'Lorem ipsum dolar sit amet, consectetur adipiscing elit',
-      description: 'External data island.is subtitle',
+      id: 'ple.application:terms.checkbox',
+      defaultMessage: 'Ég veiti umboð',
+      description: 'Agree terms and conditions',
     },
   }),
   collectEndorsements: defineMessages({
@@ -324,18 +324,19 @@ export const m: MessageDir = {
     descriptionPt1: {
       id: 'ple.application:endorsement.form.descripton.pt.one',
       defaultMessage:
-        'Með því að mæla með úthlutun tiltekins listabókstafs til tilgreinds stjórnamálaflokks samþykkir þú að viðkomandi stjórnmálaflokkur, dómsmálaráðuneytið og Þjóðskrá Íslands fái aðgang að þeim upplýsingum sem skráðar eru. Þeir aðilar hafa ekki heimild til að miðla þeim upplýsingum frekar.',
+        'Með því veiti ég viðkomandi stjórnmálasamtökum, dómsmálaráðuneytinu og Þjóðskrá Íslands aðgang að þeim upplýsingum sem skráðar eru á meðmælendalistan, þ.e. nafn, kt og heimilsfang. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
       description: 'Disclaimer description, first paragraph',
     },
     descriptionPt2: {
       id: 'ple.application:endorsement.form.descripton.pt.two',
       defaultMessage:
         'Þjóðskrá Íslands er heimilt, að beiðni dómsmálaráðuneytisins, að samkeyra meðmælendalistann við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga gilda hverju sinni.',
+
       description: 'Disclaimer description, second paragraph',
     },
     agreeTermsLabel: {
       id: 'ple.application:endorsement.form.agree.label',
-      defaultMessage: 'Ég hef kynnt mér ofangreint',
+      defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Label for terms and conditions',
     },
     submitButton: {
@@ -394,10 +395,123 @@ export const m: MessageDir = {
       defaultMessage: 'Til baka á mínar síður',
       description: 'Button back to my pages',
     },
+    myPagesUrl: {
+      id: 'ple.application:endorsement.approved.url.mypages',
+      defaultMessage: 'https://island.is/minarsidur/min-gogn/minar-upplysingar',
+      description: 'Url back to my pages',
+    },
     partyListButton: {
       id: 'ple.application:endorsement.approved.button.partylist',
       defaultMessage: 'Skoða lista',
       description: 'Button to party list',
+    },
+    partyListUrl: {
+      id: 'ple.application:endorsement.approved.url.partylist',
+      defaultMessage:
+        'https://island.is/althingiskosningar2021/medmaeli-kjosenda',
+      description: 'Url to party list',
+    },
+  }),
+  ministryOfJustice: defineMessages({
+    title: {
+      id: 'ple.application:ministry.justicet.title',
+      defaultMessage: 'Dómsmálaráðuneytið',
+      description: 'Ministry of justiice review title',
+    },
+    description: {
+      id: 'ple.application:ministry.justice.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir upplýsingarnar hér að neðan og staðfestu að þær séu réttar.',
+      description: 'Ministry of justice review description',
+    },
+    subtitle: {
+      id: 'ple.application:ministry.justice.subtitle',
+      defaultMessage: 'Yfirlit yfir framboðslista',
+      description: 'Ministry of justice review subtitle',
+    },
+    steps: {
+      id: 'ple.application:ministry.justice.steps',
+      defaultMessage: 'Til skoðunar',
+      description: 'Title for steps',
+    },
+    step1: {
+      id: 'ple.application:ministry.justice.step.1',
+      defaultMessage: 'Yfirlit framboðs',
+      description: 'Step one',
+    },
+    partyNameLabel: {
+      id: 'ple.application:ministry.justice.partyname.label',
+      defaultMessage: 'Nafn flokks',
+      description: 'Label for party name',
+    },
+    partyLetterLabel: {
+      id: 'ple.application:ministry.justice.partyletter.label',
+      defaultMessage: 'Listabókstafur',
+      description: 'Label for party letter',
+    },
+    responsiblePersonLabel: {
+      id: 'ple.application:ministry.justice.responsibleperson.label',
+      defaultMessage: 'Ábyrgðarmaður',
+      description: 'Label for responsible person',
+    },
+    typeOfEndorsementLabel: {
+      id: 'ple.application:ministry.justice.endorsementtype.label',
+      defaultMessage: 'Tegund framboðs',
+      description: 'Label for endorsement type',
+    },
+    numberOfEndorsementsLabel: {
+      id: 'ple.application:ministry.justice.no.endorsements.label',
+      defaultMessage: 'Fjöldi meðmæla',
+      description: 'Label for number of endorsements',
+    },
+    constituencyLabel: {
+      id: 'ple.application:ministry.justice.constituency.label',
+      defaultMessage: 'Kjördæmi',
+      description: 'Label for constituency',
+    },
+    commentsLabel: {
+      id: 'ple.application:ministry.justice.comments.label',
+      defaultMessage: 'Athugasemdir',
+      description: 'Label for comments',
+    },
+    csvButton: {
+      id: 'ple.application:ministry.justice.csv.button',
+      defaultMessage: 'Hlaða niður meðmælum',
+      description: 'Download endorsements button',
+    },
+    noEndorsementsMessage: {
+      id: 'ple.application:ministry.justice.no.endorsements',
+      defaultMessage: 'Umsækjandi hefur ekki skilað inn neinum meðmælum',
+      description:
+        'Message that will appear in the .csv file if there are no endorsements',
+    },
+    rejectButton: {
+      id: 'ple.application:ministry.justice.reject.button',
+      defaultMessage: 'Hafna',
+      description: 'Reject button',
+    },
+    approveButton: {
+      id: 'ple.application:ministry.justice.approve.button',
+      defaultMessage: 'Samþykkja lista',
+      description: 'Approve button',
+    },
+    approvedTitle: {
+      id: 'ple.application:ministry.justice.approved.title',
+      defaultMessage: 'Takk fyrir',
+      description: 'Title for approved screen',
+    },
+    approvedDescription: {
+      id: 'ple.application:ministry.justice.approved.description',
+      defaultMessage:
+        'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+      description: 'Text after MOJ has submitted',
+    },
+  }),
+  partyLetterApprovedOverview: defineMessages({
+    title: {
+      id: 'ple.application:letter.approved.overview.title',
+      defaultMessage: 'Umsókn samþykkt',
+      description: 'title',
     },
   }),
 }

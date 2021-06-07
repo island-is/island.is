@@ -11,6 +11,10 @@ export class CreateCourtCaseInput implements CreateCourtCase {
   readonly caseId!: string
 
   @Allow()
+  @Field()
+  readonly courtId!: string
+
+  @Allow()
   @Field(() => String)
   readonly type!: CaseType
 

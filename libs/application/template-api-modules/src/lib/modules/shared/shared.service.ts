@@ -119,7 +119,11 @@ export class SharedTemplateApiService {
     return this.emailService.sendEmail(template)
   }
 
-  async makeGraphqlQuery(authorization: string, query: string) {
+  async makeGraphqlQuery(
+    authorization: string,
+    query: string,
+    variables?: Record<string, any>,
+  ) {
     const baseApiUrl = getConfigValue(
       this.configService,
       'baseApiUrl',
@@ -132,7 +136,7 @@ export class SharedTemplateApiService {
         Accept: 'application/json',
         authorization,
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, variables }),
     })
   }
 }

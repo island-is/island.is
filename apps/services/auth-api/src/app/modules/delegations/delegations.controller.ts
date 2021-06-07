@@ -1,4 +1,4 @@
-import { DelegationsService, IDelegation } from '@island.is/auth-api-lib'
+import { DelegationsService, DelegationDTO } from '@island.is/auth-api-lib'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -19,7 +19,7 @@ export class DelegationsController {
   @Scopes('@identityserver.api/authentication')
   @Get()
   @ApiOkResponse({ isArray: true })
-  async findAllTo(@CurrentUser() user: User): Promise<IDelegation[]> {
+  async findAllTo(@CurrentUser() user: User): Promise<DelegationDTO[]> {
     const wards = await this.delegationsService.findAllWardsTo(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
