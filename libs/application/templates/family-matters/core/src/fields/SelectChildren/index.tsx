@@ -2,14 +2,12 @@ import React, { useState } from 'react'
 import { MessageDescriptor, useIntl, IntlFormatters } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  Child,
-  Address,
-} from '@island.is/application/templates/family-matters-core/types'
+import { Child } from '@island.is/application/templates/family-matters-core/types'
 import {
   DescriptionText,
   InfoBanner,
 } from '@island.is/application/templates/family-matters-core/components'
+import { sortChildrenByAge } from '@island.is/application/templates/family-matters-core/utils'
 
 const shouldBeDisabled = (
   children: Child[],
@@ -104,6 +102,7 @@ const SelectChildren = ({
   const childrenNotEligibleForTransfer = children.every(
     (child) => child.livesWithBothParents,
   )
+
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
@@ -128,7 +127,7 @@ const SelectChildren = ({
         defaultValue={selectedChildrenState}
         error={error}
         large={true}
-        options={children.map((child) => ({
+        options={sortChildrenByAge(children).map((child) => ({
           value: child.nationalId,
           label: child.fullName,
           tooltip: checkboxInfoText(child, formatMessage, translations).tooltip,
