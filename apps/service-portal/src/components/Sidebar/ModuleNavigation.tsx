@@ -76,20 +76,24 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
           <div>
             <Box className={styles.subnav} marginTop={2}>
               <Stack space={1}>
-                {nav.children.map((child, index) => (
-                  <SubNavItem
-                    path={child.path}
-                    key={`child-${index}`}
-                    active={
-                      child.path && pathname.includes(child.path) ? true : false
-                    }
-                    external={child.external}
-                    variant={variant}
-                    onClick={onItemClick}
-                  >
-                    {formatMessage(child.name)}
-                  </SubNavItem>
-                ))}
+                {nav.children
+                  .filter((child) => !child.navHide)
+                  .map((child, index) => (
+                    <SubNavItem
+                      path={child.path}
+                      key={`child-${index}`}
+                      active={
+                        child.path && pathname.includes(child.path)
+                          ? true
+                          : false
+                      }
+                      external={child.external}
+                      variant={variant}
+                      onClick={onItemClick}
+                    >
+                      {formatMessage(child.name)}
+                    </SubNavItem>
+                  ))}
               </Stack>
             </Box>
           </div>

@@ -55,24 +55,43 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:user-info',
           defaultMessage: 'Mínar upplýsingar',
         }),
-        path: ServicePortalPath.UserInfo,
+        path: ServicePortalPath.MyInfoRoot,
         divider: true,
         icon: {
           type: 'outline',
           icon: 'person',
         },
+        children: [
+          // TODO: Hide these children from mobile/sidenav
+          {
+            name: defineMessage({
+              id: 'service.portal:detail-info',
+              defaultMessage: 'Nánari upplýsingar',
+            }),
+            navHide: true,
+            path: ServicePortalPath.UserInfo,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:family',
+              defaultMessage: 'Fjölskyldan',
+            }),
+            navHide: true,
+            path: ServicePortalPath.FamilyRoot,
+          },
+        ],
       },
-      {
-        name: defineMessage({
-          id: 'service.portal:family',
-          defaultMessage: 'Fjölskyldan',
-        }),
-        path: ServicePortalPath.FamilyRoot,
-        icon: {
-          type: 'outline',
-          icon: 'people',
-        },
-      },
+      // {
+      //   name: defineMessage({
+      //     id: 'service.portal:family',
+      //     defaultMessage: 'Fjölskyldan',
+      //   }),
+      //   path: ServicePortalPath.FamilyRoot,
+      //   icon: {
+      //     type: 'outline',
+      //     icon: 'people',
+      //   },
+      // },
 
       // Menntun
       {

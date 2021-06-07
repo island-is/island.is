@@ -44,11 +44,11 @@ const ContentBreadcrumbs: FC<{}> = () => {
 
   return (
     <Box paddingTop={[0, 3]} paddingBottom={[2, 3]}>
-      <Breadcrumbs color="purple400" separatorColor="purple400">
+      <Breadcrumbs color="blue400" separatorColor="blue400">
         {items.map((item, index) =>
           item.path !== undefined ? (
             index === items.length - 1 ? (
-              <Tag key={index} variant="purple" outlined>
+              <Tag key={index} variant="blue" outlined>
                 {formatMessage(item.name)}
               </Tag>
             ) : (

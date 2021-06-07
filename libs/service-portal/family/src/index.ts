@@ -10,7 +10,7 @@ export const familyModule: ServicePortalModule = {
   widgets: () => [],
   routes: () => [
     {
-      name: 'Mín gögn',
+      name: 'Mínar upplýsingar',
       path: ServicePortalPath.MyInfoRoot,
       render: () =>
         lazy(() => import('./screens/UserInfoOverview/UserInfoOverview')),
@@ -18,7 +18,7 @@ export const familyModule: ServicePortalModule = {
     {
       name: defineMessage({
         id: 'service.portal:user-info',
-        defaultMessage: 'Mínar upplýsingar',
+        defaultMessage: 'Nánari upplýsingar',
       }),
       path: ServicePortalPath.UserInfo,
       render: () => lazy(() => import('./screens/UserInfo/UserInfo')),

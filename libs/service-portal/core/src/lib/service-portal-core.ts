@@ -17,6 +17,9 @@ export interface ServicePortalNavigationItem {
   icon?: Pick<IconProps, 'icon' | 'type'>
   children?: ServicePortalNavigationItem[]
 
+  // Hides the child item from the navigation bar, displays the breadcrumb.
+  navHide?: boolean
+
   // These two fields are used for the MVP version of the service portal where
   // the routes are pretty uniform, this will most likely be removed in the future
   // Optional header to be displayed above the nav item in the sidebar
