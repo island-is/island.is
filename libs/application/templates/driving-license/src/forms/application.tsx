@@ -87,15 +87,6 @@ export const application: Form = buildForm({
           id: 'info',
           title: m.informationMultiFieldTitle,
           children: [
-            buildKeyValueField({
-              label: m.informationApplicant,
-              value: ({ externalData: { nationalRegistry } }) =>
-                (nationalRegistry.data as NationalRegistryUser).fullName,
-            }),
-            buildDividerField({
-              title: '',
-              color: 'dark400',
-            }),
             buildCustomField({
               title: 'XXYYZZ',
               component: 'EligibilitySummary',
@@ -116,7 +107,8 @@ export const application: Form = buildForm({
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
-              value: '',
+              value: ({ externalData: { nationalRegistry } }) =>
+                (nationalRegistry.data as NationalRegistryUser).fullName,
             }),
             buildDividerField({
               title: '',
@@ -359,18 +351,13 @@ export const application: Form = buildForm({
             buildDividerField({}),
             buildKeyValueField({
               label: m.overviewPaymentCharge,
-              width: 'full',
-              value: () => '' as string,
-            }),
-            buildKeyValueField({
-              label: ({ externalData }) => {
+              value: ({ externalData }) => {
                 /// needs a lot of refactoring
                 let str = Object.values(externalData.payment.data as object)
                 /// more refactoring
-                return (str[1].toString() + ' kr.') as StaticText
+                return (parseInt(str[1], 10) + ' kr.') as StaticText
               },
-              width: 'half',
-              value: () => '',
+              width: 'full',
             }),
           ],
         }),

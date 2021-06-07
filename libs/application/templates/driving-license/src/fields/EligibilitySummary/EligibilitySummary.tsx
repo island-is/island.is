@@ -30,20 +30,20 @@ const requirementKeyToStep = (key: string, isRequirementMet: boolean): Step => {
     case RequirementKey.DrivingSchoolMissing:
       return {
         ...step,
-        title: m.requirementUnmetDrivingSchool,
-        description: m.requirementUnmetDrivingSchool,
+        title: m.requirementUnmetDrivingSchoolTitle,
+        description: m.requirementUnmetDrivingSchoolDescription,
       }
     case RequirementKey.DrivingAssessmentMissing:
       return {
         ...step,
-        title: m.requirementUnmetDrivingAssessment,
-        description: m.requirementUnmetDrivingAssessment,
+        title: m.requirementUnmetDrivingAssessmentTitle,
+        description: m.requirementUnmetDrivingAssessmentDescription,
       }
     case RequirementKey.DeniedByService:
       return {
         ...step,
-        title: m.requirementUnmetDeniedByService,
-        description: m.requirementUnmetDeniedByService,
+        title: m.requirementUnmetDeniedByServiceTitle,
+        description: m.requirementUnmetDeniedByServiceDescription,
       }
     default:
       throw new Error('Unknown requirement reason - should not happen')
@@ -52,9 +52,6 @@ const requirementKeyToStep = (key: string, isRequirementMet: boolean): Step => {
 
 
 const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
-  const { formatMessage } = useLocale()
-
-  console.log(application.externalData)
   const {
     eligibility: {
       data: eligibility
