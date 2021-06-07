@@ -2,39 +2,66 @@ import React, { FC } from 'react'
 
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
+import { m } from '../../lib/messages'
 
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-import ReviewSection, { ReviewSectionState } from './ReviewSection'
+import ReviewSection, { ReviewSectionState, Step } from './ReviewSection'
 import { dateFormat } from '@island.is/shared/constants'
+import { MessageDescriptor } from '@formatjs/intl'
+import { ApplicationEligibility, RequirementKey } from '../../types/schema'
 
-interface Step {
-  title: string
-  description: string
-  state: ReviewSectionState
+const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
+  return eligibility.requirements
+    .map(({ key, requirementMet }) => requirementKeyToStep(key, requirementMet))
 }
 
-const steps: Step[] = [
-  {
-    state: ReviewSectionState.complete,
-    title: 'all good things',
-    description: 'some days are like das',
-  },
-  {
-    state: ReviewSectionState.inProgress,
-    title: 'Da day we all met',
-    description: 'some days are like das',
-  },
-  {
-    state: ReviewSectionState.requiresAction,
-    title: 'here is some good else is good',
-    description: 'some days are like das',
-  },
-]
+
+// TODO: we need a better way of getting the translated string in here, outside
+// of react. Possibly we should just make a more flexible results screen.
+// This string ends up being used as the paramejter displayed as the error message
+// for the failed dataprovider
+const requirementKeyToStep = (key: string, isRequirementMet: boolean): Step => {
+  const step = {
+    state: isRequirementMet ? ReviewSectionState.complete : ReviewSectionState.requiresAction,
+  }
+
+  switch (key) {
+    case RequirementKey.DrivingSchoolMissing:
+      return {
+        ...step,
+        title: m.requirementUnmetDrivingSchool,
+        description: m.requirementUnmetDrivingSchool,
+      }
+    case RequirementKey.DrivingAssessmentMissing:
+      return {
+        ...step,
+        title: m.requirementUnmetDrivingAssessment,
+        description: m.requirementUnmetDrivingAssessment,
+      }
+    case RequirementKey.DeniedByService:
+      return {
+        ...step,
+        title: m.requirementUnmetDeniedByService,
+        description: m.requirementUnmetDeniedByService,
+      }
+    default:
+      throw new Error('Unknown requirement reason - should not happen')
+  }
+}
+
 
 const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
-
   const { formatMessage } = useLocale()
+
+  console.log(application.externalData)
+  const {
+    eligibility: {
+      data: eligibility
+    }
+  } = application.externalData
+
+  const steps = extractReasons(eligibility as unknown as ApplicationEligibility)
 
   return (
     <Box marginBottom={10}>
@@ -48,10 +75,10 @@ const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
         {steps.map((step, i) => {
           return (
             <ReviewSection
-              key={step.title}
+              key={i}
               application={application}
               index={i + 1}
-              {...step}
+              step={step}
             />
           )
         })}

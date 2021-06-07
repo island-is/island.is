@@ -123,8 +123,8 @@ export class SharedTemplateApiService {
     return this.emailService.sendEmail(template)
   }
 
-  async createCharge(charge: Charge): Promise<ChargeResult> {
-    return this.paymentService.createCharge(charge)
+  async createCharge(charge: Charge, returnUrl: string): Promise<ChargeResult> {
+    return this.paymentService.createCharge(charge, returnUrl)
   }
 
   async makeGraphqlQuery(authorization: string, query: string) {

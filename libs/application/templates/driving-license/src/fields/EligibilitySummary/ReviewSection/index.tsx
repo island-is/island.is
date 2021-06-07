@@ -9,6 +9,7 @@ import {
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.treat'
+import { MessageDescriptor } from '@formatjs/intl'
 
 export enum ReviewSectionState {
   inProgress = 'In progress',
@@ -16,20 +17,26 @@ export enum ReviewSectionState {
   complete = 'Complete',
 }
 
+export interface Step {
+  title: MessageDescriptor
+  description: MessageDescriptor
+  state: ReviewSectionState
+}
+
 type ReviewSectionProps = {
   application: Application
+  step: Step
   index: number
-  title: string
-  description: string
-  state?: ReviewSectionState
 }
 
 const ReviewSection: FC<ReviewSectionProps> = ({
   application,
   index,
-  title,
-  description,
-  state,
+  step: {
+    state,
+    description,
+    title,
+  },
 }) => {
   const { formatMessage } = useLocale()
 
@@ -69,9 +76,9 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         justifyContent="spaceBetween"
       >
         <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
-          <Text variant="h3">{title}</Text>
+          <Text variant="h3">{formatText(title, application, formatMessage)}</Text>
           <Text marginTop={1} variant="default">
-            {description}
+            {formatText(description, application, formatMessage)}
           </Text>
         </Box>
 
