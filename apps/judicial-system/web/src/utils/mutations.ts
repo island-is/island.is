@@ -45,7 +45,7 @@ export const CreateCaseMutation = gql`
       leadInvestigator
       arrestDate
       requestedCourtDate
-      requestedCustodyEndDate
+      requestedValidToDate
       otherDemands
       lawsBroken
       custodyProvisions
@@ -84,8 +84,8 @@ export const CreateCaseMutation = gql`
       courtLegalArguments
       ruling
       decision
-      custodyEndDate
-      isCustodyEndDateInThePast
+      validToDate
+      isValidToDateInThePast
       custodyRestrictions
       otherRestrictions
       accusedAppealDecision
@@ -128,9 +128,9 @@ export const CasesQuery = gql`
       policeCaseNumber
       accusedNationalId
       accusedName
-      custodyEndDate
+      validToDate
       decision
-      isCustodyEndDateInThePast
+      isValidToDateInThePast
       courtCaseNumber
       rulingDate
       courtEndTime
@@ -167,7 +167,7 @@ export const ExtendCaseMutation = gql`
       leadInvestigator
       arrestDate
       requestedCourtDate
-      requestedCustodyEndDate
+      requestedValidToDate
       otherDemands
       lawsBroken
       custodyProvisions
@@ -206,8 +206,8 @@ export const ExtendCaseMutation = gql`
       courtLegalArguments
       ruling
       decision
-      custodyEndDate
-      isCustodyEndDateInThePast
+      validToDate
+      isValidToDateInThePast
       custodyRestrictions
       otherRestrictions
       accusedAppealDecision

@@ -33,7 +33,7 @@ interface PageProps {
   activeSubSection?: number
   decision?: CaseDecision
   parentCaseDecision?: CaseDecision
-  isCustodyEndDateInThePast?: boolean
+  isValidToDateInThePast?: boolean
   isExtension?: boolean
   showSidepanel?: boolean
 }
@@ -48,7 +48,7 @@ const PageLayout: React.FC<PageProps> = ({
   caseType,
   decision,
   parentCaseDecision,
-  isCustodyEndDateInThePast,
+  isValidToDateInThePast,
   showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
@@ -63,14 +63,14 @@ const PageLayout: React.FC<PageProps> = ({
       decision === CaseDecision.ACCEPTING ||
       parentCaseDecision === CaseDecision.ACCEPTING
     ) {
-      return isCustodyEndDateInThePast
+      return isValidToDateInThePast
         ? 'Gæsluvarðhaldi lokið'
         : 'Gæsluvarðhald virkt'
     } else if (
       decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
       parentCaseDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
     ) {
-      return isCustodyEndDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
+      return isValidToDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
     } else {
       return 'Niðurstaða'
     }

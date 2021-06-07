@@ -81,7 +81,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly requestedCustodyEndDate?: string
+  readonly requestedValidToDate?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -201,7 +201,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly custodyEndDate?: string
+  readonly validToDate?: string
 
   @Allow()
   @Field(() => [String], { nullable: true })

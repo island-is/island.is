@@ -8,9 +8,9 @@ export function transformCase(theCase: Case): Case {
   theCase.requestProsecutorOnlySession =
     theCase.requestProsecutorOnlySession ?? false
 
-  if (theCase.custodyEndDate) {
-    theCase.isCustodyEndDateInThePast =
-      Date.now() > new Date(theCase.custodyEndDate).getTime()
+  if (theCase.validToDate) {
+    theCase.isValidToDateInThePast =
+      Date.now() > new Date(theCase.validToDate).getTime()
   }
 
   theCase.isAppealDeadlineExpired = theCase.rulingDate

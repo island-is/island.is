@@ -97,7 +97,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly requestedCustodyEndDate?: Date
+  readonly requestedValidToDate?: Date
 
   @IsOptional()
   @IsString()
@@ -247,7 +247,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly custodyEndDate?: Date
+  readonly validToDate?: Date
 
   @IsOptional()
   @IsEnum(CaseCustodyRestrictions, { each: true })

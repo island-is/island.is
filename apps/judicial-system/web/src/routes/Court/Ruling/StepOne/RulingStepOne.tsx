@@ -52,9 +52,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 
 export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [custodyEndDateIsValid, setCustodyEndDateIsValid] = useState<boolean>(
-    true,
-  )
+  const [validToDateIsValid, setValidToDateIsValid] = useState<boolean>(true)
   const [isolationToIsValid, setIsolationToIsValid] = useState<boolean>(true)
   const [
     courtCaseFactsErrorMessage,
@@ -98,12 +96,12 @@ export const RulingStepOne: React.FC = () => {
         )
       }
 
-      if (theCase.requestedCustodyEndDate) {
-        autofill('custodyEndDate', theCase.requestedCustodyEndDate, theCase)
+      if (theCase.requestedValidToDate) {
+        autofill('validToDate', theCase.requestedValidToDate, theCase)
       }
 
-      if (theCase.custodyEndDate) {
-        autofill('isolationTo', theCase.custodyEndDate, theCase)
+      if (theCase.validToDate) {
+        autofill('isolationTo', theCase.validToDate, theCase)
       }
 
       if (theCase.caseFacts) {
@@ -311,7 +309,7 @@ export const RulingStepOne: React.FC = () => {
                   </Text>
                 </Box>
                 <DateTime
-                  name="custodyEndDate"
+                  name="validToDate"
                   datepickerLabel={
                     workingCase.type === CaseType.CUSTODY &&
                     workingCase.decision === CaseDecision.ACCEPTING
@@ -319,19 +317,19 @@ export const RulingStepOne: React.FC = () => {
                       : 'Farbann til'
                   }
                   selectedDate={
-                    workingCase.custodyEndDate
-                      ? new Date(workingCase.custodyEndDate)
+                    workingCase.validToDate
+                      ? new Date(workingCase.validToDate)
                       : undefined
                   }
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
                     newSetAndSendDateToServer(
-                      'custodyEndDate',
+                      'validToDate',
                       date,
                       valid,
                       workingCase,
                       setWorkingCase,
-                      setCustodyEndDateIsValid,
+                      setValidToDateIsValid,
                       updateCase,
                     )
                   }}
@@ -370,15 +368,15 @@ export const RulingStepOne: React.FC = () => {
                       selectedDate={
                         workingCase.isolationTo
                           ? new Date(workingCase.isolationTo)
-                          : workingCase.custodyEndDate
-                          ? new Date(workingCase.custodyEndDate)
+                          : workingCase.validToDate
+                          ? new Date(workingCase.validToDate)
                           : undefined
                       }
                       // Isolation can never be set in the past.
                       minDate={new Date()}
                       maxDate={
-                        workingCase.custodyEndDate
-                          ? new Date(workingCase.custodyEndDate)
+                        workingCase.validToDate
+                          ? new Date(workingCase.validToDate)
                           : undefined
                       }
                       onChange={(date: Date | undefined, valid: boolean) => {
@@ -415,7 +413,7 @@ export const RulingStepOne: React.FC = () => {
                 !workingCase.decision ||
                 !validate(workingCase.ruling || '', 'empty').isValid ||
                 (workingCase.decision !== CaseDecision.REJECTING &&
-                  (!custodyEndDateIsValid || !isolationToIsValid))
+                  (!validToDateIsValid || !isolationToIsValid))
               }
             />
           </FormContentContainer>

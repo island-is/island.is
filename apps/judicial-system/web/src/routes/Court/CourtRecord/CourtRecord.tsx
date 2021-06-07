@@ -108,7 +108,7 @@ export const CourtRecord: React.FC = () => {
       if (
         theCase.accusedName &&
         theCase.court &&
-        theCase.requestedCustodyEndDate
+        theCase.requestedValidToDate
         // Note that theCase.requestedCustodyRestrictions can be undefined
       ) {
         autofill(
@@ -118,7 +118,7 @@ export const CourtRecord: React.FC = () => {
             theCase.accusedNationalId,
             theCase.accusedName,
             theCase.court.name,
-            theCase.requestedCustodyEndDate,
+            theCase.requestedValidToDate,
             theCase.requestedCustodyRestrictions?.includes(
               CaseCustodyRestrictions.ISOLATION,
             ) || false,
@@ -271,7 +271,9 @@ export const CourtRecord: React.FC = () => {
                 </Text>
               </Box>
               <CourtDocuments
-                title={`Krafa um ${caseTypes[workingCase.type]}`}
+                title={`Krafa um ${
+                  caseTypes[workingCase.type ?? CaseType.OTHER]
+                }`}
                 tagText="Þingmerkt nr. 1"
                 tagVariant="darkerBlue"
                 text="Rannsóknargögn málsins liggja frammi."
@@ -321,6 +323,7 @@ export const CourtRecord: React.FC = () => {
                         AccusedPleaDecision.REJECT,
                         workingCase,
                         setWorkingCase,
+                        updateCase,
                       )
                     }}
                     large
@@ -342,6 +345,7 @@ export const CourtRecord: React.FC = () => {
                         AccusedPleaDecision.ACCEPT,
                         workingCase,
                         setWorkingCase,
+                        updateCase,
                       )
                     }}
                     large

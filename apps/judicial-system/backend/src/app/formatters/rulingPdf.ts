@@ -188,7 +188,7 @@ export async function getRulingPdfAsString(
         existingCase.accusedNationalId,
         existingCase.accusedName,
         existingCase.court?.name,
-        existingCase.requestedCustodyEndDate,
+        existingCase.requestedValidToDate,
         existingCase.requestedCustodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
@@ -257,7 +257,7 @@ export async function getRulingPdfAsString(
         existingCase.accusedName,
         existingCase.accusedGender,
         existingCase.decision,
-        existingCase.custodyEndDate,
+        existingCase.validToDate,
         existingCase.type === CaseType.CUSTODY &&
           existingCase.custodyRestrictions?.includes(
             CaseCustodyRestrictions.ISOLATION,
