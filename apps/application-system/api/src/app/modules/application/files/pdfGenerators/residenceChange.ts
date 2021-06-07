@@ -7,6 +7,7 @@ import {
   formatDate,
   getSelectedChildrenFromExternalData,
   childrenResidenceInfo,
+  sortChildrenByAge,
 } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from '../utils/constants'
@@ -73,7 +74,7 @@ export async function generateResidenceChangePdf(application: CRCApplication) {
   )
 
   addSubheader('Barn/börn undir 18 ára aldri sem erindið varðar', doc)
-  childrenAppliedFor.map((c, i) =>
+  sortChildrenByAge(childrenAppliedFor).map((c, i) =>
     addValue(
       `${c.fullName}, ${formatSsn(c.nationalId)}`,
       doc,
