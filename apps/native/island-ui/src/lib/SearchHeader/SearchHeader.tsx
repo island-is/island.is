@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components/native'
+import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
@@ -7,9 +8,12 @@ const Host = styled.View`
   height: ${({ theme }) => theme.spacing[8]}px;
   align-items: center;
   justify-content: center;
-  border-bottom-color: ${({ theme }) =>
-    theme.isDark ? theme.shade.shade200 : theme.color.blue200};
+  border-bottom-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.shade.shade200,
+    light: theme.color.blue200
+  }))};
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  background-color: ${dynamicColor('background')};
 `
 
 const Text = styled.Text`

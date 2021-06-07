@@ -5,21 +5,34 @@ import { dynamicColor } from '../../utils'
 
 const Dots = styled.View`
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-end;
   width: 100%;
   height: ${({ theme }) => theme.spacing[3]}px;
+  padding-right: 24px;
+`
+const DotContainer = styled(Animated.View)`
+  flex-direction: row;
 `
 
-const Dot = styled(Animated.View)<{ active?: boolean }>`
-  width: ${({ theme }) => theme.spacing[1]}px;
-  height: ${({ theme }) => theme.spacing[1]}px;
-  border-radius: ${({ theme }) => theme.border.radius.standard};
-  margin-right: ${({ theme, active }) =>
-    active ? theme.spacing.none : theme.spacing.smallGutter}px;
-  background-color: ${dynamicColor(({ active, theme }) => ({
-    dark: active ? theme.color.purple400 : theme.color.purple600,
-    light: active ? theme.color.purple400 : theme.color.purple200,
-  }))};
+const DotLeft = styled(Animated.View)`
+  width: 8px;
+  height: 8px;
+  background-color: ${props => props.theme.color.red400};
+  border-radius: 4px;
+`
+
+const DotCenter = styled(Animated.View)`
+  width: 1px;
+  height: 8px;
+  background-color: ${props => props.theme.color.red400};
+`
+
+const DotRight = styled(Animated.View)`
+  width: 8px;
+  height: 8px;
+  margin-left: -1px;
+  background-color: ${props => props.theme.color.red400};
+  border-radius: 4px;
 `
 
 interface ViewPagerProps {
@@ -34,6 +47,19 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
   const OFFSET = OFFSET_X + OFFSET_CARD
 
   const [contentWidth, setContentWidth] = useState(pages * OFFSET - OFFSET_X)
+
+  const inputRange = (i: number) =>
+    i === pages - 1
+      ? [
+          contentWidth - OFFSET - OFFSET_CARD,
+          contentWidth - OFFSET - 60,
+          contentWidth - 120,
+        ]
+      : [
+          OFFSET * i - OFFSET,
+          OFFSET * i,
+          i === pages - 2 ? contentWidth - OFFSET - 60 : OFFSET * i + OFFSET,
+        ]
 
   const x = useRef(new Animated.Value(0)).current
 
@@ -76,30 +102,61 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
       </Animated.ScrollView>
       <Dots>
         {Array.from({ length: pages }).map((_, i) => (
-          <Dot key={i}>
-            <Dot
-              active
+          <DotContainer
+            key={i}
+            style={{
+              transform: [
+                { translateX: 16 * -0.5 },
+                {
+                  translateX: x.interpolate({
+                    inputRange: inputRange(i),
+                    outputRange: [24, 0, 0],
+                    extrapolate: 'clamp',
+                  }),
+                },
+                { translateX: 16 * 0.5 },
+              ],
+              opacity: x.interpolate({
+                inputRange: inputRange(i),
+                outputRange: [0.25, 1, 0.25],
+                extrapolate: 'clamp',
+              }),
+            }}
+          >
+            <DotLeft
+              style={{ transform: [{ translateX: 4 }] }}
+            />
+            <DotCenter
               style={{
-                opacity: x.interpolate({
-                  inputRange:
-                    i === pages - 1
-                      ? [
-                          contentWidth - OFFSET - OFFSET_CARD,
-                          contentWidth - OFFSET - 60,
-                          contentWidth - 120,
-                        ]
-                      : [
-                          OFFSET * i - OFFSET,
-                          OFFSET * i,
-                          i === pages - 2
-                            ? contentWidth - OFFSET - 60
-                            : OFFSET * i + OFFSET,
-                        ],
-                  outputRange: [0, 1, 0],
-                }),
+                transform: [
+                  { translateX: 1 * -0.5 },
+                  {
+                    scaleX: x.interpolate({
+                      inputRange: inputRange(i),
+                      outputRange: [1, 24, 1],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                  { translateX: 1 * 0.5 },
+                ],
               }}
             />
-          </Dot>
+            <DotRight
+              style={{
+                transform: [
+                  { translateX: 8 * -0.5 },
+                  {
+                    translateX: x.interpolate({
+                      inputRange: inputRange(i),
+                      outputRange: [-4, 24-4, -4],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                  { translateX: 8 * 0.5 },
+                ],
+              }}
+            />
+          </DotContainer>
         ))}
       </Dots>
     </>
