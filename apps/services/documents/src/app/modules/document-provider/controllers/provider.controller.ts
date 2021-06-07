@@ -1,6 +1,3 @@
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
-import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
   Controller,
@@ -17,6 +14,10 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { Audit, AuditService } from '@island.is/nest/audit'
+
 import { environment } from '../../../../environments'
 import { DocumentProviderService } from '../document-provider.service'
 import { CreateProviderDto } from '../dto/createProvider.dto'

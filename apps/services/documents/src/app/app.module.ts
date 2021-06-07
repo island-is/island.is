@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { SequelizeConfigService } from './sequelizeConfig.service'
-import { DocumentProviderModule } from './modules/document-provider/document-provider.module'
-import { AuditModule } from '@island.is/nest/audit'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { AuditModule } from '@island.is/nest/audit'
+
 import { environment } from '../environments'
+import { DocumentProviderModule } from './modules/document-provider/document-provider.module'
+import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
   imports: [

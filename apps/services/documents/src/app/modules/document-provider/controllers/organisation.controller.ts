@@ -14,6 +14,10 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { Audit, AuditService } from '@island.is/nest/audit'
+
 import { Organisation } from '../models/organisation.model'
 import { DocumentProviderService } from '../document-provider.service'
 import { CreateOrganisationDto } from '../dto/createOrganisation.dto'
@@ -26,10 +30,7 @@ import { Helpdesk } from '../models/helpdesk.model'
 import { CreateHelpdeskDto } from '../dto/createHelpdesk.dto'
 import { UpdateHelpdeskDto } from '../dto/updateHelpdesk.dto'
 import { Provider } from '../models/provider.model'
-import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../../environments'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
 
 const namespace = `${environment.audit.defaultNamespace}/organisations`
 

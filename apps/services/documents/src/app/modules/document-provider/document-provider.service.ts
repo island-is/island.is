@@ -1,8 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { isUuid } from 'uuidv4'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { isUuid } from 'uuidv4'
 
 import { Provider } from './models/provider.model'
 import { CreateProviderDto } from './dto/createProvider.dto'
