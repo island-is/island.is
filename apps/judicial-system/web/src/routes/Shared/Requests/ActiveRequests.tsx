@@ -8,7 +8,6 @@ import {
   AllCaseTypes,
   Case,
   CaseState,
-  CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -192,9 +191,8 @@ const ActiveRequests: React.FC<Props> = (props) => {
             <td className={styles.td}>
               <Box component="span" display="flex" flexDirection="column">
                 <Text as="span">
-                  {AllCaseTypes.map((caseType) => {
-                    if (caseType.value === c.type) return caseType.label
-                  })}
+                  {AllCaseTypes.find((caseType) => caseType.value === c.type)
+                    ?.label ?? 'Óþekkt'}
                 </Text>
                 {c.parentCase && (
                   <Text as="span" variant="small" color="dark400">
