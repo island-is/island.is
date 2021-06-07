@@ -12,11 +12,12 @@ import {
 import * as z from 'zod'
 import { ApiActions } from '../shared'
 
-type Events = { type: DefaultEvents.SUBMIT }
+type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.PAYMENT }
 
 enum States {
   DRAFT = 'draft',
   DONE = 'done',
+  PAYMENT = 'payment',
 }
 
 const dataSchema = z.object({
@@ -63,6 +64,36 @@ const template: ApplicationTemplate<
                   Promise.resolve(val.application),
                 ),
               actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Greiða',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+        },
+      },
+      [States.PAYMENT]: {
+        meta: {
+          name: 'Payment state',
+          progress: 0.9,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.createCharge,
+          },
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/payment').then((val) =>
+                  Promise.resolve(val.payment),
+                ),
+              actions: [
                 { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
               ],
               write: 'all',
@@ -78,9 +109,6 @@ const template: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
           roles: [
             {
               id: 'applicant',

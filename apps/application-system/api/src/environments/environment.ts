@@ -51,6 +51,11 @@ const devConfig = {
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
+    paymentOptions: {
+      url: 'https://tbrws-s.hysing.is',
+      username: 'isl_aranja_p',
+      password: 'vogur.123',
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -116,6 +121,11 @@ const prodConfig = {
       secret: process.env.DRIVING_LICENSE_SECRET,
       xroadClientId: process.env.XROAD_CLIENT_ID,
       xroadBaseUrl: process.env.XROAD_BASE_PATH,
+    },
+    paymentOptions: {
+      url: process.env.PAYMENT_URL,
+      username: process.env.PAYMENT_USERNAME,
+      password: process.env.PAYMENT_PASSWORD,
     },
   },
   application: {

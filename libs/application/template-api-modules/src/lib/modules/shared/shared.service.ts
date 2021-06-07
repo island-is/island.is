@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
+import { ChargeResult, PaymentService } from '@island.is/api/domains/payment'
 import { EmailService } from '@island.is/email-service'
 import { Application } from '@island.is/application/core'
 
@@ -12,10 +13,13 @@ import {
 } from '../../types'
 
 import { createAssignToken, getConfigValue } from './shared.utils'
+import { Charge } from '@island.is/clients/payment'
 
 @Injectable()
 export class SharedTemplateApiService {
   constructor(
+    @Inject(PaymentService)
+    private readonly paymentService: PaymentService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
     @Inject(ConfigService)
@@ -117,6 +121,10 @@ export class SharedTemplateApiService {
     )
 
     return this.emailService.sendEmail(template)
+  }
+
+  async createCharge(charge: Charge): Promise<ChargeResult> {
+    return this.paymentService.createCharge(charge)
   }
 
   async makeGraphqlQuery(authorization: string, query: string) {

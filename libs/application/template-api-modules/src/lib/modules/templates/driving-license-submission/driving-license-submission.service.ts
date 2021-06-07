@@ -6,10 +6,18 @@ import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
-import { User } from '@island.is/api/domains/national-registry'
+import { ChargeResult } from '@island.is/api/domains/payment'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
+}
+
+interface Payment {
+  chargeItemCode: string,
+  chargeItemName: string,
+  priceAmount: number,
+  performingOrgID: string,
+  chargeType: string,
 }
 
 @Injectable()
@@ -18,6 +26,53 @@ export class DrivingLicenseSubmissionService {
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
+
+  async createCharge({
+    application: { applicant, externalData, answers },
+  }: TemplateApiModuleActionProps) {
+    console.log('==== creating charge ====')
+    console.log({ externalData })
+    console.log({ answers })
+
+    const payment = (externalData.payment.data as Payment)
+
+    const chargeItem = {
+      chargeItemCode: payment.chargeItemCode,
+      quantity: 1,
+      priceAmount: payment.priceAmount,
+      amount: payment.priceAmount * 1,
+      reference: 'Vinnslugjald',
+    }
+
+    const result = await this.sharedTemplateAPIService
+      .createCharge({
+        chargeItemSubject: 'Fullnaðarskírteini',
+        chargeType: payment.chargeType,
+        immediateProcess: true,
+        charges: [
+          chargeItem,
+        ],
+        payeeNationalID: applicant,
+        // TODO: possibly somebody else, if 'umboð'
+        performerNationalID: applicant,
+        // TODO: sýslumannskennitala - úr juristictions
+        performingOrgID: payment.performingOrgID,
+        systemID: 'ISL',
+      })
+      .catch((e) => {
+        console.error(e)
+
+        return ({ error: e } as ChargeResult)
+      })
+
+    if (result.error || !result.success) {
+      throw new Error('Villa kom upp við að stofna til greiðslu')
+    }
+
+    console.log({ result })
+
+    return result
+  }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     const { answers } = application

@@ -100,6 +100,11 @@ const devConfig = {
       process.env.XROAD_TJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',
     clientId: process.env.XROAD_CLIENT_ID ?? 'DEV/GOV/10000/island-is-client',
   },
+  paymentDomain: {
+    username: 'isl_aranja_p',
+    password: 'vogur.123',
+    url: 'https://tbrws-s.hysing.is',
+  },
 }
 
 const prodConfig = {
@@ -195,6 +200,11 @@ const prodConfig = {
     memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
     apiPath: process.env.XROAD_TJODSKRA_API_PATH,
     clientId: process.env.XROAD_CLIENT_ID,
+  },
+  paymentDomain: {
+    username: process.env.PAYMENT_USER,
+    password: process.env.PAYMENT_PASSWORD,
+    url: process.env.PAYMENT_URL,
   },
 }
 

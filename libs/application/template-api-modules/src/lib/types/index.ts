@@ -31,6 +31,11 @@ export interface BaseTemplateAPIModuleConfig {
   drivingLicense: DrivingLicenseApiConfig
   attachmentBucket: string
   presignBucket: string
+  paymentOptions: {
+    url: string
+    username: string
+    password: string
+  }
 }
 
 export interface TemplateApiModuleActionProps {

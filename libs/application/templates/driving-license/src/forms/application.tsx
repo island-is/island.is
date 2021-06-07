@@ -15,11 +15,19 @@ import {
   buildDividerField,
   Form,
   FormModes,
+  DefaultEvents,
+  StaticText,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '../types/schema'
+import {
+  NationalRegistryUser,
+  UserProfile,
+  PaymentCatalog,
+} from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
+import { Provider } from 'reakit/ts'
+import { PaymentCatalogProvider } from '../dataProviders'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -34,6 +42,8 @@ export const application: Form = buildForm({
         buildExternalDataProvider({
           title: 'Umsókn um fullnaðarskírteini',
           id: 'approveExternalData',
+          subTitle: m.externalDataTitle,
+          checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
               id: 'nationalRegistry',
@@ -60,6 +70,11 @@ export const application: Form = buildForm({
               title: '',
               subTitle: '',
             }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentCatalogProvider',
+              title: '',
+            }),
           ],
         }),
       ],
@@ -74,8 +89,7 @@ export const application: Form = buildForm({
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
-              value: ({ externalData: { nationalRegistry } }) =>
-                (nationalRegistry.data as NationalRegistryUser).fullName,
+              value: '',
             }),
             buildDividerField({
               title: '',
@@ -222,6 +236,18 @@ export const application: Form = buildForm({
           space: 1,
           description: m.overviewMultiFieldDescription,
           children: [
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: 'Panta ökuskírteini',
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Greiða',
+                  type: 'primary',
+                },
+              ],
+            }),
             buildKeyValueField({
               label: m.overviewSubType,
               value: ({ answers: { subType } }) => subType as string[],
@@ -303,25 +329,21 @@ export const application: Form = buildForm({
                 return options
               },
             }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'payment',
-      title: 'Greiðsla',
-      children: [
-        buildMultiField({
-          id: 'paymentFinal',
-          title: 'Greiðsla',
-          children: [
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: 'Panta ökuskírteini',
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
+            buildDividerField({}),
+            buildKeyValueField({
+              label: m.overviewPaymentCharge,
+              width: 'full',
+              value: () => '' as string,
+            }),
+            buildKeyValueField({
+              label: ({ externalData }) => {
+                /// needs a lot of refactoring
+                let str = Object.values(externalData.payment.data as object)
+                /// more refactoring
+                return (str[1].toString() + ' kr.') as StaticText
+              },
+              width: 'half',
+              value: () => '',
             }),
           ],
         }),

@@ -6,6 +6,11 @@ export const m = defineMessages({
     defaultMessage: 'Ég hef kynnt mér ofangreint',
     description: 'I understand',
   },
+  externalDataTitle: {
+    id: 'dl.system:externalData.title',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
+    description: 'The following data will be retrieved electronically',
+  },
   yes: {
     id: 'dl.application:shared.yes',
     defaultMessage: 'Já',
@@ -25,11 +30,6 @@ export const m = defineMessages({
     id: 'dl.application:externalData.section',
     defaultMessage: 'Ökuréttindi',
     description: 'Driving license',
-  },
-  externalDataTitle: {
-    id: 'dl.application:externalData.title',
-    defaultMessage: 'Upplýsingasöfnun og skilyrði',
-    description: 'Information gathering and conditions',
   },
   nationalRegistryTitle: {
     id: 'dl.application:nationalRegistry.title',
@@ -301,7 +301,7 @@ export const m = defineMessages({
   overviewBringCertificateData: {
     id: 'dl.application:overview.bringCertificateData',
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
-    description: 'I bring a certificate from a doctor',
+    description: `I'll bring a certificate from a doctor`,
   },
   overviewSubmit: {
     id: 'dl.application:overview.submit',
@@ -311,7 +311,12 @@ export const m = defineMessages({
   overviewDone: {
     id: 'dl.application:overview.done',
     defaultMessage: 'Staðfesting',
-    description: 'Glæsilegt',
+    description: 'Confirmation',
+  },
+  overviewPaymentCharge: {
+    id: 'dl.application:overview.paymentcharge',
+    defaultMessage: 'Greiðsla',
+    description: 'Cost'
   },
   requirementUnmetDrivingAssessment: {
     id: 'dl.application:requirementunmet.drivingassessment',

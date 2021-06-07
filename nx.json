@@ -115,6 +115,9 @@
     "api-domains-national-registry-x-road": {
       "tags": []
     },
+    "api-domains-payment": {
+      "tags": []
+    },
     "api-domains-regulations": {
       "tags": []
     },
@@ -266,6 +269,9 @@
       "tags": []
     },
     "clients-national-registry-v2": {
+      "tags": []
+    },
+    "clients-payment": {
       "tags": []
     },
     "clients-regulations": {
