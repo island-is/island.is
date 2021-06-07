@@ -18,7 +18,7 @@ describe('Logo', () => {
     render(
       <MockedProvider mocks={[...mockJudgeQuery]} addTypename={false}>
         <Router history={history}>
-          <UserProvider>
+          <UserProvider authenticated={true}>
             <Logo />
           </UserProvider>
         </Router>

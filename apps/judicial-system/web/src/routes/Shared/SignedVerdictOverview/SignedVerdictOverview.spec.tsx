@@ -111,7 +111,7 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
+          <UserProvider authenticated={true}>
             <SignedVerdictOverview />
           </UserProvider>
         </MockedProvider>,
@@ -285,7 +285,7 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
+          <UserProvider authenticated={true}>
             <SignedVerdictOverview />
           </UserProvider>
         </MockedProvider>,
@@ -481,7 +481,7 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
+          <UserProvider authenticated={true}>
             <SignedVerdictOverview />
           </UserProvider>
         </MockedProvider>,
@@ -597,7 +597,7 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
+          <UserProvider authenticated={true}>
             <SignedVerdictOverview />
           </UserProvider>
         </MockedProvider>,
@@ -685,7 +685,7 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
+          <UserProvider authenticated={true}>
             <SignedVerdictOverview />
           </UserProvider>
         </MockedProvider>,

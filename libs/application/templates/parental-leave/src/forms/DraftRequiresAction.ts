@@ -19,11 +19,11 @@ export const DraftRequiresAction: Form = buildForm({
   mode: FormModes.REJECTED,
   children: [
     buildSection({
-      id: 'Draft not approved, requires action',
-      title: '',
+      id: 'draftRequiresAction.section',
+      title: parentalLeaveFormMessages.draftFlow.draftNotApprovedTitle,
       children: [
         buildCustomField({
-          id: 'draftRequiresAction',
+          id: 'draftRequiresAction.field',
           title: parentalLeaveFormMessages.draftFlow.draftNotApprovedTitle,
           component: 'DraftRequiresAction',
         }),
