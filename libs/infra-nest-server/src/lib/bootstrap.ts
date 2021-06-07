@@ -54,9 +54,14 @@ type RunServerOptions = {
    * Global url prefix for the app
    */
   globalPrefix?: string
+
+  stripNonClassValidatorInputs?: boolean
 }
 
-export const createApp = async (options: RunServerOptions) => {
+export const createApp = async ({
+  stripNonClassValidatorInputs = true,
+  ...options
+}: RunServerOptions) => {
   const app = await NestFactory.create<NestExpressApplication>(
     InfraModule.forRoot(options.appModule),
     {
@@ -74,8 +79,8 @@ export const createApp = async (options: RunServerOptions) => {
   // Enable validation of request DTOs globally.
   app.useGlobalPipes(
     new ValidationPipe({
+      whitelist: stripNonClassValidatorInputs,
       forbidNonWhitelisted: true,
-      exceptionFactory: (errors: ValidationError[]) => errors.join('\n'),
     }),
   )
 
