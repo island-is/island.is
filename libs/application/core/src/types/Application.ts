@@ -47,10 +47,11 @@ export interface Application {
 }
 
 export interface Payment {
+  id: string,
   applicationId: string,
   fulfilled: boolean,
   referenceId: string,
-  arkUrl: string,
+  user4: string,
   definition: object,
   amount: number,
   expiresAt: Date,

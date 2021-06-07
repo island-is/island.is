@@ -10,7 +10,7 @@ export class CreatePaymentResponseDto {
   @ApiProperty()
   @Expose()
   @IsString()
-  applicationId!: string
+  applicationId?: string
 
   @ApiProperty()
   @Expose()

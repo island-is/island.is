@@ -37,6 +37,7 @@ import {
   PdfTypes,
   ApplicationStatus,
   CustomTemplateFindQuery,
+  Payment as BasePayment,
 } from '@island.is/application/core'
 import type { Unwrap, Locale } from '@island.is/shared/types'
 import type { User } from '@island.is/auth-nest-tools'
@@ -1042,8 +1043,7 @@ export class ApplicationController {
     // TODO: initial state should be required --------- IS INITIAL STATE REQUIRED FOR PAYMENT?
 
     const paymentDto: Pick<
-      Payment,
-      | 'id',
+      BasePayment,
       | 'applicationId'
       | 'fulfilled'
       | 'referenceId'
@@ -1052,7 +1052,6 @@ export class ApplicationController {
       | 'amount'
       | 'expiresAt'
       > = {
-      id: id,
       applicationId: application.applicationId,
       fulfilled: false,
       referenceId: "",

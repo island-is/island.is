@@ -6,6 +6,9 @@ module.exports = {
       .createTable('payment', {
         id: {
           type: Sequelize.UUID,
+          primaryKey: true,
+          allowNull: false,
+          defaultValue: Sequelize.UUIDV4,
         },
         applicationId: {
           type: Sequelize.UUID,

@@ -4,10 +4,6 @@ import { ApiProperty } from '@nestjs/swagger'
 export class CreatePaymentDto {
 	@IsString()
 	@ApiProperty()
-	id!: string
-
-	@IsString()
-	@ApiProperty()
 	readonly applicationId!: string
 
 	@IsString()
@@ -19,8 +15,8 @@ export class CreatePaymentDto {
 	readonly user4!: string
 
 	@IsObject()
-		@ApiProperty()
-		definition?: object
+	@ApiProperty()
+	definition?: object
 
 	@IsNumber()
 	@ApiProperty()
