@@ -28,7 +28,7 @@ describe('UserProvider', () => {
 
     render(
       <MockedProvider mocks={[mockJudgeQuery]} addTypename={false}>
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <Header />
         </UserProvider>
       </MockedProvider>,

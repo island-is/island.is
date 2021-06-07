@@ -85,7 +85,7 @@ export class EndorsementList extends Model<EndorsementList> {
   })
   owner!: string
 
-  @ApiProperty({ type: () => [Endorsement] })
+  @ApiProperty({ type: () => [Endorsement], required: false })
   @HasMany(() => Endorsement)
   readonly endorsements?: Endorsement[]
 

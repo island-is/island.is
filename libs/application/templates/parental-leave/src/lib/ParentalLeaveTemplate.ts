@@ -261,7 +261,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/EmployerApproval').then((val) =>
                   Promise.resolve(val.EmployerApproval),
                 ),
-              read: { answers: ['periods'], externalData: ['pregnancyStatus'] },
+              read: {
+                answers: ['periods', 'selectedChild', 'payments'],
+                externalData: ['children'],
+              },
               actions: [
                 {
                   event: DefaultEvents.APPROVE,

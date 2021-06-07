@@ -32,7 +32,7 @@ export const OtherParentApproval: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'intro',
-              title: '',
+              title: otherParentApprovalFormMessages.multiTitle,
               description: otherParentApprovalFormMessages.introDescription,
             }),
 
