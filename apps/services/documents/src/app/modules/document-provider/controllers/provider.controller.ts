@@ -52,7 +52,7 @@ export class ProviderController {
   @Get(':id')
   @ApiOkResponse({ type: Provider })
   @Audit<Provider>({
-    resources: (provider) => provider?.id,
+    resources: (provider) => provider.id,
   })
   async findById(@Param('id') id: string): Promise<Provider> {
     const provider = await this.documentProviderService.findProviderById(id)
@@ -67,7 +67,7 @@ export class ProviderController {
   @Get('/external/:id')
   @ApiOkResponse({ type: Provider })
   @Audit<Provider>({
-    resources: (provider) => provider?.id,
+    resources: (provider) => provider.id,
   })
   async findByExternalId(@Param('id') id: string): Promise<Provider> {
     const provider = await this.documentProviderService.findProviderByExternalProviderId(
