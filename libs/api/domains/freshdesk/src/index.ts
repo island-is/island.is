@@ -1,1 +1,1 @@
-export * from './lib/api-domains-freshdesk.module'
+export * from './lib/freshdesk.module'

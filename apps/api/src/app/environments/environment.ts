@@ -100,6 +100,10 @@ const devConfig = {
       process.env.XROAD_TJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',
     clientId: process.env.XROAD_CLIENT_ID ?? 'DEV/GOV/10000/island-is-client',
   },
+  freshdesk: {
+    domain: process.env.FRESHDESK_DOMAIN ?? '',
+    key: process.env.FRESHDESK_KEY ?? '',
+  },
 }
 
 const prodConfig = {
@@ -195,6 +199,10 @@ const prodConfig = {
     memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
     apiPath: process.env.XROAD_TJODSKRA_API_PATH,
     clientId: process.env.XROAD_CLIENT_ID,
+  },
+  freshdesk: {
+    domain: process.env.FRESHDESK_DOMAIN ?? '',
+    key: process.env.FRESHDESK_KEY ?? '',
   },
 }
 
