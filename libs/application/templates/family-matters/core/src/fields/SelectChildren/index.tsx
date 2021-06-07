@@ -1,12 +1,8 @@
 import React, { useState } from 'react'
-import kennitala from 'kennitala'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  Child,
-  Address,
-} from '@island.is/application/templates/family-matters-core/types'
+import { Child } from '@island.is/application/templates/family-matters-core/types'
 import {
   DescriptionText,
   InfoBanner,
