@@ -4,28 +4,31 @@ import parseISO from 'date-fns/parseISO'
 
 import {
   Application,
+  coreMessages,
   ExternalData,
   extractRepeaterIndexFromField,
   Field,
   FormatMessage,
   FormValue,
   getValueViaPath,
+  MessageFormatter,
   Option,
 } from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
+import { toast } from '@island.is/island-ui/core'
 
-import { parentalLeaveFormMessages } from './lib/messages'
-import { TimelinePeriod } from './fields/components/Timeline'
-import { Period } from './types'
-import { YES, NO, MANUAL, SPOUSE, StartDateOptions } from './constants'
-import { SchemaFormValues } from './lib/dataSchema'
-import { PregnancyStatusAndRightsResults } from './dataProviders/Children/Children'
-import { daysToMonths } from './lib/directorateOfLabour.utils'
+import { parentalLeaveFormMessages } from '../lib/messages'
+import { TimelinePeriod } from '../fields/components/Timeline'
+import { Period } from '../types'
+import { YES, NO, MANUAL, SPOUSE, StartDateOptions } from '../constants'
+import { SchemaFormValues } from '../lib/dataSchema'
+import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
+import { daysToMonths } from '../lib/directorateOfLabour.utils'
 import {
   ChildInformation,
   ChildrenAndExistingApplications,
-} from './dataProviders/Children/types'
-import { Boolean } from './types'
+} from '../dataProviders/Children/types'
+import { Boolean } from '../types'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -449,4 +452,11 @@ export const requiresOtherParentApproval = (
   } = applicationAnswers
 
   return isRequestingRights === YES || usePersonalAllowanceFromSpouse === YES
+}
+
+export function handleSubmitError(
+  error: string,
+  formatMessage: MessageFormatter,
+): void {
+  toast.error(formatMessage(coreMessages.updateOrSubmitError, { error }))
 }

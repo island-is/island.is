@@ -11,8 +11,10 @@ import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import Review from '../Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
-import { handleSubmitError } from '../../parentalLeaveClientUtils'
+import {
+  getExpectedDateOfBirth,
+  handleSubmitError,
+} from '../../lib/parentalLeaveUtils'
 import { States as ApplicationStates } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 

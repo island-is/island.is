@@ -27,7 +27,7 @@ import {
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { calculateRemainingNumberOfDays } from '../../lib/directorateOfLabour.utils'
-import { getSelectedChild } from '../../parentalLeaveUtils'
+import { getSelectedChild } from '../../lib/parentalLeaveUtils'
 
 export interface PregnancyStatusAndRightsResults {
   childrenAndExistingApplications: ChildrenAndExistingApplications
