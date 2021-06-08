@@ -32,13 +32,16 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
     lawsBroken: {
       validations: ['empty'],
     },
-    // TODO: Add custodyProvisions freetext
+    legalBasis: {
+      validations: ['empty'],
+    },
   }
   const { workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
   const [, setRequestedValidToDateIsValid] = useState<boolean>(true)
   const [policeDemandsEM, setPoliceDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
+  const [legalBasisEM, setLegalBasisEM] = useState<string>('')
   const { isValid } = useCaseFormHelper(
     workingCase,
     setWorkingCase,
@@ -155,6 +158,46 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 workingCase,
                 updateCase,
                 setLawsBrokenEM,
+              )
+            }
+            required
+            textarea
+            rows={7}
+          />
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              Lagaákvæði sem brot varða við
+            </Text>
+          </Box>
+          <Input
+            data-testid="legal-basis"
+            name="legal-basis"
+            label="Lagaákvæði sem krafan er byggð á"
+            placeholder="TODO"
+            defaultValue={workingCase?.legalBasis}
+            errorMessage={legalBasisEM}
+            hasError={legalBasisEM !== ''}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'legalBasis',
+                event,
+                ['empty'],
+                workingCase,
+                setWorkingCase,
+                legalBasisEM,
+                setLegalBasisEM,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'legalBasis',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                updateCase,
+                setLegalBasisEM,
               )
             }
             required

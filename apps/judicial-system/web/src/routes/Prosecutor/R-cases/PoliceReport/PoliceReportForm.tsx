@@ -156,7 +156,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
                 <Checkbox
                   name="request-prosecutor-only-session"
                   label="Beiðni um dómþing að varnaraðila fjarstöddum"
-                  tooltip="TODO"
+                  tooltip="Hér er hægt að setja fram kröfu um að dómþing fari fram að varnaraðila fjarstöddum, vegna rannsóknarhagsmuna."
                   checked={workingCase.requestProsecutorOnlySession}
                   onChange={(evt) => {
                     setWorkingCase({
@@ -174,7 +174,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               <Input
                 name="prosecutor-only-session-request"
                 label="Beiðni"
-                placeholder="TODO"
+                placeholder="Er þess óskað að varnaraðili sé ekki viðstaddur dómþing?"
                 defaultValue={workingCase.prosecutorOnlySessionRequest}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
