@@ -13,7 +13,7 @@ import {
   useNavigationComponentDidAppear,
   useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
 import { PinKeypad } from '../../components/pin-keypad/pin-keypad'
 import { VisualizedPinCode } from '../../components/visualized-pin-code/visualized-pin-code'
@@ -61,12 +61,15 @@ export const AppLockScreen: NavigationFunctionComponent<{
 }> = ({ componentId, lockScreenActivatedAt, status }) => {
   const av = useRef(new Animated.Value(1)).current
 
+  const theme = useTheme()
   const isPromptRef = useRef(false)
   const [code, setCode] = useState('')
   const [invalidCode, setInvalidCode] = useState(false)
   const [attempts, setAttempts] = useState(0)
   const { useBiometrics } = usePreferencesStore()
   const intl = useIntl()
+
+  console.log(theme);
 
   const resetLockScreen = useCallback(() => {
     authStore.setState(() => ({

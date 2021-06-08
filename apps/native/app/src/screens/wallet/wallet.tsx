@@ -40,9 +40,6 @@ const {
       title: {
         text: intl.formatMessage({ id: 'wallet.screenTitle' }),
       },
-      // background: {
-      //   color: theme.shade.background,
-      // },
     },
     bottomTab: {
       iconColor: theme.color.blue400,

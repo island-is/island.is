@@ -3,6 +3,7 @@ import { Pressable, TextInput, TextInputProps, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import closeIcon from '../../assets/icons/close.png'
 import searchIcon from '../../assets/icons/search.png'
+import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
@@ -21,10 +22,14 @@ const SearchIcon = styled.Image`
 
 const Input = styled.TextInput`
   flex: 1;
-  background-color: ${({ theme }) =>
-    theme.isDark ? theme.shade.shade100 : theme.color.blue100};
-  border-color: ${({ theme }) =>
-    theme.isDark ? theme.shade.shade300 : theme.color.blue200};
+  background-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.shades.dark.shade100,
+    light: theme.color.blue100,
+  }))};
+  border-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.shades.dark.shade300,
+    light: theme.color.blue200,
+  }))};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-radius: ${({ theme }) => theme.spacing[1]}px;
   padding: ${({ theme }) => theme.spacing[1]}px

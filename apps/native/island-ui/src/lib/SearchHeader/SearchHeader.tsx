@@ -9,7 +9,7 @@ const Host = styled.View`
   align-items: center;
   justify-content: center;
   border-bottom-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shade.shade200,
+    dark: theme.shades.dark.shade200,
     light: theme.color.blue200
   }))};
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;

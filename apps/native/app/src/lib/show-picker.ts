@@ -1,6 +1,6 @@
-import { theme } from '@island.is/island-ui/theme'
 import { ActionSheetIOS, Platform } from 'react-native'
 import DialogAndroid from 'react-native-dialogs'
+import { uiStore } from '../stores/ui-store';
 
 /**
  * ShowPickerItem
@@ -66,6 +66,8 @@ export function showPicker(
     cancelLabel = 'Cancel',
   } = options
 
+  const theme = uiStore.getState().theme!;
+
   if (Platform.OS === 'ios') {
     return new Promise((resolve) => {
       ActionSheetIOS.showActionSheetWithOptions(
@@ -100,6 +102,11 @@ export function showPicker(
       negativeColor: theme.color.dark400,
       positiveColor: theme.color.blue400,
       widgetColor: theme.color.blue400,
+      linkColor: theme.color.blue400,
+      contentColor: theme.shade.foreground,
+      backgroundColor: theme.shade.background,
+      neutralColor: theme.shade.foreground,
+      titleColor: theme.shade.foreground,
     }).then(({ action, selectedItem }: any) => {
       let actn: ShowPickerResponse['action'] = 'neutral'
       if (action === 'actionDismiss') {

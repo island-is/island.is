@@ -9,7 +9,7 @@ import IconBE from '../../assets/icons/icon-be.png';
 const Host = styled.View`
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shade.shade500,
+    dark: theme.shades.dark.shade500,
     light: theme.color.blue200,
   }))};
   border-radius: ${({ theme }) => theme.spacing[2]}px;
@@ -22,7 +22,7 @@ const Header = styled.View`
   flex-direction: row;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
   border-bottom-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shade.shade500,
+    dark: theme.shades.dark.shade500,
     light: theme.color.blue200,
   }))};
   padding: ${({ theme }) => theme.spacing[2]}px;

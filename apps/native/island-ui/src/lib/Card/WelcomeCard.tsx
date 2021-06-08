@@ -1,8 +1,9 @@
 import React from 'react'
-import { ImageSourcePropType } from 'react-native'
-import styled from 'styled-components/native'
+import { DynamicColorIOS, ImageSourcePropType, Platform, Image } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
+import gridDotSmallSrc from '../../assets/illustrations/grid-dot-small.png'
 
 const Host = styled.View<{ color: any }>`
   padding: 0 0 24px;
@@ -14,7 +15,7 @@ const Host = styled.View<{ color: any }>`
   border-radius: ${({ theme }) => theme.border.radius.large};
 `
 
-const Image = styled.Image`
+const IllustrationImage = styled.Image`
   width: 100%;
   height: 262px;
 `
@@ -28,11 +29,21 @@ const Description = styled.Text`
   })}
 `
 
+const DotGrid = styled.View`
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 38px;
+  padding: 16px;
+  height: 262px;
+`
+
 interface CardProps {
   description?: string
   backgroundColor: { light: string; dark: string }
   imgSrc?: ImageSourcePropType
   style?: any
+  grid?: boolean
 }
 
 export function WelcomeCard({
@@ -40,11 +51,32 @@ export function WelcomeCard({
   imgSrc,
   backgroundColor,
   style,
+  grid,
 }: CardProps) {
+  const theme = useTheme()
   const color = backgroundColor
   return (
     <Host color={color} style={style}>
-      {imgSrc && <Image source={imgSrc} resizeMode="cover" />}
+      {grid && (
+        <DotGrid>
+          <Image
+            source={gridDotSmallSrc}
+            style={{
+              width: '100%',
+              height: '100%',
+              tintColor:
+                Platform.OS === 'android'
+                  ? theme.color.purple200
+                  : DynamicColorIOS({
+                      light: theme.color.purple200,
+                      dark: '#401c60',
+                    }),
+            }}
+            resizeMode="repeat"
+          />
+        </DotGrid>
+      )}
+      {imgSrc && <IllustrationImage source={imgSrc} resizeMode="cover" />}
       <Description>{description}</Description>
     </Host>
   )

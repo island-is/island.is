@@ -35,7 +35,7 @@ const Host = styled.SafeAreaView`
 const Border = styled.View`
   height: 1px;
   background-color: ${dynamicColor((props) => ({
-    dark: props.theme.shade.shade200,
+    dark: props.theme.shades.dark.shade200,
     light: props.theme.color.blue100,
   }))};
 `

@@ -19,14 +19,18 @@ RCT_EXPORT_MODULE()
 
 
 RCT_EXPORT_METHOD(overrideUserInterfaceStyle:(NSString *)uiStyle) {
-  UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
+//  UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
+  NSArray<__kindof UIWindow*>* windows = [[UIApplication sharedApplication] windows];
   if (@available(iOS 13.0, *)) {
-    if ([uiStyle isEqualToString:@"dark"]) {
-      window.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
-    } else if ([uiStyle isEqualToString:@"light"]) {
-      window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
-    } else if ([uiStyle isEqualToString:@"automatic"]) {
-      window.overrideUserInterfaceStyle = UIUserInterfaceStyleUnspecified;
+    for (UIWindow *window in windows)
+    {
+      if ([uiStyle isEqualToString:@"dark"]) {
+        window.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+      } else if ([uiStyle isEqualToString:@"light"]) {
+        window.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+      } else if ([uiStyle isEqualToString:@"automatic"]) {
+        window.overrideUserInterfaceStyle = UIUserInterfaceStyleUnspecified;
+      }
     }
   }
 }

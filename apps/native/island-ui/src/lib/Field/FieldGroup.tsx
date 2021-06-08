@@ -7,7 +7,7 @@ const Host = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
   padding-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
   border-bottom-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shade.shade500,
+    dark: theme.shades.dark.shade500,
     light: theme.color.blue200,
   }))};
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
