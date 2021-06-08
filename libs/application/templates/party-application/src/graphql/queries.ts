@@ -23,3 +23,12 @@ export const GetEndorsements = gql`
     }
   }
 `
+
+export const GetVoterRegion = gql`
+  query getVoterRegion {
+    temporaryVoterRegistryGetVoterRegion {
+      regionNumber
+      regionName
+    }
+  }
+`

@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Text, Box, Button, Input } from '@island.is/island-ui/core'
+import { Text, Box, Button, Input, AlertMessage } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
@@ -9,9 +9,9 @@ import {
 } from '@island.is/shared/form-fields'
 import { useMutation, useQuery } from '@apollo/client'
 import EndorsementApproved from '../EndorsementApproved'
-import { GetFullName, GetEndorsements } from '../../graphql/queries'
+import { GetFullName, GetEndorsements, GetVoterRegion } from '../../graphql/queries'
 import { EndorseList } from '../../graphql/mutations'
-import { SchemaFormValues } from '../../lib/dataSchema'
+import { PartyLetterRegistryPartyLetter } from '../../dataProviders/partyLetterRegistry'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -19,13 +19,14 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const [agreed, setAgreed] = useState(false)
   const [hasEndorsed, setHasEndorsed] = useState(false)
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
-  const answers = application.answers as SchemaFormValues
+  const { externalData } = application
+  const party: PartyLetterRegistryPartyLetter = externalData
+    ?.partyLetterRegistry?.data as PartyLetterRegistryPartyLetter
 
-  const partyLetter = answers.partyLetter
-  const partyName = answers.partyName
   const constituency = application.answers.constituency
   const { data: userData } = useQuery(GetFullName)
-
+  const { data: voterRegion } = useQuery(GetVoterRegion)
+  const regionMismatch = constituency !== voterRegion?.temporaryVoterRegistryGetVoterRegion.regionName
   const { loading, error } = useQuery(GetEndorsements, {
     onCompleted: async ({ endorsementSystemUserEndorsements }) => {
       if (!loading && endorsementSystemUserEndorsements) {
@@ -60,7 +61,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
         <Box>
           <Box marginBottom={2}>
             <Text variant="h2" marginBottom={3}>
-              {`${formatMessage(m.endorsementDisclaimer.title)} ${partyLetter}`}
+              {`${formatMessage(m.endorsementDisclaimer.title)} ${party.partyLetter}`}
             </Text>
             <Text marginBottom={2}>
               {`${formatMessage(
@@ -86,13 +87,13 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               <Text variant="h4">
                 {formatMessage(m.endorsementDisclaimer.partyLetter)}
               </Text>
-              <Text>{`${partyLetter} `}</Text>
+              <Text>{`${party.partyLetter} `}</Text>
             </Box>
             <Box marginLeft={[0, 0, 12]}>
               <Text variant="h4">
                 {formatMessage(m.endorsementDisclaimer.partyName)}
               </Text>
-              <Text>{partyName}</Text>
+              <Text>{party.partyName}</Text>
             </Box>
           </Box>
           <Box marginBottom={4}>
@@ -109,6 +110,15 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               )}
             />
           </Box>
+          {regionMismatch && (
+            <Box marginY={5}>
+              <AlertMessage
+                type="warning"
+                title="Athugið"
+                message={formatMessage(m.endorsementDisclaimer.regionMismatch)}
+              />
+            </Box>
+          )}
           <CheckboxController
             id="terms"
             name="tere"

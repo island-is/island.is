@@ -6800,7 +6800,7 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "../../../node_modules/.bin/sequelize-cli db:seed",
+            "command": "../../../node_modules/.bin/sequelize-cli db:seed í ../../../node_modules/.bin/sequelize-cli db:seed --seed=20210514094740-development.js",
             "cwd": "apps/services/temporary-voter-registry-api"
           }
         },

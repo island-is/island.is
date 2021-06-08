@@ -433,6 +433,16 @@ export const m: MessageDir = {
       defaultMessage: 'Stjórnmálasamtök',
       description: 'Label for party name',
     },
+    regionMismatchTitle: {
+      id: 'pa.application:endorsement.disclaimer.region.mismatch.title',
+      defaultMessage: 'Athugið',
+      description: 'warning title',
+    },
+    regionMismatch: {
+      id: 'pa.application:endorsement.disclaimer.region.mismatch',
+      defaultMessage: 'Þú virðist ekki með skráða búsetu í þessu kjördæmi. Ertu viss um að vilja halda áfram?',
+      description: 'Region mismatch message',
+    }
   }),
   endorsementApproved: defineMessages({
     title: {
