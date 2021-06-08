@@ -22,8 +22,6 @@
       "custodyProvisions": ["_95_1_A"],
       "requestedCustodyRestrictions": ["ISOLATION", "MEDIA"],
       "caseFacts": "lorem ipsum",
-      "witnessAccounts": null,
-      "investigationProgress": null,
       "legalArguments": "lorem ipsum",
       "comments": null,
       "prosecutor": {

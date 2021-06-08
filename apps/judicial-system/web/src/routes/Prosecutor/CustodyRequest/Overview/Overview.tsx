@@ -42,7 +42,6 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
 
@@ -251,17 +250,13 @@ export const Overview: React.FC = () => {
                 }}
               />
             </Box>
-            <Box
-              component="section"
-              marginBottom={5}
-              data-testid="prosecutorDemands"
-            >
+            <Box component="section" marginBottom={5} data-testid="demands">
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
                   Dómkröfur
                 </Text>
               </Box>
-              {constructProsecutorDemands(workingCase)}
+              {workingCase.demands}
             </Box>
             <Box component="section" marginBottom={10}>
               <Accordion>

@@ -14,8 +14,9 @@ import { parseString } from '../formatters'
 
 type autofillProperties = Pick<
   Case,
+  | 'demands'
   | 'courtAttendees'
-  | 'policeDemands'
+  | 'prosecutorDemands'
   | 'litigationPresentations'
   | 'courtStartDate'
   | 'courtCaseFacts'

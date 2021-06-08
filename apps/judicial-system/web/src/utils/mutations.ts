@@ -46,15 +46,13 @@ export const CreateCaseMutation = gql`
       arrestDate
       requestedCourtDate
       requestedValidToDate
-      otherDemands
+      demands
       lawsBroken
       legalBasis
       custodyProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
-      witnessAccounts
-      investigationProgress
       legalArguments
       requestProsecutorOnlySession
       prosecutorOnlySessionRequest
@@ -75,7 +73,7 @@ export const CreateCaseMutation = gql`
       courtStartDate
       courtEndTime
       courtAttendees
-      policeDemands
+      prosecutorDemands
       courtDocuments
       additionToConclusion
       accusedPleaDecision
@@ -169,15 +167,13 @@ export const ExtendCaseMutation = gql`
       arrestDate
       requestedCourtDate
       requestedValidToDate
-      otherDemands
+      demands
       lawsBroken
       legalBasis
       custodyProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
-      witnessAccounts
-      investigationProgress
       legalArguments
       requestProsecutorOnlySession
       prosecutorOnlySessionRequest
@@ -198,7 +194,7 @@ export const ExtendCaseMutation = gql`
       courtStartDate
       courtEndTime
       courtAttendees
-      policeDemands
+      prosecutorDemands
       courtDocuments
       additionToConclusion
       accusedPleaDecision

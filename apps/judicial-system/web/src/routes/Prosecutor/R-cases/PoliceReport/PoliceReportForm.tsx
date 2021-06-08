@@ -8,7 +8,6 @@ import {
 import { Case } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
-  setCheckboxAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
@@ -52,11 +51,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
         </Box>
         <Box marginBottom={5}>
           <BlueBox>
-            <Text>
-              {workingCase.policeDemands ||
-                // TODO: REMOVE
-                'Þess er krafist að Héraðsdómur Reykjavíkur heimili lögreglustjóranum á höfuðborgarsvæðinu leit í bifreiðinni Í-53, í eigu Matthíasar Jochumssonar, kt. 121201-2119. Þess er krafist að heimildin nái til leitar í læstum hirslum bifreiðarinnar.'}
-            </Text>
+            <Text>{workingCase.demands}</Text>
           </BlueBox>
         </Box>
         <Box component="section" marginBottom={5}>

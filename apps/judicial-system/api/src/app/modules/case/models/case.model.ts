@@ -80,7 +80,7 @@ export class Case implements TCase {
   readonly requestedValidToDate?: string
 
   @Field({ nullable: true })
-  readonly otherDemands?: string
+  readonly demands?: string
 
   @Field({ nullable: true })
   readonly lawsBroken?: string
@@ -99,12 +99,6 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly caseFacts?: string
-
-  @Field({ nullable: true })
-  readonly witnessAccounts?: string
-
-  @Field({ nullable: true })
-  readonly investigationProgress?: string
 
   @Field({ nullable: true })
   readonly legalArguments?: string
@@ -146,7 +140,7 @@ export class Case implements TCase {
   readonly courtAttendees?: string
 
   @Field({ nullable: true })
-  readonly policeDemands?: string
+  readonly prosecutorDemands?: string
 
   @Field(() => [String], { nullable: true })
   readonly courtDocuments?: string[]

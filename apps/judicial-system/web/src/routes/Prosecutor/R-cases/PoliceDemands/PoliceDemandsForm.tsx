@@ -26,7 +26,7 @@ interface Props {
 const PoliceDemandsForm: React.FC<Props> = (props) => {
   const validations: FormSettings = {
     // TODO: Add police demands
-    // policeDemands: {
+    // demands: {
     //   validations: ['empty'],
     // },
     lawsBroken: {
@@ -37,7 +37,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
   const [, setRequestedValidToDateIsValid] = useState<boolean>(true)
-  const [policeDemandsEM, setPoliceDemandsEM] = useState<string>('')
+  const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const { isValid } = useCaseFormHelper(
     workingCase,
@@ -89,32 +89,32 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <Input
-            data-testid="police-demands"
-            name="police-demands"
+            data-testid="demands"
+            name="demands"
             label="Krafa lögreglu"
             placeholder="Krafa ákæranda"
-            defaultValue={workingCase?.policeDemands}
-            errorMessage={policeDemandsEM}
-            hasError={policeDemandsEM !== ''}
+            defaultValue={workingCase?.demands}
+            errorMessage={demandsEM}
+            hasError={demandsEM !== ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
-                'policeDemands',
+                'demands',
                 event,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
-                policeDemandsEM,
-                setPoliceDemandsEM,
+                demandsEM,
+                setDemandsEM,
               )
             }
             onBlur={(event) =>
               validateAndSendToServer(
-                'policeDemands',
+                'demands',
                 event.target.value,
                 ['empty'],
                 workingCase,
                 updateCase,
-                setPoliceDemandsEM,
+                setDemandsEM,
               )
             }
             required

@@ -239,64 +239,6 @@ const getAcceptingAlternativeTravelBanConclusion = (
   )
 }
 
-export const constructProsecutorDemands = (
-  workingCase: Case,
-  skipOtherDemands?: boolean,
-) => {
-  return workingCase.requestedValidToDate ? (
-    <Text>
-      Þess er krafist að
-      <Text as="span" fontWeight="semiBold">
-        {` ${workingCase.accusedName}, kt. ${formatNationalId(
-          workingCase.accusedNationalId,
-        )}`}
-      </Text>
-      {`, sæti${
-        workingCase.parentCase &&
-        workingCase.parentCase?.decision === CaseDecision.ACCEPTING
-          ? ' áframhaldandi'
-          : ''
-      } ${
-        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
-      } með úrskurði ${workingCase.court?.name?.replace(
-        'Héraðsdómur',
-        'Héraðsdóms',
-      )}, til`}
-      <Text as="span" fontWeight="semiBold">
-        {` ${formatDate(workingCase.requestedValidToDate, 'EEEE')?.replace(
-          'dagur',
-          'dagsins',
-        )} ${formatDate(
-          workingCase.requestedValidToDate,
-          'PPP',
-        )}, kl. ${formatDate(workingCase.requestedValidToDate, TIME_FORMAT)}`}
-      </Text>
-      {workingCase.requestedCustodyRestrictions?.includes(
-        CaseCustodyRestrictions.ISOLATION,
-      ) ? (
-        <>
-          , og verði gert að{' '}
-          <Text as="span" fontWeight="semiBold">
-            sæta einangrun
-          </Text>{' '}
-          á meðan á varðhaldi stendur.
-        </>
-      ) : (
-        '.'
-      )}
-      {workingCase.otherDemands && !skipOtherDemands && (
-        <>
-          <br />
-          <br />
-          {` ${capitalize(workingCase.otherDemands || '')}`}
-        </>
-      )}
-    </Text>
-  ) : (
-    <Text>Saksóknari hefur ekki fyllt út dómkröfur.</Text>
-  )
-}
-
 export const isNextDisabled = (requiredFields: RequiredField[]) => {
   // Loop through requiredFields
   for (let i = 0; i < requiredFields.length; i++) {

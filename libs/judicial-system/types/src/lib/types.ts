@@ -208,11 +208,11 @@ export interface Case {
   id: string
   created: string
   modified: string
+  type: CaseType
+  description?: string
   state: CaseState
   policeCaseNumber: string
   accusedNationalId: string
-  type: CaseType
-  description?: string
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
@@ -225,15 +225,13 @@ export interface Case {
   arrestDate?: string
   requestedCourtDate?: string
   requestedValidToDate?: string
-  otherDemands?: string
+  demands?: string
   lawsBroken?: string
   legalBasis?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   requestedOtherRestrictions?: string
   caseFacts?: string
-  witnessAccounts?: string
-  investigationProgress?: string
   legalArguments?: string
   requestProsecutorOnlySession?: boolean
   prosecutorOnlySessionRequest?: string
@@ -247,7 +245,7 @@ export interface Case {
   courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
-  policeDemands?: string
+  prosecutorDemands?: string
   courtDocuments?: string[]
   additionToConclusion?: string
   accusedPleaDecision?: AccusedPleaDecision
@@ -271,8 +269,8 @@ export interface Case {
   isAppealDeadlineExpired?: boolean
   isAppealGracePeriodExpired?: boolean
   rulingDate?: string
-  judge?: User
   registrar?: User
+  judge?: User
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
@@ -329,10 +327,12 @@ export interface UpdateCase {
   arrestDate?: string
   requestedCourtDate?: string
   requestedValidToDate?: string
+  demands?: string
   lawsBroken?: string
   legalBasis?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  requestedOtherRestrictions?: string
   caseFacts?: string
   legalArguments?: string
   requestProsecutorOnlySession?: boolean
@@ -347,7 +347,7 @@ export interface UpdateCase {
   courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
-  policeDemands?: string
+  prosecutorDemands?: string
   courtDocuments?: string[]
   additionToConclusion?: string
   accusedPleaDecision?: AccusedPleaDecision

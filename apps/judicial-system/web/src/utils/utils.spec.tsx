@@ -13,7 +13,6 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   getConclusion,
-  constructProsecutorDemands,
   getShortGender,
   isDirty,
   isNextDisabled,
@@ -21,7 +20,6 @@ import {
 import { validate } from './validate'
 
 import * as formatters from './formatters'
-import { mockCourt } from './mocks'
 
 describe('Formatters utils', () => {
   describe('Parse array', () => {
@@ -568,179 +566,6 @@ describe('Step helper', () => {
           return false
         }),
       ).toBeTruthy()
-    })
-  })
-
-  describe('constructPoliceDemands', () => {
-    test('should render a message if requestedValidToDate is not set', async () => {
-      // Arrange
-      const wc = {
-        decision: CaseDecision.ACCEPTING,
-        custodyRestrictions: [
-          CaseCustodyRestrictions.MEDIA,
-          CaseCustodyRestrictions.VISITAION,
-          CaseCustodyRestrictions.ISOLATION,
-        ],
-        accusedName: 'Doe',
-        accusedNationalId: '0123456789',
-        validToDate: '2020-11-26T12:31:00.000Z',
-        requestedValidToDate: undefined,
-      }
-
-      // Act
-      render(constructProsecutorDemands(wc as Case))
-
-      // Assert
-      expect(
-        await screen.findByText((_, node) => {
-          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-          const hasText = (node: Element) =>
-            node.textContent === 'Saksóknari hefur ekki fyllt út dómkröfur.'
-
-          if (node) {
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
-
-            return nodeHasText && childrenDontHaveText
-          }
-
-          return false
-        }),
-      ).toBeTruthy()
-    })
-
-    test('should render the corrent string if the case is an extension', async () => {
-      // Arrange
-      const wc = {
-        type: CaseType.CUSTODY,
-        decision: CaseDecision.ACCEPTING,
-        custodyRestrictions: [
-          CaseCustodyRestrictions.MEDIA,
-          CaseCustodyRestrictions.VISITAION,
-          CaseCustodyRestrictions.ISOLATION,
-        ],
-        accusedName: 'Doe',
-        accusedNationalId: '0123456789',
-        validToDate: '2020-11-26T12:31:00.000Z',
-        requestedValidToDate: '2020-11-26T12:31:00.000Z',
-        court: mockCourt,
-        parentCase: {
-          id: 'TEST_EXTENSION',
-          decision: CaseDecision.ACCEPTING,
-        },
-      }
-
-      // Act
-      render(constructProsecutorDemands(wc as Case))
-
-      // Assert
-      expect(
-        await screen.findByText((_, node) => {
-          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-          const hasText = (node: Element) =>
-            node.textContent ===
-            'Þess er krafist að Doe, kt. 012345-6789, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
-
-          if (node) {
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
-
-            return nodeHasText && childrenDontHaveText
-          }
-
-          return false
-        }),
-      ).toBeTruthy()
-    })
-
-    test('should render the corrent string there are other demands', async () => {
-      // Arrange
-      const wc = {
-        type: CaseType.CUSTODY,
-        decision: CaseDecision.ACCEPTING,
-        custodyRestrictions: [
-          CaseCustodyRestrictions.MEDIA,
-          CaseCustodyRestrictions.VISITAION,
-          CaseCustodyRestrictions.ISOLATION,
-        ],
-        accusedName: 'Doe',
-        accusedNationalId: '0123456789',
-        validToDate: '2020-11-26T12:31:00.000Z',
-        requestedValidToDate: '2020-11-26T12:31:00.000Z',
-        court: mockCourt,
-        otherDemands: 'Lorem ipsum.',
-      }
-
-      // Act
-      render(constructProsecutorDemands(wc as Case))
-
-      // Assert
-      expect(
-        await screen.findByText((_, node) => {
-          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-          const hasText = (node: Element) =>
-            node.textContent ===
-            'Þess er krafist að Doe, kt. 012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31. Lorem ipsum.'
-
-          if (node) {
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
-
-            return nodeHasText && childrenDontHaveText
-          }
-
-          return false
-        }),
-      ).toBeTruthy()
-    })
-
-    test('should not render the other demands if skipOtherDemands parameter is set to true', async () => {
-      // Arrange
-      const wc = {
-        type: CaseType.CUSTODY,
-        decision: CaseDecision.ACCEPTING,
-        custodyRestrictions: [
-          CaseCustodyRestrictions.MEDIA,
-          CaseCustodyRestrictions.VISITAION,
-          CaseCustodyRestrictions.ISOLATION,
-        ],
-        accusedName: 'Doe',
-        accusedNationalId: '0123456789',
-        validToDate: '2020-11-26T12:31:00.000Z',
-        requestedValidToDate: '2020-11-26T12:31:00.000Z',
-        court: mockCourt,
-        otherDemands: 'Lorem ipsum.',
-      }
-
-      // Act
-      render(constructProsecutorDemands(wc as Case, true))
-
-      // Assert
-      expect(
-        await screen.findByText((_, node) => {
-          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-          const hasText = (node: Element) =>
-            node.textContent ===
-            'Þess er krafist að Doe, kt. 012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
-
-          if (node) {
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
-
-            return nodeHasText && childrenDontHaveText
-          }
-
-          return false
-        }),
-      ).toBeInTheDocument()
     })
   })
 

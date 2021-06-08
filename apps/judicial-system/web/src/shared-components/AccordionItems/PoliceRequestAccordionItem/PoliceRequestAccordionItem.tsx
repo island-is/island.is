@@ -14,7 +14,6 @@ import {
   CaseCustodyProvisions,
   CaseType,
 } from '@island.is/judicial-system/types'
-import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.treat'
 interface Props {
@@ -66,7 +65,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         </AccordionListItem>
       )}
       <AccordionListItem title="Dómkröfur">
-        {constructProsecutorDemands(workingCase)}
+        {workingCase.demands}
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði sem brot varða við" breakSpaces>
         <Text>{workingCase.lawsBroken}</Text>

@@ -22,8 +22,6 @@
       "custodyProvisions": null,
       "requestedCustodyRestrictions": ["ISOLATION", "MEDIA"],
       "caseFacts": null,
-      "witnessAccounts": null,
-      "investigationProgress": null,
       "legalArguments": null,
       "comments": null,
       "prosecutor": {

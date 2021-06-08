@@ -22,8 +22,6 @@
       "custodyProvisions": ["_95_1_A"],
       "requestedCustodyRestrictions": ["ISOLATION", "MEDIA"],
       "caseFacts": "lorem ipsum",
-      "witnessAccounts": null,
-      "investigationProgress": null,
       "legalArguments": "lorem ipsum",
       "comments": null,
       "prosecutor": {
@@ -37,7 +35,7 @@
       "courtStartDate": null,
       "courtEndTime": null,
       "courtAttendees": null,
-      "policeDemands": null,
+      "prosecutorDemands": null,
       "accusedPleaAnnouncement": null,
       "litigationPresentations": null,
       "ruling": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Prioris generis est docilitas, memoria; Quod quidem nobis non saepe contingit. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. Duo Reges: constructio interrete. Non est ista, inquam, Piso, magna dissensio. Quantum Aristoxeni ingenium consumptum videmus in musicis? ",

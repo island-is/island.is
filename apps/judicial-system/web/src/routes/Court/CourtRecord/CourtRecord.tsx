@@ -14,13 +14,11 @@ import {
   capitalize,
   caseTypes,
   formatAccusedByGender,
-  formatProsecutorDemands,
   NounCases,
 } from '@island.is/judicial-system/formatters'
 import {
   AccusedPleaDecision,
   Case,
-  CaseCustodyRestrictions,
   CaseGender,
   CaseType,
 } from '@island.is/judicial-system/types'
@@ -49,7 +47,9 @@ export const CourtRecord: React.FC = () => {
     setCourtRecordStartDateIsValid,
   ] = useState(true)
   const [courtAttendeesErrorMessage, setCourtAttendeesMessage] = useState('')
-  const [policeDemandsErrorMessage, setPoliceDemandsMessage] = useState('')
+  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] = useState(
+    '',
+  )
   const [
     accusedPleaAnnouncementErrorMessage,
     setAccusedPleaAnnouncementMessage,
@@ -105,32 +105,8 @@ export const CourtRecord: React.FC = () => {
 
       autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
 
-      if (
-        theCase.accusedName &&
-        theCase.court &&
-        theCase.requestedValidToDate
-        // Note that theCase.requestedCustodyRestrictions can be undefined
-      ) {
-        autofill(
-          'policeDemands',
-          `${formatProsecutorDemands(
-            theCase.type,
-            theCase.accusedNationalId,
-            theCase.accusedName,
-            theCase.court.name,
-            theCase.requestedValidToDate,
-            theCase.requestedCustodyRestrictions?.includes(
-              CaseCustodyRestrictions.ISOLATION,
-            ) || false,
-            theCase.parentCase !== undefined,
-            theCase.parentCase?.decision,
-          )}${
-            theCase.otherDemands && theCase.otherDemands.length > 0
-              ? `\n\n${theCase.otherDemands}`
-              : ''
-          }`,
-          theCase,
-        )
+      if (theCase.demands) {
+        autofill('prosecutorDemands', theCase.demands, theCase)
       }
 
       if (theCase.type === CaseType.CUSTODY) {
@@ -231,34 +207,34 @@ export const CourtRecord: React.FC = () => {
                 />
               </Box>
               <Input
-                data-testid="policeDemands"
-                name="policeDemands"
+                data-testid="prosecutorDemands"
+                name="prosecutorDemands"
                 label="Krafa"
-                defaultValue={workingCase.policeDemands}
+                defaultValue={workingCase.prosecutorDemands}
                 placeholder="Hvað hafði ákæruvaldið að segja?"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
-                    'policeDemands',
+                    'prosecutorDemands',
                     event,
                     ['empty'],
                     workingCase,
                     setWorkingCase,
-                    policeDemandsErrorMessage,
-                    setPoliceDemandsMessage,
+                    prosecutorDemandsErrorMessage,
+                    setProsecutorDemandsMessage,
                   )
                 }
                 onBlur={(event) =>
                   validateAndSendToServer(
-                    'policeDemands',
+                    'prosecutorDemands',
                     event.target.value,
                     ['empty'],
                     workingCase,
                     updateCase,
-                    setPoliceDemandsMessage,
+                    setProsecutorDemandsMessage,
                   )
                 }
-                errorMessage={policeDemandsErrorMessage}
-                hasError={policeDemandsErrorMessage !== ''}
+                errorMessage={prosecutorDemandsErrorMessage}
+                hasError={prosecutorDemandsErrorMessage !== ''}
                 textarea
                 rows={7}
                 required
@@ -439,7 +415,8 @@ export const CourtRecord: React.FC = () => {
               nextIsDisabled={
                 !courtRecordStartDateIsValid ||
                 !validate(workingCase.courtAttendees || '', 'empty').isValid ||
-                !validate(workingCase.policeDemands || '', 'empty').isValid ||
+                !validate(workingCase.prosecutorDemands || '', 'empty')
+                  .isValid ||
                 !validate(workingCase.litigationPresentations || '', 'empty')
                   .isValid ||
                 !workingCase.accusedPleaDecision

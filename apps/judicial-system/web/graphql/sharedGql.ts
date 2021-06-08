@@ -27,15 +27,13 @@ export const CaseQuery = gql`
       arrestDate
       requestedCourtDate
       requestedValidToDate
-      otherDemands
+      demands
       lawsBroken
       legalBasis
       custodyProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
-      witnessAccounts
-      investigationProgress
       legalArguments
       requestProsecutorOnlySession
       prosecutorOnlySessionRequest
@@ -61,7 +59,7 @@ export const CaseQuery = gql`
       courtStartDate
       courtEndTime
       courtAttendees
-      policeDemands
+      prosecutorDemands
       courtDocuments
       additionToConclusion
       accusedPleaDecision

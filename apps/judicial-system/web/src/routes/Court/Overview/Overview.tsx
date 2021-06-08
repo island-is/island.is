@@ -6,10 +6,7 @@ import {
   formatRequestedCustodyRestrictions,
   laws,
 } from '@island.is/judicial-system/formatters'
-import {
-  constructProsecutorDemands,
-  isNextDisabled,
-} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   FormFooter,
   PageLayout,
@@ -296,7 +293,7 @@ export const JudgeOverview: React.FC = () => {
                     Dómkröfur
                   </Text>
                 </Box>
-                {constructProsecutorDemands(workingCase)}
+                {workingCase.demands}
               </Box>
               <div className={styles.infoSection}>
                 <Box marginBottom={6} data-testid="lawsBroken">

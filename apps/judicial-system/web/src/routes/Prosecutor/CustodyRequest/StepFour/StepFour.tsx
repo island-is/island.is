@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system/types'
-import {
-  constructProsecutorDemands,
-  isNextDisabled,
-} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { Case, CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
@@ -26,6 +23,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useRouter } from 'next/router'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { formatProsecutorDemands } from '@island.is/judicial-system/formatters'
 
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -39,23 +37,40 @@ export const StepFour: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { updateCase } = useCase()
+  const { updateCase, autofill } = useCase()
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const resCase = data?.case
 
   useEffect(() => {
     document.title = 'Greinargerð - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (id && !workingCase && resCase) {
-      setWorkingCase(resCase)
+    if (id && !workingCase && data?.case) {
+      const theCase = data.case
+
+      autofill(
+        'demands',
+        formatProsecutorDemands(
+          theCase.type,
+          theCase.accusedNationalId,
+          theCase.accusedName,
+          theCase.court.name,
+          theCase.requestedValidToDate,
+          theCase.requestedCustodyRestrictions?.includes(
+            CaseCustodyRestrictions.ISOLATION,
+          ) || false,
+          theCase.parentCase !== undefined,
+          theCase.parentCase?.decision,
+        ),
+        theCase,
+      )
+
+      setWorkingCase(theCase)
     }
-  }, [id, workingCase, setWorkingCase, resCase])
+  }, [id, workingCase, setWorkingCase, data, autofill])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -102,18 +117,15 @@ export const StepFour: React.FC = () => {
                   <Tooltip text="Hér er hægt að bæta texta við dómkröfur, t.d. ef óskað er eftir öðrum úrræðum til vara." />
                 </Text>
               </Box>
-              <BlueBox>
-                <Box marginBottom={3}>
-                  {constructProsecutorDemands(workingCase, true)}
-                </Box>
+              <Box marginBottom={3}>
                 <Input
-                  name="prosecutorDemands"
-                  label="Bæta texta við dómkröfur"
+                  name="demands"
+                  label="Dómkröfur"
                   placeholder="Hér er hægt að bæta texta við dómkröfurnar eftir þörfum..."
-                  defaultValue={workingCase?.otherDemands}
+                  defaultValue={workingCase?.demands}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
-                      'otherDemands',
+                      'demands',
                       event,
                       [],
                       workingCase,
@@ -122,7 +134,7 @@ export const StepFour: React.FC = () => {
                   }
                   onBlur={(event) =>
                     validateAndSendToServer(
-                      'otherDemands',
+                      'demands',
                       event.target.value,
                       [],
                       workingCase,
@@ -132,7 +144,7 @@ export const StepFour: React.FC = () => {
                   rows={7}
                   textarea
                 />
-              </BlueBox>
+              </Box>
             </Box>
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
