@@ -69,8 +69,6 @@ export const AppLockScreen: NavigationFunctionComponent<{
   const { useBiometrics } = usePreferencesStore()
   const intl = useIntl()
 
-  console.log(theme);
-
   const resetLockScreen = useCallback(() => {
     authStore.setState(() => ({
       lockScreenActivatedAt: undefined,

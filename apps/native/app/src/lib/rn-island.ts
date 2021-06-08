@@ -8,7 +8,6 @@ export function overrideUserInterfaceStyle(
   uiStyle: 'dark' | 'light' | 'automatic',
 ) {
   if (Platform.OS === 'ios') {
-    console.log('calling set user interface style', uiStyle);
     return RNIsland.overrideUserInterfaceStyle(uiStyle)
   }
 }
