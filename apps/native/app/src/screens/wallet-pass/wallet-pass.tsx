@@ -1,4 +1,4 @@
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import {
   dynamicColor,
   Field,
@@ -18,7 +18,7 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import { client } from '../../graphql/client'
 import { ILicenseDataField } from '../../graphql/fragments/license.fragment'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
-import { FormattedDate } from 'react-intl'
+import { GetLicenseResponse, GET_LICENSE_QUERY } from '../../graphql/queries/get-license.query'
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -67,7 +67,7 @@ const FieldRender = ({ data, level = 1 }: any) => {
                 return (
                   <FieldGroup key={key}>
                     <FieldRow>
-                      <Field label={label} value={value} />
+                      <Field size={i === 0 ? 'large' : 'small'} label={label} value={value} />
                     </FieldRow>
                   </FieldGroup>
                 )
@@ -113,57 +113,14 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId)
   const theme = useTheme()
 
-  const res = useQuery(
-    gql`
-      query getLicense($id: ID!) {
-        License(id: $id) @client {
-          nationalId
-          license {
-            type
-            provider {
-              id
-            }
-            pkpass
-            timeout
-            status
-          }
-          fetch {
-            status
-            updated
-          }
-          payload {
-            data {
-              type
-              name
-              label
-              value
-              fields {
-                type
-                name
-                label
-                value
-                fields {
-                  type
-                  name
-                  label
-                  value
-                }
-              }
-            }
-            rawData
-          }
-        }
-      }
-    `,
-    {
-      client,
+  const licenseRes = useQuery<GetLicenseResponse>(GET_LICENSE_QUERY, {
+    client,
       variables: {
         id,
       },
-    },
-  )
+  })
 
-  const data = res.data?.License ?? item
+  const data = licenseRes.data?.License ?? item
 
   return (
     <View style={{ flex: 1 }}>

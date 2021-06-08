@@ -23,14 +23,13 @@ import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
-import { LIST_LICENSES_QUERY, NEW_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
+import { ILicense } from '../../graphql/fragments/license.fragment'
+import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { navigateTo } from '../../lib/deep-linking'
 import { usePreferencesStore } from '../../stores/preferences-store'
-import { LicenseStatus, LicenseType } from '../../types/license-type'
 import { testIDs } from '../../utils/test-ids'
-import { ILicenseFragment } from '../fragments/license.fragment';
 
 const {
   useNavigationOptions,
@@ -69,7 +68,7 @@ const WalletItem = React.memo(
     ({
     item,
   }: {
-    item: ILicenseFragment
+    item: ILicense
   }) => {
     return (
 
@@ -103,7 +102,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const theme = useTheme()
   const { dismiss, dismissed } = usePreferencesStore()
-  const res = useQuery(NEW_LICENSES_QUERY, { client })
+  const res = useQuery(LIST_LICENSES_QUERY, { client })
   const licenseItems = res?.data?.listLicenses ?? []
   const flatListRef = useRef<FlatList>(null)
   const alertVisible = !dismissed.includes('howToUseCertificates')
@@ -143,7 +142,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   }, [res])
 
   const renderLicenseItem = useCallback(
-    ({ item }: ILicenseFragment) => <WalletItem item={item} />,
+    ({ item }) => <WalletItem item={item} />,
     [],
   )
 
@@ -164,7 +163,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     [],
   )
 
-  const keyExtractor = useCallback((item: ILicenseFragment) => item.license.type, [])
+  const keyExtractor = useCallback((item: ILicense) => item.license.type, [])
 
   return (
     <>
@@ -212,7 +211,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
                 ? Array.from({ length: 5 }).map((_, id) => ({ id }))
                 : licenseItems
             }
-            keyExtractor={(item: any) => item.license.type}
+            keyExtractor={keyExtractor}
             renderItem={isSkeleton ? renderSkeletonItem : renderLicenseItem}
           />
         </>

@@ -67,7 +67,7 @@ export interface ILicenseDataField {
   }>
 }
 
-export interface ILicenseFragment {
+export interface ILicense {
   nationalId: string;
   license: {
     type: string;

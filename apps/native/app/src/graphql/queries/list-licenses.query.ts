@@ -1,19 +1,7 @@
 import { gql } from '@apollo/client';
 import { LicenseDataFieldFragment } from '../fragments/license.fragment';
-export const LIST_LICENSES_QUERY = gql`
-  query {
-    listLicenses @client {
-      id
-      title
-      type
-      status
-      dateTime
-      serviceProvider
-    }
-  }
-`;
 
-export const NEW_LICENSES_QUERY = gql`
+export const LIST_LICENSES_QUERY = gql`
   query {
     listLicenses @client {
       nationalId
@@ -38,5 +26,5 @@ export const NEW_LICENSES_QUERY = gql`
       }
     }
   }
-  ${LicenseDataFieldFragment} 
+  ${LicenseDataFieldFragment}
 `;
