@@ -1,13 +1,13 @@
 import { Args, Query, Resolver, InputType, Field } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { IsBoolean, IsArray, IsOptional } from 'class-validator'
-import { Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 
 import { LicenseServiceService } from '../licenseService.service'
 import { GenericUserLicense } from './genericLicense.model'
