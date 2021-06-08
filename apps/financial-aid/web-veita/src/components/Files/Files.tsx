@@ -16,14 +16,15 @@ import { calcDifferenceInDate, getFileType } from '../../utils/formHelper'
 interface Props {
   heading?: string
   filesArr?: [string]
+  className?: string
 }
 
-const Files: React.FC<Props> = ({ heading, filesArr }) => {
+const Files: React.FC<Props> = ({ heading, filesArr, className }) => {
   const router = useRouter()
   // const { isAuthenticated, setUser, user } = useContext(UserContext)
 
   return (
-    <Box>
+    <Box className={cn({ [`${className}`]: true })}>
       {' '}
       <Text variant="eyebrow" marginBottom={1}>
         {heading}

@@ -76,10 +76,6 @@ const ApplicationProfile = () => {
           insertAt(data.application.nationalId.replace('-', ''), '-', 6) || '-',
       },
       {
-        title: '',
-        content: '',
-      },
-      {
         title: 'Netfang',
         content: data?.application.email,
         link: 'mailto:' + data?.application.email,
@@ -103,6 +99,10 @@ const ApplicationProfile = () => {
       {
         title: 'Nota persónuafslátt',
         content: data?.application.usePersonalTaxCredit ? 'Já' : 'Nei',
+      },
+      {
+        title: 'Ríkisfang',
+        content: 'Ísland',
       },
     ]
 
@@ -137,20 +137,21 @@ const ApplicationProfile = () => {
         other: data.application.employmentCustom,
       },
       {
-        title: 'Hefur haft tekjur',
-        content: data.application.hasIncome ? 'Já' : 'Nei',
+        title: 'Lánshæft nám',
+        content: data.application.student ? 'Já' : 'Nei',
+        other: data.application.studentCustom,
       },
       {
-        title: 'Ríkisfang',
-        content: 'Ísland',
+        title: 'Hefur haft tekjur',
+        content: data.application.hasIncome ? 'Já' : 'Nei',
       },
     ]
 
     const filesTest = ['/lokaprof2021.docx', '/hengill_ultra_reglur_2021.pdf']
 
     return (
-      <Box marginY={10}>
-        <Box>
+      <Box marginY={10} className={styles.applicantWrapper}>
+        <Box className={styles.widthFull}>
           <Button
             colorScheme="default"
             iconType="filled"
@@ -173,6 +174,7 @@ const ApplicationProfile = () => {
           alignItems="center"
           width="full"
           paddingY={3}
+          className={styles.widtAlmostFull}
         >
           <Box display="flex" alignItems="center">
             <Box marginRight={2}>
@@ -192,16 +194,16 @@ const ApplicationProfile = () => {
             preTextIconType="filled"
             size="default"
             type="button"
+            size="small"
             variant="primary"
           >
             Ný umsókn
           </Button>
         </Box>
-
-        <Box width="full" marginBottom={4}>
+        <Box width="full" marginBottom={4} className={styles.widtAlmostFull}>
           <Divider />
         </Box>
-        <Box display="flex" marginBottom={8}>
+        <Box display="flex" marginBottom={8} className={styles.widthFull}>
           <Box marginRight={1}>
             <Text variant="small" fontWeight="semiBold" color="dark300">
               Aldur umsóknar
@@ -215,12 +217,17 @@ const ApplicationProfile = () => {
         <Profile heading="Umsókn" info={applicationArr} />
         <Profile heading="Umsækjandi" info={applicant} />
         <Profile heading="Aðrar upplýsingar" info={applicantMoreInfo} />
-
         <>
-          <Text as="h2" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
-            Gögn frá umsækjanda
-          </Text>
-          <Files heading="Tekjugögn" filesArr={filesTest} />
+          <Box marginBottom={[2, 2, 3]} className={styles.widtAlmostFull}>
+            <Text as="h2" variant="h3" color="dark300">
+              Gögn frá umsækjanda
+            </Text>
+          </Box>
+          <Files
+            heading="Tekjugögn"
+            filesArr={filesTest}
+            className={styles.widtAlmostFull}
+          />
         </>
       </Box>
     )

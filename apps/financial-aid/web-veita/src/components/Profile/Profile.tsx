@@ -31,9 +31,11 @@ const Profile: React.FC<Props> = ({ heading, info }) => {
   return (
     <>
       {' '}
-      <Text as="h2" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
-        {heading}
-      </Text>
+      <Box className={styles.headings} marginBottom={[2, 2, 3]}>
+        <Text as="h2" variant="h3" color="dark300">
+          {heading}
+        </Text>
+      </Box>
       <div className={styles.container}>
         {info.map((item) => {
           return (

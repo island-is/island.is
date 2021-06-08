@@ -66,7 +66,7 @@ const ApplicationOverview = () => {
 
   return (
     <>
-      <Text as="h1" variant="h1" marginBottom={[4, 4, 6]}>
+      <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
         {currentState.label}
       </Text>
       {data?.applications && (

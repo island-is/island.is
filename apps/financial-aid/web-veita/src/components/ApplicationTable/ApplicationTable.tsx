@@ -31,9 +31,15 @@ const ApplicationTable: React.FC<PageProps> = ({
         <tr>
           {header && (
             <>
-              {header.map((item) => {
+              {header.map((item, index) => {
                 return (
-                  <th className={styles.tablePadding}>
+                  <th
+                    // className={styles.tablePadding}
+                    className={cn({
+                      [`${styles.tablePadding}`]: true,
+                      [`${styles.firstChildPadding}`]: index === 0,
+                    })}
+                  >
                     <Text color="dark300" fontWeight="semiBold">
                       {item}
                     </Text>
@@ -45,15 +51,24 @@ const ApplicationTable: React.FC<PageProps> = ({
         </tr>
       </thead>
 
-      <tbody>
+      <tbody className={styles.tableBody}>
         {applications && (
           <>
-            {applications.map((item: any) => {
+            {applications.map((item: any, index) => {
               return (
                 <Link href={'application/' + item.link}>
                   <tr className={styles.link}>
-                    {item.arr.map((el: ReactNode) => {
-                      return <td className={styles.tablePadding}>{el}</td>
+                    {item.arr.map((el: ReactNode, index: number) => {
+                      return (
+                        <td
+                          className={cn({
+                            [`${styles.tablePadding}`]: true,
+                            [`${styles.firstChildPadding}`]: index === 0,
+                          })}
+                        >
+                          {el}
+                        </td>
+                      )
                     })}
                   </tr>
                 </Link>

@@ -33,6 +33,8 @@ export interface Application {
   interview?: boolean
   employmentCustom?: string
   homeCircumstancesCustom?: string
+  studentCustom?: string
+  formComment?: string
 }
 
 export interface CreateApplication {
@@ -51,6 +53,8 @@ export interface CreateApplication {
   interview?: boolean
   employmentCustom?: string
   homeCircumstancesCustom?: string
+  studentCustom?: string
+  formComment?: string
 }
 
 export interface Municipality {

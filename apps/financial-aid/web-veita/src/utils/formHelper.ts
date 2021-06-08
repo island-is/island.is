@@ -16,9 +16,6 @@ export const calcDifferenceInDate = (dateCreated: string | undefined) => {
   }
 }
 
-export const insertAt = (str: string, sub: string, pos: number) =>
-  `${str.slice(0, pos)}${sub}${str.slice(pos)}`
-
 export const translateMonth = (mon: number) => {
   const months = [
     'Janúar',
