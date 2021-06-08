@@ -46,12 +46,27 @@ export const selectChildren = {
       defaultMessage: 'Hitt forsjárforeldrið er {parentName}',
       description: 'Sublabel: displayed below a childs name',
     },
+    soleCustodySubLabel: {
+      id:
+        'crc.application:section.backgroundInformation.selectChildren.checkboxes.soleCustodySubLabel',
+      defaultMessage: 'Eingöngu í þinni forjá',
+      description:
+        'Sole custody sublabel: displayed below a childs name when a parent has sole custody',
+    },
     livesWithBothParents: {
       id:
         'crc.application:section.backgroundInformation.selectChildren.checkboxes.livesWithBothParents',
       defaultMessage:
         'Samkvæmt gögnum frá Þjóðskrá Íslands er {childName} barn sem þú átt með núverandi sambýlismaka. Hægt er að breyta lögheimili þessa barns með flutningstilkynningu annars hvors foreldrisins til Þjóðskrár.',
       description: 'Tooltip: displayed when a child lives with both parents',
+    },
+    soleCustodyTooltip: {
+      id:
+        'crc.application:section.backgroundInformation.selectChildren.checkboxes.soleCustodyTooltip',
+      defaultMessage:
+        'Samkvæmt gögnum frá Þjóðskrá Íslands er {childName} eingöngu í þinni forsjá. Til að breyta forsjárskráningu þessa barns er hægt að hafa samband við sýslumann.',
+      description:
+        'Sole custody Tooltip: displayed when applicant has sole custody',
     },
   }),
 }
