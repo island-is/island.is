@@ -68,9 +68,6 @@ export class PartyLetterRegistryController {
     @Body() input: CreateDto,
     @CurrentUser() user: User,
   ): Promise<PartyLetterRegistry> {
-    return await this.partyLetterRegistryService.create({
-      ...input,
-      owner: user.nationalId,
-    })
+    return await this.partyLetterRegistryService.create(input)
   }
 }

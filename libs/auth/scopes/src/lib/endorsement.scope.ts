@@ -3,5 +3,5 @@ export enum Endorsement {
   endorsementWrite = '@island.is/endorsement/endorsement:write',
   endorsementListRead = '@island.is/endorsement/endorsement-list:read',
   endorsementListWrite = '@island.is/endorsement/endorsement-list:write',
-  endorsementListJusticeDepartment = '@island.is/endorsement/endorsement-list-justice-department:write',
+  endorsementListJusticeDepartmentWrite = '@island.is/endorsement/endorsement-list-justice-department:write',
 }

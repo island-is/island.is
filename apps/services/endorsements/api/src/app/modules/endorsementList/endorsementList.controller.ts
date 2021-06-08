@@ -103,7 +103,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementScope.endorsementListJusticeDepartment)
+  @Scopes(EndorsementScope.endorsementListJusticeDepartmentWrite)
   @Put(':listId/close')
   @Audit<EndorsementList>({
     namespace: auditNamespace,
