@@ -12,18 +12,20 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  isLoading: boolean
 }
 
 const PoliceDemandsForm: React.FC<Props> = (props) => {
+  const { workingCase, setWorkingCase, isLoading } = props
   const validations: FormSettings = {
     // TODO: Add police demands
     // policeDemands: {
@@ -36,7 +38,6 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
-  const { workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
   const [, setRequestedValidToDateIsValid] = useState<boolean>(true)
   const [policeDemandsEM, setPoliceDemandsEM] = useState<string>('')
@@ -125,7 +126,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             rows={7}
           />
         </Box>
-        <Box component="section" marginBottom={7}>
+        <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Lagaákvæði sem brot varða við
@@ -165,7 +166,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             rows={7}
           />
         </Box>
-        <Box component="section" marginBottom={7}>
+        <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Lagaákvæði sem brot varða við
@@ -211,7 +212,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.R_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.R_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isValid}
-          nextIsLoading={false}
+          nextIsLoading={isLoading}
         />
       </FormContentContainer>
     </>
