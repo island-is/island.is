@@ -15,6 +15,15 @@ const auditNamespace = `${environment.audit.defaultNamespace}/voter-registry`
 export class VoterRegistryController {
   constructor(private readonly voterRegistryService: VoterRegistryService) {}
 
+  // we return a not registered entry when no entry is found in registry
+  getEmptyRegistryResponse = (nationalId: string) =>
+    ({
+      id: '0',
+      regionNumber: 0,
+      regionName: 'Ekki á skrá',
+      nationalId: nationalId,
+    } as VoterRegistry)
+
   @ApiOkResponse({
     description: 'Finds voter registry entry given user authentication',
     type: VoterRegistry,
@@ -26,22 +35,14 @@ export class VoterRegistryController {
   })
   @Scopes(TemporaryVoterRegistry.read)
   @Get()
-  async findByAuth(@CurrentUser() user: User): Promise<VoterRegistry> {
+  async findByAuth(
+    @CurrentUser() { nationalId }: User,
+  ): Promise<VoterRegistry> {
     const resource = await this.voterRegistryService.findByNationalId(
-      user.nationalId,
+      nationalId,
     )
 
-    // we return a not registered entry when no entry is found in registry
-    if (!resource) {
-      return {
-        id: '0',
-        regionNumber: 0,
-        regionName: 'Ekki á skrá',
-        nationalId: user.nationalId,
-      } as VoterRegistry
-    }
-
-    return resource
+    return resource ?? this.getEmptyRegistryResponse(nationalId)
   }
 
   // TODO: This should get a system scope, or we should allow systems to get the read scope
@@ -58,16 +59,6 @@ export class VoterRegistryController {
       nationalId,
     )
 
-    // we return a not registered entry when no entry is found in registry
-    if (!resource) {
-      return {
-        id: '0',
-        regionNumber: 0,
-        regionName: 'Ekki á skrá',
-        nationalId: nationalId,
-      } as VoterRegistry
-    }
-
-    return resource
+    return resource ?? this.getEmptyRegistryResponse(nationalId)
   }
 }
