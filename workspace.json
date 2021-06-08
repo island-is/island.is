@@ -5268,6 +5268,27 @@
         }
       }
     },
+    "regulations": {
+      "root": "libs/regulations",
+      "sourceRoot": "libs/regulations/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/regulations/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/regulations"],
+          "options": {
+            "jestConfig": "libs/regulations/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "service-portal": {
       "root": "apps/service-portal",
       "sourceRoot": "apps/service-portal/src",

@@ -1,4 +1,4 @@
-import { RegName } from './Regulations.types'
+import { RegName, prettyName } from '@island.is/regulations'
 import { RegulationPageTexts } from './RegulationTexts.types'
 
 import React from 'react'
@@ -12,7 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
-import { prettyName, useRegulationLinkResolver } from './regulationUtils'
+import { useRegulationLinkResolver } from './regulationUtils'
 
 export type RegulationLayoutProps = {
   name: RegName

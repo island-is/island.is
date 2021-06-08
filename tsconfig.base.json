@@ -287,6 +287,8 @@
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
+      "@island.is/regulations": ["libs/regulations/src/index.ts"],
+      "@island.is/regulations/*": ["libs/regulations/src/dist/*"],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],

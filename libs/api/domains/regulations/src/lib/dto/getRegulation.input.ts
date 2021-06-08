@@ -1,5 +1,5 @@
-import type { ISODate, RegQueryName } from '@island.is/clients/regulations'
-import { RegulationViewTypes } from '@island.is/clients/regulations'
+import type { ISODate, RegQueryName } from '@island.is/regulations'
+import { RegulationViewTypes } from '@island.is/regulations/web'
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import {
   IsBoolean,

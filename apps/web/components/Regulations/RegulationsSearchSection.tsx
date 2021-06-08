@@ -14,7 +14,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import {
   RegulationLawChapterTree,
   RegulationMinistry,
-} from './Regulations.types'
+} from '@island.is/regulations/web'
 import { RegulationHomeTexts } from './RegulationTexts.types'
 import { OptionTypeBase, ValueType } from 'react-select'
 import {

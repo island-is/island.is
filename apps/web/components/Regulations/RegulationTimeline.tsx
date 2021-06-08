@@ -4,18 +4,14 @@ import React, { Fragment } from 'react'
 import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { ISODate, RegulationMaybeDiff } from './Regulations.types'
+import { ISODate, interpolate, prettyName } from '@island.is/regulations'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,
 } from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import {
-  interpolate,
-  prettyName,
-  useDateUtils,
-  useRegulationLinkResolver,
-} from './regulationUtils'
+import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
 
 export type RegulationTimelineProps = {
   regulation: RegulationMaybeDiff
