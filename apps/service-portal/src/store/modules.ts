@@ -5,7 +5,7 @@ import { familyModule } from '@island.is/service-portal/family'
 import { financeModule } from '@island.is/service-portal/finance'
 import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandic-names-registry'
 // import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
-import { accessControlModule } from '@island.is/service-portal/settings/access-control'
+// import { accessControlModule } from '@island.is/service-portal/settings/access-control'
 import { educationModule } from '@island.is/service-portal/education'
 import { educationLicenseModule } from '@island.is/service-portal/education-license'
 // import { educationDegreeModule } from '@island.is/service-portal/education-degree'
@@ -25,7 +25,7 @@ import { educationStudentAssessmentModule } from '@island.is/service-portal/educ
  */
 
 export type ModuleKeys =
-  | 'accessControl'
+  // | 'accessControl'
   | 'documentProvider'
   | 'documents'
   | 'family'
@@ -39,7 +39,7 @@ export type ModuleKeys =
 // | 'applications'
 
 export const featureFlaggedModules: ModuleKeys[] = [
-  'accessControl',
+  // 'accessControl',
   'documentProvider',
   'education',
   'educationLicense',
@@ -60,5 +60,5 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   // educationCareer: educationCareerModule,
   educationStudentAssessment: educationStudentAssessmentModule,
   // applications: applicationsModule,
-  accessControl: accessControlModule,
+  // accessControl: accessControlModule,
 }

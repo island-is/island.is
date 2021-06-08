@@ -89,7 +89,10 @@ export const Header: FC<HeaderProps> = ({
                     )}
                     <Hidden below="lg">
                       <Box marginLeft={marginLeft}>
-                        <Link href="//minarsidur.island.is/" skipTab>
+                        <Link
+                          href={english ? '/en/login' : '/innskraning'}
+                          skipTab
+                        >
                           <Button
                             colorScheme={buttonColorScheme}
                             variant="utility"

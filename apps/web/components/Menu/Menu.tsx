@@ -94,7 +94,10 @@ export const Menu = ({
       }}
       renderMyPagesButton={(button) => {
         return (
-          <Link href="//minarsidur.island.is/" skipTab>
+          <Link
+            href={activeLocale === 'en' ? '/en/login' : '/innskraning'}
+            skipTab
+          >
             {button}
           </Link>
         )
