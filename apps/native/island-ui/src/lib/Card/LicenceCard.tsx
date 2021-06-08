@@ -119,6 +119,7 @@ export function LicenceCard({
 }: LicenceCardProps) {
   const theme = useTheme()
   const variant = statusIcon[status]
+  let titleString = title;
   let textColor = {
     dark: theme.shades.dark.foreground,
     light: theme.shades.light.foreground,
@@ -131,6 +132,7 @@ export function LicenceCard({
   let logo = <Image source={agencyLogo} style={{ width: 68, height: 87 }} />
   switch (type) {
     case LicenseType.DRIVERS_LICENSE:
+      titleString = 'Ökuskýrteini (IS)'
       textColor = { dark: '#000000', light: '#000000' }
       backgroundColor = { dark: '#5F414E', light: '#f5e4ec' }
       backgroundImage = driverLicence
@@ -159,17 +161,21 @@ export function LicenceCard({
       <BackgroundImage source={backgroundImage} color={backgroundColor} />
       <Content>
         <Title numberOfLines={1} ellipsizeMode="tail" color={textColor}>
-          {title}
+          {titleString}
         </Title>
-        <ValidationWrap>
-          <Image
-            source={variant.icon as ImageSourcePropType}
-            resizeMode="contain"
-            style={{ width: 13, height: 13, marginRight: 8 }}
-          />
-          <Validation color={textColor}>{variant.text}</Validation>
-        </ValidationWrap>
-        <TimeStamp color={textColor}>{date}</TimeStamp>
+        {variant &&
+          <ValidationWrap>
+            <Image
+              source={variant.icon as ImageSourcePropType}
+              resizeMode="contain"
+              style={{ width: 13, height: 13, marginRight: 8 }}
+            />
+            <Validation color={textColor}>{variant.text}</Validation>
+          </ValidationWrap>
+        }
+        {date &&
+          <TimeStamp color={textColor}>{date}</TimeStamp>
+        }
       </Content>
       <ImgWrap>{logo}</ImgWrap>
     </Host>

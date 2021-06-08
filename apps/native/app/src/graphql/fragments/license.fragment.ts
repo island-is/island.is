@@ -33,6 +33,10 @@ export const LicenseFragment = gql`
       timeout
       status
     }
+    fetch {
+      status
+      updated
+    }
     payload {
       data {
         ...LicenseDataFieldFragment
@@ -42,3 +46,44 @@ export const LicenseFragment = gql`
   }
   ${LicenseDataFieldFragment}
 `;
+
+
+export interface ILicenseDataField {
+  type: string;
+  name: string;
+  label: string;
+  value: string;
+  fields: Array<{
+    type: string;
+    name: string;
+    label: string;
+    value: string;
+    fields: Array<{
+      type: string;
+      name: string;
+      label: string;
+      value: string;
+    }>
+  }>
+}
+
+export interface ILicense {
+  nationalId: string;
+  license: {
+    type: string;
+    provider: {
+      id: string;
+    }
+    pkpass: string;
+    timeout: string;
+    status: string;
+  }
+  fetch: {
+    status: string;
+    updated: string;
+  }
+  payload: {
+    data: ILicenseDataField;
+    rawData: string;
+  }
+}
