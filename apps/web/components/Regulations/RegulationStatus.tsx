@@ -1,7 +1,8 @@
 import * as s from './RegulationStatus.treat'
 
 import React, { ReactNode } from 'react'
-import { ISODate, RegulationMaybeDiff } from './Regulations.types'
+import { ISODate } from '@island.is/regulations'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { Hidden, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import { useDateUtils } from './regulationUtils'

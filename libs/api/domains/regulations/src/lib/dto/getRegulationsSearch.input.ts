@@ -1,4 +1,4 @@
-import type { Year } from '@island.is/clients/regulations'
+import type { Year } from '@island.is/regulations'
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsNumber, IsOptional, Max, Min } from 'class-validator'
 

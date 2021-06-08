@@ -7,14 +7,11 @@ import {
   BulletList,
   Link,
 } from '@island.is/island-ui/core'
-import { RegulationMaybeDiff } from './Regulations.types'
+import { prettyName, useDomid } from '@island.is/regulations'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { uniqBy } from 'lodash'
-import {
-  prettyName,
-  useDomid,
-  useRegulationLinkResolver,
-} from './regulationUtils'
+import { useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 
 export type AffectingRegulationsProps = {

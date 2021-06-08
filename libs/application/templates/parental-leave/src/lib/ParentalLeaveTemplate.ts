@@ -154,6 +154,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 },
                 { event: DefaultEvents.REJECT, name: 'Reject', type: 'reject' },
               ],
+              read: {
+                answers: [
+                  'requestRights',
+                  'usePersonalAllowanceFromSpouse',
+                  'personalAllowanceFromSpouse',
+                ],
+              },
             },
             {
               id: Roles.APPLICANT,
@@ -187,6 +194,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
+          onEntry: {
+            apiModuleAction:
+              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromOtherParent,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -250,7 +262,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.EmployerApproval),
                 ),
               read: {
-                answers: ['periods', 'selectedChild'],
+                answers: ['periods', 'selectedChild', 'payments'],
                 externalData: ['children'],
               },
               actions: [

@@ -115,6 +115,9 @@
     "api-domains-national-registry-x-road": {
       "tags": []
     },
+    "api-domains-party-letter-registry": {
+      "tags": []
+    },
     "api-domains-regulations": {
       "tags": []
     },
@@ -122,6 +125,9 @@
       "tags": []
     },
     "api-domains-syslumenn": {
+      "tags": []
+    },
+    "api-domains-temporary-voter-registry": {
       "tags": []
     },
     "api-domains-translations": {
@@ -438,6 +444,9 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-validators": {
+      "tags": []
+    },
     "nova-sms": {
       "tags": []
     },
@@ -448,6 +457,9 @@
       "tags": []
     },
     "reference-next-app": {
+      "tags": []
+    },
+    "regulations": {
       "tags": []
     },
     "service-portal": {
@@ -494,6 +506,9 @@
       "tags": []
     },
     "service-portal-eligibility": {
+      "tags": []
+    },
+    "service-portal-endorsements": {
       "tags": []
     },
     "service-portal-family": {

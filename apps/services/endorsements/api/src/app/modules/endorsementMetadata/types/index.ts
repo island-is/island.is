@@ -1,13 +1,13 @@
-// TODO: Fix this type
-
-import { EndorsementSystemSignedListsResponse } from '../providers/endorsementSystemSignedLists.service'
-import { NationalRegistryUserResponse } from '../providers/nationalRegistryUser.service'
+import { EndorsementSystemSignedListsResponse } from '../providers/endorsementSystem/endorsementSystemSignedLists.service'
+import { NationalRegistryUserResponse } from '../providers/nationalRegistry.service'
+import { TemporaryVoterRegistryResponse } from '../providers/temporaryVoterRegistry/temporaryVoterRegistry.service'
 
 // add types for new metadata providers here
 export type MetadataProviderResponse = {
   [key: string]:
     | NationalRegistryUserResponse
     | EndorsementSystemSignedListsResponse
+    | TemporaryVoterRegistryResponse
 }
 
 export interface MetadataInput {
@@ -38,4 +38,5 @@ export enum EndorsementMetaField {
   FULL_NAME = 'fullName',
   ADDRESS = 'address',
   SIGNED_TAGS = 'signedTags',
+  VOTER_REGION = 'voterRegion',
 }
