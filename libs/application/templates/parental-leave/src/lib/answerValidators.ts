@@ -85,6 +85,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (isEmpty(period)) {
       let message = errorMessages.periodsStartDateRequired
       let field = 'startDate'
+
       if (
         (!answeredPeriods &&
           application.answers.firstPeriodStart &&
@@ -95,7 +96,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
         field = 'endDate'
         message = errorMessages.periodsEndDateRequired
       }
-      return buildError(message, field)
+
+      if (!lastAnsweredPeriod?.startDate) {
+        return buildError(message, field)
+      }
     }
 
     if (period?.startDate !== undefined) {

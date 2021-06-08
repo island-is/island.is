@@ -61,6 +61,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'person',
         },
+        children: [
+          // Medmaeli
+          {
+            name: defineMessage({
+              id: 'service.portal:endorsements',
+              defaultMessage: 'Meðmæli',
+            }),
+            path: ServicePortalPath.Endorsements,
+          },
+        ],
       },
       {
         name: defineMessage({

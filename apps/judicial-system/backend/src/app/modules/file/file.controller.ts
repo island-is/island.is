@@ -181,7 +181,11 @@ export class FileController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
   ): Promise<CaseFile[]> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+    const existingCase = await this.caseService.findByIdAndUser(
+      caseId,
+      user,
+      false,
+    )
 
     return this.fileService.getAllCaseFiles(existingCase.id)
   }

@@ -3,18 +3,31 @@ import {
   buildSection,
   buildSubmitField,
   buildCustomField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
   Form,
   FormModes,
   buildRadioField,
   buildMultiField,
-  buildExternalDataProvider,
-  buildDataProviderItem,
+  DefaultEvents,
+  ExternalData,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
+import { Constituencies } from '../types'
+import Logo from '../assets/Logo'
+import { PartyLetterRegistryPartyLetter } from '../dataProviders/partyLetterRegistry'
+
+const hasPartyLetter = (externalData: ExternalData) => {
+  const partyLetter = externalData.partyLetterRegistry
+    ?.data as PartyLetterRegistryPartyLetter
+
+  return !!partyLetter?.partyLetter
+}
 
 export const ConstituencyForm: Form = buildForm({
   id: 'Constitunecy',
   title: m.constituencySection.title,
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -28,18 +41,27 @@ export const ConstituencyForm: Form = buildForm({
           largeButtons: true,
           defaultValue: '',
           options: [
-            { value: 'Norðausturkjördæmi', label: 'Norðausturkjördæmi' },
-            { value: 'Norðvesturkjördæmi', label: 'Norðvesturkjördæmi' },
             {
-              value: 'Reykjavíkurkjördæmi norður',
-              label: 'Reykjavíkurkjördæmi norður',
+              value: Constituencies.NORTH_EAST,
+              label: Constituencies.NORTH_EAST,
             },
             {
-              value: 'Reykjavíkurkjördæmi suður',
-              label: 'Reykjavíkurkjördæmi suður',
+              value: Constituencies.NORTH_WEST,
+              label: Constituencies.NORTH_WEST,
             },
-            { value: 'Suðurkjördæmi', label: 'Suðurkjördæmi' },
-            { value: 'Suðvesturkjördæmi', label: 'Suðvesturkjördæmi' },
+            {
+              value: Constituencies.RVK_NORTH,
+              label: Constituencies.RVK_NORTH,
+            },
+            {
+              value: Constituencies.RVK_SOUTH,
+              label: Constituencies.RVK_SOUTH,
+            },
+            { value: Constituencies.SOUTH, label: Constituencies.SOUTH },
+            {
+              value: Constituencies.SOUTH_WEST,
+              label: Constituencies.SOUTH_WEST,
+            },
           ],
         }),
       ],
@@ -59,7 +81,45 @@ export const ConstituencyForm: Form = buildForm({
               id: 'disclaimer',
               type: undefined,
               title: '',
-              subTitle: m.disclaimerSection.descriptionPt2,
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'partyLetterRegistry',
+              type: 'PartyLetterRegistryProvider',
+              title: '',
+              subTitle: '',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'partyLetterFailed',
+      title: '',
+      condition: (_, externalData) => {
+        return !hasPartyLetter(externalData)
+      },
+      children: [
+        buildMultiField({
+          id: 'partyLetterFailed',
+          title: '',
+          children: [
+            buildCustomField({
+              id: 'intro',
+              title: '',
+              component: 'PartyLetterFailed',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              title: '',
+              placement: 'footer',
+              actions: [],
             }),
           ],
         }),
@@ -68,6 +128,9 @@ export const ConstituencyForm: Form = buildForm({
     buildSection({
       id: 'overviewSection',
       title: m.constituencySection.confirmationTitle,
+      condition: (_, externalData) => {
+        return hasPartyLetter(externalData)
+      },
       children: [
         buildMultiField({
           id: 'overviewSubmit',
@@ -83,9 +146,11 @@ export const ConstituencyForm: Form = buildForm({
               id: 'submit',
               title: '',
               placement: 'footer',
+
+              refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: 'SUBMIT',
+                  event: DefaultEvents.SUBMIT,
                   name: m.overviewSection.submitButton,
                   type: 'primary',
                 },

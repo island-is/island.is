@@ -18,6 +18,7 @@ interface Props {
   name?: string
   locale?: Locale
   label: string
+  size?: DatePickerProps['size']
   placeholder?: string
   backgroundColor?: DatePickerBackgroundColor
   maxDate?: DatePickerProps['maxDate']
@@ -35,6 +36,7 @@ export const DatePickerController: FC<Props> = ({
   name = id,
   locale,
   label,
+  size,
   placeholder,
   backgroundColor,
   maxDate,
@@ -51,6 +53,7 @@ export const DatePickerController: FC<Props> = ({
         <DatePicker
           hasError={error !== undefined}
           disabled={disabled}
+          size={size}
           id={id}
           errorMessage={error}
           locale={locale}

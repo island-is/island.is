@@ -36,6 +36,7 @@ const user: User = {
   nationalId: '1234567890',
   actor: {
     nationalId: '2234567890',
+    scope: [],
   },
   scope: [],
   authorization: '',

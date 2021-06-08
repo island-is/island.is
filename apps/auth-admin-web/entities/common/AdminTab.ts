@@ -8,4 +8,5 @@ export enum AdminTab {
   Translation = 7,
   Users = 8,
   ApiScopeGroups = 9,
+  Domains = 10,
 }

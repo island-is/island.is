@@ -50,7 +50,7 @@ describe('Login route', () => {
     // Act
     render(
       <MockedProvider mocks={mockJudgeQuery} addTypename={false}>
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <Login />
         </UserProvider>
       </MockedProvider>,
