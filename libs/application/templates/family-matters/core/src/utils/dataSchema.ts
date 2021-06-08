@@ -38,6 +38,9 @@ export const validateContactInfo = (
     phoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
       params: errors.phone,
     }),
+    presentationPhone: z.string().refine((v) => isValidPhoneNumber(v), {
+      params: errors.phone,
+    }),
   })
 }
 
@@ -52,6 +55,11 @@ export const validateCounterParty = (
       phoneNumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
         params: errors.phone,
       }),
+      presentationPhone: z
+        .string()
+        .refine((v) => validateOptionalPhoneNumber(v), {
+          params: errors.phone,
+        }),
     })
     .refine((v) => v.email || v.phoneNumber, {
       params: errors.counterParty,
