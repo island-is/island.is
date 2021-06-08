@@ -1,3 +1,7 @@
+import {
+  DEFAULT_ACTION_IDENTIFIER,
+  getPresentedNotificationsAsync,
+} from 'expo-notifications'
 import { AppState, AppStateStatus, Linking, Platform } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
@@ -8,6 +12,7 @@ import { uiStore } from '../../stores/ui-store'
 import { hideAppLockOverlay, showAppLockOverlay } from '../app-lock'
 import { ButtonRegistry } from '../component-registry'
 import { isOnboarded } from '../onboarding'
+import { handleNotificationResponse } from './setup-notifications'
 
 let backgroundAppLockTimeout: NodeJS.Timeout
 
@@ -92,15 +97,26 @@ export function setupEventHandlers() {
           lockScreenActivatedAt !== undefined &&
           lockScreenActivatedAt + appLockTimeout > Date.now()
         ) {
-          hideAppLockOverlay();
+          hideAppLockOverlay()
         } else {
           Navigation.updateProps(lockScreenComponentId, { status })
         }
       }
     }
+
+    if (status === 'active') {
+      getPresentedNotificationsAsync().then((notifications) => {
+        notifications.forEach((notification) =>
+          handleNotificationResponse({
+            notification,
+            actionIdentifier: 'NOOP',
+          }),
+        )
+      })
+    }
   })
 
-  // show user screen
+  // handle navigation topBar buttons
   Navigation.events().registerNavigationButtonPressedListener(
     ({ buttonId }) => {
       if (buttonId === ButtonRegistry.UserButton) {

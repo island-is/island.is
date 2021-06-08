@@ -26,7 +26,6 @@ export function getDefaultOptions(
       animate: true,
       borderHeight: 0,
       borderColor: 'transparent',
-      rightButtonColor: theme.color.blue400,
     },
     window: {
       backgroundColor:

@@ -1,32 +1,24 @@
-import { useQuery } from '@apollo/client'
 import {
   NavigationBarSheet,
   NotificationCard,
 } from '@island.is/island-ui-native'
-import React from 'react'
+import { dismissAllNotificationsAsync } from 'expo-notifications'
+import React, { useCallback, useEffect } from 'react'
 import { useIntl } from 'react-intl'
-import {
-  ActivityIndicator,
-  FlatList,
-  SafeAreaView,
-  Text,
-  TouchableHighlight,
-} from 'react-native'
+import { FlatList, SafeAreaView, TouchableHighlight } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import { useTheme } from 'styled-components'
-import logo from '../../assets/logo/logo-64w.png'
-import { client } from '../../graphql/client'
-import { INotification } from '../../graphql/fragments/notification.fragment'
-import {
-  ListNotificationsResponse,
-  LIST_NOTIFICATIONS_QUERY,
-} from '../../graphql/queries/list-notifications.query'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { navigateToNotification } from '../../lib/deep-linking'
-import { useNotificationsStore } from '../../stores/notifications-store'
+import {
+  actionsForNotification,
+  Notification,
+  useNotificationsStore,
+} from '../../stores/notifications-store'
+import { useOrganizationsStore } from '../../stores/organizations-store'
 import { testIDs } from '../../utils/test-ids'
 
 const {
@@ -42,32 +34,21 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  const notificationsRes = useQuery<ListNotificationsResponse>(
-    LIST_NOTIFICATIONS_QUERY,
-    {
-      client,
-    },
-  )
-  const notificationsStore = useNotificationsStore()
+  const { getNotifications } = useNotificationsStore()
   const intl = useIntl()
   const theme = useTheme()
+  const notifications = getNotifications()
+  const { getOrganizationLogoUrl } = useOrganizationsStore()
 
-  if (notificationsRes.loading) {
-    return <ActivityIndicator />
-  }
-
-  if (!notificationsRes.data) {
-    return <Text>No data</Text>
-  }
-
-  const notifications = notificationsRes.data?.listNotifications!
-
-  const onNotificationPress = (notification: INotification) => {
+  const onNotificationPress = useCallback((notification: Notification) => {
     navigateToNotification(notification, componentId)
-  }
+  }, [])
 
-  const renderNotificationItem = ({ item }: { item: INotification }) => {
-    const unread = !notificationsStore.readItems.has(item.id)
+  useEffect(() => {
+    dismissAllNotificationsAsync();
+  })
+
+  const renderNotificationItem = ({ item }: { item: Notification }) => {
     return (
       <TouchableHighlight
         underlayColor={theme.color.blue100}
@@ -77,21 +58,14 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         <NotificationCard
           key={item.id}
           id={item.id}
-          title={item.serviceProvider}
-          message={item.title}
+          category={item.category}
+          title={item.title!}
+          message={item.body!}
           date={new Date(item.date)}
-          icon={logo}
-          unread={!notificationsStore.readItems.has(item.id)}
-          onPress={() => navigateToNotification(item, componentId)}
-          actions={item.actions?.map((action) => ({
-            text: action.text,
-            onPress() {
-              navigateToNotification(
-                { id: item.id, link: action.link },
-                componentId,
-              )
-            },
-          }))}
+          icon={getOrganizationLogoUrl(item.title!, 64)}
+          unread={!item.read}
+          onPress={() => onNotificationPress(item)}
+          actions={actionsForNotification(item, componentId)}
         />
       </TouchableHighlight>
     )
@@ -112,7 +86,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         <FlatList
           style={{ flex: 1 }}
           data={notifications}
-          keyExtractor={(item: any) => item.id}
+          keyExtractor={(item: Notification) => item.id}
           renderItem={renderNotificationItem}
         />
       </SafeAreaView>

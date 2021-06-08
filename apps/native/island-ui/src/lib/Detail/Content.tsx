@@ -22,15 +22,15 @@ const Message = styled.Text`
 `
 
 interface ContentProps {
-  title: string
-  message: string
+  title?: string
+  message?: string
 }
 
 export function Content({ title, message }: ContentProps) {
   return (
     <Host>
-      <Title>{title}</Title>
-      <Message>{message}</Message>
+      {title && <Title>{title}</Title>}
+      {message && <Message>{message}</Message>}
     </Host>
   )
 }

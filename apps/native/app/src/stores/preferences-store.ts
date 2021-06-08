@@ -81,7 +81,7 @@ export const preferencesStore = create<PreferencesStore>(
       },
     }),
     {
-      name: 'preferences04',
+      name: 'preferences_04',
       getStorage: () => AsyncStorage,
     },
   ),

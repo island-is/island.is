@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-community/async-storage'
 import { ActionSheetIOS, DevSettings, Platform } from 'react-native'
 import DialogAndroid from 'react-native-dialogs'
 import { Navigation } from 'react-native-navigation'
@@ -8,6 +9,10 @@ import { getAppRoot } from './get-app-root'
 
 const devMenuOptions = {
   storybook: false,
+}
+
+function clearAsyncStorage() {
+  AsyncStorage.clear();
 }
 
 function toggleLockScreen() {
@@ -76,6 +81,7 @@ export function setupDevMenu() {
         : {}),
       TOGGLE_LANGUAGE: 'Toggle language',
       RESET_PREFERENCES: 'Reset preferences',
+      CLEAR_ASYNC_STORAGE: 'Clear async storage',
       LOGOUT: 'Logout',
     }
 
@@ -97,6 +103,8 @@ export function setupDevMenu() {
           return enforceLogout()
         case 'LOGIN_COGNITO':
           return loginCognito()
+        case 'CLEAR_ASYNC_STORAGE':
+          return clearAsyncStorage()
       }
     }
 

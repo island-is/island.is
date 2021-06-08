@@ -28,7 +28,7 @@ import {
   useNavigationSearchBarCancelPress,
   useNavigationSearchBarUpdate,
 } from 'react-native-navigation-hooks/dist'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
@@ -41,6 +41,7 @@ import {
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { navigateTo } from '../../lib/deep-linking'
+import { inboxStore, useInboxStore } from '../../stores/inbox-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
@@ -110,35 +111,48 @@ const {
   },
 )
 
-const PressableListItem = React.memo(({ item }: { item: IDocument }) => {
-  const { getOrganizationLogoUrl } = useOrganizationsStore()
-  return (
-    <PressableHighlight
-      onPress={() =>
-        navigateTo(`/inbox/${item.id}`, { title: item.senderName })
-      }
-    >
-      <ListItem
-        title={item.senderName}
-        subtitle={item.subject}
-        date={new Date(item.date)}
-        swipable
-        icon={
-          <Image
-            source={{ uri: getOrganizationLogoUrl(item.senderName, 75) }}
-            resizeMode="contain"
-            style={{ width: 25, height: 25 }}
-          />
+const PressableListItem = React.memo(
+  ({ item, unread }: { item: IDocument; unread: boolean }) => {
+    const { getOrganizationLogoUrl } = useOrganizationsStore()
+    return (
+      <PressableHighlight
+        onPress={() =>
+          navigateTo(`/inbox/${item.id}`, { title: item.senderName })
         }
-      />
-    </PressableHighlight>
-  )
-})
+      >
+        <ListItem
+          title={item.senderName}
+          subtitle={item.subject}
+          date={new Date(item.date)}
+          swipable
+          unread={unread}
+          onToggleUnread={() => {
+            console.log('oki dok')
+            if (unread) {
+              inboxStore.getState().actions.setRead(item.id)
+            } else {
+              inboxStore.getState().actions.setUnread(item.id)
+            }
+          }}
+          icon={
+            <Image
+              source={getOrganizationLogoUrl(item.senderName, 75)}
+              resizeMode="contain"
+              style={{ width: 25, height: 25 }}
+            />
+          }
+        />
+      </PressableHighlight>
+    )
+  },
+)
 
 export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
 
   const ui = useUiStore()
+  const theme = useTheme()
+  const { initialized, readItems } = useInboxStore()
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const flatListRef = useRef<FlatList>(null)
@@ -207,12 +221,23 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   useEffect(() => {
     if (res.data && !res.loading) {
       const items = res?.data?.listDocuments ?? []
-      setIndexedItems(
-        items.map((item) => ({
+
+      if (!initialized) {
+        // mark all as read on first app start
+        inboxStore.setState({
+          initialized: true,
+          readItems: items.map((item) => item.id),
+        })
+      }
+
+      const indexedItems = items.map((item) => {
+        return {
           ...item,
           fulltext: `${item.subject.toLocaleLowerCase()} ${item.senderName.toLocaleLowerCase()}`,
-        })),
-      )
+        }
+      })
+
+      setIndexedItems(indexedItems)
     }
   }, [res.data, res.loading])
 
@@ -228,6 +253,36 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   }, [ui.query, indexedItems])
 
   useEffect(() => {
+    if (!initialized) {
+      return
+    }
+    let unreadCount = 0
+    indexedItems.forEach((item) => {
+      const unread = !readItems.includes(item.id)
+      if (unread) {
+        unreadCount += 1
+      }
+    })
+
+    Navigation.mergeOptions(ComponentRegistry.InboxScreen, {
+      bottomTab: {
+        iconColor: theme.color.blue400,
+        text: initialized
+          ? intl.formatMessage({ id: 'inbox.bottomTabText' })
+          : '',
+        testID: testIDs.TABBAR_TAB_INBOX,
+        iconInsets: {
+          bottom: -4,
+        },
+        icon: require('../../assets/icons/tabbar-inbox.png'),
+        selectedIcon: require('../../assets/icons/tabbar-inbox-selected.png'),
+        badge: unreadCount > 0 ? unreadCount.toString() : (null as any),
+        badgeColor: theme.color.red400,
+      },
+    })
+  }, [initialized, readItems, indexedItems])
+
+  useEffect(() => {
     if (Platform.OS === 'ios') {
       AppState.addEventListener('change', onAppStateBlur)
       return () => {
@@ -241,8 +296,10 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   }, [])
 
   const renderItem = useCallback(
-    ({ item }: { item: IDocument }) => <PressableListItem item={item} />,
-    [],
+    ({ item }: { item: IDocument }) => (
+      <PressableListItem item={item} unread={!readItems.includes(item.id)} />
+    ),
+    [readItems],
   )
 
   const isSearch = ui.query.length > 0

@@ -112,6 +112,7 @@ const Dot = styled.View`
 interface CardProps {
   id: string
   icon: ImageSourcePropType
+  category?: string;
   date: Date
   title: string
   message: string
@@ -123,6 +124,7 @@ interface CardProps {
 export function NotificationCard({
   id,
   onPress,
+  category,
   title,
   message,
   date,

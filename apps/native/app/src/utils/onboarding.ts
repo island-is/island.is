@@ -31,8 +31,8 @@ export async function getOnboardingScreens() {
 
   screens.push({
     component: {
+      id: ComponentRegistry.OnboardingPinCodeScreen,
       name: ComponentRegistry.OnboardingPinCodeScreen,
-      id: 'ONBOARDING_PIN_CODE_SCREEN',
     },
   })
 
@@ -49,8 +49,8 @@ export async function getOnboardingScreens() {
     // biometrics screen
     screens.push({
       component: {
+        id: ComponentRegistry.OnboardingBiometricsScreen,
         name: ComponentRegistry.OnboardingBiometricsScreen,
-        id: 'ONBOARDING_BIOMETRICS_SCREEN',
         passProps: {
           hasHardware,
           isEnrolled,
@@ -69,8 +69,8 @@ export async function getOnboardingScreens() {
   if (Platform.OS !== 'android') {
     screens.push({
       component: {
+        id: ComponentRegistry.OnboardingNotificationsScreen,
         name: ComponentRegistry.OnboardingNotificationsScreen,
-        id: 'ONBOARDING_NOTIFICATIONS_SCREEN',
       },
     })
 
@@ -92,7 +92,7 @@ export async function nextOnboardingStep() {
   }
 
   if (screens.length === 1) {
-    Navigation.push('LOGIN_SCREEN', screens[0])
+    Navigation.push(ComponentRegistry.LoginScreen, screens[0])
     return
   }
 

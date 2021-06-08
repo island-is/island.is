@@ -1,48 +1,47 @@
-import { Heading, NotificationCard } from "@island.is/island-ui-native"
-import React from 'react'
-import { SafeAreaView } from "react-native"
-import logo from '../../assets/logo/logo-64w.png'
-import { INotification } from '../../graphql/fragments/notification.fragment'
-import { useNotificationsStore } from '../../stores/notifications-store'
+import { Heading, NotificationCard } from '@island.is/island-ui-native'
+import React, { useCallback } from 'react'
+import { SafeAreaView } from 'react-native'
 import { navigateToNotification } from '../../lib/deep-linking'
-import { useIntl } from "../../lib/intl"
+import { useIntl } from '../../lib/intl'
+import {
+  Notification,
+  actionsForNotification,
+  useNotificationsStore,
+} from '../../stores/notifications-store'
+import { useOrganizationsStore } from '../../stores/organizations-store'
 
 interface NotificationsModuleProps {
-  items: INotification[];
-  componentId: string;
+  componentId: string
 }
 
-export const NotificationsModule = React.memo(({ items, componentId }: NotificationsModuleProps) => {
-  const intl = useIntl()
-  const notificationsStore = useNotificationsStore()
+export const NotificationsModule = React.memo(
+  ({ componentId }: NotificationsModuleProps) => {
+    const intl = useIntl()
+    const { getNotifications } = useNotificationsStore()
+    const { getOrganizationLogoUrl } = useOrganizationsStore()
+    const notifications = getNotifications().slice(0, 5)
+    const onNotificationPress = useCallback((notification: Notification) => {
+      navigateToNotification(notification, componentId);
+    }, [])
 
-  return (
-    <SafeAreaView style={{ marginHorizontal: 16 }}>
-      <Heading>{intl.formatMessage({ id: 'home.notifications' })}</Heading>
-      {items
-        .map((notification) => (
+    return (
+      <SafeAreaView style={{ marginHorizontal: 16 }}>
+        <Heading>{intl.formatMessage({ id: 'home.notifications' })}</Heading>
+        {notifications.map((notification) => (
           <NotificationCard
             key={notification.id}
             id={notification.id}
-            title={notification.serviceProvider}
-            message={notification.title}
+            category={notification.category}
+            title={notification.title!}
+            message={notification.body!}
             date={new Date(notification.date)}
-            icon={logo}
-            unread={!notificationsStore.readItems.has(notification.id)}
-            onPress={() =>
-              navigateToNotification(notification, componentId)
-            }
-            actions={notification.actions?.map((action) => ({
-              text: action.text,
-              onPress() {
-                navigateToNotification(
-                  { id: notification.id, link: action.link },
-                  componentId,
-                )
-              },
-            }))}
+            icon={getOrganizationLogoUrl(notification.title!, 64)}
+            unread={!notification.read}
+            onPress={() => onNotificationPress(notification)}
+            actions={actionsForNotification(notification, componentId)}
           />
         ))}
-    </SafeAreaView>
-  )
-});
+      </SafeAreaView>
+    )
+  },
+)

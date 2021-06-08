@@ -1,6 +1,6 @@
 import { Layout } from 'react-native-navigation'
 import { checkIsAuthenticated } from '../../stores/auth-store'
-import { ComponentRegistry } from '../component-registry'
+import { ComponentRegistry, StackRegistry } from '../component-registry'
 import { getMainRoot } from '../get-main-root'
 import { getOnboardingScreens } from '../onboarding'
 
@@ -19,12 +19,12 @@ export async function getAppRoot(): Promise<Layout> {
   if (!isAuthenticated || isOnboarding) {
     return {
       stack: {
-        id: 'LOGIN_STACK',
+        id: StackRegistry.LoginStack,
         children: [
           {
             component: {
+              id: ComponentRegistry.LoginScreen,
               name: ComponentRegistry.LoginScreen,
-              id: 'LOGIN_SCREEN',
             },
           },
         ].concat(isAuthenticated ? onboardingScreens : []),

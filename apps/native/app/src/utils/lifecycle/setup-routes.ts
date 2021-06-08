@@ -6,7 +6,7 @@ import { DocumentDetailScreen } from '../../screens/document-detail/document-det
 import { authStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { uiStore } from '../../stores/ui-store'
-import { ComponentRegistry } from '../component-registry'
+import { ComponentRegistry, StackRegistry, MainBottomTabs } from '../component-registry'
 import { config } from '../config'
 
 const selectTab = (currentTabIndex: number) => {
@@ -14,7 +14,7 @@ const selectTab = (currentTabIndex: number) => {
   const { selectedTab } = uiStore.getState()
   uiStore.setState({ unselectedTab: selectedTab, selectedTab: currentTabIndex })
   // switch tab
-  Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
+  Navigation.mergeOptions(MainBottomTabs, {
     bottomTabs: {
       currentTabIndex,
     },
@@ -58,8 +58,8 @@ export function setupRoutes() {
 
   addRoute('/wallet/:passId', async ({ passId, fromId, toId, item }: any) => {
     selectTab(2)
-    await Navigation.popToRoot('WALLET_TAB')
-    Navigation.push('WALLET_TAB', {
+    await Navigation.popToRoot(StackRegistry.WalletStack)
+    Navigation.push(StackRegistry.WalletStack, {
       component: {
         name: ComponentRegistry.WalletPassScreen,
         passProps: {
@@ -88,8 +88,8 @@ export function setupRoutes() {
 
     // ensure INBOX_SCREEN doesn't already have same screen with same componentId etc.
     await Navigation.dismissAllModals()
-    await Navigation.popToRoot('INBOX_SCREEN')
-    await Navigation.push('INBOX_TAB', {
+    await Navigation.popToRoot(StackRegistry.InboxStack)
+    await Navigation.push(StackRegistry.InboxStack, {
       component: {
         name: ComponentRegistry.DocumentDetailScreen,
         passProps: {

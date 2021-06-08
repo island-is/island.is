@@ -14,14 +14,10 @@ import {
   ListApplicationsResponse,
   LIST_APPLICATIONS_QUERY,
 } from '../../graphql/queries/list-applications.query'
-import {
-  ListNotificationsResponse,
-  LIST_NOTIFICATIONS_QUERY,
-} from '../../graphql/queries/list-notifications.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { useUiStore } from '../../stores/ui-store'
-import { rightButtons } from '../../utils/get-main-root'
+import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
 import { NotificationsModule } from './notifications-module'
@@ -36,7 +32,7 @@ const {
       title: {
         text: initialized ? intl.formatMessage({ id: 'home.screenTitle' }) : '',
       },
-      rightButtons: initialized ? rightButtons : [],
+      rightButtons: initialized ? getRightButtons() : [],
     },
     bottomTab: {
       ...({
@@ -86,11 +82,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     flatListRef.current?.scrollToOffset({ offset: -100, animated: true })
   })
 
-  const notificationsRes = useQuery<ListNotificationsResponse>(
-    LIST_NOTIFICATIONS_QUERY,
-    { client },
-  )
-
   const applicationsRes = useQuery<ListApplicationsResponse>(
     LIST_APPLICATIONS_QUERY,
     { client },
@@ -104,7 +95,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const refetch = async () => {
     setLoading(true)
     try {
-      await notificationsRes.refetch()
       await applicationsRes.refetch()
     } catch (err) {
       // noop
@@ -133,12 +123,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     },
     {
       id: 'notifications',
-      component: (
-        <NotificationsModule
-          items={notificationsRes.data?.listNotifications?.slice(0, 5)!}
-          componentId={componentId}
-        />
-      ),
+      component: <NotificationsModule componentId={componentId} />,
     },
   ]
 

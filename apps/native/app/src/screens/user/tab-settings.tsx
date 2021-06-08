@@ -11,7 +11,8 @@ import {
   isEnrolledAsync,
   supportedAuthenticationTypesAsync,
 } from 'expo-local-authentication'
-import { getDevicePushTokenAsync } from 'expo-notifications'
+// import { getDevicePushTokenAsync } from 'expo-notifications'
+import messaging from '@react-native-firebase/messaging';
 import React, { useEffect, useRef, useState } from 'react'
 import {
   Animated,
@@ -21,6 +22,7 @@ import {
   ScrollView,
   Switch,
   View,
+  Alert as RNAlert
 } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
@@ -137,13 +139,12 @@ export function TabSettings() {
         setLoadingCP(false)
         setLocalPackage(p)
       })
-      getDevicePushTokenAsync()
-        .then(({ data }) => {
-          setPushToken(data)
-        })
-        .catch((err) => {
-          setPushToken('no token in simulator')
-        })
+      messaging().getToken().then(token => {
+        setPushToken(token);
+      })
+      .catch((err) => {
+        setPushToken('no token in simulator')
+      })
     }, 330)
     AppState.addEventListener('change', (state) => {
       if (state === 'active') {
@@ -413,7 +414,7 @@ export function TabSettings() {
         />
         <PressableHighlight
           onPress={() => {
-            throw new Error('My first Sentry error!')
+            RNAlert.prompt('token', 'yup', undefined, undefined, pushToken);
           }}
           onLongPress={() => {
             Sentry.nativeCrash()

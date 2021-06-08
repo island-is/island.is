@@ -3,8 +3,10 @@ import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
 import organizations from '../graphql/cache/organizations.json'
+import islandLogoSrc from '../../assets/logo/logo-64w.png'
 import { client } from '../graphql/client'
 import { GET_ORGANIZATIONS_QUERY } from '../graphql/queries/get-organizations.query'
+import { ImageSourcePropType } from 'react-native'
 
 interface Organization {
   id: string
@@ -26,7 +28,7 @@ interface Organization {
 
 interface OrganizationsStore extends State {
   organizations: Organization[]
-  getOrganizationLogoUrl(forName: string, size?: number): string
+  getOrganizationLogoUrl(forName: string, size?: number): ImageSourcePropType
   actions: any
 }
 
@@ -44,6 +46,10 @@ export const organizationsStore = create<OrganizationsStore>(
     (set, get) => ({
       organizations: processItems(organizations),
       getOrganizationLogoUrl(forName: string, size = 100) {
+        if (size === 64 && forName === 'Stafrænt Ísland') {
+          return islandLogoSrc;
+        }
+
         let c = logoCache.get(forName)
         if (!c) {
           const qs = String(forName).trim().toLocaleLowerCase()
@@ -59,8 +65,8 @@ export const organizationsStore = create<OrganizationsStore>(
         const url =
           c ??
           '//images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
-        const res = `https:${url}?w=${size}&h=${size}&fit=pad&bg=white&fm=png`
-        return res
+        const uri = `https:${url}?w=${size}&h=${size}&fit=pad&bg=white&fm=png`
+        return { uri };
       },
       actions: {
         updateOriganizations() {
@@ -73,7 +79,7 @@ export const organizationsStore = create<OrganizationsStore>(
       },
     }),
     {
-      name: 'organizations',
+      name: 'organizations_01',
       getStorage: () => AsyncStorage,
     },
   ),

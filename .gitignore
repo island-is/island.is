@@ -120,6 +120,9 @@ buck-out/
 */fastlane/Preview.html
 */fastlane/screenshots
 
+## Firebase admin
+firebase-service-account.json
+
 ## Bundle artifact
 *.jsbundle
 

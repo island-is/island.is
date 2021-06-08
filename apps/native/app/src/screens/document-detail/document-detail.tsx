@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { dynamicColor, Header, Loader } from '@island.is/island-ui-native'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Animated, Platform, Share, StyleSheet, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -23,6 +23,7 @@ import {
 } from '../../graphql/queries/list-documents.query'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { authStore, useAuthStore } from '../../stores/auth-store'
+import { inboxStore } from '../../stores/inbox-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 
@@ -121,6 +122,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     setLoaded(false)
   })
 
+  useEffect(() => {
+    if (Document.id) {
+      inboxStore.getState().actions.setRead(Document.id)
+    }
+  }, [res.data])
+
   const loading = res.loading
 
   const fadeAnim = useRef(new Animated.Value(0)).current
@@ -144,7 +151,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           message={Document.subject}
           isLoading={loading}
           hasBorder={false}
-          logo={{ uri: getOrganizationLogoUrl(Document.senderName!, 75) }}
+          logo={getOrganizationLogoUrl(Document.senderName!, 75)}
         />
       </Host>
       <Border />

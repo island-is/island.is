@@ -32,3 +32,14 @@ export const ButtonRegistry = {
   NotificationsButton: `${prefix}.button.NotificationsButton`,
   ShareButton: `${prefix}.button.ShareButton`,
 }
+
+export const StackRegistry = {
+  LoginStack: `${prefix}.stack.LoginStack`,
+  InboxStack: `${prefix}.stack.InboxStack`,
+  HomeStack: `${prefix}.stack.HomeStack`,
+  WalletStack: `${prefix}.stack.WalletStack`,
+};
+
+
+export const MainBottomTabs = `${prefix}.bottomTabs.MainBottomTabs`;
+

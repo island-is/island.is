@@ -4,53 +4,26 @@ import {
   Illustration,
   Onboarding,
 } from '@island.is/island-ui-native'
-import {
-  AndroidImportance,
-  getPermissionsAsync,
-  requestPermissionsAsync,
-  setNotificationChannelAsync,
-} from 'expo-notifications'
+import messaging from '@react-native-firebase/messaging'
 import React from 'react'
-import { Platform } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { FormattedMessage, useIntl } from '../../lib/intl'
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
 
-enum PermissionStatus {
-  GRANTED = 'granted',
-  UNDETERMINED = 'undetermined',
-  DENIED = 'denied',
-}
-
-async function registerForPushNotificationsAsync() {
-  let finalStatus = PermissionStatus.UNDETERMINED
-  const { status: existingStatus } = await getPermissionsAsync()
-  finalStatus = existingStatus
-  if (existingStatus !== 'granted') {
-    const { status } = await requestPermissionsAsync()
-    finalStatus = status
-  }
-
-  if (Platform.OS === 'android') {
-    setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    })
-  }
-  return finalStatus
+async function requestUserPermission() {
+  const authStatus = await messaging().requestPermission()
+  return (
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL
+  )
 }
 
 export const OnboardingNotificationsScreen: NavigationFunctionComponent = () => {
   const intl = useIntl()
   const onAllowPress = () => {
-    registerForPushNotificationsAsync().then((status) => {
-      if (status === PermissionStatus.DENIED) {
-        // @todo Show manual steps to enable push notifications
-      }
+    requestUserPermission().then(() => {
       preferencesStore.setState(() => ({ hasOnboardedNotifications: true }))
       return nextOnboardingStep()
     })
