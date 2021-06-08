@@ -13,18 +13,15 @@ import {
   Option,
   Select,
 } from '@island.is/island-ui/core'
-import { useNamespace } from '@island.is/web/hooks'
+import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+import { useShortState } from '@island.is/regulations'
 import {
   RegulationLawChapterTree,
   RegulationMinistry,
 } from '@island.is/regulations/web'
 import { RegulationHomeTexts } from './RegulationTexts.types'
 import { OptionTypeBase, ValueType } from 'react-select'
-import {
-  RegulationSearchFilters,
-  RegulationSearchKey,
-  useShortState,
-} from './regulationUtils'
+import { RegulationSearchFilters, RegulationSearchKey } from './regulationUtils'
 import cn from 'classnames'
 
 // ---------------------------------------------------------------------------

@@ -2,9 +2,9 @@ import * as s from './MinistryTansfer.treat'
 import { bodyText as bodyTextClass } from './RegulationDisplay.treat'
 
 import React, { memo } from 'react'
-import { RegulationMaybeDiff } from './Regulations.types'
+import { interpolateArray, prettyName } from '@island.is/regulations'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import { interpolateArray, prettyName } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 
 export type MinistryTransferProps = {

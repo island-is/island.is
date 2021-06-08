@@ -1,4 +1,10 @@
-import { Year, getParams, prettyName } from '@island.is/regulations'
+import {
+  Year,
+  getParams,
+  prettyName,
+  isPlural,
+  interpolate,
+} from '@island.is/regulations'
 import {
   RegulationLawChapterTree,
   RegulationMinistryList,
@@ -30,8 +36,6 @@ import { RegulationsSearchSection } from '../../components/Regulations/Regulatio
 import {
   RegulationSearchFilters,
   useRegulationLinkResolver,
-  isPlural,
-  interpolate,
 } from '../../components/Regulations/regulationUtils'
 import { getUiTexts } from '../../components/Regulations/getUiTexts'
 import {
