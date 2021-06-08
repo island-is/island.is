@@ -84,7 +84,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     selectedEndorsements.length > maxEndorsements ||
     selectedEndorsements.length < minEndorsements
   const firstX = () => {
-    const tempEndorsements = endorsements
+    const tempEndorsements = endorsements ?? []
     return tempEndorsements?.slice(0, maxEndorsements)
   }
   const shuffled = () => {
