@@ -4,7 +4,6 @@ import {
   Case,
   CaseCustodyProvisions,
   CaseState,
-  CaseType,
 } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
@@ -20,30 +19,24 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as styles from './Overview.treat'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   handleNextButtonClick: () => void
-  isSendingNotification: boolean
+  isLoading: boolean
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    handleNextButtonClick,
-    isSendingNotification,
-  } = props
+  const { workingCase, handleNextButtonClick, isLoading } = props
   const { user } = useContext(UserContext)
 
   return (
     <>
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             Yfirlit kröfu um rannsóknarheimild
           </Text>
@@ -111,7 +104,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           </Box>
           {constructProsecutorDemands(workingCase)}
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <Accordion>
             <AccordionItem
               labelVariant="h3"
@@ -241,7 +234,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               ? 'Senda kröfu á héraðsdóm'
               : 'Endursenda kröfu á héraðsdóm'
           }
-          nextIsLoading={isSendingNotification}
+          nextIsLoading={isLoading}
           onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>
