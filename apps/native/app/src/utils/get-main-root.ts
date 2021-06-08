@@ -9,7 +9,6 @@ import {
 import { testIDs } from './test-ids'
 
 export const getRightButtons = ({ unreadCount = notificationsStore.getState().unreadCount } = {}): OptionsTopBarButton[] => {
-  console.log('getRightButtons', unreadCount);
   return [
     {
       accessibilityLabel: 'User',

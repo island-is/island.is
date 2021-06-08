@@ -171,7 +171,6 @@ export async function checkIsAuthenticated() {
   const { authorizeResult, fetchUserInfo, logout } = authStore.getState()
 
   if (!authorizeResult) {
-    console.log('no auth result')
     return false
   }
 

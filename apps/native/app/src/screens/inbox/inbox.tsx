@@ -127,7 +127,6 @@ const PressableListItem = React.memo(
           swipable
           unread={unread}
           onToggleUnread={() => {
-            console.log('oki dok')
             if (unread) {
               inboxStore.getState().actions.setRead(item.id)
             } else {

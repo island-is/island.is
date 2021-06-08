@@ -82,49 +82,14 @@ export async function setupNotifications() {
     }),
   });
 
-  // expo
   addNotificationReceivedListener((notification) => {
-    console.log('addNotificationReceivedListener')
-    console.log(JSON.stringify(notification))
     handleNotificationResponse({
       notification,
       actionIdentifier: 'NOOP',
     })
   })
 
-  // expo action clicked
   addNotificationResponseReceivedListener((response) => {
-    console.log('addNotificationResponseReceivedListener')
-    console.log(JSON.stringify(response))
     handleNotificationResponse(response)
   })
-
-  // LETS USE EXPO INSTEAD
-  // messaging().onNotificationOpenedApp(remoteMessage => {
-  //   console.log('messaging().onNotificationOpenedApp', remoteMessage);
-  //   // navigateToNotification(remoteMessage);
-  // });
-
-  // Check whether an initial notification is available
-  // messaging()
-  //   .getInitialNotification()
-  //   .then(remoteMessage => {
-  //     if (remoteMessage) {
-  //       console.log('messaging().getInitialNotification', remoteMessage);
-  //       // navigateToNotification(remoteMessage);
-  //     }
-  //   });
-
-  // handle firebase messages in foreground
-  // messaging().onMessage(async remoteMessage => {
-  //   notificationsStore.getState().actions.handleRemoteMessage(remoteMessage);
-  //   console.log('messaging().onMessage', remoteMessage);
-  // });
-
-  // // handle firebase messages in background
-  // messaging().setBackgroundMessageHandler(async remoteMessage => {
-  //   notificationsStore.getState().actions.handleRemoteMessage(remoteMessage);
-
-  //   console.log('messaging().setBackgroundMessageHandler', remoteMessage);
-  // });
 }
