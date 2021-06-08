@@ -1,6 +1,12 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Text, Box, Button, Input, AlertMessage } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  Button,
+  Input,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
@@ -9,7 +15,11 @@ import {
 } from '@island.is/shared/form-fields'
 import { useMutation, useQuery } from '@apollo/client'
 import EndorsementApproved from '../EndorsementApproved'
-import { GetFullName, GetEndorsements, GetVoterRegion } from '../../graphql/queries'
+import {
+  GetFullName,
+  GetEndorsements,
+  GetVoterRegion,
+} from '../../graphql/queries'
 import { EndorseList } from '../../graphql/mutations'
 import { PartyLetterRegistryPartyLetter } from '../../dataProviders/partyLetterRegistry'
 
@@ -26,7 +36,9 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const constituency = application.answers.constituency
   const { data: userData } = useQuery(GetFullName)
   const { data: voterRegion } = useQuery(GetVoterRegion)
-  const regionMismatch = constituency !== voterRegion?.temporaryVoterRegistryGetVoterRegion.regionName
+  const regionMismatch =
+    constituency !==
+    voterRegion?.temporaryVoterRegistryGetVoterRegion.regionName
   const { loading, error } = useQuery(GetEndorsements, {
     onCompleted: async ({ endorsementSystemUserEndorsements }) => {
       if (!loading && endorsementSystemUserEndorsements) {
@@ -61,7 +73,9 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
         <Box>
           <Box marginBottom={2}>
             <Text variant="h2" marginBottom={3}>
-              {`${formatMessage(m.endorsementDisclaimer.title)} ${party.partyLetter}`}
+              {`${formatMessage(m.endorsementDisclaimer.title)} ${
+                party.partyLetter
+              }`}
             </Text>
             <Text marginBottom={2}>
               {`${formatMessage(

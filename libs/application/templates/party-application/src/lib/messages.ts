@@ -440,9 +440,10 @@ export const m: MessageDir = {
     },
     regionMismatch: {
       id: 'pa.application:endorsement.disclaimer.region.mismatch',
-      defaultMessage: 'Þú virðist ekki með skráða búsetu í þessu kjördæmi. Ertu viss um að vilja halda áfram?',
+      defaultMessage:
+        'Þú virðist ekki með skráða búsetu í þessu kjördæmi. Ertu viss um að vilja halda áfram?',
       description: 'Region mismatch message',
-    }
+    },
   }),
   endorsementApproved: defineMessages({
     title: {
