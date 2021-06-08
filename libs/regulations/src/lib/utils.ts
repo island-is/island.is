@@ -59,7 +59,11 @@ export default function domid() {
 
 // ---------------------------------------------------------------------------
 
-// Returns a stable, unique ID string
+/** Returns a stable, unique ID string
+ *
+ * NOTE: it triggers harmless SSR hydration warnings in the browser,
+ * but those can't be avoided beause of how React is currently designed.
+ */
 export const useDomid = (staticId?: string) => useState(staticId || domid)[0]
 
 // ---------------------------------------------------------------------------
