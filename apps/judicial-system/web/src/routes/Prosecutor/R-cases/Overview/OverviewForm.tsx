@@ -16,7 +16,6 @@ import {
 import {
   capitalize,
   formatDate,
-  formatRequestedCustodyRestrictions,
   laws,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
@@ -57,8 +56,8 @@ const OverviewForm: React.FC<Props> = (props) => {
                 value: workingCase.policeCaseNumber,
               },
               {
-                title: 'Dómstóll',
-                value: workingCase.court?.name,
+                title: 'Krafa stofnuð',
+                value: formatDate(workingCase.created, 'P'),
               },
               {
                 title: 'Embætti',
@@ -76,31 +75,9 @@ const OverviewForm: React.FC<Props> = (props) => {
                   TIME_FORMAT,
                 )}`,
               },
-              { title: 'Ákærandi', value: workingCase.prosecutor?.name },
               {
-                title: workingCase.parentCase
-                  ? `${
-                      workingCase.type === CaseType.CUSTODY
-                        ? 'Fyrri gæsla'
-                        : 'Fyrra farbann'
-                    }`
-                  : 'Tími handtöku',
-                value: workingCase.parentCase
-                  ? `${capitalize(
-                      formatDate(
-                        workingCase.parentCase.requestedValidToDate,
-                        'PPPP',
-                        true,
-                      ) || '',
-                    )} kl. ${formatDate(
-                      workingCase.parentCase.requestedValidToDate,
-                      TIME_FORMAT,
-                    )}`
-                  : workingCase.arrestDate
-                  ? `${capitalize(
-                      formatDate(workingCase.arrestDate, 'PPPP', true) || '',
-                    )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
-                  : 'Var ekki skráður',
+                title: 'Ákærandi',
+                value: `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`,
               },
             ]}
             accusedName={workingCase.accusedName}
@@ -111,7 +88,16 @@ const OverviewForm: React.FC<Props> = (props) => {
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
+            isRCase
           />
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={2}>
+            <Text as="h3" variant="h3">
+              Efni kröfu
+            </Text>
+          </Box>
+          <Text>{workingCase.description}</Text>
         </Box>
         <Box
           component="section"
@@ -153,27 +139,6 @@ const OverviewForm: React.FC<Props> = (props) => {
                     )
                   },
                 )}
-            </AccordionItem>
-            <AccordionItem
-              labelVariant="h3"
-              id="id_3"
-              label={`Takmarkanir og tilhögun ${
-                workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-              }`}
-            >
-              {formatRequestedCustodyRestrictions(
-                workingCase.type,
-                workingCase.requestedCustodyRestrictions,
-                workingCase.requestedOtherRestrictions,
-              )
-                .split('\n')
-                .map((requestedCustodyRestriction, index) => {
-                  return (
-                    <div key={index}>
-                      <Text>{requestedCustodyRestriction}</Text>
-                    </div>
-                  )
-                })}
             </AccordionItem>
             <AccordionItem
               labelVariant="h3"
@@ -269,7 +234,7 @@ const OverviewForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.R_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT

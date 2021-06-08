@@ -175,6 +175,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
                 name="prosecutor-only-session-request"
                 label="Beiðni"
                 placeholder="Er þess óskað að varnaraðili sé ekki viðstaddur dómþing?"
+                disabled={workingCase.requestProsecutorOnlySession === false}
                 defaultValue={workingCase.prosecutorOnlySessionRequest}
                 onChange={(event) =>
                   removeTabsValidateAndSet(

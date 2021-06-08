@@ -158,11 +158,7 @@ export const Overview: React.FC = () => {
           />
           {modalVisible && (
             <Modal
-              title={`Krafa um ${
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhald'
-                  : 'farbann'
-              }  hefur verið send til dómstóls`}
+              title="Krafa um rannsóknarheimild hefur verið send til dómstóls"
               text={modalText}
               handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {

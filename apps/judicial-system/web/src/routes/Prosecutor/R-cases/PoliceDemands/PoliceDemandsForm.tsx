@@ -175,7 +175,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             data-testid="legal-basis"
             name="legal-basis"
             label="Lagaákvæði sem krafan er byggð á"
-            placeholder="TODO"
+            placeholder="Hvaða lagaákvæðum byggir krafan á?"
             defaultValue={workingCase?.legalBasis}
             errorMessage={legalBasisEM}
             hasError={legalBasisEM !== ''}
