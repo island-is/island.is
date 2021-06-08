@@ -13,9 +13,11 @@ import {
   getEmployer,
   getPensionFund,
   getPrivatePensionFundRatio,
+  getRightsCode,
 } from './parental-leave.utils'
 
 import { apiConstants, formConstants } from './constants'
+import { getSelectedChild } from '@island.is/application/templates/parental-leave'
 
 let id = 0
 const createApplicationBase = (): Application => ({
@@ -32,6 +34,31 @@ const createApplicationBase = (): Application => ({
   name: '',
   status: ApplicationStatus.IN_PROGRESS,
 })
+
+const createExternalDataChild = (
+  isPrimaryParent: boolean,
+  expectedDateOfBirth: string,
+): ReturnType<typeof getSelectedChild> => {
+  const childBase = {
+    expectedDateOfBirth,
+    hasRights: true,
+    remainingDays: 180,
+    transferredDays: 0,
+  }
+
+  if (isPrimaryParent) {
+    return {
+      ...childBase,
+      parentalRelation: 'primary',
+    }
+  } else {
+    return {
+      ...childBase,
+      parentalRelation: 'secondary',
+      primaryParentNationalRegistryId: '1111111119',
+    }
+  }
+}
 
 let application: Application
 beforeEach(() => {
@@ -241,6 +268,73 @@ describe('getPrivatePensionFundRatio', () => {
 
     expect(getPrivatePensionFundRatio(application)).toBe(expectedValue)
   })
+})
+
+describe('getRightsCode', () => {
+  it('should return M-L-GR for a primary parent with employer', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(true, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'no')
+
+    const expected = 'M-L-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+  it('should return M-S-GR for a self employed primary parent', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(true, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'yes')
+
+    const expected = 'M-S-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+  // TODO:
+  // it('should return M-S-GR-SJ for a primary parent both self employed and with an employer', () => {})
+
+  // These codes apply to children that have been born, outside of v1 scope
+  // it('should return FO-L-GR for a secondary parent with employer and custody', () => {})
+  // it('should return FO-S-GR for a self employed secondary parent with custody', () => {})
+  // TODO:
+  // it('should return FO-L-GR-SJ for secondary parent that is both self employed and employed with custody', () => {})
+
+  // These codes apply to unborn children
+  it('should return FO-FL-L-GR for a secondary parent with employer and custody', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(false, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'no')
+
+    const expected = 'FO-FL-L-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+  it('should return FO-FL-S-GR for a self employed secondary parent with custody', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(false, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'yes')
+
+    const expected = 'FO-FL-S-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+  // TODO:
+  // it('should return FO-FL-L-GR-SJ for secondary parent that is both self employed and employed with custody', () => {})
 })
 
 // TODO: periods and validate against existing payment plans

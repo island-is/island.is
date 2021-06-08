@@ -10,7 +10,10 @@ import {
 } from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
-import { getSelectedChild } from '@island.is/application/templates/parental-leave'
+import {
+  getSelectedChild,
+  getApplicationAnswers,
+} from '@island.is/application/templates/parental-leave'
 
 import { apiConstants, formConstants } from './constants'
 
@@ -189,6 +192,31 @@ export const getApplicantContactInfo = (application: Application) => {
   }
 }
 
+export const getRightsCode = (application: Application): string => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  const answers = getApplicationAnswers(application.answers)
+  const isSelfEmployed = answers.isSelfEmployed === 'yes'
+  const isPrimaryParent = selectedChild.parentalRelation === 'primary'
+
+  if (isPrimaryParent) {
+    if (isSelfEmployed) {
+      return 'M-S-GR'
+    } else {
+      return 'M-L-GR'
+    }
+  } else {
+    // Only focusing on unborn children in phase 1
+    if (isSelfEmployed) {
+      return 'FO-FL-S-GR'
+    } else {
+      return 'FO-FL-L-GR'
+    }
+  }
+}
+
 export const transformApplicationToParentalLeaveDTO = (
   application: Application,
   attachments?: Attachment[],
@@ -227,10 +255,6 @@ export const transformApplicationToParentalLeaveDTO = (
     application.externalData,
   )
 
-  if (!selectedChild) {
-    throw new Error('Missing selected child')
-  }
-
   const { email, phoneNumber } = getApplicantContactInfo(application)
 
   return {
@@ -255,10 +279,7 @@ export const transformApplicationToParentalLeaveDTO = (
     periods,
     employers: [getEmployer(application, isSelfEmployed)],
     status: 'In Progress',
-    // TODO: extract correct rights code from application and connected applications
-    // Needs to know if primary/secondary parent, has custody and if self employed and/or employee
-    // https://islandis.slack.com/archives/G016P6FSDCK/p1608557387042300
-    rightsCode: 'M-L-GR',
+    rightsCode: getRightsCode(application),
     attachments,
   }
 }

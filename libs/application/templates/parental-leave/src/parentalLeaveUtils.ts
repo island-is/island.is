@@ -21,25 +21,19 @@ import { YES, NO, MANUAL, SPOUSE, StartDateOptions } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from './dataProviders/Children/Children'
 import { daysToMonths } from './lib/directorateOfLabour.utils'
-import {
+import type {
   ChildInformation,
   ChildrenAndExistingApplications,
 } from './dataProviders/Children/types'
 import { Boolean } from './types'
 
-export function getExpectedDateOfBirth(
-  application: Application,
-): string | undefined {
+export function getExpectedDateOfBirth(application: Application): string {
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
   )
 
-  if (selectedChild !== null) {
-    return selectedChild.expectedDateOfBirth
-  }
-
-  return undefined
+  return selectedChild.expectedDateOfBirth
 }
 
 export function getNameAndIdOfSpouse(
@@ -167,10 +161,6 @@ export const getAvailableRightsInMonths = (application: Application) => {
     application.externalData,
   )
 
-  if (!selectedChild) {
-    throw new Error('Missing selected child')
-  }
-
   return daysToMonths(
     selectedChild.remainingDays +
       getTransferredDays(application, selectedChild),
@@ -240,13 +230,17 @@ export const createRange = <T>(
 export const getSelectedChild = (
   answers: FormValue,
   externalData: ExternalData,
-) => {
+): ChildInformation => {
   const selectedChildIndex = getValueViaPath(answers, 'selectedChild') as string
   const selectedChild = getValueViaPath(
     externalData,
     `children.data.children[${selectedChildIndex}]`,
     null,
   ) as ChildInformation | null
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
 
   return selectedChild
 }
