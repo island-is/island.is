@@ -54,7 +54,8 @@ export enum ServicePortalPath {
   EducationLicense = '/leyfisbref',
 
   // Assets
-  AssetsRoot = '/eignir',
+  AssetsRoot = '/fasteignir',
+  AssetsVehicles = '/okutaeki',
 
   // Messages
   MessagesRoot = '/skilabod',

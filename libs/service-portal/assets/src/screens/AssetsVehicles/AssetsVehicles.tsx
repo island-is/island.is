@@ -6,19 +6,19 @@ import {
 import { defineMessage } from 'react-intl'
 import { useNamespaces } from '@island.is/localization'
 
-export const AssetsOverview: ServicePortalModuleComponent = () => {
+export const AssetsVehicles: ServicePortalModuleComponent = () => {
   useNamespaces(['service.portal', 'sp.assets'])
 
   return (
     <InfoScreen
       title={defineMessage({
-        id: 'sp.assets:title',
-        defaultMessage: 'Fasteignir',
+        id: 'sp.assets:vehicles-title',
+        defaultMessage: 'Ökutæki',
       })}
       intro={defineMessage({
-        id: 'sp.assets:intro',
+        id: 'sp.assets:vehicles-intro',
         defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir
-        fasteignir á næstunni.`,
+        ökutæki á næstunni.`,
       })}
       list={{
         title: defineMessage({
@@ -27,28 +27,28 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         }),
         items: [
           defineMessage({
-            id: 'sp.assets:inc-1',
+            id: 'sp.assets:vehicles-inc-1',
             defaultMessage:
               'Yfirlit og hægt verður að greiða öll opinber gjöld',
           }),
           defineMessage({
-            id: 'sp.assets:inc-2',
+            id: 'sp.assets:vehicles-inc-2',
             defaultMessage: 'Ganga frá skattskýrsla og sjá eldi skattskýrslur',
           }),
           defineMessage({
-            id: 'sp.assets:inc-3',
+            id: 'sp.assets:vehicles-inc-3',
             defaultMessage: 'Sjá yfirlit og ráðstafa séreignarsparnaði',
           }),
         ],
       }}
-      externalHref="https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir"
+      externalHref="https://mitt.samgongustofa.is/"
       externalLinkTitle={defineMessage({
-        id: 'sp.assets:external-link-title',
-        defaultMessage: 'Skoða fasteignir',
+        id: 'sp.assets:vehicles-external-link-title',
+        defaultMessage: 'Fara á ökutækjaskrá',
       })}
-      figure="/assets/images/bedroom.jpg"
+      figure="/assets/images/movingTruck.svg"
     />
   )
 }
 
-export default AssetsOverview
+export default AssetsVehicles

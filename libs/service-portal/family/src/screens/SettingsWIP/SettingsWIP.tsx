@@ -6,17 +6,17 @@ import {
 import { defineMessage } from 'react-intl'
 import { useNamespaces } from '@island.is/localization'
 
-export const AssetsOverview: ServicePortalModuleComponent = () => {
-  useNamespaces(['service.portal', 'sp.assets'])
+export const SettingsWIP: ServicePortalModuleComponent = () => {
+  useNamespaces('sp.family')
 
   return (
     <InfoScreen
       title={defineMessage({
-        id: 'sp.assets:title',
-        defaultMessage: 'Fasteignir',
+        id: 'sp.family:settings-title',
+        defaultMessage: 'Stillingar',
       })}
       intro={defineMessage({
-        id: 'sp.assets:intro',
+        id: 'sp.family:settings-intro',
         defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir
         fasteignir á næstunni.`,
       })}
@@ -27,28 +27,28 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         }),
         items: [
           defineMessage({
-            id: 'sp.assets:inc-1',
+            id: 'sp.family:settings-inc-1',
             defaultMessage:
               'Yfirlit og hægt verður að greiða öll opinber gjöld',
           }),
           defineMessage({
-            id: 'sp.assets:inc-2',
+            id: 'sp.family:settings-inc-2',
             defaultMessage: 'Ganga frá skattskýrsla og sjá eldi skattskýrslur',
           }),
           defineMessage({
-            id: 'sp.assets:inc-3',
+            id: 'sp.family:settings-inc-3',
             defaultMessage: 'Sjá yfirlit og ráðstafa séreignarsparnaði',
           }),
         ],
       }}
-      externalHref="https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir"
+      externalHref="https://minarsidur.island.is/minar-sidur/minn-adgangur/stillingar/"
       externalLinkTitle={defineMessage({
-        id: 'sp.assets:external-link-title',
-        defaultMessage: 'Skoða fasteignir',
+        id: 'sp.family:settings-external-link-title',
+        defaultMessage: 'Fara í stillingar',
       })}
-      figure="/assets/images/bedroom.jpg"
+      figure="/assets/images/working.jpg"
     />
   )
 }
 
-export default AssetsOverview
+export default SettingsWIP

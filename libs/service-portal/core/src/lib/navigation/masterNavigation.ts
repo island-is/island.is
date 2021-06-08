@@ -56,7 +56,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'person',
         },
         children: [
-          // TODO: Hide these children from mobile/sidenav
           {
             name: defineMessage({
               id: 'service.portal:detail-info',
@@ -184,8 +183,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:real-estate',
           defaultMessage: 'Fasteignir',
         }),
-        path: ServicePortalPath.RealEstateExternal,
-        external: true,
+        path: ServicePortalPath.AssetsRoot,
         systemRoute: true,
         icon: {
           type: 'outline',
@@ -199,8 +197,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:vehicles',
           defaultMessage: 'Ökutæki',
         }),
-        path: ServicePortalPath.FinanceVehicles,
-        external: true,
+        path: ServicePortalPath.AssetsVehicles,
         systemRoute: true,
         icon: {
           type: 'outline',
@@ -214,8 +211,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:settings',
           defaultMessage: 'Stillingar',
         }),
-        path: ServicePortalPath.SettingsExternal,
-        external: true,
+        path: ServicePortalPath.SettingsRoot,
         systemRoute: true,
         icon: {
           type: 'outline',

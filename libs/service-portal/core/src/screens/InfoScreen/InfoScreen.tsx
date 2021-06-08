@@ -1,11 +1,12 @@
 import {
-  ArrowLink,
+  Link,
   Box,
   Bullet,
   BulletList,
   GridColumn,
   GridRow,
   Inline,
+  Icon,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
@@ -23,11 +24,11 @@ interface Props {
   }
   externalHref?: string
   externalLinkTitle?: MessageDescriptor
-  institutionTitle: MessageDescriptor
-  institutionSubtitle: MessageDescriptor
-  institutionDescription: MessageDescriptor
-  institutionHref: string
-  institutionLinkTitle: MessageDescriptor
+  institutionTitle?: MessageDescriptor
+  institutionSubtitle?: MessageDescriptor
+  institutionDescription?: MessageDescriptor
+  institutionHref?: string
+  institutionLinkTitle?: MessageDescriptor
   figure: string
 }
 
@@ -54,7 +55,7 @@ export const InfoScreen: FC<Props> = ({
                   <Text variant="h1" as="h1">
                     {formatMessage(title)}
                   </Text>
-                  <Tag variant="blue" outlined>
+                  <Tag variant="blue">
                     {formatMessage({
                       id: 'service.portal:in-progress',
                       defaultMessage: 'Í vinnslu',
@@ -81,12 +82,17 @@ export const InfoScreen: FC<Props> = ({
               )}
               {externalHref && externalLinkTitle && (
                 <Box marginTop={[3, 4]}>
-                  <ArrowLink
+                  <Link
                     href={externalHref}
                     onClick={trackExternalLinkClick}
+                    color="blue400"
+                    underline="normal"
+                    underlineVisibility="always"
+                    newTab
                   >
-                    {formatMessage(externalLinkTitle)}
-                  </ArrowLink>
+                    {formatMessage(externalLinkTitle)}{' '}
+                    <Icon icon="open" type="outline" />
+                  </Link>
                 </Box>
               )}
             </Box>
