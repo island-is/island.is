@@ -18,7 +18,6 @@ import {
   laws,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './Overview.treat'
@@ -102,7 +101,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               Dómkröfur
             </Text>
           </Box>
-          {constructProsecutorDemands(workingCase)}
+          <Text>{workingCase.otherDemands}</Text>
         </Box>
         <Box component="section" marginBottom={5}>
           <Accordion>

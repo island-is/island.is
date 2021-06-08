@@ -27,10 +27,9 @@ interface Props {
 const PoliceDemandsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
   const validations: FormSettings = {
-    // TODO: Add police demands
-    // policeDemands: {
-    //   validations: ['empty'],
-    // },
+    otherDemands: {
+      validations: ['empty'],
+    },
     lawsBroken: {
       validations: ['empty'],
     },
@@ -40,7 +39,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   }
   const { updateCase } = useCase()
   const [, setRequestedValidToDateIsValid] = useState<boolean>(true)
-  const [policeDemandsEM, setPoliceDemandsEM] = useState<string>('')
+  const [otherDemandsEM, setOtherDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
   const { isValid } = useCaseFormHelper(
@@ -93,32 +92,32 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <Input
-            data-testid="police-demands"
-            name="police-demands"
+            data-testid="other-demands"
+            name="other-demands"
             label="Krafa lögreglu"
             placeholder="Krafa ákæranda"
-            defaultValue={workingCase?.policeDemands}
-            errorMessage={policeDemandsEM}
-            hasError={policeDemandsEM !== ''}
+            defaultValue={workingCase?.otherDemands}
+            errorMessage={otherDemandsEM}
+            hasError={otherDemandsEM !== ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
-                'policeDemands',
+                'otherDemands',
                 event,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
-                policeDemandsEM,
-                setPoliceDemandsEM,
+                otherDemandsEM,
+                setOtherDemandsEM,
               )
             }
             onBlur={(event) =>
               validateAndSendToServer(
-                'policeDemands',
+                'otherDemands',
                 event.target.value,
                 ['empty'],
                 workingCase,
                 updateCase,
-                setPoliceDemandsEM,
+                setOtherDemandsEM,
               )
             }
             required
