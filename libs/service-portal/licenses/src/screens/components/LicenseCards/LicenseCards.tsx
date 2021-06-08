@@ -3,11 +3,7 @@ import { gql, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
 import { useUserProfile } from '@island.is/service-portal/graphql'
 
-import {
-  GenericLicenseDataField,
-  GenericLicenseDataFieldType,
-  Query,
-} from '@island.is/api/schema'
+import { GenericLicenseDataField, Query } from '@island.is/api/schema'
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 
 const GenericLicensesQuery = gql`
@@ -63,13 +59,13 @@ const DataFields = ({ fields }: { fields: GenericLicenseDataField[] }) => {
       {fields.map((field, i) => {
         return (
           <React.Fragment key={i}>
-            {field.type === GenericLicenseDataFieldType.Value && (
+            {field.type === 'Value' && (
               <dl>
                 <dt>{field.label}</dt>
                 <dd>{field.value}</dd>
               </dl>
             )}
-            {field.type === GenericLicenseDataFieldType.Category && (
+            {field.type === 'Category' && (
               <>
                 <h3>
                   {field.name} - {field.label}
@@ -77,7 +73,7 @@ const DataFields = ({ fields }: { fields: GenericLicenseDataField[] }) => {
                 <DataFields fields={field.fields ?? []} />
               </>
             )}
-            {field.type === GenericLicenseDataFieldType.Group && (
+            {field.type === 'Group' && (
               <>
                 <h3>{field.label}</h3>
                 <DataFields fields={field.fields ?? []} />
