@@ -14,6 +14,8 @@ declare global {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const ReadSpeaker: any
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const rspkr: any
 interface WebReaderProps {
   readId?: string
   readClass?: string
@@ -36,8 +38,12 @@ export const Webreader: FC<WebReaderProps> = ({
       if (typeof ReadSpeaker !== 'undefined') {
         ReadSpeaker.PlayerAPI.stop()
 
-        if (ReadSpeaker.PlayerAPI.audio.state.current) {
-          window.location.href = url
+        if (ReadSpeaker.PlayerAPI.audio.state.current && rspkr.ui) {
+          // We need to untangle the dom manipulation that happens
+          // on behalf of the ReadSpeaker client.
+          // This is most easily done by closing the player programatically through
+          // the rspkr object and have it handle its own cleanup
+          rspkr.ui.getActivePlayer().close()
         }
       }
     }
