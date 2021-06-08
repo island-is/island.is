@@ -65,12 +65,11 @@ export class PaymentController {
   })
   async paymentApplication(
     @Body()
-    application: CreatePaymentDto,
+    paymentDetails: CreatePaymentDto,
     @CurrentUser()
     user: User,
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<CreatePaymentResponseDto> {
-    const { applicationId } = application
 
     // FIGURE SOME CHECK FOR LEGIT PAYMENT
     // if (existingApplication === null) {
@@ -93,13 +92,13 @@ export class PaymentController {
       | 'amount'
       | 'expiresAt'
       > = {
-      applicationId: application.applicationId,
+      applicationId: paymentDetails.applicationId,
       fulfilled: false,
       referenceId: "",
       user4: "",
       definition: "",
-      amount: application.amount,
-      expiresAt: application.expiresAt,
+      amount: paymentDetails.amount,
+      expiresAt: paymentDetails.expiresAt,
     }
 
     const createdPayment = await this.paymentService.createPayment(
@@ -110,7 +109,7 @@ export class PaymentController {
       user,
       action: 'create',
       resources: createdPayment.id,
-      meta: { applicationId: application.applicationId },
+      meta: { applicationId: paymentDetails.applicationId },
     })
     return createdPayment
   }

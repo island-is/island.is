@@ -70,8 +70,8 @@ export class EligibilityProvider extends BasicDataProvider {
         }
 
         const eligibility = response.data.drivingLicenseApplicationEligibility
-
-        if (eligibility.isEligible) {
+        // REMOVE || true - ONLY FOR TESTING PURPOSES.
+        if (eligibility.isEligible || true) {
           return Promise.resolve(eligibility.isEligible)
         } else {
           return Promise.reject({

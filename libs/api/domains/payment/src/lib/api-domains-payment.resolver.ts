@@ -31,7 +31,7 @@ export class PaymentResolver {
   paymentCatalogPerformingOrg(
     @Args('performingOrganizationID') performingOrganizationID: string,
   ): Promise<PaymentCatalogResponse> {
-    console.log('resolver param: ' + performingOrganizationID)
+    //console.log('resolver param: ' + performingOrganizationID)
     return this.PaymentService.getCatalogByPerformingOrg(
       performingOrganizationID,
     )

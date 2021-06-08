@@ -49,8 +49,8 @@ export class PaymentAPI extends RESTDataSource {
     const response = await this.get<Catalog>(
       `/chargeFJS/v1/catalog/performingOrg/${performingOrganizationID}`,
     )
-    console.log('service param: ' + performingOrganizationID)
-    console.log('service response: ' + response.item)
+    //console.log('service param: ' + performingOrganizationID)
+    //console.log('service response: ' + response.item)
     return response
   }
 }

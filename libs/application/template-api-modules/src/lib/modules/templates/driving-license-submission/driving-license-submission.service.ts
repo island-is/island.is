@@ -8,6 +8,10 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
 import { ChargeResult } from '@island.is/api/domains/payment'
 
+import { PaymentService } from '../../../../../../../../apps/application-system/api/src/app/modules/payment/payment.service'
+import { PaymentService as ApiDomainsPaymentService } from '@island.is/api/domains/payment'
+import { resolveModelGetter } from 'sequelize-typescript'
+
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
 }
@@ -25,6 +29,7 @@ export class DrivingLicenseSubmissionService {
   constructor(
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
   ) {}
 
   async createCharge({
@@ -75,11 +80,46 @@ export class DrivingLicenseSubmissionService {
   }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
+    console.log('myapp: ' + application)
     const { answers } = application
+    const { externalData } = application
     const nationalId = application.applicant
+
+    const payment = (externalData.payment.data as Payment)
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const juristictionId = answers.juristiction
+
+    // Calculate current time plus 24 hours. 86.400.000 is seconds in a day
+    let calcExpiration = new Date().getTime() + 86400000
+    console.log('The expiration date of payment application: ' + new Date(calcExpiration))
+
+    // const res = await this.apiPaymentService
+    //   .createPayment({
+    //     applicationId: application.id,
+    //     fulfilled: false,
+    //     user4: '',
+    //     definition: '',
+    //     amount: payment.priceAmount,
+    //     expiresAt: new Date(calcExpiration)
+    //   })
+    //   .catch((e) => {
+    //     return {
+    //       success: false,
+    //       errorMessage: e.message,
+    //     }
+    //   })
+    const res = await this.apiDomainsPaymentService
+      .createCharge({
+        systemID: 'ISL',
+        performingOrgID: payment.performingOrgID,
+        payeeNationalID: nationalId,
+        chargeType: payment.chargeType,
+        chargeItemSubject: payment.chargeItemName,
+        performerNationalID: payment.performingOrgID,
+        immediateProcess: true,
+        charges: [],
+      })
 
     const result = await this.drivingLicenseService
       .newDrivingLicense(nationalId, {
