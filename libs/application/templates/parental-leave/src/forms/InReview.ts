@@ -3,7 +3,6 @@ import {
   buildForm,
   buildSection,
   Form,
-  FormModes,
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
@@ -16,7 +15,6 @@ export const InReview: Form = buildForm({
   id: 'ParentalLeaveInReview',
   title: inReviewFormMessages.formTitle,
   logo: Logo,
-  mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'review',
