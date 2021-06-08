@@ -44,7 +44,7 @@ const EmailForm = () => {
     >
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
-          Samskiptaupplýsingar
+          Samskipti
         </Text>
         <Text marginBottom={[3, 3, 4]}>
           Vinsamlegast staðfestu eða uppfærðu netfangið þitt svo öll samskipti

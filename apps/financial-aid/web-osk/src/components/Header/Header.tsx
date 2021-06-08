@@ -60,7 +60,7 @@ const Header: React.FC = () => {
           </Box>
         </Box>
 
-        <Box className={styles.userButton}>
+        <Box>
           {isAuthenticated && (
             <Button
               icon="chevronDown"

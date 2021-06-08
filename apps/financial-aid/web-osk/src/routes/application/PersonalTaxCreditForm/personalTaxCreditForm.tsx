@@ -81,10 +81,15 @@ const PersonalTaxCreditForm = () => {
           </Text>
         </div>
 
-        <Text as="h2" variant="h3" marginBottom={2} marginTop={[2, 2, 3]}>
+        <Text
+          as="h2"
+          variant="h3"
+          marginBottom={[1, 1, 2]}
+          marginTop={[2, 2, 3]}
+        >
           Nánar um persónuafslátt
         </Text>
-        <Text marginBottom={[5, 5, 4]}>
+        <Text marginBottom={[7, 7, 4]} variant="small">
           Persónuafsláttur er skattaafsláttur sem veittur er öllum einstaklingum
           eldri en 16 ára. Persónuafslætti má safna upp á milli mánaða og nýta
           síðar. Uppsafnaður persónuafsláttur sem ekki er nýttur innan árs

@@ -65,3 +65,7 @@ export const exitModal = style({
   right: '0px',
   padding: theme.spacing[3],
 })
+
+export const buttonContainer = style({
+  flexWrap: 'wrap-reverse',
+})

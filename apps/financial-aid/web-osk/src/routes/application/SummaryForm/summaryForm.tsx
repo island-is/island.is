@@ -134,13 +134,6 @@ const SummaryForm = () => {
 
   const overview = [
     {
-      label: 'Heimili',
-      // url: 'heimili',
-      info: form?.customAddress
-        ? form?.customHomeAddress + ', ' + form?.customPostalCode
-        : 'Hafnargata 3, 220 Hafnarfjörður',
-    },
-    {
       label: 'Búseta',
       url: 'buseta',
       info:
@@ -156,12 +149,18 @@ const SummaryForm = () => {
         (form?.incomeFiles ? '' : 'ekki') +
         'fengið tekjur í þessum mánuði eða síðasta',
     },
+
     {
       label: 'Staða',
       url: 'atvinna',
       info: form?.employmentCustom
         ? form?.employmentCustom
         : getEmploymentStatus[form?.employment as Employment],
+    },
+    {
+      label: 'Netfang',
+      url: 'samskipti',
+      info: form?.emailAddress,
     },
   ]
 
@@ -174,7 +173,12 @@ const SummaryForm = () => {
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Yfirlit umsóknar
         </Text>
-        <Box display="flex" alignItems="center" marginBottom={1}>
+        <Box
+          display="flex"
+          alignItems="center"
+          flexWrap="wrap"
+          marginBottom={1}
+        >
           <Box marginRight={1}>
             <Text as="h2" variant="h3" marginBottom={1}>
               Áætluð aðstoð
@@ -265,8 +269,8 @@ const SummaryForm = () => {
               </Text>
             )}
 
-            <Text fontWeight="semiBold">Netfang</Text>
-            <Text>{form?.emailAddress}</Text>
+            <Text fontWeight="semiBold">Heimili</Text>
+            <Text>Hafnargata 3, 220 Hafnarfjörður</Text>
           </Box>
         </Box>
         {overview.map((item, index) => {
@@ -367,14 +371,6 @@ const SummaryForm = () => {
           }}
           className={styles.modalContainer}
         >
-          {/* {({ closeModal }) => (
-            <Box padding={4}>
-              <Text>We use onVisibilityChange to keep isVisible in sync</Text>
-              <Button onClick={closeModal} variant="text">
-                Close modal
-              </Button>
-            </Box>
-          )} */}
           <Box
             position="relative"
             background="white"
@@ -404,8 +400,12 @@ const SummaryForm = () => {
               aftur.
             </Text>
 
-            <Box display="flex" justifyContent="spaceBetween" flexWrap="wrap">
-              <Box marginBottom={2}>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              className={styles.buttonContainer}
+            >
+              <Box marginBottom={2} marginRight={2}>
                 <Button
                   variant="ghost"
                   onClick={() => {
@@ -417,6 +417,7 @@ const SummaryForm = () => {
               </Box>
               <Box marginBottom={2}>
                 <Button
+                  colorScheme="destructive"
                   onClick={() => {
                     api.logOut()
                     setUser && setUser(undefined)
