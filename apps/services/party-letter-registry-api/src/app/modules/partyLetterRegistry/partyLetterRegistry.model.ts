@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -16,16 +17,10 @@ import {
   ],
 })
 export class PartyLetterRegistry extends Model<PartyLetterRegistry> {
-  @Column({
-    type: DataType.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  })
-  id!: string
-
+  @ApiProperty()
   @Column({
     type: DataType.CHAR(2),
-    allowNull: false,
+    primaryKey: true,
     get() {
       // this adds a space cause of char 2 we remove added spaces here
       const value: string = ((this as unknown) as Model<PartyLetterRegistry>).getDataValue(
@@ -33,30 +28,42 @@ export class PartyLetterRegistry extends Model<PartyLetterRegistry> {
       )
       return value.trim()
     },
+    set(value: string) {
+      // we want to ensure all inserted letters are uppercase
+      ;((this as unknown) as Model<PartyLetterRegistry>).setDataValue(
+        'partyLetter' as any,
+        value.toUpperCase(),
+      )
+    },
   })
   partyLetter!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   partyName!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   owner!: string
 
+  @ApiProperty()
   @Column({
     type: DataType.ARRAY(DataType.STRING),
     allowNull: false,
   })
   managers!: string[]
 
+  @ApiProperty()
   @CreatedAt
   readonly created!: Date
 
+  @ApiProperty()
   @UpdatedAt
   readonly modified!: Date
 }

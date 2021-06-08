@@ -36,7 +36,14 @@ export const dataSchema = z.object({
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
   payments: z.object({
-    bank: z.string().nonempty(),
+    bank: z.string().refine(
+      (b) => {
+        const bankAccount = b.toString()
+
+        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+      },
+      { params: errorMessages.bank },
+    ),
     pensionFund: z.string(),
     privatePensionFund: z.string().optional(),
     privatePensionFundPercentage: z.enum(['2', '4', '']).optional(),
@@ -69,6 +76,7 @@ export const dataSchema = z.object({
       params: errorMessages.otherParentId,
     }),
   otherParentRightOfAccess: z.enum([YES, NO]).optional(),
+  otherParentEmail: z.string().email(),
   usePersonalAllowance: z.enum([YES, NO]),
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
 })

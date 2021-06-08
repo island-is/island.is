@@ -23,7 +23,7 @@ describe('Confirmation route', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <Confirmation />
         </UserProvider>
       </MockedProvider>,
@@ -50,7 +50,7 @@ describe('Confirmation route', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <Confirmation />
         </UserProvider>
       </MockedProvider>,

@@ -22,6 +22,7 @@ export interface CheckboxProps {
   filled?: boolean
   large?: boolean
   backgroundColor?: InputBackgroundColor
+  labelVariant?: 'default' | 'small'
   /** subLabel can only be used if the 'large' prop set to true */
   subLabel?: string
 }
@@ -34,6 +35,7 @@ interface AriaError {
 export const Checkbox = ({
   label,
   subLabel,
+  labelVariant = 'default',
   name,
   id = name,
   checked,
@@ -99,7 +101,11 @@ export const Checkbox = ({
           />
         </div>
         <span className={styles.labelText}>
-          <Text as="span" fontWeight={checked || strong ? 'semiBold' : 'light'}>
+          <Text
+            as="span"
+            variant={labelVariant}
+            fontWeight={checked || strong ? 'semiBold' : 'light'}
+          >
             {label}
           </Text>
           {subLabel && large && (

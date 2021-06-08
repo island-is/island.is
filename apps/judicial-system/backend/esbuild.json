@@ -2,6 +2,10 @@
   "platform": "node",
   "external": [
     "fsevents",
+    "pdfkit",
+    "@dabh/diagnostics",
+    "color-convert",
+    "color-string",
     "@nestjs/microservices",
     "class-transformer",
     "cache-manager",

@@ -25,6 +25,7 @@ import {
   ChildInformation,
   ChildrenAndExistingApplications,
 } from './dataProviders/Children/types'
+import { Boolean } from './types'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -94,7 +95,7 @@ export function formatPeriods(
       })
     }
 
-    if (period.startDate && period.endDate) {
+    if (!isActualDob && period.startDate && period.endDate) {
       timelinePeriods.push({
         actualDob: isActualDob,
         startDate: period.startDate,
@@ -112,23 +113,6 @@ export function formatPeriods(
       })
     }
   })
-
-  /*
-  otherParentPeriods?.forEach((period) => {
-    timelinePeriods.push({
-      startDate: period.startDate,
-      endDate: period.endDate,
-      ratio: period.ratio,
-      duration: differenceInMonths(
-        parseISO(period.endDate),
-        parseISO(period.startDate),
-      ),
-      canDelete: false,
-      title: `Other parent ${period.ratio ?? 100}%`,
-      color: theme.color.red200,
-    })
-  })
-  */
 
   return timelinePeriods
 }
@@ -326,4 +310,143 @@ export const calculatePeriodPercentage = (
   }
 
   return Math.min(100, Math.round((months / difference) * 100))
+}
+
+export function getApplicationAnswers(answers: Application['answers']) {
+  const otherParent = getValueViaPath(
+    answers,
+    'otherParent',
+  ) as SchemaFormValues['otherParent']
+
+  const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
+
+  const union = getValueViaPath(answers, 'payments.union') as string
+
+  const usePrivatePensionFund = getValueViaPath(
+    answers,
+    'usePrivatePensionFund',
+  ) as Boolean
+
+  const privatePensionFund = getValueViaPath(
+    answers,
+    'payments.privatePensionFund',
+  ) as string
+
+  const privatePensionFundPercentage = getValueViaPath(
+    answers,
+    'payments.privatePensionFundPercentage',
+  ) as string
+
+  const isSelfEmployed = getValueViaPath(
+    answers,
+    'employer.isSelfEmployed',
+  ) as Boolean
+
+  const otherParentName = getValueViaPath(answers, 'otherParentName') as string
+
+  const otherParentId = getValueViaPath(answers, 'otherParentId') as string
+
+  const bank = getValueViaPath(answers, 'payments.bank') as string
+
+  const personalAllowance = getValueViaPath(
+    answers,
+    'usePersonalAllowance',
+  ) as Boolean
+
+  const personalAllowanceFromSpouse = getValueViaPath(
+    answers,
+    'usePersonalAllowanceFromSpouse',
+    NO,
+  ) as Boolean
+
+  const personalUseAsMuchAsPossible = getValueViaPath(
+    answers,
+    'personalAllowance.useAsMuchAsPossible',
+  ) as Boolean
+
+  const personalUsage = getValueViaPath(
+    answers,
+    'personalAllowance.usage',
+  ) as string
+
+  const spouseUseAsMuchAsPossible = getValueViaPath(
+    answers,
+    'personalAllowanceFromSpouse.useAsMuchAsPossible',
+  ) as Boolean
+
+  const spouseUsage = getValueViaPath(
+    answers,
+    'personalAllowanceFromSpouse.usage',
+  ) as string
+
+  const employerEmail = getValueViaPath(answers, 'employer.email') as string
+
+  const shareInformationWithOtherParent = getValueViaPath(
+    answers,
+    'shareInformationWithOtherParent',
+  ) as Boolean
+
+  const selectedChild = getValueViaPath(answers, 'selectedChild') as string
+
+  const isRequestingRights = getValueViaPath(
+    answers,
+    'requestRights.isRequestingRights',
+  ) as Boolean
+
+  const requestDays = getValueViaPath(
+    answers,
+    'requestRights.requestDays',
+  ) as number
+
+  const isGivingRights = getValueViaPath(
+    answers,
+    'giveRights.isGivingRights',
+  ) as Boolean
+
+  const giveDays = getValueViaPath(answers, 'giveRights.giveDays') as number
+
+  const usePersonalAllowanceFromSpouse = getValueViaPath(
+    answers,
+    'usePersonalAllowanceFromSpouse',
+  ) as Boolean
+
+  return {
+    otherParent,
+    pensionFund,
+    union,
+    usePrivatePensionFund,
+    privatePensionFund,
+    privatePensionFundPercentage,
+    isSelfEmployed,
+    otherParentName,
+    otherParentId,
+    bank,
+    personalAllowance,
+    personalAllowanceFromSpouse,
+    personalUseAsMuchAsPossible,
+    personalUsage,
+    usePersonalAllowanceFromSpouse,
+    spouseUseAsMuchAsPossible,
+    spouseUsage,
+    employerEmail,
+    shareInformationWithOtherParent,
+    selectedChild,
+    isRequestingRights,
+    requestDays,
+    isGivingRights,
+    giveDays,
+  }
+}
+
+export const requiresOtherParentApproval = (
+  answers: Application['answers'],
+) => {
+  const applicationAnswers = getApplicationAnswers(answers)
+
+  const {
+    isRequestingRights,
+    usePersonalAllowanceFromSpouse,
+  } = applicationAnswers
+
+  return isRequestingRights === YES || usePersonalAllowanceFromSpouse === YES
 }

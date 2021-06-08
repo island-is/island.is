@@ -33,6 +33,7 @@ export const input = style({
 export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
+  alignItems: 'center',
 })
 export const labelText = style({
   display: 'flex',

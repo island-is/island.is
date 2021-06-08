@@ -56,8 +56,12 @@ export class CaseService {
     const buffer = Buffer.from(pdf, 'binary')
 
     try {
-      const streamId = await this.courtService.uploadStream(buffer)
+      const streamId = await this.courtService.uploadStream(
+        existingCase.courtId,
+        buffer,
+      )
       await this.courtService.createThingbok(
+        existingCase.courtId,
         existingCase.courtCaseNumber,
         streamId,
       )
@@ -177,6 +181,7 @@ export class CaseService {
           as: 'prosecutor',
           include: [{ model: Institution, as: 'institution' }],
         },
+        { model: Institution, as: 'sharedWithProsecutorsOffice' },
         {
           model: User,
           as: 'judge',
@@ -209,6 +214,7 @@ export class CaseService {
           as: 'prosecutor',
           include: [{ model: Institution, as: 'institution' }],
         },
+        { model: Institution, as: 'sharedWithProsecutorsOffice' },
         {
           model: User,
           as: 'judge',
@@ -225,16 +231,22 @@ export class CaseService {
     })
   }
 
-  async findByIdAndUser(id: string, user: TUser): Promise<Case> {
+  async findByIdAndUser(
+    id: string,
+    user: TUser,
+    forUpdate = true,
+  ): Promise<Case> {
     const existingCase = await this.findById(id)
 
     if (!existingCase) {
       throw new NotFoundException(`Case ${id} does not exist`)
     }
 
-    if (isCaseBlockedFromUser(existingCase, user)) {
+    if (isCaseBlockedFromUser(existingCase, user, forUpdate)) {
       throw new ForbiddenException(
-        `User ${user.id} does not have access to case ${id}`,
+        `User ${user.id} does not have${
+          forUpdate ? ' update' : ' read'
+        } access to case ${id}`,
       )
     }
 
@@ -351,7 +363,7 @@ export class CaseService {
     }
   }
 
-  extend(existingCase: Case): Promise<Case> {
+  extend(existingCase: Case, user: TUser): Promise<Case> {
     this.logger.debug(`Extending case ${existingCase.id}`)
 
     return this.caseModel.create({
@@ -367,6 +379,7 @@ export class CaseService {
       requestedCustodyRestrictions: existingCase.requestedCustodyRestrictions,
       caseFacts: existingCase.caseFacts,
       legalArguments: existingCase.legalArguments,
+      prosecutorId: user.id,
       parentCaseId: existingCase.id,
     })
   }
@@ -379,8 +392,12 @@ export class CaseService {
     const pdf = await getRequestPdfAsBuffer(existingCase)
 
     try {
-      const streamId = await this.courtService.uploadStream(pdf)
+      const streamId = await this.courtService.uploadStream(
+        existingCase.courtId,
+        pdf,
+      )
       await this.courtService.createDocument(
+        existingCase.courtId,
         existingCase.courtCaseNumber,
         streamId,
       )
