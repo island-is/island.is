@@ -12,7 +12,6 @@ import set from 'lodash/set'
 import cloneDeep from 'lodash/cloneDeep'
 import { useEndorsements } from '../../hooks/useFetchEndorsements'
 import BulkUpload from '../BulkUpload'
-import gql from 'graphql-tag'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { lang: locale, formatMessage } = useLocale()
@@ -46,20 +45,6 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
       set(answers, 'endorsements', cloneDeep(newEndorsements))
     })
   }
-
-  const USER_VOTER_REGION = gql`
-    query getVoterRegion {
-      temporaryVoterRegistryGetVoterRegion {
-        regionNumber
-        regionName
-        id
-        nationalId
-      }
-    }
-  `
-
-  const { data: voterRegion } = useQuery(USER_VOTER_REGION)
-  console.log('region', voterRegion)
 
   useEffect(() => {
     const mapToEndorsementList: Endorsement[] | undefined =
