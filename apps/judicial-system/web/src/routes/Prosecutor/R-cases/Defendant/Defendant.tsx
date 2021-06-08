@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
@@ -8,11 +9,10 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { Case, CaseState } from '@island.is/judicial-system/types'
-import { useRouter } from 'next/router'
-import DefendantForm from './DefendantForm'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
+import DefendantForm from './DefendantForm'
+import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
 const Defendant = () => {
   const router = useRouter()
@@ -21,6 +21,7 @@ const Defendant = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const { createCase, isCreatingCase } = useCase()
   const { defaultCourt } = useInstitution()
+
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -68,7 +69,7 @@ const Defendant = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.CUSTODY_PETITION_STEP_ONE}
+      activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_ONE}
       isLoading={loading || isCreatingCase}
       notFound={id !== undefined && data?.case === undefined}
       isExtension={workingCase?.parentCase && true}
@@ -82,6 +83,7 @@ const Defendant = () => {
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           handleNextButtonClick={handleNextButtonClick}
+          loading={isCreatingCase || loading}
         />
       )}
     </PageLayout>

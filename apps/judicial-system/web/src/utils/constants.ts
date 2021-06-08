@@ -6,7 +6,7 @@ export const USER_CHANGE_ROUTE = '/notendur/breyta'
 export const SIGNED_VERDICT_OVERVIEW = '/krafa/yfirlit'
 
 // Prosecutor
-export const STEP_ONE_CUSTODY_PETITION_ROUTE = '/krafa/ny/gaesluvardhald'
+export const STEP_ONE_CUSTODY_REQUEST_ROUTE = '/krafa/ny/gaesluvardhald'
 export const STEP_ONE_NEW_TRAVEL_BAN_ROUTE = '/krafa/ny/farbann'
 export const STEP_ONE_ROUTE = '/krafa/sakborningur'
 export const STEP_TWO_ROUTE = '/krafa/fyrirtaka'

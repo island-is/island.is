@@ -45,7 +45,7 @@ export const StepThree: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.CUSTODY_PETITION_STEP_THREE}
+      activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_THREE}
       isLoading={loading}
       notFound={data?.case === undefined}
       decision={workingCase?.decision}

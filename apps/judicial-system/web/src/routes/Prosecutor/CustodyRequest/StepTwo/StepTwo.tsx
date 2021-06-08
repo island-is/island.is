@@ -148,7 +148,7 @@ export const StepTwo: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.CUSTODY_PETITION_STEP_TWO}
+      activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_TWO}
       isLoading={loading || userLoading || institutionLoading}
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
