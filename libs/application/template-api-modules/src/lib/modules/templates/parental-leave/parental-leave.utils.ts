@@ -236,7 +236,7 @@ export const transformApplicationToParentalLeaveDTO = (
       // TODO: refactor period.endDate to not include time
       to: period.endDate.split('T')[0],
       ratio: Number(period.ratio),
-      approved: true,
+      approved: false,
       paid: false,
     }))
   }
