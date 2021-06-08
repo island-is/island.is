@@ -67,16 +67,6 @@ const EmailForm = () => {
             hasError={error && !Boolean(form?.emailAddress)}
           />
         </Box>
-        <div
-          className={cn({
-            [`errorMessage`]: true,
-            [`showErrorMessage`]: error && !form?.emailAddress,
-          })}
-        >
-          <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að velja einn valmöguleika
-          </Text>
-        </div>
 
         {/* <Text as="h2" variant="h3" marginBottom={[3, 3]}>
           Má bjóða þér viðtal?

@@ -86,7 +86,7 @@ const StudentForm = () => {
             name="education"
             placeholder="Dæmi: Viðskiptafræði í HR"
             value={form?.studentCustom}
-            hasError={error && form?.studentCustom === undefined}
+            hasError={error && !Boolean(form?.studentCustom)}
             errorMessage="Þú þarft að skrifa hvaða nám þú stundar"
             onChange={(
               event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -101,7 +101,7 @@ const StudentForm = () => {
         onNextButtonClick={() => {
           if (form?.student !== undefined) {
             if (form?.student) {
-              if (form?.studentCustom === '') {
+              if (!Boolean(form?.studentCustom)) {
                 setError(true)
               } else {
                 router.push(navigation?.nextUrl ?? '/')

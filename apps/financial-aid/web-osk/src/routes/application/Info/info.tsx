@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
 
 import {
@@ -13,9 +13,12 @@ import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
 import { NavigationProps } from '@island.is/financial-aid/shared'
+import { api } from '@island.is/financial-aid-web/osk/src/services'
+import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
 const ApplicationInfo = () => {
   const router = useRouter()
+  const { setUser, user } = useContext(UserContext)
 
   const [accept, setAccept] = useState(false)
   const [error, setError] = useState(false)
@@ -95,6 +98,10 @@ const ApplicationInfo = () => {
       </FormContentContainer>
 
       <FormFooter
+        onPrevButtonClick={() => {
+          api.logOut()
+          setUser && setUser(undefined)
+        }}
         previousIsDestructive={true}
         nextButtonText="Staðfesta"
         nextButtonIcon="checkmark"

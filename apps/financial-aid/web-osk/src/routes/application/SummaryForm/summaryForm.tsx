@@ -6,6 +6,8 @@ import {
   Button,
   LoadingDots,
   Input,
+  ModalBase,
+  Icon,
 } from '@island.is/island-ui/core'
 
 import { useMutation, useQuery } from '@apollo/client'
@@ -28,6 +30,7 @@ import * as styles from './summaryForm.treat'
 import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import { api } from '@island.is/financial-aid-web/osk/src/services'
 
 import {
   Municipality,
@@ -48,7 +51,9 @@ interface MunicipalityData {
 const SummaryForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
-  const { user } = useContext(UserContext)
+  const { setUser, user } = useContext(UserContext)
+
+  const [isVisible, setIsVisible] = useState(false)
 
   const { data, error, loading } = useQuery<MunicipalityData>(
     GetMunicipalityQuery,
@@ -326,7 +331,7 @@ const SummaryForm = () => {
           <Text variant="h3">Annað sem þú vilt koma á framfæri?</Text>
         </Box>
 
-        <Box marginBottom={[2, 2, 10]}>
+        <Box marginBottom={[4, 4, 10]}>
           <Input
             backgroundColor={'blue'}
             label="Athugasemd"
@@ -351,10 +356,86 @@ const SummaryForm = () => {
             {formError.message}
           </Text>
         </div>
+
+        <ModalBase
+          baseId="cancelForm"
+          isVisible={isVisible}
+          onVisibilityChange={(visibility) => {
+            if (visibility !== isVisible) {
+              setIsVisible(visibility)
+            }
+          }}
+          className={styles.modalContainer}
+        >
+          {/* {({ closeModal }) => (
+            <Box padding={4}>
+              <Text>We use onVisibilityChange to keep isVisible in sync</Text>
+              <Button onClick={closeModal} variant="text">
+                Close modal
+              </Button>
+            </Box>
+          )} */}
+          <Box
+            position="relative"
+            background="white"
+            borderRadius="large"
+            paddingY={[8, 8, 12]}
+            paddingX={[3, 3, 15]}
+            className={styles.modal}
+          >
+            <button
+              onClick={() => {
+                setIsVisible(false)
+              }}
+              className={styles.exitModal}
+            >
+              <Icon
+                color="currentColor"
+                icon="close"
+                size="medium"
+                type="filled"
+              />
+            </button>
+            <Text variant="h1" marginBottom={2}>
+              Ertu viss um að þú viljir hætta við?
+            </Text>
+            <Text variant="intro" marginBottom={[5, 5, 7]}>
+              Þú þarft að fylla umsóknina út að nýju ef þú ákveður að koma
+              aftur.
+            </Text>
+
+            <Box display="flex" justifyContent="spaceBetween" flexWrap="wrap">
+              <Box marginBottom={2}>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setIsVisible(false)
+                  }}
+                >
+                  Nei, ég vil halda áfram
+                </Button>
+              </Box>
+              <Box marginBottom={2}>
+                <Button
+                  onClick={() => {
+                    api.logOut()
+                    setUser && setUser(undefined)
+                    updateForm({ submitted: false, incomeFiles: [] })
+                  }}
+                >
+                  Já, hætta við
+                </Button>
+              </Box>
+            </Box>
+          </Box>
+        </ModalBase>
       </FormContentContainer>
 
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
+        onPrevButtonClick={() => {
+          setIsVisible(!isVisible)
+        }}
+        previousIsDestructive={true}
         nextButtonText="Senda umsókn"
         onNextButtonClick={() => {
           createApplication()

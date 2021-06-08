@@ -33,7 +33,7 @@ export const inputAppear = style({
   maxHeight: '192px',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      maxHeight: '80px',
+      maxHeight: '110px',
     },
   },
 })

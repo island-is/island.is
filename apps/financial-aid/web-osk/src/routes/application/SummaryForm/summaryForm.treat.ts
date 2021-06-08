@@ -40,3 +40,28 @@ export const taxReturn = style({
   color: theme.color.red400,
   fontWeight: 'bold',
 })
+
+export const modalContainer = style({
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  // height: 100%;
+  // display: 'flex'
+  // align-items: center;
+  // justify-content: center;
+})
+
+export const modal = style({
+  maxWidth: '888px',
+  width: '100%',
+  boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',
+})
+
+export const exitModal = style({
+  position: 'absolute',
+  top: '0px',
+  right: '0px',
+  padding: theme.spacing[3],
+})
