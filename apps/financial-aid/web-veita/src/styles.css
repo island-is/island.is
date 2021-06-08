@@ -48,3 +48,27 @@ input[type='number'] {
   max-width: 1440px;
   margin: 0 auto;
 }
+
+.logoHfj {
+  width: 32px;
+  height: 48px;
+}
+
+.logoContainer {
+  max-width: 160px;
+  display: flex;
+}
+
+.headLine {
+  position: relative;
+}
+.headLine::before {
+  content: '';
+  position: absolute;
+  display: block;
+  height: 24px;
+  width: 2px;
+  left: 0px;
+  background-color: #ccccd8;
+  top: calc((100% / 2) - 12px);
+}

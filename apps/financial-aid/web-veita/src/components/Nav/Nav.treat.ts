@@ -27,8 +27,6 @@ export const container = style({
 })
 
 export const logoContainer = style({
-  maxWidth: '160px',
-  display: 'flex',
   marginBottom: theme.spacing[8],
 })
 
@@ -38,25 +36,6 @@ export const logoHfjContainer = style({
   alignItems: 'center',
   columnGap: theme.spacing[2],
   marginBottom: theme.spacing[8],
-})
-
-export const logoHfj = style({
-  width: theme.spacing[4],
-  height: theme.spacing[6],
-})
-
-export const headline = style({
-  position: 'relative',
-  ':before': {
-    content: '""',
-    position: 'absolute',
-    display: 'block',
-    height: theme.spacing[3],
-    width: '2px',
-    left: '0px',
-    backgroundColor: theme.color.purple200,
-    top: 'calc((100%/2) - 12px)',
-  },
 })
 
 export const otherItems = style({})

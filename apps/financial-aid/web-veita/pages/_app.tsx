@@ -17,9 +17,9 @@ class FinancialAidApplication extends App<AppProps> {
     return (
       <ApolloProvider client={client}>
         {/* <Header /> */}
-        <AdminLayout>
-          <Component {...pageProps} />
-        </AdminLayout>
+        {/* <AdminLayout> */}
+        <Component {...pageProps} />
+        {/* </AdminLayout> */}
         <style jsx global>{`
           @font-face {
             font-family: 'IBM Plex Sans';

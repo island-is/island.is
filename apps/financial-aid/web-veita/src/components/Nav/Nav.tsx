@@ -41,7 +41,7 @@ const Nav: React.FC = () => {
   const navLinks = [
     {
       label: 'Ný mál',
-      link: '/',
+      link: '/nyMal',
     },
     {
       label: 'Í vinnslu',
@@ -56,13 +56,15 @@ const Nav: React.FC = () => {
   return (
     <nav className={styles.container}>
       <header>
-        <div className={styles.logoContainer}>
+        <div className={`${styles.logoContainer} logoContainer`}>
           <Logo />
         </div>
         <div className={styles.logoHfjContainer}>
-          <LogoHfj className={styles.logoHfj} />
+          <Box className={`logoHfj`}>
+            <LogoHfj />
+          </Box>
 
-          <Box paddingLeft={2} className={styles.headline}>
+          <Box paddingLeft={2} className={'headLine'}>
             <Text as="h1" lineHeight="sm">
               <strong>Sveita</strong> • Umsóknir um fjárhagsaðstoð
             </Text>

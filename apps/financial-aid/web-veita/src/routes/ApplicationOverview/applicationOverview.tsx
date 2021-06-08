@@ -37,7 +37,7 @@ const ApplicationOverview = () => {
   const navLinks = [
     {
       label: 'Ný mál',
-      link: '/',
+      link: '/nyMal',
       headers: ['Nafn', 'Staða', 'Tími án umsjár'],
     },
     {
@@ -65,13 +65,13 @@ const ApplicationOverview = () => {
   }, [])
 
   return (
-    <>
+    <AdminLayout>
       <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
-        {currentState.label}
+        {currentState?.label}
       </Text>
       {data?.applications && (
         <ApplicationTable
-          header={currentState.headers}
+          header={currentState?.headers}
           applications={data.applications.map((item) => {
             return {
               arr: [
@@ -87,7 +87,7 @@ const ApplicationOverview = () => {
           })}
         />
       )}
-    </>
+    </AdminLayout>
   )
 }
 
