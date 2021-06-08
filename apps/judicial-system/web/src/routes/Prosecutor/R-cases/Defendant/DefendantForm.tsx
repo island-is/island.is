@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Input, Select, Text } from '@island.is/island-ui/core'
+import { Box, Input, Option, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
@@ -96,6 +96,11 @@ const DefendantForm: React.FC<Props> = (props) => {
                     setWorkingCase,
                     updateCase,
                   )
+                }
+                defaultValue={
+                  RCaseTypes.find(
+                    (caseType) => caseType.value === workingCase.type,
+                  ) as Option
                 }
                 required
               />
