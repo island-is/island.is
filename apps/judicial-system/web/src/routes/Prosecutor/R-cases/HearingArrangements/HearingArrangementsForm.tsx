@@ -30,10 +30,10 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     requestedCourtDate: {
       validations: ['empty'],
     },
-    prosecutorId: {
+    prosecutor: {
       validations: ['empty'],
     },
-    courtId: {
+    court: {
       validations: ['empty'],
     },
   }
