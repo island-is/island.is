@@ -3,22 +3,14 @@ import * as s from './RegulationsSidebarBox.treat'
 import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import {
-  ISODate,
-  RegulationHistoryItem,
-  RegulationMaybeDiff,
-} from './Regulations.types'
+import { ISODate, interpolate, prettyName } from '@island.is/regulations'
+import { RegulationHistoryItem, RegulationMaybeDiff } from '@island.is/regulations/web'
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,
 } from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import {
-  interpolate,
-  prettyName,
-  useDateUtils,
-  useRegulationLinkResolver,
-} from './regulationUtils'
+import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
 
 type Effects = Array<RegulationHistoryItem>
 

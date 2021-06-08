@@ -1,7 +1,6 @@
 import { useMutation } from '@apollo/client'
 import {
   Case,
-  CaseCustodyRestrictions,
   NotificationType,
   SendNotificationResponse,
   UpdateCase,
@@ -11,7 +10,7 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { CreateCaseMutation, CreateCourtCaseMutation } from '../mutations'
-import { parseArray, parseString } from '../formatters'
+import { parseString } from '../formatters'
 
 type autofillProperties = Pick<
   Case,
@@ -91,6 +90,7 @@ const useCase = () => {
           variables: {
             input: {
               caseId: workingCase?.id,
+              courtId: workingCase?.court?.id,
               type: workingCase?.type,
               policeCaseNumber: workingCase?.policeCaseNumber,
               isExtension: Boolean(workingCase?.parentCase?.id),

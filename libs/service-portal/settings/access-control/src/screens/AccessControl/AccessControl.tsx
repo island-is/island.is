@@ -11,11 +11,11 @@ function AccessControl(): JSX.Element {
     <Box>
       <IntroHeader
         title={defineMessage({
-          id: 'service.portal:access-control-title',
+          id: 'service.portal.settings.accessControl:home-title',
           defaultMessage: 'Aðgangsstýring',
         })}
         intro={defineMessage({
-          id: 'service.portal:access-control-intro',
+          id: 'service.portal.settings.accessControl:home-intro',
           defaultMessage:
             'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
         })}

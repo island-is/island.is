@@ -45,19 +45,28 @@ export class ApiScopeGroup extends Model<ApiScopeGroup> {
     allowNull: false,
   })
   @ApiProperty({
+    example: 'Finance heading',
+  })
+  displayName!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty({
     example: 'Description about the Finance group',
   })
   description!: string
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty({
     example: '@island.is',
   })
   @ForeignKey(() => Domain)
-  domainName?: string
+  domainName!: string
 
   @CreatedAt
   @ApiProperty()

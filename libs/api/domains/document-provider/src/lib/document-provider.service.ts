@@ -21,7 +21,8 @@ import {
   CreateHelpdeskInput,
 } from './dto'
 import { OrganisationsApi, ProvidersApi } from '../../gen/fetch'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import type { Auth } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {

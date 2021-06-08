@@ -3,7 +3,7 @@ import * as s from './RegulationDisplay.treat'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import React from 'react'
 import { HTMLDump } from './HTMLDump'
-import { RegulationMaybeDiff } from './Regulations.types'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
 
 export type CommentsBoxProps = {
   title: string

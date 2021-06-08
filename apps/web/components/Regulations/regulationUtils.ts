@@ -1,8 +1,7 @@
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useDateUtils as _useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { ParsedUrlQuery } from 'querystring'
 import { ReactNode, useEffect, useRef, useState } from 'react'
-import { ISODate, RegName, RegQueryName } from './Regulations.types'
+import { ISODate, RegName, nameToSlug } from '@island.is/regulations'
 
 export const interpolateArray = (
   text: string,
@@ -30,24 +29,6 @@ export const interpolate = (
 // ---------------------------------------------------------------------------
 
 export const isPlural = (n: number) => n % 10 !== 1 || n % 100 === 11
-
-// ---------------------------------------------------------------------------
-
-/** Pretty-formats a Regulation `name` for human consumption
- *
- * Chops off leading zeros
- */
-export const prettyName = (regulationName: string): string =>
-  regulationName.replace(/^0+/, '')
-
-// ---------------------------------------------------------------------------
-
-/** Converts a Regulation `name` into a URL path segment
- *
- *  Example: '0123/2020' --> '0123-2020'
- */
-export const nameToSlug = (regulationName: RegName): RegQueryName =>
-  regulationName.replace('/', '-') as RegQueryName
 
 // ---------------------------------------------------------------------------
 
@@ -127,42 +108,6 @@ export const useRegulationLinkResolver = () => {
       new URLSearchParams(filters).toString(),
   }
 }
-
-// ---------------------------------------------------------------------------
-
-/** Returns the first query parameter value as string, falling back to '' */
-const getParamStr = (query: ParsedUrlQuery, key: string): string => {
-  const val = query[key]
-  return val == null ? '' : typeof val === 'string' ? val : val[0]
-}
-
-/** Picks named keys from the query object and defaults them to '' */
-export const getParams = <K extends string>(
-  query: ParsedUrlQuery,
-  keys: Array<K>,
-): Record<K, string> =>
-  keys.reduce((obj, key) => {
-    obj[key] = getParamStr(query, key)
-    return obj
-  }, {} as Record<K, string>)
-
-// ---------------------------------------------------------------------------
-
-const domid_prefix = '_' + /*@__PURE__*/ (Date.now() + '-').substr(6)
-let domid_incr = 0
-
-export default function domid() {
-  return domid_prefix + domid_incr++
-}
-
-// ---------------------------------------------------------------------------
-
-/** Returns a stable, unique ID string
- *
- * NOTE: it triggers harmless SSR hydration warnings in the browser,
- * but those can't be avoided beause of how React is currently designed.
- */
-export const useDomid = (staticId?: string) => useState(staticId || domid)[0]
 
 // ---------------------------------------------------------------------------
 

@@ -4,7 +4,7 @@ import * as s from './RegulationInfoBox.treat'
 import React, { useState } from 'react'
 import { Button, Hidden, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { RegulationMaybeDiff } from './Regulations.types'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,

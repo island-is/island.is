@@ -1,9 +1,9 @@
+import { Year, getParams, prettyName } from '@island.is/regulations'
 import {
   RegulationLawChapterTree,
   RegulationMinistryList,
   RegulationSearchResults,
-  Year,
-} from '../../components/Regulations/Regulations.types'
+} from '@island.is/regulations/web'
 import { RegulationHomeTexts } from '../../components/Regulations/RegulationTexts.types'
 
 import React, { useEffect, useState, useRef } from 'react'
@@ -28,8 +28,6 @@ import {
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationsSearchSection } from '../../components/Regulations/RegulationsSearchSection'
 import {
-  getParams,
-  prettyName,
   RegulationSearchFilters,
   useRegulationLinkResolver,
   isPlural,

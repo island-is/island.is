@@ -3,46 +3,23 @@ import { EndorsementMetadata } from './endorsementMetadata.model'
 import {
   EndorsementSystemSignedListsResponse,
   EndorsementSystemSignedListsService,
-} from './providers/endorsementSystemSignedLists.service'
+} from './providers/endorsementSystem/endorsementSystemSignedLists.service'
 import {
   NationalRegistryUserResponse,
   NationalRegistryUserService,
-} from './providers/nationalRegistryUser.service'
+} from './providers/nationalRegistry/nationalRegistryUser.service'
 
-interface MetadataInput {
-  fields: EndorsementMetaField[]
-  nationalId: string
-}
-type MetadataProviderField = {
-  [providerKey in EndorsementMetaField]: {
-    provider: MetadataProvider
-    dataResolver: (input: MetadataProviderResponse) => any
-  }
-}
-type MetadataProviderService = {
-  [providerKey in EndorsementMetaField]: MetadataProvider
-}
-export interface MetadataProvider {
-  metadataKey: string
-  getData: (
-    input: MetadataInput,
-  ) => Promise<MetadataProviderResponse[keyof MetadataProviderResponse]>
-}
-
-// TODO: Fix this type
-// add types for new metadata providers here
-type MetadataProviderResponse = {
-  [key: string]:
-    | NationalRegistryUserResponse
-    | EndorsementSystemSignedListsResponse
-}
-
-// add types for new metadata fields here
-export enum EndorsementMetaField {
-  FULL_NAME = 'fullName',
-  ADDRESS = 'address',
-  SIGNED_TAGS = 'signedTags',
-}
+import {
+  EndorsementMetaField,
+  MetadataInput,
+  MetadataProviderField,
+  MetadataProviderResponse,
+  MetadataProviderService,
+} from './types'
+import {
+  TemporaryVoterRegistryResponse,
+  TemporaryVoterRegistryService,
+} from './providers/temporaryVoterRegistry/temporaryVoterRegistry.service'
 
 @Injectable()
 export class EndorsementMetadataService {
@@ -50,6 +27,7 @@ export class EndorsementMetadataService {
   constructor(
     private readonly nationalRegistryUserService: NationalRegistryUserService,
     private readonly endorsementSystemSignedListsService: EndorsementSystemSignedListsService,
+    private readonly temporaryVoterRegistryService: TemporaryVoterRegistryService,
   ) {
     /**
      * We should assign minimal data to each metadata field since they optionally get appended to endorsements
@@ -71,6 +49,11 @@ export class EndorsementMetadataService {
         dataResolver: ({ endorsementListSignedTags }) =>
           (endorsementListSignedTags as EndorsementSystemSignedListsResponse)
             .tags,
+      },
+      [EndorsementMetaField.VOTER_REGION]: {
+        provider: this.temporaryVoterRegistryService,
+        dataResolver: ({ temporaryVoterRegistry }) =>
+          temporaryVoterRegistry as TemporaryVoterRegistryResponse,
       },
     }
   }

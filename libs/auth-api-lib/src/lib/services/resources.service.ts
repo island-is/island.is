@@ -1,7 +1,8 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Op, Sequelize, WhereOptions } from 'sequelize'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import { ApiScope } from '../entities/models/api-scope.model'
@@ -25,7 +26,6 @@ import { uuid } from 'uuidv4'
 import { Domain } from '../entities/models/domain.model'
 import { PagedRowsDto } from '../entities/dto/paged-rows.dto'
 import { DomainDTO } from '../entities/dto/domain.dto'
-import { isNumber } from 'class-validator'
 
 @Injectable()
 export class ResourcesService {
@@ -333,6 +333,16 @@ export class ResourcesService {
     return this.apiScopeModel.findAll({
       where: scopeNames ? whereOptions : undefined,
       include: [ApiScopeUserClaim, ApiScopeGroup],
+    })
+  }
+
+  /** Gets Api scopes with Explicit Delegation Grant */
+  async findApiScopesWithExplicitDelegationGrant(): Promise<ApiScope[]> {
+    this.logger.debug(`Finding api scopes with Explicit Delegation Grant`)
+
+    return this.apiScopeModel.findAll({
+      where: { allowExplicitDelegationGrant: true },
+      include: [ApiScopeGroup],
     })
   }
 
@@ -823,7 +833,7 @@ export class ResourcesService {
     page: number | null = null,
     count: number | null = null,
   ): Promise<Domain[] | PagedRowsDto<Domain>> {
-    if (page && count && isNumber(page) && isNumber(count)) {
+    if (page && count) {
       page--
       const offset = page * count
       if (!searchString || searchString.length === 0) {
@@ -841,6 +851,11 @@ export class ResourcesService {
     return this.domainModel.findAll({ order: [['name', 'asc']] })
   }
 
+  /** Gets domain by name */
+  async findDomainByPk(name: string): Promise<Domain | null> {
+    return this.domainModel.findByPk(name)
+  }
+
   /** Creates a new Domain */
   async createDomain(domain: DomainDTO): Promise<Domain> {
     return this.domainModel.create({ ...domain })
@@ -848,7 +863,7 @@ export class ResourcesService {
 
   /** Updates an existing Domain */
   async updateDomain(
-    domain: ApiScopeGroupDTO,
+    domain: DomainDTO,
     name: string,
   ): Promise<[number, Domain[]]> {
     return this.domainModel.update({ ...domain }, { where: { name: name } })
@@ -859,5 +874,5 @@ export class ResourcesService {
     return this.domainModel.destroy({ where: { name: name } })
   }
 
-  // #endregion ApiScopeGroup
+  // #endregion Domain
 }

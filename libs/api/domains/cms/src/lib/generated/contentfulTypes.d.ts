@@ -55,6 +55,9 @@ export interface IAccordionSliceFields {
   /** Title */
   title?: string | undefined
 
+  /** Type */
+  type: 'accordion' | 'CTA'
+
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
 }
@@ -1568,6 +1571,34 @@ export interface IMenuLinkWithChildren
   }
 }
 
+export interface IMultipleStatisticsFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Statistics */
+  statistics?: IStatistics[] | undefined
+
+  /** Link */
+  link?: ILink | undefined
+}
+
+export interface IMultipleStatistics extends Entry<IMultipleStatisticsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'multipleStatistics'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface INamespaceFields {
   /** Namespace */
   namespace?: string | undefined
@@ -1738,31 +1769,6 @@ export interface INumberBulletSection
   }
 }
 
-export interface IOfficesFields {
-  /** Title */
-  title: string
-
-  /** Offices */
-  offices?: IOrganizationOffice[] | undefined
-}
-
-export interface IOffices extends Entry<IOfficesFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'offices'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IOneColumnTextFields {
   /** Title */
   title: string
@@ -1890,15 +1896,19 @@ export interface IOrganizationPageFields {
   /** Slices */
   slices?:
     | (
+        | IAccordionSlice
         | IBigBulletList
         | IDistricts
         | IMailingListSignup
         | IFeaturedArticles
         | ISectionHeading
         | ILogoListSlice
+        | IMultipleStatistics
+        | IOneColumnText
         | IStorySection
         | ITabSection
         | ITimeline
+        | ITwoColumnText
       )[]
     | undefined
 
@@ -1969,8 +1979,9 @@ export interface IOrganizationSubpageFields {
         | IContactUs
         | IDistricts
         | IMailingListSignup
-        | IOffices
+        | IMultipleStatistics
         | IOneColumnText
+        | ITabSection
         | ITeamList
         | ITellUsAStory
         | ITwoColumnText
@@ -2985,6 +2996,9 @@ export interface ITimelineFields {
   /** Title */
   title?: string | undefined
 
+  /** Intro */
+  intro?: string | undefined
+
   /** Events */
   events: ITimelineEvent[]
 }
@@ -3447,15 +3461,14 @@ export type CONTENT_TYPE =
   | 'menu'
   | 'menuLink'
   | 'menuLinkWithChildren'
+  | 'multipleStatistics'
   | 'namespace'
   | 'namespaceJeremyDev'
   | 'news'
   | 'numberBullet'
   | 'numberBulletSection'
-  | 'offices'
   | 'oneColumnText'
   | 'organization'
-  | 'organizationOffice'
   | 'organizationPage'
   | 'organizationSubpage'
   | 'organizationTag'
