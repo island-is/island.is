@@ -4,6 +4,7 @@ import { PageLayout } from '@island.is/judicial-system-web/src/shared-components
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
+  CaseData,
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -11,27 +12,23 @@ import { useRouter } from 'next/router'
 import CaseFilesForm from './CaseFilesForm'
 
 export const CaseFiles: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
-
   const router = useRouter()
   const id = router.query.id
-
-  const { data, loading } = useQuery(CaseQuery, {
+  const [workingCase, setWorkingCase] = useState<Case>()
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const resCase = data?.case
 
   useEffect(() => {
     document.title = 'Rannsóknargögn - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (id && !workingCase && resCase) {
-      setWorkingCase(resCase)
+    if (id && !workingCase && data) {
+      setWorkingCase(data.case)
     }
-  }, [id, workingCase, setWorkingCase, resCase])
+  }, [id, workingCase, setWorkingCase, data])
 
   return (
     <PageLayout
@@ -50,6 +47,7 @@ export const CaseFiles: React.FC = () => {
         <CaseFilesForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
+          isLoading={loading}
         />
       ) : null}
     </PageLayout>

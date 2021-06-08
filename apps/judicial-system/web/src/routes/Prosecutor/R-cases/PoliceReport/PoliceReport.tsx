@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
@@ -6,17 +8,13 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { Case } from '@island.is/judicial-system/types'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
 import PoliceReportForm from './PoliceReportForm'
 
 const PoliceReport = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
-
   const router = useRouter()
   const id = router.query.id
+  const [workingCase, setWorkingCase] = useState<Case>()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -50,6 +48,7 @@ const PoliceReport = () => {
         <PoliceReportForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
+          isLoading={loading}
         />
       )}
     </PageLayout>

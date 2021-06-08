@@ -8,22 +8,23 @@ import {
 import { Case } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
-  setCheckboxAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  isLoading: boolean
 }
 
 const PoliceReportForm: React.FC<Props> = (props) => {
+  const { workingCase, setWorkingCase, isLoading } = props
   const validations: FormSettings = {
     caseFacts: {
       validations: ['empty'],
@@ -32,7 +33,6 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
-  const { workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
@@ -245,6 +245,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.R_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isValid}
+          nextIsLoading={isLoading}
         />
       </FormContentContainer>
     </>
