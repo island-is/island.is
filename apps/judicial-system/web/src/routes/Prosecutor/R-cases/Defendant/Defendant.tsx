@@ -83,7 +83,7 @@ const Defendant = () => {
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           handleNextButtonClick={handleNextButtonClick}
-          loading={isCreatingCase || loading}
+          isLoading={isCreatingCase || loading}
         />
       )}
     </PageLayout>

@@ -26,11 +26,16 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   handleNextButtonClick: (theCase: Case) => void
-  loading: boolean
+  isLoading: boolean
 }
 
 const DefendantForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, handleNextButtonClick, loading } = props
+  const {
+    workingCase,
+    setWorkingCase,
+    handleNextButtonClick,
+    isLoading,
+  } = props
   const validations: FormSettings = {
     policeCaseNumber: {
       validations: ['empty', 'police-casenumber-format'],
@@ -156,7 +161,7 @@ const DefendantForm: React.FC<Props> = (props) => {
           previousUrl={`${constants.REQUEST_LIST_ROUTE}`}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsDisabled={!isValid}
-          nextIsLoading={loading}
+          nextIsLoading={isLoading}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
           }
