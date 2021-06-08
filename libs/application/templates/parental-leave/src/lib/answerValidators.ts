@@ -64,10 +64,14 @@ export const answerValidators: Record<string, AnswerValidator> = {
   },
   [FIRST_PERIOD_START]: (_, application: Application) => {
     const buildError = buildValidationError(FIRST_PERIOD_START)
-    const expectedDateOfBirth = getExpectedDateOfBirth(application)
+    try {
+      const expectedDateOfBirth = getExpectedDateOfBirth(application)
 
-    if (!expectedDateOfBirth) {
-      return buildError(errorMessages.dateOfBirth)
+      if (!expectedDateOfBirth) {
+        return buildError(errorMessages.dateOfBirth)
+      }
+    } catch (e) {
+      return buildError(errorMessages.noChildData)
     }
 
     return undefined
