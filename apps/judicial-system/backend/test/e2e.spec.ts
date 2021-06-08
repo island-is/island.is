@@ -138,7 +138,7 @@ function remainingProsecutorCaseData() {
     arrestDate: '2020-09-08T08:00:00.000Z',
     requestedCourtDate: '2020-09-08T11:30:00.000Z',
     requestedValidToDate: '2020-09-29T12:00:00.000Z',
-    otherDemands: 'Other Demands',
+    demands: 'Demands',
     lawsBroken: 'Broken Laws',
     legalBasis: 'Legal Basis',
     custodyProvisions: [
@@ -169,7 +169,7 @@ function remainingJudgeCaseData() {
     courtStartDate: '2020-09-29T13:00:00.000Z',
     courtEndTime: '2020-09-29T14:00:00.000Z',
     courtAttendees: 'Court Attendees',
-    policeDemands: 'Police Demands',
+    prosecutorDemands: 'Police Demands',
     courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
     accusedPleaDecision: AccusedPleaDecision.ACCEPT,
     accusedPleaAnnouncement: 'Accused Plea',
@@ -345,7 +345,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.requestedValidToDate || null).toBe(
     caseTwo.requestedValidToDate || null,
   )
-  expect(caseOne.otherDemands || null).toBe(caseTwo.otherDemands || null)
+  expect(caseOne.demands || null).toBe(caseTwo.demands || null)
   expect(caseOne.lawsBroken || null).toBe(caseTwo.lawsBroken || null)
   expect(caseOne.legalBasis || null).toBe(caseTwo.legalBasis || null)
   expect(caseOne.custodyProvisions || null).toStrictEqual(
@@ -384,7 +384,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtStartDate || null).toBe(caseTwo.courtStartDate || null)
   expect(caseOne.courtEndTime || null).toBe(caseTwo.courtEndTime || null)
   expect(caseOne.courtAttendees || null).toBe(caseTwo.courtAttendees || null)
-  expect(caseOne.policeDemands || null).toBe(caseTwo.policeDemands || null)
+  expect(caseOne.prosecutorDemands || null).toBe(
+    caseTwo.prosecutorDemands || null,
+  )
   expect(caseOne.courtDocuments || null).toStrictEqual(
     caseTwo.courtDocuments || null,
   )

@@ -102,7 +102,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly otherDemands?: string
+  readonly demands?: string
 
   @IsOptional()
   @IsString()
@@ -202,7 +202,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly policeDemands?: string
+  readonly prosecutorDemands?: string
 
   @IsOptional()
   @IsString({ each: true })

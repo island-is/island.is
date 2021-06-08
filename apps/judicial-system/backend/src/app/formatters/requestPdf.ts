@@ -1,15 +1,11 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
-import {
-  CaseCustodyRestrictions,
-  CaseType,
-} from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
 import {
   formatRequestedCustodyRestrictions,
   formatGender,
   formatNationalId,
-  formatProsecutorDemands,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -89,33 +85,10 @@ function constructRequestPdf(existingCase: Case) {
     .text('Dómkröfur')
     .font('Helvetica')
     .fontSize(12)
-    .text(
-      formatProsecutorDemands(
-        existingCase.type,
-        existingCase.accusedNationalId,
-        existingCase.accusedName,
-        existingCase.court?.name,
-        existingCase.requestedValidToDate,
-        existingCase.requestedCustodyRestrictions?.includes(
-          CaseCustodyRestrictions.ISOLATION,
-        ),
-        existingCase.parentCase !== null,
-        existingCase.parentCase?.decision,
-      ),
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
-
-  if (existingCase.otherDemands) {
-    doc.text(' ').text(existingCase.otherDemands, {
+    .text(existingCase.demands, {
       lineGap: 6,
       paragraphGap: 0,
     })
-  }
-
-  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)

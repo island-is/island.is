@@ -247,7 +247,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  otherDemands: string
+  demands: string
 
   /**********
    *
@@ -459,7 +459,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  policeDemands: string
+  prosecutorDemands: string
 
   /**********
    *
@@ -644,16 +644,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  rulingDate: Date
-
-  /**********
-   *
-   **********/
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiProperty()
   accusedPostponedAppealDate: Date
 
   /**********
@@ -669,17 +659,12 @@ export class Case extends Model<Case> {
   /**********
    *
    **********/
-  @ForeignKey(() => User)
   @Column({
-    type: DataType.UUID,
+    type: DataType.DATE,
     allowNull: true,
   })
   @ApiProperty()
-  judgeId: string
-
-  @BelongsTo(() => User, 'judgeId')
-  @ApiProperty({ type: User })
-  judge: User
+  rulingDate: Date
 
   /**********
    *
@@ -695,6 +680,21 @@ export class Case extends Model<Case> {
   @BelongsTo(() => User, 'registrarId')
   @ApiProperty({ type: User })
   registrar: User
+
+  /**********
+   *
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  judgeId: string
+
+  @BelongsTo(() => User, 'judgeId')
+  @ApiProperty({ type: User })
+  judge: User
 
   /**********
    *

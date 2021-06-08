@@ -15,7 +15,6 @@ import {
   formatAlternativeTravelBanRestrictions,
   NounCases,
   formatAccusedByGender,
-  formatProsecutorDemands,
   caseTypes,
 } from '@island.is/judicial-system/formatters'
 
@@ -88,7 +87,7 @@ export async function getRulingPdfAsString(
     .text('Krafa')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.policeDemands, {
+    .text(existingCase.prosecutorDemands, {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -182,33 +181,10 @@ export async function getRulingPdfAsString(
     .text('Krafa')
     .font('Helvetica')
     .fontSize(12)
-    .text(
-      formatProsecutorDemands(
-        existingCase.type,
-        existingCase.accusedNationalId,
-        existingCase.accusedName,
-        existingCase.court?.name,
-        existingCase.requestedValidToDate,
-        existingCase.requestedCustodyRestrictions?.includes(
-          CaseCustodyRestrictions.ISOLATION,
-        ),
-        existingCase.parentCase !== null,
-        existingCase.parentCase?.decision,
-      ),
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
-
-  if (existingCase.otherDemands?.length > 0) {
-    doc.text(' ').text(existingCase.otherDemands, {
+    .text(existingCase.demands, {
       lineGap: 6,
       paragraphGap: 0,
     })
-  }
-
-  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
