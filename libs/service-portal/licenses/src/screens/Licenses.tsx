@@ -18,8 +18,7 @@ function Licenses(): JSX.Element {
         })}
         intro={defineMessage({
           id: 'service.portal:licenses-intro',
-          defaultMessage:
-            'Þín skilríki!',
+          defaultMessage: 'Þín skilríki!',
         })}
         img="./assets/images/educationLicense.svg"
       />

@@ -11,8 +11,7 @@ export const licensesModule: ServicePortalModule = {
     {
       name: 'Skilríki',
       path: ServicePortalPath.LicensesRoot,
-      render: () =>
-      lazy(() => import('./screens/Licenses')),
+      render: () => lazy(() => import('./screens/Licenses')),
     },
   ],
 }
