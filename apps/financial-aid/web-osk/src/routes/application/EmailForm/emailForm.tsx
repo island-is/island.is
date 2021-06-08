@@ -63,6 +63,7 @@ const EmailForm = () => {
             value={form?.emailAddress}
             type="email"
             backgroundColor="blue"
+            errorMessage="Athugaðu hvort netfang sé rétt slegið inn"
             hasError={error && !Boolean(form?.emailAddress)}
           />
         </Box>
@@ -73,7 +74,7 @@ const EmailForm = () => {
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að svara
+            Þú þarft að velja einn valmöguleika
           </Text>
         </div>
 

@@ -33,7 +33,7 @@ const PersonalTaxCreditForm = () => {
       value: 0,
     },
     {
-      label: 'Nei, nýti ekki persónuafslátt',
+      label: 'Nei, ekki nýta persónuafslátt',
       value: 1,
     },
   ]
@@ -77,7 +77,7 @@ const PersonalTaxCreditForm = () => {
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að svara
+            Þú þarft að velja einn valmöguleika
           </Text>
         </div>
 

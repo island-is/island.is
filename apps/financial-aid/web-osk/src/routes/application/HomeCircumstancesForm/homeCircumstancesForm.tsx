@@ -73,7 +73,7 @@ const HomeCircumstancesForm = () => {
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að svara
+            Þú þarft að velja einn valmöguleika
           </Text>
         </div>
 
@@ -93,7 +93,7 @@ const HomeCircumstancesForm = () => {
             textarea
             value={form?.homeCircumstancesCustom}
             hasError={error && !Boolean(form?.homeCircumstancesCustom)}
-            errorMessage="Þú þarft að fylla út"
+            errorMessage="Þú þarft að skrifa í textareitinn"
             onChange={(event) => {
               updateForm({
                 ...form,

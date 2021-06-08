@@ -70,7 +70,7 @@ const EmploymentForm = () => {
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að svara
+            Þú þarft að velja einn valmöguleika
           </Text>
         </div>
 
@@ -90,7 +90,7 @@ const EmploymentForm = () => {
             textarea
             value={form?.employmentCustom}
             hasError={error && !Boolean(form?.employmentCustom)}
-            errorMessage="Þú þarft að fylla út"
+            errorMessage="Þú þarft að skrifa í textareitinn"
             onChange={(event) => {
               updateForm({ ...form, employmentCustom: event.target.value })
             }}

@@ -70,7 +70,7 @@ const StudentForm = () => {
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að svara
+            Þú þarft að velja einn valmöguleika
           </Text>
         </div>
         <Box
@@ -82,12 +82,12 @@ const StudentForm = () => {
         >
           <Input
             backgroundColor="blue"
-            label="Hvaða námi?"
+            label="Hvaða námi? Dæmi: Viðskiptafræði í HR"
             name="education"
             placeholder="Dæmi: Viðskiptafræði í HR"
             value={form?.studentCustom}
             hasError={error && form?.studentCustom === undefined}
-            errorMessage="Þú þarft að fylla út"
+            errorMessage="Þú þarft að skrifa hvaða nám þú stundar"
             onChange={(
               event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => updateForm({ ...form, studentCustom: event.target.value })}

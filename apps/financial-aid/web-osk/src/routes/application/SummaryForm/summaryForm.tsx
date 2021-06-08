@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   LoadingDots,
+  Input,
 } from '@island.is/island-ui/core'
 
 import { useMutation, useQuery } from '@apollo/client'
@@ -301,7 +302,7 @@ const SummaryForm = () => {
           justifyContent="spaceBetween"
           alignItems="flexStart"
           paddingY={[4, 4, 5]}
-          marginBottom={[2, 2, 10]}
+          marginBottom={[2, 2, 5]}
         >
           <Box marginRight={3}>
             <Text fontWeight="semiBold">Gögn</Text>
@@ -318,6 +319,25 @@ const SummaryForm = () => {
           >
             Breyta
           </Button>
+        </Box>
+
+        <Box marginBottom={[3, 3, 4]}>
+          <Text variant="h3">Annað sem þú vilt koma á framfæri?</Text>
+        </Box>
+
+        <Box marginBottom={[2, 2, 10]}>
+          <Input
+            backgroundColor={'blue'}
+            label="Athugasemd"
+            name="employmentCustom"
+            placeholder="Skrifaðu hér"
+            rows={8}
+            textarea
+            value={form?.employmentCustom}
+            onChange={(event) => {
+              updateForm({ ...form })
+            }}
+          />
         </Box>
 
         <div
@@ -339,11 +359,10 @@ const SummaryForm = () => {
           createApplication()
             .then((el) => {
               router.push(navigation?.nextUrl ?? '/')
-
-              // router.events.on('routeChangeComplete', (url) => {
-              //   //Clear session storage
-              //   updateForm({ submitted: false, incomeFiles: [] })
-              // })
+              router.events.on('routeChangeComplete', (url) => {
+                //Clear session storage
+                updateForm({ submitted: false, incomeFiles: [] })
+              })
             })
             .catch((err) =>
               setFormError({

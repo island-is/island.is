@@ -71,7 +71,7 @@ const AddressForm = () => {
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að svara
+            Þú þarft að velja einn valmöguleika
           </Text>
         </div>
 
@@ -89,7 +89,7 @@ const AddressForm = () => {
               placeholder="Sláðu inn götunafn og númer"
               value={form?.customHomeAddress}
               hasError={error && !Boolean(form?.customHomeAddress)}
-              errorMessage="Þú þarft að fylla út"
+              errorMessage="Þú þarft að skrifa í textareitinn"
               onChange={(event) =>
                 updateForm({ ...form, customHomeAddress: event.target.value })
               }
@@ -104,7 +104,7 @@ const AddressForm = () => {
               placeholder="T.d. 220"
               value={form?.customPostalCode}
               hasError={error && !Boolean(form?.customPostalCode)}
-              errorMessage="Þú þarft að fylla út"
+              errorMessage="Þú þarft að skrifa í textareitinn"
               onChange={(event) =>
                 updateForm({ ...form, customPostalCode: event.target.value })
               }
