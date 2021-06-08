@@ -73,4 +73,8 @@ export class CreateApplicationInput implements CreateApplication {
   @Allow()
   @Field({ nullable: true })
   readonly interview?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly formComment?: string
 }

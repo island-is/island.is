@@ -146,4 +146,11 @@ export class ApplicationModel extends Model<ApplicationModel> {
   })
   @ApiProperty()
   interview: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  formComment: string
 }

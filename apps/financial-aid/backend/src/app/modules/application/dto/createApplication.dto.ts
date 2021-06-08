@@ -90,4 +90,9 @@ export class CreateApplicationDto {
   @IsBoolean()
   @ApiProperty()
   readonly hasIncome: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly formComment: string
 }

@@ -64,4 +64,7 @@ export class ApplicationModel implements Application {
 
   @Field({ nullable: true })
   readonly interview?: boolean
+
+  @Field({ nullable: true })
+  readonly formComment?: string
 }

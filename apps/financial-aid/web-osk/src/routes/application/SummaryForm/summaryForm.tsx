@@ -88,6 +88,7 @@ const SummaryForm = () => {
           interview: Boolean(form?.interview),
           employment: form?.employment,
           employmentCustom: form?.employmentCustom,
+          formComment: form?.formComment,
         },
       },
     })
@@ -329,13 +330,13 @@ const SummaryForm = () => {
           <Input
             backgroundColor={'blue'}
             label="Athugasemd"
-            name="employmentCustom"
+            name="formComment"
             placeholder="Skrifaðu hér"
             rows={8}
             textarea
-            value={form?.employmentCustom}
+            value={form?.formComment}
             onChange={(event) => {
-              updateForm({ ...form })
+              updateForm({ ...form, formComment: event.target.value })
             }}
           />
         </Box>
