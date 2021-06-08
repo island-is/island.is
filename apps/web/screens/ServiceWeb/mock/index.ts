@@ -23,3 +23,18 @@ export const categories = [
       'Heimagisting, Lögmannsréttindi, Meistarapróf, Löggilding fasteigna o.fl.',
   },
 ]
+
+export const questions = [
+  {
+    q: 'Hvað tekur langan tíma að fá ökuskírteini?',
+    a: 'Hvað tekur langan tíma að fá ökuskírteini?',
+  },
+  {
+    q: 'Hvað er kaupmáli?',
+    a: 'Hvað er kaupmáli?',
+  },
+  {
+    q: 'Er til eyðublað fyrir kaupmála?',
+    a: 'Er til eyðublað fyrir kaupmála?',
+  },
+]
