@@ -17,7 +17,7 @@ describe('Custody petition, step four', () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_2' },
+      query: { id: 'test_id_11' },
     }))
 
     render(
@@ -27,12 +27,16 @@ describe('Custody petition, step four', () => {
           ...mockProsecutorQuery,
           ...mockUpdateCaseMutation(
             [
+              {
+                demands:
+                  'Þess er krafist að Jon Harring, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:51.',
+              },
               { caseFacts: 'Lorem ipsum dolor sit amet,' } as UpdateCase,
               {
                 legalArguments: 'Lorem ipsum dolor sit amet,',
               } as UpdateCase,
             ],
-            'test_id_2',
+            'test_id_11',
           ),
         ]}
         addTypename={false}

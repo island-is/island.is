@@ -30,6 +30,9 @@ describe('/domari-krafa/thingbok', () => {
           ...mockUpdateCaseMutation(
             [
               {
+                prosecutorDemands: 'Þess er krafist ...',
+              },
+              {
                 courtAttendees:
                   'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman skipaður verjandi kærða',
               } as UpdateCase,
