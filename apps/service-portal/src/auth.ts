@@ -19,7 +19,7 @@ if (userMocked) {
     redirectPathSilent: '/silent/signin-oidc',
     authority: environment.identityServer.authority,
     client_id: 'island-is-1',
-    scope: `openid profile api_resource.scope ${ApplicationScope.read} ${UserProfileScope.read} ${UserProfileScope.write} ${AuthScope.actorDelegations}`,
+    scope: `openid profile api_resource.scope ${ApplicationScope.read} ${UserProfileScope.read} ${UserProfileScope.write} ${AuthScope.actorDelegations} ${AuthScope.readDelegations} ${AuthScope.writeDelegations}`,
     post_logout_redirect_uri: `${window.location.origin}`,
   })
 }

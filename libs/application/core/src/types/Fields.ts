@@ -14,7 +14,7 @@ import { FormatInputValueFunction } from 'react-number-format'
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplicationAndField<T> =
   | T
-  | ((a: Application, f: Field) => T)
+  | ((application: Application, field: Field) => T)
 export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
 export type TitleVariants = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
@@ -123,6 +123,7 @@ export interface RadioField extends BaseField {
   options: MaybeWithApplicationAndField<Option[]>
   backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
+  space?: BoxProps['paddingTop']
 }
 
 export interface SelectField extends BaseField {
