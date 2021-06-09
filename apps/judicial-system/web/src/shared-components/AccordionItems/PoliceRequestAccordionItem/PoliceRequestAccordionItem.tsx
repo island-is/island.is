@@ -65,7 +65,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         </AccordionListItem>
       )}
       <AccordionListItem title="Dómkröfur">
-        {workingCase.demands}
+        <Text>{workingCase.demands}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði sem brot varða við" breakSpaces>
         <Text>{workingCase.lawsBroken}</Text>

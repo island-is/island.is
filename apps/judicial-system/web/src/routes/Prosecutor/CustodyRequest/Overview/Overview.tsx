@@ -256,7 +256,7 @@ export const Overview: React.FC = () => {
                   Dómkröfur
                 </Text>
               </Box>
-              {workingCase.demands}
+              <Text>{workingCase.demands}</Text>
             </Box>
             <Box component="section" marginBottom={10}>
               <Accordion>
