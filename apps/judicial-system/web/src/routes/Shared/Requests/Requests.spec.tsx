@@ -116,7 +116,7 @@ describe('Custody petitions route', () => {
 
     expect(
       await waitFor(
-        () => screen.getAllByTestId('custody-petitions-table-row').length,
+        () => screen.getAllByTestId('custody-requests-table-row').length,
       ),
     ).toEqual(4)
   })
@@ -207,7 +207,7 @@ describe('Custody petitions route', () => {
 
     expect(
       await waitFor(
-        () => screen.getAllByTestId('custody-petitions-table-row').length,
+        () => screen.getAllByTestId('custody-requests-table-row').length,
       ),
     ).toEqual(5)
   })
@@ -242,7 +242,7 @@ describe('Custody petitions route', () => {
     )
 
     expect(
-      (await screen.findAllByTestId('custody-petitions-table-row')).length,
+      (await screen.findAllByTestId('custody-requests-table-row')).length,
     ).toEqual(5)
   })
 
@@ -260,9 +260,7 @@ describe('Custody petitions route', () => {
 
     userEvent.click(await screen.findByTestId('accusedNameSortButton'))
 
-    const tableRows = await screen.findAllByTestId(
-      'custody-petitions-table-row',
-    )
+    const tableRows = await screen.findAllByTestId('custody-requests-table-row')
 
     expect(tableRows[0]).toHaveTextContent('D. M. Kil')
     expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
@@ -285,9 +283,7 @@ describe('Custody petitions route', () => {
 
     userEvent.dblClick(await screen.findByTestId('accusedNameSortButton'))
 
-    const tableRows = await screen.findAllByTestId(
-      'custody-petitions-table-row',
-    )
+    const tableRows = await screen.findAllByTestId('custody-requests-table-row')
 
     expect(tableRows[4]).toHaveTextContent('D. M. Kil')
     expect(tableRows[3]).toHaveTextContent('Erlingur L Kristinsson')
@@ -310,9 +306,7 @@ describe('Custody petitions route', () => {
 
     userEvent.click(await screen.findByText('Krafa stofnuð'))
 
-    const tableRows = await screen.findAllByTestId(
-      'custody-petitions-table-row',
-    )
+    const tableRows = await screen.findAllByTestId('custody-requests-table-row')
 
     expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
     expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
@@ -335,9 +329,7 @@ describe('Custody petitions route', () => {
 
     userEvent.dblClick(await screen.findByText('Krafa stofnuð'))
 
-    const tableRows = await screen.findAllByTestId(
-      'custody-petitions-table-row',
-    )
+    const tableRows = await screen.findAllByTestId('custody-requests-table-row')
 
     expect(tableRows[4]).toHaveTextContent('Erlingur L Kristinsson')
     expect(tableRows[3]).toHaveTextContent('Jon Harring Sr.')

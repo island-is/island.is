@@ -268,7 +268,7 @@ export const Requests: React.FC = () => {
       ) : error ? (
         <div
           className={styles.requestsError}
-          data-testid="custody-petitions-error"
+          data-testid="custody-requests-error"
         >
           <AlertMessage
             title="Ekki tókst að sækja gögn úr gagnagrunni"
