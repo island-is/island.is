@@ -57,6 +57,7 @@ export class DelegationScope extends Model<DelegationScope> {
 
   toDTO(): DelegationScopeDTO {
     return {
+      delegationId: this.delegationId,
       scopeName: this.scopeName,
       validFrom: this.validFrom,
       validTo: this.validTo,
