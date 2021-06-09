@@ -76,7 +76,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.CUSTODY_PETITION_STEP_ONE}
+      activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_ONE}
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
       isExtension={workingCase?.parentCase && true}

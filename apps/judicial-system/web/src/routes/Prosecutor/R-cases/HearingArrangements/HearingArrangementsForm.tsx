@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Case, Institution, User } from '@island.is/judicial-system/types'
+import { Case, Institution } from '@island.is/judicial-system/types'
 import {
   DateTime,
   FormContentContainer,
@@ -9,41 +9,42 @@ import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   prosecutors: ReactSelectOption[]
   courts: Institution[]
+  isLoading: boolean
 }
 
 const HearingArrangementsForms: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, prosecutors, courts } = props
+  const { workingCase, setWorkingCase, prosecutors, courts, isLoading } = props
   const validations: FormSettings = {
     requestedCourtDate: {
       validations: ['empty'],
     },
-    prosecutorId: {
+    prosecutor: {
       validations: ['empty'],
     },
-    courtId: {
+    court: {
       validations: ['empty'],
     },
   }
+  const [, setRequestedCourtDateIsValid] = useState<boolean>(
+    workingCase.requestedCourtDate !== null,
+  )
   const { isValid } = useCaseFormHelper(
     workingCase,
     setWorkingCase,
     validations,
-  )
-  const [, setRequestedCourtDateIsValid] = useState<boolean>(
-    workingCase.requestedCourtDate !== null,
   )
 
   const { updateCase } = useCase()
@@ -117,10 +118,10 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.NEW_R_CASE_ROUTE}
+          previousUrl={`${Constants.R_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isValid}
-          nextIsLoading={false}
+          nextIsLoading={isLoading}
         />
       </FormContentContainer>
     </>

@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
@@ -7,8 +9,6 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { Case } from '@island.is/judicial-system/types'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
 import PoliceDemandsForm from './PoliceDemandsForm'
 
 const PoliceDemands: React.FC = () => {
@@ -37,7 +37,7 @@ const PoliceDemands: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.CUSTODY_PETITION_STEP_THREE}
+      activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_THREE}
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
       isExtension={workingCase?.parentCase && true}
@@ -50,6 +50,7 @@ const PoliceDemands: React.FC = () => {
         <PoliceDemandsForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
+          isLoading={loading}
         />
       )}
     </PageLayout>

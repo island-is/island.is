@@ -1,34 +1,41 @@
 import React, { useState } from 'react'
-import { Box, Input, Select, Text } from '@island.is/island-ui/core'
+import { ValueType } from 'react-select/src/types'
+import { Box, Input, Option, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { Case, RCaseTypes } from '@island.is/judicial-system/types'
-import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
-import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 import {
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
+import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
+import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   handleNextButtonClick: (theCase: Case) => void
+  isLoading: boolean
 }
 
 const DefendantForm: React.FC<Props> = (props) => {
+  const {
+    workingCase,
+    setWorkingCase,
+    handleNextButtonClick,
+    isLoading,
+  } = props
   const validations: FormSettings = {
     policeCaseNumber: {
       validations: ['empty', 'police-casenumber-format'],
@@ -52,7 +59,6 @@ const DefendantForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
-  const { workingCase, setWorkingCase, handleNextButtonClick } = props
   const [petitionDescriptionEM, setPetitionDescriptionEM] = useState<string>('')
   const { updateCase } = useCase()
   const { isValid } = useCaseFormHelper(
@@ -66,7 +72,7 @@ const DefendantForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Varnaraðili
+            Rannsóknarheimild
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
@@ -82,7 +88,7 @@ const DefendantForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <BlueBox>
-            <Box marginBottom={2}>
+            <Box marginBottom={3}>
               <Select
                 name="petition-type"
                 options={RCaseTypes}
@@ -96,6 +102,11 @@ const DefendantForm: React.FC<Props> = (props) => {
                     setWorkingCase,
                     updateCase,
                   )
+                }
+                defaultValue={
+                  RCaseTypes.find(
+                    (caseType) => caseType.value === workingCase.type,
+                  ) as Option
                 }
                 required
               />
@@ -133,7 +144,7 @@ const DefendantForm: React.FC<Props> = (props) => {
             />
           </BlueBox>
         </Box>
-        <Box component="section" marginBottom={5}>
+        <Box component="section" marginBottom={10}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Varnaraðili
@@ -147,10 +158,10 @@ const DefendantForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.STEP_ONE_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.REQUEST_LIST_ROUTE}`}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsDisabled={!isValid}
-          nextIsLoading={false}
+          nextIsLoading={isLoading}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
           }

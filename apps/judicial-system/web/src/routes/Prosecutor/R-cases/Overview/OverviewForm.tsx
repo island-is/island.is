@@ -4,7 +4,6 @@ import {
   Case,
   CaseCustodyProvisions,
   CaseState,
-  CaseType,
 } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
@@ -16,34 +15,27 @@ import {
 import {
   capitalize,
   formatDate,
-  formatRequestedCustodyRestrictions,
   laws,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as styles from './Overview.treat'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   handleNextButtonClick: () => void
-  isSendingNotification: boolean
+  isLoading: boolean
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    handleNextButtonClick,
-    isSendingNotification,
-  } = props
+  const { workingCase, handleNextButtonClick, isLoading } = props
   const { user } = useContext(UserContext)
 
   return (
     <>
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             Yfirlit kröfu um rannsóknarheimild
           </Text>
@@ -56,8 +48,8 @@ const OverviewForm: React.FC<Props> = (props) => {
                 value: workingCase.policeCaseNumber,
               },
               {
-                title: 'Dómstóll',
-                value: workingCase.court?.name,
+                title: 'Krafa stofnuð',
+                value: formatDate(workingCase.created, 'P'),
               },
               {
                 title: 'Embætti',
@@ -75,31 +67,9 @@ const OverviewForm: React.FC<Props> = (props) => {
                   TIME_FORMAT,
                 )}`,
               },
-              { title: 'Ákærandi', value: workingCase.prosecutor?.name },
               {
-                title: workingCase.parentCase
-                  ? `${
-                      workingCase.type === CaseType.CUSTODY
-                        ? 'Fyrri gæsla'
-                        : 'Fyrra farbann'
-                    }`
-                  : 'Tími handtöku',
-                value: workingCase.parentCase
-                  ? `${capitalize(
-                      formatDate(
-                        workingCase.parentCase.requestedValidToDate,
-                        'PPPP',
-                        true,
-                      ) || '',
-                    )} kl. ${formatDate(
-                      workingCase.parentCase.requestedValidToDate,
-                      TIME_FORMAT,
-                    )}`
-                  : workingCase.arrestDate
-                  ? `${capitalize(
-                      formatDate(workingCase.arrestDate, 'PPPP', true) || '',
-                    )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
-                  : 'Var ekki skráður',
+                title: 'Ákærandi',
+                value: `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`,
               },
             ]}
             accusedName={workingCase.accusedName}
@@ -110,7 +80,16 @@ const OverviewForm: React.FC<Props> = (props) => {
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
+            isRCase
           />
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={2}>
+            <Text as="h3" variant="h3">
+              Efni kröfu
+            </Text>
+          </Box>
+          <Text>{workingCase.description}</Text>
         </Box>
         <Box component="section" marginBottom={5} data-testid="demands">
           <Box marginBottom={2}>
@@ -118,9 +97,9 @@ const OverviewForm: React.FC<Props> = (props) => {
               Dómkröfur
             </Text>
           </Box>
-          {workingCase.demands}
+          <Text>{workingCase.demands}</Text>
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <Accordion>
             <AccordionItem
               labelVariant="h3"
@@ -148,27 +127,6 @@ const OverviewForm: React.FC<Props> = (props) => {
                     )
                   },
                 )}
-            </AccordionItem>
-            <AccordionItem
-              labelVariant="h3"
-              id="id_3"
-              label={`Takmarkanir og tilhögun ${
-                workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-              }`}
-            >
-              {formatRequestedCustodyRestrictions(
-                workingCase.type,
-                workingCase.requestedCustodyRestrictions,
-                workingCase.requestedOtherRestrictions,
-              )
-                .split('\n')
-                .map((requestedCustodyRestriction, index) => {
-                  return (
-                    <div key={index}>
-                      <Text>{requestedCustodyRestriction}</Text>
-                    </div>
-                  )
-                })}
             </AccordionItem>
             <AccordionItem
               labelVariant="h3"
@@ -264,14 +222,14 @@ const OverviewForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.R_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
               ? 'Senda kröfu á héraðsdóm'
               : 'Endursenda kröfu á héraðsdóm'
           }
-          nextIsLoading={isSendingNotification}
+          nextIsLoading={isLoading}
           onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>

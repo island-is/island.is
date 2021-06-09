@@ -12,33 +12,36 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  isLoading: boolean
 }
 
 const PoliceDemandsForm: React.FC<Props> = (props) => {
+  const { workingCase, setWorkingCase, isLoading } = props
   const validations: FormSettings = {
-    // TODO: Add police demands
-    // demands: {
-    //   validations: ['empty'],
-    // },
+    demands: {
+      validations: ['empty'],
+    },
     lawsBroken: {
       validations: ['empty'],
     },
-    // TODO: Add custodyProvisions freetext
+    legalBasis: {
+      validations: ['empty'],
+    },
   }
-  const { workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
   const [, setRequestedValidToDateIsValid] = useState<boolean>(true)
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
+  const [legalBasisEM, setLegalBasisEM] = useState<string>('')
   const { isValid } = useCaseFormHelper(
     workingCase,
     setWorkingCase,
@@ -122,7 +125,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             rows={7}
           />
         </Box>
-        <Box component="section" marginBottom={7}>
+        <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Lagaákvæði sem brot varða við
@@ -162,13 +165,53 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             rows={7}
           />
         </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              Lagaákvæði sem brot varða við
+            </Text>
+          </Box>
+          <Input
+            data-testid="legal-basis"
+            name="legal-basis"
+            label="Lagaákvæði sem krafan er byggð á"
+            placeholder="Hvaða lagaákvæðum byggir krafan á?"
+            defaultValue={workingCase?.legalBasis}
+            errorMessage={legalBasisEM}
+            hasError={legalBasisEM !== ''}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'legalBasis',
+                event,
+                ['empty'],
+                workingCase,
+                setWorkingCase,
+                legalBasisEM,
+                setLegalBasisEM,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'legalBasis',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                updateCase,
+                setLegalBasisEM,
+              )
+            }
+            required
+            textarea
+            rows={7}
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.R_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.R_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isValid}
-          nextIsLoading={false}
+          nextIsLoading={isLoading}
         />
       </FormContentContainer>
     </>

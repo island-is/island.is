@@ -23,11 +23,11 @@ import { parseString } from '@island.is/judicial-system-web/src/utils/formatters
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  isLoading: boolean
 }
 
 const CaseFilesForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase } = props
-
+  const { workingCase, setWorkingCase, isLoading } = props
   const {
     files,
     uploadErrorMessage,
@@ -74,7 +74,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
             Rannsóknargögn
           </Text>
         </Box>
-        <Box marginBottom={10}>
+        <Box marginBottom={5}>
           <ContentBlock>
             <InputFileUpload
               fileList={files}
@@ -131,6 +131,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.R_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.R_CASE_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={false}
+          nextIsLoading={isLoading}
         />
       </FormContentContainer>
     </>

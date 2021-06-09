@@ -1,22 +1,18 @@
-import React, { useState, useEffect, useContext } from 'react'
-
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { useMutation, useQuery } from '@apollo/client'
 import {
   Case,
   CaseTransition,
   NotificationType,
   TransitionCase,
   CaseState,
-  CaseType,
 } from '@island.is/judicial-system/types'
-
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   Modal,
   PageLayout,
-  FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   SendNotificationMutation,
@@ -26,16 +22,15 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useRouter } from 'next/router'
 import OverviewForm from './OverviewForm'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 export const Overview: React.FC = () => {
+  const router = useRouter()
+  const id = router.query.id
   const [modalVisible, setModalVisible] = useState(false)
   const [modalText, setModalText] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
-
-  const router = useRouter()
-  const id = router.query.id
 
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
@@ -56,6 +51,16 @@ export const Overview: React.FC = () => {
     sendNotificationMutation,
     { loading: isSendingNotification },
   ] = useMutation(SendNotificationMutation)
+
+  useEffect(() => {
+    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
+    if (!workingCase && data?.case) {
+      setWorkingCase(data.case)
+    }
+  }, [workingCase, setWorkingCase, data])
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({
@@ -125,16 +130,6 @@ export const Overview: React.FC = () => {
     }
   }
 
-  useEffect(() => {
-    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
-  }, [])
-
-  useEffect(() => {
-    if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
-    }
-  }, [workingCase, setWorkingCase, data])
-
   return (
     <PageLayout
       activeSection={
@@ -152,17 +147,12 @@ export const Overview: React.FC = () => {
         <>
           <OverviewForm
             workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
             handleNextButtonClick={handleNextButtonClick}
-            isSendingNotification={isSendingNotification}
+            isLoading={loading || isSendingNotification}
           />
           {modalVisible && (
             <Modal
-              title={`Krafa um ${
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhald'
-                  : 'farbann'
-              }  hefur verið send til dómstóls`}
+              title="Krafa um rannsóknarheimild hefur verið send til dómstóls"
               text={modalText}
               handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {

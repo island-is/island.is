@@ -11,18 +11,20 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  isLoading: boolean
 }
 
 const PoliceReportForm: React.FC<Props> = (props) => {
+  const { workingCase, setWorkingCase, isLoading } = props
   const validations: FormSettings = {
     caseFacts: {
       validations: ['empty'],
@@ -31,7 +33,6 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
-  const { workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
@@ -151,7 +152,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
                 <Checkbox
                   name="request-prosecutor-only-session"
                   label="Beiðni um dómþing að varnaraðila fjarstöddum"
-                  tooltip="TODO"
+                  tooltip="Hér er hægt að setja fram kröfu um að dómþing fari fram að varnaraðila fjarstöddum, vegna rannsóknarhagsmuna."
                   checked={workingCase.requestProsecutorOnlySession}
                   onChange={(evt) => {
                     setWorkingCase({
@@ -169,7 +170,8 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               <Input
                 name="prosecutor-only-session-request"
                 label="Beiðni"
-                placeholder="TODO"
+                placeholder="Er þess óskað að varnaraðili sé ekki viðstaddur dómþing?"
+                disabled={workingCase.requestProsecutorOnlySession === false}
                 defaultValue={workingCase.prosecutorOnlySessionRequest}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
@@ -239,6 +241,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.R_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isValid}
+          nextIsLoading={isLoading}
         />
       </FormContentContainer>
     </>

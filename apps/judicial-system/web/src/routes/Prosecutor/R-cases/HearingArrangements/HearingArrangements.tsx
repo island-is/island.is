@@ -10,31 +10,28 @@ import {
 import { Case, User, UserRole } from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import HearingArrangementsForms from './HearingArrangementsForm'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
+import HearingArrangementsForms from './HearingArrangementsForm'
 
 const HearingArrangements = () => {
   const router = useRouter()
   const id = router.query.id
-  const { user } = useContext(UserContext)
-  const { courts } = useInstitution()
   const [workingCase, setWorkingCase] = useState<Case>()
   const [prosecutors, setProsecutors] = useState<ReactSelectOption[]>()
+  const { user } = useContext(UserContext)
+  const { courts } = useInstitution()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
 
-  const { data: userData, loading: userLoading } = useQuery<{ users: User[] }>(
-    UsersQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const { data: userData } = useQuery<{ users: User[] }>(UsersQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   useEffect(() => {
     document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
@@ -55,7 +52,7 @@ const HearingArrangements = () => {
               aUser.role === UserRole.PROSECUTOR &&
               aUser.institution?.id === user?.institution?.id,
           )
-          .map((prosecutor: User, _: number) => {
+          .map((prosecutor: User) => {
             return { label: prosecutor.name, value: prosecutor.id }
           }),
       )
@@ -67,7 +64,7 @@ const HearingArrangements = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.CUSTODY_PETITION_STEP_TWO}
+      activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_TWO}
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
       isExtension={workingCase?.parentCase && true}
@@ -82,6 +79,7 @@ const HearingArrangements = () => {
           setWorkingCase={setWorkingCase}
           prosecutors={prosecutors}
           courts={courts}
+          isLoading={loading}
         />
       )}
     </PageLayout>

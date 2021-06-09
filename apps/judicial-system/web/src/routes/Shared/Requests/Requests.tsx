@@ -183,7 +183,7 @@ export const Requests: React.FC = () => {
               icon="add"
               items={[
                 {
-                  href: Constants.STEP_ONE_CUSTODY_PETITION_ROUTE,
+                  href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
                   title: 'Gæsluvarðhald',
                 },
                 {
