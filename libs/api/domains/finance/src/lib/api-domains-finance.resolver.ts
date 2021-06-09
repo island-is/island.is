@@ -11,11 +11,11 @@ import { FinanceDocumentModel } from './models/financeDocument.model'
 import { BillReceiptModel } from './models/billReceipts.model'
 import { CustomerRecords } from './models/customerRecords.model'
 
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { FinanceService } from '@island.is/clients/finance'
 

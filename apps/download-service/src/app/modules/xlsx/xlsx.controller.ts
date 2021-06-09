@@ -32,7 +32,7 @@ export class XlsxController {
         '!cols': widths,
       })
 
-      var streamBuffer = new WritableStreamBuffer({
+      const streamBuffer = new WritableStreamBuffer({
         initialSize: 100 * 1024,
         incrementAmount: 10 * 1024,
       })

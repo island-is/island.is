@@ -1,7 +1,8 @@
 import { Inject } from '@nestjs/common'
 import { Base64 } from 'js-base64'
 import axios from 'axios'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import {
