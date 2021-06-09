@@ -356,7 +356,7 @@
     "cross-env": "7.0.2",
     "cross-spawn": "7.0.3",
     "csstype": "2.6.13",
-    "csv-parse": "4.15.3",
+    "csv-parse": "4.16.0",
     "cypress": "6.5.0",
     "dotenv": "6.2.0",
     "esbuild": "0.12.1",
