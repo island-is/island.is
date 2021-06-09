@@ -5,4 +5,5 @@ bootstrap({
   appModule: AppModule,
   name: 'api',
   port: 4444,
+  stripNonClassValidatorInputs: false,
 })

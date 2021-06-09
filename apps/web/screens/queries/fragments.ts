@@ -380,19 +380,20 @@ export const slices = gql`
     }
   }
 
-  fragment OfficesSlice on Offices {
+  fragment MultipleStatisticsFields on MultipleStatistics {
     __typename
     id
     title
-    offices {
-      name
-      city
-      address
-      email
-      openingHours
-      content {
-        ...HtmlFields
+    statistics {
+      title
+      statistics {
+        label
+        value
       }
+    }
+    link {
+      text
+      url
     }
   }
 
@@ -478,7 +479,7 @@ export const slices = gql`
     ...DistrictsFields
     ...FeaturedArticlesFields
     ...TwoColumnTextFields
-    ...OfficesSlice
+    ...MultipleStatisticsFields
     ...OneColumnTextFields
     ...AccordionSliceFields
     ...OverviewLinksField

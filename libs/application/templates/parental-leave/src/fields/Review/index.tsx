@@ -24,16 +24,15 @@ import {
 import {
   getOtherParentOptions,
   getSelectedChild,
-} from '../../parentalLeaveUtils'
+} from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES, NO, MANUAL } from '../../constants'
-import { Period } from '../../types'
+import { Boolean } from '../../types'
 import { SummaryTimeline } from '../components/Timeline/SummaryTimeline'
 import { SummaryRights } from '../Rights/SummaryRights'
-import { Boolean } from '../../hooks/useApplicationAnswers'
 import { useUnion as useUnionOptions } from '../../hooks/useUnion'
 import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../hooks/usePrivatePensionFund'
 import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'

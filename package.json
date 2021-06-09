@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "engines": {
-    "node": "^14.16",
+    "node": "^14.17",
     "yarn": "^1.22"
   },
   "repository": {
@@ -432,6 +432,10 @@
     "treat/**/postcss": "npm:@island.is/postcss@107.0.37",
     "multicast-dns": "7.2.3",
     "browserslist": "4.16.6",
-    "ws": "7.4.6 "
+    "ws": "7.4.6 ",
+    "css-what": "5.0.1",
+    "glob-parent": "5.1.2",
+    "trim-newlines": "3.0.1",
+    "normalize-url": "4.5.1"
   }
 }

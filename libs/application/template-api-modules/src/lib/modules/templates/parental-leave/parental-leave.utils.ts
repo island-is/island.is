@@ -63,9 +63,7 @@ export const getPersonalAllowance = (
     return 100
   }
 
-  const usage = Number(extractAnswer(application.answers, usageGetter))
-
-  return usage
+  return Number(extractAnswer(application.answers, usageGetter))
 }
 
 export const getEmployer = (
@@ -193,6 +191,15 @@ export const transformApplicationToParentalLeaveDTO = (
   application: Application,
   attachments?: Attachment[],
 ): ParentalLeave => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
   const periodsAnswer = extractAnswer<
     {
       startDate: string
@@ -205,11 +212,11 @@ export const transformApplicationToParentalLeaveDTO = (
   if (periodsAnswer) {
     periods = periodsAnswer.map((period) => ({
       from: period.startDate,
-      // TODO: refactor period.endDate to not include time
-      to: period.endDate.split('T')[0],
+      to: period.endDate,
       ratio: Number(period.ratio),
       approved: true,
       paid: false,
+      rightsCodePeriod: null,
     }))
   }
 
@@ -220,15 +227,6 @@ export const transformApplicationToParentalLeaveDTO = (
   const union: Union = {
     id: extractAnswer(application.answers, 'payments.union'),
     name: '',
-  }
-
-  const selectedChild = getSelectedChild(
-    application.answers,
-    application.externalData,
-  )
-
-  if (!selectedChild) {
-    throw new Error('Missing selected child')
   }
 
   const { email, phoneNumber } = getApplicantContactInfo(application)

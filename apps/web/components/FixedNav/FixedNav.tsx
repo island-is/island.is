@@ -1,18 +1,19 @@
 import React, { FC, useState } from 'react'
 import cn from 'classnames'
-import * as styles from './FixedNav.treat'
 import {
   GridContainer,
   Box,
-  Button,
   FocusableBox,
   Logo,
-  Link,
+  Icon,
+  Hidden,
 } from '@island.is/island-ui/core'
-import SearchInput from '../SearchInput/SearchInput'
-import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { useI18n } from '@island.is/web/i18n'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useScrollPosition } from '../../hooks/useScrollPosition'
+import SearchInput from '../SearchInput/SearchInput'
+
+import * as styles from './FixedNav.treat'
 
 export const FixedNav: FC = () => {
   const [show, setShow] = useState<boolean>(false)
@@ -42,7 +43,7 @@ export const FixedNav: FC = () => {
     <div className={cn(styles.wrapper, { [styles.show]: show })}>
       <GridContainer className={styles.container}>
         <Box
-          paddingX={[2, 2, 6]}
+          paddingX={[3, 3, 6]}
           paddingY={1}
           width="full"
           display="flex"
@@ -51,11 +52,31 @@ export const FixedNav: FC = () => {
           alignItems="center"
           justifyContent="spaceBetween"
         >
-          <Link {...linkResolver('homepage')}>
-            <FocusableBox marginRight={2}>
-              <Logo id="fixed-nav-logo-icon" iconOnly solid={true} />
-            </FocusableBox>
-          </Link>
+          <FocusableBox
+            href={linkResolver('homepage').href}
+            marginRight={[1, 1, 1, 2]}
+          >
+            <Box className={styles.logo}>
+              <Hidden above="sm">
+                <Logo
+                  id="fixed-nav-logo-icon1"
+                  width={24}
+                  height={24}
+                  solid={true}
+                  iconOnly
+                />
+              </Hidden>
+              <Hidden below="md">
+                <Logo
+                  id="fixed-nav-logo-icon2"
+                  width={32}
+                  height={32}
+                  solid={true}
+                  iconOnly
+                />
+              </Hidden>
+            </Box>
+          </FocusableBox>
 
           <Box
             display="flex"
@@ -76,17 +97,16 @@ export const FixedNav: FC = () => {
                 autosuggest={false}
               />
             </Box>
-            <Box marginLeft={2}>
-              <Button
-                variant="ghost"
-                colorScheme="negative"
-                size="small"
-                icon="arrowUp"
+            <Box marginLeft={[1, 1, 1, 2]}>
+              <button
+                className={styles.arrowButton}
                 onClick={() => {
                   window.scrollTo(0, 0)
                 }}
                 aria-label={t.gotoTop}
-              />
+              >
+                <Icon icon="arrowUp" color="white" />
+              </button>
             </Box>
           </Box>
         </Box>
