@@ -67,7 +67,7 @@
     "@nestjs/common": "7.4.4",
     "@nestjs/config": "0.5.0",
     "@nestjs/core": "7.4.4",
-    "@nestjs/graphql": "7.5.5",
+    "@nestjs/graphql": "7.9.11",
     "@nestjs/jwt": "7.1.0",
     "@nestjs/passport": "7.1.0",
     "@nestjs/platform-express": "7.4.4",
