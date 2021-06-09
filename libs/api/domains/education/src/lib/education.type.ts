@@ -1,4 +1,4 @@
-export interface License {
+export interface EducationLicense {
   id: string
   school: string
   programme: string
