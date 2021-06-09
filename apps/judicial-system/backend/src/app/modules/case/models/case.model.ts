@@ -78,7 +78,7 @@ export class Case extends Model<Case> {
   description: string
 
   /**********
-   * The case state - exaample: DRAFT
+   * The case state - example: DRAFT
    **********/
   @Column({
     type: DataType.ENUM,
@@ -140,7 +140,7 @@ export class Case extends Model<Case> {
   accusedGender: CaseGender
 
   /**********
-   * The name of the accused´s defender - optional
+   * The name of the accused's defender - optional
    **********/
   @Column({
     type: DataType.STRING,
@@ -150,7 +150,7 @@ export class Case extends Model<Case> {
   defenderName: string
 
   /**********
-   * The email address of the accused´s defender - optional
+   * The email address of the accused's defender - optional
    **********/
   @Column({
     type: DataType.STRING,
