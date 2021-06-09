@@ -9,10 +9,10 @@ import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandi
 // import { accessControlModule } from '@island.is/service-portal/settings/access-control'
 import { educationModule } from '@island.is/service-portal/education'
 import { educationLicenseModule } from '@island.is/service-portal/education-license'
-// import { educationDegreeModule } from '@island.is/service-portal/education-degree'
-// import { educationCareerModule } from '@island.is/service-portal/education-career'
+import { educationDegreeModule } from '@island.is/service-portal/education-degree'
+import { educationCareerModule } from '@island.is/service-portal/education-career'
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
-// import { applicationsModule } from '@island.is/service-portal/applications'
+import { applicationsModule } from '@island.is/service-portal/applications'
 
 /**
  * NOTE:
@@ -35,17 +35,17 @@ export type ModuleKeys =
   // | 'personalInformation'
   | 'education'
   | 'educationLicense'
-  // | 'educationCareer'
+  | 'educationCareer'
   | 'educationStudentAssessment'
   | 'assets'
-// | 'applications'
+  | 'applications'
 
 export const featureFlaggedModules: ModuleKeys[] = [
   // 'accessControl',
   'documentProvider',
   'education',
   'educationLicense',
-  // 'educationCareer',
+  'educationCareer',
   'educationStudentAssessment',
   'icelandicNamesRegistry',
 ]
@@ -59,9 +59,9 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   // personalInformation: personalInformationModule,
   education: educationModule,
   educationLicense: educationLicenseModule,
-  // educationCareer: educationCareerModule,
+  educationCareer: educationCareerModule,
   educationStudentAssessment: educationStudentAssessmentModule,
   assets: assetsModule,
-  // applications: applicationsModule,
+  applications: applicationsModule,
   // accessControl: accessControlModule,
 }
