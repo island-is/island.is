@@ -30,7 +30,7 @@ import {
   createRange,
   calculatePeriodPercentage,
   requiresOtherParentApproval,
-} from '../parentalLeaveUtils'
+} from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
   GetUnions,
@@ -234,6 +234,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.shared
                       .privatePensionFundDescription,
                   width: 'half',
+                  space: 4,
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,

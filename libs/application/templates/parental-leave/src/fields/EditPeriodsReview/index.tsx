@@ -2,12 +2,13 @@ import React, { FC } from 'react'
 
 import { Application } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-
 import { useLocale } from '@island.is/localization'
 
 import Timeline from '../components/Timeline'
-import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
-
+import {
+  formatPeriods,
+  getExpectedDateOfBirth,
+} from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
 interface ReviewScreenProps {
