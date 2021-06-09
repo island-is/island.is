@@ -14,7 +14,7 @@ import {
 import Logo from '../assets/Logo'
 import { YES } from '../constants'
 import { otherParentApprovalFormMessages } from '../lib/messages'
-import { getApplicationAnswers } from '../parentalLeaveUtils'
+import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',

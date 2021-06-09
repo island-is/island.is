@@ -8,6 +8,7 @@ import {
   RadioButton,
   Checkbox,
   Tooltip,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -18,6 +19,7 @@ import {
 import {
   Case,
   CaseGender,
+  CaseState,
   CaseType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
@@ -125,6 +127,15 @@ export const StepOneForm: React.FC<Props> = (props) => {
   return (
     <>
       <FormContentContainer>
+        {workingCase.state === CaseState.RECEIVED && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title="Athugið"
+              message="Hægt er að breyta efni kröfunnar og bæta við rannsóknargögnum eftir að hún hefur verið send dómstól en til að breytingar skili sér í dómskjalið sem verður til hliðsjónar í þinghaldinu þarf að smella á Endursenda kröfu á skjánum Yfirlit kröfu."
+              type="warning"
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             Sakborningur

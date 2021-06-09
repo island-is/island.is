@@ -14,18 +14,18 @@ import {
 } from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
 
-import { parentalLeaveFormMessages } from './lib/messages'
-import { TimelinePeriod } from './fields/components/Timeline'
-import { Period } from './types'
-import { YES, NO, MANUAL, SPOUSE, StartDateOptions } from './constants'
-import { SchemaFormValues } from './lib/dataSchema'
-import { PregnancyStatusAndRightsResults } from './dataProviders/Children/Children'
-import { daysToMonths } from './lib/directorateOfLabour.utils'
+import { parentalLeaveFormMessages } from '../lib/messages'
+import { TimelinePeriod } from '../fields/components/Timeline'
+import { Period } from '../types'
+import { YES, NO, MANUAL, SPOUSE, StartDateOptions } from '../constants'
+import { SchemaFormValues } from '../lib/dataSchema'
+import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
+import { daysToMonths } from '../lib/directorateOfLabour.utils'
 import {
   ChildInformation,
   ChildrenAndExistingApplications,
-} from './dataProviders/Children/types'
-import { Boolean } from './types'
+} from '../dataProviders/Children/types'
+import { Boolean } from '../types'
 
 export function getExpectedDateOfBirth(
   application: Application,
