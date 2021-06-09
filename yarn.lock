@@ -21533,7 +21533,7 @@ postcss-value-parser@^4.0.0, postcss-value-parser@^4.0.2, postcss-value-parser@^
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.1.0.tgz#443f6a20ced6481a2bda4fa8532a6e55d789a2cb"
   integrity sha512-97DXOFbQJhk71ne5/Mt6cOu6yxsSfM0QGQyl0L25Gca4yGWEGJaig7l7gbCX623VqTBNGLRLaVUCnNkcedlRSQ==
 
-postcss@6.0.1, postcss@7.0.21, postcss@7.0.32, postcss@^6.0.1, postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.11, postcss@^7.0.14, postcss@^7.0.17, postcss@^7.0.18, postcss@^7.0.23, postcss@^7.0.26, postcss@^7.0.27, postcss@^7.0.32, postcss@^7.0.5, postcss@^7.0.6, "postcss@npm:@island.is/postcss@107.0.37":
+postcss@6.0.1, postcss@7.0.21, postcss@7.0.32, postcss@^6.0.1, postcss@^7.0.1, postcss@^7.0.11, postcss@^7.0.14, postcss@^7.0.17, postcss@^7.0.18, postcss@^7.0.23, postcss@^7.0.26, postcss@^7.0.27, postcss@^7.0.32, postcss@^7.0.5, postcss@^7.0.6, "postcss@npm:@island.is/postcss@107.0.37":
   version "107.0.37"
   resolved "https://registry.yarnpkg.com/@island.is/postcss/-/postcss-107.0.37.tgz#a44726fc177162da56de2cbfc0e8c5d03f4c7c1e"
   integrity sha512-CE6vDYTERTdeW6Adj8C2Oo36TTpiyhe4gCbtKoKt+tsxNFhWCr4wJ6ZC1ud3BCq5q4ft2pgJ99OssXFqeOZxWA==
@@ -21542,7 +21542,7 @@ postcss@6.0.1, postcss@7.0.21, postcss@7.0.32, postcss@^6.0.1, postcss@^7.0.0, p
     source-map "^0.6.1"
     supports-color "^6.1.0"
 
-postcss@8.1.1, postcss@8.2.10, postcss@8.2.4, postcss@^8.1.10:
+postcss@8.1.1, postcss@8.2.10, postcss@8.2.4, postcss@^7.0.0, postcss@^8.1.10:
   version "8.2.10"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.2.10.tgz#ca7a042aa8aff494b334d0ff3e9e77079f6f702b"
   integrity sha512-b/h7CPV7QEdrqIxtAf2j31U5ef05uBDuvoXv6L51Q4rcS1jdlXAVKJv+atCFdUXYl9dyTHGyoMzIepwowRJjFw==
@@ -22712,10 +22712,10 @@ react-toastify@6.0.8:
     prop-types "^15.7.2"
     react-transition-group "^4.4.1"
 
-react-top-loading-bar@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-top-loading-bar/-/react-top-loading-bar-2.0.0.tgz#531927ec5fb5f2e49a17d6ee602f91fb407a64f1"
-  integrity sha512-nsBElvXeKHTKAHM2GA7IIafPp1Wd05NLFEUAN+64Tlm7sklEnbi9PtiIwOLJd1DtUMelhk0OmqUDEEo0BFBcQQ==
+react-top-loading-bar@2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-top-loading-bar/-/react-top-loading-bar-2.0.1.tgz#c8805ad9c1068766fdd3cadd414e67cfdf1878e9"
+  integrity sha512-wkRlK9Rte4TU817GDcjlsCoDOxrrnvsNvK609FKyio0EIrmmqjQDz5DB8HbN88CHNZBy5Lh/OBALc03ioWFPuQ==
 
 react-transition-group@^2.4.0:
   version "2.9.0"
