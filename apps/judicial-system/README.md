@@ -124,6 +124,7 @@ Then the project should be running on https://localhost:4200/.
 {% hint style="info" %}
 To skip authentication at innskraning.island.is navigate to `/api/auth/login?nationalId=<national_id>` in the web project where `<national_id>` is the national id of a known user.
 Known users:
+
 - Áki Ákærandi
   - NationalId: 0000000009
   - Role: Prosecutor
@@ -133,7 +134,7 @@ Known users:
 - Dóra Dómari
   - NationalId: 0000002229
   - Role: Judge
-{% endhint %}
+    {% endhint %}
 
 ### Running the tests
 
