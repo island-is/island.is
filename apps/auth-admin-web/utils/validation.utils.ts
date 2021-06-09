@@ -13,6 +13,8 @@ class ValidationUtils {
 
   public static baseUrlPattern = /^http.+(?<!\/)$/
 
+  public static uriPattern = /^.+(?<!\/)$/
+
   public static nationalIdPattern = /^[0-9]*$/
 
   /** Pattern for illegal characters in scope name */
@@ -48,6 +50,11 @@ class ValidationUtils {
     }
 
     const regex = new RegExp(ValidationUtils.urlPattern)
+    return regex.test(input)
+  }
+
+  public static validateUri(input: string): boolean {
+    const regex = new RegExp(ValidationUtils.uriPattern)
     return regex.test(input)
   }
 
