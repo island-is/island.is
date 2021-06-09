@@ -8,7 +8,11 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
+import {
+  HomeCircumstances,
+  Employment,
+  State,
+} from '@island.is/financial-aid/shared'
 
 export class CreateApplicationDto {
   @IsNotEmpty()
@@ -95,4 +99,9 @@ export class CreateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly formComment: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly state: State
 }

@@ -6,6 +6,7 @@ import {
   CreateApplication,
   HomeCircumstances,
   Employment,
+  State,
 } from '@island.is/financial-aid/shared'
 
 @InputType()
@@ -77,4 +78,8 @@ export class CreateApplicationInput implements CreateApplication {
   @Allow()
   @Field({ nullable: true })
   readonly formComment?: string
+
+  @Allow()
+  @Field(() => String)
+  readonly state!: State
 }

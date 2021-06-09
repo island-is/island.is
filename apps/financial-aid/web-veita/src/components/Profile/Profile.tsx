@@ -17,9 +17,9 @@ interface Props {
   info: [
     {
       title: string
-      content: string
-      link: string
-      other: string
+      content?: string
+      link?: string
+      other?: string
     },
   ]
 }

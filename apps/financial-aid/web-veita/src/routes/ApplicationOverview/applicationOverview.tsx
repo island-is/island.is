@@ -42,6 +42,7 @@ const ApplicationOverview = () => {
     {
       label: 'Ný mál',
       link: '/nymal',
+      state: 'New',
       headers: ['Nafn', 'Staða', 'Tími án umsjár', 'Tímabil'],
     },
     {
@@ -70,28 +71,30 @@ const ApplicationOverview = () => {
 
   return (
     <AdminLayout>
-      <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
+      <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={4}>
         {currentState?.label}
       </Text>
       {data?.applications && (
         <ApplicationTable
           header={currentState?.headers}
-          applications={data.applications.map((item) => {
-            return {
-              arr: [
-                <Box display="flex" alignItems="center">
-                  <GeneratedProfile size={32} />
-                  <Text variant="h5">{GenerateName(item.nationalId)}</Text>
-                </Box>,
-                <Text>Ný umsókn</Text>,
-                <Text> {calcDifferenceInDate(item.modified)}</Text>,
-                <Text>
-                  {translateMonth(format(new Date(item.created), 'M'))}
-                </Text>,
-              ],
-              link: item.id,
-            }
-          })}
+          applications={data.applications
+            .filter((item) => item.state === currentState?.state)
+            .map((item) => {
+              return {
+                arr: [
+                  <Box display="flex" alignItems="center">
+                    <GeneratedProfile size={32} />
+                    <Text variant="h5">{GenerateName(item.nationalId)}</Text>
+                  </Box>,
+                  <Text>Ný umsókn</Text>,
+                  <Text> {calcDifferenceInDate(item.modified)}</Text>,
+                  <Text>
+                    {translateMonth(format(new Date(item.created), 'M'))}
+                  </Text>,
+                ],
+                link: item.id,
+              }
+            })}
         />
       )}
     </AdminLayout>

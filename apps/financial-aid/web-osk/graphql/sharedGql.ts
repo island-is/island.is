@@ -10,6 +10,7 @@ export const GetApplicationQuery = gql`
       email
       modified
       created
+      state
     }
   }
 `

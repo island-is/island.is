@@ -14,6 +14,13 @@ export enum Employment {
   OTHER = 'Other',
 }
 
+export enum State {
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  REJECTED = 'Rejected',
+  APPROVED = 'Approved',
+}
+
 export interface Application {
   id: string
   created: string
@@ -35,6 +42,7 @@ export interface Application {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
+  state?: State
 }
 
 export interface CreateApplication {
@@ -55,6 +63,7 @@ export interface CreateApplication {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
+  state?: State
 }
 
 export interface Municipality {
@@ -81,6 +90,12 @@ export interface NavigationProps {
 }
 
 export interface User {
+  nationalId: string
+  name: string
+  phoneNumber: string
+}
+
+export interface UsStaffer {
   nationalId: string
   name: string
   phoneNumber: string

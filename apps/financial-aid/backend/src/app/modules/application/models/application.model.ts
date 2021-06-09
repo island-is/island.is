@@ -9,7 +9,11 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
+import {
+  HomeCircumstances,
+  Employment,
+  State,
+} from '@island.is/financial-aid/shared'
 
 @Table({
   tableName: 'applications',
@@ -153,4 +157,12 @@ export class ApplicationModel extends Model<ApplicationModel> {
   })
   @ApiProperty()
   formComment: string
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(State),
+  })
+  @ApiProperty({ enum: State })
+  state: State
 }
