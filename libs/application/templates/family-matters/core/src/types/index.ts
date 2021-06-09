@@ -21,6 +21,7 @@ export interface Person {
 export interface Child {
   nationalId: string
   livesWithApplicant: boolean
+  livesWithBothParents: boolean
   fullName: string
   otherParent: Person
   custodyParents?: string[]
@@ -50,6 +51,8 @@ export interface ExternalData {
 
 interface MockChildren extends Person {
   livesWithApplicant: 'yes' | undefined
+  livesWithBothParents: 'yes' | undefined
+  applicantSoleCustody: 'yes' | undefined
   otherParent: number
 }
 

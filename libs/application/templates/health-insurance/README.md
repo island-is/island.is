@@ -8,7 +8,7 @@ Run `nx test application-templates-health-insurance` to execute the unit tests v
 
 ## Setup
 
-To start the application system, follow the instructions in the handbook [here](https://docs.devland.is/handbook/apps/application-system).
+To start the application system, follow the instructions in the handbook [here](https://docs.devland.is/apps/application-system).
 
 ## Additional setup
 
@@ -48,7 +48,7 @@ There are additional steps required to run this template locally
 
 ### User Profile Provider (optional)
 
-- Follow the instructions to start the user profule service in the handbook [here](https://docs.devland.is/handbook/apps/services/user-profile).
+- Follow the instructions to start the user profule service in the handbook [here](https://docs.devland.is/apps/services/user-profile).
 
 This service is optional as there is a fallback for dev
 

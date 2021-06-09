@@ -88,8 +88,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: States.DRAFT,
-          title: statesMessages.draftTitle,
-          description: statesMessages.draftDescription,
+          actionCard: {
+            description: statesMessages.draftDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.25,
           roles: [
@@ -129,8 +130,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'clearAssignees',
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
-          title: statesMessages.otherParentApprovalTitle,
-          description: statesMessages.otherParentApprovalDescription,
+          actionCard: {
+            description: statesMessages.otherParentApprovalDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
@@ -152,6 +154,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 },
                 { event: DefaultEvents.REJECT, name: 'Reject', type: 'reject' },
               ],
+              read: {
+                answers: [
+                  'requestRights',
+                  'usePersonalAllowanceFromSpouse',
+                  'personalAllowanceFromSpouse',
+                ],
+              },
             },
             {
               id: Roles.APPLICANT,
@@ -180,10 +189,16 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.OTHER_PARENT_ACTION]: {
         meta: {
           name: States.OTHER_PARENT_ACTION,
-          title: statesMessages.otherParentActionTitle,
-          description: statesMessages.otherParentActionDescription,
+          actionCard: {
+            description: statesMessages.otherParentActionDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
+          onEntry: {
+            apiModuleAction:
+              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromOtherParent,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -204,8 +219,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'saveEmployerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
-          title: statesMessages.employerWaitingToAssignTitle,
-          description: statesMessages.employerWaitingToAssignDescription,
+          actionCard: {
+            description: statesMessages.employerWaitingToAssignDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
@@ -233,8 +249,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'clearAssignees',
         meta: {
           name: States.EMPLOYER_APPROVAL,
-          title: statesMessages.employerApprovalTitle,
-          description: statesMessages.employerApprovalDescription,
+          actionCard: {
+            description: statesMessages.employerApprovalDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
@@ -244,7 +261,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/EmployerApproval').then((val) =>
                   Promise.resolve(val.EmployerApproval),
                 ),
-              read: { answers: ['periods'], externalData: ['pregnancyStatus'] },
+              read: {
+                answers: ['periods', 'selectedChild', 'payments'],
+                externalData: ['children'],
+              },
               actions: [
                 {
                   event: DefaultEvents.APPROVE,
@@ -277,8 +297,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_ACTION]: {
         meta: {
           name: States.EMPLOYER_ACTION,
-          title: statesMessages.employerActionTitle,
-          description: statesMessages.employerActionDescription,
+          actionCard: {
+            description: statesMessages.employerActionDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
@@ -300,8 +321,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.VINNUMALASTOFNUN_APPROVAL]: {
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
-          title: statesMessages.vinnumalastofnunApprovalTitle,
-          description: statesMessages.vinnumalastofnunApprovalDescription,
+          actionCard: {
+            description: statesMessages.vinnumalastofnunApprovalDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.75,
           onEntry: {
@@ -331,8 +353,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.VINNUMALASTOFNUN_ACTION]: {
         meta: {
           name: States.VINNUMALASTOFNUN_ACTION,
-          title: statesMessages.vinnumalastofnunActionTitle,
-          description: statesMessages.vinnumalastofnunActionDescription,
+          actionCard: {
+            description: statesMessages.vinnumalastofnunActionDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
@@ -354,8 +377,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.APPROVED]: {
         meta: {
           name: States.APPROVED,
-          title: statesMessages.approvedTitle,
-          description: statesMessages.approvedDescription,
+          actionCard: {
+            description: statesMessages.approvedDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 1,
           roles: [
@@ -381,8 +405,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
-          title: statesMessages.editOrAddPeriodsTitle,
-          description: statesMessages.editOrAddPeriodsDescription,
+          actionCard: {
+            description: statesMessages.editOrAddPeriodsDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 1,
           roles: [
@@ -419,9 +444,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'saveEmployerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
-          title: statesMessages.employerWaitingToAssignForEditsTitle,
-          description:
-            statesMessages.employerWaitingToAssignForEditsDescription,
+          actionCard: {
+            description:
+              statesMessages.employerWaitingToAssignForEditsDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
@@ -449,8 +475,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       [States.EMPLOYER_APPROVE_EDITS]: {
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
-          title: statesMessages.employerApproveEditsTitle,
-          description: statesMessages.employerApproveEditsDescription,
+          actionCard: {
+            description: statesMessages.employerApproveEditsDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
@@ -478,8 +505,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EMPLOYER_EDITS_ACTION,
-          title: statesMessages.employerEditsActionTitle,
-          description: statesMessages.employerEditsActionDescription,
+          actionCard: {
+            description: statesMessages.employerEditsActionDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
@@ -505,8 +533,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'clearTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-          title: statesMessages.vinnumalastofnunApproveEditsTitle,
-          description: statesMessages.vinnumalastofnunApproveEditsDescription,
+          actionCard: {
+            description: statesMessages.vinnumalastofnunApproveEditsDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
@@ -532,8 +561,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_EDITS_ACTION,
-          title: statesMessages.vinnumalastofnunEditsActionTitle,
-          description: statesMessages.vinnumalastofnunEditsActionDescription,
+          actionCard: {
+            description: statesMessages.vinnumalastofnunEditsActionDescription,
+          },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
           roles: [

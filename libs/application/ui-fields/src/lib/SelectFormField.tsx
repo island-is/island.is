@@ -28,10 +28,11 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
     backgroundColor,
   } = field
   const { formatMessage } = useLocale()
-  const finalOptions = useMemo(() => buildFieldOptions(options, application), [
-    options,
-    application,
-  ])
+  const finalOptions = useMemo(
+    () => buildFieldOptions(options, application, field),
+    [options, application],
+  )
+
   return (
     <div>
       {description && (

@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
+
 import {
   DatePicker,
   DatePickerBackgroundColor,
@@ -17,13 +18,16 @@ interface Props {
   name?: string
   locale?: Locale
   label: string
+  size?: DatePickerProps['size']
   placeholder?: string
   backgroundColor?: DatePickerBackgroundColor
   maxDate?: DatePickerProps['maxDate']
   minDate?: DatePickerProps['minDate']
   excludeDates?: DatePickerProps['excludeDates']
 }
+
 const df = 'yyyy-MM-dd'
+
 export const DatePickerController: FC<Props> = ({
   error,
   defaultValue,
@@ -32,6 +36,7 @@ export const DatePickerController: FC<Props> = ({
   name = id,
   locale,
   label,
+  size,
   placeholder,
   backgroundColor,
   maxDate,
@@ -39,6 +44,7 @@ export const DatePickerController: FC<Props> = ({
   excludeDates,
 }) => {
   const { clearErrors, setValue } = useFormContext()
+
   return (
     <Controller
       defaultValue={defaultValue}
@@ -47,6 +53,7 @@ export const DatePickerController: FC<Props> = ({
         <DatePicker
           hasError={error !== undefined}
           disabled={disabled}
+          size={size}
           id={id}
           errorMessage={error}
           locale={locale}

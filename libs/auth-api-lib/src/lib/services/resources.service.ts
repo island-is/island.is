@@ -1,7 +1,8 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Op, Sequelize, WhereOptions } from 'sequelize'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import { ApiScope } from '../entities/models/api-scope.model'
@@ -22,10 +23,15 @@ import { UserClaimDTO } from '../entities/dto/user-claim.dto'
 import { ApiScopeGroupDTO } from '../entities/dto/api-scope-group.dto'
 import { ApiScopeGroup } from '../entities/models/api-scope-group.model'
 import { uuid } from 'uuidv4'
+import { Domain } from '../entities/models/domain.model'
+import { PagedRowsDto } from '../entities/dto/paged-rows.dto'
+import { DomainDTO } from '../entities/dto/domain.dto'
 
 @Injectable()
 export class ResourcesService {
   constructor(
+    @InjectModel(Domain)
+    private domainModel: typeof Domain,
     @InjectModel(IdentityResource)
     private identityResourceModel: typeof IdentityResource,
     @InjectModel(ApiScope)
@@ -161,7 +167,7 @@ export class ResourcesService {
     return this.apiScopeModel.findAndCountAll({
       limit: count,
       offset: offset,
-      include: [ApiScopeUserClaim],
+      include: [ApiScopeUserClaim, ApiScopeGroup],
       distinct: true,
     })
   }
@@ -175,6 +181,7 @@ export class ResourcesService {
           [Op.not]: '@island.is/auth/admin:root',
         },
       },
+      include: [ApiScopeGroup],
     })
   }
 
@@ -214,6 +221,7 @@ export class ResourcesService {
 
     const apiScope = await this.apiScopeModel.findByPk(name, {
       raw: true,
+      include: [ApiScopeGroup],
     })
 
     if (apiScope) {
@@ -324,7 +332,17 @@ export class ResourcesService {
 
     return this.apiScopeModel.findAll({
       where: scopeNames ? whereOptions : undefined,
-      include: [ApiScopeUserClaim],
+      include: [ApiScopeUserClaim, ApiScopeGroup],
+    })
+  }
+
+  /** Gets Api scopes with Explicit Delegation Grant */
+  async findApiScopesWithExplicitDelegationGrant(): Promise<ApiScope[]> {
+    this.logger.debug(`Finding api scopes with Explicit Delegation Grant`)
+
+    return this.apiScopeModel.findAll({
+      where: { allowExplicitDelegationGrant: true },
+      include: [ApiScopeGroup],
     })
   }
 
@@ -760,7 +778,10 @@ export class ResourcesService {
 
   /** Returns all ApiScopeGroups */
   async findAllApiScopeGroups(): Promise<ApiScopeGroup[]> {
-    return this.apiScopeGroup.findAll({ order: [['name', 'asc']] })
+    return this.apiScopeGroup.findAll({
+      order: [['name', 'asc']],
+      include: [ApiScope],
+    })
   }
 
   /** Returns all ApiScopeGroups by name if specified with Paging */
@@ -780,14 +801,15 @@ export class ResourcesService {
     return this.apiScopeGroup.findAndCountAll({
       limit: count,
       offset: offset,
-      where: { name: { [Op.like]: searchString } },
+      where: { name: { [Op.iLike]: `%${searchString}%` } },
       order: [['name', 'asc']],
+      include: [ApiScope],
     })
   }
 
   /** Finds Api SCope Group by Id */
   async findApiScopeGroupByPk(id: string): Promise<ApiScopeGroup | null> {
-    return this.apiScopeGroup.findByPk(id)
+    return this.apiScopeGroup.findByPk(id, { include: [ApiScope] })
   }
   // #endregion ApiScopeGroup
 
@@ -797,8 +819,60 @@ export class ResourcesService {
         alsoForDelegatedUser: true,
         name: { [Op.in]: requestedScopes },
       },
+      include: [ApiScopeGroup],
     })
 
     return scopes.map((s: ApiScope): string => s.name)
   }
+
+  // #region Domain
+
+  /** Find all domains with or without paging */
+  async findAllDomains(
+    searchString: string | null = null,
+    page: number | null = null,
+    count: number | null = null,
+  ): Promise<Domain[] | PagedRowsDto<Domain>> {
+    if (page && count) {
+      page--
+      const offset = page * count
+      if (!searchString || searchString.length === 0) {
+        searchString = '%'
+      }
+
+      return this.domainModel.findAndCountAll({
+        limit: count,
+        offset: offset,
+        where: { name: { [Op.iLike]: `%${searchString}%` } },
+        order: [['name', 'asc']],
+        include: [ApiScopeGroup],
+      })
+    }
+    return this.domainModel.findAll({ order: [['name', 'asc']] })
+  }
+
+  /** Gets domain by name */
+  async findDomainByPk(name: string): Promise<Domain | null> {
+    return this.domainModel.findByPk(name)
+  }
+
+  /** Creates a new Domain */
+  async createDomain(domain: DomainDTO): Promise<Domain> {
+    return this.domainModel.create({ ...domain })
+  }
+
+  /** Updates an existing Domain */
+  async updateDomain(
+    domain: DomainDTO,
+    name: string,
+  ): Promise<[number, Domain[]]> {
+    return this.domainModel.update({ ...domain }, { where: { name: name } })
+  }
+
+  /** Delete Domain */
+  async deleteDomain(name: string): Promise<number> {
+    return this.domainModel.destroy({ where: { name: name } })
+  }
+
+  // #endregion Domain
 }

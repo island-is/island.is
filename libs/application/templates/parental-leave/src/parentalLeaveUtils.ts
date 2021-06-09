@@ -1,18 +1,23 @@
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import parseISO from 'date-fns/parseISO'
+
 import {
   Application,
   ExternalData,
+  extractRepeaterIndexFromField,
+  Field,
+  FormatMessage,
   FormValue,
   getValueViaPath,
   Option,
 } from '@island.is/application/core'
-import { theme } from '@island.is/island-ui/theme'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 
 import { parentalLeaveFormMessages } from './lib/messages'
 import { TimelinePeriod } from './fields/components/Timeline'
 import { Period } from './types'
-import { YES, NO, MANUAL } from './constants'
+import { YES, NO, MANUAL, SPOUSE, StartDateOptions } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from './dataProviders/Children/Children'
 import { daysToMonths } from './lib/directorateOfLabour.utils'
@@ -20,6 +25,7 @@ import {
   ChildInformation,
   ChildrenAndExistingApplications,
 } from './dataProviders/Children/types'
+import { Boolean } from './types'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -40,7 +46,7 @@ export function getNameAndIdOfSpouse(
   familyMembers?: FamilyMember[],
 ): [string?, string?] {
   const spouse = familyMembers?.find(
-    (member) => member.familyRelation === 'spouse',
+    (member) => member.familyRelation === SPOUSE,
   )
   if (!spouse) {
     return [undefined, undefined]
@@ -53,32 +59,61 @@ export function getEstimatedMonthlyPay(application: Application): number {
   return 384000
 }
 
+// TODO: Once we have the data, add the otherParentPeriods here.
 export function formatPeriods(
-  periods?: Period[],
-  otherParentPeriods?: Period[],
+  application: Application,
+  formatMessage: FormatMessage,
 ): TimelinePeriod[] {
+  const periods = application.answers.periods as Period[]
   const timelinePeriods: TimelinePeriod[] = []
 
   periods?.forEach((period, index) => {
-    if (period.startDate && period.endDate) {
+    const isActualDob =
+      index === 0 &&
+      application.answers.firstPeriodStart ===
+        StartDateOptions.ACTUAL_DATE_OF_BIRTH
+
+    if (isActualDob) {
+      const expectedDateOfBirth = getExpectedDateOfBirth(application)
+
       timelinePeriods.push({
+        actualDob: isActualDob,
         startDate: period.startDate,
         endDate: period.endDate,
+        ratio: period.ratio,
+        duration: expectedDateOfBirth
+          ? differenceInMonths(
+              parseISO(period.endDate),
+              parseISO(expectedDateOfBirth),
+            )
+          : 0,
         canDelete: true,
-        title: `Period ${index + 1} - ${period.ratio ?? 100}%`,
+        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
+          index: index + 1,
+          ratio: period.ratio,
+        }),
+      })
+    }
+
+    if (!isActualDob && period.startDate && period.endDate) {
+      timelinePeriods.push({
+        actualDob: isActualDob,
+        startDate: period.startDate,
+        endDate: period.endDate,
+        ratio: period.ratio,
+        duration: differenceInMonths(
+          parseISO(period.endDate),
+          parseISO(period.startDate),
+        ),
+        canDelete: true,
+        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
+          index: index + 1,
+          ratio: period.ratio,
+        }),
       })
     }
   })
 
-  otherParentPeriods?.forEach((period) => {
-    timelinePeriods.push({
-      startDate: period.startDate,
-      endDate: period.endDate,
-      canDelete: false,
-      color: theme.color.red200,
-      title: `Other parent ${period.ratio ?? 100}%`,
-    })
-  })
   return timelinePeriods
 }
 
@@ -161,11 +196,11 @@ export const getOtherParentOptions = (application: Application) => {
   ]
 
   if (family && family.length > 0) {
-    const spouse = family.find((member) => member.familyRelation === 'spouse')
+    const spouse = family.find((member) => member.familyRelation === SPOUSE)
 
     if (spouse) {
       options.unshift({
-        value: 'spouse',
+        value: SPOUSE,
         label: {
           ...parentalLeaveFormMessages.shared.otherParentSpouse,
           values: {
@@ -241,4 +276,177 @@ export const isEligibleForParentalLeave = (
     (children.length > 0 || existingApplications.length > 0) &&
     dataProvider?.remainingDays > 0
   )
+}
+
+export const calculatePeriodPercentage = (
+  application: Application,
+  field: Field,
+  dates?: { startDate: string; endDate: string },
+) => {
+  const months = getAvailableRightsInMonths(application)
+  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+  const repeaterIndex = extractRepeaterIndexFromField(field)
+  const index = repeaterIndex === -1 ? 0 : repeaterIndex
+  const { answers } = application
+
+  const startDate = getValueViaPath(
+    answers,
+    `periods[${index}].startDate`,
+    expectedDateOfBirth,
+  ) as string
+
+  const endDate = getValueViaPath(
+    answers,
+    `periods[${index}].endDate`,
+  ) as string
+
+  const difference = differenceInMonths(
+    parseISO(dates?.endDate ?? endDate),
+    parseISO(dates?.startDate ?? startDate),
+  )
+
+  if (difference <= months) {
+    return 100
+  }
+
+  return Math.min(100, Math.round((months / difference) * 100))
+}
+
+export function getApplicationAnswers(answers: Application['answers']) {
+  const otherParent = getValueViaPath(
+    answers,
+    'otherParent',
+  ) as SchemaFormValues['otherParent']
+
+  const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
+
+  const union = getValueViaPath(answers, 'payments.union') as string
+
+  const usePrivatePensionFund = getValueViaPath(
+    answers,
+    'usePrivatePensionFund',
+  ) as Boolean
+
+  const privatePensionFund = getValueViaPath(
+    answers,
+    'payments.privatePensionFund',
+  ) as string
+
+  const privatePensionFundPercentage = getValueViaPath(
+    answers,
+    'payments.privatePensionFundPercentage',
+  ) as string
+
+  const isSelfEmployed = getValueViaPath(
+    answers,
+    'employer.isSelfEmployed',
+  ) as Boolean
+
+  const otherParentName = getValueViaPath(answers, 'otherParentName') as string
+
+  const otherParentId = getValueViaPath(answers, 'otherParentId') as string
+
+  const bank = getValueViaPath(answers, 'payments.bank') as string
+
+  const personalAllowance = getValueViaPath(
+    answers,
+    'usePersonalAllowance',
+  ) as Boolean
+
+  const personalAllowanceFromSpouse = getValueViaPath(
+    answers,
+    'usePersonalAllowanceFromSpouse',
+    NO,
+  ) as Boolean
+
+  const personalUseAsMuchAsPossible = getValueViaPath(
+    answers,
+    'personalAllowance.useAsMuchAsPossible',
+  ) as Boolean
+
+  const personalUsage = getValueViaPath(
+    answers,
+    'personalAllowance.usage',
+  ) as string
+
+  const spouseUseAsMuchAsPossible = getValueViaPath(
+    answers,
+    'personalAllowanceFromSpouse.useAsMuchAsPossible',
+  ) as Boolean
+
+  const spouseUsage = getValueViaPath(
+    answers,
+    'personalAllowanceFromSpouse.usage',
+  ) as string
+
+  const employerEmail = getValueViaPath(answers, 'employer.email') as string
+
+  const shareInformationWithOtherParent = getValueViaPath(
+    answers,
+    'shareInformationWithOtherParent',
+  ) as Boolean
+
+  const selectedChild = getValueViaPath(answers, 'selectedChild') as string
+
+  const isRequestingRights = getValueViaPath(
+    answers,
+    'requestRights.isRequestingRights',
+  ) as Boolean
+
+  const requestDays = getValueViaPath(
+    answers,
+    'requestRights.requestDays',
+  ) as number
+
+  const isGivingRights = getValueViaPath(
+    answers,
+    'giveRights.isGivingRights',
+  ) as Boolean
+
+  const giveDays = getValueViaPath(answers, 'giveRights.giveDays') as number
+
+  const usePersonalAllowanceFromSpouse = getValueViaPath(
+    answers,
+    'usePersonalAllowanceFromSpouse',
+  ) as Boolean
+
+  return {
+    otherParent,
+    pensionFund,
+    union,
+    usePrivatePensionFund,
+    privatePensionFund,
+    privatePensionFundPercentage,
+    isSelfEmployed,
+    otherParentName,
+    otherParentId,
+    bank,
+    personalAllowance,
+    personalAllowanceFromSpouse,
+    personalUseAsMuchAsPossible,
+    personalUsage,
+    usePersonalAllowanceFromSpouse,
+    spouseUseAsMuchAsPossible,
+    spouseUsage,
+    employerEmail,
+    shareInformationWithOtherParent,
+    selectedChild,
+    isRequestingRights,
+    requestDays,
+    isGivingRights,
+    giveDays,
+  }
+}
+
+export const requiresOtherParentApproval = (
+  answers: Application['answers'],
+) => {
+  const applicationAnswers = getApplicationAnswers(answers)
+
+  const {
+    isRequestingRights,
+    usePersonalAllowanceFromSpouse,
+  } = applicationAnswers
+
+  return isRequestingRights === YES || usePersonalAllowanceFromSpouse === YES
 }

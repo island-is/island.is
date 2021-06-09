@@ -15,7 +15,10 @@ export interface Institution {
   name: string
 }
 
-export const IntegratedCourts = ['d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf']
+export const IntegratedCourts = [
+  'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',
+  'c9a51c9a-c0e3-4c1f-a9a2-828a3af05d1d',
+]
 
 export enum UserRole {
   PROSECUTOR = 'PROSECUTOR',
@@ -162,6 +165,7 @@ export interface Case {
   comments?: string
   caseFilesComments?: string
   prosecutor?: User
+  sharedWithProsecutorsOffice?: Institution
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
@@ -255,6 +259,7 @@ export interface UpdateCase {
   comments?: string
   caseFilesComments?: string
   prosecutorId?: string
+  sharedWithProsecutorsOfficeId?: string
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
