@@ -16,7 +16,7 @@ const StofnanirRedirect: Screen = () => {
 StofnanirRedirect.getInitialProps = async ({ res }) => {
   if (res) {
     res.writeHead(302, {
-      Location: '/en/s',
+      Location: '/en/o',
     })
     res.end()
   }
