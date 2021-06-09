@@ -100,6 +100,12 @@ const devConfig = {
       process.env.XROAD_TJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',
     clientId: process.env.XROAD_CLIENT_ID ?? 'DEV/GOV/10000/island-is-client',
   },
+  temporaryVoterRegistry: {
+    baseApiUrl: 'http://localhost:4248',
+  },
+  partyLetterRegistry: {
+    baseApiUrl: 'http://localhost:4251',
+  },
 }
 
 const prodConfig = {
@@ -195,6 +201,12 @@ const prodConfig = {
     memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
     apiPath: process.env.XROAD_TJODSKRA_API_PATH,
     clientId: process.env.XROAD_CLIENT_ID,
+  },
+  temporaryVoterRegistry: {
+    baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
+  },
+  partyLetterRegistry: {
+    baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
   },
 }
 

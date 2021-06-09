@@ -9,10 +9,7 @@ import {
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import {
-  Endorsement,
-  PartyApplicationAnswers,
-} from '../../../src/lib/PartyApplicationTemplate'
+import { Endorsement, SchemaFormValues } from '../../../src/lib/dataSchema'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 import isEqual from 'lodash/isEqual'
@@ -23,7 +20,7 @@ import sortBy from 'lodash/sortBy'
 
 const ENDORSEMENTS: Endorsement[] = [
   {
-    id: 1,
+    id: '1',
     date: '21.01.2021',
     name: 'Örvar Þór Sigurðsson',
     nationalId: '1991921335',
@@ -31,7 +28,7 @@ const ENDORSEMENTS: Endorsement[] = [
     hasWarning: false,
   },
   {
-    id: 2,
+    id: '2',
     date: '21.06.2021',
     name: 'Þórhildur Tyrfingsdóttir',
     nationalId: '1991921335',
@@ -39,7 +36,7 @@ const ENDORSEMENTS: Endorsement[] = [
     hasWarning: true,
   },
   {
-    id: 3,
+    id: '3',
     date: '21.05.2021',
     name: 'Stefán Haukdal',
     nationalId: '1991921335',
@@ -47,7 +44,7 @@ const ENDORSEMENTS: Endorsement[] = [
     hasWarning: false,
   },
   {
-    id: 4,
+    id: '4',
     date: '21.03.2021',
     name: 'Brian Johannesen',
     nationalId: '1991921335',
@@ -55,7 +52,7 @@ const ENDORSEMENTS: Endorsement[] = [
     hasWarning: false,
   },
   {
-    id: 5,
+    id: '5',
     date: '21.02.2021',
     name: 'Örvar Þór Sigurðsson',
     nationalId: '1991921335',
@@ -63,7 +60,7 @@ const ENDORSEMENTS: Endorsement[] = [
     hasWarning: false,
   },
   {
-    id: 6,
+    id: '6',
     date: '21.04.2021',
     name: 'Örvar Þór Sigurðsson',
     nationalId: '1991921335',
@@ -74,7 +71,7 @@ const ENDORSEMENTS: Endorsement[] = [
 
 const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const { lang: locale, formatMessage } = useLocale()
-  const answers = (application as any).answers as PartyApplicationAnswers
+  const answers = application.answers as SchemaFormValues
   const [endorsements] = useState(sortBy(ENDORSEMENTS, 'date'))
   const [selectedEndorsements, setSelectedEndorsements] = useState<
     Endorsement[]

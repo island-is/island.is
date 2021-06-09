@@ -1,6 +1,6 @@
 import { ApplicationContext } from '@island.is/application/core'
 import { YES, NO } from '../constants'
-import { SchemaFormValues } from './dataSchema'
+import { requiresOtherParentApproval } from '../parentalLeaveUtils'
 
 export function hasEmployer(context: ApplicationContext) {
   const currentApplicationAnswers = context.application.answers as {
@@ -11,8 +11,5 @@ export function hasEmployer(context: ApplicationContext) {
 }
 
 export function needsOtherParentApproval(context: ApplicationContext) {
-  const currentApplicationAnswers = context.application
-    .answers as SchemaFormValues
-
-  return currentApplicationAnswers.requestRights.isRequestingRights === YES
+  return requiresOtherParentApproval(context.application.answers)
 }

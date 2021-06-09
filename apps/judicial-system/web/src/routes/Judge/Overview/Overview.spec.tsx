@@ -139,7 +139,7 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <UserProvider>
+        <UserProvider authenticated={true}>
           <Overview />
         </UserProvider>
       </MockedProvider>,

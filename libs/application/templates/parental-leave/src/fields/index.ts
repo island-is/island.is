@@ -19,3 +19,4 @@ export { default as PeriodsSectionImage } from './PeriodsSectionImage/PeriodsSec
 export { default as ChildSelector } from './ChildSelector'
 export { default as EditsInReviewSteps } from './InReviewSteps/EditsInReviewSteps'
 export { default as EditsRequireAction } from './EditsRequireAction'
+export { default as EmployerApprovalExtraInformation } from './EmployerApprovalExtraInformation'

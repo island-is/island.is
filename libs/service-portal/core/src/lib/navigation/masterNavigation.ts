@@ -85,6 +85,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             navHide: true,
             path: ServicePortalPath.FamilyRoot,
           },
+          {
+            // Medmaeli
+            name: defineMessage({
+              id: 'service.portal:endorsements',
+              defaultMessage: 'Meðmæli',
+            }),
+            path: ServicePortalPath.Endorsements,
+          },
         ],
       },
 
