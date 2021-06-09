@@ -1,2 +1,2 @@
-import CaseFiles from '@island.is/judicial-system-web/src/routes/Prosecutor/R-cases/CaseFiles/CaseFiles'
+import CaseFiles from '@island.is/judicial-system-web/src/routes//Prosecutor/InvestigationRequest/CaseFiles/CaseFiles'
 export default CaseFiles
