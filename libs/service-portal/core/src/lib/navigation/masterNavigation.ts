@@ -166,6 +166,49 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      // Fjarmal
+      {
+        name: defineMessage({
+          id: 'service.portal:finance',
+          defaultMessage: 'Fjármál',
+        }),
+        path: ServicePortalPath.FinanceStatus,
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:financeStatus',
+              defaultMessage: 'Staða',
+            }),
+            path: ServicePortalPath.FinanceStatus,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:financeTransactions',
+              defaultMessage: 'Hreyfingar',
+            }),
+            path: ServicePortalPath.FinanceTransactions,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:financeBills',
+              defaultMessage: 'Greiðsluseðlar og Greiðslukvittanir',
+            }),
+            path: ServicePortalPath.FinanceBills,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:financeSalary',
+              defaultMessage: 'Laungreiðendakröfur',
+            }),
+            path: ServicePortalPath.FinanceSalary,
+          },
+        ],
+        icon: {
+          type: 'outline',
+          icon: 'cellular',
+        },
+      },
+
       // Stillingar
       {
         name: defineMessage({
@@ -196,6 +239,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       },
     ],
   },
+
   {
     name: defineMessage({
       id: 'service.portal:actions',
@@ -203,53 +247,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       description: 'Title of the actions category',
     }),
     children: [
-      // Fjarmal
-      {
-        name: defineMessage({
-          id: 'service.portal:finance',
-          defaultMessage: 'Fjármál',
-        }),
-        path: ServicePortalPath.FinanceRoot,
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:financeStatus',
-              defaultMessage: 'Staða',
-            }),
-            path: ServicePortalPath.FinanceStatus,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:financeTransactions',
-              defaultMessage: 'Færslur',
-            }),
-            path: ServicePortalPath.FinanceTransactions,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:financeSalary',
-              defaultMessage: 'Laungreiðendakröfur',
-            }),
-            path: ServicePortalPath.FinanceSalary,
-          },
-        ],
-        icon: {
-          type: 'outline',
-          icon: 'cellular',
-        },
-        heading: defineMessage({
-          id: 'service.portal:coming-soon',
-          defaultMessage: 'Væntanlegt',
-        }),
-        // external: true,
-        systemRoute: true,
-      },
-
       // Fasteignir
       {
         name: defineMessage({
           id: 'service.portal:real-estate',
           defaultMessage: 'Fasteignir',
+        }),
+        heading: defineMessage({
+          id: 'service.portal:coming-soon',
+          defaultMessage: 'Væntanlegt',
         }),
         path: ServicePortalPath.RealEstateExternal,
         external: true,

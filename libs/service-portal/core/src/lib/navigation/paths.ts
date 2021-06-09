@@ -34,6 +34,7 @@ export enum ServicePortalPath {
   FinanceStatus = '/fjarmal/stada',
   FinanceTransactions = '/fjarmal/faerslur',
   FinanceSalary = '/fjarmal/laungreidendakrofur',
+  FinanceBills = '/fjarmal/greidslusedlar-og-greidslukvittanir',
   FinanceVehicles = 'https://mitt.samgongustofa.is/',
   FinancePayments = '/greidslur',
   FinanceExternal = 'https://minarsidur.island.is/minar-sidur/fjarmal/fjarmal-stada-vid-rikissjod-og-stofnanir/',
