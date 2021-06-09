@@ -52,7 +52,7 @@ jobs:
         run: node ./scripts/gitbook.js
       - name: Check if the git repo is dirty
         id: changes
-        uses: UnicornGlobal/has-changes-action@v1.0.11
+        uses: UnicornGlobal/has-changes-action@v1.0.12
       - name: Comment on PR
         if: steps.changes.outputs.changed == 1
         uses: actions/github-script@v3
