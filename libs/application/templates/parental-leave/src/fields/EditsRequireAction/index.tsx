@@ -9,7 +9,7 @@ import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States as ApplicationStates } from '../../constants'
-import { handleSubmitError } from '../../lib/parentalLeaveUtils'
+import { handleSubmitError } from '../../lib/parentalLeaveClientUtils'
 
 const EditsRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(

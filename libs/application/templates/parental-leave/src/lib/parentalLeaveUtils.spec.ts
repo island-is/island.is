@@ -78,12 +78,6 @@ describe('getExpectedDateOfBirth', () => {
   })
 })
 
-describe('getNameAndIdOfSpouse', () => {})
-
-describe('getEstimatedMonthlyPay', () => {})
-
-describe('formatPeriods', () => {})
-
 describe('formatIsk', () => {
   it('should take a number as input and format it following ISK format', () => {
     const res = formatIsk(100000)
@@ -199,12 +193,6 @@ describe('getAvailableRightsInMonths', () => {
   })
 })
 
-describe('getOtherParentOptions', () => {})
-
-describe('getAllPeriodDates', () => {})
-
-describe('createRange', () => {})
-
 describe('getSelectedChild', () => {
   it('should return null if it cannot find a child', () => {
     const answers = {}
@@ -249,8 +237,6 @@ describe('getSelectedChild', () => {
     })
   })
 })
-
-describe('isEligibleForParentalLeave', () => {})
 
 describe('calculatePeriodPercentage', () => {
   it('should return 100% when under the maximum amount of months', () => {

@@ -9,7 +9,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { handleSubmitError } from '../../lib/parentalLeaveUtils'
+import { handleSubmitError } from '../../lib/parentalLeaveClientUtils'
 import { States as ApplicationStates } from '../../constants'
 
 const DraftRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {

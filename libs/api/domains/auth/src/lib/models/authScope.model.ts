@@ -1,16 +1,16 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType()
-export class License {
+export class AuthScope {
   @Field(() => ID)
-  id!: string
+  name!: string
 
   @Field(() => String)
-  school!: string
+  displayName!: string
 
   @Field(() => String)
-  programme!: string
+  groupName!: string
 
   @Field(() => String)
-  date!: string
+  description!: string
 }
