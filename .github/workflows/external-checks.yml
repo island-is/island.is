@@ -33,7 +33,7 @@ jobs:
             cat .github/CODEOWNERS | grep -v '^#' | awk NF
             exit 1
           fi
-      - uses: mszostok/codeowners-validator@v0.5.1
+      - uses: mszostok/codeowners-validator@v0.6.0
         if: env.CHECK
         with:
           checks: 'files,owners,duppatterns'
@@ -55,7 +55,7 @@ jobs:
         uses: UnicornGlobal/has-changes-action@v1.0.12
       - name: Comment on PR
         if: steps.changes.outputs.changed == 1
-        uses: actions/github-script@v3
+        uses: actions/github-script@v4.0.2
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |

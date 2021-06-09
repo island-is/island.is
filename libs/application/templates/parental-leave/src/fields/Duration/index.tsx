@@ -4,6 +4,8 @@ import differenceInMonths from 'date-fns/differenceInMonths'
 import addMonths from 'date-fns/addMonths'
 import formatISO from 'date-fns/formatISO'
 import parseISO from 'date-fns/parseISO'
+import format from 'date-fns/format'
+
 import {
   extractRepeaterIndexFromField,
   FieldBaseProps,
@@ -12,17 +14,19 @@ import {
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-
 import { FieldDescription } from '@island.is/shared/form-fields'
+
 import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
 import {
   calculatePeriodPercentage,
   getExpectedDateOfBirth,
-} from '../../parentalLeaveUtils'
+} from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
 import { StartDateOptions } from '../../constants'
+
+const df = 'yyyy-MM-dd'
 
 const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
@@ -166,12 +170,13 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
                 onChange={(selectedMonths: number) => {
                   clearErrors(id)
 
-                  const newEndDate = formatISO(
-                    addMonths(parseISO(currentStartDateAnswer), selectedMonths),
+                  const newEndDate = addMonths(
+                    parseISO(currentStartDateAnswer),
+                    selectedMonths,
                   )
 
-                  onChange(newEndDate)
-                  setChosenEndDate(newEndDate)
+                  onChange(format(newEndDate, df))
+                  setChosenEndDate(formatISO(newEndDate))
                   setChosenDuration(selectedMonths)
                 }}
               />

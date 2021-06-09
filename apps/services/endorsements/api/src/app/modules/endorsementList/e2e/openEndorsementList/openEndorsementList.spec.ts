@@ -3,7 +3,6 @@ import * as request from 'supertest'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { setup } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
-import { EndorsementList } from '../../endorsementList.model'
 import { authNationalId } from './seed'
 
 let app: INestApplication
@@ -19,10 +18,10 @@ beforeAll(async () => {
   })
 })
 
-describe('findOneEndorsementList', () => {
-  it(`GET /endorsement-list/:listId should return 404 error when uid does not exist`, async () => {
+describe('openEndorsementList', () => {
+  it(`PUT /endorsement-list/:listId/open should return 404 when opening an non existing list`, async () => {
     const response = await request(app.getHttpServer())
-      .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777') // random uuid
+      .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777/open')
       .send()
       .expect(404)
 
@@ -31,24 +30,23 @@ describe('findOneEndorsementList', () => {
       statusCode: 404,
     })
   })
-  it(`GET /endorsement-list/:listId should return 400 validation error when listId is not UUID`, async () => {
+  it(`PUT /endorsement-list/:listId/open should not be able to open endorsement lists for others`, async () => {
     const response = await request(app.getHttpServer())
-      .get('/endorsement-list/notAUUID')
+      .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba017/open')
       .send()
-      .expect(400)
+      .expect(405)
 
     expect(response.body).toMatchObject({
       ...errorExpectedStructure,
-      statusCode: 400,
+      statusCode: 405,
     })
   })
-  it(`GET /endorsement-list/:listId should return 200 and a valid endorsement list`, async () => {
+  it(`PUT /endorsement-list/:listId/open should open existing closed endorsement list`, async () => {
     const response = await request(app.getHttpServer())
-      .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba016')
+      .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba018/open')
       .send()
       .expect(200)
 
-    const endorsementList = new EndorsementList({ ...response.body })
-    await expect(endorsementList.validate()).resolves.not.toThrow()
+    expect(response.body).toMatchObject({ closedDate: null })
   })
 })
