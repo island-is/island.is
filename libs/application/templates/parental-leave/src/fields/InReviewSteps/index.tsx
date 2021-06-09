@@ -16,7 +16,7 @@ import {
   requiresOtherParentApproval,
 } from '../../parentalLeaveUtils'
 import { handleSubmitError } from '../../parentalLeaveClientUtils'
-import { States as ApplicationStates } from '../../constants'
+import { NO, States as ApplicationStates, YES } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
@@ -82,7 +82,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
     },
   ]
 
-  if (!isSelfEmployed) {
+  if (isSelfEmployed === NO) {
     steps.unshift({
       state: statesMap['employer'][application.state],
       title: formatMessage(
@@ -96,9 +96,9 @@ const InReviewSteps: FC<FieldBaseProps> = ({
 
   if (requiresOtherParentApproval(application.answers)) {
     const description =
-      isRequestingRights && usePersonalAllowanceFromSpouse
+      isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
         ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
-        : isRequestingRights
+        : isRequestingRights === YES
         ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
         : parentalLeaveFormMessages.reviewScreen
             .otherParentDescRequestingPersonalDiscount
