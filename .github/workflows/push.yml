@@ -6,7 +6,6 @@ on:
       - 'main'
       - 'release/**'
       - 'hotfix/**'
-      - 'self-hosted-k8s'
     paths-ignore:
       - '**/*.md'
     tags:
