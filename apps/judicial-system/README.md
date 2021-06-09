@@ -45,7 +45,7 @@ yarn nx run judicial-system-backend:migrate
 ```
 
 ```bash
-yarn nx run judicial-system-backend:seed:all
+yarn nx run judicial-system-backend:seed
 ```
 
 ### Running locally
@@ -116,14 +116,23 @@ Start the backend locally. Instructions on how to do that can be found [in the b
 Start the application
 
 ```bash
-yarn start judicial-system-web --ssl
+yarn start judicial-system-web
 ```
 
 Then the project should be running on https://localhost:4200/.
 
-{% hint style="warning" %}
+{% hint style="info" %}
 To skip authentication at innskraning.island.is navigate to `/api/auth/login?nationalId=<national_id>` in the web project where `<national_id>` is the national id of a known user.
-You can skip `--ssl` but then authentication through innskraning.island.is will fail. The project should now be running on http://localhost:4200/.
+Known users:
+- Áki Ákærandi
+  - NationalId: 0000000009
+  - Role: Prosecutor
+- Dalli Dómritari
+  - NationalId: 0000001119
+  - Role: Registrar
+- Dóra Dómari
+  - NationalId: 0000002229
+  - Role: Judge
 {% endhint %}
 
 ### Running the tests
