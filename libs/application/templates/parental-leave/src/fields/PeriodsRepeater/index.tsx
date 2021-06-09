@@ -1,16 +1,21 @@
 import React, { FC } from 'react'
-import { CustomField, RepeaterProps } from '@island.is/application/core'
 
+import { RepeaterProps } from '@island.is/application/core'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import Timeline from '../components/Timeline'
-import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { FieldDescription } from '@island.is/shared/form-fields'
+
+import Timeline from '../components/Timeline'
+import {
+  formatPeriods,
+  getExpectedDateOfBirth,
+} from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
+import { States } from '../../constants'
 
 type FieldProps = {
-  field: {
-    props: {
+  field?: {
+    props?: {
       showDescription: boolean
     }
   }
@@ -23,9 +28,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   expandRepeater,
   field,
 }) => {
-  const {
-    props: { showDescription = true },
-  } = field
+  const showDescription = field?.props?.showDescription ?? true
   const dob = getExpectedDateOfBirth(application)
   const { formatMessage } = useLocale()
 
@@ -35,7 +38,8 @@ const PeriodsRepeater: FC<ScreenProps> = ({
 
   const dobDate = new Date(dob)
   const editable =
-    application.state === 'draft' || application.state === 'editOrAddPeriods'
+    application.state === States.DRAFT ||
+    application.state === States.EDIT_OR_ADD_PERIODS
 
   return (
     <Box>
