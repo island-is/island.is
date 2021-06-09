@@ -37,10 +37,6 @@ describe('/domari-krafa/thingbok', () => {
                   'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman skipaður verjandi kærða',
               } as UpdateCase,
               {
-                prosecutorDemands:
-                  'Þess er krafist að Jon Harring, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 00:00.',
-              } as UpdateCase,
-              {
                 accusedPleaDecision: AccusedPleaDecision.ACCEPT,
               } as UpdateCase,
               {
