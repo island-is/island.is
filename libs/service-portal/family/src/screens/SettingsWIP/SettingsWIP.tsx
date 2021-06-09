@@ -18,7 +18,7 @@ export const SettingsWIP: ServicePortalModuleComponent = () => {
       intro={defineMessage({
         id: 'sp.family:settings-intro',
         defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir
-        fasteignir á næstunni.`,
+        stillingar á næstunni.`,
       })}
       list={{
         title: defineMessage({
