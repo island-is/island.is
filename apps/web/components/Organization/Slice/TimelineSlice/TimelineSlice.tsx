@@ -156,7 +156,6 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
   }
 
   useEffect(() => {
-    console.log(currentMonth)
     setPosition(currentMonth - 100)
     frameRef.current.scrollTo({
       left: currentMonth - 100,
