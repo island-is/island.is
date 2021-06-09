@@ -33,7 +33,7 @@ jobs:
             cat .github/CODEOWNERS | grep -v '^#' | awk NF
             exit 1
           fi
-      - uses: mszostok/codeowners-validator@v0.5.1
+      - uses: mszostok/codeowners-validator@v0.6.0
         if: env.CHECK
         with:
           checks: 'files,owners,duppatterns'
