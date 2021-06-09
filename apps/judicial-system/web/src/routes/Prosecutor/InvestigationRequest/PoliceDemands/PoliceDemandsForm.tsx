@@ -168,7 +168,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Lagaákvæði sem brot varða við
+              Lagaákvæði sem krafan er byggð á
             </Text>
           </Box>
           <Input

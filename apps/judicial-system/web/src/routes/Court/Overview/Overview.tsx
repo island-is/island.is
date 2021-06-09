@@ -293,7 +293,7 @@ export const JudgeOverview: React.FC = () => {
                     Dómkröfur
                   </Text>
                 </Box>
-                {workingCase.demands}
+                <Text>{workingCase.demands}</Text>
               </Box>
               <div className={styles.infoSection}>
                 <Box marginBottom={6} data-testid="lawsBroken">

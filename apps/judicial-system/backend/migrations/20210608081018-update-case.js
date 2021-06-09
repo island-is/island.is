@@ -84,7 +84,7 @@ module.exports = {
                   ),
                   isExtension: subRes[1][0].length === 1,
                   previousDecision:
-                    subRes[1][1].rowCount === 1
+                    subRes[1][0].length === 1
                       ? subRes[1][0][0].decision
                       : undefined,
                 }

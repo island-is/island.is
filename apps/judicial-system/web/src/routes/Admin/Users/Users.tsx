@@ -61,7 +61,7 @@ export const Users: React.FC = () => {
       {data && (
         <table
           className={styles.userTable}
-          data-testid="custody-requests-table"
+          data-testid="users-table"
           aria-describedby="tableCation"
         >
           <thead className={styles.thead}>
