@@ -27,14 +27,16 @@ import {
 } from '../dataProviders/Children/types'
 import { Boolean } from '../types'
 
-export function getExpectedDateOfBirth(application: Application): string {
+export function getExpectedDateOfBirth(
+  application: Application,
+): string | undefined {
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
   )
 
   if (!selectedChild) {
-    throw new Error('Missing selected child')
+    return undefined
   }
 
   return selectedChild.expectedDateOfBirth
