@@ -16,7 +16,7 @@ export const calcDifferenceInDate = (dateCreated: string | undefined) => {
   }
 }
 
-export const translateMonth = (mon: number) => {
+export const translateMonth = (mon: string) => {
   const months = [
     'Janúar',
     'Febrúar',
@@ -31,7 +31,7 @@ export const translateMonth = (mon: number) => {
     'Nóvember',
     'Desember',
   ]
-  return months.filter((el, i) => i == mon - 1)[0]
+  return months.filter((el, i) => i == parseInt(mon) - 1)[0]
 }
 
 export const calcAge = (ssn: string) => {

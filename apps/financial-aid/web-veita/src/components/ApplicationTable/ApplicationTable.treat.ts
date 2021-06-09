@@ -10,7 +10,7 @@ export const tableContainer = style({
 })
 
 export const tablePadding = style({
-  paddingRight: theme.spacing[4],
+  paddingRight: theme.spacing[9],
   paddingTop: theme.spacing[2],
   paddingBottom: theme.spacing[2],
 })

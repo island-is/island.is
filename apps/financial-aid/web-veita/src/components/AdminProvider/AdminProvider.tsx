@@ -3,13 +3,13 @@ import React, { createContext, useEffect, useState } from 'react'
 import { CSRF_COOKIE_NAME, User } from '@island.is/financial-aid/shared'
 import Cookies from 'js-cookie'
 
-interface UserProvider {
+interface AdminProvider {
   isAuthenticated?: boolean
-  user?: User
-  setUser?: React.Dispatch<React.SetStateAction<User | undefined>>
+  admin?: User
+  setAdmin?: React.Dispatch<React.SetStateAction<User | undefined>>
 }
 
-export const UserContext = createContext<UserProvider>({})
+export const AdminContext = createContext<AdminProvider>({})
 
 export const CurrentUserQuery = gql`
   query CurrentUserQuery {
@@ -21,27 +21,27 @@ export const CurrentUserQuery = gql`
   }
 `
 
-const UserProvider: React.FC = ({ children }) => {
+const AdminProvider: React.FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(Cookies.get(CSRF_COOKIE_NAME)),
   )
-  const [user, setUser] = useState<User>()
+  const [admin, setAdmin] = useState<User>()
 
   const { data } = useQuery(CurrentUserQuery, { fetchPolicy: 'no-cache' })
   const loggedInUser = data?.currentUser
 
   useEffect(() => {
-    if (loggedInUser && !user) {
-      setUser(loggedInUser)
+    if (loggedInUser && !admin) {
+      setAdmin(loggedInUser)
       setIsAuthenticated(true)
     }
-  }, [setUser, loggedInUser, user])
+  }, [setAdmin, loggedInUser, admin])
 
   return (
-    <UserContext.Provider value={{ isAuthenticated, user, setUser }}>
+    <AdminContext.Provider value={{ isAuthenticated, admin, setAdmin }}>
       {children}
-    </UserContext.Provider>
+    </AdminContext.Provider>
   )
 }
 
-export default UserProvider
+export default AdminProvider

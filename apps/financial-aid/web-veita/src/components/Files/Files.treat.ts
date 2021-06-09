@@ -4,6 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 export const filesLink = style({
   display: 'block',
   gridColumn: '1/-1',
+  borderRadius: theme.spacing[1],
   backgroundColor: theme.color.purple100,
   marginBottom: theme.spacing[2],
   selectors: {

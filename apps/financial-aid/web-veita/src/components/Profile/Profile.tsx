@@ -37,9 +37,9 @@ const Profile: React.FC<Props> = ({ heading, info }) => {
         </Text>
       </Box>
       <div className={styles.container}>
-        {info.map((item) => {
+        {info.map((item, index) => {
           return (
-            <Box>
+            <Box key={'profile-' + index}>
               <Text variant="eyebrow" marginBottom={1}>
                 {item.title}
               </Text>

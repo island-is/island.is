@@ -19,6 +19,10 @@ import {
 
 import { Application } from '@island.is/financial-aid/shared'
 
+import format from 'date-fns/format'
+
+import { calcDifferenceInDate, translateMonth } from '../../utils/formHelper'
+
 interface ApplicationData {
   applications: Application[]
 }
@@ -37,8 +41,8 @@ const ApplicationOverview = () => {
   const navLinks = [
     {
       label: 'Ný mál',
-      link: '/nyMal',
-      headers: ['Nafn', 'Staða', 'Tími án umsjár'],
+      link: '/nymal',
+      headers: ['Nafn', 'Staða', 'Tími án umsjár', 'Tímabil'],
     },
     {
       label: 'Í vinnslu',
@@ -80,7 +84,10 @@ const ApplicationOverview = () => {
                   <Text variant="h5">{GenerateName(item.nationalId)}</Text>
                 </Box>,
                 <Text>Ný umsókn</Text>,
-                <Text>2klst</Text>,
+                <Text> {calcDifferenceInDate(item.modified)}</Text>,
+                <Text>
+                  {translateMonth(format(new Date(item.created), 'M'))}
+                </Text>,
               ],
               link: item.id,
             }

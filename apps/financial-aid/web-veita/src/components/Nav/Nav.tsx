@@ -15,33 +15,29 @@ import { LogoHfj } from '../'
 import * as styles from './Nav.treat'
 import cn from 'classnames'
 
+import { api } from '../../services'
+import { AdminContext } from '../AdminProvider/AdminProvider'
+
 const Nav: React.FC = () => {
   const router = useRouter()
-  // const { isAuthenticated, setUser, user } = useContext(UserContext)
+
+  const { isAuthenticated, setAdmin, admin } = useContext(AdminContext)
 
   const otherItems = [
-    // {
-    //   label: 'Leit',
-    //   icon: 'search',
-    // },
-    // {
-    //   label: 'Tölfræði',
-    //   icon: 'cellular',
-    // },
-    // {
-    //   label: 'Stillingar',
-    //   icon: 'settings',
-    // },
     {
       label: 'Útskráning',
       icon: 'logOut',
+      onclick: () => {
+        api.logOut()
+        setAdmin && setAdmin(undefined)
+      },
     },
   ]
 
   const navLinks = [
     {
       label: 'Ný mál',
-      link: '/nyMal',
+      link: '/nymal',
     },
     {
       label: 'Í vinnslu',
@@ -77,6 +73,7 @@ const Nav: React.FC = () => {
           return (
             <Link href={item.link} key={'NavigationLinks-' + index}>
               <a
+                aria-label={item.label}
                 className={cn({
                   [`${styles.link}`]: true,
                   [`${styles.activeLink}`]: router.pathname === item.link,
@@ -98,7 +95,7 @@ const Nav: React.FC = () => {
               <Button
                 colorScheme="default"
                 iconType="outline"
-                onClick={function noRefCheck() {}}
+                onClick={item.onclick}
                 preTextIcon={item.icon as ButtonProps['icon']}
                 preTextIconType="outline"
                 size="default"

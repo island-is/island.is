@@ -31,12 +31,14 @@ const Files: React.FC<Props> = ({ heading, filesArr, className }) => {
       </Text>
       {filesArr && (
         <>
-          {filesArr.map((item) => {
+          {filesArr.map((item, index) => {
             return (
               <a
+                aria-label={item}
                 href={item}
                 target="_blank"
                 className={styles.filesLink}
+                key={'files-' + index}
                 // download
               >
                 <div className={styles.container}>

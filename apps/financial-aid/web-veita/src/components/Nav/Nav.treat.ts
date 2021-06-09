@@ -14,6 +14,7 @@ export const container = style({
   paddingBottom: theme.spacing[7],
   display: 'none',
   gridTemplateRows: 'max-content auto max-content',
+  alignItems: 'center',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       display: 'grid',

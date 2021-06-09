@@ -8,6 +8,8 @@ export const GetApplicationQuery = gql`
       name
       phoneNumber
       email
+      modified
+      created
     }
   }
 `

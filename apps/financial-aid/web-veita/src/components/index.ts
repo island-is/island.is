@@ -7,4 +7,4 @@ export { default as ApplicationTable } from './ApplicationTable/ApplicationTable
 export { default as GeneratedProfile } from './Generator/GeneratedProfile'
 export { default as GenerateName } from './Generator/GenerateName'
 export { default as Files } from './Files/Files'
-export { default as UserProvider } from './UserProvider/UserProvider'
+export { default as AdminProvider } from './AdminProvider/AdminProvider'

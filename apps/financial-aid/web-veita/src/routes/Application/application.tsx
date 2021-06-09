@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Divider,
+  ModalBase,
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
@@ -39,6 +40,31 @@ interface ApplicantData {
 
 const ApplicationProfile = () => {
   const router = useRouter()
+
+  const [isVisible, setIsVisible] = useState(false)
+
+  const statusOptions = [
+    {
+      name: 'Ný umsókn',
+      type: 'newApplication',
+    },
+    {
+      name: 'Í vinnslu',
+      type: 'inProgress',
+    },
+    {
+      name: 'Óska eftir gögnum',
+      type: 'filesNeeded',
+    },
+    {
+      name: 'Samþykkt',
+      type: 'approved',
+    },
+    {
+      name: 'Synjað',
+      type: 'declined',
+    },
+  ]
 
   const { data, error, loading } = useQuery<ApplicantData>(GetApplicantyQuery, {
     variables: { input: { id: router.query.id } },
@@ -152,13 +178,17 @@ const ApplicationProfile = () => {
 
     return (
       <AdminLayout>
-        <Box marginY={10} className={styles.applicantWrapper}>
-          <Box className={styles.widthFull}>
+        <Box
+          marginTop={10}
+          marginBottom={15}
+          className={styles.applicantWrapper}
+        >
+          <Box className={styles.widthFull} marginBottom={3}>
             <Button
               colorScheme="default"
               iconType="filled"
               onClick={() => {
-                router.push('/')
+                router.push('/vinnslu')
               }}
               preTextIcon="arrowBack"
               preTextIconType="filled"
@@ -192,11 +222,12 @@ const ApplicationProfile = () => {
               colorScheme="default"
               icon="pencil"
               iconType="filled"
-              onClick={function noRefCheck() {}}
+              onClick={() => {
+                setIsVisible(!isVisible)
+              }}
               preTextIconType="filled"
               size="default"
               type="button"
-              size="small"
               variant="primary"
             >
               Ný umsókn
@@ -232,6 +263,57 @@ const ApplicationProfile = () => {
             />
           </>
         </Box>
+
+        <ModalBase
+          baseId="changeStatus"
+          isVisible={isVisible}
+          onVisibilityChange={(visibility) => {
+            if (visibility !== isVisible) {
+              setIsVisible(visibility)
+            }
+          }}
+          className={styles.modalBase}
+        >
+          {/* //WIP take out error */}
+          {({ closeModal }) => (
+            <Box onClick={closeModal} className={styles.modalContainer}>
+              <Box
+                position="relative"
+                background="white"
+                borderRadius="large"
+                className={styles.modal}
+              >
+                <Box
+                  paddingLeft={4}
+                  paddingY={2}
+                  background="blue400"
+                  className={styles.modalHeadline}
+                >
+                  <Text fontWeight="semiBold" color="white">
+                    Stöðubreyting
+                  </Text>
+                </Box>
+                <Box padding={4}>
+                  {statusOptions.map((item, index) => {
+                    return (
+                      <button
+                        key={'statusoptions-' + index}
+                        className={styles.statusOptions}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          // setIsVisible(!isVisible)
+                          console.log('h')
+                        }}
+                      >
+                        {item.name}
+                      </button>
+                    )
+                  })}
+                </Box>
+              </Box>
+            </Box>
+          )}
+        </ModalBase>
       </AdminLayout>
     )
   }
