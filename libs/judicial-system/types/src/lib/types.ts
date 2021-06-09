@@ -1,5 +1,6 @@
 export enum Feature {
-  NONE = 'NONE',
+  NONE = 'NONE', // must be at least one
+  R_CASES = 'R_CASES',
 }
 
 export enum InstitutionType {
