@@ -197,6 +197,11 @@ export const getRightsCode = (application: Application): string => {
     application.answers,
     application.externalData,
   )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
   const answers = getApplicationAnswers(application.answers)
   const isSelfEmployed = answers.isSelfEmployed === 'yes'
   const isPrimaryParent = selectedChild.parentalRelation === 'primary'
@@ -254,6 +259,10 @@ export const transformApplicationToParentalLeaveDTO = (
     application.answers,
     application.externalData,
   )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
 
   const { email, phoneNumber } = getApplicantContactInfo(application)
 

@@ -30,6 +30,10 @@ export const applicationsToChildInformation = (
       application.externalData,
     )
 
+    if (selectedChild === null) {
+      continue
+    }
+
     if (asOtherParent) {
       let transferredDays = getTransferredDays(application, selectedChild)
 
