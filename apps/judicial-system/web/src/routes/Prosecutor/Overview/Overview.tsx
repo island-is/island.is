@@ -189,7 +189,7 @@ export const Overview: React.FC = () => {
                   },
                   {
                     title: 'Dómstóll',
-                    value: workingCase.court,
+                    value: workingCase.court?.name,
                   },
                   {
                     title: 'Embætti',

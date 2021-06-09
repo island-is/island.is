@@ -8,13 +8,24 @@ import {
 import {
   Person,
   NationalRegistry,
+  Override,
+  Child,
 } from '@island.is/application/templates/family-matters-core/types'
 import { DataProviderTypes, CRCApplication } from '../types'
+
+type SoleCustodyChild = Override<Child, { otherParent: Person | null }>
+
+type SoleCustodyNationalRegistry = Override<
+  NationalRegistry,
+  { children: (Child | SoleCustodyChild)[] }
+>
 
 export class MockNationalRegistryProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.MockNationalRegistry
 
-  async provide(application: Application): Promise<NationalRegistry> {
+  async provide(
+    application: Application,
+  ): Promise<NationalRegistry | SoleCustodyNationalRegistry> {
     const crcApplication = (application as unknown) as CRCApplication
     const {
       answers: {
@@ -24,10 +35,14 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
     const childrenArray = children?.map((child) => ({
       ...child,
       livesWithApplicant: child?.livesWithApplicant?.includes('yes') || false,
-      otherParent: parents[child.otherParent],
+      livesWithBothParents:
+        child?.livesWithBothParents?.includes('yes') || false,
+      otherParent: child?.applicantSoleCustody?.includes('yes')
+        ? null
+        : parents[child.otherParent],
     }))
 
-    const returnObject: NationalRegistry = {
+    const returnObject: NationalRegistry | SoleCustodyNationalRegistry = {
       fullName: applicant.fullName,
       nationalId: applicant.nationalId,
       address: {
@@ -35,7 +50,7 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
         postalCode: applicant.address.postalCode,
         streetName: applicant.address.streetName,
       },
-      children: childrenArray,
+      children: childrenArray || [],
     }
 
     return Promise.resolve(returnObject)

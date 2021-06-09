@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
+import { States } from '../constants'
 import {
   inReviewFormMessages,
   parentalLeaveFormMessages,
@@ -20,12 +21,15 @@ export const InReview: Form = buildForm({
   children: [
     buildSection({
       id: 'review',
-      title: '',
+      title: (application) =>
+        application.state === States.APPROVED
+          ? parentalLeaveFormMessages.reviewScreen.titleApproved
+          : parentalLeaveFormMessages.reviewScreen.titleInReview,
       children: [
         buildCustomField({
           id: 'InReviewSteps',
           title: (application) =>
-            application.state === 'approved'
+            application.state === States.APPROVED
               ? parentalLeaveFormMessages.reviewScreen.titleApproved
               : parentalLeaveFormMessages.reviewScreen.titleInReview,
           component: 'InReviewSteps',

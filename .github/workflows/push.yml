@@ -6,7 +6,6 @@ on:
       - 'main'
       - 'release/**'
       - 'hotfix/**'
-      - 'ncc-self-hosted'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -94,7 +93,7 @@ jobs:
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
-    runs-on: self-hosted
+    runs-on: ubuntu-20.04
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -118,7 +117,6 @@ jobs:
           fetch-depth: 0
 
       - name: Cleanup disk space
-        if: false
         run: |
           df -h
           # https://github.com/actions/virtual-environments/issues/709#issuecomment-612569242
@@ -198,7 +196,6 @@ jobs:
 
       - name: Set up Docker Buildx
         id: buildx
-        if: false
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           buildx-version: v0.4.1
@@ -266,7 +263,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: self-hosted
+    runs-on: ubuntu-20.04
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
@@ -323,7 +320,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Set up Docker Buildx
-        if: false && steps.gather.outcome == 'success'
+        if: steps.gather.outcome == 'success'
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           buildx-version: v0.4.1
@@ -334,7 +331,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   retag-unaffected:
-    runs-on: self-hosted
+    runs-on: ubuntu-20.04
     timeout-minutes: 5
     if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
     needs:
@@ -364,7 +361,7 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-20.04
     if: always() && needs.retag-unaffected.result == 'success'
     needs:
       - retag-unaffected
@@ -394,7 +391,7 @@ jobs:
             "branch": "$GIT_BRANCH_DEPLOY",
             "parameters": {
               "docker_tag": "$DOCKER_TAG",
-              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:].-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)",
+              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)",
               "images": "$(echo $BUILD_CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')",
               "pull_request_number": "$(echo $GITHUB_REF | cut -d'/' -f3)"
             }
@@ -402,7 +399,7 @@ jobs:
           BODY
 
   push-success:
-    runs-on: self-hosted
+    runs-on: ubuntu-20.04
     if: always()
     needs:
       - pre-checks
@@ -421,7 +418,7 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: self-hosted
+    runs-on: ubuntu-20.04
     if: failure() && needs.pre-checks.outputs.PRE_CHECK
     needs:
       - pre-checks

@@ -5,6 +5,7 @@ import { MockedProvider } from '@apollo/client/testing'
 
 import {
   mockCaseQueries,
+  mockInstitutionsQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { CaseType } from '@island.is/judicial-system/types'
@@ -22,7 +23,11 @@ describe('/krafa with an id', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -78,7 +83,11 @@ describe('/krafa with an id', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -95,6 +104,38 @@ describe('/krafa with an id', () => {
       })) as HTMLButtonElement,
     ).not.toBeDisabled()
   })
+
+  test('should display an alert box reminding users that they need to resend requests if the request is changed and the request has already been sent to the courts', async () => {
+    // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_5' },
+    }))
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
+        addTypename={false}
+      >
+        <UserProvider>
+          <StepOne />
+        </UserProvider>
+      </MockedProvider>,
+    )
+
+    // Assert
+
+    expect(
+      await screen.findByText(
+        'Hægt er að breyta efni kröfunnar og bæta við rannsóknargögnum eftir að hún hefur verið send dómstól en til að breytingar skili sér í dómskjalið sem verður til hliðsjónar í þinghaldinu þarf að smella á Endursenda kröfu á skjánum Yfirlit kröfu.',
+      ),
+    ).toBeInTheDocument()
+  })
 })
 
 describe('/krafa without ID', () => {
@@ -108,7 +149,11 @@ describe('/krafa without ID', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -135,7 +180,11 @@ describe('/krafa without ID', () => {
 
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -179,7 +228,11 @@ describe('/krafa without ID', () => {
 
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ]}
         addTypename={false}
       >
         <UserProvider>

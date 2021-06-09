@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/utils/shared'
 
-import {
+import type {
   ChildInformation,
   ChildrenAndExistingApplications,
   ChildrenWithoutRightsAndExistingApplications,
@@ -23,10 +23,11 @@ import {
   ParentalLeave,
   ParentalLeaveEntitlement,
   PregnancyStatus,
-} from '../../types/schema'
+} from '@island.is/api/domains/directorate-of-labour'
+
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { calculateRemainingNumberOfDays } from '../../lib/directorateOfLabour.utils'
-import { getSelectedChild } from '../../parentalLeaveUtils'
+import { getSelectedChild } from '../../lib/parentalLeaveUtils'
 
 export interface PregnancyStatusAndRightsResults {
   childrenAndExistingApplications: ChildrenAndExistingApplications
@@ -34,6 +35,8 @@ export interface PregnancyStatusAndRightsResults {
   hasRights: boolean
   hasActivePregnancy: boolean
 }
+
+const isRunningOnProduction = isRunningOnEnvironment('production')
 
 const parentalLeavesAndPregnancyStatus = `
   query GetParentalLeavesAndPregnancyStatus {
@@ -55,7 +58,6 @@ const parentalLeavesAndPregnancyStatus = `
   }
 `
 
-const isRunningOnProduction = isRunningOnEnvironment('production')
 const parentalLeavesEntitlements = `
   query GetParentalLeavesEntitlements($input: GetParentalLeavesEntitlementsInput!) {
     getParentalLeavesEntitlements(input: $input) {

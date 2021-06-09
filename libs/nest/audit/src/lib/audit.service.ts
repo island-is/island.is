@@ -3,9 +3,11 @@ import WinstonCloudWatch from 'winston-cloudwatch'
 import { format, TransformableInfo } from 'logform'
 import { createHash } from 'crypto'
 import { Inject, Injectable } from '@nestjs/common'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { User } from '@island.is/auth-nest-tools'
-import { AUDIT_OPTIONS, AuditOptions } from './audit.options'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { User } from '@island.is/auth-nest-tools'
+import type { AuditOptions } from './audit.options'
+import { AUDIT_OPTIONS } from './audit.options'
 
 export interface AuditMessage {
   user: User

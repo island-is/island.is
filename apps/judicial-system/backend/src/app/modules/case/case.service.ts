@@ -6,14 +6,18 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   DokobitError,
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
-import { User as TUser } from '@island.is/judicial-system/types'
+import {
+  IntegratedCourts,
+  User as TUser,
+} from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import {
@@ -52,8 +56,12 @@ export class CaseService {
     const buffer = Buffer.from(pdf, 'binary')
 
     try {
-      const streamId = await this.courtService.uploadStream(buffer)
+      const streamId = await this.courtService.uploadStream(
+        existingCase.courtId,
+        buffer,
+      )
       await this.courtService.createThingbok(
+        existingCase.courtId,
         existingCase.courtCaseNumber,
         streamId,
       )
@@ -113,10 +121,9 @@ export class CaseService {
       writeFile(`${existingCase.id}-ruling-signed.pdf`, signedRulingPdf)
     }
 
-    const uploaded = await this.uploadSignedRulingPdfToCourt(
-      existingCase,
-      signedRulingPdf,
-    )
+    const uploaded = IntegratedCourts.includes(existingCase.courtId)
+      ? await this.uploadSignedRulingPdfToCourt(existingCase, signedRulingPdf)
+      : false
 
     await Promise.all([
       this.sendEmail(
@@ -166,10 +173,15 @@ export class CaseService {
       where: { id },
       include: [
         {
+          model: Institution,
+          as: 'court',
+        },
+        {
           model: User,
           as: 'prosecutor',
           include: [{ model: Institution, as: 'institution' }],
         },
+        { model: Institution, as: 'sharedWithProsecutorsOffice' },
         {
           model: User,
           as: 'judge',
@@ -194,10 +206,15 @@ export class CaseService {
       where: getCasesQueryFilter(user),
       include: [
         {
+          model: Institution,
+          as: 'court',
+        },
+        {
           model: User,
           as: 'prosecutor',
           include: [{ model: Institution, as: 'institution' }],
         },
+        { model: Institution, as: 'sharedWithProsecutorsOffice' },
         {
           model: User,
           as: 'judge',
@@ -214,16 +231,22 @@ export class CaseService {
     })
   }
 
-  async findByIdAndUser(id: string, user: TUser): Promise<Case> {
+  async findByIdAndUser(
+    id: string,
+    user: TUser,
+    forUpdate = true,
+  ): Promise<Case> {
     const existingCase = await this.findById(id)
 
     if (!existingCase) {
       throw new NotFoundException(`Case ${id} does not exist`)
     }
 
-    if (isCaseBlockedFromUser(existingCase, user)) {
+    if (isCaseBlockedFromUser(existingCase, user, forUpdate)) {
       throw new ForbiddenException(
-        `User ${user.id} does not have access to case ${id}`,
+        `User ${user.id} does not have${
+          forUpdate ? ' update' : ' read'
+        } access to case ${id}`,
       )
     }
 
@@ -340,7 +363,7 @@ export class CaseService {
     }
   }
 
-  extend(existingCase: Case): Promise<Case> {
+  extend(existingCase: Case, user: TUser): Promise<Case> {
     this.logger.debug(`Extending case ${existingCase.id}`)
 
     return this.caseModel.create({
@@ -350,12 +373,13 @@ export class CaseService {
       accusedName: existingCase.accusedName,
       accusedAddress: existingCase.accusedAddress,
       accusedGender: existingCase.accusedGender,
-      court: existingCase.court,
+      courtId: existingCase.courtId,
       lawsBroken: existingCase.lawsBroken,
       custodyProvisions: existingCase.custodyProvisions,
       requestedCustodyRestrictions: existingCase.requestedCustodyRestrictions,
       caseFacts: existingCase.caseFacts,
       legalArguments: existingCase.legalArguments,
+      prosecutorId: user.id,
       parentCaseId: existingCase.id,
     })
   }
@@ -368,8 +392,12 @@ export class CaseService {
     const pdf = await getRequestPdfAsBuffer(existingCase)
 
     try {
-      const streamId = await this.courtService.uploadStream(pdf)
+      const streamId = await this.courtService.uploadStream(
+        existingCase.courtId,
+        pdf,
+      )
       await this.courtService.createDocument(
+        existingCase.courtId,
         existingCase.courtCaseNumber,
         streamId,
       )

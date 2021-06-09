@@ -12,11 +12,10 @@ const JCASelectChildren = ({
     externalData: { nationalRegistry },
     answers,
   } = application
-  const { address, children } = nationalRegistry.data
+  const { children } = nationalRegistry.data
   return (
     <SelectChildren
       id={field.id}
-      address={address}
       children={children}
       error={error}
       currentAnswer={answers.selectedChildren}
@@ -25,6 +24,8 @@ const JCASelectChildren = ({
         description: selectChildren.general.description,
         ineligible: selectChildren.ineligible.text,
         checkBoxSubLabel: selectChildren.checkboxes.subLabel,
+        // TODO: fix this translation
+        soleCustodySubLabel: selectChildren.checkboxes.subLabel,
       }}
     />
   )

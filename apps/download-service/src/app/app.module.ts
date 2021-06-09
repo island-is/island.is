@@ -8,11 +8,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 @Module({
   controllers: [DocumentController, DocumentsInfraController],
   imports: [
-    AuthModule.register({
-      audience: environment.identityServer.audience,
-      issuer: environment.identityServer.issuer,
-      jwksUri: environment.identityServer.jwksUri,
-    }),
+    AuthModule.register(environment.auth),
     DocumentsClientModule.register({
       basePath: environment.documentService.basePath,
       clientId: environment.documentService.clientId,

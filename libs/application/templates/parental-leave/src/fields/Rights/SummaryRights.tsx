@@ -9,10 +9,10 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getAvailableRightsInMonths,
   getSelectedChild,
-} from '../../parentalLeaveUtils'
+} from '../../lib/parentalLeaveUtils'
 import { daysToMonths } from '../../lib/directorateOfLabour.utils'
 import { YES } from '../../constants'
-import { useApplicationAnswers } from '../../hooks/use-application-answers'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 interface SummaryRightsProps {
   application: Application
@@ -60,7 +60,7 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
               </Text>
             )}
 
-            {isRequestingRights === YES && (
+            {isRequestingRights === YES && requestDays > 0 && (
               <>
                 {', '}
                 <Text as="span">
@@ -75,7 +75,7 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
               </>
             )}
 
-            {isGivingRights === YES && (
+            {isGivingRights === YES && giveDays > 0 && (
               <>
                 {', '}
                 <Text as="span">

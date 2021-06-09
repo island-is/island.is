@@ -6,6 +6,7 @@ import {
   Employer,
   Union,
   PensionFund,
+  Attachment,
 } from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
@@ -44,8 +45,11 @@ export const getPersonalAllowance = (
     : 'personalAllowance.usage'
 
   const willUsePersonalAllowance =
-    extractAnswer(application.answers, usePersonalAllowanceGetter) ===
-    formConstants.boolean.true
+    get(
+      application.answers,
+      usePersonalAllowanceGetter,
+      formConstants.boolean.false,
+    ) === formConstants.boolean.true
 
   if (!willUsePersonalAllowance) {
     return 0
@@ -59,9 +63,7 @@ export const getPersonalAllowance = (
     return 100
   }
 
-  const usage = Number(extractAnswer(application.answers, usageGetter))
-
-  return usage
+  return Number(extractAnswer(application.answers, usageGetter))
 }
 
 export const getEmployer = (
@@ -76,16 +78,16 @@ export const getEmployer = (
     : extractAnswer(application.answers, 'employer.nationalRegistryId'),
 })
 
-export const getOtherParentId = (application: Application): string => {
+export const getOtherParentId = (application: Application): string | null => {
   const otherParent = extractAnswer<string>(
     application.answers,
     'otherParent',
     null,
   )
-  const otherParentId = extractAnswer<string>(
+  const otherParentId = extractAnswer<string | null>(
     application.answers,
     'otherParentId',
-    '',
+    null,
   )
 
   if (otherParent === formConstants.spouseSelection.spouse) {
@@ -187,7 +189,17 @@ export const getApplicantContactInfo = (application: Application) => {
 
 export const transformApplicationToParentalLeaveDTO = (
   application: Application,
+  attachments?: Attachment[],
 ): ParentalLeave => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
   const periodsAnswer = extractAnswer<
     {
       startDate: string
@@ -200,11 +212,11 @@ export const transformApplicationToParentalLeaveDTO = (
   if (periodsAnswer) {
     periods = periodsAnswer.map((period) => ({
       from: period.startDate,
-      // TODO: refactor period.endDate to not include time
-      to: period.endDate.split('T')[0],
+      to: period.endDate,
       ratio: Number(period.ratio),
       approved: true,
       paid: false,
+      rightsCodePeriod: null,
     }))
   }
 
@@ -215,15 +227,6 @@ export const transformApplicationToParentalLeaveDTO = (
   const union: Union = {
     id: extractAnswer(application.answers, 'payments.union'),
     name: '',
-  }
-
-  const selectedChild = getSelectedChild(
-    application.answers,
-    application.externalData,
-  )
-
-  if (!selectedChild) {
-    throw new Error('Missing selected child')
   }
 
   const { email, phoneNumber } = getApplicantContactInfo(application)
@@ -254,5 +257,6 @@ export const transformApplicationToParentalLeaveDTO = (
     // Needs to know if primary/secondary parent, has custody and if self employed and/or employee
     // https://islandis.slack.com/archives/G016P6FSDCK/p1608557387042300
     rightsCode: 'M-L-GR',
+    attachments,
   }
 }

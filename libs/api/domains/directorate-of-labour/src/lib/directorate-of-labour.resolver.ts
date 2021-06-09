@@ -1,11 +1,11 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsAuthGuard,
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 
 import { Union } from '../models/union.model'
@@ -30,7 +30,7 @@ export class DirectorateOfLabourResolver {
     @CurrentUser() user: User,
   ): Promise<ParentalLeaveEntitlement | null> {
     return this.directorateOfLabourService.getParentalLeavesEntitlements(
-      input.dateOfBirth,
+      new Date(input.dateOfBirth),
       user.nationalId,
     )
   }

@@ -88,6 +88,32 @@ const MockChildren = ({ application, field }: CRCFieldBaseProps) => {
                 ]}
               />
             </Box>
+            <Box marginTop={2}>
+              <CheckboxController
+                id={`${id}[${index}].livesWithBothParents`}
+                name={`${id}[${index}].livesWithBothParents`}
+                large={true}
+                options={[
+                  {
+                    value: 'yes',
+                    label: 'Lives with both parents',
+                  },
+                ]}
+              />
+            </Box>
+            <Box marginTop={2}>
+              <CheckboxController
+                id={`${id}[${index}].applicantSoleCustody`}
+                name={`${id}[${index}].applicantSoleCustody`}
+                large={true}
+                options={[
+                  {
+                    value: 'yes',
+                    label: 'Applicant has sole custody',
+                  },
+                ]}
+              />
+            </Box>
           </Box>
         )
       })}

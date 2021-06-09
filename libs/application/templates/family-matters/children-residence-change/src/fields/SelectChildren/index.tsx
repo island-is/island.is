@@ -12,11 +12,10 @@ const CRCSelectChildren = ({
     externalData: { nationalRegistry },
     answers,
   } = application
-  const { address, children } = nationalRegistry.data
+  const { children } = nationalRegistry.data
   return (
     <SelectChildren
       id={field.id}
-      address={address}
       children={children}
       error={error}
       currentAnswer={answers.selectedChildren}
@@ -25,6 +24,9 @@ const CRCSelectChildren = ({
         description: selectChildren.general.description,
         ineligible: selectChildren.ineligible.text,
         checkBoxSubLabel: selectChildren.checkboxes.subLabel,
+        soleCustodySubLabel: selectChildren.checkboxes.soleCustodySubLabel,
+        livesWithBothParents: selectChildren.checkboxes.livesWithBothParents,
+        soleCustodyTooltip: selectChildren.checkboxes.soleCustodyTooltip,
       }}
     />
   )

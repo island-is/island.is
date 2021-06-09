@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common'
-
 import { ApplicationTypes } from '@island.is/application/core'
-
 import { TemplateApiModuleActionProps } from '../types'
-
 import {
   ParentalLeaveService,
   ReferenceTemplateService,
@@ -14,6 +11,8 @@ import {
   LoginServiceService,
   FundingGovernmentProjectsService,
   PartyLetterService,
+  DrivingLicenseSubmissionService,
+  PartyApplicationService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -44,6 +43,8 @@ export class TemplateAPIService {
     private readonly loginServiceService: LoginServiceService,
     private readonly fundingGovernmentProjectsService: FundingGovernmentProjectsService,
     private readonly partyLetterService: PartyLetterService,
+    private readonly drivingLicenseSubmissionService: DrivingLicenseSubmissionService,
+    private readonly partyApplicationService: PartyApplicationService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -56,7 +57,9 @@ export class TemplateAPIService {
       | ChildrenResidenceChangeService
       | LoginServiceService
       | FundingGovernmentProjectsService
-      | PartyLetterService,
+      | PartyLetterService
+      | DrivingLicenseSubmissionService
+      | PartyApplicationService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -127,6 +130,22 @@ export class TemplateAPIService {
         )
       case ApplicationTypes.PARTY_LETTER:
         return this.tryRunningActionOnService(this.partyLetterService, action)
+
+      case ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL:
+        return this.tryRunningActionOnService(
+          this.drivingLicenseSubmissionService,
+          action,
+        )
+      case ApplicationTypes.DRIVING_LICENSE:
+        return this.tryRunningActionOnService(
+          this.drivingLicenseSubmissionService,
+          action,
+        )
+      case ApplicationTypes.PARTY_APPLICATION:
+        return this.tryRunningActionOnService(
+          this.partyApplicationService,
+          action,
+        )
     }
 
     return {

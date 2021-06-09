@@ -1,15 +1,15 @@
 import {
   Column,
-  DataType,
-  Model,
-  Table,
   CreatedAt,
-  UpdatedAt,
-  PrimaryKey,
+  DataType,
   HasMany,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
 import { DelegationScope } from './delegation-scope.model'
+import { DelegationDTO, DelegationProvider, DelegationType } from '../../..'
 
 @Table({
   tableName: 'delegation',
@@ -22,7 +22,6 @@ export class Delegation extends Model<Delegation> {
     primaryKey: true,
     allowNull: false,
   })
-  @ApiProperty()
   id!: string
 
   @Column({
@@ -43,26 +42,26 @@ export class Delegation extends Model<Delegation> {
   })
   toNationalId!: string
 
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  validFrom!: Date
-
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  validTo?: Date
-
   @CreatedAt
-  @ApiProperty()
   readonly created!: Date
 
   @UpdatedAt
-  @ApiProperty()
   readonly modified?: Date
 
   @HasMany(() => DelegationScope)
   delegationScopes?: DelegationScope[]
+
+  toDTO(): DelegationDTO {
+    return {
+      id: this.id,
+      fromName: this.fromDisplayName,
+      fromNationalId: this.fromNationalId,
+      toNationalId: this.toNationalId,
+      scopes: this.delegationScopes
+        ? this.delegationScopes.map((scope) => scope.toDTO())
+        : [],
+      provider: DelegationProvider.Custom,
+      type: DelegationType.Custom,
+    }
+  }
 }

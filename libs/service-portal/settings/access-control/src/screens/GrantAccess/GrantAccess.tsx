@@ -30,11 +30,11 @@ function GrantAccess() {
     <Box>
       <IntroHeader
         title={defineMessage({
-          id: 'service.portal:access-control-grant-title',
+          id: 'service.portal.settings.accessControl:grant-title',
           defaultMessage: 'Veita aðgang',
         })}
         intro={defineMessage({
-          id: 'service.portal:access-control-grant-intro',
+          id: 'service.portal.settings.accessControl:grant-intro',
           defaultMessage:
             'Hér getur þú gefið öðrum aðgang til að sýsla með þín gögn hjá island.is',
         })}
@@ -45,7 +45,7 @@ function GrantAccess() {
           <GridColumn paddingBottom={2} span="12/12">
             <Text variant="h5">
               {formatMessage({
-                id: 'service.portal:access-control-grant-form-label',
+                id: 'service.portal.settings.accessControl:grant-form-label',
                 defaultMessage: 'Sláðu inn upplýsingar aðgangshafa',
               })}
             </Text>
@@ -59,7 +59,8 @@ function GrantAccess() {
                 required: {
                   value: true,
                   message: formatMessage({
-                    id: 'service.portal:access-control-grant-required-ssn',
+                    id:
+                      'service.portal.settings.accessControl:grant-required-ssn',
                     defaultMessage: 'Skylda er að fylla út kennitölu',
                   }),
                 },
@@ -67,7 +68,8 @@ function GrantAccess() {
                   value: (value) => {
                     if (!kennitala.isValid(value)) {
                       return formatMessage({
-                        id: 'service.portal:access-control-grant-invalid-ssn',
+                        id:
+                          'service.portal.settings.accessControl:grant-invalid-ssn',
                         defaultMessage: 'Kennitalan er ekki gild kennitala',
                       })
                     }
@@ -102,7 +104,8 @@ function GrantAccess() {
                 required: {
                   value: true,
                   message: formatMessage({
-                    id: 'service.portal:access-control-grant-required-name',
+                    id:
+                      'service.portal.settings.accessControl:grant-required-name',
                     defaultMessage: 'Skylda er að fylla út aðgangshafa',
                   }),
                 },
@@ -111,11 +114,13 @@ function GrantAccess() {
                 <Input
                   name={name}
                   label={formatMessage({
-                    id: 'service.portal:access-control-grant-label-user',
+                    id:
+                      'service.portal.settings.accessControl:grant-label-user',
                     defaultMessage: 'Aðfangshafi',
                   })}
                   placeholder={formatMessage({
-                    id: 'service.portal:access-control-grant-placeholder-user',
+                    id:
+                      'service.portal.settings.accessControl:grant-placeholder-user',
                     defaultMessage: 'Nafn',
                   })}
                   value={value}
@@ -130,7 +135,7 @@ function GrantAccess() {
         <Box display="flex" justifyContent="flexEnd">
           <Button type="submit" icon="arrowForward" disabled={loading}>
             {formatMessage({
-              id: 'service.portal:access-control-grant-form-submit',
+              id: 'service.portal.settings.accessControl:grant-form-submit',
               defaultMessage: 'Áfram',
             })}
           </Button>

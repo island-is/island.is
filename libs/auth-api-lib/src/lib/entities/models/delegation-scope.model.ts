@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { Delegation } from './delegation.model'
+import { DelegationScopeDTO } from '../dto/delegation-scope.dto'
 
 @Table({
   tableName: 'delegation_scope',
@@ -34,6 +35,18 @@ export class DelegationScope extends Model<DelegationScope> {
   })
   scopeName!: string
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  validFrom!: Date
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  validTo?: Date
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date
@@ -41,4 +54,13 @@ export class DelegationScope extends Model<DelegationScope> {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
+
+  toDTO(): DelegationScopeDTO {
+    return {
+      delegationId: this.delegationId,
+      scopeName: this.scopeName,
+      validFrom: this.validFrom,
+      validTo: this.validTo,
+    }
+  }
 }

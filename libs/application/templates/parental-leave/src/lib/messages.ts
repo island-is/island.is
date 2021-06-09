@@ -101,6 +101,23 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hitt foreldrið er {spouseName} (kt. {spouseId})',
       description: `The other parent is {spouseName} (kt. {spouseId})`,
     },
+    otherParentEmailSubSection: {
+      id: 'pl.application:otherParentEmail.subSection',
+      defaultMessage: 'Netfang hins foreldris',
+      description: 'Other parent email',
+    },
+    otherParentEmailTitle: {
+      id: 'pl.application:otherParentEmail.title',
+      defaultMessage: 'Hvert er netfang hins foreldrisins?',
+      description: 'Asking about the email address of the other parent',
+    },
+    otherParentEmailDescription: {
+      id: 'pl.application:otherParentEmail.description',
+      defaultMessage:
+        'Þú ert að óska eftir réttindum frá hinu foreldrinu sem það þarf að samþykkja.',
+      description:
+        'We need the email if you are requesting days or personal discount from the other parent for them to verify',
+    },
     paymentInformationSubSection: {
       id: 'pl.application:payment.information.subsection',
       defaultMessage: 'Greiðsluupplýsingar',
@@ -339,6 +356,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Sækja gögn',
       description: 'External Data',
     },
+    checkboxProvider: {
+      id: 'pl.application:checkbox.provider',
+      defaultMessage:
+        'Ég skil að ofangreindra gagna verður aflað í umsóknarferlinu',
+      description: 'Checbox to confirm data provider',
+    },
     dateOfBirthTitle: {
       id: 'pl.application:dateOfBirth.title',
       defaultMessage: 'Fæðingardagur',
@@ -402,6 +425,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:salary.label.month',
       defaultMessage: 'Mánuður',
       description: 'Month',
+    },
+    salaryLabelUnion: {
+      id: 'pl.application:salary.label.union',
+      defaultMessage: 'Stéttarfélag',
+      description: 'Union',
     },
     salaryLabelPensionFund: {
       id: 'pl.application:salary.label.pensionfund',
@@ -850,6 +878,22 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Sjáflstætt starfandi einstaklingar þurfa að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á.',
       description: 'Add translation',
     },
+    attachmentTitle: {
+      id: 'pl.application:selfEmployed.attachment.title',
+      defaultMessage: 'Reiknað endurgjald',
+      description: 'Title for the attachement required for self employed',
+    },
+    attachmentDescription: {
+      id: 'pl.application:selfEmployed.attachment.description',
+      defaultMessage:
+        'Sjálfstætt starfandi foreldri þarf að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á (fæst hjá RSK).',
+      description: 'Description for the attachement required for self employed',
+    },
+    attachmentButton: {
+      id: 'pl.application:selfEmployed.attachment.button',
+      defaultMessage: 'Veldu skjal',
+      description: 'Button copy for the self employed attachement',
+    },
   }),
 
   ratio: defineMessages({
@@ -1084,6 +1128,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Tímabilinu {index} - {ratio}%',
       description: 'Period copy',
     },
+    periodActualDob: {
+      id: 'pl.application:review.period.actual.dob',
+      defaultMessage: 'Raunverulegum fæðingardegi - {duration} mánuðir',
+      description: 'Actual DOB period copy',
+    },
     usePersonalAllowance: {
       id: 'pl.application:review.use.personal.allowance',
       defaultMessage: 'Nota allan persónuafsláttinn',
@@ -1306,6 +1355,16 @@ export const otherParentApprovalFormMessages = defineMessages({
     description:
       'You are apparently expecting a baby with some person that wishes to use one month of your rights. That means your rights will be 5 months at most. Do you agree?',
   },
+  labelDays: {
+    id: 'pl.application:otherParent.label.days',
+    defaultMessage: 'Fjöldi umbeðinna daga',
+    description: 'Number of requested days',
+  },
+  labelPersonalDiscount: {
+    id: 'pl.application:otherParent.label.personalDiscount',
+    defaultMessage: 'Nýting á þínum persónuafslætti',
+    description: 'Usage of your personald discount',
+  },
   finalTitle: {
     id: 'pl.application:otherParent.final.title',
     defaultMessage: 'Takk fyrir',
@@ -1328,6 +1387,11 @@ export const errorMessages = defineMessages({
     id: 'pl.application:answerValidators.email',
     defaultMessage: 'Þú þarft að skilgreina gilt netfang.',
     description: 'Invalid email copy',
+  },
+  bank: {
+    id: 'pl.application:answerValidators.bank',
+    defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
+    description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
   },
   periodsPeriodRange: {
     id: 'pl.application:answerValidators.periodsPeriodRange',
@@ -1399,6 +1463,11 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Lágmarkið er {minPeriodDays} dagar í orlofi, þú hefur valið {diff} daga á {ratio}% sem endar sem aðeins {diffWithRatio} daga leyfi.',
     description: 'Copy when ratio is invalid',
+  },
+  requiredAttachment: {
+    id: 'pl.application:errors.required.attachment',
+    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
+    description: 'Error message when the attachment file is not provided.',
   },
 })
 

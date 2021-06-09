@@ -32,6 +32,8 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
   tagVariant = 'blue',
   renderLink = (link) => link,
 }) => {
+  const visibleItems = items.filter((x) => x.title)
+
   return (
     <Box
       aria-label={label}
@@ -40,7 +42,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
       className="rs_skip"
       component="nav"
     >
-      {items.map((item, index) => {
+      {visibleItems.map((item, index) => {
         const isLink: boolean = !!item.href || !!item.slug
         const renderCrumb = item.isTag ? (
           <Tag disabled={!isLink} variant={tagVariant}>
@@ -75,7 +77,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
                   item,
                 )
               : renderCrumb}
-            {items.length - 1 > index && (
+            {visibleItems.length - 1 > index && (
               <Box
                 borderRadius={'circle'}
                 display={'inlineBlock'}

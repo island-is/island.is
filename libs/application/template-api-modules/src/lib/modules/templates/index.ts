@@ -7,6 +7,8 @@ import { ChildrenResidenceChangeModule } from './children-residence-change/child
 import { LoginServiceModule } from './login-service/login-service.module'
 import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
 import { PartyLetterModule } from './party-letter/party-letter.module'
+import { DrivingLicenseSubmissionModule } from './driving-license-submission/driving-license-submission.module'
+import { PartyApplicationModule } from './party-application/party-application.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -18,6 +20,8 @@ export const modules = [
   LoginServiceModule,
   FundingGovernmentProjectsModule,
   PartyLetterModule,
+  DrivingLicenseSubmissionModule,
+  PartyApplicationModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -29,3 +33,5 @@ export { ChildrenResidenceChangeService } from './children-residence-change/chil
 export { LoginServiceService } from './login-service/login-service.service'
 export { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
 export { PartyLetterService } from './party-letter/party-letter.service'
+export { DrivingLicenseSubmissionService } from './driving-license-submission/driving-license-submission.service'
+export { PartyApplicationService } from './party-application/party-application.service'

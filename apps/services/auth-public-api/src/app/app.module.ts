@@ -4,18 +4,18 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
 import { DelegationsModule } from './modules/delegations/delegations.module'
+import { ApiScopeModule } from './modules/resources/api-scope.module'
+import { TranslationModule } from './modules/translation/translation.module'
 
 @Module({
   imports: [
-    AuthModule.register({
-      audience: '@island.is/auth/public',
-      issuer: environment.auth.issuer,
-      jwksUri: environment.auth.jwksUri,
-    }),
+    AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
     DelegationsModule,
+    ApiScopeModule,
+    TranslationModule,
   ],
 })
 export class AppModule {}

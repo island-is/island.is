@@ -45,10 +45,10 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
         <a
           className="user-claim__button__show"
           onClick={() => setVisible(!visible)}
-          title={`Create new claim`}
+          title={localization.buttons['new'].helpText}
         >
           <i className="icon__new"></i>
-          <span>{localization.title}</span>
+          <span>{localization.buttons['new'].text}</span>
         </a>
       </div>
 
