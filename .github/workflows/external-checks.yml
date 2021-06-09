@@ -55,7 +55,7 @@ jobs:
         uses: UnicornGlobal/has-changes-action@v1.0.12
       - name: Comment on PR
         if: steps.changes.outputs.changed == 1
-        uses: actions/github-script@v3
+        uses: actions/github-script@v4.0.2
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
