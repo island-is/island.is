@@ -3,6 +3,7 @@ import { Application, getValueViaPath } from '@island.is/application/core'
 import { YES, NO } from '../constants'
 import { maxDaysToGiveOrReceive } from '../config'
 import { Boolean, OtherParent } from '../types'
+import { SchemaFormValues } from '../lib/dataSchema'
 
 export type ApplicationAnswers = ReturnType<typeof useApplicationAnswers>
 
@@ -117,6 +118,22 @@ export const useApplicationAnswers = (application: Application) => {
 
   const giveDays = getOrFallback(isGivingRights, giveValue)
 
+  const computedPersonalDays = Number(
+    getValueViaPath(
+      answers,
+      'computedRightsPersonalDays',
+      0,
+    ) as SchemaFormValues['computedRightsPersonalDays'],
+  )
+
+  const computedExtraDays = Number(
+    getValueViaPath(
+      answers,
+      'computedRightsExtraDays',
+      0,
+    ) as SchemaFormValues['computedRightsExtraDays'],
+  )
+
   return {
     otherParent,
     pensionFund,
@@ -141,5 +158,7 @@ export const useApplicationAnswers = (application: Application) => {
     requestDays,
     isGivingRights,
     giveDays,
+    computedPersonalDays,
+    computedExtraDays,
   }
 }

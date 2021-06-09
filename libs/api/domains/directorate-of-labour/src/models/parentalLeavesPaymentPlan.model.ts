@@ -1,9 +1,9 @@
 import { Field, ObjectType, Float } from '@nestjs/graphql'
 
-import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
+import { ParentalLeavesPeriod } from './parentalLeavesPeriod.model'
 
 @ObjectType()
-export class ParentalLeavePaymentPlan {
+export class ParentalLeavesPaymentPlan {
   @Field(() => Float)
   estimatedAmount!: number
 
@@ -22,6 +22,6 @@ export class ParentalLeavePaymentPlan {
   @Field(() => Float)
   estimatePayment!: number
 
-  @Field(() => ParentalLeavePeriod)
-  period!: ParentalLeavePeriod
+  @Field(() => ParentalLeavesPeriod)
+  period!: ParentalLeavesPeriod
 }

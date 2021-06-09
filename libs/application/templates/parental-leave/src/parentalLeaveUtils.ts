@@ -4,15 +4,18 @@ import parseISO from 'date-fns/parseISO'
 
 import {
   Application,
+  coreMessages,
   ExternalData,
   extractRepeaterIndexFromField,
   Field,
   FormatMessage,
   FormValue,
   getValueViaPath,
+  MessageFormatter,
   Option,
 } from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
+import { toast } from '@island.is/island-ui/core'
 
 import { parentalLeaveFormMessages } from './lib/messages'
 import { TimelinePeriod } from './fields/components/Timeline'
@@ -20,7 +23,7 @@ import { Period } from './types'
 import { YES, NO, MANUAL, SPOUSE, StartDateOptions } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from './dataProviders/Children/Children'
-import { daysToMonths } from './lib/directorateOfLabour.utils'
+import { daysToMonths, monthsToDays } from './lib/directorateOfLabour.utils'
 import {
   ChildInformation,
   ChildrenAndExistingApplications,
@@ -47,9 +50,11 @@ export function getNameAndIdOfSpouse(
   const spouse = familyMembers?.find(
     (member) => member.familyRelation === SPOUSE,
   )
+
   if (!spouse) {
     return [undefined, undefined]
   }
+
   return [spouse.fullName, spouse.nationalId]
 }
 
@@ -96,7 +101,6 @@ export function formatPeriods(
 
     if (!isActualDob && period.startDate && period.endDate) {
       timelinePeriods.push({
-        actualDob: isActualDob,
         startDate: period.startDate,
         endDate: period.endDate,
         ratio: period.ratio,
@@ -162,7 +166,6 @@ export const getTransferredDays = (
  */
 export const getAvailableRightsInMonths = (application: Application) => {
   const { answers, externalData } = application
-
   const selectedChild = getSelectedChild(answers, externalData)
 
   if (!selectedChild) {
@@ -314,4 +317,48 @@ export const calculatePeriodPercentage = (
   }
 
   return Math.min(100, Math.round((months / difference) * 100))
+}
+
+export const datesToPercentDays = (months: number, ratio: number) => {
+  const days = monthsToDays(months)
+  const percent = 100
+  const daysSpentWithPercentage = Math.round((days * percent) / 100)
+}
+
+export const updateComputedRights = (
+  daysWithPercent: number,
+  { personal, extra }: { personal: number; extra: number },
+) => {
+  let computedPersonalDays = personal
+  let computedExtraDays = extra
+  let daysToSlide = 0
+
+  if (computedPersonalDays >= daysWithPercent) {
+    computedPersonalDays = computedPersonalDays - daysWithPercent
+  }
+
+  /*
+
+   else if (computedPersonalDays > 0 && computedPersonalDays <= days) {
+    const diff = days - computedPersonalDays
+    console.log('-diff', diff)
+
+    // console.log('-computedPersonalDays', computedPersonalDays)
+    // console.log('-days', days)
+  }
+
+  // console.log('-personalDays', personalDays)
+  */
+
+  return {
+    personal: computedPersonalDays,
+    extra: computedExtraDays,
+  }
+}
+
+export function handleSubmitError(
+  error: string,
+  formatMessage: MessageFormatter,
+): void {
+  toast.error(formatMessage(coreMessages.updateOrSubmitError, { error }))
 }

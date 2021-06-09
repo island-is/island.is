@@ -54,6 +54,8 @@ export const dataSchema = z.object({
   shareInformationWithOtherParent: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
   employerInformation: z.object({ email: z.string().email() }).optional(),
+  computedRightsPersonalDays: z.union([z.number(), z.string()]).optional(),
+  computedRightsExtraDays: z.union([z.number(), z.string()]).optional(),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z

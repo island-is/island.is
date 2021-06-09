@@ -5,8 +5,8 @@ import getDaysInMonth from 'date-fns/getDaysInMonth'
 import isSameDay from 'date-fns/isSameDay'
 import {
   ParentalLeave,
-  ParentalLeaveEntitlement,
-  ParentalLeavePeriod,
+  ParentalLeavesEntitlement,
+  ParentalLeavesPeriod,
 } from '@island.is/api/domains/directorate-of-labour'
 
 // VMST rule for the number of days in each month of the year
@@ -86,7 +86,9 @@ export const calculateNumberOfDaysForOnePeriod = (start: Date, end: Date) => {
 /**
  * Calculate number of days already applied for in an existing periods of an application
  */
-export const calculateExistingNumberOfDays = (periods: ParentalLeavePeriod[]) =>
+export const calculateExistingNumberOfDays = (
+  periods: ParentalLeavesPeriod[],
+) =>
   periods
     .filter((period) => period.approved)
     .reduce((acc, cur) => {
@@ -104,7 +106,7 @@ export const calculateExistingNumberOfDays = (periods: ParentalLeavePeriod[]) =>
 export const calculateRemainingNumberOfDays = (
   dateOfBirth: string | null,
   applications: ParentalLeave[] | null,
-  rights: ParentalLeaveEntitlement,
+  rights: ParentalLeavesEntitlement,
 ) => {
   // Without date of birth or rights there is no days available
   if (

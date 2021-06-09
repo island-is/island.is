@@ -10,13 +10,17 @@ import {
 
 import { Union } from '../models/union.model'
 import { PensionFund } from '../models/pensionFund.model'
-import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
-import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
+import { ParentalLeavesEntitlement } from '../models/parentalLeavesEntitlement.model'
+import { ParentalLeavesPaymentPlan } from '../models/parentalLeavesPaymentPlan.model'
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
 import { ParentalLeave } from '../models/parentalLeaves.model'
 import { GetParentalLeavesEntitlementsInput } from '../dto/getParentalLeavesEntitlements.input'
 import { GetParentalLeavesEstimatedPaymentPlanInput } from '../dto/getParentalLeavesEstimatedPaymentPlan.input'
 import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
+import { GetParentalLeavesPeriodsEndDateInput } from '../dto/getParentalLeavesPeriodsEndDate.input'
+import { GetParentalLeavesPeriodsLengthInput } from '../dto/getParentalLeavesPeriodsLength.input'
+import { ParentalLeavesPeriodsEndDate } from '../models/parentalLeavesPeriodsEndDate.model'
+import { ParentalLeavesPeriodsLength } from '../models/parentalLeavesPeriodsLength.model'
 import { DirectorateOfLabourService } from './directorate-of-labour.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
@@ -24,11 +28,11 @@ import { DirectorateOfLabourService } from './directorate-of-labour.service'
 export class DirectorateOfLabourResolver {
   constructor(private directorateOfLabourService: DirectorateOfLabourService) {}
 
-  @Query(() => ParentalLeaveEntitlement, { nullable: true })
+  @Query(() => ParentalLeavesEntitlement, { nullable: true })
   async getParentalLeavesEntitlements(
     @Args('input') input: GetParentalLeavesEntitlementsInput,
     @CurrentUser() user: User,
-  ): Promise<ParentalLeaveEntitlement | null> {
+  ): Promise<ParentalLeavesEntitlement | null> {
     return this.directorateOfLabourService.getParentalLeavesEntitlements(
       new Date(input.dateOfBirth),
       user.nationalId,
@@ -42,26 +46,53 @@ export class DirectorateOfLabourResolver {
     return this.directorateOfLabourService.getParentalLeaves(user.nationalId)
   }
 
-  @Query(() => [ParentalLeavePaymentPlan], { nullable: true })
+  @Query(() => [ParentalLeavesPaymentPlan], { nullable: true })
   async getParentalLeavesEstimatedPaymentPlan(
     @Args('input') input: GetParentalLeavesEstimatedPaymentPlanInput,
     @CurrentUser() user: User,
-  ): Promise<ParentalLeavePaymentPlan[] | null> {
+  ): Promise<ParentalLeavesPaymentPlan[] | null> {
     return this.directorateOfLabourService.getParentalLeavesEstimatedPaymentPlan(
       input.dateOfBirth,
       input.period,
       user.nationalId,
     )
   }
-  @Query(() => [ParentalLeavePaymentPlan], { nullable: true })
+
+  @Query(() => [ParentalLeavesPaymentPlan], { nullable: true })
   async getParentalLeavesApplicationPaymentPlan(
     @Args('input') input: GetParentalLeavesApplicationPaymentPlanInput,
     @CurrentUser() user: User,
-  ): Promise<ParentalLeavePaymentPlan[] | null> {
+  ): Promise<ParentalLeavesPaymentPlan[] | null> {
     return this.directorateOfLabourService.getParentalLeavesApplicationPaymentPlan(
       input.dateOfBirth,
       input.applicationId,
       user.nationalId,
+    )
+  }
+
+  @Query(() => ParentalLeavesPeriodsEndDate)
+  async getParentalLeavesPeriodsEndDate(
+    @Args('input') input: GetParentalLeavesPeriodsEndDateInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfLabourService.getParentalLeavesPeriodsEndDate(
+      user.nationalId,
+      input.startDate,
+      input.length,
+      input.percentage,
+    )
+  }
+
+  @Query(() => ParentalLeavesPeriodsLength)
+  async getParentalLeavesPeriodsLength(
+    @Args('input') input: GetParentalLeavesPeriodsLengthInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfLabourService.getParentalLeavesPeriodsLength(
+      user.nationalId,
+      input.startDate,
+      input.endDate,
+      input.percentage,
     )
   }
 

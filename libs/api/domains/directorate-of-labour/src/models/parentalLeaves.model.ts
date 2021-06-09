@@ -1,10 +1,10 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IsOptional } from 'class-validator'
 
-import { ParentalLeaveAttachment } from './parentalLeaveAttachment.model'
-import { ParentalLeaveEmployer } from './parentalLeaveEmployer.model'
-import { ParentalLeavePaymentInfo } from './parentalLeavePaymentInfo.model'
-import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
+import { ParentalLeavesAttachment } from './parentalLeavesAttachment.model'
+import { ParentalLeavesEmployer } from './parentalLeavesEmployer.model'
+import { ParentalLeavesPaymentInfo } from './parentalLeavesPaymentInfo.model'
+import { ParentalLeavesPeriod } from './parentalLeavesPeriod.model'
 
 @ObjectType()
 export class ParentalLeave {
@@ -30,14 +30,14 @@ export class ParentalLeave {
   @Field(() => String)
   phoneNumber!: string
 
-  @Field(() => ParentalLeavePaymentInfo)
-  paymentInfo!: ParentalLeavePaymentInfo
+  @Field(() => ParentalLeavesPaymentInfo)
+  paymentInfo!: ParentalLeavesPaymentInfo
 
-  @Field(() => [ParentalLeavePeriod])
-  periods!: ParentalLeavePeriod[]
+  @Field(() => [ParentalLeavesPeriod])
+  periods!: ParentalLeavesPeriod[]
 
-  @Field(() => [ParentalLeaveEmployer])
-  employers!: ParentalLeaveEmployer[]
+  @Field(() => [ParentalLeavesEmployer])
+  employers!: ParentalLeavesEmployer[]
 
   @Field(() => String)
   status!: string
@@ -46,7 +46,7 @@ export class ParentalLeave {
   @IsOptional()
   rightsCode?: string | null
 
-  @Field(() => [ParentalLeaveAttachment], { nullable: true })
+  @Field(() => [ParentalLeavesAttachment], { nullable: true })
   @IsOptional()
-  attachments?: ParentalLeaveAttachment[] | null
+  attachments?: ParentalLeavesAttachment[] | null
 }

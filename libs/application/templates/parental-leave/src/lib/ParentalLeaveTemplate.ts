@@ -65,6 +65,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'attemptToSetPrimaryParentAsOtherParent',
           'setRightsToOtherParent',
           'setAllowanceToOtherParent',
+          'setComputedRights',
         ],
         meta: {
           name: States.PREREQUISITES,
@@ -727,6 +728,30 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         set(answers, 'usePersonalAllowance', NO)
         set(answers, 'usePersonalAllowanceFromSpouse', NO)
+
+        return context
+      }),
+      setComputedRights: assign((context) => {
+        const { application } = context
+        const { answers, externalData } = application
+        const selectedChild = getSelectedChild(answers, externalData)
+
+        if (!selectedChild) {
+          return context
+        }
+
+        const personalDays = selectedChild.remainingDays
+        const extraDays = selectedChild.transferredDays
+
+        if (extraDays && extraDays > 0) {
+          set(answers, 'computedRightsPersonalDays', personalDays)
+          set(answers, 'computedRightsExtraDays', extraDays)
+        }
+
+        if (extraDays && extraDays < 0) {
+          set(answers, 'computedRightsPersonalDays', personalDays + extraDays)
+          set(answers, 'computedRightsExtraDays', 0)
+        }
 
         return context
       }),

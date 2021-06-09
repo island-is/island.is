@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class ParentalLeaveUnion {
+export class ParentalLeavesPensionFund {
   @Field(() => String)
   id!: string
 

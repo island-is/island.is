@@ -189,6 +189,14 @@ const Screen: FC<ScreenProps> = ({
         }
       }
     } else {
+      // console.log('-formValue', formValue)
+      // console.log('-data', data)
+      // console.log('-merge', mergeAnswers(formValue, data))
+      console.log(
+        '-extract',
+        extractAnswersToSubmitFromScreen(mergeAnswers(formValue, data), screen),
+      )
+
       response = await updateApplication({
         variables: {
           input: {
@@ -196,6 +204,7 @@ const Screen: FC<ScreenProps> = ({
             answers: extractAnswersToSubmitFromScreen(
               mergeAnswers(formValue, data),
               screen,
+              data,
             ),
           },
           locale,

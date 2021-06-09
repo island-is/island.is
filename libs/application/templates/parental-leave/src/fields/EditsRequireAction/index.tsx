@@ -1,17 +1,15 @@
 import React, { FC } from 'react'
+import { useMutation } from '@apollo/client'
 
 import { useLocale } from '@island.is/localization'
-
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
-
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { useMutation } from '@apollo/client'
 import { States as ApplicationStates } from '../../constants'
-import { handleSubmitError } from '../../parentalLeaveClientUtils'
+import { handleSubmitError } from '../../parentalLeaveUtils'
 
 const EditsRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(

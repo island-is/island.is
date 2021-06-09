@@ -41,8 +41,11 @@ export function findSubmitField(screen: FormScreen): SubmitField | undefined {
 export function extractAnswersToSubmitFromScreen(
   data: FormValue,
   screen: FormScreen,
+  newData?: FormValue,
 ): FormValue {
   const screenId = screen.id ?? ''
+  console.log('-screenId', screenId)
+
   if (
     screen.isPartOfRepeater ||
     (screenId.includes('[') && screenId.includes(']'))
@@ -58,16 +61,7 @@ export function extractAnswersToSubmitFromScreen(
     return pick(data, [repeaterId])
   }
 
-  if (
-    screen.type === FieldTypes.CUSTOM &&
-    screen.childInputIds &&
-    screen.childInputIds.length > 1
-  ) {
-    return pick(
-      data,
-      screen.childInputIds.map((id) => id),
-    )
-  }
+  console.log('-screen.type', screen.type)
 
   switch (screen.type) {
     case FormItemTypes.MULTI_FIELD:
@@ -79,6 +73,30 @@ export function extractAnswersToSubmitFromScreen(
     case FormItemTypes.EXTERNAL_DATA_PROVIDER:
     case FormItemTypes.REPEATER:
       return {}
+
+    case FieldTypes.CUSTOM:
+      if (screen.childInputIds && screen.childInputIds.length > 1) {
+        return pick(
+          data,
+          screen.childInputIds.map((id) => id),
+        )
+      }
+
+      if (newData) {
+        console.log('-yo', Object.keys(newData))
+
+        const externalFields =
+          Object.keys(newData).find((field) => field !== screenId) ?? ''
+        console.log('-externalFields', externalFields)
+
+        console.log('-data', data)
+        console.log('-newData', newData)
+        console.log('-screenId', screenId)
+
+        return pick(data, [screenId, externalFields])
+      }
+
+      return pick(data, [screenId])
 
     default:
       return pick(data, [screenId])

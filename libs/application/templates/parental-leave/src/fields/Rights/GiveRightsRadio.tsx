@@ -13,12 +13,14 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { NO, YES } from '../../constants'
 import { maxDaysToGiveOrReceive } from '../../config'
 import { Boolean } from '../../types'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 interface GiveRightsRadioProps extends FieldBaseProps {
   field: RadioField
 }
 
 const GiveRightsRadio = ({ field, application }: GiveRightsRadioProps) => {
+  const { computedPersonalDays } = useApplicationAnswers(application)
   const { register } = useFormContext()
   const [radio, setRadio] = useState<Boolean | undefined>(undefined)
 
@@ -53,6 +55,17 @@ const GiveRightsRadio = ({ field, application }: GiveRightsRadioProps) => {
         value={radio === YES ? maxDaysToGiveOrReceive : 0}
         ref={register({ required: true })}
         name={`${field.id}.giveDays`}
+      />
+
+      <input
+        ref={register}
+        type="hidden"
+        value={
+          radio === YES
+            ? computedPersonalDays - maxDaysToGiveOrReceive
+            : computedPersonalDays
+        }
+        name="computedRightsPersonalDays"
       />
     </>
   )

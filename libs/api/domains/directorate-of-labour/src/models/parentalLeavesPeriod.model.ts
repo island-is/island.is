@@ -1,7 +1,7 @@
 import { Field, ObjectType, Float } from '@nestjs/graphql'
 
 @ObjectType()
-export class ParentalLeavePeriod {
+export class ParentalLeavesPeriod {
   @Field(() => String)
   from!: string
 

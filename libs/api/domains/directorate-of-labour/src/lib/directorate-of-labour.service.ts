@@ -4,9 +4,9 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { Union, PensionFund } from '@island.is/clients/vmst'
 
-import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
-import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
-import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
+import { ParentalLeavesPeriod } from '../models/parentalLeavesPeriod.model'
+import { ParentalLeavesEntitlement } from '../models/parentalLeavesEntitlement.model'
+import { ParentalLeavesPaymentPlan } from '../models/parentalLeavesPaymentPlan.model'
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
 import { ParentalLeave } from '../models/parentalLeaves.model'
 import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
@@ -19,7 +19,8 @@ export class DirectorateOfLabourService {
   ) {}
 
   handleError(error: any): any {
-    this.logger.error(error)
+    // this.logger.error(error)
+    console.log('-error', error)
 
     throw new ApolloError(
       'Failed to resolve request',
@@ -48,7 +49,7 @@ export class DirectorateOfLabourService {
   async getParentalLeavesEntitlements(
     dateOfBirth: Date,
     nationalId: string,
-  ): Promise<ParentalLeaveEntitlement | null> {
+  ): Promise<ParentalLeavesEntitlement | null> {
     return await this.directorateOfLabourRepository
       .getParentalLeavesEntitlements(dateOfBirth, nationalId)
       .catch(this.handleError)
@@ -64,7 +65,7 @@ export class DirectorateOfLabourService {
     dateOfBirth: string,
     applicationId: string,
     nationalId: string,
-  ): Promise<ParentalLeavePaymentPlan[]> {
+  ): Promise<ParentalLeavesPaymentPlan[]> {
     return await this.directorateOfLabourRepository
       .getParentalLeavesApplicationPaymentPlan(
         dateOfBirth,
@@ -76,11 +77,43 @@ export class DirectorateOfLabourService {
 
   async getParentalLeavesEstimatedPaymentPlan(
     dateOfBirth: string,
-    period: ParentalLeavePeriod[],
+    period: ParentalLeavesPeriod[],
     nationalId: string,
-  ): Promise<ParentalLeavePaymentPlan[]> {
+  ): Promise<ParentalLeavesPaymentPlan[]> {
     return await this.directorateOfLabourRepository
       .getParentalLeavesEstimatedPaymentPlan(dateOfBirth, period, nationalId)
+      .catch(this.handleError)
+  }
+
+  async getParentalLeavesPeriodsEndDate(
+    nationalId: string,
+    startDate: string,
+    length: string,
+    percentage: string,
+  ) {
+    return await this.directorateOfLabourRepository
+      .getParentalLeavesPeriodsEndDate(
+        nationalId,
+        new Date(startDate),
+        length,
+        percentage,
+      )
+      .catch(this.handleError)
+  }
+
+  async getParentalLeavesPeriodsLength(
+    nationalId: string,
+    startDate: string,
+    endDate: string,
+    percentage: string,
+  ) {
+    return await this.directorateOfLabourRepository
+      .getParentalLeavesPeriodsLength(
+        nationalId,
+        new Date(startDate),
+        new Date(endDate),
+        percentage,
+      )
       .catch(this.handleError)
   }
 

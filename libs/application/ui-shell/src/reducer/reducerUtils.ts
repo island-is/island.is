@@ -57,16 +57,17 @@ export const findCurrentScreen = (
         currentScreen = index
       }
     } else if (screen.id) {
-      if (
-        getValueViaPath(answers, screen.id) === undefined &&
-        index > currentAnswerIndex
-      ) {
-        missingAnswerBeforeCurrentIndex = true
-        currentAnswerIndex = index
-      }
+      //   if (
+      //     getValueViaPath(answers, screen.id) === undefined &&
+      //     index > currentAnswerIndex
+      //   ) {
+      //     missingAnswerBeforeCurrentIndex = true
+      //     currentAnswerIndex = index
+      //   }
 
+      // TODO: goes back to screen that doesn't contain form "your rights 12 months and 45 days screen"
       if (
-        !missingAnswerBeforeCurrentIndex &&
+        // !missingAnswerBeforeCurrentIndex &&
         getValueViaPath(answers, screen.id) !== undefined
       ) {
         currentScreen = index + 1

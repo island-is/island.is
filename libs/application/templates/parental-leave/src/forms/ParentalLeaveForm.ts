@@ -743,16 +743,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
-            buildCustomField(
-              {
-                id: 'periods[0].endDate',
-                condition: (formValue) =>
-                  formValue.confirmLeaveDuration === 'duration',
-                title: parentalLeaveFormMessages.duration.title,
-                component: 'Duration',
-              },
-              {},
-            ),
+            buildCustomField({
+              id: 'periods[0].endDate',
+              condition: (formValue) =>
+                formValue.confirmLeaveDuration === 'duration',
+              title: parentalLeaveFormMessages.duration.title,
+              component: 'Duration',
+            }),
             buildMultiField({
               id: 'periods[0].ratio',
               title: parentalLeaveFormMessages.ratio.title,

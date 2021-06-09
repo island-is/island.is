@@ -74,6 +74,7 @@ function partialSchemaValidation(
       trimmedSchema.parse({ [key]: answer })
     } catch (e) {
       const zodErrors: ZodSuberror[] = e.errors
+      console.log('-zodErrors', JSON.stringify(zodErrors))
 
       if (!has(error, constructedErrorPath)) {
         error = populateError(

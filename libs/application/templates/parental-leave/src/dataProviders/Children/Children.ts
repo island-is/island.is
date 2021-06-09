@@ -22,7 +22,7 @@ import {
 import { States, YES, NO, ParentalRelations } from '../../constants'
 import {
   ParentalLeave,
-  ParentalLeaveEntitlement,
+  ParentalLeavesEntitlement,
   PregnancyStatus,
 } from '@island.is/api/domains/directorate-of-labour'
 
@@ -91,7 +91,7 @@ export class Children extends BasicDataProvider {
 
   async queryParentalLeavesEntitlements(
     dateOfBirth: string | null | undefined,
-  ): Promise<ParentalLeaveEntitlement> {
+  ): Promise<ParentalLeavesEntitlement> {
     return this.useGraphqlGateway(parentalLeavesEntitlements, {
       input: { dateOfBirth },
     })
@@ -161,7 +161,7 @@ export class Children extends BasicDataProvider {
   remainingDays(
     dateOfBirth: string,
     parentalLeaves: ParentalLeave[] | null,
-    rights: ParentalLeaveEntitlement,
+    rights: ParentalLeavesEntitlement,
   ) {
     return calculateRemainingNumberOfDays(dateOfBirth, parentalLeaves, rights)
   }

@@ -1,7 +1,7 @@
 import { Application, getValueViaPath } from '@island.is/application/core'
 import type { DistributiveOmit } from '@island.is/shared/types'
 
-import { NO, ParentalRelations, YES } from '../../constants'
+import { ParentalRelations } from '../../constants'
 import { getSelectedChild, getTransferredDays } from '../../parentalLeaveUtils'
 import {
   ChildInformation,
@@ -9,7 +9,6 @@ import {
   PregnancyStatus,
   ChildrenWithoutRightsAndExistingApplications,
 } from './types'
-import { Boolean } from '../../types'
 
 // We do not require hasRights or remainingDays in this step
 // as it will be calculated later in the process
@@ -130,6 +129,7 @@ export const getChildrenFromMockData = (
           parentalRelation: ParentalRelations.primary,
           hasRights: primaryParentRightsDays > 0,
           remainingDays: primaryParentRightsDays,
+          transferredDays: 45,
         }
       : {
           expectedDateOfBirth: formattedDOB,
