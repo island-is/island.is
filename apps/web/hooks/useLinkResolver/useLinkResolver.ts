@@ -53,33 +53,33 @@ export const routesTemplate = {
     is: '/frett',
     en: '/en/news',
   },
-  organizationservices: {
-    is: '/stofnanir/[slug]/thjonusta',
-    en: '/en/organizations/[slug]/services',
+  oervices: {
+    is: '/s/[slug]/thjonusta',
+    en: '/en/o/[slug]/services',
   },
   auctions: {
-    is: '/stofnanir/syslumenn/uppbod',
+    is: '/s/syslumenn/uppbod',
     en: '',
   },
   apicataloguedetailpage: {
-    is: '/stofnanir/stafraent-island/vefthjonustur/[slug]',
+    is: '/s/stafraent-island/vefthjonustur/[slug]',
     en: '',
   },
   apicataloguepage: {
-    is: '/stofnanir/stafraent-island/vefthjonustur',
+    is: '/s/stafraent-island/vefthjonustur',
     en: '',
   },
-  organizationsubpage: {
-    is: '/stofnanir/[slug]/[subSlug]',
-    en: '/en/organizations/[slug]/[subSlug]',
+  oubpage: {
+    is: '/s/[slug]/[subSlug]',
+    en: '/en/o/[slug]/[subSlug]',
   },
   organizationpage: {
-    is: '/stofnanir/[slug]',
-    en: '/en/organizations/[slug]',
+    is: '/s/[slug]',
+    en: '/en/o/[slug]',
   },
-  organizations: {
-    is: '/stofnanir',
-    en: '/en/organizations',
+  o: {
+    is: '/s',
+    en: '/en/o',
   },
   lifeevents: {
     is: '/lifsvidburdir',
@@ -90,15 +90,15 @@ export const routesTemplate = {
     en: '/en/life-events/[slug]',
   },
   organizationnews: {
-    is: '/stofnanir/[organization]/frett/[slug]',
-    en: '/en/organizations/[organization]/news/[slug]',
+    is: '/s/[organization]/frett/[slug]',
+    en: '/en/o/[organization]/news/[slug]',
   },
   organizationnewsoverview: {
-    is: '/stofnanir/[organization]/frett',
-    en: '/en/organizations/[organization]/news',
+    is: '/s/[organization]/frett',
+    en: '/en/o/[organization]/news',
   },
   auction: {
-    is: '/stofnanir/syslumenn/uppbod/[id]',
+    is: '/s/syslumenn/uppbod/[id]',
     en: '',
   },
   adgerdirpage: {
