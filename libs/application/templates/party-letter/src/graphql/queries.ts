@@ -37,7 +37,6 @@ export const GetEndorsements = gql`
         invalidated
       }
       created
-
       modified
     }
   }

@@ -5,12 +5,17 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { IDS } from '../../forms/LetterApplicationForm'
 import { PartyLetter, File } from '../../lib/dataSchema'
+import { useEndorsements } from '../../hooks/useFetchEndorsements'
 
 const Review: FC<FieldBaseProps> = ({ application }) => {
+  const endorsementListId = (application.externalData?.createEndorsementList
+    .data as any).id
   const { formatMessage } = useLocale()
   const answers = application.answers as PartyLetter
-  const endorsementsCount = answers.endorsements?.length ?? 0
-  const endorsementsWarningCount = answers.invalidEndorsements?.length ?? 0
+  const endorsementHook = useEndorsements(endorsementListId, false)
+  const endorsementCount = endorsementHook?.length ?? 0
+  const endorsementsWarningCount =
+    endorsementHook?.filter((x) => x.meta.invalidated)?.length ?? 0
 
   const labelMapper: Record<IDS, string> = {
     ssd: formatMessage(m.overview.responsibleParty),
@@ -47,7 +52,7 @@ const Review: FC<FieldBaseProps> = ({ application }) => {
         labelMapper[IDS.PartyLetter],
         getValueViaPath(answers, IDS.PartyLetter) as string,
       )}
-      {reviewItem(labelMapper[IDS.Endorsements], endorsementsCount.toString())}
+      {reviewItem(labelMapper[IDS.Endorsements], endorsementCount.toString())}
       {reviewItem(
         labelMapper[IDS.Warnings],
         endorsementsWarningCount.toString(),

@@ -35,21 +35,6 @@ const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
   const endorsementListId = (externalData?.createEndorsementList.data as any).id
   const answers = application.answers as PartyLetter
   const endorsementHook = useEndorsements(endorsementListId, false)
-  const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
-
-  useEffect(() => {
-    setEndorsements((_) => {
-      if (endorsementHook?.length) {
-        const filtered = endorsementHook?.filter((endorsement) => {
-          if (answers?.endorsements?.length) {
-            return answers.endorsements.includes(endorsement.endorser)
-          }
-        })
-        return filtered
-      }
-      return undefined
-    })
-  }, [endorsementHook])
 
   return (
     <Box>
@@ -85,13 +70,13 @@ const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.ministryOfJustice.numberOfEndorsementsLabel)}
           </Text>
-          <Text marginBottom={1}>{endorsements?.length ?? 0}</Text>
+          <Text marginBottom={1}>{endorsementHook?.length ?? 0}</Text>
         </Box>
       </Box>
       <Box marginBottom={5}>
-        {endorsements?.length && (
+        {endorsementHook?.length && (
           <ExportAsCSV
-            data={mapToCSVFile(endorsements) as object[]}
+            data={mapToCSVFile(endorsementHook) as object[]}
             filename={csvFileName(answers.partyLetter, answers.partyName)}
             title={formatMessage(m.ministryOfJustice.csvButton)}
           />

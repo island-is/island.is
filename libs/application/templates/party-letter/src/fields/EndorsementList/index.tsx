@@ -5,17 +5,13 @@ import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { useMutation } from '@apollo/client'
 import { PartyLetter } from '../../lib/dataSchema'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import set from 'lodash/set'
-import cloneDeep from 'lodash/cloneDeep'
 import { useEndorsements } from '../../hooks/useFetchEndorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import { Endorsement } from '../../types/schema'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
-  const { lang: locale, formatMessage } = useLocale()
+  const { formatMessage } = useLocale()
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
   const answers = application.answers as PartyLetter
@@ -24,47 +20,12 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const [showWarning, setShowWarning] = useState(false)
   const endorsementsHook = useEndorsements(endorsementListId, true)
   const isClosedHook = useIsClosed(endorsementListId)
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
-  const updateApplicationWithEndorsements = async (
-    newEndorsements: Endorsement[],
-  ) => {
-    const endorsementIds = newEndorsements?.map((x) => x.endorser)
-    const invalidEndorsementIds = newEndorsements
-      ?.filter((x) => x.meta.invalidated)
-      .map((x) => x.endorser)
-    const updatedAnswers = {
-      ...answers,
-      endorsements: cloneDeep(endorsementIds),
-      invalidEndorsements: cloneDeep(invalidEndorsementIds),
-    }
-    await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: {
-            ...updatedAnswers,
-          },
-        },
-        locale,
-      },
-    }).then(() => {
-      set(answers, 'endorsements', cloneDeep(endorsementIds))
-    })
-  }
-
-  useEffect(() => {
-    setEndorsements((_) => {
-      if (endorsementsHook && endorsementsHook.length > 0)
-        updateApplicationWithEndorsements(endorsementsHook)
-      return endorsementsHook
-    })
-  }, [endorsementsHook])
 
   const namesCountString = formatMessage(
-    endorsements && endorsements.length > 1
+    endorsementsHook && endorsementsHook.length > 1
       ? m.endorsementList.namesCount
       : m.endorsementList.nameCount,
-    { endorsementCount: endorsements?.length ?? 0 },
+    { endorsementCount: endorsementsHook?.length ?? 0 },
   )
 
   return (
@@ -93,11 +54,11 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
               setShowWarning(!showWarning)
               setSearchTerm('')
               showWarning
-                ? setEndorsements(endorsements)
+                ? setEndorsements(endorsementsHook)
                 : setEndorsements(
-                    endorsements
-                      ? endorsements.filter((x) => x.meta.invalidated)
-                      : endorsements,
+                    endorsementsHook
+                      ? endorsementsHook.filter((x) => x.meta.invalidated)
+                      : endorsementsHook,
                   )
             }}
           />
@@ -111,11 +72,11 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             onChange={(e) => {
               setSearchTerm(e.target.value)
               setEndorsements(
-                endorsements
-                  ? endorsements.filter(
+                endorsementsHook
+                  ? endorsementsHook.filter(
                       (x) => x.meta?.fullName?.startsWith(e.target.value) ?? '',
                     )
-                  : endorsements,
+                  : endorsementsHook,
               )
             }}
           />
@@ -124,6 +85,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
           application={application}
           endorsements={endorsements}
         />
+        {/* TODO: Laga þegar bulk er komið inn */}
         {isClosedHook && <Text>ER LOKAÐ GETUR EKKI SETT INN EXCEL!!</Text>}
       </Box>
     </Box>
