@@ -17,7 +17,6 @@ import { LoginPageTexts } from '../../components/Login/LoginTexts.types'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
 import { GET_NAMESPACE_QUERY } from '../queries'
 
@@ -26,10 +25,8 @@ interface LoginProps {
 }
 
 const LoginPage: Screen<LoginProps> = ({ namespace }) => {
-  const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
 
-  console.log('activeLocale', activeLocale)
   const listItems: string[] = n('nyjuSidurList', [
     'Sjá Pósthólf',
     'Þínar Upplýsingar',
