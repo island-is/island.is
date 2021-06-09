@@ -140,7 +140,7 @@ export class Case extends Model<Case> {
   accusedGender: CaseGender
 
   /**********
-   * The name of the accused´s defender - optional
+   * The name of the accused's defender - optional
    **********/
   @Column({
     type: DataType.STRING,
