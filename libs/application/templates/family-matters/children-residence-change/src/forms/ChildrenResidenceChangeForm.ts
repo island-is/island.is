@@ -22,6 +22,30 @@ import * as m from '../lib/messages'
 import { ExternalData } from '@island.is/application/templates/family-matters-core/types'
 import { hasChildren } from '../lib/utils'
 
+const soleCustodyField = () => {
+  return buildCustomField({
+    id: 'errorModal',
+    component: 'SoleCustodyModal',
+    title: '',
+    condition: (_, externalData) => {
+      return ((externalData as unknown) as ExternalData)?.nationalRegistry?.data?.children?.every(
+        (child) => !child.otherParent,
+      )
+    },
+  })
+}
+
+const noChildrenFoundField = () => {
+  return buildCustomField({
+    id: 'errorModal',
+    component: 'NoChildrenErrorModal',
+    title: '',
+    condition: (_, externalData) => {
+      return !hasChildren((externalData as unknown) as ExternalData)
+    },
+  })
+}
+
 export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
   title: m.application.name,
@@ -130,14 +154,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 }),
               ],
             }),
-            buildCustomField({
-              id: 'errorModal',
-              component: 'NoChildrenErrorModal',
-              title: '',
-              condition: (_, externalData) => {
-                return !hasChildren((externalData as unknown) as ExternalData)
-              },
-            }),
+            noChildrenFoundField(),
+            soleCustodyField(),
           ],
         }),
         buildSubSection({
@@ -176,14 +194,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 }),
               ],
             }),
-            buildCustomField({
-              id: 'errorModal',
-              component: 'NoChildrenErrorModal',
-              title: '',
-              condition: (_, externalData) => {
-                return !hasChildren((externalData as unknown) as ExternalData)
-              },
-            }),
+            noChildrenFoundField(),
+            soleCustodyField(),
           ],
         }),
         buildSubSection({
