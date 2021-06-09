@@ -1,4 +1,4 @@
-# api-domains-finance
+# API Domains Finance
 
 This library was generated with [Nx](https://nx.dev).
 
