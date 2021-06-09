@@ -53,7 +53,7 @@ export const routesTemplate = {
     is: '/frett',
     en: '/en/news',
   },
-  oervices: {
+  organizationservices: {
     is: '/s/[slug]/thjonusta',
     en: '/en/o/[slug]/services',
   },
@@ -69,7 +69,7 @@ export const routesTemplate = {
     is: '/s/stafraent-island/vefthjonustur',
     en: '',
   },
-  oubpage: {
+  organizationsubpage: {
     is: '/s/[slug]/[subSlug]',
     en: '/en/o/[slug]/[subSlug]',
   },
@@ -77,7 +77,7 @@ export const routesTemplate = {
     is: '/s/[slug]',
     en: '/en/o/[slug]',
   },
-  o: {
+  organizations: {
     is: '/s',
     en: '/en/o',
   },
