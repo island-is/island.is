@@ -1,2 +1,2 @@
-import PoliceReport from '@island.is/judicial-system-web/src/routes/Prosecutor/R-cases/PoliceReport/PoliceReport'
+import PoliceReport from '@island.is/judicial-system-web/src/routes//Prosecutor/InvestigationRequest/PoliceReport/PoliceReport'
 export default PoliceReport

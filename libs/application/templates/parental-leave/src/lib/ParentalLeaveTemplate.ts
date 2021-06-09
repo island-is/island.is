@@ -24,7 +24,7 @@ import {
   hasEmployer,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
-import { getSelectedChild } from '../parentalLeaveUtils'
+import { getSelectedChild } from '../lib/parentalLeaveUtils'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
