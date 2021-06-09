@@ -12,6 +12,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import {
   generateAssignOtherParentApplicationEmail,
   generateAssignEmployerApplicationEmail,
+  generateOtherParentRejected,
   generateApplicationApprovedByEmployerEmail,
 } from './emailGenerators'
 import {
@@ -35,8 +36,17 @@ export class ParentalLeaveService {
   ) {}
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
-    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+    await this.sharedTemplateAPIService.sendEmail(
       generateAssignOtherParentApplicationEmail,
+      application,
+    )
+  }
+
+  async notifyApplicantOfRejectionFromOtherParent({
+    application,
+  }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateOtherParentRejected,
       application,
     )
   }
