@@ -58,7 +58,7 @@ describe('answerValidators', () => {
     expect(
       answerValidators['firstPeriodStart'](newAnswers, newApplication),
     ).toStrictEqual({
-      message: errorMessages.noChildData,
+      message: errorMessages.dateOfBirth,
       path: 'firstPeriodStart',
       values: undefined,
     })
