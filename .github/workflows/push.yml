@@ -391,7 +391,7 @@ jobs:
             "branch": "$GIT_BRANCH_DEPLOY",
             "parameters": {
               "docker_tag": "$DOCKER_TAG",
-              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:].-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)",
+              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)",
               "images": "$(echo $BUILD_CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')",
               "pull_request_number": "$(echo $GITHUB_REF | cut -d'/' -f3)"
             }

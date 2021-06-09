@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'
-import { getAllPeriodDates } from '../parentalLeaveUtils'
+import { getAllPeriodDates } from '../lib/parentalLeaveUtils'
 import { Period } from '../types'
 
 export const EditOrAddPeriods: Form = buildForm({
