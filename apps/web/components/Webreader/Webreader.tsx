@@ -43,7 +43,11 @@ export const Webreader: FC<WebReaderProps> = ({
           // on behalf of the ReadSpeaker client.
           // This is most easily done by closing the player programatically through
           // the rspkr object and have it handle its own cleanup
-          rspkr.ui.getActivePlayer().close()
+          ReadSpeaker.q(() => {
+            if (rspkr.ui.getActivePlayer()) {
+              rspkr.ui.getActivePlayer().close()
+            }
+          })
         }
       }
     }
