@@ -133,7 +133,7 @@ const FinanceBills = () => {
             <GridColumn span={['1/1', '4/12']}>
               <DatePicker
                 backgroundColor="blue"
-                handleChange={function noRefCheck() {}}
+                // handleChange={function noRefCheck() {}}
                 icon="calendar"
                 iconType="outline"
                 size="sm"
@@ -145,7 +145,7 @@ const FinanceBills = () => {
             <GridColumn span={['1/1', '4/12']}>
               <DatePicker
                 backgroundColor="blue"
-                handleChange={function noRefCheck() {}}
+                // handleChange={function noRefCheck() {}}
                 icon="calendar"
                 iconType="outline"
                 size="sm"

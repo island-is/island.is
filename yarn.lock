@@ -6034,6 +6034,11 @@
     "@types/node" "*"
     form-data "^3.0.0"
 
+"@types/node-xlsx@0.15.1":
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/@types/node-xlsx/-/node-xlsx-0.15.1.tgz#f5c15d2f7b8e0074d63d699a106da2fcf3c3eb38"
+  integrity sha512-UqU5o8OPUdYY/3DnwBjfzrEZdMvIFqTudXjYExdiJvNYJ57wa0cO7RldL0lQCWejXzVaZFbNHXJkd/KqSgZPkw==
+
 "@types/node@*", "@types/node@14", "@types/node@>=6":
   version "14.14.35"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.35.tgz#42c953a4e2b18ab931f72477e7012172f4ffa313"

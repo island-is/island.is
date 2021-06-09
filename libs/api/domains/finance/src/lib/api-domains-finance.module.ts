@@ -1,4 +1,3 @@
-
 import { DynamicModule, Module } from '@nestjs/common'
 import {
   FinanceService,

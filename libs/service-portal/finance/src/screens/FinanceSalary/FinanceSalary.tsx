@@ -44,7 +44,7 @@ const FinanceSalary = () => {
             <GridColumn span={['1/1', '3/8']}>
               <DatePicker
                 backgroundColor="blue"
-                handleChange={function noRefCheck() {}}
+                // handleChange={function noRefCheck() {}}
                 icon="calendar"
                 iconType="outline"
                 size="sm"

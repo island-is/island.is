@@ -84,6 +84,7 @@
     "@sindresorhus/slugify": "1.0.0",
     "@types/faker": "5.1.2",
     "@types/next-auth": "3.1.20",
+    "@types/node-xlsx": "0.15.1",
     "@types/nodemailer": "6.4.1",
     "@types/passport-jwt": "3.0.3",
     "@types/pdfkit": "0.10.6",

@@ -1038,6 +1038,27 @@
         }
       }
     },
+    "api-domains-finance": {
+      "root": "libs/api/domains/finance",
+      "sourceRoot": "libs/api/domains/finance/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/finance/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/finance"],
+          "options": {
+            "jestConfig": "libs/api/domains/finance/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-health-insurance": {
       "root": "libs/api/domains/health-insurance",
       "sourceRoot": "libs/api/domains/health-insurance/src",
@@ -2902,6 +2923,27 @@
           "outputs": ["coverage/libs/clients/documents"],
           "options": {
             "jestConfig": "libs/clients/documents/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-finance": {
+      "root": "libs/clients/finance",
+      "sourceRoot": "libs/clients/finance/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/finance/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/finance"],
+          "options": {
+            "jestConfig": "libs/clients/finance/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -7628,48 +7670,6 @@
             "linter": "eslint",
             "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/web-e2e/**/*"]
-          }
-        }
-      }
-    },
-    "api-domains-finance": {
-      "root": "libs/api/domains/finance",
-      "sourceRoot": "libs/api/domains/finance/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/api/domains/finance/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/domains/finance"],
-          "options": {
-            "jestConfig": "libs/api/domains/finance/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "clients-finance": {
-      "root": "libs/clients/finance",
-      "sourceRoot": "libs/clients/finance/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/clients/finance/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/clients/finance"],
-          "options": {
-            "jestConfig": "libs/clients/finance/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }
