@@ -1,12 +1,22 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
-import { Text, Input, Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
+
+import {
+  Text,
+  Input,
+  Box,
+  Checkbox,
+  Tooltip,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, CaseType } from '@island.is/judicial-system/types'
+
+import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
@@ -84,6 +94,15 @@ export const StepOneForm: React.FC<Props> = (props) => {
   return (
     <>
       <FormContentContainer>
+        {workingCase.state === CaseState.RECEIVED && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title="Athugið"
+              message="Hægt er að breyta efni kröfunnar og bæta við rannsóknargögnum eftir að hún hefur verið send dómstól en til að breytingar skili sér í dómskjalið sem verður til hliðsjónar í þinghaldinu þarf að smella á Endursenda kröfu á skjánum Yfirlit kröfu."
+              type="warning"
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             Sakborningur

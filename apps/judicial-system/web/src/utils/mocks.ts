@@ -298,7 +298,7 @@ const testCase5 = {
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
   type: CaseType.CUSTODY,
-  state: CaseState.ACCEPTED,
+  state: CaseState.RECEIVED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
   accusedName: 'Jon Harring',
