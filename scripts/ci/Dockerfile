@@ -1,5 +1,5 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
-FROM node:14.16.0-alpine3.11 as deps
+FROM node:14.17.0-alpine3.13 as deps
 
 RUN apk add -U git
 
@@ -23,7 +23,7 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN yarn run build ${APP} --prod
 
-FROM node:14.16.0-alpine3.11 as output-base
+FROM node:14.17.0-alpine3.13 as output-base
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA

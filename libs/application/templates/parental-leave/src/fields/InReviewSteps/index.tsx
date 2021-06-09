@@ -14,8 +14,8 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getExpectedDateOfBirth,
   requiresOtherParentApproval,
-} from '../../parentalLeaveUtils'
-import { handleSubmitError } from '../../parentalLeaveClientUtils'
+} from '../../lib/parentalLeaveUtils'
+import { handleSubmitError } from '../../lib/parentalLeaveClientUtils'
 import { NO, States as ApplicationStates, YES } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
