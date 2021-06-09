@@ -68,16 +68,14 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
     fileReader.onload = () => {
       try {
         const workbook = read(fileReader.result, { type: 'binary' })
-        let data: object[] = []
+        let data: any[] = []
         for (const sheet in workbook.Sheets) {
-          if (workbook.Sheets.hasOwnProperty(sheet)) {
-            const workSheet = workbook.Sheets[sheet]
-            /** Converts a worksheet object to an array of JSON objects */
-            const jsonSheet = utils.sheet_to_json(workSheet)
-            data = data.concat(jsonSheet)
-          }
+          const workSheet = workbook.Sheets[sheet]
+          /** Converts a worksheet object to an array of JSON objects */
+          const jsonSheet = utils.sheet_to_json(workSheet)
+          data = data.concat(jsonSheet)
         }
-        let mapArray: string[] = []
+        const mapArray: string[] = []
         data.map((d: any) => {
           /**  Getting the value of the first column from the JSON object */
           const nationalId = d[Object.keys(d)[0]]
@@ -124,7 +122,7 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
               buttonLabel={formatMessage(m.fileUpload.uploadButtonLabel)}
               accept=".xlsx"
               onChange={onChange}
-              onRemove={() => {}}
+              onRemove={(_) => _}
               errorMessage={
                 bulkUploadFailed
                   ? formatMessage(m.fileUpload.uploadFail)
