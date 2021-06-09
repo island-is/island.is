@@ -1,8 +1,10 @@
 import { Application, getValueViaPath } from '@island.is/application/core'
 import type { DistributiveOmit } from '@island.is/shared/types'
-import { SchemaFormValues } from '../../lib/dataSchema'
-import { getSelectedChild, getTransferredDays } from '../../parentalLeaveUtils'
 
+import {
+  getSelectedChild,
+  getTransferredDays,
+} from '../../lib/parentalLeaveUtils'
 import {
   ChildInformation,
   ExistingChildApplication,
