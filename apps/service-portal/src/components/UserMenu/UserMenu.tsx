@@ -88,10 +88,7 @@ const UserMenu = ({ state, onClose, onRouteChange }: UserMenuProps) => {
               </Text>
             </Box>
 
-            <Link
-              to={ServicePortalPath.SettingsPersonalInformation}
-              onClick={onRouteChange}
-            >
+            <Link to={ServicePortalPath.SettingsRoot} onClick={onRouteChange}>
               <Button variant="text" icon="arrowForward" size="small">
                 {formatMessage({
                   id: 'global:edit',
