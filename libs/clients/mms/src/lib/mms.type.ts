@@ -12,33 +12,40 @@ export interface LicenseResponse {
 }
 
 export interface GradeResult {
-  radeinkunn: string
-  vaegi?: string
+  einkunn?: string
+  heiti: string
+  vaegi?: number
+}
+
+export interface GradeTypeResult {
+  radeinkunn: GradeResult
+  grunnskolaeinkunn: GradeResult
 }
 
 export interface BaseGrade {
+  heiti: string
   dagsetning: string
   haefnieinkunn: string
   haefnieinkunnStada: string
-  framfaraTexti: string
-  samtals: GradeResult
+  samtals: GradeTypeResult
+  framfaraTexti: GradeResult
 }
 
 export interface MathGrade extends BaseGrade {
-  reikningurOgAdgerdir: GradeResult
-  rumfraedi: GradeResult
-  algebra: GradeResult
-  hlutfollOgProsentur: GradeResult
-  tolurOgTalnaskilningur: GradeResult
-  ordOgTalnadaemi: string
+  reikningurOgAdgerdir: GradeTypeResult
+  rumfraedi: GradeTypeResult
+  algebra: GradeTypeResult
+  hlutfollOgProsentur: GradeTypeResult
+  tolurOgTalnaskilningur: GradeTypeResult
+  ordOgTalnadaemi: GradeResult
 }
 
 export interface LanguageGrade extends BaseGrade {
-  lesskilningur: GradeResult
-  malnotkun: GradeResult
+  lesskilningur: GradeTypeResult
+  malnotkun: GradeTypeResult
 }
 
-interface Grade {
+export interface Grade {
   bekkur: string
   enska?: LanguageGrade
   islenska?: LanguageGrade

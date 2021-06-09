@@ -1,11 +1,15 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 import { Grade } from './grade.model'
+import { GradeType } from './gradeType.model'
 
 @ObjectType('EducationEnglishGrade')
 export class EnglishGrade {
   @Field(() => String)
-  grade!: string
+  label!: string
+
+  @Field(() => GradeType)
+  grade!: GradeType
 
   @Field(() => String)
   competence!: string
@@ -13,12 +17,12 @@ export class EnglishGrade {
   @Field(() => String)
   competenceStatus!: string
 
-  @Field(() => Grade)
-  reading!: Grade
+  @Field(() => GradeType)
+  reading!: GradeType
+
+  @Field(() => GradeType)
+  grammar!: GradeType
 
   @Field(() => Grade)
-  grammar!: Grade
-
-  @Field(() => String)
-  progressText!: string
+  progressText!: Grade
 }

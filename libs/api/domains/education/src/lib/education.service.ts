@@ -10,6 +10,7 @@ import {
   LanguageGrade,
   MathGrade,
   BaseGrade,
+  GradeTypeResult,
   GradeResult,
 } from '@island.is/clients/mms'
 import {
@@ -115,37 +116,46 @@ export class EducationService {
 
   private mapGrade(grade: GradeResult) {
     return {
-      grade: grade.radeinkunn,
+      grade: grade.einkunn,
+      label: grade.heiti,
       weight: grade.vaegi,
+    }
+  }
+
+  private mapGradeType(grade: GradeTypeResult) {
+    return {
+      serialGrade: this.mapGrade(grade.radeinkunn),
+      elementaryGrade: this.mapGrade(grade.grunnskolaeinkunn),
     }
   }
 
   private mapBaseGrade(grade: BaseGrade) {
     return {
-      grade: grade.samtals.radeinkunn,
+      label: grade.heiti,
       competence: grade.haefnieinkunn,
       competenceStatus: grade.haefnieinkunnStada,
-      progressText: grade.framfaraTexti,
+      grade: this.mapGradeType(grade.samtals),
+      progressText: this.mapGrade(grade.framfaraTexti),
     }
   }
 
   private mapLanguageGrade(grade: LanguageGrade) {
     return {
       ...this.mapBaseGrade(grade),
-      reading: this.mapGrade(grade.lesskilningur),
-      grammar: this.mapGrade(grade.malnotkun),
+      reading: this.mapGradeType(grade.lesskilningur),
+      grammar: this.mapGradeType(grade.malnotkun),
     }
   }
 
   private mapMathGrade(grade: MathGrade) {
     return {
       ...this.mapBaseGrade(grade),
-      wordAndNumbers: grade.ordOgTalnadaemi,
-      calculation: this.mapGrade(grade.reikningurOgAdgerdir),
-      geometry: this.mapGrade(grade.rumfraedi),
-      ratiosAndPercentages: this.mapGrade(grade.hlutfollOgProsentur),
-      algebra: this.mapGrade(grade.algebra),
-      numberComprehension: this.mapGrade(grade.tolurOgTalnaskilningur),
+      wordAndNumbers: this.mapGrade(grade.ordOgTalnadaemi),
+      calculation: this.mapGradeType(grade.reikningurOgAdgerdir),
+      geometry: this.mapGradeType(grade.rumfraedi),
+      ratiosAndPercentages: this.mapGradeType(grade.hlutfollOgProsentur),
+      algebra: this.mapGradeType(grade.algebra),
+      numberComprehension: this.mapGradeType(grade.tolurOgTalnaskilningur),
     }
   }
 
