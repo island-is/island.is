@@ -17,7 +17,7 @@ import { isRunningOnEnvironment } from '@island.is/utils/shared'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
-import { isEligibleForParentalLeave } from '../parentalLeaveUtils'
+import { isEligibleForParentalLeave } from '../lib/parentalLeaveUtils'
 import { NO, YES } from '../constants'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')

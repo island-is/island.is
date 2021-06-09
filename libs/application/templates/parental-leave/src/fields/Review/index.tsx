@@ -24,7 +24,7 @@ import {
 import {
   getOtherParentOptions,
   getSelectedChild,
-} from '../../parentalLeaveUtils'
+} from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
