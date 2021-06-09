@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   temporary_voter_registry:
-    image: postgres:11.6
+    image: public.ecr.aws/bitnami/postgresql:11.12.0
     container_name: temporary_voter_registry
     networks:
       - local

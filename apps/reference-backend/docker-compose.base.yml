@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   db_reference_backend:
-    image: postgres:11.6
+    image: public.ecr.aws/bitnami/postgresql:11.12.0
     container_name: db_reference_backend
     networks:
       - local
@@ -16,7 +16,6 @@ services:
       - DEV_DB_NAME=dev_db
     volumes:
       - ./bin/startup.sql:/docker-entrypoint-initdb.d/startup.sql
-
 
 networks:
   local:

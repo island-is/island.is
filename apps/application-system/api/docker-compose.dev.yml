@@ -7,7 +7,7 @@ services:
 
   redis-cluster:
     container_name: redis_cluster
-    image: grokzen/redis-cluster:5.0.6
+    image: public.ecr.aws/bitnami/redis-cluster:5.0.12
     privileged: true
     sysctls:
       net.core.somaxconn: '511'
