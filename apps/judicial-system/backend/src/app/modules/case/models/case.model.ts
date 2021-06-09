@@ -78,7 +78,7 @@ export class Case extends Model<Case> {
   description: string
 
   /**********
-   * The case state - exaample: DRAFT
+   * The case state - example: DRAFT
    **********/
   @Column({
     type: DataType.ENUM,
