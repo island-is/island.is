@@ -90,7 +90,7 @@ export class Case extends Model<Case> {
   state: CaseState
 
   /**********
-   * A case number in LÖKE connected to the case
+   * A case number in LÖKE (police information system) connected to the case
    **********/
   @Column({
     type: DataType.STRING,
@@ -295,8 +295,8 @@ export class Case extends Model<Case> {
   requestedCustodyRestrictions: CaseCustodyRestrictions[]
 
   /**********
-   * Additional restrictions requested by the prosecutor - only used for custody and travel ban
-   * cases - optional
+   * Additional restrictions requested by the prosecutor - only used for travel ban cases -
+   * optional
    **********/
   @Column({
     type: DataType.STRING,
@@ -404,7 +404,7 @@ export class Case extends Model<Case> {
   sharedWithProsecutorsOffice: Institution
 
   /**********
-   *
+   * The case number assigned in Auður (court information system)
    **********/
   @Column({
     type: DataType.STRING,
@@ -414,7 +414,7 @@ export class Case extends Model<Case> {
   courtCaseNumber: string
 
   /**********
-   *
+   * The scheduled date and time of the case's court session
    **********/
   @Column({
     type: DataType.DATE,
@@ -424,7 +424,7 @@ export class Case extends Model<Case> {
   courtDate: Date
 
   /**********
-   *
+   * The assigned court room for the court session
    **********/
   @Column({
     type: DataType.STRING,
@@ -434,7 +434,7 @@ export class Case extends Model<Case> {
   courtRoom: string
 
   /**********
-   *
+   * The date and time the court session started
    **********/
   @Column({
     type: DataType.DATE,
@@ -444,7 +444,7 @@ export class Case extends Model<Case> {
   courtStartDate: Date
 
   /**********
-   *
+   * The date and time the court session ended
    **********/
   @Column({
     type: DataType.DATE,
@@ -454,7 +454,7 @@ export class Case extends Model<Case> {
   courtEndTime: Date
 
   /**********
-   *
+   * The court attendees
    **********/
   @Column({
     type: DataType.STRING,
@@ -464,7 +464,7 @@ export class Case extends Model<Case> {
   courtAttendees: string
 
   /**********
-   *
+   * The prosecutor's demands - autofilled from demands - possibly modified by the court
    **********/
   @Column({
     type: DataType.STRING,
@@ -474,7 +474,7 @@ export class Case extends Model<Case> {
   prosecutorDemands: string
 
   /**********
-   *
+   * A list of additional court documents - optional
    **********/
   @Column({
     type: DataType.ARRAY(DataType.STRING),
@@ -484,7 +484,7 @@ export class Case extends Model<Case> {
   courtDocuments: string[]
 
   /**********
-   *
+   * The judge's additions to the auto generated text of the case's conclusion - optional
    **********/
   @Column({
     type: DataType.STRING,
@@ -494,7 +494,7 @@ export class Case extends Model<Case> {
   additionToConclusion: string
 
   /**********
-   *
+   * The accused's plea decision - example: REJECT
    **********/
   @Column({
     type: DataType.ENUM,
@@ -505,7 +505,7 @@ export class Case extends Model<Case> {
   accusedPleaDecision: AccusedPleaDecision
 
   /**********
-   *
+   * The accused's plea
    **********/
   @Column({
     type: DataType.STRING,
@@ -515,7 +515,7 @@ export class Case extends Model<Case> {
   accusedPleaAnnouncement: string
 
   /**********
-   *
+   * The presentations for both parties
    **********/
   @Column({
     type: DataType.STRING,
@@ -525,7 +525,8 @@ export class Case extends Model<Case> {
   litigationPresentations: string
 
   /**********
-   *
+   * The case facts as seen by the prosecutor - autofilled from caseFacts - possibly modified
+   * by the court
    **********/
   @Column({
     type: DataType.STRING,
@@ -535,7 +536,8 @@ export class Case extends Model<Case> {
   courtCaseFacts: string
 
   /**********
-   *
+   * The legal arguments presented by the prosecutor - autofilled from legalArguments -
+   * possibly modified by the court
    **********/
   @Column({
     type: DataType.STRING,
@@ -545,7 +547,7 @@ export class Case extends Model<Case> {
   courtLegalArguments: string
 
   /**********
-   *
+   * The judge's ruling
    **********/
   @Column({
     type: DataType.STRING,
@@ -555,7 +557,7 @@ export class Case extends Model<Case> {
   ruling: string
 
   /**********
-   *
+   * The judge's pending decision - example: ACCEPTING
    **********/
   @Column({
     type: DataType.ENUM,
@@ -566,7 +568,9 @@ export class Case extends Model<Case> {
   decision: CaseDecision
 
   /**********
-   *
+   * The ruling expiration date and time - example: the end of custody in custody cases -
+   * autofilled from requestedValidToDate - possibly modified by the court - only used for
+   * custody and travel ban cases
    **********/
   @Column({
     type: DataType.DATE,
@@ -576,7 +580,8 @@ export class Case extends Model<Case> {
   validToDate: Date
 
   /**********
-   *
+   * Restrictions imposed by the judge - from a predetermined list - example: ISOLATION -
+   * only used for custody and travel ban cases - optional
    **********/
   @Column({
     type: DataType.ARRAY(DataType.ENUM),
@@ -587,7 +592,8 @@ export class Case extends Model<Case> {
   custodyRestrictions: CaseCustodyRestrictions[]
 
   /**********
-   *
+   * Additional restrictions imposed by the judge - only used for travel ban cases - optional
+   * Should this not be autofilled from requestedOtherRestrictions?
    **********/
   @Column({
     type: DataType.STRING,
@@ -597,7 +603,8 @@ export class Case extends Model<Case> {
   otherRestrictions: string
 
   /**********
-   *
+   * Expiration date and time for isolation - prefilled from requestedValidToDate - only used
+   * for custody cases and only relevant if the judge imposes isolation
    **********/
   @Column({
     type: DataType.DATE,
@@ -607,7 +614,7 @@ export class Case extends Model<Case> {
   isolationTo: Date
 
   /**********
-   *
+   * The accused's appeal decision - example: APPEAL
    **********/
   @Column({
     type: DataType.ENUM,
@@ -618,7 +625,7 @@ export class Case extends Model<Case> {
   accusedAppealDecision: CaseAppealDecision
 
   /**********
-   *
+   * The accused's appeal announcement - only used if the accused appeals in court
    **********/
   @Column({
     type: DataType.STRING,
@@ -628,7 +635,7 @@ export class Case extends Model<Case> {
   accusedAppealAnnouncement: string
 
   /**********
-   *
+   * The prosecutor's appeal decision - example: POSTPONE
    **********/
   @Column({
     type: DataType.ENUM,
@@ -639,7 +646,7 @@ export class Case extends Model<Case> {
   prosecutorAppealDecision: CaseAppealDecision
 
   /**********
-   *
+   * The prosecutor's appeal announcement - only used if the prosecutor appeals in court
    **********/
   @Column({
     type: DataType.STRING,
@@ -649,7 +656,8 @@ export class Case extends Model<Case> {
   prosecutorAppealAnnouncement: string
 
   /**********
-   *
+   * The date and time of the accused's postponed appeal - only used if the accused postponed
+   * her appeal decision and later appealed within the allowed time frame
    **********/
   @Column({
     type: DataType.DATE,
@@ -659,7 +667,8 @@ export class Case extends Model<Case> {
   accusedPostponedAppealDate: Date
 
   /**********
-   *
+   * The date and time of the prosecutor's postponed appeal - only used if the prosecutor
+   * postponed his appeal decision and later appealed within the allowed time frame
    **********/
   @Column({
     type: DataType.DATE,
@@ -669,7 +678,7 @@ export class Case extends Model<Case> {
   prosecutorPostponedAppealDate: Date
 
   /**********
-   *
+   * The date and time of the judge's ruling signature
    **********/
   @Column({
     type: DataType.DATE,
@@ -679,7 +688,7 @@ export class Case extends Model<Case> {
   rulingDate: Date
 
   /**********
-   *
+   * The surrogate key of the registrar assigned to the case
    **********/
   @ForeignKey(() => User)
   @Column({
@@ -689,12 +698,15 @@ export class Case extends Model<Case> {
   @ApiProperty()
   registrarId: string
 
+  /**********
+   * The registrar assigned to the case
+   **********/
   @BelongsTo(() => User, 'registrarId')
   @ApiProperty({ type: User })
   registrar: User
 
   /**********
-   *
+   * The surrogate key of the judge assigned to the case
    **********/
   @ForeignKey(() => User)
   @Column({
@@ -704,12 +716,15 @@ export class Case extends Model<Case> {
   @ApiProperty()
   judgeId: string
 
+  /**********
+   * The judge assigned to the case
+   **********/
   @BelongsTo(() => User, 'judgeId')
   @ApiProperty({ type: User })
   judge: User
 
   /**********
-   *
+   * The surrogate key of the case's parent case - only used if the case is an extension
    **********/
   @ForeignKey(() => Case)
   @Column({
@@ -719,10 +734,16 @@ export class Case extends Model<Case> {
   @ApiProperty()
   parentCaseId: string
 
+  /**********
+   * The case's parent case - only used if the case is an extension
+   **********/
   @BelongsTo(() => Case, 'parentCaseId')
   @ApiProperty({ type: Case })
   parentCase: Case
 
+  /**********
+   * The case's child case - only used if the case has been extended
+   **********/
   @HasOne(() => Case, 'parentCaseId')
   @ApiProperty({ type: Case })
   childCase: Case
