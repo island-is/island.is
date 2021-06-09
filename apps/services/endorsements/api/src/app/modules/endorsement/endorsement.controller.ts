@@ -1,4 +1,9 @@
-import { CurrentUser, Scopes } from '@island.is/auth-nest-tools'
+import {
+  Auth,
+  CurrentAuth,
+  CurrentUser,
+  Scopes,
+} from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -118,10 +123,13 @@ export class EndorsementController {
     endorsementList: EndorsementList,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
-    return await this.endorsementService.createEndorsementOnList({
-      nationalId: user.nationalId,
-      endorsementList,
-    })
+    return await this.endorsementService.createEndorsementOnList(
+      {
+        nationalId: user.nationalId,
+        endorsementList,
+      },
+      user,
+    )
   }
 
   @ApiCreatedResponse({
@@ -149,11 +157,15 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @Body() { nationalIds }: BulkEndorsementDto,
+    @CurrentAuth() auth: Auth,
   ): Promise<EndorsementBulkCreate> {
-    return await this.endorsementService.bulkCreateEndorsementOnList({
-      nationalIds,
-      endorsementList,
-    })
+    return await this.endorsementService.bulkCreateEndorsementOnList(
+      {
+        nationalIds,
+        endorsementList,
+      },
+      auth,
+    )
   }
 
   @ApiNoContentResponse({
