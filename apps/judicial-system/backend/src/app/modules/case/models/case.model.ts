@@ -240,7 +240,8 @@ export class Case extends Model<Case> {
   requestedValidToDate: Date
 
   /**********
-   *
+   * The prosecutor's demands - in some cases they are auto generated from the requested ruling
+   * expiration date - can be modified even when auto generated
    **********/
   @Column({
     type: DataType.STRING,
@@ -250,7 +251,7 @@ export class Case extends Model<Case> {
   demands: string
 
   /**********
-   *
+   * The laws broken by the accused
    **********/
   @Column({
     type: DataType.STRING,
@@ -260,7 +261,7 @@ export class Case extends Model<Case> {
   lawsBroken: string
 
   /**********
-   *
+   * The laws on which the demands are based - not used for custody and travel ban cases
    **********/
   @Column({
     type: DataType.STRING,
@@ -270,7 +271,8 @@ export class Case extends Model<Case> {
   legalBasis: string
 
   /**********
-   *
+   * The laws on which the demands are based - from a predetermined list - example: _95_1_A -
+   * only used for custody and travel ban cases
    **********/
   @Column({
     type: DataType.ARRAY(DataType.ENUM),
@@ -281,7 +283,8 @@ export class Case extends Model<Case> {
   custodyProvisions: CaseCustodyProvisions[]
 
   /**********
-   *
+   * Restrictions requested by the prosecutor - from a predetermined list - example: ISOLATION -
+   * only used for custody and travel ban cases - optional
    **********/
   @Column({
     type: DataType.ARRAY(DataType.ENUM),
@@ -292,7 +295,8 @@ export class Case extends Model<Case> {
   requestedCustodyRestrictions: CaseCustodyRestrictions[]
 
   /**********
-   *
+   * Additional restrictions requested by the prosecutor - only used for custody and travel ban
+   * cases - optional
    **********/
   @Column({
     type: DataType.STRING,
@@ -302,7 +306,7 @@ export class Case extends Model<Case> {
   requestedOtherRestrictions: string
 
   /**********
-   *
+   * The facts of the case as seen by the prosecutor
    **********/
   @Column({
     type: DataType.STRING,
@@ -312,7 +316,7 @@ export class Case extends Model<Case> {
   caseFacts: string
 
   /**********
-   *
+   * The prosecutor's legal arguments
    **********/
   @Column({
     type: DataType.STRING,
@@ -322,7 +326,8 @@ export class Case extends Model<Case> {
   legalArguments: string
 
   /**********
-   *
+   * Indicates whether the prosecutor is requesting a court session in which the counter party
+   * is not represented - not used for custody and travel ban cases - optional
    **********/
   @Column({
     type: DataType.BOOLEAN,
@@ -332,7 +337,8 @@ export class Case extends Model<Case> {
   requestProsecutorOnlySession: boolean
 
   /**********
-   *
+   * The prosecutor's request for a court session in which the counter party is not represented -
+   * not used for custody and travel ban cases - optional
    **********/
   @Column({
     type: DataType.STRING,
@@ -342,7 +348,7 @@ export class Case extends Model<Case> {
   prosecutorOnlySessionRequest: string
 
   /**********
-   *
+   * Comments from the prosecutor to the court - optional
    **********/
   @Column({
     type: DataType.STRING,
@@ -352,7 +358,7 @@ export class Case extends Model<Case> {
   comments: string
 
   /**********
-   *
+   * Comments from the prosecutor to the court regarding the accompanying case files - optional
    **********/
   @Column({
     type: DataType.STRING,
@@ -361,10 +367,10 @@ export class Case extends Model<Case> {
   @ApiProperty()
   caseFilesComments: string
 
-  @ForeignKey(() => User)
   /**********
-   *
+   * The surrogate key of the prosecutor assigned to the case
    **********/
+  @ForeignKey(() => User)
   @Column({
     type: DataType.UUID,
     allowNull: true,
@@ -372,14 +378,17 @@ export class Case extends Model<Case> {
   @ApiProperty()
   prosecutorId: string
 
+  /**********
+   * The prosecutor assigned to the case
+   **********/
   @BelongsTo(() => User, 'prosecutorId')
   @ApiProperty({ type: User })
   prosecutor: User
 
-  @ForeignKey(() => Institution)
   /**********
-   *
+   * The surrogate key of the prosecutor's office the case has been shared with - optional
    **********/
+  @ForeignKey(() => Institution)
   @Column({
     type: DataType.UUID,
     allowNull: true,
@@ -387,6 +396,9 @@ export class Case extends Model<Case> {
   @ApiProperty()
   sharedWithProsecutorsOfficeId: string
 
+  /**********
+   * The prosecutor's office the case has been shared with - optional
+   **********/
   @BelongsTo(() => Institution, 'sharedWithProsecutorsOfficeId')
   @ApiProperty({ type: Institution })
   sharedWithProsecutorsOffice: Institution
