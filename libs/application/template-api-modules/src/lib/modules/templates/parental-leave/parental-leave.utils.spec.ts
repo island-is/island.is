@@ -38,6 +38,7 @@ const createApplicationBase = (): Application => ({
 const createExternalDataChild = (
   isPrimaryParent: boolean,
   expectedDateOfBirth: string,
+  otherParentNationalRegistryId = '1111111119',
 ): ReturnType<typeof getSelectedChild> => {
   const childBase = {
     expectedDateOfBirth,
@@ -55,7 +56,7 @@ const createExternalDataChild = (
     return {
       ...childBase,
       parentalRelation: 'secondary',
-      primaryParentNationalRegistryId: '1111111119',
+      primaryParentNationalRegistryId: otherParentNationalRegistryId,
     }
   }
 }
@@ -300,14 +301,60 @@ describe('getRightsCode', () => {
   // TODO:
   // it('should return M-S-GR-SJ for a primary parent both self employed and with an employer', () => {})
 
-  // These codes apply to children that have been born, outside of v1 scope
-  // it('should return FO-L-GR for a secondary parent with employer and custody', () => {})
-  // it('should return FO-S-GR for a self employed secondary parent with custody', () => {})
+  // These apply to unborn children where parents are in registered cohabitation
+  it('should return FO-L-GR for a secondary parent with employer and custody', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(base, 'externalData.family.data', [
+      {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+        familyRelation: 'spouse',
+      },
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'no')
+
+    const expected = 'FO-L-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+  it('should return FO-S-GR for a self employed secondary parent with custody', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(false, '2022-03-01'),
+    ])
+    set(base, 'externalData.family.data', [
+      {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+        familyRelation: 'spouse',
+      },
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'yes')
+
+    const expected = 'FO-S-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
   // TODO:
   // it('should return FO-L-GR-SJ for secondary parent that is both self employed and employed with custody', () => {})
 
-  // These codes apply to unborn children
-  it('should return FO-FL-L-GR for a secondary parent with employer and custody', () => {
+  // These codes apply to unborn children where parents are not registered partners
+  it('should return FO-FL-L-GR for a secondary parent with employer and no custody', () => {
     const base = createApplicationBase()
     set(base, 'externalData.children.data.children', [
       createExternalDataChild(false, '2022-03-01'),
@@ -320,7 +367,7 @@ describe('getRightsCode', () => {
 
     expect(result).toBe(expected)
   })
-  it('should return FO-FL-S-GR for a self employed secondary parent with custody', () => {
+  it('should return FO-FL-S-GR for a self employed secondary parent with no custody', () => {
     const base = createApplicationBase()
     set(base, 'externalData.children.data.children', [
       createExternalDataChild(false, '2022-03-01'),

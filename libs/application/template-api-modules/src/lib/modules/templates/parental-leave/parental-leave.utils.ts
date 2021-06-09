@@ -13,6 +13,7 @@ import { FamilyMember } from '@island.is/api/domains/national-registry'
 import {
   getSelectedChild,
   getApplicationAnswers,
+  getSpouse,
 } from '@island.is/application/templates/parental-leave'
 
 import { apiConstants, formConstants } from './constants'
@@ -204,21 +205,33 @@ export const getRightsCode = (application: Application): string => {
 
   const answers = getApplicationAnswers(application.answers)
   const isSelfEmployed = answers.isSelfEmployed === 'yes'
-  const isPrimaryParent = selectedChild.parentalRelation === 'primary'
 
-  if (isPrimaryParent) {
+  if (selectedChild.parentalRelation === 'primary') {
     if (isSelfEmployed) {
       return 'M-S-GR'
     } else {
       return 'M-L-GR'
     }
-  } else {
-    // Only focusing on unborn children in phase 1
+  }
+
+  const spouse = getSpouse(application)
+  const parentsAreInRegisteredCohabitation =
+    selectedChild.primaryParentNationalRegistryId === spouse?.nationalId
+
+  if (parentsAreInRegisteredCohabitation) {
+    // If this secondary parent is in registered cohabitation with primary parent
+    // then they will automatically be granted custody
     if (isSelfEmployed) {
-      return 'FO-FL-S-GR'
+      return 'FO-S-GR'
     } else {
-      return 'FO-FL-L-GR'
+      return 'FO-L-GR'
     }
+  }
+
+  if (isSelfEmployed) {
+    return 'FO-FL-S-GR'
+  } else {
+    return 'FO-FL-L-GR'
   }
 }
 
