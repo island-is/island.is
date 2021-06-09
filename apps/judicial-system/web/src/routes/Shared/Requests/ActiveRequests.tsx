@@ -79,7 +79,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
   return (
     <table
       className={styles.activeRequestsTable}
-      data-testid="custody-petition-table"
+      data-testid="custody-request-table"
       aria-describedby="activeRequestsTableCaption"
     >
       <thead className={styles.thead}>
@@ -161,7 +161,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
               styles.tableRowContainer,
               requestToRemoveIndex === i && 'isDeleting',
             )}
-            data-testid="custody-petitions-table-row"
+            data-testid="custody-requests-table-row"
             role="button"
             aria-label="Opna kröfu"
             onClick={() => {
