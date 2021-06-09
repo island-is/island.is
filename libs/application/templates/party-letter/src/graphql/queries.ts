@@ -8,6 +8,16 @@ export const GetUserEndorsements = gql`
   }
 `
 
+export const GetSingleEndorsementList = gql`
+  query endorsementSystemGetSingleEndorsementList(
+    $input: FindEndorsementListInput!
+  ) {
+    endorsementSystemGetSingleEndorsementList(input: $input) {
+      closedDate
+    }
+  }
+`
+
 export const GetFullName = gql`
   query NationalRegistryUserQuery {
     nationalRegistryUser {
@@ -27,6 +37,7 @@ export const GetEndorsements = gql`
         invalidated
       }
       created
+
       modified
     }
   }

@@ -13,14 +13,16 @@ import EndorsementApproved from '../EndorsementApproved'
 import { useHasEndorsed } from '../../hooks/useHasEndorsed'
 import { GetFullName } from '../../graphql/queries'
 import { EndorseList } from '../../graphql/mutations'
+import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
+  const endorsementListId = (application.externalData?.createEndorsementList
+    .data as any).id
   const { formatMessage } = useLocale()
   const [agreed, setAgreed] = useState(false)
   const [hasEndorsed, setHasEndorsed] = useState(false)
+  const isClosed = useIsClosed(endorsementListId)
 
-  const endorsementListId = (application.externalData?.createEndorsementList
-    .data as any).id
   const answers = application.answers as PartyLetter
   const endorsedBefore = useHasEndorsed(endorsementListId)
 
@@ -62,6 +64,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
           </Box>
           <Box width="half" marginBottom={4}>
             <Input
+              disabled={isClosed}
               label={formatMessage(m.endorsementForm.nameInput)}
               name={formatMessage(m.endorsementForm.nameInput)}
               value={userData?.nationalRegistryUser?.fullName}
@@ -84,6 +87,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
             large={true}
             backgroundColor="blue"
             defaultValue={[]}
+            disabled={isClosed}
             onSelect={() => setAgreed(!agreed)}
             options={[
               {
@@ -92,6 +96,9 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               },
             ]}
           />
+          <Text variant="eyebrow" color="red400">
+            Meðmælendalista hefur verið lokað fyrir þennan listabókstaf
+          </Text>
           <Box
             marginTop={5}
             marginBottom={8}

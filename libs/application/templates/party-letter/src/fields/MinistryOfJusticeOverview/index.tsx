@@ -17,6 +17,7 @@ const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
   const { externalData } = application
   const answers = application.answers as PartyLetter
 
+
   return (
     <Box>
       <Text variant="h3"> {formatMessage(m.ministryOfJustice.subtitle)}</Text>
@@ -55,11 +56,11 @@ const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
         </Box>
       </Box>
       <Box marginBottom={5}>
-        <ExportAsCSV
-          data={answers.endorsements as object[]}
+        {/*<ExportAsCSV
+          data={answers.endorsements as any[]}
           filename={csvFileName(answers.partyLetter, answers.partyName)}
           title={formatMessage(m.ministryOfJustice.csvButton)}
-        />
+        />*/}
       </Box>
     </Box>
   )

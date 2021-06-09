@@ -6,11 +6,13 @@ import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
-import { Endorsement, PartyLetter } from '../../lib/dataSchema'
+import { PartyLetter } from '../../lib/dataSchema'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import set from 'lodash/set'
 import cloneDeep from 'lodash/cloneDeep'
 import { useEndorsements } from '../../hooks/useFetchEndorsements'
+import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
+import { Endorsement } from '../../types/schema'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { lang: locale, formatMessage } = useLocale()
@@ -21,13 +23,19 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
   const [showWarning, setShowWarning] = useState(false)
   const endorsementsHook = useEndorsements(endorsementListId, true)
+  const isClosedHook = useIsClosed(endorsementListId)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const updateApplicationWithEndorsements = async (
     newEndorsements: Endorsement[],
   ) => {
+    const endorsementIds = newEndorsements?.map((x) => x.endorser)
+    const invalidEndorsementIds = newEndorsements
+      ?.filter((x) => x.meta.invalidated)
+      .map((x) => x.endorser)
     const updatedAnswers = {
       ...answers,
-      endorsements: cloneDeep(newEndorsements),
+      endorsements: cloneDeep(endorsementIds),
+      invalidEndorsements: cloneDeep(invalidEndorsementIds),
     }
     await updateApplication({
       variables: {
@@ -40,26 +48,15 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         locale,
       },
     }).then(() => {
-      set(answers, 'endorsements', cloneDeep(newEndorsements))
+      set(answers, 'endorsements', cloneDeep(endorsementIds))
     })
   }
 
   useEffect(() => {
-    const mapToEndorsementList: Endorsement[] | undefined =
-      endorsementsHook && endorsementsHook.length > 0
-        ? endorsementsHook.map((x: any) => ({
-            date: x.created,
-            name: x.meta.fullName,
-            nationalId: x.endorser,
-            address: x.meta.address ? x.meta.address.streetAddress : '',
-            hasWarning: x.meta.invalidated ?? false,
-            id: x.id,
-          }))
-        : undefined
     setEndorsements((_) => {
-      if (mapToEndorsementList && mapToEndorsementList.length > 0)
-        updateApplicationWithEndorsements(mapToEndorsementList)
-      return mapToEndorsementList
+      if (endorsementsHook && endorsementsHook.length > 0)
+        updateApplicationWithEndorsements(endorsementsHook)
+      return endorsementsHook
     })
   }, [endorsementsHook])
 
@@ -99,7 +96,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 ? setEndorsements(endorsements)
                 : setEndorsements(
                     endorsements
-                      ? endorsements.filter((x) => x.hasWarning)
+                      ? endorsements.filter((x) => x.meta.invalidated)
                       : endorsements,
                   )
             }}
@@ -115,8 +112,8 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
               setSearchTerm(e.target.value)
               setEndorsements(
                 endorsements
-                  ? endorsements.filter((x) =>
-                      x.name.startsWith(e.target.value),
+                  ? endorsements.filter(
+                      (x) => x.meta?.fullName?.startsWith(e.target.value) ?? '',
                     )
                   : endorsements,
               )
@@ -127,6 +124,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
           application={application}
           endorsements={endorsements}
         />
+        {isClosedHook && <Text>ER LOKAÐ GETUR EKKI SETT INN EXCEL!!</Text>}
       </Box>
     </Box>
   )

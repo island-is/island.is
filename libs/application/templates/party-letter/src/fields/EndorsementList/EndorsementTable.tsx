@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Application } from '@island.is/application/core'
-import { Endorsement } from '../../lib/dataSchema'
+import { Endorsement } from '../../types/schema'
 import { Box, Table as T, Tooltip } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -22,28 +22,23 @@ interface EndorsementTableProps {
 
 const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
   const { formatMessage } = useLocale()
+
   const renderRow = (endorsement: Endorsement) => {
     return (
       <T.Row key={endorsement.id}>
-        <T.Data key={endorsement.id + endorsement.date}>
-          {formatDate(endorsement.date)}
-        </T.Data>
-        <T.Data key={endorsement.id + endorsement.name}>
-          {endorsement.name}
-        </T.Data>
-        <T.Data key={endorsement.id + endorsement.nationalId}>
-          {formatKennitala(endorsement.nationalId)}
-        </T.Data>
+        <T.Data>{formatDate(endorsement.created)}</T.Data>
+        <T.Data>{endorsement.meta.fullName}</T.Data>
+        <T.Data>{formatKennitala(endorsement.endorser)}</T.Data>
         <T.Data
           key={endorsement.id}
           box={{
-            background: endorsement.hasWarning ? 'yellow200' : 'white',
+            background: endorsement.meta.invalidated ? 'yellow200' : 'white',
             textAlign: 'right',
           }}
         >
-          {endorsement.hasWarning ? (
+          {endorsement.meta.invalidated ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.address}
+              {endorsement.meta.address.streetAddress}
               <Box marginLeft={2}>
                 <Tooltip
                   color="blue400"
@@ -53,7 +48,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
               </Box>
             </Box>
           ) : (
-            endorsement.address
+            endorsement.meta.address.streetAddress
           )}
         </T.Data>
       </T.Row>
@@ -75,8 +70,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
         </T.Row>
       </T.Head>
       <T.Body>
-        {endorsements &&
-          endorsements.length &&
+        {!!endorsements?.length &&
           endorsements.map((endorsements) => renderRow(endorsements))}
       </T.Body>
     </T.Table>

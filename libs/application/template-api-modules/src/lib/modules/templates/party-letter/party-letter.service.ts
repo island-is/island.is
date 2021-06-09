@@ -12,7 +12,7 @@ type ErrorResponse = {
     message: string
   }
 }
-type CreateEndorsementListResponse =
+type EndorsementListResponse =
   | {
       data: {
         endorsementSystemCreateEndorsementList: {
@@ -46,7 +46,29 @@ export class PartyLetterService {
     )
   }
 
-  async applicationRejected({ application }: TemplateApiModuleActionProps) {
+  async applicationRejected({
+    application,
+    authorization,
+  }: TemplateApiModuleActionProps) {
+    const CLOSE_ENDORSEMENT = `
+      mutation {
+        endorsementSystemCloseEndorsementList(input: {
+          listId: "${
+            (application.externalData?.createEndorsementList.data as any).id
+          }",
+        }) {
+          id
+        }
+      }
+    `
+    const endorsementId: EndorsementListResponse = await this.sharedTemplateAPIService
+      .makeGraphqlQuery(authorization, CLOSE_ENDORSEMENT)
+      .then((response) => response.json())
+
+    if ('errors' in endorsementId) {
+      throw new Error('Failed to close endorsement list')
+    }
+
     await this.sharedTemplateAPIService.sendEmail(
       generateApplicationRejectedEmail,
       application,
@@ -78,9 +100,11 @@ export class PartyLetterService {
       }
     `
 
-    const endorsementList: CreateEndorsementListResponse = await this.sharedTemplateAPIService
+    const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY)
       .then((response) => response.json())
+
+    console.log('this id: ', endorsementList)
 
     if ('errors' in endorsementList) {
       throw new Error('Failed to create endorsement list')

@@ -59,11 +59,11 @@ const PartyLetterApplicationApprovedOverview: FC<FieldBaseProps> = ({
         </Box>
       </Box>
       <Box display="flex">
-        <ExportAsCSV
-          data={answers.endorsements as object[]}
+       {/* <ExportAsCSV
+          data={answers.endorsements as any[]}
           filename={csvFileName(answers.partyLetter, answers.partyName)}
           title={formatMessage(m.ministryOfJustice.csvButton)}
-        />
+       />*/}
       </Box>
     </Box>
   )

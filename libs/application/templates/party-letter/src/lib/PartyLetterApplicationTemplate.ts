@@ -176,8 +176,8 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/CollectEndorsements').then((val) =>
-                  Promise.resolve(val.CollectEndorsements),
+                import('../forms/EndorsementForm').then((val) =>
+                  Promise.resolve(val.EndorsementForm),
                 ),
               actions: [
                 {
