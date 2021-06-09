@@ -118,6 +118,29 @@ export class EndorsementListController {
   }
 
   @ApiOkResponse({
+    description: 'Open a single endorsements list by id',
+    type: EndorsementList,
+  })
+  @ApiParam({ name: 'listId', type: 'string' })
+  @Put(':listId/open')
+  @Audit<EndorsementList>({
+    namespace: auditNamespace,
+    action: 'open',
+    resources: (endorsementList) => endorsementList.id,
+  })
+  async open(
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+      IsEndorsementListOwnerValidationPipe,
+    )
+    endorsementList: EndorsementList,
+  ): Promise<EndorsementList> {
+    return await this.endorsementListService.open(endorsementList)
+  }
+
+  @ApiOkResponse({
     description: 'Create an endorsements list',
     type: EndorsementList,
   })
