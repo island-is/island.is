@@ -213,6 +213,11 @@ const prodConfig = {
   partyLetterRegistry: {
     baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
   },
+  fjarmalDomain: {
+    url: process.env.FJARMAL_API ?? '',
+    username: process.env.FJARMAL_USER ?? '',
+    password: process.env.FJARMAL_PASS ?? '',
+  },
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
