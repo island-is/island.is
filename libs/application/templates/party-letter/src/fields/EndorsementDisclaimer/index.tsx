@@ -64,7 +64,6 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
           </Box>
           <Box width="half" marginBottom={4}>
             <Input
-              disabled={isClosed}
               label={formatMessage(m.endorsementForm.nameInput)}
               name={formatMessage(m.endorsementForm.nameInput)}
               value={userData?.nationalRegistryUser?.fullName}
@@ -96,9 +95,11 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               },
             ]}
           />
-          <Text variant="eyebrow" color="red400">
-            Meðmælendalista hefur verið lokað fyrir þennan listabókstaf
-          </Text>
+          {isClosed && (
+            <Text variant="eyebrow" color="red400">
+              {formatMessage(m.endorsementForm.isClosedMessage)}
+            </Text>
+          )}
           <Box
             marginTop={5}
             marginBottom={8}
