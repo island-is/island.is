@@ -196,6 +196,11 @@ export const m: MessageDir = {
       defaultMessage: 'Sjá einungis meðmæli í vafa',
       description: 'Invalid signatures message',
     },
+    signatureInvalidTooltip: {
+      id: 'pa.application:endorsementList.tooltip',
+      defaultMessage: 'Meðmæli í vafa',
+      description: 'Invalid signature tooltip',
+    },
   }),
   endorsementListSubmission: defineMessages({
     title: {
@@ -392,6 +397,16 @@ export const m: MessageDir = {
       id: 'pa.application:recommendations.fileupload.label',
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Label for file upload',
+    },
+    uploadSuccess: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Pappírsmeðmælum hefur verið hlaðið upp!',
+      description: 'Upload succeeded text',
+    },
+    uploadFail: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
+      description: 'Upload failed text',
     },
   }),
   endorsementDisclaimer: defineMessages({

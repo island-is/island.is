@@ -8,6 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { useEndorsements } from '../../hooks/useFetchEndorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import { Endorsement } from '../../types/schema'
+import BulkUpload from '../BulkUpload'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -15,13 +16,14 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     .data as any).id
   const [searchTerm, setSearchTerm] = useState('')
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
+  const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
   const [showWarning, setShowWarning] = useState(false)
   const endorsementsHook = useEndorsements(endorsementListId, true)
   const isClosedHook = useIsClosed(endorsementListId)
 
   useEffect(() => {
     setEndorsements(endorsementsHook)
-  }, [endorsementsHook])
+  }, [endorsementsHook, updateOnBulkImport])
 
   const namesCountString = formatMessage(
     endorsementsHook && endorsementsHook.length > 1
@@ -89,6 +91,14 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         />
         {/* TODO: Laga þegar bulk er komið inn */}
         {isClosedHook && <Text>ER LOKAÐ GETUR EKKI SETT INN EXCEL!!</Text>}
+        <Box marginY={5}>
+          <BulkUpload
+            application={application}
+            onSuccess={() => {
+              setUpdateOnBulkImport(true)
+            }}
+          />
+        </Box>
       </Box>
     </Box>
   )

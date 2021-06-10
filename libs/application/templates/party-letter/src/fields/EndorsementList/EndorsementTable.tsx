@@ -1,11 +1,11 @@
 import React, { FC } from 'react'
 import { Application } from '@island.is/application/core'
-import { Endorsement } from '../../types/schema'
-import { Box, Table as T, Tooltip } from '@island.is/island-ui/core'
+import { Box, Table as T, Tooltip, Icon } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
+import { Endorsement } from '../../types/schema'
 
 const formatDate = (date: string) => {
   try {
@@ -24,27 +24,54 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
   const { formatMessage } = useLocale()
 
   const renderRow = (endorsement: Endorsement) => {
+    const rowBackground = endorsement.meta.bulkEndorsement
+      ? 'blue200'
+      : endorsement.meta.invalidated
+      ? 'yellow200'
+      : 'white'
     return (
       <T.Row key={endorsement.id}>
-        <T.Data>{formatDate(endorsement.created)}</T.Data>
-        <T.Data>{endorsement.meta.fullName}</T.Data>
-        <T.Data>{formatKennitala(endorsement.endorser)}</T.Data>
         <T.Data
-          key={endorsement.id}
           box={{
-            background: endorsement.meta.invalidated ? 'yellow200' : 'white',
+            background: rowBackground,
+          }}
+        >
+          {formatDate(endorsement.created)}
+        </T.Data>
+        <T.Data
+          box={{
+            background: rowBackground,
+          }}
+        >
+          {endorsement.meta.fullName}
+        </T.Data>
+        <T.Data
+          box={{
+            background: rowBackground,
+          }}
+        >
+          {formatKennitala(endorsement.endorser)}
+        </T.Data>
+        <T.Data
+          box={{
+            background: rowBackground,
             textAlign: 'right',
           }}
         >
-          {endorsement.meta.invalidated ? (
+          {endorsement.meta.invalidated || endorsement.meta.bulkEndorsement ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
               {endorsement.meta.address.streetAddress}
               <Box marginLeft={2}>
-                <Tooltip
-                  color="blue400"
-                  iconSize="medium"
-                  text={formatMessage(m.validationMessages.signatureInvalid)}
-                />
+                {endorsement.meta.invalidated && (
+                  <Tooltip
+                    color="blue400"
+                    iconSize="medium"
+                    text={formatMessage(m.validationMessages.signatureInvalid)}
+                  />
+                )}
+                {endorsement.meta.bulkEndorsement && (
+                  <Icon icon="attach" color="blue400" />
+                )}
               </Box>
             </Box>
           ) : (
