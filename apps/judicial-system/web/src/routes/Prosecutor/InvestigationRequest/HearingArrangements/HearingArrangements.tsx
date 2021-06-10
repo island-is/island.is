@@ -93,7 +93,9 @@ const HearingArrangements = () => {
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
       ) {
-        router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+        router.push(
+          `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+        )
       } else {
         setModalVisible(true)
       }
