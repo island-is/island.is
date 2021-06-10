@@ -25,6 +25,9 @@ if [ -f $PROJECT_ROOT/$APP_HOME/docker-compose.ci.yml ]; then
   }
   trap 'clean_up $? $LINENO' EXIT
 
+  # Create folder for terminlaOutputs in case they're created by docker
+  mkdir -p node_modules/.cache/nx/terminalOutputs/
+
   # Running the tests using docker-compose
   docker-compose -p test-$APP $COMPOSE_FILES run --rm sut
 else

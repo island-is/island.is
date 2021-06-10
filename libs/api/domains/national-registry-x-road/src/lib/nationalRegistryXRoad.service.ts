@@ -78,7 +78,11 @@ export class NationalRegistryXRoadService {
   async getChildrenCustodyInformation(
     parentNationalId: string,
     authToken: string,
-  ): Promise<NationalRegistryPerson[] | undefined> {
+  ): Promise<
+    | NationalRegistryPerson[]
+    | Omit<NationalRegistryPerson, 'otherParent'>[]
+    | undefined
+  > {
     try {
       const childrenNationalIds = await this.getCustody(
         parentNationalId,
@@ -117,23 +121,27 @@ export class NationalRegistryXRoadService {
             (person) => person.kennitala === child.kennitala,
           )
           const livesWithParentB = parentAFamily.einstaklingar?.some(
-            (person) => person.kennitala === parentB.kennitala,
+            (person) => person.kennitala === parentB?.kennitala,
           )
+
+          const parentBObject = parentB?.kennitala
+            ? {
+                nationalId: parentB.kennitala,
+                fullName: parentB.nafn,
+                address: {
+                  streetName: parentB.logheimili?.heiti || undefined,
+                  postalCode: parentB.logheimili?.postnumer || undefined,
+                  city: parentB.logheimili?.stadur || undefined,
+                },
+              }
+            : null
 
           return {
             nationalId: child.kennitala,
             fullName: child.nafn,
             livesWithApplicant,
             livesWithBothParents: livesWithParentB && livesWithApplicant,
-            otherParent: {
-              nationalId: parentB.kennitala,
-              fullName: parentB.nafn,
-              address: {
-                streetName: parentB.logheimili?.heiti || undefined,
-                postalCode: parentB.logheimili?.postnumer || undefined,
-                city: parentB.logheimili?.stadur || undefined,
-              },
-            },
+            otherParent: parentBObject,
           }
         }),
       )

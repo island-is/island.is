@@ -3,6 +3,20 @@ const yargs = require('yargs/yargs')
 const argv = yargs(process.argv.slice(2)).argv
 const xlsx = require('node-xlsx')
 
+/**
+ * The national registry provides us with a excel file containing the temporary voter registry.
+ * This seeder file serves as out way to update the database safely via data from that excel file.
+ * The first row of the excel file must be headers.
+ * The excel file should include three columns from left to right: National id, region number, region name.
+ * national_id: string
+ * region_number: number
+ * region_name: string
+ *
+ * Uploading a excel file will always bump the version the voter registry will not serve data from older version.
+ * The voter registry service will find the current active version on the first request to the service.
+ * The temporary voter registry must be updated in its entirety to ensure all data belongs to the same version.
+ */
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     // get the next version of the data (we use raw here cause the model is in ts)

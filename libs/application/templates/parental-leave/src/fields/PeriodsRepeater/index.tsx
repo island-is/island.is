@@ -1,18 +1,34 @@
 import React, { FC } from 'react'
-import { RepeaterProps } from '@island.is/application/core'
 
+import { RepeaterProps } from '@island.is/application/core'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import Timeline from '../components/Timeline'
-import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { parentalLeaveFormMessages } from '../../lib/messages'
 
-const PeriodsRepeater: FC<RepeaterProps> = ({
+import Timeline from '../components/Timeline'
+import {
+  formatPeriods,
+  getExpectedDateOfBirth,
+} from '../../lib/parentalLeaveUtils'
+import { parentalLeaveFormMessages } from '../../lib/messages'
+import { States } from '../../constants'
+
+type FieldProps = {
+  field?: {
+    props?: {
+      showDescription: boolean
+    }
+  }
+}
+type ScreenProps = RepeaterProps & FieldProps
+
+const PeriodsRepeater: FC<ScreenProps> = ({
   removeRepeaterItem,
   application,
   expandRepeater,
+  field,
 }) => {
+  const showDescription = field?.props?.showDescription ?? true
   const dob = getExpectedDateOfBirth(application)
   const { formatMessage } = useLocale()
 
@@ -22,16 +38,19 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
 
   const dobDate = new Date(dob)
   const editable =
-    application.state === 'draft' || application.state === 'editOrAddPeriods'
+    application.state === States.DRAFT ||
+    application.state === States.EDIT_OR_ADD_PERIODS
 
   return (
     <Box>
-      <FieldDescription
-        description={formatMessage(
-          parentalLeaveFormMessages.leavePlan.description,
-        )}
-      />
-      <Box marginY={3}>
+      {showDescription && (
+        <FieldDescription
+          description={formatMessage(
+            parentalLeaveFormMessages.leavePlan.description,
+          )}
+        />
+      )}
+      <Box marginTop={showDescription ? 3 : undefined} marginBottom={3}>
         <Timeline
           initDate={dobDate}
           title={formatMessage(

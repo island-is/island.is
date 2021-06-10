@@ -6,10 +6,11 @@ const eDeleteSeeds = require('../src/app/modules/endorsement/e2e/deleteEndorseme
 const eFindAllSeeds = require('../src/app/modules/endorsement/e2e/findAllEndorsement/seed')
 const eFindByUserSeeds = require('../src/app/modules/endorsement/e2e/findByUserEndorsement/seed')
 
-const elFindByTag = require('../src/app/modules/endorsementList/e2e/findByTagEndorsementList/seed')
+const elFindByTags = require('../src/app/modules/endorsementList/e2e/findByTagsEndorsementList/seed')
 const elClose = require('../src/app/modules/endorsementList/e2e/closeEndorsementList/seed')
 const elFindEndorsements = require('../src/app/modules/endorsementList/e2e/findEndorsementsEndorsementList/seed')
 const elFindOne = require('../src/app/modules/endorsementList/e2e/findOneEndorsementList/seed')
+const elOpen = require('../src/app/modules/endorsementList/e2e/openEndorsementList/seed')
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -19,10 +20,11 @@ module.exports = {
       ...eDeleteSeeds.endorsementLists,
       ...eFindAllSeeds.endorsementLists,
       ...eFindByUserSeeds.endorsementLists,
-      ...elFindByTag.endorsementLists,
+      ...elFindByTags.endorsementLists,
       ...elClose.endorsementLists,
       ...elFindEndorsements.endorsementLists,
       ...elFindOne.endorsementLists,
+      ...elOpen.endorsementLists,
     ]
     const endorsements = [
       ...eBulkSeeds.endorsements,

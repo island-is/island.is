@@ -7,6 +7,7 @@ export const CaseQuery = gql`
       created
       modified
       type
+      description
       state
       policeCaseNumber
       accusedNationalId
@@ -25,16 +26,17 @@ export const CaseQuery = gql`
       leadInvestigator
       arrestDate
       requestedCourtDate
-      requestedCustodyEndDate
-      otherDemands
+      requestedValidToDate
+      demands
       lawsBroken
+      legalBasis
       custodyProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
-      witnessAccounts
-      investigationProgress
       legalArguments
+      requestProsecutorOnlySession
+      prosecutorOnlySessionRequest
       comments
       caseFilesComments
       prosecutor {
@@ -57,7 +59,7 @@ export const CaseQuery = gql`
       courtStartDate
       courtEndTime
       courtAttendees
-      policeDemands
+      prosecutorDemands
       courtDocuments
       additionToConclusion
       accusedPleaDecision
@@ -67,8 +69,8 @@ export const CaseQuery = gql`
       courtLegalArguments
       ruling
       decision
-      custodyEndDate
-      isCustodyEndDateInThePast
+      validToDate
+      isValidToDateInThePast
       custodyRestrictions
       otherRestrictions
       isolationTo
@@ -91,7 +93,7 @@ export const CaseQuery = gql`
       }
       parentCase {
         id
-        custodyEndDate
+        validToDate
         decision
         courtCaseNumber
         ruling

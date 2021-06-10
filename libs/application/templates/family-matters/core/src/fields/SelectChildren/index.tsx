@@ -1,22 +1,20 @@
 import React, { useState } from 'react'
-import { MessageDescriptor, useIntl } from 'react-intl'
+import { MessageDescriptor, useIntl, IntlFormatters } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  Child,
-  Address,
-} from '@island.is/application/templates/family-matters-core/types'
+import { Child } from '@island.is/application/templates/family-matters-core/types'
 import {
   DescriptionText,
   InfoBanner,
 } from '@island.is/application/templates/family-matters-core/components'
+import { sortChildrenByAge } from '@island.is/application/templates/family-matters-core/utils'
 
 const shouldBeDisabled = (
   children: Child[],
   childOption: Child,
   selectedChildren?: string[],
 ) => {
-  if (childOption.livesWithBothParents) {
+  if (childOption.livesWithBothParents || !childOption.otherParent) {
     return true
   }
   if (!selectedChildren || selectedChildren?.length === 0) {
@@ -28,8 +26,8 @@ const shouldBeDisabled = (
 
   if (
     firstSelectedChild?.livesWithApplicant !== childOption.livesWithApplicant ||
-    firstSelectedChild?.otherParent.nationalId !==
-      childOption.otherParent.nationalId
+    firstSelectedChild?.otherParent?.nationalId !==
+      childOption.otherParent?.nationalId
   ) {
     return true
   }
@@ -44,10 +42,50 @@ interface Props {
     description: MessageDescriptor
     ineligible: MessageDescriptor
     checkBoxSubLabel: MessageDescriptor
+    soleCustodySubLabel: MessageDescriptor
     livesWithBothParents?: MessageDescriptor
+    soleCustodyTooltip?: MessageDescriptor
   }
   currentAnswer?: string[]
   error?: string
+}
+
+const checkboxInfoText = (
+  child: Child,
+  formatMessage: IntlFormatters['formatMessage'],
+  translations: Props['translations'],
+) => {
+  const {
+    soleCustodySubLabel,
+    soleCustodyTooltip,
+    checkBoxSubLabel,
+    livesWithBothParents,
+  } = translations
+  const defaultSubLabel = formatMessage(checkBoxSubLabel, {
+    parentName: child.otherParent?.fullName,
+  })
+  if (!child.otherParent) {
+    return {
+      subLabel: formatMessage(soleCustodySubLabel),
+      tooltip:
+        soleCustodyTooltip &&
+        formatMessage(soleCustodyTooltip, {
+          childName: child.fullName,
+        }),
+    }
+  } else if (child.livesWithBothParents) {
+    return {
+      subLabel: defaultSubLabel,
+      tooltip:
+        livesWithBothParents &&
+        formatMessage(livesWithBothParents, {
+          childName: child.fullName,
+        }),
+    }
+  }
+  return {
+    subLabel: defaultSubLabel,
+  }
 }
 
 const SelectChildren = ({
@@ -64,6 +102,7 @@ const SelectChildren = ({
   const childrenNotEligibleForTransfer = children.every(
     (child) => child.livesWithBothParents,
   )
+
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
@@ -88,19 +127,13 @@ const SelectChildren = ({
         defaultValue={selectedChildrenState}
         error={error}
         large={true}
-        options={children.map((child) => ({
+        options={sortChildrenByAge(children).map((child) => ({
           value: child.nationalId,
           label: child.fullName,
-          tooltip:
-            child.livesWithBothParents &&
-            translations.livesWithBothParents &&
-            formatMessage(translations.livesWithBothParents, {
-              childName: child.fullName,
-            }),
+          tooltip: checkboxInfoText(child, formatMessage, translations).tooltip,
           disabled: shouldBeDisabled(children, child, selectedChildrenState),
-          subLabel: formatMessage(translations.checkBoxSubLabel, {
-            parentName: child.otherParent.fullName,
-          }),
+          subLabel: checkboxInfoText(child, formatMessage, translations)
+            .subLabel,
         }))}
         onSelect={(newAnswer) => setSelectedChildrenState(newAnswer)}
       />

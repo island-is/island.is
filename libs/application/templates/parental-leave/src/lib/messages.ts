@@ -101,6 +101,23 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hitt foreldrið er {spouseName} (kt. {spouseId})',
       description: `The other parent is {spouseName} (kt. {spouseId})`,
     },
+    otherParentEmailSubSection: {
+      id: 'pl.application:otherParentEmail.subSection',
+      defaultMessage: 'Netfang hins foreldris',
+      description: 'Other parent email',
+    },
+    otherParentEmailTitle: {
+      id: 'pl.application:otherParentEmail.title',
+      defaultMessage: 'Hvert er netfang hins foreldrisins?',
+      description: 'Asking about the email address of the other parent',
+    },
+    otherParentEmailDescription: {
+      id: 'pl.application:otherParentEmail.description',
+      defaultMessage:
+        'Þú ert að óska eftir réttindum frá hinu foreldrinu sem það þarf að samþykkja.',
+      description:
+        'We need the email if you are requesting days or personal discount from the other parent for them to verify',
+    },
     paymentInformationSubSection: {
       id: 'pl.application:payment.information.subsection',
       defaultMessage: 'Greiðsluupplýsingar',
@@ -339,6 +356,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Sækja gögn',
       description: 'External Data',
     },
+    checkboxProvider: {
+      id: 'pl.application:checkbox.provider',
+      defaultMessage:
+        'Ég skil að ofangreindra gagna verður aflað í umsóknarferlinu',
+      description: 'Checbox to confirm data provider',
+    },
     dateOfBirthTitle: {
       id: 'pl.application:dateOfBirth.title',
       defaultMessage: 'Fæðingardagur',
@@ -402,6 +425,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:salary.label.month',
       defaultMessage: 'Mánuður',
       description: 'Month',
+    },
+    salaryLabelUnion: {
+      id: 'pl.application:salary.label.union',
+      defaultMessage: 'Stéttarfélag',
+      description: 'Union',
     },
     salaryLabelPensionFund: {
       id: 'pl.application:salary.label.pensionfund',
@@ -1041,15 +1069,30 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     otherParentTitle: {
       id: 'pl.application:review.otherParent.title',
-      defaultMessage: 'Annað foreldri samþykkir framlengingu',
-      description: 'Other parent approves extra time',
+      defaultMessage: 'Annað foreldri samþykkir umsóknina',
+      description: 'Other parent approves the application',
     },
-    otherParentDesc: {
-      id: 'pl.application:review.otherParent.description',
+    otherParentDescRequestingBoth: {
+      id: 'pl.application:review.otherParent.otherParentDescRequestingBoth',
+      defaultMessage:
+        'Hitt foreldrið þarf að samþykkja aukadagana sem þú hefur beðið um og notkun persónuafsláttarins.',
+      description:
+        'The other parent will need to approve the extra days you’ve requested and the use of their personal allowance.',
+    },
+    otherParentDescRequestingRights: {
+      id: 'pl.application:review.otherParent.otherParentDescRequestingRights',
       defaultMessage:
         'Hitt foreldrið þarf að samþykkja aukadagana sem þú hefur beðið um.',
       description:
         'The other parent will need to approve the extra days you’ve requested.',
+    },
+    otherParentDescRequestingPersonalDiscount: {
+      id:
+        'pl.application:review.otherParent.otherParentDescRequestingPersonalDiscount',
+      defaultMessage:
+        'Hitt foreldrið þarf að samþykkja notkun persónuafsláttar síns.',
+      description:
+        'The other parent will need to approve the use of their personal discount.',
     },
     employerTitle: {
       id: 'pl.application:review.employer.title',
@@ -1327,6 +1370,16 @@ export const otherParentApprovalFormMessages = defineMessages({
     description:
       'You are apparently expecting a baby with some person that wishes to use one month of your rights. That means your rights will be 5 months at most. Do you agree?',
   },
+  labelDays: {
+    id: 'pl.application:otherParent.label.days',
+    defaultMessage: 'Fjöldi umbeðinna daga',
+    description: 'Number of requested days',
+  },
+  labelPersonalDiscount: {
+    id: 'pl.application:otherParent.label.personalDiscount',
+    defaultMessage: 'Nýting á þínum persónuafslætti',
+    description: 'Usage of your personald discount',
+  },
   finalTitle: {
     id: 'pl.application:otherParent.final.title',
     defaultMessage: 'Takk fyrir',
@@ -1371,6 +1424,11 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Við höfum ekki getað sótt sjálfkrafa fæðingardag barnsins þíns. Vinsamlegast reyndu aftur síðar.',
     description: `Can't retrieve the DOB copy`,
+  },
+  noChildData: {
+    id: 'pl.application:answerValidators.noChildData',
+    defaultMessage: 'Ekki tókst að sækja upplýsingar um börn',
+    description: 'Could not fetch child data',
   },
   periodsStartDate: {
     id: 'pl.application:answerValidators.periodsStartDate',

@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'
-import { getAllPeriodDates } from '../parentalLeaveUtils'
+import { getAllPeriodDates } from '../lib/parentalLeaveUtils'
 import { Period } from '../types'
 
 export const EditOrAddPeriods: Form = buildForm({
@@ -22,8 +22,8 @@ export const EditOrAddPeriods: Form = buildForm({
   mode: FormModes.EDITING,
   children: [
     buildSection({
-      id: 'editOrAddPeropds',
-      title: '',
+      id: 'editOrAddPeriods',
+      title: parentalLeaveFormMessages.leavePlan.title,
       children: [
         buildRepeater({
           id: 'periods',
@@ -91,7 +91,7 @@ export const EditOrAddPeriods: Form = buildForm({
           children: [
             buildCustomField({
               id: 'confirmationScreen',
-              title: '',
+              title: parentalLeaveFormMessages.confirmation.title,
               component: 'EditPeriodsReview',
             }),
             buildSubmitField({

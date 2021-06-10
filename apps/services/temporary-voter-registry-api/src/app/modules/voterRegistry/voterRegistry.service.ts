@@ -30,8 +30,8 @@ export class VoterRegistryService {
           return data
         }
       })
-    this.version = parseInt(version)
-    return parseInt(version)
+    this.version = version
+    return version
   }
 
   async findByNationalId(nationalId: string): Promise<VoterRegistry | null> {
