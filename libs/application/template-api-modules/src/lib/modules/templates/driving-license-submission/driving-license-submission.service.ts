@@ -7,14 +7,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
 import { ChargeResult } from '@island.is/api/domains/payment'
-<<<<<<< HEAD
-
-//import { PaymentService } from '../../../../../../../../apps/application-system/api/src/app/modules/payment/payment.service'
-//import { PaymentService as ApiDomainsPaymentService } from '@island.is/api/domains/payment'
-import { resolveModelGetter } from 'sequelize-typescript'
-=======
 import { application } from 'express'
->>>>>>> feature/driving-license-demo
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
