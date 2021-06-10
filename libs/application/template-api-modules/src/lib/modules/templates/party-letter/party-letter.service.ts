@@ -58,7 +58,7 @@ export class PartyLetterService {
     const endorsementId: EndorsementListResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery(authorization, CLOSE_ENDORSEMENT)
       .then((response) => response.json())
-      console.log("close",endorsementId )
+    console.log('close', endorsementId)
 
     if ('errors' in endorsementId) {
       throw new Error('Failed to close endorsement list')
@@ -90,7 +90,7 @@ export class PartyLetterService {
       .makeGraphqlQuery(authorization, OPEN_ENDORSEMENT)
       .then((response) => response.json())
 
-      console.log("open",endorsementId )
+    console.log('open', endorsementId)
 
     if ('errors' in endorsementId) {
       throw new Error('Failed to open endorsement list')
