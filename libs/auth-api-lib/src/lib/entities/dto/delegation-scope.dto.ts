@@ -13,13 +13,20 @@ export class UpdateDelegationScopeDTO {
 }
 
 export class DelegationScopeDTO {
+  @ApiPropertyOptional()
+  id?: string
+
   @IsString()
   @ApiProperty()
   delegationId!: string
 
   @IsString()
   @ApiProperty()
-  scopeName!: string
+  scopeName?: string
+
+  @IsString()
+  @ApiProperty()
+  identityResourceName?: string
 
   @IsDateString()
   @ApiProperty()
