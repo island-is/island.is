@@ -1,38 +1,35 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
+import cn from 'classnames'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../../queries'
 import { Screen } from '../../../types'
 import {
-  Accordion,
-  AccordionItem,
   Box,
   GridColumn,
   GridContainer,
   GridRow,
+  Stack,
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
 
-import { questions } from '../mock'
-import {
-  ServiceWebSearchSection,
-  ServiceWebHeader,
-} from '@island.is/web/components'
+import { solution, questions } from '../mock'
+import { ServiceWebHeader, renderHtml } from '@island.is/web/components'
 import {
   LinkResolverResponse,
   useLinkResolver,
 } from '@island.is/web/hooks/useLinkResolver'
-import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './Category.treat'
+import * as sharedStyles from '../shared/styles.treat'
 
 interface CategoryProps {
   namespace: Query['getNamespace']
+  slug: string
 }
 
-const Category: Screen<CategoryProps> = ({}) => {
+const Category: Screen<CategoryProps> = ({ slug }) => {
   const linkResolver = useLinkResolver()
 
   const logoTitle = 'Þjónustuvefur Sýslumanna'
@@ -40,41 +37,73 @@ const Category: Screen<CategoryProps> = ({}) => {
   return (
     <>
       <ServiceWebHeader logoTitle={logoTitle} />
-      <div className={styles.bg} />
-      <Box className={styles.searchSection}>
-        <ServiceWebSearchSection
-          logoTitle={logoTitle}
-          title="Getum við aðstoðað?"
-        />
-      </Box>
-      <Box marginY={[0, 0, 10]}>
+      <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
+      <Box marginY={[3, 3, 10]}>
         <GridContainer>
           <GridRow>
             <GridColumn
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12']}
             >
-              <Box
-                className={styles.faqs}
-                paddingX={[2, 2, 4, 15]}
-                paddingY={[2, 2, 4, 8]}
-              >
-                <Text variant="h3" as="h3">
-                  Algengar spurningar
-                </Text>
+              <GridContainer>
+                <GridRow>
+                  <GridColumn
+                    span={['12/12', '12/12', '12/12', '9/12']}
+                    paddingBottom={4}
+                  >
+                    <Text variant="h1" as="h1">
+                      {solution.title}
+                    </Text>
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn
+                    span={['12/12', '12/12', '12/12', '9/12']}
+                    paddingBottom={15}
+                  >
+                    {renderHtml(solution.description)}
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn span="12/12">
+                    <Box
+                      className={styles.faqs}
+                      paddingX={[2, 2, 4, 15]}
+                      paddingY={[2, 2, 4, 8]}
+                    >
+                      <GridContainer>
+                        <GridRow>
+                          <GridColumn
+                            span={['12/12', '12/12', '12/12', '12/12', '9/12']}
+                          >
+                            <Stack space={1}>
+                              <Text variant="h3" as="h3">
+                                Skírteini
+                              </Text>
+                              <Text>
+                                Vegabréf, ökuskírteini, bílpróf, ökuréttindi
+                                o.fl.
+                              </Text>
+                            </Stack>
 
-                <Box marginTop={[2, 2, 4, 8]}>
-                  <Accordion dividerOnTop={false} dividerOnBottom={false}>
-                    {questions.map(({ q }, index) => {
-                      return (
-                        <TopicCard href="https://visir.is" key={index}>
-                          {q}
-                        </TopicCard>
-                      )
-                    })}
-                  </Accordion>
-                </Box>
-              </Box>
+                            <Box marginTop={[2, 2, 4, 8]}>
+                              <Stack space={2}>
+                                {questions.map(({ q }, index) => {
+                                  return (
+                                    <TopicCard href="#" key={index}>
+                                      {q}
+                                    </TopicCard>
+                                  )
+                                })}
+                              </Stack>
+                            </Box>
+                          </GridColumn>
+                        </GridRow>
+                      </GridContainer>
+                    </Box>
+                  </GridColumn>
+                </GridRow>
+              </GridContainer>
             </GridColumn>
           </GridRow>
         </GridContainer>
@@ -84,6 +113,8 @@ const Category: Screen<CategoryProps> = ({}) => {
 }
 
 Category.getInitialProps = async ({ apolloClient, locale, query }) => {
+  const slug = query.slug as string
+
   const [namespace] = await Promise.all([
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
@@ -104,6 +135,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     namespace,
+    slug,
   }
 }
 

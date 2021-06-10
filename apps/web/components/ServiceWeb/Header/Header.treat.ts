@@ -1,15 +1,5 @@
 import { style } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { DESKTOP_HEADER_HEIGHT, MOBILE_HEADER_HEIGHT } from '../constants'
-
-export const header = style({
-  height: MOBILE_HEADER_HEIGHT,
-  ...themeUtils.responsiveStyle({
-    lg: {
-      height: DESKTOP_HEADER_HEIGHT,
-    },
-  }),
-})
 
 export const logoTitleContainer = style({
   position: 'relative',
@@ -25,4 +15,13 @@ export const logoTitleContainer = style({
     height: 56,
     opacity: 0.5,
   },
+})
+
+export const headerActions = style({
+  height: 40,
+  ...themeUtils.responsiveStyle({
+    md: {
+      height: 48,
+    },
+  }),
 })

@@ -1,5 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
+import slugify from '@sindresorhus/slugify'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../../queries'
@@ -29,6 +29,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 
 import * as styles from './Home.treat'
+import * as sharedStyles from '../shared/styles.treat'
 
 interface HomeProps {
   namespace: Query['getNamespace']
@@ -44,8 +45,8 @@ const Home: Screen<HomeProps> = ({}) => {
 
   return (
     <>
-      <ServiceWebHeader logoTitle={logoTitle} />
-      <div className={styles.bg} />
+      <ServiceWebHeader hideSearch logoTitle={logoTitle} />
+      <div className={sharedStyles.bg} />
       <Box className={styles.searchSection}>
         <ServiceWebSearchSection
           logoTitle={logoTitle}
@@ -72,7 +73,9 @@ const Home: Screen<HomeProps> = ({}) => {
                   >
                     <Card
                       link={
-                        { href: `https://visir.is` } as LinkResolverResponse
+                        {
+                          href: `/thjonustuvefur/${slugify(title)}`,
+                        } as LinkResolverResponse
                       }
                       title={title}
                       description={description}
@@ -125,7 +128,9 @@ const Home: Screen<HomeProps> = ({}) => {
                         title={title}
                         description={description}
                         link={
-                          { href: `https://visir.is` } as LinkResolverResponse
+                          {
+                            href: `/thjonustuvefur/${slugify(title)}`,
+                          } as LinkResolverResponse
                         }
                       />
                     )
