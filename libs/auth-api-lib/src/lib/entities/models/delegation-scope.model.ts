@@ -39,7 +39,21 @@ export class DelegationScope extends Model<DelegationScope> {
   @Column({
     type: DataType.STRING,
     primaryKey: true,
-    allowNull: false,
+    allowNull: true,
+    validate: {
+      oneButNotBoth() {
+        if (!(this.scopeName || this.identityResourceName)) {
+          return new Error(
+            'Either scopeName or identityResourceName must be specified.',
+          )
+        }
+        if (this.scopeName && this.identityResourceName) {
+          return new Error(
+            'ScopeName and identityResourceName can not both be specified.',
+          )
+        }
+      },
+    },
   })
   scopeName?: string
 
@@ -47,6 +61,20 @@ export class DelegationScope extends Model<DelegationScope> {
   @Column({
     type: DataType.STRING,
     allowNull: true,
+    validate: {
+      oneButNotBoth() {
+        if (!(this.scopeName || this.identityResourceName)) {
+          return new Error(
+            'Either scopeName or identityResourceName must be specified.',
+          )
+        }
+        if (this.scopeName && this.identityResourceName) {
+          return new Error(
+            'ScopeName and identityResourceName can not both be specified.',
+          )
+        }
+      },
+    },
   })
   identityResourceName?: string
 
@@ -78,6 +106,19 @@ export class DelegationScope extends Model<DelegationScope> {
       identityResourceName: this.identityResourceName,
       validFrom: this.validFrom,
       validTo: this.validTo,
+    }
+  }
+
+  oneButNotBoth() {
+    if (!(this.scopeName || this.identityResourceName)) {
+      return new Error(
+        'Either scopeName or identityResourceName must be specified.',
+      )
+    }
+    if (this.scopeName && this.identityResourceName) {
+      return new Error(
+        'ScopeName and identityResourceName can not both be specified.',
+      )
     }
   }
 }
