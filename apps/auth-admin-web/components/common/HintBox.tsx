@@ -13,12 +13,6 @@ interface Props {
 const HintBox: React.FC<Props> = (props: Props) => {
   const [show, setShow] = useState<boolean>(false)
 
-  //   useEffect(() => {
-  //     if (show) {
-  //       document.getElementById(props.helpText).focus()
-  //     }
-  //   }, [show])
-
   useEffect(() => {
     setShow(props.setVisible)
   }, [props.setVisible])
