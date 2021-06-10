@@ -63,8 +63,6 @@ export class PartyLetterService {
       throw new Error('Failed to close endorsement list')
     }
 
-    console.log("assign: ", endorsementId)
-
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignMinistryOfJusticeApplicationEmail,
       application,
@@ -90,7 +88,6 @@ export class PartyLetterService {
     const endorsementId: EndorsementListResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery(authorization, OPEN_ENDORSEMENT)
       .then((response) => response.json())
-    console.log("reject: ",endorsementId)
 
     if ('errors' in endorsementId) {
       throw new Error('Failed to open endorsement list')
