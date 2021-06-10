@@ -10,7 +10,11 @@ import {
 } from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
-import { getSelectedChild } from '@island.is/application/templates/parental-leave'
+import {
+  getSelectedChild,
+  getApplicationAnswers,
+  getSpouse,
+} from '@island.is/application/templates/parental-leave'
 
 import { apiConstants, formConstants } from './constants'
 
@@ -187,6 +191,48 @@ export const getApplicantContactInfo = (application: Application) => {
   }
 }
 
+export const getRightsCode = (application: Application): string => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
+  const answers = getApplicationAnswers(application.answers)
+  const isSelfEmployed = answers.isSelfEmployed === 'yes'
+
+  if (selectedChild.parentalRelation === 'primary') {
+    if (isSelfEmployed) {
+      return 'M-S-GR'
+    } else {
+      return 'M-L-GR'
+    }
+  }
+
+  const spouse = getSpouse(application)
+  const parentsAreInRegisteredCohabitation =
+    selectedChild.primaryParentNationalRegistryId === spouse?.nationalId
+
+  if (parentsAreInRegisteredCohabitation) {
+    // If this secondary parent is in registered cohabitation with primary parent
+    // then they will automatically be granted custody
+    if (isSelfEmployed) {
+      return 'FO-S-GR'
+    } else {
+      return 'FO-L-GR'
+    }
+  }
+
+  if (isSelfEmployed) {
+    return 'FO-FL-S-GR'
+  } else {
+    return 'FO-FL-L-GR'
+  }
+}
+
 export const transformApplicationToParentalLeaveDTO = (
   application: Application,
   attachments?: Attachment[],
@@ -214,7 +260,7 @@ export const transformApplicationToParentalLeaveDTO = (
       from: period.startDate,
       to: period.endDate,
       ratio: Number(period.ratio),
-      approved: true,
+      approved: false,
       paid: false,
       rightsCodePeriod: null,
     }))
@@ -253,10 +299,7 @@ export const transformApplicationToParentalLeaveDTO = (
     periods,
     employers: [getEmployer(application, isSelfEmployed)],
     status: 'In Progress',
-    // TODO: extract correct rights code from application and connected applications
-    // Needs to know if primary/secondary parent, has custody and if self employed and/or employee
-    // https://islandis.slack.com/archives/G016P6FSDCK/p1608557387042300
-    rightsCode: 'M-L-GR',
+    rightsCode: getRightsCode(application),
     attachments,
   }
 }
