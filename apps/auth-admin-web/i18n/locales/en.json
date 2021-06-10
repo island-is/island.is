@@ -2059,7 +2059,7 @@
       },
       "sections": {
         "active": {
-          "title": "Active callback URLs"
+          "title": "Active callback URIs"
         }
       },
       "noActiveConnections": {
