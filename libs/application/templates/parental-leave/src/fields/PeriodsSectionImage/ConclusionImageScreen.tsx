@@ -3,9 +3,15 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Bullet, BulletList } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
-const ConclusionSectionImage: FC<FieldBaseProps> = () => {
+const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
+  const {
+    isSelfEmployed,
+    isRequestingRights,
+    usePersonalAllowanceFromSpouse,
+  } = useApplicationAnswers(application)
 
   return (
     <Box>
