@@ -1897,6 +1897,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-12.0.0.tgz#6146b9572a289ffc7f89abd9c2b58d013ed36a22"
   integrity sha512-rxanSjTfub75g5KgEtnmW7pFHNy5M0iEw+xCtlb/NLCQ4C9asCH3TGCAUqel9NbgsFzUv67WxrVOFRKHHrb4TA==
 
+"@react-native-firebase/perf@12.0.0":
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/perf/-/perf-12.0.0.tgz#77558e7d170b52f18e91686366fb5353cdf5207b"
+  integrity sha512-WDZCCuVn3U15RXVVwYdYJOXObkltumTepyP0XcXD3Fs8TiDmlCKK7oIyBASSwqNGupsS6VRVCoD9DAWoAy8s1A==
+
 "@react-native-segmented-control/segmented-control@2.3.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@react-native-segmented-control/segmented-control/-/segmented-control-2.3.0.tgz#f3ec8bf40a7e7df8c9ed15cc97513eb343e6f89c"

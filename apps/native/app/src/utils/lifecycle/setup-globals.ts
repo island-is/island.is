@@ -2,12 +2,9 @@ import * as Sentry from '@sentry/react-native'
 import { LogBox } from 'react-native'
 import { Platform } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
+import perf from '@react-native-firebase/perf';
+import messaging from '@react-native-firebase/messaging';
 import { config } from '../config'
-import { ReactNativeNavigationInstrumentation } from '../../lib/react-native-navigation-instrumentation'
-
-if (__DEV__) {
-  require('../devtools/index')
-}
 
 // uncomment polyfills that are needed.
 // make sure to add locales that are needed as well
@@ -36,17 +33,25 @@ import '@formatjs/intl-relativetimeformat/polyfill'
 import '@formatjs/intl-relativetimeformat/locale-data/en'
 import '@formatjs/intl-relativetimeformat/locale-data/is'
 
-// initialize sentry
-if (!__DEV__) {
+if (__DEV__) {
+  require('../devtools/index')
+} else {
+  // initialize sentry
   Sentry.init({
     dsn: config.sentryDsn,
-    tracesSampleRate: 1, // @todo reduce to 0.2 for production
-    integrations: [
-      new Sentry.ReactNativeTracing({
-        routingInstrumentation: new ReactNativeNavigationInstrumentation(),
-      }),
-    ],
+    // tracesSampleRate: 1, // @todo reduce to 0.2 for production
+    // integrations: [
+    //   new Sentry.ReactNativeTracing({
+    //     routingInstrumentation: new ReactNativeNavigationInstrumentation(),
+    //   }),
+    // ],
   })
+
+  // enable firebase performance metrics collection
+  perf().setPerformanceCollectionEnabled(true);
+
+  // register device for remote messages
+  messaging().registerDeviceForRemoteMessages();
 }
 
 // ignore expo warnings

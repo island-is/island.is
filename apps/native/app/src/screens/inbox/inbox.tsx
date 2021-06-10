@@ -266,6 +266,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
     Navigation.mergeOptions(ComponentRegistry.InboxScreen, {
       bottomTab: {
         iconColor: theme.color.blue400,
+        textColor: theme.shade.foreground,
         text: initialized
           ? intl.formatMessage({ id: 'inbox.bottomTabText' })
           : '',
@@ -311,11 +312,14 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   if (!isLoading && isEmpty) {
     return (
-      <EmptyList
-        title={intl.formatMessage({ id: 'inbox.emptyListTitle' })}
-        description={intl.formatMessage({ id: 'inbox.emptyListDescription' })}
-        image={<Image source={illustrationSrc} height={176} width={134} />}
-      />
+      <View style={{ flex: 1 }}>
+        <BottomTabsIndicator index={0} total={3} />
+        <EmptyList
+          title={intl.formatMessage({ id: 'inbox.emptyListTitle' })}
+          description={intl.formatMessage({ id: 'inbox.emptyListDescription' })}
+          image={<Image source={illustrationSrc} height={176} width={134} />}
+        />
+      </View>
     )
   }
 

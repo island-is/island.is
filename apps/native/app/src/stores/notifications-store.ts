@@ -5,7 +5,7 @@ import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
 import { navigateToNotification } from '../lib/deep-linking'
-import { ComponentRegistry, StackRegistry } from '../utils/component-registry'
+import { ComponentRegistry } from '../utils/component-registry'
 import { getRightButtons } from '../utils/get-main-root'
 
 export interface Notification {
@@ -34,7 +34,7 @@ interface NotificationsStore extends State {
 const firstNotification: Notification = {
   id: 'FIRST_NOTIFICATION',
   title: 'Stafrænt Ísland',
-  body: 'Fyrsta útgáfu af Ísland.is appinu',
+  body: 'Fyrsta útgáfa af Ísland.is appinu',
   copy:
     'Í þessari fyrstu útgáfu af Ísland.is appinu getur þú nálgast rafræn skjöl og skírteini frá hinu opinbera, fengið tilkynningar og séð stöðu umsókna.',
   date: new Date().getTime(),
@@ -91,7 +91,7 @@ export const notificationCategories = [
 const rightButtonScreens = [
   ComponentRegistry.HomeScreen,
   ComponentRegistry.InboxScreen,
-  ComponentRegistry.WalletScreen
+  ComponentRegistry.WalletScreen,
 ]
 
 export function actionsForNotification(

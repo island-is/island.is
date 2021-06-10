@@ -9,7 +9,8 @@ const Host = styled.View`
   padding: 20px 70px 20px 24px;
   margin-bottom: 16px;
   border-radius: 8px;
-  border: 1px solid ${dynamicColor(({ theme }) => ({
+  border-width: 1px;
+  border-color: ${dynamicColor(({ theme }) => ({
     light: theme.color.blue200,
     dark: theme.shades.dark.shade300
   }))};

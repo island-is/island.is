@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)is.island.app-dev</string>
+		<string>$(AppIdentifierPrefix)is.island.app</string>
 	</array>
 </dict>
 </plist>

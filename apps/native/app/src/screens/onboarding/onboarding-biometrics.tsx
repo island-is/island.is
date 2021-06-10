@@ -63,6 +63,7 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
         preferencesStore.setState(() => ({
           hasOnboardedBiometrics: true,
           hasAcceptedBiometrics: true,
+          useBiometrics: true,
         }))
         nextOnboardingStep()
       }
