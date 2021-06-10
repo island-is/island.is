@@ -8,7 +8,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BackendAPI } from '../../../services'
 
 import { ApplicationModel } from './models'
-import { CreateApplicationInput } from './dto'
+import { CreateApplicationInput, UpdateApplicationInput } from './dto'
 import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
 import { ApplicationInput } from './dto'
@@ -50,5 +50,18 @@ export class ApplicationResolver {
     this.logger.debug('Creating case')
 
     return backendApi.createApplication(input)
+  }
+
+  @Mutation(() => ApplicationModel, { nullable: true })
+  updateApplication(
+    @Args('input', { type: () => UpdateApplicationInput })
+    input: UpdateApplicationInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<ApplicationModel> {
+    this.logger.debug('Creating case')
+
+    const { id, ...updateApplicant } = input
+
+    return backendApi.updateApplication(id, updateApplicant)
   }
 }

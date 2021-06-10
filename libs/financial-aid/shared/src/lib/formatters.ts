@@ -1,4 +1,4 @@
-import { HomeCircumstances, Employment, KeyMapping } from './types'
+import { HomeCircumstances, Employment, KeyMapping, State } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
   Unknown: 'Óþekkt',
@@ -14,6 +14,13 @@ export const getEmploymentStatus: KeyMapping<Employment, string> = {
   Unemployed: 'Ég er atvinnulaus',
   CannotWork: 'Ég er ekki vinnufær',
   Other: 'Ekkert að ofan lýsir mínum aðstæðum',
+}
+
+export const getState: KeyMapping<State, string> = {
+  New: 'Ný umsókn',
+  InProgress: 'Í vinnslu',
+  Rejected: 'Synjað',
+  Approved: 'Samþykkt',
 }
 
 export const insertAt = (str: string, sub: string, pos: number) =>

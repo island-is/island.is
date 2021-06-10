@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { ApplicationModel } from './models'
 
-import { CreateApplicationDto } from './dto'
+import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import { User, Application } from '@island.is/financial-aid/shared'
 
 @Injectable()
@@ -29,5 +29,23 @@ export class ApplicationService {
   ): Promise<ApplicationModel> {
     // this.logger.debug('Creating a new case')
     return this.applicationModel.create(application)
+  }
+
+  async update(
+    id: string,
+    update: UpdateApplicationDto,
+  ): Promise<{
+    numberOfAffectedRows: number
+    updatedApplicant: ApplicationModel
+  }> {
+    const [
+      numberOfAffectedRows,
+      [updatedApplicant],
+    ] = await this.applicationModel.update(update, {
+      where: { id },
+      returning: true,
+    })
+
+    return { numberOfAffectedRows, updatedApplicant }
   }
 }

@@ -12,8 +12,11 @@ import { useRouter } from 'next/router'
 import * as styles from './application.treat'
 import cn from 'classnames'
 
-import { useQuery } from '@apollo/client'
-import { GetApplicantyQuery } from '../../../graphql/sharedGql'
+import { useQuery, useMutation } from '@apollo/client'
+import {
+  GetApplicantyQuery,
+  UpdateApplicationMutation,
+} from '../../../graphql/sharedGql'
 import {
   Application,
   getHomeCircumstances,
@@ -21,6 +24,8 @@ import {
   getEmploymentStatus,
   Employment,
   insertAt,
+  State,
+  getState,
 } from '@island.is/financial-aid/shared'
 import format from 'date-fns/format'
 
@@ -38,39 +43,55 @@ interface ApplicantData {
   application: Application
 }
 
+interface SaveData {
+  application: Application
+}
+
 const ApplicationProfile = () => {
   const router = useRouter()
 
   const [isVisible, setIsVisible] = useState(false)
 
+  const [state, setState] = useState<string | undefined>(undefined)
+
   const statusOptions = [
-    {
-      name: 'Ný umsókn',
-      type: 'newApplication',
-    },
-    {
-      name: 'Í vinnslu',
-      type: 'inProgress',
-    },
-    {
-      name: 'Óska eftir gögnum',
-      type: 'filesNeeded',
-    },
-    {
-      name: 'Samþykkt',
-      type: 'approved',
-    },
-    {
-      name: 'Synjað',
-      type: 'declined',
-    },
+    State.NEW,
+    State.INPROGRESS,
+    State.APPROVED,
+    State.REJECTED,
   ]
+
+  const [
+    updateApplicationMutation,
+    { loading: saveLoading },
+  ] = useMutation<SaveData>(UpdateApplicationMutation)
+
+  const saveStateApplication = async (applicant: Application, state: State) => {
+    if (saveLoading === false && applicant) {
+      await updateApplicationMutation({
+        variables: {
+          input: {
+            id: applicant.id,
+            state: state,
+          },
+        },
+      })
+    }
+    setIsVisible(false)
+    setState(state)
+  }
 
   const { data, error, loading } = useQuery<ApplicantData>(GetApplicantyQuery, {
     variables: { input: { id: router.query.id } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+
+  useEffect(() => {
+    if (data?.application) {
+      setState(data.application.state)
+    }
+  }, [data?.application?.state])
 
   if (data?.application) {
     const applicationArr = [
@@ -196,7 +217,7 @@ const ApplicationProfile = () => {
               type="button"
               variant="text"
             >
-              Í vinnslu
+              í vinnslu
             </Button>
           </Box>
 
@@ -230,7 +251,7 @@ const ApplicationProfile = () => {
               type="button"
               variant="primary"
             >
-              Ný umsókn
+              {getState[state as State]}
             </Button>
           </Box>
           <Box width="full" marginBottom={4} className={styles.widtAlmostFull}>
@@ -298,14 +319,16 @@ const ApplicationProfile = () => {
                     return (
                       <button
                         key={'statusoptions-' + index}
-                        className={styles.statusOptions}
+                        className={cn({
+                          [`${styles.statusOptions}`]: true,
+                          [`${styles.activeState}`]: item === state,
+                        })}
                         onClick={(e) => {
                           e.stopPropagation()
-                          // setIsVisible(!isVisible)
-                          console.log('h')
+                          saveStateApplication(data.application, item)
                         }}
                       >
-                        {item.name}
+                        {getState[item as State]}
                       </button>
                     )
                   })}

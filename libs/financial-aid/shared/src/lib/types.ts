@@ -66,6 +66,11 @@ export interface CreateApplication {
   state?: State
 }
 
+export interface UpdateApplication {
+  id: string
+  state?: State
+}
+
 export interface Municipality {
   id: string
   // created: string

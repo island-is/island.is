@@ -5,6 +5,7 @@ import {
   Post,
   UseGuards,
   Param,
+  Put,
   NotFoundException,
 } from '@nestjs/common'
 
@@ -13,7 +14,7 @@ import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
 import { ApplicationModel } from './models'
 
-import { CreateApplicationDto } from './dto'
+import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
 import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
 import type { User } from '@island.is/financial-aid/shared'
@@ -47,6 +48,27 @@ export class ApplicationController {
     }
 
     return applicant
+  }
+
+  @Put('applications/:id')
+  @ApiOkResponse({
+    type: ApplicationModel,
+    description: 'Updates an existing application',
+  })
+  async update(
+    @Param('id') id: string,
+    @Body() userToUpdate: UpdateApplicationDto,
+  ): Promise<ApplicationModel> {
+    const {
+      numberOfAffectedRows,
+      updatedApplicant,
+    } = await this.applicationService.update(id, userToUpdate)
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`User ${id} does not exist`)
+    }
+
+    return updatedApplicant
   }
 
   @Post('application')

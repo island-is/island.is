@@ -65,3 +65,7 @@ export const statusOptions = style({
   },
   // padd: theme.spacing[3],
 })
+
+export const activeState = style({
+  color: theme.color.blue400,
+})

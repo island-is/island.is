@@ -11,13 +11,15 @@ import {
 import * as styles from './applicationOverview.treat'
 import cn from 'classnames'
 
-import { useQuery } from '@apollo/client'
-import {
-  GetApplicationQuery,
-  GetCurrentUserQuery,
-} from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { useQuery, useMutation } from '@apollo/client'
+import { GetApplicationQuery } from '../../../graphql/sharedGql'
 
-import { Application } from '@island.is/financial-aid/shared'
+import {
+  Application,
+  UpdateApplication,
+  State,
+  getState,
+} from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
 
@@ -25,6 +27,10 @@ import { calcDifferenceInDate, translateMonth } from '../../utils/formHelper'
 
 interface ApplicationData {
   applications: Application[]
+}
+
+interface SaveData {
+  applicant: Application
 }
 
 const ApplicationOverview = () => {
@@ -42,17 +48,20 @@ const ApplicationOverview = () => {
     {
       label: 'Ný mál',
       link: '/nymal',
-      state: 'New',
+      state: State.NEW,
       headers: ['Nafn', 'Staða', 'Tími án umsjár', 'Tímabil'],
     },
     {
       label: 'Í vinnslu',
       link: '/vinnslu',
+      state: State.INPROGRESS,
       headers: ['Nafn', 'Staða', 'Síðast uppfært', 'Tímabil'],
     },
     {
       label: 'Afgreidd mál',
       link: '/afgreidd',
+      state: State.APPROVED,
+      secState: State.REJECTED,
       headers: ['Nafn', 'Staða', 'Úrlausnartími', 'Tímabil'],
     },
   ]
@@ -78,7 +87,11 @@ const ApplicationOverview = () => {
         <ApplicationTable
           header={currentState?.headers}
           applications={data.applications
-            .filter((item) => item.state === currentState?.state)
+            .filter(
+              (item) =>
+                item.state === currentState?.state ||
+                item.state === currentState?.secState,
+            )
             .map((item) => {
               return {
                 arr: [
