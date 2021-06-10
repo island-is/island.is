@@ -29,7 +29,7 @@ registerEnumType(DelegationType, { name: 'AuthDelegationType' })
   },
 })
 export abstract class Delegation {
-  @Field((type) => ID)
+  @Field(() => ID)
   id?: string
 
   @Field()
@@ -41,10 +41,10 @@ export abstract class Delegation {
   @Field()
   fromName!: string
 
-  @Field((type) => DelegationType)
+  @Field(() => DelegationType)
   type!: DelegationType
 
-  @Field((type) => DelegationProvider)
+  @Field(() => DelegationProvider)
   provider!: DelegationProvider
 }
 
@@ -62,9 +62,9 @@ export class ProcuringHolderDelegation extends Delegation {}
   implements: Delegation,
 })
 export class CustomDelegation extends Delegation {
-  @Field((type) => Date, { nullable: true })
+  @Field(() => Date, { nullable: true })
   validTo?: Date
 
-  @Field((type) => [DelegationScope])
+  @Field(() => [DelegationScope])
   scopes!: DelegationScope[]
 }

@@ -27,8 +27,8 @@ import {
 } from '../models'
 import { AuthService } from '../auth.service'
 
-const ignore404 = (e: Error) => {
-  if ((e as any).status !== 404) {
+const ignore404 = (e: Response) => {
+  if (e.status !== 404) {
     throw e
   }
 }
@@ -55,7 +55,7 @@ export class DelegationResolver {
     @CurrentUser() user: User,
     @Args('input', { type: () => DelegationInput }) input: DelegationInput,
   ): Promise<Delegation | null> {
-    let delegation = await this.authService
+    const delegation = await this.authService
       .getDelegationFromNationalId(user, input)
       .catch(ignore404)
     if (!delegation) {

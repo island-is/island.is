@@ -6,6 +6,7 @@ import {
   UpdateDelegationScopeDTO,
   DelegationsApi,
   ApiScopeApi,
+  ApiScope,
 } from '@island.is/clients/auth-public-api'
 
 import {
@@ -18,29 +19,29 @@ import {
 @Injectable()
 export class AuthService {
   constructor(
-    private _delegationsApi: DelegationsApi,
-    private _apiScopeApi: ApiScopeApi,
+    private delegationsApi: DelegationsApi,
+    private apiScopeApi: ApiScopeApi,
   ) {}
 
   private delegationsApiWithAuth(auth: Auth) {
-    return this._delegationsApi.withMiddleware(new AuthMiddleware(auth))
+    return this.delegationsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private apiScopeApiWithAuth(auth: Auth) {
-    return this._apiScopeApi.withMiddleware(new AuthMiddleware(auth))
+    return this.apiScopeApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  getActorDelegations(user: User): Promise<Array<DelegationDTO>> {
+  getActorDelegations(user: User): Promise<DelegationDTO[]> {
     return this.delegationsApiWithAuth(user).delegationsControllerFindAllTo()
   }
 
-  getDelegations(user: User): Promise<Array<DelegationDTO>> {
+  getDelegations(user: User): Promise<DelegationDTO[]> {
     return this.delegationsApiWithAuth(
       user,
     ).delegationsControllerFindAllCustomFrom()
   }
 
-  getApiScopes(user: User): Promise<any> {
+  getApiScopes(user: User): Promise<ApiScope[]> {
     return this.apiScopeApiWithAuth(
       user,
     ).apiScopeControllerFindAllWithExplicitDelegationGrant()

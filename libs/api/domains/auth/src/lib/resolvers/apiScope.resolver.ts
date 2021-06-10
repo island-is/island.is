@@ -3,7 +3,7 @@ import { UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
-import { ApiScope as IApiScope } from '@island.is/clients/auth-public-api'
+import type { ApiScope as IApiScope } from '@island.is/clients/auth-public-api'
 
 import { AuthService } from '../auth.service'
 import { ApiScope } from '../models'
@@ -14,7 +14,7 @@ export class ApiScopeResolver {
   constructor(private authService: AuthService) {}
 
   @Query(() => [ApiScope], { name: 'authApiScopes' })
-  getApiScopes(@CurrentUser() user: User): Promise<ApiScope[]> {
+  getApiScopes(@CurrentUser() user: User): Promise<IApiScope[]> {
     return this.authService.getApiScopes(user)
   }
 
