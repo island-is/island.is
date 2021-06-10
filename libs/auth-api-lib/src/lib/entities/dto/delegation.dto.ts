@@ -83,7 +83,7 @@ export class CreateDelegationDTO {
   toNationalId!: string
 
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   toName?: string
 
   @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
