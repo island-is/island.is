@@ -3,11 +3,17 @@ import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   DelegationDTO,
+  UpdateDelegationScopeDTO,
   DelegationsApi,
   ApiScopeApi,
 } from '@island.is/clients/auth-public-api'
 
-import { UpdateDelegationInput, DelegationInput } from './dto'
+import {
+  UpdateDelegationInput,
+  DeleteDelegationInput,
+  DelegationInput,
+  CreateDelegationInput,
+} from './dto'
 
 @Injectable()
 export class AuthService {
@@ -54,12 +60,15 @@ export class AuthService {
 
   updateDelegation(
     user: User,
-    { id, scopes }: UpdateDelegationInput,
+    { toNationalId, scopes }: UpdateDelegationInput,
   ): Promise<DelegationDTO> {
     return this.delegationsApiWithAuth(user).delegationsControllerUpdate({
-      id,
+      toNationalId,
       updateDelegationDTO: {
-        scopes: scopes.map((scope) => ({ ...scope, scopeName: scope.name })),
+        scopes: scopes?.map((scope) => ({
+          scopeName: scope.name,
+          validTo: scope.validTo ? scope.validTo : undefined,
+        })) as UpdateDelegationScopeDTO[],
       },
     })
   }

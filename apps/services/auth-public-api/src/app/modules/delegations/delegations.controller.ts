@@ -66,14 +66,18 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
-  @Put(':id')
+  @Put(':toNationalId')
   @ApiCreatedResponse({ type: DelegationDTO })
   update(
     @CurrentUser() user: User,
     @Body() delegation: UpdateDelegationDTO,
-    @Param('id') id: string,
+    @Param('toNationalId') toNationalId: string,
   ): Promise<DelegationDTO | null> {
-    return this.delegationsService.update(user.nationalId, delegation, id)
+    return this.delegationsService.update(
+      user.nationalId,
+      delegation,
+      toNationalId,
+    )
   }
 
   @Scopes(AuthScope.writeDelegations)
@@ -123,7 +127,7 @@ export class DelegationsController {
       )
     }
 
-    return delegation
+    return delegation.toDTO()
   }
 
   @Scopes(AuthScope.readDelegations)
