@@ -1423,13 +1423,20 @@
         }
       },
       "fields": {
+        "domain": {
+          "selectAnItem": "Select a Domain"
+        },
         "name": {
           "label": "Name",
           "placeholder": "Unique identifier",
-          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request.",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request. Follow this pattern: @{domain}[/{group}]/{resource}[:{action}]",
           "errorMessage": "Name is required and needs to be in the right format",
           "available": "Available",
-          "unAvailable": "Unavailable"
+          "unAvailable": "Unavailable",
+          "hintOkMessage": "The api scope name is in a correct format",
+          "hintErrorMessage": "The format of api scope name is incorrect",
+          "pattern": "@{domain}[/{group}]/{resource}[:{action}]",
+          "patternText": "Follow this pattern:"
         },
         "displayName": {
           "label": "Display Name",

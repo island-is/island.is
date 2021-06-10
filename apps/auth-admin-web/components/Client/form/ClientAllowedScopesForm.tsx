@@ -125,7 +125,11 @@ const ClientAllowedScopesForm: React.FC<Props> = (props: Props) => {
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >
                     {scopes.map((scope: ApiScope) => {
-                      return <option value={scope.name}>{scope.name}</option>
+                      return (
+                        <option value={scope.name} key={scope.name}>
+                          {scope.name}
+                        </option>
+                      )
                     })}
                   </select>
                   <HelpBox
