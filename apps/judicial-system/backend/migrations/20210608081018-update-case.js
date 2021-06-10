@@ -1,10 +1,39 @@
 'use strict'
 
-const isValid = require('date-fns').isValid
-const format = require('date-fns').format
-const is = require('date-fns/locale').is
+const dayOfWeek = [
+  'sunnudagsins',
+  'mánudagsins',
+  'þriðjudagsins',
+  'miðvikudagsins',
+  'fimmtudagsins',
+  'föstudagsins',
+  'laugardagsins',
+]
 
-const formatProsecutorDemands = function formatProsecutorDemands(
+const month = [
+  'janúar',
+  'febrúar',
+  'mars',
+  'apríl',
+  'maí',
+  'júní',
+  'júlí',
+  'ágúst',
+  'september',
+  'október',
+  'nóvember',
+  'desember',
+]
+
+function formatDate(date) {
+  return `${dayOfWeek[date.getDay()]} ${date.getDate()}. ${
+    month[date.getMonth()]
+  } ${date.getFullYear()}, kl. ${('0' + date.getHours()).substr(-2)}:${(
+    '00' + date.getMinutes()
+  ).substr(-2)}`
+}
+
+function formatProsecutorDemands(
   type,
   accusedNationalId,
   accusedName,
@@ -23,11 +52,7 @@ const formatProsecutorDemands = function formatProsecutorDemands(
   } ${
     type === 'CUSTODY' ? 'gæsluvarðhaldi' : 'farbanni'
   } með úrskurði ${court?.replace('Héraðsdómur', 'Héraðsdóms')}, til ${
-    isValid(requestedValidToDate)
-      ? format(requestedValidToDate, 'PPPPp', { locale: is })
-          ?.replace('dagur,', 'dagsins')
-          ?.replace(' kl.', ', kl.')
-      : ''
+    requestedValidToDate ? formatDate(requestedValidToDate) : ''
   }${
     type === 'CUSTODY' && isolation
       ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
