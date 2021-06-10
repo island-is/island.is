@@ -1,6 +1,18 @@
 import { style } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
+export const orderedList = style({
+  counterReset: 'section',
+  marginTop: 16,
+  marginBottom: 16,
+  selectors: {
+    'ol &': {
+      marginTop: 0,
+      marginBottom: 0,
+    },
+  },
+})
+
 export const unorderedList = style({
   listStyle: 'none',
   marginTop: 16,
