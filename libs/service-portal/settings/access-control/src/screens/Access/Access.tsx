@@ -86,11 +86,40 @@ const AuthDelegationQuery = gql`
   }
 `
 
+const UpdateAuthDelegationMutation = gql`
+  mutation UpdateAuthDelegationMutation($input: UpdateAuthDelegationInput!) {
+    updateAuthDelegation(input: $input) {
+      id
+      fromNationalId
+      ... on AuthCustomDelegation {
+        scopes {
+          id
+          name
+          validTo
+        }
+      }
+    }
+  }
+`
+
+const DeleteAuthDelegationMutation = gql`
+  mutation DeleteAuthDelegationMutation($input: DeleteAuthDelegationInput!) {
+    deleteAuthDelegation(input: $input)
+  }
+`
 
 function Access() {
   const { formatMessage } = useLocale()
   const { nationalId }: { nationalId: string } = useParams()
   const history = useHistory()
+  const [updateDelegation, { loading: updateLoading }] = useMutation<Mutation>(
+    UpdateAuthDelegationMutation,
+    { refetchQueries: [{ query: AuthDelegationsQuery }] },
+  )
+  const [deleteDelegation, { loading: deleteLoading }] = useMutation<Mutation>(
+    DeleteAuthDelegationMutation,
+    { refetchQueries: [{ query: AuthDelegationsQuery }] },
+  )
   const { data: apiScopeData, loading: apiScopeLoading } = useQuery<Query>(
     AuthApiScopesQuery,
   )
@@ -114,9 +143,30 @@ function Access() {
   const loading = apiScopeLoading || delegationLoading
 
   const onSubmit = handleSubmit(async (model: AccessForm) => {
+    const scopes = model[SCOPE_PREFIX].filter(
+      (scope) => scope.name?.length > 0,
+    ).map((scope) => ({ ...scope, name: scope.name[0] }))
+    const { data, errors } = await updateDelegation({
+      variables: { input: { toNationalId: nationalId, scopes } },
+    })
+    if (data && !errors) {
+      toast.success(
+        formatMessage({
+          id: 'service.portal.settings.accessControl:access-update-success',
+          defaultMessage: 'Aðgangur uppfærður!',
+        }),
+      )
+    }
   })
 
   const onDelete = async (closeModal: () => void) => {
+    const { data, errors } = await deleteDelegation({
+      variables: { input: { toNationalId: nationalId } },
+    })
+    if (data && !errors) {
+      closeModal()
+      history.push(ServicePortalPath.SettingsAccessControl)
+    }
   }
 
   if (!loading && !delegationData?.authDelegation) {
