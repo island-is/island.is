@@ -20,7 +20,7 @@ export class PaymentService {
     private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
   ) {}
 
-  async createPayment(charge: Charge, user: User, applicationId: string): Promise<ChargeResult> { // change any to createpaymentresponsedto ?
+  async createPayment(charge: Charge, returnUrl: string, applicationId: string): Promise<ChargeResult> { // change any to createpaymentresponsedto ?
     try {
       const result = await this.apiDomainsPaymentService.createCharge(charge)
 

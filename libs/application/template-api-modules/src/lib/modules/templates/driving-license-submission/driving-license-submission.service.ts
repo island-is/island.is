@@ -7,10 +7,14 @@ import { TemplateApiModuleActionProps } from '../../../types'
 
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
 import { ChargeResult } from '@island.is/api/domains/payment'
+<<<<<<< HEAD
 
 //import { PaymentService } from '../../../../../../../../apps/application-system/api/src/app/modules/payment/payment.service'
 //import { PaymentService as ApiDomainsPaymentService } from '@island.is/api/domains/payment'
 import { resolveModelGetter } from 'sequelize-typescript'
+=======
+import { application } from 'express'
+>>>>>>> feature/driving-license-demo
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -46,12 +50,16 @@ export class DrivingLicenseSubmissionService {
       quantity: 1,
       priceAmount: payment.priceAmount,
       amount: payment.priceAmount * 1,
-      reference: 'Vinnslugjald',
+      reference: 'Fullnaðarskírteini',
     }
+
+    const callbackUrl = `https://localhost:4200/umsoknir/okuskirteini/${id}`
 
     const result = await this.sharedTemplateAPIService
       .createCharge({
-        chargeItemSubject: 'Fullnaðarskírteini',
+        // TODO: this needs to be unique, but can only handle 22 or 23 chars
+        // should probably be an id or token from the DB charge once implemented
+        chargeItemSubject: `${applicant}/${new Date().toISOString().substring(0, 19).replace(/[^0-9]/g, '')}`,
         chargeType: payment.chargeType,
         immediateProcess: true,
         charges: [
@@ -60,12 +68,12 @@ export class DrivingLicenseSubmissionService {
         payeeNationalID: applicant,
         // TODO: possibly somebody else, if 'umboð'
         performerNationalID: applicant,
-        // TODO: sýslumannskennitala - úr juristictions
+        // TODO: sýslumannskennitala - rvk
         performingOrgID: payment.performingOrgID,
         systemID: 'ISL',
-      }, id)
+        returnUrl: callbackUrl,
+      }, `https://localhost:4200/umsoknir/okuskirteini/${id}`, id)
       .catch((e) => {
-        console.log('submission service error.')
         console.error(e)
 
         return ({ error: e } as ChargeResult)

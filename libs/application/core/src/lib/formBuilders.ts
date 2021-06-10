@@ -55,7 +55,7 @@ export function buildRepeater(data: {
 export function buildSection(data: {
   id?: string
   condition?: Condition
-  title: MessageDescriptor | string
+  title: FormText
   children: SectionChildren[]
 }): Section {
   return { ...data, type: FormItemTypes.SECTION }
@@ -93,6 +93,7 @@ export function buildDataProviderItem(data: {
   title: MessageDescriptor | string
   subTitle?: MessageDescriptor | string
   source?: string
+  parameters?: any
 }): DataProviderItem {
   return data
 }

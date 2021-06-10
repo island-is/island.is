@@ -30,7 +30,7 @@ export const EmployerApproval: Form = buildForm({
             buildCustomField(
               {
                 id: 'intro',
-                title: '',
+                title: employerFormMessages.reviewMultiTitle,
                 component: 'PeriodsRepeater',
               },
               {

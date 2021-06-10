@@ -36,13 +36,7 @@ export class PaymentAPI extends RESTDataSource {
   }
 
   createCharge(upcomingPayment: Charge): Promise<ChargeResponse> {
-    console.log('client payment')
-    const res = this.post<ChargeResponse>(`/chargeFJS/v1/charge`, upcomingPayment)
-    
-    console.log(JSON.stringify(res, null, 4));
-    //return res
-    const ok:ChargeResponse = {user4: '123', receptionID:'123'}
-    return Promise.resolve(ok)
+    return this.post<ChargeResponse>(`/chargeFJS/v1/charge`, upcomingPayment)
   }
 
   // could skip promise due to higher lvl graphql promise

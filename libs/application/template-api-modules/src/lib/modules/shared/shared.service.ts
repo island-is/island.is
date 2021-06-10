@@ -21,6 +21,8 @@ import { application } from 'express'
 @Injectable()
 export class SharedTemplateApiService {
   constructor(
+    @Inject(ApiDomainsPaymentService)
+    private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
     @Inject(ConfigService)
@@ -126,19 +128,21 @@ export class SharedTemplateApiService {
     return this.emailService.sendEmail(template)
   }
 
-  async createCharge(charge: Charge, applicationId: string): Promise<ChargeResult> {
-    //const res = await this.apiDomainsPaymentService.createCharge(charge)
-    console.log('shared svc')
-    console.log(JSON.stringify(charge, null, 4));
+  // async createCharge(charge: Charge, applicationId: string): Promise<ChargeResult> {
+  //   //const res = await this.apiDomainsPaymentService.createCharge(charge)
+  //   console.log('shared svc')
+  //   console.log(JSON.stringify(charge, null, 4));
 
-    const svc = await this.paymentService
-      .createPayment(
-        charge,
-        {nationalId: charge.payeeNationalID} as User,
-        applicationId as string,
-      )
+  //   const svc = await this.paymentService
+  //     .createPayment(
+  //       charge,
+  //       {nationalId: charge.payeeNationalID} as User,
+  //       applicationId as string,
+  //     )
 
-    return svc
+  //   return svc
+  async createCharge(charge: Charge, returnUrl: string, applicationId: string): Promise<ChargeResult> {
+    return this.paymentService.createPayment(charge, returnUrl, applicationId)
   }
 
   async makeGraphqlQuery(authorization: string, query: string) {

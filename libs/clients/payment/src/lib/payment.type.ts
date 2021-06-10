@@ -14,6 +14,7 @@ export interface Charge {
   immediateProcess: boolean
   charges: ChargeItem[]
   payInfo?: PayInfo
+  returnUrl: string
 }
 
 export interface ChargeResponse {

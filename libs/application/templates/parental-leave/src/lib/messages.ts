@@ -339,6 +339,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Sækja gögn',
       description: 'External Data',
     },
+    checkboxProvider: {
+      id: 'pl.application:checkbox.provider',
+      defaultMessage:
+        'Ég skil að ofangreindra gagna verður aflað í umsóknarferlinu',
+      description: 'Checbox to confirm data provider',
+    },
     dateOfBirthTitle: {
       id: 'pl.application:dateOfBirth.title',
       defaultMessage: 'Fæðingardagur',

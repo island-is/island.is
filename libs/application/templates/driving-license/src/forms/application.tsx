@@ -36,13 +36,13 @@ export const application: Form = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'type',
+      id: 'externalData',
       title: m.externalDataSection,
       children: [
         buildExternalDataProvider({
-          title: 'Umsókn um fullnaðarskírteini',
+          title: m.externalDataTitle,
           id: 'approveExternalData',
-          subTitle: m.externalDataTitle,
+          subTitle: m.externalDataSubTitle,
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
@@ -80,12 +80,30 @@ export const application: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'requirements',
+      title: 'Skilyrði umsóknar',
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: 'Skilyrði sem umsækjandi þarf að uppfylla',
+          children: [
+            buildCustomField({
+              title: 'XXYYZZ',
+              component: 'EligibilitySummary',
+              id: 'eligsummary',
+            }),
+          ],
+        })
+      ],
+    }),
+
+    buildSection({
       id: 'user',
       title: m.informationSectionTitle,
       children: [
         buildMultiField({
           id: 'info',
-          title: m.informationMultiFieldTitle,
+          title: m.pickupLocationTitle,
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
@@ -243,7 +261,7 @@ export const application: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
-                  name: 'Greiða',
+                  name: 'Halda áfram',
                   type: 'primary',
                 },
               ],
@@ -302,7 +320,8 @@ export const application: Form = buildForm({
             buildDividerField({}),
             buildKeyValueField({
               label: m.overviewTeacher,
-              value: ({ answers: { teacher } }) => teacher as string,
+              value: 'Arnór Heiðar Sigurðsson',
+              // value: ({ answers: { teacher } }) => teacher as string,
             }),
             buildDividerField({}),
             buildCheckboxField({
@@ -332,18 +351,13 @@ export const application: Form = buildForm({
             buildDividerField({}),
             buildKeyValueField({
               label: m.overviewPaymentCharge,
-              width: 'full',
-              value: () => '' as string,
-            }),
-            buildKeyValueField({
-              label: ({ externalData }) => {
+              value: ({ externalData }) => {
                 /// needs a lot of refactoring
                 let str = Object.values(externalData.payment.data as object)
                 /// more refactoring
-                return (str[1].toString() + ' kr.') as StaticText
+                return (parseInt(str[1], 10) + ' kr.') as StaticText
               },
-              width: 'half',
-              value: () => '',
+              width: 'full',
             }),
           ],
         }),

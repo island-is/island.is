@@ -8,8 +8,18 @@ export const m = defineMessages({
   },
   externalDataTitle: {
     id: 'dl.system:externalData.title',
+    defaultMessage: 'Umsókn um fullnaðarskírteini',
+    description: 'Title of the application',
+  },
+  externalDataSubTitle: {
+    id: 'dl.system:externalData.subTitle',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'The following data will be retrieved electronically',
+  },
+  eligibilitySummaryTitle: {
+    id: 'dl.application:eligibility.title',
+    defaultMessage: 'Skilyrði sem umsækjandi um fullnaðarskírteini þarf að uppfylla',
+    description: 'Headline showing up above the list of requirements',
   },
   yes: {
     id: 'dl.application:shared.yes',
@@ -126,13 +136,13 @@ export const m = defineMessages({
   },
   informationSectionTitle: {
     id: 'dl.application:informationSection.title',
-    defaultMessage: 'Upplýsingar',
+    defaultMessage: 'Afhending',
     description: 'Information',
   },
-  informationMultiFieldTitle: {
-    id: 'dl.application:informationMultiField.title',
-    defaultMessage: 'Upplýsingar',
-    description: 'Information',
+  pickupLocationTitle: {
+    id: 'dl.application:pickuplocation',
+    defaultMessage: 'Afhendingarstaður',
+    description: 'location for pickup',
   },
   informationApplicant: {
     id: 'dl.application:information.applicant',
@@ -318,19 +328,39 @@ export const m = defineMessages({
     defaultMessage: 'Greiðsla',
     description: 'Cost'
   },
-  requirementUnmetDrivingAssessment: {
-    id: 'dl.application:requirementunmet.drivingassessment',
-    defaultMessage: 'Gilt akstursmat finnst ekki á skrá',
+  requirementUnmetDrivingAssessmentTitle: {
+    id: 'dl.application:requirementunmet.drivingassessmenttitle',
+    defaultMessage: 'Akstursmat',
     description: 'requirement unmet assessment',
   },
-  requirementUnmetDrivingSchool: {
-    id: 'dl.application:requirementunmet.drivingschool',
-    defaultMessage: 'Hefur ekki lokið ökuskóla 3',
+  requirementUnmetDrivingAssessmentDescription: {
+    id: 'dl.application:requirementunmet.drivingassessmentdescription',
+    defaultMessage: 'Ökukennari þarf að hafa staðfest akstursmat',
+    description: 'requirement unmet assessment',
+  },
+  requirementUnmetDrivingSchoolTitle: {
+    id: 'dl.application:requirementunmet.drivingschooltitle',
+    defaultMessage: 'Ökuskóli 3',
     description: 'requirement unmet driving school',
   },
-  requirementUnmetDeniedByService: {
-    id: 'dl.application:requirementunmet.deniedbyservice',
-    defaultMessage: 'Má ekki sækja um valin réttindi skv ökuskírteinaskrá',
+  requirementUnmetDrivingSchoolDescription: {
+    id: 'dl.application:requirementunmet.drivingschooldescription',
+    defaultMessage: 'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini',
+    description: 'requirement unmet driving school',
+  },
+  requirementUnmetDeniedByServiceTitle: {
+    id: 'dl.application:requirementunmet.deniedbyservicetitle',
+    defaultMessage: 'Ökuskírteinaskrá',
     description: 'requirement unmet api returned false',
+  },
+  requirementUnmetDeniedByServiceDescription: {
+    id: 'dl.application:requirementunmet.deniedbyservicedescription',
+    defaultMessage: 'Ökuskírteinaskrá þarf að heimila að þú megir sækja um fullnaðarskírteini',
+    description: 'requirement unmet api returned false',
+  },
+  errorDataProvider: {
+    id: 'dl.application:error.dataProvider',
+    defaultMessage: 'Villa kom upp við að sækja upplýsingar úr vefþjónustu. Reyndu aftur síðar',
+    description: 'Unhandled error in driving license data provider',
   },
 })

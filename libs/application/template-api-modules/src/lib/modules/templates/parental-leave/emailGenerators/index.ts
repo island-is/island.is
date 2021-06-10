@@ -1,3 +1,3 @@
-export * from './applicationApproved'
+export * from './applicationApprovedByEmployer'
 export * from './assignOtherParentEmail'
 export * from './assignEmployerEmail'
