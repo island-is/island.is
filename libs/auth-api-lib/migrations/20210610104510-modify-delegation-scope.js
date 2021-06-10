@@ -54,6 +54,15 @@ module.exports = {
             = 1
             );
 
+        ALTER TABLE delegation
+        ADD COLUMN toName VARCHAR NULL;
+    
+        UPDATE delegation
+            SET toName = '' WHERE toName IS NULL;
+    
+        ALTER TABLE delegation
+        ALTER COLUMN toName SET NOT NULL;
+        
       COMMIT;
     `)
   },

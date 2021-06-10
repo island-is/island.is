@@ -40,6 +40,10 @@ export class DelegationDTO {
   @ApiProperty()
   toNationalId!: string
 
+  @IsString()
+  @ApiPropertyOptional()
+  toName?: string
+
   @ApiProperty({ enum: DelegationType, enumName: 'DelegationType' })
   type!: DelegationType
 
@@ -58,6 +62,11 @@ export class UpdateDelegationDTO {
   @ApiPropertyOptional()
   fromName?: string
 
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  toName?: string
+
   @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
   @Type(() => UpdateDelegationScopeDTO)
   @IsArray()
@@ -72,6 +81,10 @@ export class CreateDelegationDTO {
   @IsString()
   @ApiProperty()
   toNationalId!: string
+
+  @IsString()
+  @ApiProperty()
+  toName!: string
 
   @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
   @ValidateNested({ each: true })
