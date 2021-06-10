@@ -5,7 +5,6 @@ import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { PartyLetter } from '../../lib/dataSchema'
 import { useEndorsements } from '../../hooks/useFetchEndorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import { Endorsement } from '../../types/schema'
@@ -14,12 +13,15 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
-  const answers = application.answers as PartyLetter
   const [searchTerm, setSearchTerm] = useState('')
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
   const [showWarning, setShowWarning] = useState(false)
   const endorsementsHook = useEndorsements(endorsementListId, true)
   const isClosedHook = useIsClosed(endorsementListId)
+
+  useEffect(() => {
+    setEndorsements(endorsementsHook)
+  }, [endorsementsHook])
 
   const namesCountString = formatMessage(
     endorsementsHook && endorsementsHook.length > 1
