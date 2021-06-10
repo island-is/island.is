@@ -81,8 +81,7 @@
 
   &__container__field,
   &__container__checkbox__field,
-  &__container__radio__field,
-  &__container__field-prefix {
+  &__container__radio__field {
     display: block;
     position: relative;
 
@@ -164,18 +163,6 @@
       .detail-link {
         margin: 8px 0;
       }
-    }
-
-    &__postfix,
-    &__prefix {
-      & {
-        display: flex;
-        flex-direction: row;
-      }
-      float: left;
-      width: 50%;
-      flex: 1;
-      position: relative;
     }
   }
 
