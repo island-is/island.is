@@ -53,6 +53,7 @@
 /libs/application/ui-fields/                                                                  @island-is/aranja-applications
 /libs/application/ui-shell/                                                                   @island-is/aranja-applications
 /libs/application/template-api-modules/                                                       @island-is/aranja-applications
+/libs/application/template-api-modules/src/lib/modules/templates/parental-leave/              @island-is/aranja-applications
 /libs/application/template-loader/                                                            @island-is/aranja-applications
 /libs/application/templates/meta-application/                                                 @island-is/aranja-applications
 /libs/application/templates/parental-leave/                                                   @island-is/aranja-applications
