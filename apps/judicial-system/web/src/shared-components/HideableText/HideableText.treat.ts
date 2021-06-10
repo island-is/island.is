@@ -7,3 +7,19 @@ export const hideableTextContainer = style({
   alignItems: 'center',
   justifyItems: 'right',
 })
+
+export const eyeButton = style({
+  position: 'relative',
+})
+
+export const eyeStrikethrough = style({
+  display: 'block',
+  position: 'absolute',
+  top: '0',
+  left: '1px',
+  width: '30px',
+  height: '2px',
+  backgroundColor: theme.color.dark300,
+  transform: 'rotate(45deg)',
+  transformOrigin: 'left',
+})
