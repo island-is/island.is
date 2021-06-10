@@ -72,3 +72,36 @@ input[type='number'] {
   background-color: #ccccd8;
   top: calc((100% / 2) - 12px);
 }
+
+.contentUp {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0);
+  animation-name: ptContentUp;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  animation-duration: 250ms;
+}
+
+.delay-25 {
+  animation-delay: 25ms;
+}
+.delay-50 {
+  animation-delay: 50ms;
+}
+.delay-75 {
+  animation-delay: 75ms;
+}
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+@keyframes ptContentUp {
+  from {
+    transform: translate3d(0, 30px, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}

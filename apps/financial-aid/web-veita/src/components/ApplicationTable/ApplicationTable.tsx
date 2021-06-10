@@ -10,7 +10,7 @@ import cn from 'classnames'
 interface PageProps {
   applications: any //WIP
   header: String[]
-  className?: ReactNode
+  className?: string
 }
 
 const ApplicationTable: React.FC<PageProps> = ({
@@ -25,6 +25,7 @@ const ApplicationTable: React.FC<PageProps> = ({
           [`${styles.tableContainer}`]: true,
           [`${className}`]: true,
         })}
+        key={applications}
       >
         <thead>
           <tr>
@@ -34,7 +35,6 @@ const ApplicationTable: React.FC<PageProps> = ({
                   return (
                     <th
                       key={'header-' + index}
-                      // className={styles.tablePadding}
                       className={cn({
                         [`${styles.tablePadding}`]: true,
                         [`${styles.firstChildPadding}`]: index === 0,

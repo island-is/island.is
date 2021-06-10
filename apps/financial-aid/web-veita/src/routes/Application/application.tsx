@@ -216,77 +216,90 @@ const ApplicationProfile = () => {
         <Box
           marginTop={10}
           marginBottom={15}
-          className={styles.applicantWrapper}
+          className={`${styles.applicantWrapper}`}
         >
-          <Box className={styles.widthFull} marginBottom={3}>
-            {prevUrl && (
-              <Button
-                colorScheme="default"
-                iconType="filled"
-                onClick={() => {
-                  router.push(prevUrl.link)
-                }}
-                preTextIcon="arrowBack"
-                preTextIconType="filled"
-                size="small"
-                type="button"
-                variant="text"
-              >
-                {prevUrl?.label}
-              </Button>
-            )}
-          </Box>
+          <Box className={`contentUp   ${styles.widtAlmostFull} `}>
+            <Box marginBottom={3}>
+              {prevUrl && (
+                <Button
+                  colorScheme="default"
+                  iconType="filled"
+                  onClick={() => {
+                    router.push(prevUrl.link)
+                  }}
+                  preTextIcon="arrowBack"
+                  preTextIconType="filled"
+                  size="small"
+                  type="button"
+                  variant="text"
+                >
+                  {prevUrl?.label}
+                </Button>
+              )}
+            </Box>
 
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="center"
-            width="full"
-            paddingY={3}
-            className={styles.widtAlmostFull}
-          >
-            <Box display="flex" alignItems="center">
-              <Box marginRight={2}>
-                <GeneratedProfile size={48} />
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              width="full"
+              paddingY={3}
+            >
+              <Box display="flex" alignItems="center">
+                <Box marginRight={2}>
+                  <GeneratedProfile size={48} />
+                </Box>
+
+                <Text as="h2" variant="h1">
+                  {GenerateName(data.application.nationalId)}
+                </Text>
               </Box>
 
-              <Text as="h2" variant="h1">
-                {GenerateName(data.application.nationalId)}
-              </Text>
+              <Button
+                colorScheme="default"
+                icon="pencil"
+                iconType="filled"
+                onClick={() => {
+                  setIsVisible(!isVisible)
+                }}
+                preTextIconType="filled"
+                size="default"
+                type="button"
+                variant="primary"
+              >
+                {getState[state as State]}
+              </Button>
             </Box>
 
-            <Button
-              colorScheme="default"
-              icon="pencil"
-              iconType="filled"
-              onClick={() => {
-                setIsVisible(!isVisible)
-              }}
-              preTextIconType="filled"
-              size="default"
-              type="button"
-              variant="primary"
-            >
-              {getState[state as State]}
-            </Button>
-          </Box>
-          <Box width="full" marginBottom={4} className={styles.widtAlmostFull}>
             <Divider />
-          </Box>
-          <Box display="flex" marginBottom={8} className={styles.widthFull}>
-            <Box marginRight={1}>
-              <Text variant="small" fontWeight="semiBold" color="dark300">
-                Aldur umsóknar
+
+            <Box display="flex" marginBottom={8} marginTop={4}>
+              <Box marginRight={1}>
+                <Text variant="small" fontWeight="semiBold" color="dark300">
+                  Aldur umsóknar
+                </Text>
+              </Box>
+              <Text variant="small">
+                {calcDifferenceInDate(data.application.created)}
               </Text>
             </Box>
-            <Text variant="small">
-              {calcDifferenceInDate(data.application.created)}
-            </Text>
           </Box>
 
-          <Profile heading="Umsókn" info={applicationArr} />
-          <Profile heading="Umsækjandi" info={applicant} />
-          <Profile heading="Aðrar upplýsingar" info={applicantMoreInfo} />
+          <Profile
+            heading="Umsókn"
+            info={applicationArr}
+            className={`contentUp delay-50`}
+          />
+          <Profile
+            heading="Umsækjandi"
+            info={applicant}
+            className={`contentUp delay-75`}
+          />
+          <Profile
+            heading="Aðrar upplýsingar"
+            info={applicantMoreInfo}
+            className={`contentUp delay-100`}
+          />
           <>
             <Box marginBottom={[2, 2, 3]} className={styles.widtAlmostFull}>
               <Text as="h2" variant="h3" color="dark300">
@@ -357,7 +370,11 @@ const ApplicationProfile = () => {
     )
   }
   if (loading) {
-    return <LoadingDots />
+    return (
+      <AdminLayout>
+        <LoadingDots />
+      </AdminLayout>
+    )
   } else {
     return (
       <AdminLayout>

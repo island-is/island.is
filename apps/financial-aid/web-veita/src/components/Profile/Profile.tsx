@@ -22,21 +22,33 @@ interface Props {
       other?: string
     },
   ]
+  className?: string
 }
 
-const Profile: React.FC<Props> = ({ heading, info }) => {
+const Profile: React.FC<Props> = ({ heading, info, className }) => {
   const router = useRouter()
   // const { isAuthenticated, setUser, user } = useContext(UserContext)
 
   return (
     <>
       {' '}
-      <Box className={styles.headings} marginBottom={[2, 2, 3]}>
+      <Box
+        className={cn({
+          [`${styles.headings}`]: true,
+          [`${className}`]: true,
+        })}
+        marginBottom={[2, 2, 3]}
+      >
         <Text as="h2" variant="h3" color="dark300">
           {heading}
         </Text>
       </Box>
-      <div className={styles.container}>
+      <div
+        className={cn({
+          [`${styles.container}`]: true,
+          [`${className}`]: true,
+        })}
+      >
         {info.map((item, index) => {
           return (
             <Box key={'profile-' + index}>

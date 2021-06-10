@@ -70,11 +70,15 @@ const ApplicationOverview = () => {
 
   return (
     <AdminLayout>
-      <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={4}>
-        {currentState?.label}
-      </Text>
+      <Box className={`contentUp delay-25`} key={currentState?.label}>
+        <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={4}>
+          {currentState?.label}
+        </Text>
+      </Box>
+
       {data?.applications && (
         <ApplicationTable
+          className={`contentUp delay-50`}
           header={currentState?.headers}
           applications={data.applications
             .filter(
