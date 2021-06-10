@@ -17,7 +17,6 @@ services:
       - TEST_DB_PASS=test_db
       - TEST_DB_NAME=test_db
       - DB_HOST=db_reference_backend
-    user: $UID:$GID
     volumes:
       - ../..:/code
 

@@ -5,12 +5,13 @@ import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { Endorsement, PartyLetter } from '../../lib/dataSchema'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import set from 'lodash/set'
 import cloneDeep from 'lodash/cloneDeep'
 import { useEndorsements } from '../../hooks/useFetchEndorsements'
+import BulkUpload from '../BulkUpload'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { lang: locale, formatMessage } = useLocale()
@@ -19,6 +20,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const answers = application.answers as PartyLetter
   const [searchTerm, setSearchTerm] = useState('')
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
+  const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
   const [showWarning, setShowWarning] = useState(false)
   const endorsementsHook = useEndorsements(endorsementListId, true)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
@@ -54,6 +56,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             address: x.meta.address ? x.meta.address.streetAddress : '',
             hasWarning: x.meta.invalidated ?? false,
             id: x.id,
+            bulkImported: x.meta?.bulkEndorsement ?? false,
           }))
         : undefined
     setEndorsements((_) => {
@@ -61,7 +64,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         updateApplicationWithEndorsements(mapToEndorsementList)
       return mapToEndorsementList
     })
-  }, [endorsementsHook])
+  }, [endorsementsHook, updateOnBulkImport])
 
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1
@@ -127,6 +130,14 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
           application={application}
           endorsements={endorsements}
         />
+        <Box marginY={5}>
+          <BulkUpload
+            application={application}
+            onSuccess={() => {
+              setUpdateOnBulkImport(true)
+            }}
+          />
+        </Box>
       </Box>
     </Box>
   )

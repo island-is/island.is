@@ -592,8 +592,8 @@ export class Case extends Model<Case> {
   custodyRestrictions: CaseCustodyRestrictions[]
 
   /**********
-   * Additional restrictions imposed by the judge - only used for travel ban cases - optional
-   * Should this not be autofilled from requestedOtherRestrictions?
+   * Additional restrictions imposed by the judge - prefilled from requestedOtherRestrictions -
+   * only used for travel ban cases - optional
    **********/
   @Column({
     type: DataType.STRING,
