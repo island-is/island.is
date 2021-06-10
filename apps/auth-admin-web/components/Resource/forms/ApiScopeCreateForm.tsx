@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import HelpBox from '../../common/HelpBox'
 import { ErrorMessage } from '@hookform/error-message'
