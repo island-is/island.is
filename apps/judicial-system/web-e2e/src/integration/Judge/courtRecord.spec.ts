@@ -19,8 +19,8 @@ describe('/domur/thingbok/:id', () => {
     )
   })
 
-  it('should autofill police demands', () => {
-    cy.getByTestid('policeDemands').contains(
+  it('should autofill prosecutor demands', () => {
+    cy.getByTestid('prosecutorDemands').contains(
       'Þess er krafist að Batman Robinsson, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     )
   })

@@ -240,7 +240,6 @@ export const setAndSendToServer = (
     ...theCase,
     [field]: value,
   })
-
   if (theCase.id !== '') {
     if (typeof value === 'string') {
       stringValue = value
