@@ -26,27 +26,6 @@ export const searchSection = style({
   }),
 })
 
-export const bg = style({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  zIndex: -1,
-  height: MOBILE_HEIGHT,
-  backgroundBlendMode: 'saturation',
-  background: `linear-gradient(99.09deg, #003D85 23.68%, #4E8ECC 123.07%),
-    linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%),
-    url('https://images.ctfassets.net/8k0h54kbe6bj/47lCoLCMeg5tCuc6HXbKyg/dc0ca3f94f536ad62e40398baa90db04/Group.svg')`,
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'center center, center center, 20% 0',
-  backgroundSize: '100%, 100%, 90% 150%',
-  ...themeUtils.responsiveStyle({
-    lg: {
-      height: DESKTOP_HEIGHT,
-    },
-  }),
-})
-
 export const categories = style({
   position: 'relative',
   display: 'inline-block',
