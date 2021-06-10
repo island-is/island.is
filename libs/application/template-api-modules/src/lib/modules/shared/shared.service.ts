@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
-import { ChargeResult, ApiDomainsPaymentService } from '@island.is/api/domains/payment'
+import { ChargeResult } from '@island.is/api/domains/payment'
 import { EmailService } from '@island.is/email-service'
 import { Application } from '@island.is/application/core'
 
@@ -21,8 +21,6 @@ import { application } from 'express'
 @Injectable()
 export class SharedTemplateApiService {
   constructor(
-    @Inject(ApiDomainsPaymentService)
-    private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
     @Inject(ConfigService)
