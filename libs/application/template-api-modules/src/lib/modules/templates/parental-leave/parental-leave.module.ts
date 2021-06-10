@@ -15,6 +15,7 @@ const XROAD_VMST_API_PATH = process.env.XROAD_VMST_API_PATH ?? ''
 const XROAD_CLIENT_ID = process.env.XROAD_CLIENT_ID ?? ''
 const VMST_API_KEY = process.env.VMST_API_KEY ?? ''
 
+// Test change for codeowners
 export class ParentalLeaveModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
