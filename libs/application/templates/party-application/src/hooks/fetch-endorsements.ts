@@ -4,7 +4,7 @@ import { GetEndorsements } from '../graphql/queries'
 import { Endorsement } from '../types/schema'
 
 interface EndorsementData {
-  endorsementSystemGetEndorsements?: Endorsement
+  endorsementSystemGetEndorsements?: Endorsement[]
 }
 
 export const useEndorsements = (
@@ -23,5 +23,5 @@ export const useEndorsements = (
     },
   )
 
-  return endorsementsData?.endorsementSystemGetEndorsements ?? []
+  return endorsementsData?.endorsementSystemGetEndorsements
 }
