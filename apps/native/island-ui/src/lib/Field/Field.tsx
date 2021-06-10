@@ -1,12 +1,11 @@
-import { object } from '@storybook/addon-knobs'
 import React from 'react'
 import styled from 'styled-components/native'
 import { font } from '../../utils/font'
-import { Skeleton } from '../Skeleton/Skeleton'
+import { Skeleton } from '../skeleton/skeleton'
 import { FormattedDate } from 'react-intl'
 
 const Host = styled.View<{ compact?: boolean }>`
-  ${(props) => (props.compact ? '' : 'flex: 1;')}
+  ${(props: any) => (props.compact ? '' : 'flex: 1;')}
 `
 
 const Content = styled.View`

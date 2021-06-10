@@ -2,10 +2,10 @@ import { withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
-import { Button } from '../Button/Button'
-import { CancelButton } from '../Button/CancelButton'
-import { Illustration } from '../Illustration/Illustration'
-import { Onboarding } from './Onboarding'
+import { Button } from '../button/button'
+import { CancelButton } from '../button/cancel-button'
+import { Illustration } from '../illustration/illustration'
+import { Onboarding } from './onboarding'
 
 const CenterView = ({ children }: any) => (
   <View

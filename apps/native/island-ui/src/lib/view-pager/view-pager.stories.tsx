@@ -4,8 +4,8 @@ import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { ImageSourcePropType, View } from 'react-native'
 import illustrationSrc from '../../assets/illustrations/digital-services-m3.png'
-import { WelcomeCard } from '../Card/WelcomeCard'
-import { ViewPager } from './ViewPager'
+import { WelcomeCard } from '../card/welcome-card'
+import { ViewPager } from './view-pager'
 
 const CenterView = ({ children }: any) => (
   <View

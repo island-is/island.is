@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/react-native';
 import { text, withKnobs, boolean } from '@storybook/addon-knobs';
 import React from 'react';
 import { View } from 'react-native';
-import { Alert } from './Alert';
+import { Alert } from './alert';
 
 const CenterView = ({ children }: any) => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>{children}</View>

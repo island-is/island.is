@@ -2,11 +2,11 @@ import { withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { SafeAreaView, View } from 'react-native'
-import { Field } from './Field'
-import { FieldCard } from './FieldCard'
-import { FieldGroup } from './FieldGroup'
-import { FieldLabel } from './FieldLabel'
-import { FieldRow } from './FieldRow'
+import { Field } from './field'
+import { FieldCard } from './field-card'
+import { FieldGroup } from './field-group'
+import { FieldLabel } from './field-label'
+import { FieldRow } from './field-row'
 
 const CenterView = ({ children }: any) => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

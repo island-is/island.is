@@ -3,7 +3,7 @@ import { ImageSourcePropType } from 'react-native'
 import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
-import { Skeleton } from '../Skeleton/Skeleton'
+import { Skeleton } from '../skeleton/skeleton'
 
 const Host = styled.View<{ hasBorder?: boolean }>`
   padding-bottom: 16px;

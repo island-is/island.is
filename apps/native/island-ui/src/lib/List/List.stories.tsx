@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { Image, ImageSourcePropType, View } from 'react-native'
 import agencyLogo from '../../assets/card/agency-logo.png'
-import { ListItem } from './ListItem'
+import { ListItem } from './list-item'
 
 const CenterView = ({ children }: any) => (
   <View
