@@ -6,7 +6,7 @@ import {
   IsArray,
   IsObject,
 } from 'class-validator'
-import { Type, Transform } from 'class-transformer'
+import { Type } from 'class-transformer'
 import { ValidationRuleDto } from './validationRule.dto'
 import { EndorsementTag } from '../endorsementList.model'
 
@@ -39,7 +39,7 @@ export class EndorsementListDto {
   @ValidateNested({ each: true })
   @Type(() => ValidationRuleDto)
   @IsArray()
-  validationRules: ValidationRuleDto[] = [] as ValidationRuleDto[]
+  validationRules = [] as ValidationRuleDto[]
 
   @ApiProperty({ nullable: true })
   @IsOptional()
