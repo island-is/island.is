@@ -69,8 +69,26 @@ type ScreenProps = {
   goToScreen: (id: string) => void
 }
 
+function parseErrorMessage(error: string) {
+  if (!error) {
+    return 'Unknown error'
+  }
+
+  if (isJSONObject(error)) {
+    const errorObj = JSON.parse(error)
+
+    return errorObj.message ?? error
+  }
+
+  return error
+}
+
 function handleError(error: string, formatMessage: MessageFormatter): void {
-  toast.error(formatMessage(coreMessages.updateOrSubmitError, { error }))
+  toast.error(
+    formatMessage(coreMessages.updateOrSubmitError, {
+      error: parseErrorMessage(error),
+    }),
+  )
 }
 
 const Screen: FC<ScreenProps> = ({

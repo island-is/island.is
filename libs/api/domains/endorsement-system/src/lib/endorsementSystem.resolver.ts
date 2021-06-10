@@ -122,6 +122,17 @@ export class EndorsementSystemResolver {
   }
 
   @Mutation(() => EndorsementList)
+  async endorsementSystemOpenEndorsementList(
+    @Args('input') input: FindEndorsementListInput,
+    @CurrentUser() user: User,
+  ): Promise<EndorsementList> {
+    return await this.endorsementSystemService.endorsementListControllerOpen(
+      input,
+      user,
+    )
+  }
+
+  @Mutation(() => EndorsementList)
   async endorsementSystemCreateEndorsementList(
     @Args('input') input: CreateEndorsementListDto,
     @CurrentUser() user: User,

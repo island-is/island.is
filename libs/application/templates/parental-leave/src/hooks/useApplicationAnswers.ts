@@ -1,6 +1,6 @@
 import { Application } from '@island.is/application/core'
 
-import { getApplicationAnswers } from '../parentalLeaveUtils'
+import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 
 export const useApplicationAnswers = (application: Application) => {
   return getApplicationAnswers(application.answers)

@@ -15,7 +15,7 @@ import {
 import isEmpty from 'lodash/isEmpty'
 import has from 'lodash/has'
 
-import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
+import { getExpectedDateOfBirth } from '../lib/parentalLeaveUtils'
 import { Period } from '../types'
 import { minPeriodDays, usageMaxMonths } from '../config'
 import { NO, YES } from '../constants'

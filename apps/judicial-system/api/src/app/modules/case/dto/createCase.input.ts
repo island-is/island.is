@@ -15,6 +15,10 @@ export class CreateCaseInput implements CreateCase {
   readonly type!: CaseType
 
   @Allow()
+  @Field({ nullable: true })
+  readonly description?: string
+
+  @Allow()
   @Field()
   readonly policeCaseNumber!: string
 
