@@ -26,6 +26,7 @@ type autofillProperties = Pick<
   | 'courtLegalArguments'
   | 'validToDate'
   | 'isolationTo'
+  | 'otherRestrictions'
 >
 
 interface CreateCourtCaseMutationResponse {

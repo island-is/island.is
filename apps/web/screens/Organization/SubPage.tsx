@@ -61,8 +61,8 @@ const SubPage: Screen<SubPageProps> = ({
   const { linkResolver } = useLinkResolver()
   useContentfulId(organizationPage.id)
 
-  const pageUrl = `/stofnanir/${organizationPage.slug}/${subpage.slug}`
-  const parentSubpageUrl = `/stofnanir/${organizationPage.slug}/${subpage.parentSubpage}`
+  const pageUrl = `/s/${organizationPage.slug}/${subpage.slug}`
+  const parentSubpageUrl = `/s/${organizationPage.slug}/${subpage.parentSubpage}`
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
