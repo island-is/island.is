@@ -31,14 +31,14 @@ export class PaymentService {
       console.log(JSON.stringify(charge, null, 4));
       console.log(JSON.stringify(result, null, 4));
       const paymentDto = {
-        applicationId: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',//applicationId, //applicationId != "" ? applicationId : '123456789',
+        application_id: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',//applicationId, //applicationId != "" ? applicationId : '123456789',
         fulfilled: false,
         user4: "cool url bro", //result.data?.paymentUrl as string
         definition: '123', //result.data?.user4 as string,
         amount: 2288,//charge.payInfo?.payableAmount != null ? charge.payInfo?.payableAmount as number : 999,
-        expiresAt: new Date(calcExpiration),
-        id: '44444',
-        referenceId: "666666"
+        expires_at: new Date(calcExpiration),
+        id: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',
+        reference_id: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c'
       }
       this.paymentModel.create(paymentDto)
       return result

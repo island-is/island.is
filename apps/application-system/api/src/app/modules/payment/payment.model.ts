@@ -4,6 +4,7 @@ import {
   Model,
   Table,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Application } from '../application/application.model'
@@ -13,11 +14,11 @@ import { JsonObject } from 'type-fest'
 ///Payment table to hold onto fulfilled payments and expiring payments.
 @Table({
   tableName: 'payment',
-  timestamps: true,
+  timestamps: false,
   freezeTableName: true,
   indexes: [
     {
-      fields: ['applicationId'],
+      fields: ['application_id'],
     },
   ],
 })
@@ -33,12 +34,14 @@ export class Payment extends Model<Application> {
   @ApiProperty()
   id!: string
   
+  @ApiProperty()
   @ForeignKey(() => Application)
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  applicationId!: string
+  application_id!: Application["id"]
+
   
   @Column({
     type: DataType.BOOLEAN,
@@ -53,7 +56,7 @@ export class Payment extends Model<Application> {
     allowNull: false,
   })
   @ApiProperty()
-  referenceId!: string
+  reference_id!: string
   
   @Column({
     type: DataType.STRING,
@@ -80,5 +83,5 @@ export class Payment extends Model<Application> {
       type: DataType.DATE,
   })
   @ApiProperty()
-  expiresAt!: Date
+  expires_at!: Date
 }

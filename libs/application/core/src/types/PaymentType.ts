@@ -1,10 +1,10 @@
 export interface PaymentType {
   id: string,
-  applicationId: string,
+  application_id: string,
   fulfilled: boolean,
-  referenceId: string,
+  reference_id: string,
   user4: string,
   definition: string,
   amount: number,
-  expiresAt: Date,
+  expires_at: Date,
 }

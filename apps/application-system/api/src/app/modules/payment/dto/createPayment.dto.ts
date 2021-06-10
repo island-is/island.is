@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger'
 export class CreatePaymentDto {
 	@IsString()
 	@ApiProperty()
-	readonly applicationId!: string
+	readonly application_id!: string
 
 	@IsString()
 	@ApiProperty()
@@ -24,5 +24,5 @@ export class CreatePaymentDto {
 
 	@IsDate()
 	@ApiProperty()
-	readonly expiresAt!: Date
+	readonly expires_at!: Date
 }

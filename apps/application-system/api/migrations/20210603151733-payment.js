@@ -10,7 +10,7 @@ module.exports = {
           allowNull: false,
           defaultValue: Sequelize.UUIDV4,
         },
-        applicationId: {
+        application_id: {
           type: Sequelize.UUID,
           allowNull: false,
           references: {
@@ -23,7 +23,7 @@ module.exports = {
           allowNull: false,
           defaultValue: false
         },
-        referenceId: {
+        reference_id: {
           type: Sequelize.UUID,
           allowNull: false,
         },
@@ -39,13 +39,13 @@ module.exports = {
           allowNull: false,
         },
         /// maybe remove.
-        expiresAt: {
+        expires_at: {
           type: Sequelize.DATE,
           allowNull: false,
         },
       })
       .then(() => 
-        queryInterface.addIndex('payment', ['applicationId']),
+        queryInterface.addIndex('payment', ['application_id']),
       )
   },
 

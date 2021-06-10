@@ -3,8 +3,6 @@ import {
   Controller,
   Param,
   Post,
-  ParseUUIDPipe,
-  BadRequestException,
   UseInterceptors,
   UseGuards,
 } from '@nestjs/common'
@@ -27,8 +25,6 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-
-import { PaymentService } from './payment.service'
 import { CreatePaymentDto } from './dto/createPayment.dto'
 import { CreatePaymentResponseDto } from './dto/createPaymentResponse.dto'
 import { ApplicationSerializer } from '../application/tools/application.serializer'
@@ -48,20 +44,18 @@ import { Payment } from './payment.model'
 @Controller()
 export class PaymentController {
   constructor(
-    private readonly paymentService: PaymentService,
     private readonly auditService: AuditService,
     @InjectModel(Payment)
     private paymentModel: typeof Payment,
   ) {}
   @Scopes(ApplicationScope.write)
   @ApiParam({
-    name: 'applicationId',
+    name: 'application_id',
     type: String,
     required: true,
     description: 'The id of the application to submit payment for.',
-    allowEmptyValue: false,
   })
-  @Post('applications/:applicationId/payment')
+  @Post('applications/:application_id/payment')
   @ApiCreatedResponse({ type: CreatePaymentResponseDto })
   @UseInterceptors(ApplicationSerializer)
   @Audit<CreatePaymentResponseDto>({
@@ -88,21 +82,21 @@ export class PaymentController {
 
     const paymentDto: Pick<
       BasePayment,
-      | 'applicationId'
+      | 'application_id'
       | 'fulfilled'
-      | 'referenceId'
+      | 'reference_id'
       | 'user4'
       | 'definition'
       | 'amount'
-      | 'expiresAt'
+      | 'expires_at'
       > = {
-      applicationId: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',
+      application_id: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',
       fulfilled: false,
-      referenceId: "456",
+      reference_id: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',
       user4: "789",
       definition: "000",
       amount: 1,
-      expiresAt: paymentDetails.expiresAt,
+      expires_at: new Date(),
     }
     console.log('payment controller')
     console.log(JSON.stringify(paymentDto, null, 4));
@@ -110,8 +104,8 @@ export class PaymentController {
     this.auditService.audit({
       user,
       action: 'create',
-      resources: paymentDto.applicationId,
-      meta: { applicationId: paymentDto.applicationId },
+      resources: paymentDto.application_id as string,
+      meta: { applicationId: paymentDto.application_id },
     })
     return await this.paymentModel.create(paymentDto)
   }

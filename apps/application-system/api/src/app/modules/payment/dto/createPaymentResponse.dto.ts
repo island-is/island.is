@@ -10,7 +10,7 @@ export class CreatePaymentResponseDto {
   @ApiProperty()
   @Expose()
   @IsString()
-  applicationId?: string
+  application_id?: string
 
   @ApiProperty()
   @Expose()
@@ -35,5 +35,5 @@ export class CreatePaymentResponseDto {
   @ApiProperty()
   @Expose()
   @IsDate()
-  expiresAt!: Date 
+  expires_at!: Date 
 }
