@@ -147,6 +147,16 @@ export const m: MessageDir = {
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Label for file upload',
     },
+    uploadSuccess: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Pappírsmeðmælum hefur verið hlaðið upp!',
+      description: 'Upload succeeded text',
+    },
+    uploadFail: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
+      description: 'Upload failed text',
+    },
   }),
   selectNationalId: defineMessages({
     title: {
