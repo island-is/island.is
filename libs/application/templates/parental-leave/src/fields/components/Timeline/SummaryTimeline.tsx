@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { Application } from '@island.is/application/core'
 
 import { parentalLeaveFormMessages } from '../../../lib/messages'
-import { formatPeriods } from '../../../parentalLeaveUtils'
+import { formatPeriods } from '../../../lib/parentalLeaveUtils'
 
 interface SummaryTimelineProps {
   application: Application
