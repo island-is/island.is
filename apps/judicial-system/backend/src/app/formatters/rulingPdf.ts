@@ -208,6 +208,7 @@ export async function getRulingPdfAsString(
       paragraphGap: 0,
     })
     .text(' ')
+  
   if (existingCase.requestProsecutorOnlySession) {
     doc
       .font('Helvetica-Bold')
@@ -220,7 +221,9 @@ export async function getRulingPdfAsString(
         lineGap: 6,
         paragraphGap: 0,
       })
+      .text(' ')
   }
+  
   doc
     .font('Helvetica-Bold')
     .fontSize(14)
