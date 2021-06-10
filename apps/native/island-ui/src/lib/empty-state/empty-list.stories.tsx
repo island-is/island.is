@@ -4,8 +4,8 @@ import React from 'react'
 import { Image, View } from 'react-native'
 import illustrationSrc from '../../assets/empty-list/LE-Company-S3.png'
 import leJobss4 from '../../assets/illustrations/le-jobs-s4.png'
-import { EmptyCard } from './EmptyCard'
-import { EmptyList } from './EmptyList'
+import { EmptyCard } from './empty-card'
+import { EmptyList } from './empty-list'
 
 const CenterView = ({ children }: any) => (
   <View

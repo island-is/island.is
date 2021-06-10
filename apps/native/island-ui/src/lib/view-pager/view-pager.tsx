@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { Animated } from 'react-native'
 import styled from 'styled-components/native'
-import { dynamicColor } from '../../utils'
 
 const Dots = styled.View`
   flex-direction: row;

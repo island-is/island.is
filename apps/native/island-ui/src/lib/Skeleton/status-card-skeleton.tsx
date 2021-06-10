@@ -3,7 +3,7 @@ import styled from 'styled-components/native'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
 import { spacing } from '../../utils'
 import { dynamicColor } from '../../utils/dynamic-color'
-import { Loader } from '../Loader/Loader'
+import { Loader } from '../loader/loader'
 
 const Host = styled.View`
   width: 100%;

@@ -2,9 +2,9 @@ import { boolean, text, withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
-import { Button } from './Button'
-import { CancelButton } from './CancelButton'
-import { Close } from './Close'
+import { Button } from './button'
+import { CancelButton } from './cancel-button'
+import { Close } from './close'
 
 const CenterView = ({ children }: any) => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

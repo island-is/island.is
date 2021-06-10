@@ -155,7 +155,7 @@ const Cell = styled.View``
 
 const Divider = styled.View`
   background-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade400,
+    dark: theme.shades.dark.shade100,
     light: theme.color.blue200,
   }))};
 `

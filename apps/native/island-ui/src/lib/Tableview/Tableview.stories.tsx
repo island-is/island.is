@@ -3,8 +3,8 @@ import { withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { Platform, Switch, View } from 'react-native'
-import { TableViewCell } from './TableviewCell'
-import { TableViewGroup } from './TableviewGroup'
+import { TableViewCell } from './tableview-cell'
+import { TableViewGroup } from './tableview-group'
 
 const CenterView = ({ children }: any) => (
   <View

@@ -7,11 +7,11 @@ import { LicenseStatus, LicenseType } from '../../../../app/src/types/license-ty
 import agencyLogo from '../../assets/card/agency-logo.png'
 import logo from '../../assets/card/logo-64w.png'
 import illustrationSrc from '../../assets/illustrations/digital-services-m3.png'
-import { Badge } from '../Badge/Badge'
-import { LicenceCard } from './LicenceCard'
-import { NotificationCard } from './NotificationCard'
-import { StatusCard } from './StatusCard'
-import { WelcomeCard } from './WelcomeCard'
+import { Badge } from '../badge/badge'
+import { LicenceCard } from './licence-card'
+import { NotificationCard } from './notification-card'
+import { StatusCard } from './status-card'
+import { WelcomeCard } from './welcome-card'
 
 const CenterView = ({ children }: any) => (
   <View

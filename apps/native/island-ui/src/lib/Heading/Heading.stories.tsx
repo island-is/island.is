@@ -2,8 +2,8 @@ import { withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
-import { Close } from '../Button/Close'
-import { Heading } from './Heading'
+import { Close } from '../button/close'
+import { Heading } from './heading'
 
 const CenterView = ({ children }: any) => (
   <View

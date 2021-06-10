@@ -2,7 +2,7 @@ import { withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
-import { SearchHeader } from './SearchHeader'
+import { NavigationBarSheet } from './navigation-bar-sheet'
 
 const CenterView = ({ children }: any) => (
   <View
@@ -17,16 +17,18 @@ const CenterView = ({ children }: any) => (
   </View>
 )
 
-storiesOf('Search Header', module)
+storiesOf('Navigation Bar Sheet', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Default', () => {
     return (
-      <SearchHeader
-        count={3}
-        loading={false}
-        loadingText="Leita í skjölum..."
-        resultText="niðurstöður fundust"
-      />
+      <View style={{ width: '100%' }}>
+        <NavigationBarSheet
+          componentId="none"
+          title="Notandi"
+          onClosePress={() => console.log('close')}
+          style={{ marginHorizontal: 16 }}
+        />
+      </View>
     )
   })

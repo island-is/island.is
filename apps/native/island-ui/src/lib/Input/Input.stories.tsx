@@ -2,8 +2,8 @@ import { withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
-import { Input } from './Input'
-import { InputRow } from './InputRow'
+import { Input } from './input'
+import { InputRow } from './input-row'
 
 const CenterView = ({ children }: any) => (
   <View

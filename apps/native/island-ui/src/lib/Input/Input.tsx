@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
-import { Skeleton } from '../Skeleton/Skeleton'
+import { Skeleton } from '../skeleton/skeleton'
 
 const Host = styled.SafeAreaView`
   flex: 1;
