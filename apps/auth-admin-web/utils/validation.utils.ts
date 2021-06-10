@@ -19,8 +19,7 @@ class ValidationUtils {
 
   public static apiScopePattern = /^@[a-z\.]*[/]([a-z]+[:/]?)*[a-z]+$/
 
-  /** Pattern for illegal characters in scope name */
-  public static scopePattern = /^@([\w-])$/
+  public static scopePattern = /^@([\w-]+)$/
 
   public static validateEmail(input: string): boolean {
     if (input.length === 0) {
