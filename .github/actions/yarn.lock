@@ -284,10 +284,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@fluffy-spoon/substitute@^1.143.0":
-  version "1.143.0"
-  resolved "https://registry.yarnpkg.com/@fluffy-spoon/substitute/-/substitute-1.143.0.tgz#34b661a3e9f8bb691e12d60ea7b00dcf27e47ff4"
-  integrity sha512-sQ7SF9kkIfa0oOekdoPPnXGdoYjO8wgqfbRZKj38C7fmcZ7r53Ttv+6Mhr6fZUZxC/Kyj5JIWrNxg4/LRao6Ow==
+"@fluffy-spoon/substitute@^1.208.0":
+  version "1.208.0"
+  resolved "https://registry.yarnpkg.com/@fluffy-spoon/substitute/-/substitute-1.208.0.tgz#38ea4e0b960ec85055f8fc3e429396b081517b57"
+  integrity sha512-BU5vKRoK4OYlKzDtyg4HbtWnUNLOvV0ntqEZIphz+mq2G0HlVFywwJ7M+FbIcnJVDbUReS01FyL5x8R01r7zBg==
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
