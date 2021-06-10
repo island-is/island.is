@@ -31,7 +31,7 @@ export class PaymentService {
       console.log(JSON.stringify(charge, null, 4));
       console.log(JSON.stringify(result, null, 4));
       const paymentDto = {
-        applicationId: applicationId, //applicationId != "" ? applicationId : '123456789',
+        applicationId: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',//applicationId, //applicationId != "" ? applicationId : '123456789',
         fulfilled: false,
         user4: "cool url bro", //result.data?.paymentUrl as string
         definition: '123', //result.data?.user4 as string,
@@ -54,20 +54,6 @@ export class PaymentService {
     // kalla i api domains create charge
     // createmodel
     //return this.paymentController.paymentApplication(payment, user)
-  }
-
-  async createPaymentModel(payment: CreatePaymentDto): Promise<CreatePaymentResponseDto> {
-    const createObj = {
-      applicationId: '123',
-      fulfilled: false,
-      user4: 'nuice',
-      definition: 'DATA IS FAKED, CUZ THIS NEEDS REMOVAL FROM CONTROLLER.',
-      amount: 963,
-      expiresAt: new Date(),
-      id: '12333',
-      referenceId: "555555"
-    }
-    return this.paymentModel.create(createObj)
   }
 
   async recreatedPayment(payment: CreatePaymentDto): Promise<Payment> {

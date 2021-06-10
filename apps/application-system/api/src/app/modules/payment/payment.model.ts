@@ -14,6 +14,7 @@ import { JsonObject } from 'type-fest'
 @Table({
   tableName: 'payment',
   timestamps: true,
+  freezeTableName: true,
   indexes: [
     {
       fields: ['applicationId'],
@@ -25,6 +26,8 @@ export class Payment extends Model<Application> {
     type: DataType.UUID,
     primaryKey: true,
     allowNull: false,
+    autoIncrement: true,
+    unique: true,
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
@@ -35,7 +38,7 @@ export class Payment extends Model<Application> {
     type: DataType.UUID,
     allowNull: false,
   })
-  ApplicationId!: string
+  applicationId!: string
   
   @Column({
     type: DataType.BOOLEAN,

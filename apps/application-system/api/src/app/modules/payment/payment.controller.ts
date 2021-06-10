@@ -32,6 +32,8 @@ import { PaymentService } from './payment.service'
 import { CreatePaymentDto } from './dto/createPayment.dto'
 import { CreatePaymentResponseDto } from './dto/createPaymentResponse.dto'
 import { ApplicationSerializer } from '../application/tools/application.serializer'
+import { InjectModel } from '@nestjs/sequelize'
+import { Payment } from './payment.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -48,6 +50,8 @@ export class PaymentController {
   constructor(
     private readonly paymentService: PaymentService,
     private readonly auditService: AuditService,
+    @InjectModel(Payment)
+    private paymentModel: typeof Payment,
   ) {}
   @Scopes(ApplicationScope.write)
   @ApiParam({
@@ -102,16 +106,13 @@ export class PaymentController {
     }
     console.log('payment controller')
     console.log(JSON.stringify(paymentDto, null, 4));
-    const createdPayment = await this.paymentService.createPaymentModel(
-      paymentDto
-    )
 
     this.auditService.audit({
       user,
       action: 'create',
-      resources: createdPayment.id,
-      meta: { applicationId: paymentDetails.applicationId },
+      resources: paymentDto.applicationId,
+      meta: { applicationId: paymentDto.applicationId },
     })
-    return createdPayment
+    return await this.paymentModel.create(paymentDto)
   }
 }

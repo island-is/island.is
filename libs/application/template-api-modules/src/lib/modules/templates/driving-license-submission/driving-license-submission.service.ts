@@ -52,7 +52,7 @@ export class DrivingLicenseSubmissionService {
       .createCharge({
         // TODO: this needs to be unique, but can only handle 22 or 23 chars
         // should probably be an id or token from the DB charge once implemented
-        chargeItemSubject: `${applicant}/${new Date().toISOString().substring(0, 19).replace(/[^0-9]/g, '')}`,
+        chargeItemSubject: `${new Date().toISOString().substring(0, 19).replace(/[^0-9]/g, '')}`,
         chargeType: payment.chargeType,
         immediateProcess: true,
         charges: [
