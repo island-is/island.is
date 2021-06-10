@@ -12,15 +12,19 @@ import { CRCFieldBaseProps } from '../../types'
 
 const emailId = 'parentA.email'
 const phoneNumberId = 'parentA.phoneNumber'
+const phoneNumberPres = 'parentA.presentationPhone'
 
 const counterPartyEmail = 'counterParty.email'
 const counterPartyPhoneNumber = 'counterParty.phoneNumber'
+const counterPartyPhoneNumberPres = 'counterParty.presentationPhone'
 
 export const contactInfoIds = [
   emailId,
   phoneNumberId,
   counterPartyEmail,
   counterPartyPhoneNumber,
+  phoneNumberPres,
+  counterPartyPhoneNumberPres,
 ]
 
 const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
@@ -28,17 +32,16 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
   const { userProfile, nationalRegistry } = externalData
   const { formatMessage } = useIntl()
   const emailError = errors?.parentA?.email
-  const phoneNumberError = errors?.parentA?.phoneNumber
+  const phoneNumberError = errors?.parentA?.presentationPhone
   const counterPartyError =
     typeof errors?.counterParty === 'string' ? errors.counterParty : undefined
   const counterPartyEmailError = errors?.counterParty?.email
-  const counterPartyPhoneError = errors?.counterParty?.phoneNumber
+  const counterPartyPhoneError = errors?.counterParty?.presentationPhone
   const applicant = nationalRegistry.data
   const selectedChildren = getSelectedChildrenFromExternalData(
     applicant.children,
     answers.selectedChildren,
   )
-
   return (
     <>
       <Box marginTop={3}>
@@ -57,6 +60,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
           }}
           phoneNumber={{
             id: phoneNumberId,
+            presentationId: phoneNumberPres,
             label: formatMessage(contactInfo.inputs.phoneNumberLabel),
             error: phoneNumberError,
             defaultValue:
@@ -86,6 +90,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
           }}
           phoneNumber={{
             id: counterPartyPhoneNumber,
+            presentationId: counterPartyPhoneNumberPres,
             label: formatMessage(contactInfo.inputs.phoneNumberLabel),
             error: counterPartyError ? '' : counterPartyPhoneError,
             clearErrors: [counterPartyPhoneNumber, 'counterParty'],
