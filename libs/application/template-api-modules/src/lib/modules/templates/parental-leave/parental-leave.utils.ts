@@ -14,9 +14,13 @@ import {
   getSelectedChild,
   getApplicationAnswers,
   getSpouse,
+  ParentalRelations,
+  NO,
+  YES,
+  SPOUSE,
 } from '@island.is/application/templates/parental-leave'
 
-import { apiConstants, formConstants } from './constants'
+import { apiConstants } from './constants'
 
 const extractAnswer = <T>(
   object: unknown,
@@ -49,19 +53,13 @@ export const getPersonalAllowance = (
     : 'personalAllowance.usage'
 
   const willUsePersonalAllowance =
-    get(
-      application.answers,
-      usePersonalAllowanceGetter,
-      formConstants.boolean.false,
-    ) === formConstants.boolean.true
+    get(application.answers, usePersonalAllowanceGetter, NO) === YES
 
   if (!willUsePersonalAllowance) {
     return 0
   }
 
-  const willUseMax =
-    extractAnswer(application.answers, useMaxGetter) ===
-    formConstants.boolean.true
+  const willUseMax = extractAnswer(application.answers, useMaxGetter) === YES
 
   if (willUseMax) {
     return 100
@@ -94,7 +92,7 @@ export const getOtherParentId = (application: Application): string | null => {
     null,
   )
 
-  if (otherParent === formConstants.spouseSelection.spouse) {
+  if (otherParent === SPOUSE) {
     const familyMembers: FamilyMember[] | null = extractAnswer(
       application.externalData,
       'family.data',
@@ -108,8 +106,7 @@ export const getOtherParentId = (application: Application): string | null => {
     }
 
     const spouse = familyMembers.find(
-      (member) =>
-        member.familyRelation === formConstants.spouseSelection.spouse,
+      (member) => member.familyRelation === SPOUSE,
     )
 
     if (!spouse) {
@@ -204,7 +201,7 @@ export const getRightsCode = (application: Application): string => {
   const answers = getApplicationAnswers(application.answers)
   const isSelfEmployed = answers.isSelfEmployed === 'yes'
 
-  if (selectedChild.parentalRelation === 'primary') {
+  if (selectedChild.parentalRelation === ParentalRelations.primary) {
     if (isSelfEmployed) {
       return 'M-S-GR'
     } else {
@@ -267,8 +264,7 @@ export const transformApplicationToParentalLeaveDTO = (
   }
 
   const isSelfEmployed =
-    extractAnswer(application.answers, 'employer.isSelfEmployed') ===
-    formConstants.boolean.true
+    extractAnswer(application.answers, 'employer.isSelfEmployed') === YES
 
   const union: Union = {
     id: extractAnswer(application.answers, 'payments.union'),
