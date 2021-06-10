@@ -34,6 +34,9 @@ const ignore404 = (e: Error) => {
 }
 
 @UseGuards(IdsUserGuard)
+@Resolver(() => CustomDelegation)
+@Resolver(() => LegalGuardianDelegation)
+@Resolver(() => ProcuringHolderDelegation)
 export class DelegationResolver {
   constructor(private authService: AuthService) {}
 
@@ -85,5 +88,9 @@ export class DelegationResolver {
     input: UpdateDelegationInput,
   ): Promise<Delegation> {
     return this.authService.updateDelegation(user, input)
+  }
+  @ResolveField('id', () => ID)
+  resolveId(@Parent() delegation: DelegationDTO): string {
+    return `${delegation.fromNationalId}-${delegation.toNationalId}`
   }
 }
