@@ -255,6 +255,7 @@
     "winston": "3.3.3",
     "winston-cloudwatch": "2.4.0",
     "winston-transport": "4.4.0",
+    "xlsx": "0.17.0",
     "xml2js": "0.4.23",
     "xstate": "4.13.0",
     "yargs": "15.4.1",

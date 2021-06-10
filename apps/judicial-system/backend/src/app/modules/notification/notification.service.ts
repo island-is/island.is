@@ -340,7 +340,7 @@ export class NotificationService {
       existingCase.courtDate,
       existingCase.accusedName,
       existingCase.accusedGender,
-      existingCase.requestedCustodyEndDate,
+      existingCase.requestedValidToDate,
       existingCase.requestedCustodyRestrictions?.includes(
         CaseCustodyRestrictions.ISOLATION,
       ),
@@ -453,7 +453,7 @@ export class NotificationService {
       existingCase.defenderName,
       existingCase.defenderEmail,
       existingCase.decision,
-      existingCase.custodyEndDate,
+      existingCase.validToDate,
       existingCase.custodyRestrictions,
       existingCase.accusedAppealDecision,
       existingCase.prosecutorAppealDecision,
