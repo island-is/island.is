@@ -84,7 +84,7 @@ export class CreateDelegationDTO {
 
   @IsString()
   @ApiProperty()
-  toName!: string
+  toName?: string
 
   @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
   @ValidateNested({ each: true })
