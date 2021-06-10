@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@octokit/action": "^3.10.1",
-    "@octokit/core": "^3.0.0",
+    "@octokit/core": "^3.4.0",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
