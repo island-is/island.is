@@ -159,6 +159,7 @@ function constructRequestPdf(existingCase: Case) {
       paragraphGap: 0,
     })
     .text(' ')
+  
   if (existingCase.requestProsecutorOnlySession) {
     doc
       .font('Helvetica-Bold')
@@ -171,7 +172,9 @@ function constructRequestPdf(existingCase: Case) {
         lineGap: 6,
         paragraphGap: 0,
       })
+      .text(' ')
   }
+  
   doc
     .font('Helvetica-Bold')
     .text(
