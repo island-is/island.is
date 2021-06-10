@@ -346,6 +346,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'otherParent',
   ) as SchemaFormValues['otherParent']
 
+  const otherParentRightOfAccess = getValueViaPath(
+    answers,
+    'otherParentRightOfAccess',
+  ) as SchemaFormValues['otherParentRightOfAccess']
+
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
 
   const union = getValueViaPath(answers, 'payments.union') as string
@@ -445,6 +450,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     otherParent,
+    otherParentRightOfAccess,
     pensionFund,
     union,
     usePrivatePensionFund,
@@ -482,4 +488,15 @@ export const requiresOtherParentApproval = (
   } = applicationAnswers
 
   return isRequestingRights === YES || usePersonalAllowanceFromSpouse === YES
+}
+
+export const allowOtherParent = (answers: Application['answers']) => {
+  const { otherParent, otherParentRightOfAccess } = getApplicationAnswers(
+    answers,
+  )
+
+  return (
+    otherParent === SPOUSE ||
+    (otherParent === MANUAL && otherParentRightOfAccess === YES)
+  )
 }
