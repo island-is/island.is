@@ -12,7 +12,7 @@
   "dependencies": {
     "@octokit/action": "^3.10.1",
     "@octokit/core": "^3.4.0",
-    "tslib": "^2.0.0"
+    "tslib": "^2.2.0"
   },
   "devDependencies": {
     "@fluffy-spoon/substitute": "^1.208.0",
