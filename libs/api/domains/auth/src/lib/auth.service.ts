@@ -4,25 +4,34 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   DelegationDTO,
   DelegationsApi,
+  ApiScopeApi,
 } from '@island.is/clients/auth-public-api'
 
 import { UpdateDelegationInput, DelegationInput } from './dto'
 
 @Injectable()
 export class AuthService {
-  constructor(private _delegationsApi: DelegationsApi) {}
+  constructor(
+    private _delegationsApi: DelegationsApi,
+    private _apiScopeApi: ApiScopeApi,
+  ) {}
 
   private delegationsApiWithAuth(auth: Auth) {
     return this._delegationsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private apiScopeApiWithAuth(auth: Auth) {
+    return this._apiScopeApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   getActorDelegations(user: User): Promise<Array<DelegationDTO>> {
     return this.delegationsApiWithAuth(user).delegationsControllerFindAllTo()
   }
 
-  getAuthScopes(): Promise<any> {
-    // XXX: waiting on auth-public-api implementation
-    return Promise.resolve([])
+  getApiScopes(user: User): Promise<any> {
+    return this.apiScopeApiWithAuth(
+      user,
+    ).apiScopeControllerFindAllWithExplicitDelegationGrant()
   }
 
   getDelegationFromNationalId(
