@@ -24,10 +24,10 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
   const { formatMessage } = useLocale()
 
   const renderRow = (endorsement: Endorsement) => {
-    const rowBackground = endorsement.meta.bulkEndorsement
-      ? 'blue200'
-      : endorsement.meta.invalidated
+    const rowBackground = endorsement.meta.invalidated
       ? 'yellow200'
+      : endorsement.meta.bulkEndorsement
+      ? 'purple100'
       : 'white'
     return (
       <T.Row key={endorsement.id}>

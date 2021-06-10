@@ -18,10 +18,14 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
   const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
   const [showWarning, setShowWarning] = useState(false)
-  const endorsementsHook = useEndorsements(endorsementListId, true)
+  const { endorsements: endorsementsHook, refetch } = useEndorsements(
+    endorsementListId,
+    true,
+  )
   const isClosedHook = useIsClosed(endorsementListId)
 
   useEffect(() => {
+    refetch()
     setEndorsements(endorsementsHook)
   }, [endorsementsHook, updateOnBulkImport])
 
@@ -89,16 +93,20 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
           application={application}
           endorsements={endorsements}
         />
-        {/* TODO: Laga þegar bulk er komið inn */}
-        {isClosedHook && <Text>ER LOKAÐ GETUR EKKI SETT INN EXCEL!!</Text>}
-        <Box marginY={5}>
-          <BulkUpload
-            application={application}
-            onSuccess={() => {
-              setUpdateOnBulkImport(true)
-            }}
-          />
-        </Box>
+        {!isClosedHook ? (
+          <Box marginY={5}>
+            <BulkUpload
+              application={application}
+              onSuccess={() => {
+                setUpdateOnBulkImport(true)
+              }}
+            />
+          </Box>
+        ) : (
+          <Text variant="eyebrow" color="red400" marginTop={5}>
+            {formatMessage(m.endorsementForm.isClosedMessage)}
+          </Text>
+        )}
       </Box>
     </Box>
   )
