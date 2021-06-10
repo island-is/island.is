@@ -33,6 +33,11 @@ type CreatePartyLetterResponse =
     }
   | ErrorResponse
 
+interface PartyLetterData {
+  partyName: string
+  partyLetter: string
+}
+
 @Injectable()
 export class PartyLetterService {
   constructor(
@@ -111,21 +116,28 @@ export class PartyLetterService {
     authorization,
   }: TemplateApiModuleActionProps) {
     const CREATE_ENDORSEMENT_LIST_QUERY = `
-      mutation {
-        endorsementSystemCreateEndorsementList(input: {
-          title: "${application.answers.partyName}",
-          description: "${application.answers.partyLetter}",
-          endorsementMeta: [fullName, address, signedTags],
-          tags: [partyLetter2021],
-          validationRules: [],
-        }) {
+      mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
+        endorsementSystemCreateEndorsementList(input: $input) {
           id
         }
       }
     `
 
-    const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY)
+    const endorsementList: CreateEndorsementListResponse = await this.sharedTemplateAPIService
+      .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
+        input: {
+          title: application.answers.partyName,
+          description: application.answers.partyLetter,
+          endorsementMeta: ['fullName', 'address', 'signedTags'],
+          tags: ['partyLetter2021'],
+          validationRules: [],
+          meta: {
+            // to be able to link back to this application
+            applicationTypeId: application.typeId,
+            applicationId: application.id,
+          },
+        },
+      })
       .then((response) => response.json())
 
     if ('errors' in endorsementList) {
