@@ -7,6 +7,7 @@ import {
   FormValue,
 } from '@island.is/application/core'
 
+import { ParentalRelations } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
   calculatePeriodPercentage,
@@ -60,7 +61,7 @@ describe('getExpectedDateOfBirth', () => {
                 hasRights: true,
                 remainingDays: 180,
                 transferredDays: 45,
-                parentalRelation: 'primary',
+                parentalRelation: ParentalRelations.primary,
                 expectedDateOfBirth: '2021-05-17',
               },
             ],
@@ -100,7 +101,7 @@ describe('getTransferredDays', () => {
     const child = {
       hasRights: true,
       remainingDays: 180,
-      parentalRelation: 'primary',
+      parentalRelation: ParentalRelations.primary,
       expectedDateOfBirth: '2021-05-17',
     } as ChildInformation
 
@@ -122,7 +123,7 @@ describe('getTransferredDays', () => {
     const child = {
       hasRights: true,
       remainingDays: 180,
-      parentalRelation: 'primary',
+      parentalRelation: ParentalRelations.primary,
       expectedDateOfBirth: '2021-05-17',
     } as ChildInformation
 
@@ -144,7 +145,7 @@ describe('getTransferredDays', () => {
     const child = {
       hasRights: true,
       remainingDays: 180,
-      parentalRelation: 'secondary',
+      parentalRelation: ParentalRelations.secondary,
       expectedDateOfBirth: '2021-05-17',
     } as ChildInformation
 
@@ -175,7 +176,7 @@ describe('getAvailableRightsInMonths', () => {
               {
                 hasRights: true,
                 remainingDays: 180,
-                parentalRelation: 'primary',
+                parentalRelation: ParentalRelations.primary,
                 expectedDateOfBirth: '2021-05-17',
               },
             ],
@@ -215,7 +216,7 @@ describe('getSelectedChild', () => {
               hasRights: true,
               remainingDays: 180,
               transferredDays: 45,
-              parentalRelation: 'primary',
+              parentalRelation: ParentalRelations.primary,
               expectedDateOfBirth: '2021-05-17',
             },
           ],
@@ -232,7 +233,7 @@ describe('getSelectedChild', () => {
       hasRights: true,
       remainingDays: 180,
       transferredDays: 45,
-      parentalRelation: 'primary',
+      parentalRelation: ParentalRelations.primary,
       expectedDateOfBirth: '2021-05-17',
     })
   })
@@ -257,7 +258,7 @@ describe('calculatePeriodPercentage', () => {
               {
                 hasRights: true,
                 remainingDays: 180,
-                parentalRelation: 'primary',
+                parentalRelation: ParentalRelations.primary,
                 expectedDateOfBirth: '2021-05-17',
               },
             ],
@@ -292,7 +293,7 @@ describe('calculatePeriodPercentage', () => {
               {
                 hasRights: true,
                 remainingDays: 180,
-                parentalRelation: 'primary',
+                parentalRelation: ParentalRelations.primary,
                 expectedDateOfBirth: '2021-05-17',
               },
             ],
@@ -339,7 +340,7 @@ describe('calculatePeriodPercentage', () => {
               {
                 hasRights: true,
                 remainingDays: 180,
-                parentalRelation: 'primary',
+                parentalRelation: ParentalRelations.primary,
                 expectedDateOfBirth: '2021-05-17',
               },
             ],

@@ -81,6 +81,7 @@ describe('answerValidators', () => {
     const newApplication = {
       ...application,
       answers: {
+        ...application.answers,
         firstPeriodStart: 'estimatedDateOfBirth',
       },
     } as Application
@@ -102,6 +103,7 @@ describe('answerValidators', () => {
     const newApplication = {
       ...application,
       answers: {
+        ...application.answers,
         periods: [
           { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
         ],
@@ -121,6 +123,7 @@ describe('answerValidators', () => {
     const newApplication = {
       ...application,
       answers: {
+        ...application.answers,
         periods: [
           { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
           { startDate: '2021-07-15' },

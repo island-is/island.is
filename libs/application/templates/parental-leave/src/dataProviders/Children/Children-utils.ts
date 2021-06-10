@@ -7,10 +7,6 @@ import {
   getTransferredDays,
 } from '../../lib/parentalLeaveUtils'
 import {
-  getSelectedChild,
-  getTransferredDays,
-} from '../../lib/parentalLeaveUtils'
-import {
   ChildInformation,
   ExistingChildApplication,
   PregnancyStatus,
@@ -36,34 +32,36 @@ export const applicationsToChildInformation = (
       application.externalData,
     )
 
-    if (selectedChild !== null) {
-      if (asOtherParent) {
-        let transferredDays = getTransferredDays(application, selectedChild)
+    if (selectedChild === null) {
+      continue
+    }
 
-        if (transferredDays !== undefined && transferredDays !== 0) {
-          // * -1 because we need to reverse the days over to this parent
-          // for example if other parent is requesting 45 days
-          // then this parent needs to lose 45 days
-          transferredDays *= -1
-        }
+    if (asOtherParent) {
+      let transferredDays = getTransferredDays(application, selectedChild)
 
-        if (selectedChild.parentalRelation === ParentalRelations.primary) {
-          result.push({
-            parentalRelation: ParentalRelations.secondary,
-            expectedDateOfBirth: selectedChild.expectedDateOfBirth,
-            primaryParentNationalRegistryId: application.applicant,
-            transferredDays,
-          })
-        } else {
-          result.push({
-            parentalRelation: ParentalRelations.primary,
-            expectedDateOfBirth: selectedChild.expectedDateOfBirth,
-            transferredDays,
-          })
-        }
-      } else {
-        result.push(selectedChild)
+      if (transferredDays !== undefined && transferredDays !== 0) {
+        // * -1 because we need to reverse the days over to this parent
+        // for example if other parent is requesting 45 days
+        // then this parent needs to lose 45 days
+        transferredDays *= -1
       }
+
+      if (selectedChild.parentalRelation === ParentalRelations.primary) {
+        result.push({
+          parentalRelation: ParentalRelations.secondary,
+          expectedDateOfBirth: selectedChild.expectedDateOfBirth,
+          primaryParentNationalRegistryId: application.applicant,
+          transferredDays,
+        })
+      } else {
+        result.push({
+          parentalRelation: ParentalRelations.primary,
+          expectedDateOfBirth: selectedChild.expectedDateOfBirth,
+          transferredDays,
+        })
+      }
+    } else {
+      result.push(selectedChild)
     }
   }
 
