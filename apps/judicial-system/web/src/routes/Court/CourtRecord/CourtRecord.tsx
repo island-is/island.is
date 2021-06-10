@@ -113,7 +113,16 @@ export const CourtRecord: React.FC = () => {
       if (theCase.type === CaseType.CUSTODY) {
         autofill(
           'litigationPresentations',
-          'Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi kærða ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að kærða verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að kærða verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
+          `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatAccusedByGender(
+            theCase.accusedGender,
+            NounCases.GENITIVE,
+          )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatAccusedByGender(
+            theCase.accusedGender,
+            NounCases.DATIVE,
+          )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatAccusedByGender(
+            theCase.accusedGender,
+            NounCases.DATIVE,
+          )} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.`,
           theCase,
         )
       }
@@ -279,7 +288,10 @@ export const CourtRecord: React.FC = () => {
                   sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr.
                   114. gr. sömu laga"
                   onToggleVisibility={() => console.log('YARRA')}
-                  tooltip="Með því að fela forbókun um réttindi kærða birtist hún ekki í Þingbók málsins."
+                  tooltip={`Með því að fela forbókun um réttindi ${formatAccusedByGender(
+                    workingCase.accusedGender,
+                    NounCases.GENITIVE,
+                  )} birtist hún ekki í Þingbók málsins.`}
                 />
               </Box>
               <BlueBox>

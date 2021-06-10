@@ -171,6 +171,7 @@ function remainingJudgeCaseData() {
     courtAttendees: 'Court Attendees',
     prosecutorDemands: 'Police Demands',
     courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
+    isAccusedAbsent: true,
     accusedPleaDecision: AccusedPleaDecision.ACCEPT,
     accusedPleaAnnouncement: 'Accused Plea',
     litigationPresentations: 'Litigation Presentations',
@@ -181,7 +182,7 @@ function remainingJudgeCaseData() {
     validToDate: '2021-09-28T12:00:00.000Z',
     custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
     otherRestrictions: 'Other Restrictions',
-    isolationTo: '2021-09-10T12:00:00.000Z',
+    isolationToDate: '2021-09-10T12:00:00.000Z',
     additionToConclusion: 'Addition to Conclusion',
     accusedAppealDecision: CaseAppealDecision.APPEAL,
     accusedAppealAnnouncement: 'Accused Appeal Announcement',
@@ -274,7 +275,8 @@ function caseToCCase(dbCase: Case) {
       theCase.courtStartDate && theCase.courtStartDate.toISOString(),
     courtEndTime: theCase.courtEndTime && theCase.courtEndTime.toISOString(),
     validToDate: theCase.validToDate && theCase.validToDate.toISOString(),
-    isolationTo: theCase.isolationTo && theCase.isolationTo.toISOString(),
+    isolationToDate:
+      theCase.isolationToDate && theCase.isolationToDate.toISOString(),
     rulingDate: theCase.rulingDate && theCase.rulingDate.toISOString(),
     accusedPostponedAppealDate:
       theCase.accusedPostponedAppealDate &&
@@ -390,6 +392,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtDocuments || null).toStrictEqual(
     caseTwo.courtDocuments || null,
   )
+  expect(caseOne.isAccusedAbsent || null).toBe(caseTwo.isAccusedAbsent || null)
   expect(caseOne.accusedPleaDecision || null).toBe(
     caseTwo.accusedPleaDecision || null,
   )
@@ -412,7 +415,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.otherRestrictions || null).toBe(
     caseTwo.otherRestrictions || null,
   )
-  expect(caseOne.isolationTo || null).toBe(caseTwo.isolationTo || null)
+  expect(caseOne.isolationToDate || null).toBe(caseTwo.isolationToDate || null)
   expect(caseOne.additionToConclusion || null).toBe(
     caseTwo.additionToConclusion || null,
   )
