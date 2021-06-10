@@ -25,6 +25,7 @@ export const GetEndorsements = gql`
         fullName
         address
         invalidated
+        bulkEndorsement
       }
       created
       modified
