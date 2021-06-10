@@ -76,7 +76,9 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   }
 
   const onApiScopeNameChange = async (name: string) => {
-    console.log('CHANGING')
+    if (isEditing) {
+      return
+    }
     setApiScopeNameHintVisible(true)
     setApiScopeNameIsValid(ValidationUtils.validateApiScope(name))
     apiScopeNameIsValid
@@ -164,7 +166,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   <input
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateScope,
+                      validate: ValidationUtils.validateDescription,
                     })}
                     id="apiScope.name"
                     name="apiScope.name"
