@@ -93,6 +93,7 @@ const devConfig = {
     url: process.env.FJARMAL_API ?? '',
     username: process.env.FJARMAL_USER ?? '',
     password: process.env.FJARMAL_PASS ?? '',
+    financeTestUser: process.env.FINANCE_TEST_USER,
   },
   endorsementSystem: {
     baseApiUrl: 'http://localhost:4246',
@@ -217,6 +218,7 @@ const prodConfig = {
     url: process.env.FJARMAL_API ?? '',
     username: process.env.FJARMAL_USER ?? '',
     password: process.env.FJARMAL_PASS ?? '',
+    financeTestUser: '',
   },
 }
 

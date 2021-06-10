@@ -20,6 +20,7 @@ export interface FinanceServiceOptions {
   url: string
   username: string
   password: string
+  financeTestUser?: string
   ttl?: number
 }
 
@@ -48,7 +49,7 @@ export class FinanceService extends RESTDataSource {
   async getFinanceStatus(nationalID: string): Promise<FinanceStatus | null> {
     const response = await this.get<FinanceStatus | null>(
       // `/customerStatusByOrganization?nationalID=${nationalID}`,
-      `/customerStatusByOrganization?nationalID=${process.env.FINANCE_TEST_USER}`,
+      `/customerStatusByOrganization?nationalID=${this.options.financeTestUser}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },
@@ -63,7 +64,7 @@ export class FinanceService extends RESTDataSource {
   ): Promise<FinanceStatusDetails | null> {
     const response = await this.get<FinanceStatusDetails | null>(
       // `/customerStatusByOrganizationDetails?nationalID=${nationalID}&OrgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
-      `/customerStatusByOrganizationDetails?nationalID=${process.env.FINANCE_TEST_USER}&OrgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
+      `/customerStatusByOrganizationDetails?nationalID=${this.options.financeTestUser}&OrgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },
@@ -75,7 +76,7 @@ export class FinanceService extends RESTDataSource {
     nationalID: string,
   ): Promise<CustomerChargeType | null> {
     const response = await this.get<CustomerChargeType | null>(
-      `/customerChargeType?nationalID=${process.env.FINANCE_TEST_USER}`,
+      `/customerChargeType?nationalID=${this.options.financeTestUser}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },
@@ -92,7 +93,7 @@ export class FinanceService extends RESTDataSource {
     const chargeTypeArray = chargeTypeID.map((item) => `&chargeTypeID=${item}`)
     const chargeTypeString = chargeTypeArray.join('')
     const response = await this.get<CustomerRecords | null>(
-      `/customerRecords?nationalID=${process.env.FINANCE_TEST_USER}&dayFrom=${dayFrom}&dayTo=${dayTo}${chargeTypeString}`,
+      `/customerRecords?nationalID=${this.options.financeTestUser}&dayFrom=${dayFrom}&dayTo=${dayTo}${chargeTypeString}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },
@@ -106,7 +107,7 @@ export class FinanceService extends RESTDataSource {
     dayTo: string,
   ): Promise<BillReceiptTypes> {
     const response = await this.get<BillReceiptTypes>(
-      `/documentsList/billReceipt?nationalID=${process.env.FINANCE_TEST_USER}&dayFrom=${dayFrom}&dayTo=${dayTo}`,
+      `/documentsList/billReceipt?nationalID=${this.options.financeTestUser}&dayFrom=${dayFrom}&dayTo=${dayTo}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },
@@ -119,7 +120,7 @@ export class FinanceService extends RESTDataSource {
     documentID: string,
   ): Promise<DocumentTypes> {
     const response = await this.get<DocumentTypes>(
-      `/document?nationalID=${process.env.FINANCE_TEST_USER}&documentID=${documentID}`,
+      `/document?nationalID=${this.options.financeTestUser}&documentID=${documentID}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },
