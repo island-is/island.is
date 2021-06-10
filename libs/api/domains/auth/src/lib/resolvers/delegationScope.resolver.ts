@@ -17,4 +17,11 @@ export class DelegationScopeResolver {
   resolveName(@Parent() delegationScope: DelegationScopeDTO): string {
     return delegationScope.scopeName
   }
+
+  @ResolveField('displayName')
+  resolveDisplayName(@Parent() delegationScope: DelegationScopeDTO): string {
+    // TODO: missing implementation in auth-public-api
+    const split = delegationScope.scopeName.split('/')
+    return split[split.length - 1]
+  }
 }

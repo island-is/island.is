@@ -45,6 +45,11 @@ export class DelegationResolver {
     return this.authService.getActorDelegations(user)
   }
 
+  @Query(() => [Delegation], { name: 'authDelegations' })
+  getDelegations(@CurrentUser() user: User): Promise<Delegation[]> {
+    return this.authService.getDelegations(user)
+  }
+
   @Query(() => Delegation, { name: 'authDelegation', nullable: true })
   async getDelegation(
     @CurrentUser() user: User,
