@@ -1069,15 +1069,30 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     otherParentTitle: {
       id: 'pl.application:review.otherParent.title',
-      defaultMessage: 'Annað foreldri samþykkir framlengingu',
-      description: 'Other parent approves extra time',
+      defaultMessage: 'Annað foreldri samþykkir umsóknina',
+      description: 'Other parent approves the application',
     },
-    otherParentDesc: {
-      id: 'pl.application:review.otherParent.description',
+    otherParentDescRequestingBoth: {
+      id: 'pl.application:review.otherParent.otherParentDescRequestingBoth',
+      defaultMessage:
+        'Hitt foreldrið þarf að samþykkja aukadagana sem þú hefur beðið um og notkun persónuafsláttarins.',
+      description:
+        'The other parent will need to approve the extra days you’ve requested and the use of their personal allowance.',
+    },
+    otherParentDescRequestingRights: {
+      id: 'pl.application:review.otherParent.otherParentDescRequestingRights',
       defaultMessage:
         'Hitt foreldrið þarf að samþykkja aukadagana sem þú hefur beðið um.',
       description:
         'The other parent will need to approve the extra days you’ve requested.',
+    },
+    otherParentDescRequestingPersonalDiscount: {
+      id:
+        'pl.application:review.otherParent.otherParentDescRequestingPersonalDiscount',
+      defaultMessage:
+        'Hitt foreldrið þarf að samþykkja notkun persónuafsláttar síns.',
+      description:
+        'The other parent will need to approve the use of their personal discount.',
     },
     employerTitle: {
       id: 'pl.application:review.employer.title',
