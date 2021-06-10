@@ -7,6 +7,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { SigningModule } from '@island.is/dokobit-signing'
 import { AuditModule } from '@island.is/nest/audit'
+import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 
 import { Payment } from './payment.model'
 import { PaymentController } from './payment.controller'
@@ -16,47 +17,44 @@ import { environment } from '../../../environments'
 import {
   PAYMENT_CONFIG,
   PaymentConfig,
+  PaymentServiceOptions,
 } from './payment.configuration'
 
-let BullModule: DynamicModule
-
-if (process.env.INIT_SCHEMA === 'true') {
-  BullModule = NestBullModule.registerQueueAsync()
-} else {
-  const bullModuleName = 'application_system_api_payment_bull_module'
-  BullModule = NestBullModule.registerQueueAsync({
-    name: 'upload',
-    useFactory: () => ({
-      prefix: `{${bullModuleName}}`,
-      createClient: () =>
-        createRedisCluster({
-          name: bullModuleName,
-          ssl: environment.production,
-          nodes: environment.redis.urls,
-          noPrefix: true,
-        }),
-    }),
-  })
+export interface Config {
+  xroadBaseUrl: string
+  xroadClientId: string
+  secret: string
 }
 
-@Module({
-  imports: [
-    AuditModule.forRoot(environment.audit),
-    AuthModule.register(environment.auth),
-    TemplateAPIModule.register(environment.templateApi),
-    SequelizeModule.forFeature([Payment]),
-    BullModule,
-    SigningModule.register(environment.signingOptions),
-    TranslationsModule,
-  ],
-  controllers: [PaymentController],
-  providers: [
-    PaymentService,
-    {
-      provide: PAYMENT_CONFIG,
-      useValue: environment.application as PaymentConfig,
-    },
-    AwsService,
-  ],
-})
-export class PaymentModule {}
+export class PaymentModule {
+  static register(config?: PaymentServiceOptions): DynamicModule {
+    return {
+      module: PaymentModule,
+      providers: [
+        PaymentService,
+        {
+          provide: PAYMENT_CONFIG,
+          useValue: environment.application as PaymentConfig,
+        },
+        AwsService,
+        // {
+        //   provide: DrivingLicenseApi,
+        //   useFactory: async () =>
+        //     new DrivingLicenseApi(
+        //       config.xroadBaseUrl,
+        //       config.xroadClientId,
+        //       config.secret,
+        //     ),
+        // },
+      ],
+      imports: [
+        AuditModule.forRoot(environment.audit),
+        SequelizeModule.forFeature([Payment]),
+        ApiDomainsPaymentModule.register(config as PaymentServiceOptions),
+        TranslationsModule,
+      ],
+      controllers: [PaymentController],
+      exports: [PaymentService],
+    }
+  }
+}

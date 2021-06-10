@@ -3,7 +3,7 @@ import { Charge, PaymentAPI } from '@island.is/clients/payment'
 import { ChargeResult } from './api-domains-payment.types'
 
 @Injectable()
-export class PaymentService {
+export class ApiDomainsPaymentService {
   private baseUrl: string
 
   constructor(private readonly paymentApi: PaymentAPI) {
@@ -17,9 +17,11 @@ export class PaymentService {
   }
 
   async createCharge(chargeParameters: Charge): Promise<ChargeResult> {
+    console.log('apidomainssvc ' + JSON.stringify(chargeParameters, null, 4));
     try {
+      console.log('inside try')
       const charge = await this.paymentApi.createCharge(chargeParameters)
-
+      console.log(JSON.stringify(charge, null, 4));
       return {
         success: true,
         error: null,
@@ -31,7 +33,7 @@ export class PaymentService {
     } catch (e) {
       return {
         success: false,
-        error: e,
+        error: e as Error,
       }
     }
   }

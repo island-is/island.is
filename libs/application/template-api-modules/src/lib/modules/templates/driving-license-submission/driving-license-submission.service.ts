@@ -8,8 +8,8 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
 import { ChargeResult } from '@island.is/api/domains/payment'
 
-import { PaymentService } from '../../../../../../../../apps/application-system/api/src/app/modules/payment/payment.service'
-import { PaymentService as ApiDomainsPaymentService } from '@island.is/api/domains/payment'
+//import { PaymentService } from '../../../../../../../../apps/application-system/api/src/app/modules/payment/payment.service'
+//import { PaymentService as ApiDomainsPaymentService } from '@island.is/api/domains/payment'
 import { resolveModelGetter } from 'sequelize-typescript'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
@@ -29,11 +29,11 @@ export class DrivingLicenseSubmissionService {
   constructor(
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
+    //private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
   ) {}
 
   async createCharge({
-    application: { applicant, externalData, answers },
+    application: { applicant, externalData, answers, id },
   }: TemplateApiModuleActionProps) {
     console.log('==== creating charge ====')
     console.log({ externalData })
@@ -63,8 +63,9 @@ export class DrivingLicenseSubmissionService {
         // TODO: sýslumannskennitala - úr juristictions
         performingOrgID: payment.performingOrgID,
         systemID: 'ISL',
-      })
+      }, id)
       .catch((e) => {
+        console.log('submission service error.')
         console.error(e)
 
         return ({ error: e } as ChargeResult)
@@ -80,7 +81,6 @@ export class DrivingLicenseSubmissionService {
   }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
-    console.log('myapp: ' + application)
     const { answers } = application
     const { externalData } = application
     const nationalId = application.applicant
@@ -90,10 +90,7 @@ export class DrivingLicenseSubmissionService {
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const juristictionId = answers.juristiction
 
-    // Calculate current time plus 24 hours. 86.400.000 is seconds in a day
-    let calcExpiration = new Date().getTime() + 86400000
-    console.log('The expiration date of payment application: ' + new Date(calcExpiration))
-
+    
     // const res = await this.apiPaymentService
     //   .createPayment({
     //     applicationId: application.id,
@@ -109,17 +106,17 @@ export class DrivingLicenseSubmissionService {
     //       errorMessage: e.message,
     //     }
     //   })
-    const res = await this.apiDomainsPaymentService
-      .createCharge({
-        systemID: 'ISL',
-        performingOrgID: payment.performingOrgID,
-        payeeNationalID: nationalId,
-        chargeType: payment.chargeType,
-        chargeItemSubject: payment.chargeItemName,
-        performerNationalID: payment.performingOrgID,
-        immediateProcess: true,
-        charges: [],
-      })
+    // const res = await this.apiDomainsPaymentService
+    //   .createCharge({
+    //     systemID: 'ISL',
+    //     performingOrgID: payment.performingOrgID,
+    //     payeeNationalID: nationalId,
+    //     chargeType: payment.chargeType,
+    //     chargeItemSubject: payment.chargeItemName,
+    //     performerNationalID: payment.performingOrgID,
+    //     immediateProcess: true,
+    //     charges: [],
+    //   })
 
     const result = await this.drivingLicenseService
       .newDrivingLicense(nationalId, {

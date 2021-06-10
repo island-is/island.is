@@ -27,7 +27,7 @@ import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-reg
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
-import { PaymentModule } from '@island.is/api/domains/payment'
+import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -165,7 +165,7 @@ const autoSchemaFile = environment.production
       xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
       xRoadClientId: environment.nationalRegistryXRoad.clientId,
     }),
-    PaymentModule.register({
+    ApiDomainsPaymentModule.register({
       password: environment.paymentDomain.password,
       url: environment.paymentDomain.url,
       username: environment.paymentDomain.username,

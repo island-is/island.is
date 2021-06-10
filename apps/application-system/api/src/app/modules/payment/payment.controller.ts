@@ -68,9 +68,9 @@ export class PaymentController {
     paymentDetails: CreatePaymentDto,
     @CurrentUser()
     user: User,
-    @Param('id', new ParseUUIDPipe()) id: string,
+    // @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<CreatePaymentResponseDto> {
-
+    console.log('controller what up')
     // FIGURE SOME CHECK FOR LEGIT PAYMENT
     // if (existingApplication === null) {
     //   throw new BadRequestException(
@@ -92,17 +92,18 @@ export class PaymentController {
       | 'amount'
       | 'expiresAt'
       > = {
-      applicationId: paymentDetails.applicationId,
+      applicationId: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',
       fulfilled: false,
-      referenceId: "",
-      user4: "",
-      definition: "",
-      amount: paymentDetails.amount,
+      referenceId: "456",
+      user4: "789",
+      definition: "000",
+      amount: 1,
       expiresAt: paymentDetails.expiresAt,
     }
-
-    const createdPayment = await this.paymentService.createPayment(
-      paymentDto,
+    console.log('payment controller')
+    console.log(JSON.stringify(paymentDto, null, 4));
+    const createdPayment = await this.paymentService.createPaymentModel(
+      paymentDto
     )
 
     this.auditService.audit({

@@ -5,22 +5,22 @@ import {
   PaymentServiceOptions,
 } from '@island.is/clients/payment'
 import { PaymentResolver } from './api-domains-payment.resolver'
-import { PaymentService } from './api-domains-payment.service'
+import { ApiDomainsPaymentService } from './api-domains-payment.service'
 
 @Module({})
-export class PaymentModule {
+export class ApiDomainsPaymentModule {
   static register(config: PaymentServiceOptions): DynamicModule {
     return {
-      module: PaymentModule,
+      module: ApiDomainsPaymentModule,
       providers: [
         {
           provide: PaymentAPI,
           useFactory: () => new PaymentAPI(config),
         },
-        PaymentService,
+        ApiDomainsPaymentService,
         PaymentResolver,
       ],
-      exports: [PaymentService],
+      exports: [ApiDomainsPaymentService],
     }
   }
 }
