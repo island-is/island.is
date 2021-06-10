@@ -22,7 +22,7 @@ export class PaymentService {
 
   async createPayment(charge: Charge, returnUrl: string, applicationId: string): Promise<ChargeResult> { // change any to createpaymentresponsedto ?
     try {
-      const result = await this.apiDomainsPaymentService.createCharge(charge)
+      const result = await this.apiDomainsPaymentService.createCharge(charge, returnUrl)
 
       // Calculate current time plus 24 hours. 86.400.000 is seconds in a day
       let calcExpiration = new Date().getTime() + 86400000
