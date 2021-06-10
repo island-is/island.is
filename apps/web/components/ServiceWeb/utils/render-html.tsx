@@ -14,12 +14,19 @@ const defaultHeaderMargins: {
   marginTop: ResponsiveSpace
 } = { marginBottom: 2, marginTop: [5, 5, 5, 6] }
 
-const headingTags = ['h1', 'h2', 'h3', 'h4', 'h5']
+const headingTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+const listTags = ['ul', 'ol']
 
 const transform: Transform = (node, index) => {
-  if (node.type === 'tag' && node.name === 'ul') {
+  if (node.type === 'tag' && listTags.includes(node.name)) {
     return (
-      <Box key={index} component="ul" className={styles.unorderedList}>
+      <Box
+        key={index}
+        component={node.name}
+        className={
+          node.name === 'ul' ? styles.unorderedList : styles.orderedList
+        }
+      >
         {processNodes(node.children, transform)}
       </Box>
     )
@@ -90,8 +97,7 @@ export const renderHtml = (html: string) => {
     return null
   }
 
-  const cleanHtml = DOMPurify.sanitize(html)
-  return HtmlParser(cleanHtml, options)
+  return HtmlParser(DOMPurify.sanitize(html), options)
 }
 
 export default renderHtml

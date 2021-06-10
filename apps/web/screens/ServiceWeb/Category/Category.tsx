@@ -1,4 +1,5 @@
 import React from 'react'
+import NextLink from 'next/link'
 import cn from 'classnames'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
@@ -6,6 +7,7 @@ import { GET_NAMESPACE_QUERY } from '../../queries'
 import { Screen } from '../../../types'
 import {
   Box,
+  Breadcrumbs,
   GridColumn,
   GridContainer,
   GridRow,
@@ -18,6 +20,7 @@ import { solution, questions } from '../mock'
 import { ServiceWebHeader, renderHtml } from '@island.is/web/components'
 import {
   LinkResolverResponse,
+  LinkType,
   useLinkResolver,
 } from '@island.is/web/hooks/useLinkResolver'
 
@@ -30,7 +33,7 @@ interface CategoryProps {
 }
 
 const Category: Screen<CategoryProps> = ({ slug }) => {
-  const linkResolver = useLinkResolver()
+  const { linkResolver } = useLinkResolver()
 
   const logoTitle = 'Þjónustuvefur Sýslumanna'
 
@@ -46,6 +49,36 @@ const Category: Screen<CategoryProps> = ({ slug }) => {
               span={['12/12', '12/12', '12/12', '10/12']}
             >
               <GridContainer>
+                <GridRow>
+                  <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
+                    <Box printHidden>
+                      <Breadcrumbs
+                        items={[
+                          {
+                            title: logoTitle,
+                            typename: 'helpdesk',
+                            href: '/',
+                          },
+                          {
+                            title: 'Skírteini',
+                            typename: 'helpdesk',
+                            href: '/',
+                          },
+                        ]}
+                        renderLink={(link, { typename, slug }) => {
+                          return (
+                            <NextLink
+                              {...linkResolver(typename as LinkType, slug)}
+                              passHref
+                            >
+                              {link}
+                            </NextLink>
+                          )
+                        }}
+                      />
+                    </Box>
+                  </GridColumn>
+                </GridRow>
                 <GridRow>
                   <GridColumn
                     span={['12/12', '12/12', '12/12', '9/12']}
