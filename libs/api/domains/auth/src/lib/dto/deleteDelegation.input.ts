@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType('AuthDelegationInput')
-export class DelegationInput {
+@InputType('DeleteAuthDelegationInput')
+export class DeleteDelegationInput {
   @Field((_) => String)
   toNationalId!: string
 }

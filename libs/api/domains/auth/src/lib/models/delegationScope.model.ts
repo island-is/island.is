@@ -8,6 +8,9 @@ export class DelegationScope {
   @Field(() => String)
   name!: string
 
-  @Field(() => Date)
-  validTo!: Date
+  @Field(() => String)
+  displayName!: string
+
+  @Field(() => Date, { nullable: true })
+  validTo?: Date
 }
