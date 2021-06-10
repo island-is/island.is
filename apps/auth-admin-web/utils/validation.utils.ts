@@ -17,8 +17,10 @@ class ValidationUtils {
 
   public static nationalIdPattern = /^[0-9]*$/
 
+  public static apiScopePattern = /^@[a-z\.]*[/]([a-z]+[:/]?)*[a-z]+$/
+
   /** Pattern for illegal characters in scope name */
-  public static scopePattern = /[<>%\$]/
+  public static scopePattern = /^@([\w-])$/
 
   public static validateEmail(input: string): boolean {
     if (input.length === 0) {
@@ -88,7 +90,14 @@ class ValidationUtils {
       return true
     }
     const regex = new RegExp(ValidationUtils.scopePattern)
-    return !regex.test(input)
+    return regex.test(input)
+  }
+
+  public static validateApiScope(input: string): boolean {
+    const regex = new RegExp(ValidationUtils.apiScopePattern)
+    console.log(input)
+    console.log(regex.test(input))
+    return regex.test(input)
   }
 }
 export default ValidationUtils

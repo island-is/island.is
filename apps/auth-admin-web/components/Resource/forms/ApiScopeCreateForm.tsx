@@ -11,6 +11,7 @@ import { FormControl } from '../../../entities/common/Localization'
 import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
 import ApiScopeGroupCreateFormModal from './ApiScopeGroupCreateFormModal'
 import { Domain } from './../../../entities/models/domain.model'
+import HintBox from '../../common/HintBox'
 
 interface Props {
   handleSave?: (object: ApiScopeDTO) => void
@@ -37,6 +38,14 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   const [nameLength, setNameLength] = useState(0)
   const [domains, setDomains] = useState<Domain[]>([])
   const [domainIsTouched, setDomainIsTouched] = useState<boolean>(false)
+  const [
+    apiScopeNameHintVisible,
+    setApiScopeNameHintVisible,
+  ] = useState<boolean>(false)
+  const [apiScopeHintMessage, setApiScopeHintMessage] = useState<string>('')
+  const [apiScopeNameIsValid, setApiScopeNameIsValid] = useState<
+    boolean | null
+  >(null)
 
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeCreateForm'),
@@ -66,8 +75,15 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
     }
   }
 
-  const checkAvailability = async (name: string) => {
-    setNameLength(name.length)
+  const onApiScopeNameChange = async (name: string) => {
+    console.log('CHANGING')
+    setApiScopeNameHintVisible(true)
+    setApiScopeNameIsValid(ValidationUtils.validateApiScope(name))
+    apiScopeNameIsValid
+      ? setApiScopeHintMessage(localization.fields['name'].hintOkMessage)
+      : setApiScopeHintMessage(localization.fields['name'].hintErrorMessage)
+    setNameLength(name?.length)
+
     if (name.length === 0) {
       setAvailable(false)
       return
@@ -93,6 +109,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   const onDomainChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     setDomainIsTouched(true)
     setValue('apiScope.name', e.currentTarget.value)
+    document.getElementById('apiScope.name').focus()
   }
 
   return (
@@ -118,7 +135,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     onChange={(e) => onDomainChange(e)}
                   >
                     <option value={'null'} disabled={true} selected>
-                      Select a domain
+                      {localization.fields['domain'].selectAnItem}
                     </option>
                     {domains.map((domain: Domain) => {
                       return (
@@ -155,8 +172,18 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     className="api-scope-form__input"
                     defaultValue={props.apiScope.name}
                     readOnly={isEditing || !domainIsTouched}
-                    onChange={(e) => checkAvailability(e.target.value)}
+                    onChange={(e) => onApiScopeNameChange(e.target.value)}
                     placeholder={localization.fields['name'].placeholder}
+                    onBlur={() => setApiScopeNameHintVisible(false)}
+                    onFocus={(e) => onApiScopeNameChange(e.target.value)}
+                  />
+                  <HintBox
+                    helpText={apiScopeHintMessage}
+                    pattern={localization.fields['name'].pattern}
+                    patternText={localization.fields['name'].patternText}
+                    setVisible={apiScopeNameHintVisible}
+                    onVisibleChange={(e) => setApiScopeNameHintVisible(e)}
+                    isValid={apiScopeNameIsValid}
                   />
                   <div
                     className={`api-scope-form__container__field__available ${
