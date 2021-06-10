@@ -1304,9 +1304,9 @@ export const parentalLeaveFormMessages: MessageDir = {
     step2: {
       id: 'pl.application:finalscreen.step2',
       defaultMessage:
-        'Síðan þarf vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs.',
+        'Vinnuveitandi þinn verður að samþykkja fyrirhugað fæðingarorlof.',
       description:
-        'Then your employer has to approve your maternity leave arrangements.',
+        'Your employer has to approve your maternity leave arrangements.',
     },
     step3: {
       id: 'pl.application:finalscreen.step3',

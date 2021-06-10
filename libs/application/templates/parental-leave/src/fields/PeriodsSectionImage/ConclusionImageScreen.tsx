@@ -4,6 +4,8 @@ import { Box, Bullet, BulletList } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { requiresOtherParentApproval } from '../../lib/parentalLeaveUtils'
+import { NO, YES } from '../../constants'
 
 const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -13,21 +15,31 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
     usePersonalAllowanceFromSpouse,
   } = useApplicationAnswers(application)
 
+  const steps = [formatMessage(parentalLeaveFormMessages.finalScreen.step3)]
+
+  if (isSelfEmployed === NO) {
+    steps.unshift(formatMessage(parentalLeaveFormMessages.finalScreen.step2))
+  }
+
+  if (requiresOtherParentApproval(application.answers)) {
+    const otherParentStep =
+      isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
+        : isRequestingRights === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
+        : parentalLeaveFormMessages.reviewScreen
+            .otherParentDescRequestingPersonalDiscount
+    steps.unshift(formatMessage(otherParentStep))
+  }
+
   return (
     <Box>
-      <Box>
-        <BulletList type="ul">
-          <Bullet>
-            {formatMessage(parentalLeaveFormMessages.finalScreen.step1)}
-          </Bullet>
-          <Bullet>
-            {formatMessage(parentalLeaveFormMessages.finalScreen.step2)}
-          </Bullet>
-          <Bullet>
-            {formatMessage(parentalLeaveFormMessages.finalScreen.step3)}
-          </Bullet>
-        </BulletList>
-      </Box>
+      <BulletList type="ul">
+        {steps.map((step, index) => {
+          return <Bullet key={index}>{step}</Bullet>
+        })}
+      </BulletList>
+
       <Box
         display="flex"
         flexDirection="column"
