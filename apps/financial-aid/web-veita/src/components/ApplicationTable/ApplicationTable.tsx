@@ -54,17 +54,18 @@ const ApplicationTable: React.FC<PageProps> = ({
         <tbody className={styles.tableBody}>
           {applications.map((item: any, index: number) => {
             return (
-              <Link href={'application/' + item.link}>
-                <tr className={styles.link} key={'key-' + index}>
+              <Link href={'application/' + item.link} key={'key-' + index}>
+                <tr className={styles.link}>
                   {item?.arr && (
                     <>
-                      {item.arr.map((el: ReactNode, index: number) => {
+                      {item.arr.map((el: ReactNode, i: number) => {
                         return (
                           <td
                             className={cn({
                               [`${styles.tablePadding}`]: true,
-                              [`${styles.firstChildPadding}`]: index === 0,
+                              [`${styles.firstChildPadding}`]: i === 0,
                             })}
+                            key={'tr-' + index + '-td-' + i}
                           >
                             {el}
                           </td>

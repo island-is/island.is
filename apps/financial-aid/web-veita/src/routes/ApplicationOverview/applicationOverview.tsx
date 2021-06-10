@@ -23,7 +23,11 @@ import {
 
 import format from 'date-fns/format'
 
-import { calcDifferenceInDate, translateMonth } from '../../utils/formHelper'
+import {
+  navLinks,
+  calcDifferenceInDate,
+  translateMonth,
+} from '../../utils/formHelper'
 
 interface ApplicationData {
   applications: Application[]
@@ -31,6 +35,14 @@ interface ApplicationData {
 
 interface SaveData {
   applicant: Application
+}
+
+interface NavigationLinks {
+  label?: string
+  link?: string
+  state?: State
+  secState?: State
+  headers?: string[]
 }
 
 const ApplicationOverview = () => {
@@ -43,35 +55,13 @@ const ApplicationOverview = () => {
       errorPolicy: 'all',
     },
   )
-
-  const navLinks = [
-    {
-      label: 'Ný mál',
-      link: '/nymal',
-      state: State.NEW,
-      headers: ['Nafn', 'Staða', 'Tími án umsjár', 'Tímabil'],
-    },
-    {
-      label: 'Í vinnslu',
-      link: '/vinnslu',
-      state: State.INPROGRESS,
-      headers: ['Nafn', 'Staða', 'Síðast uppfært', 'Tímabil'],
-    },
-    {
-      label: 'Afgreidd mál',
-      link: '/afgreidd',
-      state: State.APPROVED,
-      secState: State.REJECTED,
-      headers: ['Nafn', 'Staða', 'Úrlausnartími', 'Tímabil'],
-    },
-  ]
-
-  const [currentState, setState] = useState(
-    navLinks.filter((i) => i.link === router.pathname)[0],
+  //WIP
+  const [currentState, setState] = useState<any>(
+    navLinks('link', router.pathname),
   )
 
   useEffect(() => {
-    setState(navLinks.filter((i) => i.link === router.pathname)[0])
+    setState(navLinks('link', router.pathname))
   }, [router.pathname])
 
   useEffect(() => {

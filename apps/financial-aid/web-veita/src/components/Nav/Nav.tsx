@@ -18,6 +18,8 @@ import cn from 'classnames'
 import { api } from '../../services'
 import { AdminContext } from '../AdminProvider/AdminProvider'
 
+import { navLinks } from '../../utils/formHelper'
+
 const Nav: React.FC = () => {
   const router = useRouter()
 
@@ -31,21 +33,6 @@ const Nav: React.FC = () => {
         api.logOut()
         setAdmin && setAdmin(undefined)
       },
-    },
-  ]
-
-  const navLinks = [
-    {
-      label: 'Ný mál',
-      link: '/nymal',
-    },
-    {
-      label: 'Í vinnslu',
-      link: '/vinnslu',
-    },
-    {
-      label: 'Afgreidd mál',
-      link: '/afgreidd',
     },
   ]
 
@@ -69,7 +56,7 @@ const Nav: React.FC = () => {
       </header>
 
       <div>
-        {navLinks.map((item, index) => {
+        {navLinks().map((item, index) => {
           return (
             <Link href={item.link} key={'NavigationLinks-' + index}>
               <a

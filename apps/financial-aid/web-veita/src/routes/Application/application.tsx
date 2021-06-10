@@ -29,7 +29,12 @@ import {
 } from '@island.is/financial-aid/shared'
 import format from 'date-fns/format'
 
-import { calcDifferenceInDate, calcAge } from '../../utils/formHelper'
+import {
+  calcDifferenceInDate,
+  calcAge,
+  navLinks,
+  translateMonth,
+} from '../../utils/formHelper'
 
 import {
   GeneratedProfile,
@@ -53,6 +58,7 @@ const ApplicationProfile = () => {
   const [isVisible, setIsVisible] = useState(false)
 
   const [state, setState] = useState<string | undefined>(undefined)
+  const [prevUrl, setPrevUrl] = useState<any | undefined>(undefined)
 
   const statusOptions = [
     State.NEW,
@@ -90,6 +96,8 @@ const ApplicationProfile = () => {
   useEffect(() => {
     if (data?.application) {
       setState(data.application.state)
+      //WIP
+      setPrevUrl(navLinks('state', data.application.state))
     }
   }, [data?.application?.state])
 
@@ -97,7 +105,9 @@ const ApplicationProfile = () => {
     const applicationArr = [
       {
         title: 'Tímabil',
-        content: format(new Date(data.application.created), 'MM y'),
+        content:
+          translateMonth(format(new Date(data.application.created), 'M')) +
+          format(new Date(data.application.created), ' y'),
       },
       {
         title: 'Sótt um',
@@ -193,6 +203,10 @@ const ApplicationProfile = () => {
         title: 'Hefur haft tekjur',
         content: data.application.hasIncome ? 'Já' : 'Nei',
       },
+      {
+        title: 'Athugasemd',
+        other: data.application.formComment,
+      },
     ]
 
     const filesTest = ['/lokaprof2021.docx', '/hengill_ultra_reglur_2021.pdf']
@@ -205,20 +219,22 @@ const ApplicationProfile = () => {
           className={styles.applicantWrapper}
         >
           <Box className={styles.widthFull} marginBottom={3}>
-            <Button
-              colorScheme="default"
-              iconType="filled"
-              onClick={() => {
-                router.push('/vinnslu')
-              }}
-              preTextIcon="arrowBack"
-              preTextIconType="filled"
-              size="small"
-              type="button"
-              variant="text"
-            >
-              í vinnslu
-            </Button>
+            {prevUrl && (
+              <Button
+                colorScheme="default"
+                iconType="filled"
+                onClick={() => {
+                  router.push(prevUrl.link)
+                }}
+                preTextIcon="arrowBack"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+              >
+                {prevUrl?.label}
+              </Button>
+            )}
           </Box>
 
           <Box

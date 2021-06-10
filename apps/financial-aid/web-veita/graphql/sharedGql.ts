@@ -22,6 +22,7 @@ export const GetApplicantyQuery = gql`
       employmentCustom
       homeCircumstancesCustom
       state
+      formComment
     }
   }
 `
