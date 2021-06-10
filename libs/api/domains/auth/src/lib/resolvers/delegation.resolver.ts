@@ -89,6 +89,16 @@ export class DelegationResolver {
   ): Promise<Delegation> {
     return this.authService.updateDelegation(user, input)
   }
+
+  @Mutation(() => Boolean, { name: 'deleteAuthDelegation' })
+  deleteDelegation(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => DeleteDelegationInput })
+    input: DeleteDelegationInput,
+  ): Promise<boolean> {
+    return this.authService.deleteDelegation(user, input)
+  }
+
   @ResolveField('id', () => ID)
   resolveId(@Parent() delegation: DelegationDTO): string {
     return `${delegation.fromNationalId}-${delegation.toNationalId}`

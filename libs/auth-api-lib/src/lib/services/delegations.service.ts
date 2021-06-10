@@ -265,20 +265,24 @@ export class DelegationsService {
     })
   }
 
-  async deleteTo(nationalId: string, id: string): Promise<number> {
-    this.logger.debug(`Deleting Delegation for Id ${id}`)
+  async deleteTo(
+    fromNationalId: string,
+    toNationalId: string,
+  ): Promise<number> {
+    this.logger.debug(
+      `Deleting a delegation with from ${fromNationalId} to ${toNationalId}`,
+    )
 
-    const delegation = await this.delegationModel.findByPk(id)
-
-    if (!delegation || delegation?.toNationalId !== nationalId) {
+    const delegation = await this.findOneTo(fromNationalId, toNationalId)
+    if (!delegation) {
       this.logger.debug('Delegation is not assigned to user')
       throw new UnauthorizedException()
     }
 
-    await this.delegationScopeService.delete(id)
+    await this.delegationScopeService.delete(delegation.id)
 
     return this.delegationModel.destroy({
-      where: { id: id, toNationalId: nationalId },
+      where: { id: delegation.id },
     })
   }
 }

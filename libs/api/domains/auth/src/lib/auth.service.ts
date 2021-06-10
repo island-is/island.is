@@ -58,6 +58,16 @@ export class AuthService {
     })
   }
 
+  async deleteDelegation(
+    user: User,
+    { toNationalId }: DeleteDelegationInput,
+  ): Promise<boolean> {
+    await this.delegationsApiWithAuth(user).delegationsControllerDeleteTo({
+      toNationalId,
+    })
+    return true
+  }
+
   updateDelegation(
     user: User,
     { toNationalId, scopes }: UpdateDelegationInput,

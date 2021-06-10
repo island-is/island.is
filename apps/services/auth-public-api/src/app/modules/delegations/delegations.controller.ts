@@ -91,13 +91,13 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.writeDelegations)
-  @Delete('custom/delete/to/:id')
+  @Delete('custom/delete/to/:toNationalId')
   @ApiCreatedResponse()
-  async deleteTo(
+  deleteTo(
     @CurrentUser() user: User,
-    @Param('id') id: string,
+    @Param('toNationalId') toNationalId: string,
   ): Promise<number> {
-    return await this.delegationsService.deleteTo(user.nationalId, id)
+    return this.delegationsService.deleteTo(user.nationalId, toNationalId)
   }
 
   @Scopes(AuthScope.readDelegations)
