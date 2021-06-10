@@ -24,7 +24,7 @@ If you want to contribute to the repository, please make sure to follow [this gu
 
 ## Prerequisites
 
-- You have Node installed `^14.16.0` and Yarn at `^1.22.0`.
+- You have Node installed `^14.17.0` and Yarn at `^1.22.0`.
 - You have [Docker](https://docs.docker.com/desktop/) installed.
 - You have [direnv](https://direnv.net/) installed.
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).

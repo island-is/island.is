@@ -10,6 +10,11 @@ export class CreateCaseDto {
   @ApiPropertyOptional({ enum: CaseType })
   readonly type: CaseType
 
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly description?: string
+
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
