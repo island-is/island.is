@@ -17,7 +17,7 @@ class ValidationUtils {
 
   public static nationalIdPattern = /^[0-9]*$/
 
-  public static apiScopePattern = /^@[a-z\.]*[/]([a-z]+[:/]?)*[a-z]+$/
+  public static apiScopePattern = /^@[a-z\.]*[/]([a-z][:/]?)*[a-z]+$/
 
   public static scopePattern = /^@([\w-])$/
 
