@@ -13,6 +13,7 @@ interface Props {
 const Decision: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
+
   return (
     <BlueBox>
       <Box marginBottom={2}>
