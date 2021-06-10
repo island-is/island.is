@@ -162,7 +162,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
                 <Checkbox
                   name="request-prosecutor-only-session"
                   label="Beiðni um dómþing að varnaraðila fjarstöddum"
-                  tooltip="Hér er hægt að setja fram kröfu um að dómþing fari fram að varnaraðila fjarstöddum, vegna rannsóknarhagsmuna."
+                  tooltip="Hér er hægt að setja fram kröfu um að dómþing fari fram að varnaraðila fjarstöddum sé það nauðsynlegt vegna rannsóknarhagsmuna. Með því að haka í reitinn birtist krafan neðst í skjalinu."
                   checked={workingCase.requestProsecutorOnlySession}
                   onChange={(evt) => {
                     setWorkingCase({
