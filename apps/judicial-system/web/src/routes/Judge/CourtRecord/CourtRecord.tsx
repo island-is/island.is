@@ -8,6 +8,7 @@ import {
   BlueBox,
   FormContentContainer,
   DateTime,
+  HideableText,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -295,13 +296,15 @@ export const CourtRecord: React.FC = () => {
                 </Text>
               </Box>
               <Box marginBottom={2}>
-                <Text>
-                  Sakborningi er bent á að honum sé óskylt að svara spurningum
+                <HideableText
+                  text="Sakborningi er bent á að honum sé óskylt að svara spurningum
                   er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113.
                   gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um
                   sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr.
-                  114. gr. sömu laga
-                </Text>
+                  114. gr. sömu laga"
+                  onToggleVisibility={() => console.log('YARRA')}
+                  tooltip="Með því að fela forbókun um réttindi kærða birtist hún ekki í Þingbók málsins."
+                />
               </Box>
               <BlueBox>
                 <div className={styles.accusedPleaDecision}>
