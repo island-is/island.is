@@ -35,11 +35,11 @@ export function getExpectedDateOfBirth(
     application.externalData,
   )
 
-  if (selectedChild !== null) {
-    return selectedChild.expectedDateOfBirth
+  if (!selectedChild) {
+    return undefined
   }
 
-  return undefined
+  return selectedChild.expectedDateOfBirth
 }
 
 export function getNameAndIdOfSpouse(
@@ -177,13 +177,23 @@ export const getAvailableRightsInMonths = (application: Application) => {
   )
 }
 
-export const getOtherParentOptions = (application: Application) => {
+export const getSpouse = (application: Application): FamilyMember | null => {
   const family = getValueViaPath(
     application.externalData,
     'family.data',
     [],
   ) as FamilyMember[]
 
+  if (!family) {
+    return null
+  }
+
+  const spouse = family.find((member) => member.familyRelation === SPOUSE)
+
+  return spouse ?? null
+}
+
+export const getOtherParentOptions = (application: Application) => {
   const options: Option[] = [
     {
       value: NO,
@@ -195,21 +205,19 @@ export const getOtherParentOptions = (application: Application) => {
     },
   ]
 
-  if (family && family.length > 0) {
-    const spouse = family.find((member) => member.familyRelation === SPOUSE)
+  const spouse = getSpouse(application)
 
-    if (spouse) {
-      options.unshift({
-        value: SPOUSE,
-        label: {
-          ...parentalLeaveFormMessages.shared.otherParentSpouse,
-          values: {
-            spouseName: spouse.fullName,
-            spouseId: spouse.nationalId,
-          },
+  if (spouse) {
+    options.unshift({
+      value: SPOUSE,
+      label: {
+        ...parentalLeaveFormMessages.shared.otherParentSpouse,
+        values: {
+          spouseName: spouse.fullName,
+          spouseId: spouse.nationalId,
         },
-      })
-    }
+      },
+    })
   }
 
   return options
@@ -240,7 +248,7 @@ export const createRange = <T>(
 export const getSelectedChild = (
   answers: FormValue,
   externalData: ExternalData,
-) => {
+): ChildInformation | null => {
   const selectedChildIndex = getValueViaPath(answers, 'selectedChild') as string
   const selectedChild = getValueViaPath(
     externalData,
