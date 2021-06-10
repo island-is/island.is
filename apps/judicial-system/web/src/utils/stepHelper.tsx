@@ -116,10 +116,7 @@ const getAcceptingConclusion = (wc: Case, large?: boolean) => {
 
   const isTravelBan = wc.type === CaseType.TRAVEL_BAN
 
-  const formattedCustodyEndDateAndTime = `${formatDate(
-    wc.custodyEndDate,
-    'PPPPp',
-  )
+  const formattedValidToDateAndTime = `${formatDate(wc.validToDate, 'PPPPp')
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}`
 
@@ -131,10 +128,10 @@ const getAcceptingConclusion = (wc: Case, large?: boolean) => {
     wc.type === CaseType.CUSTODY &&
     wc.custodyRestrictions?.includes(CaseCustodyRestrictions.ISOLATION)
 
-  const isolationIsSameAsCustodyEndDate =
-    wc.custodyEndDate &&
+  const isolationIsSameAsValidToDate =
+    wc.validToDate &&
     wc.isolationTo &&
-    compareAsc(parseISO(wc.custodyEndDate), parseISO(wc.isolationTo)) === 0
+    compareAsc(parseISO(wc.validToDate), parseISO(wc.isolationTo)) === 0
 
   return (
     <Text variant={large ? 'intro' : 'default'}>
@@ -158,7 +155,7 @@ const getAcceptingConclusion = (wc: Case, large?: boolean) => {
         color={large ? 'blue400' : 'dark400'}
         fontWeight="semiBold"
       >
-        {` ${formattedCustodyEndDateAndTime}.`}
+        {` ${formattedValidToDateAndTime}.`}
       </Text>
       {accusedShouldBeInIsolation && (
         <>
@@ -174,7 +171,7 @@ const getAcceptingConclusion = (wc: Case, large?: boolean) => {
           >
             sæta einangrun
           </Text>
-          {isolationIsSameAsCustodyEndDate ? (
+          {isolationIsSameAsValidToDate ? (
             <Text
               as="span"
               variant={large ? 'intro' : 'default'}
@@ -214,10 +211,7 @@ const getAcceptingAlternativeTravelBanConclusion = (
     wc.parentCase &&
     wc.parentCase?.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
 
-  const formattedCustodyEndDateAndTime = `${formatDate(
-    wc.custodyEndDate,
-    'PPPPp',
-  )
+  const formattedValidToDateAndTime = `${formatDate(wc.validToDate, 'PPPPp')
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}`
 
@@ -239,70 +233,9 @@ const getAcceptingAlternativeTravelBanConclusion = (
         color={large ? 'blue400' : 'dark400'}
         fontWeight="semiBold"
       >
-        {` ${formattedCustodyEndDateAndTime}.`}
+        {` ${formattedValidToDateAndTime}.`}
       </Text>
     </Text>
-  )
-}
-
-export const constructProsecutorDemands = (
-  workingCase: Case,
-  skipOtherDemands?: boolean,
-) => {
-  return workingCase.requestedCustodyEndDate ? (
-    <Text>
-      Þess er krafist að
-      <Text as="span" fontWeight="semiBold">
-        {` ${workingCase.accusedName}, kt. ${formatNationalId(
-          workingCase.accusedNationalId,
-        )}`}
-      </Text>
-      {`, sæti${
-        workingCase.parentCase &&
-        workingCase.parentCase?.decision === CaseDecision.ACCEPTING
-          ? ' áframhaldandi'
-          : ''
-      } ${
-        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
-      } með úrskurði ${workingCase.court?.name?.replace(
-        'Héraðsdómur',
-        'Héraðsdóms',
-      )}, til`}
-      <Text as="span" fontWeight="semiBold">
-        {` ${formatDate(workingCase.requestedCustodyEndDate, 'EEEE')?.replace(
-          'dagur',
-          'dagsins',
-        )} ${formatDate(
-          workingCase.requestedCustodyEndDate,
-          'PPP',
-        )}, kl. ${formatDate(
-          workingCase.requestedCustodyEndDate,
-          TIME_FORMAT,
-        )}`}
-      </Text>
-      {workingCase.requestedCustodyRestrictions?.includes(
-        CaseCustodyRestrictions.ISOLATION,
-      ) ? (
-        <>
-          , og verði gert að{' '}
-          <Text as="span" fontWeight="semiBold">
-            sæta einangrun
-          </Text>{' '}
-          á meðan á varðhaldi stendur.
-        </>
-      ) : (
-        '.'
-      )}
-      {workingCase.otherDemands && !skipOtherDemands && (
-        <>
-          <br />
-          <br />
-          {` ${capitalize(workingCase.otherDemands || '')}`}
-        </>
-      )}
-    </Text>
-  ) : (
-    <Text>Saksóknari hefur ekki fyllt út dómkröfur.</Text>
   )
 }
 

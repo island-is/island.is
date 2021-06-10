@@ -24,7 +24,9 @@ const CRCSelectChildren = ({
         description: selectChildren.general.description,
         ineligible: selectChildren.ineligible.text,
         checkBoxSubLabel: selectChildren.checkboxes.subLabel,
+        soleCustodySubLabel: selectChildren.checkboxes.soleCustodySubLabel,
         livesWithBothParents: selectChildren.checkboxes.livesWithBothParents,
+        soleCustodyTooltip: selectChildren.checkboxes.soleCustodyTooltip,
       }}
     />
   )

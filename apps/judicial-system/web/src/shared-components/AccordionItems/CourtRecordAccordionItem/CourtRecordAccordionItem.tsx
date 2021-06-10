@@ -52,7 +52,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         )}
       </Box>
       <AccordionListItem title="Krafa" breakSpaces>
-        <Text>{workingCase.policeDemands}</Text>
+        <Text>{workingCase.prosecutorDemands}</Text>
       </AccordionListItem>
       <AccordionListItem title="Viðstaddir" breakSpaces>
         <Text>{workingCase.courtAttendees}</Text>

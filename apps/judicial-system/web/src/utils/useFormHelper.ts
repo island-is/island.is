@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Case, UpdateCase } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import { parseString, replaceTabs } from './formatters'
 import { validate, Validation } from './validate'
+import useCase from './hooks/useCase'
 
 export interface FieldSettings {
   validations?: Validation[]
   errorMessage?: string | undefined
-  setErrorMessage?: React.Dispatch<React.SetStateAction<string | undefined>>
+  setErrorMessage?: React.Dispatch<React.SetStateAction<string>>
 }
 
 export interface FormSettings {
@@ -15,11 +16,11 @@ export interface FormSettings {
 
 export const useCaseFormHelper = (
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setCase: (value: React.SetStateAction<Case | undefined>) => void,
   formSettings: FormSettings,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   const [isValid, setIsValid] = useState(true)
+  const { updateCase } = useCase()
 
   useEffect(() => {
     let valid = true
@@ -35,7 +36,7 @@ export const useCaseFormHelper = (
       ) {
         valid = false
       } else if (fieldSettings.errorMessage && fieldSettings.setErrorMessage) {
-        fieldSettings.setErrorMessage(undefined)
+        fieldSettings.setErrorMessage('')
       }
     }
 
