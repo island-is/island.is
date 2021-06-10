@@ -51,7 +51,7 @@ export class AuthService {
 
   createDelegation(
     user: User,
-    { toNationalId, name }: DelegationInput,
+    { toNationalId, name }: CreateDelegationInput,
   ): Promise<DelegationDTO> {
     return this.delegationsApiWithAuth(user).delegationsControllerCreate({
       createDelegationDTO: { toNationalId, fromName: name },
