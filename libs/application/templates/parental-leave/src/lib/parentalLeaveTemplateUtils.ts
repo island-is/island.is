@@ -1,6 +1,7 @@
 import { ApplicationContext } from '@island.is/application/core'
+
 import { YES, NO } from '../constants'
-import { requiresOtherParentApproval } from '../parentalLeaveUtils'
+import { requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
 
 export function hasEmployer(context: ApplicationContext) {
   const currentApplicationAnswers = context.application.answers as {

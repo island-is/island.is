@@ -14,9 +14,9 @@ services:
       - DEV_DB_USER=dev_db
       - DEV_DB_PASS=dev_db
       - DEV_DB_NAME=dev_db
+    user: $UID:$GID
     volumes:
       - ./bin/startup.sql:/docker-entrypoint-initdb.d/startup.sql
-
 
 networks:
   local:
