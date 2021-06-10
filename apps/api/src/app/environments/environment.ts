@@ -8,7 +8,7 @@ const devConfig = {
     baseApiUrl: 'http://localhost:3333',
   },
   authPublicApi: {
-    baseApiUrl: 'http://localhost:3370/public',
+    baseApiUrl: 'http://localhost:3370',
   },
   drivingLicense: {
     secret: process.env.DRIVING_LICENSE_SECRET,
