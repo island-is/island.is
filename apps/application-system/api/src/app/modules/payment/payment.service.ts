@@ -20,49 +20,34 @@ export class PaymentService {
     private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
   ) {}
 
-  async createPayment(charge: Charge, returnUrl: string, applicationId: string): Promise<ChargeResult> { // change any to createpaymentresponsedto ?
+  async createPayment(charge: Charge, returnUrl: string, applicationId: string): Promise<ChargeResult> {
     try {
       const result = await this.apiDomainsPaymentService.createCharge(charge, returnUrl)
 
-      // Calculate current time plus 24 hours. 86.400.000 is seconds in a day
-      let calcExpiration = new Date().getTime() + 86400000
+      // Calculate current time plus 48 hours. 86.400.000 is seconds in a day, 172.800.000 is two days.
+      let calcExpiration = new Date().getTime() + 172800000
       console.log('The expiration date of payment application: ' + new Date(calcExpiration))
       console.log('payment service')
       console.log(JSON.stringify(charge, null, 4));
       console.log(JSON.stringify(result, null, 4));
       const paymentDto = {
-        application_id: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',//applicationId, //applicationId != "" ? applicationId : '123456789',
+        application_id: applicationId,
         fulfilled: false,
-        user4: "cool url bro", //result.data?.paymentUrl as string
-        definition: '123', //result.data?.user4 as string,
-        amount: 2288,//charge.payInfo?.payableAmount != null ? charge.payInfo?.payableAmount as number : 999,
+        user4: result.data?.paymentUrl as string,
+        definition: charge.chargeItemSubject,
+        amount: charge.payInfo?.payableAmount || 0,
         expires_at: new Date(calcExpiration),
-        id: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',
-        reference_id: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c'
+        reference_id: result.data?.receptionID
       }
       this.paymentModel.create(paymentDto)
       return result
 
     } catch (e) {
-      console.log('payment.service error')
       console.log(JSON.stringify(e, null, 4))
       return {
         success: false,
         error: e as Error,
       }
     }
-    // kalla i api domains create charge
-    // createmodel
-    //return this.paymentController.paymentApplication(payment, user)
-  }
-
-  async recreatedPayment(payment: CreatePaymentDto): Promise<Payment> {
-    payment.definition = 'this payment was recreated by user.'
-
-    // Service returns string on error, number on successful/not successful
-    // const responseIsString = typeof response !== 'string'
-    // const success = responseIsString && response === 1
-    
-    return this.paymentModel.create(payment)
   }
 }

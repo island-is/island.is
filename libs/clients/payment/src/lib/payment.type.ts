@@ -32,12 +32,12 @@ interface ChargeItem {
 }
 
 interface PayInfo {
-  RRN: string
-  cardType: string
-  paymentMeans: string
-  authCode: string
-  PAN: string
-  payableAmount: number
+  RRN?: string
+  cardType?: string
+  paymentMeans?: string
+  authCode?: string
+  PAN?: string
+  payableAmount?: number
 }
 
 export interface Catalog {

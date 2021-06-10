@@ -58,6 +58,7 @@ export class DrivingLicenseSubmissionService {
         charges: [
           chargeItem,
         ],
+        payInfo: { payableAmount: chargeItem.amount },
         payeeNationalID: applicant,
         // TODO: possibly somebody else, if 'umboð'
         performerNationalID: applicant,

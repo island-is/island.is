@@ -66,19 +66,9 @@ export class PaymentController {
     paymentDetails: CreatePaymentDto,
     @CurrentUser()
     user: User,
-    // @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<CreatePaymentResponseDto> {
-    console.log('controller what up')
     // FIGURE SOME CHECK FOR LEGIT PAYMENT
-    // if (existingApplication === null) {
-    //   throw new BadRequestException(
     //     `No application found for application id: ${applicationId}`,
-    //   )
-    // }
-
-    // TODO: verify template is ready from https://github.com/island-is/island.is/pull/3297
-
-    // TODO: initial state should be required --------- IS INITIAL STATE REQUIRED FOR PAYMENT?
 
     const paymentDto: Pick<
       BasePayment,
@@ -90,16 +80,14 @@ export class PaymentController {
       | 'amount'
       | 'expires_at'
       > = {
-      application_id: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',
+      application_id: paymentDetails.application_id,
       fulfilled: false,
       reference_id: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',
-      user4: "789",
-      definition: "000",
-      amount: 1,
+      user4: "",
+      definition: "",
+      amount: 0,
       expires_at: new Date(),
     }
-    console.log('payment controller')
-    console.log(JSON.stringify(paymentDto, null, 4));
 
     this.auditService.audit({
       user,
@@ -107,6 +95,7 @@ export class PaymentController {
       resources: paymentDto.application_id as string,
       meta: { applicationId: paymentDto.application_id },
     })
+    // possible duplication of model creation.. happens also in service... refactor?
     return await this.paymentModel.create(paymentDto)
   }
 }
