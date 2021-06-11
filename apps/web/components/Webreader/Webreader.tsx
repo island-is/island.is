@@ -35,7 +35,7 @@ export const Webreader: FC<WebReaderProps> = ({
 
   useEffect(() => {
     const routeChangestart = (url) => {
-      if (typeof ReadSpeaker !== 'undefined') {
+      if (typeof ReadSpeaker !== 'undefined' && ReadSpeaker.PlayerAPI?.stop) {
         ReadSpeaker.PlayerAPI.stop()
 
         if (ReadSpeaker.PlayerAPI.audio.state.current && rspkr.ui) {
@@ -66,6 +66,13 @@ export const Webreader: FC<WebReaderProps> = ({
       el.type = 'text/javascript'
       document.body.appendChild(el)
       window.rsConf = { general: { usePost: true } }
+    } else if (typeof rspkr !== 'undefined') {
+      // https://wrdev.readspeaker.com/get-started/implementation/dynamic-loading
+      // When a parent component, with the webreader, has been umnmounted
+      // the readspeaker will still remain initialized
+      // but in order for functionality to be added to the new button
+      // we need to call 'addClickEvents'
+      rspkr.ui.addClickEvents()
     }
   }, [])
 
