@@ -20,7 +20,7 @@ export class EndorsementListDto {
   @ApiProperty({ type: String, nullable: true })
   @IsOptional()
   @IsString()
-  description: string = ''
+  description = ''
 
   @ApiProperty({ enum: EndorsementMetaField, isArray: true, nullable: true })
   @IsOptional()
