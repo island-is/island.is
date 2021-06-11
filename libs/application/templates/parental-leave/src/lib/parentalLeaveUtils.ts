@@ -26,6 +26,7 @@ import {
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
 import { Boolean } from '../types'
+import { maxDaysToGiveOrReceive } from '../config'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -35,11 +36,11 @@ export function getExpectedDateOfBirth(
     application.externalData,
   )
 
-  if (selectedChild !== null) {
-    return selectedChild.expectedDateOfBirth
+  if (!selectedChild) {
+    return undefined
   }
 
-  return undefined
+  return selectedChild.expectedDateOfBirth
 }
 
 export function getNameAndIdOfSpouse(
@@ -140,7 +141,7 @@ export const getTransferredDays = (
   let days = 0
 
   if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
-    const requestedDays = requestRights.requestDays
+    const requestedDays = Number(requestRights.requestDays)
 
     days = requestedDays
   }
@@ -150,7 +151,7 @@ export const getTransferredDays = (
     giveRights?.isGivingRights === YES &&
     giveRights.giveDays
   ) {
-    const givenDays = giveRights.giveDays
+    const givenDays = Number(giveRights.giveDays)
 
     days = -givenDays
   }
@@ -162,28 +163,43 @@ export const getTransferredDays = (
  * Returns the number of months available for the applicant.
  */
 export const getAvailableRightsInMonths = (application: Application) => {
-  const selectedChild = getSelectedChild(
-    application.answers,
-    application.externalData,
-  )
+  const { answers, externalData } = application
+
+  const selectedChild = getSelectedChild(answers, externalData)
 
   if (!selectedChild) {
     throw new Error('Missing selected child')
   }
 
-  return daysToMonths(
-    selectedChild.remainingDays +
-      getTransferredDays(application, selectedChild),
-  )
+  const useMockData = getValueViaPath(answers, 'mock.useMockData') === YES
+
+  if (useMockData) {
+    return daysToMonths(
+      selectedChild.remainingDays +
+        getTransferredDays(application, selectedChild),
+    )
+  }
+
+  return daysToMonths(selectedChild.remainingDays)
 }
 
-export const getOtherParentOptions = (application: Application) => {
+export const getSpouse = (application: Application): FamilyMember | null => {
   const family = getValueViaPath(
     application.externalData,
     'family.data',
     [],
   ) as FamilyMember[]
 
+  if (!family) {
+    return null
+  }
+
+  const spouse = family.find((member) => member.familyRelation === SPOUSE)
+
+  return spouse ?? null
+}
+
+export const getOtherParentOptions = (application: Application) => {
   const options: Option[] = [
     {
       value: NO,
@@ -195,21 +211,19 @@ export const getOtherParentOptions = (application: Application) => {
     },
   ]
 
-  if (family && family.length > 0) {
-    const spouse = family.find((member) => member.familyRelation === SPOUSE)
+  const spouse = getSpouse(application)
 
-    if (spouse) {
-      options.unshift({
-        value: SPOUSE,
-        label: {
-          ...parentalLeaveFormMessages.shared.otherParentSpouse,
-          values: {
-            spouseName: spouse.fullName,
-            spouseId: spouse.nationalId,
-          },
+  if (spouse) {
+    options.unshift({
+      value: SPOUSE,
+      label: {
+        ...parentalLeaveFormMessages.shared.otherParentSpouse,
+        values: {
+          spouseName: spouse.fullName,
+          spouseId: spouse.nationalId,
         },
-      })
-    }
+      },
+    })
   }
 
   return options
@@ -240,7 +254,7 @@ export const createRange = <T>(
 export const getSelectedChild = (
   answers: FormValue,
   externalData: ExternalData,
-) => {
+): ChildInformation | null => {
   const selectedChildIndex = getValueViaPath(answers, 'selectedChild') as string
   const selectedChild = getValueViaPath(
     externalData,
@@ -312,11 +326,27 @@ export const calculatePeriodPercentage = (
   return Math.min(100, Math.round((months / difference) * 100))
 }
 
+const getOrFallback = (
+  condition: Boolean,
+  value: number | undefined = maxDaysToGiveOrReceive,
+) => {
+  if (condition === YES) {
+    return value
+  }
+
+  return 0
+}
+
 export function getApplicationAnswers(answers: Application['answers']) {
   const otherParent = getValueViaPath(
     answers,
     'otherParent',
   ) as SchemaFormValues['otherParent']
+
+  const otherParentRightOfAccess = getValueViaPath(
+    answers,
+    'otherParentRightOfAccess',
+  ) as SchemaFormValues['otherParentRightOfAccess']
 
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
 
@@ -393,17 +423,22 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'requestRights.isRequestingRights',
   ) as Boolean
 
-  const requestDays = getValueViaPath(
-    answers,
-    'requestRights.requestDays',
-  ) as number
+  const requestValue = getValueViaPath(answers, 'requestRights.requestDays') as
+    | number
+    | undefined
+
+  const requestDays = getOrFallback(isRequestingRights, requestValue)
 
   const isGivingRights = getValueViaPath(
     answers,
     'giveRights.isGivingRights',
   ) as Boolean
 
-  const giveDays = getValueViaPath(answers, 'giveRights.giveDays') as number
+  const giveValue = getValueViaPath(answers, 'giveRights.giveDays') as
+    | number
+    | undefined
+
+  const giveDays = getOrFallback(isGivingRights, giveValue)
 
   const usePersonalAllowanceFromSpouse = getValueViaPath(
     answers,
@@ -412,6 +447,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     otherParent,
+    otherParentRightOfAccess,
     pensionFund,
     union,
     usePrivatePensionFund,
@@ -449,4 +485,15 @@ export const requiresOtherParentApproval = (
   } = applicationAnswers
 
   return isRequestingRights === YES || usePersonalAllowanceFromSpouse === YES
+}
+
+export const allowOtherParent = (answers: Application['answers']) => {
+  const { otherParent, otherParentRightOfAccess } = getApplicationAnswers(
+    answers,
+  )
+
+  return (
+    otherParent === SPOUSE ||
+    (otherParent === MANUAL && otherParentRightOfAccess === YES)
+  )
 }

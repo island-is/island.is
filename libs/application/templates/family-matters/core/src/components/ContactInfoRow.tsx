@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
@@ -11,14 +12,23 @@ interface InputField {
   defaultValue?: string
 }
 
+interface PhoneField extends InputField {
+  presentationId: string
+}
+
 interface Props {
   email: InputField
-  phoneNumber: InputField
+  phoneNumber: PhoneField
 }
 
 const ContactInfoRow = ({ email, phoneNumber }: Props) => {
-  const { clearErrors } = useFormContext()
-
+  const [statefulPhone, setStatefulPhone] = useState(
+    phoneNumber.defaultValue || '',
+  )
+  const { clearErrors, register } = useFormContext()
+  const parsedNumber =
+    parsePhoneNumberFromString(statefulPhone, 'IS')?.nationalNumber ||
+    statefulPhone
   return (
     <GridContainer>
       <GridRow>
@@ -41,19 +51,25 @@ const ContactInfoRow = ({ email, phoneNumber }: Props) => {
         </GridColumn>
         <GridColumn span={['1/1', '1/2', '1/1', '1/3']}>
           <InputController
-            id={phoneNumber.id}
-            name={phoneNumber.id}
+            id={phoneNumber.presentationId}
+            name={phoneNumber.presentationId}
             backgroundColor="blue"
             type="tel"
             label={phoneNumber.label}
             error={phoneNumber.error}
-            format="### ####"
-            onChange={() => {
+            onChange={(event) => {
+              setStatefulPhone(event.target.value)
               clearErrors(phoneNumber.clearErrors || phoneNumber.id)
             }}
             defaultValue={phoneNumber.defaultValue || ''}
           />
         </GridColumn>
+        <input
+          name={`${phoneNumber.id}`}
+          type="hidden"
+          value={parsedNumber as string}
+          ref={register}
+        />
       </GridRow>
     </GridContainer>
   )

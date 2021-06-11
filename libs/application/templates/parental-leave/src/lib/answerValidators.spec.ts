@@ -7,6 +7,7 @@ import differenceInDays from 'date-fns/differenceInDays'
 import parseISO from 'date-fns/parseISO'
 
 import { minPeriodDays, usageMaxMonths } from '../config'
+import { ParentalRelations } from '../constants'
 import { answerValidators } from './answerValidators'
 import { errorMessages } from './messages'
 
@@ -27,7 +28,7 @@ describe('answerValidators', () => {
           children: [
             {
               expectedDateOfBirth: DEFAULT_DOB,
-              parentalRelation: 'primary',
+              parentalRelation: ParentalRelations.primary,
             },
           ],
         },
@@ -80,6 +81,7 @@ describe('answerValidators', () => {
     const newApplication = {
       ...application,
       answers: {
+        ...application.answers,
         firstPeriodStart: 'estimatedDateOfBirth',
       },
     } as Application
@@ -101,6 +103,7 @@ describe('answerValidators', () => {
     const newApplication = {
       ...application,
       answers: {
+        ...application.answers,
         periods: [
           { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
         ],
@@ -120,6 +123,7 @@ describe('answerValidators', () => {
     const newApplication = {
       ...application,
       answers: {
+        ...application.answers,
         periods: [
           { ratio: '100', endDate: '2021-07-01', startDate: '2021-06-01' },
           { startDate: '2021-07-15' },

@@ -64,14 +64,14 @@ export function formatConclusion(
   accusedName: string,
   accusedGender: CaseGender,
   decision: CaseDecision,
-  custodyEndDate: Date,
+  validToDate: Date,
   isolation: boolean,
   isExtension: boolean,
   previousDecision: CaseDecision,
-  isolationTo?: Date,
+  isolationToDate?: Date,
 ): string {
-  const isolationIsBeforeCustodyEndDate =
-    isolationTo && custodyEndDate > isolationTo
+  const isolationIsBeforeValidToDate =
+    isolationToDate && validToDate > isolationToDate
 
   return decision === CaseDecision.REJECTING
     ? `Kröfu um að ${formatAccusedByGender(
@@ -99,15 +99,15 @@ export function formatConclusion(
                 ? 'áframhaldandi '
                 : ''
             }farbanni`
-      }, þó ekki lengur en til ${formatDate(custodyEndDate, 'PPPPp')
+      }, þó ekki lengur en til ${formatDate(validToDate, 'PPPPp')
         ?.replace('dagur,', 'dagsins')
         ?.replace(' kl.', ', kl.')}.${
         decision === CaseDecision.ACCEPTING && isolation
           ? ` ${capitalize(
               formatAccusedByGender(accusedGender),
             )} skal sæta einangrun ${
-              isolationIsBeforeCustodyEndDate
-                ? `ekki lengur en til ${`${formatDate(isolationTo, 'PPPPp')
+              isolationIsBeforeValidToDate
+                ? `ekki lengur en til ${`${formatDate(isolationToDate, 'PPPPp')
                     ?.replace('dagur,', 'dagsins')
                     ?.replace(' kl.', ', kl.')}`}.`
                 : 'á meðan á gæsluvarðhaldinu stendur.'
@@ -206,7 +206,7 @@ export function formatPrisonCourtDateEmailNotification(
   courtDate: Date,
   accusedName: string,
   accusedGender: CaseGender,
-  requestedCustodyEndDate: Date,
+  requestedValidToDate: Date,
   isolation: boolean,
   defenderName: string,
   isExtension: boolean,
@@ -215,15 +215,12 @@ export function formatPrisonCourtDateEmailNotification(
   const courtDateText = formatDate(courtDate, 'PPPPp')
     ?.replace('dagur', 'daginn')
     ?.replace(' kl.', ', kl.')
-  const requestedCustodyEndDateText = formatDate(
-    requestedCustodyEndDate,
-    'PPPPp',
-  )
+  const requestedValidToDateText = formatDate(requestedValidToDate, 'PPPPp')
     ?.replace('dagur', 'dagsins')
     ?.replace(' kl.', ', kl.')
   const requestText = `Nafn sakbornings: ${accusedName}.<br /><br />Kyn sakbornings: ${formatGender(
     accusedGender,
-  )}.<br /><br />Krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
+  )}.<br /><br />Krafist er gæsluvarðhalds til ${requestedValidToDateText}.`
   const isolationText = isolation
     ? 'Farið er fram á einangrun.'
     : 'Ekki er farið fram á einangrun.'
@@ -273,7 +270,7 @@ export function formatPrisonRulingEmailNotification(
   defenderName: string,
   defenderEmail: string,
   decision: CaseDecision,
-  custodyEndDate: Date,
+  validToDate: Date,
   custodyRestrictions: CaseCustodyRestrictions[],
   accusedAppealDecision: CaseAppealDecision,
   prosecutorAppealDecision: CaseAppealDecision,
@@ -282,7 +279,7 @@ export function formatPrisonRulingEmailNotification(
   isExtension: boolean,
   previousDecision: CaseDecision,
   additionToConclusion?: string,
-  isolationTo?: Date,
+  isolationToDate?: Date,
 ): string {
   return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
     courtEndTime,
@@ -304,11 +301,11 @@ export function formatPrisonRulingEmailNotification(
     accusedName,
     accusedGender,
     decision,
-    custodyEndDate,
+    validToDate,
     custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION),
     isExtension,
     previousDecision,
-    isolationTo,
+    isolationToDate,
   )}${
     additionToConclusion ? `<br /><br />${additionToConclusion}` : ''
   }<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(

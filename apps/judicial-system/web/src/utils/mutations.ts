@@ -26,6 +26,7 @@ export const CreateCaseMutation = gql`
       created
       modified
       type
+      description
       state
       policeCaseNumber
       accusedNationalId
@@ -44,16 +45,17 @@ export const CreateCaseMutation = gql`
       leadInvestigator
       arrestDate
       requestedCourtDate
-      requestedCustodyEndDate
-      otherDemands
+      requestedValidToDate
+      demands
       lawsBroken
+      legalBasis
       custodyProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
-      witnessAccounts
-      investigationProgress
       legalArguments
+      requestProsecutorOnlySession
+      prosecutorOnlySessionRequest
       comments
       caseFilesComments
       prosecutor {
@@ -71,9 +73,9 @@ export const CreateCaseMutation = gql`
       courtStartDate
       courtEndTime
       courtAttendees
-      policeDemands
+      prosecutorDemands
       courtDocuments
-      additionToConclusion
+      isAccusedAbsent
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
@@ -81,10 +83,12 @@ export const CreateCaseMutation = gql`
       courtLegalArguments
       ruling
       decision
-      custodyEndDate
-      isCustodyEndDateInThePast
+      validToDate
+      isValidToDateInThePast
       custodyRestrictions
       otherRestrictions
+      isolationToDate
+      additionToConclusion
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision
@@ -120,13 +124,14 @@ export const CasesQuery = gql`
       id
       created
       type
+      description
       state
       policeCaseNumber
       accusedNationalId
       accusedName
-      custodyEndDate
+      validToDate
       decision
-      isCustodyEndDateInThePast
+      isValidToDateInThePast
       courtCaseNumber
       rulingDate
       courtEndTime
@@ -144,6 +149,7 @@ export const ExtendCaseMutation = gql`
       created
       modified
       type
+      description
       state
       policeCaseNumber
       accusedNationalId
@@ -162,16 +168,17 @@ export const ExtendCaseMutation = gql`
       leadInvestigator
       arrestDate
       requestedCourtDate
-      requestedCustodyEndDate
-      otherDemands
+      requestedValidToDate
+      demands
       lawsBroken
+      legalBasis
       custodyProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
-      witnessAccounts
-      investigationProgress
       legalArguments
+      requestProsecutorOnlySession
+      prosecutorOnlySessionRequest
       comments
       caseFilesComments
       prosecutor {
@@ -189,9 +196,9 @@ export const ExtendCaseMutation = gql`
       courtStartDate
       courtEndTime
       courtAttendees
-      policeDemands
+      prosecutorDemands
       courtDocuments
-      additionToConclusion
+      isAccusedAbsent
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
@@ -199,10 +206,12 @@ export const ExtendCaseMutation = gql`
       courtLegalArguments
       ruling
       decision
-      custodyEndDate
-      isCustodyEndDateInThePast
+      validToDate
+      isValidToDateInThePast
       custodyRestrictions
       otherRestrictions
+      isolationToDate
+      additionToConclusion
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision

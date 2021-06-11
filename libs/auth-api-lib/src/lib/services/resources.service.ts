@@ -346,6 +346,19 @@ export class ResourcesService {
     })
   }
 
+  /** Gets Api scopes with Explicit Delegation Grant */
+  async findIdentityResourcesWithExplicitDelegationGrant(): Promise<
+    IdentityResource[]
+  > {
+    this.logger.debug(
+      `Finding identity resources with Explicit Delegation Grant`,
+    )
+
+    return this.identityResourceModel.findAll({
+      where: { allowExplicitDelegationGrant: true },
+    })
+  }
+
   /** Gets api resources by api resource names  */
   async findApiResourcesByNameAsync(
     apiResourceNames: string[],
@@ -834,19 +847,20 @@ export class ResourcesService {
     count: number | null = null,
   ): Promise<Domain[] | PagedRowsDto<Domain>> {
     if (page && count) {
-      page--
-      const offset = page * count
-      if (!searchString || searchString.length === 0) {
-        searchString = '%'
+      if (page > 0 && count > 0) {
+        page!--
+        const offset = page! * count!
+        if (!searchString || searchString.length === 0) {
+          searchString = '%'
+        }
+        return this.domainModel.findAndCountAll({
+          limit: count,
+          offset: offset,
+          where: { name: { [Op.iLike]: `%${searchString}%` } },
+          order: [['name', 'asc']],
+          include: [ApiScopeGroup],
+        })
       }
-
-      return this.domainModel.findAndCountAll({
-        limit: count,
-        offset: offset,
-        where: { name: { [Op.iLike]: `%${searchString}%` } },
-        order: [['name', 'asc']],
-        include: [ApiScopeGroup],
-      })
     }
     return this.domainModel.findAll({ order: [['name', 'asc']] })
   }
