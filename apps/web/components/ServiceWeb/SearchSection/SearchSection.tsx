@@ -1,16 +1,19 @@
 import React from 'react'
 import { Box, Text, AsyncSearch, Hidden } from '@island.is/island-ui/core'
+import { Image } from '@island.is/web/graphql/schema'
 
 import * as styles from './SearchSection.treat'
 
 interface SearchSectionProps {
   title?: string
   logoTitle?: string
+  logoUrl?: string
 }
 
 export const SearchSection = ({
   title = '',
   logoTitle = '',
+  logoUrl,
 }: SearchSectionProps) => {
   return (
     <Box
@@ -19,11 +22,13 @@ export const SearchSection = ({
       paddingBottom={3}
       className={styles.container}
     >
-      <Hidden below="lg">
-        <Box marginBottom={6} className={styles.logo}>
-          <img src="http://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg" />
-        </Box>
-      </Hidden>
+      {!!logoUrl && (
+        <Hidden below="lg">
+          <Box marginBottom={6} className={styles.logo}>
+            <img src={logoUrl} />
+          </Box>
+        </Hidden>
+      )}
       {title && (
         <>
           {logoTitle && (
