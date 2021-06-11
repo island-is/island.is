@@ -41,7 +41,7 @@ export interface PregnancyStatusAndRightsResults {
 const isRunningOnProduction = isRunningOnEnvironment('production')
 
 const parentalLeavesAndPregnancyStatus = `
-  query GetParentalLeaveAndPregnancyStatus {
+  query GetParentalLeavesAndPregnancyStatus {
     getParentalLeaves {
       applicant
       expectedDateOfBirth
@@ -61,8 +61,8 @@ const parentalLeavesAndPregnancyStatus = `
 `
 
 const parentalLeavesEntitlements = `
-  query GetParentalLeaveEntitlements($input: GetParentalLeaveEntitlementsInput!) {
-    getParentalLeaveEntitlements(input: $input) {
+  query GetParentalLeavesEntitlements($input: GetParentalLeavesEntitlementsInput!) {
+    getParentalLeavesEntitlements(input: $input) {
       independentMonths
       transferableMonths
     }
@@ -102,7 +102,7 @@ export class Children extends BasicDataProvider {
           return this.handleError(response.errors)
         }
 
-        return Promise.resolve(response.data.getParentalLeaveEntitlements)
+        return Promise.resolve(response.data.getParentalLeavesEntitlements)
       })
       .catch((error) => this.handleError(error))
   }

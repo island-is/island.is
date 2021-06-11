@@ -29,7 +29,7 @@ export class DirectorateOfLabourResolver {
   constructor(private directorateOfLabourService: DirectorateOfLabourService) {}
 
   @Query(() => ParentalLeaveEntitlement, { nullable: true })
-  async getParentalLeaveEntitlements(
+  async getParentalLeavesEntitlements(
     @Args('input') input: GetParentalLeavesEntitlementsInput,
     @CurrentUser() user: User,
   ): Promise<ParentalLeaveEntitlement | null> {

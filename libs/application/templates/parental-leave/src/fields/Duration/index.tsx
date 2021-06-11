@@ -75,8 +75,6 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
       length: days,
     })
 
-    console.log('-endDateResult', endDateResult)
-
     const date = new Date(endDateResult.date)
 
     onChange(format(date, df))

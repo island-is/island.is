@@ -274,20 +274,13 @@ export const calculatePeriodPercentage = (
     dates?: { startDate: string; endDate: string }
   },
 ) => {
-  console.log('-field', field)
   const months = getAvailableRightsInMonths(application)
-  console.log('-months', months)
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
 
   let startDate: string | undefined = undefined
   let endDate: string | undefined = undefined
 
-  if (dates) {
-    startDate = dates?.startDate
-    endDate = dates?.endDate
-  }
-
-  const repeaterIndex = field ? extractRepeaterIndexFromField(field) : 0
+  const repeaterIndex = field ? extractRepeaterIndexFromField(field) : -1
   const index = repeaterIndex === -1 ? 0 : repeaterIndex
   const { answers } = application
 
@@ -298,6 +291,11 @@ export const calculatePeriodPercentage = (
   ) as string
 
   endDate = getValueViaPath(answers, `periods[${index}].endDate`) as string
+
+  if (dates) {
+    startDate = dates?.startDate
+    endDate = dates?.endDate
+  }
 
   const difference = differenceInMonths(parseISO(endDate), parseISO(startDate))
 
