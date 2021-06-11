@@ -1,6 +1,3 @@
 export {
-  ExampleFails,
-  ExampleSucceeds,
+  PaymentCatalogProvider,
 } from '@island.is/application/data-providers'
-
-export { SampleDataProvider } from './SampleDataProvider'
