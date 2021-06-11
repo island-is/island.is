@@ -22,9 +22,12 @@ const devConfig = {
     xroad: {
       basePath: process.env.XROAD_BASE_PATH_WITH_ENV,
       memberClass: XRoadMemberClass.GovernmentInstitution,
-      memberCode: '10001',
-      apiPath: '/SKRA-Protected/Einstaklingar-v1',
-      clientId: 'IS-DEV/GOV/10000/island-is-client',
+      memberCode: process.env.XROAD_NATIONAL_REGISTRY_MEMBER_CODE,
+      apiPath: process.env.XROAD_NATIONAL_REGISTRY_API_PATH,
+      clientId: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID,
+    },
+    authMiddlewareOptions: {
+      forwardUserInfo: false,
     },
   },
 }
@@ -60,6 +63,9 @@ const prodConfig = {
       memberCode: process.env.XROAD_NATIONAL_REGISTRY_MEMBER_CODE,
       apiPath: process.env.XROAD_NATIONAL_REGISTRY_API_PATH,
       clientId: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID,
+    },
+    authMiddlewareOptions: {
+      forwardUserInfo: false,
     },
   },
 }

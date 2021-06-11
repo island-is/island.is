@@ -52,10 +52,13 @@ export class DelegationsService {
   async findAllWardsTo(
     auth: Auth,
     xRoadClient: string,
+    authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO[]> {
     try {
       const response = await this.personApi
-        .withMiddleware(new AuthMiddleware(auth, false))
+        .withMiddleware(
+          new AuthMiddleware(auth, authMiddlewareOptions, this.logger),
+        )
         .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
           id: auth.nationalId,
           xRoadClient: xRoadClient,
@@ -67,7 +70,9 @@ export class DelegationsService {
 
       const resultPromises = distinct.map(async (nationalId) =>
         this.personApi
-          .withMiddleware(new AuthMiddleware(auth, false))
+          .withMiddleware(
+            new AuthMiddleware(auth, authMiddlewareOptions, this.logger),
+          )
           .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
             id: nationalId,
             xRoadClient: xRoadClient,

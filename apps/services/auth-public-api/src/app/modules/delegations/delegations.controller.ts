@@ -53,6 +53,7 @@ export class DelegationsController {
     const wards = await this.delegationsService.findAllWardsTo(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
+      environment.nationalRegistry.authMiddlewareOptions,
     )
 
     const companies = await this.delegationsService.findAllCompaniesTo(
