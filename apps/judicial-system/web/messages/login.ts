@@ -55,9 +55,9 @@ export const login = {
       },
       message: {
         id: 'judicial.system:login.error.unAuthorized.message',
-        defaultMessage: 'Skráðu þig inn í Réttarvörslugátt',
-        description:
+        defaultMessage:
           'Þú hefur ekki fengið aðgang að Réttarvörslugátt. Ef þú telur þig eiga að hafa aðgang þarft þú að hafa samband við viðeigandi stjórnanda eða notendaþjónustu hjá þinni starfsstöð.',
+        description: 'Login screen: Error login unauthorized message',
       },
     }),
   },
