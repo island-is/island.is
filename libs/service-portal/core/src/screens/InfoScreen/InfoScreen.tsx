@@ -99,7 +99,10 @@ export const InfoScreen: FC<Props> = ({
           </GridColumn>
           <GridColumn span={['12/12', '5/12']} order={[1, 2]}>
             <Box marginBottom={[3, 0]}>
-              <img src={figure} alt={`skrautmynd fyrir ${title}`} />
+              <img
+                src={figure}
+                alt={`skrautmynd fyrir ${formatMessage(title)}`}
+              />
             </Box>
           </GridColumn>
         </GridRow>

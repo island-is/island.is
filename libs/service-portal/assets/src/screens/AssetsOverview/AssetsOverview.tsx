@@ -46,7 +46,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         id: 'sp.assets:external-link-title',
         defaultMessage: 'Skoða fasteignir',
       })}
-      figure="/assets/images/bedroom.jpg"
+      figure="./assets/images/bedroom.jpg"
     />
   )
 }

@@ -46,7 +46,7 @@ export const AssetsVehicles: ServicePortalModuleComponent = () => {
         id: 'sp.assets:vehicles-external-link-title',
         defaultMessage: 'Fara á ökutækjaskrá',
       })}
-      figure="/assets/images/movingTruck.svg"
+      figure="./assets/images/movingTruck.svg"
     />
   )
 }

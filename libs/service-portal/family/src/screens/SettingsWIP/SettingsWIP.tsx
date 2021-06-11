@@ -46,7 +46,7 @@ export const SettingsWIP: ServicePortalModuleComponent = () => {
         id: 'sp.family:settings-external-link-title',
         defaultMessage: 'Fara í stillingar',
       })}
-      figure="/assets/images/working.jpg"
+      figure="./assets/images/working.jpg"
     />
   )
 }
