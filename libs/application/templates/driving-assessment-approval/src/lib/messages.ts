@@ -23,10 +23,7 @@ export const m = defineMessages({
   },
   externalDataTeachingRightsSubtitle: {
     id: 'dla.application:externalData.teachingRights.subtitle',
-    defaultMessage: `
-      Við munum sækja skráningu þína úr ökuskírteinaskrá til að athuga hvort þú
-      hafir sannarlega ökukennararéttindi
-    `,
+    defaultMessage: 'Við munum sækja skráningu þína úr ökuskírteinaskrá til að athuga hvort þú hafir sannarlega ökukennararéttindi',
     description: 'title of external data provider for getting teaching rights - description'
   },
 

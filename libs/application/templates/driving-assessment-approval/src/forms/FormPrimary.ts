@@ -91,7 +91,7 @@ export const FormPrimary: Form = buildForm({
               ],
             }),
             buildCustomField({
-              id: 'studentLookup',
+              id: 'studentLookupToShow',
               title: 'Uppfletting nemanda',
               component: 'StudentLookupField',
               width: 'half',

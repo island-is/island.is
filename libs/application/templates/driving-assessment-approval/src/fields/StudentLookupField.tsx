@@ -52,7 +52,7 @@ export const StudentLookupField: FC<Props> = ({ error }) => {
 
       {result.student ? (
         <Box>
-          <Text variant="h4">Umsækjandi</Text>
+          <Text variant="h4">Nemandi</Text>
           <Text>{result.student.name}</Text>
         </Box>
       ) : (
