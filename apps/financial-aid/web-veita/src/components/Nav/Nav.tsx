@@ -28,8 +28,6 @@ const Nav: React.FC = () => {
 
   const { applications } = useContext(ApplicationsContext)
 
-  // console.log(applications)
-
   const otherItems = [
     {
       label: 'Útskráning',

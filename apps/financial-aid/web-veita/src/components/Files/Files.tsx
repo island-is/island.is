@@ -15,7 +15,7 @@ import { calcDifferenceInDate, getFileType } from '../../utils/formHelper'
 
 interface Props {
   heading?: string
-  filesArr?: [string]
+  filesArr?: string[]
   className?: string
 }
 

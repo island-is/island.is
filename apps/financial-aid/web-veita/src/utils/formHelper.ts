@@ -77,7 +77,7 @@ export const navLinks = (
     },
   ]
   if (filterBy === 'state') {
-    return links.filter((i) => i[filterBy].includes(filter))[0]
+    return links.filter((i) => i[filterBy].includes(filter as State))[0]
   } else if (filterBy) {
     return links.filter((i) => i[filterBy] === filter)[0]
   } else {

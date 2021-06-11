@@ -14,14 +14,12 @@ import cn from 'classnames'
 
 interface Props {
   heading: string
-  info: [
-    {
-      title: string
-      content?: string
-      link?: string
-      other?: string
-    },
-  ]
+  info: {
+    title: string
+    content?: string
+    link?: string
+    other?: string
+  }[]
   className?: string
 }
 
