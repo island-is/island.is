@@ -11,7 +11,11 @@ import type {
   EinstaklingarGetForsjaRequest,
   EinstaklingarGetEinstaklingurRequest,
 } from '@island.is/clients/national-registry-v2'
-import { DelegationScope } from '@island.is/auth-api-lib'
+import {
+  DelegationScope,
+  ApiScope,
+  IdentityResource,
+} from '@island.is/auth-api-lib'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth } from '@island.is/auth-nest-tools'
 
@@ -244,7 +248,9 @@ export class DelegationsService {
       where: {
         fromNationalId: nationalId,
       },
-      include: [DelegationScope],
+      include: [
+        { model: DelegationScope, include: [ApiScope, IdentityResource] },
+      ],
     })
     return delegations.map((delegation) => delegation.toDTO())
   }
