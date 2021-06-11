@@ -1,1 +1,1 @@
-export { default as Accesses } from './Accesses'
+export { default as Accesses, AuthDelegationsQuery } from './Accesses'

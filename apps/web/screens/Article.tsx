@@ -29,6 +29,7 @@ import {
   OrganizationFooter,
   OrganizationChatPanel,
   Sticky,
+  Webreader,
   AppendedArticleComponents,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -466,8 +467,11 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         </Box>
         <Box>
           <Text variant="h1" as="h1">
-            <span id={slugify(article.title)}>{article.title}</span>
+            <span id={slugify(article.title)} className="rs_read">
+              {article.title}
+            </span>
           </Text>
+          <Webreader readId={null} readClass="rs_read" />
           <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
             <ArticleNavigation
               article={article}
@@ -477,7 +481,12 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             />
           </Box>
           {!!processEntry && (
-            <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
+            <Box
+              marginTop={3}
+              display={['none', 'none', 'block']}
+              printHidden
+              className="rs_read"
+            >
               <ProcessEntry {...processEntry} />
             </Box>
           )}
@@ -495,17 +504,19 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           )}
           {subArticle && (
             <Text variant="h2" as="h2" paddingTop={7}>
-              <span id={slugify(subArticle.title)}>{subArticle.title}</span>
+              <span id={slugify(subArticle.title)} className="rs_read">
+                {subArticle.title}
+              </span>
             </Text>
           )}
         </Box>
         <Box paddingTop={subArticle ? 2 : 4}>
-          {richText(
-            (subArticle ?? article).body as SliceType[],
-            undefined,
-            activeLocale,
-          )}
-          <Box paddingTop={2}>
+          <Box className="rs_read">
+            {richText(
+              (subArticle ?? article).body as SliceType[],
+              undefined,
+              activeLocale,
+            )}
             <AppendedArticleComponents article={article} />
           </Box>
           <Box
