@@ -4804,12 +4804,12 @@
           },
           "outputs": ["coverage/apps/judicial-system/web"]
         },
-        "docker-next": {}
-      },
-      "extract-strings": {
-        "builder": "@nrwl/workspace:run-commands",
-        "options": {
-          "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/web/**/*.{js,ts,tsx}'"
+        "docker-next": {},
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/web/messages/**/*.{js,ts,tsx}'"
+          }
         }
       }
     },
