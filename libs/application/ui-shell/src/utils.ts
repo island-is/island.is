@@ -54,8 +54,10 @@ export function extractAnswersToSubmitFromScreen(
 
     // We always submit the whole array for the repeater answers
     const repeaterId = baseId.split('[')[0] ?? ''
+
     return pick(data, [repeaterId])
   }
+
   if (
     screen.type === FieldTypes.CUSTOM &&
     screen.childInputIds &&
@@ -66,15 +68,18 @@ export function extractAnswersToSubmitFromScreen(
       screen.childInputIds.map((id) => id),
     )
   }
+
   switch (screen.type) {
     case FormItemTypes.MULTI_FIELD:
       return pick(
         data,
         screen.children.map((c) => c.id),
       )
+
     case FormItemTypes.EXTERNAL_DATA_PROVIDER:
     case FormItemTypes.REPEATER:
       return {}
+
     default:
       return pick(data, [screenId])
   }

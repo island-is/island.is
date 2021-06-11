@@ -20,6 +20,8 @@ import {
   formatDate,
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
+  formatAccusedByGender,
+  NounCases,
 } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
@@ -439,7 +441,10 @@ export const Confirmation: React.FC = () => {
                       CaseAppealDecision.APPEAL && (
                       <Box>
                         <Text variant="eyebrow" color="blue400">
-                          Yfirlýsing um kæru kærða
+                          {`Yfirlýsing um kæru ${formatAccusedByGender(
+                            workingCase.accusedGender,
+                            NounCases.GENITIVE,
+                          )}`}
                         </Text>
                         <Text>{workingCase.accusedAppealAnnouncement}</Text>
                       </Box>

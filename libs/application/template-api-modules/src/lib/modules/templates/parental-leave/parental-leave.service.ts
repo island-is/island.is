@@ -6,6 +6,7 @@ import { ParentalLeaveApi } from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Application, getValueViaPath } from '@island.is/application/core'
+import { YES } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
@@ -19,7 +20,7 @@ import {
   getEmployer,
   transformApplicationToParentalLeaveDTO,
 } from './parental-leave.utils'
-import { apiConstants, formConstants } from './constants'
+import { apiConstants } from './constants'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -84,8 +85,7 @@ export class ParentalLeaveService {
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
     const isSelfEmployed =
-      getValueViaPath(application.answers, 'employer.isSelfEmployed') ===
-      formConstants.boolean.true
+      getValueViaPath(application.answers, 'employer.isSelfEmployed') === YES
 
     if (isSelfEmployed) {
       const pdf = await this.getSelfEmployedPdf(application)

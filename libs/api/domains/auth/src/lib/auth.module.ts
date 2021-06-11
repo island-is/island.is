@@ -6,9 +6,9 @@ import {
 } from '@island.is/clients/auth-public-api'
 
 import {
-  AuthScopeResolver,
+  ApiScopeResolver,
   DelegationScopeResolver,
-  MainResolver,
+  DelegationResolver,
 } from './resolvers'
 import { AuthService } from './auth.service'
 
@@ -16,9 +16,9 @@ export type Config = AuthPublicApiClientModuleConfig
 
 @Module({
   providers: [
-    MainResolver,
+    DelegationResolver,
     DelegationScopeResolver,
-    AuthScopeResolver,
+    ApiScopeResolver,
     AuthService,
   ],
 })

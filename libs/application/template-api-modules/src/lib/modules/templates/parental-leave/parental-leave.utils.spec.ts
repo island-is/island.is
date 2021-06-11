@@ -6,6 +6,13 @@ import {
   ApplicationTypes,
 } from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
+import {
+  getSelectedChild,
+  MANUAL,
+  NO,
+  ParentalRelations,
+  YES,
+} from '@island.is/application/templates/parental-leave'
 
 import {
   getOtherParentId,
@@ -15,9 +22,7 @@ import {
   getPrivatePensionFundRatio,
   getRightsCode,
 } from './parental-leave.utils'
-
-import { apiConstants, formConstants } from './constants'
-import { getSelectedChild } from '@island.is/application/templates/parental-leave'
+import { apiConstants } from './constants'
 
 let id = 0
 const createApplicationBase = (): Application => ({
@@ -50,12 +55,12 @@ const createExternalDataChild = (
   if (isPrimaryParent) {
     return {
       ...childBase,
-      parentalRelation: 'primary',
+      parentalRelation: ParentalRelations.primary,
     }
   } else {
     return {
       ...childBase,
-      parentalRelation: 'secondary',
+      parentalRelation: ParentalRelations.secondary,
       primaryParentNationalRegistryId: otherParentNationalRegistryId,
     }
   }
@@ -68,7 +73,7 @@ beforeEach(() => {
 
 describe('getOtherParentId', () => {
   it('should return null if no parent is selected', () => {
-    application.answers.otherParent = formConstants.spouseSelection.noSpouse
+    application.answers.otherParent = NO
 
     const expectedId = null
 
@@ -76,7 +81,7 @@ describe('getOtherParentId', () => {
   })
 
   it('should return answers.otherParentId if manual is selected', () => {
-    application.answers.otherParent = formConstants.spouseSelection.manual
+    application.answers.otherParent = MANUAL
 
     const expectedId = '1234567899'
 
@@ -109,18 +114,14 @@ describe('getOtherParentId', () => {
 describe('getPersonalAllowance', () => {
   describe('for self', () => {
     it('should return 0 if not going to use it', () => {
-      application.answers.usePersonalAllowance = formConstants.boolean.false
+      application.answers.usePersonalAllowance = NO
 
       expect(getPersonalAllowance(application)).toBe(0)
     })
 
     it('should return 100 if using as much as possible', () => {
-      application.answers.usePersonalAllowance = formConstants.boolean.true
-      set(
-        application.answers,
-        'personalAllowance.useAsMuchAsPossible',
-        formConstants.boolean.true,
-      )
+      application.answers.usePersonalAllowance = YES
+      set(application.answers, 'personalAllowance.useAsMuchAsPossible', YES)
 
       expect(getPersonalAllowance(application)).toBe(100)
     })
@@ -128,13 +129,9 @@ describe('getPersonalAllowance', () => {
     it('should return expected value if using a custom percentage', () => {
       const customValues = [0, 1, 15, 50, 90, 99, 100]
 
-      application.answers.usePersonalAllowance = formConstants.boolean.true
+      application.answers.usePersonalAllowance = YES
 
-      set(
-        application.answers,
-        'personalAllowance.useAsMuchAsPossible',
-        formConstants.boolean.false,
-      )
+      set(application.answers, 'personalAllowance.useAsMuchAsPossible', NO)
 
       for (const value of customValues) {
         set(application.answers, 'personalAllowance.usage', value)
@@ -145,19 +142,17 @@ describe('getPersonalAllowance', () => {
 
   describe('for spouse', () => {
     it('should return 0 if not going to use it', () => {
-      application.answers.usePersonalAllowanceFromSpouse =
-        formConstants.boolean.false
+      application.answers.usePersonalAllowanceFromSpouse = NO
 
       expect(getPersonalAllowance(application, true)).toBe(0)
     })
 
     it('should return 100 if using as much as possible', () => {
-      application.answers.usePersonalAllowanceFromSpouse =
-        formConstants.boolean.true
+      application.answers.usePersonalAllowanceFromSpouse = YES
       set(
         application.answers,
         'personalAllowanceFromSpouse.useAsMuchAsPossible',
-        formConstants.boolean.true,
+        YES,
       )
 
       expect(getPersonalAllowance(application, true)).toBe(100)
@@ -166,13 +161,12 @@ describe('getPersonalAllowance', () => {
     it('should return expected value if using a custom percentage', () => {
       const customValues = [0, 1, 15, 50, 90, 99, 100]
 
-      application.answers.usePersonalAllowanceFromSpouse =
-        formConstants.boolean.true
+      application.answers.usePersonalAllowanceFromSpouse = YES
 
       set(
         application.answers,
         'personalAllowanceFromSpouse.useAsMuchAsPossible',
-        formConstants.boolean.false,
+        NO,
       )
 
       for (const value of customValues) {
