@@ -1,5 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
-import { Configuration, DelegationsApi } from '../../gen/fetch'
+import { Configuration, DelegationsApi, ApiScopeApi } from '../../gen/fetch'
 
 export interface AuthPublicApiClientModuleConfig {
   baseApiUrl: string
@@ -20,8 +20,18 @@ export class AuthPublicApiClientModule {
               }),
             ),
         },
+        {
+          provide: ApiScopeApi,
+          useFactory: () =>
+            new ApiScopeApi(
+              new Configuration({
+                fetchApi: fetch,
+                basePath: config.baseApiUrl,
+              }),
+            ),
+        },
       ],
-      exports: [DelegationsApi],
+      exports: [DelegationsApi, ApiScopeApi],
     }
   }
 }
