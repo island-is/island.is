@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
@@ -29,12 +29,12 @@ export interface Props extends FieldBaseProps {
   description?: string
 }
 
-const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
+const MinistryOfJusticeOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const { externalData } = application
   const endorsementListId = (externalData?.createEndorsementList.data as any).id
   const answers = application.answers as PartyLetter
-  const endorsementHook = useEndorsements(endorsementListId, false)
+  const { endorsements } = useEndorsements(endorsementListId, false)
 
   return (
     <Box>
@@ -70,13 +70,13 @@ const MinistryOfJusticeOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.ministryOfJustice.numberOfEndorsementsLabel)}
           </Text>
-          <Text marginBottom={1}>{endorsementHook?.length ?? 0}</Text>
+          <Text marginBottom={1}>{endorsements?.length ?? 0}</Text>
         </Box>
       </Box>
       <Box marginBottom={5}>
-        {endorsementHook?.length && (
+        {endorsements?.length && (
           <ExportAsCSV
-            data={mapToCSVFile(endorsementHook) as object[]}
+            data={mapToCSVFile(endorsements) as object[]}
             filename={csvFileName(answers.partyLetter, answers.partyName)}
             title={formatMessage(m.ministryOfJustice.csvButton)}
           />

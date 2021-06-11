@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
@@ -7,15 +7,15 @@ import { IDS } from '../../forms/LetterApplicationForm'
 import { PartyLetter, File } from '../../lib/dataSchema'
 import { useEndorsements } from '../../hooks/useFetchEndorsements'
 
-const Review: FC<FieldBaseProps> = ({ application }) => {
+const Review = ({ application }: FieldBaseProps) => {
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
   const { formatMessage } = useLocale()
   const answers = application.answers as PartyLetter
-  const endorsementHook = useEndorsements(endorsementListId, false)
-  const endorsementCount = endorsementHook?.length ?? 0
+  const { endorsements } = useEndorsements(endorsementListId, false)
+  const endorsementCount = endorsements?.length ?? 0
   const endorsementsWarningCount =
-    endorsementHook?.filter((x) => x.meta.invalidated)?.length ?? 0
+    endorsements?.filter((x) => x.meta.invalidated)?.length ?? 0
 
   const labelMapper: Record<IDS, string> = {
     ssd: formatMessage(m.overview.responsibleParty),
