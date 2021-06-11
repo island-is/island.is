@@ -4,7 +4,7 @@ export const categories = [
     description: 'Vegabréf, ökuskírteini, bílpróf, ökuréttindi o.fl.',
   },
   {
-    title: 'Fölskyldumál',
+    title: 'Fjölskyldumál',
     description:
       'Hjónavígslur, forsjá barns, meðlag, sáttameðferð, skilnaður o.fl.',
   },
@@ -21,21 +21,6 @@ export const categories = [
     title: 'Leyfi og löggildingar',
     description:
       'Heimagisting, Lögmannsréttindi, Meistarapróf, Löggilding fasteigna o.fl.',
-  },
-]
-
-export const questions = [
-  {
-    q: 'Hvað tekur langan tíma að fá ökuskírteini?',
-    a: 'Hvað tekur langan tíma að fá ökuskírteini?',
-  },
-  {
-    q: 'Hvað er kaupmáli?',
-    a: 'Hvað er kaupmáli?',
-  },
-  {
-    q: 'Er til eyðublað fyrir kaupmála?',
-    a: 'Er til eyðublað fyrir kaupmála?',
   },
 ]
 
@@ -84,3 +69,15 @@ export const solution = {
     </p>
   `,
 }
+
+export const questions = [
+  {
+    title: solution.title,
+  },
+  {
+    title: 'Hvað er kaupmáli?',
+  },
+  {
+    title: 'Er til eyðublað fyrir kaupmála?',
+  },
+]

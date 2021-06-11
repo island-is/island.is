@@ -2,8 +2,14 @@ import React from 'react'
 import NextLink from 'next/link'
 import cn from 'classnames'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY } from '../../queries'
+import {
+  ContentLanguage,
+  Organization,
+  Query,
+  QueryGetNamespaceArgs,
+  QueryGetOrganizationArgs,
+} from '@island.is/web/graphql/schema'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_QUERY } from '../../queries'
 import { Screen } from '../../../types'
 import {
   Box,
@@ -23,16 +29,26 @@ import {
   LinkType,
   useLinkResolver,
 } from '@island.is/web/hooks/useLinkResolver'
+import { asSlug } from '../utils'
 
-import * as styles from './Category.treat'
+import * as styles from './SubPage.treat'
 import * as sharedStyles from '../shared/styles.treat'
 
-interface CategoryProps {
+interface SubPageProps {
+  organization?: Organization
   namespace: Query['getNamespace']
-  slug: string
+  organizationSlug: string
+  categorySlug: string
+  solutionSlug: string
 }
 
-const Category: Screen<CategoryProps> = ({ slug }) => {
+const SubPage: Screen<SubPageProps> = ({
+  organization,
+  namespace,
+  organizationSlug,
+  categorySlug,
+  solutionSlug,
+}) => {
   const { linkResolver } = useLinkResolver()
 
   const logoTitle = 'Þjónustuvefur Sýslumanna'
@@ -121,10 +137,15 @@ const Category: Screen<CategoryProps> = ({ slug }) => {
 
                             <Box marginTop={[2, 2, 4, 8]}>
                               <Stack space={2}>
-                                {questions.map(({ q }, index) => {
+                                {questions.map(({ title }, index) => {
                                   return (
-                                    <TopicCard href="#" key={index}>
-                                      {q}
+                                    <TopicCard
+                                      href={`/thjonustuvefur/${organizationSlug}/${categorySlug}/${asSlug(
+                                        title,
+                                      )}`}
+                                      key={index}
+                                    >
+                                      {title}
                                     </TopicCard>
                                   )
                                 })}
@@ -145,10 +166,24 @@ const Category: Screen<CategoryProps> = ({ slug }) => {
   )
 }
 
-Category.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const slug = query.slug as string
+SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+  const slugs = query.slugs as string
 
-  const [namespace] = await Promise.all([
+  const organizationSlug = slugs[0] || ''
+  const categorySlug = slugs[1] || ''
+  const solutionSlug = slugs[2] || ''
+
+  const [organization, namespace] = await Promise.all([
+    !!organizationSlug &&
+      apolloClient.query<Query, QueryGetOrganizationArgs>({
+        query: GET_ORGANIZATION_QUERY,
+        variables: {
+          input: {
+            slug: organizationSlug,
+            lang: locale as ContentLanguage,
+          },
+        },
+      }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -168,10 +203,13 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     namespace,
-    slug,
+    organization: organization?.data?.getOrganization,
+    organizationSlug,
+    categorySlug,
+    solutionSlug,
   }
 }
 
-export default withMainLayout(Category, {
+export default withMainLayout(SubPage, {
   showHeader: false,
 })

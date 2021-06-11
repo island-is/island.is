@@ -1,8 +1,13 @@
 import React from 'react'
-import slugify from '@sindresorhus/slugify'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY } from '../../queries'
+import {
+  ContentLanguage,
+  Organization,
+  Query,
+  QueryGetNamespaceArgs,
+  QueryGetOrganizationArgs,
+} from '@island.is/web/graphql/schema'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_QUERY } from '../../queries'
 import { Screen } from '../../../types'
 import {
   Accordion,
@@ -28,20 +33,29 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 
+import { asSlug } from '../utils'
 import * as styles from './Home.treat'
 import * as sharedStyles from '../shared/styles.treat'
 
 interface HomeProps {
+  organization?: Organization
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({}) => {
-  const linkResolver = useLinkResolver()
+const Home: Screen<HomeProps> = ({ organization, namespace }) => {
+  // const linkResolver = useLinkResolver()
   const { width } = useWindowSize()
 
   const isMobile = width < theme.breakpoints.md
 
-  const logoTitle = 'Þjónustuvefur Sýslumanna'
+  const logoTitle =
+    organization?.shortTitle ?? organization?.title ?? 'Ísland.is'
+
+  const logoUrl =
+    organization?.logo?.url ??
+    '//images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
+
+  const searchTitle = 'Getum við aðstoðað?'
 
   return (
     <>
@@ -50,7 +64,8 @@ const Home: Screen<HomeProps> = ({}) => {
       <Box className={styles.searchSection}>
         <ServiceWebSearchSection
           logoTitle={logoTitle}
-          title="Getum við aðstoðað?"
+          logoUrl={logoUrl}
+          title={searchTitle}
         />
       </Box>
       {!isMobile ? (
@@ -74,7 +89,9 @@ const Home: Screen<HomeProps> = ({}) => {
                     <Card
                       link={
                         {
-                          href: `/thjonustuvefur/${slugify(title)}`,
+                          href: `/thjonustuvefur/${
+                            organization?.slug + '/' ?? ''
+                          }${asSlug(title)}`,
                         } as LinkResolverResponse
                       }
                       title={title}
@@ -129,7 +146,7 @@ const Home: Screen<HomeProps> = ({}) => {
                         description={description}
                         link={
                           {
-                            href: `/thjonustuvefur/${slugify(title)}`,
+                            href: `/thjonustuvefur/${asSlug(title)}`,
                           } as LinkResolverResponse
                         }
                       />
@@ -159,14 +176,14 @@ const Home: Screen<HomeProps> = ({}) => {
 
                 <Box marginTop={[2, 2, 4, 8]}>
                   <Accordion dividerOnTop={false} dividerOnBottom={false}>
-                    {questions.map(({ q, a }, index) => {
+                    {questions.map(({ title }, index) => {
                       return (
                         <AccordionItem
                           key={index}
                           id={`service-web-faq-${index}`}
-                          label={q}
+                          label={title}
                         >
-                          {a}
+                          {title}
                         </AccordionItem>
                       )
                     })}
@@ -182,7 +199,19 @@ const Home: Screen<HomeProps> = ({}) => {
 }
 
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const [namespace] = await Promise.all([
+  const slug = query.slug as string
+
+  const [organization, namespace] = await Promise.all([
+    !!slug &&
+      apolloClient.query<Query, QueryGetOrganizationArgs>({
+        query: GET_ORGANIZATION_QUERY,
+        variables: {
+          input: {
+            slug,
+            lang: locale as ContentLanguage,
+          },
+        },
+      }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -201,6 +230,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   ])
 
   return {
+    organization: organization?.data?.getOrganization,
     namespace,
   }
 }
