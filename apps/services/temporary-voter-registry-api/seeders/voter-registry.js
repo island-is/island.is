@@ -1,7 +1,8 @@
 'use strict'
 const yargs = require('yargs/yargs')
 const argv = yargs(process.argv.slice(2)).argv
-const xlsx = require('node-xlsx')
+const xlsx = require('xlsx')
+const { isPerson } = require('kennitala')
 
 /**
  * The national registry provides us with a excel file containing the temporary voter registry.
@@ -16,6 +17,42 @@ const xlsx = require('node-xlsx')
  * The voter registry service will find the current active version on the first request to the service.
  * The temporary voter registry must be updated in its entirety to ensure all data belongs to the same version.
  */
+
+const validateData = (voterRegions) => {
+  const errors = []
+
+  // we want to make sure the data we are inserting is consistent
+  const validRegionNumbers = [1, 2, 3, 4, 5, 6]
+  const validRegionNames = [
+    'Norðvesturkjördæmi',
+    'Norðausturkjördæmi',
+    'Reykjavíkurkjördæmi norður',
+    'Reykjavíkurkjördæmi suður',
+    'Suðvesturkjördæmi',
+    'Suðurkjördæmi',
+  ]
+
+  voterRegions.forEach((voterRegion) => {
+    if (!isPerson(voterRegion.national_id)) {
+      errors.push(`NationalId check failed for ${voterRegion.national_id}`)
+    }
+
+    if (!validRegionNames.includes(voterRegion.region_name)) {
+      errors.push(
+        `${voterRegion.region_name} is was not found in region names, is this a typo?`,
+      )
+    }
+
+    if (!validRegionNumbers.includes(voterRegion.region_number)) {
+      errors.push(
+        `${voterRegion.region_number} is was not found in region numbers, is this a typo?`,
+      )
+    }
+  })
+  if (errors.length > 0) {
+    throw new Error(`Validation failed:\n${errors.join('\n')}`)
+  }
+}
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -32,17 +69,27 @@ module.exports = {
       // bump version by one to get next version
       .then((data) => data + 1 || 1)
 
-    console.log(`Getting data from sourcefile: ${argv['region-file']}`)
-    const workSheetsFromFile = xlsx.parse(argv['region-file'])
-    const [unusedHeaders, ...userData] = workSheetsFromFile[0].data
-    const voterRegions = userData.map((data) => ({
-      national_id: data[0].trim(),
-      region_number: parseInt(data[1]),
-      region_name: data[2].trim(),
-      version,
-      created: new Date(),
-      modified: new Date(),
-    }))
+    console.log(`Getting data from sourcefile: ${argv['source-file']}`)
+
+    const workSheetsFromFile = xlsx.readFile(argv['source-file'])
+    const data = xlsx.utils.sheet_to_json(
+      workSheetsFromFile.Sheets[workSheetsFromFile.SheetNames[0]],
+    )
+
+    const voterRegions = data.map((data) => {
+      const registryData = Object.values(data)
+      return {
+        national_id: registryData[0].trim(),
+        region_number: parseInt(registryData[1]),
+        region_name: registryData[2].trim(),
+        version,
+        created: new Date(),
+        modified: new Date(),
+      }
+    })
+
+    console.log('Validating data')
+    validateData(voterRegions)
 
     console.log(`Inserting new data into table as version: ${version}`)
     // this ensures data for the new version won't be accessible unless the whole set imports successfully
@@ -52,7 +99,8 @@ module.exports = {
     })
     await transaction.commit()
     console.log('Successfully inserted data', {
-      sourceFile: argv['region-file'],
+      sourceFile: argv['source-file'],
+      count: voterRegions.length,
     })
   },
 }
