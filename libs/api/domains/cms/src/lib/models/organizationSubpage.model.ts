@@ -24,7 +24,7 @@ export class OrganizationSubpage {
   @Field(() => [String])
   url!: Array<string>
 
-  @Field()
+  @Field({ nullable: true })
   intro!: string
 
   @Field(() => [SliceUnion], { nullable: true })
