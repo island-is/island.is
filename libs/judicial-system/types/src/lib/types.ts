@@ -149,23 +149,6 @@ export const RCaseTypes = [
   },
 ]
 
-const CustodyAndTravelBanTypes = [
-  {
-    label: 'Gæsluvarðhald',
-    value: CaseType.CUSTODY,
-  },
-  {
-    label: 'Farbann',
-    value: CaseType.TRAVEL_BAN,
-  },
-]
-
-export const AllCaseTypes = [
-  ...RCaseTypes.slice(0, 5),
-  ...(RCaseTypes[5].options || []),
-  ...CustodyAndTravelBanTypes,
-]
-
 export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
