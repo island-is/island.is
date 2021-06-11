@@ -13,7 +13,6 @@ export const searchSection = style({
   display: 'inline-block',
   width: '100%',
   height: MOBILE_HEIGHT - DESKTOP_HEADER_HEIGHT,
-  overflow: 'hidden',
   marginTop: DESKTOP_HEADER_HEIGHT,
   paddingBottom: 150,
   top: -DESKTOP_HEADER_HEIGHT,

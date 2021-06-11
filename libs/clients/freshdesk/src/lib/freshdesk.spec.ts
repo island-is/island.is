@@ -2,7 +2,7 @@ import { freshdeskApi as freshdesk, FreshdeskConfig } from './freshdesk.api'
 
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
-import { TicketResponse } from './freshdesk.type'
+import { CategoryResponse } from './freshdesk.type'
 
 const testConfig: FreshdeskConfig = {
   domain: 'https://subdomain.domain.com',
@@ -11,20 +11,21 @@ const testConfig: FreshdeskConfig = {
 
 const testApi = `https://${testConfig.domain}/api/v2`
 
-const tickets: TicketResponse[] = [
+const categoriesResponse: CategoryResponse[] = [
   {
     id: 1,
-    subject: 'ticket subject 1',
+    name: 'category name 1',
   },
   {
     id: 2,
-    subject: 'ticket subject 2',
+    name: 'category name 1',
+    description: 'category description 2',
   },
 ]
 
 const server = setupServer(
-  rest.get(`${testApi}/tickets`, (_, res, ctx) => {
-    return res(ctx.status(200), ctx.json(tickets))
+  rest.get(`${testApi}/solutions/categories`, (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(categoriesResponse))
   }),
 )
 

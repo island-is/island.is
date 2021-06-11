@@ -2,6 +2,7 @@ import React from 'react'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
+  FreshdeskGetCategoriesQuery,
   Organization,
   Query,
   QueryGetNamespaceArgs,
@@ -19,7 +20,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
-import { categories, questions } from '../mock'
+import { questions } from '../mock'
 import {
   Card,
   SimpleSlider,
@@ -33,16 +34,22 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 
+import { GET_FRESHDESK_CATEGORIES } from '../../queries/Freshdesk'
 import { asSlug } from '../utils'
 import * as styles from './Home.treat'
 import * as sharedStyles from '../shared/styles.treat'
 
 interface HomeProps {
   organization?: Organization
+  freshdeskCategories?: FreshdeskGetCategoriesQuery['freshdeskGetCategories']
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({ organization, namespace }) => {
+const Home: Screen<HomeProps> = ({
+  organization,
+  freshdeskCategories,
+  namespace,
+}) => {
   // const linkResolver = useLinkResolver()
   const { width } = useWindowSize()
 
@@ -79,7 +86,7 @@ const Home: Screen<HomeProps> = ({ organization, namespace }) => {
               </GridColumn>
             </GridRow>
             <GridRow>
-              {categories.map(({ title, description }, index) => {
+              {freshdeskCategories.map(({ name, description }, index) => {
                 return (
                   <GridColumn
                     key={index}
@@ -87,15 +94,15 @@ const Home: Screen<HomeProps> = ({ organization, namespace }) => {
                     paddingBottom={[2, 2, 3]}
                   >
                     <Card
+                      title={name}
+                      description={description}
                       link={
                         {
                           href: `/thjonustuvefur/${
                             organization?.slug + '/' ?? ''
-                          }${asSlug(title)}`,
+                          }${asSlug(name)}`,
                         } as LinkResolverResponse
                       }
-                      title={title}
-                      description={description}
                     />
                   </GridColumn>
                 )
@@ -138,20 +145,22 @@ const Home: Screen<HomeProps> = ({ organization, namespace }) => {
                       slideWidthOffset: 400,
                     },
                   }}
-                  items={categories.map(({ title, description }, index) => {
-                    return (
-                      <Card
-                        key={index}
-                        title={title}
-                        description={description}
-                        link={
-                          {
-                            href: `/thjonustuvefur/${asSlug(title)}`,
-                          } as LinkResolverResponse
-                        }
-                      />
-                    )
-                  })}
+                  items={freshdeskCategories.map(
+                    ({ name, description }, index) => {
+                      return (
+                        <Card
+                          key={index}
+                          title={name}
+                          description={description}
+                          link={
+                            {
+                              href: `/thjonustuvefur/${asSlug(name)}`,
+                            } as LinkResolverResponse
+                          }
+                        />
+                      )
+                    },
+                  )}
                 />
               </GridColumn>
             </GridRow>
@@ -201,7 +210,7 @@ const Home: Screen<HomeProps> = ({ organization, namespace }) => {
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug as string
 
-  const [organization, namespace] = await Promise.all([
+  const [organization, freshdeskCategories, namespace] = await Promise.all([
     !!slug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
         query: GET_ORGANIZATION_QUERY,
@@ -212,6 +221,9 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       }),
+    apolloClient.query<FreshdeskGetCategoriesQuery>({
+      query: GET_FRESHDESK_CATEGORIES,
+    }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -231,6 +243,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     organization: organization?.data?.getOrganization,
+    freshdeskCategories: freshdeskCategories?.data?.freshdeskGetCategories,
     namespace,
   }
 }

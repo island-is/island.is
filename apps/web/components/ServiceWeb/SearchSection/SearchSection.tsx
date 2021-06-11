@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Text, AsyncSearch, Hidden } from '@island.is/island-ui/core'
-import { Image } from '@island.is/web/graphql/schema'
+import { ServiceWebSearchInput } from '@island.is/web/components'
 
 import * as styles from './SearchSection.treat'
 
@@ -47,25 +47,7 @@ export const SearchSection = ({
           </Box>
         </>
       )}
-      <AsyncSearch
-        size="large"
-        key="ok"
-        options={[
-          {
-            label: 'Hvað tekur langan tíma að fá ökuskírteini?',
-            value: 'Hvað tekur langan tíma að fá ökuskírteini?',
-          },
-          {
-            label: 'Hvað er kaupmáli?',
-            value: 'Hvað er kaupmáli?',
-          },
-          {
-            label: 'Er til eyðublað fyrir kaupmála?',
-            value: 'Er til eyðublað fyrir kaupmála?',
-          },
-        ]}
-        placeholder="Leitaðu á þjónustuvefnum"
-      />
+      <ServiceWebSearchInput />
     </Box>
   )
 }

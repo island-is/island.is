@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { TicketResponse } from './freshdesk.type'
+import { CategoryResponse, SearchResponse } from './freshdesk.type'
 
 export interface FreshdeskConfig {
   domain: string
@@ -25,12 +25,21 @@ export class freshdeskApi {
     }
   }
 
-  async getTickets(): Promise<TicketResponse[]> {
-    const response = await fetch(`${this.api}/tickets`, this.params)
+  async getCategories(): Promise<CategoryResponse[]> {
+    const response = await fetch(
+      `${this.api}/solutions/categories`,
+      this.params,
+    )
+
     return response.json()
   }
-}
 
-export function freshdesk(): string {
-  return 'freshdesk'
+  async search(term: string): Promise<SearchResponse[]> {
+    const response = await fetch(
+      `${this.api}/search/solutions?term=${term}`,
+      this.params,
+    )
+
+    return response.json()
+  }
 }
