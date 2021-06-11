@@ -1,6 +1,11 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { RskApi } from '@island.is/clients/rsk/v2'
@@ -151,21 +156,35 @@ export class DelegationsService {
   }
 
   async create(
-    nationalId: string,
+    user: Auth,
+    xRoadClient: string,
     delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
+    const person = await this.personApi
+      .withMiddleware(new AuthMiddleware(user, false))
+      .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
+        id: user.nationalId,
+        xRoadClient: xRoadClient,
+      })
+    if (!person || !user.nationalId) {
+      throw new BadRequestException(
+        `A person with nationalId<${user.nationalId}> could not be found`,
+      )
+    }
+
     this.logger.debug('Creating a new delegation')
     const id = uuid()
     await this.delegationModel.create({
       id: id,
-      fromNationalId: nationalId,
+      fromNationalId: user.nationalId,
       toNationalId: delegation.toNationalId,
+      fromDisplayName: person.fulltNafn || person.nafn,
       toName: delegation.toName,
     })
     if (delegation.scopes && delegation.scopes.length > 0) {
       this.delegationScopeService.createMany(id, delegation.scopes)
     }
-    return this.findOne(nationalId, id)
+    return this.findOne(user.nationalId, id)
   }
 
   async update(

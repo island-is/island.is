@@ -72,7 +72,7 @@ const AuthDelegationQuery = gql`
     authDelegation(input: $input) {
       id
       type
-      fromName
+      toName
       toNationalId
       fromNationalId
       ... on AuthCustomDelegation {
