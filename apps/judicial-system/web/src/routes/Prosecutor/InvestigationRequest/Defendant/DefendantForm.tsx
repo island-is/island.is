@@ -20,8 +20,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
+import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
-
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
@@ -91,7 +91,7 @@ const DefendantForm: React.FC<Props> = (props) => {
             <Box marginBottom={3}>
               <Select
                 name="petition-type"
-                options={RCaseTypes}
+                options={RCaseTypes as ReactSelectOption[]}
                 label="Tegund kröfu"
                 placeholder="Veldu tegund kröfu"
                 onChange={(selectedOption: ValueType<ReactSelectOption>) =>
@@ -104,10 +104,23 @@ const DefendantForm: React.FC<Props> = (props) => {
                   )
                 }
                 defaultValue={
-                  RCaseTypes.find(
+                  [
+                    ...RCaseTypes.slice(0, 5),
+                    ...(RCaseTypes[5].options || []),
+                  ].find(
                     (caseType) => caseType.value === workingCase.type,
                   ) as Option
                 }
+                formatGroupLabel={() => (
+                  <div
+                    style={{
+                      width: 'calc(100% + 24px)',
+                      height: '3px',
+                      marginLeft: '-12px',
+                      backgroundColor: theme.color.dark300,
+                    }}
+                  />
+                )}
                 required
               />
             </Box>

@@ -23,10 +23,19 @@ interface Props {
   prosecutors: ReactSelectOption[]
   courts: Institution[]
   isLoading: boolean
+  handleNextButtonClick: () => Promise<void>
 }
 
 const HearingArrangementsForms: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, prosecutors, courts, isLoading } = props
+  const {
+    workingCase,
+    setWorkingCase,
+    prosecutors,
+    courts,
+    isLoading,
+    handleNextButtonClick,
+  } = props
+
   const validations: FormSettings = {
     requestedCourtDate: {
       validations: ['empty'],
@@ -119,7 +128,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.R_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={async () => await handleNextButtonClick()}
           nextIsDisabled={!isValid}
           nextIsLoading={isLoading}
         />

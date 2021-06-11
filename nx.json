@@ -328,6 +328,24 @@
     "file-storage": {
       "tags": []
     },
+    "financial-aid-api": {
+      "tags": []
+    },
+    "financial-aid-auth": {
+      "tags": []
+    },
+    "financial-aid-backend": {
+      "tags": []
+    },
+    "financial-aid-shared": {
+      "tags": []
+    },
+    "financial-aid-web-osk": {
+      "tags": []
+    },
+    "financial-aid-web-veita": {
+      "tags": []
+    },
     "gjafakort-api": {
       "tags": []
     },

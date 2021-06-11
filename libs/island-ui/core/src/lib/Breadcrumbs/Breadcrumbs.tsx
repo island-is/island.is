@@ -36,10 +36,11 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
 
   return (
     <Box
-      component="nav"
       aria-label={label}
       display={'inlineFlex'}
       alignItems={'center'}
+      className="rs_skip"
+      component="nav"
     >
       {visibleItems.map((item, index) => {
         const isLink: boolean = !!item.href || !!item.slug

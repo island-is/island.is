@@ -1,0 +1,45 @@
+@import '../../../../libs/island-ui/fonts/fonts.css';
+
+/* You can add global styles to this file, and also import other style files */
+
+#root {
+  min-height: 100vh;
+}
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  overflow: hidden;
+}
+
+caption {
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+th,
+td {
+  text-align: left;
+}
+
+.errorMessage {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 250ms ease;
+}
+
+.showErrorMessage {
+  max-height: 50px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
