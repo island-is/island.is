@@ -130,46 +130,44 @@ const useCase = () => {
     }
   }
 
+  const getTransition = (workingCase: Case) => {
+    let transitionRequest = null
+
+    if (workingCase.state === CaseState.NEW) {
+      transitionRequest = parseTransition(
+        workingCase.modified,
+        CaseTransition.OPEN,
+      )
+    }
+
+    return transitionRequest
+  }
+
   const transitionCase = async (
     workingCase: Case,
     setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
   ) => {
-    if (!workingCase) {
-      return false
-    }
+    try {
+      const transitionRequest = getTransition(workingCase)
 
-    switch (workingCase.state) {
-      case CaseState.NEW:
-        try {
-          // Parse the transition request
-          const transitionRequest = parseTransition(
-            workingCase.modified,
-            CaseTransition.OPEN,
-          )
-
-          const { data } = await transitionCaseMutation({
-            variables: { input: { id: workingCase.id, ...transitionRequest } },
-          })
-
-          if (!data) {
-            return false
-          }
-
-          setWorkingCase({
-            ...workingCase,
-            state: data.transitionCase.state,
-          })
-
-          return true
-        } catch (e) {
-          return false
-        }
-      case CaseState.DRAFT:
-      case CaseState.SUBMITTED:
-      case CaseState.RECEIVED:
-        return true
-      default:
+      if (!workingCase) {
         return false
+      }
+
+      const { data } = await transitionCaseMutation({
+        variables: { input: { id: workingCase.id, ...transitionRequest } },
+      })
+
+      if (!data) {
+        return false
+      }
+
+      setWorkingCase({
+        ...workingCase,
+        state: data.transitionCase.state,
+      })
+    } catch (e) {
+      return false
     }
   }
 
