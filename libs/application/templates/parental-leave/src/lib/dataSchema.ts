@@ -59,13 +59,7 @@ export const dataSchema = z.object({
     requestDays: z
       .string()
       .optional()
-      .refine((v) => {
-        if (!v || isNaN(Number(v))) {
-          return false
-        }
-
-        return true
-      }),
+      .refine((v) => !isNaN(Number(v))),
   }),
   giveRights: z
     .object({
@@ -73,13 +67,7 @@ export const dataSchema = z.object({
       giveDays: z
         .string()
         .optional()
-        .refine((v) => {
-          if (!v || isNaN(Number(v))) {
-            return false
-          }
-
-          return true
-        }),
+        .refine((v) => !isNaN(Number(v))),
     })
     .optional(),
   singlePeriod: z.enum([YES, NO]),

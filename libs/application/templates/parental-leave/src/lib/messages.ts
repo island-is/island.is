@@ -518,11 +518,6 @@ export const parentalLeaveFormMessages: MessageDir = {
   }),
 
   selectChild: defineMessages({
-    subSection: {
-      id: 'pl.application:selectChild.subSection',
-      defaultMessage: 'Veldu barn',
-      description: 'Choose a child',
-    },
     screenTitle: {
       id: 'pl.application:selectChild.screenTitle',
       defaultMessage: 'Veldu barn',
@@ -530,13 +525,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     screenDescription: {
       id: 'pl.application:selectChild.screenDescription',
-      defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir',
-      description: 'Children you can apply for parental leave',
-    },
-    title: {
-      id: 'pl.application:selectChild.title',
-      defaultMessage: 'Börn sem þú getur sótt um fyrir',
-      description: 'Children you can apply for',
+      defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir.',
+      description: 'Children you can apply for parental leave.',
     },
     activeApplications: {
       id: 'pl.application:selectChild.activeApplications',
@@ -548,19 +538,25 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Velja',
       description: 'Choose',
     },
+    baby: {
+      id: 'pl.application:selectChild.baby',
+      defaultMessage: 'Barn væntanlegt {dateOfBirth}',
+      description: 'Child copy radio button',
+    },
+    primaryParent: {
+      id: 'pl.application:selectChild.primaryParent',
+      defaultMessage: 'Þú ert aðalforeldri barnsins',
+      description: 'Primary parent copy',
+    },
+    secondaryParent: {
+      id: 'pl.application:selectChild.secondaryParent',
+      defaultMessage:
+        'Þú ert efri foreldri barnsins. Aðalforeldri er {nationalId}',
+      description: 'Secondary parent copy',
+    },
   }),
 
   notEligible: defineMessages({
-    subSection: {
-      id: 'pl.application:notEligible.subSection',
-      defaultMessage: 'Veldu barn',
-      description: 'Choose a child',
-    },
-    screenTitle: {
-      id: 'pl.application:notEligible.screenTitle',
-      defaultMessage: 'Veldu barn',
-      description: 'Choose a child',
-    },
     screenDescription: {
       id: 'pl.application:notEligible.screenDescription',
       defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir',
