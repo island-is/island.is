@@ -1,7 +1,7 @@
 const devConfig = {
   production: false,
   api: {
-    url: 'http://localhost:3333',
+    url: 'http://localhost:4200',
   },
 }
 
