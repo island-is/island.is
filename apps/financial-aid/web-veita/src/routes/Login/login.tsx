@@ -13,6 +13,9 @@ import * as styles from './login.treat'
 import cn from 'classnames'
 
 const Login = () => {
+  useEffect(() => {
+    document.title = 'Sveita • Innskráning'
+  }, [])
   return (
     <div className={` wrapper ${styles.gridWrapper}`}>
       <div className={styles.logo}>

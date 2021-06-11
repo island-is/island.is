@@ -36,7 +36,6 @@ export const logoHfjContainer = style({
   gridTemplateColumns: 'max-content auto',
   alignItems: 'center',
   columnGap: theme.spacing[2],
-  marginBottom: theme.spacing[8],
 })
 
 export const otherItems = style({})

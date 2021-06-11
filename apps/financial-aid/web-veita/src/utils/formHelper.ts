@@ -54,30 +54,31 @@ export const getFileType = (fileName: string) => {
 
 export const navLinks = (
   filterBy?: 'label' | 'link' | 'state',
-  filter?: string,
+  filter?: string | undefined,
 ) => {
   const links = [
     {
       label: 'Ný mál',
       link: '/nymal',
-      state: State.NEW,
+      state: [State.NEW],
       headers: ['Nafn', 'Staða', 'Tími án umsjár', 'Tímabil'],
     },
     {
       label: 'Í vinnslu',
       link: '/vinnslu',
-      state: State.INPROGRESS,
+      state: [State.INPROGRESS],
       headers: ['Nafn', 'Staða', 'Síðast uppfært', 'Tímabil'],
     },
     {
       label: 'Afgreidd mál',
       link: '/afgreidd',
-      state: State.APPROVED,
-      secState: State.REJECTED,
+      state: [State.APPROVED, State.REJECTED],
       headers: ['Nafn', 'Staða', 'Úrlausnartími', 'Tímabil'],
     },
   ]
-  if (filterBy) {
+  if (filterBy === 'state') {
+    return links.filter((i) => i[filterBy].includes(filter))[0]
+  } else if (filterBy) {
     return links.filter((i) => i[filterBy] === filter)[0]
   } else {
     return links

@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext } from 'react'
+import React, { ReactNode, useContext, useEffect } from 'react'
 import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
@@ -14,6 +14,10 @@ interface PageProps {
 const AdminLayout: React.FC<PageProps> = ({ children }) => {
   const router = useRouter()
   // const { isAuthenticated, setUser, user } = useContext(UserContext)
+
+  useEffect(() => {
+    document.title = 'Sveita • Umsóknir um fjárhagsaðstoð'
+  }, [])
 
   return (
     <>

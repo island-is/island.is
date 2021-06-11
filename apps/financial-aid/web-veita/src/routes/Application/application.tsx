@@ -211,6 +211,24 @@ const ApplicationProfile = () => {
 
     const filesTest = ['/lokaprof2021.docx', '/hengill_ultra_reglur_2021.pdf']
 
+    const links = [
+      {
+        label: 'Ný mál',
+        link: '/nymal',
+        state: [State.NEW],
+      },
+      {
+        label: 'Í vinnslu',
+        link: '/vinnslu',
+        state: [State.INPROGRESS],
+      },
+      {
+        label: 'Afgreidd mál',
+        link: '/afgreidd',
+        state: [State.APPROVED, State.REJECTED],
+      },
+    ]
+
     return (
       <AdminLayout>
         <Box

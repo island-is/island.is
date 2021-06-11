@@ -29,12 +29,10 @@ import {
   translateMonth,
 } from '../../utils/formHelper'
 
+import { ApplicationsContext } from '../../components/ApplicationsProvider/ApplicationsProvider'
+
 interface ApplicationData {
   applications: Application[]
-}
-
-interface SaveData {
-  applicant: Application
 }
 
 interface NavigationLinks {
@@ -48,13 +46,7 @@ interface NavigationLinks {
 const ApplicationOverview = () => {
   const router = useRouter()
 
-  const { data, error, loading } = useQuery<ApplicationData>(
-    GetApplicationQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const { applications } = useContext(ApplicationsContext)
   //WIP
   const [currentState, setState] = useState<any>(
     navLinks('link', router.pathname),
@@ -64,10 +56,6 @@ const ApplicationOverview = () => {
     setState(navLinks('link', router.pathname))
   }, [router.pathname])
 
-  useEffect(() => {
-    document.title = 'Sveita • Umsóknir um fjárhagsaðstoð'
-  }, [])
-
   return (
     <AdminLayout>
       <Box className={`contentUp delay-25`} key={currentState?.label}>
@@ -76,22 +64,20 @@ const ApplicationOverview = () => {
         </Text>
       </Box>
 
-      {data?.applications && (
+      {applications && (
         <ApplicationTable
           className={`contentUp delay-50`}
           header={currentState?.headers}
-          applications={data.applications
-            .filter(
-              (item) =>
-                item.state === currentState?.state ||
-                item.state === currentState?.secState,
-            )
+          applications={applications
+            .filter((item) => currentState?.state.includes(item?.state))
             .map((item) => {
               return {
                 arr: [
                   <Box display="flex" alignItems="center">
                     <GeneratedProfile size={32} />
-                    <Text variant="h5">{GenerateName(item.nationalId)}</Text>
+                    <Box marginLeft={2}>
+                      <Text variant="h5">{GenerateName(item.nationalId)}</Text>
+                    </Box>
                   </Box>,
                   <Text>Ný umsókn</Text>,
                   <Text> {calcDifferenceInDate(item.modified)}</Text>,
