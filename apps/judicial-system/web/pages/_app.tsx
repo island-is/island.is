@@ -1,7 +1,6 @@
 import React from 'react'
 import App, { AppProps } from 'next/app'
 import getConfig from 'next/config'
-import gql from 'graphql-tag'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloProvider } from '@apollo/client'
