@@ -119,8 +119,8 @@ export class ParentalLeaveService {
       throw new Error('Missing selected child')
     }
 
+    const periods: Period[] = []
     let daysAllowed = selectedChild.remainingDays
-    let periods: Period[] = []
     let extraDaysToTransformIntoPeriod = 0
 
     for (const period of answers) {
