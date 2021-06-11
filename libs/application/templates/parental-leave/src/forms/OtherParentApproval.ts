@@ -7,10 +7,14 @@ import {
   Form,
   FormModes,
   coreMessages,
+  Application,
+  buildKeyValueField,
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
+import { YES } from '../constants'
 import { otherParentApprovalFormMessages } from '../lib/messages'
+import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
@@ -25,11 +29,35 @@ export const OtherParentApproval: Form = buildForm({
         buildMultiField({
           id: 'multi',
           title: otherParentApprovalFormMessages.multiTitle,
+          description: otherParentApprovalFormMessages.introDescription,
           children: [
-            buildDescriptionField({
-              id: 'intro',
-              title: otherParentApprovalFormMessages.multiTitle,
-              description: otherParentApprovalFormMessages.introDescription,
+            buildKeyValueField({
+              label: otherParentApprovalFormMessages.labelDays,
+              width: 'half',
+              condition: (answers) =>
+                getApplicationAnswers(answers).isRequestingRights === YES,
+              // TODO: update when requested days are no longer a binary choice
+              // defaultValue: (application: Application) => getApplicationAnswers(application.answers).requestDays
+              value: '45',
+            }),
+            buildKeyValueField({
+              label: otherParentApprovalFormMessages.labelPersonalDiscount,
+              width: 'half',
+              condition: (answers) =>
+                getApplicationAnswers(answers)
+                  .usePersonalAllowanceFromSpouse === YES,
+              value: (application: Application) => {
+                const {
+                  spouseUseAsMuchAsPossible,
+                  spouseUsage,
+                } = getApplicationAnswers(application.answers)
+
+                if (spouseUseAsMuchAsPossible === YES) {
+                  return '100%'
+                }
+
+                return `${spouseUsage}%`
+              },
             }),
             buildSubmitField({
               id: 'submit',

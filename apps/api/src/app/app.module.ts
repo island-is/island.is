@@ -28,6 +28,8 @@ import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
+import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
+import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -156,6 +158,9 @@ const autoSchemaFile = environment.production
     EndorsementSystemModule.register({
       baseApiUrl: environment.endorsementSystem.baseApiUrl,
     }),
+    TemporaryVoterRegistryModule.register({
+      baseApiUrl: environment.temporaryVoterRegistry.baseApiUrl,
+    }),
     RegulationsModule.register({
       url: environment.regulationsDomain.url,
     }),
@@ -169,6 +174,9 @@ const autoSchemaFile = environment.production
       password: environment.paymentDomain.password,
       url: environment.paymentDomain.url,
       username: environment.paymentDomain.username,
+    }),
+    PartyLetterRegistryModule.register({
+      baseApiUrl: environment.partyLetterRegistry.baseApiUrl,
     }),
   ],
 })

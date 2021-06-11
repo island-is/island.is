@@ -14,14 +14,16 @@ import { parseString } from '../formatters'
 
 type autofillProperties = Pick<
   Case,
+  | 'demands'
   | 'courtAttendees'
-  | 'policeDemands'
+  | 'prosecutorDemands'
   | 'litigationPresentations'
   | 'courtStartDate'
   | 'courtCaseFacts'
   | 'courtLegalArguments'
-  | 'custodyEndDate'
+  | 'validToDate'
   | 'isolationTo'
+  | 'otherRestrictions'
 >
 
 interface CreateCourtCaseMutationResponse {
@@ -65,6 +67,7 @@ const useCase = () => {
             sendRequestToDefender: theCase.sendRequestToDefender,
             leadInvestigator: theCase.leadInvestigator,
             courtId: theCase.court?.id,
+            description: theCase.description,
           },
         },
       })

@@ -8,7 +8,7 @@ const devConfig = {
     baseApiUrl: 'http://localhost:3333',
   },
   authPublicApi: {
-    baseApiUrl: 'http://localhost:3370/public',
+    baseApiUrl: 'http://localhost:3370',
   },
   drivingLicense: {
     secret: process.env.DRIVING_LICENSE_SECRET,
@@ -104,6 +104,12 @@ const devConfig = {
     username: 'isl_aranja_p',
     password: 'vogur.123',
     url: 'https://tbrws-s.hysing.is',
+  },
+  temporaryVoterRegistry: {
+    baseApiUrl: 'http://localhost:4248',
+  },
+  partyLetterRegistry: {
+    baseApiUrl: 'http://localhost:4251',
   },
 }
 
@@ -205,6 +211,12 @@ const prodConfig = {
     username: process.env.PAYMENT_USER,
     password: process.env.PAYMENT_PASSWORD,
     url: process.env.PAYMENT_URL,
+  },
+  temporaryVoterRegistry: {
+    baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
+  },
+  partyLetterRegistry: {
+    baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
   },
 }
 

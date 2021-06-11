@@ -15,7 +15,7 @@ export enum ServicePortalPath {
   SettingsRoot = '/stillingar',
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
-  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:id',
+  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:nationalId',
   SettingsPersonalInformation = '/stillingar/personuupplysingar',
   SettingsPersonalInformationEditPhoneNumber = '/stillingar/personuupplysingar/breyta-simanumeri',
   SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
@@ -27,6 +27,8 @@ export enum ServicePortalPath {
   FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
+  Endorsements = '/min-gogn/medmaeli',
+
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 
   // Fjarmal

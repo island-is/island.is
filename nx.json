@@ -118,6 +118,9 @@
     "api-domains-payment": {
       "tags": []
     },
+    "api-domains-party-letter-registry": {
+      "tags": []
+    },
     "api-domains-regulations": {
       "tags": []
     },
@@ -125,6 +128,9 @@
       "tags": []
     },
     "api-domains-syslumenn": {
+      "tags": []
+    },
+    "api-domains-temporary-voter-registry": {
       "tags": []
     },
     "api-domains-translations": {
@@ -328,6 +334,24 @@
     "file-storage": {
       "tags": []
     },
+    "financial-aid-api": {
+      "tags": []
+    },
+    "financial-aid-auth": {
+      "tags": []
+    },
+    "financial-aid-backend": {
+      "tags": []
+    },
+    "financial-aid-shared": {
+      "tags": []
+    },
+    "financial-aid-web-osk": {
+      "tags": []
+    },
+    "financial-aid-web-veita": {
+      "tags": []
+    },
     "gjafakort-api": {
       "tags": []
     },
@@ -444,6 +468,9 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-validators": {
+      "tags": []
+    },
     "nova-sms": {
       "tags": []
     },
@@ -500,6 +527,9 @@
       "tags": []
     },
     "service-portal-eligibility": {
+      "tags": []
+    },
+    "service-portal-endorsements": {
       "tags": []
     },
     "service-portal-family": {

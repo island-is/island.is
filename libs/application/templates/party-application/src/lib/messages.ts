@@ -40,24 +40,19 @@ export const m: MessageDir = {
     },
     subtitle: {
       id: 'pa.application:disclaimerSection.subtitle',
-      defaultMessage: 'Eftirfarandi gildir um söfnun meðmælenda',
+      defaultMessage:
+        'Eftirfaranadi gildir um söfnun meðmæla fyrir framboðslista',
       description: 'Subtitle of disclaimer section',
     },
     descriptionPt1: {
       id: 'pa.application:disclaimerSection.descrtipion.p1',
       defaultMessage:
-        'Eingöngu Þjóðskrá Íslands og yfirkjörstjórnir hafa aðgang  að söfnun meðmælanna ásamt þeim stjórnmálaflokki sem stofnar viðkomandi söfnun. Óheimilt er að dreifa meðmælunum eða þeim upplýsingum sem þar koma fram.',
+        'Eingöngu Þjóðskrá Íslands og yfirkjörstjórnir hafa aðgang að söfnum meðmælanna ásamt þeim stjórnmálasamtökum sem stofna söfnunina. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
       description: 'Description part one',
-    },
-    descriptionPt2: {
-      id: 'pa.application:disclaimerSection.descrtipion.p2',
-      defaultMessage:
-        'Hér er hægt að skila framboðum til yfirkjörstjórna og gera frambjóðendum kleift að undirrita yfirlýsingu sína um framboð rafrænt.',
-      description: 'Description part two',
     },
     checkboxLabel: {
       id: 'pa.application:disclaimerSection.checkboxLabel',
-      defaultMessage: 'Ég samþykki skilmála hér að ofan',
+      defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Checkbox label',
     },
   }),
@@ -201,6 +196,11 @@ export const m: MessageDir = {
       defaultMessage: 'Sjá einungis meðmæli í vafa',
       description: 'Invalid signatures message',
     },
+    signatureInvalidTooltip: {
+      id: 'pa.application:endorsementList.tooltip',
+      defaultMessage: 'Meðmæli í vafa',
+      description: 'Invalid signature tooltip',
+    },
   }),
   endorsementListSubmission: defineMessages({
     title: {
@@ -264,13 +264,12 @@ export const m: MessageDir = {
   applicationApproved: defineMessages({
     title: {
       id: 'pa.application:application.approved.title',
-      defaultMessage: 'Meðmælendalista hefur verið skilað.',
+      defaultMessage: 'Meðmælendalista hefur verið skilað',
       description: 'Title for conlcusion',
     },
     approvedTitle: {
       id: 'pa.application:application.approved.card.title',
-      defaultMessage:
-        'Meðmælendalista hefur verið skilað til yfirkjörstjórnar.',
+      defaultMessage: 'Meðmælendalista hefur verið skilað til yfirkjörstjórnar',
       description: 'Title for approved card',
     },
     approvedSubtitle: {
@@ -304,6 +303,13 @@ export const m: MessageDir = {
       id: 'pa.application:application.approved.card.bulletLink2Title',
       defaultMessage: 'kosning.is',
       description: 'Link title',
+    },
+  }),
+  applicationApprovedOverview: defineMessages({
+    title: {
+      id: 'pa.application:application.approved.title',
+      defaultMessage: 'Umsokn samþykkt',
+      description: 'Title for overview',
     },
   }),
   collectEndorsements: defineMessages({
@@ -342,7 +348,7 @@ export const m: MessageDir = {
     },
     agreeTermsLabel: {
       id: 'pa.application:collect.agree.label',
-      defaultMessage: 'Ég hef kynnt mér ofangreint',
+      defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Label for terms and conditions',
     },
     submitButton: {
@@ -392,58 +398,80 @@ export const m: MessageDir = {
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Label for file upload',
     },
+    uploadSuccess: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Pappírsmeðmælum hefur verið hlaðið upp!',
+      description: 'Upload succeeded text',
+    },
+    uploadFail: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
+      description: 'Upload failed text',
+    },
   }),
   endorsementDisclaimer: defineMessages({
     title: {
-      id: 'ple.application:endorsement.disclaimer.title',
-      defaultMessage: 'Meðmælendalisti',
+      id: 'pa.application:endorsement.disclaimer.title',
+      defaultMessage: 'Meðmæli með framboðslista',
       description: 'Title for signature disclaimer',
     },
     messagePt1: {
-      id: 'ple.application:endorsement.disclaimer.message.pt1',
-      defaultMessage: 'Ég undirritaður kjósandi í',
+      id: 'pa.application:endorsement.disclaimer.message.pt1',
+      defaultMessage: 'Ég kjósandi í',
       description: 'Part 1 of signature disclaimer',
     },
     messagePt2: {
-      id: 'ple.application:endorsement.disclaimer.message.pt2',
+      id: 'pa.application:endorsement.disclaimer.message.pt2',
       defaultMessage:
-        'lýsi hér með yfir stuðningi eftirfarandi lista vegna alþingiskosninganna 25. september 2021.',
+        'lýsi hér með yfir stuðningi við neðangreindan lista vegna alþingiskosninganna 25.september 2021.',
       description: 'Part 2 of signature disclaimer',
     },
+    descriptionPt1: {
+      id: 'pa.application:endorsement.disclaimer.description.pt1',
+      defaultMessage:
+        'Með því veiti ég viðkomandi stjórnmálasamtökum, yfirkjörstjórn í kjördæmi, landskjörstjórn og Þjóðskrá Íslands aðgang að þeim upplýsingum sem skráðar eru á meðmælendalistan, þ.e. nafn, kt, heimilsfang og kjördæmi. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
+      description: 'Part 1 of message disclaimer',
+    },
+    descriptionPt2: {
+      id: 'pa.application:endorsement.disclaimer.description.pt2',
+      defaultMessage:
+        'Þjóðskrá Íslands er heimilt að samkeyra upplýsingar úr meðmælendalista við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga.',
+      description: 'Part 2 of message disclaimer',
+    },
     partyLetter: {
-      id: 'ple.application:endorsement.disclaimer.party.letter',
-      defaultMessage: 'Listi:',
+      id: 'pa.application:endorsement.disclaimer.party.letter',
+      defaultMessage: 'Listi',
       description: 'Label for party letter',
     },
     partyName: {
-      id: 'ple.application:endorsement.disclaimer.party.name',
-      defaultMessage: 'Stjórnmálasamtök:',
+      id: 'pa.application:endorsement.disclaimer.party.name',
+      defaultMessage: 'Stjórnmálasamtök',
       description: 'Label for party name',
     },
   }),
   endorsementApproved: defineMessages({
     title: {
-      id: 'ple.application:endorsement.approved.title',
+      id: 'pa.application:endorsement.approved.title',
       defaultMessage: 'Staðfesting',
       description: 'Approved card title',
     },
     cardTitle: {
-      id: 'ple.application:endorsement.approved.card.title',
+      id: 'pa.application:endorsement.approved.card.title',
       defaultMessage: 'Þú hefur verið skráður sem meðmælandi',
       description: 'Approved card title',
     },
     cardSubtitle: {
-      id: 'ple.application:endorsement.approved.card.subtitle',
+      id: 'pa.application:endorsement.approved.card.subtitle',
       defaultMessage: 'Hægt er að skoða virka lista undir ',
       description: 'Approved card subtitle',
     },
     myPagesButton: {
-      id: 'ple.application:endorsement.approved.button.mypages',
+      id: 'pa.application:endorsement.approved.button.mypages',
       defaultMessage: 'Til baka á mínar síður',
       description: 'Button back to my pages',
     },
     partyListButton: {
-      id: 'ple.application:endorsement.approved.button.partylist',
+      id: 'pa.application:endorsement.approved.button.partylist',
       defaultMessage: 'Skoða lista',
       description: 'Button to party list',
     },
@@ -458,6 +486,131 @@ export const m: MessageDir = {
       id: 'pa.application:validation.approve.terms',
       defaultMessage: 'Vinsamlegast samþykktu skilmála',
       description: 'Approve terms and conditions',
+    },
+  }),
+  logo: defineMessages({
+    imgAlt: {
+      id: 'pa.application:logo.img.alt',
+      defaultMessage: 'Skjaldamerkið',
+      description: 'Alt for image',
+    },
+    service: {
+      id: 'pa.application:logo.service',
+      defaultMessage: 'Þjónustuaðili',
+      description: 'Service for',
+    },
+    organization: {
+      id: 'pa.application:logo.organization',
+      defaultMessage: 'Dómsmálaráðuneytið',
+      description: 'Name of organization',
+    },
+  }),
+  partyLetterFailed: defineMessages({
+    title: {
+      id: 'pa.application:partyletter.failed.title',
+      defaultMessage: 'Listabókstafur ekki á skrá',
+      description: 'Title for party letter failed',
+    },
+    description: {
+      id: 'pa.application:partyletter.failed.description',
+      defaultMessage:
+        'Þú ert ekki á skrá sem umsjónarmaður stjórnmálasamtaka vinsamlegast hafðu samband við postur@dmr.is',
+      description: 'Description for party letter failed',
+    },
+  }),
+  supremeCourt: defineMessages({
+    title: {
+      id: 'pa.application:supreme.court.title',
+      defaultMessage: 'Yfirkjörstjórn',
+      description: 'Supreme court review title',
+    },
+    description: {
+      id: 'pa.application:supreme.court.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir upplýsingarnar hér að neðan og staðfestu að þær séu réttar.',
+      description: 'Supreme court review description',
+    },
+    subtitle: {
+      id: 'pa.application:supreme.court.subtitle',
+      defaultMessage: 'Yfirlit yfir framboðslista',
+      description: 'Supreme court review subtitle',
+    },
+    steps: {
+      id: 'pa.application:supreme.court.steps',
+      defaultMessage: 'Til skoðunar',
+      description: 'Title for steps',
+    },
+    step1: {
+      id: 'pa.application:supreme.court.step.1',
+      defaultMessage: 'Yfirlit framboðs',
+      description: 'Step one',
+    },
+    partyNameLabel: {
+      id: 'pa.application:supreme.court.partyname.label',
+      defaultMessage: 'Nafn flokks',
+      description: 'Label for party name',
+    },
+    partyLetterLabel: {
+      id: 'pa.application:supreme.court.partyletter.label',
+      defaultMessage: 'Listabókstafur',
+      description: 'Label for party letter',
+    },
+    responsiblePersonLabel: {
+      id: 'pa.application:supreme.court.responsibleperson.label',
+      defaultMessage: 'Ábyrgðarmaður',
+      description: 'Label for responsible person',
+    },
+    typeOfEndorsementLabel: {
+      id: 'pa.application:supreme.court.endorsementtype.label',
+      defaultMessage: 'Tegund framboðs',
+      description: 'Label for endorsement type',
+    },
+    numberOfEndorsementsLabel: {
+      id: 'pa.application:supreme.court.no.endorsements.label',
+      defaultMessage: 'Fjöldi meðmæla',
+      description: 'Label for number of endorsements',
+    },
+    constituencyLabel: {
+      id: 'pa.application:supreme.court.constituency.label',
+      defaultMessage: 'Kjördæmi',
+      description: 'Label for constituency',
+    },
+    commentsLabel: {
+      id: 'pa.application:supreme.court.comments.label',
+      defaultMessage: 'Athugasemdir',
+      description: 'Label for comments',
+    },
+    csvButton: {
+      id: 'pa.application:supreme.court.csv.button',
+      defaultMessage: 'Hlaða niður meðmælum',
+      description: 'Download endorsements button',
+    },
+    noEndorsementsMessage: {
+      id: 'pa.application:supreme.court.no.endorsements',
+      defaultMessage: 'Umsækjandi hefur ekki skilað inn neinum meðmælum',
+      description:
+        'Message that will appear in the .csv file if there are no endorsements',
+    },
+    rejectButton: {
+      id: 'pa.application:supreme.court.reject.button',
+      defaultMessage: 'Hafna',
+      description: 'Reject button',
+    },
+    approveButton: {
+      id: 'pa.application:supreme.court.approve.button',
+      defaultMessage: 'Samþykkja lista',
+      description: 'Approve button',
+    },
+    approvedTitle: {
+      id: 'pa.application:supreme.court.approved.title',
+      defaultMessage: 'Takk fyrir',
+      description: 'Title for approved screen',
+    },
+    approvedDescription: {
+      id: 'pa.application:supreme.court.approved.description',
+      defaultMessage:
+        'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+      description: 'Text after supreme court has submitted',
     },
   }),
 }

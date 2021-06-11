@@ -834,19 +834,20 @@ export class ResourcesService {
     count: number | null = null,
   ): Promise<Domain[] | PagedRowsDto<Domain>> {
     if (page && count) {
-      page--
-      const offset = page * count
-      if (!searchString || searchString.length === 0) {
-        searchString = '%'
+      if (page > 0 && count > 0) {
+        page!--
+        const offset = page! * count!
+        if (!searchString || searchString.length === 0) {
+          searchString = '%'
+        }
+        return this.domainModel.findAndCountAll({
+          limit: count,
+          offset: offset,
+          where: { name: { [Op.iLike]: `%${searchString}%` } },
+          order: [['name', 'asc']],
+          include: [ApiScopeGroup],
+        })
       }
-
-      return this.domainModel.findAndCountAll({
-        limit: count,
-        offset: offset,
-        where: { name: { [Op.iLike]: `%${searchString}%` } },
-        order: [['name', 'asc']],
-        include: [ApiScopeGroup],
-      })
     }
     return this.domainModel.findAll({ order: [['name', 'asc']] })
   }

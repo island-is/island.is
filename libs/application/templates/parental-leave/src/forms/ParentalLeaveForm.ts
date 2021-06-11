@@ -29,7 +29,8 @@ import {
   getSelectedChild,
   createRange,
   calculatePeriodPercentage,
-} from '../parentalLeaveUtils'
+  requiresOtherParentApproval,
+} from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
   GetUnions,
@@ -233,6 +234,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.shared
                       .privatePensionFundDescription,
                   width: 'half',
+                  space: 4,
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
@@ -632,6 +634,19 @@ export const ParentalLeaveForm: Form = buildForm({
                   value: NO,
                 },
               ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'otherParentEmailQuestion',
+          title: parentalLeaveFormMessages.shared.otherParentEmailSubSection,
+          condition: (answers) => requiresOtherParentApproval(answers),
+          children: [
+            buildTextField({
+              id: 'otherParentEmail',
+              title: parentalLeaveFormMessages.shared.otherParentEmailTitle,
+              description:
+                parentalLeaveFormMessages.shared.otherParentEmailDescription,
             }),
           ],
         }),

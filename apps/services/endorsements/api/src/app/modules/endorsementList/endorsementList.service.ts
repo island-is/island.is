@@ -21,11 +21,14 @@ export class EndorsementListService {
     private logger: Logger,
   ) {}
 
-  async findListsByTag(tag: string) {
-    this.logger.debug(`Finding endorsement lists by tag "${tag}"`)
+  async findListsByTags(tags: string[]) {
+    this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
     // TODO: Add option to get only open endorsement lists
+
     return this.endorsementListModel.findAll({
-      where: { tags: { [Op.contains]: [tag] } },
+      where: {
+        tags: { [Op.overlap]: tags },
+      },
     })
   }
 
@@ -51,7 +54,7 @@ export class EndorsementListService {
       include: [
         {
           model: EndorsementList,
-          attributes: ['id', 'title', 'description'],
+          attributes: ['id', 'title', 'description', 'tags'],
         },
       ],
     })
@@ -60,6 +63,11 @@ export class EndorsementListService {
   async close(endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.debug('Closing endorsement list', endorsementList.id)
     return await endorsementList.update({ closedDate: new Date() })
+  }
+
+  async open(endorsementList: EndorsementList): Promise<EndorsementList> {
+    this.logger.debug('Opening endorsement list', endorsementList.id)
+    return await endorsementList.update({ closedDate: null })
   }
 
   async create(list: createInput) {

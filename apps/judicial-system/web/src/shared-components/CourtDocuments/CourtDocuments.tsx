@@ -116,7 +116,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
             <Box display="flex" alignItems="center">
               <Box marginRight={2}>
                 <Tag variant={tagVariant} outlined disabled>{`Þingmerkt nr. ${
-                  // +2 because index is zero based and "Police demands" is number 1
+                  // +2 because index is zero based and "Krafa um ..." is number 1
                   index + 2
                 }`}</Tag>
               </Box>
