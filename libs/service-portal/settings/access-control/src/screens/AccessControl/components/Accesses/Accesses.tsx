@@ -23,7 +23,7 @@ export const AuthDelegationsQuery = gql`
       id
       type
       toNationalId
-      fromName
+      toName
       ... on AuthCustomDelegation {
         validTo
         scopes {
@@ -74,7 +74,7 @@ function Accesses(): JSX.Element {
               authDelegations.map((delegation) => (
                 <AccessCard
                   key={delegation.id}
-                  title={delegation.fromName}
+                  title={delegation.toName}
                   validTo={delegation.validTo}
                   description={delegation.toNationalId}
                   tags={delegation.scopes.map((scope) => scope.displayName)}

@@ -1,6 +1,11 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { RskApi } from '@island.is/clients/rsk/v2'
@@ -11,7 +16,11 @@ import type {
   EinstaklingarGetForsjaRequest,
   EinstaklingarGetEinstaklingurRequest,
 } from '@island.is/clients/national-registry-v2'
-import { DelegationScope } from '@island.is/auth-api-lib'
+import {
+  DelegationScope,
+  ApiScope,
+  IdentityResource,
+} from '@island.is/auth-api-lib'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth } from '@island.is/auth-nest-tools'
 
@@ -147,21 +156,35 @@ export class DelegationsService {
   }
 
   async create(
-    nationalId: string,
+    user: Auth,
+    xRoadClient: string,
     delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
+    const person = await this.personApi
+      .withMiddleware(new AuthMiddleware(user, false))
+      .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
+        id: user.nationalId,
+        xRoadClient: xRoadClient,
+      })
+    if (!person || !user.nationalId) {
+      throw new BadRequestException(
+        `A person with nationalId<${user.nationalId}> could not be found`,
+      )
+    }
+
     this.logger.debug('Creating a new delegation')
     const id = uuid()
     await this.delegationModel.create({
       id: id,
-      fromNationalId: nationalId,
+      fromNationalId: user.nationalId,
       toNationalId: delegation.toNationalId,
-      fromDisplayName: delegation.fromName,
+      fromDisplayName: person.fulltNafn || person.nafn,
+      toName: delegation.toName,
     })
     if (delegation.scopes && delegation.scopes.length > 0) {
       this.delegationScopeService.createMany(id, delegation.scopes)
     }
-    return this.findOne(nationalId, id)
+    return this.findOne(user.nationalId, id)
   }
 
   async update(
@@ -179,10 +202,10 @@ export class DelegationsService {
       throw new UnauthorizedException()
     }
 
-    if (input.fromName) {
+    if (input.toName) {
       await this.delegationModel.update(
-        { fromDisplayName: input.fromName },
-        { where: { id: delegation.id, fromNationalId: fromNationalId } },
+        { toName: input.toName },
+        { where: { id: delegation.id } },
       )
     }
 
@@ -244,7 +267,9 @@ export class DelegationsService {
       where: {
         fromNationalId: nationalId,
       },
-      include: [DelegationScope],
+      include: [
+        { model: DelegationScope, include: [ApiScope, IdentityResource] },
+      ],
     })
     return delegations.map((delegation) => delegation.toDTO())
   }

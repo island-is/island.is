@@ -61,7 +61,7 @@ export class AuthService {
     { toNationalId, name }: CreateDelegationInput,
   ): Promise<DelegationDTO> {
     return this.delegationsApiWithAuth(user).delegationsControllerCreate({
-      createDelegationDTO: { toNationalId, fromName: name },
+      createDelegationDTO: { toNationalId, toName: name },
     })
   }
 
@@ -83,7 +83,7 @@ export class AuthService {
       toNationalId,
       updateDelegationDTO: {
         scopes: scopes?.map((scope) => ({
-          scopeName: scope.name,
+          ...scope,
           validTo: scope.validTo ? scope.validTo : undefined,
         })) as UpdateDelegationScopeDTO[],
       },
