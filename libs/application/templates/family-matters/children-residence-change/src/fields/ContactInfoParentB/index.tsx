@@ -10,8 +10,9 @@ import { CRCFieldBaseProps } from '../../types'
 
 const emailId = 'parentB.email'
 const phoneNumberId = 'parentB.phoneNumber'
+const phoneNumberPres = 'parentB.presentationPhone'
 
-export const contactInfoParentBIds = [emailId, phoneNumberId]
+export const contactInfoParentBIds = [emailId, phoneNumberId, phoneNumberPres]
 
 const ContactInfoParentB = ({ errors, application }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -34,6 +35,7 @@ const ContactInfoParentB = ({ errors, application }: CRCFieldBaseProps) => {
           }}
           phoneNumber={{
             id: phoneNumberId,
+            presentationId: phoneNumberPres,
             label: formatMessage(contactInfo.inputs.phoneNumberLabel),
             error: phoneNumberError,
             defaultValue: answers?.parentB?.phoneNumber,
