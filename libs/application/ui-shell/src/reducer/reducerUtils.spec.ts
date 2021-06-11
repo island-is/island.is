@@ -1,9 +1,4 @@
 import {
-  convertFormToScreens,
-  findCurrentScreen,
-  getNavigableSectionsInForm,
-} from './reducerUtils'
-import {
   buildForm,
   buildDescriptionField,
   buildMultiField,
@@ -12,6 +7,12 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
+
+import {
+  convertFormToScreens,
+  findCurrentScreen,
+  getNavigableSectionsInForm,
+} from './reducerUtils'
 import { FormScreen, MultiFieldScreen, RepeaterScreen } from '../types'
 
 describe('reducerUtils', () => {
@@ -31,6 +32,7 @@ describe('reducerUtils', () => {
       sectionIndex,
       subSectionIndex,
     })
+
     const buildTextScreen = (
       id: string,
       isNavigable = true,
@@ -45,27 +47,34 @@ describe('reducerUtils', () => {
       sectionIndex,
       subSectionIndex,
     })
+
     const screens: FormScreen[] = [
       buildIntroScreen('intro'),
       buildTextScreen('a'),
       buildTextScreen('b'),
       buildTextScreen('c'),
     ]
+
     it('should default to the first screen if there are no answers', () => {
       expect(findCurrentScreen(screens, {})).toBe(0)
     })
+
     it('should default to the first screen if the answers dont really match the list of screens', () => {
       expect(findCurrentScreen(screens, { random: 'asdf', notThis: '4' })).toBe(
         0,
       )
     })
+
     it('should go to the screen where the last answer belongs to the screen before', () => {
       expect(findCurrentScreen(screens, { a: 'answer' })).toBe(2)
-      expect(findCurrentScreen(screens, { b: 'answer' })).toBe(3)
+      expect(findCurrentScreen(screens, { b: 'answer' })).toBe(0)
+      expect(findCurrentScreen(screens, { a: 'answer', b: 'answer' })).toBe(3)
     })
-    it('should go to the last screen if the last question has an answer', () => {
-      expect(findCurrentScreen(screens, { a: 'answer', c: 'answer' })).toBe(3)
+
+    it('should go to the screen missing an answer', () => {
+      expect(findCurrentScreen(screens, { a: 'answer', c: 'answer' })).toBe(2)
     })
+
     it('should, if the last answer is in a partially answered multifield, go to that screen', () => {
       const screens: FormScreen[] = [
         buildIntroScreen('intro'),
@@ -76,9 +85,11 @@ describe('reducerUtils', () => {
         }) as MultiFieldScreen,
         buildTextScreen('c'),
       ]
+
       expect(findCurrentScreen(screens, { a: 'sick' })).toBe(1)
       expect(findCurrentScreen(screens, { b: 'very sick' })).toBe(1)
     })
+
     it('should, if the last answer is in a fully answered multifield, go to the next screen after', () => {
       const screens: FormScreen[] = [
         buildIntroScreen('intro'),
@@ -91,6 +102,7 @@ describe('reducerUtils', () => {
       ]
       expect(findCurrentScreen(screens, { a: 'sick', b: 'very sick' })).toBe(2)
     })
+
     it('should, if the last answer is a fully built repeater, go to the repeater screen', () => {
       const screens: FormScreen[] = [
         buildIntroScreen('intro'),
@@ -103,6 +115,7 @@ describe('reducerUtils', () => {
         }) as RepeaterScreen,
         buildTextScreen('c'),
       ]
+
       expect(findCurrentScreen(screens, { person: [{ a: '1', b: '2' }] })).toBe(
         2,
       )
@@ -110,6 +123,7 @@ describe('reducerUtils', () => {
       expect(findCurrentScreen(screens, { first: 'asdf' })).toBe(2)
     })
   })
+
   describe('get navigable sections in form', () => {
     const firstSection = buildSection({
       id: '1',
@@ -165,12 +179,14 @@ describe('reducerUtils', () => {
         children: [],
         condition: () => false,
       })
+
       const subSection2 = buildSubSection({
         id: 'sub2',
         title: 'sub2',
         children: [],
         condition: () => true,
       })
+
       const subSection3 = buildSubSection({
         id: 'sub3',
         title: 'sub3',
@@ -186,6 +202,7 @@ describe('reducerUtils', () => {
           children: [subSection, subSection2, subSection3],
         }),
       ]
+
       const form = buildForm({
         id: 'ExampleForm',
         children: sections,
@@ -203,6 +220,7 @@ describe('reducerUtils', () => {
       ])
     })
   })
+
   describe('convert form to screens', () => {
     describe('conditions', () => {
       it('should hide all fields that belong to a section that violates condition', () => {
@@ -215,6 +233,7 @@ describe('reducerUtils', () => {
             buildTextField({ id: '2', title: '2' }),
           ],
         })
+
         const visibleSection = buildSection({
           id: '2',
           title: 'visible',
@@ -225,12 +244,15 @@ describe('reducerUtils', () => {
             buildTextField({ id: '5', title: '5' }),
           ],
         })
+
         const form = buildForm({
           id: 'ExampleForm',
           title: 'asdf',
           children: [invisibleSection, visibleSection],
         })
+
         const screens = convertFormToScreens(form, {}, {})
+
         expect(screens.length).toBe(5)
         expect(screens[0].isNavigable).toBe(false)
         expect(screens[0].id).toBe('1')
@@ -244,6 +266,7 @@ describe('reducerUtils', () => {
         expect(screens[4].id).toBe('5')
       })
     })
+
     describe('multifield', () => {
       it('should convert multifield to a single screen', () => {
         const multifield = buildMultiField({
@@ -257,12 +280,15 @@ describe('reducerUtils', () => {
             buildTextField({ id: '5', title: '5' }),
           ],
         })
+
         const form = buildForm({
           id: 'ExampleForm',
           title: 'asdf',
           children: [multifield],
         })
+
         const screens = convertFormToScreens(form, {}, {})
+
         expect(screens.length).toBe(1)
         expect(screens[0].id).toBe('multi')
       })
@@ -272,6 +298,7 @@ describe('reducerUtils', () => {
         buildTextField({ id: '1', title: '1' }),
         buildTextField({ id: '2', title: '2' }),
       ]
+
       const repeater = {
         ...buildRepeater({
           id: 'id',
@@ -280,6 +307,7 @@ describe('reducerUtils', () => {
           children,
         }),
       }
+
       it('should only include the repeater screen if it has not been expanded', () => {
         const form = buildForm({
           id: 'ExampleForm',
@@ -287,7 +315,9 @@ describe('reducerUtils', () => {
           children: [repeater],
         })
         const screens = convertFormToScreens(form, {}, {})
+
         expect(screens.length).toBe(1)
+
         expect(screens[0]).toEqual({
           ...repeater,
           sectionIndex: -1,
@@ -311,6 +341,7 @@ describe('reducerUtils', () => {
             }),
           ],
         })
+
         const visibleSection = buildSection({
           id: '2',
           title: 'visible',
@@ -331,6 +362,7 @@ describe('reducerUtils', () => {
             }),
           ],
         })
+
         const form = buildForm({
           id: 'ExampleForm',
           title: 'asdf',
@@ -343,7 +375,9 @@ describe('reducerUtils', () => {
             }),
           ],
         })
+
         const screens = convertFormToScreens(form, {}, {})
+
         expect(screens.length).toBe(6)
         expect(screens[0].sectionIndex).toBe(-1)
         expect(screens[0].subSectionIndex).toBe(-1)
