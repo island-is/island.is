@@ -114,26 +114,30 @@ export async function getRulingPdfAsString(
     }),
   )
 
+  if (!existingCase.isAccusedAbsent) {
+    doc
+      .text(' ')
+      .font('Helvetica-Bold')
+      .fontSize(14)
+      .lineGap(8)
+      .text(
+        `Réttindi ${formatAccusedByGender(
+          existingCase.accusedGender,
+          NounCases.GENITIVE,
+        )}`,
+      )
+      .font('Helvetica')
+      .fontSize(12)
+      .text(
+        'Sakborningi er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
+        {
+          lineGap: 6,
+          paragraphGap: 0,
+        },
+      )
+  }
+
   doc
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text(
-      `Réttindi ${formatAccusedByGender(
-        existingCase.accusedGender,
-        NounCases.GENITIVE,
-      )}`,
-    )
-    .font('Helvetica')
-    .fontSize(12)
-    .text(
-      'Sakborningi er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -149,9 +153,19 @@ export async function getRulingPdfAsString(
     .text(
       `${
         existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
-          ? `Kærði samþykkir kröfuna. `
+          ? `${capitalize(
+              formatAccusedByGender(
+                existingCase.accusedGender,
+                NounCases.NOMINATIVE,
+              ),
+            )} samþykkir kröfuna. `
           : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
-          ? `Kærði hafnar kröfunni. `
+          ? `${capitalize(
+              formatAccusedByGender(
+                existingCase.accusedGender,
+                NounCases.NOMINATIVE,
+              ),
+            )} hafnar kröfunni. `
           : ''
       }${existingCase.accusedPleaAnnouncement || ''}`,
       {
@@ -257,7 +271,7 @@ export async function getRulingPdfAsString(
           ),
         existingCase.parentCase !== null,
         existingCase.parentCase?.decision,
-        existingCase.isolationTo,
+        existingCase.isolationToDate,
       ),
       {
         lineGap: 6,

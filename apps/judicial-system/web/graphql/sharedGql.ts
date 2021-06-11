@@ -61,7 +61,7 @@ export const CaseQuery = gql`
       courtAttendees
       prosecutorDemands
       courtDocuments
-      additionToConclusion
+      isAccusedAbsent
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
@@ -73,7 +73,8 @@ export const CaseQuery = gql`
       isValidToDateInThePast
       custodyRestrictions
       otherRestrictions
-      isolationTo
+      isolationToDate
+      additionToConclusion
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision

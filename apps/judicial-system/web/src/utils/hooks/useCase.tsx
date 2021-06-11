@@ -25,7 +25,7 @@ type autofillProperties = Pick<
   | 'courtCaseFacts'
   | 'courtLegalArguments'
   | 'validToDate'
-  | 'isolationTo'
+  | 'isolationToDate'
   | 'prosecutorOnlySessionRequest'
   | 'otherRestrictions'
 >

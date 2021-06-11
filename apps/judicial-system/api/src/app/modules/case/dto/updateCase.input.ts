@@ -173,7 +173,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly additionToConclusion?: string
+  readonly isAccusedAbsent?: boolean
 
   @Allow()
   @Field(() => String, { nullable: true })
@@ -217,7 +217,11 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly isolationTo?: string
+  readonly isolationToDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly additionToConclusion?: string
 
   @Allow()
   @Field(() => String, { nullable: true })

@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import { Box, Text, Input } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatAccusedByGender,
+  formatDate,
+  NounCases,
+} from '@island.is/judicial-system/formatters'
 import { Case, CaseType } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -114,7 +118,10 @@ const StepThreeForm: React.FC<Props> = (props) => {
           <Input
             data-testid="lawsBroken"
             name="lawsBroken"
-            label="Lagaákvæði sem ætluð brot kærða þykja varða við"
+            label={`Lagaákvæði sem ætluð brot ${formatAccusedByGender(
+              workingCase?.accusedGender,
+              NounCases.GENITIVE,
+            )} þykja varða við`}
             placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
             defaultValue={workingCase?.lawsBroken}
             errorMessage={lawsBrokenErrorMessage}

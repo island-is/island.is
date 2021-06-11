@@ -75,7 +75,7 @@ export const CreateCaseMutation = gql`
       courtAttendees
       prosecutorDemands
       courtDocuments
-      additionToConclusion
+      isAccusedAbsent
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
@@ -87,6 +87,8 @@ export const CreateCaseMutation = gql`
       isValidToDateInThePast
       custodyRestrictions
       otherRestrictions
+      isolationToDate
+      additionToConclusion
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision
@@ -196,7 +198,7 @@ export const ExtendCaseMutation = gql`
       courtAttendees
       prosecutorDemands
       courtDocuments
-      additionToConclusion
+      isAccusedAbsent
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
@@ -208,6 +210,8 @@ export const ExtendCaseMutation = gql`
       isValidToDateInThePast
       custodyRestrictions
       otherRestrictions
+      isolationToDate
+      additionToConclusion
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision
