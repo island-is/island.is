@@ -9,7 +9,6 @@ import {
   formatAccusedByGender,
   formatDate,
   formatNationalId,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import {
   Case,
