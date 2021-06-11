@@ -102,7 +102,6 @@ const SelectChildren = ({
   const childrenNotEligibleForTransfer = children.every(
     (child) => child.livesWithBothParents,
   )
-
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
