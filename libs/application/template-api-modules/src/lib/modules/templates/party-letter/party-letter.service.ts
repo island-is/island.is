@@ -32,12 +32,6 @@ type CreatePartyLetterResponse =
       }
     }
   | ErrorResponse
-
-interface PartyLetterData {
-  partyName: string
-  partyLetter: string
-}
-
 @Injectable()
 export class PartyLetterService {
   constructor(
