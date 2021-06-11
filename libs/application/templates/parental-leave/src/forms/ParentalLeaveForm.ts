@@ -30,6 +30,7 @@ import {
   calculatePeriodPercentage,
   requiresOtherParentApproval,
   getApplicationAnswers,
+  allowOtherParent,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -352,10 +353,7 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRadioField({
               id: 'usePersonalAllowanceFromSpouse',
               title: parentalLeaveFormMessages.personalAllowance.useFromSpouse,
-              condition: (answers) =>
-                answers.otherParent === SPOUSE ||
-                (answers.otherParent === MANUAL &&
-                  answers.otherParentRightOfAccess === YES),
+              condition: (answers) => allowOtherParent(answers),
               width: 'half',
               options: [
                 {
@@ -560,7 +558,7 @@ export const ParentalLeaveForm: Form = buildForm({
               width: 'half',
               condition: (answers, externalData) =>
                 getSelectedChild(answers, externalData)?.parentalRelation ===
-                ParentalRelations.primary,
+                  ParentalRelations.primary && allowOtherParent(answers),
               component: 'RequestRightsRadio',
             }),
             /*

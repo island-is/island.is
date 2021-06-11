@@ -227,7 +227,7 @@ export class Children extends BasicDataProvider {
         ...child,
         remainingDays,
         hasRights:
-          parentalLeavesEntitlements?.independentMonths > 0 ||
+          parentalLeavesEntitlements.independentMonths > 0 ||
           parentalLeavesEntitlements.transferableMonths > 0,
       })
     }

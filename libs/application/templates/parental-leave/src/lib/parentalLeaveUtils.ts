@@ -308,14 +308,11 @@ export const calculatePeriodPercentage = (
   return Math.min(100, Math.round((months / difference) * 100))
 }
 
-const getOrFallback = (condition: Boolean, value: number | undefined) => {
+const getOrFallback = (
+  condition: Boolean,
+  value: number | undefined = maxDaysToGiveOrReceive,
+) => {
   if (condition === YES) {
-    // In the first version of the app, we can't manually change the number of
-    // days requested or given, so we use the maximum number of days in this case
-    if (value === undefined) {
-      return maxDaysToGiveOrReceive
-    }
-
     return value
   }
 
@@ -371,6 +368,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'otherParent',
   ) as SchemaFormValues['otherParent']
+
+  const otherParentRightOfAccess = getValueViaPath(
+    answers,
+    'otherParentRightOfAccess',
+  ) as SchemaFormValues['otherParentRightOfAccess']
 
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
 
@@ -482,6 +484,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     otherParent,
+    otherParentRightOfAccess,
     pensionFund,
     union,
     usePrivatePensionFund,
@@ -522,4 +525,15 @@ export const requiresOtherParentApproval = (
   } = applicationAnswers
 
   return isRequestingRights === YES || usePersonalAllowanceFromSpouse === YES
+}
+
+export const allowOtherParent = (answers: Application['answers']) => {
+  const { otherParent, otherParentRightOfAccess } = getApplicationAnswers(
+    answers,
+  )
+
+  return (
+    otherParent === SPOUSE ||
+    (otherParent === MANUAL && otherParentRightOfAccess === YES)
+  )
 }

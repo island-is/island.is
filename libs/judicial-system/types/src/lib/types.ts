@@ -1,3 +1,5 @@
+import { OptionsType, GroupedOptionsType } from 'react-select'
+
 export enum Feature {
   NONE = 'NONE', // must be at least one
   R_CASES = 'R_CASES',
@@ -101,28 +103,33 @@ export const RCaseTypes = [
     value: CaseType.TRACKING_EQUIPMENT,
   },
   {
-    label: 'Geðrannsókn',
-    value: CaseType.PSYCHIATRIC_EXAMINATION,
-  },
-  {
-    label: 'Hljóðupptökubúnaði komið fyrir',
-    value: CaseType.SOUND_RECORDING_EQUIPMENT,
-  },
-  {
-    label: 'Krufning',
-    value: CaseType.AUTOPSY,
-  },
-  {
-    label: 'Leit og líkamsrannsókn',
-    value: CaseType.BODY_SEARCH,
-  },
-  {
-    label: 'Upplýsingar um vefnotkun',
-    value: CaseType.INTERNET_USAGE,
-  },
-  {
-    label: 'Annað',
-    value: CaseType.OTHER,
+    label: '',
+    options: [
+      {
+        label: 'Geðrannsókn',
+        value: CaseType.PSYCHIATRIC_EXAMINATION,
+      },
+      {
+        label: 'Hljóðupptökubúnaði komið fyrir',
+        value: CaseType.SOUND_RECORDING_EQUIPMENT,
+      },
+      {
+        label: 'Krufning',
+        value: CaseType.AUTOPSY,
+      },
+      {
+        label: 'Leit og líkamsrannsókn',
+        value: CaseType.BODY_SEARCH,
+      },
+      {
+        label: 'Upplýsingar um vefnotkun',
+        value: CaseType.INTERNET_USAGE,
+      },
+      {
+        label: 'Annað',
+        value: CaseType.OTHER,
+      },
+    ],
   },
 ]
 
@@ -137,7 +144,11 @@ const CustodyAndTravelBanTypes = [
   },
 ]
 
-export const AllCaseTypes = [...RCaseTypes, ...CustodyAndTravelBanTypes]
+export const AllCaseTypes = [
+  ...RCaseTypes.slice(0, 5),
+  ...(RCaseTypes[5].options || []),
+  ...CustodyAndTravelBanTypes,
+]
 
 export enum CaseState {
   NEW = 'NEW',
@@ -248,7 +259,7 @@ export interface Case {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  additionToConclusion?: string
+  isAccusedAbsent?: boolean
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
@@ -260,7 +271,8 @@ export interface Case {
   isValidToDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
-  isolationTo?: string
+  isolationToDate?: string
+  additionToConclusion?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
@@ -350,7 +362,7 @@ export interface UpdateCase {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  additionToConclusion?: string
+  isAccusedAbsent?: boolean
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
@@ -361,7 +373,8 @@ export interface UpdateCase {
   validToDate?: string
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
-  isolationTo?: string
+  isolationToDate?: string
+  additionToConclusion?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision

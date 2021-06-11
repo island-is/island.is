@@ -191,7 +191,7 @@ export class ParentalLeaveService {
           ratio: 100,
           approved: false,
           paid: false,
-          rightsCodePeriod: apiConstants.rights.givingReceivingRightsId,
+          rightsCodePeriod: apiConstants.rights.receivingRightsId,
         })
       }
     }

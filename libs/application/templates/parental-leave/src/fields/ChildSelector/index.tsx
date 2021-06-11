@@ -33,6 +33,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
     children: {
       expectedDateOfBirth: string
       primaryParentNationalRegistryId?: string
+      parentalRelation: ParentalRelations
     }[]
     existingApplications: {
       applicationId: string
@@ -60,12 +61,6 @@ const ChildSelector: FC<FieldBaseProps> = ({
     <Box>
       {children.length > 0 && (
         <>
-          <FieldDescription
-            description={formatMessage(
-              parentalLeaveFormMessages.selectChild.title,
-            )}
-          />
-
           <Box marginY={3}>
             <RadioController
               id="selectedChild"
@@ -74,14 +69,26 @@ const ChildSelector: FC<FieldBaseProps> = ({
               largeButtons={true}
               defaultValue={selectedChild}
               options={children.map((child, index) => {
-                const nationalRegistryId = child.primaryParentNationalRegistryId
-                  ? `- ${child.primaryParentNationalRegistryId}`
-                  : ''
-                const label = `${child.expectedDateOfBirth} ${nationalRegistryId}`
+                const subLabel =
+                  child.parentalRelation === ParentalRelations.secondary
+                    ? formatMessage(
+                        parentalLeaveFormMessages.selectChild.secondaryParent,
+                        {
+                          nationalId:
+                            child.primaryParentNationalRegistryId ?? '',
+                        },
+                      )
+                    : formatMessage(
+                        parentalLeaveFormMessages.selectChild.primaryParent,
+                      )
 
                 return {
                   value: `${index}`,
-                  label,
+                  label: formatMessage(
+                    parentalLeaveFormMessages.selectChild.baby,
+                    { dateOfBirth: child.expectedDateOfBirth },
+                  ),
+                  subLabel,
                 }
               })}
             />

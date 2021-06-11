@@ -32,8 +32,6 @@ const DomainList: React.FC = () => {
       count,
     )
     if (response) {
-      console.log('setting domains')
-      console.log(response)
       setDomains((response as PagedRowsDTO<Domain>).rows)
       setLastPage(Math.ceil((response as PagedRowsDTO<Domain>).count / count))
     }

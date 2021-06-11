@@ -59,6 +59,17 @@ export function extractAnswersToSubmitFromScreen(
     return pick(data, [repeaterId])
   }
 
+  if (
+    screen.type === FieldTypes.CUSTOM &&
+    screen.childInputIds &&
+    screen.childInputIds.length > 1
+  ) {
+    return pick(
+      data,
+      screen.childInputIds.map((id) => id),
+    )
+  }
+
   switch (screen.type) {
     case FormItemTypes.MULTI_FIELD:
       return pick(

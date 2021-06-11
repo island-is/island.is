@@ -5,7 +5,7 @@ export const apiConstants = {
   },
   rights: {
     // When primary or secondary parents are requested extra days from their spouse
-    givingReceivingRightsId: 'FSAL-GR',
+    receivingRightsId: 'FSAL-GR',
   },
   attachments: {
     selfEmployed: 'selfEmployed',

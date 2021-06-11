@@ -268,18 +268,19 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'selectChild',
-          title: parentalLeaveFormMessages.selectChild.subSection,
+          title: parentalLeaveFormMessages.selectChild.screenTitle,
           children: [
             buildMultiField({
               id: 'selectedChildScreen',
-              title: parentalLeaveFormMessages.selectChild.title,
-              description: parentalLeaveFormMessages.selectChild.description,
+              title: parentalLeaveFormMessages.selectChild.screenTitle,
+              description:
+                parentalLeaveFormMessages.selectChild.screenDescription,
               condition: (_, externalData) =>
                 isEligibleForParentalLeave(externalData),
               children: [
                 buildCustomField({
                   id: 'selectedChild',
-                  title: parentalLeaveFormMessages.selectChild.subSection,
+                  title: parentalLeaveFormMessages.selectChild.screenTitle,
                   component: 'ChildSelector',
                 }),
                 buildSubmitField({
