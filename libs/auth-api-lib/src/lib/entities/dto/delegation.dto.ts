@@ -76,15 +76,11 @@ export class UpdateDelegationDTO {
 export class CreateDelegationDTO {
   @IsString()
   @ApiProperty()
-  fromName!: string
-
-  @IsString()
-  @ApiProperty()
   toNationalId!: string
 
   @IsString()
-  @ApiPropertyOptional()
-  toName?: string
+  @ApiProperty()
+  toName!: string
 
   @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
   @ValidateNested({ each: true })

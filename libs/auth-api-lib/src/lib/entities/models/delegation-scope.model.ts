@@ -4,6 +4,7 @@ import {
   Model,
   Table,
   CreatedAt,
+  BelongsTo,
   UpdatedAt,
   PrimaryKey,
   ForeignKey,
@@ -57,6 +58,9 @@ export class DelegationScope extends Model<DelegationScope> {
   })
   scopeName?: string
 
+  @BelongsTo(() => ApiScope)
+  apiScope?: any
+
   @ForeignKey(() => IdentityResource)
   @Column({
     type: DataType.STRING,
@@ -77,6 +81,9 @@ export class DelegationScope extends Model<DelegationScope> {
     },
   })
   identityResourceName?: string
+
+  @BelongsTo(() => IdentityResource)
+  identityResource?: any
 
   @Column({
     type: DataType.DATE,
@@ -103,7 +110,9 @@ export class DelegationScope extends Model<DelegationScope> {
       id: this.id,
       delegationId: this.delegationId,
       scopeName: this.scopeName,
+      apiScope: (this.apiScope as ApiScope)?.toDTO(),
       identityResourceName: this.identityResourceName,
+      identityResource: (this.identityResource as IdentityResource)?.toDTO(),
       validFrom: this.validFrom,
       validTo: this.validTo,
     }
