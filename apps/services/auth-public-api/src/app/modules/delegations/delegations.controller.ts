@@ -62,7 +62,11 @@ export class DelegationsController {
     @CurrentUser() user: User,
     @Body() delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    return this.delegationsService.create(user.nationalId, delegation)
+    return this.delegationsService.create(
+      user,
+      environment.nationalRegistry.xroad.clientId ?? '',
+      delegation,
+    )
   }
 
   @Scopes(AuthScope.writeDelegations)
