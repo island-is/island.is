@@ -123,7 +123,7 @@ export class PartyLetterService {
       }
     `
 
-    const endorsementList: CreateEndorsementListResponse = await this.sharedTemplateAPIService
+    const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
         input: {
           title: application.answers.partyName,
