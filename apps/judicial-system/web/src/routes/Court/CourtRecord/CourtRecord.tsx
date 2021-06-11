@@ -287,7 +287,16 @@ export const CourtRecord: React.FC = () => {
                   gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um
                   sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr.
                   114. gr. sömu laga"
-                  onToggleVisibility={() => console.log('YARRA')}
+                  defaultIsVisible={workingCase.isAccusedAbsent}
+                  onToggleVisibility={(isVisible: boolean) =>
+                    setAndSendToServer(
+                      'isAccusedAbsent',
+                      isVisible,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
                   tooltip={`Með því að fela forbókun um réttindi ${formatAccusedByGender(
                     workingCase.accusedGender,
                     NounCases.GENITIVE,

@@ -114,7 +114,7 @@ export async function getRulingPdfAsString(
     }),
   )
 
-  if (existingCase.isAccusedAbsent) {
+  if (!existingCase.isAccusedAbsent) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
