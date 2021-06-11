@@ -17,6 +17,10 @@ import {
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import {
+  formatAccusedByGender,
+  NounCases,
+} from '@island.is/judicial-system/formatters'
 
 interface Props {
   workingCase: Case
@@ -96,7 +100,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             name="demands"
             label="Krafa lögreglu"
             placeholder="Krafa ákæranda"
-            defaultValue={workingCase?.demands}
+            defaultValue={workingCase.demands}
             errorMessage={demandsEM}
             hasError={demandsEM !== ''}
             onChange={(event) =>
@@ -134,9 +138,12 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
           <Input
             data-testid="lawsBroken"
             name="lawsBroken"
-            label="Lagaákvæði sem ætluð brot kærða þykja varða við"
+            label={`Lagaákvæði sem ætluð brot ${formatAccusedByGender(
+              workingCase.accusedGender,
+              NounCases.GENITIVE,
+            )} þykja varða við`}
             placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
-            defaultValue={workingCase?.lawsBroken}
+            defaultValue={workingCase.lawsBroken}
             errorMessage={lawsBrokenEM}
             hasError={lawsBrokenEM !== ''}
             onChange={(event) =>
@@ -176,7 +183,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             name="legal-basis"
             label="Lagaákvæði sem krafan er byggð á"
             placeholder="Hvaða lagaákvæðum byggir krafan á?"
-            defaultValue={workingCase?.legalBasis}
+            defaultValue={workingCase.legalBasis}
             errorMessage={legalBasisEM}
             hasError={legalBasisEM !== ''}
             onChange={(event) =>

@@ -101,7 +101,7 @@ export const RulingStepOne: React.FC = () => {
       }
 
       if (theCase.validToDate) {
-        autofill('isolationTo', theCase.validToDate, theCase)
+        autofill('isolationToDate', theCase.validToDate, theCase)
       }
 
       if (theCase.caseFacts) {
@@ -348,7 +348,7 @@ export const RulingStepOne: React.FC = () => {
                   <BlueBox>
                     <Box marginBottom={3}>
                       <CheckboxList
-                        checkboxes={isolation}
+                        checkboxes={isolation(workingCase.accusedGender)}
                         selected={workingCase.custodyRestrictions}
                         onChange={(id) =>
                           setCheckboxAndSendToServer(
@@ -363,11 +363,11 @@ export const RulingStepOne: React.FC = () => {
                       />
                     </Box>
                     <DateTime
-                      name="isolationTo"
+                      name="isolationToDate"
                       datepickerLabel="Einangrun til"
                       selectedDate={
-                        workingCase.isolationTo
-                          ? new Date(workingCase.isolationTo)
+                        workingCase.isolationToDate
+                          ? new Date(workingCase.isolationToDate)
                           : workingCase.validToDate
                           ? new Date(workingCase.validToDate)
                           : undefined
@@ -381,7 +381,7 @@ export const RulingStepOne: React.FC = () => {
                       }
                       onChange={(date: Date | undefined, valid: boolean) => {
                         newSetAndSendDateToServer(
-                          'isolationTo',
+                          'isolationToDate',
                           date,
                           valid,
                           workingCase,

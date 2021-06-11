@@ -4,6 +4,7 @@ import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
   padTimeWithZero,
   parseArray,
+  parseBoolean,
   parseNull,
   parseString,
   parseTime,
@@ -244,6 +245,8 @@ export const setAndSendToServer = (
     if (typeof value === 'string') {
       stringValue = value
       updateCase(theCase.id, parseString(field, stringValue))
+    } else if (typeof value === 'boolean') {
+      updateCase(theCase.id, parseBoolean(field, value))
     } else {
       updateCase(theCase.id, parseNull(field))
     }

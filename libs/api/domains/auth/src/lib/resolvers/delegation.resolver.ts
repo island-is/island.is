@@ -41,12 +41,12 @@ export class DelegationResolver {
   constructor(private authService: AuthService) {}
 
   @Query(() => [Delegation], { name: 'authActorDelegations' })
-  getActorDelegations(@CurrentUser() user: User): Promise<Delegation[]> {
+  getActorDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
     return this.authService.getActorDelegations(user)
   }
 
   @Query(() => [Delegation], { name: 'authDelegations' })
-  getDelegations(@CurrentUser() user: User): Promise<Delegation[]> {
+  getDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
     return this.authService.getDelegations(user)
   }
 
@@ -54,7 +54,7 @@ export class DelegationResolver {
   async getDelegation(
     @CurrentUser() user: User,
     @Args('input', { type: () => DelegationInput }) input: DelegationInput,
-  ): Promise<Delegation | null> {
+  ): Promise<DelegationDTO | null> {
     const delegation = await this.authService
       .getDelegationFromNationalId(user, input)
       .catch(ignore404)
@@ -70,13 +70,13 @@ export class DelegationResolver {
     @CurrentUser() user: User,
     @Args('input', { type: () => CreateDelegationInput })
     input: CreateDelegationInput,
-  ): Promise<Delegation | null> {
+  ): Promise<DelegationDTO | null> {
     let delegation = await this.authService
       .getDelegationFromNationalId(user, input)
       .catch(ignore404)
     if (!delegation) {
       delegation = await this.authService.createDelegation(user, input)
-    } else if (delegation.fromName !== input.name) {
+    } else if (delegation.toName !== input.name) {
       return this.authService.updateDelegation(
         user,
         input as UpdateDelegationInput,
@@ -91,7 +91,7 @@ export class DelegationResolver {
     @CurrentUser() user: User,
     @Args('input', { type: () => UpdateDelegationInput })
     input: UpdateDelegationInput,
-  ): Promise<Delegation> {
+  ): Promise<DelegationDTO> {
     return this.authService.updateDelegation(user, input)
   }
 
