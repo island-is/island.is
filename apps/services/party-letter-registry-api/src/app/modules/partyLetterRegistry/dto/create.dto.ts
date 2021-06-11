@@ -17,7 +17,6 @@ export class CreateDto {
   managers!: string[]
 
   @ApiProperty()
-  @IsArray()
   @IsNationalId()
   owner!: string
 }
