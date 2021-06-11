@@ -1,27 +1,33 @@
 import { useMutation } from '@apollo/client'
 import {
   Case,
+  CaseState,
+  CaseTransition,
   NotificationType,
   SendNotificationResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import {
   SendNotificationMutation,
+  TransitionCaseMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { CreateCaseMutation, CreateCourtCaseMutation } from '../mutations'
-import { parseString } from '../formatters'
+import { parseString, parseTransition } from '../formatters'
 
 type autofillProperties = Pick<
   Case,
+  | 'demands'
   | 'courtAttendees'
-  | 'policeDemands'
+  | 'prosecutorDemands'
   | 'litigationPresentations'
   | 'courtStartDate'
   | 'courtCaseFacts'
   | 'courtLegalArguments'
-  | 'custodyEndDate'
-  | 'isolationTo'
+  | 'validToDate'
+  | 'isolationToDate'
+  | 'prosecutorOnlySessionRequest'
+  | 'otherRestrictions'
 >
 
 interface CreateCourtCaseMutationResponse {
@@ -37,6 +43,11 @@ const useCase = () => {
   const [createCaseMutation, { loading: isCreatingCase }] = useMutation(
     CreateCaseMutation,
   )
+  const [
+    transitionCaseMutation,
+    { loading: isTransitioningCase },
+  ] = useMutation(TransitionCaseMutation)
+
   const [
     createCourtCaseMutation,
     { loading: creatingCourtCase },
@@ -65,6 +76,7 @@ const useCase = () => {
             sendRequestToDefender: theCase.sendRequestToDefender,
             leadInvestigator: theCase.leadInvestigator,
             courtId: theCase.court?.id,
+            description: theCase.description,
           },
         },
       })
@@ -115,6 +127,49 @@ const useCase = () => {
       setCourtCaseNumberErrorMessage(
         'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
       )
+    }
+  }
+
+  const transitionCase = async (
+    workingCase: Case,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
+  ) => {
+    if (!workingCase) {
+      return false
+    }
+
+    switch (workingCase.state) {
+      case CaseState.NEW:
+        try {
+          // Parse the transition request
+          const transitionRequest = parseTransition(
+            workingCase.modified,
+            CaseTransition.OPEN,
+          )
+
+          const { data } = await transitionCaseMutation({
+            variables: { input: { id: workingCase.id, ...transitionRequest } },
+          })
+
+          if (!data) {
+            return false
+          }
+
+          setWorkingCase({
+            ...workingCase,
+            state: data.transitionCase.state,
+          })
+
+          return true
+        } catch (e) {
+          return false
+        }
+      case CaseState.DRAFT:
+      case CaseState.SUBMITTED:
+      case CaseState.RECEIVED:
+        return true
+      default:
+        return false
     }
   }
 
@@ -178,6 +233,8 @@ const useCase = () => {
     autofill,
     createCourtCase,
     creatingCourtCase,
+    transitionCase,
+    isTransitioningCase,
   }
 }
 

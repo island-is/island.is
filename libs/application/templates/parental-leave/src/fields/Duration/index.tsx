@@ -46,12 +46,10 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
     id,
     formatISO(addMonths(parseISO(currentStartDateAnswer), 1)),
   ) as string
-
   const monthsToUse = differenceInMonths(
     parseISO(currentEndDateAnswer),
     parseISO(currentStartDateAnswer),
   )
-
   const [chosenEndDate, setChosenEndDate] = useState<string>(
     currentEndDateAnswer,
   )

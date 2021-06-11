@@ -1,3 +1,3 @@
-export { AuthScopeResolver } from './authScope.resolver'
+export { ApiScopeResolver } from './apiScope.resolver'
 export { DelegationScopeResolver } from './delegationScope.resolver'
-export { MainResolver } from './main.resolver'
+export { DelegationResolver } from './delegation.resolver'

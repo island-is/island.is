@@ -20,11 +20,11 @@ const devConfig = {
   },
   nationalRegistry: {
     xroad: {
-      basePath: process.env.XROAD_BASE_PATH_WITH_ENV,
+      basePath: 'http://localhost:8081/r1/IS-DEV',
+      memberCode: '10001',
+      apiPath: '/SKRA-Protected/Einstaklingar-v1',
+      clientId: 'IS-DEV/GOV/10000/island-is-client',
       memberClass: XRoadMemberClass.GovernmentInstitution,
-      memberCode: process.env.XROAD_NATIONAL_REGISTRY_MEMBER_CODE,
-      apiPath: process.env.XROAD_NATIONAL_REGISTRY_API_PATH,
-      clientId: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID,
     },
   },
 }

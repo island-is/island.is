@@ -1,3 +1,4 @@
+import { uuid } from 'uuidv4'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
@@ -23,6 +24,7 @@ export class DelegationScopeService {
   ): Promise<DelegationScope | null> {
     this.logger.debug('Creating new delegation scope')
     return this.delegationScopeModel.create({
+      id: uuid(),
       ...delegationScope,
       delegationId,
     })
@@ -34,7 +36,16 @@ export class DelegationScopeService {
   ): Promise<any> {
     return this.delegationScopeModel.bulkCreate(
       scopes.map((delegationScope) => ({
-        ...delegationScope,
+        id: uuid(),
+        validTo: delegationScope.validTo,
+        scopeName:
+          delegationScope.type === 'apiScope'
+            ? delegationScope.name
+            : undefined,
+        identityResourceName:
+          delegationScope.type === 'identityResource'
+            ? delegationScope.name
+            : undefined,
         delegationId,
       })),
     )
