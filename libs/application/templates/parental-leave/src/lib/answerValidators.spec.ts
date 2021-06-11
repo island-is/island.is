@@ -7,6 +7,7 @@ import differenceInDays from 'date-fns/differenceInDays'
 import parseISO from 'date-fns/parseISO'
 
 import { minPeriodDays, usageMaxMonths } from '../config'
+import { ParentalRelations } from '../constants'
 import { answerValidators } from './answerValidators'
 import { errorMessages } from './messages'
 
@@ -27,7 +28,7 @@ describe('answerValidators', () => {
           children: [
             {
               expectedDateOfBirth: DEFAULT_DOB,
-              parentalRelation: 'primary',
+              parentalRelation: ParentalRelations.primary,
             },
           ],
         },

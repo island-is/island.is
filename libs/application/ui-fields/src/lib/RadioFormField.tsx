@@ -20,6 +20,7 @@ import { getDefaultValue } from '../getDefaultValue'
 interface Props extends FieldBaseProps {
   field: RadioField
 }
+
 const RadioFormField: FC<Props> = ({
   showFieldName = false,
   field,
@@ -78,6 +79,7 @@ const RadioFormField: FC<Props> = ({
               ),
             }),
           }))}
+          onSelect={field.onSelect}
         />
       </Box>
     </Box>
