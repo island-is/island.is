@@ -9,6 +9,7 @@ import { useQuery } from '@apollo/client'
 import { Endorsement } from '../../lib/dataSchema'
 import { GetEndorsements } from '../../graphql/queries'
 import BulkUpload from '../BulkUpload'
+import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 
 interface EndorsementData {
   endorsementSystemGetEndorsements?: Endorsement[]
@@ -21,20 +22,19 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
   const [showWarning, setShowWarning] = useState(false)
   const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
+  const isClosedHook = useIsClosed(endorsementListId)
 
-  const {
-    data: endorsementsData,
-    loading,
-    error,
-    refetch,
-  } = useQuery<EndorsementData>(GetEndorsements, {
-    variables: {
-      input: {
-        listId: endorsementListId,
+  const { data: endorsementsData, refetch } = useQuery<EndorsementData>(
+    GetEndorsements,
+    {
+      variables: {
+        input: {
+          listId: endorsementListId,
+        },
       },
+      pollInterval: 20000,
     },
-    pollInterval: 20000,
-  })
+  )
 
   useEffect(() => {
     refetch()
@@ -112,22 +112,26 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             }}
           />
         </Box>
-        {endorsements && endorsements.length > 0 && (
-          <Box marginY={3}>
-            <EndorsementTable
-              application={application}
-              endorsements={endorsements}
-            />
-          </Box>
-        )}
-        <Box marginY={5}>
-          <BulkUpload
+        <Box marginY={3}>
+          <EndorsementTable
             application={application}
-            onSuccess={() => {
-              setUpdateOnBulkImport(true)
-            }}
+            endorsements={endorsements}
           />
         </Box>
+        {!isClosedHook ? (
+          <Box marginY={5}>
+            <BulkUpload
+              application={application}
+              onSuccess={() => {
+                setUpdateOnBulkImport(true)
+              }}
+            />
+          </Box>
+        ) : (
+          <Text variant="eyebrow" color="red400" marginTop={5}>
+            {formatMessage(m.endorsementList.isClosedMessage)}
+          </Text>
+        )}
       </Box>
     </Box>
   )

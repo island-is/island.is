@@ -349,6 +349,11 @@ export const m: MessageDir = {
       defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Label for terms and conditions',
     },
+    isClosedMessage: {
+      id: 'ple.application:endorsement.form.isClosed.message',
+      defaultMessage: 'Meðmælendalista hefur verið lokað',
+      description: 'Error message if endorsement list has been closed',
+    },
     submitButton: {
       id: 'ple.application:endorsement.form.submit.button',
       defaultMessage: 'Setja nafn mitt á lista',
