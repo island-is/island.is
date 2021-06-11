@@ -65,6 +65,7 @@ export const findCurrentScreen = (
         currentAnswerIndex = index
       }
 
+      // TODO: goes back to screen that doesn't contain form "your rights 12 months and 45 days screen"
       if (
         !missingAnswerBeforeCurrentIndex &&
         getValueViaPath(answers, screen.id) !== undefined

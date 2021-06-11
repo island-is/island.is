@@ -271,7 +271,7 @@ describe('calculatePeriodPercentage', () => {
     })
 
     const res = calculatePeriodPercentage(application, {
-      ...buildTextField({
+      field: buildTextField({
         id: 'periods[0].startDate',
         title: '',
       }),
@@ -305,19 +305,16 @@ describe('calculatePeriodPercentage', () => {
       },
     })
 
-    const res = calculatePeriodPercentage(
-      application,
-      {
-        ...buildTextField({
-          id: 'periods[0].startDate',
-          title: '',
-        }),
-      },
-      {
+    const res = calculatePeriodPercentage(application, {
+      field: buildTextField({
+        id: 'periods[0].startDate',
+        title: '',
+      }),
+      dates: {
         startDate: '2021-01-01',
         endDate: '2021-09-01',
       },
-    )
+    })
 
     expect(res).toEqual(75)
   })
@@ -353,7 +350,7 @@ describe('calculatePeriodPercentage', () => {
     })
 
     const res = calculatePeriodPercentage(application, {
-      ...buildTextField({
+      field: buildTextField({
         id: 'periods[0].startDate',
         title: '',
       }),

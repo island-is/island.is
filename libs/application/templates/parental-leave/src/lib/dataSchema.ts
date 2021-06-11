@@ -82,7 +82,6 @@ export const dataSchema = z.object({
         }),
     })
     .optional(),
-  singlePeriod: z.enum([YES, NO]),
   firstPeriodStart: z.enum([
     StartDateOptions.ACTUAL_DATE_OF_BIRTH,
     StartDateOptions.ESTIMATED_DATE_OF_BIRTH,

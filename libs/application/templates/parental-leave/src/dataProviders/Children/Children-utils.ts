@@ -134,6 +134,7 @@ export const getChildrenFromMockData = (
           parentalRelation: ParentalRelations.primary,
           hasRights: primaryParentRightsDays > 0,
           remainingDays: primaryParentRightsDays,
+          transferredDays: 45,
         }
       : {
           expectedDateOfBirth: formattedDOB,

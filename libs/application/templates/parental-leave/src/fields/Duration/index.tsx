@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import addMonths from 'date-fns/addMonths'
@@ -19,18 +19,20 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
 import {
-  calculatePeriodPercentage,
+  getAvailableRightsInMonths,
   getExpectedDateOfBirth,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
 import { StartDateOptions } from '../../constants'
+import { monthsToDays } from '../../lib/directorateOfLabour.utils'
+import { useGetOrRequestEndDates } from '../../hooks/useGetOrRequestEndDates'
 
 const df = 'yyyy-MM-dd'
 
 const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
-  const { clearErrors } = useFormContext()
+  const { register, clearErrors } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
@@ -55,15 +57,32 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   )
   const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
   const [percent, setPercent] = useState<number>(100)
+  const getEndDate = useGetOrRequestEndDates(application)
 
-  useEffect(() => {
-    const percentage = calculatePeriodPercentage(application, field, {
+  const handleChange = async (months: number) => {
+    clearErrors(id)
+    setChosenDuration(months)
+  }
+
+  const handleChangeEnd = async (
+    months: number,
+    onChange: (...event: any[]) => void,
+  ) => {
+    const days = monthsToDays(months)
+
+    const endDateResult = await getEndDate({
       startDate: currentStartDateAnswer,
-      endDate: chosenEndDate,
+      length: days,
     })
 
-    setPercent(percentage)
-  }, [chosenEndDate])
+    console.log('-endDateResult', endDateResult)
+
+    const date = new Date(endDateResult.date)
+
+    onChange(format(date, df))
+    setChosenEndDate(date.toISOString())
+    setPercent(endDateResult.percentage)
+  }
 
   return (
     <Box>
@@ -72,6 +91,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
           parentalLeaveFormMessages.duration.monthsDescription,
         )}
       />
+
       <Box
         background="blue100"
         paddingTop={3}
@@ -108,6 +128,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
               />
             </Text>
           </Box>
+
           <Box
             display="flex"
             alignItems="center"
@@ -120,6 +141,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
             </Text>
           </Box>
         </Box>
+
         <Box marginTop={8}>
           <Controller
             defaultValue={chosenEndDate}
@@ -129,11 +151,9 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
                 min={usageMinMonths}
                 max={usageMaxMonths}
                 trackStyle={{ gridTemplateRows: 8 }}
-                calculateCellStyle={() => {
-                  return {
-                    background: theme.color.dark200,
-                  }
-                }}
+                calculateCellStyle={() => ({
+                  background: theme.color.dark200,
+                })}
                 showMinMaxLabels
                 showToolTip
                 label={{
@@ -156,7 +176,9 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
                           ),
                         },
                         end: {
-                          date: formatDateFns(chosenEndDate),
+                          date: chosenEndDate
+                            ? formatDateFns(chosenEndDate)
+                            : '—',
                           message: formatMessage(
                             parentalLeaveFormMessages.shared.rangeEndDate,
                           ),
@@ -165,23 +187,22 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
                     : undefined
                 }
                 currentIndex={chosenDuration}
-                onChange={(selectedMonths: number) => {
-                  clearErrors(id)
-
-                  const newEndDate = addMonths(
-                    parseISO(currentStartDateAnswer),
-                    selectedMonths,
-                  )
-
-                  onChange(format(newEndDate, df))
-                  setChosenEndDate(formatISO(newEndDate))
-                  setChosenDuration(selectedMonths)
-                }}
+                onChange={(months: number) => handleChange(months)}
+                onChangeEnd={(months: number) =>
+                  handleChangeEnd(months, onChange)
+                }
               />
             )}
           />
         </Box>
       </Box>
+
+      <input
+        ref={register}
+        type="hidden"
+        value={chosenDuration}
+        name={`periods[${currentIndex}].duration`}
+      />
     </Box>
   )
 }

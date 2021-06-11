@@ -43,6 +43,7 @@ export function extractAnswersToSubmitFromScreen(
   screen: FormScreen,
 ): FormValue {
   const screenId = screen.id ?? ''
+
   if (
     screen.isPartOfRepeater ||
     (screenId.includes('[') && screenId.includes(']'))
@@ -56,17 +57,6 @@ export function extractAnswersToSubmitFromScreen(
     const repeaterId = baseId.split('[')[0] ?? ''
 
     return pick(data, [repeaterId])
-  }
-
-  if (
-    screen.type === FieldTypes.CUSTOM &&
-    screen.childInputIds &&
-    screen.childInputIds.length > 1
-  ) {
-    return pick(
-      data,
-      screen.childInputIds.map((id) => id),
-    )
   }
 
   switch (screen.type) {

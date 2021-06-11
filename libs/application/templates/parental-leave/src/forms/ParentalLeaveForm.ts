@@ -29,6 +29,7 @@ import {
   createRange,
   calculatePeriodPercentage,
   requiresOtherParentApproval,
+  getApplicationAnswers,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -51,7 +52,6 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
-import { Period } from '../types'
 
 const percentOptions = createRange<{ label: string; value: string }>(
   10,
@@ -138,7 +138,7 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'otherParent',
-                  title: 'Other parent',
+                  title: parentalLeaveFormMessages.shared.otherParentSubTitle,
                   options: (application) => getOtherParentOptions(application),
                 }),
                 buildTextField({
@@ -691,22 +691,6 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'firstPeriod',
           title: parentalLeaveFormMessages.shared.firstPeriodName,
           children: [
-            buildRadioField({
-              id: 'singlePeriod',
-              title: parentalLeaveFormMessages.shared.periodAllAtOnce,
-              description:
-                parentalLeaveFormMessages.shared.periodAllAtOnceDescription,
-              options: [
-                {
-                  label: parentalLeaveFormMessages.shared.periodAllAtOnceYes,
-                  value: YES,
-                },
-                {
-                  label: parentalLeaveFormMessages.shared.periodAllAtOnceNo,
-                  value: NO,
-                },
-              ],
-            }),
             buildCustomField({
               id: 'firstPeriodStart',
               title: parentalLeaveFormMessages.firstPeriodStart.title,
@@ -757,16 +741,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
-            buildCustomField(
-              {
-                id: 'periods[0].endDate',
-                condition: (formValue) =>
-                  formValue.confirmLeaveDuration === 'duration',
-                title: parentalLeaveFormMessages.duration.title,
-                component: 'Duration',
-              },
-              {},
-            ),
+            buildCustomField({
+              id: 'periods[0].endDate',
+              condition: (formValue) =>
+                formValue.confirmLeaveDuration === 'duration',
+              title: parentalLeaveFormMessages.duration.title,
+              component: 'Duration',
+            }),
             buildMultiField({
               id: 'periods[0].ratio',
               title: parentalLeaveFormMessages.ratio.title,
@@ -781,18 +762,16 @@ export const ParentalLeaveForm: Form = buildForm({
                     application: Application,
                     field: SelectField,
                   ) => {
-                    const percentage = calculatePeriodPercentage(
-                      application,
+                    const percentage = calculatePeriodPercentage(application, {
                       field,
-                    )
+                    })
 
                     return `${percentage}`
                   },
                   options: (application: Application, field: Field) => {
-                    const percentage = calculatePeriodPercentage(
-                      application,
+                    const percentage = calculatePeriodPercentage(application, {
                       field,
-                    )
+                    })
                     const existingOptions = percentOptions.filter(
                       (option) => Number(option.value) < percentage,
                     )
@@ -824,8 +803,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.startDate.title,
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
-                  excludeDates: (application) =>
-                    getAllPeriodDates(application.answers.periods as Period[]),
+                  excludeDates: (application) => {
+                    const { periods } = getApplicationAnswers(
+                      application.answers,
+                    )
+
+                    return getAllPeriodDates(periods)
+                  },
                 }),
                 buildMultiField({
                   id: 'endDate',
@@ -838,18 +822,20 @@ export const ParentalLeaveForm: Form = buildForm({
                       placeholder:
                         parentalLeaveFormMessages.endDate.placeholder,
                       minDate: (application) => {
-                        const periods = application.answers.periods as Period[]
+                        const { periods } = getApplicationAnswers(
+                          application.answers,
+                        )
                         const latestStartDate =
                           periods[periods.length - 1].startDate
 
                         return addDays(new Date(latestStartDate), minPeriodDays)
                       },
                       excludeDates: (application) => {
-                        const {
-                          answers: { periods },
-                        } = application
+                        const { periods } = getApplicationAnswers(
+                          application.answers,
+                        )
 
-                        return getAllPeriodDates(periods as Period[])
+                        return getAllPeriodDates(periods)
                       },
                     }),
                   ],
@@ -870,7 +856,7 @@ export const ParentalLeaveForm: Form = buildForm({
                       ) => {
                         const percentage = calculatePeriodPercentage(
                           application,
-                          field,
+                          { field },
                         )
 
                         return `${percentage}`
@@ -878,7 +864,7 @@ export const ParentalLeaveForm: Form = buildForm({
                       options: (application: Application, field: Field) => {
                         const percentage = calculatePeriodPercentage(
                           application,
-                          field,
+                          { field },
                         )
                         const existingOptions = percentOptions.filter(
                           (option) => Number(option.value) < percentage,

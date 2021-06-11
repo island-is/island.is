@@ -377,5 +377,3 @@ describe('getRightsCode', () => {
   // TODO:
   // it('should return FO-FL-L-GR-SJ for secondary parent that is both self employed and employed with custody', () => {})
 })
-
-// TODO: periods and validate against existing payment plans
