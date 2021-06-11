@@ -36,7 +36,16 @@ export class DelegationScopeService {
   ): Promise<any> {
     return this.delegationScopeModel.bulkCreate(
       scopes.map((delegationScope) => ({
-        ...delegationScope,
+        id: uuid(),
+        validTo: delegationScope.validTo,
+        scopeName:
+          delegationScope.type === 'apiScope'
+            ? delegationScope.name
+            : undefined,
+        identityResourceName:
+          delegationScope.type === 'identityResource'
+            ? delegationScope.name
+            : undefined,
         delegationId,
       })),
     )

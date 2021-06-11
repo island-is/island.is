@@ -49,6 +49,7 @@ type AccessForm = {
   [SCOPE_PREFIX]: {
     name: string[]
     validTo?: string
+    type: string
   }[]
 }
 
@@ -57,6 +58,7 @@ const AuthApiScopesQuery = gql`
     authApiScopes {
       name
       displayName
+      type
       group {
         name
         displayName
@@ -79,6 +81,7 @@ const AuthDelegationQuery = gql`
         scopes {
           id
           name
+          type
           validTo
         }
       }
@@ -145,7 +148,12 @@ function Access() {
   const onSubmit = handleSubmit(async (model: AccessForm) => {
     const scopes = model[SCOPE_PREFIX].filter(
       (scope) => scope.name?.length > 0,
-    ).map((scope) => ({ ...scope, name: scope.name[0] }))
+    ).map((scope) => ({
+      ...scope,
+      type: authApiScopes?.find((apiScope) => apiScope.name === scope.name[0])
+        ?.type,
+      name: scope.name[0],
+    }))
     const { data, errors } = await updateDelegation({
       variables: { input: { toNationalId: nationalId, scopes } },
     })

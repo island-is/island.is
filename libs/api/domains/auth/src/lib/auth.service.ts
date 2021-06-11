@@ -83,7 +83,7 @@ export class AuthService {
       toNationalId,
       updateDelegationDTO: {
         scopes: scopes?.map((scope) => ({
-          scopeName: scope.name,
+          ...scope,
           validTo: scope.validTo ? scope.validTo : undefined,
         })) as UpdateDelegationScopeDTO[],
       },
