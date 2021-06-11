@@ -42,17 +42,8 @@ export class DelegationScope extends Model<DelegationScope> {
     primaryKey: true,
     allowNull: true,
     validate: {
-      oneButNotBoth() {
-        if (!(this.scopeName || this.identityResourceName)) {
-          return new Error(
-            'Either scopeName or identityResourceName must be specified.',
-          )
-        }
-        if (this.scopeName && this.identityResourceName) {
-          return new Error(
-            'ScopeName and identityResourceName can not both be specified.',
-          )
-        }
+      ddlConstraint(this: DelegationScope) {
+        this.eitherScopeNameOrIdentityResourceName()
       },
     },
   })
@@ -66,17 +57,8 @@ export class DelegationScope extends Model<DelegationScope> {
     type: DataType.STRING,
     allowNull: true,
     validate: {
-      oneButNotBoth() {
-        if (!(this.scopeName || this.identityResourceName)) {
-          return new Error(
-            'Either scopeName or identityResourceName must be specified.',
-          )
-        }
-        if (this.scopeName && this.identityResourceName) {
-          return new Error(
-            'ScopeName and identityResourceName can not both be specified.',
-          )
-        }
+      ddlConstraint(this: DelegationScope) {
+        this.eitherScopeNameOrIdentityResourceName()
       },
     },
   })
@@ -118,7 +100,7 @@ export class DelegationScope extends Model<DelegationScope> {
     }
   }
 
-  oneButNotBoth() {
+  eitherScopeNameOrIdentityResourceName() {
     if (!(this.scopeName || this.identityResourceName)) {
       return new Error(
         'Either scopeName or identityResourceName must be specified.',
