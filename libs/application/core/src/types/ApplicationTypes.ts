@@ -17,6 +17,7 @@ export enum ApplicationTypes {
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
   PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
   JOINT_CUSTODY_AGREEMENT = 'JointCustodyAgreement',
+  PAYABLE_DUMMY_TEMPLATE = 'PayableDummyTemplate',
 }
 
 export const ApplicationConfigurations = {
@@ -91,5 +92,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.JOINT_CUSTODY_AGREEMENT]: {
     slug: 'forsja-barns',
     translation: 'jca.application',
+  },
+  [ApplicationTypes.PAYABLE_DUMMY_TEMPLATE]: {
+    slug: 'borga',
+    translation: 'pay.application',
   },
 }

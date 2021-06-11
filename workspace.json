@@ -2459,6 +2459,42 @@
         }
       }
     },
+    "application-templates-payable-dummy-template": {
+      "root": "libs/application/templates/payable-dummy-template",
+      "sourceRoot": "libs/application/templates/payable-dummy-template/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/payable-dummy-template/tsconfig.lib.json",
+              "libs/application/templates/payable-dummy-template/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/payable-dummy-template/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/payable-dummy-template/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/application/templates/payable-dummy-template"]
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/payable-dummy-template/src/lib/messages.ts"
+          }
+        }
+      }
+    },
     "application-templates-reference-template": {
       "root": "libs/application/templates/reference-template",
       "sourceRoot": "libs/application/templates/reference-template/src",

@@ -1,10 +1,10 @@
+import { PaymentCatalog } from '@island.is/api/schema'
 import {
   BasicDataProvider,
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { PaymentCatalog } from '../types/schema'
 
 const searchCorrectCatalog = (
   keySearch: string,
@@ -30,27 +30,25 @@ export class PaymentCatalogProvider extends BasicDataProvider {
   async provide(application: Application): Promise<PaymentCatalog[]> {
     const query = `
     query PaymentCatalogProvider($performingOrganizationID: String!) {
-        paymentCatalogPerformingOrg(performingOrganizationID: $performingOrganizationID) {
-            item {                
-                performingOrgID
-                chargeType
-                chargeItemCode
-                chargeItemName
-                priceAmount
-            }
+      paymentCatalogPerformingOrg(performingOrganizationID: $performingOrganizationID) {
+        item {
+          performingOrgID
+          chargeType
+          chargeItemCode
+          chargeItemName
+          priceAmount
         }
+      }
     }
     `
     /// THIS NEEDS REFACTORING
-    let chargeItemCode = ''
-    if (application.typeId == 'DrivingLicense') chargeItemCode = 'AY110'
+    let chargeItemCode = 'AY110'
 
     return this.useGraphqlGateway(query, {
       performingOrganizationID: '6509142520',
     })
       .then(async (res: Response) => {
         const response = await res.json()
-        //console.log('GraphqlGateway: ' + JSON.stringify(response, null, 4))
         if (response.errors) {
           return this.handleError()
         }
@@ -77,6 +75,7 @@ export class PaymentCatalogProvider extends BasicDataProvider {
   }
 
   onProvideError(result: string): FailedDataProviderResult {
+    console.log('provide error : ' + result)
     return {
       date: new Date(),
       reason: result,
@@ -86,7 +85,7 @@ export class PaymentCatalogProvider extends BasicDataProvider {
   }
 
   onProvideSuccess(result: object): SuccessfulDataProviderResult {
-    console.log('provider Succses : ' + result)
+    console.log('provider Succses : ', result)
     return { date: new Date(), status: 'success', data: result }
   }
 }

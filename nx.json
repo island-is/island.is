@@ -224,6 +224,9 @@
     "application-templates-public-debt-payment-plan": {
       "tags": []
     },
+    "application-templates-payable-dummy-template": {
+      "tags": []
+    },
     "application-templates-reference-template": {
       "tags": []
     },
