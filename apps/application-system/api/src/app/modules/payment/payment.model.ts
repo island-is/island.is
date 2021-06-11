@@ -63,17 +63,17 @@ export class Payment extends Model<Application> {
   
   @Column({
     type: DataType.UUID,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
-  reference_id!: string
+  reference_id?: string
   
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
-  user4!: string
+  user4?: string
   
   @Column({
     type: DataType.JSONB,

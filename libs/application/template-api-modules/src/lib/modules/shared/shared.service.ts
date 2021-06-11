@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
-import { ChargeResult } from '@island.is/api/domains/payment'
+import { Callback, ChargeResult } from '@island.is/api/domains/payment'
 import { EmailService } from '@island.is/email-service'
 import { Application } from '@island.is/application/core'
 

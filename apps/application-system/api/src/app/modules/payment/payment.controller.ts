@@ -5,6 +5,7 @@ import {
   Post,
   UseInterceptors,
   UseGuards,
+  Put,
 } from '@nestjs/common'
 
 import {
@@ -30,6 +31,9 @@ import { CreatePaymentResponseDto } from './dto/createPaymentResponse.dto'
 import { ApplicationSerializer } from '../application/tools/application.serializer'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
+import { Callback } from '@island.is/api/domains/payment'
+import { PaymentService } from './payment.service'
+
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -45,6 +49,7 @@ import { Payment } from './payment.model'
 export class PaymentController {
   constructor(
     private readonly auditService: AuditService,
+    private readonly paymentService: PaymentService,
     @InjectModel(Payment)
     private paymentModel: typeof Payment,
   ) {}
@@ -82,10 +87,10 @@ export class PaymentController {
       > = {
       application_id: paymentDetails.application_id,
       fulfilled: false,
-      reference_id: '55cf8d89-3ffa-4254-b3c3-71dd02dd834c',
-      user4: "",
-      definition: "",
-      amount: 0,
+      reference_id: '',
+      user4: paymentDetails.user4 || '',
+      definition: paymentDetails.definition || '',
+      amount: paymentDetails.amount || 0,
       expires_at: new Date(),
     }
 
@@ -98,4 +103,75 @@ export class PaymentController {
     // possible duplication of model creation.. happens also in service... refactor?
     return await this.paymentModel.create(paymentDto)
   }
+
+  @Scopes(ApplicationScope.write)
+  @Put('applications/:application_id/payment/:id')
+  @ApiParam({
+    name: 'application_id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update fulfilled status.',
+  })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the payment.',
+  })
+  async paymentApproved(
+    @Param('id') id: string,
+    @Param('application_id') applicationId: string,
+    @Body()
+    paymentDetails: CreatePaymentResponseDto,
+    callback: Callback,
+    @CurrentUser()
+    user: User,
+  ): Promise<CreatePaymentResponseDto> {
+
+    const payments = await this.paymentService.findPaymentByApplicationId(
+      applicationId, 
+      id
+    )
+    // response obj because we are updating a row in db.
+    if(payments) {
+      this.auditService.audit({
+        user,
+        action: 'approvePaymentApplication',
+        resources: applicationId,
+        meta: { applicationId: applicationId, id: id },
+      })
+
+      if(payments.length > 1) {
+        const payment = await this.paymentService.findCorrectApplicationPayment(payments)
+        const paymentDto:CreatePaymentResponseDto = await this.paymentService.assignValues(id, applicationId, callback.status === 'isPaid' ? true : false, payment)
+        return await this.paymentModel.create(paymentDto)
+      } else if(payments.length === 1) {
+        const paymentDto:CreatePaymentResponseDto = await this.paymentService.assignValues(id, applicationId, callback.status === 'isPaid' ? true : false, payments[0])
+        return await this.paymentModel.create(paymentDto)
+      } else {
+        // no record found. Throw error?
+      }
+      
+    }
+    const paymentDto: Pick<
+      BasePayment,
+      | 'application_id'
+      | 'fulfilled'
+      | 'reference_id'
+      | 'user4'
+      | 'definition'
+      | 'amount'
+      | 'expires_at'
+      > = {
+      application_id: paymentDetails.application_id || applicationId,
+      fulfilled: callback.status === 'paid' ? true : false,
+      reference_id: callback.receptionID,
+      user4: paymentDetails.user4 || '',
+      definition: callback.chargeItemSubject,
+      amount: paymentDetails.amount || 0,
+      expires_at: new Date(),
+    }
+    return await this.paymentModel.create(paymentDto)
+  }
+
 }

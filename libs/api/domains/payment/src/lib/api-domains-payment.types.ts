@@ -7,3 +7,15 @@ export interface ChargeResult {
     receptionID: string
   }
 }
+
+export interface CallbackResult {
+  success: boolean
+  error: Error | null | string
+  data?: Callback
+}
+
+export interface Callback {
+  receptionID: string
+  chargeItemSubject: string
+  status: string
+}

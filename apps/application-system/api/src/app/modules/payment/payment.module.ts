@@ -1,11 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common'
-import { BullModule as NestBullModule } from '@nestjs/bull'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { createRedisCluster } from '@island.is/cache'
-import { TemplateAPIModule } from '@island.is/application/template-api-modules'
-import { AuthModule } from '@island.is/auth-nest-tools'
 import { TranslationsModule } from '@island.is/api/domains/translations'
-import { SigningModule } from '@island.is/dokobit-signing'
 import { AuditModule } from '@island.is/nest/audit'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 

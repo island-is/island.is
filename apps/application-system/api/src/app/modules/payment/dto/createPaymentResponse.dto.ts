@@ -20,7 +20,7 @@ export class CreatePaymentResponseDto {
   @ApiProperty()
   @Expose()
   @IsString()
-  user4!: string
+  user4?: string
 
   @ApiProperty()
   @Expose()

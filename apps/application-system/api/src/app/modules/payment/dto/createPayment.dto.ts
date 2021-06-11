@@ -12,7 +12,7 @@ export class CreatePaymentDto {
 
 	@IsString()
 	@ApiProperty()
-	readonly user4!: string
+	readonly user4?: string
 
 	@IsObject()
 	@ApiProperty()

@@ -25,11 +25,11 @@ module.exports = {
         },
         reference_id: {
           type: Sequelize.UUID,
-          allowNull: false,
+          allowNull: true,
         },
         user4: {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: true,
         },
         definition: {
           type: Sequelize.STRING,
