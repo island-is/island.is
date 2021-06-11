@@ -160,7 +160,7 @@ export class DelegationsService {
       id: id,
       fromNationalId: nationalId,
       toNationalId: delegation.toNationalId,
-      fromDisplayName: delegation.fromName,
+      toName: delegation.toName,
     })
     if (delegation.scopes && delegation.scopes.length > 0) {
       this.delegationScopeService.createMany(id, delegation.scopes)
@@ -183,10 +183,10 @@ export class DelegationsService {
       throw new UnauthorizedException()
     }
 
-    if (input.fromName) {
+    if (input.toName) {
       await this.delegationModel.update(
-        { fromDisplayName: input.fromName },
-        { where: { id: delegation.id, fromNationalId: fromNationalId } },
+        { toName: input.toName },
+        { where: { id: delegation.id } },
       )
     }
 

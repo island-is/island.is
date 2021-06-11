@@ -70,13 +70,13 @@ export class DelegationResolver {
     @CurrentUser() user: User,
     @Args('input', { type: () => CreateDelegationInput })
     input: CreateDelegationInput,
-  ): Promise<Delegation | null> {
+  ): Promise<DelegationDTO | null> {
     let delegation = await this.authService
       .getDelegationFromNationalId(user, input)
       .catch(ignore404)
     if (!delegation) {
       delegation = await this.authService.createDelegation(user, input)
-    } else if (delegation.fromName !== input.name) {
+    } else if (delegation.toName !== input.name) {
       return this.authService.updateDelegation(
         user,
         input as UpdateDelegationInput,
