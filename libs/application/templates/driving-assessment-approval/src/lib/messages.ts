@@ -1,11 +1,35 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  externalDataTitle: {
+    id: 'dla.application:externalData.title',
+    defaultMessage: 'Forsendur í akstursmati',
+    description: 'Title for data section',
+  },
+  externalDataSubtitle: {
+    id: 'dla.application:externalData.subtitle',
+    defaultMessage: 'Upplýsingar um núverandi ökuréttindi verða sótt í Ökuskírteinaskrá',
+    description: 'Subtitle for data section',
+  },
   externalDataAgreement: {
     id: 'dla.application:externalData.agreement',
     defaultMessage: 'Ég hef kynnt mér ofangreint',
     description: 'I understand',
   },
+  externalDataTeachingRightsTitle: {
+    id: 'dla.application:externalData.teachingRights.title',
+    defaultMessage: 'Staðfesting á réttindum',
+    description: 'title of external data provider for getting teaching rights - title'
+  },
+  externalDataTeachingRightsSubtitle: {
+    id: 'dla.application:externalData.teachingRights.subtitle',
+    defaultMessage: `
+      Við munum sækja skráningu þína úr ökuskírteinaskrá til að athuga hvort þú
+      hafir sannarlega ökukennararéttindi
+    `,
+    description: 'title of external data provider for getting teaching rights - description'
+  },
+
   conditionsSection: {
     id: 'dla.application:conditions.section',
     defaultMessage: 'Forsendur',

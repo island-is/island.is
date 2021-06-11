@@ -29,15 +29,15 @@ export const FormPrimary: Form = buildForm({
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'Akstursmat',
+          title: m.externalDataTitle,
+          subTitle: m.externalDataSubtitle,
+          checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
               id: 'teachingRights',
               type: 'TeachingRightsProvider',
-              title: 'Staðfesting á réttindum',
-              subTitle:
-                'Við munum sækja skráningu þína úr ökuskírteinaskrá til að athuga hvort þú ' +
-                'hafir sannarlega ökukennararéttindi',
+              title: m.externalDataTeachingRightsTitle,
+              subTitle: m.externalDataTeachingRightsSubtitle,
             }),
           ],
         }),
@@ -45,12 +45,12 @@ export const FormPrimary: Form = buildForm({
     }),
     buildSection({
       id: 'student',
-      title: 'Nemandi',
+      title: 'Upplýsingar um nemanda',
       children: [
         buildMultiField({
           id: 'info',
-          title: 'Upplýsingar umsækjanda',
-          description: 'Sláðu inn kennitölu og netfang umsækjanda',
+          title: 'Upplýsingar um nemanda',
+          description: 'Sláðu inn kennitölu og netfang nemanda',
           children: [
             buildTextField({
               id: 'student.nationalId',
@@ -97,7 +97,7 @@ export const FormPrimary: Form = buildForm({
               width: 'half',
             }),
             buildKeyValueField({
-              label: 'Kennitala umsækjanda',
+              label: 'Kennitala nemanda',
               width: 'half',
               value: ({ answers }) =>
                 formatKennitala(
@@ -105,7 +105,7 @@ export const FormPrimary: Form = buildForm({
                 ),
             }),
             buildKeyValueField({
-              label: 'Tölvupóstfang umsækjanda',
+              label: 'Tölvupóstfang nemanda',
               width: 'half',
               value: ({ answers }) =>
                 get(answers, 'student.email', '') as string,
@@ -115,7 +115,7 @@ export const FormPrimary: Form = buildForm({
               id: 'drivingAssessmentConfirmationCheck',
               options: [
                 {
-                  label: 'Ég staðfesti að umsækjandi hafi staðist akstursmat',
+                  label: 'Ég staðfesti að nemandi hafi staðist akstursmat',
                   value: 'confirmed',
                 },
               ],
