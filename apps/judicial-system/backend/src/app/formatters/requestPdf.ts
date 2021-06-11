@@ -160,7 +160,7 @@ function constructRestrictionRequestPdf(
       paragraphGap: 0,
     })
     .text(' ')
-  
+
   if (existingCase.requestProsecutorOnlySession) {
     doc
       .font('Helvetica-Bold')
@@ -175,7 +175,7 @@ function constructRestrictionRequestPdf(
       })
       .text(' ')
   }
-  
+
   doc
     .font('Helvetica-Bold')
     .text(
