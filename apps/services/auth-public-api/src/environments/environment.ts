@@ -29,6 +29,15 @@ const devConfig = {
       clientId: 'IS-DEV/GOV/10000/island-is-client',
       memberClass: XRoadMemberClass.GovernmentInstitution,
     },
+    authMiddlewareOptions: {
+      forwardUserInfo: false,
+      tokenExchangeOptions: {
+        issuer: 'https://identity-server.dev01.devland.is',
+        clientId: '@island.is/clients/national-registry',
+        clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
+        scope: '@skra.is/individuals',
+      },
+    },
   },
 }
 
@@ -62,6 +71,15 @@ const prodConfig = {
       memberCode: process.env.XROAD_NATIONAL_REGISTRY_MEMBER_CODE,
       apiPath: process.env.XROAD_NATIONAL_REGISTRY_API_PATH,
       clientId: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID,
+    },
+    authMiddlewareOptions: {
+      forwardUserInfo: false,
+      tokenExchangeOptions: {
+        issuer: process.env.IDS_ISSUER,
+        clientId: process.env.NATIONAL_REGISTRY_IDS_CLIENT_ID,
+        clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
+        scope: process.env.NATIONAL_REGISTRY_IDS_SCOPE,
+      },
     },
   },
 }
