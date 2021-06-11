@@ -12,6 +12,7 @@ import {
   ContentBlock,
   Tag,
 } from '@island.is/island-ui/core'
+import * as styles from './Login.treat'
 import SvgPlant from '../../components/Login/svgPlant'
 import { LoginPageTexts } from '../../components/Login/LoginTexts.types'
 import { Screen } from '@island.is/web/types'
@@ -90,14 +91,9 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                   'Ný útgáfa minna síðna á ísland.is. Hér er um að ræða beta útgáfu að nýjum mínum síðum, ekki eru allir möguleikar sem eru á gömlu mínum síðum í boði hér ennþá.',
                 )}
               </Text>
-              <Link
-                href="/minarsidur"
-                color="blue400"
-                underline="normal"
-                underlineVisibility="always"
-              >
+              <a className={styles.link} href="/minarsidur">
                 {n('nyjuSidurLink', 'Fara á nýju mínar síður')}
-              </Link>
+              </a>
             </GridColumn>
             <GridColumn
               span={['12/12', '12/12', '6/12']}
