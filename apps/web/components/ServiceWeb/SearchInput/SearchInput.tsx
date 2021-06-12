@@ -1,16 +1,22 @@
-import React, { useMemo, useState } from 'react'
-import { AsyncSearch, AsyncSearchOption } from '@island.is/island-ui/core'
-
-import * as styles from './SearchInput.treat'
+import React, { useMemo, useRef, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
-import { FRESHDESK_SEARCH } from '../../../screens/queries/Freshdesk'
+import {
+  AsyncSearch,
+  AsyncSearchOption,
+  AsyncSearchProps,
+} from '@island.is/island-ui/core'
 import {
   FreshdeskSearchQuery,
   FreshdeskSearchQueryVariables,
 } from '@island.is/web/graphql/schema'
 
+import { FRESHDESK_SEARCH } from '../../../screens/queries/Freshdesk'
+
+const DEBOUNCE_TIMER = 600
+
 interface SearchInputProps {
   title?: string
+  size?: AsyncSearchProps['size']
   logoTitle?: string
   logoUrl?: string
 }
@@ -19,7 +25,10 @@ export const SearchInput = ({
   title = '',
   logoTitle = '',
   logoUrl,
+  size = 'large',
 }: SearchInputProps) => {
+  const timerRef = useRef(null)
+  const [isBusy, setIsBusy] = useState<boolean>(false)
   const [searchTerms, setSearchTerms] = useState<string>('')
 
   const [doSearch, { data, loading, called, error }] = useLazyQuery<
@@ -34,8 +43,16 @@ export const SearchInput = ({
   })
 
   useMemo(() => {
-    if (searchTerms) {
+    clearTimeout(timerRef.current)
+
+    if (!called && searchTerms) {
+      console.log('first search!', searchTerms)
       doSearch()
+    } else {
+      timerRef.current = setTimeout(() => {
+        doSearch()
+        console.log('doing new search!', searchTerms)
+      }, DEBOUNCE_TIMER)
     }
   }, [searchTerms])
 
@@ -49,12 +66,16 @@ export const SearchInput = ({
 
   return (
     <AsyncSearch
-      size="large"
-      key="ok"
-      options={options}
-      inputValue={searchTerms}
-      onInputValueChange={(value) => setSearchTerms(value)}
+      size={size}
+      key="island-helpdesk"
       placeholder="Leitaðu á þjónustuvefnum"
+      options={options}
+      onChange={(value) => {
+        console.log('onChange', value)
+      }}
+      inputValue={searchTerms}
+      loading={loading}
+      onInputValueChange={(value) => setSearchTerms(value)}
     />
   )
 }
