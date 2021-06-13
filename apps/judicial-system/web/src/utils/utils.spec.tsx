@@ -427,7 +427,7 @@ describe('Step helper', () => {
         accusedGender: CaseGender.MALE,
         validToDate: '2020-10-22T12:31:00.000Z',
         type: CaseType.CUSTODY,
-        isolationTo: '2020-10-22T12:31:00.000Z',
+        isolationToDate: '2020-10-22T12:31:00.000Z',
       }
 
       // Act

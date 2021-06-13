@@ -124,6 +124,7 @@ export interface RadioField extends BaseField {
   backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
   space?: BoxProps['paddingTop']
+  onSelect?: (s: string) => void
 }
 
 export interface SelectField extends BaseField {

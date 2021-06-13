@@ -146,7 +146,7 @@ export class Case implements TCase {
   readonly courtDocuments?: string[]
 
   @Field({ nullable: true })
-  readonly additionToConclusion?: string
+  isAccusedAbsent?: boolean
 
   @Field(() => String, { nullable: true })
   readonly accusedPleaDecision?: AccusedPleaDecision
@@ -182,7 +182,10 @@ export class Case implements TCase {
   readonly otherRestrictions?: string
 
   @Field({ nullable: true })
-  readonly isolationTo?: string
+  readonly isolationToDate?: string
+
+  @Field({ nullable: true })
+  readonly additionToConclusion?: string
 
   @Field(() => String, { nullable: true })
   readonly accusedAppealDecision?: CaseAppealDecision

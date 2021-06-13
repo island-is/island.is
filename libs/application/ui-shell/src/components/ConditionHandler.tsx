@@ -1,10 +1,12 @@
 import { FC, useEffect } from 'react'
+import { useWatch } from 'react-hook-form'
+
 import {
   ExternalData,
   FormItemTypes,
   FormValue,
 } from '@island.is/application/core'
-import { useWatch } from 'react-hook-form'
+
 import { FieldDef, MultiFieldScreen } from '../types'
 import { convertMultiFieldToScreen } from '../reducer/reducerUtils'
 
@@ -29,7 +31,9 @@ export const ConditionHandler: FC<{
       screen.sectionIndex,
       screen.subSectionIndex,
     )
+
     let hasUpdated = false
+
     if (screen.isNavigable !== newScreen.isNavigable) {
       answerQuestions(data)
       hasUpdated = true
