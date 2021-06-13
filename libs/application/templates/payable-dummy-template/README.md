@@ -1,4 +1,4 @@
-# Payable template
+# Payable Template
 
 4. Add to `application/template-loader/src/lib/templateLoaders.ts` so that library knows how to import this new application template.
 5. Add a project reference to the `nx.json` [NX](https://github.com/island-is/island.is/blob/main/nx.json)

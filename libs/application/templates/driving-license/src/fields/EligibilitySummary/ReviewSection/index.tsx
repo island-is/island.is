@@ -32,11 +32,7 @@ type ReviewSectionProps = {
 const ReviewSection: FC<ReviewSectionProps> = ({
   application,
   index,
-  step: {
-    state,
-    description,
-    title,
-  },
+  step: { state, description, title },
 }) => {
   const { formatMessage } = useLocale()
 
@@ -76,7 +72,9 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         justifyContent="spaceBetween"
       >
         <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
-          <Text variant="h3">{formatText(title, application, formatMessage)}</Text>
+          <Text variant="h3">
+            {formatText(title, application, formatMessage)}
+          </Text>
           <Text marginTop={1} variant="default">
             {formatText(description, application, formatMessage)}
           </Text>

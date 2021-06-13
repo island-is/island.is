@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
-import { IsBoolean, IsObject, IsString, IsNumber, IsDate } from 'class-validator'
+import {
+  IsBoolean,
+  IsObject,
+  IsString,
+  IsNumber,
+  IsDate,
+} from 'class-validator'
 
 export class CreatePaymentResponseDto {
   @Expose()
@@ -35,5 +41,5 @@ export class CreatePaymentResponseDto {
   @ApiProperty()
   @Expose()
   @IsDate()
-  expires_at!: Date 
+  expires_at!: Date
 }

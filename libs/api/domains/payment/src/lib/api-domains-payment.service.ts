@@ -11,12 +11,17 @@ export class ApiDomainsPaymentService {
   }
 
   private makePaymentUrl(docNum: string, returnUrl: string): string {
-    return `${this.baseUrl}/quickpay/pay`
-      + `?returnUrl=${encodeURIComponent(returnUrl)}`
-      + `&doc_num=${docNum}`
+    return (
+      `${this.baseUrl}/quickpay/pay` +
+      `?returnUrl=${encodeURIComponent(returnUrl)}` +
+      `&doc_num=${docNum}`
+    )
   }
 
-  async createCharge(chargeParameters: Charge, returnUrl: string): Promise<ChargeResult> {
+  async createCharge(
+    chargeParameters: Charge,
+    returnUrl: string,
+  ): Promise<ChargeResult> {
     try {
       const charge = await this.paymentApi.createCharge(chargeParameters)
 
@@ -25,7 +30,7 @@ export class ApiDomainsPaymentService {
         error: null,
         data: {
           ...charge,
-          paymentUrl: this.makePaymentUrl(charge.user4, returnUrl)
+          paymentUrl: this.makePaymentUrl(charge.user4, returnUrl),
         },
       }
     } catch (e) {

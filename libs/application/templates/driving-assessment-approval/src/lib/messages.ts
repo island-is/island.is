@@ -8,7 +8,8 @@ export const m = defineMessages({
   },
   externalDataSubtitle: {
     id: 'dla.application:externalData.subtitle',
-    defaultMessage: 'Upplýsingar um núverandi ökuréttindi verða sótt í Ökuskírteinaskrá',
+    defaultMessage:
+      'Upplýsingar um núverandi ökuréttindi verða sótt í Ökuskírteinaskrá',
     description: 'Subtitle for data section',
   },
   externalDataAgreement: {
@@ -19,12 +20,15 @@ export const m = defineMessages({
   externalDataTeachingRightsTitle: {
     id: 'dla.application:externalData.teachingRights.title',
     defaultMessage: 'Staðfesting á réttindum',
-    description: 'title of external data provider for getting teaching rights - title'
+    description:
+      'title of external data provider for getting teaching rights - title',
   },
   externalDataTeachingRightsSubtitle: {
     id: 'dla.application:externalData.teachingRights.subtitle',
-    defaultMessage: 'Við munum sækja skráningu þína úr ökuskírteinaskrá til að athuga hvort þú hafir sannarlega ökukennararéttindi',
-    description: 'title of external data provider for getting teaching rights - description'
+    defaultMessage:
+      'Við munum sækja skráningu þína úr ökuskírteinaskrá til að athuga hvort þú hafir sannarlega ökukennararéttindi',
+    description:
+      'title of external data provider for getting teaching rights - description',
   },
 
   conditionsSection: {

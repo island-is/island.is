@@ -32,11 +32,11 @@ export const Draft: Form = buildForm({
               id: 'paymentCatalogProvider',
               type: 'PaymentCatalogProvider',
               title: 'Upplýsingar um kostnað',
-              subTitle: 'Upplýsingar um kostnað hjá Fjársýslunni'
+              subTitle: 'Upplýsingar um kostnað hjá Fjársýslunni',
             }),
           ],
         }),
-      ]
+      ],
     }),
     buildSection({
       id: 'conditions',
@@ -50,14 +50,22 @@ export const Draft: Form = buildForm({
               label: 'Kennitala stofnunar',
               width: 'half',
               value: (application: Application) => {
-                return get(application.externalData, 'paymentCatalogProvider.data.performingOrgID', 'Fannst ekki') as string
+                return get(
+                  application.externalData,
+                  'paymentCatalogProvider.data.performingOrgID',
+                  'Fannst ekki',
+                ) as string
               },
             }),
             buildKeyValueField({
               label: 'Upphæð',
               width: 'half',
               value: (application: Application) => {
-                return get(application.externalData, 'paymentCatalogProvider.data.priceAmount', 'Fannst ekki') as string
+                return get(
+                  application.externalData,
+                  'paymentCatalogProvider.data.priceAmount',
+                  'Fannst ekki',
+                ) as string
               },
             }),
             buildKeyValueField({
@@ -65,8 +73,19 @@ export const Draft: Form = buildForm({
               width: 'half',
               value: (application: Application) => {
                 console.log(application.externalData)
-                return get(application.externalData, 'paymentCatalogProvider.data.chargeItemCode', 'Fannst ekki') + ' (' +
-                  get(application.externalData, 'paymentCatalogProvider.data.chargeItemName', 'Fannst ekki') as string + ')'
+                return (
+                  ((get(
+                    application.externalData,
+                    'paymentCatalogProvider.data.chargeItemCode',
+                    'Fannst ekki',
+                  ) +
+                    ' (' +
+                    get(
+                      application.externalData,
+                      'paymentCatalogProvider.data.chargeItemName',
+                      'Fannst ekki',
+                    )) as string) + ')'
+                )
               },
             }),
             buildSubmitField({

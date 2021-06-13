@@ -18,7 +18,8 @@ export const m = defineMessages({
   },
   eligibilitySummaryTitle: {
     id: 'dl.application:eligibility.title',
-    defaultMessage: 'Skilyrði sem umsækjandi um fullnaðarskírteini þarf að uppfylla',
+    defaultMessage:
+      'Skilyrði sem umsækjandi um fullnaðarskírteini þarf að uppfylla',
     description: 'Headline showing up above the list of requirements',
   },
   yes: {
@@ -326,7 +327,7 @@ export const m = defineMessages({
   overviewPaymentCharge: {
     id: 'dl.application:overview.paymentcharge',
     defaultMessage: 'Greiðsla',
-    description: 'Cost'
+    description: 'Cost',
   },
   requirementUnmetDrivingAssessmentTitle: {
     id: 'dl.application:requirementunmet.drivingassessmenttitle',
@@ -345,7 +346,8 @@ export const m = defineMessages({
   },
   requirementUnmetDrivingSchoolDescription: {
     id: 'dl.application:requirementunmet.drivingschooldescription',
-    defaultMessage: 'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini',
+    defaultMessage:
+      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini',
     description: 'requirement unmet driving school',
   },
   requirementUnmetDeniedByServiceTitle: {
@@ -355,12 +357,14 @@ export const m = defineMessages({
   },
   requirementUnmetDeniedByServiceDescription: {
     id: 'dl.application:requirementunmet.deniedbyservicedescription',
-    defaultMessage: 'Ökuskírteinaskrá þarf að heimila að þú megir sækja um fullnaðarskírteini',
+    defaultMessage:
+      'Ökuskírteinaskrá þarf að heimila að þú megir sækja um fullnaðarskírteini',
     description: 'requirement unmet api returned false',
   },
   errorDataProvider: {
     id: 'dl.application:error.dataProvider',
-    defaultMessage: 'Villa kom upp við að sækja upplýsingar úr vefþjónustu. Reyndu aftur síðar',
+    defaultMessage:
+      'Villa kom upp við að sækja upplýsingar úr vefþjónustu. Reyndu aftur síðar',
     description: 'Unhandled error in driving license data provider',
   },
 })

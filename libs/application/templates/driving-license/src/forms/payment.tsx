@@ -32,12 +32,14 @@ export const payment: Form = buildForm({
           id: 'info',
           title: 'Greiðsla',
           description: (application) => {
-            const createCharge = application.externalData.createCharge.data as { error: '', data: { paymentUrl: string } }
-            if (!createCharge.error)
-            console.log({ createCharge })
+            const createCharge = application.externalData.createCharge.data as {
+              error: ''
+              data: { paymentUrl: string }
+            }
+            if (!createCharge.error) console.log({ createCharge })
             window.document.location.href = createCharge.data.paymentUrl
             return 'Sendi þig áfram á greiðsluveitu...'
-          }
+          },
         }),
       ],
     }),

@@ -139,7 +139,11 @@ export class SharedTemplateApiService {
   //     )
 
   //   return svc
-  async createCharge(charge: Charge, returnUrl: string, applicationId: string): Promise<ChargeResult> {
+  async createCharge(
+    charge: Charge,
+    returnUrl: string,
+    applicationId: string,
+  ): Promise<ChargeResult> {
     return this.paymentService.createPayment(charge, returnUrl, applicationId)
   }
 

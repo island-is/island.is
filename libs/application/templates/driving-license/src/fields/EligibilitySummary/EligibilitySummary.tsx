@@ -12,10 +12,10 @@ import { MessageDescriptor } from '@formatjs/intl'
 import { ApplicationEligibility, RequirementKey } from '../../types/schema'
 
 const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
-  return eligibility.requirements
-    .map(({ key, requirementMet }) => requirementKeyToStep(key, requirementMet))
+  return eligibility.requirements.map(({ key, requirementMet }) =>
+    requirementKeyToStep(key, requirementMet),
+  )
 }
-
 
 // TODO: we need a better way of getting the translated string in here, outside
 // of react. Possibly we should just make a more flexible results screen.
@@ -23,7 +23,9 @@ const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
 // for the failed dataprovider
 const requirementKeyToStep = (key: string, isRequirementMet: boolean): Step => {
   const step = {
-    state: isRequirementMet ? ReviewSectionState.complete : ReviewSectionState.requiresAction,
+    state: isRequirementMet
+      ? ReviewSectionState.complete
+      : ReviewSectionState.requiresAction,
   }
 
   switch (key) {
@@ -50,23 +52,21 @@ const requirementKeyToStep = (key: string, isRequirementMet: boolean): Step => {
   }
 }
 
-
 const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
   const {
-    eligibility: {
-      data: eligibility
-    }
+    eligibility: { data: eligibility },
   } = application.externalData
 
-  const steps = extractReasons(eligibility as unknown as ApplicationEligibility)
+  const steps = extractReasons(
+    (eligibility as unknown) as ApplicationEligibility,
+  )
 
   return (
     <Box marginBottom={10}>
       <Box
         display={['block', 'block', 'block', 'flex']}
         justifyContent="spaceBetween"
-      >
-      </Box>
+      ></Box>
 
       <Box marginTop={7} marginBottom={8}>
         {steps.map((step, i) => {

@@ -133,7 +133,7 @@ export class DrivingLicenseService {
       hasTeachingRights: status.value > 0,
     }
   }
-  
+
   async getListOfJuristictions(): Promise<Juristiction[]> {
     const embaetti = await this.drivingLicenseApi.getListOfJuristictions()
 

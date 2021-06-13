@@ -19,8 +19,7 @@ const States = {
   paymentPending: 'paymentPending',
 }
 
-type ReferenceTemplateEvent =
-  | { type: DefaultEvents.PAYMENT }
+type ReferenceTemplateEvent = { type: DefaultEvents.PAYMENT }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -63,9 +62,7 @@ const PayableDummyTemplate: ApplicationTemplate<
                 import('../forms/Draft').then((module) =>
                   Promise.resolve(module.Draft),
                 ),
-              actions: [
-                { event: 'SUBMIT', name: 'Áfram', type: 'primary' },
-              ],
+              actions: [{ event: 'SUBMIT', name: 'Áfram', type: 'primary' }],
               write: 'all',
             },
           ],

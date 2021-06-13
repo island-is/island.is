@@ -14,7 +14,9 @@ import { ApplicationEligibilityRequirement } from '@island.is/api/schema'
 export class EligibilityProvider extends BasicDataProvider {
   type = 'EligibilityProvider'
 
-  async provide(application: Application): Promise<ApplicationEligibilityRequirement> {
+  async provide(
+    application: Application,
+  ): Promise<ApplicationEligibilityRequirement> {
     const query = `
       query EligibilityQuery($drivingLicenseType: String!) {
         drivingLicenseApplicationEligibility(type: $drivingLicenseType) {
@@ -57,7 +59,7 @@ export class EligibilityProvider extends BasicDataProvider {
     return response.data.drivingLicenseApplicationEligibility
   }
 
-  onProvideError (): FailedDataProviderResult {
+  onProvideError(): FailedDataProviderResult {
     return {
       date: new Date(),
       reason: m.errorDataProvider,

@@ -18,10 +18,7 @@ import {
   DefaultEvents,
   StaticText,
 } from '@island.is/application/core'
-import {
-  NationalRegistryUser,
-  UserProfile,
-} from '../types/schema'
+import { NationalRegistryUser, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
@@ -91,7 +88,7 @@ export const application: Form = buildForm({
               id: 'eligsummary',
             }),
           ],
-        })
+        }),
       ],
     }),
 

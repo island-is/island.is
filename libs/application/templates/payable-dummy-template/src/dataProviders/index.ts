@@ -1,3 +1,1 @@
-export {
-  PaymentCatalogProvider,
-} from '@island.is/application/data-providers'
+export { PaymentCatalogProvider } from '@island.is/application/data-providers'

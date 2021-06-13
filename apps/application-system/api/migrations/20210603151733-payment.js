@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -21,7 +21,7 @@ module.exports = {
         fulfilled: {
           type: Sequelize.BOOLEAN,
           allowNull: false,
-          defaultValue: false
+          defaultValue: false,
         },
         reference_id: {
           type: Sequelize.UUID,
@@ -55,12 +55,10 @@ module.exports = {
           allowNull: false,
         },
       })
-      .then(() => 
-        queryInterface.addIndex('payment', ['application_id']),
-      )
+      .then(() => queryInterface.addIndex('payment', ['application_id']))
   },
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable('payment')
-  }
-};
+  },
+}

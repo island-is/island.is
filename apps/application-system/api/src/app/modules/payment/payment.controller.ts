@@ -14,9 +14,7 @@ import {
   ApiTags,
   ApiHeader,
 } from '@nestjs/swagger'
-import {
-  PaymentType as BasePayment,
-} from '@island.is/application/core'
+import { PaymentType as BasePayment } from '@island.is/application/core'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -33,7 +31,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
-
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -84,7 +81,7 @@ export class PaymentController {
       | 'definition'
       | 'amount'
       | 'expires_at'
-      > = {
+    > = {
       application_id: paymentDetails.application_id,
       fulfilled: false,
       reference_id: '',
@@ -127,13 +124,12 @@ export class PaymentController {
     @CurrentUser()
     user: User,
   ): Promise<CreatePaymentResponseDto> {
-
     const payments = await this.paymentService.findPaymentByApplicationId(
-      applicationId, 
-      id
+      applicationId,
+      id,
     )
     // response obj because we are updating a row in db.
-    if(payments) {
+    if (payments) {
       this.auditService.audit({
         user,
         action: 'approvePaymentApplication',
@@ -141,17 +137,28 @@ export class PaymentController {
         meta: { applicationId: applicationId, id: id },
       })
 
-      if(payments.length > 1) {
-        const payment = await this.paymentService.findCorrectApplicationPayment(payments)
-        const paymentDto:CreatePaymentResponseDto = await this.paymentService.assignValues(id, applicationId, callback.status === 'isPaid' ? true : false, payment)
+      if (payments.length > 1) {
+        const payment = await this.paymentService.findCorrectApplicationPayment(
+          payments,
+        )
+        const paymentDto: CreatePaymentResponseDto = await this.paymentService.assignValues(
+          id,
+          applicationId,
+          callback.status === 'isPaid' ? true : false,
+          payment,
+        )
         return await this.paymentModel.create(paymentDto)
-      } else if(payments.length === 1) {
-        const paymentDto:CreatePaymentResponseDto = await this.paymentService.assignValues(id, applicationId, callback.status === 'isPaid' ? true : false, payments[0])
+      } else if (payments.length === 1) {
+        const paymentDto: CreatePaymentResponseDto = await this.paymentService.assignValues(
+          id,
+          applicationId,
+          callback.status === 'isPaid' ? true : false,
+          payments[0],
+        )
         return await this.paymentModel.create(paymentDto)
       } else {
         // no record found. Throw error?
       }
-      
     }
     const paymentDto: Pick<
       BasePayment,
@@ -162,7 +169,7 @@ export class PaymentController {
       | 'definition'
       | 'amount'
       | 'expires_at'
-      > = {
+    > = {
       application_id: paymentDetails.application_id || applicationId,
       fulfilled: callback.status === 'paid' ? true : false,
       reference_id: callback.receptionID,
@@ -173,5 +180,4 @@ export class PaymentController {
     }
     return await this.paymentModel.create(paymentDto)
   }
-
 }
