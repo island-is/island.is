@@ -87,7 +87,7 @@ export class Application extends Model<Application> {
     allowNull: false,
   })
   @ApiProperty()
-  externalData!: Record<string, unknown>
+  externalData!: object
 
   @Column({
     type: DataType.ENUM,
