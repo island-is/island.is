@@ -559,6 +559,27 @@ describe('formatHeadsUpSmsNotification', () => {
     const prosecutorName = 'Al Coe'
     const arrestDate = new Date('2021-01-24T13:00')
     const requestedCourtDate = new Date('2021-06-20T10:00')
+
+    // Act
+    const res = formatCourtHeadsUpSmsNotification(
+      type,
+      prosecutorName,
+      arrestDate,
+      requestedCourtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Ný krafa um rannsóknarheimild (leit og líkamsrannsókn) í vinnslu. Ákærandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
+    )
+  })
+
+  test('should format heads up notification for investigation of type OTHER', () => {
+    // Arrange
+    const type = CaseType.OTHER
+    const prosecutorName = 'Al Coe'
+    const arrestDate = new Date('2021-01-24T13:00')
+    const requestedCourtDate = new Date('2021-06-20T10:00')
     const description = 'Leit í bifreið'
 
     // Act
@@ -572,7 +593,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný krafa um rannsóknarheimild í vinnslu: Leit og líkamsrannsókn - Leit í bifreið. Ákærandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
+      'Ný krafa um rannsóknarheimild í vinnslu. Ákærandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
     )
   })
 })

@@ -169,12 +169,10 @@ export function formatCourtHeadsUpSmsNotification(
       ? 'gæsluvarðhaldskrafa'
       : type === CaseType.TRAVEL_BAN
       ? 'farbannskrafa'
-      : 'krafa um rannsóknarheimild'
-  } í vinnslu${
-    type === CaseType.CUSTODY || type === CaseType.TRAVEL_BAN
-      ? ''
-      : `: ${capitalize(caseTypes[type])} - ${description}`
-  }.`
+      : type === CaseType.OTHER
+      ? 'krafa um rannsóknarheimild'
+      : `krafa um rannsóknarheimild (${caseTypes[type]})`
+  } í vinnslu.`
 
   return `${newCaseText}${prosecutorText}${arrestDateText}${requestedCourtDateText}`
 }
