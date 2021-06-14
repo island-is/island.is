@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
 // React libs
 #import "RCTSpotlightSearch.h"
+#import "RNQuickActionManager.h"
 #import <Firebase.h>
 #import <CodePush/CodePush.h>
 #import <React/RCTLinkingManager.h>
@@ -70,6 +71,9 @@ static void InitializeFlipper(UIApplication *application) {
 #endif
 }
 
+- (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL succeeded)) completionHandler {
+  [RNQuickActionManager onQuickActionPress:shortcutItem completionHandler:completionHandler];
+}
 
 - (BOOL)application:(UIApplication *)application
    openURL:(NSURL *)url

@@ -1,8 +1,7 @@
 import {
-  DEFAULT_ACTION_IDENTIFIER,
-  getPresentedNotificationsAsync,
+  getPresentedNotificationsAsync
 } from 'expo-notifications'
-import { AppState, AppStateStatus, Linking, Platform } from 'react-native'
+import { AppState, AppStateStatus, DeviceEventEmitter, Linking, Platform } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
 import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
@@ -11,7 +10,7 @@ import { preferencesStore } from '../../stores/preferences-store'
 import { uiStore } from '../../stores/ui-store'
 import { hideAppLockOverlay, showAppLockOverlay, skipAppLock } from '../app-lock'
 import { ButtonRegistry } from '../component-registry'
-import { isOnboarded } from '../onboarding'
+import { handleQuickAction } from '../quick-actions'
 import { handleNotificationResponse } from './setup-notifications'
 
 let backgroundAppLockTimeout: NodeJS.Timeout
@@ -124,4 +123,7 @@ export function setupEventHandlers() {
       }
     },
   )
+
+  // Handle quick actions
+  DeviceEventEmitter.addListener('quickActionShortcut', handleQuickAction);
 }

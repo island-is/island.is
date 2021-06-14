@@ -8,17 +8,27 @@ import {
   FieldRow,
   LicenceCard,
 } from '@island.is/island-ui-native'
+import { atob } from 'js-base64'
 import React from 'react'
-import { Platform, SafeAreaView, View } from 'react-native'
+import { useIntl } from 'react-intl'
+import { Button, Platform, SafeAreaView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
-import { ILicenseDataField } from '../../graphql/fragments/license.fragment'
+import {
+  IGenericLicenseDataField,
+  IGenericUserLicense,
+} from '../../graphql/fragments/license.fragment'
+import {
+  GetGenericLicenseInput,
+  GetLicenseResponse,
+  GET_GENERIC_LICENSE_QUERY,
+} from '../../graphql/queries/get-license.query'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
-import { GetLicenseResponse, GET_LICENSE_QUERY } from '../../graphql/queries/get-license.query'
+import { getMockLicenseItem } from '../wallet/wallet'
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -56,7 +66,7 @@ const FieldRender = ({ data, level = 1 }: any) => {
     <>
       {(data || []).map(
         (
-          { type, name, label, value, fields }: ILicenseDataField,
+          { type, name, label, value, fields }: IGenericLicenseDataField,
           i: number,
         ) => {
           const key = `field-${type}-${i}`
@@ -67,7 +77,11 @@ const FieldRender = ({ data, level = 1 }: any) => {
                 return (
                   <FieldGroup key={key}>
                     <FieldRow>
-                      <Field size={i === 0 ? 'large' : 'small'} label={label} value={value} />
+                      <Field
+                        size={i === 0 ? 'large' : 'small'}
+                        label={label}
+                        value={value}
+                      />
                     </FieldRow>
                   </FieldGroup>
                 )
@@ -112,15 +126,45 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 }> = ({ id, item, componentId }) => {
   useNavigationOptions(componentId)
   const theme = useTheme()
+  const intl = useIntl()
 
-  const licenseRes = useQuery<GetLicenseResponse>(GET_LICENSE_QUERY, {
-    client,
+  const licenseRes = useQuery<GetLicenseResponse, GetGenericLicenseInput>(
+    GET_GENERIC_LICENSE_QUERY,
+    {
+      client,
       variables: {
-        id,
+        input: {
+          licenseId: 'noop', // @todo hard coded for now
+          licenseType: ['DriversLicense'], // @todo hard coded for now
+          providerId: 'NationalPoliceCommissioner', // @todo hard coded for now
+        },
       },
-  })
+    },
+  )
 
-  const data = licenseRes.data?.License ?? item
+  const data: IGenericUserLicense = {
+    ...licenseRes.data?.genericLicense,
+    ...item,
+    ...getMockLicenseItem(intl),
+  }
+
+  const onAddPkPass = () => {
+    PassKit.canAddPasses().then((result: boolean) => {
+      if (result) {
+        fetch(data.pkpassUrl)
+          .then((res) => res.text())
+          .then((res) => PassKit.addPass(atob(res), 'com.snjallveskid'))
+          .then(() => {
+            // done
+          })
+          .catch((err) => {
+            alert('Failed to add pass')
+          })
+      } else {
+        alert('You cannot use passes')
+      }
+    })
+  }
 
   console.log('data', data)
 
@@ -130,9 +174,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       <View style={{ height: 140 }} />
       <Information contentInset={{ bottom: 162 }}>
         <SafeAreaView style={{ marginHorizontal: 16 }}>
-
           <FieldRender data={data?.payload.data} />
-
         </SafeAreaView>
         <View style={{ height: 60 }} />
       </Information>
@@ -150,23 +192,23 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         <LicenceCard
           nativeID={`license-${data?.license.type}_destination`}
           title={data?.license.type}
-          type={data?.license.type}
+          type={data?.license.type as any}
           date={data?.fetch.updated}
-          status={data?.license.status}
+          status={data?.license.status as any}
           agencyLogo={agencyLogo}
         />
       </SafeAreaView>
-      {Platform.OS === 'ios' && (
-        <SafeAreaView
-          style={{
-            position: 'absolute',
-            bottom: 24,
-            left: 0,
-            right: 0,
-            marginHorizontal: 16,
-            zIndex: 100,
-          }}
-        >
+      <SafeAreaView
+        style={{
+          position: 'absolute',
+          bottom: 24,
+          left: 0,
+          right: 0,
+          marginHorizontal: 16,
+          zIndex: 100,
+        }}
+      >
+        {Platform.OS === 'ios' ? (
           <AddPassButton
             style={{ height: 52 }}
             addPassButtonStyle={
@@ -174,12 +216,12 @@ export const WalletPassScreen: NavigationFunctionComponent<{
                 ? PassKit.AddPassButtonStyle.blackOutline
                 : PassKit.AddPassButtonStyle.black
             }
-            onPress={() => {
-              alert('Not implemented yet')
-            }}
+            onPress={onAddPkPass}
           />
-        </SafeAreaView>
-      )}
+        ) : (
+          <Button title="Add to Wallet" onPress={onAddPkPass} color="#111111" />
+        )}
+      </SafeAreaView>
     </View>
   )
 }

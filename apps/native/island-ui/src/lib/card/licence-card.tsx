@@ -5,6 +5,7 @@ import {
   LicenseStatus,
   LicenseType,
 } from '../../../../app/src/types/license-type'
+import { FormattedDate } from 'react-intl'
 import danger from '../../assets/card/danger.png'
 import isVerifiedLogo from '../../assets/card/is-verified.png'
 import driverLicence from '../../assets/card/okuskyrteini.png'
@@ -174,7 +175,9 @@ export function LicenceCard({
           </ValidationWrap>
         }
         {date &&
-          <TimeStamp color={textColor}>{date}</TimeStamp>
+          <TimeStamp color={textColor}>
+            <FormattedDate dateStyle="short" timeStyle="short" value={date}  />
+          </TimeStamp>
         }
       </Content>
       <ImgWrap>{logo}</ImgWrap>

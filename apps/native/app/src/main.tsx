@@ -9,6 +9,7 @@ import { setupNotifications, openInitialNotification } from './utils/lifecycle/s
 import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { showAppLockOverlay } from './utils/app-lock'
 import { readAuthorizeResult } from './stores/auth-store'
+import { performanceMetricsAppLaunched } from './utils/performance-metrics'
 
 async function startApp() {
   // setup global packages and polyfills
@@ -44,7 +45,7 @@ async function startApp() {
     await Navigation.dismissAllOverlays()
 
     // Show lock screen overlay
-    await showAppLockOverlay({ enforceActivated: true })
+    showAppLockOverlay({ enforceActivated: true })
 
     // Dismiss all modals
     await Navigation.dismissAllModals()
@@ -54,6 +55,9 @@ async function startApp() {
 
     // Open initial notification on android
     openInitialNotification();
+
+    // Mark app launched
+    performanceMetricsAppLaunched();
   })
 }
 

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>StringsTable</key>
+	<string>Root</string>
+	<key>PreferenceSpecifiers</key>
+	<array>
+		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Language</string>
+			<key>Key</key>
+			<string>language_preference</string>
+			<key>DefaultValue</key>
+			<string>is-IS</string>
+			<key>Titles</key>
+			<array>
+				<string>Icelandic</string>
+				<string>English</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<string>is-IS</string>
+				<string>en-US</string>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Appearance</string>
+			<key>Key</key>
+			<string>appearance_preference</string>
+			<key>DefaultValue</key>
+			<string>automatic</string>
+			<key>Titles</key>
+			<array>
+				<string>System default</string>
+				<string>Light mode</string>
+        <string>Dark mode</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<string>automatic</string>
+				<string>light</string>
+        <string>dark</string>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>App Info</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+			<key>Title</key>
+			<string>Version</string>
+			<key>Key</key>
+			<string>version_preference</string>
+			<key>DefaultValue</key>
+			<string>1.0.0</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+			<key>Title</key>
+			<string>Build</string>
+			<key>Key</key>
+			<string>build_preference</string>
+			<key>DefaultValue</key>
+			<string>25</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-export const LicenseDataFieldFragment = gql`
-  fragment LicenseDataFieldFragment on GenericLicenseDataField {
+export const GenericLicenseDataFieldFragment = gql`
+  fragment GenericLicenseDataFieldFragment on GenericLicenseDataField {
     type
     name
     label
@@ -21,8 +21,8 @@ export const LicenseDataFieldFragment = gql`
   }
 `;
 
-export const LicenseFragment = gql`
-  fragment LicenseFragment on GenericLicense {
+export const GenericUserLicenseFragment = gql`
+  fragment GenericUserLicenseFragment on GenericUserLicense {
     nationalId
     license {
       type
@@ -37,18 +37,19 @@ export const LicenseFragment = gql`
       status
       updated
     }
+    pkpassUrl
     payload {
       data {
-        ...LicenseDataFieldFragment
+        ...GenericLicenseDataFieldFragment
       }
       rawData
     }
   }
-  ${LicenseDataFieldFragment}
+  ${GenericLicenseDataFieldFragment}
 `;
 
 
-export interface ILicenseDataField {
+export interface IGenericLicenseDataField {
   type: string;
   name: string;
   label: string;
@@ -67,7 +68,7 @@ export interface ILicenseDataField {
   }>
 }
 
-export interface ILicense {
+export interface IGenericUserLicense {
   nationalId: string;
   license: {
     type: string;
@@ -78,12 +79,13 @@ export interface ILicense {
     timeout: string;
     status: string;
   }
+  pkpassUrl: string;
   fetch: {
     status: string;
     updated: string;
   }
   payload: {
-    data: ILicenseDataField;
+    data: IGenericLicenseDataField;
     rawData: string;
   }
 }

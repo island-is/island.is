@@ -214,6 +214,7 @@ dependencies {
     implementation project(':react-native-keychain')
     implementation project(':react-native-localize')
     implementation project(':react-native-interactable')
+    implementation project(':react-native-quick-actions')
     implementation project(':react-native-navigation')
     implementation project(':react-native-ultimate-config')
     implementation project(':react-native-web-view')

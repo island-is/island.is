@@ -37,6 +37,7 @@ export function setupRoutes() {
   })
 
   addRoute('/wallet', () => {
+    console.log(' i am wallet')
     Navigation.dismissAllModals()
     selectTab(2)
   })

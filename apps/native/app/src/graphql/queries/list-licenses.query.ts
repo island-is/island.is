@@ -1,30 +1,15 @@
 import { gql } from '@apollo/client';
-import { LicenseDataFieldFragment } from '../fragments/license.fragment';
+import { GenericUserLicenseFragment, IGenericUserLicense } from '../fragments/license.fragment';
 
-export const LIST_LICENSES_QUERY = gql`
-  query {
-    listLicenses @client {
-      nationalId
-      license {
-        type
-        provider {
-          id
-        }
-        pkpass
-        timeout
-        status
-      }
-      fetch {
-        status
-        updated
-      }
-      payload {
-        data {
-          ...LicenseDataFieldFragment
-        }
-        rawData
-      }
+export const LIST_GENERIC_LICENSES_QUERY = gql`
+  query genericLicenses {
+    genericLicenses {
+      ...GenericLicenseFragment
     }
   }
-  ${LicenseDataFieldFragment}
+  ${GenericUserLicenseFragment}
 `;
+
+export interface ListGenericLicensesResponse {
+  genericLicenses: IGenericUserLicense[];
+}

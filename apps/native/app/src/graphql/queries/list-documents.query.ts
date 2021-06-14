@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import { IDocument } from '../fragments/document.fragment';
 
 export const LIST_DOCUMENTS_QUERY = gql`
-  query {
+  query listDocuments {
     listDocuments {
       id
       date

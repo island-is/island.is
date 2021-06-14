@@ -35,6 +35,7 @@ target 'IslandApp' do
   pod 'RNFBPerf', :path => '../../node_modules/@react-native-firebase/perf'
   pod 'RNFBMessaging', :path => '../../node_modules/@react-native-firebase/messaging'
   pod 'RNCAsyncStorage', :path => '../../node_modules/@react-native-community/async-storage'
+  pod 'RNQuickAction', :path => '../../node_modules/react-native-quick-actions'
   pod 'ReactNativeKeyboardManager', :path => '../../node_modules/react-native-keyboard-manager'
   pod 'ReactNativeNavigation', :path => '../../node_modules/react-native-navigation'
   pod 'Interactable', :path => '../../node_modules/react-native-interactable'
