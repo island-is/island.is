@@ -167,7 +167,6 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                   />
                   <T.Body>
                     {financeStatusData.organizations.map(
-                      // TODO: Put in separate component :+1:
                       (org: FinanceStatusOrganizationType) =>
                         org.chargeTypes.map((chargeType) => (
                           <FinanceStatusTableRow

@@ -1,4 +1,5 @@
 import { downloadCSV } from './downloadFile'
+import flatten from 'lodash/flatten'
 import {
   FinanceStatusDetailsType,
   FinanceStatusDetailsChangeItem,
@@ -38,4 +39,22 @@ export const exportGjoldSundurlidunCSV = async (
   )
 
   await downloadCSV(name, gjoldSundurlidunHeaders, dataArray)
+}
+
+export const exportGjoldSundurlidunXSLX = (data: FinanceStatusDetailsType) => {
+  const dataArray = data.chargeItemSubjects.map(
+    (item: FinanceStatusDetailsChangeItem) => [
+      item.chargeItemSubject,
+      item.timePeriod,
+      item.dueDate,
+      item.finalDueDate,
+      item.principal.toString(),
+      item.interest.toString(),
+      item.cost.toString(),
+      item.paid.toString(),
+      item.totals.toString(),
+    ],
+  )
+
+  return flatten(dataArray)
 }

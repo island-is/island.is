@@ -1,20 +1,24 @@
 import React, { FC } from 'react'
 import { Table as T } from '@island.is/island-ui/core'
+import { gql, useLazyQuery } from '@apollo/client'
 import {
   FinanceStatusOrganizationType,
   FinanceStatusDetailsType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
 import amountFormat from '../../utils/amountFormat'
+import { Box, Text, Columns, Column, Button } from '@island.is/island-ui/core'
 import {
-  Box,
-  Text,
-  Columns,
-  Column,
-  ArrowLink,
-  Button,
-} from '@island.is/island-ui/core'
-import { exportGjoldSundurlidunCSV } from '../../utils/csvGjoldSundurlidun'
+  exportGjoldSundurlidunCSV,
+  exportGjoldSundurlidunXSLX,
+} from '../../utils/filesGjoldSundurlidun'
+import { downloadXlsx } from '../../utils/downloadFile'
 import * as styles from './FinanceStatusDetailTable.treat'
+
+const GetExcelSheetData = gql`
+  query GetExcelSheetData($input: ExcelSheetInput!) {
+    getExcelDocument(input: $input)
+  }
+`
 
 interface Props {
   organization: FinanceStatusOrganizationType
@@ -36,6 +40,18 @@ const FinanceStatusDetailTable: FC<Props> = ({
     'Greiðslur',
     'Staða',
   ]
+
+  const [loadExcelSheet] = useLazyQuery(GetExcelSheetData, {
+    onCompleted: (data) => {
+      const xlslData = data?.getExcelDocument || null
+      if (xlslData) {
+        downloadXlsx(xlslData.file, xlslData.filename)
+      } else {
+        console.warn('No excel data')
+      }
+    },
+  })
+
   return (
     <Box className={styles.wrapper} background="white">
       <T.Table>
@@ -54,7 +70,18 @@ const FinanceStatusDetailTable: FC<Props> = ({
                   colorScheme="default"
                   icon="arrowForward"
                   iconType="filled"
-                  // onClick={function noRefCheck() {}}
+                  onClick={() =>
+                    loadExcelSheet({
+                      variables: {
+                        input: {
+                          headers: tableHeaderArray,
+                          data: exportGjoldSundurlidunXSLX(
+                            financeStatusDetails,
+                          ),
+                        },
+                      },
+                    })
+                  }
                   preTextIconType="filled"
                   size="small"
                   type="button"
