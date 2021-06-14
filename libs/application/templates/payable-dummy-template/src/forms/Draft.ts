@@ -39,7 +39,7 @@ export const Draft: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'conditions',
+      id: 'info',
       title: 'Upplýsingar',
       children: [
         buildMultiField({

@@ -9,6 +9,7 @@ import { FundingGovernmentProjectsModule } from './funding-government-projects/f
 import { PartyLetterModule } from './party-letter/party-letter.module'
 import { DrivingLicenseSubmissionModule } from './driving-license-submission/driving-license-submission.module'
 import { PartyApplicationModule } from './party-application/party-application.module'
+import { PayableDummyTemplateModule } from './payable-dummy-template/payable-dummy-template.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -22,6 +23,7 @@ export const modules = [
   PartyLetterModule,
   DrivingLicenseSubmissionModule,
   PartyApplicationModule,
+  PayableDummyTemplateModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -35,3 +37,4 @@ export { FundingGovernmentProjectsService } from './funding-government-projects/
 export { PartyLetterService } from './party-letter/party-letter.service'
 export { DrivingLicenseSubmissionService } from './driving-license-submission/driving-license-submission.service'
 export { PartyApplicationService } from './party-application/party-application.service'
+export { PayableDummyTemplateService } from './payable-dummy-template/payable-dummy-template.service'
