@@ -1,18 +1,22 @@
 import { useQuery } from '@apollo/client'
+import { dynamicColor, TopLine } from '@island.is/island-ui-native'
 import React, { useCallback, useRef, useState } from 'react'
 import {
+  Animated,
   DynamicColorIOS,
   FlatList,
   Platform,
   RefreshControl,
+  StyleSheet
 } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
+import styled from 'styled-components/native'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
 import {
   ListApplicationsResponse,
-  LIST_APPLICATIONS_QUERY,
+  LIST_APPLICATIONS_QUERY
 } from '../../graphql/queries/list-applications.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
@@ -91,6 +95,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   const renderItem = useCallback(({ item }: any) => item.component, [])
   const keyExtractor = useCallback((item) => item.id, [])
+  const scrollY = useRef(new Animated.Value(0)).current
 
   const refetch = async () => {
     setLoading(true)
@@ -130,7 +135,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   return (
     <>
       <BottomTabsIndicator index={1} total={3} />
-      <FlatList
+      <Animated.FlatList
         ref={flatListRef}
         testID={testIDs.SCREEN_HOME}
         keyExtractor={keyExtractor}
@@ -140,10 +145,18 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         data={data}
         renderItem={renderItem}
         style={{ flex: 1 }}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          {
+            useNativeDriver: true,
+          },
+        )}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={refetch} />
         }
       />
+      <TopLine scrollY={scrollY} />
     </>
   )
 }

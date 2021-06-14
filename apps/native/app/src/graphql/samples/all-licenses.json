@@ -81,6 +81,26 @@
           "fields": [
             {
               "type": "Category",
+              "name": "A",
+              "label": "Mótorhjól",
+              "value": null,
+              "fields": [
+                {
+                  "type": "Value",
+                  "name": null,
+                  "label": "Lokadagur",
+                  "value": "2050-05-22T00:00:00"
+                },
+                {
+                  "type": "Value",
+                  "name": null,
+                  "label": "Útgáfudagur",
+                  "value": "2000-08-10T00:00:00"
+                }
+              ]
+            },
+            {
+              "type": "Category",
               "name": "B",
               "label": "Bifreið",
               "value": null,
@@ -98,7 +118,88 @@
                   "value": "2000-08-10T00:00:00"
                 }
               ]
+            },
+            {
+              "type": "Category",
+              "name": "BE",
+              "label": "Bifreið með eftirvagn",
+              "value": null,
+              "fields": [
+                {
+                  "type": "Value",
+                  "name": null,
+                  "label": "Lokadagur",
+                  "value": "2050-05-22T00:00:00"
+                },
+                {
+                  "type": "Value",
+                  "name": null,
+                  "label": "Útgáfudagur",
+                  "value": "2000-08-10T00:00:00"
+                }
+              ]
+            },
+            {
+              "type": "Category",
+              "name": "C",
+              "label": "Vörubifreið",
+              "value": null,
+              "fields": [
+                {
+                  "type": "Value",
+                  "name": null,
+                  "label": "Lokadagur",
+                  "value": "2050-05-22T00:00:00"
+                },
+                {
+                  "type": "Value",
+                  "name": null,
+                  "label": "Útgáfudagur",
+                  "value": "2000-08-10T00:00:00"
+                }
+              ]
+            },
+            {
+              "type": "Category",
+              "name": "CE",
+              "label": "Vörubifreið með vagn",
+              "value": null,
+              "fields": [
+                {
+                  "type": "Value",
+                  "name": null,
+                  "label": "Lokadagur",
+                  "value": "2050-05-22T00:00:00"
+                },
+                {
+                  "type": "Value",
+                  "name": null,
+                  "label": "Útgáfudagur",
+                  "value": "2000-08-10T00:00:00"
+                }
+              ]
+            },
+            {
+              "type": "Category",
+              "name": "D",
+              "label": "Rúta",
+              "value": null,
+              "fields": [
+                {
+                  "type": "Value",
+                  "name": null,
+                  "label": "Lokadagur",
+                  "value": "2050-05-22T00:00:00"
+                },
+                {
+                  "type": "Value",
+                  "name": null,
+                  "label": "Útgáfudagur",
+                  "value": "2000-08-10T00:00:00"
+                }
+              ]
             }
+
           ]
         }
       ],
