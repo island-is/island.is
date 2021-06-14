@@ -82,3 +82,10 @@ export class Application {
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
 }
+
+@ObjectType()
+export class ApplicationPaymentStatus {
+  @Field()
+  status!: string
+}
+

@@ -6,6 +6,7 @@ import {
   UseInterceptors,
   UseGuards,
   Put,
+  Get,
 } from '@nestjs/common'
 
 import {
@@ -31,6 +32,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
+import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -179,5 +181,25 @@ export class PaymentController {
       expires_at: new Date(),
     }
     return await this.paymentModel.create(paymentDto)
+  }
+
+  @Scopes(ApplicationScope.read)
+  @Get('applications/:application_id/payment-status')
+  @ApiParam({
+    name: 'application_id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update fulfilled status.',
+  })
+  async getPaymentStatus(
+    @Param('applicationid') applicationId: string,
+  ): Promise<PaymentStatusResponseDto> {
+    const [ payment ] = await this.paymentService.findPaymentByApplicationId(
+      applicationId,
+    )
+
+    return {
+      fulfilled: payment.fulfilled,
+    }
   }
 }

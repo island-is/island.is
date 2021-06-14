@@ -9,7 +9,7 @@ import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationService } from './application.service'
-import { Application } from './application.model'
+import { Application, ApplicationPaymentStatus } from './application.model'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -26,6 +26,7 @@ import { ApplicationApplicationsInput } from './dto/applicationApplications.inpu
 import { RequestFileSignatureResponse } from './dto/requestFileSignature.response'
 import { PresignedUrlResponse } from './dto/presignedUrl.response'
 import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
+import { ApplicationPaymentStatusInput } from './dto/applicationPaymentStatusInput'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -40,6 +41,16 @@ export class ApplicationResolver {
     @CurrentUser() user: User,
   ): Promise<Application> {
     return this.applicationService.findOne(input.id, user, locale)
+  }
+
+  @Query(() => [ApplicationPaymentStatus], { nullable: true })
+  async applicationPaymentStatus(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input', { nullable: true }) input?: ApplicationPaymentStatusInput,
+  ): Promise<ApplicationPaymentStatus[] | null> {
+    return this.applicationService.findAll(user, locale, input)
   }
 
   @Query(() => [Application], { nullable: true })

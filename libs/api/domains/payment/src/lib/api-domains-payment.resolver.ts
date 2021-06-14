@@ -11,11 +11,6 @@ import { CreatingPaymentModel, PaymentCatalogResponse } from './models/index'
 export class PaymentResolver {
   constructor(private paymentService: PaymentAPI) {}
 
-  @Query(() => CreatingPaymentModel)
-  createChargePayment(createChargeToClient: Charge) {
-    return this.paymentService.createCharge(createChargeToClient)
-  }
-
   @Query(() => PaymentCatalogResponse)
   paymentCatalog(): Promise<PaymentCatalogResponse> {
     return this.paymentService.getCatalog()

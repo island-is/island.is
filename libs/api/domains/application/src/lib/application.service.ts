@@ -5,7 +5,7 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 
-import { ApplicationsApi } from '../../gen/fetch'
+import { ApplicationsApi, PaymentsApi } from '../../gen/fetch'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
@@ -35,16 +35,32 @@ const handleError = async (error: any) => {
 
 @Injectable()
 export class ApplicationService {
-  constructor(private _applicationApi: ApplicationsApi) {}
+  constructor(
+    private _applicationApi: ApplicationsApi,
+    private _applicationPaymentApi: PaymentsApi
+  ) {}
 
   applicationApiWithAuth(auth: Auth) {
     return this._applicationApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  paymentApiWithAuth(auth: Auth) {
+    return this._applicationPaymentApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async findOne(id: string, auth: Auth, locale: Locale) {
     return await this.applicationApiWithAuth(auth)
       .applicationControllerFindOne({
         id,
+        locale,
+      })
+      .catch(handleError)
+  }
+
+  async getPaymentStatus(applicationId: string, auth: Auth, locale: Locale) {
+    return await this.paymentApiWithAuth(auth)
+      .paymentControllerGetPaymentStatus({
+        applicationId,
         locale,
       })
       .catch(handleError)
