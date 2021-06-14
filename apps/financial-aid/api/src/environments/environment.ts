@@ -36,7 +36,7 @@ const prodConfig = {
 const devConfig = {
   production: false,
   auth: {
-    samlEntryPoint: 'https://innskraning.island.is/?id=financial-aid.local',
+    samlEntryPoint: 'https://innskraning.island.is/?id=judicial-system.local',
     audience: 'localhost:4200',
     allowAuthBypass: true,
     allowFakeUsers: true,
