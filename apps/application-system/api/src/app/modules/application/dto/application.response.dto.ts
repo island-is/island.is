@@ -96,7 +96,7 @@ export class ApplicationResponseDto {
   @ApiProperty()
   @Expose()
   @IsObject()
-  externalData!: Record<string, unknown>
+  externalData!: object
 
   @ApiPropertyOptional()
   @Expose()
