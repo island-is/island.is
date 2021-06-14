@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
+import { cloneDeep } from 'lodash'
 
 import type { Attachment, Period } from '@island.is/clients/vmst'
 import { ParentalLeaveApi } from '@island.is/clients/vmst'
@@ -10,6 +11,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Application, getValueViaPath } from '@island.is/application/core'
 import {
   getApplicationAnswers,
+  getAvailableRightsInDays,
+  getAvailablePersonalRightsInDays,
   getSelectedChild,
   YES,
 } from '@island.is/application/templates/parental-leave'
@@ -109,19 +112,23 @@ export class ParentalLeaveService {
     application: Application,
     nationalRegistryId: string,
   ): Promise<Period[]> {
-    const { periods: answers } = getApplicationAnswers(application.answers)
-    const selectedChild = getSelectedChild(
+    const { periods: originalPeriods } = getApplicationAnswers(
       application.answers,
-      application.externalData,
     )
+    const answers = cloneDeep(originalPeriods).sort((a, b) => {
+      const dateA = new Date(a.startDate)
+      const dateB = new Date(b.startDate)
 
-    if (!selectedChild) {
-      throw new Error('Missing selected child')
-    }
+      return dateA.getTime() - dateB.getTime()
+    })
 
     const periods: Period[] = []
-    let daysAllowed = selectedChild.remainingDays
-    let extraDaysToTransformIntoPeriod = 0
+
+    const maximumDaysToSpend = getAvailableRightsInDays(application)
+    const maximumPersonalDaysToSpend = getAvailablePersonalRightsInDays(
+      application,
+    )
+    let numberOfDaysAlreadySpent = 0
 
     for (const period of answers) {
       const startDate = new Date(period.startDate)
@@ -129,9 +136,33 @@ export class ParentalLeaveService {
       const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
         { nationalRegistryId, startDate, endDate, percentage: period.ratio },
       )
-      const periodLength = Number(getPeriodLength?.periodLength ?? 0)
 
-      if (daysAllowed > periodLength) {
+      if (getPeriodLength.periodLength === undefined) {
+        throw new Error(
+          `Could not calculate length of period from ${period.startDate} to ${period.endDate}`,
+        )
+      }
+
+      const periodLength = Number(getPeriodLength.periodLength ?? 0)
+      const numberOfDaysSpentAfterPeriod =
+        numberOfDaysAlreadySpent + periodLength
+
+      if (numberOfDaysSpentAfterPeriod > maximumDaysToSpend) {
+        throw new Error(
+          `Period from ${period.startDate} to ${period.endDate} will exceed rights (${numberOfDaysSpentAfterPeriod} > ${maximumDaysToSpend})`,
+        )
+      }
+
+      const isUsingTransferredRights =
+        numberOfDaysAlreadySpent > maximumPersonalDaysToSpend
+      const willStartToUseTransferredRightsWithPeriod =
+        numberOfDaysSpentAfterPeriod > maximumPersonalDaysToSpend
+
+      if (
+        !isUsingTransferredRights &&
+        !willStartToUseTransferredRightsWithPeriod
+      ) {
+        // We know its a normal period and it will not exceed personal rights
         periods.push({
           from: period.startDate,
           to: period.endDate,
@@ -140,60 +171,83 @@ export class ParentalLeaveService {
           paid: false,
           rightsCodePeriod: null,
         })
+      } else if (isUsingTransferredRights) {
+        // We know all of the period will be using transferred rights
+        periods.push({
+          from: period.startDate,
+          to: period.endDate,
+          ratio: Number(period.ratio),
+          approved: false,
+          paid: false,
+          rightsCodePeriod: apiConstants.rights.receivingRightsId,
+        })
+      } else {
+        // If we reach here, we have a period that will have to be split into
+        // two, a part of it will be using personal rights and the other part
+        // will be using transferred rights
+        const daysLeftOfPersonalRights =
+          maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
 
-        daysAllowed = daysAllowed - periodLength
-      } else if (daysAllowed > 0) {
-        const getPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+        const getNormalPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
           {
             nationalRegistryId,
             startDate,
-            length: String(daysAllowed),
+            length: String(daysLeftOfPersonalRights),
             percentage: period.ratio,
           },
         )
-        const periodEndDate = getPeriodEndDate?.periodEndDate
 
-        if (periodEndDate) {
-          periods.push({
-            from: period.startDate,
-            to: format(periodEndDate, df),
-            ratio: Number(period.ratio),
-            approved: false,
-            paid: false,
-            rightsCodePeriod: null,
-          })
+        if (getNormalPeriodEndDate.periodEndDate === undefined) {
+          throw new Error(
+            `Could not calculate end date of period starting ${period.startDate} and using ${daysLeftOfPersonalRights} days of rights`,
+          )
         }
 
-        daysAllowed = 0
-        extraDaysToTransformIntoPeriod = 45
-      }
-    }
-
-    if (extraDaysToTransformIntoPeriod > 0) {
-      const extraStartDate = addDays(
-        new Date(periods[periods.length - 1].to),
-        1,
-      )
-      const getExtraPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-        {
-          nationalRegistryId,
-          startDate: extraStartDate,
-          length: String(extraDaysToTransformIntoPeriod),
-          percentage: '100',
-        },
-      )
-      const extraPeriodEndDate = getExtraPeriodEndDate?.periodEndDate
-
-      if (extraPeriodEndDate) {
+        // Add the period using personal rights
         periods.push({
-          from: format(extraStartDate, df),
-          to: format(extraPeriodEndDate, df),
-          ratio: 100,
+          from: period.startDate,
+          to: format(getNormalPeriodEndDate.periodEndDate, df),
+          ratio: Number(period.ratio),
+          approved: false,
+          paid: false,
+          rightsCodePeriod: null,
+        })
+
+        const transferredPeriodStartDate = addDays(
+          getNormalPeriodEndDate.periodEndDate,
+          1,
+        )
+        const lengthOfPeriodUsingTransferredDays =
+          periodLength - daysLeftOfPersonalRights
+
+        const getTransferredPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+          {
+            nationalRegistryId,
+            startDate: transferredPeriodStartDate,
+            length: String(lengthOfPeriodUsingTransferredDays),
+            percentage: period.ratio,
+          },
+        )
+
+        if (getTransferredPeriodEndDate.periodEndDate === undefined) {
+          throw new Error(
+            `Could not calculate end date of period starting ${period.startDate} and using ${lengthOfPeriodUsingTransferredDays} days of rights`,
+          )
+        }
+
+        // Add the period using transferred rights
+        periods.push({
+          from: format(transferredPeriodStartDate, df),
+          to: format(getTransferredPeriodEndDate.periodEndDate, df),
+          ratio: Number(period.ratio),
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
         })
       }
+
+      // Add each period to the total number of days spent when an iteration is finished
+      numberOfDaysAlreadySpent += periodLength
     }
 
     return periods

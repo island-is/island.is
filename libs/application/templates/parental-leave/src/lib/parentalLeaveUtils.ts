@@ -16,7 +16,14 @@ import { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { TimelinePeriod } from '../fields/components/Timeline'
-import { YES, NO, MANUAL, SPOUSE, StartDateOptions } from '../constants'
+import {
+  YES,
+  NO,
+  MANUAL,
+  SPOUSE,
+  StartDateOptions,
+  ParentalRelations,
+} from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
 import { daysToMonths } from '../lib/directorateOfLabour.utils'
@@ -119,6 +126,14 @@ export const getTransferredDays = (
   application: Application,
   selectedChild: ChildInformation,
 ) => {
+  // Primary parent decides if rights are transferred or not
+  // If the current parent is a secondary parent then the value
+  // will be stored in external data
+  if (selectedChild.parentalRelation === ParentalRelations.secondary) {
+    return selectedChild.transferredDays ?? 0
+  }
+
+  // This is a primary parent, let's have a look at the answers
   const {
     isRequestingRights,
     requestDays,
@@ -143,28 +158,53 @@ export const getTransferredDays = (
   return days
 }
 
-/**
- * Returns the number of months available for the applicant.
- */
-export const getAvailableRightsInMonths = (application: Application) => {
-  const { answers, externalData } = application
-  const selectedChild = getSelectedChild(answers, externalData)
+export const getAvailableRightsInDays = (application: Application) => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
 
   if (!selectedChild) {
     throw new Error('Missing selected child')
   }
 
-  const useMockData = getValueViaPath(answers, 'mock.useMockData') === YES
-
-  if (useMockData) {
-    return daysToMonths(
-      selectedChild.remainingDays +
-        getTransferredDays(application, selectedChild),
-    )
+  if (selectedChild.parentalRelation === ParentalRelations.secondary) {
+    // Transferred days are chosen for secondary parent by primary parent
+    // so they are persisted into external data
+    return selectedChild.remainingDays
   }
 
-  return daysToMonths(selectedChild.remainingDays)
+  // Primary parent chooses transferred days so they are persisted into answers
+  const transferredDays = getTransferredDays(application, selectedChild)
+
+  return selectedChild.remainingDays + transferredDays
 }
+
+export const getAvailablePersonalRightsInDays = (application: Application) => {
+  const totalDaysAvailable = getAvailableRightsInDays(application)
+
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+
+  const totalTransferredDays = getTransferredDays(application, selectedChild)
+
+  return totalDaysAvailable - totalTransferredDays
+}
+
+export const getAvailablePersonalRightsInMonths = (application: Application) =>
+  daysToMonths(getAvailablePersonalRightsInDays(application))
+
+/**
+ * Returns the number of months available for the applicant.
+ */
+export const getAvailableRightsInMonths = (application: Application) =>
+  daysToMonths(getAvailableRightsInDays(application))
 
 export const getSpouse = (application: Application): FamilyMember | null => {
   const family = getValueViaPath(
