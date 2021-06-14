@@ -43,14 +43,18 @@ export class ApplicationResolver {
     return this.applicationService.findOne(input.id, user, locale)
   }
 
-  @Query(() => [ApplicationPaymentStatus], { nullable: true })
+  @Query(() => ApplicationPaymentStatus, { nullable: true })
   async applicationPaymentStatus(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input') input: ApplicationPaymentStatusInput,
-  ): Promise<ApplicationPaymentStatus[] | void> {
-    return this.applicationService.getPaymentStatus(input.id, user, locale)
+  ): Promise<ApplicationPaymentStatus | null> {
+    const status = await this.applicationService.getPaymentStatus(input.id, user, locale)
+
+    return {
+      fulfilled: status.fulfilled
+    }
   }
 
   @Query(() => [Application], { nullable: true })

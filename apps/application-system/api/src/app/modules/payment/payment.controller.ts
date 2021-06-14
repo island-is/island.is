@@ -14,6 +14,7 @@ import {
   ApiParam,
   ApiTags,
   ApiHeader,
+  ApiOkResponse,
 } from '@nestjs/swagger'
 import { PaymentType as BasePayment } from '@island.is/application/core'
 import type { User } from '@island.is/auth-nest-tools'
@@ -171,6 +172,7 @@ export class PaymentController {
 
   @Scopes(ApplicationScope.read)
   @Get('applications/:application_id/payment-status')
+  @ApiOkResponse({ type: PaymentStatusResponseDto })
   @ApiParam({
     name: 'application_id',
     type: String,

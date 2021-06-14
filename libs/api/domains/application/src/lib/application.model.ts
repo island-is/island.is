@@ -86,6 +86,6 @@ export class Application {
 @ObjectType()
 export class ApplicationPaymentStatus {
   @Field()
-  status!: string
+  fulfilled!: boolean
 }
 
