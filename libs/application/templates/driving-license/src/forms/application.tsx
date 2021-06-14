@@ -253,6 +253,7 @@ export const application: Form = buildForm({
               id: 'submit',
               placement: 'footer',
               title: 'Panta ökuskírteini',
+              refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,

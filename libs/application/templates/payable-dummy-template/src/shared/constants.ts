@@ -1,3 +1,3 @@
 export enum ApiActions {
-  pay = 'pay',
+  createCharge = 'createCharge',
 }

@@ -46,6 +46,19 @@ export const Draft: Form = buildForm({
           id: 'externalDataSuccess',
           title: 'Æði',
           children: [
+            buildSubmitField({
+              id: 'toDraft',
+              placement: 'footer',
+              title: 'Æði æði æði, ennþá meiri gæði',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Áfram',
+                  type: 'primary',
+                },
+              ],
+            }),
             buildKeyValueField({
               label: 'Kennitala stofnunar',
               width: 'half',
@@ -61,11 +74,10 @@ export const Draft: Form = buildForm({
               label: 'Upphæð',
               width: 'half',
               value: (application: Application) => {
-                return get(
-                  application.externalData,
-                  'paymentCatalogProvider.data.priceAmount',
-                  'Fannst ekki',
-                ) as string
+                const priceAmount = get(application.externalData, 'paymentCatalogProvider.data.priceAmount', NaN) as number
+
+                // todo: get price formatting function from utils somewhere
+                return  priceAmount.toLocaleString('DE-de')
               },
             }),
             buildKeyValueField({
@@ -87,19 +99,6 @@ export const Draft: Form = buildForm({
                     )) as string) + ')'
                 )
               },
-            }),
-            buildSubmitField({
-              id: 'toDraft',
-              placement: 'footer',
-              title: 'Æði æði æði, ennþá meiri gæði',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.PAYMENT,
-                  name: 'Áfram',
-                  type: 'primary',
-                },
-              ],
             }),
           ],
         }),

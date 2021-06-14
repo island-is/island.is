@@ -28,7 +28,7 @@ export class PayableDummyTemplateService {
     console.log({ externalData })
     console.log({ answers })
 
-    const payment = (externalData.payment.data as Payment)
+    const payment = (externalData.paymentCatalogProvider.data as Payment)
 
     const chargeItem = {
       chargeItemCode: payment.chargeItemCode,
@@ -50,7 +50,6 @@ export class PayableDummyTemplateService {
         charges: [
           chargeItem,
         ],
-        payInfo: { payableAmount: chargeItem.amount },
         payeeNationalID: applicant,
         // TODO: possibly somebody else, if 'umboð'
         performerNationalID: applicant,

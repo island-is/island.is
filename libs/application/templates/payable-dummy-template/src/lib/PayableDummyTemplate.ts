@@ -53,7 +53,7 @@ const PayableDummyTemplate: ApplicationTemplate<
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
           onExit: {
-            apiModuleAction: ApiActions.pay,
+            apiModuleAction: ApiActions.createCharge,
           },
           roles: [
             {
@@ -62,7 +62,9 @@ const PayableDummyTemplate: ApplicationTemplate<
                 import('../forms/Draft').then((module) =>
                   Promise.resolve(module.Draft),
                 ),
-              actions: [{ event: 'SUBMIT', name: 'Áfram', type: 'primary' }],
+              actions: [
+                { event: DefaultEvents.PAYMENT, name: 'Áfram', type: 'primary' },
+              ],
               write: 'all',
             },
           ],
