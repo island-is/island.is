@@ -135,14 +135,6 @@ export const TransitionCaseMutation = gql`
   }
 `
 
-export const SendNotificationMutation = gql`
-  mutation SendNotificationMutation($input: SendNotificationInput!) {
-    sendNotification(input: $input) {
-      notificationSent
-    }
-  }
-`
-
 export const CreatePresignedPostMutation = gql`
   mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
     createPresignedPost(input: $input) {

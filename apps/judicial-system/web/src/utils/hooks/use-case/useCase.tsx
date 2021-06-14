@@ -6,17 +6,15 @@ import {
   SendNotificationResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import {
-  SendNotificationMutation,
-  TransitionCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { TransitionCaseMutation } from '@island.is/judicial-system-web/graphql'
 import {
   parseString,
   parseTransition,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { CreateCaseMutation } from './createCaseGql'
-import { UpdateCaseMutation } from './updateCaseGql'
 import { CreateCourtCaseMutation } from './createCourtCaseGql'
+import { UpdateCaseMutation } from './updateCaseGql'
+import { SendNotificationMutation } from './sendNotificationGql'
 
 type autofillProperties = Pick<
   Case,

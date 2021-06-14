@@ -43,7 +43,6 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   CaseQuery,
-  SendNotificationMutation,
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { useMutation, useQuery } from '@apollo/client'
@@ -54,6 +53,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useRouter } from 'next/router'
 import * as style from './Confirmation.treat'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface SigningModalProps {
   workingCase: Case
@@ -73,6 +73,8 @@ const SigningModal: React.FC<SigningModalProps> = ({
     signatureConfirmationResponse,
     setSignatureConfirmationResponse,
   ] = useState<SignatureConfirmationResponse>()
+
+  const { sendNotification } = useCase()
 
   const { data } = useQuery(SignatureConfirmationQuery, {
     variables: {
@@ -137,36 +139,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
     }
   }, [transitionCaseMutation, workingCase, setWorkingCase])
 
-  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
-
-  const sendNotification = useCallback(async () => {
-    try {
-      const { data } = await sendNotificationMutation({
-        variables: {
-          input: {
-            caseId: workingCase.id,
-            type: NotificationType.RULING,
-          },
-        },
-      })
-
-      if (!data) {
-        // TODO: Handle error
-        return
-      }
-
-      const {
-        sendNotification: { notificationSent },
-      } = data
-
-      if (!notificationSent) {
-        // TODO: Handle error
-      }
-    } catch (e) {
-      // TODO: Handle error
-    }
-  }, [sendNotificationMutation, workingCase.id])
-
   useEffect(() => {
     const completeSigning = async (
       resSignatureConfirmationResponse: SignatureConfirmationResponse,
@@ -174,7 +146,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
       if (resSignatureConfirmationResponse.documentSigned) {
         await transitionCase()
 
-        await sendNotification()
+        await sendNotification(workingCase.id, NotificationType.RULING)
       }
 
       setSignatureConfirmationResponse(resSignatureConfirmationResponse)

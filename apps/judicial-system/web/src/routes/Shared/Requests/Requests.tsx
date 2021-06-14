@@ -18,16 +18,14 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import {
-  SendNotificationMutation,
-  TransitionCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { TransitionCaseMutation } from '@island.is/judicial-system-web/graphql'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
 import router from 'next/router'
 import * as styles from './Requests.treat'
 import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const Requests: React.FC = () => {
@@ -45,21 +43,9 @@ export const Requests: React.FC = () => {
     errorPolicy: 'all',
   })
 
-  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+  const { sendNotification } = useCase()
+
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
-
-  const sendNotification = async (id: string) => {
-    const { data } = await sendNotificationMutation({
-      variables: {
-        input: {
-          caseId: id,
-          type: NotificationType.REVOKED,
-        },
-      },
-    })
-
-    return data?.sendNotification?.notificationSent
-  }
 
   const resCases = data?.cases
 
@@ -134,9 +120,12 @@ export const Requests: React.FC = () => {
 
         clearTimeout()
 
-        const sent = await sendNotification(caseToDelete.id)
+        const notificationSent = await sendNotification(
+          caseToDelete.id,
+          NotificationType.REVOKED,
+        )
 
-        if (!sent) {
+        if (!notificationSent) {
           // TODO: Handle error
         }
       } catch (e) {

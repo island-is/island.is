@@ -30,10 +30,7 @@ import {
   formatRequestedCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
 import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  SendNotificationMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
@@ -41,7 +38,7 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -51,30 +48,12 @@ export const Overview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { transitionCase } = useCase()
+  const { transitionCase, sendNotification } = useCase()
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const [
-    sendNotificationMutation,
-    { loading: isSendingNotification },
-  ] = useMutation(SendNotificationMutation)
-
-  const sendNotification = async (id: string) => {
-    const { data } = await sendNotificationMutation({
-      variables: {
-        input: {
-          caseId: id,
-          type: NotificationType.READY_FOR_COURT,
-        },
-      },
-    })
-
-    return data?.sendNotification?.notificationSent
-  }
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
@@ -93,7 +72,10 @@ export const Overview: React.FC = () => {
         : workingCase.state !== CaseState.NEW
 
       const notificationSent = caseSubmitted
-        ? await sendNotification(workingCase.id)
+        ? await sendNotification(
+            workingCase.id,
+            NotificationType.READY_FOR_COURT,
+          )
         : false
 
       if (shouldSubmitCase) {
