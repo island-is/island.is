@@ -7,6 +7,7 @@ import {
   NotificationType,
   CaseState,
   CaseType,
+  CaseTransition,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -81,11 +82,21 @@ export const Overview: React.FC = () => {
     }
 
     try {
-      await transitionCase(workingCase, setWorkingCase)
-      const notificationSent = await sendNotification(workingCase.id)
-      const isDraft = workingCase.state === CaseState.DRAFT
+      const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
-      if (isDraft) {
+      const caseSubmitted = shouldSubmitCase
+        ? await transitionCase(
+            workingCase,
+            setWorkingCase,
+            CaseTransition.SUBMIT,
+          )
+        : workingCase.state !== CaseState.NEW
+
+      const notificationSent = caseSubmitted
+        ? await sendNotification(workingCase.id)
+        : false
+
+      if (shouldSubmitCase) {
         // An SMS should have been sent
         if (notificationSent) {
           setModalText(

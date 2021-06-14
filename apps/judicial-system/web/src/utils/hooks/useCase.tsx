@@ -47,7 +47,6 @@ const useCase = () => {
     transitionCaseMutation,
     { loading: isTransitioningCase },
   ] = useMutation(TransitionCaseMutation)
-
   const [
     createCourtCaseMutation,
     { loading: creatingCourtCase },
@@ -130,34 +129,16 @@ const useCase = () => {
     }
   }
 
-  const getTransition = (workingCase: Case) => {
-    let transitionRequest = null
-
-    if (workingCase.state === CaseState.NEW) {
-      transitionRequest = parseTransition(
-        workingCase.modified,
-        CaseTransition.OPEN,
-      )
-    } else if (workingCase.state === CaseState.DRAFT) {
-      transitionRequest = parseTransition(
-        workingCase.modified,
-        CaseTransition.SUBMIT,
-      )
-    }
-
-    return transitionRequest
-  }
-
   const transitionCase = async (
     workingCase: Case,
     setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
+    transition: CaseTransition,
   ) => {
     try {
-      const transitionRequest = getTransition(workingCase)
-
-      if (!workingCase) {
-        return false
-      }
+      const transitionRequest = parseTransition(
+        workingCase.modified,
+        transition,
+      )
 
       const { data } = await transitionCaseMutation({
         variables: { input: { id: workingCase.id, ...transitionRequest } },
