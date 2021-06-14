@@ -1966,6 +1966,9 @@ export interface IOrganizationSubpageFields {
   /** Slug */
   slug: string
 
+  /** Intro */
+  intro?: string | undefined
+
   /** Description */
   description?: Document | undefined
 
