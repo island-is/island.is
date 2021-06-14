@@ -87,7 +87,7 @@ export const m = defineMessages({
   applicantSubTitle: {
     id: 'dpo.application:applicant.subtitle',
     defaultMessage:
-      '<b>Upplýsingar um þá stofnun sem óskar eftir því að nota stafrænt pósthólf</b> <br /> Hér þarf að skrá upplýsingar um ábyrgðaraðila skjalveitunnar. <br/> Um er að ræða kennitölu og nafn stofnunar, netfang, heimilisfang, póstnúmer og stað. <br />Mikilvægt er að gefa upp almennt netfang stofnunar sem er vaktað og tryggt að innsend erindi séu meðhöndluð og komið í viðeigandi farveg. ',
+      '<b>Upplýsingar um þá stofnun sem óskar eftir því að nota stafrænt pósthólf</b> <br /> Hér þarf að skrá upplýsingar um ábyrgðaraðila skjalveitunnar. Um er að ræða kennitölu, nafn og netfang stofnunar. Mikilvægt er að gefa upp almennt netfang stofnunar sem er vaktað og tryggt að innsend erindi séu meðhöndluð og komið í viðeigandi farveg.',
     description: '',
   },
   applicantNationalId: {
