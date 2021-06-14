@@ -26,6 +26,7 @@
 /libs/application/templates/party-application/                                                @island-is/kosmos-kaos
 /libs/service-portal/endorsements/                                                            @island-is/kosmos-kaos
 /libs/application/template-api-modules/src/lib/modules/templates/party-letter/                @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/party-application/           @island-is/kosmos-kaos
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
 /libs/clients/zendesk/                                                                        @island-is/kosmos-kaos
 /libs/icelandic-names-registry/                                                               @island-is/kosmos-kaos
@@ -59,6 +60,7 @@
 /libs/application/templates/reference-template/                                               @island-is/aranja-applications
 /libs/clients/vmst/                                                                           @island-is/aranja-applications
 /libs/shared/form-fields/                                                                     @island-is/aranja-applications
+/libs/api/domains/directorate-of-labour/                                                      @island-is/aranja-applications
 
 /libs/application/templates/family-matters/                                                   @island-is/kolibri-modern-family
 /apps/application-system/api/src/app/modules/application/files/                               @island-is/kolibri-modern-family

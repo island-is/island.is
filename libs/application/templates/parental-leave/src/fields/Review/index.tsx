@@ -24,12 +24,12 @@ import {
 import {
   getOtherParentOptions,
   getSelectedChild,
-} from '../../parentalLeaveUtils'
+} from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { YES, NO, MANUAL } from '../../constants'
+import { YES, NO, MANUAL, ParentalRelations } from '../../constants'
 import { Boolean } from '../../types'
 import { SummaryTimeline } from '../components/Timeline/SummaryTimeline'
 import { SummaryRights } from '../Rights/SummaryRights'
@@ -42,7 +42,7 @@ type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
 
 interface ReviewScreenProps {
   application: Application
-  field: Field
+  field: Field & { props?: { editable?: boolean } }
   goToScreen?: (id: string) => void
   errors?: RecordObject
   editable?: boolean
@@ -58,8 +58,8 @@ const Review: FC<ReviewScreenProps> = ({
   field,
   goToScreen,
   errors,
-  editable,
 }) => {
+  const editable = field.props?.editable ?? false
   const pensionFundOptions = usePensionFundOptions()
   const privatePensionFundOptions = usePrivatePensionFundOptions()
   const unionOptions = useUnionOptions()
@@ -67,14 +67,14 @@ const Review: FC<ReviewScreenProps> = ({
   const [
     {
       otherParent,
+      otherParentName,
+      otherParentId,
       pensionFund,
       union,
       usePrivatePensionFund,
       privatePensionFund,
       privatePensionFundPercentage,
       isSelfEmployed,
-      otherParentName,
-      otherParentId,
       bank,
       personalAllowance,
       personalAllowanceFromSpouse,
@@ -90,9 +90,12 @@ const Review: FC<ReviewScreenProps> = ({
     application.answers,
     application.externalData,
   )
-  const isPrimaryParent = selectedChild?.parentalRelation === 'primary'
+  const isPrimaryParent =
+    selectedChild?.parentalRelation === ParentalRelations.primary
+
   const getSelectOptionLabel = (options: selectOption[], id: string) =>
     options.find((option) => option.value === id)?.label
+
   const otherParentOptions = useMemo(
     () =>
       buildFieldOptions(getOtherParentOptions(application), application, field),
@@ -420,284 +423,291 @@ const Review: FC<ReviewScreenProps> = ({
         )}
       </ReviewGroup>
 
-      <ReviewGroup
-        isEditable={editable}
-        editChildren={
-          <>
-            <Label marginBottom={2}>
-              {formatMessage(parentalLeaveFormMessages.personalAllowance.title)}
-            </Label>
+      {isPrimaryParent && (
+        <ReviewGroup
+          isEditable={editable}
+          editChildren={
+            <>
+              <Label marginBottom={2}>
+                {formatMessage(
+                  parentalLeaveFormMessages.personalAllowance.title,
+                )}
+              </Label>
 
-            <RadioController
-              id="usePersonalAllowance"
-              name="usePersonalAllowance"
-              defaultValue={personalAllowance}
-              split="1/2"
-              options={[
-                {
-                  label: formatMessage(
-                    parentalLeaveFormMessages.shared.yesOptionLabel,
-                  ),
-                  value: YES,
-                },
-                {
-                  label: formatMessage(
-                    parentalLeaveFormMessages.shared.noOptionLabel,
-                  ),
-                  value: NO,
-                },
-              ]}
-              onSelect={(s: string) => {
-                setStateful((prev) => ({
-                  ...prev,
-                  personalAllowance: s as Boolean,
-                }))
-              }}
-            />
+              <RadioController
+                id="usePersonalAllowance"
+                name="usePersonalAllowance"
+                defaultValue={personalAllowance}
+                split="1/2"
+                options={[
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.yesOptionLabel,
+                    ),
+                    value: YES,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.noOptionLabel,
+                    ),
+                    value: NO,
+                  },
+                ]}
+                onSelect={(s: string) => {
+                  setStateful((prev) => ({
+                    ...prev,
+                    personalAllowance: s as Boolean,
+                  }))
+                }}
+              />
 
-            {personalAllowance === YES && (
-              <>
-                <Label marginTop={2} marginBottom={2}>
-                  {formatMessage(
-                    parentalLeaveFormMessages.personalAllowance
-                      .useAsMuchAsPossible,
-                  )}
-                </Label>
+              {personalAllowance === YES && (
+                <>
+                  <Label marginTop={2} marginBottom={2}>
+                    {formatMessage(
+                      parentalLeaveFormMessages.personalAllowance
+                        .useAsMuchAsPossible,
+                    )}
+                  </Label>
 
-                <RadioController
-                  id="personalAllowance.useAsMuchAsPossible"
-                  name="personalAllowance.useAsMuchAsPossible"
-                  defaultValue={personalUseAsMuchAsPossible}
-                  split="1/2"
-                  options={[
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.yesOptionLabel,
-                      ),
-                      value: YES,
-                    },
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.noOptionLabel,
-                      ),
-                      value: NO,
-                    },
-                  ]}
-                  onSelect={(s: string) => {
-                    setStateful((prev) => ({
-                      ...prev,
-                      personalUseAsMuchAsPossible: s as Boolean,
-                    }))
-                  }}
-                />
-              </>
-            )}
-
-            {personalUseAsMuchAsPossible === NO && (
-              <>
-                <Label marginTop={2} marginBottom={2}>
-                  {formatMessage(
-                    parentalLeaveFormMessages.personalAllowance.manual,
-                  )}
-                </Label>
-
-                <InputController
-                  id="personalAllowance.usage"
-                  name="personalAllowance.usage"
-                  suffix="%"
-                  placeholder="0%"
-                  type="number"
-                  defaultValue={personalUsage}
-                  onChange={(e) =>
-                    setStateful((prev) => ({
-                      ...prev,
-                      personalUsage: e.target.value?.replace('%', ''),
-                    }))
-                  }
-                />
-              </>
-            )}
-          </>
-        }
-      >
-        <GridRow marginBottom={2}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <RadioValue
-              label={formatMessage(
-                parentalLeaveFormMessages.personalAllowance.title,
+                  <RadioController
+                    id="personalAllowance.useAsMuchAsPossible"
+                    name="personalAllowance.useAsMuchAsPossible"
+                    defaultValue={personalUseAsMuchAsPossible}
+                    split="1/2"
+                    options={[
+                      {
+                        label: formatMessage(
+                          parentalLeaveFormMessages.shared.yesOptionLabel,
+                        ),
+                        value: YES,
+                      },
+                      {
+                        label: formatMessage(
+                          parentalLeaveFormMessages.shared.noOptionLabel,
+                        ),
+                        value: NO,
+                      },
+                    ]}
+                    onSelect={(s: string) => {
+                      setStateful((prev) => ({
+                        ...prev,
+                        personalUseAsMuchAsPossible: s as Boolean,
+                      }))
+                    }}
+                  />
+                </>
               )}
-              value={personalAllowance}
-            />
-          </GridColumn>
 
-          {personalAllowance === YES && personalUseAsMuchAsPossible === YES && (
-            <GridColumn
-              paddingTop={[2, 2, 2, 0]}
-              span={['12/12', '12/12', '12/12', '5/12']}
-            >
+              {personalUseAsMuchAsPossible === NO && (
+                <>
+                  <Label marginTop={2} marginBottom={2}>
+                    {formatMessage(
+                      parentalLeaveFormMessages.personalAllowance.manual,
+                    )}
+                  </Label>
+
+                  <InputController
+                    id="personalAllowance.usage"
+                    name="personalAllowance.usage"
+                    suffix="%"
+                    placeholder="0%"
+                    type="number"
+                    defaultValue={personalUsage}
+                    onChange={(e) =>
+                      setStateful((prev) => ({
+                        ...prev,
+                        personalUsage: e.target.value?.replace('%', ''),
+                      }))
+                    }
+                  />
+                </>
+              )}
+            </>
+          }
+        >
+          <GridRow marginBottom={2}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <RadioValue
                 label={formatMessage(
-                  parentalLeaveFormMessages.reviewScreen.usePersonalAllowance,
+                  parentalLeaveFormMessages.personalAllowance.title,
                 )}
-                value={personalUseAsMuchAsPossible}
+                value={personalAllowance}
               />
             </GridColumn>
-          )}
 
-          {personalAllowance === YES && personalUseAsMuchAsPossible === NO && (
-            <GridColumn
-              paddingTop={[2, 2, 2, 0]}
-              span={['12/12', '12/12', '12/12', '5/12']}
-            >
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.personalAllowance.allowanceUsage,
-                )}
-                value={`${personalUsage ?? 0}%`}
-              />
-            </GridColumn>
-          )}
-        </GridRow>
-      </ReviewGroup>
-
-      <ReviewGroup
-        isEditable={editable}
-        editChildren={
-          <>
-            <Label marginBottom={2}>
-              {formatMessage(
-                parentalLeaveFormMessages.personalAllowance.spouseTitle,
-              )}
-            </Label>
-
-            <RadioController
-              id="usePersonalAllowanceFromSpouse"
-              name="usePersonalAllowanceFromSpouse"
-              defaultValue={personalAllowanceFromSpouse}
-              split="1/2"
-              options={[
-                {
-                  label: formatMessage(
-                    parentalLeaveFormMessages.shared.yesOptionLabel,
-                  ),
-                  value: YES,
-                },
-                {
-                  label: formatMessage(
-                    parentalLeaveFormMessages.shared.noOptionLabel,
-                  ),
-                  value: NO,
-                },
-              ]}
-              onSelect={(s: string) => {
-                setStateful((prev) => ({
-                  ...prev,
-                  personalAllowanceFromSpouse: s as Boolean,
-                }))
-              }}
-            />
-
-            {personalAllowanceFromSpouse === YES && (
-              <>
-                <Label marginTop={2} marginBottom={2}>
-                  {formatMessage(
-                    parentalLeaveFormMessages.personalAllowance
-                      .useAsMuchAsPossibleFromSpouse,
-                  )}
-                </Label>
-
-                <RadioController
-                  id="personalAllowance.useAsMuchAsPossibleFromSpouse"
-                  name="personalAllowance.useAsMuchAsPossibleFromSpouse"
-                  defaultValue={spouseUseAsMuchAsPossible}
-                  split="1/2"
-                  options={[
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.yesOptionLabel,
-                      ),
-                      value: YES,
-                    },
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.noOptionLabel,
-                      ),
-                      value: NO,
-                    },
-                  ]}
-                  onSelect={(s: string) => {
-                    setStateful((prev) => ({
-                      ...prev,
-                      spouseUseAsMuchAsPossible: s as Boolean,
-                    }))
-                  }}
-                />
-              </>
-            )}
-
-            {spouseUseAsMuchAsPossible === NO && (
-              <>
-                <Label marginTop={2} marginBottom={2}>
-                  {formatMessage(
-                    parentalLeaveFormMessages.personalAllowance.manual,
-                  )}
-                </Label>
-
-                <InputController
-                  id="personalAllowanceFromSpouse.usage"
-                  name="personalAllowanceFromSpouse.usage"
-                  suffix="%"
-                  placeholder="0%"
-                  type="number"
-                  defaultValue={spouseUsage}
-                  onChange={(e) =>
-                    setStateful((prev) => ({
-                      ...prev,
-                      spouseUsage: e.target.value?.replace('%', ''),
-                    }))
-                  }
-                />
-              </>
-            )}
-          </>
-        }
-      >
-        <GridRow marginBottom={2}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <RadioValue
-              label={formatMessage(
-                parentalLeaveFormMessages.personalAllowance.spouseTitle,
-              )}
-              value={personalAllowanceFromSpouse}
-            />
-          </GridColumn>
-
-          {personalAllowanceFromSpouse === YES &&
-            spouseUseAsMuchAsPossible === YES && (
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            {personalAllowance === YES && personalUseAsMuchAsPossible === YES && (
+              <GridColumn
+                paddingTop={[2, 2, 2, 0]}
+                span={['12/12', '12/12', '12/12', '5/12']}
+              >
                 <RadioValue
                   label={formatMessage(
-                    parentalLeaveFormMessages.reviewScreen
-                      .useSpousePersonalAllowance,
+                    parentalLeaveFormMessages.reviewScreen.usePersonalAllowance,
                   )}
-                  value={spouseUseAsMuchAsPossible}
+                  value={personalUseAsMuchAsPossible}
                 />
               </GridColumn>
             )}
 
-          {personalAllowanceFromSpouse === YES &&
-            spouseUseAsMuchAsPossible === NO && (
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            {personalAllowance === YES && personalUseAsMuchAsPossible === NO && (
+              <GridColumn
+                paddingTop={[2, 2, 2, 0]}
+                span={['12/12', '12/12', '12/12', '5/12']}
+              >
                 <DataValue
                   label={formatMessage(
                     parentalLeaveFormMessages.personalAllowance.allowanceUsage,
                   )}
-                  value={`${spouseUsage ?? 0}%`}
+                  value={`${personalUsage ?? 0}%`}
                 />
               </GridColumn>
             )}
-        </GridRow>
-      </ReviewGroup>
+          </GridRow>
+        </ReviewGroup>
+      )}
+
+      {isPrimaryParent && (
+        <ReviewGroup
+          isEditable={editable}
+          editChildren={
+            <>
+              <Label marginBottom={2}>
+                {formatMessage(
+                  parentalLeaveFormMessages.personalAllowance.spouseTitle,
+                )}
+              </Label>
+
+              <RadioController
+                id="usePersonalAllowanceFromSpouse"
+                name="usePersonalAllowanceFromSpouse"
+                defaultValue={personalAllowanceFromSpouse}
+                split="1/2"
+                options={[
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.yesOptionLabel,
+                    ),
+                    value: YES,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.noOptionLabel,
+                    ),
+                    value: NO,
+                  },
+                ]}
+                onSelect={(s: string) => {
+                  setStateful((prev) => ({
+                    ...prev,
+                    personalAllowanceFromSpouse: s as Boolean,
+                  }))
+                }}
+              />
+
+              {personalAllowanceFromSpouse === YES && (
+                <>
+                  <Label marginTop={2} marginBottom={2}>
+                    {formatMessage(
+                      parentalLeaveFormMessages.personalAllowance
+                        .useAsMuchAsPossibleFromSpouse,
+                    )}
+                  </Label>
+
+                  <RadioController
+                    id="personalAllowance.useAsMuchAsPossibleFromSpouse"
+                    name="personalAllowance.useAsMuchAsPossibleFromSpouse"
+                    defaultValue={spouseUseAsMuchAsPossible}
+                    split="1/2"
+                    options={[
+                      {
+                        label: formatMessage(
+                          parentalLeaveFormMessages.shared.yesOptionLabel,
+                        ),
+                        value: YES,
+                      },
+                      {
+                        label: formatMessage(
+                          parentalLeaveFormMessages.shared.noOptionLabel,
+                        ),
+                        value: NO,
+                      },
+                    ]}
+                    onSelect={(s: string) => {
+                      setStateful((prev) => ({
+                        ...prev,
+                        spouseUseAsMuchAsPossible: s as Boolean,
+                      }))
+                    }}
+                  />
+                </>
+              )}
+
+              {spouseUseAsMuchAsPossible === NO && (
+                <>
+                  <Label marginTop={2} marginBottom={2}>
+                    {formatMessage(
+                      parentalLeaveFormMessages.personalAllowance.manual,
+                    )}
+                  </Label>
+
+                  <InputController
+                    id="personalAllowanceFromSpouse.usage"
+                    name="personalAllowanceFromSpouse.usage"
+                    suffix="%"
+                    placeholder="0%"
+                    type="number"
+                    defaultValue={spouseUsage}
+                    onChange={(e) =>
+                      setStateful((prev) => ({
+                        ...prev,
+                        spouseUsage: e.target.value?.replace('%', ''),
+                      }))
+                    }
+                  />
+                </>
+              )}
+            </>
+          }
+        >
+          <GridRow marginBottom={2}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <RadioValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.personalAllowance.spouseTitle,
+                )}
+                value={personalAllowanceFromSpouse}
+              />
+            </GridColumn>
+
+            {personalAllowanceFromSpouse === YES &&
+              spouseUseAsMuchAsPossible === YES && (
+                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                  <RadioValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.reviewScreen
+                        .useSpousePersonalAllowance,
+                    )}
+                    value={spouseUseAsMuchAsPossible}
+                  />
+                </GridColumn>
+              )}
+
+            {personalAllowanceFromSpouse === YES &&
+              spouseUseAsMuchAsPossible === NO && (
+                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                  <DataValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.personalAllowance
+                        .allowanceUsage,
+                    )}
+                    value={`${spouseUsage ?? 0}%`}
+                  />
+                </GridColumn>
+              )}
+          </GridRow>
+        </ReviewGroup>
+      )}
 
       <ReviewGroup
         isEditable={editable}

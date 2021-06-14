@@ -43,7 +43,7 @@ export const getRegexByValidation = (validation: Validation) => {
         regex: new RegExp(
           /^(0[0-9]|1[0-9]|2[0-9]|3[0-1])(0[0-9]|1[0-2])(\d{2})(-?(\d{3}){1}(0|9){1})?$/g,
         ),
-        errorMessage: 'Dæmi: 012345-6789',
+        errorMessage: 'Dæmi: 000000-0000',
       }
     case 'email-format':
       return {

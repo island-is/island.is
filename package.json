@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "engines": {
-    "node": "^14.16",
+    "node": "^14.17",
     "yarn": "^1.22"
   },
   "repository": {
@@ -255,6 +255,7 @@
     "winston": "3.3.3",
     "winston-cloudwatch": "2.4.0",
     "winston-transport": "4.4.0",
+    "xlsx": "0.17.0",
     "xml2js": "0.4.23",
     "xstate": "4.13.0",
     "yargs": "15.4.1",
@@ -375,7 +376,6 @@
     "license-checker": "25.0.1",
     "next-secure-headers": "2.1.0",
     "next-transpile-modules": "4.1.0",
-    "node-xlsx": "0.16.1",
     "prettier": "2.2.1",
     "quicktype": "15.0.258",
     "sequelize-cli": "5.5.1",

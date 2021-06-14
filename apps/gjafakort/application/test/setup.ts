@@ -1,7 +1,7 @@
 import { sequelize } from '@island.is/gjafakort/application/extensions'
 
-export const truncate = () =>
-  Promise.all(
+export const truncate = async () =>
+  await Promise.all(
     Object.values(sequelize.models).map((model) => {
       if (model.tableName.toLowerCase() === 'sequelize') {
         return null
@@ -16,7 +16,7 @@ export const truncate = () =>
     }),
   )
 
-beforeEach(() => truncate())
+beforeEach(truncate)
 
 beforeAll(() => sequelize.sync())
 

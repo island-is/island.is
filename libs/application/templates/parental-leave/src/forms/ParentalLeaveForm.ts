@@ -15,7 +15,6 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  ExternalData,
   Field,
   Form,
   FormModes,
@@ -30,7 +29,8 @@ import {
   createRange,
   calculatePeriodPercentage,
   requiresOtherParentApproval,
-} from '../parentalLeaveUtils'
+  allowOtherParent,
+} from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
   GetUnions,
@@ -40,7 +40,7 @@ import {
   FILE_SIZE_LIMIT,
   MANUAL,
   NO,
-  SPOUSE,
+  ParentalRelations,
   StartDateOptions,
   YES,
 } from '../constants'
@@ -122,7 +122,9 @@ export const ParentalLeaveForm: Form = buildForm({
             const selectedChild = getSelectedChild(answers, externalData)
 
             if (selectedChild !== null) {
-              return selectedChild.parentalRelation === 'primary'
+              return (
+                selectedChild.parentalRelation === ParentalRelations.primary
+              )
             }
 
             return true
@@ -234,6 +236,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.shared
                       .privatePensionFundDescription,
                   width: 'half',
+                  space: 4,
                   options: [
                     {
                       label: parentalLeaveFormMessages.shared.yesOptionLabel,
@@ -284,6 +287,11 @@ export const ParentalLeaveForm: Form = buildForm({
         buildSubSection({
           id: 'personalAllowanceSubSection',
           title: parentalLeaveFormMessages.personalAllowance.title,
+          condition: (answers, externalData) => {
+            const selectedChild = getSelectedChild(answers, externalData)
+
+            return selectedChild?.parentalRelation === ParentalRelations.primary
+          },
           children: [
             buildRadioField({
               id: 'usePersonalAllowance',
@@ -344,10 +352,7 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRadioField({
               id: 'usePersonalAllowanceFromSpouse',
               title: parentalLeaveFormMessages.personalAllowance.useFromSpouse,
-              condition: (answers) =>
-                answers.otherParent === SPOUSE ||
-                (answers.otherParent === MANUAL &&
-                  answers.otherParentRightOfAccess === YES),
+              condition: (answers) => allowOtherParent(answers),
               width: 'half',
               options: [
                 {
@@ -476,6 +481,11 @@ export const ParentalLeaveForm: Form = buildForm({
     buildSection({
       id: 'rights',
       title: parentalLeaveFormMessages.shared.rightsSection,
+      condition: (answers, externalData) => {
+        const selectedChild = getSelectedChild(answers, externalData)
+
+        return selectedChild?.parentalRelation === ParentalRelations.primary
+      },
       children: [
         buildSubSection({
           id: 'rightsQuestions',
@@ -517,6 +527,8 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.requestRightsName,
               description:
                 parentalLeaveFormMessages.shared.requestRightsDescription,
+              condition: (answers, externalData) =>
+                getSelectedChild(answers, externalData)?.parentalRelation === ParentalRelations.primary,
               children: [
                 buildCustomField({
                   id: 'requestRights.isRequestingRights',
@@ -537,22 +549,16 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             */
-            buildRadioField({
-              id: 'requestRights.isRequestingRights',
+            buildCustomField({
+              id: 'requestRights',
               title: parentalLeaveFormMessages.shared.requestRightsName,
               description:
                 parentalLeaveFormMessages.shared.requestRightsDescription,
               width: 'half',
-              options: [
-                {
-                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                  value: YES,
-                },
-                {
-                  label: parentalLeaveFormMessages.shared.noOptionLabel,
-                  value: NO,
-                },
-              ],
+              condition: (answers, externalData) =>
+                getSelectedChild(answers, externalData)?.parentalRelation ===
+                  ParentalRelations.primary && allowOtherParent(answers),
+              component: 'RequestRightsRadio',
             }),
             /*
             TODO: move back to days picker later on
@@ -561,10 +567,11 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.shared.giveRightsName,
               description:
                 parentalLeaveFormMessages.shared.giveRightsDescription,
-              condition: (answers, externalData: ExternalData) => {
+              condition: (answers, externalData) => {
                 const selectedChild = getSelectedChild(answers, externalData)
 
                 if (
+                  selectedChild?.parentalRelation === ParentalRelations.secondary ||
                   !selectedChild?.hasRights ||
                   selectedChild?.remainingDays === 0
                 ) {
@@ -599,15 +606,18 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             */
-            buildRadioField({
-              id: 'giveRights.isGivingRights',
+            buildCustomField({
+              id: 'giveRights',
               title: parentalLeaveFormMessages.shared.giveRightsName,
               description:
                 parentalLeaveFormMessages.shared.giveRightsDescription,
-              condition: (answers, externalData: ExternalData) => {
+              width: 'half',
+              condition: (answers, externalData) => {
                 const selectedChild = getSelectedChild(answers, externalData)
 
                 if (
+                  selectedChild?.parentalRelation ===
+                    ParentalRelations.secondary ||
                   !selectedChild?.hasRights ||
                   selectedChild?.remainingDays === 0
                 ) {
@@ -622,17 +632,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   })?.requestRights?.isRequestingRights === NO
                 )
               },
-              width: 'half',
-              options: [
-                {
-                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                  value: YES,
-                },
-                {
-                  label: parentalLeaveFormMessages.shared.noOptionLabel,
-                  value: NO,
-                },
-              ],
+              component: 'GiveRightsRadio',
             }),
           ],
         }),
@@ -951,11 +951,16 @@ export const ParentalLeaveForm: Form = buildForm({
           title: parentalLeaveFormMessages.confirmation.title,
           description: parentalLeaveFormMessages.confirmation.description,
           children: [
-            buildCustomField({
-              id: 'confirmationScreen',
-              title: '',
-              component: 'Review',
-            }),
+            buildCustomField(
+              {
+                id: 'confirmationScreen',
+                title: '',
+                component: 'Review',
+              },
+              {
+                editable: true,
+              },
+            ),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

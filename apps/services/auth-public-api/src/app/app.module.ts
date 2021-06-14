@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
 import { DelegationsModule } from './modules/delegations/delegations.module'
-import { ApiScopeModule } from './modules/resources/api-scope.module'
+import { ResourcesModule } from './modules/resources/resources.module'
 import { TranslationModule } from './modules/translation/translation.module'
 
 @Module({
@@ -14,7 +14,7 @@ import { TranslationModule } from './modules/translation/translation.module'
       useClass: SequelizeConfigService,
     }),
     DelegationsModule,
-    ApiScopeModule,
+    ResourcesModule,
     TranslationModule,
   ],
 })

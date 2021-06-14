@@ -11,9 +11,12 @@ import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import Review from '../Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
-import { handleSubmitError } from '../../parentalLeaveClientUtils'
-import { States as ApplicationStates } from '../../constants'
+import {
+  getExpectedDateOfBirth,
+  requiresOtherParentApproval,
+} from '../../lib/parentalLeaveUtils'
+import { handleSubmitError } from '../../lib/parentalLeaveClientUtils'
+import { NO, States as ApplicationStates, YES } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
@@ -52,7 +55,11 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   refetch,
   errors,
 }) => {
-  const { isRequestingRights } = useApplicationAnswers(application)
+  const {
+    isSelfEmployed,
+    isRequestingRights,
+    usePersonalAllowanceFromSpouse,
+  } = useApplicationAnswers(application)
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -67,24 +74,6 @@ const InReviewSteps: FC<FieldBaseProps> = ({
 
   const steps = [
     {
-      state: statesMap['otherParent'][application.state],
-      title: formatMessage(
-        parentalLeaveFormMessages.reviewScreen.otherParentTitle,
-      ),
-      description: formatMessage(
-        parentalLeaveFormMessages.reviewScreen.otherParentDesc,
-      ),
-    },
-    {
-      state: statesMap['employer'][application.state],
-      title: formatMessage(
-        parentalLeaveFormMessages.reviewScreen.employerTitle,
-      ),
-      description: formatMessage(
-        parentalLeaveFormMessages.reviewScreen.employerDesc,
-      ),
-    },
-    {
       state: statesMap['vinnumalastofnun'][application.state],
       title: formatMessage(parentalLeaveFormMessages.reviewScreen.deptTitle),
       description: formatMessage(
@@ -93,8 +82,34 @@ const InReviewSteps: FC<FieldBaseProps> = ({
     },
   ]
 
-  if (!isRequestingRights) {
-    steps.shift()
+  if (isSelfEmployed === NO) {
+    steps.unshift({
+      state: statesMap['employer'][application.state],
+      title: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.employerTitle,
+      ),
+      description: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.employerDesc,
+      ),
+    })
+  }
+
+  if (requiresOtherParentApproval(application.answers)) {
+    const description =
+      isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
+        : isRequestingRights === YES
+        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
+        : parentalLeaveFormMessages.reviewScreen
+            .otherParentDescRequestingPersonalDiscount
+
+    steps.unshift({
+      state: statesMap['otherParent'][application.state],
+      title: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.otherParentTitle,
+      ),
+      description: formatMessage(description),
+    })
   }
 
   const dob = getExpectedDateOfBirth(application)
@@ -183,25 +198,18 @@ const InReviewSteps: FC<FieldBaseProps> = ({
 
       {screenState === 'steps' ? (
         <Box marginTop={7} marginBottom={8}>
-          {steps.map((step, index) => {
-            return (
-              <ReviewSection
-                key={index}
-                application={application}
-                index={index + 1}
-                {...step}
-              />
-            )
-          })}
+          {steps.map((step, index) => (
+            <ReviewSection
+              key={index}
+              application={application}
+              index={index + 1}
+              {...step}
+            />
+          ))}
         </Box>
       ) : (
         <Box marginTop={7} marginBottom={8}>
-          <Review
-            application={application}
-            field={field}
-            errors={errors}
-            editable={false}
-          />
+          <Review application={application} field={field} errors={errors} />
         </Box>
       )}
     </Box>

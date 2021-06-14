@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { gql, useMutation, useLazyQuery } from '@apollo/client'
 import { useForm, Controller } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
@@ -12,18 +13,70 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { Mutation, Query } from '@island.is/api/schema'
+import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 
+import { AuthDelegationsQuery } from '../AccessControl'
+
+const CreateAuthDelegationMutation = gql`
+  mutation CreateAuthDelegationMutation($input: CreateAuthDelegationInput!) {
+    createAuthDelegation(input: $input) {
+      id
+      toName
+      toNationalId
+    }
+  }
+`
+
+const AuthDelegationQuery = gql`
+  query AuthDelegationQuery($input: AuthDelegationInput!) {
+    authDelegation(input: $input) {
+      id
+      type
+      toNationalId
+      toName
+    }
+  }
+`
+
 function GrantAccess() {
-  const { handleSubmit, control, errors } = useForm()
+  const { handleSubmit, control, errors, setValue } = useForm()
+  const [createAuthDelegation, { loading }] = useMutation<Mutation>(
+    CreateAuthDelegationMutation,
+    {
+      refetchQueries: [{ query: AuthDelegationsQuery }],
+    },
+  )
+  const [getDelegation, { data }] = useLazyQuery<Query>(AuthDelegationQuery)
+  const { authDelegation } = data || {}
   const { formatMessage } = useLocale()
   const history = useHistory()
-  const loading = false
 
-  const onSubmit = handleSubmit(({ nationalId }) => {
-    // TODO: mutate
-    history.push(nationalId)
+  const requestDelegation = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const value = e.target.value
+    if (value.length === 10 && kennitala.isValid(value)) {
+      getDelegation({ variables: { input: { toNationalId: value } } })
+    }
+  }
+
+  useEffect(() => {
+    if (authDelegation) {
+      setValue('name', authDelegation.toName)
+    }
+  }, [authDelegation, setValue])
+
+  const onSubmit = handleSubmit(async ({ toNationalId, name }) => {
+    const { data, errors } = await createAuthDelegation({
+      variables: { input: { name, toNationalId } },
+    })
+    if (data && !errors) {
+      history.push(
+        `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.toNationalId}`,
+      )
+    }
   })
 
   return (
@@ -53,7 +106,7 @@ function GrantAccess() {
           <GridColumn paddingBottom={2} span={['12/12', '12/12', '6/12']}>
             <Controller
               control={control}
-              name="nationalId"
+              name="toNationalId"
               defaultValue=""
               rules={{
                 required: {
@@ -88,9 +141,12 @@ function GrantAccess() {
                     defaultMessage: 'Kennitala',
                   })}
                   value={value}
-                  hasError={errors.nationalId}
-                  errorMessage={errors.nationalId?.message}
-                  onChange={onChange}
+                  hasError={errors.toNationalId}
+                  errorMessage={errors.toNationalId?.message}
+                  onChange={(value) => {
+                    onChange(value)
+                    requestDelegation(value)
+                  }}
                 />
               )}
             />
@@ -133,7 +189,12 @@ function GrantAccess() {
           </GridColumn>
         </GridRow>
         <Box display="flex" justifyContent="flexEnd">
-          <Button type="submit" icon="arrowForward" disabled={loading}>
+          <Button
+            type="submit"
+            icon="arrowForward"
+            disabled={loading}
+            loading={loading}
+          >
             {formatMessage({
               id: 'service.portal.settings.accessControl:grant-form-submit',
               defaultMessage: 'Áfram',

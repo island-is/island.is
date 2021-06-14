@@ -5,69 +5,35 @@ import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { useMutation } from '@apollo/client'
-import { Endorsement, PartyLetter } from '../../lib/dataSchema'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import set from 'lodash/set'
-import cloneDeep from 'lodash/cloneDeep'
 import { useEndorsements } from '../../hooks/useFetchEndorsements'
+import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
+import { Endorsement } from '../../types/schema'
+import BulkUpload from '../BulkUpload'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
-  const { lang: locale, formatMessage } = useLocale()
+  const { formatMessage } = useLocale()
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
-  const answers = application.answers as PartyLetter
   const [searchTerm, setSearchTerm] = useState('')
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
+  const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
   const [showWarning, setShowWarning] = useState(false)
-  const endorsementsHook = useEndorsements(endorsementListId, true)
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
-  const updateApplicationWithEndorsements = async (
-    newEndorsements: Endorsement[],
-  ) => {
-    const updatedAnswers = {
-      ...answers,
-      endorsements: cloneDeep(newEndorsements),
-    }
-    await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: {
-            ...updatedAnswers,
-          },
-        },
-        locale,
-      },
-    }).then(() => {
-      set(answers, 'endorsements', cloneDeep(newEndorsements))
-    })
-  }
+  const { endorsements: endorsementsHook, refetch } = useEndorsements(
+    endorsementListId,
+    true,
+  )
+  const isClosedHook = useIsClosed(endorsementListId)
 
   useEffect(() => {
-    const mapToEndorsementList: Endorsement[] | undefined =
-      endorsementsHook && endorsementsHook.length > 0
-        ? endorsementsHook.map((x: any) => ({
-            date: x.created,
-            name: x.meta.fullName,
-            nationalId: x.endorser,
-            address: x.meta.address ? x.meta.address.streetAddress : '',
-            hasWarning: x.meta.invalidated ?? false,
-            id: x.id,
-          }))
-        : undefined
-    setEndorsements((_) => {
-      if (mapToEndorsementList && mapToEndorsementList.length > 0)
-        updateApplicationWithEndorsements(mapToEndorsementList)
-      return mapToEndorsementList
-    })
-  }, [endorsementsHook])
+    refetch()
+    setEndorsements(endorsementsHook)
+  }, [endorsementsHook, updateOnBulkImport])
 
   const namesCountString = formatMessage(
-    endorsements && endorsements.length > 1
+    endorsementsHook && endorsementsHook.length > 1
       ? m.endorsementList.namesCount
       : m.endorsementList.nameCount,
-    { endorsementCount: endorsements?.length ?? 0 },
+    { endorsementCount: endorsementsHook?.length ?? 0 },
   )
 
   return (
@@ -96,11 +62,11 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
               setShowWarning(!showWarning)
               setSearchTerm('')
               showWarning
-                ? setEndorsements(endorsements)
+                ? setEndorsements(endorsementsHook)
                 : setEndorsements(
-                    endorsements
-                      ? endorsements.filter((x) => x.hasWarning)
-                      : endorsements,
+                    endorsementsHook
+                      ? endorsementsHook.filter((x) => x.meta.invalidated)
+                      : endorsementsHook,
                   )
             }}
           />
@@ -114,11 +80,11 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             onChange={(e) => {
               setSearchTerm(e.target.value)
               setEndorsements(
-                endorsements
-                  ? endorsements.filter((x) =>
-                      x.name.startsWith(e.target.value),
+                endorsementsHook
+                  ? endorsementsHook.filter(
+                      (x) => x.meta?.fullName?.startsWith(e.target.value) ?? '',
                     )
-                  : endorsements,
+                  : endorsementsHook,
               )
             }}
           />
@@ -127,6 +93,20 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
           application={application}
           endorsements={endorsements}
         />
+        {!isClosedHook ? (
+          <Box marginY={5}>
+            <BulkUpload
+              application={application}
+              onSuccess={() => {
+                setUpdateOnBulkImport(true)
+              }}
+            />
+          </Box>
+        ) : (
+          <Text variant="eyebrow" color="red400" marginTop={5}>
+            {formatMessage(m.endorsementForm.isClosedMessage)}
+          </Text>
+        )}
       </Box>
     </Box>
   )

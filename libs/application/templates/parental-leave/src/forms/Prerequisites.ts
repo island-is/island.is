@@ -12,13 +12,14 @@ import {
   buildTextField,
   Form,
   FormModes,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/utils/shared'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
-import { isEligibleForParentalLeave } from '../parentalLeaveUtils'
-import { NO, YES } from '../constants'
+import { isEligibleForParentalLeave } from '../lib/parentalLeaveUtils'
+import { NO, YES, ParentalRelations } from '../constants'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -43,7 +44,7 @@ export const PrerequisitesForm: Form = buildForm({
                     title: 'Gervigögn',
                     children: [
                       buildRadioField({
-                        id: 'useMockData',
+                        id: 'mock.useMockData',
                         title: 'Viltu nota gervigögn?',
                         width: 'half',
                         options: [
@@ -58,38 +59,166 @@ export const PrerequisitesForm: Form = buildForm({
                         ],
                       }),
                       buildRadioField({
-                        id: 'useMockedParentalRelation',
+                        id: 'mock.useMockedParentalRelation',
                         title: 'Tengsl við barn:',
                         width: 'half',
-                        condition: (answers) => answers.useMockData === YES,
+                        condition: (answers) => {
+                          const useMockData =
+                            getValueViaPath(answers, 'mock.useMockData') === YES
+
+                          return useMockData
+                        },
                         options: [
                           {
-                            value: 'primary',
+                            value: ParentalRelations.primary,
                             label: 'Móðir',
                           },
                           {
-                            value: 'secondary',
+                            value: ParentalRelations.secondary,
                             label: 'Hitt foreldri',
                           },
                         ],
                       }),
+                      buildRadioField({
+                        id: 'mock.useMockedApplication',
+                        title:
+                          'Use an existing application from primary parent',
+                        width: 'half',
+                        condition: (answers) => {
+                          const useMockData =
+                            getValueViaPath(answers, 'mock.useMockData') === YES
+                          const isSecondaryParent =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedParentalRelation',
+                            ) === ParentalRelations.secondary
+
+                          return useMockData && isSecondaryParent
+                        },
+                        options: [
+                          {
+                            value: YES,
+                            label: 'Yes',
+                          },
+                          {
+                            value: NO,
+                            label: 'No',
+                          },
+                        ],
+                      }),
                       buildTextField({
-                        id: 'useMockedDateOfBirth',
+                        id: 'mock.useMockedApplicationId',
+                        title: 'Application id from primary parent',
+                        placeholder: 'bf1e5775-836c-4512-abae-bdbeb8709659',
+                        condition: (answers) => {
+                          const useMockData =
+                            getValueViaPath(answers, 'mock.useMockData') === YES
+                          const useApplication =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedApplication',
+                            ) === YES
+                          const isSecondaryParent =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedParentalRelation',
+                            ) === ParentalRelations.secondary
+
+                          return (
+                            useMockData && useApplication && isSecondaryParent
+                          )
+                        },
+                      }),
+                      buildTextField({
+                        id: 'mock.useMockedDateOfBirth',
                         title: 'Áætlaður fæðingardagur:',
-                        condition: (answers) =>
-                          answers.useMockData === YES &&
-                          !!answers.useMockedParentalRelation,
+                        condition: (answers) => {
+                          const useMockData =
+                            getValueViaPath(answers, 'mock.useMockData') === YES
+                          const useApplication =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedApplication',
+                            ) === NO
+                          const isPrimaryParent =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedParentalRelation',
+                            ) === ParentalRelations.primary
+
+                          return (
+                            useMockData &&
+                            ((!isPrimaryParent && useApplication) ||
+                              isPrimaryParent)
+                          )
+                        },
                         placeholder: 'YYYY-MM-DD',
                         format: '####-##-##',
                       }),
                       buildTextField({
-                        id: 'useMockedPrimaryParentNationalRegistryId',
+                        id: 'mock.useMockedPrimaryParentRights',
+                        title: 'Primary parent rights days (0 — 180)',
+                        variant: 'number',
+                        defaultValue: '180',
+                        condition: (answers) => {
+                          const useMockData =
+                            getValueViaPath(answers, 'mock.useMockData') === YES
+                          const isPrimaryParent =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedParentalRelation',
+                            ) === ParentalRelations.primary
+
+                          return useMockData && isPrimaryParent
+                        },
+                      }),
+                      buildTextField({
+                        id: 'mock.useMockedPrimaryParentNationalRegistryId',
                         title: 'Kennitala móður:',
-                        condition: (answers) =>
-                          answers.useMockData === YES &&
-                          answers.useMockedParentalRelation === 'secondary',
                         placeholder: '1234567-7890',
                         format: '######-####',
+                        condition: (answers) => {
+                          const useMockData =
+                            getValueViaPath(answers, 'mock.useMockData') === YES
+                          const useApplication =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedApplication',
+                            ) === NO
+                          const isSecondaryParent =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedParentalRelation',
+                            ) === ParentalRelations.secondary
+
+                          return (
+                            useMockData && useApplication && isSecondaryParent
+                          )
+                        },
+                      }),
+                      buildTextField({
+                        id: 'mock.useMockedSecondaryParentRights',
+                        title: 'Secondary parent rights in days  (0 — 180)',
+                        variant: 'number',
+                        defaultValue: '180',
+                        condition: (answers) => {
+                          const useMockData =
+                            getValueViaPath(answers, 'mock.useMockData') === YES
+                          const useApplication =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedApplication',
+                            ) === NO
+                          const isSecondaryParent =
+                            getValueViaPath(
+                              answers,
+                              'mock.useMockedParentalRelation',
+                            ) === ParentalRelations.secondary
+
+                          return (
+                            useMockData && useApplication && isSecondaryParent
+                          )
+                        },
                       }),
                     ],
                   }),
@@ -139,18 +268,19 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'selectChild',
-          title: parentalLeaveFormMessages.selectChild.subSection,
+          title: parentalLeaveFormMessages.selectChild.screenTitle,
           children: [
             buildMultiField({
               id: 'selectedChildScreen',
-              title: parentalLeaveFormMessages.selectChild.title,
-              description: parentalLeaveFormMessages.selectChild.description,
+              title: parentalLeaveFormMessages.selectChild.screenTitle,
+              description:
+                parentalLeaveFormMessages.selectChild.screenDescription,
               condition: (_, externalData) =>
                 isEligibleForParentalLeave(externalData),
               children: [
                 buildCustomField({
                   id: 'selectedChild',
-                  title: parentalLeaveFormMessages.selectChild.subSection,
+                  title: parentalLeaveFormMessages.selectChild.screenTitle,
                   component: 'ChildSelector',
                 }),
                 buildSubmitField({
@@ -161,7 +291,7 @@ export const PrerequisitesForm: Form = buildForm({
                     {
                       event: 'SUBMIT',
                       name: parentalLeaveFormMessages.selectChild.choose,
-                      type: 'primary',
+                      type: ParentalRelations.primary,
                     },
                   ],
                 }),

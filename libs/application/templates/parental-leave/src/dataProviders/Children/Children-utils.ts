@@ -1,13 +1,15 @@
 import { Application, getValueViaPath } from '@island.is/application/core'
 import type { DistributiveOmit } from '@island.is/shared/types'
-import { SchemaFormValues } from '../../lib/dataSchema'
-import { getSelectedChild, getTransferredDays } from '../../parentalLeaveUtils'
 
+import { ParentalRelations } from '../../constants'
+import {
+  getSelectedChild,
+  getTransferredDays,
+} from '../../lib/parentalLeaveUtils'
 import {
   ChildInformation,
   ExistingChildApplication,
   PregnancyStatus,
-  ChildrenAndExistingApplications,
   ChildrenWithoutRightsAndExistingApplications,
 } from './types'
 
@@ -30,34 +32,36 @@ export const applicationsToChildInformation = (
       application.externalData,
     )
 
-    if (selectedChild !== null) {
-      if (asOtherParent) {
-        let transferredDays = getTransferredDays(application, selectedChild)
+    if (selectedChild === null) {
+      continue
+    }
 
-        if (transferredDays !== undefined && transferredDays !== 0) {
-          // * -1 because we need to reverse the days over to this parent
-          // for example if other parent is requesting 45 days
-          // then this parent needs to lose 45 days
-          transferredDays *= -1
-        }
+    if (asOtherParent) {
+      let transferredDays = getTransferredDays(application, selectedChild)
 
-        if (selectedChild.parentalRelation === 'primary') {
-          result.push({
-            parentalRelation: 'secondary',
-            expectedDateOfBirth: selectedChild.expectedDateOfBirth,
-            primaryParentNationalRegistryId: application.applicant,
-            transferredDays,
-          })
-        } else {
-          result.push({
-            parentalRelation: 'primary',
-            expectedDateOfBirth: selectedChild.expectedDateOfBirth,
-            transferredDays,
-          })
-        }
-      } else {
-        result.push(selectedChild)
+      if (transferredDays !== undefined && transferredDays !== 0) {
+        // * -1 because we need to reverse the days over to this parent
+        // for example if other parent is requesting 45 days
+        // then this parent needs to lose 45 days
+        transferredDays *= -1
       }
+
+      if (selectedChild.parentalRelation === ParentalRelations.primary) {
+        result.push({
+          parentalRelation: ParentalRelations.secondary,
+          expectedDateOfBirth: selectedChild.expectedDateOfBirth,
+          primaryParentNationalRegistryId: application.applicant,
+          transferredDays,
+        })
+      } else {
+        result.push({
+          parentalRelation: ParentalRelations.primary,
+          expectedDateOfBirth: selectedChild.expectedDateOfBirth,
+          transferredDays,
+        })
+      }
+    } else {
+      result.push(selectedChild)
     }
   }
 
@@ -88,48 +92,58 @@ export const applicationsToExistingChildApplication = (
 
 export const getChildrenFromMockData = (
   application: Application,
-): ChildrenAndExistingApplications => {
+): ChildInformation => {
   const parentalRelation = getValueViaPath(
     application.answers,
-    'useMockedParentalRelation',
+    'mock.useMockedParentalRelation',
   ) as ChildInformation['parentalRelation']
+
   const dob = getValueViaPath(
     application.answers,
-    'useMockedDateOfBirth',
+    'mock.useMockedDateOfBirth',
   ) as string
+
   const primaryParentNationalRegistryId = getValueViaPath(
     application.answers,
-    'useMockedPrimaryParentNationalRegistryId',
+    'mock.useMockedPrimaryParentNationalRegistryId',
   ) as string
+
+  const primaryParentRightsDays = Number(
+    getValueViaPath(
+      application.answers,
+      'mock.useMockedPrimaryParentRights',
+    ) as string,
+  )
+
+  const secondaryParentRightsDays = Number(
+    getValueViaPath(
+      application.answers,
+      'mock.useMockedSecondaryParentRights',
+    ) as string,
+  )
 
   const formattedDOB = `${dob.slice(0, 4)}-${dob.slice(4, 6)}-${dob.slice(
     6,
     8,
   )}`
 
-  // TODO: Be able to configure rights when mocking
   const child: ChildInformation =
-    parentalRelation === 'primary'
+    parentalRelation === ParentalRelations.primary
       ? {
           expectedDateOfBirth: formattedDOB,
-          parentalRelation: 'primary',
-          // Hardcode rights when mocking data for now
-          hasRights: true,
-          remainingDays: 180,
+          parentalRelation: ParentalRelations.primary,
+          hasRights: primaryParentRightsDays > 0,
+          remainingDays: primaryParentRightsDays,
         }
       : {
           expectedDateOfBirth: formattedDOB,
-          parentalRelation: 'secondary',
+          parentalRelation: ParentalRelations.secondary,
           primaryParentNationalRegistryId,
-          // Hardcode rights when mocking data for now
-          hasRights: true,
-          remainingDays: 180,
+          hasRights: secondaryParentRightsDays > 0,
+          remainingDays: secondaryParentRightsDays,
         }
 
-  return {
-    children: [child],
-    existingApplications: [],
-  }
+  return child
 }
 
 export const getChildrenAndExistingApplications = (
@@ -168,7 +182,7 @@ export const getChildrenAndExistingApplications = (
     if (!hasAlreadyAppliedForChild) {
       children.push({
         expectedDateOfBirth: pregnancyStatus.expectedDateOfBirth,
-        parentalRelation: 'primary',
+        parentalRelation: ParentalRelations.primary,
       })
     }
   }

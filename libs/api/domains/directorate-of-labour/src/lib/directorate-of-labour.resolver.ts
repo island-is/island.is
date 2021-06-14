@@ -30,7 +30,7 @@ export class DirectorateOfLabourResolver {
     @CurrentUser() user: User,
   ): Promise<ParentalLeaveEntitlement | null> {
     return this.directorateOfLabourService.getParentalLeavesEntitlements(
-      input.dateOfBirth,
+      new Date(input.dateOfBirth),
       user.nationalId,
     )
   }
