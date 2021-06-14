@@ -74,10 +74,14 @@ export const Draft: Form = buildForm({
               label: 'Upphæð',
               width: 'half',
               value: (application: Application) => {
-                const priceAmount = get(application.externalData, 'paymentCatalogProvider.data.priceAmount', NaN) as number
+                const priceAmount = get(
+                  application.externalData,
+                  'paymentCatalogProvider.data.priceAmount',
+                  NaN,
+                ) as number
 
                 // todo: get price formatting function from utils somewhere
-                return  priceAmount.toLocaleString('DE-de')
+                return priceAmount.toLocaleString('DE-de')
               },
             }),
             buildKeyValueField({

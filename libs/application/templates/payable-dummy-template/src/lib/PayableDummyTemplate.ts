@@ -63,7 +63,11 @@ const PayableDummyTemplate: ApplicationTemplate<
                   Promise.resolve(module.Draft),
                 ),
               actions: [
-                { event: DefaultEvents.PAYMENT, name: 'Áfram', type: 'primary' },
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Áfram',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },

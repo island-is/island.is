@@ -14,9 +14,7 @@ export class PayableDummyTemplateModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: PayableDummyTemplateModule,
-      imports: [
-        SharedTemplateAPIModule.register(baseConfig),
-      ],
+      imports: [SharedTemplateAPIModule.register(baseConfig)],
       providers: [PayableDummyTemplateService],
       exports: [PayableDummyTemplateService],
     }
