@@ -4,7 +4,6 @@ import { ValidatorService } from '../../endorsementValidator.service'
 import { EndorsementMetaField } from '../../../endorsementMetadata/types'
 import { EndorsementTag } from '../../../endorsementList/constants'
 
-console.log('EndorsementTag', EndorsementTag)
 export class UniqueWithinTagsInputType {
   @IsArray()
   @IsEnum(EndorsementTag, { each: true })

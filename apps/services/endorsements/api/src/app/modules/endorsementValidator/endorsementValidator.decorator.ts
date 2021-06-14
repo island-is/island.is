@@ -42,7 +42,6 @@ export const IsEndorsementValidator = (
 
           // if we have no validation errors we allow this value
           const validationErrors = await classValidate(validator)
-          console.log('validationErrors', validationErrors)
           if (validationErrors.length === 0) {
             return true
           }
