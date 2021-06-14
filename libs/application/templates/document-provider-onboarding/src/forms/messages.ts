@@ -21,7 +21,7 @@ export const m = defineMessages({
   termsSubTitle: {
     id: 'dpo.application:terms.subTitle',
     defaultMessage:
-      '<b>Skilmálar um notkun stafræns pósthólfs á Ísland.is</b> <br /> Um það að veita gögnum inn á stafrænt pósthólf á Ísland.is gilda ákveðnir skilmálar sem skjalaveitur skulu uppfylla.<br/> Til að sækja um að gerast skjalaveitandi þarf að samþykkja þessa skilmála. Aðeins með því að gera það hér, með því að haka í viðkomandi box kemst, umsækjandi áfram í næsta skref umsóknar.',
+      '<b>Skilmálar um notkun stafræns pósthólfs á Ísland.is</b> <br />Um skjalaveitingu inn á stafrænt pósthólf á Ísland.is gilda ákveðnir skilmálar sem skjalaveitendur þurfa að gangast undir. <br /> Með því að sækja um að gerast skjalaveitandi gengst umrædd stofnun við gildandi skilmálum sem má ávallt finna inni á island.is',
     description: 'Some description',
   },
   termsUserAgreementTitle: {
@@ -31,7 +31,8 @@ export const m = defineMessages({
   },
   termsUserAgreementUrl: {
     id: 'dpo.application:terms.userAgreementUrl',
-    defaultMessage: 'https://island.is',
+    defaultMessage:
+      'https://island.is/postholf/skilmalar-vegna-adgengis-ad-stafraenu-postholfi',
     description: 'The url to the user agreements',
   },
   termsUserAgreementMessage: {
@@ -68,12 +69,7 @@ export const m = defineMessages({
   },
   userAgreementOptionLabel: {
     id: 'dpo.application:userAgreement.option.label',
-    defaultMessage: 'Ég samþykki notendaskilmála',
-    description: 'Some description',
-  },
-  safetyAgreementOptionLabel: {
-    id: 'dpo.application:safetyAgreement.option.label',
-    defaultMessage: 'Ég samþykki öryggisskilmála',
+    defaultMessage: 'Ég samþykki ofangreinda skilmála',
     description: 'Some description',
   },
 

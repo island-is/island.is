@@ -86,7 +86,6 @@ const applicant = z.object({
 
 const termsOfAgreement = z.object({
   userTerms: z.boolean().refine((v) => v, {}),
-  securityTerms: z.boolean().refine((v) => v, {}),
 })
 
 const endPoint = z.object({
