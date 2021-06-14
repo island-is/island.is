@@ -45,7 +45,7 @@ import { parseTransition } from '@island.is/judicial-system-web/src/utils/format
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import ConclusionDraft from './Components/ConclusionDraft'
 import { AnimatePresence } from 'framer-motion'
 
@@ -62,7 +62,7 @@ export const JudgeOverview: React.FC = () => {
   const id = router.query.id
 
   const { user } = useContext(UserContext)
-  const { updateCase, createCourtCase, creatingCourtCase } = useCase()
+  const { updateCase, createCourtCase, isCreatingCourtCase } = useCase()
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -167,7 +167,7 @@ export const JudgeOverview: React.FC = () => {
                           <Button
                             size="small"
                             onClick={() => handleClick(workingCase)}
-                            loading={creatingCourtCase}
+                            loading={isCreatingCourtCase}
                             disabled={Boolean(workingCase.courtCaseNumber)}
                             fluid
                           >
@@ -191,7 +191,7 @@ export const JudgeOverview: React.FC = () => {
                         }
                         errorMessage={courtCaseNumberErrorMessage}
                         hasError={
-                          !creatingCourtCase &&
+                          !isCreatingCourtCase &&
                           courtCaseNumberErrorMessage !== ''
                         }
                         onChange={(event) => {

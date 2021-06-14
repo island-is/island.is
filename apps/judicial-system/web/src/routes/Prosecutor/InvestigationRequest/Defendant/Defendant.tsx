@@ -9,8 +9,10 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { Case, CaseState } from '@island.is/judicial-system/types'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
+import {
+  useCase,
+  useInstitution,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import DefendantForm from './DefendantForm'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 

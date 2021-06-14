@@ -22,9 +22,11 @@ import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
+import {
+  useCase,
+  useInstitution,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import HearingArrangementsForms from './HearingArrangementsForm'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 const HearingArrangements = () => {

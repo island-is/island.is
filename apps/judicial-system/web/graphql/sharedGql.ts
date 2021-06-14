@@ -117,15 +117,6 @@ export const CaseQuery = gql`
   }
 `
 
-export const UpdateCaseMutation = gql`
-  mutation UpdateCaseMutation($input: UpdateCaseInput!) {
-    updateCase(input: $input) {
-      id
-      modified
-    }
-  }
-`
-
 export const TransitionCaseMutation = gql`
   mutation TransitionCaseMutation($input: TransitionCaseInput!) {
     transitionCase(input: $input) {
