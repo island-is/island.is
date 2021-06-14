@@ -211,9 +211,16 @@ export function formatProsecutorCourtDateEmailNotification(
     ? `Verjandi sakbornings: ${defenderName}`
     : 'Verjandi sakbornings hefur ekki verið skráður'
 
-  return `${court} hefur staðfest fyrirtökutíma fyrir ${
-    type === CaseType.CUSTODY ? 'gæsluvarðhaldskröfu' : 'farbannskröfu'
-  }.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />${defenderText}.`
+  const scheduledCaseText =
+    type === CaseType.CUSTODY
+      ? 'gæsluvarðhaldskröfu'
+      : type === CaseType.TRAVEL_BAN
+      ? 'farbannskröfu'
+      : type === CaseType.OTHER
+      ? 'kröfu um rannsóknarheimild'
+      : `kröfu um rannsóknarheimild (${caseTypes[type]})`
+
+  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />${defenderText}.`
 }
 
 export function formatPrisonCourtDateEmailNotification(
