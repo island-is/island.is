@@ -88,15 +88,3 @@ export class ApplicationPaymentStatus {
   @Field()
   fulfilled!: boolean
 }
-
-@ObjectType()
-export class ApplicationUpdatePaymentStatus {
-  @Field()
-  applicationId!: string
-
-  @Field()
-  fulfilled!: boolean
-  
-  @Field()
-  id?: string
-}

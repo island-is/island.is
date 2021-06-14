@@ -9,7 +9,7 @@ import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationService } from './application.service'
-import { Application, ApplicationPaymentStatus, ApplicationUpdatePaymentStatus } from './application.model'
+import { Application, ApplicationPaymentStatus } from './application.model'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -27,7 +27,6 @@ import { RequestFileSignatureResponse } from './dto/requestFileSignature.respons
 import { PresignedUrlResponse } from './dto/presignedUrl.response'
 import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
 import { ApplicationPaymentStatusInput } from './dto/applicationPaymentStatusInput'
-import { UpdatePaymentStatus } from './dto/updatePaymentStatus.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()

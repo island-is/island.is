@@ -18,7 +18,7 @@ import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
-import { ApplicationPaymentStatus, ApplicationUpdatePaymentStatus } from './application.model'
+import { ApplicationPaymentStatus } from './application.model'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
