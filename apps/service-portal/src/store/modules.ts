@@ -5,8 +5,8 @@ import { assetsModule } from '@island.is/service-portal/assets'
 import { familyModule } from '@island.is/service-portal/family'
 import { financeModule } from '@island.is/service-portal/finance'
 import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandic-names-registry'
-// import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
-// import { accessControlModule } from '@island.is/service-portal/settings/access-control'
+import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
+import { accessControlModule } from '@island.is/service-portal/settings/access-control'
 import { educationModule } from '@island.is/service-portal/education'
 import { educationLicenseModule } from '@island.is/service-portal/education-license'
 import { endorsementsModule } from '@island.is/service-portal/endorsements'
@@ -27,13 +27,13 @@ import { applicationsModule } from '@island.is/service-portal/applications'
  */
 
 export type ModuleKeys =
-  // | 'accessControl'
+  | 'accessControl'
   | 'documentProvider'
   | 'documents'
   | 'family'
   | 'finance'
   | 'icelandicNamesRegistry'
-  // | 'personalInformation'
+  | 'personalInformation'
   | 'education'
   | 'educationLicense'
   | 'endorsements'
@@ -43,7 +43,7 @@ export type ModuleKeys =
   | 'applications'
 
 export const featureFlaggedModules: ModuleKeys[] = [
-  // 'accessControl',
+  'accessControl',
   'documentProvider',
   'education',
   'educationLicense',
@@ -51,6 +51,7 @@ export const featureFlaggedModules: ModuleKeys[] = [
   'educationStudentAssessment',
   'endorsements',
   'icelandicNamesRegistry',
+  'personalInformation',
 ]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
@@ -59,7 +60,7 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   family: familyModule,
   finance: financeModule,
   icelandicNamesRegistry: icelandicNamesRegistryModule,
-  // personalInformation: personalInformationModule,
+  personalInformation: personalInformationModule,
   education: educationModule,
   educationLicense: educationLicenseModule,
   endorsements: endorsementsModule,
@@ -67,5 +68,5 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   educationStudentAssessment: educationStudentAssessmentModule,
   assets: assetsModule,
   applications: applicationsModule,
-  // accessControl: accessControlModule,
+  accessControl: accessControlModule,
 }
