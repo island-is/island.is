@@ -41,23 +41,21 @@ const HideableText: React.FC<Props> = (props) => {
   )
 
   return (
-    <>
-      <div className={styles.hideableTextContainer}>
-        <Text
-          strikethrough={!isVisible}
-          color={isVisible ? 'dark400' : 'dark300'}
-        >
-          {text}
-        </Text>
-        {tooltip ? (
-          <Tooltip text={tooltip} placement="right">
-            {renderVisibilityButton()}
-          </Tooltip>
-        ) : (
-          renderVisibilityButton()
-        )}
-      </div>
-    </>
+    <div className={styles.hideableTextContainer}>
+      <Text
+        strikethrough={!isVisible}
+        color={isVisible ? 'dark400' : 'dark300'}
+      >
+        {text}
+      </Text>
+      {tooltip ? (
+        <Tooltip text={tooltip} placement="right">
+          {renderVisibilityButton()}
+        </Tooltip>
+      ) : (
+        renderVisibilityButton()
+      )}
+    </div>
   )
 }
 
