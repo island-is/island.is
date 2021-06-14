@@ -6,12 +6,12 @@
 // export let app: INestApplication
 // let sequelize: Sequelize
 
-// export const truncate = () => {
+// export const truncate = async () => {
 //   if (!sequelize) {
 //     return
 //   }
 
-//   Promise.all(
+//   await Promise.all(
 //     Object.values(sequelize.models).map((model) => {
 //       if (model.tableName.toLowerCase() === 'sequelize') {
 //         return null
@@ -46,7 +46,7 @@
 //   return app
 // }
 
-// beforeEach(() => truncate())
+// beforeEach(truncate)
 
 // afterAll(async () => {
 //   if (app && sequelize) {
