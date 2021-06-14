@@ -6,7 +6,6 @@ import {
   SendNotificationResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { TransitionCaseMutation } from '@island.is/judicial-system-web/graphql'
 import {
   parseString,
   parseTransition,
@@ -15,6 +14,7 @@ import { CreateCaseMutation } from './createCaseGql'
 import { CreateCourtCaseMutation } from './createCourtCaseGql'
 import { UpdateCaseMutation } from './updateCaseGql'
 import { SendNotificationMutation } from './sendNotificationGql'
+import { TransitionCaseMutation } from './transitionCaseGql'
 
 type autofillProperties = Pick<
   Case,
@@ -96,7 +96,7 @@ const useCase = () => {
       })
 
       if (data) {
-        return data.createCase.id
+        return data.createCase?.id
       }
     }
   }
@@ -122,7 +122,7 @@ const useCase = () => {
           },
         })
 
-        if (data && !errors) {
+        if (data?.createCourtCase?.courtCaseNumber && !errors) {
           setWorkingCase({
             ...workingCase,
             courtCaseNumber: data.createCourtCase.courtCaseNumber,
@@ -159,7 +159,7 @@ const useCase = () => {
     workingCase: Case,
     setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
     transition: CaseTransition,
-  ) => {
+  ): Promise<boolean> => {
     try {
       const transitionRequest = parseTransition(
         workingCase.modified,
@@ -170,7 +170,7 @@ const useCase = () => {
         variables: { input: { id: workingCase.id, ...transitionRequest } },
       })
 
-      if (!data) {
+      if (!data?.transitionCase?.state) {
         return false
       }
 
@@ -188,7 +188,7 @@ const useCase = () => {
   const sendNotification = async (
     id: string,
     notificationType: NotificationType,
-  ) => {
+  ): Promise<boolean> => {
     const { data } = await sendNotificationMutation({
       variables: {
         input: {
@@ -198,7 +198,7 @@ const useCase = () => {
       },
     })
 
-    return data?.sendNotification?.notificationSent
+    return Boolean(data?.sendNotification?.notificationSent)
   }
 
   // TODO: find a way for this to work where value is something other then string

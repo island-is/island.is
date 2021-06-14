@@ -41,7 +41,6 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
@@ -64,7 +63,13 @@ export const JudgeOverview: React.FC = () => {
   const id = router.query.id
 
   const { user } = useContext(UserContext)
-  const { updateCase, createCourtCase, isCreatingCourtCase } = useCase()
+  const {
+    createCourtCase,
+    isCreatingCourtCase,
+    updateCase,
+    transitionCase,
+    isTransitioningCase,
+  } = useCase()
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -72,38 +77,9 @@ export const JudgeOverview: React.FC = () => {
     fetchPolicy: 'no-cache',
   })
 
-  useEffect(() => {
-    const transitionCase = async (theCase: Case) => {
-      try {
-        // Parse the transition request
-        const transitionRequest = parseTransition(
-          theCase.modified,
-          CaseTransition.RECEIVE,
-        )
-
-        const { data } = await transitionCaseMutation({
-          variables: {
-            input: { id: theCase.id, ...transitionRequest },
-          },
-        })
-
-        if (!data) {
-          return false
-        }
-
-        setWorkingCase({
-          ...workingCase,
-          state: data.transitionCase.state,
-        } as Case)
-      } catch (e) {
-        // TODO: Handle error
-      }
-    }
-
-    if (workingCase?.state === CaseState.SUBMITTED) {
-      transitionCase(workingCase)
-    }
-  }, [workingCase, setWorkingCase, transitionCaseMutation])
+  if (workingCase?.state === CaseState.SUBMITTED && !isTransitioningCase) {
+    transitionCase(workingCase, setWorkingCase, CaseTransition.RECEIVE)
+  }
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'

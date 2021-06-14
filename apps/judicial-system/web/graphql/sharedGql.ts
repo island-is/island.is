@@ -117,24 +117,6 @@ export const CaseQuery = gql`
   }
 `
 
-export const TransitionCaseMutation = gql`
-  mutation TransitionCaseMutation($input: TransitionCaseInput!) {
-    transitionCase(input: $input) {
-      id
-      modified
-      state
-      prosecutor {
-        name
-        title
-      }
-      judge {
-        name
-        title
-      }
-    }
-  }
-`
-
 export const CreatePresignedPostMutation = gql`
   mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
     createPresignedPost(input: $input) {
