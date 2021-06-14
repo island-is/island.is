@@ -138,6 +138,11 @@ const useCase = () => {
         workingCase.modified,
         CaseTransition.OPEN,
       )
+    } else if (workingCase.state === CaseState.DRAFT) {
+      transitionRequest = parseTransition(
+        workingCase.modified,
+        CaseTransition.SUBMIT,
+      )
     }
 
     return transitionRequest
@@ -166,6 +171,8 @@ const useCase = () => {
         ...workingCase,
         state: data.transitionCase.state,
       })
+
+      return true
     } catch (e) {
       return false
     }
