@@ -1,7 +1,11 @@
 import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
-import { FormContentContainer } from '@island.is/judicial-system-web/src/shared-components'
+import {
+  FormContentContainer,
+  FormFooter,
+} from '@island.is/judicial-system-web/src/shared-components'
 import { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
@@ -10,7 +14,7 @@ interface Props {
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
-  const { workingCase } = props
+  const { workingCase, isLoading } = props
 
   return (
     <>
@@ -20,6 +24,13 @@ const OverviewForm: React.FC<Props> = (props) => {
             Yfirlit kröfu um rannsóknarheimild
           </Text>
         </Box>
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={Constants.REQUEST_LIST_ROUTE}
+          nextIsLoading={isLoading}
+          nextUrl={`${Constants.R_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+        />
       </FormContentContainer>
     </>
   )

@@ -29,6 +29,11 @@ export const R_CASE_POLICE_CONFIRMATION_ROUTE =
 export const R_CASE_OVERVIEW = '/domur/rannsoknarheimild/yfirlit'
 export const R_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
   '/domur/rannsoknarheimild/fyrirtaka'
+export const R_CASE_COURT_RECORD_ROUTE = '/domur/rannsoknarheimild/thingbok'
+export const R_CASE_RULING_STEP_ONE_ROUTE = '/domur/rannsoknarheimild/urskurdur'
+export const R_CASE_RULING_STEP_TWO_ROUTE =
+  '/domur/rannsoknarheimild/urskurdarord'
+export const R_CASE_CONFIRMATION_ROUTE = '/domur/rannsoknarheimild/stadfesta'
 
 // Court
 export const JUDGE_SINGLE_REQUEST_BASE_ROUTE = '/domur/krafa'
