@@ -2,7 +2,7 @@ import {
   registerDecorator,
   ValidationArguments,
   ValidationOptions,
-  validate,
+  validate as classValidate,
 } from 'class-validator'
 import { ValidationRule } from './endorsementValidator.service'
 import { MinAgeInputType } from './validators/minAge/minAgeValidator.service'
@@ -33,10 +33,6 @@ export const IsEndorsementValidator = (
 
           // so we don't crash when validator type is wrong
           const Validator = validatorInputTypes[validatorType]
-          if (!Validator) {
-            return false
-          }
-
           const validator: any = new Validator()
 
           // assign values to validation object
@@ -45,7 +41,8 @@ export const IsEndorsementValidator = (
           })
 
           // if we have no validation errors we allow this value
-          const validationErrors = await validate(validator)
+          const validationErrors = await classValidate(validator)
+          console.log('validationErrors', validationErrors)
           if (validationErrors.length === 0) {
             return true
           }
