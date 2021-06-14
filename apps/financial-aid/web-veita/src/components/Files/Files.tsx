@@ -24,9 +24,9 @@ const Files: React.FC<Props> = ({ heading, filesArr, className }) => {
   // const { isAuthenticated, setUser, user } = useContext(UserContext)
 
   return (
-    <Box className={cn({ [`${className}`]: true })}>
+    <Box className={cn({ [`${className}`]: true })} marginBottom={2}>
       {' '}
-      <Text variant="eyebrow" marginBottom={1}>
+      <Text variant="eyebrow" marginBottom={2}>
         {heading}
       </Text>
       {filesArr && (
@@ -50,8 +50,12 @@ const Files: React.FC<Props> = ({ heading, filesArr, className }) => {
                   <div className={styles.name}>
                     <Text variant="small">{item}</Text>
                   </div>
-                  <Text variant="small">Skjal • 184 KB</Text>
-                  <Text variant="small">45 mínútur</Text>
+                  <Box className={styles.extraInfo}>
+                    <Text variant="small">Skjal • 544 KB</Text>
+                  </Box>
+                  <Box className={styles.extraInfo}>
+                    <Text variant="small">45 mínútur</Text>
+                  </Box>
                 </div>
               </a>
             )

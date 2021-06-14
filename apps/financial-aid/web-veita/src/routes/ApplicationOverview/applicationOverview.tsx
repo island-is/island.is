@@ -79,7 +79,7 @@ const ApplicationOverview = () => {
                       <Text variant="h5">{GenerateName(item.nationalId)}</Text>
                     </Box>
                   </Box>,
-                  <Text>Ný umsókn</Text>,
+                  <Text> {getState[item.state as State]}</Text>,
                   <Text> {calcDifferenceInDate(item.modified)}</Text>,
                   <Text>
                     {translateMonth(format(new Date(item.created), 'M'))}

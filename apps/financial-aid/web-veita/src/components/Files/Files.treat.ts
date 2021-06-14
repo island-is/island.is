@@ -34,3 +34,11 @@ export const type = style({
 export const name = style({
   gridColumn: 'span 2',
 })
+
+export const extraInfo = style({
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.xl}px)`]: {
+      gridColumn: 'span 2',
+    },
+  },
+})

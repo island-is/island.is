@@ -210,6 +210,7 @@ const ApplicationProfile = () => {
     ]
 
     const filesTest = ['/lokaprof2021.docx', '/hengill_ultra_reglur_2021.pdf']
+    const filesSkattTest = ['/lokaprof2021.docx']
 
     return (
       <AdminLayout>
@@ -306,6 +307,12 @@ const ApplicationProfile = () => {
                 Gögn frá umsækjanda
               </Text>
             </Box>
+            <Files
+              heading="Skattframtal"
+              filesArr={filesSkattTest}
+              className={styles.widtAlmostFull}
+            />
+
             <Files
               heading="Tekjugögn"
               filesArr={filesTest}
