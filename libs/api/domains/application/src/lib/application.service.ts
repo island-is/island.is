@@ -18,6 +18,7 @@ import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
+import { ApplicationPaymentStatus } from './application.model'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -57,7 +58,7 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async getPaymentStatus(applicationId: string, auth: Auth, locale: Locale) {
+  async getPaymentStatus(applicationId: string, auth: Auth, locale: Locale): Promise<ApplicationPaymentStatus[] | void>  {
     return await this.paymentApiWithAuth(auth)
       .paymentControllerGetPaymentStatus({
         applicationId,

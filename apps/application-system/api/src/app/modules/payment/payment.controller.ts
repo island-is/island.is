@@ -159,7 +159,7 @@ export class PaymentController {
       | 'expires_at'
     > = {
       application_id: paymentDetails.application_id || applicationId,
-      fulfilled: callback.status === 'paid' ? true : false,
+      fulfilled: callback.status === 'isPaid' ? true : false,
       reference_id: callback.receptionID,
       user4: paymentDetails.user4 || '',
       definition: callback.chargeItemSubject,
