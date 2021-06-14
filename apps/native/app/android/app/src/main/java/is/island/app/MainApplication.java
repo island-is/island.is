@@ -19,6 +19,7 @@ import com.reactnativecommunity.webview.RNCWebViewPackage;
 import io.sentry.react.RNSentryPackage;
 import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
+import io.invertase.firebase.perf.ReactNativeFirebasePerfPackage;
 import com.wix.interactable.Interactable;
 import com.github.droibit.android.reactnative.customtabs.CustomTabsPackage;
 
@@ -67,6 +68,7 @@ public class MainApplication extends NavigationApplication {
           packages.add(new RNSentryPackage());
           packages.add(new ReactNativeFirebaseAppPackage());
           packages.add(new ReactNativeFirebaseMessagingPackage());
+          packages.add(new ReactNativeFirebasePerfPackage());
           packages.add(new Interactable());
           packages.add(new CustomTabsPackage());
 

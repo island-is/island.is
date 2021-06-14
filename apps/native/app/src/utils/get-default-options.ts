@@ -27,6 +27,11 @@ export function getDefaultOptions(
       borderHeight: 0,
       borderColor: 'transparent',
     },
+    statusBar: Platform.OS === 'android' ? {
+      animated: true,
+      backgroundColor: theme.shade.background,
+      style: theme.isDark ? 'light' : 'dark',
+    } : undefined,
     window: {
       backgroundColor:
         Platform.OS === 'android'

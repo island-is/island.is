@@ -97,7 +97,12 @@ const authLink = setContext(async (_, { headers }) => ({
 }))
 
 export const client = new ApolloClient({
-  link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
+  link: ApolloLink.from([
+    retryLink,
+    errorLink,
+    authLink,
+    httpLink,
+  ]),
   cache: new InMemoryCache({ typePolicies }),
   typeDefs,
 })

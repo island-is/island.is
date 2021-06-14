@@ -41,7 +41,7 @@ interface ViewPagerProps {
 
 export function ViewPager({ children, itemWidth }: ViewPagerProps) {
   const pages = React.Children.count(children)
-  const OFFSET_X = 16
+  const OFFSET_X = 16+16
   const OFFSET_CARD = itemWidth ?? 283
   const OFFSET = OFFSET_X + OFFSET_CARD
 
@@ -95,7 +95,6 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
         automaticallyAdjustContentInsets={false}
         contentInsetAdjustmentBehavior="never"
         decelerationRate={0}
-        nestedScrollEnabled
       >
         {children}
       </Animated.ScrollView>
@@ -132,7 +131,7 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
                   {
                     scaleX: x.interpolate({
                       inputRange: inputRange(i),
-                      outputRange: [1, 24, 1],
+                      outputRange: [0, 24, 0],
                       extrapolate: 'clamp',
                     }),
                   },

@@ -17,7 +17,9 @@ export function isOnboarded() {
   } = preferencesStore.getState()
 
   return (
-    hasOnboardedBiometrics && hasOnboardedNotifications && hasOnboardedPinCode
+    hasOnboardedBiometrics &&
+    (Platform.OS === 'android' || hasOnboardedNotifications) &&
+    hasOnboardedPinCode
   )
 }
 

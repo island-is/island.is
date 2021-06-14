@@ -28,10 +28,11 @@ target 'IslandApp' do
   )
 
   pod 'CodePush', :path => '../../node_modules/react-native-code-push'
-  pod 'RNFBApp', :path => '../../node_modules/@react-native-firebase/app'
   pod 'RNSentry', path: '../../node_modules/@sentry/react-native'
   pod 'RNKeychain', :path => '../../node_modules/react-native-keychain'
   pod 'RNLocalize', :path => '../../node_modules/react-native-localize'
+  pod 'RNFBApp', :path => '../../node_modules/@react-native-firebase/app'
+  pod 'RNFBPerf', :path => '../../node_modules/@react-native-firebase/perf'
   pod 'RNFBMessaging', :path => '../../node_modules/@react-native-firebase/messaging'
   pod 'RNCAsyncStorage', :path => '../../node_modules/@react-native-community/async-storage'
   pod 'ReactNativeKeyboardManager', :path => '../../node_modules/react-native-keyboard-manager'

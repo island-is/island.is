@@ -9,7 +9,7 @@ import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
 import { authStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { uiStore } from '../../stores/ui-store'
-import { hideAppLockOverlay, showAppLockOverlay } from '../app-lock'
+import { hideAppLockOverlay, showAppLockOverlay, skipAppLock } from '../app-lock'
 import { ButtonRegistry } from '../component-registry'
 import { isOnboarded } from '../onboarding'
 import { handleNotificationResponse } from './setup-notifications'
@@ -57,52 +57,8 @@ export function setupEventHandlers() {
       lockScreenComponentId,
       lockScreenActivatedAt,
       noLockScreenUntilNextAppStateActive,
-      userInfo,
     } = authStore.getState()
-    const { dev__useLockScreen, appLockTimeout } = preferencesStore.getState()
-
-    if (!userInfo || !isOnboarded() || dev__useLockScreen === false) {
-      return
-    }
-
-    if (noLockScreenUntilNextAppStateActive) {
-      authStore.setState({ noLockScreenUntilNextAppStateActive: false })
-      return
-    }
-
-    if (status === 'background' || status === 'inactive') {
-      if (Platform.OS === 'ios') {
-        // Add a small delay for those accidental backgrounds in iOS
-        backgroundAppLockTimeout = setTimeout(() => {
-          if (!lockScreenComponentId) {
-            showAppLockOverlay({ status })
-          } else {
-            Navigation.updateProps(lockScreenComponentId, { status })
-          }
-        }, 100)
-      } else {
-        if (!lockScreenComponentId) {
-          showAppLockOverlay({ status })
-        } else {
-          Navigation.updateProps(lockScreenComponentId, { status })
-        }
-      }
-    }
-
-    if (status === 'active') {
-      clearTimeout(backgroundAppLockTimeout)
-
-      if (lockScreenComponentId) {
-        if (
-          lockScreenActivatedAt !== undefined &&
-          lockScreenActivatedAt + appLockTimeout > Date.now()
-        ) {
-          hideAppLockOverlay()
-        } else {
-          Navigation.updateProps(lockScreenComponentId, { status })
-        }
-      }
-    }
+    const { appLockTimeout } = preferencesStore.getState()
 
     if (status === 'active') {
       getPresentedNotificationsAsync().then((notifications) => {
@@ -113,6 +69,47 @@ export function setupEventHandlers() {
           }),
         )
       })
+    }
+
+    if (!skipAppLock()) {
+      if (noLockScreenUntilNextAppStateActive) {
+        authStore.setState({ noLockScreenUntilNextAppStateActive: false })
+        return
+      }
+
+      if (status === 'background' || status === 'inactive') {
+        if (Platform.OS === 'ios') {
+          // Add a small delay for those accidental backgrounds in iOS
+          backgroundAppLockTimeout = setTimeout(() => {
+            if (!lockScreenComponentId) {
+              showAppLockOverlay({ status })
+            } else {
+              Navigation.updateProps(lockScreenComponentId, { status })
+            }
+          }, 100)
+        } else {
+          if (!lockScreenComponentId) {
+            showAppLockOverlay({ status })
+          } else {
+            Navigation.updateProps(lockScreenComponentId, { status })
+          }
+        }
+      }
+
+      if (status === 'active') {
+        clearTimeout(backgroundAppLockTimeout)
+
+        if (lockScreenComponentId) {
+          if (
+            lockScreenActivatedAt !== undefined &&
+            lockScreenActivatedAt + appLockTimeout > Date.now()
+          ) {
+            hideAppLockOverlay()
+          } else {
+            Navigation.updateProps(lockScreenComponentId, { status })
+          }
+        }
+      }
     }
   })
 

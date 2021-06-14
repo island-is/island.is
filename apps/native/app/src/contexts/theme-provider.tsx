@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StatusBar, useColorScheme } from 'react-native'
+import { Platform, StatusBar, useColorScheme } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 import { overrideUserInterfaceStyle } from '../lib/rn-island'
@@ -22,10 +22,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setPrevColorScheme(selectedTheme.colorScheme)
     }
     uiStore.setState({ theme: selectedTheme })
-    StatusBar.setBarStyle(
-      selectedTheme.isDark ? 'light-content' : 'dark-content',
-      true,
-    )
+    if (Platform.OS === 'ios') {
+      StatusBar.setBarStyle(
+        preferences.appearanceMode === 'automatic'
+          ? 'default'
+          : selectedTheme.isDark
+          ? 'light-content'
+          : 'dark-content',
+        true,
+      )
+    }
   }, [selectedTheme])
 
   useEffect(() => {

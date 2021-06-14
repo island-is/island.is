@@ -49,3 +49,7 @@ export const config: Config = {
   constants: ConstantsRest,
   env,
 }
+
+if (__DEV__) {
+  console.log(config)
+}

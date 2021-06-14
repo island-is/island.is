@@ -4,6 +4,7 @@ import {
   TableViewCell,
   TableViewGroup,
 } from '@island.is/island-ui-native'
+import messaging from '@react-native-firebase/messaging'
 import * as Sentry from '@sentry/react-native'
 import {
   authenticateAsync,
@@ -11,18 +12,15 @@ import {
   isEnrolledAsync,
   supportedAuthenticationTypesAsync,
 } from 'expo-local-authentication'
-// import { getDevicePushTokenAsync } from 'expo-notifications'
-import messaging from '@react-native-firebase/messaging';
 import React, { useEffect, useRef, useState } from 'react'
 import {
-  Animated,
+  Alert as RNAlert,
   AppState,
   Platform,
   Pressable,
   ScrollView,
   Switch,
   View,
-  Alert as RNAlert
 } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
@@ -32,7 +30,7 @@ import CodePush, {
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
 import { useIntl } from '../../lib/intl'
 import { showPicker } from '../../lib/show-picker'
-import { useAuthStore } from '../../stores/auth-store'
+import { authStore } from '../../stores/auth-store'
 import {
   PreferencesStore,
   preferencesStore,
@@ -47,21 +45,12 @@ import { useBiometricType } from '../onboarding/onboarding-biometrics'
 const PreferencesSwitch = React.memo(
   ({ name }: { name: keyof PreferencesStore }) => {
     const theme = useTheme()
-    const [value, setValue] = useState(
-      preferencesStore.getState()[name] as boolean,
-    )
-    const onValueChange = (val: boolean) => {
-      setValue(val)
-    }
-    useEffect(() => {
-      requestAnimationFrame(() => {
-        preferencesStore.setState(() => ({ [name]: value } as any))
-      })
-    }, [value])
     return (
       <Switch
-        onValueChange={onValueChange}
-        value={value}
+        onValueChange={(value) =>
+          preferencesStore.setState({ [name]: value } as any)
+        }
+        value={preferencesStore.getState()[name] as boolean}
         thumbColor={Platform.select({ android: theme.color.dark100 })}
         trackColor={{
           false: theme.color.dark200,
@@ -73,7 +62,6 @@ const PreferencesSwitch = React.memo(
 )
 
 export function TabSettings() {
-  const authStore = useAuthStore()
   const intl = useIntl()
   const theme = useTheme()
   const {
@@ -88,7 +76,6 @@ export function TabSettings() {
     setUseBiometrics,
     appLockTimeout,
   } = usePreferencesStore()
-  const offsetY = useRef(new Animated.Value(0)).current
   const [isEnrolled, setIsEnrolled] = useState(false)
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
@@ -103,7 +90,7 @@ export function TabSettings() {
   const biometricType = useBiometricType(supportedAuthenticationTypes)
 
   const onLogoutPress = async () => {
-    await authStore.logout()
+    await authStore.getState().logout()
     await Navigation.dismissAllModals()
     await Navigation.setRoot({
       root: await getAppRoot(),
@@ -139,12 +126,10 @@ export function TabSettings() {
         setLoadingCP(false)
         setLocalPackage(p)
       })
-      messaging().getToken().then(token => {
-        setPushToken(token);
-      })
-      .catch((err) => {
-        setPushToken('no token in simulator')
-      })
+      messaging()
+        .getToken()
+        .then((token) => setPushToken(token))
+        .catch(() => setPushToken('no token in simulator'))
     }, 330)
     AppState.addEventListener('change', (state) => {
       if (state === 'active') {
@@ -414,7 +399,8 @@ export function TabSettings() {
         />
         <PressableHighlight
           onPress={() => {
-            RNAlert.prompt('token', 'yup', undefined, undefined, pushToken);
+            console.log(pushToken)
+            RNAlert.prompt('token', 'yup', undefined, undefined, pushToken)
           }}
           onLongPress={() => {
             Sentry.nativeCrash()

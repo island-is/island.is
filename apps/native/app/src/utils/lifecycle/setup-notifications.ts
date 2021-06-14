@@ -3,6 +3,7 @@ import {
   addNotificationResponseReceivedListener,
   DEFAULT_ACTION_IDENTIFIER,
   NotificationResponse,
+  Notification,
   setNotificationCategoryAsync,
   setNotificationHandler,
 } from 'expo-notifications'
@@ -11,6 +12,8 @@ import {
   notificationCategories,
   notificationsStore,
 } from '../../stores/notifications-store'
+import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+import { Platform } from 'react-native';
 
 type NotificationContent = {
   title: string | null
@@ -66,6 +69,28 @@ export function handleNotificationResponse(response: NotificationResponse) {
   }
 }
 
+function mapRemoteMessage(remoteMessage: FirebaseMessagingTypes.RemoteMessage): Notification {
+  return {
+    date: remoteMessage.sentTime!,
+    request: {
+      content: {
+        title: remoteMessage.notification?.title || null,
+        subtitle: null,
+        body: remoteMessage.notification?.body || null,
+        data: {
+          link: remoteMessage.notification?.android?.link,
+          ...remoteMessage.data,
+        },
+        sound: 'default',
+      },
+      identifier: remoteMessage.messageId!,
+      trigger: {
+        type: 'push',
+      }
+    }
+  };
+}
+
 export async function setupNotifications() {
   // set notification groups
   Promise.all(
@@ -92,4 +117,42 @@ export async function setupNotifications() {
   addNotificationResponseReceivedListener((response) => {
     handleNotificationResponse(response)
   })
+
+  // FCMs
+  if (Platform.OS !== 'ios') {
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      handleNotificationResponse({
+        notification: mapRemoteMessage(remoteMessage),
+        actionIdentifier: DEFAULT_ACTION_IDENTIFIER,
+      })
+    })
+
+    messaging().onMessage(async remoteMessage => {
+      handleNotificationResponse({
+        notification: mapRemoteMessage(remoteMessage),
+        actionIdentifier: 'NOOP',
+      })
+    });
+
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      handleNotificationResponse({
+        notification: mapRemoteMessage(remoteMessage),
+        actionIdentifier: 'NOOP',
+      })
+    });
+  }
+}
+
+export function openInitialNotification() {
+  // FCMs
+  if (Platform.OS !== 'ios') {
+    messaging().getInitialNotification().then((remoteMessage) => {
+      if (remoteMessage) {
+        handleNotificationResponse({
+          notification: mapRemoteMessage(remoteMessage),
+          actionIdentifier: DEFAULT_ACTION_IDENTIFIER,
+        })
+      }
+    });
+  }
 }

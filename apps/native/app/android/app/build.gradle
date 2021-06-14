@@ -1,5 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "com.google.gms.google-services"
+apply plugin: "com.google.firebase.firebase-perf"
 
 import com.android.build.OutputFile
 
@@ -139,7 +140,7 @@ android {
         applicationId "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
+        versionCode 5
         versionName "1.0.0"
         manifestPlaceholders = [
             appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
@@ -220,6 +221,7 @@ dependencies {
     implementation project(':react-native-custom-tabs')
     implementation project(':@react-native-firebase_app')
     implementation project(':@react-native-firebase_messaging')
+    implementation project(':@react-native-firebase_perf')
 
     addUnimodulesDependencies([
       modulesPaths: ['../../../node_modules'],

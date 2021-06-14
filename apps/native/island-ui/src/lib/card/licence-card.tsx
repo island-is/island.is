@@ -132,7 +132,7 @@ export function LicenceCard({
   let logo = <Image source={agencyLogo} style={{ width: 68, height: 87 }} />
   switch (type) {
     case LicenseType.DRIVERS_LICENSE:
-      titleString = 'Ökuskýrteini (IS)'
+      titleString = 'Ökuskírteini (IS)'
       textColor = { dark: '#000000', light: '#000000' }
       backgroundColor = { dark: '#5F414E', light: '#f5e4ec' }
       backgroundImage = driverLicence

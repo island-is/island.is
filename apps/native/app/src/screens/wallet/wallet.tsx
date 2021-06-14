@@ -29,6 +29,7 @@ import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { navigateTo } from '../../lib/deep-linking'
 import { usePreferencesStore } from '../../stores/preferences-store'
+import { LicenseType, LicenseStatus } from '../../types/license-type'
 import { testIDs } from '../../utils/test-ids'
 
 const {
@@ -83,9 +84,9 @@ const WalletItem = React.memo(
           <LicenceCard
             nativeID={`license-${item.license.type}_source`}
             title={item.license.type}
-            type={item.license.type}
+            type={item.license.type as LicenseType}
             date={item.fetch.updated}
-            status={item.license.status}
+            status={item.license.status as LicenseStatus}
             agencyLogo={agencyLogo}
           />
         </SafeAreaView>
