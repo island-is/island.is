@@ -1,3 +1,8 @@
-export { AuthScope } from './authScope.model'
-export { Delegation } from './delegation.model'
+export { ApiScope } from './apiScope.model'
+export {
+  CustomDelegation,
+  Delegation,
+  LegalGuardianDelegation,
+  ProcuringHolderDelegation,
+} from './delegation.model'
 export { DelegationScope } from './delegationScope.model'

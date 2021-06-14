@@ -6,6 +6,13 @@ import {
   ApplicationTypes,
 } from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
+import {
+  getSelectedChild,
+  MANUAL,
+  NO,
+  ParentalRelations,
+  YES,
+} from '@island.is/application/templates/parental-leave'
 
 import {
   getOtherParentId,
@@ -13,9 +20,9 @@ import {
   getEmployer,
   getPensionFund,
   getPrivatePensionFundRatio,
+  getRightsCode,
 } from './parental-leave.utils'
-
-import { apiConstants, formConstants } from './constants'
+import { apiConstants } from './constants'
 
 let id = 0
 const createApplicationBase = (): Application => ({
@@ -33,6 +40,32 @@ const createApplicationBase = (): Application => ({
   status: ApplicationStatus.IN_PROGRESS,
 })
 
+const createExternalDataChild = (
+  isPrimaryParent: boolean,
+  expectedDateOfBirth: string,
+  otherParentNationalRegistryId = '1111111119',
+): ReturnType<typeof getSelectedChild> => {
+  const childBase = {
+    expectedDateOfBirth,
+    hasRights: true,
+    remainingDays: 180,
+    transferredDays: 0,
+  }
+
+  if (isPrimaryParent) {
+    return {
+      ...childBase,
+      parentalRelation: ParentalRelations.primary,
+    }
+  } else {
+    return {
+      ...childBase,
+      parentalRelation: ParentalRelations.secondary,
+      primaryParentNationalRegistryId: otherParentNationalRegistryId,
+    }
+  }
+}
+
 let application: Application
 beforeEach(() => {
   application = createApplicationBase()
@@ -40,7 +73,7 @@ beforeEach(() => {
 
 describe('getOtherParentId', () => {
   it('should return null if no parent is selected', () => {
-    application.answers.otherParent = formConstants.spouseSelection.noSpouse
+    application.answers.otherParent = NO
 
     const expectedId = null
 
@@ -48,7 +81,7 @@ describe('getOtherParentId', () => {
   })
 
   it('should return answers.otherParentId if manual is selected', () => {
-    application.answers.otherParent = formConstants.spouseSelection.manual
+    application.answers.otherParent = MANUAL
 
     const expectedId = '1234567899'
 
@@ -81,18 +114,14 @@ describe('getOtherParentId', () => {
 describe('getPersonalAllowance', () => {
   describe('for self', () => {
     it('should return 0 if not going to use it', () => {
-      application.answers.usePersonalAllowance = formConstants.boolean.false
+      application.answers.usePersonalAllowance = NO
 
       expect(getPersonalAllowance(application)).toBe(0)
     })
 
     it('should return 100 if using as much as possible', () => {
-      application.answers.usePersonalAllowance = formConstants.boolean.true
-      set(
-        application.answers,
-        'personalAllowance.useAsMuchAsPossible',
-        formConstants.boolean.true,
-      )
+      application.answers.usePersonalAllowance = YES
+      set(application.answers, 'personalAllowance.useAsMuchAsPossible', YES)
 
       expect(getPersonalAllowance(application)).toBe(100)
     })
@@ -100,13 +129,9 @@ describe('getPersonalAllowance', () => {
     it('should return expected value if using a custom percentage', () => {
       const customValues = [0, 1, 15, 50, 90, 99, 100]
 
-      application.answers.usePersonalAllowance = formConstants.boolean.true
+      application.answers.usePersonalAllowance = YES
 
-      set(
-        application.answers,
-        'personalAllowance.useAsMuchAsPossible',
-        formConstants.boolean.false,
-      )
+      set(application.answers, 'personalAllowance.useAsMuchAsPossible', NO)
 
       for (const value of customValues) {
         set(application.answers, 'personalAllowance.usage', value)
@@ -117,19 +142,17 @@ describe('getPersonalAllowance', () => {
 
   describe('for spouse', () => {
     it('should return 0 if not going to use it', () => {
-      application.answers.usePersonalAllowanceFromSpouse =
-        formConstants.boolean.false
+      application.answers.usePersonalAllowanceFromSpouse = NO
 
       expect(getPersonalAllowance(application, true)).toBe(0)
     })
 
     it('should return 100 if using as much as possible', () => {
-      application.answers.usePersonalAllowanceFromSpouse =
-        formConstants.boolean.true
+      application.answers.usePersonalAllowanceFromSpouse = YES
       set(
         application.answers,
         'personalAllowanceFromSpouse.useAsMuchAsPossible',
-        formConstants.boolean.true,
+        YES,
       )
 
       expect(getPersonalAllowance(application, true)).toBe(100)
@@ -138,13 +161,12 @@ describe('getPersonalAllowance', () => {
     it('should return expected value if using a custom percentage', () => {
       const customValues = [0, 1, 15, 50, 90, 99, 100]
 
-      application.answers.usePersonalAllowanceFromSpouse =
-        formConstants.boolean.true
+      application.answers.usePersonalAllowanceFromSpouse = YES
 
       set(
         application.answers,
         'personalAllowanceFromSpouse.useAsMuchAsPossible',
-        formConstants.boolean.false,
+        NO,
       )
 
       for (const value of customValues) {
@@ -241,6 +263,119 @@ describe('getPrivatePensionFundRatio', () => {
 
     expect(getPrivatePensionFundRatio(application)).toBe(expectedValue)
   })
+})
+
+describe('getRightsCode', () => {
+  it('should return M-L-GR for a primary parent with employer', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(true, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'no')
+
+    const expected = 'M-L-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+  it('should return M-S-GR for a self employed primary parent', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(true, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'yes')
+
+    const expected = 'M-S-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+  // TODO:
+  // it('should return M-S-GR-SJ for a primary parent both self employed and with an employer', () => {})
+
+  // These apply to unborn children where parents are in registered cohabitation
+  it('should return FO-L-GR for a secondary parent with employer and custody', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(base, 'externalData.family.data', [
+      {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+        familyRelation: 'spouse',
+      },
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'no')
+
+    const expected = 'FO-L-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+  it('should return FO-S-GR for a self employed secondary parent with custody', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(false, '2022-03-01'),
+    ])
+    set(base, 'externalData.family.data', [
+      {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+        familyRelation: 'spouse',
+      },
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'yes')
+
+    const expected = 'FO-S-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+  // TODO:
+  // it('should return FO-L-GR-SJ for secondary parent that is both self employed and employed with custody', () => {})
+
+  // These codes apply to unborn children where parents are not registered partners
+  it('should return FO-FL-L-GR for a secondary parent with employer and no custody', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(false, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'no')
+
+    const expected = 'FO-FL-L-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+  it('should return FO-FL-S-GR for a self employed secondary parent with no custody', () => {
+    const base = createApplicationBase()
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(false, '2022-03-01'),
+    ])
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'yes')
+
+    const expected = 'FO-FL-S-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+  // TODO:
+  // it('should return FO-FL-L-GR-SJ for secondary parent that is both self employed and employed with custody', () => {})
 })
 
 // TODO: periods and validate against existing payment plans

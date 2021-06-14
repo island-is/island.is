@@ -1,27 +1,28 @@
 import set from 'lodash/set'
 
-import { Application } from '@island.is/application/core'
+import { Application, FormValue } from '@island.is/application/core'
 
+import { ParentalRelations } from '../../constants'
 import {
   getChildrenAndExistingApplications,
   applicationsToExistingChildApplication,
 } from './Children-utils'
-
 import {
   ChildInformationWithoutRights,
   PregnancyStatus,
   ChildrenWithoutRightsAndExistingApplications,
+  ChildInformation,
 } from './types'
 
 let id = 0
 
 const PRIMARY_PARENT_ID = '0101302129'
 
-const createApplicationWithChildrenWithoutRights = (
+const createApplicationWithChildren = (
   applicant: string,
   children: ChildInformationWithoutRights[],
   selectedChildIndex: number,
-  state = '',
+  answers?: FormValue,
 ): Application => {
   const externalData: Application['externalData'] = {}
 
@@ -32,6 +33,7 @@ const createApplicationWithChildrenWithoutRights = (
   return {
     answers: {
       selectedChild: `${selectedChildIndex}`,
+      ...answers,
     },
     applicant,
     assignees: [],
@@ -40,7 +42,7 @@ const createApplicationWithChildrenWithoutRights = (
     externalData,
     id: `${id++}`,
     modified: new Date(),
-    state,
+    state: '',
     status: 'inprogress' as Application['status'],
     typeId: 'ParentalLeave' as Application['typeId'],
   }
@@ -70,16 +72,12 @@ describe('getChildrenAndExistingApplications', () => {
     const children: ChildInformationWithoutRights[] = [
       {
         expectedDateOfBirth: '2020-10-10',
-        parentalRelation: 'primary',
+        parentalRelation: ParentalRelations.primary,
       },
     ]
 
     const applicationsWhereApplicant: Application[] = [
-      createApplicationWithChildrenWithoutRights(
-        PRIMARY_PARENT_ID,
-        children,
-        0,
-      ),
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0),
     ]
     const applicationsWhereOtherParent: Application[] = []
     const pregnancyStatus = undefined
@@ -107,24 +105,20 @@ describe('getChildrenAndExistingApplications', () => {
     const children: ChildInformationWithoutRights[] = [
       {
         expectedDateOfBirth: '2020-10-10',
-        parentalRelation: 'primary',
+        parentalRelation: ParentalRelations.primary,
       },
     ]
 
     const applicationsWhereApplicant: Application[] = []
     const applicationsWhereOtherParent: Application[] = [
-      createApplicationWithChildrenWithoutRights(
-        PRIMARY_PARENT_ID,
-        children,
-        0,
-      ),
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0),
     ]
     const pregnancyStatus = undefined
 
     const expectedChildren: ChildInformationWithoutRights[] = [
       {
         ...children[0],
-        parentalRelation: 'secondary',
+        parentalRelation: ParentalRelations.secondary,
         primaryParentNationalRegistryId: PRIMARY_PARENT_ID,
         transferredDays: 0,
       },
@@ -155,7 +149,7 @@ describe('getChildrenAndExistingApplications', () => {
 
     const expectedChildren: ChildInformationWithoutRights[] = [
       {
-        parentalRelation: 'primary',
+        parentalRelation: ParentalRelations.primary,
         expectedDateOfBirth: pregnancyStatus.expectedDateOfBirth,
       },
     ]
@@ -178,17 +172,13 @@ describe('getChildrenAndExistingApplications', () => {
   it('should not duplicate expected date of birth in in result.children and result.existingApplications when primary parent has already applied for her unborn child', () => {
     const childFromPregnancyStatus: ChildInformationWithoutRights = {
       expectedDateOfBirth: '2021-05-10',
-      parentalRelation: 'primary',
+      parentalRelation: ParentalRelations.primary,
     }
 
     const children: ChildInformationWithoutRights[] = [childFromPregnancyStatus]
 
     const applicationsWhereApplicant: Application[] = [
-      createApplicationWithChildrenWithoutRights(
-        PRIMARY_PARENT_ID,
-        children,
-        0,
-      ),
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0),
     ]
     const applicationsWhereOtherParent: Application[] = []
     const pregnancyStatus: PregnancyStatus = {
@@ -215,5 +205,75 @@ describe('getChildrenAndExistingApplications', () => {
     expect(result.existingApplications.length).toBe(1)
     expect(result.children.length).toBe(0)
     expect(result).toStrictEqual(expected)
+  })
+
+  it('should return the number of days requested by the primary parent', () => {
+    const childFromPregnancyStatus: ChildInformationWithoutRights = {
+      expectedDateOfBirth: '2021-05-10',
+      parentalRelation: ParentalRelations.primary,
+    }
+
+    const children: ChildInformationWithoutRights[] = [childFromPregnancyStatus]
+
+    const pregnancyStatus: PregnancyStatus = {
+      hasActivePregnancy: true,
+      expectedDateOfBirth: childFromPregnancyStatus.expectedDateOfBirth,
+    }
+
+    const applicationsWhereOtherParent: Application[] = [
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0, {
+        requestRights: {
+          isRequestingRights: 'yes',
+          requestDays: 45,
+        },
+        giveRights: {
+          isGivingRights: 'no',
+        },
+      }),
+    ]
+
+    const result = getChildrenAndExistingApplications(
+      [],
+      applicationsWhereOtherParent,
+      pregnancyStatus,
+    )
+
+    expect(result.children[0].transferredDays).toBe(-45)
+  })
+
+  it('should return the number of days given by the primary parent', () => {
+    const childFromPregnancyStatus: ChildInformation = {
+      expectedDateOfBirth: '2021-05-10',
+      parentalRelation: ParentalRelations.primary,
+      hasRights: true,
+      remainingDays: 180,
+    }
+
+    const children: ChildInformation[] = [childFromPregnancyStatus]
+
+    const pregnancyStatus: PregnancyStatus = {
+      hasActivePregnancy: true,
+      expectedDateOfBirth: childFromPregnancyStatus.expectedDateOfBirth,
+    }
+
+    const applicationsWhereOtherParent: Application[] = [
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0, {
+        requestRights: {
+          isRequestingRights: 'no',
+        },
+        giveRights: {
+          isGivingRights: 'yes',
+          giveDays: 45,
+        },
+      }),
+    ]
+
+    const result = getChildrenAndExistingApplications(
+      [],
+      applicationsWhereOtherParent,
+      pregnancyStatus,
+    )
+
+    expect(result.children[0].transferredDays).toBe(45)
   })
 })
