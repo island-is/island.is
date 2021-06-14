@@ -9,7 +9,7 @@ import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationService } from './application.service'
-import { Application, ApplicationPaymentStatus } from './application.model'
+import { Application, ApplicationPaymentStatus, ApplicationUpdatePaymentStatus } from './application.model'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -27,6 +27,8 @@ import { RequestFileSignatureResponse } from './dto/requestFileSignature.respons
 import { PresignedUrlResponse } from './dto/presignedUrl.response'
 import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
 import { ApplicationPaymentStatusInput } from './dto/applicationPaymentStatusInput'
+import { CreatePaymentResponseDto } from '../../gen/fetch/models/CreatePaymentResponseDto'
+import { UpdatePaymentStatus } from './dto/updatePaymentStatus.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -59,6 +61,24 @@ export class ApplicationResolver {
     return {
       fulfilled: status.fulfilled,
     }
+  }
+
+  @Mutation(() => ApplicationUpdatePaymentStatus, { nullable: true })
+  async applicationUpdatePaymentStatus(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: UpdatePaymentStatus,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationUpdatePaymentStatus | void> {
+    return this.applicationService.updatePaymentStatus(
+      {
+        applicationId: input.applicationId,
+        fulfilled: input.fulfilled,
+        id: input?.id || ''
+      }, 
+      user, 
+      locale
+    )
   }
 
   @Query(() => [Application], { nullable: true })

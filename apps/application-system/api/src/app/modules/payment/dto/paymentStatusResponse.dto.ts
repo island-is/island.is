@@ -6,5 +6,5 @@ export class PaymentStatusResponseDto {
   @ApiProperty()
   @Expose()
   @IsBoolean()
-  fulfilled?: boolean
+  fulfilled!: boolean
 }

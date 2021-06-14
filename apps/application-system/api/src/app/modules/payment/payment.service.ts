@@ -79,10 +79,10 @@ export class PaymentService {
   }
 
   async assignValues(
-    id: string,
     applicationId: string,
     isPaid: boolean,
     payment: Payment,
+    id?: string,
   ): Promise<CreatePaymentResponseDto> {
     const assignedObject: CreatePaymentResponseDto = {
       id: id || payment.id,

@@ -119,13 +119,13 @@ export class PaymentController {
     description: 'The id of the payment.',
   })
   async paymentApproved(
-    @Param('id') id: string,
     @Param('application_id') applicationId: string,
     @Body()
     paymentDetails: CreatePaymentResponseDto,
     callback: Callback,
     @CurrentUser()
     user: User,
+    @Param('id') id?: string,
   ): Promise<CreatePaymentResponseDto> {
     const payment = await this.paymentService.findPaymentByApplicationId(
       applicationId,
@@ -141,10 +141,10 @@ export class PaymentController {
       })
 
       const paymentDto: CreatePaymentResponseDto = await this.paymentService.assignValues(
-        id,
         applicationId,
-        callback.status === 'isPaid' ? true : false,
+        (callback.status === 'isPaid' ? true : false),
         payment,
+        id,
       )
       return await this.paymentModel.create(paymentDto)
     }
