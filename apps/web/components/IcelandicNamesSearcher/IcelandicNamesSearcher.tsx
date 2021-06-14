@@ -27,8 +27,8 @@ import {
   ResponsiveSpace,
   Link,
   Hidden,
+  Tooltip,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 
 import { alphabet } from './data'
 import {
@@ -283,9 +283,19 @@ export const IcelandicNamesSearcher = () => {
                     {!isBusy &&
                       filteredNamesList.map(
                         (
-                          { icelandicName, status, type, verdict, url },
+                          {
+                            icelandicName,
+                            description,
+                            status,
+                            type,
+                            verdict,
+                            url,
+                          },
                           index,
                         ) => {
+                          const rejected = status === 'Haf'
+                          const approved = status === 'Sam'
+
                           return (
                             <T.Row key={index}>
                               <T.Data>
@@ -298,41 +308,81 @@ export const IcelandicNamesSearcher = () => {
                                 </Text>
                               </T.Data>
                               <T.Data>
-                                <Text as="span" fontWeight="semiBold">
-                                  {`${icelandicName[0].toUpperCase()}${icelandicName.substring(
-                                    1,
-                                  )}`}
-                                </Text>
+                                <Box className={styles.data}>
+                                  <Text as="span" fontWeight="semiBold">
+                                    {`${icelandicName[0].toUpperCase()}${icelandicName.substring(
+                                      1,
+                                    )}`}
+                                  </Text>
+                                  {!!description && (
+                                    <Box
+                                      className={styles.tooltip}
+                                      marginLeft={1}
+                                    >
+                                      <Tooltip
+                                        color="blue300"
+                                        text={description}
+                                        iconSize="small"
+                                        as="span"
+                                      />
+                                    </Box>
+                                  )}
+                                </Box>
                               </T.Data>
                               <T.Data>
-                                {!!verdict && url ? (
-                                  <Link href={url} skipTab>
-                                    <Button
-                                      colorScheme={
-                                        status === 'Haf'
-                                          ? 'destructive'
-                                          : 'default'
-                                      }
-                                      variant="text"
-                                      size="small"
-                                      icon="open"
-                                      iconType="outline"
-                                      as="span"
-                                    >
-                                      {verdict}
-                                    </Button>
-                                  </Link>
-                                ) : (
-                                  <Text
-                                    variant="small"
-                                    fontWeight="semiBold"
-                                    color={
-                                      status === 'Haf' ? 'red600' : 'blue400'
-                                    }
-                                  >
-                                    {verdict}
-                                  </Text>
-                                )}
+                                <Box className={styles.data}>
+                                  <Box className={styles.icon} marginRight={1}>
+                                    {!!rejected && (
+                                      <Icon
+                                        size="small"
+                                        type="filled"
+                                        icon="close"
+                                        color="red600"
+                                      />
+                                    )}
+                                    {!!approved && (
+                                      <Icon
+                                        size="small"
+                                        type="filled"
+                                        icon="checkmark"
+                                        color="blue400"
+                                      />
+                                    )}
+                                  </Box>
+                                  <Box>
+                                    {!!verdict && url ? (
+                                      <Link href={url} skipTab>
+                                        <Button
+                                          colorScheme={
+                                            status === 'Haf'
+                                              ? 'destructive'
+                                              : 'default'
+                                          }
+                                          variant="text"
+                                          size="small"
+                                          icon="open"
+                                          iconType="outline"
+                                          as="span"
+                                        >
+                                          {verdict}
+                                        </Button>
+                                      </Link>
+                                    ) : (
+                                      <Text
+                                        variant="small"
+                                        fontWeight="semiBold"
+                                        color={
+                                          status === 'Haf'
+                                            ? 'red600'
+                                            : 'blue400'
+                                        }
+                                      >
+                                        {status === 'Haf'}
+                                        {verdict}
+                                      </Text>
+                                    )}
+                                  </Box>
+                                </Box>
                               </T.Data>
                             </T.Row>
                           )
