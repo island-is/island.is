@@ -143,7 +143,6 @@ export function formatCourtHeadsUpSmsNotification(
   prosecutorName: string,
   arrestDate: Date,
   requestedCourtDate: Date,
-  description?: string,
 ): string {
   // Prosecutor
   const prosecutorText = ` Ákærandi: ${prosecutorName || 'Ekki skráður'}.`
@@ -188,9 +187,16 @@ export function formatCourtReadyForCourtSmsNotification(
   // Court
   const courtText = ` Dómstóll: ${court || 'Ekki skráður'}.`
 
-  return `${
-    type === CaseType.CUSTODY ? 'Gæsluvarðhaldskrafa' : 'Farbannskrafa'
-  } tilbúin til afgreiðslu.${prosecutorText}${courtText}`
+  const submittedCaseText =
+    type === CaseType.CUSTODY
+      ? 'Gæsluvarðhaldskrafa'
+      : type === CaseType.TRAVEL_BAN
+      ? 'Farbannskrafa'
+      : type === CaseType.OTHER
+      ? 'Krafa um rannsóknarheimild'
+      : `Krafa um rannsóknarheimild (${caseTypes[type]})`
+
+  return `${submittedCaseText} tilbúin til afgreiðslu.${prosecutorText}${courtText}`
 }
 
 export function formatProsecutorCourtDateEmailNotification(

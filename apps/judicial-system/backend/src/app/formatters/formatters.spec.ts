@@ -580,7 +580,6 @@ describe('formatHeadsUpSmsNotification', () => {
     const prosecutorName = 'Al Coe'
     const arrestDate = new Date('2021-01-24T13:00')
     const requestedCourtDate = new Date('2021-06-20T10:00')
-    const description = 'Leit í bifreið'
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
@@ -588,7 +587,6 @@ describe('formatHeadsUpSmsNotification', () => {
       prosecutorName,
       arrestDate,
       requestedCourtDate,
-      description,
     )
 
     // Assert
@@ -651,6 +649,44 @@ describe('formatReadyForCourtSmsNotification', () => {
     // Assert
     expect(res).toBe(
       'Farbannskrafa tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+    )
+  })
+
+  test('should format ready for court SMS notification for investigation', () => {
+    // Arrange
+    const type = CaseType.INTERNET_USAGE
+    const prosecutorName = 'Árni Ákærandi'
+    const court = 'Héraðsdómur Austurlands'
+
+    // Act
+    const res = formatCourtReadyForCourtSmsNotification(
+      type,
+      prosecutorName,
+      court,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um rannsóknarheimild (upplýsingar um vefnotkun) tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+    )
+  })
+
+  test('should format ready for court SMS notification for investigation of type OTHER', () => {
+    // Arrange
+    const type = CaseType.OTHER
+    const prosecutorName = 'Árni Ákærandi'
+    const court = 'Héraðsdómur Austurlands'
+
+    // Act
+    const res = formatCourtReadyForCourtSmsNotification(
+      type,
+      prosecutorName,
+      court,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um rannsóknarheimild tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
     )
   })
 })
