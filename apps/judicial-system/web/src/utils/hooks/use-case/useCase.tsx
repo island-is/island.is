@@ -144,23 +144,17 @@ const useCase = () => {
     }
   }
 
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
+  const updateCase = (id: string, updateCase: UpdateCase) => {
     // Only update if id has been set
     if (!id) {
-      return null
+      return
     }
-    const { data } = await updateCaseMutation({
+
+    updateCaseMutation({
       variables: { input: { id, ...updateCase } },
     })
 
-    const resCase = data?.updateCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want the modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
+    // TODO: Handle errors and perhaps wait for and do something with the result
   }
 
   const transitionCase = async (
