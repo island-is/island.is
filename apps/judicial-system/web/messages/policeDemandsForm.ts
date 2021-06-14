@@ -2,6 +2,25 @@ import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings on policeDemandsForm
 export const policeDemandsForm = {
+  general: {
+    heading: defineMessage({
+      id: 'judicial.system:forms.policeDemands.general.heading',
+      defaultMessage: 'Dómkröfur og lagagrundvöllur',
+      description: 'Police Demands form: Heading',
+    }),
+  },
+  requestToDate: defineMessages({
+    heading: {
+      id: 'judicial.system:forms.policeDemands.requestToDate.heading',
+      defaultMessage: 'Gildistími heimildar',
+      description: 'Police Demands form Request valid to date: Heading',
+    },
+    dateLabel: {
+      id: 'judicial.system:forms.policeDemands.requestToDate.dateLabel',
+      defaultMessage: 'Heimild gildir til:',
+      description: 'Police Demands form Request valid to date: Date Label',
+    },
+  }),
   courtClaim: {
     heading: defineMessage({
       id: 'judicial.system:forms.policeDemands.courtClaim.heading',
@@ -59,4 +78,39 @@ export const policeDemandsForm = {
       },
     }),
   },
+  lawsBroken: defineMessages({
+    heading: {
+      id: 'judicial.system:forms.policeDemands.lawsBroken.heading',
+      defaultMessage: 'Lagaákvæði sem brot varða við',
+      description: 'Police Demands form Laws broken: Heading',
+    },
+    label: {
+      id: 'judicial.system:forms.policeDemands.lawsBroken.label',
+      defaultMessage: 'Lagaákvæði sem ætluð brot {defendant} þykja varða við',
+      description: 'Police Demands form Laws broken: Label',
+    },
+    placeholder: {
+      id: 'judicial.system:forms.policeDemands.lawsBroken.placeholder',
+      defaultMessage:
+        'Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940...',
+      description: 'Police Demands form Laws broken: Placeholder',
+    },
+  }),
+  legalBasis: defineMessages({
+    heading: {
+      id: 'judicial.system:forms.policeDemands.legalBasis.heading',
+      defaultMessage: 'Lagaákvæði sem krafan er byggð á',
+      description: 'Police Demands form Legal Basis: Heading',
+    },
+    label: {
+      id: 'judicial.system:forms.policeDemands.legalBasis.label',
+      defaultMessage: 'Lagaákvæði sem krafan er byggð á',
+      description: 'Police Demands form Legal Basis: Label',
+    },
+    placeholder: {
+      id: 'judicial.system:forms.policeDemands.legalBasis.placeholder',
+      defaultMessage: 'Hvaða lagaákvæðum byggir krafan á?',
+      description: 'Police Demands form Legal Basis: Placeholder',
+    },
+  }),
 }

@@ -23,6 +23,7 @@ import {
   NounCases,
 } from '@island.is/judicial-system/formatters'
 import { policeDemandsForm } from '@island.is/judicial-system-web/messages'
+import { format } from 'winston'
 
 const courtClaimPrefill: Partial<
   Record<
@@ -111,18 +112,20 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Dómkröfur og lagagrundvöllur
+            {formatMessage(policeDemandsForm.general.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Gildistími heimildar
+              {formatMessage(policeDemandsForm.requestToDate.heading)}
             </Text>
           </Box>
           <DateTime
             name="reqValidToDate"
-            datepickerLabel="Heimild gildir til:"
+            datepickerLabel={formatMessage(
+              policeDemandsForm.requestToDate.dateLabel,
+            )}
             minDate={new Date()}
             selectedDate={
               workingCase.requestedValidToDate
@@ -188,17 +191,21 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Lagaákvæði sem brot varða við
+              {formatMessage(policeDemandsForm.lawsBroken.heading)}
             </Text>
           </Box>
           <Input
             data-testid="lawsBroken"
             name="lawsBroken"
-            label={`Lagaákvæði sem ætluð brot ${formatAccusedByGender(
-              workingCase.accusedGender,
-              NounCases.GENITIVE,
-            )} þykja varða við`}
-            placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
+            label={formatMessage(policeDemandsForm.lawsBroken.label, {
+              defendant: formatAccusedByGender(
+                workingCase.accusedGender,
+                NounCases.GENITIVE,
+              ),
+            })}
+            placeholder={formatMessage(
+              policeDemandsForm.lawsBroken.placeholder,
+            )}
             defaultValue={workingCase.lawsBroken}
             errorMessage={lawsBrokenEM}
             hasError={lawsBrokenEM !== ''}
@@ -231,14 +238,16 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Lagaákvæði sem krafan er byggð á
+              {formatMessage(policeDemandsForm.legalBasis.heading)}
             </Text>
           </Box>
           <Input
             data-testid="legal-basis"
             name="legal-basis"
-            label="Lagaákvæði sem krafan er byggð á"
-            placeholder="Hvaða lagaákvæðum byggir krafan á?"
+            label={formatMessage(policeDemandsForm.legalBasis.label)}
+            placeholder={formatMessage(
+              policeDemandsForm.legalBasis.placeholder,
+            )}
             defaultValue={workingCase.legalBasis}
             errorMessage={legalBasisEM}
             hasError={legalBasisEM !== ''}
