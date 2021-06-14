@@ -56,7 +56,9 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
-  const [createCaseSuccess, setCreateCaseSuccess] = useState<boolean>(false)
+  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
+    false,
+  )
 
   const router = useRouter()
   const id = router.query.id
@@ -117,7 +119,7 @@ export const JudgeOverview: React.FC = () => {
     createCourtCase(workingCase, setWorkingCase, setCourtCaseNumberErrorMessage)
 
     if (courtCaseNumberErrorMessage === '') {
-      setCreateCaseSuccess(true)
+      setCreateCourtCaseSuccess(true)
     }
   }
 
@@ -185,7 +187,7 @@ export const JudgeOverview: React.FC = () => {
                         backgroundColor="white"
                         value={workingCase.courtCaseNumber || ''}
                         icon={
-                          workingCase.courtCaseNumber && createCaseSuccess
+                          workingCase.courtCaseNumber && createCourtCaseSuccess
                             ? 'checkmark'
                             : undefined
                         }
@@ -195,7 +197,7 @@ export const JudgeOverview: React.FC = () => {
                           courtCaseNumberErrorMessage !== ''
                         }
                         onChange={(event) => {
-                          setCreateCaseSuccess(false)
+                          setCreateCourtCaseSuccess(false)
                           removeTabsValidateAndSet(
                             'courtCaseNumber',
                             event,
