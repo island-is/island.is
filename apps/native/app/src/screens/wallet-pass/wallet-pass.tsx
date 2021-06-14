@@ -122,6 +122,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const data = licenseRes.data?.License ?? item
 
+  console.log('data', data)
+
   return (
     <View style={{ flex: 1 }}>
       <BottomTabsIndicator index={2} total={3} />

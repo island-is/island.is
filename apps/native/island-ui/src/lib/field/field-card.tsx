@@ -3,8 +3,12 @@ import { Image } from 'react-native'
 import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
-import IconB from '../../assets/icons/icon-b.png';
-import IconBE from '../../assets/icons/icon-be.png';
+import IconA from '../../assets/licenece-type/icon-a.png';
+import IconB from '../../assets/licenece-type/icon-b.png';
+import IconBE from '../../assets/licenece-type/icon-be.png';
+import IconC from '../../assets/licenece-type/icon-c.png';
+import IconCE from '../../assets/licenece-type/icon-ce.png';
+import IconD from '../../assets/licenece-type/icon-d.png';
 
 const Host = styled.View`
   border-width: ${({ theme }) => theme.border.width.standard}px;
@@ -61,11 +65,23 @@ export function FieldCard(props: FieldCardProps) {
   let icon = null;
 
   switch (props.code) {
+    case 'A':
+      icon = <Image source={IconA} resizeMode="contain" height={24} width={24}  />
+      break;
     case 'B':
-      icon = <Image source={IconB} height={12} width={24}  />
+      icon = <Image source={IconB} resizeMode="contain" height={12} width={24}  />
       break;
     case 'BE':
-      icon = <Image source={IconBE} height={15} width={42}  />
+      icon = <Image source={IconBE} resizeMode="contain" height={15} width={42}  />
+      break;
+    case 'C':
+      icon = <Image source={IconC} resizeMode="contain" height={24} width={24}  />
+      break;
+    case 'CE':
+      icon = <Image source={IconCE} resizeMode="contain" height={15} width={40}  />
+      break;
+    case 'D':
+      icon = <Image source={IconD} resizeMode="contain" height={24} width={24}  />
       break;
   }
   return (
@@ -73,7 +89,7 @@ export function FieldCard(props: FieldCardProps) {
       <Header>
         <HeaderTextBold>{props.code}</HeaderTextBold>
         <HeaderText>{props.title}</HeaderText>
-        <IconWrap>{icon}</IconWrap>
+        {icon && <IconWrap>{icon}</IconWrap>}
       </Header>
       <ChildrenWrap>{props.children}</ChildrenWrap>
     </Host>
