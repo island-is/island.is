@@ -30,6 +30,7 @@
     "jsonwebtoken": "*",
     "dotenv": "*",
     "js-base64": "*",
-    "@formatjs/intl-numberformat": "*"
+    "@formatjs/intl-numberformat": "*",
+    "graphql": "*"
   }
 }
