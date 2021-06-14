@@ -125,7 +125,7 @@ export class PartyApplicationService {
     const constituencyTag =
       constituencyMapper[application.answers.constituency as Constituencies]
     const CREATE_ENDORSEMENT_LIST_QUERY = `
-      mutation EndorsementSystemCreateEndorsementList($input: CreateEndorsementListDto!) {
+      mutation EndorsementSystemCreatePartyApplicationEndorsementList($input: CreateEndorsementListDto!) {
         endorsementSystemCreateEndorsementList(input: $input) {
           id
         }
@@ -142,6 +142,11 @@ export class PartyApplicationService {
           endorsementMeta: ['fullName', 'address', 'signedTags'],
           tags: [constituencyTag],
           validationRules: [],
+          meta: {
+            // to be able to link back to this application
+            applicationTypeId: application.typeId,
+            applicationId: application.id,
+          },
         },
       })
       .then((response) => response.json())
