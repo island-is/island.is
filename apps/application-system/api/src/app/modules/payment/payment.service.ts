@@ -96,9 +96,7 @@ export class PaymentService {
     return Promise.resolve(assignedObject)
   }
 
-  findCorrectApplicationPayment(
-    paymentRows: Payment[],
-  ): Payment {
+  findCorrectApplicationPayment(paymentRows: Payment[]): Payment {
     let filteredPayment: Payment = paymentRows[0]
     for (const payment in paymentRows) {
       if (paymentRows[payment].fulfilled === true) {

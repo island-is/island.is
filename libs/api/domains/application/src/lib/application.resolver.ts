@@ -50,10 +50,14 @@ export class ApplicationResolver {
     locale: Locale = 'is',
     @Args('input') input: ApplicationPaymentStatusInput,
   ): Promise<ApplicationPaymentStatus | null> {
-    const status = await this.applicationService.getPaymentStatus(input.id, user, locale)
+    const status = await this.applicationService.getPaymentStatus(
+      input.id,
+      user,
+      locale,
+    )
 
     return {
-      fulfilled: status.fulfilled
+      fulfilled: status.fulfilled,
     }
   }
 

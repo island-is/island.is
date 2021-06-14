@@ -88,4 +88,3 @@ export class ApplicationPaymentStatus {
   @Field()
   fulfilled!: boolean
 }
-

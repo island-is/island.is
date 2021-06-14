@@ -38,7 +38,7 @@ const handleError = async (error: any) => {
 export class ApplicationService {
   constructor(
     private _applicationApi: ApplicationsApi,
-    private _applicationPaymentApi: PaymentsApi
+    private _applicationPaymentApi: PaymentsApi,
   ) {}
 
   applicationApiWithAuth(auth: Auth) {
@@ -58,7 +58,11 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async getPaymentStatus(applicationId: string, auth: Auth, locale: Locale): Promise<ApplicationPaymentStatus[] | void>  {
+  async getPaymentStatus(
+    applicationId: string,
+    auth: Auth,
+    locale: Locale,
+  ): Promise<ApplicationPaymentStatus[] | void> {
     return await this.paymentApiWithAuth(auth)
       .paymentControllerGetPaymentStatus({
         applicationId,
