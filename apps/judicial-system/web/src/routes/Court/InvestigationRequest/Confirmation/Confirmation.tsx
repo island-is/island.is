@@ -9,9 +9,9 @@ import {
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
-import HearingArrangementsForm from './HearingArrangementsForm'
+import ConfirmationForm from './ConfirmationForm'
 
-const HearingArrangements = () => {
+const Confirmation = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
 
   const router = useRouter()
@@ -23,7 +23,7 @@ const HearingArrangements = () => {
   })
 
   useEffect(() => {
-    document.title = 'Fyrirtaka - Réttarvörslugátt'
+    document.title = 'Þingbók - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const HearingArrangements = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
+      activeSubSection={JudgeSubsections.CONFIRMATION}
       isLoading={loading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
@@ -45,7 +45,7 @@ const HearingArrangements = () => {
       caseId={workingCase?.id}
     >
       {workingCase && (
-        <HearingArrangementsForm
+        <ConfirmationForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           isLoading={loading}
@@ -55,4 +55,4 @@ const HearingArrangements = () => {
   )
 }
 
-export default HearingArrangements
+export default Confirmation
