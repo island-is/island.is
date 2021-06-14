@@ -4,9 +4,7 @@ import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
   Case,
   CaseCustodyProvisions,
-  CaseTransition,
   NotificationType,
-  TransitionCase,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
