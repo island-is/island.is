@@ -1,6 +1,7 @@
-import React from 'react'
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import React, { useState, useEffect } from 'react'
+import { gql, useLazyQuery } from '@apollo/client'
+import { dateFormat } from '@island.is/shared/constants'
+import format from 'date-fns/format'
 import { Table as T } from '@island.is/island-ui/core'
 import {
   Box,
@@ -11,12 +12,11 @@ import {
   GridRow,
   GridColumn,
   DatePicker,
+  Button,
+  AlertBanner,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  BillReceiptTypes,
-  BillReceiptItemTypes,
-} from './FinanceBillsData.types'
+import { BillReceiptItemTypes } from './FinanceBillsData.types'
 import amountFormat from '../../utils/amountFormat'
 
 // Todo: This is can be shared with "Documents"
@@ -74,39 +74,39 @@ const FinanceBills = () => {
   useNamespaces('sp.finance-bills')
   const { formatMessage } = useLocale()
 
-  const { data } = useQuery<Query>(getFinanceBillsListQuery, {
-    variables: {
-      input: {
-        dayFrom: '2021-01-01',
-        dayTo: '2021-05-31',
-      },
-    },
-  })
+  const [fromDate, setFromDate] = useState<string>()
+  const [toDate, setToDate] = useState<string>()
+
+  const [loadFinanceBills, { data, loading, called }] = useLazyQuery(
+    getFinanceBillsListQuery,
+  )
 
   const billsDataArray: BillReceiptItemTypes[] =
     data?.getBillReceipts?.documentsList || []
 
-  // TODO: This is still hardcoded. Add onclick to fetch document per table row.
-  const { data: documentData } = useQuery<Query>(getFinanceDocumentQuery, {
-    variables: {
-      input: {
-        documentID: 'SK11112704685439202101111609341083008',
-      },
+  useEffect(() => {
+    if (toDate && fromDate) {
+      loadFinanceBills({
+        variables: {
+          input: {
+            dayFrom: fromDate,
+            dayTo: toDate,
+          },
+        },
+      })
+    }
+  }, [toDate, fromDate])
+
+  const [loadFinanceDocument] = useLazyQuery(getFinanceDocumentQuery, {
+    onCompleted: (docData) => {
+      const pdfData = docData?.getFinanceDocument?.docment || null
+      if (pdfData && documentIsPdf(pdfData)) {
+        window.open(getPdfURL(pdfData.document))
+      } else {
+        console.warn('No PDF data') // Should warn the user with toast?
+      }
     },
   })
-
-  const doc: any = documentData?.getFinanceDocument?.docment || {}
-
-  console.log('doc', doc)
-
-  const displayDocument = () => {
-    console.log('clicked')
-    if (documentIsPdf(doc)) {
-      console.log('ispdf')
-      window.open(getPdfURL(doc.document))
-      return
-    }
-  }
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -133,7 +133,10 @@ const FinanceBills = () => {
             <GridColumn span={['1/1', '4/12']}>
               <DatePicker
                 backgroundColor="blue"
-                // handleChange={function noRefCheck() {}}
+                handleChange={(d) => {
+                  const date = format(d, 'yyyy-MM-dd')
+                  setFromDate(date)
+                }}
                 icon="calendar"
                 iconType="outline"
                 size="sm"
@@ -145,7 +148,10 @@ const FinanceBills = () => {
             <GridColumn span={['1/1', '4/12']}>
               <DatePicker
                 backgroundColor="blue"
-                // handleChange={function noRefCheck() {}}
+                handleChange={(d) => {
+                  const date = format(d, 'yyyy-MM-dd')
+                  setToDate(date)
+                }}
                 icon="calendar"
                 iconType="outline"
                 size="sm"
@@ -157,28 +163,60 @@ const FinanceBills = () => {
           </GridRow>
         </Box>
         <Box marginTop={2}>
+          {!called && !loading && (
+            <AlertBanner
+              description="Veldu dagsetningar til að fá niðurstöður"
+              variant="info"
+            />
+          )}
           {billsDataArray.length > 0 ? (
             <T.Table>
               <T.Head>
                 <T.Row>
-                  <T.HeadData>Dagsetning</T.HeadData>
-                  <T.HeadData>Tegund</T.HeadData>
-                  <T.HeadData>Skýring</T.HeadData>
-                  <T.HeadData>Framkvæmdaraðili</T.HeadData>
-                  <T.HeadData>Upphæð</T.HeadData>
+                  <T.HeadData>
+                    <Text variant="eyebrow">Dagsetning</Text>
+                  </T.HeadData>
+                  <T.HeadData>
+                    <Text variant="eyebrow">Tegund</Text>
+                  </T.HeadData>
+                  <T.HeadData>
+                    <Text variant="eyebrow">Skýring</Text>
+                  </T.HeadData>
+                  <T.HeadData>
+                    <Text variant="eyebrow">Framkvæmdaraðili</Text>
+                  </T.HeadData>
+                  <T.HeadData>
+                    <Text variant="eyebrow">Upphæð</Text>
+                  </T.HeadData>
                   <T.HeadData></T.HeadData>
                 </T.Row>
               </T.Head>
               <T.Body>
                 {billsDataArray.map((listItem) => (
                   <T.Row key={listItem.id}>
-                    <T.Data>{listItem.date}</T.Data>
+                    <T.Data>
+                      {format(new Date(listItem.date), dateFormat.is)}
+                    </T.Data>
                     <T.Data>{listItem.type}</T.Data>
                     <T.Data>{listItem.note}</T.Data>
                     <T.Data>{listItem.sender}</T.Data>
                     <T.Data>{amountFormat(listItem.amount)}</T.Data>
                     <T.Data>
-                      <button onClick={() => displayDocument()}>Skoða</button>
+                      <Button
+                        size="small"
+                        variant="text"
+                        onClick={() =>
+                          loadFinanceDocument({
+                            variables: {
+                              input: {
+                                documentID: listItem.id,
+                              },
+                            },
+                          })
+                        }
+                      >
+                        Skoða
+                      </Button>
                     </T.Data>
                   </T.Row>
                 ))}
