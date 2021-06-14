@@ -1,6 +1,6 @@
 FROM public.ecr.aws/bitnami/node:14.17.0
 
-RUN apt-get update && apt-get install netcat
+RUN apt-get update && apt-get install netcat -y
 
 WORKDIR "/code"
 VOLUME ["/code"]
