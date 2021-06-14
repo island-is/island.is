@@ -62,7 +62,7 @@ export class ApplicationService {
     applicationId: string,
     auth: Auth,
     locale: Locale,
-  ): Promise<ApplicationPaymentStatus[] | void> {
+  ): Promise<ApplicationPaymentStatus> {
     return await this.paymentApiWithAuth(auth)
       .paymentControllerGetPaymentStatus({
         applicationId,
