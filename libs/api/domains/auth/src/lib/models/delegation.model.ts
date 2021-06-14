@@ -41,6 +41,9 @@ export abstract class Delegation {
   @Field()
   fromName!: string
 
+  @Field()
+  toName!: string
+
   @Field(() => DelegationType)
   type!: DelegationType
 

@@ -21,6 +21,12 @@ export class OrganizationSubpage {
   @Field()
   slug!: string
 
+  @Field(() => [String])
+  url!: Array<string>
+
+  @Field({ nullable: true })
+  intro!: string
+
   @Field(() => [SliceUnion], { nullable: true })
   description?: Array<typeof SliceUnion>
 
@@ -53,6 +59,8 @@ export const mapOrganizationSubpage = ({
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
+  url: [fields.organizationPage?.fields?.slug, fields.slug],
+  intro: fields.intro ?? '',
   description: fields.description
     ? mapDocument(fields.description, sys.id + ':content')
     : [],

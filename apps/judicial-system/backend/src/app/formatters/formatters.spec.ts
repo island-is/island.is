@@ -6,6 +6,7 @@ import {
   CaseGender,
   CaseType,
 } from '@island.is/judicial-system/types'
+
 import {
   formatConclusion,
   formatProsecutorCourtDateEmailNotification,
@@ -177,7 +178,7 @@ describe('formatConclusion', () => {
     const validToDate = new Date('2020-12-22T11:23')
     const isolation = true
     const isExtension = false
-    const isolationTo = new Date('2020-12-20T15:39')
+    const isolationToDate = new Date('2020-12-20T15:39')
 
     // Act
     const res = formatConclusion(
@@ -190,7 +191,7 @@ describe('formatConclusion', () => {
       isolation,
       isExtension,
       undefined,
-      isolationTo,
+      isolationToDate,
     )
 
     // Assert
@@ -1109,7 +1110,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
-    const isolationTo = new Date('2021-04-06T12:30')
+    const isolationToDate = new Date('2021-04-06T12:30')
     const accusedAppealDecision = CaseAppealDecision.APPEAL
     const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
     const judgeName = 'Dalli Dómari'
@@ -1137,7 +1138,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       isExtension,
       undefined,
       additionToConclusion,
-      isolationTo,
+      isolationToDate,
     )
 
     // Assert

@@ -6,7 +6,6 @@ import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
   PageLayout,
-  BlueBox,
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
