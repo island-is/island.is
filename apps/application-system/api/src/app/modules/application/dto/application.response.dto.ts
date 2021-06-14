@@ -91,7 +91,7 @@ export class ApplicationResponseDto {
   @ApiProperty()
   @Expose()
   @IsObject()
-  answers!: Record<string, unknown>
+  answers!: object
 
   @ApiProperty()
   @Expose()

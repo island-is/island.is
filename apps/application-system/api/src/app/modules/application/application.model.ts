@@ -79,7 +79,7 @@ export class Application extends Model<Application> {
     allowNull: false,
   })
   @ApiProperty()
-  answers!: Record<string, unknown>
+  answers!: object
 
   @Column({
     type: DataType.JSONB,
