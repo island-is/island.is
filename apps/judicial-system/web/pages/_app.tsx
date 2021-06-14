@@ -31,6 +31,9 @@ const getTranslationStrings = ({
     .then((content) => {
       return content?.data?.getTranslations
     })
+    .catch(() => {
+      return {}
+    })
 }
 
 interface Props extends AppProps {
