@@ -34,6 +34,8 @@ export const is = {
   'onboarding.biometrics.type.fingerprint': 'fingrafar',
   'onboarding.biometrics.type.iris': 'augnskanna',
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlits auðkenningu',
+  'onboarding.pinKeypad.accessibilityLabel.iris': 'Nota augnskanna auðkenningu',
+  'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Nota fingrafars auðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
 
   // user

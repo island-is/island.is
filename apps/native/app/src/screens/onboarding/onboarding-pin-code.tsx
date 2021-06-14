@@ -168,7 +168,6 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
             onInput={onPinInput}
             onBackPress={onBackPress}
             back={code.length > 0}
-            faceId={false}
           />
           <View
             style={{
