@@ -265,7 +265,7 @@ export const m = defineMessages({
   helpDeskSubTitle: {
     id: 'dpo.application:helpDesk.subtitle',
     defaultMessage:
-      '<b>Netfang og símanúmer sem tekur við athugasemdum frá notendum pósthólfs</b> <br />Upplýsingar um hvert notandi sem lendir í vandræðum með að nálgast gögn frá skjalaveitanda í stafræna pósthólfinu getur snúið sér með vandamál sem upp hefur komið. Þetta getur til dæmis átt við ef notanda tekst ekki að opna skjal frá viðkomandi skjalaveitanda í stafræna pósthólfinu. Mikilvægt er að tryggja notanda auðvelt aðgengi að aðstoð í slíkum tilfellum og því skal hér skrá símanúmer eða netfang sem tryggt er að svari erindi frá notanda fljótt og vel.',
+      '<b>Netfang og símanúmer sem tekur við athugasemdum frá notendum pósthólfs</b> <br />Upplýsingar um hvert notandi sem lendir í vandræðum með að nálgast gögn frá skjalaveitanda í stafræna pósthólfinu getur snúið sér með vandamál sem upp hefur komið. Þetta getur til dæmis átt við ef notanda tekst ekki að opna skjal frá viðkomandi skjalaveitanda í stafræna pósthólfinu. Mikilvægt er að tryggja notanda auðvelt aðgengi að aðstoð í slíkum tilfellum og því skal hér skrá símanúmer og netfang sem tryggt er að svari erindi frá notanda fljótt og vel.',
     description: '',
   },
   helpDeskEmail: {
