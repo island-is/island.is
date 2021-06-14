@@ -182,7 +182,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Skilríki',
         }),
         path: ServicePortalPath.LicensesRoot,
-        systemRoute: true,
         icon: {
           type: 'outline',
           icon: 'business',

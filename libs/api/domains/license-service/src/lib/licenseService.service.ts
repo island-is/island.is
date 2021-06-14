@@ -65,7 +65,6 @@ export class LicenseServiceService {
     const genericDrivingLicense = drivingLicensesToSingleGenericLicense(
       drivingLicense,
     )
-    console.log({ drivingLicense })
 
     return genericDrivingLicense
   }
