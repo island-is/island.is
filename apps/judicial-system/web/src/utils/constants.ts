@@ -27,6 +27,8 @@ export const R_CASE_CASE_FILES_ROUTE = '/krafa/rannsoknarheimild/rannsoknargogn'
 export const R_CASE_POLICE_CONFIRMATION_ROUTE =
   '/krafa/rannsoknarheimild/stadfesta'
 export const R_CASE_OVERVIEW = '/domur/rannsoknarheimild/yfirlit'
+export const R_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
+  '/domur/rannsoknarheimild/fyrirtaka'
 
 // Court
 export const JUDGE_SINGLE_REQUEST_BASE_ROUTE = '/domur/krafa'
