@@ -18,7 +18,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
   const { externalData } = application
   const answers = application.answers as SchemaFormValues
   const endorsementListId = (externalData?.createEndorsementList.data as any).id
-  const endorsementHook = useEndorsements(endorsementListId, false)
+  const {endorsements: endorsementHook} = useEndorsements(endorsementListId, false)
   //console.log('selected', answers.selectedEndorsements)
 
   //find selected endorsements from the endorsement system and find how many of them are invalidated

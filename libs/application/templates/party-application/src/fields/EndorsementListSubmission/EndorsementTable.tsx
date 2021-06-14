@@ -21,8 +21,8 @@ const formatDate = (date: string) => {
 }
 
 interface EndorsementTableProps {
-  endorsements: Endorsement[]
-  selectedEndorsements: Endorsement[]
+  endorsements?: Endorsement[]
+  selectedEndorsements?: Endorsement[]
   onChange: (endorsement: Endorsement) => void
   disabled: boolean
 }

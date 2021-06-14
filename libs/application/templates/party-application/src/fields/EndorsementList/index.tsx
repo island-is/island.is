@@ -17,9 +17,13 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
   const [showWarning, setShowWarning] = useState(false)
   const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
-  const endorsementsHook = useEndorsements(endorsementListId, true)
+  const { endorsements: endorsementsHook, refetch } = useEndorsements(
+    endorsementListId,
+    true,
+  )
 
   useEffect(() => {
+    refetch()
     setEndorsements(endorsementsHook)
   }, [endorsementsHook, updateOnBulkImport])
 

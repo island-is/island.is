@@ -32,7 +32,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const [chooseRandom, setChooseRandom] = useState(false)
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
-  const endorsementsHook = useEndorsements(endorsementListId, true)
+  const {endorsements: endorsementsHook} = useEndorsements(endorsementListId, false)
 
    
   useEffect(() => {
@@ -59,7 +59,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     selectedEndorsements.length > maxEndorsements ||
     selectedEndorsements.length < minEndorsements
   const firstX = () => {
-    const tempEndorsements = endorsementsHook ?? []
+    const tempEndorsements = endorsementsHook?.length ? endorsementsHook : []
     return tempEndorsements?.slice(0, maxEndorsements)
   }
   const shuffled = () => {
@@ -106,9 +106,10 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     newEndorsements: Endorsement[],
   ) => {
     console.log('new', newEndorsements)
+    const endorsementIds: string[] = newEndorsements.map((e) => e.id)
     const updatedAnswers = {
       ...answers,
-      selectedEndorsements: newEndorsements.map((e) => e.id),
+      selectedEndorsements: endorsementIds,
     }
 
     await updateApplication({
@@ -122,7 +123,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
         locale,
       },
     }).then(() => {
-      set(answers, 'selectedEndorsements', cloneDeep(newEndorsements))
+      set(answers, 'selectedEndorsements', endorsementIds)
     })
 
     console.log('ANSWERS', application.answers)
