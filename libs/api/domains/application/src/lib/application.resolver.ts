@@ -26,7 +26,6 @@ import { ApplicationApplicationsInput } from './dto/applicationApplications.inpu
 import { RequestFileSignatureResponse } from './dto/requestFileSignature.response'
 import { PresignedUrlResponse } from './dto/presignedUrl.response'
 import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
-import { ApplicationPaymentStatusInput } from './dto/applicationPaymentStatusInput'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -48,10 +47,10 @@ export class ApplicationResolver {
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
-    @Args('input') input: ApplicationPaymentStatusInput,
+    @Args('applicationId') applicationId: string,
   ): Promise<ApplicationPaymentStatus | null> {
     const status = await this.applicationService.getPaymentStatus(
-      input.id,
+      applicationId,
       user,
       locale,
     )

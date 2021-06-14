@@ -68,7 +68,7 @@ export class PaymentService {
     const payments = await this.paymentModel.findAll({
       where: {
         ...(applicationIds
-          ? { applicationId: { [Op.in]: applicationIds } }
+          ? { application_id: { [Op.in]: applicationIds } }
           : {}),
         ...(ids ? { id: { [Op.in]: ids } } : {}),
       },
