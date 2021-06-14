@@ -95,7 +95,24 @@ export class PartyApplicationService {
           description: partyLetter.partyLetter,
           endorsementMeta: ['fullName', 'address', 'signedTags'],
           tags: [constituencyTag],
-          validationRules: [],
+          validationRules: [
+            {
+              type: 'minAgeAtDate',
+              value: {
+                date: '2021-09-25T00:00:00Z',
+                age: 18,
+              },
+            },
+            {
+              type: 'uniqueWithinTags',
+              value: {
+                tags: [
+                  'partyLetter2021'
+
+                ],
+              },
+            },
+          ],
         },
       })
       .then((response) => response.json())

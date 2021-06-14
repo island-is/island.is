@@ -65,21 +65,30 @@ export class PartyLetterService {
     authorization,
   }: TemplateApiModuleActionProps) {
     const CREATE_ENDORSEMENT_LIST_QUERY = `
-      mutation {
-        endorsementSystemCreateEndorsementList(input: {
-          title: "${application.answers.partyName}",
-          description: "${application.answers.partyLetter}",
-          endorsementMeta: [fullName, address, signedTags],
-          tags: [partyLetter2021],
-          validationRules: [],
-        }) {
+      mutation EndorsementSystemCreateEndorsementList($input: CreateEndorsementListDto!) {
+        endorsementSystemCreateEndorsementList(input: $input) {
           id
         }
       }
     `
 
     const endorsementList: CreateEndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY)
+      .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
+        input: {
+          title: application.answers.partyName,
+          description: application.answers.partyLetter,
+          endorsementMeta: ['fullName', 'address', 'signedTags'],
+          tags: ['partyLetter2021'],
+          validationRules: [
+            {
+              type: 'minAge',
+              value: {
+                age: 18,
+              },
+            },
+          ],
+        },
+      })
       .then((response) => response.json())
 
     if ('errors' in endorsementList) {
