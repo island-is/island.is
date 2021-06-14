@@ -4,9 +4,7 @@ import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
   Case,
   CaseCustodyProvisions,
-  CaseTransition,
   NotificationType,
-  TransitionCase,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
@@ -16,7 +14,6 @@ import {
   capitalize,
   laws,
 } from '@island.is/judicial-system/formatters'
-import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   FormFooter,
   Modal,
@@ -35,7 +32,6 @@ import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   SendNotificationMutation,
-  TransitionCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
@@ -44,6 +40,7 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -53,21 +50,12 @@ export const Overview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
+  const { transitionCase } = useCase()
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
-
-  const transitionCase = async (id: string, transitionCase: TransitionCase) => {
-    const { data } = await transitionCaseMutation({
-      variables: { input: { id, ...transitionCase } },
-    })
-
-    return data?.transitionCase
-  }
 
   const [
     sendNotificationMutation,
@@ -93,30 +81,9 @@ export const Overview: React.FC = () => {
     }
 
     try {
-      const isDraft = workingCase.state === CaseState.DRAFT
-
-      if (isDraft) {
-        // Parse the transition request
-        const transitionRequest = parseTransition(
-          workingCase.modified,
-          CaseTransition.SUBMIT,
-        )
-
-        // Transition the case
-        const resCase = await transitionCase(workingCase.id, transitionRequest)
-
-        if (!resCase) {
-          // TDOO: Handle error
-          return
-        }
-
-        setWorkingCase({
-          ...workingCase,
-          state: resCase.state,
-        })
-      }
-
+      await transitionCase(workingCase, setWorkingCase)
       const notificationSent = await sendNotification(workingCase.id)
+      const isDraft = workingCase.state === CaseState.DRAFT
 
       if (isDraft) {
         // An SMS should have been sent
