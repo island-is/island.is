@@ -50,7 +50,7 @@ export class ApplicationResolver {
     locale: Locale = 'is',
     @Args('input', { nullable: true }) input?: ApplicationPaymentStatusInput,
   ): Promise<ApplicationPaymentStatus[] | null> {
-    return this.applicationService.findAll(user, locale, input)
+    return this.applicationService.getPaymentStatus(user, locale, input)
   }
 
   @Query(() => [Application], { nullable: true })

@@ -61,11 +61,11 @@ export class PaymentService {
   async findPaymentByApplicationId(
     applicationId: string,
     id?: string,
-  ): Promise<Payment[]> {
+  ): Promise<Payment> {
     const applicationIds = applicationId?.split(',')
     const ids = id?.split(',')
 
-    return this.paymentModel.findAll({
+    const payments = await this.paymentModel.findAll({
       where: {
         ...(applicationIds
           ? { applicationId: { [Op.in]: applicationIds } }
@@ -74,6 +74,8 @@ export class PaymentService {
       },
       order: [['modified', 'DESC']],
     })
+
+    return this.findCorrectApplicationPayment(payments)
   }
 
   async assignValues(
@@ -94,9 +96,9 @@ export class PaymentService {
     return Promise.resolve(assignedObject)
   }
 
-  async findCorrectApplicationPayment(
+  findCorrectApplicationPayment(
     paymentRows: Payment[],
-  ): Promise<Payment> {
+  ): Payment {
     let filteredPayment: Payment = paymentRows[0]
     for (const payment in paymentRows) {
       if (paymentRows[payment].fulfilled === true) {
