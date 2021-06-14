@@ -8,7 +8,6 @@ const Host = styled(Animated.View)`
     light: theme.color.blue200,
     dark: theme.shades.dark.shade600,
   }))};
-  height: ${StyleSheet.hairlineWidth};
   position: absolute;
   top: 0px;
   left: 0px;
