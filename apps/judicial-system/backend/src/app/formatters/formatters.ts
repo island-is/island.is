@@ -6,6 +6,7 @@ import {
   formatCustodyRestrictions,
   laws,
   formatGender,
+  caseTypes,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -142,6 +143,7 @@ export function formatCourtHeadsUpSmsNotification(
   prosecutorName: string,
   arrestDate: Date,
   requestedCourtDate: Date,
+  description?: string,
 ): string {
   // Prosecutor
   const prosecutorText = ` Ákærandi: ${prosecutorName || 'Ekki skráður'}.`
@@ -162,9 +164,19 @@ export function formatCourtHeadsUpSmsNotification(
       )}.`
     : ''
 
-  return `Ný ${
-    type === CaseType.CUSTODY ? 'gæsluvarðhaldskrafa' : 'farbannskrafa'
-  } í vinnslu.${prosecutorText}${arrestDateText}${requestedCourtDateText}`
+  const newCaseText = `Ný ${
+    type === CaseType.CUSTODY
+      ? 'gæsluvarðhaldskrafa'
+      : type === CaseType.TRAVEL_BAN
+      ? 'farbannskrafa'
+      : 'krafa um rannsóknarheimild'
+  } í vinnslu${
+    type === CaseType.CUSTODY || type === CaseType.TRAVEL_BAN
+      ? ''
+      : `: ${capitalize(caseTypes[type])} - ${description}`
+  }.`
+
+  return `${newCaseText}${prosecutorText}${arrestDateText}${requestedCourtDateText}`
 }
 
 export function formatCourtReadyForCourtSmsNotification(

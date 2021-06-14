@@ -552,6 +552,29 @@ describe('formatHeadsUpSmsNotification', () => {
       'Ný farbannskrafa í vinnslu. Ákærandi: Ákærandinn. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 25.01.2021, eftir kl. 19:15.',
     )
   })
+
+  test('should format heads up notification for investigation', () => {
+    // Arrange
+    const type = CaseType.BODY_SEARCH
+    const prosecutorName = 'Al Coe'
+    const arrestDate = new Date('2021-01-24T13:00')
+    const requestedCourtDate = new Date('2021-06-20T10:00')
+    const description = 'Leit í bifreið'
+
+    // Act
+    const res = formatCourtHeadsUpSmsNotification(
+      type,
+      prosecutorName,
+      arrestDate,
+      requestedCourtDate,
+      description,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Ný krafa um rannsóknarheimild í vinnslu: Leit og líkamsrannsókn - Leit í bifreið. Ákærandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
+    )
+  })
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
