@@ -19,3 +19,9 @@ export interface Callback {
   chargeItemSubject: string
   status: string
 }
+
+export interface PaymentServiceOptions {
+  url: string
+  username: string
+  password: string
+}

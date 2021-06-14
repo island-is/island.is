@@ -17,9 +17,8 @@ interface Payment {
 @Injectable()
 export class PayableDummyTemplateService {
   constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) //private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
-  {}
+    private readonly sharedTemplateAPIService: SharedTemplateApiService, //private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
+  ) {}
 
   async createCharge({
     application: { applicant, externalData, answers, id },
