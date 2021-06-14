@@ -100,6 +100,7 @@ export class PaymentService {
     let filteredPayment: Payment = paymentRows[0]
     for (const payment in paymentRows) {
       if (paymentRows[payment].fulfilled === true) {
+        console.log(paymentRows[payment])
         return paymentRows[payment]
       }
       console.log(

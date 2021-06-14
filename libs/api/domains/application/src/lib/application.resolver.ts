@@ -48,7 +48,7 @@ export class ApplicationResolver {
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
-    @Args('input', { nullable: true }) input?: ApplicationPaymentStatusInput,
+    @Args('input', { nullable: true }) input?: ApplicationApplicationsInput,
   ): Promise<ApplicationPaymentStatus[] | null> {
     return this.applicationService.findAll(user, locale, input)
   }

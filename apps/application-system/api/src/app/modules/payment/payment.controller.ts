@@ -189,14 +189,18 @@ export class PaymentController {
     name: 'application_id',
     type: String,
     required: true,
-    description: 'The id of the application to update fulfilled status.',
+    description: 'The id of the application check if it is paid.',
   })
   async getPaymentStatus(
-    @Param('applicationid') applicationId: string,
+    @Param('application_id') applicationId: string,
   ): Promise<PaymentStatusResponseDto> {
-    const [ payment ] = await this.paymentService.findPaymentByApplicationId(
+    const payments = await this.paymentService.findPaymentByApplicationId(
       applicationId,
     )
+    let payment = payments[0]
+    if(payments.length > 0) {
+      payment = await this.paymentService.findCorrectApplicationPayment(payments)
+    }
 
     return {
       fulfilled: payment.fulfilled,
