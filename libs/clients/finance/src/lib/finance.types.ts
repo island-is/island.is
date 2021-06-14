@@ -44,6 +44,12 @@ export type DocumentDataTypes = {
   document: string
 }
 
+export type TapsControlTypes = {
+  RecordsTap: boolean
+  employeeClaimsTap: boolean
+  localTaxTap: boolean
+}
+
 export type DocumentTypes = {
   docment: DocumentDataTypes
 }

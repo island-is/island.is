@@ -8,6 +8,7 @@ import { UseGuards } from '@nestjs/common'
 import graphqlTypeJson from 'graphql-type-json'
 import { CustomerChargeType } from './models/customerChargeType.model'
 import { FinanceDocumentModel } from './models/financeDocument.model'
+import { CustomerTapsControlModel } from './models/customerTapsControl.model'
 import { BillReceiptModel } from './models/billReceipts.model'
 import { CustomerRecords } from './models/customerRecords.model'
 
@@ -80,6 +81,11 @@ export class FinanceResolver {
       user.nationalId,
       input.documentID,
     )
+  }
+
+  @Query(() => CustomerTapsControlModel, { nullable: true })
+  async getCustomerTapControl(@CurrentUser() user: User) {
+    return this.FinanceService.getCustomerTapControl(user.nationalId)
   }
 
   @Query(() => graphqlTypeJson)

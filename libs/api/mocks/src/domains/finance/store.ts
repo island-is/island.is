@@ -12,6 +12,7 @@ import {
   getBillReceiptsData,
   getFinanceDocumentData,
   getExcelDocumentData,
+  getCustomerTapControlData,
 } from './static'
 
 export const store = createStore(() => {
@@ -20,6 +21,7 @@ export const store = createStore(() => {
   const customerChargeType: CustomerChargeType = getCustomerChargeTypeData
   const customerRecords: CustomerRecords = getCustomerRecordsData
   const billReceipts: BillReceiptModel = getBillReceiptsData
+  const tapControl = getCustomerTapControlData
   const financeDocuments = getFinanceDocumentData // TODO: Add factories
   const excelDocument = getExcelDocumentData // TODO: Add factories
 
@@ -31,5 +33,6 @@ export const store = createStore(() => {
     billReceipts,
     financeDocuments,
     excelDocument,
+    tapControl,
   }
 })

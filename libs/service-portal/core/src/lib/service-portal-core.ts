@@ -114,7 +114,9 @@ export interface ServicePortalModule {
    * The service portal shell will define these as routes
    * within itself and use the provided render function to render out the component
    */
-  routes: (props: ServicePortalModuleProps) => ServicePortalRoute[]
+  routes: (
+    props: ServicePortalModuleProps,
+  ) => Promise<ServicePortalRoute[]> | ServicePortalRoute[]
   /**
    * Global components will always be rendered by default
    * These are usually utility components that prompt the user about certain

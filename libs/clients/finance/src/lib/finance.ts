@@ -12,6 +12,7 @@ import {
   CustomerRecords,
   DocumentTypes,
   BillReceiptTypes,
+  TapsControlTypes,
 } from './finance.types'
 
 export const FINANCE_OPTIONS = 'FINANCE_OPTIONS'
@@ -128,6 +129,16 @@ export class FinanceService extends RESTDataSource {
     return response
   }
 
+  async getCustomerTapControl(nationalID: string): Promise<TapsControlTypes> {
+    const response = await this.get<TapsControlTypes>(
+      `/customerTapsControl?nationalID=${this.options.financeTestUser}`,
+      {
+        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+      },
+    )
+    return response
+  }
+
   async getExcelDocument(
     sheetHeaders: (string | number)[],
     sheetData: (string | number)[][],
@@ -137,7 +148,6 @@ export class FinanceService extends RESTDataSource {
       data: sheetData,
     }
 
-    console.log('excelData', excelData)
     try {
       const response = await axios
         .post(`http://localhost:3377/download/v1/xlsx`, excelData) // TODO: Add env var for download service for URL.

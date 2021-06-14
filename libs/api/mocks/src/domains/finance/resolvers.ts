@@ -30,5 +30,8 @@ export const resolvers: Resolvers = {
     getExcelDocument: () => {
       return store.excelDocument
     },
+    getCustomerTapControl: () => {
+      return store.tapControl
+    },
   },
 }

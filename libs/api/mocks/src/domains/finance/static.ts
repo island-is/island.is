@@ -458,6 +458,12 @@ export const getFinanceStatusDetailsData = {
   ],
 }
 
+export const getCustomerTapControlData = {
+  RecordsTap: true,
+  employeeClaimsTap: false,
+  localTaxTap: false,
+}
+
 export const getCustomerChargeTypeData = {
   chargeType: [
     {

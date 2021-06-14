@@ -1,14 +1,17 @@
+import { Query } from '@island.is/api/schema'
 import {
   ServicePortalModule,
   ServicePortalPath,
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
+import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
+import * as Sentry from '@sentry/react'
 import { lazy } from 'react'
 
 export const financeModule: ServicePortalModule = {
   name: 'Fjármál',
   widgets: () => [],
-  routes: () => {
+  routes: async ({ client }) => {
     const routes: ServicePortalRoute[] = [
       {
         name: 'Fjármál',
@@ -22,21 +25,38 @@ export const financeModule: ServicePortalModule = {
         render: () => lazy(() => import('./screens/FinanceStatus')),
       },
       {
-        name: 'Hreyfingar',
-        path: ServicePortalPath.FinanceTransactions,
-        render: () => lazy(() => import('./screens/FinanceTransactions')),
-      },
-      {
         name: 'Greiðsluseðlar og Greiðslukvittanir',
         path: ServicePortalPath.FinanceBills,
         render: () => lazy(() => import('./screens/FinanceBills')),
       },
-      {
-        name: 'Laungreiðendakröfur',
-        path: ServicePortalPath.FinanceSalary,
-        render: () => lazy(() => import('./screens/FinanceSalary')),
-      },
     ]
+    try {
+      const res = await client.query<Query>({
+        query: GET_TAPS_QUERY,
+      })
+
+      const data = res?.data?.getCustomerTapControl
+
+      // Show customer records:
+      if (data?.RecordsTap) {
+        routes.push({
+          name: 'Hreyfingar',
+          path: ServicePortalPath.FinanceTransactions,
+          render: () => lazy(() => import('./screens/FinanceTransactions')),
+        })
+      }
+
+      // Show employee claims:
+      if (data?.employeeClaimsTap) {
+        routes.push({
+          name: 'Laungreiðendakröfur',
+          path: ServicePortalPath.FinanceSalary,
+          render: () => lazy(() => import('./screens/FinanceSalary')),
+        })
+      }
+    } catch (error) {
+      Sentry.captureException(error)
+    }
 
     return routes
   },
