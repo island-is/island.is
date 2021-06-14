@@ -1,5 +1,7 @@
-import { Case } from '@island.is/judicial-system/types'
 import React from 'react'
+import { Box, Text } from '@island.is/island-ui/core'
+import { FormContentContainer } from '@island.is/judicial-system-web/src/shared-components'
+import { Case } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
@@ -8,7 +10,15 @@ interface Props {
 }
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
-  return <p>sjdknfjksnd</p>
+  return (
+    <FormContentContainer>
+      <Box marginBottom={7}>
+        <Text as="h1" variant="h1">
+          Fyrirtaka
+        </Text>
+      </Box>
+    </FormContentContainer>
+  )
 }
 
 export default HearingArrangementsForm

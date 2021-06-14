@@ -1,5 +1,7 @@
-import { Case } from '@island.is/judicial-system/types'
 import React from 'react'
+import { Box, Text } from '@island.is/island-ui/core'
+import { FormContentContainer } from '@island.is/judicial-system-web/src/shared-components'
+import { Case } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
@@ -8,7 +10,19 @@ interface Props {
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
-  return <p>sjdknfjksnd</p>
+  const { workingCase } = props
+
+  return (
+    <>
+      <FormContentContainer>
+        <Box marginBottom={7}>
+          <Text as="h1" variant="h1">
+            Yfirlit kröfu um rannsóknarheimild
+          </Text>
+        </Box>
+      </FormContentContainer>
+    </>
+  )
 }
 
 export default OverviewForm
