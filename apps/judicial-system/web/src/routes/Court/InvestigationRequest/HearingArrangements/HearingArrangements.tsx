@@ -5,11 +5,13 @@ import {
   CaseData,
   JudgeSubsections,
   Sections,
+  UserData,
 } from '@island.is/judicial-system-web/src/types'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import HearingArrangementsForm from './HearingArrangementsForm'
+import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 const HearingArrangements = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -20,6 +22,11 @@ const HearingArrangements = () => {
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+  })
+
+  const { data: users, loading: userLoading } = useQuery<UserData>(UsersQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   useEffect(() => {
@@ -44,11 +51,12 @@ const HearingArrangements = () => {
       caseType={workingCase?.type}
       caseId={workingCase?.id}
     >
-      {workingCase && (
+      {workingCase && users && (
         <HearingArrangementsForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           isLoading={loading}
+          users={users}
         />
       )}
     </PageLayout>
