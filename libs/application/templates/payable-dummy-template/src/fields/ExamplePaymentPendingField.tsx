@@ -1,16 +1,12 @@
 import React, { FC } from 'react'
 import { useQuery, gql } from '@apollo/client'
-import { useWatch } from 'react-hook-form'
 import { CustomField, FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-import * as kennitala from 'kennitala'
 
 const QUERY = gql`
-  query studentInfo($nationalId: String!) {
-    drivingLicenseStudentInformation(nationalId: $nationalId) {
-      student {
-        name
-      }
+  query status ($applicationId: String!) {
+    applicationPaymentStatus(applicationId: $applicationId) {
+      fulfilled
     }
   }
 `
@@ -19,47 +15,36 @@ interface Props extends FieldBaseProps {
   field: CustomField
 }
 
-export const ExamplePaymentPendingField: FC<Props> = ({ error }) => {
-  const studentNationalId = useWatch({
-    name: 'student.nationalId',
+interface PaymentStatus {
+  fulfilled: boolean
+}
+
+export const ExamplePaymentPendingField: FC<Props> = ({ error, application }) => {
+  const applicationId = application.id
+
+  const { data, error: queryError, loading } = useQuery(QUERY, {
+    variables: {
+      applicationId,
+    },
+    pollInterval: 4000,
   })
 
-  const { data = {}, error: queryError, loading } = useQuery(QUERY, {
-    skip:
-      !studentNationalId || !kennitala.isPerson(studentNationalId as string),
-    variables: {
-      nationalId: studentNationalId,
-    },
-  })
+  const paymentStatus: PaymentStatus = data?.applicationPaymentStatus || { fulfilled: false }
+
+  console.log({ paymentStatus })
 
   if (queryError) {
-    return <Text>Villa kom upp við að sækja upplýsingar um nemanda</Text>
+    return <Text>Villa kom upp við að sækja upplýsingar um greiðslu</Text>
   }
-
-  if (loading) {
-    return <Text>Sæki upplýsingar um nemanda... </Text>
-  }
-
-  if (!data?.drivingLicenseStudentInformation) {
-    return null
-  }
-
-  const result = data.drivingLicenseStudentInformation
 
   return (
     <>
       {error && { error }}
 
-      {result.student ? (
+      {!paymentStatus.fulfilled && (
         <Box>
-          <Text variant="h4">Nemandi</Text>
-          <Text>{result.student.name}</Text>
-        </Box>
-      ) : (
-        <Box color="red400" padding={2}>
-          <Text color="red400">
-            Kennitala fannst ekki eða nemandi er ekki með bráðabyrgðaskírteini
-          </Text>
+          <Text variant="h2">Augnablik meðan beðið er eftir greiðslu</Text>
+          <Text marginTop="gutter">Texti um hvað er að gerast</Text>
         </Box>
       )}
     </>

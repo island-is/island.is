@@ -3,6 +3,7 @@ import {
   buildDescriptionField,
   Form,
   FormModes,
+  buildCustomField,
 } from '@island.is/application/core'
 
 export const PaymentPending: Form = buildForm({
@@ -10,10 +11,10 @@ export const PaymentPending: Form = buildForm({
   title: 'Beðið eftir staðfestingu greiðsluveitu',
   mode: FormModes.PENDING,
   children: [
-    buildDescriptionField({
-      id: 'inReview',
-      title: 'Beðið eftir staðfó',
-      description: 'Bíðum eftir staðfó',
+    buildCustomField({
+      component: 'ExamplePaymentPendingField',
+      id: 'paymentPendingField',
+      title: '',
     }),
   ],
 })

@@ -105,7 +105,7 @@ export class PaymentController {
   }
 
   @Scopes(ApplicationScope.write)
-  @Put('applications/:application_id/payment/:id')
+  @Post('applications/:application_id/payment/:id')
   @ApiParam({
     name: 'application_id',
     type: String,
@@ -120,17 +120,10 @@ export class PaymentController {
   })
   async paymentApproved(
     @Param('application_id') applicationId: string,
-    @Body()
-    paymentDetails: CreatePaymentResponseDto,
-    callback: Callback,
-    @CurrentUser()
-    user: User,
+    @Body() callback: Callback,
+    @CurrentUser() user: User,
     @Param('id') id: string,
   ): Promise<void> {
-    const payment = await this.paymentService.findPaymentByApplicationId(
-      applicationId,
-    )
-
     if (callback.status !== 'paid') {
       // TODO: no-op.. it would be nice eventually to update all statuses
       return
