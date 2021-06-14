@@ -126,12 +126,12 @@ export class PaymentController {
     @CurrentUser()
     user: User,
   ): Promise<CreatePaymentResponseDto> {
-    const payments = await this.paymentService.findPaymentByApplicationId(
+    const payment = await this.paymentService.findPaymentByApplicationId(
       applicationId,
       id,
     )
     // response obj because we are updating a row in db.
-    if (payments) {
+    if (payment) {
       this.auditService.audit({
         user,
         action: 'approvePaymentApplication',
@@ -139,29 +139,15 @@ export class PaymentController {
         meta: { applicationId: applicationId, id: id },
       })
 
-      if (payments.length > 1) {
-        const payment = await this.paymentService.findCorrectApplicationPayment(
-          payments,
-        )
-        const paymentDto: CreatePaymentResponseDto = await this.paymentService.assignValues(
-          id,
-          applicationId,
-          callback.status === 'isPaid' ? true : false,
-          payment,
-        )
-        return await this.paymentModel.create(paymentDto)
-      } else if (payments.length === 1) {
-        const paymentDto: CreatePaymentResponseDto = await this.paymentService.assignValues(
-          id,
-          applicationId,
-          callback.status === 'isPaid' ? true : false,
-          payments[0],
-        )
-        return await this.paymentModel.create(paymentDto)
-      } else {
-        // no record found. Throw error?
-      }
+      const paymentDto: CreatePaymentResponseDto = await this.paymentService.assignValues(
+        id,
+        applicationId,
+        callback.status === 'isPaid' ? true : false,
+        payment,
+      )
+      return await this.paymentModel.create(paymentDto)
     }
+
     const paymentDto: Pick<
       BasePayment,
       | 'application_id'
