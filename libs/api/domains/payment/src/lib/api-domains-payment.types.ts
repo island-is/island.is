@@ -17,7 +17,7 @@ export interface CallbackResult {
 export interface Callback {
   receptionID: string
   chargeItemSubject: string
-  status: string
+  status: 'paid' | 'cancelled' | 'recreated' | 'recreatedAndPaid'
 }
 
 export interface PaymentServiceOptions {

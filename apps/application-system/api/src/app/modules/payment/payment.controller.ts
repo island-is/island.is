@@ -125,38 +125,32 @@ export class PaymentController {
     callback: Callback,
     @CurrentUser()
     user: User,
-    @Param('id') id?: string,
-  ): Promise<CreatePaymentResponseDto> {
+    @Param('id') id: string,
+  ): Promise<void> {
     const payment = await this.paymentService.findPaymentByApplicationId(
-      applicationId
+      applicationId,
     )
+
+    if (callback.status !== 'paid') {
+      // TODO: no-op.. it would be nice eventually to update all statuses
+      return
+    }
 
     this.auditService.audit({
       user,
       action: 'approvePaymentApplication',
       resources: applicationId,
-      meta: { applicationId: applicationId, id: id },
+      meta: { applicationId, id },
     })
 
-    const paymentDto: Pick<
-      BasePayment,
-      | 'application_id'
-      | 'fulfilled'
-      | 'reference_id'
-      | 'user4'
-      | 'definition'
-      | 'amount'
-      | 'expires_at'
-    > = {
-      application_id: payment?.application_id || applicationId,
-      fulfilled: callback.status === 'paid' ? true : false,
-      reference_id: callback.receptionID,
-      user4: payment?.user4 || '',
-      definition: callback.chargeItemSubject,
-      amount: payment?.amount || paymentDetails.amount || 0,
-      expires_at: payment?.expires_at || new Date(),
-    }
-    return await this.paymentModel.create(paymentDto)
+    await this.paymentModel.update(
+      {
+        fulfilled: true,
+      },
+      {
+        where: { id },
+      },
+    )
   }
 
   @Scopes(ApplicationScope.read)
