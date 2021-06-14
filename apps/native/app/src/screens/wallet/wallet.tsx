@@ -6,7 +6,7 @@ import {
   Skeleton,
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 import {
   Animated,
   FlatList,
@@ -23,13 +23,14 @@ import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
-import { ILicense } from '../../graphql/fragments/license.fragment'
-import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
+import { IGenericUserLicense } from '../../graphql/fragments/license.fragment'
+import { ListGenericLicensesResponse, LIST_GENERIC_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { navigateTo } from '../../lib/deep-linking'
+import { authStore } from '../../stores/auth-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
-import { LicenseType, LicenseStatus } from '../../types/license-type'
+import { LicenseStatus, LicenseType } from '../../types/license-type'
 import { testIDs } from '../../utils/test-ids'
 
 const {
@@ -62,49 +63,138 @@ const {
   },
 )
 
-const WalletItem = React.memo(
-    ({
-    item,
-  }: {
-    item: ILicense
-  }) => {
-    return (
+const WalletItem = React.memo(({ item }: { item: IGenericUserLicense }) => {
+  return (
+    <TouchableHighlight
+      style={{ marginBottom: 16, borderRadius: 16 }}
+      onPress={() =>
+        navigateTo(`/wallet/${item.license.type}`, {
+          item,
+          fromId: `license-${item.license.type}_source`,
+          toId: `license-${item.license.type}_destination`,
+        })
+      }
+    >
+      <SafeAreaView>
+        <LicenceCard
+          nativeID={`license-${item.license.type}_source`}
+          title={item.license.type}
+          type={item.license.type as LicenseType}
+          date={item.fetch.updated}
+          status={item.license.status as LicenseStatus}
+          agencyLogo={agencyLogo}
+        />
+      </SafeAreaView>
+    </TouchableHighlight>
+  )
+})
 
-      <TouchableHighlight
-        style={{ marginBottom: 16, borderRadius: 16 }}
-        onPress={() =>
-          navigateTo(`/wallet/${item.license.type}`, {
-            item,
-            fromId: `license-${item.license.type}_source`,
-            toId: `license-${item.license.type}_destination`,
-          })
-        }
-      >
-        <SafeAreaView>
-          <LicenceCard
-            nativeID={`license-${item.license.type}_source`}
-            title={item.license.type}
-            type={item.license.type as LicenseType}
-            date={item.fetch.updated}
-            status={item.license.status as LicenseStatus}
-            agencyLogo={agencyLogo}
-          />
-        </SafeAreaView>
-      </TouchableHighlight>
-    )
+export function getMockLicenseItem(intl: IntlShape) {
+  const { userInfo } = authStore.getState()
+  const nationalId = userInfo?.nationalId || ''
+  const lastChar = nationalId.substr(-1)
+  const year =
+    (lastChar === '9' ? 1900 : 2000) + Number(nationalId.substr(4, 2))
+  const birthDate = new Date(
+    year,
+    Number(nationalId.substr(0, 2)),
+    Number(nationalId.substr(2, 2)) - 1,
+  )
+  const licenseStart = new Date(birthDate)
+  licenseStart.setFullYear(licenseStart.getFullYear() + 17)
+  const licenseEnd = new Date(licenseStart)
+  licenseEnd.setFullYear(licenseEnd.getFullYear() + 50)
+
+  return {
+    nationalId: userInfo?.nationalId,
+    license: {
+      type: 'DriversLicense',
+      provider: {
+        id: 'NationalPoliceCommissioner',
+      },
+      pkpass: true,
+      timeout: 1,
+      status: 'VALID',
+    },
+    pkpassUrl: '',
+    fetch: {
+      status: 'UPDATED',
+      updated: new Date().toJSON(),
+    },
+    payload: {
+      data: [
+        {
+          type: 'Value',
+          name: null,
+          label: '2. Eiginnafn 1. Kenninafn',
+          value: userInfo?.name,
+          fields: null,
+        },
+        {
+          type: 'Value',
+          name: null,
+          label: '3. Fæðingardagur og fæðingarstaður',
+          value: `${intl.formatDate(birthDate, { dateStyle: 'medium' })}, ${userInfo?.nat}`,
+          fields: null,
+        },
+        {
+          type: 'Group',
+          name: null,
+          label: null,
+          value: null,
+          fields: [
+            {
+              type: 'Value',
+              name: null,
+              label: '4a. Útgáfudagur',
+              value: licenseStart,
+              fields: null,
+            },
+            {
+              type: 'Value',
+              name: null,
+              label: '4b. Lokadagur',
+              value: licenseEnd,
+              fields: null,
+            },
+            {
+              type: 'Value',
+              name: null,
+              label: '5. Númer',
+              value: '00000000',
+              fields: null,
+            },
+          ],
+        },
+        {
+          type: 'Value',
+          name: null,
+          label: '4c. Nafn útgefanda',
+          value: 'Sýslumaðurinn á höfuðborgarsvæðinu',
+          fields: null,
+        },
+        {
+          type: 'Value',
+          name: null,
+          label: '4d. Kennitala',
+          value: `${nationalId.substr(0, 6)}-${nationalId.substr(-4)}`,
+          fields: null,
+        },
+      ],
+    },
   }
-)
+}
 
 export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
 
   const theme = useTheme()
   const { dismiss, dismissed } = usePreferencesStore()
-  const res = useQuery(LIST_LICENSES_QUERY, { client })
-  const licenseItems = res?.data?.listLicenses ?? []
+  const res = useQuery<ListGenericLicensesResponse>(LIST_GENERIC_LICENSES_QUERY, { client })
+  const [licenseItems, setLicenseItems] = useState<any>([])
   const flatListRef = useRef<FlatList>(null)
   const alertVisible = !dismissed.includes('howToUseCertificates')
-  const [loading, setLoading] = useState(res.loading)
+  const [loading, setLoading] = useState(true)
   const isSkeleton = res.loading && !res.data
   const loadingTimeout = useRef<NodeJS.Timeout>()
   const intl = useIntl()
@@ -115,6 +205,18 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       animated: true,
     })
   })
+
+  useEffect(() => {
+    if (!res.loading) {
+      if (res.error) {
+        // overwrite thing with mock user license
+        setLicenseItems([getMockLicenseItem(intl)])
+      } else {
+        setLicenseItems(res.data?.genericLicenses || [])
+      }
+      setLoading(false)
+    }
+  }, [res.loading, res.error])
 
   // indexing list for spotlight search IOS
   useEffect(() => {
@@ -161,7 +263,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     [],
   )
 
-  const keyExtractor = useCallback((item: ILicense) => item.license.type, [])
+  const keyExtractor = useCallback((item: IGenericUserLicense) => item.license.type, [])
 
   return (
     <>
@@ -183,6 +285,9 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
               paddingTop: 16,
               paddingHorizontal: 16,
               zIndex: 9,
+            }}
+            contentInset={{
+              bottom: 32,
             }}
             refreshControl={
               <RefreshControl

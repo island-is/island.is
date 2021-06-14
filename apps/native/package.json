@@ -39,6 +39,7 @@
     "react-native-navigation": "7.14.0",
     "react-native-navigation-hooks": "6.3.0",
     "react-native-passkit-wallet": "0.1.4",
+    "react-native-quick-actions": "0.3.13",
     "react-native-safe-area-context": "3.2.0",
     "react-native-spotlight-search": "2.0.0",
     "react-native-ultimate-config": "3.3.4",

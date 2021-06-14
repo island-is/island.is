@@ -6858,6 +6858,11 @@ react-native-passkit-wallet@0.1.4:
   resolved "https://registry.yarnpkg.com/react-native-passkit-wallet/-/react-native-passkit-wallet-0.1.4.tgz#246476c8163813a4b054d06215a9d06042757ec3"
   integrity sha512-H1EQ1NyRVPRujivOZrUkcn7OWGAtsAqGVYghxOLBFHpFLpyGyCvGnfpGjcu4UVej8X50SJsh9d9ysZtVTct23Q==
 
+react-native-quick-actions@0.3.13:
+  version "0.3.13"
+  resolved "https://registry.yarnpkg.com/react-native-quick-actions/-/react-native-quick-actions-0.3.13.tgz#74431b0b30e98ac896e44cc1024c38864cfe2bbc"
+  integrity sha512-Vz13a0+NV0mzCh/29tNt0qDzWPh8i2srTQW8eCSzGFDArnVm1COTOhTD0FY0hWHlxRY0ahvX+BlezTDvsyAuMA==
+
 react-native-safe-area-context@3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.2.0.tgz#06113c6b208f982d68ab5c3cebd199ca93db6941"

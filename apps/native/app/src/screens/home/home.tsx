@@ -134,6 +134,9 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         ref={flatListRef}
         testID={testIDs.SCREEN_HOME}
         keyExtractor={keyExtractor}
+        contentInset={{
+          bottom: 32
+        }}
         data={data}
         renderItem={renderItem}
         style={{ flex: 1 }}

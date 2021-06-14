@@ -2,8 +2,9 @@ import * as Sentry from '@sentry/react-native'
 import { LogBox } from 'react-native'
 import { Platform } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
-import perf from '@react-native-firebase/perf';
-import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging'
+import perf from '@react-native-firebase/perf'
+import { performanceMetrics } from '../performance-metrics'
 import { config } from '../config'
 
 // uncomment polyfills that are needed.
@@ -32,26 +33,23 @@ import '@formatjs/intl-datetimeformat/add-golden-tz'
 import '@formatjs/intl-relativetimeformat/polyfill'
 import '@formatjs/intl-relativetimeformat/locale-data/en'
 import '@formatjs/intl-relativetimeformat/locale-data/is'
+import { setupQuickActions } from '../quick-actions'
 
 if (__DEV__) {
+  perf().setPerformanceCollectionEnabled(false)
+
   require('../devtools/index')
 } else {
   // initialize sentry
   Sentry.init({
     dsn: config.sentryDsn,
-    // tracesSampleRate: 1, // @todo reduce to 0.2 for production
-    // integrations: [
-    //   new Sentry.ReactNativeTracing({
-    //     routingInstrumentation: new ReactNativeNavigationInstrumentation(),
-    //   }),
-    // ],
   })
 
-  // enable firebase performance metrics collection
-  perf().setPerformanceCollectionEnabled(true);
+  // enable performance metrics collection
+  performanceMetrics()
 
   // register device for remote messages
-  messaging().registerDeviceForRemoteMessages();
+  messaging().registerDeviceForRemoteMessages()
 }
 
 // ignore expo warnings
@@ -69,9 +67,13 @@ global.Intl = (global as any).IntlPolyfill
 ;(global.Intl as any).__disableRegExpRestore()
 
 export function setupGlobals() {
+  // keyboard manager
   if (Platform.OS === 'ios') {
     KeyboardManager.setEnable(true)
     KeyboardManager.setEnableAutoToolbar(true)
     KeyboardManager.setToolbarPreviousNextButtonEnable(true)
   }
+
+  // quick actions
+  setupQuickActions();
 }

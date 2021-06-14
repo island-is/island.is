@@ -502,6 +502,8 @@ PODS:
     - React-Core
   - RNLocalize (2.0.3):
     - React-Core
+  - RNQuickAction (0.3.13):
+    - React
   - RNSentry (2.4.3):
     - React-Core
     - Sentry (= 6.1.4)
@@ -602,6 +604,7 @@ DEPENDENCIES:
   - "RNFBPerf (from `../../node_modules/@react-native-firebase/perf`)"
   - RNKeychain (from `../../node_modules/react-native-keychain`)
   - RNLocalize (from `../../node_modules/react-native-localize`)
+  - RNQuickAction (from `../../node_modules/react-native-quick-actions`)
   - "RNSentry (from `../../node_modules/@sentry/react-native`)"
   - UMAppLoader (from `../../node_modules/unimodules-app-loader/ios`)
   - UMConstantsInterface (from `../../node_modules/unimodules-constants-interface/ios`)
@@ -752,6 +755,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/react-native-keychain"
   RNLocalize:
     :path: "../../node_modules/react-native-localize"
+  RNQuickAction:
+    :path: "../../node_modules/react-native-quick-actions"
   RNSentry:
     :path: "../../node_modules/@sentry/react-native"
   UMAppLoader:
@@ -786,7 +791,7 @@ SPEC CHECKSUMS:
   EXNotifications: c13e078d83ce01c7aeb8e3f44a48c13f50099291
   EXPermissions: 8f8c1c05580c4e02d4ee2c8dd74bfe173ff6a723
   FBLazyVector: 7b423f9e248eae65987838148c36eec1dbfe0b53
-  FBReactNativeSpec: 1d4fcc35d48f0cf39c436af5b555260e3848bf2c
+  FBReactNativeSpec: 5eed47e7fcaec0c54a0655113238b7845c27ae65
   Firebase: 73c3e3b216ec1ecbc54d2ffdd4670c65c749edb1
   FirebaseABTesting: 5b22abfa9a55d5b9cd3d1e500a3ca29f6b1264cb
   FirebaseCore: 3f09591d51292843e2a46f18358d60bf4e996255
@@ -853,6 +858,7 @@ SPEC CHECKSUMS:
   RNFBPerf: 097e3a5cc809be6bf447c8149bfc8061cbd18b95
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLocalize: 99e59cad311ca1b6872b1764514009416ccba03d
+  RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNSentry: 6f8f9ee7e4c939dcd35e5633b94d0e3782888e46
   Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
@@ -866,6 +872,6 @@ SPEC CHECKSUMS:
   Yoga: a7de31c64fe738607e7a3803e3f591a4b1df7393
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: ddeca6ea5513c55f8f801f6279f939bdd96411fc
+PODFILE CHECKSUM: 715720fe6b6cd781c5180cbf11236b954004e696
 
 COCOAPODS: 1.10.1

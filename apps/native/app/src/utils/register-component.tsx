@@ -15,15 +15,17 @@ export function registerComponent(
   const SentryComponent = Sentry.withProfiler(Component)
   Navigation.registerComponent(
     name,
-    () => (props) => (
-      <I18nProvider>
-        <NavigationProvider value={{ componentId: props.componentId }}>
-          <ThemeProvider>
-            <SentryComponent {...props} />
-          </ThemeProvider>
-        </NavigationProvider>
-      </I18nProvider>
-    ),
+    () => (props) => {
+      return (
+        <I18nProvider>
+          <NavigationProvider value={{ componentId: props.componentId }}>
+            <ThemeProvider>
+              <SentryComponent {...props} />
+            </ThemeProvider>
+          </NavigationProvider>
+        </I18nProvider>
+      )
+    },
     () => Component,
   )
 }

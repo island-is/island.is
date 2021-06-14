@@ -79,6 +79,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   })
   const docRes = useQuery<GetDocumentResponse>(GET_DOCUMENT_QUERY, {
     client,
+    fetchPolicy: 'network-only',
     variables: {
       input: {
         id: docId,

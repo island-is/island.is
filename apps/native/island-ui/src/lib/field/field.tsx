@@ -30,7 +30,7 @@ const Value = styled.Text<{ size?: 'large' | 'small' }>`
 
 interface FieldProps {
   label: string
-  value?: string
+  value?: string | Date
   loading?: boolean
   compact?: boolean
   size?: 'large' | 'small'
@@ -45,8 +45,7 @@ export function Field({
   size = 'small',
   style,
 }: FieldProps) {
-  const d = value && new Date(value)
-  const isDate = value && d instanceof Date && !isNaN(d as any)
+  const isDate = value && value instanceof Date;
 
   return (
     <Host compact={compact} style={style}>
@@ -56,7 +55,7 @@ export function Field({
           <Skeleton active />
         ) : (
           <Value size={size}>
-            {isDate ? <FormattedDate value={d} /> : value ?? ''}
+            {isDate ? <FormattedDate value={value} /> : value ?? ''}
           </Value>
         )}
       </Content>
