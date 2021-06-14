@@ -71,26 +71,6 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async updatePaymentStatus(input: ApplicationUpdatePaymentStatus, auth: Auth, locale: Locale) {
-    const { id, applicationId, fulfilled } = input
-
-    return await this.paymentApiWithAuth(auth)
-      .paymentControllerPaymentApproved({
-        applicationId: applicationId,
-        id: id || '',
-        createPaymentResponseDto: {
-          applicationId: applicationId,
-          fulfilled: fulfilled,
-          user4: '',
-          amount: 0,
-          expiresAt: new Date(),
-          definition: 'updated info'
-        },
-        locale,
-      })
-      .catch(handleError)
-  }
-
   async findAll(
     user: User,
     locale: Locale,
