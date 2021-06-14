@@ -101,8 +101,6 @@ const useCase = () => {
         return data.createCase.id
       }
     }
-
-    return undefined
   }
 
   const createCourtCase = async (
