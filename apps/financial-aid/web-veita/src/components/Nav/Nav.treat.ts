@@ -49,4 +49,19 @@ export const link = style({
   display: 'block',
   padding: theme.spacing[1],
   marginBottom: theme.spacing[1],
+  borderRadius: theme.spacing[1],
+  selectors: {
+    '&:hover': {
+      textDecoration: 'none !important',
+    },
+  },
+})
+
+export const linkHoverEffect = style({
+  transition: 'background-color 250ms ease',
+  selectors: {
+    '&:hover': {
+      backgroundColor: theme.color.purple200,
+    },
+  },
 })

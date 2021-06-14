@@ -68,6 +68,7 @@ const Nav: React.FC = () => {
                 className={cn({
                   [`${styles.link}`]: true,
                   [`${styles.activeLink}`]: router.pathname === item.link,
+                  [`${styles.linkHoverEffect}`]: router.pathname !== item.link,
                 })}
               >
                 <Box display="flex" justifyContent="spaceBetween">

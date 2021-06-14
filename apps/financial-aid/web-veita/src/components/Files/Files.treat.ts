@@ -7,9 +7,12 @@ export const filesLink = style({
   borderRadius: theme.spacing[1],
   backgroundColor: theme.color.purple100,
   marginBottom: theme.spacing[2],
+  transition: 'background-color ease 250ms',
   selectors: {
     '&:hover': {
       cursor: 'pointer',
+      backgroundColor: theme.color.purple200,
+      textDecoration: 'none !important',
     },
   },
 })

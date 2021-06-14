@@ -16,7 +16,7 @@ export const tablePadding = style({
 })
 
 export const link = style({
-  transition: 'backgroundColor ease 250ms',
+  transition: 'background-color ease 250ms',
   borderRadius: theme.spacing[1],
   selectors: {
     '&:hover': {
