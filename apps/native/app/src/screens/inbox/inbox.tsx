@@ -1,9 +1,9 @@
 import { useQuery } from '@apollo/client'
 import {
-  dynamicColor,
   EmptyList,
   ListItem,
   SearchHeader,
+  TopLine
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -17,18 +17,18 @@ import {
   Platform,
   RefreshControl,
   StyleSheet,
-  View,
+  View
 } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
 import {
   Navigation,
-  NavigationFunctionComponent,
+  NavigationFunctionComponent
 } from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate,
+  useNavigationSearchBarUpdate
 } from 'react-native-navigation-hooks/dist'
-import styled, { useTheme } from 'styled-components/native'
+import { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
@@ -36,7 +36,7 @@ import { client } from '../../graphql/client'
 import { IDocument } from '../../graphql/fragments/document.fragment'
 import {
   ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY,
+  LIST_DOCUMENTS_QUERY
 } from '../../graphql/queries/list-documents.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
@@ -50,17 +50,6 @@ import { testIDs } from '../../utils/test-ids'
 interface IndexedDocument extends IDocument {
   fulltext: string
 }
-
-const TopLine = styled(Animated.View)`
-  background-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade600,
-  }))};
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-`
 
 const {
   useNavigationOptions,
@@ -377,17 +366,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
           )
         }
       />
-      <TopLine
-        style={{
-          height: StyleSheet.hairlineWidth,
-          opacity: isSearch
-            ? 0
-            : scrollY.interpolate({
-                inputRange: [0, 32],
-                outputRange: [0, 1],
-              }),
-        }}
-      />
+      <TopLine scrollY={scrollY} />
     </View>
   )
 }
