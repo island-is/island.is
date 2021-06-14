@@ -13,6 +13,7 @@ import {
 import {
   Case,
   CaseState,
+  CaseTransition,
   NotificationType,
   User,
   UserRole,
@@ -82,9 +83,12 @@ const HearingArrangements = () => {
       return
     }
 
-    const transitionSuccess = await transitionCase(workingCase, setWorkingCase)
+    const caseOpened =
+      workingCase.state === CaseState.NEW
+        ? await transitionCase(workingCase, setWorkingCase, CaseTransition.OPEN)
+        : true
 
-    if (transitionSuccess) {
+    if (caseOpened) {
       if (
         (workingCase.state !== CaseState.NEW &&
           workingCase.state !== CaseState.DRAFT) ||

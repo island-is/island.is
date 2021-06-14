@@ -87,7 +87,15 @@ export class EndorsementList extends Model<EndorsementList> {
 
   @ApiProperty({ type: () => [Endorsement], required: false })
   @HasMany(() => Endorsement)
-  readonly endorsements?: Endorsement[]
+  endorsements?: Endorsement[]
+
+  @ApiProperty()
+  @Column({
+    type: DataType.JSONB,
+    allowNull: false,
+    defaultValue: '{}',
+  })
+  meta!: object
 
   @ApiProperty({
     type: String,
