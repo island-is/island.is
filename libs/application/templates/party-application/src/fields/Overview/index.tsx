@@ -13,12 +13,25 @@ export interface Props extends FieldBaseProps {
 }
 
 const Overview: FC<FieldBaseProps> = ({ application }) => {
+  console.log('overview', application)
   const { formatMessage } = useLocale()
   const { externalData } = application
   const answers = application.answers as SchemaFormValues
   const endorsementListId = (externalData?.createEndorsementList.data as any).id
   const endorsementHook = useEndorsements(endorsementListId, false)
-  const endorsementsWithWarning = endorsementHook?.filter((e) => e.meta.invalidated)
+  //console.log('selected', answers.selectedEndorsements)
+
+  //find selected endorsements from the endorsement system and find how many of them are invalidated
+  const endorsementsWithWarning = () => {
+    const intersectingEndorsements = endorsementHook?.filter((e: any) => {
+      return answers.selectedEndorsements?.indexOf(e.id) !== -1
+    })
+
+    //console.log('intersecting', intersectingEndorsements)
+    intersectingEndorsements?.filter((e) => e.meta.invalidated)
+    return intersectingEndorsements?.length
+  }
+
   const { register } = useFormContext()
 
   return (
@@ -52,7 +65,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5">
           {formatMessage(m.overviewSection.signatureCount)}
         </Text>
-        <Text>{endorsementHook?.length ?? 0}</Text>
+        <Text>{answers.selectedEndorsements?.length ?? 0}</Text>
       </Box>
       <Box marginBottom={3}>
         <Inline space={2}>
@@ -67,9 +80,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
             />
           </Box>
         </Inline>
-        <Text>
-          {endorsementsWithWarning?.length ?? 0}
-        </Text>
+        <Text>{endorsementsWithWarning()}</Text>
       </Box>
       <Box marginBottom={3} width="half">
         <Text variant="h5" marginBottom={2}>

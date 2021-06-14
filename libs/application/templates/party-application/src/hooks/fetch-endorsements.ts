@@ -19,7 +19,7 @@ export const useEndorsements = (
           listId: endorsementListId,
         },
       },
-      pollInterval: shouldPoll ? 2000 : 0,
+      pollInterval: shouldPoll ? 20000 : 0,
     },
   )
 

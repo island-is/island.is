@@ -24,8 +24,7 @@ export const dataSchema = z.object({
   partyLetter: z.string().nonempty(),
   partyName: z.string().nonempty(),
   reasonForReject: z.string().optional(),
-  endorsements: z.array(EndorsementSchema).optional(), //todo: validate
-  endorsementsWithWarning: z.array(EndorsementSchema).optional(),
+  selectedEndorsements: z.array(z.string()).optional(), //todo: validate
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

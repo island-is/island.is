@@ -9,7 +9,6 @@ import {
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { Endorsement, SchemaFormValues } from '../../../src/lib/dataSchema'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 import isEqual from 'lodash/isEqual'
@@ -19,17 +18,13 @@ import { constituencyMapper } from '../../constants'
 import sortBy from 'lodash/sortBy'
 import cloneDeep from 'lodash/cloneDeep'
 import set from 'lodash/set'
-import { GetEndorsements } from '../../graphql/queries'
-import { useQuery } from '@apollo/client'
-
-interface EndorsementData {
-  endorsementSystemGetEndorsements?: Endorsement[]
-}
+import { Endorsement } from '../../types/schema'
+import { useEndorsements } from '../../hooks/fetch-endorsements'
+import { SchemaFormValues } from '../../../src/lib/dataSchema'
 
 const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const { lang: locale, formatMessage } = useLocale()
   const answers = application.answers as SchemaFormValues
-  const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
   const [selectedEndorsements, setSelectedEndorsements] = useState<
     Endorsement[]
   >([])
@@ -37,43 +32,23 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const [chooseRandom, setChooseRandom] = useState(false)
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
+  const endorsementsHook = useEndorsements(endorsementListId, true)
 
-  const { data: endorsementsData, refetch } = useQuery<EndorsementData>(
-    GetEndorsements,
-    {
-      variables: {
-        input: {
-          listId: endorsementListId,
-        },
-      },
-      pollInterval: 20000,
-    },
-  )
-
+   
   useEffect(() => {
-    refetch()
-    const mapToEndorsementList:
-      | Endorsement[]
-      | undefined = endorsementsData?.endorsementSystemGetEndorsements?.map(
-      (x: any) => ({
-        date: x.created,
-        name: x.meta.fullName,
-        nationalId: x.endorser,
-        address: x.meta.address ? x.meta.address.streetAddress : '',
-        hasWarning: x.meta?.invalidated ?? false,
-        id: x.id,
-        bulkImported: x.meta?.bulkEndorsement ?? false,
-      }),
-    )
-
-    setEndorsements(sortBy(mapToEndorsementList, 'date'))
-  }, [endorsementsData])
+  //setEndorsements(sortBy(endorsementsHook, 'created'))
+  }, [endorsementsHook])
 
   const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION, {
     onError: (error) => {
       // If there was an error doing the update we will deselect the endorsement
       toast.error(formatMessage(coreMessages.updateOrSubmitError, { error }))
-      setSelectedEndorsements(answers.endorsements ?? [])
+
+      const endorsements: any = endorsementsHook?.filter((e: any) => {
+        return answers.selectedEndorsements?.indexOf(e.id) !== -1
+      })
+      console.log(endorsements)
+      setSelectedEndorsements(endorsements ?? [])
     },
   })
   const maxEndorsements =
@@ -84,11 +59,11 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     selectedEndorsements.length > maxEndorsements ||
     selectedEndorsements.length < minEndorsements
   const firstX = () => {
-    const tempEndorsements = endorsements ?? []
+    const tempEndorsements = endorsementsHook ?? []
     return tempEndorsements?.slice(0, maxEndorsements)
   }
   const shuffled = () => {
-    const tempEndorsements = sortBy(endorsements, 'date')
+    const tempEndorsements = sortBy(endorsementsHook, 'created')
     return tempEndorsements.sort(() => 0.5 - Math.random())
   }
 
@@ -130,10 +105,10 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const updateApplicationWithEndorsements = async (
     newEndorsements: Endorsement[],
   ) => {
+    console.log('new', newEndorsements)
     const updatedAnswers = {
       ...answers,
-      endorsements: newEndorsements,
-      endorsementsWithWarning: newEndorsements.filter((e) => e.hasWarning),
+      selectedEndorsements: newEndorsements.map((e) => e.id),
     }
 
     await updateApplication({
@@ -147,15 +122,21 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
         locale,
       },
     }).then(() => {
-      set(answers, 'endorsements', cloneDeep(newEndorsements))
+      set(answers, 'selectedEndorsements', cloneDeep(newEndorsements))
     })
+
+    console.log('ANSWERS', application.answers)
   }
 
   /* on intital render: decide which radio button should be checked */
   useEffect(() => {
-    if (answers.endorsements && answers.endorsements.length > 0) {
-      setSelectedEndorsements(answers.endorsements)
-      isEqual(answers.endorsements, firstX())
+    if (answers.selectedEndorsements && answers.selectedEndorsements.length > 0) {
+      const endorsements: any = endorsementsHook?.filter((e: any) => {
+        return answers.selectedEndorsements?.indexOf(e.id) !== -1
+      })
+
+      setSelectedEndorsements(endorsements)
+      isEqual(endorsementsHook, firstX())
         ? setAutoSelect(true)
         : setChooseRandom(true)
     } else {
@@ -163,11 +144,10 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
       setAutoSelect(true)
     }
   }, [])
-
   return (
     <Box marginBottom={8}>
       <Text>{formatMessage(m.endorsementListSubmission.description)}</Text>
-      {endorsements && endorsements.length > 0 && (
+      {endorsementsHook && endorsementsHook.length > 0 && (
         <Box>
           <Box
             marginTop={3}
@@ -199,7 +179,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
             </Box>
           </Box>
           <EndorsementTable
-            endorsements={endorsements}
+            endorsements={endorsementsHook}
             selectedEndorsements={selectedEndorsements}
             onChange={(endorsement) => handleCheckboxChange(endorsement)}
             disabled={loading}

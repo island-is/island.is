@@ -9,9 +9,6 @@ import BulkUpload from '../BulkUpload'
 import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 
-interface EndorsementData {
-  endorsementSystemGetEndorsements?: Endorsement[]
-}
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const endorsementListId = (application.externalData?.createEndorsementList
@@ -23,8 +20,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const endorsementsHook = useEndorsements(endorsementListId, true)
 
   useEffect(() => {
-  
-      setEndorsements(endorsementsHook)
+    setEndorsements(endorsementsHook)
   }, [endorsementsHook, updateOnBulkImport])
 
   const namesCountString = formatMessage(
@@ -60,8 +56,8 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 : setEndorsements(
                     endorsements
                       ? endorsements.filter((x) => {
-                        x.meta.invalidated
-                      })
+                          x.meta.invalidated
+                        })
                       : endorsements,
                   )
             }}
