@@ -23,6 +23,7 @@ export const GetApplicantyQuery = gql`
       homeCircumstancesCustom
       state
       formComment
+      studentCustom
     }
   }
 `
