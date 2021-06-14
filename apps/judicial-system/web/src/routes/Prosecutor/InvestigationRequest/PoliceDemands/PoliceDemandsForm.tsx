@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { MessageDescriptor, useIntl } from 'react-intl'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
   DateTime,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
@@ -21,6 +22,40 @@ import {
   formatAccusedByGender,
   NounCases,
 } from '@island.is/judicial-system/formatters'
+import { policeDemandsForm } from '@island.is/judicial-system-web/messages'
+
+const courtClaimPrefill: Partial<
+  Record<
+    CaseType,
+    {
+      text: MessageDescriptor
+      format?: {
+        accusedName?: boolean
+        address?: boolean
+      }
+    }
+  >
+> = {
+  [CaseType.SEARCH_WARRANT]: {
+    text: policeDemandsForm.courtClaim.prefill.searchWarrant,
+    format: { accusedName: true, address: true },
+  },
+  [CaseType.BANKING_SECRECY_WAIVER]: {
+    text: policeDemandsForm.courtClaim.prefill.bankingSecrecyWaiver,
+  },
+  [CaseType.PHONE_TAPPING]: {
+    text: policeDemandsForm.courtClaim.prefill.phoneTapping,
+    format: { accusedName: true },
+  },
+  [CaseType.TELECOMMUNICATIONS]: {
+    text: policeDemandsForm.courtClaim.prefill.teleCommunications,
+    format: { accusedName: true },
+  },
+  [CaseType.TRACKING_EQUIPMENT]: {
+    text: policeDemandsForm.courtClaim.prefill.trackingEquipment,
+    format: { accusedName: true },
+  },
+}
 
 interface Props {
   workingCase: Case
@@ -41,7 +76,8 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
-  const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
+  const { updateCase, autofill } = useCase()
   const [, setRequestedValidToDateIsValid] = useState<boolean>(true)
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
@@ -51,6 +87,24 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
     setWorkingCase,
     validations,
   )
+
+  useEffect(() => {
+    if (workingCase) {
+      const courtClaim = courtClaimPrefill[workingCase.type]
+      const courtClaimText = courtClaim
+        ? formatMessage(courtClaim.text, {
+            ...(courtClaim.format?.accusedName && {
+              accusedName: workingCase.accusedName,
+            }),
+            ...(courtClaim.format?.address && {
+              address: workingCase.accusedAddress,
+            }),
+          })
+        : ''
+      autofill('demands', courtClaimText, workingCase)
+      setWorkingCase(workingCase)
+    }
+  }, [workingCase, setWorkingCase, autofill])
 
   return (
     <>
@@ -92,14 +146,16 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómkröfur
+              {formatMessage(policeDemandsForm.courtClaim.heading)}
             </Text>
           </Box>
           <Input
             data-testid="demands"
             name="demands"
-            label="Krafa lögreglu"
-            placeholder="Krafa ákæranda"
+            label={formatMessage(policeDemandsForm.courtClaim.label)}
+            placeholder={formatMessage(
+              policeDemandsForm.courtClaim.placeholder,
+            )}
             defaultValue={workingCase.demands}
             errorMessage={demandsEM}
             hasError={demandsEM !== ''}
