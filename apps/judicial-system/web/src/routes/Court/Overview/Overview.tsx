@@ -27,11 +27,8 @@ import {
   CaseType,
   IntegratedCourts,
 } from '@island.is/judicial-system/types'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  TransitionCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   CaseData,
   JudgeSubsections,
@@ -71,14 +68,13 @@ export const JudgeOverview: React.FC = () => {
     isTransitioningCase,
   } = useCase()
 
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
 
   if (workingCase?.state === CaseState.SUBMITTED && !isTransitioningCase) {
-    transitionCase(workingCase, setWorkingCase, CaseTransition.RECEIVE)
+    transitionCase(workingCase, CaseTransition.RECEIVE, setWorkingCase)
   }
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import {
   Case,
   NotificationType,
@@ -55,8 +55,8 @@ export const Overview: React.FC = () => {
       const caseSubmitted = shouldSubmitCase
         ? await transitionCase(
             workingCase,
-            setWorkingCase,
             CaseTransition.SUBMIT,
+            setWorkingCase,
           )
         : workingCase.state !== CaseState.NEW
 

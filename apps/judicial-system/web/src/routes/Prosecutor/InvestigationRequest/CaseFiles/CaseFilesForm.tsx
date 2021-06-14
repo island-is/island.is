@@ -9,7 +9,7 @@ import {
   Input,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   useCase,

@@ -15,10 +15,8 @@ import {
 } from '@island.is/judicial-system/types'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { TransitionCaseMutation } from '@island.is/judicial-system-web/graphql'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
@@ -43,9 +41,7 @@ export const Requests: React.FC = () => {
     errorPolicy: 'all',
   })
 
-  const { sendNotification } = useCase()
-
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+  const { transitionCase, sendNotification } = useCase()
 
   const resCases = data?.cases
 
@@ -97,18 +93,14 @@ export const Requests: React.FC = () => {
       caseToDelete.state === CaseState.SUBMITTED ||
       caseToDelete.state === CaseState.RECEIVED
     ) {
-      const transitionRequest = parseTransition(
-        caseToDelete.modified,
+      const caseDeleted = await transitionCase(
+        caseToDelete,
         CaseTransition.DELETE,
       )
 
-      try {
-        const { data } = await transitionCaseMutation({
-          variables: { input: { id: caseToDelete.id, ...transitionRequest } },
-        })
-        if (!data) {
-          return
-        }
+      if (caseDeleted) {
+        // No need to wait
+        sendNotification(caseToDelete.id, NotificationType.REVOKED)
 
         setTimeout(() => {
           setActiveCases(
@@ -119,17 +111,6 @@ export const Requests: React.FC = () => {
         }, 800)
 
         clearTimeout()
-
-        const notificationSent = await sendNotification(
-          caseToDelete.id,
-          NotificationType.REVOKED,
-        )
-
-        if (!notificationSent) {
-          // TODO: Handle error
-        }
-      } catch (e) {
-        // TODO: Handle error
       }
     }
   }

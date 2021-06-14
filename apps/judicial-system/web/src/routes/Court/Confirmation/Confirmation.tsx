@@ -93,10 +93,10 @@ const SigningModal: React.FC<SigningModalProps> = ({
           workingCase.state === CaseState.RECEIVED
             ? await transitionCase(
                 workingCase,
-                setWorkingCase,
                 workingCase.decision === CaseDecision.REJECTING
                   ? CaseTransition.REJECT
                   : CaseTransition.ACCEPT,
+                setWorkingCase,
               )
             : workingCase.state === CaseState.REJECTED ||
               workingCase.state === CaseState.ACCEPTED

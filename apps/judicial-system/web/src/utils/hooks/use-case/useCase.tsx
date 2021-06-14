@@ -157,8 +157,8 @@ const useCase = () => {
 
   const transitionCase = async (
     workingCase: Case,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
     transition: CaseTransition,
+    setWorkingCase?: React.Dispatch<React.SetStateAction<Case | undefined>>,
   ): Promise<boolean> => {
     try {
       const transitionRequest = parseTransition(
@@ -174,10 +174,12 @@ const useCase = () => {
         return false
       }
 
-      setWorkingCase({
-        ...workingCase,
-        state: data.transitionCase.state,
-      })
+      if (setWorkingCase) {
+        setWorkingCase({
+          ...workingCase,
+          state: data.transitionCase.state,
+        })
+      }
 
       return true
     } catch (e) {

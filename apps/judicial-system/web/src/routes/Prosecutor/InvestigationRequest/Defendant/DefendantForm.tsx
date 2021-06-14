@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { ValueType } from 'react-select/src/types'
-import { Box, Input, Option, Select, Text } from '@island.is/island-ui/core'
+import { Box, Input, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,

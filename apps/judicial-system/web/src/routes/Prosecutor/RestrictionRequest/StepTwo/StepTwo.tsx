@@ -83,7 +83,7 @@ export const StepTwo: React.FC = () => {
 
     const caseOpened =
       workingCase.state === CaseState.NEW
-        ? await transitionCase(workingCase, setWorkingCase, CaseTransition.OPEN)
+        ? await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
         : true
 
     if (caseOpened) {

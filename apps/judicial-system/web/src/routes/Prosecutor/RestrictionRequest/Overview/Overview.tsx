@@ -29,7 +29,7 @@ import {
   TIME_FORMAT,
   formatRequestedCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
@@ -66,8 +66,8 @@ export const Overview: React.FC = () => {
       const caseSubmitted = shouldSubmitCase
         ? await transitionCase(
             workingCase,
-            setWorkingCase,
             CaseTransition.SUBMIT,
+            setWorkingCase,
           )
         : workingCase.state !== CaseState.NEW
 
