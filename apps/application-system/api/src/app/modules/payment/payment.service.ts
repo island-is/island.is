@@ -1,11 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
-
-import { CreatePaymentDto } from './dto/createPayment.dto'
-import { User } from '@island.is/auth-nest-tools'
-//import { PaymentService } from '@island.is/api/domains/payment'
-//import { PaymentController } from './payment.controller'
 import { CreatePaymentResponseDto } from './dto/createPaymentResponse.dto'
 import {
   ChargeResult,
@@ -35,7 +30,7 @@ export class PaymentService {
       )
 
       // Calculate current time plus 48 hours. 86.400.000 is seconds in a day, 172.800.000 is two days.
-      let calcExpiration = new Date().getTime() + 172800000
+      const calcExpiration = new Date().getTime() + 172800000
       console.log(
         'The expiration date of payment application: ' +
           new Date(calcExpiration),

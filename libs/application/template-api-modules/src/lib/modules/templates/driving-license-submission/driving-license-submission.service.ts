@@ -25,9 +25,8 @@ interface Payment {
 export class DrivingLicenseSubmissionService {
   constructor(
     private readonly drivingLicenseService: DrivingLicenseService,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) //private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
-  {}
+    private readonly sharedTemplateAPIService: SharedTemplateApiService, //private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
+  ) {}
 
   async createCharge({
     application: { applicant, externalData, answers, id },

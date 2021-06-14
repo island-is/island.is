@@ -5,7 +5,6 @@ import {
   Model,
   Table,
   UpdatedAt,
-  ForeignKey,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
@@ -80,7 +79,7 @@ export class Application extends Model<Application> {
     allowNull: false,
   })
   @ApiProperty()
-  answers!: object
+  answers!: Record<string, unknown>
 
   @Column({
     type: DataType.JSONB,
@@ -88,7 +87,7 @@ export class Application extends Model<Application> {
     allowNull: false,
   })
   @ApiProperty()
-  externalData!: object
+  externalData!: Record<string, unknown>
 
   @Column({
     type: DataType.ENUM,

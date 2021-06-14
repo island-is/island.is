@@ -4,13 +4,11 @@ import {
   Model,
   Table,
   ForeignKey,
-  BelongsTo,
   CreatedAt,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Application } from '../application/application.model'
-import { JsonObject } from 'type-fest'
 
 ///Payment table to hold onto fulfilled payments and expiring payments.
 @Table({

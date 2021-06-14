@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import { DynamicModule } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { AuditModule } from '@island.is/nest/audit'
@@ -32,15 +32,6 @@ export class PaymentModule {
           useValue: environment.application as PaymentConfig,
         },
         AwsService,
-        // {
-        //   provide: DrivingLicenseApi,
-        //   useFactory: async () =>
-        //     new DrivingLicenseApi(
-        //       config.xroadBaseUrl,
-        //       config.xroadClientId,
-        //       config.secret,
-        //     ),
-        // },
       ],
       imports: [
         AuditModule.forRoot(environment.audit),

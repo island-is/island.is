@@ -91,12 +91,12 @@ export class ApplicationResponseDto {
   @ApiProperty()
   @Expose()
   @IsObject()
-  answers!: object
+  answers!: Record<string, unknown>
 
   @ApiProperty()
   @Expose()
   @IsObject()
-  externalData!: object
+  externalData!: Record<string, unknown>
 
   @ApiPropertyOptional()
   @Expose()
