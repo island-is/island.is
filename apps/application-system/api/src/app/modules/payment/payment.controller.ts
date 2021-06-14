@@ -128,26 +128,15 @@ export class PaymentController {
     @Param('id') id?: string,
   ): Promise<CreatePaymentResponseDto> {
     const payment = await this.paymentService.findPaymentByApplicationId(
-      applicationId,
-      id,
+      applicationId
     )
-    // response obj because we are updating a row in db.
-    if (payment) {
-      this.auditService.audit({
-        user,
-        action: 'approvePaymentApplication',
-        resources: applicationId,
-        meta: { applicationId: applicationId, id: id },
-      })
 
-      const paymentDto: CreatePaymentResponseDto = await this.paymentService.assignValues(
-        applicationId,
-        (callback.status === 'isPaid' ? true : false),
-        payment,
-        id,
-      )
-      return await this.paymentModel.create(paymentDto)
-    }
+    this.auditService.audit({
+      user,
+      action: 'approvePaymentApplication',
+      resources: applicationId,
+      meta: { applicationId: applicationId, id: id },
+    })
 
     const paymentDto: Pick<
       BasePayment,
@@ -159,13 +148,13 @@ export class PaymentController {
       | 'amount'
       | 'expires_at'
     > = {
-      application_id: paymentDetails.application_id || applicationId,
-      fulfilled: callback.status === 'isPaid' ? true : false,
+      application_id: payment?.application_id || applicationId,
+      fulfilled: callback.status === 'paid' ? true : false,
       reference_id: callback.receptionID,
-      user4: paymentDetails.user4 || '',
+      user4: payment?.user4 || '',
       definition: callback.chargeItemSubject,
-      amount: paymentDetails.amount || 0,
-      expires_at: new Date(),
+      amount: payment?.amount || paymentDetails.amount || 0,
+      expires_at: payment?.expires_at || new Date(),
     }
     return await this.paymentModel.create(paymentDto)
   }
