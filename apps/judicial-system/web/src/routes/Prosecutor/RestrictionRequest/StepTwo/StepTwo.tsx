@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import {
   Case,
   CaseState,
+  CaseTransition,
   CaseType,
   NotificationType,
   User,
@@ -78,9 +79,12 @@ export const StepTwo: React.FC = () => {
       return
     }
 
-    const transitionSuccess = await transitionCase(workingCase, setWorkingCase)
+    const caseOpened =
+      workingCase.state === CaseState.NEW
+        ? await transitionCase(workingCase, setWorkingCase, CaseTransition.OPEN)
+        : true
 
-    if (transitionSuccess) {
+    if (caseOpened) {
       if (
         (workingCase.state !== CaseState.NEW &&
           workingCase.state !== CaseState.DRAFT) ||
