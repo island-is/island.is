@@ -58,24 +58,16 @@ export class PaymentService {
     }
   }
 
-  async findPaymentByApplicationId(
+  findPaymentByApplicationId(
     applicationId: string,
-    id?: string,
-  ): Promise<Payment> {
-    const applicationIds = applicationId?.split(',')
-    const ids = id?.split(',')
-
-    const payments = await this.paymentModel.findAll({
+  ): Promise<Payment | null> {
+    return this.paymentModel.findOne({
       where: {
-        ...(applicationIds
-          ? { application_id: { [Op.in]: applicationIds } }
-          : {}),
-        ...(ids ? { id: { [Op.in]: ids } } : {}),
+        application_id: { [Op.eq]: applicationId }
       },
+      limit: 1,
       order: [['modified', 'DESC']],
     })
-
-    return this.findCorrectApplicationPayment(payments)
   }
 
   async assignValues(
@@ -94,29 +86,6 @@ export class PaymentService {
       expires_at: payment.expires_at || new Date(),
     }
     return Promise.resolve(assignedObject)
-  }
-
-  findCorrectApplicationPayment(paymentRows: Payment[]): Payment {
-    let filteredPayment: Payment = paymentRows[0]
-    for (const payment in paymentRows) {
-      if (paymentRows[payment].fulfilled === true) {
-        console.log(paymentRows[payment])
-        return paymentRows[payment]
-      }
-      console.log(
-        'paymentrows ' +
-          [payment] +
-          '  ' +
-          paymentRows[payment].createdAt.getTime(),
-      )
-      if (
-        paymentRows[payment].createdAt.getTime() >
-        filteredPayment.createdAt.getTime()
-      ) {
-        filteredPayment = paymentRows[payment]
-      }
-    }
-    return filteredPayment
   }
 
   // async approvePayment(callback: Callback, applicationId: string, charge: Charge): Promise<CallbackResult> {

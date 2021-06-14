@@ -187,7 +187,9 @@ export class PaymentController {
     )
 
     return {
-      fulfilled: payment.fulfilled,
+      // TODO: maybe treat the case where no payment was found differently?
+      // not sure how/if that case would/could come up.
+      fulfilled: payment?.fulfilled,
     }
   }
 }
