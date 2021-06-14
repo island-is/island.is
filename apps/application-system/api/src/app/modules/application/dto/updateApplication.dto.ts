@@ -15,7 +15,7 @@ export class UpdateApplicationDto {
   @IsOptional()
   @IsObject()
   @ApiPropertyOptional()
-  readonly answers?: Record<string, unknown>
+  readonly answers?: object
 
   @IsOptional()
   @IsObject()
