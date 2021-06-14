@@ -25,7 +25,7 @@ export class Organization {
   @Field(() => [OrganizationTag])
   tag?: Array<OrganizationTag>
 
-  @Field(() => Image, { nullable: true })
+  @Field({ nullable: true })
   logo?: Image | null
 
   @Field({ nullable: true })

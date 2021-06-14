@@ -12,7 +12,7 @@ export class SectionWithImage {
   @Field()
   title?: string
 
-  @Field(() => Image, { nullable: true })
+  @Field({ nullable: true })
   image?: Image | null
 
   @Field(() => Html)

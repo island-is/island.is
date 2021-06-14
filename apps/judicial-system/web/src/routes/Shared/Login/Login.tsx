@@ -1,17 +1,14 @@
 import React, { useContext, useEffect } from 'react'
-import { useIntl } from 'react-intl'
 import { Text, Button, Box, AlertMessage } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
-import { login } from '@island.is/judicial-system-web/messages'
 import { useRouter } from 'next/router'
 import * as styles from './Login.treat'
 
 const Login = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
-  const { formatMessage } = useIntl()
 
   useEffect(() => {
     document.title = 'Réttarvörslugátt'
@@ -33,24 +30,24 @@ const Login = () => {
         return (
           <AlertMessage
             type="warning"
-            title={formatMessage(login.error.failed.title)}
-            message={formatMessage(login.error.failed.message)}
+            title="Innskráning ógild"
+            message="Innskráning tókst ekki. Ertu viss um að þú hafir slegið inn rétt símanúmer?"
           />
         )
       case LoginErrorCodes.UNAUTHENTICATED:
         return (
           <AlertMessage
             type="info"
-            title={formatMessage(login.error.unAuthenticated.title)}
-            message={formatMessage(login.error.unAuthenticated.message)}
+            title="Innskráning tókst ekki"
+            message="Innskráning ekki lengur gild. Vinsamlegast reynið aftur."
           />
         )
       case LoginErrorCodes.UNAUTHORIZED:
         return (
           <AlertMessage
             type="warning"
-            title={formatMessage(login.error.unAuthorized.title)}
-            message={formatMessage(login.error.unAuthorized.message)}
+            title="Þú ert ekki með aðgang"
+            message="Þú hefur ekki fengið aðgang að Réttarvörslugátt. Ef þú telur þig eiga að hafa aðgang þarft þú að hafa samband við viðeigandi stjórnanda eða notendaþjónustu hjá þinni starfsstöð."
           />
         )
 
@@ -71,12 +68,15 @@ const Login = () => {
       <div className={styles.titleContainer}>
         <Box>
           <Text as="h1" variant="h1">
-            {formatMessage(login.general.heading)}
+            Skráðu þig inn í Réttarvörslugátt
           </Text>
         </Box>
       </div>
       <div className={styles.subTitleContainer}>
-        <Text>{formatMessage(login.general.description)}</Text>
+        <Text>
+          Notaðu rafræn skilríki til þess að skrá þig inn. Passaðu upp á að það
+          sé kveikt á símanum eða hann sé ólæstur.
+        </Text>
       </div>
       <div className={styles.buttonContainer}>
         <a
@@ -85,7 +85,7 @@ const Login = () => {
           rel="noreferrer noopener"
           className={styles.btn}
         >
-          <Button fluid>{formatMessage(login.general.buttonLabel)}</Button>
+          <Button fluid>Innskráning</Button>
         </a>
       </div>
     </div>

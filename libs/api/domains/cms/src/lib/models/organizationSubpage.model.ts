@@ -48,7 +48,7 @@ export class OrganizationSubpage {
   @Field(() => OrganizationPage)
   organizationPage!: OrganizationPage | null
 
-  @Field(() => Image, { nullable: true })
+  @Field({ nullable: true })
   featuredImage?: Image | null
 }
 

@@ -11,7 +11,7 @@ export class TabContent {
   @Field({ nullable: true })
   contentTitle?: string
 
-  @Field(() => Image, { nullable: true })
+  @Field({ nullable: true })
   image?: Image | null
 
   @Field(() => Html, { nullable: true })
