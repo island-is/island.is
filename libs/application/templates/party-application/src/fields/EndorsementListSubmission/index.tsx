@@ -32,11 +32,13 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const [chooseRandom, setChooseRandom] = useState(false)
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
-  const {endorsements: endorsementsHook} = useEndorsements(endorsementListId, false)
+    const { endorsements: endorsementsHook, refetch } = useEndorsements(
+      endorsementListId,
+      true,
+    ) 
 
-   
   useEffect(() => {
-  //setEndorsements(sortBy(endorsementsHook, 'created'))
+    refetch()
   }, [endorsementsHook])
 
   const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION, {
@@ -47,10 +49,11 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
       const endorsements: any = endorsementsHook?.filter((e: any) => {
         return answers.selectedEndorsements?.indexOf(e.id) !== -1
       })
-      console.log(endorsements)
+      console.log('ERROR??', error)
       setSelectedEndorsements(endorsements ?? [])
     },
   })
+
   const maxEndorsements =
     constituencyMapper[answers.constituency as Constituencies].high
   const minEndorsements =
@@ -59,7 +62,8 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     selectedEndorsements.length > maxEndorsements ||
     selectedEndorsements.length < minEndorsements
   const firstX = () => {
-    const tempEndorsements = endorsementsHook?.length ? endorsementsHook : []
+    const tempEndorsements = endorsementsHook ?? []
+    console.log('FIRST_X', tempEndorsements?.slice(0, maxEndorsements))
     return tempEndorsements?.slice(0, maxEndorsements)
   }
   const shuffled = () => {
@@ -109,7 +113,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     const endorsementIds: string[] = newEndorsements.map((e) => e.id)
     const updatedAnswers = {
       ...answers,
-      selectedEndorsements: endorsementIds,
+      selectedEndorsements: cloneDeep(endorsementIds),
     }
 
     await updateApplication({
@@ -123,7 +127,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
         locale,
       },
     }).then(() => {
-      set(answers, 'selectedEndorsements', endorsementIds)
+      set(answers, 'selectedEndorsements', cloneDeep(endorsementIds))
     })
 
     console.log('ANSWERS', application.answers)
@@ -131,13 +135,14 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
 
   /* on intital render: decide which radio button should be checked */
   useEffect(() => {
+    console.log('render', answers.selectedEndorsements)
     if (answers.selectedEndorsements && answers.selectedEndorsements.length > 0) {
       const endorsements: any = endorsementsHook?.filter((e: any) => {
         return answers.selectedEndorsements?.indexOf(e.id) !== -1
       })
 
       setSelectedEndorsements(endorsements)
-      isEqual(endorsementsHook, firstX())
+      isEqual(endorsements, firstX())
         ? setAutoSelect(true)
         : setChooseRandom(true)
     } else {
