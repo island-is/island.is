@@ -393,6 +393,16 @@ export const IcelandicNamesSearcher = () => {
                         </button>
                       )
                     })}
+                    {!!selectedLetter && (
+                      <ResetButton
+                        onClick={() => {
+                          setSelectedLetter('')
+                          setTableData([])
+                        }}
+                      >
+                        Hreinsa síu
+                      </ResetButton>
+                    )}
                   </div>
                 </SidebarAccordion>
                 <Box paddingY={2}>
@@ -458,7 +468,16 @@ export const IcelandicNamesSearcher = () => {
                 </SidebarAccordion>
               </Box>
               {!!someFilterSelected && (
-                <ResetButton onClick={() => dispatch({ type: 'clearAll' })}>
+                <ResetButton
+                  onClick={() => {
+                    if (selectedLetter) {
+                      setTableData([])
+                    }
+
+                    setSelectedLetter('')
+                    dispatch({ type: 'clearAll' })
+                  }}
+                >
                   Hreinsa allar síur
                 </ResetButton>
               )}
