@@ -23,7 +23,6 @@ import {
   NounCases,
 } from '@island.is/judicial-system/formatters'
 import { policeDemandsForm } from '@island.is/judicial-system-web/messages'
-import { format } from 'winston'
 
 const courtClaimPrefill: Partial<
   Record<
