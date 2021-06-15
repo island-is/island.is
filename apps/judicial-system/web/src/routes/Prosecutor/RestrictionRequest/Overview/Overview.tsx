@@ -48,7 +48,7 @@ export const Overview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { transitionCase, sendNotification } = useCase()
+  const { transitionCase, sendNotification, isSendingNotification } = useCase()
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
