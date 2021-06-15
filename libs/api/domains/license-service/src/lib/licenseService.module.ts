@@ -4,7 +4,7 @@ import { LicenseServiceService } from './licenseService.service'
 
 import { MainResolver } from './graphql/main.resolver'
 
-import { LicenseServiceApi } from './client/driving-license-client/drivingLicenseService.api'
+import { GenericDrivingLicenseApi } from './client/driving-license-client'
 
 export interface Config {
   xroad: {
@@ -23,9 +23,9 @@ export class LicenseServiceModule {
         MainResolver,
         LicenseServiceService,
         {
-          provide: LicenseServiceApi,
+          provide: GenericDrivingLicenseApi,
           useFactory: async () =>
-            new LicenseServiceApi(
+            new GenericDrivingLicenseApi(
               config.xroad.xroadBaseUrl,
               config.xroad.xroadClientId,
               config.xroad.drivingLicenseSecret,

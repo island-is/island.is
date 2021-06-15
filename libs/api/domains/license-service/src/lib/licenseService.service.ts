@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { GenericUserLicense } from './licenceService.type'
-import { LicenseServiceApi } from './client/driving-license-client'
+import { GenericDrivingLicenseApi } from './client/driving-license-client'
 import { drivingLicensesToSingleGenericLicense } from './client/driving-license-client/drivingLicenseMappers'
 import { Locale } from '@island.is/shared/types'
 
@@ -14,7 +14,9 @@ export type GetGenericDrivingLicenseOptions = {
 
 @Injectable()
 export class LicenseServiceService {
-  constructor(private readonly licenseService: LicenseServiceApi) {}
+  constructor(
+    private readonly drivingLicenseService: GenericDrivingLicenseApi,
+  ) {}
 
   async getAllLicenses(
     nationalId: User['nationalId'],
@@ -26,7 +28,10 @@ export class LicenseServiceService {
       onlyList,
     }: GetGenericDrivingLicenseOptions = {},
   ): Promise<GenericUserLicense[]> {
-    const drivingLicense = await this.licenseService.getGenericDrivingLicense(
+    console.log(includedProviders)
+    const licenses: GenericUserLicense[] = []
+
+    const drivingLicense = await this.drivingLicenseService.getGenericDrivingLicense(
       nationalId,
     )
 
@@ -53,7 +58,7 @@ export class LicenseServiceService {
     licenseType: string, // TODO(osk) actual type/enum
     licenseId: string,
   ): Promise<GenericUserLicense | null> {
-    const drivingLicense = await this.licenseService.getGenericDrivingLicense(
+    const drivingLicense = await this.drivingLicenseService.getGenericDrivingLicense(
       nationalId,
     )
 

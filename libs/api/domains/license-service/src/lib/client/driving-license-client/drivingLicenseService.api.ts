@@ -6,7 +6,7 @@ import { User } from '@island.is/auth-nest-tools'
 
 import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
 
-export class LicenseServiceApi {
+export class GenericDrivingLicenseApi {
   private readonly xroadApiUrl: string
   private readonly xroadClientId: string
   private readonly secret: string
