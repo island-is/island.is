@@ -124,14 +124,14 @@ export interface RadioField extends BaseField {
   backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
   space?: BoxProps['paddingTop']
-  onSelect?: (s: string) => void
+  onSelect?(s: string): void
 }
 
 export interface SelectField extends BaseField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
   options: MaybeWithApplicationAndField<Option[]>
-  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
+  onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
 }
@@ -140,8 +140,8 @@ export interface AsyncSelectField extends BaseField {
   readonly type: FieldTypes.ASYNC_SELECT
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
-  loadOptions: (c: Context) => Promise<Option[]>
-  onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
+  loadOptions(c: Context): Promise<Option[]>
+  onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
 }
