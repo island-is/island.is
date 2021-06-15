@@ -72,12 +72,10 @@ beforeEach(() => {
 })
 
 describe('getOtherParentId', () => {
-  it('should return null if no parent is selected', () => {
+  it('should return undefined if no parent is selected', () => {
     application.answers.otherParent = NO
 
-    const expectedId = null
-
-    expect(getOtherParentId(application)).toBe(expectedId)
+    expect(getOtherParentId(application)).toBeUndefined()
   })
 
   it('should return answers.otherParentId if manual is selected', () => {
@@ -377,5 +375,3 @@ describe('getRightsCode', () => {
   // TODO:
   // it('should return FO-FL-L-GR-SJ for secondary parent that is both self employed and employed with custody', () => {})
 })
-
-// TODO: periods and validate against existing payment plans
