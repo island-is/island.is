@@ -592,12 +592,12 @@ export class NotificationService {
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
 
-    const courtWasBeenNotified = await this.existsRevokableNotification(
+    const courtWasNotified = await this.existsRevokableNotification(
       existingCase.id,
       environment.notifications.courtsMobileNumbers[existingCase.courtId],
     )
 
-    if (courtWasBeenNotified) {
+    if (courtWasNotified) {
       promises.push(this.sendRevokedSmsNotificationToCourt(existingCase))
     }
 
