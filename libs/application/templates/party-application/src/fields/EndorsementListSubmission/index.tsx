@@ -20,7 +20,7 @@ import { SchemaFormValues } from '../../../src/lib/dataSchema'
 import { useFormContext } from 'react-hook-form'
 
 const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
-  const { lang: locale, formatMessage } = useLocale()
+  const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const answers = application.answers as SchemaFormValues
   const [selectedEndorsements, setSelectedEndorsements] = useState<
@@ -30,9 +30,9 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const [chooseRandom, setChooseRandom] = useState(false)
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
-  const { endorsements: endorsementsHook, refetch } = useEndorsements(
+  const { endorsements: endorsementsHook } = useEndorsements(
     endorsementListId,
-    true,
+    false,
   )
 
   /* on intital render: decide which radio button should be checked */
@@ -45,7 +45,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
         return answers.selectedEndorsements?.indexOf(e.id) !== -1
       })
 
-      setSelectedEndorsements(endorsements)
+      setSelectedEndorsements(sortBy(endorsements, 'created'))
       isEqual(endorsements, firstX())
         ? setAutoSelect(true)
         : setChooseRandom(true)
@@ -67,14 +67,14 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     return tempEndorsements?.slice(0, maxEndorsements)
   }
   const shuffled = () => {
-    const tempEndorsements = sortBy(endorsementsHook, 'created')
+    const tempEndorsements = endorsementsHook ?? []
     return tempEndorsements.sort(() => 0.5 - Math.random())
   }
 
   const firstMaxEndorsements = () => {
     setAutoSelect(true)
     setChooseRandom(false)
-    setSelectedEndorsements([...firstX()])
+    setSelectedEndorsements(sortBy([...firstX()], 'created'))
     updateApplicationWithEndorsements([...firstX()])
   }
 
