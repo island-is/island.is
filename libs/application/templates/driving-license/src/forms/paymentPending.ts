@@ -5,6 +5,7 @@ import {
   FormModes,
   buildCustomField,
 } from '@island.is/application/core'
+import { m } from '../lib/messages'
 
 export const PaymentPending: Form = buildForm({
   id: 'PaymentPending',

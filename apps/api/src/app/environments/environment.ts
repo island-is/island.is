@@ -101,8 +101,8 @@ const devConfig = {
     clientId: process.env.XROAD_CLIENT_ID ?? 'DEV/GOV/10000/island-is-client',
   },
   paymentDomain: {
-    username: 'isl_aranja_p',
-    password: 'vogur.123',
+    username: process.env.PAYMENT_TEST_USER,
+    password: process.env.PAYMENT_TEST_PASSWORD,
     url: 'https://tbrws-s.hysing.is',
   },
   temporaryVoterRegistry: {

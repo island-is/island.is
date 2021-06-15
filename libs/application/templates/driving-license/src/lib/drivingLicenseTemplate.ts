@@ -48,7 +48,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
-  name: m.applicationForDrivingLicense,
+  name: 'Umsókn um ökuskilríki',
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
