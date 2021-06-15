@@ -1,4 +1,5 @@
 import { Module, DynamicModule } from '@nestjs/common'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { LicenseServiceService } from './licenseService.service'
 
@@ -10,7 +11,9 @@ export interface Config {
   xroad: {
     xroadBaseUrl: string
     xroadClientId: string
-    drivingLicenseSecret: string
+  }
+  drivingLicense: {
+    secret: string
   }
 }
 
@@ -23,12 +26,16 @@ export class LicenseServiceModule {
         MainResolver,
         LicenseServiceService,
         {
+          provide: LOGGER_PROVIDER,
+          useValue: logger,
+        },
+        {
           provide: GenericDrivingLicenseApi,
           useFactory: async () =>
             new GenericDrivingLicenseApi(
               config.xroad.xroadBaseUrl,
               config.xroad.xroadClientId,
-              config.xroad.drivingLicenseSecret,
+              config.drivingLicense.secret,
             ),
         },
       ],

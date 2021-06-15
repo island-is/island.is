@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import {
   GenericUserLicense,
@@ -27,6 +29,7 @@ const includeType = (
 export class LicenseServiceService {
   constructor(
     private readonly drivingLicenseService: GenericDrivingLicenseApi,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
   private async getDriversLicense(
