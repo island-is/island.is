@@ -22,9 +22,11 @@
 /libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
 /libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
 /libs/api/domains/temporary-voter-registry/                                                   @island-is/kosmos-kaos
+/libs/api/domains/party-letter-registry/                                                      @island-is/kosmos-kaos
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
 /libs/application/templates/party-application/                                                @island-is/kosmos-kaos
 /libs/service-portal/endorsements/                                                            @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/party-application/           @island-is/kosmos-kaos
 /libs/application/template-api-modules/src/lib/modules/templates/party-letter/                @island-is/kosmos-kaos
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
 /libs/clients/zendesk/                                                                        @island-is/kosmos-kaos
@@ -34,6 +36,10 @@
 /libs/service-portal/education-student-assessment/                                            @island-is/kosmos-kaos @island-is/sendiradid
 /libs/contentful-extensions/mideind-translation/                                              @island-is/kosmos-kaos
 /libs/contentful-extensions/parent-slug/                                                      @island-is/kosmos-kaos
+/libs/application/templates/driving-license/                                                  @island-is/kosmos-kaos
+/libs/application/templates/driving-assessment-approval/                                      @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission   @island-is/kosmos-kaos
+
 
 /apps/reference-next-app/                                                                     @island-is/aranja-core
 /libs/api/domains/translations/                                                               @island-is/aranja-core
@@ -151,7 +157,3 @@
 /libs/api/domains/regulations/                                                                @island-is/hugsmidjan
 /apps/web/screens/Regulations/                                                                @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                             @island-is/hugsmidjan
-
-/libs/application/templates/driving-license/                                                  @island-is/kosmos-kaos
-/libs/application/templates/driving-assessment-approval/                                      @island-is/kosmos-kaos
-/libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission   @island-is/kosmos-kaos

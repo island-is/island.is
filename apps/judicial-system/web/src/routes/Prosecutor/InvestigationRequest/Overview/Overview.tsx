@@ -1,56 +1,38 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import {
   Case,
-  CaseTransition,
   NotificationType,
-  TransitionCase,
   CaseState,
+  CaseTransition,
 } from '@island.is/judicial-system/types'
-import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   Modal,
   PageLayout,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  CaseQuery,
-  SendNotificationMutation,
-  TransitionCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import OverviewForm from './OverviewForm'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
+
   const [modalVisible, setModalVisible] = useState(false)
   const [modalText, setModalText] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
 
+  const { transitionCase, sendNotification } = useCase()
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
-
-  const transitionCase = async (id: string, transitionCase: TransitionCase) => {
-    const { data } = await transitionCaseMutation({
-      variables: { input: { id, ...transitionCase } },
-    })
-
-    return data?.transitionCase
-  }
-
-  const [
-    sendNotificationMutation,
-    { loading: isSendingNotification },
-  ] = useMutation(SendNotificationMutation)
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -62,51 +44,30 @@ export const Overview: React.FC = () => {
     }
   }, [workingCase, setWorkingCase, data])
 
-  const sendNotification = async (id: string) => {
-    const { data } = await sendNotificationMutation({
-      variables: {
-        input: {
-          caseId: id,
-          type: NotificationType.READY_FOR_COURT,
-        },
-      },
-    })
-
-    return data?.sendNotification?.notificationSent
-  }
-
   const handleNextButtonClick = async () => {
     if (!workingCase) {
       return
     }
 
     try {
-      const isDraft = workingCase.state === CaseState.DRAFT
+      const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
-      if (isDraft) {
-        // Parse the transition request
-        const transitionRequest = parseTransition(
-          workingCase.modified,
-          CaseTransition.SUBMIT,
-        )
+      const caseSubmitted = shouldSubmitCase
+        ? await transitionCase(
+            workingCase,
+            CaseTransition.SUBMIT,
+            setWorkingCase,
+          )
+        : workingCase.state !== CaseState.NEW
 
-        // Transition the case
-        const resCase = await transitionCase(workingCase.id, transitionRequest)
+      const notificationSent = caseSubmitted
+        ? await sendNotification(
+            workingCase.id,
+            NotificationType.READY_FOR_COURT,
+          )
+        : false
 
-        if (!resCase) {
-          // TDOO: Handle error
-          return
-        }
-
-        setWorkingCase({
-          ...workingCase,
-          state: resCase.state,
-        })
-      }
-
-      const notificationSent = await sendNotification(workingCase.id)
-
-      if (isDraft) {
+      if (shouldSubmitCase) {
         // An SMS should have been sent
         if (notificationSent) {
           setModalText(

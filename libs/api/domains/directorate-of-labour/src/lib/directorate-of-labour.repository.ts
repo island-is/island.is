@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   UnionApi,
   Union,
@@ -10,13 +11,18 @@ import {
   ParentalLeave,
 } from '@island.is/clients/vmst'
 import format from 'date-fns/format'
+import addDays from 'date-fns/addDays'
+import differenceInDays from 'date-fns/differenceInDays'
 
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
 import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
+import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
+import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
 
 const isRunningInDevelopment = process.env.NODE_ENV === 'development'
+const df = 'yyyy-MM-dd'
 
 enum PensionFundType {
   required = 'L',
@@ -26,12 +32,13 @@ enum PensionFundType {
 @Injectable()
 export class DirectorateOfLabourRepository {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private parentalLeaveApi: ParentalLeaveApi,
     private unionApi: UnionApi,
     private pensionApi: PensionApi,
     private pregnancyApi: PregnancyApi,
   ) {
-    logger.debug('Created Directorate of labour repository')
+    this.logger.debug('Created Directorate of labour repository')
   }
 
   async getUnions(): Promise<Union[]> {
@@ -135,7 +142,7 @@ export class DirectorateOfLabourRepository {
         transferableMonths: rights.transferableMonths,
       }
     } catch (e) {
-      logger.error(
+      this.logger.error(
         `Could not fetch parental leaves entitlements for ${nationalId}, ${dateOfBirth}`,
         e,
       )
@@ -158,7 +165,7 @@ export class DirectorateOfLabourRepository {
 
       return results.parentalLeaves ?? []
     } catch (e) {
-      logger.error(`Could not fetch parental leaves for ${nationalId}`, e)
+      this.logger.error(`Could not fetch parental leaves for ${nationalId}`, e)
 
       return null
     }
@@ -207,6 +214,70 @@ export class DirectorateOfLabourRepository {
     ]
   }
 
+  async getParentalLeavesPeriodEndDate(
+    nationalId: string,
+    startDate: Date,
+    length: string,
+    percentage: string,
+  ): Promise<ParentalLeavePeriodEndDate> {
+    if (isRunningInDevelopment) {
+      this.logger.warn(
+        'You need to run against VMST API through XROAD to get the correct dates calculation. This is an approximation done with date-fns.',
+      )
+
+      return {
+        periodEndDate: addDays(startDate, Number(length)).getTime(),
+      }
+    }
+
+    const res = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate({
+      nationalRegistryId: nationalId,
+      startDate,
+      length,
+      percentage,
+    })
+
+    if (!res?.periodEndDate) {
+      throw new Error(`Cannot get the end date for ${startDate} and ${length}`)
+    }
+
+    return {
+      periodEndDate: res.periodEndDate as any,
+    }
+  }
+
+  async getParentalLeavesPeriodsLength(
+    nationalId: string,
+    startDate: Date,
+    endDate: Date,
+    percentage: string,
+  ): Promise<ParentalLeavePeriodLength> {
+    if (isRunningInDevelopment) {
+      this.logger.warn(
+        'You need to run against VMST API through XROAD to get the correct dates calculation. This is an approximation done with date-fns.',
+      )
+
+      return {
+        periodLength: differenceInDays(endDate, startDate),
+      }
+    }
+
+    const res = await this.parentalLeaveApi.parentalLeaveGetPeriodLength({
+      nationalRegistryId: nationalId,
+      startDate,
+      endDate,
+      percentage,
+    })
+
+    if (!res?.periodLength) {
+      throw new Error(`Cannot get the length for ${startDate} and ${endDate}`)
+    }
+
+    return {
+      periodLength: res.periodLength,
+    }
+  }
+
   async getPregnancyStatus(
     nationalId: string,
   ): Promise<PregnancyStatus | null> {
@@ -240,13 +311,10 @@ export class DirectorateOfLabourRepository {
 
       return {
         hasActivePregnancy: pregnancyStatus.hasActivePregnancy,
-        expectedDateOfBirth: format(
-          pregnancyStatus.pregnancyDueDate,
-          'yyyy-MM-dd',
-        ),
+        expectedDateOfBirth: format(pregnancyStatus.pregnancyDueDate, df),
       }
     } catch (e) {
-      logger.error(`Could not fetch pregnancy status for ${nationalId}`, e)
+      this.logger.error(`Could not fetch pregnancy status for ${nationalId}`, e)
 
       return null
     }

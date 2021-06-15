@@ -5,7 +5,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '../../utils/formHelper'
-import useCase from '../../utils/hooks/useCase'
+import { useCase } from '../../utils/hooks'
 
 interface Props {
   workingCase: Case

@@ -8,6 +8,7 @@ import {
   BlueBox,
   FormContentContainer,
   DateTime,
+  HideableText,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -38,7 +39,7 @@ import {
 import { useRouter } from 'next/router'
 import { validate } from '../../../utils/validate'
 import * as styles from './CourtRecord.treat'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -112,7 +113,16 @@ export const CourtRecord: React.FC = () => {
       if (theCase.type === CaseType.CUSTODY) {
         autofill(
           'litigationPresentations',
-          'Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi kærða ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að kærða verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að kærða verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
+          `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatAccusedByGender(
+            theCase.accusedGender,
+            NounCases.GENITIVE,
+          )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatAccusedByGender(
+            theCase.accusedGender,
+            NounCases.DATIVE,
+          )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatAccusedByGender(
+            theCase.accusedGender,
+            NounCases.DATIVE,
+          )} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.`,
           theCase,
         )
       }
@@ -271,13 +281,27 @@ export const CourtRecord: React.FC = () => {
                 </Text>
               </Box>
               <Box marginBottom={2}>
-                <Text>
-                  Sakborningi er bent á að honum sé óskylt að svara spurningum
+                <HideableText
+                  text="Sakborningi er bent á að honum sé óskylt að svara spurningum
                   er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113.
                   gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um
                   sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr.
-                  114. gr. sömu laga
-                </Text>
+                  114. gr. sömu laga"
+                  defaultIsVisible={workingCase.isAccusedAbsent}
+                  onToggleVisibility={(isVisible: boolean) =>
+                    setAndSendToServer(
+                      'isAccusedAbsent',
+                      isVisible,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                  tooltip={`Með því að fela forbókun um réttindi ${formatAccusedByGender(
+                    workingCase.accusedGender,
+                    NounCases.GENITIVE,
+                  )} birtist hún ekki í Þingbók málsins.`}
+                />
               </Box>
               <BlueBox>
                 <div className={styles.accusedPleaDecision}>

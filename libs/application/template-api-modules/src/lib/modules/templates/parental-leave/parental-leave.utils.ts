@@ -9,98 +9,80 @@ import {
   Attachment,
 } from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/core'
-import { FamilyMember } from '@island.is/api/domains/national-registry'
 import {
   getSelectedChild,
   getApplicationAnswers,
   getSpouse,
+  ParentalRelations,
+  YES,
+  SPOUSE,
+  Period as AnswerPeriod,
+  getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
 
-import { apiConstants, formConstants } from './constants'
-
-const extractAnswer = <T>(
-  object: unknown,
-  path: string,
-  defaultValue: unknown | undefined = undefined,
-): T => {
-  const value = get(object, path, defaultValue)
-
-  if (defaultValue === undefined && typeof value === 'undefined') {
-    throw new Error(
-      `transformApplicationToParentalLeaveDTO.extractAnswer: missing value for ${path}`,
-    )
-  }
-
-  return value
-}
+import { apiConstants } from './constants'
 
 export const getPersonalAllowance = (
   application: Application,
   fromSpouse = false,
 ): number => {
-  const usePersonalAllowanceGetter = fromSpouse
-    ? 'usePersonalAllowanceFromSpouse'
-    : 'usePersonalAllowance'
-  const useMaxGetter = fromSpouse
-    ? 'personalAllowanceFromSpouse.useAsMuchAsPossible'
-    : 'personalAllowance.useAsMuchAsPossible'
-  const usageGetter = fromSpouse
-    ? 'personalAllowanceFromSpouse.usage'
-    : 'personalAllowance.usage'
+  const {
+    usePersonalAllowanceFromSpouse,
+    usePersonalAllowance,
+    spouseUseAsMuchAsPossible,
+    personalUseAsMuchAsPossible,
+    personalUsage,
+    spouseUsage,
+  } = getApplicationAnswers(application.answers)
 
-  const willUsePersonalAllowance =
-    get(
-      application.answers,
-      usePersonalAllowanceGetter,
-      formConstants.boolean.false,
-    ) === formConstants.boolean.true
+  const usePersonalAllowanceGetter = fromSpouse
+    ? usePersonalAllowanceFromSpouse
+    : usePersonalAllowance
+  const useMaxGetter = fromSpouse
+    ? spouseUseAsMuchAsPossible
+    : personalUseAsMuchAsPossible
+  const usageGetter = fromSpouse ? spouseUsage : personalUsage
+
+  const willUsePersonalAllowance = usePersonalAllowanceGetter === YES
 
   if (!willUsePersonalAllowance) {
     return 0
   }
 
-  const willUseMax =
-    extractAnswer(application.answers, useMaxGetter) ===
-    formConstants.boolean.true
+  const willUseMax = useMaxGetter === YES
 
   if (willUseMax) {
     return 100
   }
 
-  return Number(extractAnswer(application.answers, usageGetter))
+  return Number(usageGetter)
 }
 
 export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
-): Employer => ({
-  email: isSelfEmployed
-    ? extractAnswer(application.answers, 'applicant.email')
-    : extractAnswer(application.answers, 'employer.email'),
-  nationalRegistryId: isSelfEmployed
-    ? application.applicant
-    : extractAnswer(application.answers, 'employer.nationalRegistryId'),
-})
+): Employer => {
+  const {
+    applicantEmail,
+    employerEmail,
+    employerNationalRegistryId,
+  } = getApplicationAnswers(application.answers)
+
+  return {
+    email: isSelfEmployed ? applicantEmail : employerEmail,
+    nationalRegistryId: isSelfEmployed
+      ? application.applicant
+      : employerNationalRegistryId,
+  }
+}
 
 export const getOtherParentId = (application: Application): string | null => {
-  const otherParent = extractAnswer<string>(
+  const { familyMembers } = getApplicationExternalData(application.externalData)
+  const { otherParent, otherParentId } = getApplicationAnswers(
     application.answers,
-    'otherParent',
-    null,
-  )
-  const otherParentId = extractAnswer<string | null>(
-    application.answers,
-    'otherParentId',
-    null,
   )
 
-  if (otherParent === formConstants.spouseSelection.spouse) {
-    const familyMembers: FamilyMember[] | null = extractAnswer(
-      application.externalData,
-      'family.data',
-      null,
-    )
-
+  if (otherParent === SPOUSE) {
     if (familyMembers === null) {
       throw new Error(
         'transformApplicationToParentalLeaveDTO: Cannot find spouse. Missing data for family members.',
@@ -108,8 +90,7 @@ export const getOtherParentId = (application: Application): string | null => {
     }
 
     const spouse = familyMembers.find(
-      (member) =>
-        member.familyRelation === formConstants.spouseSelection.spouse,
+      (member) => member.familyRelation === SPOUSE,
     )
 
     if (!spouse) {
@@ -157,25 +138,24 @@ export const getPensionFund = (
 }
 
 export const getPrivatePensionFundRatio = (application: Application) => {
-  const rawPrivatePensionFundRatio: string | undefined = extractAnswer(
+  const { privatePensionFundPercentage } = getApplicationAnswers(
     application.answers,
-    'payments.privatePensionFundPercentage',
-    '0',
   )
   const privatePensionFundRatio: number =
-    Number(rawPrivatePensionFundRatio) || 0
+    Number(privatePensionFundPercentage) || 0
 
   return privatePensionFundRatio
 }
 
 export const getApplicantContactInfo = (application: Application) => {
-  const email =
-    get(application.answers, 'applicant.email') ||
-    get(application.externalData, 'userProfile.data.email')
-
-  const phoneNumber =
-    get(application.answers, 'applicant.phoneNumber') ||
-    get(application.externalData, 'userProfile.data.mobilePhoneNumber')
+  const { userEmail, userPhoneNumber } = getApplicationExternalData(
+    application.externalData,
+  )
+  const { applicantEmail, applicantPhoneNumber } = getApplicationAnswers(
+    application.answers,
+  )
+  const email = applicantEmail || userEmail
+  const phoneNumber = applicantPhoneNumber || userPhoneNumber
 
   if (!email) {
     throw new Error('Missing applicant email')
@@ -202,9 +182,9 @@ export const getRightsCode = (application: Application): string => {
   }
 
   const answers = getApplicationAnswers(application.answers)
-  const isSelfEmployed = answers.isSelfEmployed === 'yes'
+  const isSelfEmployed = answers.isSelfEmployed === YES
 
-  if (selectedChild.parentalRelation === 'primary') {
+  if (selectedChild.parentalRelation === ParentalRelations.primary) {
     if (isSelfEmployed) {
       return 'M-S-GR'
     } else {
@@ -233,8 +213,26 @@ export const getRightsCode = (application: Application): string => {
   }
 }
 
+export const answerToPeriodsDTO = (answers: AnswerPeriod[]) => {
+  let periods: Period[] = []
+
+  if (answers) {
+    periods = answers.map((period) => ({
+      from: period.startDate,
+      to: period.endDate,
+      ratio: Number(period.ratio),
+      approved: false,
+      paid: false,
+      rightsCodePeriod: null,
+    }))
+  }
+
+  return periods
+}
+
 export const transformApplicationToParentalLeaveDTO = (
   application: Application,
+  periods: Period[],
   attachments?: Attachment[],
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
@@ -246,36 +244,11 @@ export const transformApplicationToParentalLeaveDTO = (
     throw new Error('Missing selected child')
   }
 
-  const periodsAnswer = extractAnswer<
-    {
-      startDate: string
-      endDate: string
-      ratio: string
-    }[]
-  >(application.answers, 'periods')
-  let periods: Period[] = []
-
-  if (periodsAnswer) {
-    periods = periodsAnswer.map((period) => ({
-      from: period.startDate,
-      to: period.endDate,
-      ratio: Number(period.ratio),
-      approved: false,
-      paid: false,
-      rightsCodePeriod: null,
-    }))
-  }
-
-  const isSelfEmployed =
-    extractAnswer(application.answers, 'employer.isSelfEmployed') ===
-    formConstants.boolean.true
-
-  const union: Union = {
-    id: extractAnswer(application.answers, 'payments.union'),
-    name: '',
-  }
-
+  const { isSelfEmployed, union, bank } = getApplicationAnswers(
+    application.answers,
+  )
   const { email, phoneNumber } = getApplicantContactInfo(application)
+  const selfEmployed = isSelfEmployed === YES
 
   return {
     applicationId: application.id,
@@ -288,16 +261,19 @@ export const transformApplicationToParentalLeaveDTO = (
     email,
     phoneNumber,
     paymentInfo: {
-      bankAccount: extractAnswer(application.answers, 'payments.bank'),
+      bankAccount: bank,
       personalAllowance: getPersonalAllowance(application),
       personalAllowanceFromSpouse: getPersonalAllowance(application, true),
-      union,
+      union: {
+        id: union,
+        name: '',
+      } as Union,
       pensionFund: getPensionFund(application),
       privatePensionFund: getPensionFund(application, true),
       privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
-    employers: [getEmployer(application, isSelfEmployed)],
+    employers: [getEmployer(application, selfEmployed)],
     status: 'In Progress',
     rightsCode: getRightsCode(application),
     attachments,

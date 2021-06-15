@@ -28,6 +28,9 @@ module.exports = {
           },
         ]),
         owner: '1111111111',
+        meta: {
+          applicationId: 'someId',
+        },
         created: new Date(),
         modified: new Date(),
       },
@@ -48,6 +51,9 @@ module.exports = {
           },
         ]),
         owner: '1111111111',
+        meta: {
+          applicationId: 'someId',
+        },
         created: new Date(),
         modified: new Date(),
       },
@@ -80,6 +86,9 @@ module.exports = {
           },
         ]),
         owner: '1111111111',
+        meta: {
+          applicationId: 'someId',
+        },
         created: new Date(),
         modified: new Date(),
       },
@@ -112,6 +121,9 @@ module.exports = {
           },
         ]),
         owner: '1111111111',
+        meta: {
+          applicationId: 'someId',
+        },
         created: new Date(),
         modified: new Date(),
       },

@@ -1,27 +1,48 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
+import {
+  Modal,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/shared-components'
 import {
   CaseData,
   ProsecutorSubsections,
   ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { Case, User, UserRole } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseTransition,
+  NotificationType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
+import {
+  useCase,
+  useInstitution,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import HearingArrangementsForms from './HearingArrangementsForm'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 const HearingArrangements = () => {
   const router = useRouter()
   const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
   const [prosecutors, setProsecutors] = useState<ReactSelectOption[]>()
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
   const { user } = useContext(UserContext)
   const { courts } = useInstitution()
+  const {
+    sendNotification,
+    isSendingNotification,
+    transitionCase,
+    isTransitioningCase,
+  } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -59,6 +80,36 @@ const HearingArrangements = () => {
     }
   }, [userData])
 
+  const handleNextButtonClick = async () => {
+    if (!workingCase) {
+      return
+    }
+
+    const caseOpened =
+      workingCase.state === CaseState.NEW
+        ? await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
+        : true
+
+    if (caseOpened) {
+      if (
+        (workingCase.state !== CaseState.NEW &&
+          workingCase.state !== CaseState.DRAFT) ||
+        // TODO: Ignore failed notifications
+        workingCase.notifications?.find(
+          (notification) => notification.type === NotificationType.HEADS_UP,
+        )
+      ) {
+        router.push(
+          `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+        )
+      } else {
+        setModalVisible(true)
+      }
+    } else {
+      // TODO: Handle error
+    }
+  }
+
   return (
     <PageLayout
       activeSection={
@@ -74,13 +125,43 @@ const HearingArrangements = () => {
       caseId={workingCase?.id}
     >
       {workingCase && prosecutors && courts && (
-        <HearingArrangementsForms
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          prosecutors={prosecutors}
-          courts={courts}
-          isLoading={loading}
-        />
+        <>
+          <HearingArrangementsForms
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            prosecutors={prosecutors}
+            courts={courts}
+            isLoading={loading || isTransitioningCase}
+            handleNextButtonClick={handleNextButtonClick}
+          />
+          {modalVisible && (
+            <Modal
+              title="Viltu senda tilkynningu?"
+              text="Með því að senda tilkynningu á dómara á vakt um að krafa um rannsóknarheimild sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála."
+              primaryButtonText="Senda tilkynningu"
+              secondaryButtonText="Halda áfram með kröfu"
+              handleClose={() => setModalVisible(false)}
+              handleSecondaryButtonClick={() =>
+                router.push(
+                  `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                )
+              }
+              handlePrimaryButtonClick={async () => {
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  NotificationType.HEADS_UP,
+                )
+
+                if (notificationSent) {
+                  router.push(
+                    `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                  )
+                }
+              }}
+              isPrimaryButtonLoading={isSendingNotification}
+            />
+          )}
+        </>
       )}
     </PageLayout>
   )

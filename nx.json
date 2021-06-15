@@ -109,6 +109,9 @@
     "api-domains-icelandic-names-registry": {
       "tags": []
     },
+    "api-domains-license-service": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
@@ -328,6 +331,24 @@
     "file-storage": {
       "tags": []
     },
+    "financial-aid-api": {
+      "tags": []
+    },
+    "financial-aid-auth": {
+      "tags": []
+    },
+    "financial-aid-backend": {
+      "tags": []
+    },
+    "financial-aid-shared": {
+      "tags": []
+    },
+    "financial-aid-web-osk": {
+      "tags": []
+    },
+    "financial-aid-web-veita": {
+      "tags": []
+    },
     "gjafakort-api": {
       "tags": []
     },
@@ -521,6 +542,9 @@
       "tags": []
     },
     "service-portal-icelandic-names-registry": {
+      "tags": []
+    },
+    "service-portal-licenses": {
       "tags": []
     },
     "service-portal-settings-access-control": {

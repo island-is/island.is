@@ -84,6 +84,9 @@
       "@island.is/api/domains/icelandic-names-registry": [
         "libs/api/domains/icelandic-names-registry/src/index.ts"
       ],
+      "@island.is/api/domains/license-service": [
+        "libs/api/domains/license-service/src/index.ts"
+      ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
@@ -236,6 +239,11 @@
       "@island.is/email-service": ["libs/email-service/src/index.ts"],
       "@island.is/feature-flags": ["libs/feature-flags/src/index.ts"],
       "@island.is/file-storage": ["libs/file-storage/src/index.ts"],
+      "@island.is/financial-aid-web/osk*": ["apps/financial-aid/web-osk/*"],
+      "@island.is/financial-aid/auth": ["libs/financial-aid/auth/src/index.ts"],
+      "@island.is/financial-aid/shared": [
+        "libs/financial-aid/shared/src/index.ts"
+      ],
       "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
       "@island.is/gjafakort/application/*": [
         "apps/gjafakort/application/src/*"
@@ -343,6 +351,9 @@
       ],
       "@island.is/service-portal/icelandic-names-registry": [
         "libs/service-portal/icelandic-names-registry/src/index.ts"
+      ],
+      "@island.is/service-portal/licenses": [
+        "libs/service-portal/licenses/src/index.ts"
       ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"

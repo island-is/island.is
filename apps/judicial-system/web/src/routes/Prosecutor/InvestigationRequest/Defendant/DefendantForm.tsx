@@ -1,18 +1,23 @@
 import React, { useState } from 'react'
 import { ValueType } from 'react-select/src/types'
-import { Box, Input, Option, Select, Text } from '@island.is/island-ui/core'
+import { Box, Input, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, RCaseTypes } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseType,
+  RCaseTypes,
+  ReadableCaseType,
+} from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   FormSettings,
@@ -20,8 +25,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
+import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import { capitalize } from '@island.is/judicial-system/formatters'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
@@ -91,7 +97,7 @@ const DefendantForm: React.FC<Props> = (props) => {
             <Box marginBottom={3}>
               <Select
                 name="petition-type"
-                options={RCaseTypes}
+                options={RCaseTypes as ReactSelectOption[]}
                 label="Tegund kröfu"
                 placeholder="Veldu tegund kröfu"
                 onChange={(selectedOption: ValueType<ReactSelectOption>) =>
@@ -103,11 +109,20 @@ const DefendantForm: React.FC<Props> = (props) => {
                     updateCase,
                   )
                 }
-                defaultValue={
-                  RCaseTypes.find(
-                    (caseType) => caseType.value === workingCase.type,
-                  ) as Option
-                }
+                defaultValue={{
+                  value: CaseType[workingCase.type],
+                  label: capitalize(ReadableCaseType[workingCase.type]),
+                }}
+                formatGroupLabel={() => (
+                  <div
+                    style={{
+                      width: 'calc(100% + 24px)',
+                      height: '3px',
+                      marginLeft: '-12px',
+                      backgroundColor: theme.color.dark300,
+                    }}
+                  />
+                )}
                 required
               />
             </Box>

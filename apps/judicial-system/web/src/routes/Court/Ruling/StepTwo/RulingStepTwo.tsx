@@ -53,8 +53,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useRouter } from 'next/router'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
+import {
+  useCase,
+  useDateTime,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import * as style from './RulingStepTwo.treat'
 
 export const RulingStepTwo: React.FC = () => {
@@ -66,12 +68,11 @@ export const RulingStepTwo: React.FC = () => {
     setCourtDocumentEndErrorMessage,
   ] = useState<string>('')
 
-  const { updateCase } = useCase()
+  const { updateCase, autofill } = useCase()
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  const resCase = data?.case
 
   const { isValidTime: isValidCourtEndTime } = useDateTime({
     time: getTimeFromDate(workingCase?.courtEndTime),
@@ -82,10 +83,26 @@ export const RulingStepTwo: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (id && !workingCase && resCase) {
-      setWorkingCase(resCase)
+    if (id && !workingCase && data?.case) {
+      const theCase = data.case
+
+      // Normally we always autofill if the target has a "falsy" value.
+      // However, if the target is optional, then it should not be autofilled after
+      // the autofilled value has been deleted (is the empty string).
+      if (
+        theCase.requestedOtherRestrictions &&
+        theCase.otherRestrictions !== ''
+      ) {
+        autofill(
+          'otherRestrictions',
+          theCase.requestedOtherRestrictions,
+          theCase,
+        )
+      }
+
+      setWorkingCase(theCase)
     }
-  }, [id, workingCase, setWorkingCase, resCase])
+  }, [id, workingCase, setWorkingCase, data, autofill])
 
   return (
     <PageLayout

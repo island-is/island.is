@@ -1,29 +1,52 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsString, IsOptional, IsDateString, IsISO8601 } from 'class-validator'
+import { IsString, IsEnum, IsOptional, IsDateString } from 'class-validator'
+
+import { ApiScopesDTO } from './api-scopes.dto'
+import { IdentityResourcesDTO } from './identity-resources.dto'
+
+export enum ScopeType {
+  API_SCOPE = 'apiScope',
+  Identity_Resource = 'identityResource',
+}
 
 export class UpdateDelegationScopeDTO {
   @IsString()
   @ApiProperty()
-  scopeName!: string
+  name!: string
 
-  @IsISO8601()
-  @ApiPropertyOptional()
-  validFrom?: Date
+  @IsEnum(ScopeType)
+  @ApiProperty({ enum: ScopeType, enumName: 'ScopeType' })
+  type!: ScopeType
 
   @IsOptional()
-  @IsISO8601()
-  @ApiProperty()
-  validTo!: Date
+  @IsDateString()
+  @ApiPropertyOptional()
+  validTo?: Date
 }
 
 export class DelegationScopeDTO {
+  @ApiPropertyOptional()
+  id?: string
+
   @IsString()
   @ApiProperty()
   delegationId!: string
 
   @IsString()
   @ApiProperty()
-  scopeName!: string
+  scopeName?: string
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: ApiScopesDTO })
+  apiScope?: ApiScopesDTO
+
+  @IsString()
+  @ApiProperty()
+  identityResourceName?: string
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: IdentityResourcesDTO })
+  identityResource?: IdentityResourcesDTO
 
   @IsDateString()
   @ApiProperty()

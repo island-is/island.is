@@ -15,7 +15,7 @@ export enum ServicePortalPath {
   SettingsRoot = '/stillingar',
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
-  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:id',
+  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:nationalId',
   SettingsPersonalInformation = '/stillingar/personuupplysingar',
   SettingsPersonalInformationEditPhoneNumber = '/stillingar/personuupplysingar/breyta-simanumeri',
   SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
@@ -65,6 +65,9 @@ export enum ServicePortalPath {
 
   // Icelandic Names Registry
   IcelandicNamesRegistryRoot = '/mannanafnaskra',
+
+  // Licenses service
+  LicensesRoot = '/min-gogn/skilriki',
 
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first

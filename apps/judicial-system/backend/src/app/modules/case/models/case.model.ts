@@ -484,14 +484,14 @@ export class Case extends Model<Case> {
   courtDocuments: string[]
 
   /**********
-   * The judge's additions to the auto generated text of the case's conclusion - optional
+   * Indicates whether the accused was present during the court session - optional
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiProperty()
-  additionToConclusion: string
+  isAccusedAbsent: boolean
 
   /**********
    * The accused's plea decision - example: REJECT
@@ -592,8 +592,8 @@ export class Case extends Model<Case> {
   custodyRestrictions: CaseCustodyRestrictions[]
 
   /**********
-   * Additional restrictions imposed by the judge - only used for travel ban cases - optional
-   * Should this not be autofilled from requestedOtherRestrictions?
+   * Additional restrictions imposed by the judge - prefilled from requestedOtherRestrictions -
+   * only used for travel ban cases - optional
    **********/
   @Column({
     type: DataType.STRING,
@@ -611,7 +611,17 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  isolationTo: Date
+  isolationToDate: Date
+
+  /**********
+   * The judge's additions to the auto generated text of the case's conclusion - optional
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  additionToConclusion: string
 
   /**********
    * The accused's appeal decision - example: APPEAL

@@ -126,7 +126,7 @@ export class EndorsementSystemResolver {
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
-    return await this.endorsementSystemService.endorsementListControllerClose(
+    return await this.endorsementSystemService.endorsementListControllerOpen(
       input,
       user,
     )
