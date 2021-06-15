@@ -2,6 +2,9 @@
   "name": "@island.is/island-ui-native",
   "version": "0.0.1",
   "main": "src/index.ts",
+  "scripts": {
+    "start": "../../../node_modules/.bin/start-storybook"
+  },
   "sideEffects": [
     "src/index.ts"
   ]

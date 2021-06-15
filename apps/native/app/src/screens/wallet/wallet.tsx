@@ -95,11 +95,10 @@ export function getMockLicenseItem(intl: IntlShape) {
   const lastChar = nationalId.substr(-1)
   const year =
     (lastChar === '9' ? 1900 : 2000) + Number(nationalId.substr(4, 2))
-  const birthDate = new Date(
-    year,
-    Number(nationalId.substr(0, 2)),
-    Number(nationalId.substr(2, 2)) - 1,
-  )
+  const birthDate = new Date();
+  birthDate.setFullYear(year);
+  birthDate.setMonth(Number(nationalId.substr(2, 2)) - 1)
+  birthDate.setDate(Number(nationalId.substr(0, 2)));
   const licenseStart = new Date(birthDate)
   licenseStart.setFullYear(licenseStart.getFullYear() + 17)
   const licenseEnd = new Date(licenseStart)
@@ -302,6 +301,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
                       loadingTimeout.current = setTimeout(() => {
                         setLoading(false)
                       }, 331)
+                    }).catch(() => {
+                      setLoading(false);
                     })
                   } catch (err) {
                     setLoading(false)

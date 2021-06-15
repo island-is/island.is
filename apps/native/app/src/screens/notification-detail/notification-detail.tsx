@@ -1,5 +1,6 @@
 import {
   Content,
+  dynamicColor,
   Header,
   NavigationBarSheet,
 } from '@island.is/island-ui-native'
@@ -12,7 +13,10 @@ import {
 import styled from 'styled-components/native'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { useIntl } from '../../lib/intl'
-import { useNotificationsStore } from '../../stores/notifications-store'
+import {
+  actionsForNotification,
+  useNotificationsStore,
+} from '../../stores/notifications-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { testIDs } from '../../utils/test-ids'
 
@@ -23,6 +27,23 @@ interface NotificationDetailScreenProps {
 const Host = styled.SafeAreaView`
   margin-left: 24px;
   margin-right: 24px;
+  flex: 1;
+`
+
+const Actions = styled.View`
+  flex-direction: row;
+  justify-content: center;
+
+  padding-top: 8px;
+
+  border-top-width: 1px;
+  border-top-color: ${dynamicColor((props) => ({
+    dark: props.theme.shades.dark.shade200,
+    light: props.theme.color.blue100,
+  }))};
+`
+
+const Action = styled.Button`
   flex: 1;
 `
 
@@ -44,6 +65,7 @@ export const NotificationDetailScreen: NavigationFunctionComponent<NotificationD
   const { items } = useNotificationsStore()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const notification = items.get(id)!
+  const actions = actionsForNotification(notification, componentId)
 
   return (
     <Host testID={testIDs.SCREEN_NOTIFICATION_DETAIL}>
@@ -58,6 +80,13 @@ export const NotificationDetailScreen: NavigationFunctionComponent<NotificationD
         date={<FormattedDate value={new Date(notification.date)} />}
       />
       <Content title={notification.body} message={notification.copy} />
+      {actions.length > 0 && (
+        <Actions>
+          {actions.map((action, i) => (
+            <Action key={i} onPress={action.onPress} title={action.text} />
+          ))}
+        </Actions>
+      )}
     </Host>
   )
 }
