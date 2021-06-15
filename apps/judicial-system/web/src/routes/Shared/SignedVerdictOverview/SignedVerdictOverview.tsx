@@ -22,7 +22,7 @@ import {
   parseNull,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import formatISO from 'date-fns/formatISO'
 import {
   CaseData,
