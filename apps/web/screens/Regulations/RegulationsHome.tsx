@@ -269,7 +269,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
       .query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
         query: GET_SUBPAGE_HEADER_QUERY,
         variables: {
-          input: { id: 'reglugerdir', lang: locale },
+          input: { id: 'regulations-intro', lang: locale },
         },
       })
       .then((res) => res.data?.getSubpageHeader),
