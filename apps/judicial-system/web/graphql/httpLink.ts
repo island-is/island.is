@@ -2,7 +2,7 @@ import { createHttpLink } from '@apollo/client'
 import fetch from 'isomorphic-unfetch'
 import getConfig from 'next/config'
 
-// const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } = getConfig()
+// TODO: Revisit this - Needed for jest tests to run because next config is not available during tests
 const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } = getConfig() || {}
 
 // Polyfill fetch() on the server (used by apollo-client)
