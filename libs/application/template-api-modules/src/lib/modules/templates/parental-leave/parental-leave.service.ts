@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 
 import type { Attachment, Period } from '@island.is/clients/vmst'
 import { ParentalLeaveApi } from '@island.is/clients/vmst'
@@ -13,7 +13,6 @@ import {
   getApplicationAnswers,
   getAvailableRightsInDays,
   getAvailablePersonalRightsInDays,
-  getSelectedChild,
   YES,
 } from '@island.is/application/templates/parental-leave'
 
