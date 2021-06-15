@@ -12,6 +12,7 @@ import {
   CaseType,
   IntegratedCourts,
   NotificationType,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
@@ -426,8 +427,15 @@ export class NotificationService {
 
     const promises: Promise<Recipient>[] = [
       this.sendCourtDateEmailNotificationToProsecutor(existingCase),
-      this.sendCourtDateEmailNotificationToDefender(existingCase),
     ]
+
+    if (
+      existingCase.type === CaseType.CUSTODY ||
+      existingCase.type === CaseType.TRAVEL_BAN ||
+      existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+    ) {
+      promises.push(this.sendCourtDateEmailNotificationToDefender(existingCase))
+    }
 
     if (existingCase.type === CaseType.CUSTODY) {
       promises.push(this.sendCourtDateEmailNotificationToPrison(existingCase))
