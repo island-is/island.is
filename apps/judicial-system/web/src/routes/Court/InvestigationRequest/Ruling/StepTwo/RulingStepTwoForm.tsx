@@ -72,7 +72,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
           <Input
             name="conclusion"
             label="Úrskurðarorð"
-            placeholder="Hér er hægt að bæta texta við úrskurðarorð eftir þörfum"
+            placeholder="Hver eru úrskurðarorðin?"
             defaultValue={workingCase.conclusion}
             onChange={(event) =>
               removeTabsValidateAndSet(
@@ -126,13 +126,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 <GridRow>
                   <GridColumn span="6/12">
                     <RadioButton
-                      name="accused-appeal-decition"
+                      name="accused-appeal-decision"
                       id="accused-appeal"
-                      label={`${capitalize(
-                        formatAccusedByGender(
-                          workingCase.accusedGender || CaseGender.OTHER,
-                        ),
-                      )} kærir úrskurðinn`}
+                      label="Varnaraðili kærir úrskurðinn"
                       value={CaseAppealDecision.APPEAL}
                       checked={
                         workingCase.accusedAppealDecision ===
@@ -158,13 +154,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   </GridColumn>
                   <GridColumn span="6/12">
                     <RadioButton
-                      name="accused-appeal-decition"
+                      name="accused-appeal-decision"
                       id="accused-accept"
-                      label={`${capitalize(
-                        formatAccusedByGender(
-                          workingCase.accusedGender || CaseGender.OTHER,
-                        ),
-                      )} unir úrskurðinum`}
+                      label="Varnaraðili unir úrskurðinum"
                       value={CaseAppealDecision.ACCEPT}
                       checked={
                         workingCase.accusedAppealDecision ===
@@ -194,13 +186,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 <GridRow>
                   <GridColumn span="7/12">
                     <RadioButton
-                      name="accused-appeal-decition"
+                      name="accused-appeal-decision"
                       id="accused-postpone"
-                      label={`${capitalize(
-                        formatAccusedByGender(
-                          workingCase.accusedGender || CaseGender.OTHER,
-                        ),
-                      )}  tekur sér lögboðinn frest`}
+                      label="Varnaraðili tekur sér lögboðinn frest"
                       value={CaseAppealDecision.POSTPONE}
                       checked={
                         workingCase.accusedAppealDecision ===
@@ -217,6 +205,35 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                           parseString(
                             'accusedAppealDecision',
                             CaseAppealDecision.POSTPONE,
+                          ),
+                        )
+                      }}
+                      large
+                      backgroundColor="white"
+                    />
+                  </GridColumn>
+                  <GridColumn span="5/12">
+                    <RadioButton
+                      name="accused-appeal-decision"
+                      id="accused-not-applicable"
+                      label="Á ekki við"
+                      value={CaseAppealDecision.NOT_APPLICABLE}
+                      checked={
+                        workingCase.accusedAppealDecision ===
+                        CaseAppealDecision.NOT_APPLICABLE
+                      }
+                      onChange={() => {
+                        setWorkingCase({
+                          ...workingCase,
+                          accusedAppealDecision:
+                            CaseAppealDecision.NOT_APPLICABLE,
+                        })
+
+                        updateCase(
+                          workingCase.id,
+                          parseString(
+                            'accusedAppealDecision',
+                            CaseAppealDecision.NOT_APPLICABLE,
                           ),
                         )
                       }}
@@ -276,7 +293,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 <GridRow>
                   <GridColumn span="6/12">
                     <RadioButton
-                      name="prosecutor-appeal-decition"
+                      name="prosecutor-appeal-decision"
                       id="prosecutor-appeal"
                       label="Sækjandi kærir úrskurðinn"
                       value={CaseAppealDecision.APPEAL}
@@ -304,7 +321,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   </GridColumn>
                   <GridColumn span="6/12">
                     <RadioButton
-                      name="prosecutor-appeal-decition"
+                      name="prosecutor-appeal-decision"
                       id="prosecutor-accept"
                       label="Sækjandi unir úrskurðinum"
                       value={CaseAppealDecision.ACCEPT}
@@ -336,7 +353,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 <GridRow>
                   <GridColumn span="7/12">
                     <RadioButton
-                      name="prosecutor-appeal-decition"
+                      name="prosecutor-appeal-decision"
                       id="prosecutor-postpone"
                       label="Sækjandi tekur sér lögboðinn frest"
                       value={CaseAppealDecision.POSTPONE}

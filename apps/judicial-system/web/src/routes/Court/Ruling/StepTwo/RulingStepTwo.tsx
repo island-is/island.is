@@ -195,7 +195,7 @@ export const RulingStepTwo: React.FC = () => {
                     <GridRow>
                       <GridColumn span="6/12">
                         <RadioButton
-                          name="accused-appeal-decition"
+                          name="accused-appeal-decision"
                           id="accused-appeal"
                           label={`${capitalize(
                             formatAccusedByGender(
@@ -227,7 +227,7 @@ export const RulingStepTwo: React.FC = () => {
                       </GridColumn>
                       <GridColumn span="6/12">
                         <RadioButton
-                          name="accused-appeal-decition"
+                          name="accused-appeal-decision"
                           id="accused-accept"
                           label={`${capitalize(
                             formatAccusedByGender(
@@ -263,7 +263,7 @@ export const RulingStepTwo: React.FC = () => {
                     <GridRow>
                       <GridColumn span="7/12">
                         <RadioButton
-                          name="accused-appeal-decition"
+                          name="accused-appeal-decision"
                           id="accused-postpone"
                           label={`${capitalize(
                             formatAccusedByGender(
@@ -346,7 +346,7 @@ export const RulingStepTwo: React.FC = () => {
                     <GridRow>
                       <GridColumn span="6/12">
                         <RadioButton
-                          name="prosecutor-appeal-decition"
+                          name="prosecutor-appeal-decision"
                           id="prosecutor-appeal"
                           label="Sækjandi kærir úrskurðinn"
                           value={CaseAppealDecision.APPEAL}
@@ -375,7 +375,7 @@ export const RulingStepTwo: React.FC = () => {
                       </GridColumn>
                       <GridColumn span="6/12">
                         <RadioButton
-                          name="prosecutor-appeal-decition"
+                          name="prosecutor-appeal-decision"
                           id="prosecutor-accept"
                           label="Sækjandi unir úrskurðinum"
                           value={CaseAppealDecision.ACCEPT}
@@ -408,7 +408,7 @@ export const RulingStepTwo: React.FC = () => {
                     <GridRow>
                       <GridColumn span="7/12">
                         <RadioButton
-                          name="prosecutor-appeal-decition"
+                          name="prosecutor-appeal-decision"
                           id="prosecutor-postpone"
                           label="Sækjandi tekur sér lögboðinn frest"
                           value={CaseAppealDecision.POSTPONE}

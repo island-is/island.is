@@ -25,10 +25,10 @@ import addDays from 'date-fns/addDays'
 
 export const getAppealDecisionText = (
   role: AppealDecisionRole,
-  appealDecition?: CaseAppealDecision,
+  appealDecision?: CaseAppealDecision,
   accusedGender?: CaseGender,
 ) => {
-  switch (appealDecition) {
+  switch (appealDecision) {
     case CaseAppealDecision.APPEAL: {
       return `${
         role === AppealDecisionRole.ACCUSED
