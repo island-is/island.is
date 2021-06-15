@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Endorsement } from '../../../endorsement/endorsement.model'
-import {
-  EndorsementList,
-  EndorsementTag,
-} from '../../../endorsementList/endorsementList.model'
-
+import { EndorsementList } from '../../../endorsementList/endorsementList.model'
+import { EndorsementTag } from '../../../endorsementList/constants'
 import { MetadataProvider } from '../../types'
 
 export interface EndorsementSystemSignedListsInput {
