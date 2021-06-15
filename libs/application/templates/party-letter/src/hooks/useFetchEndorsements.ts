@@ -11,7 +11,7 @@ export const useEndorsements = (
   endorsementListId: string,
   shouldPoll: boolean,
 ) => {
-  const { data: endorsementsData } = useQuery<EndorsementData>(
+  const { data: endorsementsData, refetch } = useQuery<EndorsementData>(
     GetEndorsements,
     {
       variables: {
@@ -23,5 +23,8 @@ export const useEndorsements = (
     },
   )
 
-  return endorsementsData?.endorsementSystemGetEndorsements
+  return {
+    endorsements: endorsementsData?.endorsementSystemGetEndorsements,
+    refetch,
+  }
 }

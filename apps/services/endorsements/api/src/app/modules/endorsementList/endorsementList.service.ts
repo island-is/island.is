@@ -72,13 +72,6 @@ export class EndorsementListService {
 
   async create(list: createInput) {
     this.logger.debug('Creating endorsement list')
-    return this.endorsementListModel.create({
-      title: list.title,
-      description: list.description,
-      endorsementMeta: list.endorsementMeta,
-      tags: list.tags,
-      validationRules: list.validationRules,
-      owner: list.owner,
-    })
+    return this.endorsementListModel.create(list)
   }
 }

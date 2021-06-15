@@ -20,10 +20,10 @@ module.exports = {
         .then(() =>
           queryInterface.sequelize.query(
             `UPDATE "case" \
-         SET "court_id" = "i"."id" \
-         FROM (SELECT "id", "name" \
-               FROM "institution") as "i" \
-         WHERE "case"."court" = "i"."name"`,
+             SET "court_id" = "i"."id" \
+             FROM (SELECT "id", "name" \
+                   FROM "institution") as "i" \
+             WHERE "case"."court" = "i"."name"`,
             { transaction: t },
           ),
         )

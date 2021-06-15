@@ -14,9 +14,10 @@ export const LetterApplicationApprovedOverview: Form = buildForm({
   mode: FormModes.APPROVED,
   children: [
     buildCustomField({
-      id: 'thankYou',
-      title: m.partyLetterApprovedOverview.title,
-      component: 'PartyLetterApplicationApprovedOverview',
+      title: m.ministryOfJustice.title,
+      description: m.ministryOfJustice.description,
+      id: 'ministryOverview',
+      component: 'MinistryOfJusticeOverview',
     }),
   ],
 })
