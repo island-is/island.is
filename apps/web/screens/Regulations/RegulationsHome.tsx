@@ -117,6 +117,8 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
       : {}
 
   const resultItems = props.regulations?.data || []
+  const firstResultOrd = (currentPage - 1) * stepSize + 1
+  const lastResultOrd = firstResultOrd - 1 + resultItems.length
   const hasPaging = totalItems > stepSize
 
   return (
@@ -166,8 +168,8 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                           ),
                           { count: totalItems.toLocaleString('is') },
                         )}
-                        , birti {(currentPage - 1) * stepSize + 1} -{' '}
-                        {(currentPage - 1) * stepSize + stepSize}
+                        {hasPaging &&
+                          `, birti ${firstResultOrd} - ${lastResultOrd}`}
                       </Text>
                     )}
                   </GridColumn>
