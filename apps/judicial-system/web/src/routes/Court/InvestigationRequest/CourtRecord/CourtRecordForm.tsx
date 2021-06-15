@@ -20,7 +20,7 @@ import {
   setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   capitalize,
   caseTypes,
@@ -364,7 +364,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}}`}
+          previousUrl={`${Constants.R_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.R_CASE_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { Case } from '@island.is/judicial-system/types'
+import {
+  Case,
+  RequestSignatureResponse,
+} from '@island.is/judicial-system/types'
 import {
   CaseData,
   JudgeSubsections,
@@ -10,6 +13,8 @@ import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import ConfirmationForm from './ConfirmationForm'
+import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 const Confirmation = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -22,8 +27,16 @@ const Confirmation = () => {
     fetchPolicy: 'no-cache',
   })
 
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [
+    requestSignatureResponse,
+    setRequestSignatureResponse,
+  ] = useState<RequestSignatureResponse>()
+
+  const { requestSignature, isRequestingSignature } = useCase()
+
   useEffect(() => {
-    document.title = 'Þingbók - Réttarvörslugátt'
+    document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
@@ -31,6 +44,31 @@ const Confirmation = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
+
+  useEffect(() => {
+    if (!modalVisible) {
+      setRequestSignatureResponse(undefined)
+    }
+  }, [modalVisible, setRequestSignatureResponse])
+
+  const handleNextButtonClick = async () => {
+    if (!workingCase) {
+      return
+    }
+
+    // Request signature to get control code
+    try {
+      const requestSignatureResponse = await requestSignature(workingCase.id)
+      if (requestSignatureResponse) {
+        setRequestSignatureResponse(requestSignatureResponse)
+        setModalVisible(true)
+      } else {
+        // TODO: Handle error
+      }
+    } catch (e) {
+      // TODO: Handle error
+    }
+  }
 
   return (
     <PageLayout
@@ -45,11 +83,21 @@ const Confirmation = () => {
       caseId={workingCase?.id}
     >
       {workingCase && (
-        <ConfirmationForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          isLoading={loading}
-        />
+        <>
+          <ConfirmationForm
+            workingCase={workingCase}
+            isLoading={loading}
+            handleNextButtonClick={handleNextButtonClick}
+          />
+          {modalVisible && (
+            <SigningModal
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+              requestSignatureResponse={requestSignatureResponse}
+              setModalVisible={setModalVisible}
+            />
+          )}
+        </>
       )}
     </PageLayout>
   )

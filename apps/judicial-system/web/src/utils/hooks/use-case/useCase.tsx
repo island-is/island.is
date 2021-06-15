@@ -1,19 +1,22 @@
 import { useMutation } from '@apollo/client'
 import {
   Case,
-  CaseState,
   CaseTransition,
   NotificationType,
+  RequestSignatureResponse,
   SendNotificationResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import {
-  SendNotificationMutation,
-  TransitionCaseMutation,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
-import { CreateCaseMutation, CreateCourtCaseMutation } from '../mutations'
-import { parseString, parseTransition } from '../formatters'
+  parseString,
+  parseTransition,
+} from '@island.is/judicial-system-web/src/utils/formatters'
+import { CreateCaseMutation } from './createCaseGql'
+import { CreateCourtCaseMutation } from './createCourtCaseGql'
+import { UpdateCaseMutation } from './updateCaseGql'
+import { SendNotificationMutation } from './sendNotificationGql'
+import { TransitionCaseMutation } from './transitionCaseGql'
+import { RequestSignatureMutation } from '../../mutations'
 
 type autofillProperties = Pick<
   Case,
@@ -30,33 +33,55 @@ type autofillProperties = Pick<
   | 'otherRestrictions'
 >
 
+interface CreateCaseMutationResponse {
+  createCase: Case
+}
+
 interface CreateCourtCaseMutationResponse {
-  createCourtCase: {
-    courtCaseNumber: string
-  }
+  createCourtCase: Case
+}
+
+interface UpdateCaseMutationResponse {
+  updateCase: Case
+}
+
+interface TransitionCaseMutationResponse {
+  transitionCase: Case
+}
+
+interface SendNotificationMutationResponse {
+  sendNotification: SendNotificationResponse
+}
+
+interface RequestSignatureMutationResponse {
+  requestSignature: RequestSignatureResponse
 }
 
 const useCase = () => {
-  const [updateCaseMutation, { loading: isUpdatingCase }] = useMutation(
-    UpdateCaseMutation,
-  )
-  const [createCaseMutation, { loading: isCreatingCase }] = useMutation(
-    CreateCaseMutation,
-  )
+  const [
+    createCaseMutation,
+    { loading: isCreatingCase },
+  ] = useMutation<CreateCaseMutationResponse>(CreateCaseMutation)
+  const [
+    createCourtCaseMutation,
+    { loading: isCreatingCourtCase },
+  ] = useMutation<CreateCourtCaseMutationResponse>(CreateCourtCaseMutation)
+  const [
+    updateCaseMutation,
+    { loading: isUpdatingCase },
+  ] = useMutation<UpdateCaseMutationResponse>(UpdateCaseMutation)
   const [
     transitionCaseMutation,
     { loading: isTransitioningCase },
-  ] = useMutation(TransitionCaseMutation)
-  const [
-    createCourtCaseMutation,
-    { loading: creatingCourtCase },
-  ] = useMutation<CreateCourtCaseMutationResponse>(CreateCourtCaseMutation)
+  ] = useMutation<TransitionCaseMutationResponse>(TransitionCaseMutation)
   const [
     sendNotificationMutation,
     { loading: isSendingNotification },
-  ] = useMutation<{ sendNotification: SendNotificationResponse }>(
-    SendNotificationMutation,
-  )
+  ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
+  const [
+    requestSignatureMutation,
+    { loading: isRequestingSignature },
+  ] = useMutation<RequestSignatureMutationResponse>(RequestSignatureMutation)
 
   const createCase = async (theCase: Case): Promise<string | undefined> => {
     if (isCreatingCase === false) {
@@ -80,12 +105,10 @@ const useCase = () => {
         },
       })
 
-      const resCase: Case = data?.createCase
-
-      return resCase.id
+      if (data) {
+        return data.createCase?.id
+      }
     }
-
-    return undefined
   }
 
   const createCourtCase = async (
@@ -95,21 +118,21 @@ const useCase = () => {
       React.SetStateAction<string>
     >,
   ): Promise<void> => {
-    if (creatingCourtCase === false) {
+    if (isCreatingCourtCase === false) {
       try {
         const { data, errors } = await createCourtCaseMutation({
           variables: {
             input: {
-              caseId: workingCase?.id,
-              courtId: workingCase?.court?.id,
-              type: workingCase?.type,
-              policeCaseNumber: workingCase?.policeCaseNumber,
-              isExtension: Boolean(workingCase?.parentCase?.id),
+              caseId: workingCase.id,
+              courtId: workingCase.court?.id,
+              type: workingCase.type,
+              policeCaseNumber: workingCase.policeCaseNumber,
+              isExtension: Boolean(workingCase.parentCase?.id),
             },
           },
         })
 
-        if (data && workingCase && !errors) {
+        if (data?.createCourtCase?.courtCaseNumber && !errors) {
           setWorkingCase({
             ...workingCase,
             courtCaseNumber: data.createCourtCase.courtCaseNumber,
@@ -129,11 +152,24 @@ const useCase = () => {
     }
   }
 
+  const updateCase = (id: string, updateCase: UpdateCase) => {
+    // Only update if id has been set
+    if (!id) {
+      return
+    }
+
+    updateCaseMutation({
+      variables: { input: { id, ...updateCase } },
+    })
+
+    // TODO: Handle errors and perhaps wait for and do something with the result
+  }
+
   const transitionCase = async (
     workingCase: Case,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
     transition: CaseTransition,
-  ) => {
+    setWorkingCase?: React.Dispatch<React.SetStateAction<Case | undefined>>,
+  ): Promise<boolean> => {
     try {
       const transitionRequest = parseTransition(
         workingCase.modified,
@@ -144,14 +180,16 @@ const useCase = () => {
         variables: { input: { id: workingCase.id, ...transitionRequest } },
       })
 
-      if (!data) {
+      if (!data?.transitionCase?.state) {
         return false
       }
 
-      setWorkingCase({
-        ...workingCase,
-        state: data.transitionCase.state,
-      })
+      if (setWorkingCase) {
+        setWorkingCase({
+          ...workingCase,
+          state: data.transitionCase.state,
+        })
+      }
 
       return true
     } catch (e) {
@@ -159,29 +197,10 @@ const useCase = () => {
     }
   }
 
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    // Only update if id has been set
-    if (!id) {
-      return null
-    }
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-
-    const resCase = data?.updateCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
-  }
-
   const sendNotification = async (
     id: string,
     notificationType: NotificationType,
-  ) => {
+  ): Promise<boolean> => {
     const { data } = await sendNotificationMutation({
       variables: {
         input: {
@@ -191,7 +210,15 @@ const useCase = () => {
       },
     })
 
-    return data?.sendNotification?.notificationSent
+    return Boolean(data?.sendNotification?.notificationSent)
+  }
+
+  const requestSignature = async (id: string) => {
+    const { data } = await requestSignatureMutation({
+      variables: { input: { caseId: id } },
+    })
+
+    return data?.requestSignature
   }
 
   // TODO: find a way for this to work where value is something other then string
@@ -210,17 +237,19 @@ const useCase = () => {
   }
 
   return {
-    updateCase,
-    isUpdatingCase,
     createCase,
     isCreatingCase,
-    sendNotification,
-    isSendingNotification,
-    autofill,
     createCourtCase,
-    creatingCourtCase,
+    isCreatingCourtCase,
+    updateCase,
+    isUpdatingCase,
     transitionCase,
     isTransitioningCase,
+    sendNotification,
+    isSendingNotification,
+    requestSignature,
+    isRequestingSignature,
+    autofill,
   }
 }
 

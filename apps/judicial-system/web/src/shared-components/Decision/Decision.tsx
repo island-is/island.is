@@ -3,7 +3,7 @@ import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import React from 'react'
 import { BlueBox } from '..'
 import { setAndSendToServer } from '../../utils/formHelper'
-import useCase from '../../utils/hooks/useCase'
+import { useCase } from '../../utils/hooks'
 
 interface Props {
   workingCase: Case

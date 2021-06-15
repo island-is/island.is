@@ -17,7 +17,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   capitalize,
   formatDate,
@@ -43,7 +43,7 @@ const OverviewForm: React.FC<Props> = (props) => {
   const [createCaseSuccess, setCreateCaseSuccess] = useState<boolean>(false)
 
   const { user } = useContext(UserContext)
-  const { updateCase, createCourtCase, creatingCourtCase } = useCase()
+  const { updateCase, createCourtCase, isCreatingCourtCase } = useCase()
 
   const validations: FormSettings = {
     courtCaseNumber: {
@@ -95,7 +95,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                       <Button
                         size="small"
                         onClick={() => handleCreateCourtCase(workingCase)}
-                        loading={creatingCourtCase}
+                        loading={isCreatingCourtCase}
                         disabled={Boolean(workingCase.courtCaseNumber)}
                         fluid
                       >
@@ -118,7 +118,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                         : undefined
                     }
                     errorMessage={courtCaseNumberEM}
-                    hasError={!creatingCourtCase && courtCaseNumberEM !== ''}
+                    hasError={!isCreatingCourtCase && courtCaseNumberEM !== ''}
                     onChange={(event) => {
                       setCreateCaseSuccess(false)
                       removeTabsValidateAndSet(

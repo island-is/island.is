@@ -712,11 +712,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const days = selectedChild.transferredDays
 
-        if (days && days < 0) {
+        if (days !== undefined && days > 0) {
           set(answers, 'requestRights.isRequestingRights', YES)
-          set(answers, 'requestRights.requestDays', days)
+          set(answers, 'requestRights.requestDays', days.toString())
+        } else if (days !== undefined && days < 0) {
+          set(answers, 'giveRights.isGivingRights', YES)
+          set(answers, 'giveRights.giveDays', days.toString())
         } else {
           set(answers, 'requestRights.isRequestingRights', NO)
+          set(answers, 'giveRights.isGivingRights', NO)
         }
 
         return context

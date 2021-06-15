@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import {
   Case,
   NotificationType,
@@ -11,17 +11,14 @@ import {
   Modal,
   PageLayout,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  CaseQuery,
-  SendNotificationMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import OverviewForm from './OverviewForm'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
@@ -31,16 +28,11 @@ export const Overview: React.FC = () => {
   const [modalText, setModalText] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { transitionCase } = useCase()
+  const { transitionCase, sendNotification } = useCase()
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const [
-    sendNotificationMutation,
-    { loading: isSendingNotification },
-  ] = useMutation(SendNotificationMutation)
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -51,19 +43,6 @@ export const Overview: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  const sendNotification = async (id: string) => {
-    const { data } = await sendNotificationMutation({
-      variables: {
-        input: {
-          caseId: id,
-          type: NotificationType.READY_FOR_COURT,
-        },
-      },
-    })
-
-    return data?.sendNotification?.notificationSent
-  }
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
@@ -76,13 +55,16 @@ export const Overview: React.FC = () => {
       const caseSubmitted = shouldSubmitCase
         ? await transitionCase(
             workingCase,
-            setWorkingCase,
             CaseTransition.SUBMIT,
+            setWorkingCase,
           )
         : workingCase.state !== CaseState.NEW
 
       const notificationSent = caseSubmitted
-        ? await sendNotification(workingCase.id)
+        ? await sendNotification(
+            workingCase.id,
+            NotificationType.READY_FOR_COURT,
+          )
         : false
 
       if (shouldSubmitCase) {

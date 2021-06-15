@@ -39,7 +39,7 @@ import {
 import { useRouter } from 'next/router'
 import { validate } from '../../../utils/validate'
 import * as styles from './CourtRecord.treat'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
