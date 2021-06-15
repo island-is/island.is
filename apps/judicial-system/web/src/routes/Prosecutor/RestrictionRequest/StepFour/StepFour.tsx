@@ -6,7 +6,6 @@ import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
   PageLayout,
-  BlueBox,
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -22,7 +21,7 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useRouter } from 'next/router'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatProsecutorDemands } from '@island.is/judicial-system/formatters'
 
 export const StepFour: React.FC = () => {

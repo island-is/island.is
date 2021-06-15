@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
-
+import { useQuery } from '@apollo/client'
+import { useRouter } from 'next/router'
 import {
   Case,
   CaseState,
@@ -19,18 +19,15 @@ import {
   Modal,
   PageLayout,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import {
-  CaseQuery,
-  TransitionCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { useRouter } from 'next/router'
+import {
+  useCase,
+  useInstitution,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import StepTwoForm from './StepTwoForm'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
 
 export const StepTwo: React.FC = () => {
   const router = useRouter()
@@ -40,7 +37,12 @@ export const StepTwo: React.FC = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const { user } = useContext(UserContext)
-  const { sendNotification, isSendingNotification } = useCase()
+  const {
+    sendNotification,
+    isSendingNotification,
+    transitionCase,
+    isTransitioningCase,
+  } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -79,9 +81,12 @@ export const StepTwo: React.FC = () => {
       return
     }
 
-    const transitionSuccess = await transitionCase()
+    const caseOpened =
+      workingCase.state === CaseState.NEW
+        ? await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
+        : true
 
-    if (transitionSuccess) {
+    if (caseOpened) {
       if (
         (workingCase.state !== CaseState.NEW &&
           workingCase.state !== CaseState.DRAFT) ||
@@ -96,50 +101,6 @@ export const StepTwo: React.FC = () => {
       }
     } else {
       // TODO: Handle error
-    }
-  }
-
-  const [transitionCaseMutation, { loading: transitionLoading }] = useMutation(
-    TransitionCaseMutation,
-  )
-
-  const transitionCase = async () => {
-    if (!workingCase) {
-      return false
-    }
-
-    switch (workingCase.state) {
-      case CaseState.NEW:
-        try {
-          // Parse the transition request
-          const transitionRequest = parseTransition(
-            workingCase.modified,
-            CaseTransition.OPEN,
-          )
-
-          const { data } = await transitionCaseMutation({
-            variables: { input: { id: workingCase.id, ...transitionRequest } },
-          })
-
-          if (!data) {
-            return false
-          }
-
-          setWorkingCase({
-            ...workingCase,
-            state: data.transitionCase.state,
-          })
-
-          return true
-        } catch (e) {
-          return false
-        }
-      case CaseState.DRAFT:
-      case CaseState.SUBMITTED:
-      case CaseState.RECEIVED:
-        return true
-      default:
-        return false
     }
   }
 
@@ -164,7 +125,7 @@ export const StepTwo: React.FC = () => {
             prosecutors={prosecutors}
             courts={courts}
             handleNextButtonClick={handleNextButtonClick}
-            transitionLoading={transitionLoading}
+            transitionLoading={isTransitioningCase}
           />
           {modalVisible && (
             <Modal

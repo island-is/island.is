@@ -8,6 +8,7 @@ import { useLocale } from '@island.is/localization'
 import BulkUpload from '../BulkUpload'
 import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
+import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -17,6 +18,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
   const [showWarning, setShowWarning] = useState(false)
   const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
+  const isClosedHook = useIsClosed(endorsementListId)
   const { endorsements: endorsementsHook, refetch } = useEndorsements(
     endorsementListId,
     true,
@@ -86,22 +88,26 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             }}
           />
         </Box>
-        {endorsements && endorsements.length > 0 && (
-          <Box marginY={3}>
-            <EndorsementTable
-              application={application}
-              endorsements={endorsements}
-            />
-          </Box>
-        )}
-        <Box marginY={5}>
-          <BulkUpload
+        <Box marginY={3}>
+          <EndorsementTable
             application={application}
-            onSuccess={() => {
-              setUpdateOnBulkImport(true)
-            }}
+            endorsements={endorsements}
           />
         </Box>
+        {!isClosedHook ? (
+          <Box marginY={5}>
+            <BulkUpload
+              application={application}
+              onSuccess={() => {
+                setUpdateOnBulkImport(true)
+              }}
+            />
+          </Box>
+        ) : (
+          <Text variant="eyebrow" color="red400" marginTop={5}>
+            {formatMessage(m.endorsementList.isClosedMessage)}
+          </Text>
+        )}
       </Box>
     </Box>
   )

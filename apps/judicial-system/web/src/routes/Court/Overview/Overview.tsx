@@ -27,11 +27,8 @@ import {
   CaseType,
   IntegratedCourts,
 } from '@island.is/judicial-system/types'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  TransitionCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   CaseData,
   JudgeSubsections,
@@ -41,11 +38,10 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import ConclusionDraft from './Components/ConclusionDraft'
 import { AnimatePresence } from 'framer-motion'
 
@@ -56,52 +52,30 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
-  const [createCaseSuccess, setCreateCaseSuccess] = useState<boolean>(false)
+  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
+    false,
+  )
 
   const router = useRouter()
   const id = router.query.id
 
   const { user } = useContext(UserContext)
-  const { updateCase, createCourtCase, creatingCourtCase } = useCase()
+  const {
+    createCourtCase,
+    isCreatingCourtCase,
+    updateCase,
+    transitionCase,
+    isTransitioningCase,
+  } = useCase()
 
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
 
-  useEffect(() => {
-    const transitionCase = async (theCase: Case) => {
-      try {
-        // Parse the transition request
-        const transitionRequest = parseTransition(
-          theCase.modified,
-          CaseTransition.RECEIVE,
-        )
-
-        const { data } = await transitionCaseMutation({
-          variables: {
-            input: { id: theCase.id, ...transitionRequest },
-          },
-        })
-
-        if (!data) {
-          return false
-        }
-
-        setWorkingCase({
-          ...workingCase,
-          state: data.transitionCase.state,
-        } as Case)
-      } catch (e) {
-        // TODO: Handle error
-      }
-    }
-
-    if (workingCase?.state === CaseState.SUBMITTED) {
-      transitionCase(workingCase)
-    }
-  }, [workingCase, setWorkingCase, transitionCaseMutation])
+  if (workingCase?.state === CaseState.SUBMITTED && !isTransitioningCase) {
+    transitionCase(workingCase, CaseTransition.RECEIVE, setWorkingCase)
+  }
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -117,7 +91,7 @@ export const JudgeOverview: React.FC = () => {
     createCourtCase(workingCase, setWorkingCase, setCourtCaseNumberErrorMessage)
 
     if (courtCaseNumberErrorMessage === '') {
-      setCreateCaseSuccess(true)
+      setCreateCourtCaseSuccess(true)
     }
   }
 
@@ -167,7 +141,7 @@ export const JudgeOverview: React.FC = () => {
                           <Button
                             size="small"
                             onClick={() => handleClick(workingCase)}
-                            loading={creatingCourtCase}
+                            loading={isCreatingCourtCase}
                             disabled={Boolean(workingCase.courtCaseNumber)}
                             fluid
                           >
@@ -185,17 +159,17 @@ export const JudgeOverview: React.FC = () => {
                         backgroundColor="white"
                         value={workingCase.courtCaseNumber || ''}
                         icon={
-                          workingCase.courtCaseNumber && createCaseSuccess
+                          workingCase.courtCaseNumber && createCourtCaseSuccess
                             ? 'checkmark'
                             : undefined
                         }
                         errorMessage={courtCaseNumberErrorMessage}
                         hasError={
-                          !creatingCourtCase &&
+                          !isCreatingCourtCase &&
                           courtCaseNumberErrorMessage !== ''
                         }
                         onChange={(event) => {
-                          setCreateCaseSuccess(false)
+                          setCreateCourtCaseSuccess(false)
                           removeTabsValidateAndSet(
                             'courtCaseNumber',
                             event,

@@ -16,7 +16,7 @@ export class Districts {
   @Field({ nullable: true })
   description?: string
 
-  @Field({ nullable: true })
+  @Field(() => Image, { nullable: true })
   image?: Image | null
 
   @Field(() => [Link])

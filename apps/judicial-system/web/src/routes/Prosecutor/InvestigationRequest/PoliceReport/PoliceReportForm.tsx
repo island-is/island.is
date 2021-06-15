@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -10,7 +10,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   FormSettings,
   useCaseFormHelper,
@@ -33,7 +33,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
-  const { updateCase } = useCase()
+  const { updateCase, autofill } = useCase()
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
   const { isValid } = useCaseFormHelper(
@@ -41,6 +41,16 @@ const PoliceReportForm: React.FC<Props> = (props) => {
     setWorkingCase,
     validations,
   )
+
+  useEffect(() => {
+    if (workingCase.requestProsecutorOnlySession) {
+      autofill(
+        'prosecutorOnlySessionRequest',
+        'Beðið er um að krafan verði tekin fyrir án þess að þeir sem hún beinist að verði kvaddir á dómþingið.',
+        workingCase,
+      )
+    }
+  }, [autofill, workingCase.requestProsecutorOnlySession])
 
   return (
     <>
@@ -152,7 +162,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
                 <Checkbox
                   name="request-prosecutor-only-session"
                   label="Beiðni um dómþing að varnaraðila fjarstöddum"
-                  tooltip="Hér er hægt að setja fram kröfu um að dómþing fari fram að varnaraðila fjarstöddum, vegna rannsóknarhagsmuna."
+                  tooltip="Hér er hægt að setja fram kröfu um að dómþing fari fram að varnaraðila fjarstöddum sé það nauðsynlegt vegna rannsóknarhagsmuna. Með því að haka í reitinn birtist krafan neðst í skjalinu."
                   checked={workingCase.requestProsecutorOnlySession}
                   onChange={(evt) => {
                     setWorkingCase({
