@@ -15,6 +15,7 @@ import {
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import {
+  CaseType,
   IntegratedCourts,
   User as TUser,
 } from '@island.is/judicial-system/types'
@@ -125,7 +126,7 @@ export class CaseService {
       ? await this.uploadSignedRulingPdfToCourt(existingCase, signedRulingPdf)
       : false
 
-    await Promise.all([
+    const promises = [
       this.sendEmail(
         existingCase.prosecutor?.name,
         existingCase.prosecutor?.email,
@@ -156,14 +157,24 @@ export class CaseService {
         signedRulingPdf,
         'Sjá viðhengi',
       ),
-      this.sendEmail(
-        'Fangelsismálastofnun',
-        environment.notifications.prisonAdminEmail,
-        existingCase.courtCaseNumber,
-        signedRulingPdf,
-        'Sjá viðhengi',
-      ),
-    ])
+    ]
+
+    if (
+      existingCase.type === CaseType.CUSTODY ||
+      existingCase.type === CaseType.TRAVEL_BAN
+    ) {
+      promises.push(
+        this.sendEmail(
+          'Fangelsismálastofnun',
+          environment.notifications.prisonAdminEmail,
+          existingCase.courtCaseNumber,
+          signedRulingPdf,
+          'Sjá viðhengi',
+        ),
+      )
+    }
+
+    await Promise.all(promises)
   }
 
   private findById(id: string): Promise<Case> {
