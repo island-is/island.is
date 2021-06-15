@@ -169,7 +169,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                           { count: totalItems.toLocaleString('is') },
                         )}
                         {hasPaging &&
-                          `, birti ${firstResultOrd} - ${lastResultOrd}`}
+                          `, birti ${firstResultOrd} – ${lastResultOrd}`}
                       </Text>
                     )}
                   </GridColumn>
