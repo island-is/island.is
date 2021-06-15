@@ -1,3 +1,4 @@
+import type { FamilyMember } from '@island.is/api/domains/national-registry'
 import {
   Application,
   ApplicationStatus,
@@ -7,7 +8,7 @@ import {
   FormValue,
 } from '@island.is/application/core'
 
-import { ParentalRelations } from '../constants'
+import { NO, MANUAL, ParentalRelations } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
   calculatePeriodPercentage,
@@ -16,6 +17,7 @@ import {
   getExpectedDateOfBirth,
   getSelectedChild,
   getTransferredDays,
+  getOtherParentId,
 } from './parentalLeaveUtils'
 
 function buildApplication(data?: {
@@ -349,5 +351,64 @@ describe('calculatePeriodPercentage', () => {
     })
 
     expect(res).toEqual(75)
+  })
+})
+
+describe('getOtherParentId', () => {
+  let id = 0
+  const createApplicationBase = (): Application => ({
+    answers: {},
+    applicant: '',
+    assignees: [],
+    attachments: {},
+    created: new Date(),
+    modified: new Date(),
+    externalData: {},
+    id: (id++).toString(),
+    state: '',
+    typeId: ApplicationTypes.PARENTAL_LEAVE,
+    name: '',
+    status: ApplicationStatus.IN_PROGRESS,
+  })
+
+  let application: Application
+  beforeEach(() => {
+    application = createApplicationBase()
+  })
+
+  it('should return undefined if no parent is selected', () => {
+    application.answers.otherParent = NO
+
+    expect(getOtherParentId(application)).toBeUndefined()
+  })
+
+  it('should return answers.otherParentId if manual is selected', () => {
+    application.answers.otherParent = MANUAL
+
+    const expectedId = '1234567899'
+
+    application.answers.otherParentId = expectedId
+
+    expect(getOtherParentId(application)).toBe(expectedId)
+  })
+
+  it('should return spouse if spouse is selected', () => {
+    const expectedSpouse: Pick<
+      FamilyMember,
+      'fullName' | 'familyRelation' | 'nationalId'
+    > = {
+      familyRelation: 'spouse' as FamilyMember['familyRelation'],
+      fullName: 'Spouse Spouseson',
+      nationalId: '1234567890',
+    }
+
+    application.externalData.family = {
+      data: [expectedSpouse],
+      date: new Date(),
+      status: 'success',
+    }
+    application.answers.otherParent = 'spouse'
+
+    expect(getOtherParentId(application)).toBe(expectedSpouse.nationalId)
   })
 })

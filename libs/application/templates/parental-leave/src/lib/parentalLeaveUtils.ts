@@ -605,3 +605,32 @@ export const allowOtherParent = (answers: Application['answers']) => {
     (otherParent === MANUAL && otherParentRightOfAccess === YES)
   )
 }
+
+export const getOtherParentId = (application: Application): string | null => {
+  const { familyMembers } = getApplicationExternalData(application.externalData)
+  const { otherParent, otherParentId } = getApplicationAnswers(
+    application.answers,
+  )
+
+  if (otherParent === SPOUSE) {
+    if (familyMembers === null) {
+      throw new Error(
+        'transformApplicationToParentalLeaveDTO: Cannot find spouse. Missing data for family members.',
+      )
+    }
+
+    const spouse = familyMembers.find(
+      (member) => member.familyRelation === SPOUSE,
+    )
+
+    if (!spouse) {
+      throw new Error(
+        'transformApplicationToParentalLeaveDTO: Cannot find spouse. No family member with this relation.',
+      )
+    }
+
+    return spouse.nationalId
+  }
+
+  return otherParentId
+}
