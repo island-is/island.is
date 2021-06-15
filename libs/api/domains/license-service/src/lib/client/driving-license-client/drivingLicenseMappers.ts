@@ -1,3 +1,6 @@
+import * as kennitala from 'kennitala'
+import format from 'date-fns/format'
+import { dateFormat } from '@island.is/shared/constants'
 import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
 import {
   GenericUserLicense,
@@ -61,6 +64,9 @@ export const drivingLicensesToSingleGenericLicense = (
 
   // TODO(osk) we're only handling the first driving license, we get them ordered so pick first
   const license = licenses[0]
+  const birthday = license.kennitala
+    ? kennitala.info(license.kennitala).birthday
+    : ''
 
   // We parse license data into the fields as they're displayed on the physical drivers license
   // see: https://www.samgongustofa.is/umferd/nam-og-rettindi/skirteini-og-rettindi/okurettindi-og-skirteini/
@@ -70,40 +76,46 @@ export const drivingLicensesToSingleGenericLicense = (
       type: GenericLicenseDataFieldType.Value,
       label: '2. Eiginnafn 1. Kenninafn',
       value: license.nafn,
-    } as GenericLicenseDataField,
+    },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '3. Fæðingardagur og fæðingarstaður',
-      // TODO(osk) parse nationalId into date of birth. helper util exists somewhere?
-      value: [license.kennitala ?? null, license.faedingarStadurHeiti ?? null]
+      value: [
+        birthday ? format(new Date(birthday), dateFormat.is) : null,
+        license.faedingarStadurHeiti ?? null,
+      ]
         .filter(Boolean)
         .join(' '),
-    } as GenericLicenseDataField,
+    },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '4a. Útgáfudagur',
-      value: license.utgafuDagsetning,
-    } as GenericLicenseDataField,
+      value: license.utgafuDagsetning
+        ? format(new Date(license.utgafuDagsetning), dateFormat.is)
+        : '',
+    },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '4b. Lokadagur',
-      value: license.gildirTil,
-    } as GenericLicenseDataField,
+      value: license.gildirTil
+        ? format(new Date(license.gildirTil), dateFormat.is)
+        : '',
+    },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '4c. Nafn útgefanda',
       value: license.nafnUtgafustadur,
-    } as GenericLicenseDataField,
+    },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '4d. Kennitala',
       value: license.kennitala,
-    } as GenericLicenseDataField,
+    },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '5. Númer',
       value: (license?.id ?? '').toString(),
-    } as GenericLicenseDataField,
+    },
     {
       type: GenericLicenseDataFieldType.Group,
       label: '9. Réttindaflokkar',
@@ -115,16 +127,20 @@ export const drivingLicensesToSingleGenericLicense = (
           {
             type: GenericLicenseDataFieldType.Value,
             label: 'Lokadagur',
-            value: field.gildirTil,
+            value: field.gildirTil
+              ? format(new Date(field.gildirTil), dateFormat.is)
+              : '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
             label: 'Útgáfudagur',
-            value: field.utgafuDags,
+            value: field.utgafuDags
+              ? format(new Date(field.utgafuDags), dateFormat.is)
+              : '',
           },
         ],
       })),
-    } as GenericLicenseDataField,
+    },
   ].filter((Boolean as unknown) as ExcludesFalse)
 
   const out: GenericUserLicense = {
