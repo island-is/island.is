@@ -46,10 +46,17 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   isLoading: boolean
   users: UserData
+  handleNextButtonClick: () => void
 }
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, users } = props
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoading,
+    users,
+    handleNextButtonClick,
+  } = props
   const [courtroomEM, setCourtroomEM] = useState('')
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
@@ -127,7 +134,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   const defaultRegistrar = registrars?.find(
     (registrar: Option) => registrar.value === workingCase?.registrar?.id,
   )
-
   return (
     <>
       <FormContentContainer>
@@ -360,8 +366,8 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.R_CASE_OVERVIEW}/${workingCase.id}`}
           nextIsLoading={isLoading}
-          nextUrl={`${Constants.R_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isValid || !courtDateIsValid}
+          onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>
     </>
