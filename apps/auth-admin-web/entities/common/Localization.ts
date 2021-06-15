@@ -105,6 +105,11 @@ export class FormItem {
   popUpTitle?: string
   popUpDescription?: string
   selectAnItem?: string
+  hintOkMessage?: string
+  hintErrorMessage?: string
+  pattern?: string
+  /** Help text or title before pattern */
+  patternText?: string
 }
 
 export class SelectField {

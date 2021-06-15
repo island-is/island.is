@@ -7,6 +7,7 @@ export const CaseQuery = gql`
       created
       modified
       type
+      description
       state
       policeCaseNumber
       accusedNationalId
@@ -25,16 +26,17 @@ export const CaseQuery = gql`
       leadInvestigator
       arrestDate
       requestedCourtDate
-      requestedCustodyEndDate
-      otherDemands
+      requestedValidToDate
+      demands
       lawsBroken
+      legalBasis
       custodyProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
-      witnessAccounts
-      investigationProgress
       legalArguments
+      requestProsecutorOnlySession
+      prosecutorOnlySessionRequest
       comments
       caseFilesComments
       prosecutor {
@@ -57,9 +59,9 @@ export const CaseQuery = gql`
       courtStartDate
       courtEndTime
       courtAttendees
-      policeDemands
+      prosecutorDemands
       courtDocuments
-      additionToConclusion
+      isAccusedAbsent
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
@@ -67,11 +69,12 @@ export const CaseQuery = gql`
       courtLegalArguments
       ruling
       decision
-      custodyEndDate
-      isCustodyEndDateInThePast
+      validToDate
+      isValidToDateInThePast
       custodyRestrictions
       otherRestrictions
-      isolationTo
+      isolationToDate
+      additionToConclusion
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision
@@ -91,7 +94,7 @@ export const CaseQuery = gql`
       }
       parentCase {
         id
-        custodyEndDate
+        validToDate
         decision
         courtCaseNumber
         ruling
@@ -110,41 +113,6 @@ export const CaseQuery = gql`
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
-    }
-  }
-`
-
-export const UpdateCaseMutation = gql`
-  mutation UpdateCaseMutation($input: UpdateCaseInput!) {
-    updateCase(input: $input) {
-      id
-      modified
-    }
-  }
-`
-
-export const TransitionCaseMutation = gql`
-  mutation TransitionCaseMutation($input: TransitionCaseInput!) {
-    transitionCase(input: $input) {
-      id
-      modified
-      state
-      prosecutor {
-        name
-        title
-      }
-      judge {
-        name
-        title
-      }
-    }
-  }
-`
-
-export const SendNotificationMutation = gql`
-  mutation SendNotificationMutation($input: SendNotificationInput!) {
-    sendNotification(input: $input) {
-      notificationSent
     }
   }
 `

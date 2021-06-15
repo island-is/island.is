@@ -1099,6 +1099,27 @@
         }
       }
     },
+    "api-domains-license-service": {
+      "root": "libs/api/domains/license-service",
+      "sourceRoot": "libs/api/domains/license-service/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/license-service/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/license-service"],
+          "options": {
+            "jestConfig": "libs/api/domains/license-service/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-national-registry": {
       "root": "libs/api/domains/national-registry",
       "sourceRoot": "libs/api/domains/national-registry/src",
@@ -3480,6 +3501,413 @@
         }
       }
     },
+    "financial-aid-api": {
+      "root": "apps/financial-aid/api",
+      "sourceRoot": "apps/financial-aid/api/src",
+      "projectType": "application",
+      "prefix": "financial-aid-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/api",
+            "main": "apps/financial-aid/api/src/main.ts",
+            "tsConfig": "apps/financial-aid/api/tsconfig.app.json",
+            "assets": [],
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "financial-aid-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/financial-aid/api/tsconfig.app.json",
+              "apps/financial-aid/api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/financial-aid/api/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/financial-aid/api/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/financial-aid/api"]
+        },
+        "schemas/build-graphql-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P apps/financial-aid/api/tsconfig.json scripts/build-graphql-schema.ts apps/financial-aid/api/src/app/app.module"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config apps/financial-aid/codegen.yml"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "financial-aid-auth": {
+      "root": "libs/financial-aid/auth",
+      "sourceRoot": "libs/financial-aid/auth/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/financial-aid/auth/tsconfig.lib.json",
+              "libs/financial-aid/auth/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/financial-aid/auth/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/financial-aid/auth/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/financial-aid/auth"]
+        }
+      }
+    },
+    "financial-aid-backend": {
+      "root": "apps/financial-aid/backend",
+      "sourceRoot": "apps/financial-aid/backend/src",
+      "projectType": "application",
+      "prefix": "financial-aid-backend",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/backend",
+            "main": "apps/financial-aid/backend/src/main.ts",
+            "tsConfig": "apps/financial-aid/backend/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "*",
+                "input": "apps/financial-aid/backend/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/financial-aid/backend",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/financial-aid/backend",
+                "output": "./"
+              }
+            ],
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "financial-aid-backend:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/financial-aid/backend/tsconfig.app.json",
+              "apps/financial-aid/backend/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/financial-aid/backend/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/financial-aid/backend/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/financial-aid/backend"]
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "cwd": "apps/financial-aid/backend"
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/financial-aid/backend/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/financial-aid/backend/tsconfig.app.json apps/financial-aid/backend/src/buildOpenApi.ts"
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+            "cwd": "apps/financial-aid/backend"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "cwd": "apps/financial-aid/backend"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "financial-aid-shared": {
+      "root": "libs/financial-aid/shared",
+      "sourceRoot": "libs/financial-aid/shared/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/financial-aid/shared/tsconfig.lib.json",
+              "libs/financial-aid/shared/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/financial-aid/shared/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/financial-aid/shared/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/financial-aid/shared"]
+        }
+      }
+    },
+    "financial-aid-web-osk": {
+      "root": "apps/financial-aid/web-osk",
+      "sourceRoot": "apps/financial-aid/web-osk",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/web-osk",
+            "commands": [
+              "yarn nx build-next financial-aid-web-osk",
+              "yarn nx build-server financial-aid-web-osk"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "args": "--prod"
+            }
+          }
+        },
+        "build-next": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/financial-aid/web-osk",
+            "outputPath": "dist/apps/financial-aid/web-osk"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/financial-aid/web-osk/src/environments/environment.ts",
+                  "with": "apps/financial-aid/web-osk/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "build-server": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/web-osk",
+            "main": "apps/financial-aid/web-osk/server.ts",
+            "tsConfig": "apps/financial-aid/web-osk/tsconfig.json",
+            "maxWorkers": 2,
+            "assets": ["apps/financial-aid/web-osk/next-modules"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "financial-aid-web-osk:build-server"
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "financial-aid-web-osk:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/financial-aid/web-osk/tsconfig.json",
+              "apps/financial-aid/web-osk/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/financial-aid/web-osk/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/financial-aid/web-osk/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/financial-aid/web-osk"]
+        },
+        "docker-next": {}
+      }
+    },
+    "financial-aid-web-veita": {
+      "root": "apps/financial-aid/web-veita",
+      "sourceRoot": "apps/financial-aid/web-veita",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/web-veita",
+            "commands": [
+              "yarn nx build-next financial-aid-web-veita",
+              "yarn nx build-server financial-aid-web-veita"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "args": "--prod"
+            }
+          }
+        },
+        "build-next": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/financial-aid/web-veita",
+            "outputPath": "dist/apps/financial-aid/web-veita"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/financial-aid/web-veita/src/environments/environment.ts",
+                  "with": "apps/financial-aid/web-veita/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "build-server": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/web-veita",
+            "main": "apps/financial-aid/web-veita/server.ts",
+            "tsConfig": "apps/financial-aid/web-veita/tsconfig.json",
+            "maxWorkers": 2,
+            "assets": ["apps/financial-aid/web-veita/next-modules"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "financial-aid-web-veita:build-server"
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "financial-aid-web-veita:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/financial-aid/web-veita/tsconfig.json",
+              "apps/financial-aid/web-veita/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/financial-aid/web-veita/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/financial-aid/web-veita/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/financial-aid/web-veita"]
+        },
+        "docker-next": {}
+      }
+    },
     "gjafakort-api": {
       "root": "apps/gjafakort/api",
       "sourceRoot": "apps/gjafakort/api/src",
@@ -4804,7 +5232,13 @@
           },
           "outputs": ["coverage/apps/judicial-system/web"]
         },
-        "docker-next": {}
+        "docker-next": {},
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/web/messages/**/*.{js,ts,tsx}'"
+          }
+        }
       }
     },
     "judicial-system-web-e2e": {
@@ -6033,6 +6467,29 @@
           "options": {
             "parallel": false,
             "command": "graphql-codegen --config libs/service-portal/icelandic-names-registry/codegen.yml"
+          }
+        }
+      }
+    },
+    "service-portal-licenses": {
+      "root": "libs/service-portal/licenses",
+      "sourceRoot": "libs/service-portal/licenses/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/licenses/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/licenses"],
+          "options": {
+            "jestConfig": "libs/service-portal/licenses/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }

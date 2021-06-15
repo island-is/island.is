@@ -5,59 +5,62 @@ import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { useLazyQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { Endorsement } from '../../lib/dataSchema'
 import { GetEndorsements } from '../../graphql/queries'
+import BulkUpload from '../BulkUpload'
+import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 
+interface EndorsementData {
+  endorsementSystemGetEndorsements?: Endorsement[]
+}
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
   const [searchTerm, setSearchTerm] = useState('')
-  const [endorsements, setEndorsements] = useState<Endorsement[]>([])
+  const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
   const [showWarning, setShowWarning] = useState(false)
+  const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
+  const isClosedHook = useIsClosed(endorsementListId)
 
-  const [getEndorsementList, { loading, error }] = useLazyQuery(
+  const { data: endorsementsData, refetch } = useQuery<EndorsementData>(
     GetEndorsements,
     {
-      pollInterval: 20000,
-      onCompleted: async ({ endorsementSystemGetEndorsements }) => {
-        if (!loading && endorsementSystemGetEndorsements) {
-          const hasEndorsements =
-            !error && !loading && endorsementSystemGetEndorsements.length
-              ? endorsementSystemGetEndorsements.length > 0
-              : false
-          const mapToEndorsementList: Endorsement[] = hasEndorsements
-            ? endorsementSystemGetEndorsements.map((x: any) => ({
-                date: x.created,
-                name: x.meta.fullName,
-                nationalId: x.endorser,
-                address: x.meta.address ? x.meta.address.streetAddress : '',
-                hasWarning: x.meta?.invalidated ?? false,
-                id: x.id,
-              }))
-            : []
-          setEndorsements(mapToEndorsementList)
-        }
-      },
-    },
-  )
-
-  useEffect(() => {
-    getEndorsementList({
       variables: {
         input: {
           listId: endorsementListId,
         },
       },
-    })
-  }, [])
+      pollInterval: 20000,
+    },
+  )
+
+  useEffect(() => {
+    refetch()
+    const mapToEndorsementList:
+      | Endorsement[]
+      | undefined = endorsementsData?.endorsementSystemGetEndorsements?.map(
+      (x: any) => ({
+        date: x.created,
+        name: x.meta.fullName,
+        nationalId: x.endorser,
+        address: x.meta.address ? x.meta.address.streetAddress : '',
+        hasWarning: x.meta?.invalidated ?? false,
+        id: x.id,
+        bulkImported: x.meta?.bulkEndorsement ?? false,
+      }),
+    )
+
+    setEndorsements(mapToEndorsementList)
+  }, [endorsementsData, updateOnBulkImport])
 
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1
       ? m.endorsementList.namesCount
       : m.endorsementList.nameCount,
   )
+
   return (
     <Box marginBottom={8}>
       <CopyLink
@@ -109,11 +112,25 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             }}
           />
         </Box>
-        {endorsements && endorsements.length > 0 && (
+        <Box marginY={3}>
           <EndorsementTable
             application={application}
             endorsements={endorsements}
           />
+        </Box>
+        {!isClosedHook ? (
+          <Box marginY={5}>
+            <BulkUpload
+              application={application}
+              onSuccess={() => {
+                setUpdateOnBulkImport(true)
+              }}
+            />
+          </Box>
+        ) : (
+          <Text variant="eyebrow" color="red400" marginTop={5}>
+            {formatMessage(m.endorsementList.isClosedMessage)}
+          </Text>
         )}
       </Box>
     </Box>
