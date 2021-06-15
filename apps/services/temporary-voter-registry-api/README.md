@@ -8,7 +8,7 @@ The data here is periodically updated manually and might not contain the most up
 
 ### Import voter registry
 
-When updating the voter registry you must upload the entire registry as a single xlsx file.  
+When updating the voter registry you must upload the entire registry as a single xlsx file  
 The file must have three columns from left to right: "national id", "voter region number", "voter region name", where each row is a separate voter.
 The first row is reserved for headers and is removed on import.
 
