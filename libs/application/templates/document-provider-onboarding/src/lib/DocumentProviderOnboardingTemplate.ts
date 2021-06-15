@@ -36,6 +36,17 @@ enum States {
   FINISHED = 'finished',
 }
 
+const administrativeContact = z.object({
+  name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
+  phoneNumber: z.string().refine(
+    (p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    },
+    { message: 'Símanúmerið þarf að vera gilt' },
+  ),
+})
+
 const contact = z.object({
   name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
   email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
@@ -99,7 +110,7 @@ const productionEndPoint = z.object({
 const dataSchema = z.object({
   termsOfAgreement: termsOfAgreement,
   applicant: applicant,
-  administrativeContact: contact,
+  administrativeContact: administrativeContact,
   technicalContact: contact,
   helpDesk: helpDeskContact,
   technicalAnswer: z.boolean().refine((v) => v, {
@@ -302,6 +313,9 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     //This logic makes it so the application is not accessible to anybody but involved parties
+
+    console.log(process.env.NODE_ENV)
+    console.log(application.state)
 
     // This if statement might change depending on the "umboðskerfi"
     if (

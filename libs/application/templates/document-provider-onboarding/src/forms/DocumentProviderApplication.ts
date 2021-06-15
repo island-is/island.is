@@ -84,12 +84,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
               placeholder: m.administrativeContactNamePlaceholder,
             }),
             buildTextField({
-              id: 'administrativeContact.email',
-              title: m.administrativeContactEmail,
-              variant: 'email',
-              placeholder: m.administrativeContactEmailPlaceholder,
-            }),
-            buildTextField({
               id: 'administrativeContact.phoneNumber',
               title: m.administrativeContactPhoneNumber,
               variant: 'tel',
@@ -183,16 +177,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
               placeholder: m.applicantNamePlaceholder,
             }),
             buildTextField({
-              id: 'applicant.address',
-              title: m.applicantAddress,
-              placeholder: m.applicantAddressPlaceholder,
-            }),
-            buildTextField({
-              id: 'applicant.zipCode',
-              title: m.applicantZipCode,
-              placeholder: m.applicantZipCodePlaceholder,
-            }),
-            buildTextField({
               id: 'applicant.email',
               title: m.applicantEmail,
               variant: 'email',
@@ -214,12 +198,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'administrativeContact.name',
               title: m.administrativeContactName,
               placeholder: m.administrativeContactNamePlaceholder,
-            }),
-            buildTextField({
-              id: 'administrativeContact.email',
-              title: m.administrativeContactEmail,
-              variant: 'email',
-              placeholder: m.administrativeContactEmailPlaceholder,
             }),
             buildTextField({
               id: 'administrativeContact.phoneNumber',
