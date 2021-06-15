@@ -35,7 +35,7 @@ interface CreateCaseMutationResponse {
   createCase: Case
 }
 
-interface CreateCourtCaseMutationReqponse {
+interface CreateCourtCaseMutationResponse {
   createCourtCase: Case
 }
 
@@ -59,7 +59,7 @@ const useCase = () => {
   const [
     createCourtCaseMutation,
     { loading: isCreatingCourtCase },
-  ] = useMutation<CreateCourtCaseMutationReqponse>(CreateCourtCaseMutation)
+  ] = useMutation<CreateCourtCaseMutationResponse>(CreateCourtCaseMutation)
   const [
     updateCaseMutation,
     { loading: isUpdatingCase },
