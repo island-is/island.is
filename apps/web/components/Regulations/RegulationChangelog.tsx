@@ -4,7 +4,10 @@ import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { ISODate, interpolate, prettyName } from '@island.is/regulations'
-import { RegulationHistoryItem, RegulationMaybeDiff } from '@island.is/regulations/web'
+import {
+  RegulationHistoryItem,
+  RegulationMaybeDiff,
+} from '@island.is/regulations/web'
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,
@@ -166,7 +169,9 @@ export const useRegulationEffectPrepper = (
   )
 
   return {
-    boxTitle: interpolate(txt('historyTitle'), { name: regulation.name }),
+    boxTitle: interpolate(txt('historyTitle'), {
+      name: prettyName(regulation.name),
+    }),
     hasPastEffects: effects.past.length > 0,
     hasFutureEffects: effects.future.length > 0,
     isViewingCurrent,
