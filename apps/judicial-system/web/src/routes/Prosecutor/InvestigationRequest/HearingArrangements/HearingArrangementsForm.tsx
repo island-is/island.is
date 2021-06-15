@@ -14,7 +14,7 @@ import {
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {

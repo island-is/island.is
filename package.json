@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "engines": {
+    "npm": "please-use-yarn",
     "node": "^14.17",
     "yarn": "^1.22"
   },
