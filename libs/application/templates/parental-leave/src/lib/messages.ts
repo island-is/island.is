@@ -1295,20 +1295,6 @@ export const parentalLeaveFormMessages: MessageDir = {
         (if you did so). Then, your employer will approve your parental leave dates.
         And finally Vinnumálastofnun will review your application.`,
     },
-    step1: {
-      id: 'pl.application:finalscreen.step1',
-      defaultMessage:
-        'Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess.',
-      description:
-        'The other parent must approve your application if you requested the transfer of part of their rights to you, or the use of their personal allowance.',
-    },
-    step2: {
-      id: 'pl.application:finalscreen.step2',
-      defaultMessage:
-        'Vinnuveitandi þinn verður að samþykkja fyrirhugað fæðingarorlof.',
-      description:
-        'Your employer has to approve your maternity leave arrangements.',
-    },
     step3: {
       id: 'pl.application:finalscreen.step3',
       defaultMessage:

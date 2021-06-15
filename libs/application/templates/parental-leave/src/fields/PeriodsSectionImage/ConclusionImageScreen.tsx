@@ -4,32 +4,28 @@ import { Box, Bullet, BulletList } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
-import { requiresOtherParentApproval } from '../../lib/parentalLeaveUtils'
-import { NO, YES } from '../../constants'
+import {
+  otherParentApprovalDescription,
+  requiresOtherParentApproval,
+} from '../../lib/parentalLeaveUtils'
+import { NO } from '../../constants'
 
 const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const {
-    isSelfEmployed,
-    isRequestingRights,
-    usePersonalAllowanceFromSpouse,
-  } = useApplicationAnswers(application)
+  const { isSelfEmployed } = useApplicationAnswers(application)
 
   const steps = [formatMessage(parentalLeaveFormMessages.finalScreen.step3)]
 
   if (isSelfEmployed === NO) {
-    steps.unshift(formatMessage(parentalLeaveFormMessages.finalScreen.step2))
+    steps.unshift(
+      formatMessage(parentalLeaveFormMessages.reviewScreen.employerDesc),
+    )
   }
 
   if (requiresOtherParentApproval(application.answers)) {
-    const otherParentStep =
-      isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
-        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
-        : isRequestingRights === YES
-        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
-        : parentalLeaveFormMessages.reviewScreen
-            .otherParentDescRequestingPersonalDiscount
-    steps.unshift(formatMessage(otherParentStep))
+    steps.unshift(
+      otherParentApprovalDescription(application.answers, formatMessage),
+    )
   }
 
   return (
