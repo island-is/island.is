@@ -27,7 +27,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
     const rowBackground = endorsement.meta.invalidated
       ? 'yellow200'
       : endorsement.meta.bulkEndorsement
-      ? 'purple100'
+      ? 'roseTinted100'
       : 'white'
     return (
       <T.Row key={endorsement.id}>
