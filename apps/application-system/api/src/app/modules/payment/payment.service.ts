@@ -41,10 +41,13 @@ export class PaymentService {
       // TODO: we can remove this? Not sure why we need this
       // Calculate current time plus 48 hours. 86.400.000 is seconds in a day, 172.800.000 is two days.
       const calcExpiration = new Date().getTime() + 172800000
-      let amount = 0
-      for(const item in charge.charges){
-        amount += charge.charges[item].amount
-      }
+      // let amount = 3
+      // if(charge.charges.length > 1) {
+      //   for(const item in charge.charges){
+      //     amount += charge.charges[item].amount
+      //   }
+      // } else {
+      const amount = charge.charges[0].amount
 
       const paymentDto = {
         application_id: applicationId,
