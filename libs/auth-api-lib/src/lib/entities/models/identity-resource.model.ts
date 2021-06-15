@@ -1,6 +1,7 @@
 import {
   Column,
   CreatedAt,
+  BelongsTo,
   DataType,
   Model,
   Table,
@@ -10,6 +11,8 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { IdentityResourceUserClaim } from './identity-resource-user-claim.model'
+import { DelegationScope } from './delegation-scope.model'
+import { IdentityResourcesDTO } from '../dto/identity-resources.dto'
 
 @Table({
   tableName: 'identity_resource',
@@ -152,4 +155,24 @@ export class IdentityResource extends Model<IdentityResource> {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
+
+  @HasMany(() => DelegationScope)
+  delegationScopes?: DelegationScope[]
+
+  toDTO(): IdentityResourcesDTO {
+    return {
+      name: this.name,
+      enabled: this.enabled,
+      displayName: this.displayName,
+      description: this.description,
+      showInDiscoveryDocument: this.showInDiscoveryDocument,
+      grantToLegalGuardians: this.grantToLegalGuardians,
+      grantToProcuringHolders: this.grantToProcuringHolders,
+      allowExplicitDelegationGrant: this.allowExplicitDelegationGrant,
+      automaticDelegationGrant: this.automaticDelegationGrant,
+      alsoForDelegatedUser: this.alsoForDelegatedUser,
+      required: this.required,
+      emphasize: this.emphasize,
+    }
+  }
 }

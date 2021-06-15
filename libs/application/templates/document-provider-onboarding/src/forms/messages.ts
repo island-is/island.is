@@ -21,7 +21,7 @@ export const m = defineMessages({
   termsSubTitle: {
     id: 'dpo.application:terms.subTitle',
     defaultMessage:
-      '<b>Skilmálar um notkun stafræns pósthólfs á Ísland.is</b> <br /> Um það að veita gögnum inn á stafrænt pósthólf á Ísland.is gilda ákveðnir skilmálar sem skjalaveitur skulu uppfylla.<br/> Til að sækja um að gerast skjalaveitandi þarf að samþykkja þessa skilmála. Aðeins með því að gera það hér, með því að haka í viðkomandi box kemst, umsækjandi áfram í næsta skref umsóknar.',
+      '<b>Skilmálar um notkun stafræns pósthólfs á Ísland.is</b> <br />Um skjalaveitingu inn á stafrænt pósthólf á Ísland.is gilda ákveðnir skilmálar sem skjalaveitendur þurfa að gangast undir. <br /> Með því að sækja um að gerast skjalaveitandi gengst umrædd stofnun við gildandi skilmálum sem má ávallt finna inni á island.is',
     description: 'Some description',
   },
   termsUserAgreementTitle: {
@@ -31,7 +31,8 @@ export const m = defineMessages({
   },
   termsUserAgreementUrl: {
     id: 'dpo.application:terms.userAgreementUrl',
-    defaultMessage: 'https://island.is',
+    defaultMessage:
+      'https://island.is/postholf/skilmalar-vegna-adgengis-ad-stafraenu-postholfi',
     description: 'The url to the user agreements',
   },
   termsUserAgreementMessage: {
@@ -68,12 +69,7 @@ export const m = defineMessages({
   },
   userAgreementOptionLabel: {
     id: 'dpo.application:userAgreement.option.label',
-    defaultMessage: 'Ég samþykki notendaskilmála',
-    description: 'Some description',
-  },
-  safetyAgreementOptionLabel: {
-    id: 'dpo.application:safetyAgreement.option.label',
-    defaultMessage: 'Ég samþykki öryggisskilmála',
+    defaultMessage: 'Ég samþykki ofangreinda skilmála',
     description: 'Some description',
   },
 
@@ -91,7 +87,7 @@ export const m = defineMessages({
   applicantSubTitle: {
     id: 'dpo.application:applicant.subtitle',
     defaultMessage:
-      '<b>Upplýsingar um þá stofnun sem óskar eftir því að nota stafrænt pósthólf</b> <br /> Hér þarf að skrá upplýsingar um ábyrgðaraðila skjalveitunnar. <br/> Um er að ræða kennitölu og nafn stofnunar, netfang, heimilisfang, póstnúmer og stað. <br />Mikilvægt er að gefa upp almennt netfang stofnunar sem er vaktað og tryggt að innsend erindi séu meðhöndluð og komið í viðeigandi farveg. ',
+      '<b>Upplýsingar um þá stofnun sem óskar eftir því að nota stafrænt pósthólf</b> <br /> Hér þarf að skrá upplýsingar um ábyrgðaraðila skjalveitunnar. Um er að ræða kennitölu, nafn og netfang stofnunar. Mikilvægt er að gefa upp almennt netfang stofnunar sem er vaktað og tryggt að innsend erindi séu meðhöndluð og komið í viðeigandi farveg.',
     description: '',
   },
   applicantNationalId: {
@@ -265,7 +261,7 @@ export const m = defineMessages({
   helpDeskSubTitle: {
     id: 'dpo.application:helpDesk.subtitle',
     defaultMessage:
-      '<b>Netfang og símanúmer sem tekur við athugasemdum frá notendum pósthólfs</b> <br />Upplýsingar um hvert notandi sem lendir í vandræðum með að nálgast gögn frá skjalaveitanda í stafræna pósthólfinu getur snúið sér með vandamál sem upp hefur komið. Þetta getur til dæmis átt við ef notanda tekst ekki að opna skjal frá viðkomandi skjalaveitanda í stafræna pósthólfinu. Mikilvægt er að tryggja notanda auðvelt aðgengi að aðstoð í slíkum tilfellum og því skal hér skrá símanúmer eða netfang sem tryggt er að svari erindi frá notanda fljótt og vel.',
+      '<b>Netfang og símanúmer sem tekur við athugasemdum frá notendum pósthólfs</b> <br />Upplýsingar um hvert notandi sem lendir í vandræðum með að nálgast gögn frá skjalaveitanda í stafræna pósthólfinu getur snúið sér með vandamál sem upp hefur komið. Þetta getur til dæmis átt við ef notanda tekst ekki að opna skjal frá viðkomandi skjalaveitanda í stafræna pósthólfinu. Mikilvægt er að tryggja notanda auðvelt aðgengi að aðstoð í slíkum tilfellum og því skal hér skrá símanúmer og netfang sem tryggt er að svari erindi frá notanda fljótt og vel.',
     description: '',
   },
   helpDeskEmail: {

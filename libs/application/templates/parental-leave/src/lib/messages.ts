@@ -76,6 +76,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Vinsamlegast staðfestu hitt foreldrið (ef það á við)',
       description: 'Please confirm the other parent (if any)',
     },
+    otherParentSubTitle: {
+      id: 'pl.application:otherParent.sub.title',
+      defaultMessage: 'Annað foreldri',
+      description: 'Sub title for the other parent question',
+    },
     otherParentName: {
       id: 'pl.application:otherParent.name',
       defaultMessage: 'Nafn hins foreldrisins',
@@ -518,11 +523,6 @@ export const parentalLeaveFormMessages: MessageDir = {
   }),
 
   selectChild: defineMessages({
-    subSection: {
-      id: 'pl.application:selectChild.subSection',
-      defaultMessage: 'Veldu barn',
-      description: 'Choose a child',
-    },
     screenTitle: {
       id: 'pl.application:selectChild.screenTitle',
       defaultMessage: 'Veldu barn',
@@ -530,13 +530,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     screenDescription: {
       id: 'pl.application:selectChild.screenDescription',
-      defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir',
-      description: 'Children you can apply for parental leave',
-    },
-    title: {
-      id: 'pl.application:selectChild.title',
-      defaultMessage: 'Börn sem þú getur sótt um fyrir',
-      description: 'Children you can apply for',
+      defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir.',
+      description: 'Children you can apply for parental leave.',
     },
     activeApplications: {
       id: 'pl.application:selectChild.activeApplications',
@@ -548,19 +543,25 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Velja',
       description: 'Choose',
     },
+    baby: {
+      id: 'pl.application:selectChild.baby',
+      defaultMessage: 'Barn væntanlegt {dateOfBirth}',
+      description: 'Child copy radio button',
+    },
+    primaryParent: {
+      id: 'pl.application:selectChild.primaryParent',
+      defaultMessage: 'Þú ert aðalforeldri barnsins',
+      description: 'Primary parent copy',
+    },
+    secondaryParent: {
+      id: 'pl.application:selectChild.secondaryParent',
+      defaultMessage:
+        'Þú ert efri foreldri barnsins. Aðalforeldri er {nationalId}',
+      description: 'Secondary parent copy',
+    },
   }),
 
   notEligible: defineMessages({
-    subSection: {
-      id: 'pl.application:notEligible.subSection',
-      defaultMessage: 'Veldu barn',
-      description: 'Choose a child',
-    },
-    screenTitle: {
-      id: 'pl.application:notEligible.screenTitle',
-      defaultMessage: 'Veldu barn',
-      description: 'Choose a child',
-    },
     screenDescription: {
       id: 'pl.application:notEligible.screenDescription',
       defaultMessage: 'Börn sem þú getur sótt um fæðingarorlof fyrir',
@@ -1069,15 +1070,30 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     otherParentTitle: {
       id: 'pl.application:review.otherParent.title',
-      defaultMessage: 'Annað foreldri samþykkir framlengingu',
-      description: 'Other parent approves extra time',
+      defaultMessage: 'Annað foreldri samþykkir umsóknina',
+      description: 'Other parent approves the application',
     },
-    otherParentDesc: {
-      id: 'pl.application:review.otherParent.description',
+    otherParentDescRequestingBoth: {
+      id: 'pl.application:review.otherParent.otherParentDescRequestingBoth',
+      defaultMessage:
+        'Hitt foreldrið þarf að samþykkja aukadagana sem þú hefur beðið um og notkun persónuafsláttarins.',
+      description:
+        'The other parent will need to approve the extra days you’ve requested and the use of their personal allowance.',
+    },
+    otherParentDescRequestingRights: {
+      id: 'pl.application:review.otherParent.otherParentDescRequestingRights',
       defaultMessage:
         'Hitt foreldrið þarf að samþykkja aukadagana sem þú hefur beðið um.',
       description:
         'The other parent will need to approve the extra days you’ve requested.',
+    },
+    otherParentDescRequestingPersonalDiscount: {
+      id:
+        'pl.application:review.otherParent.otherParentDescRequestingPersonalDiscount',
+      defaultMessage:
+        'Hitt foreldrið þarf að samþykkja notkun persónuafsláttar síns.',
+      description:
+        'The other parent will need to approve the use of their personal discount.',
     },
     employerTitle: {
       id: 'pl.application:review.employer.title',
@@ -1342,18 +1358,45 @@ export const otherParentApprovalFormMessages = defineMessages({
     defaultMessage: 'Annað samþykki foreldra',
     description: 'Other parent approval',
   },
-  multiTitle: {
-    id: 'pl.application:otherParent.multi.title',
-    defaultMessage: 'Viltu láta einn mánuð af fæðingarorlofsrétti þínum?',
-    description:
-      'Do you want to give away one month of your parental leave rights?',
-  },
-  introDescription: {
-    id: 'pl.application:otherParent.intro.description',
+  requestRights: {
+    id: 'pl.application:otherParent.requestRights',
     defaultMessage:
-      'Þú ert greinilega að búast við barni með einhverjum einstaklingi sem vill nota einn mánuð af réttindum þínum. Það þýðir að réttindi þín verða í mesta lagi 5 mánuðir. Ertu sammála?',
+      'Viltu gefa hinu foreldrinu 45 dagar af fæðingarorlofsrétti þínum?',
     description:
-      'You are apparently expecting a baby with some person that wishes to use one month of your rights. That means your rights will be 5 months at most. Do you agree?',
+      'Do you allow the transfer of 45 days of your parental leave rights to the other parent?',
+  },
+  requestAllowance: {
+    id: 'pl.application:otherParent.requestAllowance',
+    defaultMessage:
+      'Leyfir þú að flytja persónuafslátt þinn yfir á hitt foreldrið?',
+    description:
+      'Do you allow the transfer of your personal discount to the other parent?',
+  },
+  requestBoth: {
+    id: 'pl.application:otherParent.requestBoth',
+    defaultMessage:
+      'Leyfir þú þér að flytja 45 daga af foreldraorlofsréttindum þínum og persónulegum afslætti þínum til hins foreldrisins?',
+    description:
+      'Do you allow the transfer of 45 days of your parental leave rights and of your personal discount to the other parent?',
+  },
+  introDescriptionRights: {
+    id: 'pl.application:otherParent.introDescriptionRights',
+    defaultMessage:
+      'Í umsókn um fæðingarorlof hefur hitt foreldrið óskað eftir yfirfærslu á 45 dagar af réttindum þínum til fæðingarorlofs. Réttindi þín verða þá í mesta lagi 4.5 mánuðir. Samþykkir þú beiðnina?',
+    description:
+      'When applying for the parental leave the other parent has requested a transfer of 45 days of your rights to parental leave. That means your rights will at most be 4.5 months. Do you approve the request?',
+  },
+  introDescriptionAllowance: {
+    id: 'pl.application:otherParent.introDescriptionAllowance',
+    defaultMessage:
+      'Þegar þú sækir um foreldraorlof hefur hitt foreldrið óskað eftir flutningi persónuafsláttar þíns. Það þýðir að þú munt ekki geta notað persónulegan afslátt þinn. Samþykkir þú beiðnina?',
+    description: `When applying for the parental leave the other parent has requested a transfer of your personal discount. That means you won't be able to use your personal discount. Do you approve the request?`,
+  },
+  introDescriptionBoth: {
+    id: 'pl.application:otherParent.introDescriptionBoth',
+    defaultMessage:
+      'Þegar þú sækir um foreldraorlof hefur hitt foreldrið óskað eftir flutningi persónuafsláttar þíns og 45 daga af réttindum þínum til foreldraorlofs. Það þýðir að réttindi þín verða í mesta lagi 4,5 mánuðir og geta ekki notað persónulegan afslátt þinn. Samþykkir þú beiðnina?',
+    description: `When applying for the parental leave the other parent has requested a transfer of your personal discount and of 45 days of your rights to parental leave. That means your rights will at most be 4.5 months and won't be able to use your personal discount. Do you approve the request?`,
   },
   labelDays: {
     id: 'pl.application:otherParent.label.days',
@@ -1409,6 +1452,11 @@ export const errorMessages = defineMessages({
     defaultMessage:
       'Við höfum ekki getað sótt sjálfkrafa fæðingardag barnsins þíns. Vinsamlegast reyndu aftur síðar.',
     description: `Can't retrieve the DOB copy`,
+  },
+  noChildData: {
+    id: 'pl.application:answerValidators.noChildData',
+    defaultMessage: 'Ekki tókst að sækja upplýsingar um börn',
+    description: 'Could not fetch child data',
   },
   periodsStartDate: {
     id: 'pl.application:answerValidators.periodsStartDate',
