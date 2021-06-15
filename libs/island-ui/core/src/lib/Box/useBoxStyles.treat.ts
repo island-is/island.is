@@ -181,6 +181,7 @@ export const width = {
     {
       full: { width: '100%' },
       touchable: { width: theme.spacing[1] * theme.touchableSize },
+      half: { width: '50%' },
     },
     'width',
   ),
@@ -585,6 +586,18 @@ export const opacity = styleMap({
   0: { opacity: 0 },
   0.5: { opacity: 0.5 },
   1: { opacity: 1 },
+})
+
+export const zIndex = styleMap({
+  10: { zIndex: 10 },
+  20: { zIndex: 20 },
+  30: { zIndex: 30 },
+  40: { zIndex: 40 },
+  50: { zIndex: 50 },
+  60: { zIndex: 60 },
+  70: { zIndex: 70 },
+  80: { zIndex: 80 },
+  90: { zIndex: 90 },
 })
 
 export const printHidden = style({

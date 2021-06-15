@@ -1,12 +1,19 @@
 import ContentWrapper from './../../../components/Layout/ContentWrapper'
-import React from 'react'
+import React, { useEffect } from 'react'
 import ApiResourceCreateForm from '../../../components/Resource/forms/ApiResourceCreateForm'
 import { ApiResourcesDTO } from './../../../entities/dtos/api-resources-dto'
 import { useRouter } from 'next/router'
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
+import LocalizationUtils from '../../../utils/localization.utils'
 
 const Index: React.FC = () => {
   const router = useRouter()
+
+  useEffect(() => {
+    document.title = LocalizationUtils.getPageTitle(
+      'resource.api-resource.index',
+    )
+  }, [])
 
   const handleSave = (data: ApiResourcesDTO) => {
     router.push(

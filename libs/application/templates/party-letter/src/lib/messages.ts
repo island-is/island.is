@@ -3,7 +3,7 @@ import { defineMessages, MessageDescriptor } from 'react-intl'
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const m: MessageDir = {
-  // Messages shared accross party letter application
+  // Messages shared across party letter application
   externalDataSection: defineMessages({
     title: {
       id: 'ple.application:terms.title',
@@ -12,7 +12,8 @@ export const m: MessageDir = {
     },
     subtitle: {
       id: 'ple.application:terms.subtitle',
-      defaultMessage: 'Eftirfarandi gildir um umsókn og meðmælendasöfnun',
+      defaultMessage:
+        'Eftirfarandi gildir um umsókn og  meðmælendasöfnun vegna listabókstafa',
       description: 'External data subtitle',
     },
     dmrTitle: {
@@ -22,52 +23,146 @@ export const m: MessageDir = {
     },
     dmrSubtitle: {
       id: 'ple.application:dmr.subtitle',
-      defaultMessage: 'Skilmálar og reglugerðir',
+      defaultMessage:
+        'Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018. Stjórnmálasamtökum er óheimilt að miðla  meðmælendalistanum eða upplýsingum úr honum. ',
       description: 'External data DRM subtitle',
     },
     nationalRegistryTitle: {
       id: 'ple.application:nationalRegistry.title',
-      defaultMessage: 'Persónupplýsingar úr þjóðskrá',
+      defaultMessage: 'Persónupplýsingar úr Þjóðskrá',
       description: 'External data national registry title',
     },
     nationalRegistrySubtitle: {
       id: 'ple.application:nationalRegistry.subtitle',
-      defaultMessage: 'Frekar skýring hér',
+      defaultMessage: 'Nafn og kennitala.',
       description: 'External data national registry subtitle',
     },
     islandTitle: {
       id: 'ple.application:island.title',
-      defaultMessage: 'Ísland.is',
-      description: 'External data island.is title',
+      defaultMessage: 'Fyrirtækjaskrá',
+      description: 'Grunnupplýsingar úr fyrirtækjaskrá eru sóttar',
     },
     islandSubtitle: {
       id: 'ple.application:island.subtitle',
-      defaultMessage: 'Lorem ipsum dolar sit amet, consectetur adipiscing elit',
+      defaultMessage: 'Nafn fyrirtækis og kennitala.',
       description: 'External data island.is subtitle',
     },
     agree: {
-      id: 'ple.application:island.subtitle',
-      defaultMessage: 'Lorem ipsum dolar sit amet, consectetur adipiscing elit',
-      description: 'External data island.is subtitle',
+      id: 'ple.application:terms.checkbox',
+      defaultMessage: 'Ég veiti umboð',
+      description: 'Agree terms and conditions',
     },
   }),
-  recommendations: defineMessages({
+  collectEndorsements: defineMessages({
     title: {
-      id: 'ple.application:recommendations.title',
+      id: 'ple.application:collect.endorsements.title',
       defaultMessage: 'Safna meðmælum',
-      description: 'Recommendations title',
-    },
-    linkDescription: {
-      id: 'ple.application:recommendations.link.description',
-      defaultMessage: 'Hér er hlekkur til að senda út á fólk',
-      description: 'Recommendations link description',
+      description: 'Collect endorsements title',
     },
   }),
-  selectSSD: defineMessages({
+  endorsementList: defineMessages({
+    linkDescription: {
+      id: 'ple.application:endorsement.list.link.description',
+      defaultMessage: 'Hér er hlekkur til að senda út á meðmælendur',
+      description: 'Link description',
+    },
+    copyLinkButton: {
+      id: 'ple.application:endorsement.list.link.button',
+      defaultMessage: 'Afrita hlekk',
+      description: 'Copy link button',
+    },
+    nameCount: {
+      id: 'ple.application:endorsement.list.name.count',
+      defaultMessage: '{endorsementCount} nafn á lista af 300',
+      description: 'X name on list',
+    },
+    namesCount: {
+      id: 'ple.application:endorsement.list.names.count',
+      defaultMessage: '{endorsementCount} nöfn á lista af 300',
+      description: 'X names on list',
+    },
+    invalidEndorsements: {
+      id: 'ple.application:endorsement.list.invalid.endorsements',
+      defaultMessage: 'Sjá einungis meðmæli í vafa',
+      description: 'Only show invalid endorsements',
+    },
+    searchbar: {
+      id: 'ple.application:endorsement.list.search',
+      defaultMessage: 'Leitaðu hér',
+      description: 'Searchbar placeholder',
+    },
+  }),
+  endorsementTable: defineMessages({
+    thDate: {
+      id: 'ple.application:endorsementTable.th.date',
+      defaultMessage: 'Dags skráð',
+      description: 'Table header date',
+    },
+    thName: {
+      id: 'ple.application:endorsementTable.th.name',
+      defaultMessage: 'Nafn',
+      description: 'Table header name',
+    },
+    thNationalNumber: {
+      id: 'ple.application:endorsementTable.th.nationalnumber',
+      defaultMessage: 'Kennitala',
+      description: 'Table header national number',
+    },
+    thAddress: {
+      id: 'ple.application:endorsementTable.th.address',
+      defaultMessage: 'Heimilisfang',
+      description: 'Table header address',
+    },
+  }),
+  fileUpload: defineMessages({
+    includePapers: {
+      id: 'pa.application:file.upload.includePapers',
+      defaultMessage: 'Ég ætla skila inn meðmælum á pappír*',
+      description: 'Include paper signatures',
+    },
+    includePapersDisclaimerPt1: {
+      id: 'ple.application:file.upload.disclaimer.pt1',
+      defaultMessage:
+        '*Fyrir meðmæli á pappír þarf að lista upp kennitölur meðmælenda í skjal og hlaða upp hér að neðan.',
+      description: 'Include paper endorsements disclaimer part 1',
+    },
+    includePapersDisclaimerPt2: {
+      id: 'ple.application:file.upload.disclaimer.pt2',
+      defaultMessage:
+        '*Pappírsmeðmæli skulu einnig sendast með bréfpósti til yfirkjörstjórnar.',
+      description: 'Include paper endorsements disclaimer part 2',
+    },
+    fileUploadHeader: {
+      id: 'ple.application:file.upload.header',
+      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      description: 'Header for file upload',
+    },
+    uploadDescription: {
+      id: 'ple.application:file.upload.description',
+      defaultMessage: 'Tekið er við skjölum með endingu: .xlsx',
+      description: 'Description for file upload',
+    },
+    uploadButtonLabel: {
+      id: 'ple.application:file.upload.label',
+      defaultMessage: 'Velja skjöl til að hlaða upp',
+      description: 'Label for file upload',
+    },
+    uploadSuccess: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Pappírsmeðmælum hefur verið hlaðið upp!',
+      description: 'Upload succeeded text',
+    },
+    uploadFail: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
+      description: 'Upload failed text',
+    },
+  }),
+  selectNationalId: defineMessages({
     title: {
-      id: 'ple.application:ssd.title',
+      id: 'ple.application:select.national.id.title',
       defaultMessage: 'Kennitala framboðs',
-      description: 'Select SSD title',
+      description: 'Select national id title',
     },
   }),
   selectPartyLetter: defineMessages({
@@ -125,6 +220,11 @@ export const m: MessageDir = {
       defaultMessage: 'Upplýsingar um listabókstaf',
       description: 'Overview review title',
     },
+    email: {
+      id: 'ple.application:overview.review.email',
+      defaultMessage: 'Netfang',
+      description: 'Registered email for party letter',
+    },
     partyLetter: {
       id: 'ple.application:overview.partyletter',
       defaultMessage: 'Listabókstafur',
@@ -140,19 +240,19 @@ export const m: MessageDir = {
       defaultMessage: 'Ábyrgðarmaður',
       description: 'Overview label for responsible party',
     },
-    signaturesCount: {
-      id: 'ple.application:overview.signatures.count',
+    endorsementsCount: {
+      id: 'ple.application:overview.endorsements.count',
       defaultMessage: 'Fjöldi meðmælenda',
-      description: 'Overview label for signatures count',
+      description: 'Overview label for endorsements count',
     },
     warningCount: {
       id: 'ple.application:overview.warning.count',
       defaultMessage: 'Fjöldi meðmælenda í vafa',
-      description: 'Overview label for signatures count with warning',
+      description: 'Overview label for endorsements count with warning',
     },
-    includePapers: {
+    includedPapers: {
       id: 'ple.application:overview.include.papers',
-      defaultMessage: 'Ég er líka með meðmælendur á pappír',
+      defaultMessage: 'Meðmælendur á pappír',
       description: 'Overview label for include papers checkbox',
     },
     submitButton: {
@@ -203,62 +303,230 @@ export const m: MessageDir = {
       defaultMessage: 'Undirskrift ekki lengur gild',
       description: 'Error message if signature has new address',
     },
+    emailInvalid: {
+      id: 'ple.application:validationmessages.email.invalid',
+      defaultMessage: 'Netfang þarf að vera gilt',
+      description: 'Error message if email is invalid',
+    },
   }),
-  collectSignatures: defineMessages({
-    applicationTitle: {
-      id: 'ple.application:collect.applicationtitle',
-      defaultMessage: 'Listabókstafur',
-      description: 'Title for collect signatures application',
+  endorsementForm: defineMessages({
+    title: {
+      id: 'ple.application:endorsement.form.title',
+      defaultMessage: 'Meðmæli með listabókstafnum',
+      description: 'Title for endorsements application',
     },
     stepTitle: {
-      id: 'ple.application:collect.steptitle',
+      id: 'ple.application:endorsement.form.steptitle',
       defaultMessage: 'Samþykkja',
       description: 'Title for section step',
     },
     sectionTitle: {
-      id: 'ple.application:collect.secitontitle',
+      id: 'ple.application:endorsement.form.secitontitle',
       defaultMessage: 'Listabókstafs meðmælendalisti',
       description:
         'Partial title for section, party letter will be added programmatically',
     },
     nameInput: {
-      id: 'ple.application:collect.name.input',
+      id: 'ple.application:endorsement.form.name.input',
       defaultMessage: 'Nafn',
       description: 'Label and placeholder for name input field',
     },
     descriptionPt1: {
-      id: 'ple.application:collect.descripton.pt.one',
+      id: 'ple.application:endorsement.form.descripton.pt.one',
       defaultMessage:
-        'Með því að mæla með úthlutun tiltekins listabókstafs til tilgreinds stjórnamálaflokks samþykkir þú að viðkomandi stjórnmálaflokkur, dómsmálaráðuneytið og Þjóðskrá Íslands fái aðgang að þeim upplýsingum sem skráðar eru. Þeir aðilar hafa ekki heimild til að miðla þeim upplýsingum frekar.',
+        'Með því veiti ég viðkomandi stjórnmálasamtökum, dómsmálaráðuneytinu og Þjóðskrá Íslands aðgang að þeim upplýsingum sem skráðar eru á meðmælendalistan, þ.e. nafn, kt og heimilsfang. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
       description: 'Disclaimer description, first paragraph',
     },
     descriptionPt2: {
-      id: 'ple.application:collect.descripton.pt.two',
+      id: 'ple.application:endorsement.form.descripton.pt.two',
       defaultMessage:
         'Þjóðskrá Íslands er heimilt, að beiðni dómsmálaráðuneytisins, að samkeyra meðmælendalistann við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga gilda hverju sinni.',
+
       description: 'Disclaimer description, second paragraph',
     },
     agreeTermsLabel: {
-      id: 'ple.application:collect.agree.label',
-      defaultMessage: 'Ég hef kynnt mér ofangreint',
+      id: 'ple.application:endorsement.form.agree.label',
+      defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Label for terms and conditions',
     },
+    isClosedMessage: {
+      id: 'ple.application:endorsement.form.isClosed.message',
+      defaultMessage: 'Meðmælendalista hefur verið lokað',
+      description: 'Error message if endorsement list has been closed',
+    },
     submitButton: {
-      id: 'ple.application:collect.submit.button',
+      id: 'ple.application:endorsement.form.submit.button',
       defaultMessage: 'Setja nafn mitt á lista',
       description: 'Title for submit button',
     },
   }),
-  signatureDisclaimer: defineMessages({
+  endorsementDisclaimer: defineMessages({
     part1: {
-      id: 'ple.application:signature.pt.1',
+      id: 'ple.application:endorsement.disclaimer.pt1',
       defaultMessage: 'Ég lýsi því hér með yfir að ég mæli með því að',
-      description: 'Part 1 of signature disclaimer',
+      description: 'Part 1 of endorsement disclaimer',
     },
     part2: {
-      id: 'ple.application:signature.pt.2',
+      id: 'ple.application:endorsement.disclaimer.pt2',
       defaultMessage: 'fái úthlutað listabókstafnum',
-      description: 'Part 2 of signature disclaimer',
+      description: 'Part 2 of endorsement disclaimer',
+    },
+  }),
+  logo: defineMessages({
+    imgAlt: {
+      id: 'ple.application:logo.img.alt',
+      defaultMessage: 'Skjaldamerkið',
+      description: 'Alt for image',
+    },
+    service: {
+      id: 'ple.application:logo.service',
+      defaultMessage: 'Þjónustuaðili',
+      description: 'Service for',
+    },
+    organization: {
+      id: 'ple.application:logo.organization',
+      defaultMessage: 'Dómsmálaráðuneytið',
+      description: 'Name of organization',
+    },
+  }),
+  endorsementApproved: defineMessages({
+    title: {
+      id: 'ple.application:endorsement.approved.title',
+      defaultMessage: 'Staðfesting',
+      description: 'Approved card title',
+    },
+    cardTitle: {
+      id: 'ple.application:endorsement.approved.card.title',
+      defaultMessage: 'Þú hefur verið skráður sem meðmælandi',
+      description: 'Approved card title',
+    },
+    cardSubtitle: {
+      id: 'ple.application:endorsement.approved.card.subtitle',
+      defaultMessage: 'Hægt er að skoða virka lista undir ',
+      description: 'Approved card subtitle',
+    },
+    myPagesButton: {
+      id: 'ple.application:endorsement.approved.button.mypages',
+      defaultMessage: 'Til baka á mínar síður',
+      description: 'Button back to my pages',
+    },
+    myPagesUrl: {
+      id: 'ple.application:endorsement.approved.url.mypages',
+      defaultMessage: 'https://island.is/minarsidur/min-gogn/minar-upplysingar',
+      description: 'Url back to my pages',
+    },
+    partyListButton: {
+      id: 'ple.application:endorsement.approved.button.partylist',
+      defaultMessage: 'Skoða lista',
+      description: 'Button to party list',
+    },
+    partyListUrl: {
+      id: 'ple.application:endorsement.approved.url.partylist',
+      defaultMessage:
+        'https://island.is/althingiskosningar2021/medmaeli-kjosenda',
+      description: 'Url to party list',
+    },
+  }),
+  ministryOfJustice: defineMessages({
+    title: {
+      id: 'ple.application:ministry.justicet.title',
+      defaultMessage: 'Dómsmálaráðuneytið',
+      description: 'Ministry of justiice review title',
+    },
+    description: {
+      id: 'ple.application:ministry.justice.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir upplýsingarnar hér að neðan og staðfestu að þær séu réttar.',
+      description: 'Ministry of justice review description',
+    },
+    subtitle: {
+      id: 'ple.application:ministry.justice.subtitle',
+      defaultMessage: 'Yfirlit yfir framboðslista',
+      description: 'Ministry of justice review subtitle',
+    },
+    steps: {
+      id: 'ple.application:ministry.justice.steps',
+      defaultMessage: 'Til skoðunar',
+      description: 'Title for steps',
+    },
+    step1: {
+      id: 'ple.application:ministry.justice.step.1',
+      defaultMessage: 'Yfirlit framboðs',
+      description: 'Step one',
+    },
+    partyNameLabel: {
+      id: 'ple.application:ministry.justice.partyname.label',
+      defaultMessage: 'Nafn flokks',
+      description: 'Label for party name',
+    },
+    partyLetterLabel: {
+      id: 'ple.application:ministry.justice.partyletter.label',
+      defaultMessage: 'Listabókstafur',
+      description: 'Label for party letter',
+    },
+    responsiblePersonLabel: {
+      id: 'ple.application:ministry.justice.responsibleperson.label',
+      defaultMessage: 'Ábyrgðarmaður',
+      description: 'Label for responsible person',
+    },
+    typeOfEndorsementLabel: {
+      id: 'ple.application:ministry.justice.endorsementtype.label',
+      defaultMessage: 'Tegund framboðs',
+      description: 'Label for endorsement type',
+    },
+    numberOfEndorsementsLabel: {
+      id: 'ple.application:ministry.justice.no.endorsements.label',
+      defaultMessage: 'Fjöldi meðmæla',
+      description: 'Label for number of endorsements',
+    },
+    constituencyLabel: {
+      id: 'ple.application:ministry.justice.constituency.label',
+      defaultMessage: 'Kjördæmi',
+      description: 'Label for constituency',
+    },
+    commentsLabel: {
+      id: 'ple.application:ministry.justice.comments.label',
+      defaultMessage: 'Athugasemdir',
+      description: 'Label for comments',
+    },
+    csvButton: {
+      id: 'ple.application:ministry.justice.csv.button',
+      defaultMessage: 'Hlaða niður meðmælum',
+      description: 'Download endorsements button',
+    },
+    noEndorsementsMessage: {
+      id: 'ple.application:ministry.justice.no.endorsements',
+      defaultMessage: 'Umsækjandi hefur ekki skilað inn neinum meðmælum',
+      description:
+        'Message that will appear in the .csv file if there are no endorsements',
+    },
+    rejectButton: {
+      id: 'ple.application:ministry.justice.reject.button',
+      defaultMessage: 'Hafna',
+      description: 'Reject button',
+    },
+    approveButton: {
+      id: 'ple.application:ministry.justice.approve.button',
+      defaultMessage: 'Samþykkja lista',
+      description: 'Approve button',
+    },
+    approvedTitle: {
+      id: 'ple.application:ministry.justice.approved.title',
+      defaultMessage: 'Takk fyrir',
+      description: 'Title for approved screen',
+    },
+    approvedDescription: {
+      id: 'ple.application:ministry.justice.approved.description',
+      defaultMessage:
+        'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+      description: 'Text after MOJ has submitted',
+    },
+  }),
+  partyLetterApprovedOverview: defineMessages({
+    title: {
+      id: 'ple.application:letter.approved.overview.title',
+      defaultMessage: 'Umsókn samþykkt',
+      description: 'title',
     },
   }),
 }

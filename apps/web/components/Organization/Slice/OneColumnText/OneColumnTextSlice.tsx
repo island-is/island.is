@@ -19,7 +19,7 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           paddingBottom={[4, 5, 10]}
         >
           <Text
-            variant="h3"
+            variant="h2"
             as="h2"
             id={'sliceTitle-' + slice.id}
             paddingBottom={2}

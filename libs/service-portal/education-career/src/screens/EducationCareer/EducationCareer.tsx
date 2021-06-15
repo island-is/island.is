@@ -20,7 +20,7 @@ function EducationCareer(): JSX.Element {
           id: 'service.portal:education-career-intro',
           defaultMessage: 'Hér getur þú fundið yfirlit yfir námsmat.',
         })}
-        img="/assets/images/educationGrades.svg"
+        img="./assets/images/educationGrades.svg"
       />
       <CareerCards />
     </Box>

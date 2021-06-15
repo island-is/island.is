@@ -1,4 +1,4 @@
-import { Case } from '@island.is/judicial-system/types'
+import { Case, User } from '@island.is/judicial-system/types'
 import { Validation } from '../utils/validate'
 
 export enum AppealDecisionRole {
@@ -20,11 +20,12 @@ export enum Sections {
 }
 
 export enum ProsecutorSubsections {
-  CREATE_DETENTION_REQUEST_STEP_ONE = 0,
-  CREATE_DETENTION_REQUEST_STEP_TWO = 1,
-  CREATE_DETENTION_REQUEST_STEP_THREE = 2,
-  CREATE_DETENTION_REQUEST_STEP_FOUR = 3,
-  PROSECUTOR_OVERVIEW = 4,
+  CUSTODY_REQUEST_STEP_ONE = 0,
+  CUSTODY_REQUEST_STEP_TWO = 1,
+  CUSTODY_REQUEST_STEP_THREE = 2,
+  CUSTODY_REQUEST_STEP_FOUR = 3,
+  CUSTODY_REQUEST_STEP_FIVE = 4,
+  PROSECUTOR_OVERVIEW = 5,
 }
 
 export enum JudgeSubsections {
@@ -48,4 +49,12 @@ export type directionType = 'ascending' | 'descending'
 export interface SortConfig {
   key: keyof Case
   direction: directionType
+}
+
+export interface CaseData {
+  case?: Case
+}
+
+export interface UserData {
+  users: User[]
 }

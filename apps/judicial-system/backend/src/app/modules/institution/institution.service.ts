@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { Institution } from './institution.model'
 
@@ -19,6 +20,7 @@ export class InstitutionService {
 
     return this.institutionModel.findAll({
       order: ['name'],
+      where: { active: true },
     })
   }
 }

@@ -2,10 +2,12 @@ import React from 'react'
 import { ApiScopeDTO } from '../../../entities/dtos/api-scope-dto'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import ResourceListDisplay from './ListDisplay'
+import ResourceListDisplay from './ResourceListDisplay'
 import { ResourcesService } from '../../../services/ResourcesService'
 import { ApiScope } from '../../../entities/models/api-scope.model'
 import ConfirmModal from '../../common/ConfirmModal'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { ListControl } from '../../../entities/common/Localization'
 
 const ApiScopeList: React.FC = () => {
   const [count, setCount] = useState(0)
@@ -15,7 +17,9 @@ const ApiScopeList: React.FC = () => {
   const router = useRouter()
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [scopeToRemove, setScopeToRemove] = React.useState('')
-
+  const [localization] = useState<ListControl>(
+    LocalizationUtils.getListControl('ApiScopeList'),
+  )
   const edit = (apiScope: ApiScopeDTO) => {
     router.push(`/resource/api-scope/${encodeURIComponent(apiScope.name)}`)
   }
@@ -64,8 +68,7 @@ const ApiScopeList: React.FC = () => {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to archive this Api scope:{' '}
-        <span>{scopeToRemove}</span>
+        {localization.removeConfirmation}:<span>{scopeToRemove}</span>
       </p>
     )
   }
@@ -74,8 +77,9 @@ const ApiScopeList: React.FC = () => {
     <div>
       <ResourceListDisplay
         list={apiScopes}
-        header={'Api scopes'}
-        linkHeader={'Create new Api scope'}
+        header={localization.title}
+        linkHeaderHelp={localization.buttons['new'].helpText}
+        linkHeader={localization.buttons['new'].text}
         createUri={'/resource/api-scope'}
         lastPage={lastPage}
         handlePageChange={handlePageChange}
@@ -87,7 +91,7 @@ const ApiScopeList: React.FC = () => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText="Archive"
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

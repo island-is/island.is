@@ -1,13 +1,10 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 import { INumberBulletSection } from '../generated/contentfulTypes'
 import { NumberBullet, mapNumberBullet } from './numberBullet.model'
+import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class NumberBulletGroup {
-  constructor(initializer: NumberBulletGroup) {
-    Object.assign(this, initializer)
-  }
-
   @Field(() => ID)
   id!: string
 
@@ -21,9 +18,9 @@ export class NumberBulletGroup {
 export const mapNumberBulletGroup = ({
   fields,
   sys,
-}: INumberBulletSection): NumberBulletGroup =>
-  new NumberBulletGroup({
-    id: sys.id,
-    defaultVisible: fields.defaultVisible ?? 5,
-    bullets: (fields.bullets ?? []).map(mapNumberBullet),
-  })
+}: INumberBulletSection): SystemMetadata<NumberBulletGroup> => ({
+  typename: 'NumberBulletGroup',
+  id: sys.id,
+  defaultVisible: fields.defaultVisible ?? 5,
+  bullets: (fields.bullets ?? []).map(mapNumberBullet),
+})

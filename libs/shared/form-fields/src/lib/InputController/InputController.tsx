@@ -22,6 +22,7 @@ interface Props {
   suffix?: string
   rows?: number
   format?: string | FormatInputValueFunction
+  required?: boolean
 }
 
 interface ChildParams {
@@ -48,6 +49,7 @@ export const InputController: FC<Props> = ({
   onChange: onInputChange,
   suffix,
   rows,
+  required,
 }) => {
   function renderChildInput(c: ChildParams) {
     const { value, onChange, ...props } = c
@@ -66,11 +68,17 @@ export const InputController: FC<Props> = ({
           suffix=" kr."
           value={value}
           format={format}
+          onChange={(e) => {
+            if (onInputChange) {
+              onInputChange(e)
+            }
+          }}
           onValueChange={({ value }) => {
             onChange(value)
           }}
           hasError={error !== undefined}
           errorMessage={error}
+          required={required}
           {...props}
         />
       )
@@ -86,11 +94,17 @@ export const InputController: FC<Props> = ({
           suffix={suffix}
           value={value}
           format={format}
+          onChange={(e) => {
+            if (onInputChange) {
+              onInputChange(e)
+            }
+          }}
           onValueChange={({ value }) => {
             onChange(value)
           }}
           hasError={error !== undefined}
           errorMessage={error}
+          required={required}
           {...props}
         />
       )
@@ -106,11 +120,17 @@ export const InputController: FC<Props> = ({
           type={type as 'text' | 'tel'}
           value={value}
           format={format}
+          onChange={(e) => {
+            if (onInputChange) {
+              onInputChange(e)
+            }
+          }}
           onValueChange={({ value }) => {
             onChange(value)
           }}
           hasError={error !== undefined}
           errorMessage={error}
+          required={required}
           {...props}
         />
       )
@@ -126,6 +146,7 @@ export const InputController: FC<Props> = ({
           autoFocus={autoFocus}
           hasError={error !== undefined}
           errorMessage={error}
+          required={required}
           textarea={textarea}
           type={type}
           onChange={(e) => {

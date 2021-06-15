@@ -26,7 +26,11 @@ import {
   HeadWithSocialSharing,
   InstitutionPanel,
   InstitutionsPanel,
+  OrganizationFooter,
+  OrganizationChatPanel,
   Sticky,
+  Webreader,
+  AppendedArticleComponents,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
@@ -40,6 +44,7 @@ import {
   AllSlicesFragment as Slice,
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
+  Organization,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -96,7 +101,7 @@ const createArticleNavigation = (
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: linkResolver('article', [article.slug, subArticle.slug]).href,
+      url: linkResolver('article', subArticle.slug.split('/')).href,
     })
 
     // expand sub-article navigation for selected sub-article
@@ -189,7 +194,9 @@ const ArticleNavigation: FC<
         activeItemTitle={
           !activeSlug
             ? article.shortTitle || article.title
-            : article.subArticles.find((sub) => activeSlug === sub.slug).title
+            : article.subArticles.find(
+                (sub) => activeSlug === sub.slug.split('/').pop(),
+              ).title
         }
         isMenuDialog={isMenuDialog}
         renderLink={(link, { typename, slug }) => {
@@ -209,8 +216,8 @@ const ArticleNavigation: FC<
           ...article.subArticles.map((item) => ({
             title: item.title,
             typename: item.__typename,
-            slug: [article.slug, item.slug],
-            active: activeSlug === item.slug,
+            slug: item.slug.split('/'),
+            active: activeSlug === item.slug.split('/').pop(),
           })),
         ]}
       />
@@ -261,13 +268,11 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
       {article.subArticles.length > 0 && (
         <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       )}
-      {article.relatedArticles.length > 0 && (
-        <RelatedContent
-          title={n('relatedMaterial')}
-          articles={article.relatedArticles}
-          otherContent={article.relatedContent}
-        />
-      )}
+      <RelatedContent
+        title={n('relatedMaterial')}
+        articles={article.relatedArticles}
+        otherContent={article.relatedContent}
+      />
     </Stack>
   )
 }
@@ -317,7 +322,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   )
 
   const subArticle = article.subArticles.find((sub) => {
-    return sub.slug === query.subSlug
+    return sub.slug.split('/').pop() === query.subSlug
   })
 
   const contentOverviewOptions = useMemo(() => {
@@ -462,8 +467,11 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         </Box>
         <Box>
           <Text variant="h1" as="h1">
-            <span id={slugify(article.title)}>{article.title}</span>
+            <span id={slugify(article.title)} className="rs_read">
+              {article.title}
+            </span>
           </Text>
+          <Webreader readId={null} readClass="rs_read" />
           <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
             <ArticleNavigation
               article={article}
@@ -473,7 +481,12 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             />
           </Box>
           {!!processEntry && (
-            <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
+            <Box
+              marginTop={3}
+              display={['none', 'none', 'block']}
+              printHidden
+              className="rs_read"
+            >
               <ProcessEntry {...processEntry} />
             </Box>
           )}
@@ -491,16 +504,21 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           )}
           {subArticle && (
             <Text variant="h2" as="h2" paddingTop={7}>
-              <span id={slugify(subArticle.title)}>{subArticle.title}</span>
+              <span id={slugify(subArticle.title)} className="rs_read">
+                {subArticle.title}
+              </span>
             </Text>
           )}
         </Box>
         <Box paddingTop={subArticle ? 2 : 4}>
-          {richText(
-            (subArticle ?? article).body as SliceType[],
-            undefined,
-            activeLocale,
-          )}
+          <Box className="rs_read">
+            {richText(
+              (subArticle ?? article).body as SliceType[],
+              undefined,
+              activeLocale,
+            )}
+            <AppendedArticleComponents article={article} />
+          </Box>
           <Box
             id="processRef"
             display={['block', 'block', 'none']}
@@ -516,6 +534,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               printHidden
             >
               <InstitutionsPanel
+                img={article.organization[0].logo?.url ?? ''}
                 institution={{
                   title: article.organization[0].title,
                   label: n('organization'),
@@ -560,6 +579,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             portalRef.current,
           )}
       </SidebarLayout>
+      <OrganizationChatPanel
+        slugs={article.organization.map((x) => x.slug)}
+        pushUp={isVisible}
+      />
+      <OrganizationFooter
+        organizations={article.organization as Organization[]}
+      />
     </>
   )
 }
@@ -596,7 +622,9 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   ])
 
   // we assume 404 if no article/sub-article is found
-  const subArticle = article?.subArticles.find((a) => a.slug === query.subSlug)
+  const subArticle = article?.subArticles.find(
+    (a) => a.slug.split('/').pop() === query.subSlug,
+  )
   if (!article || (query.subSlug && !subArticle)) {
     throw new CustomNextError(404, 'Article not found')
   }

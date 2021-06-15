@@ -70,7 +70,7 @@ describe('formatRequestedCustodyRestrictions', () => {
     )
 
     // Assert
-    expect(r).toEqual('B - Einangrun.\nD - Bréfskoðun, símabann.')
+    expect(r).toEqual('B - Einangrun\nD - Bréfskoðun, símabann')
   })
 
   test('should return "Ekki er farið fram á takmarkanir á gæslu" if no custody restriction is supplied', () => {
@@ -121,7 +121,7 @@ describe('formatRequestedCustodyRestrictions', () => {
 
     // Assert
     expect(r).toEqual(
-      'B - Einangrun.\nD - Bréfskoðun, símabann.\nThe accused should stay home.',
+      'B - Einangrun\nD - Bréfskoðun, símabann\nThe accused should stay home.',
     )
   })
 
@@ -337,7 +337,7 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '010101-0000'
     const accusedName = 'Glanni Glæpur'
     const court = 'Héraðsdómur Reykjavíkur'
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = true
     const isExtension = false
 
@@ -347,7 +347,7 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       isExtension,
       undefined,
@@ -365,7 +365,7 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const court = 'Héraðsdómur Reykjavíkur'
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
     const isExtension = false
 
@@ -375,7 +375,7 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       isExtension,
       undefined,
@@ -393,7 +393,7 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '011101-0000'
     const accusedName = 'Siggi Sýra'
     const court = 'Héraðsdómur Kjósarskarðs'
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
     const isExtension = true
     const previousDecision = CaseDecision.ACCEPTING
@@ -404,7 +404,7 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       isExtension,
       previousDecision,
@@ -422,7 +422,7 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '011101-0000'
     const accusedName = 'Siggi Sýra'
     const court = 'Héraðsdómur Kjósarskarðs'
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
     const isExtension = true
     const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -433,7 +433,7 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       isExtension,
       previousDecision,
@@ -451,7 +451,7 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const court = 'Héraðsdómur Reykjavíkur'
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
     const isExtension = false
 
@@ -461,7 +461,7 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       isExtension,
       undefined,

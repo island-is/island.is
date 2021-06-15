@@ -21,14 +21,14 @@ describe('create', () => {
     flightLegs: [
       {
         origin: 'VPN',
-        destination: 'AK',
+        destination: 'AEY',
         originalPrice: 50000,
         discountPrice: 30000,
         date: new Date('2021-03-12T12:35:50.971Z'),
       },
       {
         origin: 'VPN',
-        destination: 'AK',
+        destination: 'AEY',
         originalPrice: 50000,
         discountPrice: 30000,
         date: new Date('2021-03-12T12:35:50.971Z'),

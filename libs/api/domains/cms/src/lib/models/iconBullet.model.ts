@@ -1,13 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IIconBullet } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
+import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class IconBullet {
-  constructor(initializer: IconBullet) {
-    Object.assign(this, initializer)
-  }
-
   @Field(() => ID)
   id!: string
 
@@ -21,18 +18,21 @@ export class IconBullet {
   icon!: Image
 
   @Field({ nullable: true })
-  url?: string
+  url!: string
 
   @Field({ nullable: true })
-  linkText?: string
+  linkText!: string
 }
 
-export const mapIconBullet = ({ fields, sys }: IIconBullet): IconBullet =>
-  new IconBullet({
-    id: sys.id,
-    title: fields.title ?? '',
-    body: fields.body ?? '',
-    icon: mapImage(fields.icon),
-    url: fields.url ?? '',
-    linkText: fields.linkText ?? '',
-  })
+export const mapIconBullet = ({
+  fields,
+  sys,
+}: IIconBullet): SystemMetadata<IconBullet> => ({
+  typename: 'IconBullet',
+  id: sys.id,
+  title: fields.title ?? '',
+  body: fields.body ?? '',
+  icon: mapImage(fields.icon),
+  url: fields.url ?? '',
+  linkText: fields.linkText ?? '',
+})

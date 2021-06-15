@@ -1,27 +1,17 @@
-import { Controller, Get, Inject, UseGuards } from '@nestjs/common'
+import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import {
-  JwtAuthGuard,
-  RolesGuard,
-  RolesRule,
-  RolesRules,
-} from '@island.is/judicial-system/auth'
-import { UserRole } from '@island.is/judicial-system/types'
+import { JwtAuthGuard } from '@island.is/judicial-system/auth'
 
 import { InstitutionService } from './institution.service'
 import { Institution } from './institution.model'
 
-// Allows admins to perform any action
-const adminRule = UserRole.ADMIN as RolesRule
-
 @Controller('api')
 @ApiTags('institutions')
+@UseGuards(JwtAuthGuard)
 export class InstitutionController {
   constructor(private readonly institutionService: InstitutionService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(adminRule)
   @Get('institutions')
   @ApiOkResponse({
     type: Institution,

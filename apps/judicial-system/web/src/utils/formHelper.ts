@@ -4,6 +4,8 @@ import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
   padTimeWithZero,
   parseArray,
+  parseBoolean,
+  parseNull,
   parseString,
   parseTime,
   replaceTabs,
@@ -98,7 +100,7 @@ export const validateAndSetTime = (
   }
 }
 
-export const setAndSendDateToServer = async (
+export const setAndSendDateToServer = (
   field: string,
   currentValue: string | undefined,
   date: Date | null,
@@ -140,7 +142,7 @@ export const setAndSendDateToServer = async (
   }
 }
 
-export const newSetAndSendDateToServer = async (
+export const newSetAndSendDateToServer = (
   field: string,
   date: Date | undefined,
   isValid: boolean,
@@ -175,7 +177,7 @@ export const newSetAndSendDateToServer = async (
   }
 }
 
-export const validateAndSendToServer = async (
+export const validateAndSendToServer = (
   field: string,
   value: string,
   validations: Validation[],
@@ -193,11 +195,11 @@ export const validateAndSendToServer = async (
   }
 
   if (theCase.id !== '') {
-    await updateCase(theCase.id, parseString(field, value))
+    updateCase(theCase.id, parseString(field, value))
   }
 }
 
-export const validateAndSendTimeToServer = async (
+export const validateAndSendTimeToServer = (
   field: string,
   currentValue: string | undefined,
   time: string,
@@ -228,18 +230,26 @@ export const validateAndSendTimeToServer = async (
 
 export const setAndSendToServer = (
   field: string,
-  value: string | boolean,
+  value: string | boolean | null,
   theCase: Case,
   setCase: (value: React.SetStateAction<Case | undefined>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
+  let stringValue = ''
+
   setCase({
     ...theCase,
     [field]: value,
   })
-
   if (theCase.id !== '') {
-    updateCase(theCase.id, parseString(field, value))
+    if (typeof value === 'string') {
+      stringValue = value
+      updateCase(theCase.id, parseString(field, stringValue))
+    } else if (typeof value === 'boolean') {
+      updateCase(theCase.id, parseBoolean(field, value))
+    } else {
+      updateCase(theCase.id, parseNull(field))
+    }
   }
 }
 

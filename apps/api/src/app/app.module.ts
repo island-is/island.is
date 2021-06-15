@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
+import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
@@ -22,6 +23,13 @@ import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
+import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
+import { RegulationsModule } from '@island.is/api/domains/regulations'
+import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
+import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
+import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
+import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
+import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -50,6 +58,7 @@ const autoSchemaFile = environment.production
         }),
       ],
     }),
+    AuthDomainModule.register(environment.authPublicApi),
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
@@ -80,10 +89,15 @@ const autoSchemaFile = environment.production
     DirectorateOfLabourModule.register(),
     FileUploadModule.register({ fileStorage: environment.fileStorage }),
     DocumentModule.register({
-      basePath: environment.documentService.basePath,
-      clientId: environment.documentService.clientId,
-      clientSecret: environment.documentService.clientSecret,
-      tokenUrl: environment.documentService.tokenUrl,
+      documentClientConfig: {
+        basePath: environment.documentService.basePath,
+        clientId: environment.documentService.clientId,
+        clientSecret: environment.documentService.clientSecret,
+        tokenUrl: environment.documentService.tokenUrl,
+      },
+      downloadServiceConfig: {
+        downloadServiceBaseUrl: environment.downloadService.baseUrl,
+      },
     }),
     DocumentProviderModule.register({
       test: {
@@ -127,11 +141,7 @@ const autoSchemaFile = environment.production
     }),
     CommunicationsModule,
     ApiCatalogueModule,
-    AuthModule.register({
-      audience: environment.identityServer.audience,
-      issuer: environment.identityServer.issuer,
-      jwksUri: `${environment.identityServer.jwksUri}`,
-    }),
+    AuthModule.register(environment.auth),
     SyslumennModule.register({
       url: environment.syslumennService.url,
       username: environment.syslumennService.username,
@@ -141,6 +151,34 @@ const autoSchemaFile = environment.production
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
       username: environment.rskDomain.username,
+    }),
+    IcelandicNamesModule.register({
+      backendUrl: environment.icelandicNamesRegistry.backendUrl,
+    }),
+    EndorsementSystemModule.register({
+      baseApiUrl: environment.endorsementSystem.baseApiUrl,
+    }),
+    TemporaryVoterRegistryModule.register({
+      baseApiUrl: environment.temporaryVoterRegistry.baseApiUrl,
+    }),
+    RegulationsModule.register({
+      url: environment.regulationsDomain.url,
+    }),
+    NationalRegistryXRoadModule.register({
+      xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
+      xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
+      xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
+      xRoadClientId: environment.nationalRegistryXRoad.clientId,
+    }),
+    PartyLetterRegistryModule.register({
+      baseApiUrl: environment.partyLetterRegistry.baseApiUrl,
+    }),
+    LicenseServiceModule.register({
+      xroad: {
+        xroadBaseUrl: environment.xroad.baseUrl,
+        xroadClientId: environment.xroad.clientId,
+        drivingLicenseSecret: environment.drivingLicense.secret,
+      },
     }),
   ],
 })

@@ -1,9 +1,11 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import addMonths from 'date-fns/addMonths'
 import formatISO from 'date-fns/formatISO'
 import parseISO from 'date-fns/parseISO'
+import format from 'date-fns/format'
+
 import {
   extractRepeaterIndexFromField,
   FieldBaseProps,
@@ -12,29 +14,33 @@ import {
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-
 import { FieldDescription } from '@island.is/shared/form-fields'
+
 import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
 import {
-  getAvailableRights,
   getExpectedDateOfBirth,
-} from '../../parentalLeaveUtils'
+  calculatePeriodPercentageBetweenDates,
+} from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
+import { StartDateOptions } from '../../constants'
+import { monthsToDays } from '../../lib/directorateOfLabour.utils'
+import { useGetOrRequestEndDates } from '../../hooks/useGetOrRequestEndDates'
+
+const df = 'yyyy-MM-dd'
 
 const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
-  const { clearErrors } = useFormContext()
+  const { register, clearErrors } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
   const currentRepeaterIndex = extractRepeaterIndexFromField(field)
+  const currentIndex = currentRepeaterIndex === -1 ? 0 : currentRepeaterIndex
   const currentStartDateAnswer = getValueViaPath(
     answers,
-    `periods[${
-      currentRepeaterIndex === -1 ? 0 : currentRepeaterIndex
-    }].startDate`,
+    `periods[${currentIndex}].startDate`,
     expectedDateOfBirth,
   ) as string
   const currentEndDateAnswer = getValueViaPath(
@@ -43,29 +49,41 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
     formatISO(addMonths(parseISO(currentStartDateAnswer), 1)),
   ) as string
 
-  const monthsToUse = differenceInMonths(
-    parseISO(currentEndDateAnswer),
-    parseISO(currentStartDateAnswer),
-  )
+  const startDate = parseISO(currentStartDateAnswer)
+  const endDate = parseISO(currentEndDateAnswer)
 
+  const monthsToUse = differenceInMonths(endDate, startDate)
   const [chosenEndDate, setChosenEndDate] = useState<string>(
     currentEndDateAnswer,
   )
   const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
-  const [percent, setPercent] = useState<number>(100)
-  const { months } = getAvailableRights(application)
+  const [percent, setPercent] = useState<number>(
+    calculatePeriodPercentageBetweenDates(application, startDate, endDate),
+  )
+  const getEndDate = useGetOrRequestEndDates(application)
 
-  useEffect(() => {
-    if (chosenDuration > months) {
-      const newPercent = Math.min(
-        100,
-        Math.round((months / chosenDuration) * 100),
-      )
-      setPercent(newPercent)
-    } else {
-      setPercent(100)
-    }
-  }, [months, chosenDuration, monthsToUse])
+  const handleChange = async (months: number) => {
+    clearErrors(id)
+    setChosenDuration(months)
+  }
+
+  const handleChangeEnd = async (
+    months: number,
+    onChange: (...event: any[]) => void,
+  ) => {
+    const days = monthsToDays(months)
+
+    const endDateResult = await getEndDate({
+      startDate: currentStartDateAnswer,
+      length: days,
+    })
+
+    const date = new Date(endDateResult.date)
+
+    onChange(format(date, df))
+    setChosenEndDate(date.toISOString())
+    setPercent(endDateResult.percentage)
+  }
 
   return (
     <Box>
@@ -74,6 +92,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
           parentalLeaveFormMessages.duration.monthsDescription,
         )}
       />
+
       <Box
         background="blue100"
         paddingTop={3}
@@ -110,6 +129,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
               />
             </Text>
           </Box>
+
           <Box
             display="flex"
             alignItems="center"
@@ -122,6 +142,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
             </Text>
           </Box>
         </Box>
+
         <Box marginTop={8}>
           <Controller
             defaultValue={chosenEndDate}
@@ -131,11 +152,9 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
                 min={usageMinMonths}
                 max={usageMaxMonths}
                 trackStyle={{ gridTemplateRows: 8 }}
-                calculateCellStyle={() => {
-                  return {
-                    background: theme.color.dark200,
-                  }
-                }}
+                calculateCellStyle={() => ({
+                  background: theme.color.dark200,
+                })}
                 showMinMaxLabels
                 showToolTip
                 label={{
@@ -146,36 +165,45 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
                     parentalLeaveFormMessages.shared.months,
                   ),
                 }}
-                rangeDates={{
-                  start: {
-                    date: formatDateFns(currentStartDateAnswer),
-                    message: formatMessage(
-                      parentalLeaveFormMessages.shared.rangeStartDate,
-                    ),
-                  },
-                  end: {
-                    date: formatDateFns(chosenEndDate),
-                    message: formatMessage(
-                      parentalLeaveFormMessages.shared.rangeEndDate,
-                    ),
-                  },
-                }}
+                rangeDates={
+                  currentIndex === 0 &&
+                  answers.firstPeriodStart !==
+                    StartDateOptions.ACTUAL_DATE_OF_BIRTH
+                    ? {
+                        start: {
+                          date: formatDateFns(currentStartDateAnswer),
+                          message: formatMessage(
+                            parentalLeaveFormMessages.shared.rangeStartDate,
+                          ),
+                        },
+                        end: {
+                          date: chosenEndDate
+                            ? formatDateFns(chosenEndDate)
+                            : '—',
+                          message: formatMessage(
+                            parentalLeaveFormMessages.shared.rangeEndDate,
+                          ),
+                        },
+                      }
+                    : undefined
+                }
                 currentIndex={chosenDuration}
-                onChange={(selectedMonths: number) => {
-                  clearErrors(id)
-                  const newEndDate = addMonths(
-                    parseISO(currentStartDateAnswer),
-                    selectedMonths,
-                  )
-                  onChange(formatISO(newEndDate))
-                  setChosenEndDate(formatISO(newEndDate))
-                  setChosenDuration(selectedMonths)
-                }}
+                onChange={(months: number) => handleChange(months)}
+                onChangeEnd={(months: number) =>
+                  handleChangeEnd(months, onChange)
+                }
               />
             )}
           />
         </Box>
       </Box>
+
+      <input
+        ref={register}
+        type="hidden"
+        value={chosenDuration}
+        name={`periods[${currentIndex}].duration`}
+      />
     </Box>
   )
 }

@@ -52,13 +52,13 @@ describe('Create Flight', () => {
         flightLegs: [
           {
             origin: 'REK',
-            destination: 'AK',
+            destination: 'AEY',
             originalPrice: 50000,
             discountPrice: 30000,
             date: '2021-03-12T12:35:50.971Z',
           },
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'REK',
             originalPrice: 100000,
             discountPrice: 60000,
@@ -77,14 +77,14 @@ describe('Create Flight', () => {
           id: expect.any(String),
           date: '2021-03-12T12:35:50.971Z',
           origin: 'REK',
-          destination: 'AK',
+          destination: 'AEY',
           discountPrice: 30000,
           originalPrice: 50000,
         },
         {
           id: expect.any(String),
           date: '2021-03-15T12:35:50.971Z',
-          origin: 'AK',
+          origin: 'AEY',
           destination: 'REK',
           discountPrice: 60000,
           originalPrice: 100000,
@@ -176,7 +176,7 @@ describe('Reykjavik -> Akureyri connecting flight validations', () => {
         flightLegs: [
           {
             origin: 'REK',
-            destination: 'AK',
+            destination: 'AEY',
             originalPrice: 50000,
             discountPrice: 30000,
             date: '2020-08-17T14:26:22', // 24 hours before Date.now jest
@@ -195,7 +195,7 @@ describe('Reykjavik -> Akureyri connecting flight validations', () => {
       .send({
         flightLegs: [
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'GRY',
             date: '2020-08-18T14:26:22',
           },
@@ -233,7 +233,7 @@ describe('Reykjavik -> Akureyri connecting flight validations', () => {
       .send({
         flightLegs: [
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'RKV',
             date: '2020-08-18T14:26:22',
           },
@@ -242,7 +242,7 @@ describe('Reykjavik -> Akureyri connecting flight validations', () => {
       .expect(403)
 
     expect(connectionRes.body.message).toEqual(
-      'A flightleg contains invalid flight code/s [AK, RKV]. Allowed flight codes: [AK,VPN,GRY,THO]',
+      'A flightleg contains invalid flight code/s [AEY, RKV]. Allowed flight codes: [AEY,VPN,GRY,THO]',
     )
     cacheSpy.mockRestore()
   })
@@ -254,7 +254,7 @@ describe('Reykjavik -> Akureyri connecting flight validations', () => {
       .send({
         flightLegs: [
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'GRY',
             date: '2020-08-20T14:26:22',
           },
@@ -275,7 +275,7 @@ describe('Reykjavik -> Akureyri connecting flight validations', () => {
       .send({
         flightLegs: [
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'GRY',
             date: '2020-08-16T14:26:22',
           },
@@ -289,20 +289,20 @@ describe('Reykjavik -> Akureyri connecting flight validations', () => {
     cacheSpy.mockRestore()
   })
 
-  it('AK -> GRY -> GRY -> AK, not allowed since there is no return trip to RKV', async () => {
+  it('AEY -> GRY -> GRY -> AEY, not allowed since there is no return trip to RKV', async () => {
     const connectionRes = await request(app.getHttpServer())
       .post('/api/public/discounts/ABCDEFGH/isValidConnectionFlight')
       .set('Authorization', 'Bearer norlandair')
       .send({
         flightLegs: [
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'GRY',
             date: '2020-08-16T14:26:22',
           },
           {
             origin: 'GRY',
-            destination: 'AK',
+            destination: 'AEY',
             date: '2020-08-16T16:26:22',
           },
         ],
@@ -322,7 +322,7 @@ describe('Reykjavik -> Akureyri connecting flight validations', () => {
       .send({
         flightLegs: [
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'GRY',
             date: '2020-08-18T14:26:22',
           },
@@ -364,13 +364,13 @@ describe('Reykjavik -> Akureyri -> Akureyri -> Reykjavík connecting flight vali
         flightLegs: [
           {
             origin: 'RKV',
-            destination: 'AK',
+            destination: 'AEY',
             originalPrice: 50000,
             discountPrice: 30000,
             date: '2020-08-14T14:26:22',
           },
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'RKV',
             originalPrice: 50000,
             discountPrice: 30000,
@@ -390,13 +390,13 @@ describe('Reykjavik -> Akureyri -> Akureyri -> Reykjavík connecting flight vali
       .send({
         flightLegs: [
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'GRY',
             date: '2020-08-15T14:26:22',
           },
           {
             origin: 'GRY',
-            destination: 'AK',
+            destination: 'AEY',
             date: '2020-08-16T14:26:22',
           },
         ],
@@ -405,20 +405,20 @@ describe('Reykjavik -> Akureyri -> Akureyri -> Reykjavík connecting flight vali
     cacheSpy.mockRestore()
   })
 
-  it('AK->GRY->GRY->AK, one flightLeg has wrong date', async () => {
+  it('AEY->GRY->GRY->AEY, one flightLeg has wrong date', async () => {
     const connectionRes = await request(app.getHttpServer())
       .post('/api/public/discounts/ABCDEFGH/isValidConnectionFlight')
       .set('Authorization', 'Bearer norlandair')
       .send({
         flightLegs: [
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'GRY',
             date: '2020-08-15T14:26:22',
           },
           {
             origin: 'GRY',
-            destination: 'AK',
+            destination: 'AEY',
             date: '2020-08-20T14:26:22',
           },
         ],
@@ -440,13 +440,13 @@ describe('Reykjavik -> Akureyri -> Akureyri -> Reykjavík connecting flight vali
       .send({
         flightLegs: [
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'RHN',
             date: '2020-08-15T14:26:22',
           },
           {
             origin: 'RHN',
-            destination: 'AK',
+            destination: 'AEY',
             date: '2020-08-16T14:26:22',
           },
         ],
@@ -454,7 +454,7 @@ describe('Reykjavik -> Akureyri -> Akureyri -> Reykjavík connecting flight vali
       .expect(403)
 
     expect(connectionRes.body.message).toBe(
-      'A flightleg contains invalid flight code/s [AK, RHN]. Allowed flight codes: [AK,VPN,GRY,THO]',
+      'A flightleg contains invalid flight code/s [AEY, RHN]. Allowed flight codes: [AEY,VPN,GRY,THO]',
     )
     cacheSpy.mockRestore()
   })
@@ -475,13 +475,13 @@ describe('Delete Flight', () => {
         flightLegs: [
           {
             origin: 'REK',
-            destination: 'AK',
+            destination: 'AEY',
             originalPrice: 50000,
             discountPrice: 30000,
             date: '2021-03-12T12:35:50.971Z',
           },
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'REK',
             originalPrice: 100000,
             discountPrice: 60000,
@@ -533,13 +533,13 @@ describe('Delete Flight', () => {
         flightLegs: [
           {
             origin: 'REK',
-            destination: 'AK',
+            destination: 'AEY',
             originalPrice: 50000,
             discountPrice: 30000,
             date: '2021-03-12T12:35:50.971Z',
           },
           {
-            origin: 'AK',
+            origin: 'AEY',
             destination: 'REK',
             originalPrice: 100000,
             discountPrice: 60000,

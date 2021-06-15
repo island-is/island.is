@@ -13,6 +13,7 @@ export interface BreadCrumbItem {
   slug?: string[]
   typename?: string
   isTag?: boolean
+  isCurrentPage?: boolean
 }
 
 interface BreadcrumbsProps {
@@ -31,9 +32,17 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
   tagVariant = 'blue',
   renderLink = (link) => link,
 }) => {
+  const visibleItems = items.filter((x) => x.title)
+
   return (
-    <Box aria-label={label} display={'inlineFlex'} alignItems={'center'}>
-      {items.map((item, index) => {
+    <Box
+      aria-label={label}
+      display={'inlineFlex'}
+      alignItems={'center'}
+      className="rs_skip"
+      component="nav"
+    >
+      {visibleItems.map((item, index) => {
         const isLink: boolean = !!item.href || !!item.slug
         const renderCrumb = item.isTag ? (
           <Tag disabled={!isLink} variant={tagVariant}>
@@ -56,6 +65,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
                   <a
                     href={item?.href}
                     tabIndex={item.isTag ? -1 : undefined}
+                    {...(item.isCurrentPage && { 'aria-current': 'page' })}
                     className={cn(
                       styles.breadcrumb[color],
                       styles.focusable[color],
@@ -67,7 +77,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
                   item,
                 )
               : renderCrumb}
-            {items.length - 1 > index && (
+            {visibleItems.length - 1 > index && (
               <Box
                 borderRadius={'circle'}
                 display={'inlineBlock'}

@@ -1,9 +1,8 @@
-/* tslint:disable */
 import React from 'react'
 import { render, waitFor } from '@testing-library/react'
 import fetchMock from 'fetch-mock'
 import { MockedProvider } from '@apollo/client/testing'
-
+import { LocaleProvider } from '@island.is/localization'
 import { mockJudgeQuery } from '@island.is/judicial-system-web/src/utils/mocks'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
@@ -20,13 +19,19 @@ describe('Login route', () => {
     }))
 
     // Act
-    const { baseElement } = render(<Login />)
+    const { baseElement } = render(
+      <MockedProvider mocks={mockJudgeQuery} addTypename={false}>
+        <LocaleProvider locale="is" messages={{}}>
+          <Login />
+        </LocaleProvider>
+      </MockedProvider>,
+    )
 
     // Assert
     expect(baseElement).toBeTruthy()
   })
 
-  test('should have a title set', () => {
+  test('should have a title set', async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -34,10 +39,17 @@ describe('Login route', () => {
     }))
 
     // Act
-    render(<Login />)
+    render(
+      <MockedProvider mocks={mockJudgeQuery} addTypename={false}>
+        <LocaleProvider locale="is" messages={{}}>
+          <Login />
+        </LocaleProvider>
+      </MockedProvider>,
+    )
 
     // Assert
-    expect(document.title).toEqual('Réttarvörslugátt')
+    // expect(document.title).toEqual('Réttarvörslugátt')
+    await waitFor(() => expect(document.title).toEqual('Réttarvörslugátt'))
   })
 
   test('should logout a logged in user', async () => {
@@ -51,8 +63,10 @@ describe('Login route', () => {
     // Act
     render(
       <MockedProvider mocks={mockJudgeQuery} addTypename={false}>
-        <UserProvider>
-          <Login />
+        <UserProvider authenticated={true}>
+          <LocaleProvider locale="is" messages={{}}>
+            <Login />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )

@@ -3,7 +3,8 @@ import HelpBox from '../../common/HelpBox'
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ResourcesService } from '../../../services/ResourcesService'
 import UserClaimCreateForm from './UserClaimCreateForm'
-
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   identityResourceName: string
   claims?: string[]
@@ -15,6 +16,9 @@ interface Props {
 
 const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
   const [claims, setClaims] = useState<string[]>([])
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('IdentityResourceUserClaims'),
+  )
 
   useEffect(() => {
     getAllAvailableClaims()
@@ -73,12 +77,11 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
     <div className="identity-resource-user-claims">
       <div className="identity-resource-user-claims__wrapper">
         <div className="identity-resource-user-claims__container">
-          <h1>Select the appropriate user claims</h1>
+          <h1>{localization.title}</h1>
 
           <div className="identity-resource-user-claims__container__form">
             <div className="identity-resource-user-claims__help">
-              List of associated user claim types that should be included in the
-              identity token.
+              {localization.help}
             </div>
             <UserClaimCreateForm
               resourceName={props.identityResourceName}
@@ -113,9 +116,9 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
             </div>
 
             <NoActiveConnections
-              title="No User Claims are selected"
+              title={localization.noActiveConnections?.title}
               show={!props.claims || props.claims.length === 0}
-              helpText="Some claims need to be associated with this Identity Resource"
+              helpText={localization.noActiveConnections?.helpText}
             ></NoActiveConnections>
 
             <div className="identity-resource-user-claims__buttons__container">
@@ -124,18 +127,19 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
                   type="button"
                   className="identity-resource-user-claims__button__cancel"
                   onClick={props.handleBack}
+                  title={localization.buttons['cancel'].helpText}
                 >
-                  Back
+                  {localization.buttons['cancel'].text}
                 </button>
               </div>
               <div className="identity-resource-user-claims__button__container">
                 <button
                   type="button"
                   className="identity-resource-user-claims__button__save"
-                  value="Next"
+                  title={localization.buttons['save'].helpText}
                   onClick={props.handleNext}
                 >
-                  Next
+                  {localization.buttons['save'].text}
                 </button>
               </div>
             </div>

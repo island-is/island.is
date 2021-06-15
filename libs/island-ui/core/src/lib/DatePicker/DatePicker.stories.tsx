@@ -65,18 +65,6 @@ export const LocaleIS = () => {
     </>
   )
 }
-export const LocalePL = () => {
-  return (
-    <Wrap>
-      <DatePicker
-        label="Data"
-        placeholderText="Wybierz datę"
-        locale="pl"
-        handleChange={(date: Date) => console.log(date)}
-      />
-    </Wrap>
-  )
-}
 
 export const SelectYear = () => {
   const toDay = new Date()

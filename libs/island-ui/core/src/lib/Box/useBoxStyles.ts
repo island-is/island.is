@@ -69,6 +69,7 @@ export interface UseBoxStylesProps {
   opacity?: keyof typeof styleRefs.opacity
   printHidden?: boolean
   className?: Parameters<typeof classnames>[0]
+  zIndex?: keyof typeof styleRefs.zIndex
 }
 
 export const useBoxStyles = ({
@@ -127,6 +128,7 @@ export const useBoxStyles = ({
   opacity,
   printHidden,
   className,
+  zIndex,
 }: UseBoxStylesProps) => {
   const resetStyles = { ...resetStyleRefs }
   const styles = { ...styleRefs }
@@ -313,5 +315,6 @@ export const useBoxStyles = ({
     styles.opacity[opacity!],
     printHidden && styles.printHidden,
     className,
+    styles.zIndex[zIndex!],
   )
 }

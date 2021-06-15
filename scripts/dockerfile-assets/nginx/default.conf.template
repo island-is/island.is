@@ -1,0 +1,41 @@
+server {
+    # the default port we target in the Helm setup
+    listen       3333;
+    server_name  localhost;
+
+    location $BASEPATH {
+        alias   /usr/share/nginx/html/;
+        index  index.html index.htm;
+        # The following is necessary for React router based apps
+        try_files $uri $uri/ /index.html =404;
+        # We don't want to redirect to localhost:3333
+        absolute_redirect off;
+        # We do not cache any of the assets
+        add_header Cache-Control "no-store, no-cache, must-revalidate";
+    }
+
+    location ~ "^$BASEPATH(.+\.[0-9a-f]{20}\..+)$" {
+        # Serving all cache busting assets
+        alias   /usr/share/nginx/html/$1;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        access_log off;        
+        # We don't want to redirect to localhost:3333
+        absolute_redirect off;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    location = /readiness {
+        access_log off;
+        return 200 'ok';
+    }
+
+    location = /liveness {
+        access_log off;
+        return 200 'ok';
+    }
+}

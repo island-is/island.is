@@ -1,4 +1,5 @@
 import React, { ComponentType } from 'react'
+import cn from 'classnames'
 import ReactSelect, {
   components,
   ValueType,
@@ -13,22 +14,30 @@ import ReactSelect, {
   InputProps,
   ControlProps,
   Props,
+  OptionsType,
+  GroupedOptionsType,
 } from 'react-select'
-import cn from 'classnames'
+import { formatGroupLabel } from 'react-select/src/builtins'
 import * as styles from './Select.treat'
 import { Icon } from '../IconRC/Icon'
-import { InputBackgroundColor } from '../Input/Input'
+import { InputBackgroundColor } from '../Input/types'
 
 export type Option = {
   label: string
   value: string | number
   disabled?: boolean
 }
+
+interface AriaError {
+  'aria-invalid': boolean
+  'aria-describedby': string
+}
+
 export interface SelectProps {
   name: string
+  options: OptionsType<Option> | GroupedOptionsType<Option>
   id?: string
   disabled?: boolean
-  options: ReadonlyArray<Option>
   hasError?: boolean
   errorMessage?: string
   noOptionsMessage?: string
@@ -46,6 +55,8 @@ export interface SelectProps {
   size?: 'sm' | 'md'
   backgroundColor?: InputBackgroundColor
   required?: boolean
+  ariaError?: AriaError
+  formatGroupLabel?: formatGroupLabel<Option>
 }
 
 export const Select = ({
@@ -66,7 +77,16 @@ export const Select = ({
   size = 'md',
   backgroundColor = 'white',
   required,
+  formatGroupLabel,
 }: SelectProps) => {
+  const errorId = `${id}-error`
+  const ariaError = hasError
+    ? {
+        'aria-invalid': true,
+        'aria-describedby': errorId,
+      }
+    : {}
+
   return (
     <div
       className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
@@ -92,6 +112,8 @@ export const Select = ({
         isSearchable={isSearchable}
         size={size}
         required={required}
+        ariaError={ariaError as AriaError}
+        formatGroupLabel={formatGroupLabel}
         components={{
           Control,
           Input,
@@ -105,7 +127,7 @@ export const Select = ({
         }}
       />
       {hasError && errorMessage && (
-        <div className={styles.errorMessage} id={id}>
+        <div id={errorId} className={styles.errorMessage} aria-live="assertive">
           {errorMessage}
         </div>
       )}
@@ -186,11 +208,13 @@ const Placeholder = (props: PlaceholderProps<Option>) => {
 const Input: ComponentType<InputProps> = (
   props: InputProps & { selectProps?: Props<Option> },
 ) => {
+  const ariaError = props?.selectProps?.ariaError
   const size = (props?.selectProps?.size || 'md') as SelectProps['size']
   return (
     <components.Input
       className={cn(styles.input, styles.inputSize[size!])}
       {...props}
+      {...ariaError}
     />
   )
 }
@@ -210,7 +234,10 @@ const Control = (props: ControlProps<Option>) => {
       >
         {props.selectProps.label}
         {props.selectProps.required && (
-          <span className={styles.isRequiredStar}> *</span>
+          <span aria-hidden="true" className={styles.isRequiredStar}>
+            {' '}
+            *
+          </span>
         )}
       </label>
       {props.children}

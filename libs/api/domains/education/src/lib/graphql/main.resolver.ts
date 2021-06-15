@@ -2,37 +2,37 @@ import { Args, Query, Mutation, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 
+import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 
 import { EducationService } from '../education.service'
 import {
-  License,
-  SignedLicense,
+  EducationLicense,
+  EducationSignedLicense,
   FetchEducationSignedLicenseUrlInput,
 } from './license'
 import { ExamFamilyOverview, ExamResult } from './grade'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class MainResolver {
   constructor(private readonly educationService: EducationService) {}
 
-  @Query(() => [License])
-  educationLicense(@CurrentUser() user: User): Promise<License[]> {
+  @Query(() => [EducationLicense])
+  educationLicense(@CurrentUser() user: User): Promise<EducationLicense[]> {
     return this.educationService.getLicenses(user.nationalId)
   }
 
-  @Mutation(() => SignedLicense, { nullable: true })
+  @Mutation(() => EducationSignedLicense, { nullable: true })
   async fetchEducationSignedLicenseUrl(
     @CurrentUser() user: User,
     @Args('input', { type: () => FetchEducationSignedLicenseUrlInput })
     input: FetchEducationSignedLicenseUrlInput,
-  ): Promise<SignedLicense> {
+  ): Promise<EducationSignedLicense> {
     const url = await this.educationService.downloadPdfLicense(
       user.nationalId,
       input.licenseId,

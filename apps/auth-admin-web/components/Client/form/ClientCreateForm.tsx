@@ -5,10 +5,11 @@ import { ErrorMessage } from '@hookform/error-message'
 import HelpBox from '../../common/HelpBox'
 import { ClientService } from '../../../services/ClientService'
 import { Client } from './../../../entities/models/client.model'
-import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
 import { TimeUtils } from './../../../utils/time.utils'
 import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: ClientDTO) => void
@@ -21,7 +22,13 @@ interface FormOutput {
 }
 
 const ClientCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+    setValue,
+  } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [show, setShow] = useState(false)
   const [available, setAvailable] = useState<boolean>(false)
@@ -30,10 +37,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const [clientTypeSelected, setClientTypeSelected] = useState<boolean>(false)
   const [clientTypeInfo, setClientTypeInfo] = useState<JSX.Element>(<div></div>)
   const [client, setClient] = useState<ClientDTO>(props.client)
-  const [requireConsent, setRequireConsent] = useState(false)
   const [callbackUri, setCallbackUri] = useState('')
   const [showClientTypeInfo, setShowClientTypeInfo] = useState<boolean>(false)
   const [showBaseUrlInfo, setShowBaseUrlInfo] = useState<boolean>(false)
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientCreateForm'),
+  )
 
   const castToNumbers = (obj: ClientDTO): ClientDTO => {
     obj.absoluteRefreshTokenLifetime = +obj.absoluteRefreshTokenLifetime
@@ -71,12 +80,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
       setIsEditing(true)
       setAvailable(true)
       setClientTypeSelected(true)
-      setClientType(props.client.clientType)
-      if (props.client.requireConsent) {
-        setRequireConsent(true)
-      } else {
-        setRequireConsent(false)
-      }
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
     }
@@ -133,19 +136,25 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   }
 
   const getClientTypeHTML = (clientType): JSX.Element => {
-    const clientInfo = ClientTypeInfoService.getClientTypeInfo(clientType)
-
     return (
       <div className="detail-container">
-        <div className="detail-title">{clientInfo.title}</div>
-        <div className={`detail-flow${clientInfo.flow ? ' show' : ' hidden'}`}>
-          {clientInfo.flow}
+        <div className="detail-title">
+          {
+            localization.fields['clientType'].selectItems[clientType]
+              .selectItemText
+          }
         </div>
-        <div className="detail-description">{clientInfo.description}</div>
-        <div className="detail-link">
-          <a href={clientInfo.url} target="_blank" rel="noreferrer">
-            {clientInfo.urlText}
-          </a>
+        <div
+          className={`detail-flow${
+            localization.fields['clientType'].selectItems[clientType].flow
+              ? ' show'
+              : ' hidden'
+          }`}
+        >
+          {localization.fields['clientType'].selectItems[clientType].flow}
+        </div>
+        <div className="detail-description">
+          {localization.fields['clientType'].selectItems[clientType].helpText}
         </div>
       </div>
     )
@@ -153,34 +162,17 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
 
   const setClientType = async (clientType: string) => {
     if (clientType) {
-      if (clientType === 'spa') {
-        client.requireClientSecret = false
-        client.requirePkce = true
-
-        setClientTypeInfo(getClientTypeHTML('spa'))
+      if (clientType === 'spa' || clientType === 'native') {
+        setValue('client.requireClientSecret', false)
+        setValue('client.requirePkce', true)
       }
 
-      if (clientType === 'native') {
-        client.requireClientSecret = false
-        client.requirePkce = true
-
-        setClientTypeInfo(getClientTypeHTML('native'))
+      if (clientType === 'web' || clientType === 'machine') {
+        setValue('client.requireClientSecret', true)
+        setValue('client.requirePkce', false)
       }
 
-      if (clientType === 'web') {
-        client.requireClientSecret = true
-        client.requirePkce = false
-
-        setClientTypeInfo(getClientTypeHTML('web'))
-      }
-
-      if (clientType === 'machine') {
-        client.requireClientSecret = true
-        client.requirePkce = false
-
-        setClientTypeInfo(getClientTypeHTML('machine'))
-      }
-
+      setClientTypeInfo(getClientTypeHTML(clientType))
       setClientTypeSelected(true)
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
@@ -192,69 +184,93 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
     <div className="client">
       <div className="client__wrapper">
         <div className="client__container">
-          <h1>{isEditing ? 'Edit Client' : 'Create a new Client'}</h1>
+          <h1>{isEditing ? localization.editTitle : localization.title}</h1>
           <div className="client__container__form">
-            <div className="client__help">
-              Enter some basic details for this client. Click{' '}
-              <a href="#advanced">advanced</a> to configure preferences if
-              default settings need to be changed. You will then go through
-              steps to configure and add additional properties.
-            </div>
+            <div className="client__help">{localization.help}</div>
             <form onSubmit={handleSubmit(save)}>
               <div className="client__container__fields">
                 <div className={clientTypeSelected ? '' : 'field-with-details'}>
                   <div className="client__container__field">
-                    <label className="client__label">Client Type</label>
+                    <label
+                      className="client__label"
+                      htmlFor="client.clientType"
+                    >
+                      {localization.fields['clientType'].label}
+                    </label>
                     <select
+                      id="client.clientType"
                       name="client.clientType"
                       ref={register({ required: true })}
-                      title="Type of Client"
+                      title={localization.fields['clientType'].helpText}
                       onChange={(e) => setClientType(e.target.value)}
                       onFocus={() => setShowClientTypeInfo(true)}
                       onBlur={hideClientInfo}
                     >
                       <option value="" selected={!client.clientType}>
-                        Select Client Type
+                        {
+                          localization.fields['clientType'].selectItems['']
+                            .selectItemText
+                        }
                       </option>
                       <option
                         value="spa"
                         selected={client.clientType === 'spa'}
                       >
-                        Single Page App
+                        {
+                          localization.fields['clientType'].selectItems['spa']
+                            .selectItemText
+                        }
                       </option>
                       <option
                         value="native"
                         selected={client.clientType === 'native'}
                       >
-                        Native
+                        {
+                          localization.fields['clientType'].selectItems[
+                            'native'
+                          ].selectItemText
+                        }
                       </option>
                       <option
                         value="web"
                         selected={client.clientType === 'web'}
                       >
-                        Web App
+                        {
+                          localization.fields['clientType'].selectItems['web']
+                            .selectItemText
+                        }
                       </option>
                       <option
                         value="machine"
                         selected={client.clientType === 'machine'}
                       >
-                        Machine
+                        {
+                          localization.fields['clientType'].selectItems[
+                            'machine'
+                          ].selectItemText
+                        }
                       </option>
                       <option
                         value="device"
                         selected={client.clientType === 'device'}
                         disabled
                       >
-                        Device (not supported)
+                        {
+                          localization.fields['clientType'].selectItems[
+                            'device'
+                          ].selectItemText
+                        }
                       </option>
                     </select>
 
-                    <HelpBox helpText="Select the appropriate Client Type" />
+                    <HelpBox
+                      helpText={localization.fields['clientType'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientType"
-                      message="Client Type is required"
+                      message={localization.fields['clientType'].errorMessage}
                     />
                     <div
                       className={`client__container__field__details${
@@ -268,10 +284,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
 
                 <div className={clientTypeSelected ? '' : 'hidden'}>
                   <div className="client__container__field">
-                    <label className="client__label">
-                      National Id (Kennitala)
+                    <label className="client__label" htmlFor="nationalId">
+                      {localization.fields['nationalId'].label}
                     </label>
                     <input
+                      id="nationalId"
                       type="text"
                       name="client.nationalId"
                       ref={register({
@@ -282,21 +299,28 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.nationalId}
                       className="client__input"
-                      placeholder="0123456789"
+                      placeholder={
+                        localization.fields['nationalId'].placeholder
+                      }
                       maxLength={10}
-                      title="The nationalId (Kennitala) registered for the client"
+                      title={localization.fields['nationalId'].helpText}
                     />
-                    <HelpBox helpText="The nationalId (Kennitala) registered for the client" />
+                    <HelpBox
+                      helpText={localization.fields['nationalId'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.nationalId"
-                      message="NationalId must be 10 numeric characters"
+                      message={localization.fields['nationalId'].errorMessage}
                     />
                   </div>
                   <div className="client__container__field">
-                    <label className="client__label">Contact email</label>
+                    <label className="client__label" htmlFor="contactEmail">
+                      {localization.fields['contactEmail'].label}
+                    </label>
                     <input
+                      id="contactEmail"
                       type="text"
                       ref={register({
                         required: true,
@@ -305,19 +329,25 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.contactEmail"
                       defaultValue={client.contactEmail ?? ''}
                       className="client__input"
-                      title="The email of the person who can be contacted regarding this Client"
-                      placeholder="john@example.com"
+                      title={localization.fields['contactEmail'].helpText}
+                      placeholder={
+                        localization.fields['contactEmail'].placeholder
+                      }
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.contactEmail"
-                      message="Contact email must be set and must be a valid email address"
+                      message={localization.fields['contactEmail'].errorMessage}
                     />
-                    <HelpBox helpText="The email of the person who can be contacted regarding this Client" />
+                    <HelpBox
+                      helpText={localization.fields['contactEmail'].helpText}
+                    />
                   </div>
                   <div className="client__container__field">
-                    <label className="client__label">Client Id</label>
+                    <label className="client__label" htmlFor="clientId">
+                      {localization.fields['clientId'].label}
+                    </label>
                     <input
                       type="text"
                       name="client.clientId"
@@ -327,9 +357,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.clientId}
                       className="client__input"
-                      placeholder="example-client"
+                      placeholder={localization.fields['clientId'].placeholder}
                       onChange={(e) => checkAvailability(e.target.value)}
-                      title="The unique identifier for this application"
+                      title={localization.fields['clientId'].helpText}
                       readOnly={isEditing}
                     />
                     <div
@@ -337,19 +367,25 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         available ? 'ok ' : 'taken '
                       } ${clientIdLength > 0 ? 'show' : 'hidden'}`}
                     >
-                      {available ? 'Available' : 'Unavailable'}
+                      {available
+                        ? localization.fields['clientId'].available
+                        : localization.fields['clientId'].unAvailable}
                     </div>
-                    <HelpBox helpText="The unique identifier for this application. No spaces or special characters." />
+                    <HelpBox
+                      helpText={localization.fields['clientId'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientId"
-                      message="Client Id is required and needs to be in the right format (no spaces or special characters)"
+                      message={localization.fields['clientId'].errorMessage}
                     />
                   </div>
 
                   <div className="client__container__field">
-                    <label className="client__label">Description</label>
+                    <label className="client__label" htmlFor="description">
+                      {localization.fields['description'].label}
+                    </label>
                     <input
                       type="text"
                       ref={register({
@@ -358,64 +394,76 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.description"
                       defaultValue={client.description ?? ''}
                       className="client__input"
-                      title="Application description for use within AdminUI"
-                      placeholder="Example description"
+                      title={localization.fields['description'].helpText}
+                      placeholder={
+                        localization.fields['description'].placeholder
+                      }
                     />
-                    <HelpBox helpText="Application description for use within the IDS management" />
+                    <HelpBox
+                      helpText={localization.fields['description'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.description"
-                      message="Description can not include special characters"
+                      message={localization.fields['description'].errorMessage}
                     />
                   </div>
 
                   <div>
                     <div className="client__container__field">
-                      <label className="client__label">Base Url:</label>
+                      <label className="client__label" htmlFor="baseUrl">
+                        {localization.fields['baseUrl'].label}
+                      </label>
                       <input
+                        id="baseUrl"
                         readOnly={isEditing}
                         name="baseUrl"
                         type="text"
                         ref={register({
                           required: !isEditing,
-                          validate: ValidationUtils.validateUrl,
+                          validate: ValidationUtils.validateBaseUrl,
                         })}
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
-                        placeholder="https://localhost:4200"
-                        title="Base Url of the application. Used for Cors Origin and callback URI. The callback uri will be the specified Base Url /signin-oidc"
+                        placeholder={localization.fields['baseUrl'].placeholder}
+                        title={localization.fields['baseUrl'].helpText}
                         onChange={(e) => setCallbackUri(e.target.value)}
                         onFocus={() => setShowBaseUrlInfo(true)}
                         onBlur={() => setShowBaseUrlInfo(false)}
                       />
-                      <HelpBox helpText="Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc" />
+                      <HelpBox
+                        helpText={localization.fields['baseUrl'].helpText}
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="baseUrl"
-                        message="Base Url is required and needs to be in the right format"
+                        message={localization.fields['baseUrl'].helpText}
                       />
                       <div
                         className={`client__container__field__details
                           ${showBaseUrlInfo ? ' show' : ' hidden'}`}
                       >
                         <div className="detail-title">
-                          Redirect (Callback) Uri will be:
+                          {localization.fields['baseUrl'].popUpTitle}
                         </div>
                         <div className="detail-uri">
                           {callbackUri}/signin-oidc
                         </div>
                         <div className="detail-link">
-                          This can be changed later
+                          {localization.fields['baseUrl'].popUpDescription}
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="client__container__field">
-                    <label className="client__label">Display Name</label>
+                    <label className="client__label" htmlFor="clientName">
+                      {localization.fields['clientName'].label}
+                    </label>
                     <input
+                      id="clientName"
                       type="text"
                       name="client.clientName"
                       ref={register({
@@ -423,15 +471,19 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.clientName ?? ''}
                       className="client__input"
-                      title="Application name that will be seen on consent screens"
-                      placeholder="Example name"
+                      title={localization.fields['clientName'].helpText}
+                      placeholder={
+                        localization.fields['clientName'].placeholder
+                      }
                     />
-                    <HelpBox helpText="Application name that will be seen on consent screens" />
+                    <HelpBox
+                      helpText={localization.fields['clientName'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientName"
-                      message="Display name is required since the client requires consent"
+                      message={localization.fields['clientName'].errorMessage}
                     />
                     <TranslationCreateFormDropdown
                       className="client"
@@ -442,49 +494,64 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                   </div>
 
                   <div className="client__container__field">
-                    <label className="client__label">Display URL</label>
+                    <label className="client__label" htmlFor="clientUri">
+                      {localization.fields['clientUri'].label}
+                    </label>
                     <input
+                      id="clientUri"
                       name="client.clientUri"
                       ref={register({ validate: ValidationUtils.validateUrl })}
                       type="text"
                       defaultValue={client.clientUri ?? ''}
                       className="client__input"
-                      placeholder="https://example.com"
-                      title="Application URL that will be seen on consent screens"
+                      placeholder={localization.fields['clientUri'].placeholder}
+                      title={localization.fields['clientUri'].helpText}
                     />
-                    <HelpBox helpText="URI to further information about client (used on consent screen)" />
+                    <HelpBox
+                      helpText={localization.fields['clientUri'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientUri"
-                      message="Display url needs to be in the right format"
+                      message={localization.fields['clientUri'].errorMessage}
                     />
                   </div>
 
                   <div className="client__container__checkbox__field">
-                    <label className="client__label">Enabled</label>
+                    <label className="client__label" htmlFor="enabled">
+                      {localization.fields['enabled'].label}
+                    </label>
                     <input
+                      id="enabled"
                       type="checkbox"
                       name="client.enabled"
                       className="client__checkbox"
                       defaultChecked={client.enabled}
                       ref={register}
+                      title={localization.fields['enabled'].helpText}
                     ></input>
-                    <HelpBox helpText="Sets client enabled or disabled" />
+                    <HelpBox
+                      helpText={localization.fields['enabled'].helpText}
+                    />
                   </div>
 
                   <div className="client__container__checkbox__field">
-                    <label className="client__label">Require consent</label>
+                    <label className="client__label" htmlFor="requireConsent">
+                      {localization.fields['requireConsent'].label}
+                    </label>
                     <input
+                      id="requireConsent"
                       type="checkbox"
                       defaultChecked={client.requireConsent}
                       className="client__input"
                       name="client.requireConsent"
                       ref={register}
-                      title="Specifies whether a consent screen is required"
-                      onChange={(e) => setRequireConsent(e.target.checked)}
+                      title={localization.fields['requireConsent'].helpText}
                     />
-                    <HelpBox helpText="Specifies whether a consent screen is required" />
+                    <HelpBox
+                      helpText={localization.fields['requireConsent'].helpText}
+                    />
                   </div>
 
                   <div className="client__container__button" id="advanced">
@@ -492,9 +559,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       type="button"
                       className="client__button__show"
                       onClick={() => setShow(!show)}
+                      title={localization.buttons['advanced'].helpText}
                     >
                       <i className="client__button__show__icon"></i>
-                      Advanced
+                      {localization.buttons['advanced'].text}
                     </button>
                   </div>
 
@@ -504,14 +572,14 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     }`}
                   >
                     <section className="client_section">
-                      <h3>Delegation section</h3>
+                      <h3>{localization.sections['delegations'].title}</h3>
 
                       <div className="client__container__checkbox__field">
                         <label
                           className="client__label"
                           htmlFor="supportsDelegation"
                         >
-                          Supports Delegation
+                          {localization.fields['supportsDelegation'].label}
                         </label>
                         <input
                           id="supportsDelegation"
@@ -520,9 +588,15 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                           defaultChecked={client.supportsDelegation}
                           className="client__input"
                           ref={register}
-                          title="Specifies if the client supports delegation"
+                          title={
+                            localization.fields['supportsDelegation'].helpText
+                          }
                         />
-                        <HelpBox helpText="Specifies if the client supports delegation" />
+                        <HelpBox
+                          helpText={
+                            localization.fields['supportsDelegation'].helpText
+                          }
+                        />
                       </div>
 
                       <div className="client__container__checkbox__field">
@@ -530,7 +604,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                           className="client__label"
                           htmlFor="supportsLegalGuardians"
                         >
-                          Supports Legal Guardians Delegation
+                          {localization.fields['supportsLegalGuardians'].label}
                         </label>
                         <input
                           id="supportsLegalGuardians"
@@ -539,9 +613,17 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                           defaultChecked={client.supportsLegalGuardians}
                           className="client__input"
                           ref={register}
-                          title="Specifies if the client supports legal guardian delegation"
+                          title={
+                            localization.fields['supportsLegalGuardians']
+                              .helpText
+                          }
                         />
-                        <HelpBox helpText="Specifies if the client supports legal guardian delegation" />
+                        <HelpBox
+                          helpText={
+                            localization.fields['supportsLegalGuardians']
+                              .helpText
+                          }
+                        />
                       </div>
 
                       <div className="client__container__checkbox__field">
@@ -549,7 +631,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                           className="client__label"
                           htmlFor="supportsProcuringHolders"
                         >
-                          Supports Procuring Holders Delegation
+                          {
+                            localization.fields['supportsProcuringHolders']
+                              .label
+                          }
                         </label>
                         <input
                           id="supportsProcuringHolders"
@@ -558,9 +643,17 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                           defaultChecked={client.supportsProcuringHolders}
                           className="client__input"
                           ref={register}
-                          title="Specifies if the client supports Procuring Holders delegation"
+                          title={
+                            localization.fields['supportsProcuringHolders']
+                              .helpText
+                          }
                         />
-                        <HelpBox helpText="Specifies if the client supports Procuring Holders delegation" />
+                        <HelpBox
+                          helpText={
+                            localization.fields['supportsProcuringHolders']
+                              .helpText
+                          }
+                        />
                       </div>
 
                       <div className="client__container__checkbox__field">
@@ -568,7 +661,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                           className="client__label"
                           htmlFor="promptDelegations"
                         >
-                          Prompt delegations
+                          {localization.fields['promptDelegations'].label}
                         </label>
                         <input
                           id="promptDelegations"
@@ -577,33 +670,60 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                           defaultChecked={client.promptDelegations}
                           className="client__input"
                           ref={register}
-                          title="Specifies if the user is prompt with delegation window"
+                          title={
+                            localization.fields['promptDelegations'].helpText
+                          }
                         />
-                        <HelpBox helpText="Specifies if the user is prompt with delegation window" />
+                        <HelpBox
+                          helpText={
+                            localization.fields['promptDelegations'].helpText
+                          }
+                        />
                       </div>
                     </section>
 
                     <div className="client__container__field">
                       <label className="client__label">
-                        Front channel logout uri
+                        {localization.fields['frontChannelLogoutUri'].label}
                       </label>
                       <input
                         type="text"
                         name="client.frontChannelLogoutUri"
                         defaultValue={client.frontChannelLogoutUri ?? ''}
                         className="client__input"
-                        ref={register}
+                        placeholder={
+                          localization.fields['frontChannelLogoutUri']
+                            .placeholder
+                        }
+                        title={
+                          localization.fields['frontChannelLogoutUri'].helpText
+                        }
+                        ref={register({
+                          required: false,
+                          validate: ValidationUtils.validateUrl,
+                        })}
                       />
                       <HelpBox
-                        helpText="Specifies logout URI at client for HTTP based front-channel logout."
+                        helpText={
+                          localization.fields['frontChannelLogoutUri'].helpText
+                        }
                         helpLinkText="See the OIDC Connect Session Management spec for more details."
                         helpLink="https://openid.net/specs/openid-connect-session-1_0.html"
+                      />
+                      <ErrorMessage
+                        as="span"
+                        errors={errors}
+                        name="client.frontChannelLogoutUri"
+                        message={
+                          localization.fields['frontChannelLogoutUri']
+                            .errorMessage
+                        }
                       />
                     </div>
 
                     <div className="client__container__field">
                       <label className="client__label">
-                        Rair wise subject salt
+                        {localization.fields['pairWiseSubjectSalt'].label}
                       </label>
                       <input
                         type="text"
@@ -611,28 +731,43 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         className="client__input"
                         name="client.pairWiseSubjectSalt"
                         ref={register}
+                        title={
+                          localization.fields['pairWiseSubjectSalt'].helpText
+                        }
                       />
-                      <HelpBox helpText="Salt value used in pair-wise subjectId generation for users of this client." />
+                      <HelpBox
+                        helpText={
+                          localization.fields['pairWiseSubjectSalt'].helpText
+                        }
+                      />
                     </div>
 
                     <div className="client__container__field">
-                      <label className="client__label">User code type</label>
+                      <label className="client__label">
+                        {localization.fields['userCodeType'].label}
+                      </label>
                       <input
                         type="text"
                         defaultValue={client.userCodeType ?? ''}
                         name="client.userCodeType"
                         className="client__input"
                         ref={register}
+                        title={localization.fields['userCodeType'].helpText}
                       />
-                      <HelpBox helpText="Specifies the type of user code to use for the client. Otherwise falls back to default" />
+                      <HelpBox
+                        helpText={localization.fields['userCodeType'].helpText}
+                      />
                     </div>
 
                     <div className="client__container__field">
-                      <label className="client__label">Access Token Type</label>
+                      <label className="client__label">
+                        {localization.fields['accessTokenType'].label}
+                      </label>
                       <select
                         name="client.accessTokenType"
                         className="client__select"
                         ref={register({ required: true })}
+                        title={localization.fields['accessTokenType'].helpText}
                       >
                         <option
                           value={0}
@@ -647,19 +782,25 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                           Reference
                         </option>
                       </select>
-                      <HelpBox helpText="Specifies whether the access token is a reference token or a self contained JWT token (defaults to Jwt)." />
+                      <HelpBox
+                        helpText={
+                          localization.fields['accessTokenType'].helpText
+                        }
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="client.accessTokenType"
-                        message="Access Token Type is required"
+                        message={
+                          localization.fields['accessTokenType'].errorMessage
+                        }
                       />
                     </div>
 
                     {/* Number inputs */}
                     <div className="client__container__field">
                       <label className="client__label">
-                        Access Token Lifetime
+                        {localization.fields['accessTokenLifetime'].label}
                       </label>
 
                       <input
@@ -668,18 +809,28 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         name="client.accessTokenLifetime"
                         defaultValue={client.accessTokenLifetime}
                         className="client__input"
+                        title={
+                          localization.fields['accessTokenLifetime'].helpText
+                        }
                       />
-                      <HelpBox helpText="Lifetime of access token in seconds (defaults to 3600 seconds / 1 hour)" />
+                      <HelpBox
+                        helpText={
+                          localization.fields['accessTokenLifetime'].helpText
+                        }
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="client.accessTokenLifetime"
-                        message="Access Token Lifetime is required"
+                        message={
+                          localization.fields['accessTokenLifetime']
+                            .errorMessage
+                        }
                       />
                     </div>
                     <div className="client__container__field">
                       <label className="client__label">
-                        Authorization code lifetime
+                        {localization.fields['authorizationCodeLifetime'].label}
                       </label>
                       <input
                         type="number"
@@ -687,35 +838,56 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         defaultValue={client.authorizationCodeLifetime}
                         ref={register({ required: true, min: 0 })}
                         className="client__input"
+                        title={
+                          localization.fields['authorizationCodeLifetime']
+                            .helpText
+                        }
                       />
-                      <HelpBox helpText="Lifetime of authorization code in seconds (defaults to 300 seconds / 5 minutes)" />
+                      <HelpBox
+                        helpText={
+                          localization.fields['authorizationCodeLifetime']
+                            .helpText
+                        }
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="client.authorizationCodeLifetime"
-                        message="Authorization code lifetime is required"
+                        message={
+                          localization.fields['authorizationCodeLifetime']
+                            .errorMessage
+                        }
                       />
                     </div>
                     <div className="client__container__field">
-                      <label className="client__label">Consent lifetime</label>
+                      <label className="client__label">
+                        {localization.fields['consentLifetime'].label}
+                      </label>
                       <input
                         type="number"
                         name="client.consentLifetime"
                         defaultValue={client.consentLifetime ?? ''}
                         className="client__input"
                         ref={register({ min: 0 })}
+                        title={localization.fields['consentLifetime'].helpText}
                       />
-                      <HelpBox helpText="Lifetime of a user consent in seconds. Defaults to null (no expiration)." />
+                      <HelpBox
+                        helpText={
+                          localization.fields['consentLifetime'].helpText
+                        }
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="client.consentLifetime"
-                        message="Value can not be negative"
+                        message={
+                          localization.fields['consentLifetime'].errorMessage
+                        }
                       />
                     </div>
                     <div className="client__container__field">
                       <label className="client__label">
-                        Device code lifetime
+                        {localization.fields['deviceCodeLifetime'].label}
                       </label>
                       <input
                         type="number"
@@ -723,42 +895,66 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         name="client.deviceCodeLifetime"
                         defaultValue={client.deviceCodeLifetime}
                         className="client__input"
+                        title={
+                          localization.fields['deviceCodeLifetime'].helpText
+                        }
+                        placeholder={
+                          localization.fields['deviceCodeLifetime'].placeholder
+                        }
                       />
-                      <HelpBox helpText="Lifetime to device code in seconds (defaults to 300 seconds / 5 minutes)" />
+                      <HelpBox
+                        helpText={
+                          localization.fields['deviceCodeLifetime'].helpText
+                        }
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="client.deviceCodeLifetime"
-                        message="Device code lifetime is required"
+                        message={
+                          localization.fields['deviceCodeLifetime'].errorMessage
+                        }
                       />
                     </div>
 
                     <div className="client__container__field">
-                      <label className="client__label">User Sso Lifetime</label>
+                      <label className="client__label">
+                        {localization.fields['userSsoLifetime'].label}
+                      </label>
                       <input
                         type="number"
                         defaultValue={client.userSsoLifetime ?? ''}
                         name="client.userSsoLifetime"
                         className="client__input"
                         ref={register({ min: 0 })}
+                        title={localization.fields['userSsoLifetime'].helpText}
                       />
-                      <HelpBox helpText="The maximum duration (in seconds) since the last time the user authenticated. (Default null)" />
+                      <HelpBox
+                        helpText={
+                          localization.fields['userSsoLifetime'].helpText
+                        }
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="client.userSsoLifetime"
-                        message="Value can not be negative"
+                        message={
+                          localization.fields['userSsoLifetime'].errorMessage
+                        }
                       />
                     </div>
 
                     <div className="client__container__field">
                       <label className="client__label">
-                        Refresh Token Usage
+                        {localization.fields['refreshTokenUsage'].label}
                       </label>
                       <select
                         name="client.refreshTokenUsage"
                         className="client__select"
                         ref={register({ required: true })}
+                        title={
+                          localization.fields['refreshTokenUsage'].helpText
+                        }
                       >
                         <option
                           value={0}
@@ -774,19 +970,23 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         </option>
                       </select>
                       <HelpBox
-                        helpText='"ReUse" the refresh token handle will stay the same when refreshing tokens. 
-                    "OneTime" the refresh token handle will be updated when refreshing tokens. This is the default'
+                        helpText={
+                          localization.fields['refreshTokenUsage'].helpText
+                        }
                       />
                     </div>
 
                     <div className="client__container__field">
                       <label className="client__label">
-                        Refresh token expiration
+                        {localization.fields['refreshTokenExpiration'].label}
                       </label>
                       <select
                         name="client.refreshTokenExpiration"
                         className="client__select"
                         ref={register({ required: true })}
+                        title={
+                          localization.fields['refreshTokenExpiration'].helpText
+                        }
                       >
                         <option
                           value={0}
@@ -802,15 +1002,18 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         </option>
                       </select>
                       <HelpBox
-                        helpText="Absolute the refresh token will expire on a fixed point in time (specified by the AbsoluteRefreshTokenLifetime)
-
-Sliding when refreshing the token, the lifetime of the refresh token will be renewed (by the amount specified in SlidingRefreshTokenLifetime). The lifetime will not exceed AbsoluteRefreshTokenLifetime."
+                        helpText={
+                          localization.fields['refreshTokenExpiration'].helpText
+                        }
                       />
                     </div>
 
                     <div className="client__container__field">
                       <label className="client__label">
-                        Sliding refresh token lifetime
+                        {
+                          localization.fields['slidingRefreshTokenLifetime']
+                            .label
+                        }
                       </label>
                       <input
                         type="number"
@@ -818,19 +1021,38 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         name="client.slidingRefreshTokenLifetime"
                         className="client__input"
                         ref={register({ min: 0 })}
+                        title={
+                          localization.fields['slidingRefreshTokenLifetime']
+                            .helpText
+                        }
+                        placeholder={
+                          localization.fields['slidingRefreshTokenLifetime']
+                            .placeholder
+                        }
                       />
-                      <HelpBox helpText="Sliding lifetime of a refresh token in seconds. Defaults to 1296000 seconds / 15 days" />
+                      <HelpBox
+                        helpText={
+                          localization.fields['slidingRefreshTokenLifetime']
+                            .helpText
+                        }
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="client.slidingRefreshTokenLifetime"
-                        message="Value can not be negative"
+                        message={
+                          localization.fields['slidingRefreshTokenLifetime']
+                            .errorMessage
+                        }
                       />
                     </div>
 
                     <div className="client__container__field">
                       <label className="client__label">
-                        Absolute Refresh Token Lifetime
+                        {
+                          localization.fields['absoluteRefreshTokenLifetime']
+                            .label
+                        }
                       </label>
                       <input
                         type="number"
@@ -838,19 +1060,35 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         name="client.absoluteRefreshTokenLifetime"
                         defaultValue={client.absoluteRefreshTokenLifetime}
                         className="client__input"
+                        title={
+                          localization.fields['absoluteRefreshTokenLifetime']
+                            .helpText
+                        }
+                        placeholder={
+                          localization.fields['absoluteRefreshTokenLifetime']
+                            .placeholder
+                        }
                       />
-                      <HelpBox helpText="Maximum lifetime of a refresh token in seconds. Defaults to 2592000 seconds / 30 days" />
+                      <HelpBox
+                        helpText={
+                          localization.fields['absoluteRefreshTokenLifetime']
+                            .helpText
+                        }
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="client.absoluteRefreshTokenLifetime"
-                        message="Absolute Refresh Token Lifetime is required"
+                        message={
+                          localization.fields['identityTokenLifetime']
+                            .errorMessage
+                        }
                       />
                     </div>
 
                     <div className="client__container__field">
                       <label className="client__label">
-                        Identity token lifetime
+                        {localization.fields['identityTokenLifetime'].label}
                       </label>
                       <input
                         type="number"
@@ -858,18 +1096,34 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         defaultValue={client.identityTokenLifetime}
                         ref={register({ required: true, min: 0 })}
                         className="client__input"
+                        title={
+                          localization.fields['identityTokenLifetime'].helpText
+                        }
+                        placeholder={
+                          localization.fields['identityTokenLifetime']
+                            .placeholder
+                        }
                       />
-                      <HelpBox helpText="Lifetime to identity token in seconds (defaults to 300 seconds / 5 minutes)" />
+                      <HelpBox
+                        helpText={
+                          localization.fields['identityTokenLifetime'].helpText
+                        }
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="client.identityTokenLifetime"
-                        message="Key is required"
+                        message={
+                          localization.fields['identityTokenLifetime']
+                            .errorMessage
+                        }
                       />
                     </div>
 
                     <div className="client__container__field">
-                      <label className="client__label">Protocol Type</label>
+                      <label className="client__label">
+                        {localization.fields['protocolType'].label}
+                      </label>
                       <input
                         ref={register({ required: true, min: 0 })}
                         type="text"
@@ -878,19 +1132,27 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                           client.protocolType ? client.protocolType : 'oidc'
                         }
                         className="client__input"
+                        placeholder={
+                          localization.fields['protocolType'].placeholder
+                        }
+                        title={localization.fields['protocolType'].helpText}
                       />
-                      <HelpBox helpText="Typically set to oidc" />
+                      <HelpBox
+                        helpText={localization.fields['protocolType'].helpText}
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="client.protocolType"
-                        message="Protocol Type is required"
+                        message={
+                          localization.fields['protocolType'].errorMessage
+                        }
                       />
                     </div>
 
                     <div className="client__container__field">
                       <label className="client__label">
-                        Client claims prefix
+                        {localization.fields['clientClaimsPrefix'].label}
                       </label>
                       <input
                         ref={register}
@@ -902,20 +1164,35 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                             : 'client__'
                         }
                         className="client__input"
+                        placeholder={
+                          localization.fields['clientClaimsPrefix'].placeholder
+                        }
+                        title={
+                          localization.fields['clientClaimsPrefix'].helpText
+                        }
                       />
-                      <HelpBox helpText="If set, the prefix client claim types will be prefixed with. Defaults to client_. The intent is to make sure they don’t accidentally collide with user claims." />
+                      <HelpBox
+                        helpText={
+                          localization.fields['clientClaimsPrefix'].helpText
+                        }
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="client.clientClaimsPrefix"
-                        message="Client claims prefix is required"
+                        message={
+                          localization.fields['clientClaimsPrefix'].errorMessage
+                        }
                       />
                     </div>
 
                     {/* Checkboxes */}
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Allow access Token Via Browser
+                        {
+                          localization.fields['allowAccessTokenViaBrowser']
+                            .label
+                        }
                       </label>
                       <input
                         type="checkbox"
@@ -923,12 +1200,21 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         defaultChecked={client.allowAccessTokenViaBrowser}
                         className="client__input"
                         ref={register}
+                        title={
+                          localization.fields['allowAccessTokenViaBrowser']
+                            .helpText
+                        }
                       />
-                      <HelpBox helpText="Specifies whether this client is allowed to receive access tokens via the browser. This is useful to harden flows that allow multiple response types (e.g. by disallowing a hybrid flow client that is supposed to use code id_token to add the token response type and thus leaking the token to the browser." />
+                      <HelpBox
+                        helpText={
+                          localization.fields['allowAccessTokenViaBrowser']
+                            .helpText
+                        }
+                      />
                     </div>
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Allow offline access
+                        {localization.fields['allowOfflineAccess'].label}
                       </label>
                       <input
                         name="client.allowOfflineAccess"
@@ -936,12 +1222,19 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         defaultChecked={client.allowOfflineAccess}
                         className="client__input"
                         ref={register}
+                        title={
+                          localization.fields['allowOfflineAccess'].helpText
+                        }
                       />
-                      <HelpBox helpText="Specifies whether this client can request refresh tokens (be requesting the offline_access scope)" />
+                      <HelpBox
+                        helpText={
+                          localization.fields['allowOfflineAccess'].helpText
+                        }
+                      />
                     </div>
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Allow plain text Pkce
+                        {localization.fields['allowPlainTextPkce'].label}
                       </label>
                       <input
                         name="client.allowPlainTextPkce"
@@ -949,12 +1242,19 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         defaultChecked={client.allowPlainTextPkce}
                         className="client__input"
                         ref={register}
+                        title={
+                          localization.fields['allowPlainTextPkce'].helpText
+                        }
                       />
-                      <HelpBox helpText="Specifies whether clients using PKCE can use a plain text code challenge (not recommended)" />
+                      <HelpBox
+                        helpText={
+                          localization.fields['allowPlainTextPkce'].helpText
+                        }
+                      />
                     </div>
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Allow remember consent
+                        {localization.fields['allowRememberConsent'].label}
                       </label>
                       <input
                         name="client.allowRememberConsent"
@@ -962,12 +1262,23 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         defaultChecked={client.allowRememberConsent}
                         className="client__input"
                         ref={register}
+                        title={
+                          localization.fields['allowRememberConsent'].helpText
+                        }
                       />
-                      <HelpBox helpText="Specifies whether user can choose to store consent decisions." />
+                      <HelpBox
+                        helpText={
+                          localization.fields['allowRememberConsent'].helpText
+                        }
+                      />
                     </div>
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Always include user claims in Id token
+                        {
+                          localization.fields[
+                            'alwaysIncludeUserClaimsInIdToken'
+                          ].label
+                        }
                       </label>
                       <input
                         type="checkbox"
@@ -975,12 +1286,23 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         defaultChecked={client.alwaysIncludeUserClaimsInIdToken}
                         className="client__input"
                         ref={register}
+                        title={
+                          localization.fields[
+                            'alwaysIncludeUserClaimsInIdToken'
+                          ].helpText
+                        }
                       />
-                      <HelpBox helpText="When requesting both an id token and access token, should the user claims always be added to the id token instead of requring the client to use the userinfo endpoint. Default is false." />
+                      <HelpBox
+                        helpText={
+                          localization.fields[
+                            'alwaysIncludeUserClaimsInIdToken'
+                          ].helpText
+                        }
+                      />
                     </div>
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Always send client claims
+                        {localization.fields['alwaysSendClientClaims'].label}
                       </label>
                       <input
                         type="checkbox"
@@ -988,13 +1310,24 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         defaultChecked={client.alwaysSendClientClaims}
                         className="client__input"
                         ref={register}
+                        title={
+                          localization.fields['alwaysSendClientClaims'].helpText
+                        }
                       />
-                      <HelpBox helpText="If set, the client claims will be sent for every flow. If not, only for client credentials flow (default is false)" />
+                      <HelpBox
+                        helpText={
+                          localization.fields['alwaysSendClientClaims'].helpText
+                        }
+                      />
                     </div>
 
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Back channel logout session required
+                        {
+                          localization.fields[
+                            'backChannelLogoutSessionRequired'
+                          ].label
+                        }
                       </label>
                       <input
                         type="checkbox"
@@ -1002,13 +1335,24 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         defaultChecked={client.backChannelLogoutSessionRequired}
                         className="client__input"
                         ref={register}
+                        title={
+                          localization.fields[
+                            'backChannelLogoutSessionRequired'
+                          ].helpText
+                        }
                       />
-                      <HelpBox helpText="Specifies if the user’s session id should be sent in the request to the BackChannelLogoutUri" />
+                      <HelpBox
+                        helpText={
+                          localization.fields[
+                            'backChannelLogoutSessionRequired'
+                          ].helpText
+                        }
+                      />
                     </div>
 
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Enable local login
+                        {localization.fields['enableLocalLogin'].helpText}
                       </label>
                       <input
                         type="checkbox"
@@ -1016,13 +1360,22 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         className="client__input"
                         name="client.enableLocalLogin"
                         ref={register}
+                        title={localization.fields['enableLocalLogin'].helpText}
                       />
-                      <HelpBox helpText="Specifies if this client can use local accounts, or external IdPs only" />
+                      <HelpBox
+                        helpText={
+                          localization.fields['enableLocalLogin'].helpText
+                        }
+                      />
                     </div>
 
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Front channel logout session required
+                        {
+                          localization.fields[
+                            'frontChannelLogoutSessionRequired'
+                          ].label
+                        }
                       </label>
                       <input
                         type="checkbox"
@@ -1032,25 +1385,41 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         }
                         className="client__input"
                         ref={register}
+                        title={
+                          localization.fields[
+                            'frontChannelLogoutSessionRequired'
+                          ].helpText
+                        }
                       />
-                      <HelpBox helpText="Specifies if the user’s session id should be sent to the FrontChannelLogoutUri" />
+                      <HelpBox
+                        helpText={
+                          localization.fields[
+                            'frontChannelLogoutSessionRequired'
+                          ].helpText
+                        }
+                      />
                     </div>
 
                     <div className="client__container__checkbox__field">
-                      <label className="client__label">Include Jwt Id</label>
+                      <label className="client__label">
+                        {localization.fields['includeJwtId'].label}
+                      </label>
                       <input
                         type="checkbox"
                         defaultChecked={client.includeJwtId}
                         className="client__input"
                         name="client.includeJwtId"
                         ref={register}
+                        title={localization.fields['includeJwtId'].helpText}
                       />
-                      <HelpBox helpText="Specifies whether JWT access tokens should have an embedded unique ID (via the jti claim)" />
+                      <HelpBox
+                        helpText={localization.fields['includeJwtId'].helpText}
+                      />
                     </div>
 
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Require Client Secret
+                        {localization.fields['requireClientSecret'].label}
                       </label>
                       <input
                         type="checkbox"
@@ -1058,25 +1427,41 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         className="client__input"
                         name="client.requireClientSecret"
                         ref={register}
+                        title={
+                          localization.fields['requireClientSecret'].helpText
+                        }
                       />
-                      <HelpBox helpText="Specifies whether this client needs a secret to request tokens from the token endpoint" />
+                      <HelpBox
+                        helpText={
+                          localization.fields['requireClientSecret'].helpText
+                        }
+                      />
                     </div>
 
                     <div className="client__container__checkbox__field">
-                      <label className="client__label">Require Pkce</label>
+                      <label className="client__label">
+                        {localization.fields['requirePkce'].label}
+                      </label>
                       <input
                         type="checkbox"
                         defaultChecked={client.requirePkce}
                         name="client.requirePkce"
                         className="client__input"
                         ref={register}
+                        title={localization.fields['requirePkce'].helpText}
                       />
-                      <HelpBox helpText="Specifies whether clients using an authorization code based grant type must send a proof key" />
+                      <HelpBox
+                        helpText={localization.fields['requirePkce'].helpText}
+                      />
                     </div>
 
                     <div className="client__container__checkbox__field">
                       <label className="client__label">
-                        Update access token claims on refresh
+                        {
+                          localization.fields[
+                            'updateAccessTokenClaimsOnRefresh'
+                          ].label
+                        }
                       </label>
                       <input
                         type="checkbox"
@@ -1084,8 +1469,19 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                         name="client.updateAccessTokenClaimsOnRefresh"
                         className="client__input"
                         ref={register}
+                        title={
+                          localization.fields[
+                            'updateAccessTokenClaimsOnRefresh'
+                          ].helpText
+                        }
                       />
-                      <HelpBox helpText="Gets or sets a value indicating whether the access token (and its claims) should be updated on a refresh token request." />
+                      <HelpBox
+                        helpText={
+                          localization.fields[
+                            'updateAccessTokenClaimsOnRefresh'
+                          ].helpText
+                        }
+                      />
                     </div>
                   </div>
                 </div>
@@ -1096,8 +1492,9 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                     className="client__button__cancel"
                     type="button"
                     onClick={props.handleCancel}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    Cancel
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="client__button__container">
@@ -1105,7 +1502,8 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                     type="submit"
                     className="client__button__save"
                     disabled={isSubmitting || !available}
-                    value="Next"
+                    title={localization.buttons['save'].helpText}
+                    value={localization.buttons['save'].text}
                   />
                 </div>
               </div>

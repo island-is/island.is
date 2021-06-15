@@ -38,7 +38,7 @@ const availableFinancialStates = [
 
 export const CONNECTING_FLIGHT_GRACE_PERIOD = 48 * (1000 * 60 * 60) // 48 hours in milliseconds
 export const REYKJAVIK_FLIGHT_CODES = ['RKV', 'REK']
-export const AKUREYRI_FLIGHT_CODES = ['AK']
+export const AKUREYRI_FLIGHT_CODES = ['AEY']
 export const ALLOWED_CONNECTING_FLIGHT_CODES = ['VPN', 'GRY', 'THO']
 
 @Injectable()

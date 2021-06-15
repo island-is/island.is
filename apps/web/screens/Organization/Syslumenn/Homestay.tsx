@@ -58,7 +58,7 @@ const Homestay: Screen<HomestayProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  const pageUrl = `/stofnanir/syslumenn/heimagisting`
+  const pageUrl = `/s/syslumenn/heimagisting`
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
@@ -99,10 +99,6 @@ const Homestay: Screen<HomestayProps> = ({
         {
           title: 'Ísland.is',
           href: linkResolver('homepage').href,
-        },
-        {
-          title: n('organizations', 'Stofnanir'),
-          href: linkResolver('organizations').href,
         },
         {
           title: organizationPage.title,

@@ -4,9 +4,10 @@
 
 import deepmerge from 'deepmerge'
 import isArray from 'lodash/isArray'
+import get from 'lodash/get'
 import HtmlParser from 'react-html-parser'
 
-import { shouldShowFormItem } from '@island.is/application/core'
+import { shouldShowFormItem } from './conditionUtils'
 import { Field, RecordObject } from '../types/Fields'
 import { Application, ExternalData, FormValue } from '../types/Application'
 import {
@@ -34,6 +35,10 @@ const containsArray = (obj: RecordObject) => {
   return contains
 }
 
+export function getErrorViaPath(obj: RecordObject, path: string): string {
+  return get(obj, path) as string
+}
+
 export function getValueViaPath(
   obj: RecordObject,
   path: string,
@@ -41,7 +46,7 @@ export function getValueViaPath(
 ): unknown | undefined {
   // Errors from dataSchema with array of object looks like e.g. `{ 'periods[1].startDate': 'error message' }`
   if (path.match(/.\[\d\]\../g) && !containsArray(obj)) {
-    return obj?.[path]
+    return obj?.[path] ?? defaultValue
   }
 
   // For the rest of the case, we are into e.g. `personalAllowance.usePersonalAllowance`
@@ -207,8 +212,6 @@ export type MessageFormatter = (
   values?: StaticTextObject['values'],
 ) => string
 
-type ValueOf<T> = T[keyof T]
-
 const handleMessageFormatting = (
   message: StaticText,
   formatMessage: MessageFormatter,
@@ -270,28 +273,36 @@ export function formatAndParseAsHTML(
 // notPartOfRepeater -> -1
 // periods[5ab33f1].id -> -1
 export function extractRepeaterIndexFromField(field: Field): number {
-  if (!field.isPartOfRepeater) {
+  if (!field?.isPartOfRepeater) {
     return -1
   }
+
   let repeaterIndex = ''
   let foundBracketOpen = false
+
   for (let i = 0; i < field.id.length; i++) {
     const char = field.id.charAt(i)
+
     if (char === ']') {
       break
     }
+
     if (!foundBracketOpen && char === '[') {
       foundBracketOpen = true
     } else if (foundBracketOpen) {
       const partOfIndex = parseInt(char, 10)
+
       if (isNaN(partOfIndex)) {
         return -1
       }
+
       repeaterIndex += char
     }
   }
+
   if (repeaterIndex.length) {
     return parseInt(repeaterIndex, 10)
   }
+
   return -1
 }

@@ -44,7 +44,6 @@ interface TrackProps {
   step?: number
   snap?: boolean
   trackStyle?: CSSProperties
-  calculateCellStyle: (index: number) => CSSProperties
   showLabel?: boolean
   showMinMaxLabels?: boolean
   showRemainderOverlay?: boolean
@@ -62,7 +61,9 @@ interface TrackProps {
     end: { date: string; message: string }
   }
   currentIndex: number
-  onChange?: (index: number) => void
+  calculateCellStyle(index: number): CSSProperties
+  onChange?(index: number): void
+  onChangeEnd?(index: number): void
 }
 
 const Slider = ({
@@ -71,7 +72,6 @@ const Slider = ({
   step = 0.5,
   snap = true,
   trackStyle,
-  calculateCellStyle,
   showLabel = false,
   showMinMaxLabels = false,
   showRemainderOverlay = true,
@@ -80,7 +80,9 @@ const Slider = ({
   label,
   rangeDates,
   currentIndex,
+  calculateCellStyle,
   onChange,
+  onChangeEnd,
 }: TrackProps) => {
   const [isDragging, setIsDragging] = useState(false)
   const ref = useRef(null)
@@ -105,14 +107,17 @@ const Slider = ({
   }, [isDragging, x])
 
   const tooltipStyle = { transform: `translateX(${x}px)` }
+
   const thumbStyle = {
     transform: `translateX(${dragX.current == null ? x : dragX.current}px)`,
     transition: isDragging ? 'none' : '',
   }
+
   const remainderStyle = {
     left: `${dragX.current == null ? x : dragX.current}px`,
     transition: isDragging ? 'none' : '',
   }
+
   const progressStyle = {
     right: `${dragX.current == null ? x : dragX.current}px`,
     transition: isDragging ? 'none' : '',
@@ -122,14 +127,17 @@ const Slider = ({
   const remainderRef = React.useRef<HTMLDivElement>(null)
   const progressRef = React.useRef<HTMLDivElement>(null)
 
+  const convertDeltaToIndex = (delta: number) => {
+    const currentX = x + delta
+
+    dragX.current = Math.max(min * sizePerCell, Math.min(size.width, currentX))
+
+    return roundByNum(dragX.current / sizePerCell, step)
+  }
+
   const dragBind = useDrag({
     onDragMove(deltaX) {
-      const currentX = x + deltaX
-      dragX.current = Math.max(
-        min * sizePerCell,
-        Math.min(size.width, currentX),
-      )
-      const index = roundByNum(dragX.current / sizePerCell, step)
+      const index = convertDeltaToIndex(deltaX)
 
       if (onChange && index !== indexRef.current) {
         onChange(index)
@@ -150,8 +158,15 @@ const Slider = ({
     onDragStart() {
       setIsDragging(true)
     },
-    onDragEnd() {
+    onDragEnd(deltaX) {
       dragX.current = undefined
+
+      if (onChangeEnd) {
+        const index = convertDeltaToIndex(deltaX)
+
+        onChangeEnd?.(index)
+      }
+
       setIsDragging(false)
     },
   })
@@ -252,34 +267,36 @@ const Slider = ({
         )}
       </Box>
 
-      {rangeDates && (
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          width="full"
-          marginTop={9}
-        >
-          <Box>
-            <Text color="blue400" variant="eyebrow">
-              {rangeDates.start.message}
-            </Text>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        width="full"
+        marginTop={9}
+      >
+        {rangeDates && (
+          <>
+            <Box>
+              <Text color="blue400" variant="eyebrow">
+                {rangeDates.start.message}
+              </Text>
 
-            <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
-              {rangeDates.start.date}
-            </Text>
-          </Box>
+              <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
+                {rangeDates.start.date}
+              </Text>
+            </Box>
 
-          <Box textAlign="right">
-            <Text color="blue400" variant="eyebrow">
-              {rangeDates.end.message}
-            </Text>
+            <Box textAlign="right">
+              <Text color="blue400" variant="eyebrow">
+                {rangeDates.end.message}
+              </Text>
 
-            <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
-              {rangeDates.end.date}
-            </Text>
-          </Box>
-        </Box>
-      )}
+              <Text color="blue400" variant="eyebrow" fontWeight="semiBold">
+                {rangeDates.end.date}
+              </Text>
+            </Box>
+          </>
+        )}
+      </Box>
     </Box>
   )
 }

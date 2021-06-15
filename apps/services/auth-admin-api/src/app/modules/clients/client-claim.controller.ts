@@ -13,29 +13,49 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentUser,
+} from '@island.is/auth-nest-tools'
+import { AuthAdminScope } from '@island.is/auth/scopes'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { environment } from '../../../environments/'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+const namespace = `${environment.audit.defaultNamespace}/client-claim`
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('client-claim')
 @Controller('backend/client-claim')
+@Audit({ namespace })
 export class ClientClaimController {
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(
+    private readonly clientsService: ClientsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   /** Adds new claim to client */
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientClaim })
+  @Audit<ClientClaim>({
+    resources: (claim) => claim.clientId,
+    meta: (claim) => ({ type: claim.type, value: claim.value }),
+  })
   async create(@Body() claim: ClientClaimDTO): Promise<ClientClaim> {
-    return await this.clientsService.addClaim(claim)
+    return this.clientsService.addClaim(claim)
   }
 
   /** Removes a claim from client */
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete(':clientId/:claimType/:claimValue')
   @ApiCreatedResponse()
   async delete(
     @Param('clientId') clientId: string,
     @Param('claimType') claimType: string,
     @Param('claimValue') claimValue: string,
+    @CurrentUser() user: User,
   ): Promise<number> {
     if (!clientId || !claimType || !claimValue) {
       throw new BadRequestException(
@@ -43,10 +63,14 @@ export class ClientClaimController {
       )
     }
 
-    return await this.clientsService.removeClaim(
-      clientId,
-      claimType,
-      claimValue,
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'delete',
+        namespace,
+        resources: `${clientId}/${claimType}/${claimValue}`,
+      },
+      this.clientsService.removeClaim(clientId, claimType, claimValue),
     )
   }
 }

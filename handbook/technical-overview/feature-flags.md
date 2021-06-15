@@ -6,7 +6,7 @@ If you want to introduce something behind a feature flag you can follow these st
 
 1. Ask someone from DevOps for invite to ConfigCat.
 2. Once you're in (https://app.configcat.com/) you can add your feature flag. The initial values should always be "On" in Dev and (probably always to start with) "Off" in Production and Staging.
-3. Make sure that the CONFIGCAT_SDK_KEY environment variable is in `.env.secret` in the root of the repository. You can fetch it by calling `./scripts/secrets.sh configcat`.
+3. Make sure that the CONFIGCAT_SDK_KEY environment variable is `export`ed in `.env.secret` in the root of the repository. You can fetch it by calling for example `yarn get-secrets service-portal`.
 4. Start using your flag by using the package `@island.is/feature-flags`.
 
 ## Naming convention

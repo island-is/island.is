@@ -27,7 +27,7 @@ describe('PublicFlightController', () => {
       {
         id: 'eb5f2db9-fa03-4382-bb3b-401fd86f8d59',
         origin: 'REK',
-        destination: 'AK',
+        destination: 'AEY',
         originalPrice: 100000,
         discountPrice: 60000,
         date: new Date('2021-10-05T14:48:00.000Z'),
@@ -91,7 +91,7 @@ describe('PublicFlightController', () => {
       flightLegs: [
         {
           origin: 'REK',
-          destination: 'AK',
+          destination: 'AEY',
           originalPrice: 100000,
           discountPrice: 60000,
           date: new Date('2021-10-05T14:48:00.000Z'),

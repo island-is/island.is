@@ -1,15 +1,33 @@
-export enum UserRole {
-  PROSECUTOR = 'PROSECUTOR',
-  REGISTRAR = 'REGISTRAR',
-  JUDGE = 'JUDGE',
-  ADMIN = 'ADMIN',
+import { OptionsType, GroupedOptionsType } from 'react-select'
+
+export enum Feature {
+  NONE = 'NONE', // must be at least one
+  R_CASES = 'R_CASES',
+}
+
+export enum InstitutionType {
+  PROSECUTORS_OFFICE = 'PROSECUTORS_OFFICE',
+  COURT = 'COURT',
 }
 
 export interface Institution {
   id: string
   created: string
   modified: string
+  type: InstitutionType
   name: string
+}
+
+export const IntegratedCourts = [
+  'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf', // Héraðsdómur Reykjavíkur
+  'c9a51c9a-c0e3-4c1f-a9a2-828a3af05d1d', // Héraðsdómur Reykjaness
+]
+
+export enum UserRole {
+  PROSECUTOR = 'PROSECUTOR',
+  REGISTRAR = 'REGISTRAR',
+  JUDGE = 'JUDGE',
+  ADMIN = 'ADMIN',
 }
 
 export interface User {
@@ -50,7 +68,86 @@ export interface UpdateUser {
 export enum CaseType {
   CUSTODY = 'CUSTODY',
   TRAVEL_BAN = 'TRAVEL_BAN',
+  SEARCH_WARRANT = 'SEARCH_WARRANT',
+  BANKING_SECRECY_WAIVER = 'BANKING_SECRECY_WAIVER',
+  PHONE_TAPPING = 'PHONE_TAPPING',
+  TELECOMMUNICATIONS = 'TELECOMMUNICATIONS',
+  TRACKING_EQUIPMENT = 'TRACKING_EQUIPMENT',
+  PSYCHIATRIC_EXAMINATION = 'PSYCHIATRIC_EXAMINATION',
+  SOUND_RECORDING_EQUIPMENT = 'SOUND_RECORDING_EQUIPMENT',
+  AUTOPSY = 'AUTOPSY',
+  BODY_SEARCH = 'BODY_SEARCH',
+  INTERNET_USAGE = 'INTERNET_USAGE',
+  OTHER = 'OTHER',
 }
+
+export enum ReadableCaseType {
+  CUSTODY = 'gæsluvarðhald',
+  TRAVEL_BAN = 'farbann',
+  SEARCH_WARRANT = 'húsleit',
+  BANKING_SECRECY_WAIVER = 'rof bankaleyndar',
+  PHONE_TAPPING = 'símhlustun',
+  TELECOMMUNICATIONS = 'upplýsingar um fjarskiptasamskipti',
+  TRACKING_EQUIPMENT = 'eftirfararbúnaður',
+  PSYCHIATRIC_EXAMINATION = 'geðrannsókn',
+  SOUND_RECORDING_EQUIPMENT = 'hljóðupptökubúnaði komið fyrir',
+  AUTOPSY = 'krufning',
+  BODY_SEARCH = 'leit og líkamsrannsókn',
+  INTERNET_USAGE = 'upplýsingar um vefnotkun',
+  OTHER = 'annað',
+}
+
+export const RCaseTypes = [
+  {
+    label: 'Húsleit',
+    value: CaseType.SEARCH_WARRANT,
+  },
+  {
+    label: 'Rof bankaleyndar',
+    value: CaseType.BANKING_SECRECY_WAIVER,
+  },
+  {
+    label: 'Símhlustun',
+    value: CaseType.PHONE_TAPPING,
+  },
+  {
+    label: 'Upplýsingar um fjarskiptasamskipti',
+    value: CaseType.TELECOMMUNICATIONS,
+  },
+  {
+    label: 'Eftirfararbúnaður',
+    value: CaseType.TRACKING_EQUIPMENT,
+  },
+  {
+    label: '',
+    options: [
+      {
+        label: 'Geðrannsókn',
+        value: CaseType.PSYCHIATRIC_EXAMINATION,
+      },
+      {
+        label: 'Hljóðupptökubúnaði komið fyrir',
+        value: CaseType.SOUND_RECORDING_EQUIPMENT,
+      },
+      {
+        label: 'Krufning',
+        value: CaseType.AUTOPSY,
+      },
+      {
+        label: 'Leit og líkamsrannsókn',
+        value: CaseType.BODY_SEARCH,
+      },
+      {
+        label: 'Upplýsingar um vefnotkun',
+        value: CaseType.INTERNET_USAGE,
+      },
+      {
+        label: 'Annað',
+        value: CaseType.OTHER,
+      },
+    ],
+  },
+]
 
 export enum CaseState {
   NEW = 'NEW',
@@ -71,6 +168,7 @@ export enum CaseTransition {
   DELETE = 'DELETE',
 }
 
+/* eslint-disable @typescript-eslint/naming-convention */
 export enum CaseCustodyProvisions {
   _95_1_A = '_95_1_A', // a-lið 1. mgr. 95. gr.
   _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
@@ -81,6 +179,7 @@ export enum CaseCustodyProvisions {
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
+/* eslint-enable @typescript-eslint/naming-convention */
 
 export enum CaseCustodyRestrictions {
   ISOLATION = 'ISOLATION',
@@ -121,6 +220,7 @@ export interface Case {
   created: string
   modified: string
   type: CaseType
+  description?: string
   state: CaseState
   policeCaseNumber: string
   accusedNationalId: string
@@ -129,53 +229,64 @@ export interface Case {
   accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
+  defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  court?: string
+  court?: Institution
+  leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
-  requestedCustodyEndDate?: string
-  otherDemands?: string
+  requestedValidToDate?: string
+  demands?: string
   lawsBroken?: string
+  legalBasis?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   requestedOtherRestrictions?: string
   caseFacts?: string
-  witnessAccounts?: string
-  investigationProgress?: string
   legalArguments?: string
+  requestProsecutorOnlySession?: boolean
+  prosecutorOnlySessionRequest?: string
   comments?: string
+  caseFilesComments?: string
   prosecutor?: User
-  setCourtCaseNumberManually?: boolean
+  sharedWithProsecutorsOffice?: Institution
   courtCaseNumber?: string
   courtDate?: string
-  isCourtDateInThePast?: boolean
   courtRoom?: string
-  courtStartTime?: string
+  courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
-  policeDemands?: string
+  prosecutorDemands?: string
   courtDocuments?: string[]
-  additionToConclusion?: string
+  isAccusedAbsent?: boolean
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
+  courtCaseFacts?: string
+  courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
-  custodyEndDate?: string
-  isCustodyEndDateInThePast?: boolean
+  validToDate?: string
+  isValidToDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
-  isolationTo?: string
+  isolationToDate?: string
+  additionToConclusion?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  accusedPostponedAppealDate?: string
+  prosecutorPostponedAppealDate?: string
+  isAppealDeadlineExpired?: boolean
+  isAppealGracePeriodExpired?: boolean
   rulingDate?: string
-  judge?: User
   registrar?: User
+  judge?: User
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
+  files?: CaseFile[]
 }
 
 export enum NotificationType {
@@ -197,6 +308,7 @@ export interface Notification {
 
 export interface CreateCase {
   type: CaseType
+  description?: string
   policeCaseNumber: string
   accusedNationalId: string
   accusedName?: string
@@ -204,11 +316,15 @@ export interface CreateCase {
   accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
+  defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  court?: string
+  courtId?: string
+  leadInvestigator?: string
 }
 
 export interface UpdateCase {
+  type?: string
+  description?: string
   policeCaseNumber?: string
   accusedNationalId?: string
   accusedName?: string
@@ -216,41 +332,54 @@ export interface UpdateCase {
   accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
+  defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  court?: string
+  courtId?: string
+  leadInvestigator?: string
   arrestDate?: string
   requestedCourtDate?: string
-  requestedCustodyEndDate?: string
+  requestedValidToDate?: string
+  demands?: string
   lawsBroken?: string
+  legalBasis?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  requestedOtherRestrictions?: string
   caseFacts?: string
   legalArguments?: string
+  requestProsecutorOnlySession?: boolean
+  prosecutorOnlySessionRequest?: string
   comments?: string
+  caseFilesComments?: string
   prosecutorId?: string
-  setCourtCaseNumberManually?: boolean
+  sharedWithProsecutorsOfficeId?: string
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  courtStartTime?: string
+  courtStartDate?: string
   courtEndTime?: string
   courtAttendees?: string
-  policeDemands?: string
+  prosecutorDemands?: string
   courtDocuments?: string[]
-  additionToConclusion?: string
+  isAccusedAbsent?: boolean
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
+  courtCaseFacts?: string
+  courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
-  custodyEndDate?: string
+  validToDate?: string
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
-  isolationTo?: string
+  isolationToDate?: string
+  additionToConclusion?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  accusedPostponedAppealDate?: string | null
+  prosecutorPostponedAppealDate?: string
   registrarId?: string
   judgeId?: string
 }
@@ -279,6 +408,49 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
-export interface CreateCustodyCourtCase {
+export interface CreateCourtCase {
+  type: CaseType
   policeCaseNumber: string
+  isExtension: boolean
+}
+
+export interface PresignedPost {
+  url: string
+  fields: { [key: string]: string }
+}
+
+export interface CreatePresignedPost {
+  fileName: string
+}
+
+export interface DeleteFile {
+  id: string
+}
+
+export interface DeleteFileResponse {
+  success: boolean
+}
+
+export interface GetSignedUrl {
+  caseId: string
+  id: string
+}
+
+export interface SignedUrl {
+  url: string
+}
+
+export interface CaseFile {
+  id: string
+  created: string
+  modified: string
+  caseId: string
+  name: string
+  key: string
+  size: number
+}
+
+export interface CreateFile {
+  key: string
+  size: number
 }

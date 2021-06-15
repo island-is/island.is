@@ -21,12 +21,6 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
     false,
   ) as boolean
 
-  const currentSecurityTerms = getValueViaPath(
-    formValue,
-    'termsOfAgreement.securityTerms' as string,
-    false,
-  ) as boolean
-
   const { setValue, errors, getValues } = useFormContext()
 
   return (
@@ -55,28 +49,6 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
               </Button>
             </Link>
           </Box>
-          <Box
-            marginTop={3}
-            background="blue100"
-            padding={3}
-            borderRadius="large"
-          >
-            <Link
-              href={formatText(
-                m.termsSafetyAgreementUrl,
-                application,
-                formatMessage,
-              )}
-            >
-              <Button icon="open" iconType="outline" variant="text">
-                {formatText(
-                  m.termsSafetyAgreementTitle,
-                  application,
-                  formatMessage,
-                )}
-              </Button>
-            </Link>
-          </Box>
         </Box>
       </Box>
       <Box marginBottom={1}>
@@ -97,7 +69,7 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
                 checked={value}
                 name="termsOfAgreement.userTerms"
                 hasError={
-                  errors['termsOfAgreement.userTerms'] &&
+                  errors?.termsOfAgreement?.userTerms &&
                   getValues('termsOfAgreement.userTerms') === false
                 }
                 errorMessage={formatText(
@@ -107,43 +79,6 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
                 )}
                 label={formatText(
                   m.userAgreementOptionLabel,
-                  application,
-                  formatMessage,
-                )}
-                large
-              />
-            )
-          }}
-        />
-      </Box>
-      <Box>
-        <Controller
-          name="termsOfAgreement.securityTerms"
-          defaultValue={currentSecurityTerms}
-          rules={{ required: true }}
-          render={({ value, onChange }) => {
-            return (
-              <Checkbox
-                onChange={(e) => {
-                  onChange(e.target.checked)
-                  setValue(
-                    'termsOfAgreement.securityTerms' as string,
-                    e.target.checked,
-                  )
-                }}
-                checked={value}
-                name="termsOfAgreement.securityTerms"
-                hasError={
-                  errors['termsOfAgreement.securityTerms'] &&
-                  getValues('termsOfAgreement.securityTerms') === false
-                }
-                errorMessage={formatText(
-                  m.termsSafetyAgreementRequiredMessage,
-                  application,
-                  formatMessage,
-                )}
-                label={formatText(
-                  m.safetyAgreementOptionLabel,
                   application,
                   formatMessage,
                 )}

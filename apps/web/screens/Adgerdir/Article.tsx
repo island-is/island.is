@@ -19,7 +19,7 @@ import {
   QueryGetAdgerdirTagsArgs,
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { HeadWithSocialSharing, ChatPanel } from '@island.is/web/components'
+import { HeadWithSocialSharing } from '@island.is/web/components'
 import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
 import { Tag } from './components/UI/Tag/Tag'
 import { ProcessEntry } from './components/UI/ProcessEntry/ProcessEntry'
@@ -172,7 +172,6 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           </ContentBlock>
         </Box>
       </ColorSchemeContext.Provider>
-      <ChatPanel />
     </>
   )
 }

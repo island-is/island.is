@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common'
-
 import { ApplicationTypes } from '@island.is/application/core'
-
 import { TemplateApiModuleActionProps } from '../types'
-
 import {
   ParentalLeaveService,
   ReferenceTemplateService,
   DocumentProviderOnboardingService,
   HealthInsuranceService,
+  InstitutionCollaborationService,
   ChildrenResidenceChangeService,
+  LoginServiceService,
+  FundingGovernmentProjectsService,
+  PartyLetterService,
+  DrivingLicenseSubmissionService,
+  PartyApplicationService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -35,7 +38,13 @@ export class TemplateAPIService {
     private readonly referenceTemplateService: ReferenceTemplateService,
     private readonly documentProviderOnboardingService: DocumentProviderOnboardingService,
     private readonly healthInsuranceService: HealthInsuranceService,
+    private readonly institutionApplicationService: InstitutionCollaborationService,
     private readonly childrenResidenceChangeService: ChildrenResidenceChangeService,
+    private readonly loginServiceService: LoginServiceService,
+    private readonly fundingGovernmentProjectsService: FundingGovernmentProjectsService,
+    private readonly partyLetterService: PartyLetterService,
+    private readonly drivingLicenseSubmissionService: DrivingLicenseSubmissionService,
+    private readonly partyApplicationService: PartyApplicationService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -44,7 +53,13 @@ export class TemplateAPIService {
       | ParentalLeaveService
       | DocumentProviderOnboardingService
       | HealthInsuranceService
-      | ChildrenResidenceChangeService,
+      | InstitutionCollaborationService
+      | ChildrenResidenceChangeService
+      | LoginServiceService
+      | FundingGovernmentProjectsService
+      | PartyLetterService
+      | DrivingLicenseSubmissionService
+      | PartyApplicationService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -86,6 +101,11 @@ export class TemplateAPIService {
         )
       case ApplicationTypes.PARENTAL_LEAVE:
         return this.tryRunningActionOnService(this.parentalLeaveService, action)
+      case ApplicationTypes.INSTITUTION_COLLABORATION:
+        return this.tryRunningActionOnService(
+          this.institutionApplicationService,
+          action,
+        )
       case ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING:
         return this.tryRunningActionOnService(
           this.documentProviderOnboardingService,
@@ -99,6 +119,31 @@ export class TemplateAPIService {
       case ApplicationTypes.CHILDREN_RESIDENCE_CHANGE:
         return this.tryRunningActionOnService(
           this.childrenResidenceChangeService,
+          action,
+        )
+      case ApplicationTypes.LOGIN_SERVICE:
+        return this.tryRunningActionOnService(this.loginServiceService, action)
+      case ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS:
+        return this.tryRunningActionOnService(
+          this.fundingGovernmentProjectsService,
+          action,
+        )
+      case ApplicationTypes.PARTY_LETTER:
+        return this.tryRunningActionOnService(this.partyLetterService, action)
+
+      case ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL:
+        return this.tryRunningActionOnService(
+          this.drivingLicenseSubmissionService,
+          action,
+        )
+      case ApplicationTypes.DRIVING_LICENSE:
+        return this.tryRunningActionOnService(
+          this.drivingLicenseSubmissionService,
+          action,
+        )
+      case ApplicationTypes.PARTY_APPLICATION:
+        return this.tryRunningActionOnService(
+          this.partyApplicationService,
           action,
         )
     }

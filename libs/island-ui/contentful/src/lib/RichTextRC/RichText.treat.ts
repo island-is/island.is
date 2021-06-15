@@ -32,17 +32,20 @@ export const listItem = style({
         'ol &': {
           listStyle: 'none',
           position: 'relative',
+          paddingLeft: theme.spacing[3],
         },
         'ol ol &': {
           paddingLeft: theme.spacing[3],
         },
         'ol &:before': {
-          float: 'left',
-          margin: `2px 12px 0 0`,
+          position: 'absolute',
+          top: '2px',
+          left: '8px',
           counterIncrement: 'section',
           content: 'counters(section, ".") " "',
           color: theme.color.red400,
           fontWeight: theme.typography.semiBold,
+          transform: 'translate(-100%, 0)',
         },
         'ul &': {
           position: 'relative',
@@ -55,6 +58,8 @@ export const listItem = style({
           left: 0,
           borderRadius: '50%',
           border: `4px solid red`,
+          counterIncrement: 'none',
+          transform: 'none',
         },
         '&:not(:first-child), ul ul &:first-child, ol ol &:first-child': {
           marginTop: 12,

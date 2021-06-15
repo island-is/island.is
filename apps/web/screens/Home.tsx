@@ -25,7 +25,7 @@ import {
   Categories,
   SearchInput,
   FrontpageSlider,
-  LatestNewsSection,
+  LatestNewsSectionSlider,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
@@ -77,11 +77,22 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
           {page.featured.map(({ title, attention, thing }) => {
             const cardUrl = linkResolver(thing?.type as LinkType, [thing?.slug])
             return cardUrl?.href && cardUrl?.href.length > 0 ? (
-              <Link key={title} {...cardUrl} skipTab>
-                <Tag variant="darkerBlue" attention={attention}>
-                  {title}
-                </Tag>
-              </Link>
+              <Tag
+                key={title}
+                {...(cardUrl.href.startsWith('/')
+                  ? {
+                      CustomLink: ({ children, ...props }) => (
+                        <Link key={title} {...props} {...cardUrl}>
+                          {children}
+                        </Link>
+                      ),
+                    }
+                  : { href: cardUrl.href })}
+                variant="darkerBlue"
+                attention={attention}
+              >
+                {title}
+              </Tag>
             ) : (
               <Tag key={title} variant="darkerBlue" attention={attention}>
                 {title}
@@ -128,9 +139,9 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
         />
       </Section>
       <Section paddingTop={[8, 8, 6]} aria-labelledby="latestNewsTitle">
-        <LatestNewsSection
+        <LatestNewsSectionSlider
           label={gn('newsAndAnnouncements')}
-          labelId="latestNewsTitle"
+          readMoreText={gn('seeMore')}
           items={news}
         />
       </Section>

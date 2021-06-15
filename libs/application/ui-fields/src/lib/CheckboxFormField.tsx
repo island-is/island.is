@@ -32,14 +32,16 @@ const CheckboxFormField: FC<Props> = ({
     options,
     disabled,
     large,
+    strong,
     backgroundColor,
+    width,
   } = field
   const { formatMessage } = useLocale()
 
-  const finalOptions = useMemo(() => buildFieldOptions(options, application), [
-    options,
-    application,
-  ])
+  const finalOptions = useMemo(
+    () => buildFieldOptions(options, application, field),
+    [options, application],
+  )
 
   return (
     <div>
@@ -61,11 +63,13 @@ const CheckboxFormField: FC<Props> = ({
           disabled={disabled}
           large={large}
           name={`${id}`}
+          split={width === 'half' ? '1/2' : '1/1'}
           backgroundColor={backgroundColor}
           defaultValue={
             (getValueViaPath(application.answers, id) as string[]) ??
             getDefaultValue(field, application)
           }
+          strong={strong}
           error={error}
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,

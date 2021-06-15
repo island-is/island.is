@@ -1,14 +1,15 @@
 import React, { FC } from 'react'
-import { FieldDef } from '../types'
 import {
   Application,
   Field,
   FieldBaseProps,
-  getValueViaPath,
+  getErrorViaPath,
   RecordObject,
   SetBeforeSubmitCallback,
 } from '@island.is/application/core'
-import { useFields } from './FieldContext'
+
+import { useFields } from '../context/FieldContext'
+import { FieldDef } from '../types'
 
 const FormField: FC<{
   application: Application
@@ -35,9 +36,7 @@ const FormField: FC<{
     return null
   }
 
-  const error = getValueViaPath(errors, field.id, undefined) as
-    | string
-    | undefined
+  const error = getErrorViaPath(errors, field.id)
 
   const fieldProps: FieldBaseProps = {
     application,

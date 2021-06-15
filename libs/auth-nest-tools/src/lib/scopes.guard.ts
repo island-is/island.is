@@ -1,7 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { Reflector } from '@nestjs/core'
-import { GqlExecutionContext } from '@nestjs/graphql'
+import { getRequest } from './getRequest'
+import { SCOPES_KEY, ACTOR_SCOPES_KEY } from './scopes.decorator'
 
 @Injectable()
 export class ScopesGuard implements CanActivate {
@@ -10,31 +11,34 @@ export class ScopesGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const allowedScopes = this.reflector.get<string[]>(
-      'scopes',
+    const scopes = this.reflector.get<string[]>(
+      SCOPES_KEY,
       context.getHandler(),
     )
+    const actorScopes = this.reflector.get<string[]>(
+      ACTOR_SCOPES_KEY,
+      context.getHandler(),
+    )
+    const request = getRequest(context)
 
-    if (!allowedScopes) {
-      return true
+    if (scopes && !this.hasScope(scopes, request.auth?.scope)) {
+      return false
     }
 
-    const userScopes = this.getUserScopes(context)
+    if (
+      actorScopes &&
+      !this.hasScope(
+        actorScopes,
+        request.user?.actor ? request.user.actor.scope : request.user?.scope,
+      )
+    ) {
+      return false
+    }
 
-    const hasPermission = () =>
-      allowedScopes.every((scope) => userScopes.includes(scope))
-
-    return hasPermission()
+    return true
   }
 
-  private getUserScopes(context: ExecutionContext): string[] {
-    const request = context.getArgs()[0]
-
-    if (request) {
-      return request.user.scope
-    } else {
-      const ctx = GqlExecutionContext.create(context)
-      return ctx.getContext().req.user.scope
-    }
+  private hasScope(needScopes: string[], haveScopes: string[] = []): boolean {
+    return needScopes.some((scope) => haveScopes.includes(scope))
   }
 }

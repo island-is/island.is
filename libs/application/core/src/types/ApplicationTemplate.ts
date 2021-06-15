@@ -8,7 +8,7 @@ import {
   ApplicationStateSchema,
 } from './StateMachine'
 import { ApplicationTypes } from './ApplicationTypes'
-import { Schema } from './Form'
+import { Schema, StaticText } from './Form'
 import { AnswerValidator } from '../validation/AnswerValidator'
 
 export interface ApplicationTemplate<
@@ -18,7 +18,9 @@ export interface ApplicationTemplate<
 > {
   readonly readyForProduction?: boolean
   readonly type: ApplicationTypes
-  readonly name: string
+  readonly name: StaticText
+  readonly institution?: StaticText
+  readonly translationNamespaces?: string[]
   readonly dataSchema: Schema
   readonly stateMachineConfig: MachineConfig<
     TContext,

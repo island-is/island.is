@@ -6,9 +6,9 @@ import {
   CaseGender,
   CaseType,
 } from '@island.is/judicial-system/types'
+
 import {
   formatConclusion,
-  formatCourtCaseNumber,
   formatProsecutorCourtDateEmailNotification,
   formatCourtDateNotificationCondition,
   formatCustodyProvisions,
@@ -78,20 +78,6 @@ describe('formatCustodyProvisions', () => {
   })
 })
 
-describe('formatCourtCaseNumber', () => {
-  test('should return formatted court case number', () => {
-    // Arrange
-    const court = 'Héraðsdómur Reykjavíkur'
-    const courtCaseNumber = 'R-5/2020'
-
-    // Act
-    const res = formatCourtCaseNumber(court, courtCaseNumber)
-
-    // Assert
-    expect(res).toBe('Málsnúmer Héraðsdóms Reykjavíkur R-5/2020')
-  })
-})
-
 describe('formatConclusion', () => {
   test('should format conclusion for a rejected case', () => {
     // Arrange
@@ -129,7 +115,7 @@ describe('formatConclusion', () => {
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING
-    const custodyEndDate = new Date('2020-12-22T11:23')
+    const validToDate = new Date('2020-12-22T11:23')
     const isolation = false
     const isExtension = false
 
@@ -140,7 +126,7 @@ describe('formatConclusion', () => {
       accusedName,
       accusedGender,
       decision,
-      custodyEndDate,
+      validToDate,
       isolation,
       isExtension,
       undefined,
@@ -159,7 +145,7 @@ describe('formatConclusion', () => {
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING
-    const custodyEndDate = new Date('2020-12-22T11:23')
+    const validToDate = new Date('2020-12-22T11:23')
     const isolation = true
     const isExtension = false
 
@@ -170,7 +156,7 @@ describe('formatConclusion', () => {
       accusedName,
       accusedGender,
       decision,
-      custodyEndDate,
+      validToDate,
       isolation,
       isExtension,
       undefined,
@@ -189,10 +175,10 @@ describe('formatConclusion', () => {
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING
-    const custodyEndDate = new Date('2020-12-22T11:23')
+    const validToDate = new Date('2020-12-22T11:23')
     const isolation = true
     const isExtension = false
-    const isolationTo = new Date('2020-12-20T15:39')
+    const isolationToDate = new Date('2020-12-20T15:39')
 
     // Act
     const res = formatConclusion(
@@ -201,11 +187,11 @@ describe('formatConclusion', () => {
       accusedName,
       accusedGender,
       decision,
-      custodyEndDate,
+      validToDate,
       isolation,
       isExtension,
       undefined,
-      isolationTo,
+      isolationToDate,
     )
 
     // Assert
@@ -221,7 +207,7 @@ describe('formatConclusion', () => {
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-    const custodyEndDate = new Date('2021-01-29T13:03')
+    const validToDate = new Date('2021-01-29T13:03')
     const isolation = false
     const isExtension = false
 
@@ -232,7 +218,7 @@ describe('formatConclusion', () => {
       accusedName,
       accusedGender,
       decision,
-      custodyEndDate,
+      validToDate,
       isolation,
       isExtension,
       undefined,
@@ -311,7 +297,7 @@ describe('formatConclusion', () => {
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING
-    const custodyEndDate = new Date('2020-12-22T11:23')
+    const validToDate = new Date('2020-12-22T11:23')
     const isolation = false
     const isExtension = true
     const previousDecision = CaseDecision.ACCEPTING
@@ -323,7 +309,7 @@ describe('formatConclusion', () => {
       accusedName,
       accusedGender,
       decision,
-      custodyEndDate,
+      validToDate,
       isolation,
       isExtension,
       previousDecision,
@@ -342,7 +328,7 @@ describe('formatConclusion', () => {
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING
-    const custodyEndDate = new Date('2020-12-22T11:23')
+    const validToDate = new Date('2020-12-22T11:23')
     const isolation = false
     const isExtension = true
     const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -354,7 +340,7 @@ describe('formatConclusion', () => {
       accusedName,
       accusedGender,
       decision,
-      custodyEndDate,
+      validToDate,
       isolation,
       isExtension,
       previousDecision,
@@ -373,7 +359,7 @@ describe('formatConclusion', () => {
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-    const custodyEndDate = new Date('2020-12-22T11:23')
+    const validToDate = new Date('2020-12-22T11:23')
     const isolation = false
     const isExtension = true
     const previousDecision = CaseDecision.ACCEPTING
@@ -385,7 +371,7 @@ describe('formatConclusion', () => {
       accusedName,
       accusedGender,
       decision,
-      custodyEndDate,
+      validToDate,
       isolation,
       isExtension,
       previousDecision,
@@ -404,7 +390,7 @@ describe('formatConclusion', () => {
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-    const custodyEndDate = new Date('2020-12-22T11:23')
+    const validToDate = new Date('2020-12-22T11:23')
     const isolation = false
     const isExtension = true
     const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -416,7 +402,7 @@ describe('formatConclusion', () => {
       accusedName,
       accusedGender,
       decision,
-      custodyEndDate,
+      validToDate,
       isolation,
       isExtension,
       previousDecision,
@@ -463,7 +449,7 @@ describe('formatConclusion', () => {
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
     const decision = CaseDecision.ACCEPTING
-    const custodyEndDate = new Date('2020-12-22T11:23')
+    const validToDate = new Date('2020-12-22T11:23')
     const isolation = false
     const isExtension = false
 
@@ -474,7 +460,7 @@ describe('formatConclusion', () => {
       accusedName,
       accusedGender,
       decision,
-      custodyEndDate,
+      validToDate,
       isolation,
       isExtension,
       undefined,
@@ -566,6 +552,48 @@ describe('formatHeadsUpSmsNotification', () => {
       'Ný farbannskrafa í vinnslu. Ákærandi: Ákærandinn. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 25.01.2021, eftir kl. 19:15.',
     )
   })
+
+  test('should format heads up notification for investigation', () => {
+    // Arrange
+    const type = CaseType.BODY_SEARCH
+    const prosecutorName = 'Al Coe'
+    const arrestDate = new Date('2021-01-24T13:00')
+    const requestedCourtDate = new Date('2021-06-20T10:00')
+
+    // Act
+    const res = formatCourtHeadsUpSmsNotification(
+      type,
+      prosecutorName,
+      arrestDate,
+      requestedCourtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Ný krafa um rannsóknarheimild (leit og líkamsrannsókn) í vinnslu. Ákærandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
+    )
+  })
+
+  test('should format heads up notification for investigation of type OTHER', () => {
+    // Arrange
+    const type = CaseType.OTHER
+    const prosecutorName = 'Al Coe'
+    const arrestDate = new Date('2021-01-24T13:00')
+    const requestedCourtDate = new Date('2021-06-20T10:00')
+
+    // Act
+    const res = formatCourtHeadsUpSmsNotification(
+      type,
+      prosecutorName,
+      arrestDate,
+      requestedCourtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Ný krafa um rannsóknarheimild í vinnslu. Ákærandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
+    )
+  })
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
@@ -621,6 +649,44 @@ describe('formatReadyForCourtSmsNotification', () => {
     // Assert
     expect(res).toBe(
       'Farbannskrafa tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+    )
+  })
+
+  test('should format ready for court SMS notification for investigation', () => {
+    // Arrange
+    const type = CaseType.INTERNET_USAGE
+    const prosecutorName = 'Árni Ákærandi'
+    const court = 'Héraðsdómur Austurlands'
+
+    // Act
+    const res = formatCourtReadyForCourtSmsNotification(
+      type,
+      prosecutorName,
+      court,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um rannsóknarheimild (upplýsingar um vefnotkun) tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+    )
+  })
+
+  test('should format ready for court SMS notification for investigation of type OTHER', () => {
+    // Arrange
+    const type = CaseType.OTHER
+    const prosecutorName = 'Árni Ákærandi'
+    const court = 'Héraðsdómur Austurlands'
+
+    // Act
+    const res = formatCourtReadyForCourtSmsNotification(
+      type,
+      prosecutorName,
+      court,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um rannsóknarheimild tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
     )
   })
 })
@@ -693,6 +759,52 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir farbannskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
     )
   })
+
+  test('should format court date notification for investigation', () => {
+    // Arrange
+    const type = CaseType.SOUND_RECORDING_EQUIPMENT
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2021-12-24T10:00')
+    const courtRoom = '999'
+    const defenderName = 'Valdi Verjandi'
+
+    // Act
+    const res = formatProsecutorCourtDateEmailNotification(
+      type,
+      court,
+      courtDate,
+      courtRoom,
+      defenderName,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild (hljóðupptökubúnaði komið fyrir).<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+    )
+  })
+
+  test('should format court date notification for investigation of type OTHER', () => {
+    // Arrange
+    const type = CaseType.OTHER
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2021-12-24T10:00')
+    const courtRoom = '999'
+    const defenderName = 'Valdi Verjandi'
+
+    // Act
+    const res = formatProsecutorCourtDateEmailNotification(
+      type,
+      court,
+      courtDate,
+      courtRoom,
+      defenderName,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+    )
+  })
 })
 
 describe('formatPrisonCourtDateEmailNotification', () => {
@@ -703,7 +815,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
     const accusedGender = CaseGender.FEMALE
-    const requestedCustodyEndDate = new Date('2030-08-12T08:25')
+    const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
     const defenderName = 'Varði Varnari'
     const isExtension = false
@@ -715,7 +827,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       courtDate,
       accusedName,
       accusedGender,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       defenderName,
       isExtension,
@@ -734,7 +846,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
     const accusedGender = CaseGender.OTHER
-    const requestedCustodyEndDate = new Date('2030-08-12T08:25')
+    const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
     const defenderName = 'Vala Verja'
     const isExtension = false
@@ -746,7 +858,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       courtDate,
       accusedName,
       accusedGender,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       defenderName,
       isExtension,
@@ -765,7 +877,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
     const accusedGender = CaseGender.MALE
-    const requestedCustodyEndDate = new Date('2030-08-12T08:25')
+    const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const defenderName = 'Vala Verja'
     const isExtension = false
@@ -777,7 +889,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       courtDate,
       accusedName,
       accusedGender,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       defenderName,
       isExtension,
@@ -796,7 +908,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
     const accusedGender = CaseGender.MALE
-    const requestedCustodyEndDate = new Date('2030-08-12T08:25')
+    const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const isExtension = false
 
@@ -807,7 +919,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       courtDate,
       accusedName,
       accusedGender,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       undefined,
       isExtension,
@@ -826,7 +938,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const courtDate = new Date('2021-02-11T12:02')
     const accusedName = 'Maggi Murder'
     const accusedGender = CaseGender.MALE
-    const requestedCustodyEndDate = new Date('2030-08-12T08:25')
+    const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const defenderName = 'Vala Verja'
     const isExtension = true
@@ -838,7 +950,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       courtDate,
       accusedName,
       accusedGender,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       defenderName,
       isExtension,
@@ -923,7 +1035,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const defenderName = 'Skúli Skjöldur'
     const defenderEmail = 'shield@defend.is'
     const decision = CaseDecision.ACCEPTING
-    const custodyEndDate = new Date('2021-04-06T12:30')
+    const validToDate = new Date('2021-04-06T12:30')
     const custodyRestrictions = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
@@ -945,7 +1057,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       defenderName,
       defenderEmail,
       decision,
-      custodyEndDate,
+      validToDate,
       custodyRestrictions,
       accusedAppealDecision,
       prosecutorAppealDecision,
@@ -972,7 +1084,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const defenderName = 'Skúli Skjöldur'
     const defenderEmail = 'shield@defend.is'
     const decision = CaseDecision.REJECTING
-    const custodyEndDate = new Date('2021-04-06T12:30')
+    const validToDate = new Date('2021-04-06T12:30')
     const custodyRestrictions = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
@@ -994,7 +1106,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       defenderName,
       defenderEmail,
       decision,
-      custodyEndDate,
+      validToDate,
       custodyRestrictions,
       accusedAppealDecision,
       prosecutorAppealDecision,
@@ -1021,7 +1133,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const defenderName = null
     const defenderEmail = null
     const decision = CaseDecision.ACCEPTING
-    const custodyEndDate = new Date('2021-04-06T12:30')
+    const validToDate = new Date('2021-04-06T12:30')
     const custodyRestrictions = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
@@ -1043,7 +1155,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       defenderName,
       defenderEmail,
       decision,
-      custodyEndDate,
+      validToDate,
       custodyRestrictions,
       accusedAppealDecision,
       prosecutorAppealDecision,
@@ -1070,7 +1182,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const defenderName = null
     const defenderEmail = 'shield@defend.is'
     const decision = CaseDecision.ACCEPTING
-    const custodyEndDate = new Date('2021-04-06T12:30')
+    const validToDate = new Date('2021-04-06T12:30')
     const custodyRestrictions = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
@@ -1092,7 +1204,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       defenderName,
       defenderEmail,
       decision,
-      custodyEndDate,
+      validToDate,
       custodyRestrictions,
       accusedAppealDecision,
       prosecutorAppealDecision,
@@ -1119,12 +1231,12 @@ describe('formatPrisonRulingEmailNotification', () => {
     const defenderName = null
     const defenderEmail = 'shield@defend.is'
     const decision = CaseDecision.ACCEPTING
-    const custodyEndDate = new Date('2021-04-06T12:30')
+    const validToDate = new Date('2021-04-06T12:30')
     const custodyRestrictions = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
-    const isolationTo = new Date('2021-04-06T12:30')
+    const isolationToDate = new Date('2021-04-06T12:30')
     const accusedAppealDecision = CaseAppealDecision.APPEAL
     const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
     const judgeName = 'Dalli Dómari'
@@ -1143,7 +1255,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       defenderName,
       defenderEmail,
       decision,
-      custodyEndDate,
+      validToDate,
       custodyRestrictions,
       accusedAppealDecision,
       prosecutorAppealDecision,
@@ -1152,7 +1264,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       isExtension,
       undefined,
       additionToConclusion,
-      isolationTo,
+      isolationToDate,
     )
 
     // Assert

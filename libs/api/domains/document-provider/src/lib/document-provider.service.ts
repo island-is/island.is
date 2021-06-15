@@ -9,11 +9,11 @@ import {
   TestResult,
   Organisation,
   Helpdesk,
+  ProviderStatistics,
 } from './models'
 import { DocumentProviderClientTest } from './client/documentProviderClientTest'
 import { DocumentProviderClientProd } from './client/documentProviderClientProd'
 import {
-  CreateOrganisationInput,
   UpdateOrganisationInput,
   UpdateContactInput,
   UpdateHelpdeskInput,
@@ -21,6 +21,8 @@ import {
   CreateHelpdeskInput,
 } from './dto'
 import { OrganisationsApi, ProvidersApi } from '../../gen/fetch'
+import type { Auth } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -41,20 +43,36 @@ export class DocumentProviderService {
     private providersApi: ProvidersApi,
   ) {}
 
-  async getOrganisations(authorization: string): Promise<Organisation[]> {
-    return await this.organisationsApi
-      .organisationControllerGetOrganisations({ authorization })
+  organisationsApiWithAuth(authorization: Auth) {
+    return this.organisationsApi.withMiddleware(
+      new AuthMiddleware(authorization),
+    )
+  }
+
+  providersApiWithAuth(authorization: Auth) {
+    return this.providersApi.withMiddleware(new AuthMiddleware(authorization))
+  }
+
+  async getOrganisations(authorization: Auth): Promise<Organisation[]> {
+    return await this.organisationsApiWithAuth(authorization)
+      .organisationControllerGetOrganisations({})
       .catch(handleError)
   }
 
-  async getOrganisation(nationalId: string): Promise<Organisation> {
-    return await this.organisationsApi
+  async getOrganisation(
+    nationalId: string,
+    authorization: Auth,
+  ): Promise<Organisation> {
+    return await this.organisationsApiWithAuth(authorization)
       .organisationControllerFindByNationalId({ nationalId })
       .catch(handleError)
   }
 
-  async organisationExists(nationalId: string): Promise<boolean> {
-    const organisation = await this.organisationsApi
+  async organisationExists(
+    nationalId: string,
+    authorization: Auth,
+  ): Promise<boolean> {
+    const organisation = await this.organisationsApiWithAuth(authorization)
       .organisationControllerFindByNationalId({ nationalId })
       .catch(() => {
         //Find returns 404 error if organisation is not found. Do nothing.
@@ -63,32 +81,17 @@ export class DocumentProviderService {
     return !organisation ? false : true
   }
 
-  async createOrganisation(
-    input: CreateOrganisationInput,
-    authorization: string,
-  ): Promise<Organisation> {
-    const dto = {
-      createOrganisationDto: { ...input },
-      authorization,
-    }
-
-    return await this.organisationsApi
-      .organisationControllerCreateOrganisation(dto)
-      .catch(handleError)
-  }
-
   async updateOrganisation(
     id: string,
     organisation: UpdateOrganisationInput,
-    authorization: string,
+    authorization: Auth,
   ): Promise<Organisation> {
     const dto = {
       id,
       updateOrganisationDto: { ...organisation },
-      authorization,
     }
 
-    return await this.organisationsApi
+    return await this.organisationsApiWithAuth(authorization)
       .organisationControllerUpdateOrganisation(dto)
       .catch(handleError)
   }
@@ -96,15 +99,14 @@ export class DocumentProviderService {
   async createAdministrativeContact(
     organisationId: string,
     input: CreateContactInput,
-    authorization: string,
+    authorization: Auth,
   ): Promise<Contact> {
     const dto = {
       id: organisationId,
       createContactDto: { ...input },
-      authorization,
     }
 
-    return await this.organisationsApi
+    return await this.organisationsApiWithAuth(authorization)
       .organisationControllerCreateAdministrativeContact(dto)
       .catch(handleError)
   }
@@ -113,16 +115,15 @@ export class DocumentProviderService {
     organisationId: string,
     contactId: string,
     contact: UpdateContactInput,
-    authorization: string,
+    authorization: Auth,
   ): Promise<Contact> {
     const dto = {
       id: organisationId,
       administrativeContactId: contactId,
       updateContactDto: { ...contact },
-      authorization,
     }
 
-    return await this.organisationsApi
+    return await this.organisationsApiWithAuth(authorization)
       .organisationControllerUpdateAdministrativeContact(dto)
       .catch(handleError)
   }
@@ -130,15 +131,14 @@ export class DocumentProviderService {
   async createTechnicalContact(
     organisationId: string,
     input: CreateContactInput,
-    authorization: string,
+    authorization: Auth,
   ): Promise<Contact> {
     const dto = {
       id: organisationId,
       createContactDto: { ...input },
-      authorization,
     }
 
-    return await this.organisationsApi
+    return await this.organisationsApiWithAuth(authorization)
       .organisationControllerCreateTechnicalContact(dto)
       .catch(handleError)
   }
@@ -147,16 +147,15 @@ export class DocumentProviderService {
     organisationId: string,
     contactId: string,
     contact: UpdateContactInput,
-    authorization: string,
+    authorization: Auth,
   ): Promise<Contact> {
     const dto = {
       id: organisationId,
       technicalContactId: contactId,
       updateContactDto: { ...contact },
-      authorization,
     }
 
-    return await this.organisationsApi
+    return await this.organisationsApiWithAuth(authorization)
       .organisationControllerUpdateTechnicalContact(dto)
       .catch(handleError)
   }
@@ -164,15 +163,14 @@ export class DocumentProviderService {
   async createHelpdesk(
     organisationId: string,
     input: CreateHelpdeskInput,
-    authorization: string,
+    authorization: Auth,
   ): Promise<Helpdesk> {
     const dto = {
       id: organisationId,
       createHelpdeskDto: { ...input },
-      authorization,
     }
 
-    return await this.organisationsApi
+    return await this.organisationsApiWithAuth(authorization)
       .organisationControllerCreateHelpdesk(dto)
       .catch(handleError)
   }
@@ -181,18 +179,28 @@ export class DocumentProviderService {
     organisationId: string,
     helpdeskId: string,
     helpdesk: UpdateHelpdeskInput,
-    authorization: string,
+    authorization: Auth,
   ): Promise<Helpdesk> {
     const dto = {
       id: organisationId,
       helpdeskId: helpdeskId,
       updateHelpdeskDto: { ...helpdesk },
-      authorization,
     }
 
-    return await this.organisationsApi
+    return await this.organisationsApiWithAuth(authorization)
       .organisationControllerUpdateHelpdesk(dto)
       .catch(handleError)
+  }
+
+  async isLastModifierOfOrganisation(
+    organisationNationalId: string,
+    authorization: Auth,
+  ): Promise<boolean> {
+    return await this.organisationsApiWithAuth(
+      authorization,
+    ).organisationControllerIsLastModifierOfOrganisation({
+      nationalId: organisationNationalId,
+    })
   }
 
   //-------------------- PROVIDER --------------------------
@@ -200,12 +208,25 @@ export class DocumentProviderService {
   async createProviderOnTest(
     nationalId: string,
     clientName: string,
+    authorization: Auth,
   ): Promise<ClientCredentials> {
     // return new ClientCredentials(
     //   '5016d8d5cb6ce0758107b9969ea3c301',
     //   '7a557951364a960a608735371db61ed8ed320d6bfc59f52fe37fc08e23dbd8d1',
     //   'd6a4d279-6243-46d1-81c0-d98b825959bc',
     // )
+
+    const isLastModifier = await this.isLastModifierOfOrganisation(
+      nationalId,
+      authorization,
+    )
+
+    if (!isLastModifier) {
+      throw new ApolloError(
+        'Forbidden. User is not last modifier of organisation.',
+        '403',
+      )
+    }
 
     const result = await this.documentProviderClientTest
       .createClient(nationalId, clientName)
@@ -256,13 +277,25 @@ export class DocumentProviderService {
   async createProvider(
     nationalId: string,
     clientName: string,
-    authorization: string,
+    authorization: Auth,
   ): Promise<ClientCredentials> {
     // return new ClientCredentials(
     //   '5016d8d5cb6ce0758107b9969ea3c301',
     //   '7a557951364a960a608735371db61ed8ed320d6bfc59f52fe37fc08e23dbd8d1',
     //   'd6a4d279-6243-46d1-81c0-d98b825959bc',
     // )
+
+    const isLastModifier = await this.isLastModifierOfOrganisation(
+      nationalId,
+      authorization,
+    )
+
+    if (!isLastModifier) {
+      throw new ApolloError(
+        'Forbidden. User is not last modifier of organisation.',
+        '403',
+      )
+    }
 
     const result = await this.documentProviderClientProd
       .createClient(nationalId, clientName)
@@ -275,7 +308,7 @@ export class DocumentProviderService {
     )
 
     // Get the current organisation from nationalId
-    const organisation = await this.getOrganisation(nationalId)
+    const organisation = await this.getOrganisation(nationalId, authorization)
 
     if (!organisation) {
       throw new ApolloError('Could not find organisation.')
@@ -287,12 +320,11 @@ export class DocumentProviderService {
         externalProviderId: credentials.providerId,
         organisationId: organisation.id,
       },
-      authorization,
     }
 
-    const provider = await this.providersApi.providerControllerCreateProvider(
-      dto,
-    )
+    const provider = await this.providersApiWithAuth(
+      authorization,
+    ).providerControllerCreateProvider(dto)
 
     if (!provider) {
       throw new ApolloError('Could not create provider.')
@@ -305,7 +337,7 @@ export class DocumentProviderService {
     endpoint: string,
     providerId: string,
     xroad: boolean,
-    authorization: string,
+    authorization: Auth,
   ): Promise<AudienceAndScope> {
     // return new AudienceAndScope(
     //   'https://test-skjalaveita-island-is.azurewebsites.net',
@@ -332,17 +364,64 @@ export class DocumentProviderService {
         apiScope: audienceAndScope.scope,
         xroad,
       },
-      authorization,
     }
 
-    const updatedProvider = await this.providersApi.providerControllerUpdateProvider(
-      dto,
-    )
+    const updatedProvider = await this.providersApiWithAuth(
+      authorization,
+    ).providerControllerUpdateProvider(dto)
 
     if (!updatedProvider) {
       throw new ApolloError('Could not update provider.')
     }
 
     return audienceAndScope
+  }
+
+  //-------------------- STATISTICS --------------------------
+
+  async getStatisticsTotal(
+    organisationId?: string,
+    fromDate?: string,
+    toDate?: string,
+    authorization?: string,
+  ): Promise<ProviderStatistics> {
+    let providers = undefined
+
+    // Get external provider ids if organisationId is included
+    if (organisationId) {
+      const orgProviders = await this.organisationsApi.organisationControllerGetOrganisationsProviders(
+        {
+          id: organisationId,
+          authorization,
+        },
+      )
+
+      // Filter out null values and only set providers if organisation has external providers
+      if (orgProviders) {
+        const externalProviders = orgProviders
+          .filter(
+            (item) =>
+              item.externalProviderId !== null &&
+              item.externalProviderId !== undefined,
+          )
+          .map((item) => {
+            return item.externalProviderId
+          })
+
+        if (externalProviders.length > 0) {
+          providers = externalProviders as string[]
+        }
+      }
+    }
+
+    const result = await this.documentProviderClientProd
+      .statisticsTotal(providers, fromDate, toDate)
+      .catch(handleError)
+
+    return new ProviderStatistics(
+      result.published,
+      result.notifications,
+      result.opened,
+    )
   }
 }

@@ -1,38 +1,47 @@
 import { logger } from '@island.is/logging'
 import { UserApplication } from '@island.is/gjafakort/types'
 import { ApplicationStates } from '@island.is/gjafakort/consts'
-
 import cache from '../../extensions/cache'
-import { ApplicationAPI, NovaAPI } from '../../services'
+import {
+  ApplicationAPI,
+  getVersionConfiguration,
+  NovaAPI,
+} from '../../services'
 
-const APPLICATION_TYPE = 'gjafakort-user'
-
-export const getApplication = (
+export const getApplication = async (
   userSSN: string,
   applicationApi: ApplicationAPI,
 ) => {
+  const { type: applicationType } = await getVersionConfiguration()
+
   return applicationApi.getApplicationByType<UserApplication>(
-    APPLICATION_TYPE,
+    applicationType,
     userSSN,
   )
 }
 
-export const getApplications = (applicationApi: ApplicationAPI) => {
-  return applicationApi.getApplications<UserApplication>(APPLICATION_TYPE)
+export const getApplications = async (applicationApi: ApplicationAPI) => {
+  const { type: applicationType } = await getVersionConfiguration()
+
+  return applicationApi.getApplications<UserApplication>(applicationType)
 }
 
-export const getApplicationCount = (applicationApi: ApplicationAPI) => {
-  return applicationApi.getApplicationCount<UserApplication>(APPLICATION_TYPE)
+export const getApplicationCount = async (applicationApi: ApplicationAPI) => {
+  const { type: applicationType } = await getVersionConfiguration()
+
+  return applicationApi.getApplicationCount<UserApplication>(applicationType)
 }
 
-export const createApplication = (
+export const createApplication = async (
   userSSN: string,
   mobileNumber: string,
   countryCode: string,
   applicationApi: ApplicationAPI,
 ) => {
+  const { type: applicationType } = await getVersionConfiguration()
+
   return applicationApi.createApplication<UserApplication>({
-    applicationType: APPLICATION_TYPE,
+    applicationType,
     issuerSSN: userSSN,
     authorSSN: userSSN,
     state: ApplicationStates.APPROVED,

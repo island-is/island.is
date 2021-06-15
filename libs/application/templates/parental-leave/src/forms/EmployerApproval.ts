@@ -29,21 +29,35 @@ export const EmployerApproval: Form = buildForm({
           children: [
             buildCustomField(
               {
-                id: 'intro',
-                title: '',
+                id: 'timeline',
+                title: employerFormMessages.reviewMultiTitle,
                 component: 'PeriodsRepeater',
               },
               {
                 editable: false,
+                showDescription: false,
               },
             ),
+            buildCustomField({
+              id: 'unionAndPensionInfo',
+              title: '',
+              component: 'EmployerApprovalExtraInformation',
+            }),
             buildSubmitField({
               id: 'submit',
               title: coreMessages.buttonSubmit,
               placement: 'footer',
               actions: [
-                { name: 'Reject', type: 'reject', event: 'REJECT' },
-                { name: 'Approve', type: 'primary', event: 'APPROVE' },
+                {
+                  name: coreMessages.buttonReject,
+                  type: 'reject',
+                  event: 'REJECT',
+                },
+                {
+                  name: coreMessages.buttonApprove,
+                  type: 'primary',
+                  event: 'APPROVE',
+                },
               ],
             }),
           ],

@@ -22,7 +22,9 @@ export function initializeReducer(
   const sections = getNavigableSectionsInForm(form, answers, externalData)
   const screens = convertFormToScreens(form, answers, externalData)
   const currentScreen =
-    form.mode === FormModes.REVIEW ? 0 : findCurrentScreen(screens, answers)
+    form.mode === FormModes.REVIEW || form.mode === FormModes.EDITING
+      ? 0
+      : findCurrentScreen(screens, answers)
 
   return {
     ...state,
@@ -82,14 +84,18 @@ const answerAndGoNextScreen = (
 ): ApplicationUIState => {
   const newState = addNewAnswersToState(state, answers)
   const currentScreen = newState.screens[newState.activeScreen]
+
   const nextScreen =
     newState.screens[
       Math.min(newState.activeScreen + 1, newState.screens.length)
     ]
+
   let activeScreen: number
+
   if (currentScreen.type === FormItemTypes.REPEATER) {
     const repeatedItems = (newState.application.answers[currentScreen.id] ??
       []) as unknown[]
+
     activeScreen = moveToScreen(
       newState.screens,
       newState.activeScreen +
@@ -111,15 +117,18 @@ const answerAndGoNextScreen = (
       true,
     )
   }
+
   return { ...newState, activeScreen, historyReason: 'navigate' }
 }
 
 function expandRepeater(state: ApplicationUIState): ApplicationUIState {
   const { activeScreen, form, screens, application } = state
   const repeater = screens[activeScreen]
+
   if (!repeater || repeater.type !== FormItemTypes.REPEATER) {
     return state
   }
+
   const { answers, externalData } = application
   const repeaterValues = getValueViaPath(
     answers ?? {},
@@ -133,6 +142,7 @@ function expandRepeater(state: ApplicationUIState): ApplicationUIState {
   })
 
   const newScreens = convertFormToScreens(form, newAnswers, externalData)
+
   return {
     ...state,
     screens: newScreens,
@@ -150,11 +160,13 @@ function findNearestRepeater(
   screens: FormScreen[],
 ): number {
   let repeaterIndex = activeScreen - 1
+
   for (repeaterIndex; repeaterIndex >= 0; repeaterIndex--) {
     if (screens[repeaterIndex].type === FormItemTypes.REPEATER) {
       break
     }
   }
+
   return repeaterIndex
 }
 
@@ -167,6 +179,7 @@ export const ApplicationReducer = (
   switch (action.type) {
     case ActionTypes.ANSWER_AND_GO_NEXT_SCREEN:
       return answerAndGoNextScreen(state, action.payload)
+
     case ActionTypes.PREV_SCREEN:
       if (prevScreen.isPartOfRepeater) {
         // go to the repeater index screen, TODO nested repeaters
@@ -189,12 +202,16 @@ export const ApplicationReducer = (
         ),
         historyReason: 'navigate',
       }
+
     case ActionTypes.ANSWER:
       return addNewAnswersToState(state, action.payload)
+
     case ActionTypes.EXPAND_REPEATER:
       return expandRepeater(state)
+
     case ActionTypes.GO_TO_SCREEN:
       return goToSpecificScreen(state, action.payload)
+
     case ActionTypes.ADD_EXTERNAL_DATA:
       return {
         ...state,
@@ -206,12 +223,14 @@ export const ApplicationReducer = (
           },
         },
       }
+
     case ActionTypes.HISTORY_POP:
       return {
         ...state,
         activeScreen: action.payload.screen,
         historyReason: 'pop',
       }
+
     default:
       return state
   }

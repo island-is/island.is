@@ -12,23 +12,27 @@ import {
   buildDataProviderItem,
   Application,
   getValueViaPath,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { User } from '@island.is/api/domains/national-registry'
 import { UserCompany } from '../dataProviders/CurrentUserCompanies'
 import { m } from '../lib/messages'
 import { format } from 'kennitala'
+import Logo from '../assets/Logo'
 
 export enum IDS {
   PartySSD = 'ssd',
-  PartyLetter = 'party.letter',
-  PartyName = 'party.name',
-  Signatures = 'signatures',
+  PartyLetter = 'partyLetter',
+  PartyName = 'partyName',
+  Endorsements = 'endorsements',
   Warnings = 'warnings',
+  Documents = 'documents',
 }
 
 export const LetterApplicationForm: Form = buildForm({
   id: 'LetterApplicationDraft',
   title: 'Listabókstafur',
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -38,12 +42,13 @@ export const LetterApplicationForm: Form = buildForm({
         buildExternalDataProvider({
           id: 'approveTermsAndConditions',
           title: m.externalDataSection.title,
-          subTitle: m.externalDataSection.subTitle,
+          subTitle: m.externalDataSection.subtitle,
+          checkboxLabel: m.externalDataSection.agree,
           dataProviders: [
             buildDataProviderItem({
               id: 'dmr',
               type: undefined,
-              title: m.externalDataSection.dmrTitle,
+              title: '',
               subTitle: m.externalDataSection.dmrSubtitle,
             }),
             buildDataProviderItem({
@@ -65,11 +70,11 @@ export const LetterApplicationForm: Form = buildForm({
 
     buildSection({
       id: 'company',
-      title: m.selectSSD.title,
+      title: m.selectNationalId.title,
       children: [
         buildRadioField({
           id: IDS.PartySSD,
-          title: m.selectSSD.title,
+          title: m.selectNationalId.title,
           largeButtons: true,
           width: 'half',
           options: (application: Application) => {
@@ -134,18 +139,6 @@ export const LetterApplicationForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'recommendations',
-      title: m.recommendations.title,
-      children: [
-        buildCustomField({
-          id: 'gatherRecommendations',
-          title: m.recommendations.title,
-          component: 'Recommendations',
-        }),
-      ],
-    }),
-
-    buildSection({
       id: 'reviewApplication',
       title: m.overview.title,
       children: [
@@ -157,16 +150,26 @@ export const LetterApplicationForm: Form = buildForm({
             buildCustomField({
               id: 'confirmationScreen',
               title: '',
-              component: 'Review',
+              component: 'PartyLetterApplicationReview',
+            }),
+            buildTextField({
+              id: 'email',
+              title: m.overview.email,
+              placeholder: m.overview.email,
+              variant: 'email',
+              backgroundColor: 'blue',
+              width: 'half',
+              defaultValue: () => '',
             }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
+              refetchApplicationAfterSubmit: true,
               title: m.overview.title,
               actions: [
                 {
-                  event: 'SUBMIT',
-                  name: m.overview.submitButton,
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Hefja söfnun',
                   type: 'primary',
                 },
               ],
@@ -174,9 +177,9 @@ export const LetterApplicationForm: Form = buildForm({
           ],
         }),
         buildCustomField({
-          id: 'thankYou',
-          title: m.overview.finalTitle,
-          component: 'Conclusion',
+          id: 'endorsement',
+          title: m.collectEndorsements.title,
+          component: 'EndorsementList',
         }),
       ],
     }),

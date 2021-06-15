@@ -27,20 +27,17 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper } from '@island.is/web/components'
+import {
+  lightThemes,
+  OrganizationSlice,
+  OrganizationWrapper,
+  SliceDropdown,
+} from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { Namespace } from '@island.is/api/schema'
-import dynamic from 'next/dynamic'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-
-const OrganizationSlice = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.OrganizationSlice),
-)
-const SliceDropdown = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.SliceDropdown),
-)
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -64,8 +61,8 @@ const SubPage: Screen<SubPageProps> = ({
   const { linkResolver } = useLinkResolver()
   useContentfulId(organizationPage.id)
 
-  const pageUrl = `/stofnanir/${organizationPage.slug}/${subpage.slug}`
-  const parentSubpageUrl = `/stofnanir/${organizationPage.slug}/${subpage.parentSubpage}`
+  const pageUrl = `/s/${organizationPage.slug}/${subpage.slug}`
+  const parentSubpageUrl = `/s/${organizationPage.slug}/${subpage.parentSubpage}`
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
@@ -87,6 +84,7 @@ const SubPage: Screen<SubPageProps> = ({
     <OrganizationWrapper
       pageTitle={subpage.title}
       organizationPage={organizationPage}
+      fullWidthContent={true}
       pageFeaturedImage={
         subpage.featuredImage ?? organizationPage.featuredImage
       }
@@ -94,10 +92,6 @@ const SubPage: Screen<SubPageProps> = ({
         {
           title: 'Ísland.is',
           href: linkResolver('homepage').href,
-        },
-        {
-          title: n('organizations', 'Stofnanir'),
-          href: linkResolver('organizations').href,
         },
         {
           title: organizationPage.title,
@@ -108,43 +102,56 @@ const SubPage: Screen<SubPageProps> = ({
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
-      fullWidthContent={true}
     >
       <GridContainer>
-        <Box paddingBottom={4}>
+        <Box paddingY={4}>
           <GridRow>
-            <GridColumn
-              span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
-            >
-              <Box marginBottom={2}>
-                <Text variant="h1" as="h2">
-                  {subpage.title}
-                </Text>
-              </Box>
-            </GridColumn>
-          </GridRow>
-          <GridRow>
-            <GridColumn
-              span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
-            >
-              {richText(subpage.description as SliceType[])}
-            </GridColumn>
-            {subpage.links.length > 0 && (
-              <GridColumn
-                span={['12/12', '12/12', '4/12']}
-                offset={[null, null, '1/12']}
-              >
-                <Stack space={2}>
-                  {subpage.links.map((link) => (
-                    <Link href={link.url} underline="small">
-                      <Text fontWeight="light" color="blue400">
-                        {link.text}
+            <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
+              <GridContainer>
+                <GridRow>
+                  <GridColumn
+                    span={[
+                      '12/12',
+                      '12/12',
+                      subpage.links.length ? '7/12' : '12/12',
+                    ]}
+                  >
+                    <Box marginBottom={2}>
+                      <Text variant="h1" as="h2">
+                        {subpage.title}
                       </Text>
-                    </Link>
-                  ))}
-                </Stack>
-              </GridColumn>
-            )}
+                    </Box>
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn
+                    span={[
+                      '12/12',
+                      '12/12',
+                      subpage.links.length ? '7/12' : '12/12',
+                    ]}
+                  >
+                    {richText(subpage.description as SliceType[])}
+                  </GridColumn>
+                  {subpage.links.length > 0 && (
+                    <GridColumn
+                      span={['12/12', '12/12', '4/12']}
+                      offset={[null, null, '1/12']}
+                    >
+                      <Stack space={2}>
+                        {subpage.links.map((link) => (
+                          <Link href={link.url} underline="small">
+                            <Text fontWeight="light" color="blue400">
+                              {link.text}
+                            </Text>
+                          </Link>
+                        ))}
+                      </Stack>
+                    </GridColumn>
+                  )}
+                </GridRow>
+              </GridContainer>
+            </GridColumn>
           </GridRow>
         </Box>
       </GridContainer>
@@ -153,6 +160,7 @@ const SubPage: Screen<SubPageProps> = ({
         subpage.sliceCustomRenderer,
         subpage.sliceExtraText,
         namespace,
+        organizationPage.slug,
       )}
     </OrganizationWrapper>
   )
@@ -163,13 +171,19 @@ const renderSlices = (
   renderType: string,
   extraText: string,
   namespace: Namespace,
+  organizationPageSlug: string,
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice) => (
-        <OrganizationSlice key={slice.id} slice={slice} namespace={namespace} />
+        <OrganizationSlice
+          key={slice.id}
+          slice={slice}
+          namespace={namespace}
+          organizationPageSlug={organizationPageSlug}
+        />
       ))
   }
 }
@@ -224,15 +238,15 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization subpage not found')
   }
 
+  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
+
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,
+    ...(lightTheme ? {} : { darkTheme: true }),
   }
 }
 
-export default withMainLayout(SubPage, {
-  headerButtonColorScheme: 'negative',
-  headerColorScheme: 'white',
-})
+export default withMainLayout(SubPage)

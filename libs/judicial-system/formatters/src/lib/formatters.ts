@@ -5,7 +5,6 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseGender,
-  CaseTransition,
   CaseType,
 } from '@island.is/judicial-system/types'
 
@@ -65,6 +64,22 @@ export const laws = {
   _98_2: '2. mgr. 98. gr.',
   _99_1_B: 'b-lið 1. mgr. 99. gr.',
   _100_1: '1. mgr. 100. gr. sml.',
+}
+
+export const caseTypes = {
+  CUSTODY: 'gæsluvarðhald',
+  TRAVEL_BAN: 'farbann',
+  SEARCH_WARRANT: 'húsleit',
+  BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
+  PHONE_TAPPING: 'símhlustun',
+  TELECOMMUNICATIONS: 'upplýsingar um fjarskiptasamskipti',
+  TRACKING_EQUIPMENT: 'eftirfararbúnaður',
+  PSYCHIATRIC_EXAMINATION: 'geðrannsókn',
+  SOUND_RECORDING_EQUIPMENT: 'hljóðupptökubúnaði komið fyrir',
+  AUTOPSY: 'krufning',
+  BODY_SEARCH: 'leit og líkamsrannsókn',
+  INTERNET_USAGE: 'upplýsingar um vefnotkun',
+  OTHER: 'annað',
 }
 
 const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
@@ -267,9 +282,7 @@ export const formatRequestedCustodyRestrictions = (
     ? requestedCustodyRestrictions &&
       requestedCustodyRestrictions.reduce(
         (acc, restriction, index) =>
-          `${acc}${index > 0 ? '\n' : ''}${getRestrictionByValue(
-            restriction,
-          )}.`,
+          `${acc}${index > 0 ? '\n' : ''}${getRestrictionByValue(restriction)}`,
         '',
       )
     : ''
@@ -289,7 +302,7 @@ export function formatProsecutorDemands(
   accusedNationalId: string,
   accusedName: string,
   court: string,
-  requestedCustodyEndDate: Date | string,
+  requestedValidToDate: Date | string,
   isolation: boolean,
   isExtension: boolean,
   previousDecision?: CaseDecision,
@@ -305,7 +318,7 @@ export function formatProsecutorDemands(
   } með úrskurði ${court?.replace(
     'Héraðsdómur',
     'Héraðsdóms',
-  )}, til ${formatDate(requestedCustodyEndDate, 'PPPPp')
+  )}, til ${formatDate(requestedValidToDate, 'PPPPp')
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}${
     type === CaseType.CUSTODY && isolation

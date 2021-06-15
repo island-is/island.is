@@ -2,7 +2,7 @@ import 'isomorphic-fetch'
 
 import { deleteCookie } from '@island.is/judicial-system-web/src/utils/cookies'
 
-const { API_URL = '' } = process.env
+const { API_URL = 'http://localhost:4200' } = process.env // eslint-disable-line @typescript-eslint/naming-convention
 export const apiUrl = API_URL
 
 export const logOut = (path = '') => {
@@ -16,6 +16,6 @@ export const logOut = (path = '') => {
   }
 }
 
-export const getFeature = async (name: string) => {
+export const getFeature = async (name: string): Promise<boolean> => {
   return await (await fetch(`/api/feature/${name}`)).json()
 }

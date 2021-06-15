@@ -1,5 +1,6 @@
 import React, { ReactNode, FC, AllHTMLAttributes } from 'react'
 import cn from 'classnames'
+import { theme } from '@island.is/island-ui/theme'
 
 import { useBoxStyles, UseBoxStylesProps } from '../Box/useBoxStyles'
 import { getTextStyles, TextProps } from '../Text/Text'
@@ -12,6 +13,7 @@ type DataField = {
     'variant' | 'color' | 'truncate' | 'fontWeight' | 'lineHeight'
   >
   box?: Omit<UseBoxStylesProps, 'component'>
+  borderColor?: keyof typeof theme.color
 }
 
 type Table = {
@@ -60,6 +62,7 @@ export const Data = ({
   children,
   text = {},
   box = {},
+  borderColor = 'blue200',
   ...props
 }: DataField &
   Omit<AllHTMLAttributes<HTMLTableDataCellElement>, 'className'>) => {
@@ -76,7 +79,7 @@ export const Data = ({
       paddingTop: 'p5',
       paddingBottom: 'p5',
       borderBottomWidth: 'standard',
-      borderColor: 'blue200',
+      borderColor,
       ...box,
     }),
   )

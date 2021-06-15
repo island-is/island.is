@@ -71,6 +71,24 @@ export const parseTime = (date: string, time: string) => {
   }
 }
 
+export const parseNull = (property: string) => {
+  try {
+    const json = JSON.parse(`{"${property}": ${null}}`)
+    return json
+  } catch (e) {
+    return null
+  }
+}
+
+export const parseBoolean = (property: string, value: boolean) => {
+  try {
+    const json = JSON.parse(`{"${property}": ${value}}`)
+    return json
+  } catch (e) {
+    return null
+  }
+}
+
 // Credit: https://stackoverflow.com/a/53060314
 export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`

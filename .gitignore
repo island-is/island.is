@@ -5,9 +5,13 @@
 /tmp
 /out-tsc
 
-# Contentful extension
-libs/contentful-translation-extension/build
-libs/contentful-translation-extension/.cache
+# Contentful extensions
+libs/contentful-extensions/translation/build
+libs/contentful-extensions/translation/.cache
+libs/contentful-extensions/mideind-translation/build
+libs/contentful-extensions/mideind-translation/.cache
+libs/contentful-extensions/parent-slug/build
+libs/contentful-extensions/parent-slug/.cache
 
 # dependencies
 node_modules/

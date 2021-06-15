@@ -8,17 +8,22 @@ import isSameDay from 'date-fns/isSameDay'
 import addMonths from 'date-fns/addMonths'
 import endOfMonth from 'date-fns/endOfMonth'
 import parseISO from 'date-fns/parseISO'
-
 import { useWindowSize } from 'react-use'
-import { useDrag } from '../utils'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
+
+import { useDrag } from '../utils'
 import * as styles from './Timeline.treat'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
 
 export interface TimelinePeriod {
+  actualDob?: boolean
   startDate: string
   endDate: string
+  ratio: string
+  duration: string
   title: string
   color?: string
   canDelete?: boolean
@@ -41,6 +46,7 @@ const Panel: FC<{
   isMobile,
   onDeletePeriod,
 }) => {
+  const { formatMessage } = useLocale()
   const formatStyle = isMobile ? 'dd MMM' : 'dd MMM yyyy'
   const titleLabel = isMobile ? titleSmall : title
 
@@ -56,33 +62,41 @@ const Panel: FC<{
         </Text>
         <Box className={styles.firstPanelRowSeparator} />
       </Box>
-      {periods.map((p, index) => {
-        return (
-          <Box className={styles.panelRow} key={index}>
-            {p.canDelete && editable && onDeletePeriod && (
-              <Box
-                className={styles.deleteIcon}
-                onClick={() => onDeletePeriod(index)}
-              >
-                <Icon
-                  color="dark200"
-                  icon="removeCircle"
-                  size="medium"
-                  type="outline"
-                />
-              </Box>
-            )}
-            <Text variant="small">
-              <Text variant="small" as="span" fontWeight="semiBold">
-                {p.title}
-              </Text>
-              <br />
-              {format(parseISO(p.startDate), formatStyle)}—
-              {format(parseISO(p.endDate), formatStyle)}
+
+      {periods.map((p, index) => (
+        <Box className={styles.panelRow} key={index}>
+          {p.canDelete && editable && onDeletePeriod && (
+            <Box
+              className={styles.deleteIcon}
+              onClick={() => onDeletePeriod(index)}
+            >
+              <Icon
+                color="dark200"
+                icon="removeCircle"
+                size="medium"
+                type="outline"
+              />
+            </Box>
+          )}
+
+          <Text variant="small">
+            <Text variant="small" as="span" fontWeight="semiBold">
+              {p.title}
             </Text>
-          </Box>
-        )
-      })}
+            <br />
+            {p.actualDob
+              ? formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.periodActualDob,
+                  {
+                    duration: p.duration,
+                  },
+                )
+              : format(parseISO(p.startDate), formatStyle)}
+            {' — '}
+            {format(parseISO(p.endDate), formatStyle)}
+          </Text>
+        </Box>
+      ))}
     </Box>
   )
 }

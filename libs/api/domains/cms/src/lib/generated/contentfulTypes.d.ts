@@ -55,6 +55,9 @@ export interface IAccordionSliceFields {
   /** Title */
   title?: string | undefined
 
+  /** Type */
+  type: 'accordion' | 'CTA'
+
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
 }
@@ -815,6 +818,9 @@ export interface IFrontpageSliderFields {
   /** Slide link */
   slideLink?: ILink | undefined
 
+  /** Animation JSON (Asset) */
+  animationJsonAsset?: Asset | undefined
+
   /** Animation (JSON) */
   animationJson?: Record<string, any> | undefined
 
@@ -849,7 +855,7 @@ export interface IFrontpageSliderListFields {
   items: IFrontpageSlider[]
 }
 
-/** Listi af efniseiningum sem hægt er að fletta á milli og birtast efst á forsíðu Ísland.is. */
+/** Á heima inni í 'Frontpage' núna */
 
 export interface IFrontpageSliderList
   extends Entry<IFrontpageSliderListFields> {
@@ -946,6 +952,9 @@ export interface IGenericPage extends Entry<IGenericPageFields> {
 export interface IGenericTagFields {
   /** Title */
   title: string
+
+  /** Slug */
+  slug: string
 }
 
 /** A generic uniquely named tag that can be used for tag miscellaneous things. */
@@ -1152,6 +1161,12 @@ export interface ILandingPage extends Entry<ILandingPageFields> {
 export interface ILatestNewsSliceFields {
   /** Title */
   title?: string | undefined
+
+  /** News tag */
+  newsTag?: IGenericTag | undefined
+
+  /** Read more text */
+  readMoreText?: string | undefined
 }
 
 /** Slice to show latest news entries */
@@ -1426,6 +1441,9 @@ export interface IMailingListSignupFields {
 
   /** Submit button text */
   buttonText: string
+
+  /** Signup URL */
+  signupUrl: string
 }
 
 export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
@@ -1546,6 +1564,34 @@ export interface IMenuLinkWithChildren
     contentType: {
       sys: {
         id: 'menuLinkWithChildren'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IMultipleStatisticsFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Statistics */
+  statistics?: IStatistics[] | undefined
+
+  /** Link */
+  link?: ILink | undefined
+}
+
+export interface IMultipleStatistics extends Entry<IMultipleStatisticsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'multipleStatistics'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1723,31 +1769,6 @@ export interface INumberBulletSection
   }
 }
 
-export interface IOfficesFields {
-  /** Title */
-  title: string
-
-  /** Offices */
-  offices?: IOrganizationOffice[] | undefined
-}
-
-export interface IOffices extends Entry<IOfficesFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'offices'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IOneColumnTextFields {
   /** Title */
   title: string
@@ -1797,6 +1818,9 @@ export interface IOrganizationFields {
 
   /** Logo */
   logo?: Asset | undefined
+
+  /** Footer Items */
+  footerItems?: IFooterItem[] | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -1872,20 +1896,35 @@ export interface IOrganizationPageFields {
   /** Slices */
   slices?:
     | (
+        | IAccordionSlice
         | IBigBulletList
         | IDistricts
         | IMailingListSignup
         | IFeaturedArticles
         | ISectionHeading
         | ILogoListSlice
+        | IMultipleStatistics
+        | IOneColumnText
         | IStorySection
         | ITabSection
         | ITimeline
+        | ITwoColumnText
       )[]
     | undefined
 
-  /** Menu Links */
+  /** Bottom slices */
+  bottomSlices?:
+    | (ILatestNewsSlice | ILogoListSlice | IOneColumnText | ITwoColumnText)[]
+    | undefined
+
+  /** News tag */
+  newsTag?: IGenericTag | undefined
+
+  /** Menu Links (DEPRECATED - DELETE AFTER 01-06-2021) */
   menuLinks?: ILinkGroup[] | undefined
+
+  /** Secondary Menu */
+  secondaryMenu?: ILinkGroup | undefined
 
   /** Organization */
   organization: IOrganization
@@ -1927,6 +1966,9 @@ export interface IOrganizationSubpageFields {
   /** Slug */
   slug: string
 
+  /** Intro */
+  intro?: string | undefined
+
   /** Description */
   description?: Document | undefined
 
@@ -1939,8 +1981,10 @@ export interface IOrganizationSubpageFields {
         | IAccordionSlice
         | IContactUs
         | IDistricts
-        | IOffices
+        | IMailingListSignup
+        | IMultipleStatistics
         | IOneColumnText
+        | ITabSection
         | ITeamList
         | ITellUsAStory
         | ITwoColumnText
@@ -1996,6 +2040,31 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
     contentType: {
       sys: {
         id: 'organizationTag'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOverviewLinksFields {
+  /** Overview Links */
+  overviewLinks?: IIntroLinkImage[] | undefined
+
+  /** Link */
+  link?: ILink | undefined
+}
+
+export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'overviewLinks'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2358,7 +2427,16 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
 
 export interface ISidebarCardFields {
   /** Type */
-  type?: 'info' | 'warning' | undefined
+  type?:
+    | 'informationCircle'
+    | 'warning'
+    | 'notifications'
+    | 'time'
+    | 'heart'
+    | 'home'
+    | 'lockClosed'
+    | 'mail'
+    | undefined
 
   /** Title */
   title?: string | undefined
@@ -2592,6 +2670,12 @@ export interface ISubArticleFields {
 
   /** Show Table Of Contents */
   showTableOfContents?: boolean | undefined
+
+  /** url */
+  url: string
+
+  /** Parent */
+  parent: IArticle
 }
 
 /** A sub article that's a part of another main article */
@@ -2914,6 +2998,9 @@ export interface ITestHomepage extends Entry<ITestHomepageFields> {
 export interface ITimelineFields {
   /** Title */
   title?: string | undefined
+
+  /** Intro */
+  intro?: string | undefined
 
   /** Events */
   events: ITimelineEvent[]
@@ -3377,15 +3464,14 @@ export type CONTENT_TYPE =
   | 'menu'
   | 'menuLink'
   | 'menuLinkWithChildren'
+  | 'multipleStatistics'
   | 'namespace'
   | 'namespaceJeremyDev'
   | 'news'
   | 'numberBullet'
   | 'numberBulletSection'
-  | 'offices'
   | 'oneColumnText'
   | 'organization'
-  | 'organizationOffice'
   | 'organizationPage'
   | 'organizationSubpage'
   | 'organizationTag'

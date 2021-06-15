@@ -4,9 +4,9 @@ info:
   title: FOS - Parental Leaves API
   version: 1.0.0
 servers:
-  - url: https://vmst-paternity-leave.azurewebsites.net
+  - url: 'https://vmst-paternity-leave.azurewebsites.net'
 paths:
-  /users/{nationalRegistryId}/parental-leaves:
+  '/users/{nationalRegistryId}/parental-leaves':
     get:
       tags:
         - ParentalLeave
@@ -60,7 +60,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostParentalLeaveResponse'
-  /users/{nationalRegistryId}/parental-leaves/{applicationId}/periods:
+  '/users/{nationalRegistryId}/parental-leaves/{applicationId}/periods':
     put:
       tags:
         - ParentalLeave
@@ -98,7 +98,7 @@ paths:
               schema:
                 type: string
                 format: binary
-  /users/{nationalRegistryId}/parental-leaves/rights:
+  '/users/{nationalRegistryId}/parental-leaves/rights':
     get:
       tags:
         - ParentalLeave
@@ -125,7 +125,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Right'
-  /users/{nationalRegistryId}/parental-leaves/estimated-payment-plan:
+  '/users/{nationalRegistryId}/parental-leaves/estimated-payment-plan':
     get:
       tags:
         - ParentalLeave
@@ -152,7 +152,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EstimatedPaymentPlan'
-  /users/{nationalRegistryId}/parental-leaves/{applicationId}/payment-plan:
+  '/users/{nationalRegistryId}/parental-leaves/{applicationId}/payment-plan':
     get:
       tags:
         - ParentalLeave
@@ -179,6 +179,82 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentPlansResponse'
+  '/users/{nationalRegistryId}/parental-leaves/periods/end-date':
+    get:
+      tags:
+        - ParentalLeave
+      operationId: ParentalLeave_GetPeriodEndDate
+      parameters:
+        - name: nationalRegistryId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          x-position: 2
+        - name: length
+          in: query
+          schema:
+            type: string
+            nullable: true
+          x-position: 3
+        - name: percentage
+          in: query
+          schema:
+            type: string
+            nullable: true
+          x-position: 4
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PeriodEndDateResponse'
+  '/users/{nationalRegistryId}/parental-leaves/periods/length':
+    get:
+      tags:
+        - ParentalLeave
+      operationId: ParentalLeave_GetPeriodLength
+      parameters:
+        - name: nationalRegistryId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          x-position: 2
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          x-position: 3
+        - name: percentage
+          in: query
+          schema:
+            type: string
+            nullable: true
+          x-position: 4
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PeriodLengthResponse'
   /pension-funds:
     get:
       tags:
@@ -191,7 +267,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PensionFundsResponse'
-  /users/{nationalRegistryId}/pregnancy-status:
+  '/users/{nationalRegistryId}/pregnancy-status':
     get:
       tags:
         - Pregnancy
@@ -239,7 +315,6 @@ components:
       required:
         - applicationId
         - applicant
-        - otherParentId
         - expectedDateOfBirth
         - dateOfBirth
         - email
@@ -256,10 +331,10 @@ components:
         applicant:
           type: string
           minLength: 1
-          pattern: ^\d{10}$
+          pattern: '^\d{10}$'
         otherParentId:
           type: string
-          minLength: 1
+          nullable: true
         expectedDateOfBirth:
           type: string
           minLength: 1
@@ -288,6 +363,11 @@ components:
         rightsCode:
           type: string
           minLength: 1
+        attachments:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Attachment'
     PaymentInfo:
       type: object
       additionalProperties: false
@@ -330,7 +410,6 @@ components:
           minLength: 1
         name:
           type: string
-          minLength: 1
     PensionFund:
       type: object
       additionalProperties: false
@@ -343,7 +422,6 @@ components:
           minLength: 1
         name:
           type: string
-          minLength: 1
     Period:
       type: object
       additionalProperties: false
@@ -367,6 +445,9 @@ components:
           type: boolean
         paid:
           type: boolean
+        rightsCodePeriod:
+          type: string
+          nullable: true
     Employer:
       type: object
       additionalProperties: false
@@ -379,6 +460,20 @@ components:
           minLength: 1
         nationalRegistryId:
           type: string
+          minLength: 1
+    Attachment:
+      type: object
+      additionalProperties: false
+      required:
+        - attachmentType
+        - attachmentBytes
+      properties:
+        attachmentType:
+          type: string
+          minLength: 1
+        attachmentBytes:
+          type: string
+          format: byte
           minLength: 1
     PostParentalLeaveResponse:
       type: object
@@ -429,6 +524,24 @@ components:
         employerWages:
           type: number
           format: float
+        employerJobRatio:
+          type: number
+          format: float
+        employerTaxAmount:
+          type: number
+          format: float
+        employerIncomeAmount:
+          type: number
+          format: float
+        employerIncomeAmountJobRatio:
+          type: number
+          format: float
+        employerSelfEmploymentAmount:
+          type: number
+          format: float
+        employerSelfEmploymentAmountJobRatio:
+          type: number
+          format: float
     PaymentPlansResponse:
       type: object
       additionalProperties: false
@@ -461,6 +574,20 @@ components:
         estimatedPayment:
           type: number
           format: float
+    PeriodEndDateResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        periodEndDate:
+          type: string
+          format: date-time
+    PeriodLengthResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        periodLength:
+          type: integer
+          format: int32
     PensionFundsResponse:
       type: object
       additionalProperties: false

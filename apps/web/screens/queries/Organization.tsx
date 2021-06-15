@@ -56,13 +56,40 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           url
         }
       }
+      secondaryMenu {
+        name
+        childrenLinks {
+          text
+          url
+        }
+      }
       organization {
+        title
+        slug
         logo {
           url
+        }
+        footerItems {
+          title
+          content {
+            ...HtmlFields
+          }
+          link {
+            text
+            url
+          }
         }
       }
       slices {
         ...AllSlices
+      }
+      bottomSlices {
+        ...AllSlices
+      }
+      newsTag {
+        id
+        title
+        slug
       }
       featuredImage {
         url
@@ -70,15 +97,19 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         width
         height
       }
-      footerItems {
+      sidebarCards {
         title
-        content {
-          ...HtmlFields
-        }
+        content
+        type
         link {
           text
           url
         }
+      }
+      theme
+      themeProperties {
+        gradientStartColor
+        gradientEndColor
       }
     }
   }
@@ -91,7 +122,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       title
       slug
       description {
-        ...HtmlFields
+        ...AllSlices
       }
       links {
         text

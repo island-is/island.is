@@ -7,6 +7,7 @@ export const CaseQuery = gql`
       created
       modified
       type
+      description
       state
       policeCaseNumber
       accusedNationalId
@@ -15,54 +16,71 @@ export const CaseQuery = gql`
       accusedGender
       defenderName
       defenderEmail
+      defenderPhoneNumber
       sendRequestToDefender
-      court
+      court {
+        id
+        name
+        type
+      }
+      leadInvestigator
       arrestDate
       requestedCourtDate
-      requestedCustodyEndDate
-      otherDemands
+      requestedValidToDate
+      demands
       lawsBroken
+      legalBasis
       custodyProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
-      witnessAccounts
-      investigationProgress
       legalArguments
+      requestProsecutorOnlySession
+      prosecutorOnlySessionRequest
       comments
+      caseFilesComments
       prosecutor {
         id
         name
         title
         institution {
+          id
           name
         }
       }
-      setCourtCaseNumberManually
+      sharedWithProsecutorsOffice {
+        id
+        type
+        name
+      }
       courtCaseNumber
       courtDate
-      isCourtDateInThePast
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
-      policeDemands
+      prosecutorDemands
       courtDocuments
-      additionToConclusion
+      isAccusedAbsent
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
+      courtCaseFacts
+      courtLegalArguments
       ruling
       decision
-      custodyEndDate
-      isCustodyEndDateInThePast
+      validToDate
+      isValidToDateInThePast
       custodyRestrictions
       otherRestrictions
-      isolationTo
+      isolationToDate
+      additionToConclusion
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       rulingDate
       judge {
         id
@@ -76,7 +94,7 @@ export const CaseQuery = gql`
       }
       parentCase {
         id
-        custodyEndDate
+        validToDate
         decision
         courtCaseNumber
         ruling
@@ -87,41 +105,52 @@ export const CaseQuery = gql`
       notifications {
         type
       }
-    }
-  }
-`
-
-export const UpdateCaseMutation = gql`
-  mutation UpdateCaseMutation($input: UpdateCaseInput!) {
-    updateCase(input: $input) {
-      id
-      modified
-    }
-  }
-`
-
-export const TransitionCaseMutation = gql`
-  mutation TransitionCaseMutation($input: TransitionCaseInput!) {
-    transitionCase(input: $input) {
-      id
-      modified
-      state
-      prosecutor {
+      files {
+        id
         name
-        title
+        size
+        created
       }
-      judge {
-        name
-        title
-      }
+      isAppealDeadlineExpired
+      isAppealGracePeriodExpired
     }
   }
 `
 
-export const SendNotificationMutation = gql`
-  mutation SendNotificationMutation($input: SendNotificationInput!) {
-    sendNotification(input: $input) {
-      notificationSent
+export const CreatePresignedPostMutation = gql`
+  mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
+    createPresignedPost(input: $input) {
+      url
+      fields
+    }
+  }
+`
+
+export const CreateFileMutation = gql`
+  mutation CreateFileMutation($input: CreateFileInput!) {
+    createFile(input: $input) {
+      id
+      created
+      caseId
+      name
+      key
+      size
+    }
+  }
+`
+
+export const DeleteFileMutation = gql`
+  mutation DeleteFileMutation($input: DeleteFileInput!) {
+    deleteFile(input: $input) {
+      success
+    }
+  }
+`
+
+export const GetSignedUrlQuery = gql`
+  query GetSignedUrlQuery($input: GetSignedUrlInput!) {
+    getSignedUrl(input: $input) {
+      url
     }
   }
 `

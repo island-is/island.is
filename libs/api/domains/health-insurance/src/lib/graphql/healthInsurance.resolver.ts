@@ -1,18 +1,18 @@
 import { UseGuards } from '@nestjs/common'
 import { Resolver, Query } from '@nestjs/graphql'
 
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User as AuthUser,
 } from '@island.is/auth-nest-tools'
 
 // import { VistaSkjalModel } from './models'
 import { HealthInsuranceService } from '../healthInsurance.service'
 // import { VistaSkjalInput } from '@island.is/health-insurance'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => String)
 export class HealthInsuranceResolver {
   constructor(

@@ -18,9 +18,16 @@ import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Loading from '../Loading/Loading'
 import * as styles from './PageLayout.treat'
+import {
+  getCourtSections,
+  getCustodyAndTravelBanProsecutorSection,
+  getExtenstionSections,
+  getRCaseProsecutorSection,
+} from './Sections'
 
 interface PageProps {
   children: ReactNode
+  caseId?: string
   activeSection?: number
   isLoading: boolean
   notFound: boolean
@@ -28,13 +35,14 @@ interface PageProps {
   activeSubSection?: number
   decision?: CaseDecision
   parentCaseDecision?: CaseDecision
-  isCustodyEndDateInThePast?: boolean
+  isValidToDateInThePast?: boolean
   isExtension?: boolean
   showSidepanel?: boolean
 }
 
 const PageLayout: React.FC<PageProps> = ({
   children,
+  caseId,
   activeSection,
   activeSubSection,
   isLoading,
@@ -42,7 +50,7 @@ const PageLayout: React.FC<PageProps> = ({
   caseType,
   decision,
   parentCaseDecision,
-  isCustodyEndDateInThePast,
+  isValidToDateInThePast,
   showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
@@ -57,86 +65,33 @@ const PageLayout: React.FC<PageProps> = ({
       decision === CaseDecision.ACCEPTING ||
       parentCaseDecision === CaseDecision.ACCEPTING
     ) {
-      return isCustodyEndDateInThePast
+      return isValidToDateInThePast
         ? 'Gæsluvarðhaldi lokið'
         : 'Gæsluvarðhald virkt'
     } else if (
       decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
       parentCaseDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
     ) {
-      return isCustodyEndDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
+      return isValidToDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
     } else {
       return 'Niðurstaða'
     }
   }
 
   const sections = [
-    {
-      name:
-        caseType === CaseType.CUSTODY
-          ? 'Krafa um gæsluvarðhald'
-          : 'Krafa um farbann',
-      children: [
-        { type: 'SUB_SECTION', name: 'Sakborningur' },
-        { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
-        {
-          type: 'SUB_SECTION',
-          name: 'Dómkröfur og lagagrundvöllur',
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Greinargerð',
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Yfirlit kröfu',
-        },
-      ],
-    },
-    {
-      name: 'Úrskurður Héraðsdóms',
-      children: [
-        { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
-        { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
-        { type: 'SUB_SECTION', name: 'Þingbók' },
-        { type: 'SUB_SECTION', name: 'Úrskurður' },
-        { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
-        { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
-      ],
-    },
+    caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+      ? getCustodyAndTravelBanProsecutorSection(
+          caseId,
+          caseType,
+          activeSubSection,
+        )
+      : getRCaseProsecutorSection(caseId, activeSubSection),
+    getCourtSections(caseId, activeSubSection),
     {
       name: caseResult(),
     },
-    {
-      name: 'Krafa um framlengingu',
-      children: [
-        { type: 'SUB_SECTION', name: 'Sakborningur' },
-        { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
-        {
-          type: 'SUB_SECTION',
-          name: 'Dómkröfur og lagagrundvöllur',
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Greinargerð',
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Yfirlit kröfu',
-        },
-      ],
-    },
-    {
-      name: 'Úrskurður Héraðsdóms',
-      children: [
-        { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
-        { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
-        { type: 'SUB_SECTION', name: 'Þingbók' },
-        { type: 'SUB_SECTION', name: 'Úrskurður' },
-        { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
-        { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
-      ],
-    },
+    getExtenstionSections(caseId, activeSubSection),
+    getCourtSections(caseId, activeSubSection),
   ]
 
   return children ? (
@@ -160,7 +115,9 @@ const PageLayout: React.FC<PageProps> = ({
           {showSidepanel && (
             <GridColumn span={['0', '0', '3/12', '3/12']}>
               <Box marginLeft={2}>
-                <Logo />
+                <Box marginBottom={5}>
+                  <Logo />
+                </Box>
                 <FormStepper
                   // Remove the extension parts of the formstepper if the user is not applying for an extension
                   sections={
@@ -170,7 +127,11 @@ const PageLayout: React.FC<PageProps> = ({
                       : sections.filter((_, index) => index <= 2)
                   }
                   formName={
-                    caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
+                    caseType === CaseType.CUSTODY
+                      ? 'Gæsluvarðhald'
+                      : caseType === CaseType.TRAVEL_BAN
+                      ? 'Farbann'
+                      : 'Rannsóknarheimild'
                   }
                   activeSection={activeSection}
                   activeSubSection={activeSubSection}

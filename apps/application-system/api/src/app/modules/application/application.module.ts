@@ -5,6 +5,9 @@ import { FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
 import { TemplateAPIModule } from '@island.is/application/template-api-modules'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { TranslationsModule } from '@island.is/api/domains/translations'
+import { SigningModule } from '@island.is/dokobit-signing'
+import { AuditModule } from '@island.is/nest/audit'
 
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
@@ -13,11 +16,11 @@ import { FileService } from './files/file.service'
 import { AwsService } from './files/aws.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
-import { SigningModule } from '@island.is/dokobit-signing'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from './application.configuration'
+import { ApplicationAccessService } from './tools/applicationAccess.service'
 
 let BullModule: DynamicModule
 
@@ -42,12 +45,14 @@ if (process.env.INIT_SCHEMA === 'true') {
 
 @Module({
   imports: [
+    AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
     TemplateAPIModule.register(environment.templateApi),
     SequelizeModule.forFeature([Application]),
     FileStorageModule.register(environment.fileStorage),
     BullModule,
     SigningModule.register(environment.signingOptions),
+    TranslationsModule,
   ],
   controllers: [ApplicationController],
   providers: [
@@ -59,6 +64,7 @@ if (process.env.INIT_SCHEMA === 'true') {
       useValue: environment.application as ApplicationConfig,
     },
     AwsService,
+    ApplicationAccessService,
   ],
 })
 export class ApplicationModule {}

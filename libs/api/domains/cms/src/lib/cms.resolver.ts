@@ -13,7 +13,6 @@ import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
 import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
-import { FrontpageSliderList } from './models/frontpageSliderList.model'
 import { News } from './models/news.model'
 import { GetSingleNewsInput } from './dto/getSingleNews.input'
 import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
@@ -22,7 +21,6 @@ import { GetAdgerdirPagesInput } from './dto/getAdgerdirPages.input'
 import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import { GetOrganizationInput } from './dto/getOrganization.input'
 import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
-import { GetFrontpageSliderListInput } from './dto/getFrontpageSliderList.input'
 import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
@@ -55,9 +53,7 @@ import { Url } from './models/url.model'
 import { GetSingleArticleInput } from './dto/getSingleArticle.input'
 import { GetAboutSubPageInput } from './dto/getAboutSubPage.input'
 import { AboutSubPage } from './models/aboutSubPage.model'
-import { GetHomepageInput } from './dto/getHomepage.input'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
-import { Homepage } from './models/homepage.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
 import { NewsList } from './models/newsList.model'
@@ -255,16 +251,6 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => FrontpageSliderList, { nullable: true })
-  getFrontpageSliderList(
-    @Args('input') input: GetFrontpageSliderListInput,
-  ): Promise<FrontpageSliderList | null> {
-    return this.cmsContentfulService.getFrontpageSliderList(
-      input?.lang ?? 'is-IS',
-    )
-  }
-
-  @Directive(cacheControlDirective())
   @Query(() => AdgerdirFrontpage, { nullable: true })
   getAdgerdirFrontpage(
     @Args('input') input: GetAdgerdirFrontpageInput,
@@ -319,14 +305,10 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => Homepage)
-  getHomepage(@Args('input') input: GetHomepageInput): Promise<Homepage> {
-    return this.cmsContentfulService.getHomepage(input)
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => Frontpage)
-  getFrontpage(@Args('input') input: GetFrontpageInput): Promise<Frontpage> {
+  @Query(() => Frontpage, { nullable: true })
+  getFrontpage(
+    @Args('input') input: GetFrontpageInput,
+  ): Promise<Frontpage | null> {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
       getElasticsearchIndex(input.lang),
       { type: 'webFrontpage', slug: input.pageIdentifier },

@@ -13,12 +13,22 @@ export enum ServicePortalPath {
 
   // Settings
   SettingsRoot = '/stillingar',
+  SettingsAccessControl = '/stillingar/adgangsstyring',
+  SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
+  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:nationalId',
+  SettingsPersonalInformation = '/stillingar/personuupplysingar',
+  SettingsPersonalInformationEditPhoneNumber = '/stillingar/personuupplysingar/breyta-simanumeri',
+  SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
+  SettingsPersonalInformationEditLanguage = '/stillingar/personuupplysingar/breyta-tungumali',
+  SettingsPersonalInformationEmailConfirmation = '/stillingar/personuupplysingar/stadfesta-netfang/:hash',
 
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',
   FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
+  Endorsements = '/min-gogn/medmaeli',
+
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 
   // Fjarmal
@@ -39,7 +49,7 @@ export enum ServicePortalPath {
   EducationLicense = '/menntun/leyfisbref',
   EducationDegree = '/menntun/profgradur',
   EducationCareer = '/menntun/namsferill',
-  EducationStudentAssessment = '/menntun/namsferill/samraemd-prof',
+  EducationStudentAssessment = '/menntun/namsferill/:nationalId/samraemd-prof',
   EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
 
   // Assets
@@ -53,12 +63,11 @@ export enum ServicePortalPath {
   ParentalLeave = '/min-rettindi/faedingarorlof',
   DrivingLicense = '/min-rettindi/okuskirteini',
 
-  // User Profile
-  UserProfileRoot = '/stillingar',
-  UserProfileEditPhoneNumber = '/stillingar/breyta-simanumeri',
-  UserProfileEditEmail = '/stillingar/breyta-netfangi',
-  UserProfileEditLanguage = '/stillingar/breyta-tungumali',
-  UserProfileEmailConfirmation = '/stillingar/stadfesta-netfang/:hash',
+  // Icelandic Names Registry
+  IcelandicNamesRegistryRoot = '/mannanafnaskra',
+
+  // Licenses service
+  LicensesRoot = '/min-gogn/skilriki',
 
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first

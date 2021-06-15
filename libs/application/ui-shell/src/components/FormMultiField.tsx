@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import { Box, GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import {
   Application,
   formatText,
@@ -54,7 +54,7 @@ const FormMultiField: FC<{
         </GridColumn>
       )}
 
-      {/* Todo: 
+      {/* Todo:
           We need a better approach for overall field spacing and control of spacing.
           For now I'm setting this based on the Parental Leave comps:
           https://www.figma.com/file/xXSz5E9SRRs6Me0vtpgimH/F%C3%A6%C3%B0ingarorlof-Ums%C3%B3kn?node-id=465%3A0
@@ -74,7 +74,7 @@ const FormMultiField: FC<{
             span={['1/1', '1/1', span]}
             paddingBottom={index === children.length - 1 ? 0 : space}
           >
-            <Box paddingTop={1}>
+            <Box>
               <FormField
                 application={application}
                 showFieldName

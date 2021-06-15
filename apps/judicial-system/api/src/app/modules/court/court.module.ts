@@ -4,7 +4,6 @@ import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 import { CourtClientModule } from '@island.is/judicial-system/court-client'
 
 import { environment } from '../../../environments'
-import { AuditModule } from '../audit'
 import { CourtResolver } from './court.resolver'
 import { CourtService } from './court.service'
 
@@ -14,15 +13,15 @@ import { CourtService } from './court.service'
       xRoadPath: createXRoadAPIPath(
         environment.xRoad.basePathWithEnv,
         XRoadMemberClass.GovernmentInstitution,
-        environment.courtService.memberCode,
-        environment.courtService.apiPath,
+        environment.courtClientOptions.memberCode,
+        environment.courtClientOptions.apiPath,
       ),
       xRoadClient: environment.xRoad.clientId,
       clientCert: environment.xRoad.clientCert,
       clientKey: environment.xRoad.clientKey,
       clientCa: environment.xRoad.clientCa,
+      serviceOptions: environment.courtClientOptions.serviceOptions,
     }),
-    AuditModule,
   ],
   providers: [CourtResolver, CourtService],
 })

@@ -1,5 +1,5 @@
-import React, { FC } from 'react'
-import { Button, Text, Stack, Link } from '@island.is/island-ui/core'
+import React from 'react'
+import { Button, Text, Stack, Link, Box } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
 import { ContentLink } from '@island.is/web/components'
 import { PROJECT_STORIES_TAG_ID } from '@island.is/web/constants'
@@ -14,44 +14,51 @@ export interface StoryProps {
   readMoreText: string
   link?: string
   linkedPage?: string
+  variant: 'light' | 'dark'
 }
 
 export interface StoryListProps {
   readMoreText: string
   stories: StoryProps[]
+  variant?: 'light' | 'dark'
 }
 
-export const StoryList: FC<StoryListProps> = ({
+export const StoryList = ({
   readMoreText,
   stories = [],
-}) => {
+  variant = 'light',
+}: StoryListProps) => {
   const { linkResolver } = useLinkResolver()
 
   return (
     <Stack space={8}>
       {stories.map((story, i) => (
-        <Story key={i} {...story} />
+        <Story key={i} variant={variant} {...story} />
       ))}
       {stories.length > 0 ? (
-        <div className={styles.margin}>
+        <Box className={styles.margin} display="inlineBlock">
           <Link
             href={{
               pathname: linkResolver('newsoverview').href,
               query: { tag: PROJECT_STORIES_TAG_ID },
             }}
-            pureChildren
+            skipTab
           >
-            <Button variant="ghost" colorScheme="negative">
+            <Button
+              as="span"
+              variant="ghost"
+              colorScheme={variant === 'light' ? 'negative' : 'default'}
+            >
               {readMoreText}
             </Button>
           </Link>
-        </div>
+        </Box>
       ) : null}
     </Stack>
   )
 }
 
-const Story: FC<StoryProps> = ({
+const Story = ({
   logoUrl,
   label,
   title,
@@ -59,23 +66,36 @@ const Story: FC<StoryProps> = ({
   readMoreText,
   linkedPage,
   link,
-}) => {
+  variant,
+}: StoryProps) => {
   return (
     <div className={styles.margin}>
       <div className={styles.icon}>
         <IconBullet variant="gradient" image={logoUrl} />
       </div>
       <Stack space={2}>
-        <Text variant="eyebrow" color="white">
+        <Text
+          variant="eyebrow"
+          color={variant === 'light' ? 'white' : 'dark400'}
+        >
           {label}
         </Text>
-        <Text variant="h2" as="h2" color="white">
+        <Text
+          variant="h2"
+          as="h2"
+          color={variant === 'light' ? 'white' : 'dark400'}
+        >
           {title}
         </Text>
-        <Text color="white">{intro}</Text>
+        <Text color={variant === 'light' ? 'white' : 'dark400'}>{intro}</Text>
         {!!(linkedPage || link) && (
           <ContentLink pageData={linkedPage} fallbackLink={link}>
-            <Button variant="text" colorScheme="negative" icon="arrowForward">
+            <Button
+              as="span"
+              variant="text"
+              colorScheme={variant === 'light' ? 'negative' : 'default'}
+              icon="arrowForward"
+            >
               {readMoreText}
             </Button>
           </ContentLink>

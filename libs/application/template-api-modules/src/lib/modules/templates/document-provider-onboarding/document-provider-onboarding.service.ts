@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
 import get from 'lodash/get'
+
+import { logger } from '@island.is/logging'
+import { OrganisationsApi } from '@island.is/clients/document-provider'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-
 import {
   generateAssignReviewerEmail,
   generateApplicationApprovedEmail,
@@ -16,12 +17,10 @@ interface Contact {
   email: string
   phoneNumber: string
 }
-
 interface Applicant extends Contact {
   nationalId: string
   address: string
 }
-
 interface Helpdesk {
   email: string
   phoneNumber: string
@@ -31,6 +30,7 @@ interface Helpdesk {
 export class DocumentProviderOnboardingService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private organisationsApi: OrganisationsApi,
   ) {}
 
   async assignReviewer({ application }: TemplateApiModuleActionProps) {
@@ -61,24 +61,17 @@ export class DocumentProviderOnboardingService {
         'helpDesk',
       ) as unknown) as Helpdesk
 
-      const query = `mutation {
-      createOrganisation(
-        input: {
-          nationalId: "${applicant.nationalId}"
-          name: "${applicant.name}"
-          address: "${applicant.address}"
-          email: "${applicant.email}"
-          phoneNumber: "${applicant.phoneNumber}"
-          administrativeContact: {name:"${adminContact.name}", email:"${adminContact.email}", phoneNumber:"${adminContact.phoneNumber}"}
-          technicalContact:{name:"${techContact.name}", email:"${techContact.email}", phoneNumber:"${techContact.phoneNumber}"}
-          helpdesk:{email:"${helpdesk.email}", phoneNumber:"${helpdesk.phoneNumber}"}
-        }
-      ) {
-        id
+      const dto = {
+        createOrganisationDto: {
+          ...applicant,
+          administrativeContact: { ...adminContact },
+          technicalContact: { ...techContact },
+          helpdesk: { ...helpdesk },
+        },
+        authorization,
       }
-    }`
 
-      await this.sharedTemplateAPIService.makeGraphqlQuery(authorization, query)
+      await this.organisationsApi.organisationControllerCreateOrganisation(dto)
     } catch (error) {
       logger.error('Failed to create organisation', error)
       throw error

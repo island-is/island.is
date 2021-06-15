@@ -2,11 +2,13 @@
 .users,
 .identity-resources,
 .api-resources-list,
-.admin-users-list,
+.api-scope-users-list,
 .idp-providers-list,
 .grant-type-list,
 .language-list,
-.translation-list {
+.translation-list,
+.api-scope-group-list,
+.domain-list {
   &__wrapper {
     max-width: 1024px;
   }

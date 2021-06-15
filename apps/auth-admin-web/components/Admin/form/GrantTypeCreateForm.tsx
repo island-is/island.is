@@ -6,6 +6,8 @@ import { GrantTypeDTO } from './../../../entities/dtos/grant-type.dto'
 import { GrantType } from './../../../entities/models/grant-type.model'
 import { GrantTypeService } from './../../../services/GrantTypeService'
 import ValidationUtils from './../../../utils/validation.utils'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 interface Props {
   grantType: GrantTypeDTO
   handleSaveButtonClicked?: (response: GrantType) => void
@@ -21,6 +23,9 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const grantType = props.grantType
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('GrantTypeCreateForm'),
+  )
 
   useEffect(() => {
     if (props.grantType && props.grantType.name) {
@@ -58,10 +63,10 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
     <div className="grant-type-create-form">
       <div className="grant-type-create-form__wrapper">
         <div className="grant-type-create-form__container">
-          <h1>{isEditing ? 'Edit Grant Type' : 'Create a new Grant Type'}</h1>
+          <h1>{isEditing ? localization.editTitle : localization.title}</h1>
           <div className="grant-type-create-form__container__form">
             <div className="grant-type-create-form__help">
-              Add or edit a Grant Type
+              {localization.help}
             </div>
             <form onSubmit={handleSubmit(create)}>
               <div className="grant-type-create-form__container__fields">
@@ -70,7 +75,7 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     className="grant-type-create-form__label"
                     htmlFor="grantType.name"
                   >
-                    Name
+                    {localization.fields['name'].label}
                   </label>
                   <input
                     type="text"
@@ -82,16 +87,16 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     })}
                     defaultValue={grantType.name}
                     className="grant-type-create-form__input"
-                    placeholder="Grant Type unique name"
-                    title="The unique name of the Grant Type"
+                    placeholder={localization.fields['name'].placeholder}
+                    title={localization.fields['name'].helpText}
                     readOnly={isEditing}
                   />
-                  <HelpBox helpText="The unique name of the Grant Type" />
+                  <HelpBox helpText={localization.fields['name'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="grantType.name"
-                    message="Name is required and needs to be in the right format"
+                    message={localization.fields['name'].errorMessage}
                   />
                 </div>
 
@@ -100,7 +105,7 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     className="grant-type-create-form__label"
                     htmlFor="grantType.description"
                   >
-                    Description
+                    {localization.fields['description'].label}
                   </label>
                   <input
                     id="grantType.description"
@@ -112,16 +117,18 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     name="grantType.description"
                     defaultValue={grantType.description ?? ''}
                     className="grant-type-create-form__input"
-                    title="Short description about this Grant Type"
-                    placeholder="App from Example Firm"
+                    title={localization.fields['description'].helpText}
+                    placeholder={localization.fields['description'].placeholder}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="grantType.description"
-                    message="Description is required and needs to be in the right format"
+                    message={localization.fields['description'].errorMessage}
                   />
-                  <HelpBox helpText="Short description about this Grant Type" />
+                  <HelpBox
+                    helpText={localization.fields['description'].helpText}
+                  />
                 </div>
               </div>
 
@@ -131,8 +138,9 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     className="grant-type-create-form__button__cancel"
                     type="button"
                     onClick={props.handleCancel}
+                    title={localization.buttons['cancel'].helpText}
                   >
-                    Cancel
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="grant-type-create-form__button__container">
@@ -140,7 +148,8 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="grant-type-create-form__button__save"
                     disabled={isSubmitting}
-                    value="Save"
+                    title={localization.buttons['save'].helpText}
+                    value={localization.buttons['save'].text}
                   />
                 </div>
               </div>

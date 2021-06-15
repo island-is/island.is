@@ -3,13 +3,17 @@ import { documentProviderModule } from '@island.is/service-portal/document-provi
 import { documentsModule } from '@island.is/service-portal/documents'
 import { familyModule } from '@island.is/service-portal/family'
 import { financeModule } from '@island.is/service-portal/finance'
-import { settingsModule } from '@island.is/service-portal/settings'
+import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandic-names-registry'
+import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
+import { accessControlModule } from '@island.is/service-portal/settings/access-control'
 import { educationModule } from '@island.is/service-portal/education'
 import { educationLicenseModule } from '@island.is/service-portal/education-license'
+import { endorsementsModule } from '@island.is/service-portal/endorsements'
 import { educationDegreeModule } from '@island.is/service-portal/education-degree'
 import { educationCareerModule } from '@island.is/service-portal/education-career'
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
 import { applicationsModule } from '@island.is/service-portal/applications'
+import { licensesModule } from '@island.is/service-portal/licenses'
 
 /**
  * NOTE:
@@ -23,26 +27,31 @@ import { applicationsModule } from '@island.is/service-portal/applications'
  */
 
 export type ModuleKeys =
+  | 'accessControl'
   | 'documentProvider'
   | 'documents'
   | 'family'
   | 'finance'
-  | 'settings'
+  | 'icelandicNamesRegistry'
+  | 'personalInformation'
   | 'education'
-  | 'educationDegree'
   | 'educationLicense'
+  | 'endorsements'
   | 'educationCareer'
   | 'educationStudentAssessment'
   | 'applications'
+  | 'licenses'
 
 export const featureFlaggedModules: ModuleKeys[] = [
+  'accessControl',
   'documentProvider',
   'education',
-  'educationDegree',
   'educationLicense',
   'educationCareer',
   'educationStudentAssessment',
-  'applications',
+  'endorsements',
+  'icelandicNamesRegistry',
+  'licenses',
 ]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
@@ -50,11 +59,14 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   documents: documentsModule,
   family: familyModule,
   finance: financeModule,
-  settings: settingsModule,
+  icelandicNamesRegistry: icelandicNamesRegistryModule,
+  personalInformation: personalInformationModule,
   education: educationModule,
-  educationDegree: educationDegreeModule,
   educationLicense: educationLicenseModule,
+  endorsements: endorsementsModule,
   educationCareer: educationCareerModule,
   educationStudentAssessment: educationStudentAssessmentModule,
   applications: applicationsModule,
+  accessControl: accessControlModule,
+  licenses: licensesModule,
 }

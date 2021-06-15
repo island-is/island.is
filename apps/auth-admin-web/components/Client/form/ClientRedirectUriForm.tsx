@@ -7,6 +7,8 @@ import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import ValidationUtils from './../../../utils/validation.utils'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { FormControl } from '../../../entities/common/Localization'
 
 interface Props {
   clientId: string
@@ -30,6 +32,9 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
   )
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [uriToRemove, setUriToRemove] = React.useState('')
+  const [localization] = useState<FormControl>(
+    LocalizationUtils.getFormControl('ClientRedirectUriForm'),
+  )
 
   const add = async (data: ClientRedirectUriDTO) => {
     const clientRedirect = new ClientRedirectUriDTO()
@@ -88,51 +93,57 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
       <div className="client-redirect">
         <div className="client-redirect__wrapper">
           <div className="client-redirect__container">
-            <h1>Enter a callback URL</h1>
+            <h1>{localization.title}</h1>
             <div className="client-redirect__container__form">
-              <div className="client-redirect__help">
-                Specifies the allowed URIs to return tokens or authorization
-                codes to
-              </div>
+              <div className="client-redirect__help">{localization.help}</div>
               <form id="redirectForm" onSubmit={handleSubmit(add)}>
                 <div className="client-redirect__container__fields">
                   <div className="client-redirect__container__field">
-                    <label className="client-redirect__label">
-                      Callback URL
+                    <label
+                      className="client-redirect__label"
+                      htmlFor="redirectUri"
+                    >
+                      {localization.fields['redirectUri'].label}
                     </label>
                     <input
+                      id="redirectUri"
                       type="text"
                       name="redirectUri"
                       ref={register({
                         required: true,
-                        validate: ValidationUtils.validateUrl,
+                        validate: ValidationUtils.validateUri,
                       })}
                       defaultValue={defaultUrl ?? ''}
                       className="client-redirect__input"
-                      placeholder="https://localhost:4200/signin-oidc"
-                      title="Full path of the redirect URL. These protocols rely upon TLS in production"
+                      placeholder={
+                        localization.fields['redirectUri'].placeholder
+                      }
+                      title={localization.fields['redirectUri'].helpText}
                     />
-                    <HelpBox helpText="Full path of the redirect URL. These protocols rely upon TLS in production" />
+                    <HelpBox
+                      helpText={localization.fields['redirectUri'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="redirectUri"
-                      message="Path is required and needs to be in the right format"
+                      message={localization.fields['redirectUri'].errorMessage}
                     />
                     <input
                       type="submit"
                       className="client-redirect__button__add"
                       disabled={isSubmitting}
-                      value="Add"
+                      value={localization.buttons['add'].text}
+                      title={localization.buttons['add'].helpText}
                     />
                   </div>
                 </div>
               </form>
 
               <NoActiveConnections
-                title="No client redirect uris (Callback uris) are defined"
+                title={localization.noActiveConnections?.title}
                 show={!props.uris || props.uris.length === 0}
-                helpText="Add a redirect uri and push the Add button. If a uri exists in the form, it's the display uri defined in the Client form"
+                helpText={localization.noActiveConnections?.helpText}
               ></NoActiveConnections>
 
               <div
@@ -140,7 +151,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                   props.uris && props.uris.length > 0 ? 'show' : 'hidden'
                 }`}
               >
-                <h3>Active callback URLs</h3>
+                <h3>{localization.sections['active'].title}</h3>
                 {props.uris?.map((uri: string) => {
                   return (
                     <div
@@ -153,10 +164,10 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => confirmRemove(uri)}
                           className="client-redirect__container__list__button__remove"
-                          title="Remove"
+                          title={localization.buttons['remove'].helpText}
                         >
                           <i className="icon__delete"></i>
-                          <span>Remove</span>
+                          <span>{localization.buttons['remove'].text}</span>
                         </button>
                       </div>
                     </div>
@@ -169,10 +180,10 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                   <button
                     type="button"
                     className="client-redirect__button__cancel"
-                    title="Back"
+                    title={localization.buttons['cancel'].helpText}
                     onClick={props.handleBack}
                   >
-                    Back
+                    {localization.buttons['cancel'].text}
                   </button>
                 </div>
                 <div className="client-redirect__button__container">
@@ -180,9 +191,9 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="client-redirect__button__save"
                     onClick={props.handleNext}
-                    title="Next"
+                    title={localization.buttons['save'].helpText}
                   >
-                    Next
+                    {localization.buttons['save'].text}
                   </button>
                 </div>
               </div>
@@ -195,7 +206,7 @@ const ClientRedirectUriForm: React.FC<Props> = (props: Props) => {
         headerElement={setHeaderElement()}
         closeModal={closeModal}
         confirmation={remove}
-        confirmationText="Delete"
+        confirmationText={localization.buttons['remove'].text}
       ></ConfirmModal>
     </div>
   )

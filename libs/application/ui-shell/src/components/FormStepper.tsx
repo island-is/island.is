@@ -39,6 +39,7 @@ const FormStepper: FC<FormStepperProps> = ({
 
   const progressTheme: Record<FormModes, FormStepperThemes> = {
     [FormModes.APPLYING]: FormStepperThemes.PURPLE,
+    [FormModes.EDITING]: FormStepperThemes.PURPLE,
     [FormModes.APPROVED]: FormStepperThemes.GREEN,
     [FormModes.REVIEW]: FormStepperThemes.BLUE,
     [FormModes.PENDING]: FormStepperThemes.BLUE,
@@ -71,7 +72,7 @@ const FormStepper: FC<FormStepperProps> = ({
 
       case FormModes.APPROVED:
         return (
-          <Tag variant="darkerMint" outlined>
+          <Tag variant="blueberry" outlined>
             Status: Approved
           </Tag>
         )

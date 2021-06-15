@@ -1,4 +1,5 @@
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { EmailVerification } from './emailVerification.model'
@@ -163,7 +164,7 @@ export class VerificationService {
   }
 
   async sendConfirmationEmail(verification: EmailVerification) {
-    const resetLink = `${environment.email.servicePortalBaseUrl}/stillingar/stadfesta-netfang/${verification.hash}`
+    const resetLink = `${environment.email.servicePortalBaseUrl}/stillingar/personuupplysingar/stadfesta-netfang/${verification.hash}`
     try {
       await this.emailService.sendEmail({
         from: {

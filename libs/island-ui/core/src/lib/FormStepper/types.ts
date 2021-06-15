@@ -8,5 +8,9 @@ export enum FormStepperThemes {
 export interface FormStepperSection {
   name: string
   type?: string
-  children?: FormStepperSection[]
+  children?: FormStepperChildSection[]
+}
+
+export interface FormStepperChildSection extends FormStepperSection {
+  href?: string
 }

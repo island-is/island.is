@@ -13,35 +13,65 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { NationalIdGuard } from '../access/national-id-guard'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentUser,
+} from '@island.is/auth-nest-tools'
+import { AuthAdminScope } from '@island.is/auth/scopes'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { environment } from '../../../environments/'
 
-@UseGuards(IdsAuthGuard, NationalIdGuard)
+const namespace = `${environment.audit.defaultNamespace}/client-grant-type`
+
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('client-grant-type')
 @Controller('backend/client-grant-type')
+@Audit({ namespace })
 export class ClientGrantTypeController {
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(
+    private readonly clientsService: ClientsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   /** Adds new Grant type to client */
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Post()
   @ApiCreatedResponse({ type: ClientGrantType })
+  @Audit<ClientGrantType>({
+    resources: (grantType) => grantType.clientId,
+    meta: ({ grantType }) => ({ grantType }),
+  })
   async create(
     @Body() grantType: ClientGrantTypeDTO,
   ): Promise<ClientGrantType> {
-    return await this.clientsService.addGrantType(grantType)
+    return this.clientsService.addGrantType(grantType)
   }
 
   /** Removes a grant type from client */
+  @Scopes(AuthAdminScope.root, AuthAdminScope.full)
   @Delete(':clientId/:grantType')
   @ApiCreatedResponse()
   async delete(
     @Param('clientId') clientId: string,
     @Param('grantType') grantType: string,
+    @CurrentUser() user: User,
   ): Promise<number> {
     if (!clientId || !grantType) {
       throw new BadRequestException('clientId and grantType must be provided')
     }
 
-    return await this.clientsService.removeGrantType(clientId, grantType)
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'delete',
+        namespace,
+        resources: clientId,
+        meta: { grantType },
+      },
+      this.clientsService.removeGrantType(clientId, grantType),
+    )
   }
 }

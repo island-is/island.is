@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { UserRole } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
@@ -47,7 +48,7 @@ export class UserService {
   }
 
   async findByNationalId(nationalId: string): Promise<User> {
-    this.logger.debug(`Getting user with national id ${nationalId}`)
+    this.logger.debug('Getting a user by national id')
 
     // First check if the user is an admin
     try {
@@ -76,9 +77,7 @@ export class UserService {
   }
 
   create(userToCreate: CreateUserDto): Promise<User> {
-    this.logger.debug(
-      `Creating a new user with national id ${userToCreate.nationalId}`,
-    )
+    this.logger.debug('Creating a new user')
 
     return this.userModel.create(userToCreate)
   }

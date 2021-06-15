@@ -1,598 +1,878 @@
-import React, { FC, useMemo, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
+import React, { FC, useMemo } from 'react'
+
 import {
   Application,
-  getValueViaPath,
-  ValidAnswers,
   formatAndParseAsHTML,
   buildFieldOptions,
+  RecordObject,
+  Field,
 } from '@island.is/application/core'
+import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import {
-  Accordion,
-  AccordionItem,
-  Box,
-  Button,
-  GridColumn,
-  GridRow,
-  Input,
-  Text,
-} from '@island.is/island-ui/core'
-import {
+  InputController,
   RadioController,
   SelectController,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { useQuery } from '@apollo/client'
-
-import Timeline from '../components/Timeline'
 import {
-  formatPeriods,
-  getExpectedDateOfBirth,
+  DataValue,
+  Label,
+  RadioValue,
+  ReviewGroup,
+} from '@island.is/application/ui-components'
+
+import {
   getOtherParentOptions,
-} from '../../parentalLeaveUtils'
-
-import PaymentsTable from '../PaymentSchedule/PaymentsTable'
-import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
-import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
+  getSelectedChild,
+} from '../../lib/parentalLeaveUtils'
+// TODO: Bring back payment calculation info, once we have an api
+// import PaymentsTable from '../PaymentSchedule/PaymentsTable'
+// import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { YES, NO } from '../../constants'
-import {
-  GetPensionFunds,
-  GetPrivatePensionFunds,
-  GetUnions,
-} from '../../graphql/queries'
-import {
-  GetPensionFundsQuery,
-  GetPrivatePensionFundsQuery,
-  GetUnionsQuery,
-} from '../../types/schema'
+import { YES, NO, MANUAL, ParentalRelations } from '../../constants'
+import { Boolean } from '../../types'
+import { SummaryTimeline } from '../components/Timeline/SummaryTimeline'
+import { SummaryRights } from '../Rights/SummaryRights'
+import { useUnion as useUnionOptions } from '../../hooks/useUnion'
+import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../hooks/usePrivatePensionFund'
+import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
+import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 
-import { Period } from '../../types'
-
-type ValidOtherParentAnswer = 'no' | 'manual' | undefined
+type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
 
 interface ReviewScreenProps {
   application: Application
+  field: Field & { props?: { editable?: boolean } }
   goToScreen?: (id: string) => void
+  errors?: RecordObject
   editable?: boolean
+}
+
+type selectOption = {
+  label: string
+  value: string
 }
 
 const Review: FC<ReviewScreenProps> = ({
   application,
+  field,
   goToScreen,
-  editable = true,
+  errors,
 }) => {
-  const [allItemsExpanded, toggleAllItemsExpanded] = useState(true)
-
-  const { register } = useFormContext()
+  const editable = field.props?.editable ?? false
+  const pensionFundOptions = usePensionFundOptions()
+  const privatePensionFundOptions = usePrivatePensionFundOptions()
+  const unionOptions = useUnionOptions()
   const { formatMessage } = useLocale()
-
   const [
-    statefulOtherParentConfirmed,
-    setStatefulOtherParentConfirmed,
-  ] = useState<ValidOtherParentAnswer>(
-    getValueViaPath(
-      application.answers,
-      'otherParent',
-    ) as ValidOtherParentAnswer,
+    {
+      otherParent,
+      otherParentName,
+      otherParentId,
+      pensionFund,
+      union,
+      usePrivatePensionFund,
+      privatePensionFund,
+      privatePensionFundPercentage,
+      isSelfEmployed,
+      bank,
+      usePersonalAllowance,
+      usePersonalAllowanceFromSpouse,
+      personalUseAsMuchAsPossible,
+      personalUsage,
+      spouseUseAsMuchAsPossible,
+      spouseUsage,
+      employerEmail,
+    },
+    setStateful,
+  ] = useStatefulAnswers(application)
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
   )
+  const isPrimaryParent =
+    selectedChild?.parentalRelation === ParentalRelations.primary
 
-  const [
-    statefulPrivatePension,
-    setStatefulPrivatePension,
-  ] = useState<ValidAnswers>(
-    getValueViaPath(
-      application.answers,
-      'usePrivatePensionFund',
-    ) as ValidAnswers,
-  )
+  const getSelectOptionLabel = (options: selectOption[], id: string) =>
+    options.find((option) => option.value === id)?.label
 
   const otherParentOptions = useMemo(
-    () => buildFieldOptions(getOtherParentOptions(application), application),
+    () =>
+      buildFieldOptions(getOtherParentOptions(application), application, field),
     [application],
   )
 
-  const { data: pensionFundData } = useQuery<GetPensionFundsQuery>(
-    GetPensionFunds,
-  )
-  const pensionFundOptions =
-    pensionFundData?.getPensionFunds?.map(({ id, name }) => ({
-      label: name,
-      value: id,
-    })) ?? []
-
-  const {
-    data: privatePensionFundData,
-  } = useQuery<GetPrivatePensionFundsQuery>(GetPrivatePensionFunds)
-  const privatePensionFundOptions =
-    privatePensionFundData?.getPrivatePensionFunds?.map(({ id, name }) => ({
-      label: name,
-      value: id,
-    })) ?? []
-
-  const { data: unionData } = useQuery<GetUnionsQuery>(GetUnions)
-  const unionOptions =
-    unionData?.getUnions?.map(({ id, name }) => ({
-      label: name,
-      value: id,
-    })) ?? []
-
-  const dob = getExpectedDateOfBirth(application)
-  const { data, error, loading } = useQuery(getEstimatedPayments, {
-    variables: {
-      input: {
-        dateOfBirth: dob,
-        period: [
-          {
-            from: '2021-01-01',
-            to: '2021-01-01',
-            ratio: 100,
-            approved: true,
-            paid: true,
-          },
-        ],
-      },
-    },
-  })
-  if (!dob) {
-    return null
-  }
-  const dobDate = new Date(dob)
-
   return (
-    <div>
-      <Box marginTop={[2, 2, 4]} marginBottom={[0, 0, 6]}>
-        <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
-          <Button
-            colorScheme="default"
-            iconType="filled"
-            icon={allItemsExpanded ? 'remove' : 'add'}
-            onClick={() => {
-              toggleAllItemsExpanded(!allItemsExpanded)
-            }}
-            preTextIconType="filled"
-            size="default"
-            type="button"
-            variant="utility"
-          >
-            {allItemsExpanded
-              ? `${formatMessage(
-                  parentalLeaveFormMessages.confirmation.collapseAll,
-                )}`
-              : `${formatMessage(
-                  parentalLeaveFormMessages.confirmation.epxandAll,
-                )}`}
-          </Button>
-        </Box>
+    <>
+      <ReviewGroup
+        isEditable={editable && isPrimaryParent}
+        editChildren={
+          <>
+            <Label marginBottom={3}>
+              {formatMessage(parentalLeaveFormMessages.shared.otherParentTitle)}
+            </Label>
 
-        <Accordion singleExpand={false}>
-          <AccordionItem
-            id="id_4"
+            <RadioController
+              id="otherParent"
+              name="otherParent"
+              defaultValue={otherParent}
+              options={otherParentOptions.map((option) => ({
+                ...option,
+                label: formatAndParseAsHTML(
+                  option.label,
+                  application,
+                  formatMessage,
+                ),
+              }))}
+              onSelect={(s: string) => {
+                setStateful((prev) => ({
+                  ...prev,
+                  otherParent: s as ValidOtherParentAnswer,
+                }))
+              }}
+            />
+
+            {otherParent === MANUAL && (
+              <>
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                    <InputController
+                      id="otherParentName"
+                      name="otherParentName"
+                      defaultValue={otherParentName}
+                      label={formatMessage(
+                        parentalLeaveFormMessages.shared.otherParentName,
+                      )}
+                      onChange={(e) =>
+                        setStateful((prev) => ({
+                          ...prev,
+                          otherParentName: e.target.value,
+                        }))
+                      }
+                    />
+                  </GridColumn>
+
+                  <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                    <InputController
+                      id="otherParentId"
+                      name="otherParentId"
+                      defaultValue={otherParentId}
+                      format="######-####"
+                      placeholder="000000-0000"
+                      label={formatMessage(
+                        parentalLeaveFormMessages.shared.otherParentID,
+                      )}
+                      onChange={(e) =>
+                        setStateful((prev) => ({
+                          ...prev,
+                          otherParentId: e.target.value?.replace('-', ''),
+                        }))
+                      }
+                    />
+                  </GridColumn>
+                </GridRow>
+              </>
+            )}
+          </>
+        }
+      >
+        {otherParent === NO && (
+          <RadioValue
             label={formatMessage(
               parentalLeaveFormMessages.shared.otherParentTitle,
             )}
-            startExpanded={allItemsExpanded}
-          >
-            <Box paddingY={4}>
-              <Box>
-                {editable ? (
-                  <RadioController
-                    id="otherParent"
-                    disabled={false}
-                    name="otherParent"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'otherParent',
-                      ) as string[]
-                    }
-                    options={otherParentOptions.map((option) => ({
-                      ...option,
-                      label: formatAndParseAsHTML(
-                        option.label,
-                        application,
-                        formatMessage,
-                      ),
-                    }))}
-                    onSelect={(s: string) => {
-                      setStatefulOtherParentConfirmed(
-                        s as ValidOtherParentAnswer,
-                      )
-                    }}
-                  />
-                ) : (
-                  <Text>
-                    {
-                      getValueViaPath(
-                        application.answers,
-                        'otherParent',
-                      ) as string[]
-                    }
-                  </Text>
-                )}
-              </Box>
-              {statefulOtherParentConfirmed === 'manual' && (
-                <>
-                  <Box marginTop={3} />
-                  <GridRow>
-                    <GridColumn span="6/12">
-                      {editable ? (
-                        <Input
-                          id="otherParentName"
-                          name="otherParentName"
-                          label={formatMessage(
-                            parentalLeaveFormMessages.shared.otherParentName,
-                          )}
-                          ref={register}
-                        />
-                      ) : (
-                        <Text>
-                          {
-                            getValueViaPath(
-                              application.answers,
-                              'otherParentName',
-                            ) as string[]
-                          }
-                        </Text>
-                      )}
-                    </GridColumn>
-                    <GridColumn span="6/12">
-                      {editable ? (
-                        <Input
-                          id="otherParentId"
-                          name="otherParentId"
-                          label={formatMessage(
-                            parentalLeaveFormMessages.shared.otherParentID,
-                          )}
-                          ref={register}
-                        />
-                      ) : (
-                        <Text>
-                          {
-                            getValueViaPath(
-                              application.answers,
-                              'otherParentId',
-                            ) as string[]
-                          }
-                        </Text>
-                      )}
-                    </GridColumn>
-                  </GridRow>
-                </>
+            value={otherParent}
+          />
+        )}
+
+        {otherParent === MANUAL && (
+          <>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.otherParentName,
+                  )}
+                  value={otherParentName}
+                />
+              </GridColumn>
+
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.otherParentID,
+                  )}
+                  value={otherParentId}
+                />
+              </GridColumn>
+            </GridRow>
+          </>
+        )}
+      </ReviewGroup>
+
+      <ReviewGroup
+        isEditable={editable}
+        editChildren={
+          <>
+            <Label marginBottom={3}>
+              {formatMessage(
+                parentalLeaveFormMessages.shared.paymentInformationSubSection,
               )}
-            </Box>
-          </AccordionItem>
+            </Label>
 
-          <AccordionItem
-            id="id_3"
-            label={formatMessage(
-              parentalLeaveFormMessages.shared.paymentInformationSubSection,
-            )}
-            startExpanded={allItemsExpanded}
-          >
-            <Box paddingY={4}>
-              <GridRow>
-                <GridColumn span="6/12">
-                  {editable ? (
-                    <Input
-                      id="payments.bank"
-                      name="payments.bank"
-                      label={formatMessage(
-                        parentalLeaveFormMessages.shared.paymentInformationBank,
-                      )}
-                      ref={register}
-                    />
-                  ) : (
-                    <Text>
-                      {
-                        getValueViaPath(
-                          application.answers,
-                          'payments.bank',
-                        ) as string[]
-                      }
-                    </Text>
+            <InputController
+              id="payments.bank"
+              name="payments.bank"
+              format="####-##-######"
+              placeholder="0000-00-000000"
+              defaultValue={bank}
+              label={formatMessage(
+                parentalLeaveFormMessages.shared.paymentInformationBank,
+              )}
+              onChange={(e) =>
+                setStateful((prev) => ({ ...prev, bank: e.target.value }))
+              }
+            />
+
+            <GridRow marginTop={3} marginBottom={3}>
+              <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                <SelectController
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.salaryLabelPensionFund,
                   )}
-                </GridColumn>
-                <GridColumn span="6/12">
-                  {
-                    //TODO add the personal allowance questions when finished
+                  name="payments.pensionFund"
+                  id="payments.pensionFund"
+                  options={pensionFundOptions}
+                  defaultValue={pensionFund}
+                  onSelect={(s) =>
+                    setStateful((prev) => ({
+                      ...prev,
+                      pensionFund: s.value as string,
+                    }))
                   }
-                </GridColumn>
-              </GridRow>
-              <Box marginTop={3} />
-              <GridRow>
-                <GridColumn span="6/12">
-                  {editable ? (
-                    <SelectController
-                      label={formatMessage(
-                        parentalLeaveFormMessages.shared.salaryLabelPensionFund,
-                      )}
-                      name="payments.pensionFund"
-                      disabled={false}
-                      id="payments.pensionFund"
-                      options={pensionFundOptions}
-                    />
-                  ) : (
-                    <Text>
-                      {
-                        getValueViaPath(
-                          application.answers,
-                          'payments.pensionFund',
-                        ) as string[]
-                      }
-                    </Text>
-                  )}
-                </GridColumn>
-                <GridColumn span="6/12">
-                  {editable ? (
-                    <SelectController
-                      label={formatMessage(
-                        parentalLeaveFormMessages.shared.union,
-                      )}
-                      name="payments.union"
-                      disabled={false}
-                      id="payments.union"
-                      options={unionOptions}
-                    />
-                  ) : (
-                    <Text>
-                      {
-                        getValueViaPath(
-                          application.answers,
-                          'payments.union',
-                        ) as string[]
-                      }
-                    </Text>
-                  )}
-                </GridColumn>
-              </GridRow>
+                />
+              </GridColumn>
 
-              <Box marginTop={3} />
-
-              <Text variant="h5" marginTop={1} marginBottom={2}>
-                {formatMessage(
-                  parentalLeaveFormMessages.shared.privatePensionFundName,
-                )}
-              </Text>
-
-              {editable ? (
-                <RadioController
-                  id="usePrivatePensionFund"
-                  disabled={false}
-                  name="usePrivatePensionFund"
-                  defaultValue={
-                    getValueViaPath(
-                      application.answers,
-                      'usePrivatePensionFund',
-                    ) as string[]
-                  }
-                  options={[
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.yesOptionLabel,
-                      ),
-                      value: YES,
-                    },
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.noOptionLabel,
-                      ),
-                      value: NO,
-                    },
-                  ]}
-                  onSelect={(s: string) => {
-                    setStatefulPrivatePension(s as ValidAnswers)
+              <GridColumn
+                paddingTop={[2, 2, 2, 0]}
+                span={['12/12', '12/12', '12/12', '6/12']}
+              >
+                <SelectController
+                  label={formatMessage(parentalLeaveFormMessages.shared.union)}
+                  name="payments.union"
+                  id="payments.union"
+                  options={unionOptions}
+                  defaultValue={union}
+                  onSelect={(s) => {
+                    setStateful((prev) => ({
+                      ...prev,
+                      union: s.value as string,
+                    }))
                   }}
                 />
-              ) : (
-                <Text>
-                  {
-                    getValueViaPath(
-                      application.answers,
-                      'usePrivatePensionFund',
-                    ) as string[]
-                  }
-                </Text>
-              )}
+              </GridColumn>
+            </GridRow>
 
-              {statefulPrivatePension === YES && (
+            <Label marginBottom={3}>
+              {formatMessage(
+                parentalLeaveFormMessages.shared.privatePensionFundName,
+              )}
+            </Label>
+
+            <RadioController
+              id="usePrivatePensionFund"
+              name="usePrivatePensionFund"
+              defaultValue={usePrivatePensionFund}
+              split="1/2"
+              options={[
+                {
+                  label: formatMessage(
+                    parentalLeaveFormMessages.shared.yesOptionLabel,
+                  ),
+                  value: YES,
+                },
+                {
+                  label: formatMessage(
+                    parentalLeaveFormMessages.shared.noOptionLabel,
+                  ),
+                  value: NO,
+                },
+              ]}
+              onSelect={(s: string) => {
+                setStateful((prev) => ({
+                  ...prev,
+                  usePrivatePensionFund: s as Boolean,
+                }))
+              }}
+            />
+
+            {usePrivatePensionFund === YES && (
+              <GridRow marginTop={1}>
+                <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                  <SelectController
+                    label={formatMessage(
+                      parentalLeaveFormMessages.shared.privatePensionFund,
+                    )}
+                    name="payments.privatePensionFund"
+                    id="payments.privatePensionFund"
+                    options={privatePensionFundOptions}
+                    defaultValue={privatePensionFund}
+                    onSelect={(s) =>
+                      setStateful((prev) => ({
+                        ...prev,
+                        privatePensionFund: s.value as string,
+                      }))
+                    }
+                  />
+                </GridColumn>
+
+                <GridColumn
+                  paddingTop={[2, 2, 2, 0]}
+                  span={['12/12', '12/12', '12/12', '6/12']}
+                >
+                  <SelectController
+                    label={formatMessage(
+                      parentalLeaveFormMessages.shared.privatePensionFundRatio,
+                    )}
+                    name="payments.union"
+                    id="payments.union"
+                    defaultValue={privatePensionFundPercentage}
+                    options={[
+                      { label: '2%', value: '2' },
+                      { label: '4%', value: '4' },
+                    ]}
+                    onSelect={(s) =>
+                      setStateful((prev) => ({
+                        ...prev,
+                        privatePensionFundPercentage: s.value as string,
+                      }))
+                    }
+                  />
+                </GridColumn>
+              </GridRow>
+            )}
+          </>
+        }
+      >
+        <GridRow marginBottom={2}>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(
+                parentalLeaveFormMessages.shared.paymentInformationBank,
+              )}
+              value={bank}
+            />
+          </GridColumn>
+        </GridRow>
+
+        <GridRow marginBottom={2}>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(
+                parentalLeaveFormMessages.shared.salaryLabelPensionFund,
+              )}
+              value={getSelectOptionLabel(pensionFundOptions, pensionFund)}
+            />
+          </GridColumn>
+
+          <GridColumn
+            paddingTop={[2, 2, 2, 0]}
+            span={['12/12', '12/12', '12/12', '5/12']}
+          >
+            <DataValue
+              label={formatMessage(parentalLeaveFormMessages.shared.union)}
+              value={getSelectOptionLabel(unionOptions, union)}
+            />
+          </GridColumn>
+        </GridRow>
+
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <RadioValue
+              label={formatMessage(
+                parentalLeaveFormMessages.shared.privatePensionFundName,
+              )}
+              value={usePrivatePensionFund}
+            />
+          </GridColumn>
+        </GridRow>
+
+        {usePrivatePensionFund === YES && (
+          <GridRow marginTop={2}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.privatePensionFund,
+                )}
+                value={getSelectOptionLabel(
+                  privatePensionFundOptions,
+                  privatePensionFund,
+                )}
+              />
+            </GridColumn>
+
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.privatePensionFundRatio,
+                )}
+                value={privatePensionFundPercentage}
+              />
+            </GridColumn>
+          </GridRow>
+        )}
+      </ReviewGroup>
+
+      {isPrimaryParent && (
+        <ReviewGroup
+          isEditable={editable}
+          editChildren={
+            <>
+              <Label marginBottom={2}>
+                {formatMessage(
+                  parentalLeaveFormMessages.personalAllowance.title,
+                )}
+              </Label>
+
+              <RadioController
+                id="usePersonalAllowance"
+                name="usePersonalAllowance"
+                defaultValue={usePersonalAllowance}
+                split="1/2"
+                options={[
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.yesOptionLabel,
+                    ),
+                    value: YES,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.noOptionLabel,
+                    ),
+                    value: NO,
+                  },
+                ]}
+                onSelect={(s: string) => {
+                  setStateful((prev) => ({
+                    ...prev,
+                    usePersonalAllowance: s as Boolean,
+                  }))
+                }}
+              />
+
+              {usePersonalAllowance === YES && (
                 <>
-                  <Box marginTop={3} />
-                  <GridRow>
-                    <GridColumn span="6/12">
-                      {editable ? (
-                        <SelectController
-                          label={formatMessage(
-                            parentalLeaveFormMessages.shared.privatePensionFund,
-                          )}
-                          name="payments.pensionFund"
-                          disabled={false}
-                          id="payments.pensionFund"
-                          options={privatePensionFundOptions}
-                        />
-                      ) : (
-                        <Text>
-                          {
-                            getValueViaPath(
-                              application.answers,
-                              'payments.pensionFund',
-                            ) as string[]
-                          }
-                        </Text>
-                      )}
-                    </GridColumn>
-                    <GridColumn span="6/12">
-                      {editable ? (
-                        <SelectController
-                          label={formatMessage(
-                            parentalLeaveFormMessages.shared.union,
-                          )}
-                          name="payments.union"
-                          disabled={false}
-                          id="payments.union"
-                          options={unionOptions}
-                        />
-                      ) : (
-                        <Text>
-                          {
-                            getValueViaPath(
-                              application.answers,
-                              'payments.union',
-                            ) as string[]
-                          }
-                        </Text>
-                      )}
-                    </GridColumn>
-                  </GridRow>
+                  <Label marginTop={2} marginBottom={2}>
+                    {formatMessage(
+                      parentalLeaveFormMessages.personalAllowance
+                        .useAsMuchAsPossible,
+                    )}
+                  </Label>
+
+                  <RadioController
+                    id="personalAllowance.useAsMuchAsPossible"
+                    name="personalAllowance.useAsMuchAsPossible"
+                    defaultValue={personalUseAsMuchAsPossible}
+                    split="1/2"
+                    options={[
+                      {
+                        label: formatMessage(
+                          parentalLeaveFormMessages.shared.yesOptionLabel,
+                        ),
+                        value: YES,
+                      },
+                      {
+                        label: formatMessage(
+                          parentalLeaveFormMessages.shared.noOptionLabel,
+                        ),
+                        value: NO,
+                      },
+                    ]}
+                    onSelect={(s: string) => {
+                      setStateful((prev) => ({
+                        ...prev,
+                        personalUseAsMuchAsPossible: s as Boolean,
+                      }))
+                    }}
+                  />
                 </>
               )}
-            </Box>
-          </AccordionItem>
-          <AccordionItem
-            id="id_1"
-            label={formatMessage(parentalLeaveFormMessages.employer.subSection)}
-            startExpanded={allItemsExpanded}
-          >
-            {editable ? (
-              <Box paddingY={4}>
-                <Input
-                  id="employer.email"
-                  name="employer.email"
-                  label={formatMessage(
-                    parentalLeaveFormMessages.employer.email,
-                  )}
-                  ref={register}
-                />
-              </Box>
-            ) : (
-              <Text paddingY={4}>
-                {
-                  getValueViaPath(
-                    application.answers,
-                    'employer.email',
-                  ) as string[]
-                }
-              </Text>
-            )}
-          </AccordionItem>
 
-          <AccordionItem
-            id="id_4"
-            label={formatMessage(parentalLeaveFormMessages.shared.yourRights)}
-            startExpanded={allItemsExpanded}
-          >
-            <Box paddingY={4}>
-              <YourRightsBoxChart application={application} />
-            </Box>
-          </AccordionItem>
+              {personalUseAsMuchAsPossible === NO && (
+                <>
+                  <Label marginTop={2} marginBottom={2}>
+                    {formatMessage(
+                      parentalLeaveFormMessages.personalAllowance.manual,
+                    )}
+                  </Label>
 
-          <AccordionItem
-            id="id_4"
-            label={formatMessage(
-              parentalLeaveFormMessages.shared.periodsSection,
-            )}
-            startExpanded={allItemsExpanded}
-          >
-            <Box paddingY={4}>
-              <Timeline
-                initDate={dobDate}
-                title={formatMessage(
-                  parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
+                  <InputController
+                    id="personalAllowance.usage"
+                    name="personalAllowance.usage"
+                    suffix="%"
+                    placeholder="0%"
+                    type="number"
+                    defaultValue={personalUsage}
+                    onChange={(e) =>
+                      setStateful((prev) => ({
+                        ...prev,
+                        personalUsage: e.target.value?.replace('%', ''),
+                      }))
+                    }
+                  />
+                </>
+              )}
+            </>
+          }
+        >
+          <GridRow marginBottom={2}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <RadioValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.personalAllowance.title,
                 )}
-                titleSmall={formatMessage(
-                  parentalLeaveFormMessages.shared.dateOfBirthTitle,
-                )}
-                // TODO: Once we have the data, add the otherParentPeriods here.
-                //  periods={formatPeriods(
-                //   application.answers.periods as Period[],
-                //   otherParentPeriods,
-                // )}
-                periods={formatPeriods(application.answers.periods as Period[])}
+                value={usePersonalAllowance}
               />
-              {editable && (
-                <Box paddingTop={3}>
-                  <Button size="small" onClick={() => goToScreen?.('periods')}>
-                    {formatMessage(parentalLeaveFormMessages.leavePlan.change)}
-                  </Button>
-                </Box>
+            </GridColumn>
+
+            {usePersonalAllowance === YES &&
+              personalUseAsMuchAsPossible === YES && (
+                <GridColumn
+                  paddingTop={[2, 2, 2, 0]}
+                  span={['12/12', '12/12', '12/12', '5/12']}
+                >
+                  <RadioValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.reviewScreen
+                        .usePersonalAllowance,
+                    )}
+                    value={personalUseAsMuchAsPossible}
+                  />
+                </GridColumn>
               )}
-            </Box>
-          </AccordionItem>
 
-          <AccordionItem
-            id="id_4"
-            label={formatMessage(
-              parentalLeaveFormMessages.paymentPlan.subSection,
-            )}
-            startExpanded={allItemsExpanded}
-          >
-            <Box paddingY={4}>
-              {!loading && !error && (
-                <PaymentsTable
-                  application={application}
-                  payments={data.getEstimatedPayments}
-                />
+            {usePersonalAllowance === YES &&
+              personalUseAsMuchAsPossible === NO && (
+                <GridColumn
+                  paddingTop={[2, 2, 2, 0]}
+                  span={['12/12', '12/12', '12/12', '5/12']}
+                >
+                  <DataValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.personalAllowance
+                        .allowanceUsage,
+                    )}
+                    value={`${personalUsage ?? 0}%`}
+                  />
+                </GridColumn>
               )}
-            </Box>
-          </AccordionItem>
+          </GridRow>
+        </ReviewGroup>
+      )}
 
-          <AccordionItem
-            id="id_4"
-            label={formatMessage(
-              parentalLeaveFormMessages.shareInformation.subSection,
-            )}
-            startExpanded={allItemsExpanded}
-          >
-            <Box paddingY={4}>
-              <Box marginTop={1} marginBottom={2} marginLeft={4}>
-                <Text variant="h5">
-                  {formatMessage(
-                    parentalLeaveFormMessages.shareInformation.title,
-                  )}
-                </Text>
-              </Box>
+      {isPrimaryParent && (
+        <ReviewGroup
+          isEditable={editable}
+          editChildren={
+            <>
+              <Label marginBottom={2}>
+                {formatMessage(
+                  parentalLeaveFormMessages.personalAllowance.spouseTitle,
+                )}
+              </Label>
 
-              {editable ? (
-                <RadioController
-                  id="shareInformationWithOtherParent"
-                  disabled={false}
-                  name="shareInformationWithOtherParent"
-                  defaultValue={
-                    getValueViaPath(
-                      application.answers,
-                      'shareInformationWithOtherParent',
-                    ) as string[]
-                  }
-                  options={[
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.yesOptionLabel,
-                      ),
-                      value: YES,
-                    },
-                    {
-                      label: formatMessage(
-                        parentalLeaveFormMessages.shared.noOptionLabel,
-                      ),
-                      value: NO,
-                    },
-                  ]}
-                />
-              ) : (
-                <Text>
+              <RadioController
+                id="usePersonalAllowanceFromSpouse"
+                name="usePersonalAllowanceFromSpouse"
+                defaultValue={usePersonalAllowanceFromSpouse}
+                split="1/2"
+                options={[
                   {
-                    getValueViaPath(
-                      application.answers,
-                      'shareInformationWithOtherParent',
-                    ) as string[]
-                  }
-                </Text>
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.yesOptionLabel,
+                    ),
+                    value: YES,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.noOptionLabel,
+                    ),
+                    value: NO,
+                  },
+                ]}
+                onSelect={(s: string) => {
+                  setStateful((prev) => ({
+                    ...prev,
+                    usePersonalAllowanceFromSpouse: s as Boolean,
+                  }))
+                }}
+              />
+
+              {usePersonalAllowanceFromSpouse === YES && (
+                <>
+                  <Label marginTop={2} marginBottom={2}>
+                    {formatMessage(
+                      parentalLeaveFormMessages.personalAllowance
+                        .useAsMuchAsPossibleFromSpouse,
+                    )}
+                  </Label>
+
+                  <RadioController
+                    id="personalAllowance.useAsMuchAsPossibleFromSpouse"
+                    name="personalAllowance.useAsMuchAsPossibleFromSpouse"
+                    defaultValue={spouseUseAsMuchAsPossible}
+                    split="1/2"
+                    options={[
+                      {
+                        label: formatMessage(
+                          parentalLeaveFormMessages.shared.yesOptionLabel,
+                        ),
+                        value: YES,
+                      },
+                      {
+                        label: formatMessage(
+                          parentalLeaveFormMessages.shared.noOptionLabel,
+                        ),
+                        value: NO,
+                      },
+                    ]}
+                    onSelect={(s: string) => {
+                      setStateful((prev) => ({
+                        ...prev,
+                        spouseUseAsMuchAsPossible: s as Boolean,
+                      }))
+                    }}
+                  />
+                </>
               )}
+
+              {spouseUseAsMuchAsPossible === NO && (
+                <>
+                  <Label marginTop={2} marginBottom={2}>
+                    {formatMessage(
+                      parentalLeaveFormMessages.personalAllowance.manual,
+                    )}
+                  </Label>
+
+                  <InputController
+                    id="personalAllowanceFromSpouse.usage"
+                    name="personalAllowanceFromSpouse.usage"
+                    suffix="%"
+                    placeholder="0%"
+                    type="number"
+                    defaultValue={spouseUsage}
+                    onChange={(e) =>
+                      setStateful((prev) => ({
+                        ...prev,
+                        spouseUsage: e.target.value?.replace('%', ''),
+                      }))
+                    }
+                  />
+                </>
+              )}
+            </>
+          }
+        >
+          <GridRow marginBottom={2}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <RadioValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.personalAllowance.spouseTitle,
+                )}
+                value={usePersonalAllowanceFromSpouse}
+              />
+            </GridColumn>
+
+            {usePersonalAllowanceFromSpouse === YES &&
+              spouseUseAsMuchAsPossible === YES && (
+                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                  <RadioValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.reviewScreen
+                        .useSpousePersonalAllowance,
+                    )}
+                    value={spouseUseAsMuchAsPossible}
+                  />
+                </GridColumn>
+              )}
+
+            {usePersonalAllowanceFromSpouse === YES &&
+              spouseUseAsMuchAsPossible === NO && (
+                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                  <DataValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.personalAllowance
+                        .allowanceUsage,
+                    )}
+                    value={`${spouseUsage ?? 0}%`}
+                  />
+                </GridColumn>
+              )}
+          </GridRow>
+        </ReviewGroup>
+      )}
+
+      <ReviewGroup
+        isEditable={editable}
+        editChildren={
+          <>
+            <Label marginBottom={3}>
+              {formatMessage(parentalLeaveFormMessages.selfEmployed.title)}
+            </Label>
+
+            <RadioController
+              id="employer.isSelfEmployed"
+              name="employer.isSelfEmployed"
+              defaultValue={isSelfEmployed}
+              split="1/2"
+              options={[
+                {
+                  label: formatMessage(
+                    parentalLeaveFormMessages.shared.yesOptionLabel,
+                  ),
+                  value: YES,
+                },
+                {
+                  label: formatMessage(
+                    parentalLeaveFormMessages.shared.noOptionLabel,
+                  ),
+                  value: NO,
+                },
+              ]}
+              onSelect={(s: string) =>
+                setStateful((prev) => ({
+                  ...prev,
+                  isSelfEmployed: s as Boolean,
+                }))
+              }
+            />
+
+            {isSelfEmployed === NO && (
+              <InputController
+                id="employer.email"
+                name="employer.email"
+                label={formatMessage(parentalLeaveFormMessages.employer.email)}
+                defaultValue={employerEmail}
+                onChange={(e) =>
+                  setStateful((prev) => ({
+                    ...prev,
+                    employerEmail: e.target.value,
+                  }))
+                }
+              />
+            )}
+          </>
+        }
+      >
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <RadioValue
+              label={formatMessage(
+                parentalLeaveFormMessages.selfEmployed.title,
+              )}
+              value={isSelfEmployed}
+            />
+          </GridColumn>
+
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            {isSelfEmployed === NO && (
+              <DataValue
+                label={formatMessage(parentalLeaveFormMessages.employer.email)}
+                value={employerEmail}
+              />
+            )}
+          </GridColumn>
+        </GridRow>
+      </ReviewGroup>
+
+      <ReviewGroup>
+        <SummaryRights application={application} />
+      </ReviewGroup>
+
+      <ReviewGroup
+        isEditable={editable}
+        editAction={() => goToScreen?.('periods')}
+        isLast={true}
+      >
+        <SummaryTimeline application={application} />
+      </ReviewGroup>
+
+      {/**
+       * TODO: Bring back payment calculation info, once we have an api
+       * https://app.asana.com/0/1182378413629561/1200214178491335/f
+       */}
+      {/* <ReviewGroup
+      isEditable={editable}>
+        {!loading && !error && (
+          <>
+            <Label>
+              {formatMessage(
+                parentalLeaveFormMessages.paymentPlan.subSection,
+              )}
+            </Label>
+
+            <PaymentsTable
+              application={application}
+              payments={data.getEstimatedPayments}
+            />
+          </>
+        )}
+      </ReviewGroup> */}
+
+      {/**
+       * TODO: Bring back this feature post v1 launch
+       * Would also be good to combine it with the first accordion item
+       * and make just one section for the other parent info, and sharing with the other parent
+       * https://app.asana.com/0/1182378413629561/1200214178491339/f
+       */}
+      {/* {statefulOtherParentConfirmed === MANUAL && (
+        <ReviewGroup
+        isEditable={editable}>
+          <Box paddingY={4}>
+            <Box marginTop={1} marginBottom={2}>
+              <Text variant="h5">
+                {formatMessage(
+                  parentalLeaveFormMessages.shareInformation.subSection,
+                )}
+
+                {formatMessage(
+                  parentalLeaveFormMessages.shareInformation.title,
+                )}
+              </Text>
             </Box>
-          </AccordionItem>
-        </Accordion>
-      </Box>
-    </div>
+
+            {editable ? (
+              <RadioController
+                id="shareInformationWithOtherParent"
+                name="shareInformationWithOtherParent"
+                error={
+                  (errors as RecordObject<string> | undefined)
+                    ?.shareInformationWithOtherParent
+                }
+                defaultValue={shareInformationWithOtherParent}
+                options={[
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.yesOptionLabel,
+                    ),
+                    value: YES,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.noOptionLabel,
+                    ),
+                    value: NO,
+                  },
+                ]}
+              />
+            ) : (
+              <RadioValue value={shareInformationWithOtherParent} />
+            )}
+          </Box>
+        </ReviewGroup>
+      )} */}
+    </>
   )
 }
 

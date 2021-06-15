@@ -1,24 +1,33 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CheckboxController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { IDS } from '../../forms/LetterApplicationForm'
+import { PartyLetter, File } from '../../lib/dataSchema'
+import { useEndorsements } from '../../hooks/useFetchEndorsements'
 
-const Review: FC<FieldBaseProps> = ({ application }) => {
+const Review = ({ application }: FieldBaseProps) => {
+  const endorsementListId = (application.externalData?.createEndorsementList
+    .data as any).id
   const { formatMessage } = useLocale()
+  const answers = application.answers as PartyLetter
+  const { endorsements } = useEndorsements(endorsementListId, false)
+  const endorsementCount = endorsements?.length ?? 0
+  const endorsementsWarningCount =
+    endorsements?.filter((x) => x.meta.invalidated)?.length ?? 0
 
   const labelMapper: Record<IDS, string> = {
     ssd: formatMessage(m.overview.responsibleParty),
-    'party.letter': formatMessage(m.overview.partyLetter),
-    'party.name': formatMessage(m.overview.partyName),
-    signatures: formatMessage(m.overview.signaturesCount),
+    partyLetter: formatMessage(m.overview.partyLetter),
+    partyName: formatMessage(m.overview.partyName),
+    endorsements: formatMessage(m.overview.endorsementsCount),
     warnings: formatMessage(m.overview.warningCount),
+    documents: formatMessage(m.overview.includedPapers),
   }
 
   const reviewItem = (label: string, answer: string) => {
-    return label ? (
+    return label && answer ? (
       <Box marginBottom={2} key={label}>
         <Text variant="h5">{label}</Text>
         <Text>{answer}</Text>
@@ -26,31 +35,34 @@ const Review: FC<FieldBaseProps> = ({ application }) => {
     ) : null
   }
 
+  const documentNames = (documents: File[]) => {
+    return documents.map((x) => x.name).join(', ')
+  }
+
   return (
     <Box>
       <Text variant="h3" marginBottom={3}>
         {formatMessage(m.overview.reviewTitle)}
       </Text>
-      {Object.keys(application.answers).map((id) => {
-        return reviewItem(
-          labelMapper[id as IDS],
-          getValueViaPath(application.answers, id) as string,
-        )
-      })}
-      {reviewItem(labelMapper['signatures' as IDS], '305')}
-      {reviewItem(labelMapper['warnings' as IDS], '18')}
-      <Box marginTop={2}>
-        <CheckboxController
-          id={'includePapers'}
-          defaultValue={[]}
-          options={[
-            {
-              value: 'includePapers',
-              label: formatMessage(m.overview.includePapers),
-            },
-          ]}
-        />
-      </Box>
+      {reviewItem(
+        labelMapper[IDS.PartyName],
+        getValueViaPath(answers, IDS.PartyName) as string,
+      )}
+      {reviewItem(
+        labelMapper[IDS.PartyLetter],
+        getValueViaPath(answers, IDS.PartyLetter) as string,
+      )}
+      {reviewItem(labelMapper[IDS.Endorsements], endorsementCount.toString())}
+      {reviewItem(
+        labelMapper[IDS.Warnings],
+        endorsementsWarningCount.toString(),
+      )}
+      {answers.documents
+        ? reviewItem(
+            labelMapper[IDS.Documents],
+            documentNames(getValueViaPath(answers, IDS.Documents) as File[]),
+          )
+        : null}
     </Box>
   )
 }

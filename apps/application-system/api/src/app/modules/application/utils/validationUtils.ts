@@ -1,6 +1,7 @@
 import {
   Application,
   ApplicationTemplateHelper,
+  FormatMessage,
   FormValue,
   validateAnswers,
 } from '@island.is/application/core'
@@ -9,12 +10,13 @@ import {
   HttpException,
   UnauthorizedException,
 } from '@nestjs/common'
-
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import { Unwrap } from '@island.is/shared/types'
+import { NestIntl } from '@island.is/api/domains/translations'
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
-import { Unwrap } from '@island.is/shared/types'
+import { logger } from '@island.is/logging'
 
 const isRunningOnProductionEnvironment =
   environment.production === true &&
@@ -62,6 +64,7 @@ export function validateThatTemplateIsReady(
 export async function validateApplicationSchema(
   application: Pick<Application, 'typeId'>,
   newAnswers: FormValue,
+  formatMessage: FormatMessage,
 ) {
   const applicationTemplate = await getApplicationTemplateByTypeId(
     application.typeId,
@@ -75,13 +78,15 @@ export async function validateApplicationSchema(
 
   validateThatTemplateIsReady(applicationTemplate)
 
-  const schemaFormValidationError = validateAnswers(
-    applicationTemplate.dataSchema,
-    newAnswers,
-    false,
-  )
+  const schemaFormValidationError = validateAnswers({
+    dataSchema: applicationTemplate.dataSchema,
+    answers: newAnswers,
+    isFullSchemaValidation: false,
+    formatMessage,
+  })
 
   if (schemaFormValidationError) {
+    logger.error('Failed to validate schema', schemaFormValidationError)
     // TODO improve error message
     throw new HttpException(`Schema validation has failed`, 403)
   }
@@ -92,6 +97,7 @@ export async function validateIncomingAnswers(
   newAnswers: FormValue | undefined,
   nationalId: string,
   isStrict = true,
+  formatMessage: FormatMessage,
 ): Promise<FormValue> {
   if (!newAnswers) {
     return {}
@@ -148,7 +154,7 @@ export async function validateIncomingAnswers(
   }
 
   try {
-    await helper.applyAnswerValidators(newAnswers)
+    await helper.applyAnswerValidators(newAnswers, formatMessage)
   } catch (error) {
     throw new HttpException(error, 403)
   }

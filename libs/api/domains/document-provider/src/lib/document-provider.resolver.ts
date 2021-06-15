@@ -1,11 +1,11 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
+import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsAuthGuard,
+  IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
 
@@ -17,6 +17,7 @@ import {
   Organisation,
   Contact,
   Helpdesk,
+  ProviderStatistics,
 } from './models'
 import {
   RunEndpointTestsInput,
@@ -26,12 +27,12 @@ import {
   UpdateHelpdeskInput,
   CreateContactInput,
   CreateHelpdeskInput,
+  StatisticsInput,
 } from './dto'
-import { CreateOrganisationInput } from './dto/createOrganisation.input'
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
-import { AdminGuard } from './admin.guard'
+import { AdminGuard } from './utils/admin.guard'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class DocumentProviderResolver {
   constructor(private documentProviderService: DocumentProviderService) {}
@@ -41,34 +42,26 @@ export class DocumentProviderResolver {
   async getProviderOrganisations(
     @CurrentUser() user: User,
   ): Promise<Organisation[]> {
-    return this.documentProviderService.getOrganisations(user.authorization)
+    return this.documentProviderService.getOrganisations(user)
   }
 
   @UseGuards(AdminGuard)
   @Query(() => Organisation)
   async getProviderOrganisation(
     @Args('nationalId') nationalId: string,
+    @CurrentUser() user: User,
   ): Promise<Organisation> {
-    return this.documentProviderService.getOrganisation(nationalId)
+    return this.documentProviderService.getOrganisation(nationalId, user)
   }
 
   @Query(() => Boolean)
   async organisationExists(
     @Args('nationalId') nationalId: string,
-  ): Promise<boolean> {
-    return await this.documentProviderService.organisationExists(nationalId)
-  }
-
-  @Mutation(() => Organisation, { nullable: true })
-  async createOrganisation(
-    @Args('input') input: CreateOrganisationInput,
     @CurrentUser() user: User,
-  ): Promise<Organisation | null> {
-    logger.info(`createOrganisation: user: ${user.nationalId}`)
-
-    return this.documentProviderService.createOrganisation(
-      input,
-      user.authorization,
+  ): Promise<boolean> {
+    return await this.documentProviderService.organisationExists(
+      nationalId,
+      user,
     )
   }
 
@@ -83,11 +76,7 @@ export class DocumentProviderResolver {
       `updateTechnicalContact: user: ${user.nationalId}, organisationId: ${id}`,
     )
 
-    return this.documentProviderService.updateOrganisation(
-      id,
-      input,
-      user.authorization,
-    )
+    return this.documentProviderService.updateOrganisation(id, input, user)
   }
 
   @UseGuards(AdminGuard)
@@ -102,7 +91,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createAdministrativeContact(
       organisationId,
       input,
-      user.authorization,
+      user,
     )
   }
 
@@ -122,7 +111,7 @@ export class DocumentProviderResolver {
       organisationId,
       administrativeContactId,
       contact,
-      user.authorization,
+      user,
     )
   }
 
@@ -138,7 +127,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createTechnicalContact(
       organisationId,
       input,
-      user.authorization,
+      user,
     )
   }
 
@@ -158,7 +147,7 @@ export class DocumentProviderResolver {
       organisationId,
       technicalContactId,
       contact,
-      user.authorization,
+      user,
     )
   }
 
@@ -174,7 +163,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createHelpdesk(
       organisationId,
       input,
-      user.authorization,
+      user,
     )
   }
 
@@ -194,7 +183,7 @@ export class DocumentProviderResolver {
       organisationId,
       helpdeskId,
       helpdesk,
-      user.authorization,
+      user,
     )
   }
 
@@ -210,6 +199,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createProviderOnTest(
       input.nationalId,
       input.clientName,
+      user,
     )
   }
 
@@ -257,7 +247,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createProvider(
       input.nationalId,
       input.clientName,
-      user.authorization,
+      user,
     )
   }
 
@@ -274,7 +264,19 @@ export class DocumentProviderResolver {
       input.endpoint,
       input.providerId,
       input.xroad || false,
-      user.authorization,
+      user,
+    )
+  }
+
+  @UseGuards(AdminGuard)
+  @Query(() => ProviderStatistics)
+  async getStatisticsTotal(
+    @Args('input', { nullable: true }) input: StatisticsInput,
+  ): Promise<ProviderStatistics> {
+    return this.documentProviderService.getStatisticsTotal(
+      input?.organisationId,
+      input?.fromDate,
+      input?.toDate,
     )
   }
 }

@@ -8,7 +8,7 @@ export const m = defineMessages({
   },
   applicantInfoSection: {
     id: 'hi.application:applicant.section',
-    defaultMessage: 'Tengiliðsupplýsingar',
+    defaultMessage: 'Tengiliðaupplýsingar',
     description: 'Your contact information',
   },
   externalDataTitle: {
@@ -90,7 +90,7 @@ export const m = defineMessages({
   },
   contactInfoTitle: {
     id: 'hi.application:contactInfo.title',
-    defaultMessage: 'Staðfestið tengiliðsupplýsingar',
+    defaultMessage: 'Staðfestið tengiliðaupplýsingar',
     description: 'Confirm your contact information',
   },
   name: {
@@ -143,9 +143,9 @@ export const m = defineMessages({
   editDigitalIslandData: {
     id: 'hi.application:digitalIslandData.edit',
     defaultMessage:
-      'Vinsamlegast uppfærið netfang og símanúmer á <a href="https://island.is/minarsidur/stillingar" target="_blank" style="color:#0061ff">Mínum síðum</a> ef með þarf.',
+      'Vinsamlegast uppfærið netfang og símanúmer á <a href="https://island.is/minarsidur/stillingar/personuupplysingar" target="_blank" style="color:#0061ff">Mínum síðum</a> ef með þarf. Eftir að búið er að skrá inn nýjar upplýsingar, uppfærið þessa síðu.',
     description:
-      'Please update your E-mail and Phone number on <a href="https://island.is/minarsidur/stillingar" target="_blank" style="color:#0061ff">My Pages</a> if not correct.',
+      'Update your e-mail and phone number on <a href="https://island.is/minarsidur/stillingar/personuupplysingar" target="_blank" style="color:#0061ff">My Pages</a> if incorrect. Refresh this page once updated.',
   },
   statusAndChildren: {
     id: 'hi.application:statusAndChildrend.section',
@@ -286,7 +286,8 @@ export const m = defineMessages({
   },
   formerInsuranceDetails: {
     id: 'hi.application:formerInsurance.details',
-    defaultMessage: 'Vinsamlegast gefið upplýsingar um fyrra tryggingarland.',
+    defaultMessage:
+      'Vinsamlegast gefið upplýsingar um fyrra tryggingarland. Veldu landsheiti á ensku.',
     description:
       'Please provide the following details regarding your former country of residence.',
   },

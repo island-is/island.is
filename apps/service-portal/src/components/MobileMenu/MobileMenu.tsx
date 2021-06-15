@@ -1,3 +1,4 @@
+import React, { FC, useRef } from 'react'
 import {
   Box,
   Button,
@@ -10,13 +11,15 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { ISLAND_IS_URL } from '@island.is/service-portal/constants'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import React, { FC, useRef } from 'react'
+import { useAuth } from '@island.is/auth/react'
+import { Features, useFeatureFlag } from '@island.is/feature-flags'
+
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
 import * as styles from './MobileMenu.treat'
-import useAuth from '../../hooks/useAuth/useAuth'
+import { UserDelegations } from '../UserDelegations/UserDelegations'
 
 const MobileMenu: FC<{}> = () => {
   const ref = useRef(null)
@@ -24,10 +27,11 @@ const MobileMenu: FC<{}> = () => {
   const { lang, formatMessage } = useLocale()
   const navigation = useNavigation()
   const { changeLanguage } = useNamespaces()
-  const { signOutUser } = useAuth()
+  const { signOut } = useAuth()
+  const showDelegations = useFeatureFlag(Features.delegationsEnabled, false)
 
   const handleLangClick = (value: Locale) => changeLanguage(value)
-  const handleLogoutClick = () => signOutUser()
+  const handleLogoutClick = () => signOut()
 
   const handleLinkClick = () =>
     dispatch({
@@ -88,6 +92,7 @@ const MobileMenu: FC<{}> = () => {
                   />
                 ),
             )}
+            {rootIndex === 0 && showDelegations.value && <UserDelegations />}
             {rootIndex === 0 && (
               <Box>
                 <Button
@@ -107,7 +112,7 @@ const MobileMenu: FC<{}> = () => {
           {rootIndex === 1 && (
             <Text variant="small" color="blueberry600" marginTop={3}>
               {formatMessage({
-                id: 'service.portal:incoming-services-footer',
+                id: 'service.portal:incoming-services-footer-mobile',
                 defaultMessage: `
                   Þessi virkni er enn í boði á eldri Mínum síðum.
                   Unnið er að því að færa þessar þjónustur.

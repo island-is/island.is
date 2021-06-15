@@ -4,7 +4,8 @@ import { S3 } from 'aws-sdk'
 import { Response } from 'node-fetch'
 import stream from 'stream'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 type S3Location = {
   fileName: string

@@ -8,9 +8,7 @@ The repository is a [monorepo](../technical-overview/monorepo.md) that has multi
 
 ## GitBook
 
-The apps and libraries documentation and our handbook are hosted on [GitBook](https://www.gitbook.com).
-
-### For a better reading experience make sure to visit [docs.devland.is](https://docs.devland.is/handbook/).
+The apps and libraries documentation and our handbook are hosted on [GitBook](https://www.gitbook.com) and is publicly available at [docs.devland.is](https://docs.devland.is).
 
 ## Storybook
 
@@ -20,18 +18,24 @@ The Ísland.is design system is developed and showcased using [Storybook](https:
 
 To get more technical information about the project please make sure to read this [overview](handbook/technical-overview/README.md).
 
-## How to contribute
+## External contributors
 
 If you want to contribute to the repository, please make sure to follow [this guide](handbook/repository/external-contribute.md).
 
 ## Prerequisites
 
-- You have Node installed `^14.16.0` and Yarn at `^1.22.0`.
+- You have Node installed `^14.17.0` and Yarn at `^1.22.0`.
 - You have [Docker](https://docs.docker.com/desktop/) installed.
 - You have [direnv](https://direnv.net/) installed.
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
-- You have [AWS command line tools v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html) installed (for fetching secrets).
 - Run `yarn` to install the dependencies.
+
+### For fetching secrets
+
+- You have [AWS command line tools v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) installed.
+  - `brew install awscli`
+- You have [jq](https://stedolan.github.io/jq/) installed.
+  - `brew install jq`
 
 ## Usage
 
@@ -115,29 +119,37 @@ To see a diagram of the dependencies of your projects:
 yarn nx dep-graph
 ```
 
-### Making dev secrets available locally
+### AWS Secrets
 
-Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file.
-Additionally, if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
+A dedicated documentation about fetching shared development secrets or creating new secrets, using AWS secrets is available [here](handbook/repository/aws-secrets.md).
 
-All secrets labeled with the `dev` label can be fetched using `yarn get-secrets`.
+### Running proxy against development service
 
-### Fetch development secrets for your project
+If you have AWS access to our development account, you can connect to development databases and services using a proxy. We've set up a proxy and connection helpers for our development Postgres, Elastic Search, Redis and X-Road Security Server.
 
-```bash
-yarn get-secrets <project> [options]
-```
-
-**Example**:
+To do so, you can run for example:
 
 ```bash
-yarn get-secrets gjafakort --reset
+./scripts/run-db-proxy.sh
 ```
+
+It will try to get your AWS credentials from your environment variables and from your `~/.aws/credentials` file. We're currently not able to get AWS credentials from an AWS profile configured using AWS SSO. You will need to visit your AWS account and export the credentials manually or add them to your `~/.aws/credentials` file. You can find more instructions [here](handbook/repository/aws-secrets.md#using-aws-session).
+
+{% hint style="info" %}
+You will be able to find the credentials needed to open the development services on your AWS account.
+{% endhint %}
+
+{% hint style="info" %}
+If you want to run your app against one of this service (e.g. `db`), you may need to edit your app environment or sequelize config to pass the proxy credentials.
+{% endhint %}
+
+{% hint style="warning" %}
+The following services will run on the associated ports: `db:5432`, `es:9200`, `redis:6379`, `xroad:80`. If you have docker running on theses ports or any others services you will need to stop them in order to run the proxies.
+{% endhint %}
 
 ### Environment variables with static websites
 
-To be able to access environment variables in purely static projects, you need
-to do the following:
+To be able to access environment variables in purely static projects, you need to do the following:
 
 1. In the index.html file, add `<!-- environment placeholder -->`.
 2. Use the `getStaticEnv` function from the `@island.is/utils/environment`
@@ -145,12 +157,6 @@ to do the following:
 3. Prefix your environment variables with `SI_PUBLIC_`, for example
    `SI_PUBLIC_MY_VARIABLE`.
 
-NOTE: This is only to get environment variables when running in kubernetes, not
-for when running locally. So you should only use `getStaticEnv` in your
-`environment.prod.ts` file.
+NOTE: This is only to get environment variables when running in kubernetes, not for when running locally. So you should only use `getStaticEnv` in your `environment.prod.ts` file.
 
-What happens behind the scenes is that static projects have a bash script that
-runs when the docker container starts up. This script searches for references
-of `SI_PUBLIC_*` in the code and tries to find a match in the environment. It
-then puts all the matches inside the index.html which is then served to the
-client.
+What happens behind the scenes is that static projects have a bash script that runs when the docker container starts up. This script searches for references of `SI_PUBLIC_*` in the code and tries to find a match in the environment. It then puts all the matches inside the index.html which is then served to the client.

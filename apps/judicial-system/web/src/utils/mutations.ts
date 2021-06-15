@@ -19,105 +19,23 @@ export const SignatureConfirmationQuery = gql`
   }
 `
 
-export const CreateCaseMutation = gql`
-  mutation CreateCaseMutation($input: CreateCaseInput!) {
-    createCase(input: $input) {
-      id
-      created
-      modified
-      type
-      state
-      policeCaseNumber
-      accusedNationalId
-      accusedName
-      accusedAddress
-      accusedGender
-      defenderName
-      defenderEmail
-      sendRequestToDefender
-      court
-      arrestDate
-      requestedCourtDate
-      requestedCustodyEndDate
-      otherDemands
-      lawsBroken
-      custodyProvisions
-      requestedCustodyRestrictions
-      requestedOtherRestrictions
-      caseFacts
-      witnessAccounts
-      investigationProgress
-      legalArguments
-      comments
-      prosecutor {
-        name
-        title
-      }
-      setCourtCaseNumberManually
-      courtCaseNumber
-      courtDate
-      isCourtDateInThePast
-      courtRoom
-      courtStartTime
-      courtEndTime
-      courtAttendees
-      policeDemands
-      courtDocuments
-      additionToConclusion
-      accusedPleaDecision
-      accusedPleaAnnouncement
-      litigationPresentations
-      ruling
-      decision
-      custodyEndDate
-      isCustodyEndDateInThePast
-      custodyRestrictions
-      otherRestrictions
-      accusedAppealDecision
-      accusedAppealAnnouncement
-      prosecutorAppealDecision
-      prosecutorAppealAnnouncement
-      judge {
-        name
-        title
-      }
-      registrar {
-        name
-        title
-      }
-      parentCase {
-        id
-      }
-    }
-  }
-`
-
-export const CreateCustodyCourtCaseMutation = gql`
-  mutation CreateCustodyCourtCaseMutation(
-    $input: CreateCustodyCourtCaseInput!
-  ) {
-    createCustodyCourtCase(input: $input) {
-      courtCaseNumber
-    }
-  }
-`
-
 export const CasesQuery = gql`
   query CasesQuery {
     cases {
       id
       created
       type
+      description
       state
       policeCaseNumber
       accusedNationalId
       accusedName
-      isCourtDateInThePast
-      custodyEndDate
+      validToDate
       decision
-      isCustodyEndDateInThePast
+      isValidToDateInThePast
       courtCaseNumber
       rulingDate
+      courtEndTime
       parentCase {
         id
       }
@@ -132,6 +50,7 @@ export const ExtendCaseMutation = gql`
       created
       modified
       type
+      description
       state
       policeCaseNumber
       accusedNationalId
@@ -140,49 +59,66 @@ export const ExtendCaseMutation = gql`
       accusedGender
       defenderName
       defenderEmail
+      defenderPhoneNumber
       sendRequestToDefender
-      court
+      court {
+        id
+        type
+        name
+      }
+      leadInvestigator
       arrestDate
       requestedCourtDate
-      requestedCustodyEndDate
-      otherDemands
+      requestedValidToDate
+      demands
       lawsBroken
+      legalBasis
       custodyProvisions
       requestedCustodyRestrictions
       requestedOtherRestrictions
       caseFacts
-      witnessAccounts
-      investigationProgress
       legalArguments
+      requestProsecutorOnlySession
+      prosecutorOnlySessionRequest
       comments
+      caseFilesComments
       prosecutor {
         name
         title
       }
-      setCourtCaseNumberManually
+      sharedWithProsecutorsOffice {
+        id
+        type
+        name
+      }
       courtCaseNumber
       courtDate
-      isCourtDateInThePast
       courtRoom
-      courtStartTime
+      courtStartDate
       courtEndTime
       courtAttendees
-      policeDemands
+      prosecutorDemands
       courtDocuments
-      additionToConclusion
+      isAccusedAbsent
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
+      courtCaseFacts
+      courtLegalArguments
       ruling
       decision
-      custodyEndDate
-      isCustodyEndDateInThePast
+      validToDate
+      isValidToDateInThePast
       custodyRestrictions
       otherRestrictions
+      isolationToDate
+      additionToConclusion
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       judge {
         name
         title
@@ -205,6 +141,7 @@ export const CreateUserMutation = gql`
       email
       institution {
         id
+        type
         name
       }
       active
@@ -224,6 +161,7 @@ export const UsersQuery = gql`
       email
       institution {
         id
+        type
         name
       }
       active
@@ -243,6 +181,7 @@ export const UserQuery = gql`
       email
       institution {
         id
+        type
         name
       }
       active
@@ -263,6 +202,7 @@ export const InstitutionsQuery = gql`
   query InstitutionsQuery {
     institutions {
       id
+      type
       name
     }
   }

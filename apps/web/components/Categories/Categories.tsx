@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import {
   Text,
   GridRow,
@@ -20,11 +20,11 @@ interface CategoriesProps {
   cards: Card[]
 }
 
-export const Categories: FC<CategoriesProps> = ({
+export const Categories = ({
   title = 'Þjónustuflokkar',
   titleId,
   cards,
-}) => {
+}: CategoriesProps) => {
   const titleProps = titleId ? { id: titleId } : {}
 
   return (

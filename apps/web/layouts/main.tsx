@@ -42,7 +42,7 @@ import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
-import { environment } from '../environments/environment'
+import { environment } from '../environments'
 import { useNamespace } from '../hooks'
 import {
   formatMegaMenuCategoryLinks,
@@ -180,10 +180,29 @@ const Layout: NextComponentType<
     JSON.stringify(alertBannerContent),
   )}`
 
+  const preloadedFonts = [
+    '/fonts/ibm-plex-sans-v7-latin-300.woff2',
+    '/fonts/ibm-plex-sans-v7-latin-regular.woff2',
+    '/fonts/ibm-plex-sans-v7-latin-italic.woff2',
+    '/fonts/ibm-plex-sans-v7-latin-500.woff2',
+    '/fonts/ibm-plex-sans-v7-latin-600.woff2',
+  ]
+
   return (
     <GlobalContextProvider namespace={namespace}>
       <Page component="div">
         <Head>
+          {preloadedFonts.map((href, index) => {
+            return (
+              <link
+                rel="preload"
+                href={href}
+                as="font"
+                type="font/woff2"
+                crossOrigin="true"
+              />
+            )
+          })}
           <link
             rel="apple-touch-icon"
             sizes="180x180"
@@ -204,16 +223,13 @@ const Layout: NextComponentType<
           <link rel="manifest" href="/site.webmanifest" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />
-
           <title>{n('title')}</title>
-
           <meta name="title" content={n('title')} key="title" />
           <meta
             name="description"
             content={n('description')}
             key="description"
           />
-
           <meta property="og:title" content={n('title')} key="ogTitle" />
           <meta
             property="og:description"
@@ -229,7 +245,6 @@ const Layout: NextComponentType<
           />
           <meta property="og:image:width" content="1200" key="ogImageWidth" />
           <meta property="og:image:height" content="630" key="ogImageHeight" />
-
           <meta
             property="twitter:card"
             content="summary_large_image"
@@ -546,12 +561,25 @@ export const withMainLayout = <T,>(
   }
 
   WithMainLayout.getInitialProps = async (ctx) => {
+    const getLayoutInitialProps = Layout.getInitialProps as Exclude<
+      typeof Layout.getInitialProps,
+      undefined
+    >
+
     const [layoutProps, componentProps] = await Promise.all([
-      Layout.getInitialProps(ctx),
-      Component.getInitialProps(ctx),
+      getLayoutInitialProps(ctx),
+      Component.getInitialProps ? Component.getInitialProps(ctx) : ({} as T),
     ])
 
-    return { layoutProps: { ...layoutProps, ...layoutConfig }, componentProps }
+    const themeConfig: Partial<LayoutProps> =
+      'darkTheme' in componentProps
+        ? { headerColorScheme: 'white', headerButtonColorScheme: 'negative' }
+        : {}
+
+    return {
+      layoutProps: { ...layoutProps, ...layoutConfig, ...themeConfig },
+      componentProps,
+    }
   }
 
   return WithMainLayout

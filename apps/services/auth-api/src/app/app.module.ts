@@ -8,13 +8,11 @@ import { ResourcesModule } from './modules/resources/resources.module'
 import { UsersModule } from './modules/users/users.module'
 import { environment } from '../environments'
 import { TranslationModule } from './modules/translation/translation.module'
+import { DelegationsModule } from './modules/delegations/delegations.module'
+import { PermissionsModule } from './modules/permissions/permissions.module'
 @Module({
   imports: [
-    AuthModule.register({
-      audience: '@identityserver.api',
-      issuer: environment.auth.issuer,
-      jwksUri: environment.auth.jwksUri,
-    }),
+    AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
@@ -23,6 +21,8 @@ import { TranslationModule } from './modules/translation/translation.module'
     ResourcesModule,
     GrantsModule,
     TranslationModule,
+    DelegationsModule,
+    PermissionsModule,
   ],
 })
 export class AppModule {}

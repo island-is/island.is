@@ -1,24 +1,30 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import Paginator from '../../common/Paginator'
 import Link from 'next/link'
 import ConfirmModal from '../../common/ConfirmModal'
 import { TranslationService } from './../../../services/TranslationService'
 import { TranslationDTO } from './../../../entities/dtos/translation.dto'
 import { Translation } from './../../../entities/models/translation.model'
+import LocalizationUtils from '../../../utils/localization.utils'
+import { ListControl } from '../../../entities/common/Localization'
 
-class TranslationList extends Component {
-  state = {
-    translations: [],
-    rowCount: 0,
-    count: 1,
-    page: 1,
-    modalIsOpen: false,
-    translationToRemove: new TranslationDTO(),
-    searchString: '',
-  }
+const TranslationList: React.FC = () => {
+  const [translations, setTranslations] = useState<Translation[]>([])
+  const [page, setPage] = useState(1)
+  const [lastPage, setLastPage] = useState(1)
+  const [
+    translationToRemove,
+    setTranslationToRemove,
+  ] = useState<TranslationDTO>(new TranslationDTO())
+  const [count, setCount] = useState(0)
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [searchString, setSearchString] = useState<string>('')
+  const [localization] = useState<ListControl>(
+    LocalizationUtils.getListControl('TranslationList'),
+  )
 
-  getTranslations = async (
+  const getTranslations = async (
     searchString: string,
     page: number,
     count: number,
@@ -29,183 +35,183 @@ class TranslationList extends Component {
       count,
     )
     if (response) {
-      this.setState({
-        translations: response.rows,
-        rowCount: response.count,
-      })
+      setTranslations(response.rows)
+      setLastPage(Math.ceil(response.count / count))
     }
   }
 
-  handlePageChange = async (page: number, count: number): Promise<void> => {
-    this.getTranslations(this.state.searchString, page, count)
-    this.setState({ page: page, count: count })
+  const handlePageChange = async (
+    page: number,
+    count: number,
+  ): Promise<void> => {
+    getTranslations(searchString, page, count)
+    setPage(page)
+    setCount(count)
   }
 
-  deleteTranslation = async (): Promise<void> => {
+  const deleteTranslation = async (): Promise<void> => {
     const translationObj = new TranslationDTO()
-    translationObj.className = this.state.translationToRemove.className
-    translationObj.key = this.state.translationToRemove.key
-    translationObj.language = this.state.translationToRemove.language
-    translationObj.property = this.state.translationToRemove.property
-    await TranslationService.deleteTranslation(translationObj)
-    this.getTranslations(
-      this.state.searchString,
-      this.state.page,
-      this.state.count,
-    )
-    this.closeModal()
+    translationObj.className = translationToRemove.className
+    translationObj.key = translationToRemove.key
+    translationObj.language = translationToRemove.language
+    translationObj.property = translationToRemove.property
+    const response = await TranslationService.deleteTranslation(translationObj)
+    if (response) {
+      getTranslations(searchString, page, count)
+    }
+
+    closeModal()
   }
 
-  confirmDelete = async (translation: TranslationDTO): Promise<void> => {
-    this.setState({ translationToRemove: translation })
-    this.setState({ modalIsOpen: true })
+  const confirmDelete = async (translation: TranslationDTO): Promise<void> => {
+    setTranslationToRemove(translation)
+    setIsOpen(true)
   }
 
-  closeModal = (): void => {
-    this.setState({ modalIsOpen: false })
+  const closeModal = (): void => {
+    setIsOpen(false)
   }
 
-  setHeaderElement = (): JSX.Element => {
+  const setHeaderElement = (): JSX.Element => {
     return (
       <p>
-        Are you sure want to delete this Translation:{' '}
-        <span>{this.state.translationToRemove.language} </span>
+        {localization.removeConfirmation}
+        <span>{translationToRemove.language} </span>
       </p>
     )
   }
 
-  search = (event) => {
-    this.getTranslations(
-      this.state.searchString,
-      this.state.page,
-      this.state.count,
-    )
+  const search = (event) => {
+    getTranslations(searchString, page, count)
     event.preventDefault()
   }
 
-  handleSearchChange = (event) => {
-    this.setState({ searchString: event.target.value })
+  const handleSearchChange = (event) => {
+    setSearchString(event.target.value)
   }
 
-  render(): JSX.Element {
-    return (
-      <div>
-        <div className="translation-list">
-          <div className="translation-list__wrapper">
-            <div className="translation-list__container">
-              <h1>Translations</h1>
-              <div className="translation-list__container__options">
-                <div className="translation-list__container__options__button">
-                  <Link href={'/admin/translation'}>
-                    <a className="translation-list__button__new">
-                      <i className="icon__new"></i>Create new Translation
-                    </a>
-                  </Link>
-                </div>
-                <form onSubmit={this.search}>
-                  <div className="translation-list__container__options__search">
-                    <label htmlFor="search" className="translation-list__label">
-                      Text value
-                    </label>
-                    <input
-                      id="search"
-                      className="translation-list__input__search"
-                      value={this.state.searchString}
-                      onChange={this.handleSearchChange}
-                    ></input>
-                    <button
-                      type="submit"
-                      className="translation-list__button__search"
-                    >
-                      Search
-                    </button>
-                  </div>
-                </form>
+  return (
+    <div>
+      <div className="translation-list">
+        <div className="translation-list__wrapper">
+          <div className="translation-list__container">
+            <h1>{localization.title}</h1>
+            <div className="translation-list__container__options">
+              <div className="translation-list__container__options__button">
+                <Link href={'/admin/translation'}>
+                  <a
+                    className="translation-list__button__new"
+                    title={localization.buttons['new'].helpText}
+                  >
+                    <i className="icon__new"></i>
+                    {localization.buttons['new'].text}
+                  </a>
+                </Link>
               </div>
-              <div className="translation-list__container__table">
-                <table className="translation-list__table">
-                  <thead>
-                    <tr>
-                      <th>Language</th>
-                      <th>Key</th>
-                      <th>Class Name</th>
-                      <th>Property</th>
-                      <th>Value</th>
-                      <th colSpan={2}></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.translations.map((translation: Translation) => {
-                      return (
-                        <tr
-                          key={
-                            translation.language +
-                            translation.className +
-                            translation.property +
-                            translation.key
-                          }
-                        >
-                          <td>{translation.language}</td>
-                          <td>{translation.key}</td>
-                          <td>{translation.className}</td>
-                          <td>{translation.property}</td>
-                          <td>{translation.value}</td>
-                          <td className="translation-list__table__button">
-                            <Link
-                              href={`admin/translation/${encodeURIComponent(
-                                translation.language +
-                                  '$' +
-                                  translation.className +
-                                  '$' +
-                                  translation.property +
-                                  '$' +
-                                  translation.key,
-                              )}`}
-                            >
-                              <button
-                                type="button"
-                                className={`translation-list__button__edit`}
-                                title="Edit"
-                              >
-                                <i className="icon__edit"></i>
-                                <span>Edit</span>
-                              </button>
-                            </Link>
-                          </td>
-                          <td className="translation-list__table__button">
+              <form onSubmit={search}>
+                <div className="translation-list__container__options__search">
+                  <label htmlFor="search" className="translation-list__label">
+                    {localization.search.label}
+                  </label>
+                  <input
+                    id="search"
+                    className="translation-list__input__search"
+                    value={searchString}
+                    onChange={handleSearchChange}
+                  ></input>
+                  <button
+                    type="submit"
+                    className="translation-list__button__search"
+                    title={localization.buttons['search'].helpText}
+                  >
+                    {localization.buttons['search'].text}
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div className="translation-list__container__table">
+              <table className="translation-list__table">
+                <thead>
+                  <tr>
+                    <th>{localization.columns['language'].headerText}</th>
+                    <th>{localization.columns['key'].headerText}</th>
+                    <th>{localization.columns['className'].headerText}</th>
+                    <th>{localization.columns['property'].headerText}</th>
+                    <th>{localization.columns['value'].headerText}</th>
+                    <th colSpan={2}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {translations.map((translation: Translation) => {
+                    return (
+                      <tr
+                        key={
+                          translation.language +
+                          translation.className +
+                          translation.property +
+                          translation.key
+                        }
+                      >
+                        <td>{translation.language}</td>
+                        <td>{translation.key}</td>
+                        <td>{translation.className}</td>
+                        <td>{translation.property}</td>
+                        <td>{translation.value}</td>
+                        <td className="translation-list__table__button">
+                          <Link
+                            href={`admin/translation/${encodeURIComponent(
+                              translation.language +
+                                '$' +
+                                translation.className +
+                                '$' +
+                                translation.property +
+                                '$' +
+                                translation.key,
+                            )}`}
+                          >
                             <button
                               type="button"
-                              className={`translation-list__button__delete`}
-                              title="Delete"
-                              onClick={() => this.confirmDelete(translation)}
+                              className={`translation-list__button__edit`}
+                              title={localization.buttons['edit'].helpText}
                             >
-                              <i className="icon__delete"></i>
-                              <span>Delete</span>
+                              <i className="icon__edit"></i>
+                              <span>{localization.buttons['edit'].text}</span>
                             </button>
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-              <Paginator
-                lastPage={Math.ceil(this.state.rowCount / this.state.count)}
-                handlePageChange={this.handlePageChange}
-              />
+                          </Link>
+                        </td>
+                        <td className="translation-list__table__button">
+                          <button
+                            type="button"
+                            className={`translation-list__button__delete`}
+                            title={localization.buttons['remove'].helpText}
+                            onClick={() => confirmDelete(translation)}
+                          >
+                            <i className="icon__delete"></i>
+                            <span>{localization.buttons['remove'].text}</span>
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
             </div>
+            <Paginator
+              lastPage={lastPage}
+              handlePageChange={handlePageChange}
+            />
           </div>
         </div>
-        <ConfirmModal
-          modalIsOpen={this.state.modalIsOpen}
-          headerElement={this.setHeaderElement()}
-          closeModal={this.closeModal}
-          confirmation={this.deleteTranslation}
-          confirmationText="Delete"
-        ></ConfirmModal>
       </div>
-    )
-  }
+      <ConfirmModal
+        modalIsOpen={modalIsOpen}
+        headerElement={setHeaderElement()}
+        closeModal={closeModal}
+        confirmation={deleteTranslation}
+        confirmationText={localization.buttons['remove'].text}
+      ></ConfirmModal>
+    </div>
+  )
 }
 
 export default TranslationList

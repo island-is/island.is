@@ -3,6 +3,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IOrganization } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
+import { FooterItem, mapFooterItem } from './footerItem.model'
 
 @ObjectType()
 export class Organization {
@@ -24,11 +25,14 @@ export class Organization {
   @Field(() => [OrganizationTag])
   tag?: Array<OrganizationTag>
 
-  @Field({ nullable: true })
+  @Field(() => Image, { nullable: true })
   logo?: Image | null
 
   @Field({ nullable: true })
   link?: string
+
+  @Field(() => [FooterItem])
+  footerItems?: Array<FooterItem>
 }
 
 export const mapOrganization = ({
@@ -43,4 +47,5 @@ export const mapOrganization = ({
   tag: (fields.tag ?? []).map(mapOrganizationTag),
   logo: fields.logo ? mapImage(fields.logo) : null,
   link: fields.link ?? '',
+  footerItems: (fields.footerItems ?? []).map(mapFooterItem),
 })

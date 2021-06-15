@@ -13,10 +13,6 @@ export const container = style({
   position: 'relative',
 })
 
-export const filled = style({
-  background: theme.color.white,
-})
-
 export const large = style({
   borderRadius: theme.border.radius.large,
   border: `1px solid ${theme.color.blue200}`,
@@ -33,7 +29,6 @@ export const input = style({
 export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
-  fontWeight: theme.typography.light,
   lineHeight: theme.typography.baseLineHeight,
 })
 export const labelText = style({
@@ -48,9 +43,6 @@ export const largeLabel = style({
       padding: `${theme.spacing[3]}px`,
     },
   },
-})
-export const labelChecked = style({
-  fontWeight: theme.typography.medium,
 })
 export const radioButtonDisabled = style({
   background: 'transparent',

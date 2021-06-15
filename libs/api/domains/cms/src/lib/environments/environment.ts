@@ -4,6 +4,7 @@ export default {
   cacheTime: process.env.CACHE_TIME || 5,
   indexableTypes: [
     'article',
+    'subArticle',
     'lifeEventPage',
     'articleCategory',
     'news',
@@ -17,6 +18,7 @@ export default {
     'frontpage',
   ],
   nestedContentTypes: [
+    'subArticle',
     'processEntry',
     'embeddedVideo',
     'author',
@@ -28,7 +30,6 @@ export default {
     'questionAndAnswer',
     'sectionHeading',
     'sectionWithImage',
-    'subArticle',
     'url',
     'articleGroup',
     'articleSubgroup',
@@ -47,6 +48,8 @@ export default {
     'featured',
     'frontpageSlider',
     'namespace',
+    'timeline',
+    'timelineEvent',
   ],
   contentful: {
     space: process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',

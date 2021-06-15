@@ -1,53 +1,44 @@
 import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
 
-import { AssignmentEmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGenerator } from '../../../../types'
+import { ApplicationConfigurations } from '@island.is/application/core'
 
-export const generateAssignOtherParentApplicationEmail: AssignmentEmailTemplateGenerator = (
+export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator = (
   props,
-  assignLink,
 ) => {
   const {
     application,
-    options: { locale },
+    options: { email, clientLocationOrigin },
   } = props
 
-  const applicantEmail = get(application.answers, 'person.email')
+  const otherParentEmail = get(application.answers, 'otherParentEmail')
 
-  // TODO translate using locale
-  const subject =
-    locale === 'is'
-      ? 'Yfirferð á umsókn um fæðingarorlof'
-      : 'Request for review on paternity leave'
-  const body =
-    locale === 'is'
-      ? dedent(`Góðan dag.
+  if (!otherParentEmail) {
+    throw new Error('Could not find other parent email')
+  }
 
-        Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem foreldri í umsókn sinni.
+  // TODO handle different locales
+  const subject = 'Yfirferð á umsókn um fæðingarorlof'
+  const body = dedent(`Góðan dag.
+
+        Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem foreldri í umsókn sinni og er að óska eftir réttindum frá þér.
     
-        Ef þú áttir von á þessum tölvupósti þá getur þú <a href="${assignLink}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.
+        Ef þú áttir von á þessum tölvupósti þá getur þú <a href="${clientLocationOrigin}/umsoknir/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.
     
         Með kveðju,
         Fæðingarorlofssjóðsjóður
       `)
-      : dedent(`Hello.
-
-        An application from applicant with national registry ${application.applicant} awaits your approval.
-
-        To review, <a href="${assignLink}">click here</a>.
-
-        Best regards,
-        ReferenceTemplateInstitution`)
 
   return {
     from: {
-      name: 'Devland.is',
-      address: 'development@island.is',
+      name: email.sender,
+      address: email.address,
     },
     to: [
       {
         name: '',
-        address: applicantEmail as string,
+        address: otherParentEmail as string,
       },
     ],
     subject,

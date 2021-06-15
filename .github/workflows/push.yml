@@ -194,12 +194,10 @@ jobs:
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+        uses: docker/setup-buildx-action@v1
 
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
@@ -247,7 +245,7 @@ jobs:
       - name: Prepare docker build targets
         id: build_map
         run: |
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static)
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
@@ -256,7 +254,7 @@ jobs:
       - name: Gather unaffected docker images
         id: unaffected
         run: |
-          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static)
+          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-cypress)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
   docker-build:
@@ -319,12 +317,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
-        if: steps.gather.outcome == 'success'
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+        uses: docker/setup-buildx-action@v1
 
       - name: Building Docker images
         if: steps.gather.outcome == 'success'
@@ -350,12 +346,15 @@ jobs:
       - name: Check docker-build success
         run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
       - uses: actions/checkout@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
       - name: Retag unaffected Docker images
         if: "!startsWith(env.GIT_BRANCH_DEPLOY, 'feature/')"
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   deploy:
     runs-on: ubuntu-20.04
@@ -388,7 +387,7 @@ jobs:
             "branch": "$GIT_BRANCH_DEPLOY",
             "parameters": {
               "docker_tag": "$DOCKER_TAG",
-              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:].-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)",
+              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)",
               "images": "$(echo $BUILD_CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')",
               "pull_request_number": "$(echo $GITHUB_REF | cut -d'/' -f3)"
             }

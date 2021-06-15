@@ -1,7 +1,9 @@
 import { Application } from '../types/Application'
+import { RecordObject } from '../types/Fields'
+import { StaticText } from '../types/Form'
 
 export type AnswerValidationError =
-  | { message: string; path: string }
+  | { message: StaticText; path: string; values?: RecordObject<any> }
   | undefined
 
 export type AnswerValidator = (

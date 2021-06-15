@@ -11,6 +11,7 @@ import {
 interface Props {
   name: string
   datepickerLabel?: string
+  datepickerPlaceholder?: string
   timeLabel?: string
   minDate?: Date
   maxDate?: Date
@@ -20,6 +21,7 @@ interface Props {
   blueBox?: boolean
   locked?: boolean
   backgroundColor?: 'blue' | 'white'
+  size?: 'sm' | 'md'
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
@@ -27,6 +29,7 @@ const DateTime: React.FC<Props> = (props) => {
   const {
     name,
     datepickerLabel = 'Veldu dagsetningu',
+    datepickerPlaceholder = 'Veldu dagsetningu',
     minDate,
     maxDate,
     selectedDate,
@@ -36,6 +39,7 @@ const DateTime: React.FC<Props> = (props) => {
     blueBox = true,
     locked = false,
     backgroundColor = 'white',
+    size = 'md',
     onChange,
   } = props
 
@@ -143,10 +147,10 @@ const DateTime: React.FC<Props> = (props) => {
         <DatePicker
           id={name}
           label={datepickerLabel}
-          placeholderText="Veldu dagsetningu"
+          placeholderText={datepickerPlaceholder}
           locale="is"
           errorMessage={datepickerErrorMessage}
-          hasError={datepickerErrorMessage != undefined}
+          hasError={datepickerErrorMessage !== undefined}
           icon={locked ? 'lockClosed' : undefined}
           minDate={minDate}
           maxDate={maxDate}
@@ -155,9 +159,10 @@ const DateTime: React.FC<Props> = (props) => {
           handleCloseCalendar={onCalendarClose}
           required={required}
           backgroundColor={backgroundColor}
+          size={size}
         />
         <TimeInputField
-          disabled={disabled || locked || currentDate == undefined}
+          disabled={disabled || locked || currentDate === undefined}
           onChange={onTimeChange}
           onBlur={onTimeBlur}
         >
@@ -173,6 +178,7 @@ const DateTime: React.FC<Props> = (props) => {
             iconType="outline"
             required={required}
             backgroundColor={backgroundColor}
+            size={size}
           />
         </TimeInputField>
       </div>

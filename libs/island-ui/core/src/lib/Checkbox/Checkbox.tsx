@@ -4,7 +4,7 @@ import { Text } from '../Text/Text'
 import { Icon } from '../Icon/Icon'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Box } from '../Box/Box'
-import { InputBackgroundColor } from '../Input/Input'
+import { InputBackgroundColor } from '../Input/types'
 import * as styles from './Checkbox.treat'
 
 export interface CheckboxProps {
@@ -18,16 +18,24 @@ export interface CheckboxProps {
   hasError?: boolean
   errorMessage?: string
   value?: string
+  strong?: boolean
   filled?: boolean
   large?: boolean
   backgroundColor?: InputBackgroundColor
+  labelVariant?: 'default' | 'small'
   /** subLabel can only be used if the 'large' prop set to true */
   subLabel?: string
+}
+
+interface AriaError {
+  'aria-invalid': boolean
+  'aria-describedby': string
 }
 
 export const Checkbox = ({
   label,
   subLabel,
+  labelVariant = 'default',
   name,
   id = name,
   checked,
@@ -38,13 +46,15 @@ export const Checkbox = ({
   errorMessage,
   value,
   large,
+  strong,
   backgroundColor,
   filled = false,
 }: CheckboxProps) => {
+  const errorId = `${id}-error`
   const ariaError = hasError
     ? {
         'aria-invalid': true,
-        'aria-describedby': id,
+        'aria-describedby': errorId,
       }
     : {}
 
@@ -68,11 +78,10 @@ export const Checkbox = ({
         onChange={onChange}
         value={value}
         checked={checked}
-        {...ariaError}
+        {...(ariaError as AriaError)}
       />
       <label
         className={cn(styles.label, {
-          [styles.labelChecked]: checked,
           [styles.checkboxLabelDisabled]: disabled,
           [styles.largeLabel]: large,
         })}
@@ -92,12 +101,18 @@ export const Checkbox = ({
           />
         </div>
         <span className={styles.labelText}>
-          <Text as="span">{label}</Text>
+          <Text
+            as="span"
+            variant={labelVariant}
+            fontWeight={checked || strong ? 'semiBold' : 'light'}
+          >
+            {label}
+          </Text>
           {subLabel && large && (
             <Text
               as="span"
               marginTop="smallGutter"
-              fontWeight="medium"
+              fontWeight="regular"
               variant="small"
             >
               {subLabel}
@@ -114,7 +129,11 @@ export const Checkbox = ({
           </div>
         )}
         {hasError && errorMessage && (
-          <div className={styles.errorMessage} id={id}>
+          <div
+            id={errorId}
+            className={styles.errorMessage}
+            aria-live="assertive"
+          >
             {errorMessage}
           </div>
         )}

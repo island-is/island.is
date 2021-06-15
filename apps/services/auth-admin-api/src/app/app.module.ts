@@ -8,18 +8,16 @@ import { ResourcesModule } from './modules/resources/resources.module'
 import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { ClaimsModule } from './modules/claims/claims.module'
-import { environment } from '../environments/environment'
+import { environment } from '../environments'
 import { AccessModule } from './modules/access/access.module'
 import { IdpProviderModule } from './modules/idp-provider/idp-provider.module'
 import { TranslationModule } from './modules/translation/translation.module'
+import { AuditModule } from '@island.is/nest/audit'
 
 @Module({
   imports: [
-    AuthModule.register({
-      audience: 'auth-admin-api',
-      issuer: environment.auth.issuer,
-      jwksUri: environment.auth.jwksUri,
-    }),
+    AuditModule.forRoot(environment.audit),
+    AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
