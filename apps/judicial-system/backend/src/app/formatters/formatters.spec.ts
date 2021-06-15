@@ -6,6 +6,7 @@ import {
   CaseGender,
   CaseType,
 } from '@island.is/judicial-system/types'
+
 import {
   formatConclusion,
   formatProsecutorCourtDateEmailNotification,
@@ -177,7 +178,7 @@ describe('formatConclusion', () => {
     const validToDate = new Date('2020-12-22T11:23')
     const isolation = true
     const isExtension = false
-    const isolationTo = new Date('2020-12-20T15:39')
+    const isolationToDate = new Date('2020-12-20T15:39')
 
     // Act
     const res = formatConclusion(
@@ -190,7 +191,7 @@ describe('formatConclusion', () => {
       isolation,
       isExtension,
       undefined,
-      isolationTo,
+      isolationToDate,
     )
 
     // Assert
@@ -551,6 +552,48 @@ describe('formatHeadsUpSmsNotification', () => {
       'Ný farbannskrafa í vinnslu. Ákærandi: Ákærandinn. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 25.01.2021, eftir kl. 19:15.',
     )
   })
+
+  test('should format heads up notification for investigation', () => {
+    // Arrange
+    const type = CaseType.BODY_SEARCH
+    const prosecutorName = 'Al Coe'
+    const arrestDate = new Date('2021-01-24T13:00')
+    const requestedCourtDate = new Date('2021-06-20T10:00')
+
+    // Act
+    const res = formatCourtHeadsUpSmsNotification(
+      type,
+      prosecutorName,
+      arrestDate,
+      requestedCourtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Ný krafa um rannsóknarheimild (leit og líkamsrannsókn) í vinnslu. Ákærandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
+    )
+  })
+
+  test('should format heads up notification for investigation of type OTHER', () => {
+    // Arrange
+    const type = CaseType.OTHER
+    const prosecutorName = 'Al Coe'
+    const arrestDate = new Date('2021-01-24T13:00')
+    const requestedCourtDate = new Date('2021-06-20T10:00')
+
+    // Act
+    const res = formatCourtHeadsUpSmsNotification(
+      type,
+      prosecutorName,
+      arrestDate,
+      requestedCourtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Ný krafa um rannsóknarheimild í vinnslu. Ákærandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
+    )
+  })
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
@@ -606,6 +649,44 @@ describe('formatReadyForCourtSmsNotification', () => {
     // Assert
     expect(res).toBe(
       'Farbannskrafa tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+    )
+  })
+
+  test('should format ready for court SMS notification for investigation', () => {
+    // Arrange
+    const type = CaseType.INTERNET_USAGE
+    const prosecutorName = 'Árni Ákærandi'
+    const court = 'Héraðsdómur Austurlands'
+
+    // Act
+    const res = formatCourtReadyForCourtSmsNotification(
+      type,
+      prosecutorName,
+      court,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um rannsóknarheimild (upplýsingar um vefnotkun) tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+    )
+  })
+
+  test('should format ready for court SMS notification for investigation of type OTHER', () => {
+    // Arrange
+    const type = CaseType.OTHER
+    const prosecutorName = 'Árni Ákærandi'
+    const court = 'Héraðsdómur Austurlands'
+
+    // Act
+    const res = formatCourtReadyForCourtSmsNotification(
+      type,
+      prosecutorName,
+      court,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um rannsóknarheimild tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
     )
   })
 })
@@ -676,6 +757,52 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir farbannskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+    )
+  })
+
+  test('should format court date notification for investigation', () => {
+    // Arrange
+    const type = CaseType.SOUND_RECORDING_EQUIPMENT
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2021-12-24T10:00')
+    const courtRoom = '999'
+    const defenderName = 'Valdi Verjandi'
+
+    // Act
+    const res = formatProsecutorCourtDateEmailNotification(
+      type,
+      court,
+      courtDate,
+      courtRoom,
+      defenderName,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild (hljóðupptökubúnaði komið fyrir).<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+    )
+  })
+
+  test('should format court date notification for investigation of type OTHER', () => {
+    // Arrange
+    const type = CaseType.OTHER
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2021-12-24T10:00')
+    const courtRoom = '999'
+    const defenderName = 'Valdi Verjandi'
+
+    // Act
+    const res = formatProsecutorCourtDateEmailNotification(
+      type,
+      court,
+      courtDate,
+      courtRoom,
+      defenderName,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
     )
   })
 })
@@ -1109,7 +1236,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
-    const isolationTo = new Date('2021-04-06T12:30')
+    const isolationToDate = new Date('2021-04-06T12:30')
     const accusedAppealDecision = CaseAppealDecision.APPEAL
     const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
     const judgeName = 'Dalli Dómari'
@@ -1137,7 +1264,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       isExtension,
       undefined,
       additionToConclusion,
-      isolationTo,
+      isolationToDate,
     )
 
     // Assert

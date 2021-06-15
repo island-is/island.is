@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Table as T, Text } from '@island.is/island-ui/core'
@@ -22,6 +22,31 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
   const { lang } = useLocale()
   const { setValue, getValues } = useFormContext()
 
+  const toggleCheckboxGroup = () => {
+    const values = apiScopes
+      .filter((apiScope) => apiScope.__typename !== 'AuthApiScopeGroup')
+      .map((apiScope) => getValues(`${apiScope.model}.name`))
+    setValue(
+      `${apiScopes[0].model}.name`,
+      values.every((value) => value?.length > 0) ? [apiScopes[0].name] : [],
+    )
+  }
+
+  const toggleDatePickerGroup = () => {
+    const values = apiScopes
+      .filter((apiScope) => apiScope.__typename !== 'AuthApiScopeGroup')
+      .map((apiScope) => getValues(`${apiScope.model}.validTo`))
+    setValue(
+      `${apiScopes[0].model}.validTo`,
+      values.every((value) => value === values[0]) ? values[0] : undefined,
+    )
+  }
+
+  useEffect(() => {
+    toggleCheckboxGroup()
+    toggleDatePickerGroup()
+  }, [toggleCheckboxGroup, toggleDatePickerGroup])
+
   const onSelect = (item: Scope, value: string[]) => {
     if (item.__typename === 'AuthApiScopeGroup') {
       apiScopes.forEach((apiScope) => {
@@ -31,13 +56,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
         )
       })
     } else {
-      const values = apiScopes
-        .filter((apiScope) => apiScope.__typename !== 'AuthApiScopeGroup')
-        .map((apiScope) => getValues(`${apiScope.model}.name`))
-      setValue(
-        `${apiScopes[0].model}.name`,
-        values.every((value) => value?.length > 0) ? [apiScopes[0].name] : [],
-      )
+      toggleCheckboxGroup()
     }
   }
 
@@ -47,13 +66,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
         setValue(`${apiScope.model}.validTo`, value)
       })
     } else {
-      const values = apiScopes
-        .filter((apiScope) => apiScope.__typename !== 'AuthApiScopeGroup')
-        .map((apiScope) => getValues(`${apiScope.model}.validTo`))
-      setValue(
-        `${apiScopes[0].model}.validTo`,
-        values.every((value) => value === values[0]) ? values[0] : undefined,
-      )
+      toggleDatePickerGroup()
     }
   }
 

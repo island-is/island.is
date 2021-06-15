@@ -346,6 +346,19 @@ export class ResourcesService {
     })
   }
 
+  /** Gets Api scopes with Explicit Delegation Grant */
+  async findIdentityResourcesWithExplicitDelegationGrant(): Promise<
+    IdentityResource[]
+  > {
+    this.logger.debug(
+      `Finding identity resources with Explicit Delegation Grant`,
+    )
+
+    return this.identityResourceModel.findAll({
+      where: { allowExplicitDelegationGrant: true },
+    })
+  }
+
   /** Gets api resources by api resource names  */
   async findApiResourcesByNameAsync(
     apiResourceNames: string[],

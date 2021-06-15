@@ -198,25 +198,18 @@ const InReviewSteps: FC<FieldBaseProps> = ({
 
       {screenState === 'steps' ? (
         <Box marginTop={7} marginBottom={8}>
-          {steps.map((step, index) => {
-            return (
-              <ReviewSection
-                key={index}
-                application={application}
-                index={index + 1}
-                {...step}
-              />
-            )
-          })}
+          {steps.map((step, index) => (
+            <ReviewSection
+              key={index}
+              application={application}
+              index={index + 1}
+              {...step}
+            />
+          ))}
         </Box>
       ) : (
         <Box marginTop={7} marginBottom={8}>
-          <Review
-            application={application}
-            field={field}
-            errors={errors}
-            editable={false}
-          />
+          <Review application={application} field={field} errors={errors} />
         </Box>
       )}
     </Box>

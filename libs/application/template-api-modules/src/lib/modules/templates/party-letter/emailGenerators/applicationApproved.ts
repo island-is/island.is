@@ -12,6 +12,7 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
   } = props
 
   const applicantEmail = get(application.answers, 'email')
+  const hasComment = application.answers.reasonForReject.toString()?.length
 
   const subject = 'Umsókn um listabókstaf uppfyllir skilyrði'
   const body = dedent(`
@@ -21,7 +22,7 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
         <b>Stjórnmálasamtök: </b>${application.answers.partyName}
 
         <b>Athugasemd frá Dómsmálaráðuneytinu: </b>${
-          application.answers.reasonForReject ?? 'Engin athugasemd'
+          hasComment ? application.answers.reasonForReject : 'Engin athugasemd'
         }
       `)
 

@@ -185,6 +185,18 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'fileTrayFull',
         },
       },
+
+      {
+        name: defineMessage({
+          id: 'service.portal:licenses',
+          defaultMessage: 'Skilríki',
+        }),
+        path: ServicePortalPath.LicensesRoot,
+        icon: {
+          type: 'outline',
+          icon: 'business',
+        },
+      },
     ],
   },
   {
