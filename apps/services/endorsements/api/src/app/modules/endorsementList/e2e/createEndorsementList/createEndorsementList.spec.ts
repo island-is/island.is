@@ -3,7 +3,7 @@ import * as request from 'supertest'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { setup } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
-import { EndorsementTag } from '../../endorsementList.model'
+import { EndorsementTag } from '../../constants'
 
 let app: INestApplication
 
@@ -34,6 +34,10 @@ describe('createEndorsementList', () => {
           },
         },
       ],
+      meta: {
+        random: 'data',
+        moreRandom: 1337,
+      },
     }
     const response = await request(app.getHttpServer())
       .post('/endorsement-list')
@@ -49,6 +53,7 @@ describe('createEndorsementList', () => {
       tags: [EndorsementTag.PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021],
       endorsementMeta: ['fullName'],
       validationRules: [],
+      meta: {},
     }
     const endorsementListsWithWrongFields = [
       {
@@ -74,6 +79,10 @@ describe('createEndorsementList', () => {
             type: 'randomNonExistingType', // invalid
           },
         ],
+      },
+      {
+        ...validEndorsementList,
+        meta: '', // invalid
       },
     ]
 
