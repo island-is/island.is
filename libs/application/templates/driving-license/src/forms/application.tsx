@@ -251,12 +251,12 @@ export const application: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: 'Panta ökuskírteini',
+              title: m.orderDrivingLicense,
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
-                  name: 'Halda áfram',
+                  name: m.continue,
                   type: 'primary',
                 },
               ],
@@ -315,8 +315,7 @@ export const application: Form = buildForm({
             buildDividerField({}),
             buildKeyValueField({
               label: m.overviewTeacher,
-              value: 'Arnór Heiðar Sigurðsson',
-              // value: ({ answers: { teacher } }) => teacher as string,
+              value: ({ answers: { teacher } }) => teacher as string,
             }),
             buildDividerField({}),
             buildCheckboxField({

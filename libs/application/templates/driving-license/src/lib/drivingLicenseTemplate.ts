@@ -11,6 +11,7 @@ import {
 import { State } from 'xstate'
 import * as z from 'zod'
 import { ApiActions } from '../shared'
+import { m } from './messages'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.PAYMENT }
 
@@ -47,7 +48,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
-  name: 'Umsókn um ökuskilríki',
+  name: m.applicationForDrivingLicense,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -67,7 +68,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
-                  name: 'Halda áfram',
+                  name: m.continue,
                   type: 'primary',
                 },
               ],

@@ -192,4 +192,81 @@ export const m = defineMessages({
     description:
       'In order to apply for this application we need your email and phone number',
   },
+  student: {
+    id: 'dla.application:student',
+    defaultMessage: 'Nemandi',
+    description: 'Student driver',
+  },
+  errorOrNoTemporaryLicense: {
+    id: 'dla.application:error.noTempLicense',
+    defaultMessage:
+      'Kennitala fannst ekki eða nemandi er ekki með bráðabyrgðaskírteini',
+    description:
+      'The national ID was not found or the student does not have a valid temporary driving license.',
+  },
+  prereqTitle: {
+    id: 'dla.application:PrerequisitesDraft.title',
+    defaultMessage: 'Akstursmat',
+    description: 'Driving assessment',
+  },
+  studentInformation: {
+    id: 'dla.application:student.title',
+    defaultMessage: 'Upplýsingar um nemanda',
+    description: 'Information about driving student.',
+  },
+  infoTitle: {
+    id: 'dla.application:info.title',
+    defaultMessage: 'Upplýsingar um nemanda',
+    description: 'Information about driving student.',
+  },
+  infoDescription: {
+    id: 'dla.application:info.description',
+    defaultMessage: 'Sláðu inn kennitölu og netfang nemanda',
+    description: 'Enter the national ID and email of driving student.',
+  },
+  studentNationalId: {
+    id: 'dla.application:student.nationalId',
+    defaultMessage: 'Kennitala nemanda',
+    description: 'National ID of driving student',
+  },
+  studentEmail: {
+    id: 'dla.application:student.email',
+    defaultMessage: 'Tölvupóstfang nemanda',
+    description: 'E-mail of driving student',
+  },
+  studentLookup: {
+    id: 'dla.application:student.lookup',
+    defaultMessage: 'Uppfletting nemanda',
+    description: 'Driving student lookup',
+  },
+  approvalAssessment: {
+    id: 'dla.application:approval.assessment',
+    defaultMessage: 'Akstursmat',
+    description: 'Driving assessment',
+  },
+  drivingAssessmentConfirmation: {
+    id: 'dla.application:',
+    defaultMessage: 'Staðfesting akstursmats',
+    description: 'Confirmation of driving assessment',
+  },
+  submitConfirmation: {
+    id: 'dla.application:submit.confirmation',
+    defaultMessage: 'Staðfesting',
+    description: 'Confirmation',
+  },
+  studentLookupToShow: {
+    id: 'dla.application:student.lookupToShow',
+    defaultMessage: 'Uppfletting nemanda',
+    description: 'Lookup the driving student',
+  },
+  drivingAssessmentConfirmationCheck: {
+    id: 'dla.application:drivingAssessment.confirmationCheck',
+    defaultMessage: 'Ég staðfesti að nemandi hafi staðist akstursmat',
+    description: 'I confirm that the student has passed the driving assessment',
+  },
+  finalAssessmentTitle: {
+    id: 'dla.application:',
+    defaultMessage: 'Akstursmat móttekið',
+    description: 'Driving assessment received.',
+  },
 })

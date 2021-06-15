@@ -20,7 +20,7 @@ import { format as formatKennitala } from 'kennitala'
 
 export const FormPrimary: Form = buildForm({
   id: 'PrerequisitesDraft',
-  title: 'Akstursmat',
+  title: m.prereqTitle,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -45,29 +45,29 @@ export const FormPrimary: Form = buildForm({
     }),
     buildSection({
       id: 'student',
-      title: 'Upplýsingar um nemanda',
+      title: m.studentInformation,
       children: [
         buildMultiField({
           id: 'info',
-          title: 'Upplýsingar um nemanda',
-          description: 'Sláðu inn kennitölu og netfang nemanda',
+          title: m.infoTitle,
+          description: m.infoDescription,
           children: [
             buildTextField({
               id: 'student.nationalId',
-              title: 'Kennitala nemanda',
+              title: m.studentNationalId,
               width: 'half',
               backgroundColor: 'blue',
             }),
             buildTextField({
               id: 'student.email',
-              title: 'Tölvupóstfang nemanda',
+              title: m.studentEmail,
               width: 'half',
               backgroundColor: 'blue',
               variant: 'email',
             }),
             buildCustomField({
               id: 'studentLookup',
-              title: 'Uppfletting nemanda',
+              title: m.studentLookup,
               component: 'StudentLookupField',
             }),
           ],
@@ -76,28 +76,28 @@ export const FormPrimary: Form = buildForm({
     }),
     buildSection({
       id: 'approval',
-      title: 'Akstursmat',
+      title: m.approvalAssessment,
       children: [
         buildMultiField({
           id: 'drivingAssessmentConfirmation',
-          title: 'Staðfesting akstursmats',
+          title: m.drivingAssessmentConfirmation,
           children: [
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: 'Staðfesting',
+              title: m.submitConfirmation,
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
             }),
             buildCustomField({
               id: 'studentLookupToShow',
-              title: 'Uppfletting nemanda',
+              title: m.studentLookupToShow,
               component: 'StudentLookupField',
               width: 'half',
             }),
             buildKeyValueField({
-              label: 'Kennitala nemanda',
+              label: m.studentNationalId,
               width: 'half',
               value: ({ answers }) =>
                 formatKennitala(
@@ -105,7 +105,7 @@ export const FormPrimary: Form = buildForm({
                 ),
             }),
             buildKeyValueField({
-              label: 'Tölvupóstfang nemanda',
+              label: m.studentEmail,
               width: 'half',
               value: ({ answers }) =>
                 get(answers, 'student.email', '') as string,
@@ -115,7 +115,7 @@ export const FormPrimary: Form = buildForm({
               id: 'drivingAssessmentConfirmationCheck',
               options: [
                 {
-                  label: 'Ég staðfesti að nemandi hafi staðist akstursmat',
+                  label: m.drivingAssessmentConfirmationCheck,
                   value: 'confirmed',
                 },
               ],
@@ -124,7 +124,7 @@ export const FormPrimary: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'final',
-          title: 'Akstursmat móttekið',
+          title: m.finalAssessmentTitle,
           description: (application) => {
             const sendApplicationActionResult =
               application.externalData[ApiActions.submitAssessmentConfirmation]

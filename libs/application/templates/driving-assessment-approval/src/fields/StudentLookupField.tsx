@@ -4,6 +4,7 @@ import { useWatch } from 'react-hook-form'
 import { CustomField, FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import * as kennitala from 'kennitala'
+import { m } from '../lib/messages'
 
 const QUERY = gql`
   query studentInfo($nationalId: String!) {
@@ -52,14 +53,12 @@ export const StudentLookupField: FC<Props> = ({ error }) => {
 
       {result.student ? (
         <Box>
-          <Text variant="h4">Nemandi</Text>
+          <Text variant="h4">{m.student}</Text>
           <Text>{result.student.name}</Text>
         </Box>
       ) : (
         <Box color="red400" padding={2}>
-          <Text color="red400">
-            Kennitala fannst ekki eða nemandi er ekki með bráðabyrgðaskírteini
-          </Text>
+          <Text color="red400">{m.errorOrNoTemporaryLicense}</Text>
         </Box>
       )}
     </>

@@ -8,7 +8,7 @@ import {
 
 export const PaymentPending: Form = buildForm({
   id: 'PaymentPending',
-  title: 'Beðið eftir staðfestingu greiðsluveitu',
+  title: m.paymentPendingConfirmation,
   mode: FormModes.PENDING,
   children: [
     buildCustomField({

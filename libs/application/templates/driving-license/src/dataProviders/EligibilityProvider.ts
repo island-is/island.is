@@ -3,13 +3,10 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-  formatText,
-  StaticText,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { MessageDescriptor } from '@formatjs/intl'
-import { RequirementKey } from '../types/schema'
 import { ApplicationEligibilityRequirement } from '@island.is/api/schema'
+import { logger } from '@island.is/logging'
 
 export class EligibilityProvider extends BasicDataProvider {
   type = 'EligibilityProvider'
@@ -32,24 +29,12 @@ export class EligibilityProvider extends BasicDataProvider {
     const res = await this.useGraphqlGateway(query, { drivingLicenseType: 'B' })
 
     if (!res.ok) {
-      console.error('failed http request', { res })
+      logger.info(`Failed http request: ${res}`)
 
       return Promise.reject({
         reason: 'Náði ekki sambandi við vefþjónustu',
       })
     }
-
-    //     const eligibility = response.data.drivingLicenseApplicationEligibility
-    //     // REMOVE || true - ONLY FOR TESTING PURPOSES.
-    //     if (eligibility.isEligible || true) {
-    //       return Promise.resolve(eligibility.isEligible)
-    //     } else {
-    //       return Promise.reject({
-    //         reason: extractReason(eligibility.requirements),
-    //       })
-    //     }
-    //   },
-    // )
     const response = await res.json()
 
     if (response.errors) {

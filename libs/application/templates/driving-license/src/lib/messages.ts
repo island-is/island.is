@@ -367,4 +367,44 @@ export const m = defineMessages({
       'Villa kom upp við að sækja upplýsingar úr vefþjónustu. Reyndu aftur síðar',
     description: 'Unhandled error in driving license data provider',
   },
+  examplePaymentPendingField: {
+    id: 'dl.application:example.waitingForPayment',
+    defaultMessage: 'Augnablik meðan beðið er eftir greiðslu',
+    description: 'One moment while we wait for payment confirmation.',
+  },
+  examplePaymentPendingDescription: {
+    id: 'dl.application:example.waitingDescription',
+    defaultMessage: 'Texti um hvað er að gerast',
+    description: 'Text about current payment proceedures.',
+  },
+  orderDrivingLicense: {
+    id: 'dl.application:order.drivingLicense',
+    defaultMessage: 'Panta ökuskírteini',
+    description: 'Order driving license',
+  },
+  continue: {
+    id: 'dl.application.continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Continue',
+  },
+  payment: {
+    id: 'dl.application.DrivingLicenseApplicationPaymentForm',
+    defaultMessage: 'greiðsla',
+    description: 'payment',
+  },
+  paymentCapital: {
+    id: 'dl.application.awaitingPayment',
+    defaultMessage: 'Greiðsla',
+    description: 'Payment',
+  },
+  forwardingToPayment: {
+    id: 'dl.application.forwardingToPayment',
+    defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
+    description: 'Forwarding you to payment handler...',
+  },
+  paymentPendingConfirmation: {
+    id: 'dl.application.forwardingToPayment',
+    defaultMessage: 'Beðið eftir staðfestingu greiðsluveitu',
+    description: 'Pending confirmation from payment handler',
+  },
 })

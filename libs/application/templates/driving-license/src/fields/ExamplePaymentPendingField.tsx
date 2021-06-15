@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import { CustomField, FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
+import { m } from '../lib/messages'
 
 const QUERY = gql`
   query status($applicationId: String!) {
@@ -48,8 +49,8 @@ export const ExamplePaymentPendingField: FC<Props> = ({
 
       {!paymentStatus.fulfilled && (
         <Box>
-          <Text variant="h2">Augnablik meðan beðið er eftir greiðslu</Text>
-          <Text marginTop="gutter">Texti um hvað er að gerast</Text>
+          <Text variant="h2">{m.examplePaymentPendingField}</Text>
+          <Text marginTop="gutter">{m.examplePaymentPendingDescription}</Text>
 
           <Box backgroundPattern="dotted" height="full" width="half" />
         </Box>
