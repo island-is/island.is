@@ -117,6 +117,10 @@ export const routesTemplate = {
     is: '/reglugerdir',
     en: '',
   },
+  login: {
+    is: '/innskraning',
+    en: '/en/login',
+  },
   webservicedetailpage: {
     is: '/throun/vefthjonustur/[slug]',
     en: '/en/developers/webservices/[slug]',

@@ -13,7 +13,6 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import * as styles from './Login.treat'
-import SvgPlant from '../../components/Login/svgPlant'
 import { LoginPageTexts } from '../../components/Login/LoginTexts.types'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -28,7 +27,7 @@ interface LoginProps {
 const LoginPage: Screen<LoginProps> = ({ namespace }) => {
   const n = useNamespace(namespace)
 
-  const listItems: string[] = n('nyjuSidurList', [
+  const oldListItems: string[] = n('gomluSidurList', [
     'Sjá Pósthólf',
     'Þínar Upplýsingar',
     'Fjármál',
@@ -36,7 +35,16 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
     'Samræmd könnunarpróf',
   ])
 
-  const listItemsArray = Array.isArray(listItems) ? listItems : []
+  const newListItems: string[] = n('nyjuSidurList', [
+    'Sjá Pósthólf',
+    'Þínar Upplýsingar',
+    'Fjármál',
+    'Starfsleyfi kennara',
+    'Samræmd könnunarpróf',
+  ])
+
+  const oldListItemsArray = Array.isArray(oldListItems) ? oldListItems : []
+  const newListItemsArray = Array.isArray(newListItems) ? newListItems : []
   return (
     <ContentBlock>
       <Box paddingX={[0, 4, 4, 12]} paddingY={[2, 2, 10]} id="main-content">
@@ -44,7 +52,7 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
           <GridRow>
             <GridColumn
               span={['12/12', '12/12', '6/12']}
-              paddingBottom={[2, 2, 4]}
+              paddingBottom={[3, 3, 4]}
             >
               <Text as="h1" variant="h1" marginBottom="p3">
                 {n('gomluSidurTitle', 'Gömlu mínar síður')}
@@ -68,18 +76,33 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
             </GridColumn>
             <GridColumn
               span={['12/12', '12/12', '6/12']}
-              hiddenBelow="md"
-              paddingBottom={[2, 2, 4]}
+              paddingBottom={[3, 3, 4]}
             >
-              <Box display="flex" alignItems="center" justifyContent="center">
-                <SvgPlant />
+              <Box
+                flexDirection="column"
+                display="flex"
+                alignItems={['flexStart', 'flexStart', 'center']}
+                height="full"
+              >
+                {oldListItemsArray.length > 0 ? (
+                  <div>
+                    <Text as="h3" variant="h3" marginBottom="p3">
+                      {n('gomluSidurListTitle', 'Á gömlu mínum síðum')}
+                    </Text>
+                    <BulletList type="ul">
+                      {oldListItemsArray.map((li) => (
+                        <Bullet key={li}>{li}</Bullet>
+                      ))}
+                    </BulletList>
+                  </div>
+                ) : null}
               </Box>
             </GridColumn>
           </GridRow>
           <GridRow marginTop="containerGutter">
             <GridColumn
               span={['12/12', '12/12', '6/12']}
-              paddingBottom={[8, 8, 4]}
+              paddingBottom={[3, 3, 4]}
             >
               <Tag disabled>{n('nyjuSidurTag', 'Beta útgáfa')}</Tag>
               <Text as="h2" variant="h1" marginBottom="p3" marginTop="p1">
@@ -103,17 +126,16 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                 flexDirection="column"
                 display="flex"
                 alignItems={['flexStart', 'flexStart', 'center']}
-                justifyContent={['flexStart', 'flexStart', 'center']}
                 height="full"
               >
-                {listItemsArray.length > 0 ? (
+                {newListItemsArray.length > 0 ? (
                   <div>
                     <Text as="h3" variant="h3" marginBottom="p3">
                       {n('nyjuSidurListTitle', 'Á nýjum mínum síðum')}
                     </Text>
                     <BulletList type="ul">
-                      {listItemsArray.map((li) => (
-                        <Bullet>{li}</Bullet>
+                      {newListItemsArray.map((li) => (
+                        <Bullet key={li}>{li}</Bullet>
                       ))}
                     </BulletList>
                   </div>

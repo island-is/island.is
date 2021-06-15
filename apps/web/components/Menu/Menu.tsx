@@ -8,6 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
 
@@ -34,6 +35,7 @@ export const Menu = ({
 }: Props) => {
   const searchInput = useRef<HTMLInputElement>()
   const { activeLocale, t } = useI18n()
+  const { linkResolver } = useLinkResolver()
 
   return (
     <MenuUI
@@ -94,10 +96,7 @@ export const Menu = ({
       }}
       renderMyPagesButton={(button) => {
         return (
-          <Link
-            href={activeLocale === 'en' ? '/en/login' : '/innskraning'}
-            skipTab
-          >
+          <Link {...linkResolver('login')} skipTab>
             {button}
           </Link>
         )
