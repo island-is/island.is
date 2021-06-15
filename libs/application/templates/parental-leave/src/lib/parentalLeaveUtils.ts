@@ -1,5 +1,4 @@
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
-import differenceInMonths from 'date-fns/differenceInMonths'
 import parseISO from 'date-fns/parseISO'
 
 import {
@@ -23,6 +22,7 @@ import {
   SPOUSE,
   StartDateOptions,
   ParentalRelations,
+  MILLISECONDS_IN_A_DAY,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
@@ -32,7 +32,7 @@ import {
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
 import { Boolean, Period } from '../types'
-import { maxDaysToGiveOrReceive } from '../config'
+import { maxDaysToGiveOrReceive, daysInMonth } from '../config'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -304,6 +304,39 @@ export const isEligibleForParentalLeave = (
   )
 }
 
+const calculateNumberOfHalfMonthsBetween = (start: Date, end: Date) => {
+  const daysBetween =
+    end.getTime() / MILLISECONDS_IN_A_DAY -
+    start.getTime() / MILLISECONDS_IN_A_DAY
+  const halfMonthsBetween = daysBetween / (daysInMonth / 2)
+
+  // TODO: Refactor. Rough estimate.
+  return Math.round(halfMonthsBetween)
+}
+
+export const calculatePeriodPercentageBetweenDates = (
+  application: Application,
+  start: Date,
+  end: Date,
+) => {
+  const availableRights = getAvailableRightsInMonths(application)
+
+  const numberOfHalfMonthsBetween = calculateNumberOfHalfMonthsBetween(
+    start,
+    end,
+  )
+  const numberOfHalfMonthsInRights = availableRights * 2
+
+  if (numberOfHalfMonthsBetween <= numberOfHalfMonthsInRights) {
+    return 100
+  }
+
+  return Math.min(
+    100,
+    Math.round((numberOfHalfMonthsInRights / numberOfHalfMonthsBetween) * 100),
+  )
+}
+
 export const calculatePeriodPercentage = (
   application: Application,
   {
@@ -314,7 +347,6 @@ export const calculatePeriodPercentage = (
     dates?: { startDate: string; endDate: string }
   },
 ) => {
-  const months = getAvailableRightsInMonths(application)
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
 
   let startDate: string | undefined = undefined
@@ -337,13 +369,11 @@ export const calculatePeriodPercentage = (
     endDate = dates?.endDate
   }
 
-  const difference = differenceInMonths(parseISO(endDate), parseISO(startDate))
-
-  if (difference <= months) {
-    return 100
-  }
-
-  return Math.min(100, Math.round((months / difference) * 100))
+  return calculatePeriodPercentageBetweenDates(
+    application,
+    parseISO(startDate),
+    parseISO(endDate),
+  )
 }
 
 const getOrFallback = (

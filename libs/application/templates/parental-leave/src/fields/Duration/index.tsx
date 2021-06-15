@@ -1,4 +1,4 @@
-import React, { FC, useState, useMemo } from 'react'
+import React, { FC, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import addMonths from 'date-fns/addMonths'
@@ -19,8 +19,8 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
 import {
-  getAvailableRightsInMonths,
   getExpectedDateOfBirth,
+  calculatePeriodPercentageBetweenDates,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
@@ -48,15 +48,18 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
     id,
     formatISO(addMonths(parseISO(currentStartDateAnswer), 1)),
   ) as string
-  const monthsToUse = differenceInMonths(
-    parseISO(currentEndDateAnswer),
-    parseISO(currentStartDateAnswer),
-  )
+
+  const startDate = parseISO(currentStartDateAnswer)
+  const endDate = parseISO(currentEndDateAnswer)
+
+  const monthsToUse = differenceInMonths(endDate, startDate)
   const [chosenEndDate, setChosenEndDate] = useState<string>(
     currentEndDateAnswer,
   )
   const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
-  const [percent, setPercent] = useState<number>(100)
+  const [percent, setPercent] = useState<number>(
+    calculatePeriodPercentageBetweenDates(application, startDate, endDate),
+  )
   const getEndDate = useGetOrRequestEndDates(application)
 
   const handleChange = async (months: number) => {
