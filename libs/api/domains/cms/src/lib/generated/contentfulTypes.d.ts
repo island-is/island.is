@@ -2345,6 +2345,64 @@ export interface IProcessEntry extends Entry<IProcessEntryFields> {
   }
 }
 
+export interface IProjectPageFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Slug */
+  slug?: string | undefined
+
+  /** Theme */
+  theme: 'default'
+
+  /** Sidebar */
+  sidebar: boolean
+
+  /** Sidebar Links */
+  sidebarLinks?: ILink[] | undefined
+
+  /** Subtitle */
+  subtitle?: string | undefined
+
+  /** Intro */
+  intro?: string | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Slices */
+  slices?:
+    | (
+        | IAccordionSlice
+        | IMailingListSignup
+        | IFeaturedArticles
+        | ISectionHeading
+        | ILatestNewsSlice
+        | IOneColumnText
+      )[]
+    | undefined
+
+  /** News Tag */
+  newsTag?: IGenericTag | undefined
+}
+
+export interface IProjectPage extends Entry<IProjectPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'projectPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IQuestionAndAnswerFields {
   /** Question */
   question: string
