@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { coreMessages, FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
   Text,
@@ -9,10 +9,7 @@ import {
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { useMutation } from '@apollo/client'
 import isEqual from 'lodash/isEqual'
-import { toast } from '@island.is/island-ui/core'
 import { Constituencies } from '../../types'
 import { constituencyMapper } from '../../constants'
 import sortBy from 'lodash/sortBy'
@@ -24,6 +21,7 @@ import { useFormContext } from 'react-hook-form'
 
 const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const { lang: locale, formatMessage } = useLocale()
+  const { setValue } = useFormContext()
   const answers = application.answers as SchemaFormValues
   const [selectedEndorsements, setSelectedEndorsements] = useState<
     Endorsement[]
@@ -32,10 +30,10 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const [chooseRandom, setChooseRandom] = useState(false)
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
-    const { endorsements: endorsementsHook, refetch } = useEndorsements(
-      endorsementListId,
-      true,
-    ) 
+  const { endorsements: endorsementsHook, refetch } = useEndorsements(
+    endorsementListId,
+    true,
+  )
 
   useEffect(() => {
     refetch()
@@ -50,14 +48,12 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     selectedEndorsements.length < minEndorsements
   const firstX = () => {
     const tempEndorsements = endorsementsHook ?? []
-    console.log('FIRST_X', tempEndorsements?.slice(0, maxEndorsements))
     return tempEndorsements?.slice(0, maxEndorsements)
   }
   const shuffled = () => {
     const tempEndorsements = sortBy(endorsementsHook, 'created')
     return tempEndorsements.sort(() => 0.5 - Math.random())
   }
-  const { setValue, errors, getValues } = useFormContext()
 
   const firstMaxEndorsements = () => {
     setAutoSelect(true)
@@ -97,13 +93,16 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const updateApplicationWithEndorsements = async (
     newEndorsements: Endorsement[],
   ) => {
-    setValue('selectedEndorsements', cloneDeep(newEndorsements))
+    const endorsementIds: string[] = newEndorsements.map((e) => e.id)
+    setValue('selectedEndorsements', cloneDeep(endorsementIds))
   }
 
   /* on intital render: decide which radio button should be checked */
   useEffect(() => {
-    console.log('render', answers.selectedEndorsements)
-    if (answers.selectedEndorsements && answers.selectedEndorsements.length > 0) {
+    if (
+      answers.selectedEndorsements &&
+      answers.selectedEndorsements.length > 0
+    ) {
       const endorsements: any = endorsementsHook?.filter((e: any) => {
         return answers.selectedEndorsements?.indexOf(e.id) !== -1
       })

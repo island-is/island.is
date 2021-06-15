@@ -13,13 +13,14 @@ export interface Props extends FieldBaseProps {
 }
 
 const Overview: FC<FieldBaseProps> = ({ application }) => {
-  console.log('overview', application)
   const { formatMessage } = useLocale()
   const { externalData } = application
   const answers = application.answers as SchemaFormValues
   const endorsementListId = (externalData?.createEndorsementList.data as any).id
-  const { endorsements: endorsementHook } = useEndorsements(endorsementListId, false)
-  //console.log('selected', answers.selectedEndorsements)
+  const { endorsements: endorsementHook } = useEndorsements(
+    endorsementListId,
+    false,
+  )
 
   //find selected endorsements from the endorsement system and find how many of them are invalidated
   const endorsementsWithWarning = () => {
@@ -27,7 +28,6 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
       return answers.selectedEndorsements?.indexOf(e.id) !== -1
     })
 
-    //console.log('intersecting', intersectingEndorsements)
     intersectingEndorsements?.filter((e) => e.meta.invalidated)
     return intersectingEndorsements?.length
   }
