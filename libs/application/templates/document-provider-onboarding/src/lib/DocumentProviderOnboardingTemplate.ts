@@ -314,9 +314,6 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     //This logic makes it so the application is not accessible to anybody but involved parties
 
-    console.log(process.env.NODE_ENV)
-    console.log(application.state)
-
     // This if statement might change depending on the "umboðskerfi"
     if (
       process.env.NODE_ENV === 'development' &&
