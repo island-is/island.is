@@ -1,4 +1,4 @@
-import { withKnobs } from '@storybook/addon-knobs'
+import { withKnobs, text } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { SafeAreaView, View } from 'react-native'
@@ -18,28 +18,31 @@ storiesOf('Field', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Compact', () => {
+    const label = text('Field Label', '1. Eiginnafn');
+    const value = text('Field Value', 'Svanur');
     return (
       <Field
         compact
         size="large"
-        label="1. Eiginnafn"
-        value="Svanur"
-        style={{ marginRight: 8 }}
+        label={label}
+        value={value}
       />
     )
   })
   .add('2 Compact In Row', () => {
     return (
-      <FieldRow>
-        <Field
-          compact
-          size="large"
-          label="2. Eiginnafn"
-          value="Svanur"
-          style={{ marginRight: 8 }}
-        />
-        <Field compact size="large" label="1. Kenninafn" value="Örn Svanberg" />
-      </FieldRow>
+      <View style={{ width: '100%', paddingHorizontal: 16 }}>
+        <FieldRow>
+          <Field
+            compact
+            size="large"
+            label="2. Eiginnafn"
+            value="Svanur"
+            style={{ marginRight: 8 }}
+          />
+          <Field compact size="large" label="1. Kenninafn" value="Örn Svanberg" />
+        </FieldRow>
+      </View>
     )
   })
   .add('3 In Group', () => {

@@ -21,7 +21,7 @@ const CenterView = ({ children }: any) => (
   </View>
 )
 
-storiesOf('Empty List', module)
+storiesOf('Empty States', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Deafult', () => {
@@ -35,9 +35,11 @@ storiesOf('Empty List', module)
   })
   .add('Empty Card', () => {
     return (
-      <EmptyCard
-        text="Þegar þú stofnar stafræna umsókn á Ísland.is birtist staða hennar hér."
-        image={<Image source={leJobss4} height={90} width={42} />}
-      />
+      <View style={{ width: '100%', paddingHorizontal: 16 }}>
+       <EmptyCard
+          text="Þegar þú stofnar stafræna umsókn á Ísland.is birtist staða hennar hér."
+          image={<Image source={leJobss4} height={90} width={42} />}
+        />
+      </View>
     )
   })

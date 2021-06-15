@@ -1,4 +1,4 @@
-import { withKnobs } from '@storybook/addon-knobs'
+import { withKnobs, text, boolean } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
@@ -22,32 +22,39 @@ storiesOf('Input', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Input', () => {
+    const label = text('Input Label', 'Birtingarnafn');
+    const value = text('Input Value', 'Jón Jónsson');
     return (
       <InputRow>
         <Input
-          loading={false}
-          error={false}
-          label="Birtingarnafn"
-          value="Jón Jónsson"
+          loading={boolean('Input Loading', false)}
+          error={boolean('Input Error', false)}
+          label={label}
+          value={value}
         />
       </InputRow>
     )
   })
   .add('2 Input Row', () => {
+    const label = text('2 Input Row Label', 'Kennitala');
+    const value = text('2 Input Row Value', '1234568-1234');
+
+    const label2 = text('2 Input Row Label 2', 'Fæðingastaður');
+    const value2 = text('2 Input Row Value 2', 'Reykjavík');
     return (
       <View style={{ width: '100%' }}>
         <InputRow>
           <Input
             loading={false}
             error={false}
-            label="Kennitala"
-            value="1234568-1234"
+            label={label}
+            value={value}
           />
           <Input
             loading={false}
             error={false}
-            label="Fæðingastaður"
-            value="Reykjavík"
+            label={label2}
+            value={value2}
           />
         </InputRow>
       </View>

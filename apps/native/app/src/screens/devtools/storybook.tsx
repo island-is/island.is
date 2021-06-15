@@ -16,10 +16,11 @@ configure(() => {
   require('../../../../island-ui/src/lib/view-pager/view-pager.stories')
   require('../../../../island-ui/src/lib/tab-bar/tab-bar.stories')
   require('../../../../island-ui/src/lib/search-bar/search-bar.stories')
-  require('../../../../island-ui/src/lib/empty-state/empty-list.stories')
+  require('../../../../island-ui/src/lib/empty-state/empty-state.stories')
   require('../../../../island-ui/src/lib/loader/loader.stories')
   require('../../../../island-ui/src/lib/onboarding/onboarding.stories')
   require('../../../../island-ui/src/lib/search-header/search-header.stories')
+  require('../../../../island-ui/src/lib/skeleton/skeleton.stories')
 }, module)
 
 export const StorybookUI = getStorybookUI({
