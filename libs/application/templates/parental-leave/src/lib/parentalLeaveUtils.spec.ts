@@ -278,7 +278,7 @@ describe('calculatePeriodPercentage', () => {
     expect(res).toEqual(100)
   })
 
-  it('should return 75% when number of months used is above limit using default dates', () => {
+  it('should return 74% when number of months used is above limit using default dates', () => {
     const application = buildApplication({
       answers: {
         selectedChild: 0,
@@ -310,10 +310,10 @@ describe('calculatePeriodPercentage', () => {
       },
     })
 
-    expect(res).toEqual(75)
+    expect(res).toEqual(74)
   })
 
-  it('should return 75% when number of months used is above limit', () => {
+  it('should return 74% when number of months used is above limit', () => {
     const application = buildApplication({
       answers: {
         selectedChild: 0,
@@ -350,7 +350,7 @@ describe('calculatePeriodPercentage', () => {
       }),
     })
 
-    expect(res).toEqual(75)
+    expect(res).toEqual(74)
   })
 })
 

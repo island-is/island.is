@@ -304,14 +304,14 @@ export const isEligibleForParentalLeave = (
   )
 }
 
-const calculateNumberOfHalfMonthsBetween = (start: Date, end: Date) => {
+const calculateMonthsBetweenDates = (start: Date, end: Date) => {
   const daysBetween =
     end.getTime() / MILLISECONDS_IN_A_DAY -
     start.getTime() / MILLISECONDS_IN_A_DAY
-  const halfMonthsBetween = daysBetween / (daysInMonth / 2)
+  const monthsBetween = daysBetween / daysInMonth
 
   // TODO: Refactor. Rough estimate.
-  return Math.round(halfMonthsBetween)
+  return Math.round(monthsBetween * 10) / 10
 }
 
 export const calculatePeriodPercentageBetweenDates = (
@@ -321,19 +321,18 @@ export const calculatePeriodPercentageBetweenDates = (
 ) => {
   const availableRights = getAvailableRightsInMonths(application)
 
-  const numberOfHalfMonthsBetween = calculateNumberOfHalfMonthsBetween(
-    start,
-    end,
-  )
-  const numberOfHalfMonthsInRights = availableRights * 2
+  const numberOfMonthsBetween = calculateMonthsBetweenDates(start, end)
+  const numberOfMonthsInRights = availableRights
 
-  if (numberOfHalfMonthsBetween <= numberOfHalfMonthsInRights) {
+  if (numberOfMonthsBetween <= numberOfMonthsInRights) {
     return 100
   }
 
   return Math.min(
     100,
-    Math.round((numberOfHalfMonthsInRights / numberOfHalfMonthsBetween) * 100),
+    // We don't want to over estimate the percentage and end up with
+    // invalid period length
+    Math.floor((numberOfMonthsInRights / numberOfMonthsBetween) * 100),
   )
 }
 
