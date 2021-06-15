@@ -1,4 +1,3 @@
-import * as kennitala from 'kennitala'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -9,6 +8,7 @@ import {
   DefaultStateLifeCycle,
   DefaultEvents,
 } from '@island.is/application/core'
+import { State } from 'xstate'
 import * as z from 'zod'
 import { ApiActions } from '../shared'
 
@@ -18,6 +18,7 @@ enum States {
   DRAFT = 'draft',
   DONE = 'done',
   PAYMENT = 'payment',
+  PAYMENT_PENDING = 'paymentPending',
 }
 
 const dataSchema = z.object({
@@ -101,7 +102,25 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
+          '*': { target: States.PAYMENT_PENDING },
           [DefaultEvents.SUBMIT]: { target: States.DONE },
+        },
+      },
+      [States.PAYMENT_PENDING]: {
+        meta: {
+          name: 'Greiða',
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/paymentPending').then((val) =>
+                  Promise.resolve(val.PaymentPending),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
       [States.DONE]: {

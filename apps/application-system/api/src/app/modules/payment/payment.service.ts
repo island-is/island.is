@@ -6,7 +6,7 @@ import {
   ChargeResult,
   ApiDomainsPaymentService,
 } from '@island.is/api/domains/payment'
-import { Charge } from '@island.is/clients/payment'
+import { BaseCharge, Charge } from '@island.is/clients/payment'
 import { Op } from 'sequelize'
 
 @Injectable()
@@ -19,25 +19,30 @@ export class PaymentService {
   ) {}
 
   async createPayment(
-    charge: Charge,
-    returnUrl: string,
+    baseCharge: BaseCharge,
     applicationId: string,
   ): Promise<ChargeResult> {
-    try {
-      const result = await this.apiDomainsPaymentService.createCharge(
-        charge,
-        returnUrl,
-      )
+    // TODO: island.is x-road service path for callback.. ??
+    // this can actually be a fixed url
+    const callbackUrl = `https://localhost:3333/application/${applicationId}/payment/thiswillneverwork`
 
+    const charge: Charge = {
+      ...baseCharge,
+      // TODO: this needs to be unique, but can only handle 22 or 23 chars
+      // should probably be an id or token from the DB charge once implemented
+      chargeItemSubject: `pay/${Date.now().toString(32)}`,
+      immediateProcess: true,
+      systemID: 'ISL',
+      returnUrl: callbackUrl,
+    }
+
+    try {
+      const result = await this.apiDomainsPaymentService.createCharge(charge)
+
+      // TODO: we can remove this? Not sure why we need this
       // Calculate current time plus 48 hours. 86.400.000 is seconds in a day, 172.800.000 is two days.
       const calcExpiration = new Date().getTime() + 172800000
-      console.log(
-        'The expiration date of payment application: ' +
-          new Date(calcExpiration),
-      )
-      console.log('payment service')
-      console.log(JSON.stringify(charge, null, 4))
-      console.log(JSON.stringify(result, null, 4))
+
       const paymentDto = {
         application_id: applicationId,
         fulfilled: false,
@@ -58,12 +63,10 @@ export class PaymentService {
     }
   }
 
-  findPaymentByApplicationId(
-    applicationId: string,
-  ): Promise<Payment | null> {
+  findPaymentByApplicationId(applicationId: string): Promise<Payment | null> {
     return this.paymentModel.findOne({
       where: {
-        application_id: { [Op.eq]: applicationId }
+        application_id: { [Op.eq]: applicationId },
       },
       limit: 1,
       order: [['modified', 'DESC']],

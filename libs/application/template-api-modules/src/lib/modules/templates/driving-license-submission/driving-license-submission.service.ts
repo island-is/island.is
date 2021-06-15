@@ -31,10 +31,6 @@ export class DrivingLicenseSubmissionService {
   async createCharge({
     application: { applicant, externalData, answers, id },
   }: TemplateApiModuleActionProps) {
-    console.log('==== creating charge ====')
-    console.log({ externalData })
-    console.log({ answers })
-
     const payment = externalData.payment.data as Payment
 
     const chargeItem = {
@@ -45,30 +41,17 @@ export class DrivingLicenseSubmissionService {
       reference: 'Fullnaðarskírteini',
     }
 
-    const callbackUrl = `https://localhost:4200/umsoknir/okuskirteini/${id}`
-
     const result = await this.sharedTemplateAPIService
       .createCharge(
         {
-          // TODO: this needs to be unique, but can only handle 22 or 23 chars
-          // should probably be an id or token from the DB charge once implemented
-          chargeItemSubject: `${new Date()
-            .toISOString()
-            .substring(0, 19)
-            .replace(/[^0-9]/g, '')}`,
           chargeType: payment.chargeType,
-          immediateProcess: true,
           charges: [chargeItem],
-          payInfo: { payableAmount: chargeItem.amount },
           payeeNationalID: applicant,
           // TODO: possibly somebody else, if 'umboð'
           performerNationalID: applicant,
           // TODO: sýslumannskennitala - rvk
           performingOrgID: payment.performingOrgID,
-          systemID: 'ISL',
-          returnUrl: callbackUrl,
         },
-        `https://localhost:4200/umsoknir/okuskirteini/${id}`,
         id,
       )
       .catch((e) => {
@@ -80,8 +63,6 @@ export class DrivingLicenseSubmissionService {
     if (result.error || !result.success) {
       throw new Error('Villa kom upp við að stofna til greiðslu')
     }
-
-    console.log({ result })
 
     return result
   }
@@ -95,33 +76,6 @@ export class DrivingLicenseSubmissionService {
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const juristictionId = answers.juristiction
-
-    // const res = await this.apiPaymentService
-    //   .createPayment({
-    //     applicationId: application.id,
-    //     fulfilled: false,
-    //     user4: '',
-    //     definition: '',
-    //     amount: payment.priceAmount,
-    //     expiresAt: new Date(calcExpiration)
-    //   })
-    //   .catch((e) => {
-    //     return {
-    //       success: false,
-    //       errorMessage: e.message,
-    //     }
-    //   })
-    // const res = await this.apiDomainsPaymentService
-    //   .createCharge({
-    //     systemID: 'ISL',
-    //     performingOrgID: payment.performingOrgID,
-    //     payeeNationalID: nationalId,
-    //     chargeType: payment.chargeType,
-    //     chargeItemSubject: payment.chargeItemName,
-    //     performerNationalID: payment.performingOrgID,
-    //     immediateProcess: true,
-    //     charges: [],
-    //   })
 
     const result = await this.drivingLicenseService
       .newDrivingLicense(nationalId, {

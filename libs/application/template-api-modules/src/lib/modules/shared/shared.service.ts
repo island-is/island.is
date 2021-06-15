@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
-import { Callback, ChargeResult } from '@island.is/api/domains/payment'
+import { ChargeResult } from '@island.is/api/domains/payment'
 import { EmailService } from '@island.is/email-service'
 import { Application } from '@island.is/application/core'
 
@@ -13,10 +13,8 @@ import {
 } from '../../types'
 
 import { createAssignToken, getConfigValue } from './shared.utils'
-import { Charge } from '@island.is/clients/payment'
+import { BaseCharge } from '@island.is/clients/payment'
 import { PaymentService } from '../../../../../../../apps/application-system/api/src/app/modules/payment/payment.service'
-import { User } from '@island.is/auth-nest-tools'
-import { application } from 'express'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -126,25 +124,11 @@ export class SharedTemplateApiService {
     return this.emailService.sendEmail(template)
   }
 
-  // async createCharge(charge: Charge, applicationId: string): Promise<ChargeResult> {
-  //   //const res = await this.apiDomainsPaymentService.createCharge(charge)
-  //   console.log('shared svc')
-  //   console.log(JSON.stringify(charge, null, 4));
-
-  //   const svc = await this.paymentService
-  //     .createPayment(
-  //       charge,
-  //       {nationalId: charge.payeeNationalID} as User,
-  //       applicationId as string,
-  //     )
-
-  //   return svc
   async createCharge(
-    charge: Charge,
-    returnUrl: string,
+    charge: BaseCharge,
     applicationId: string,
   ): Promise<ChargeResult> {
-    return this.paymentService.createPayment(charge, returnUrl, applicationId)
+    return this.paymentService.createPayment(charge, applicationId)
   }
 
   async makeGraphqlQuery(

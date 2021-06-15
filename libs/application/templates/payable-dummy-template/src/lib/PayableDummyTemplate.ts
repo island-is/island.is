@@ -17,6 +17,7 @@ import { m } from './messages'
 const States = {
   draft: 'draft',
   paymentPending: 'paymentPending',
+  paid: 'paid',
 }
 
 type ReferenceTemplateEvent = { type: DefaultEvents.PAYMENT }
@@ -28,6 +29,7 @@ enum Roles {
 const Schema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   subject: z.string().nonempty().max(256),
+  isPaid: z.boolean().nullable(),
 })
 
 const PayableDummyTemplate: ApplicationTemplate<
@@ -98,10 +100,7 @@ const PayableDummyTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(
-    id: string,
-    application: Application,
-  ): ApplicationRole | undefined {
+  mapUserToRole(): ApplicationRole | undefined {
     return Roles.APPLICANT
   },
 }

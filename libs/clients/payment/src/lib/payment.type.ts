@@ -4,15 +4,18 @@ export interface PaymentServiceOptions {
   password: string
 }
 
-export interface Charge {
-  systemID: string
+export interface BaseCharge {
   performingOrgID: string
   payeeNationalID: string
   chargeType: string
-  chargeItemSubject: string
   performerNationalID: string
-  immediateProcess: boolean
   charges: ChargeItem[]
+}
+
+export interface Charge extends BaseCharge {
+  chargeItemSubject: string
+  immediateProcess: boolean
+  systemID: string
   payInfo?: PayInfo
   returnUrl: string
 }
@@ -20,7 +23,6 @@ export interface Charge {
 export interface ChargeResponse {
   user4: string
   receptionID: string
-  //createdTimeStamp: Date
 }
 
 interface ChargeItem {
@@ -42,7 +44,6 @@ interface PayInfo {
 
 export interface Catalog {
   item: Item[]
-  //createdTimeStamp: Date
 }
 
 export interface Item {
@@ -52,11 +53,3 @@ export interface Item {
   chargeItemName: string
   priceAmount: number
 }
-
-// export interface XRoadConfig {
-//   baseUrl: string
-//   clientId: string
-//   services: {
-
-//   }
-// }
