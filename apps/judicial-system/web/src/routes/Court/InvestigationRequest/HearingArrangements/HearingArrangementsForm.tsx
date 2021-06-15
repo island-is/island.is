@@ -10,6 +10,7 @@ import {
   Tooltip,
   Option,
   Input,
+  RadioButton,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -21,6 +22,7 @@ import {
 import {
   Case,
   CaseState,
+  SessionArrangements,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -194,6 +196,79 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             }
             required
           />
+        </Box>
+        <Box component="section" marginBottom={8}>
+          <Box marginBottom={2}>
+            <Text as="h3" variant="h3">
+              Fyrirtaka
+            </Text>
+          </Box>
+          <BlueBox>
+            <Box marginBottom={2}>
+              <RadioButton
+                name="session-arrangements-all-present"
+                id="session-arrangements-all-present"
+                label="Fulltrúar málsaðila mæta"
+                checked={
+                  workingCase.sessionArrangements ===
+                  SessionArrangements.ALL_PRESENT
+                }
+                onChange={() => {
+                  setAndSendToServer(
+                    'sessionArrangements',
+                    SessionArrangements.ALL_PRESENT,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <RadioButton
+                name="session-arrangements-prosecutor-present"
+                id="session-arrangements-prosecutor-present"
+                label="Fulltrúi ákæruvalds mætir"
+                checked={
+                  workingCase.sessionArrangements ===
+                  SessionArrangements.PROSECUTOR_PRESENT
+                }
+                onChange={() => {
+                  setAndSendToServer(
+                    'sessionArrangements',
+                    SessionArrangements.PROSECUTOR_PRESENT,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+              />
+            </Box>
+            <RadioButton
+              name="session-arrangements-remote-session"
+              id="session-arrangements-remote-session"
+              label="Rafræn fyrirtaka"
+              checked={
+                workingCase.sessionArrangements ===
+                SessionArrangements.REMOTE_SESSION
+              }
+              onChange={() => {
+                setAndSendToServer(
+                  'sessionArrangements',
+                  SessionArrangements.REMOTE_SESSION,
+                  workingCase,
+                  setWorkingCase,
+                  updateCase,
+                )
+              }}
+              large
+              backgroundColor="white"
+            />
+          </BlueBox>
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
