@@ -38,7 +38,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import AppealSection from './Components/AppealSection/AppealSection'
-import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
+import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 

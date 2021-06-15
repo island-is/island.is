@@ -53,16 +53,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
               placeholder: m.applicantNamePlaceholder,
             }),
             buildTextField({
-              id: 'applicant.address',
-              title: m.applicantAddress,
-              placeholder: m.applicantAddressPlaceholder,
-            }),
-            buildTextField({
-              id: 'applicant.zipCode',
-              title: m.applicantZipCode,
-              placeholder: m.applicantZipCodePlaceholder,
-            }),
-            buildTextField({
               id: 'applicant.email',
               title: m.applicantEmail,
               variant: 'email',

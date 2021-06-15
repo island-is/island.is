@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { IsEnum } from 'class-validator'
-import { EndorsementTag } from '../endorsementList.model'
+import { EndorsementTag } from '../constants'
 
 export class FindEndorsementListByTagsDto {
   @ApiProperty({ enum: EndorsementTag, isArray: true })

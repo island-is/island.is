@@ -271,6 +271,8 @@ export class Children extends BasicDataProvider {
       const transferredDays =
         child.transferredDays === undefined ? 0 : child.transferredDays
 
+      // Transferred days are only added to remaining days for secondary parents
+      // since the primary parent makes the choice for them
       const remainingDays =
         this.remainingDays(
           child.expectedDateOfBirth,
