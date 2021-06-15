@@ -84,13 +84,14 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
   const txt = useNamespace(props.texts)
   const anchor = useRef<HTMLDivElement>(null)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
-  const totalItems = props.regulations?.totalItems ?? 0
-  const stepSize = props.regulations?.perPage ?? 18
-  const totalPages = props.regulations?.totalPages ?? 0
-  const [currentPage, setCurrentPage] = useState(props.regulations.page ?? 1)
+  const regulations = props.regulations
+  const totalItems = regulations.totalItems || 0
+  const stepSize = regulations.perPage || 18
+  const totalPages = regulations.totalPages || 1
+  const [currentPage, setCurrentPage] = useState(regulations.page || 1)
 
   useEffect(() => {
-    setCurrentPage(props.regulations.page ?? 1)
+    setCurrentPage(regulations.page || 1)
   }, [totalItems])
 
   const breadCrumbs = (
@@ -114,6 +115,9 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
           paddingBottom: [4, 4, 8],
         }
       : {}
+
+  const resultItems = props.regulations?.data || []
+  const hasPaging = totalItems > stepSize
 
   return (
     <SubpageLayout
@@ -170,8 +174,8 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                 </GridRow>
 
                 <GridRow>
-                  {props.regulations?.data?.length > 0 &&
-                    props.regulations.data.map((reg, i) => (
+                  {resultItems.length > 0 &&
+                    resultItems.map((reg, i) => (
                       <GridColumn
                         key={reg.name}
                         span={['1/1', '1/2', '1/2', '1/3']}
@@ -192,7 +196,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                       </GridColumn>
                     ))}
                 </GridRow>
-                {currentPage && totalItems > stepSize && (
+                {hasPaging && (
                   <Box marginTop={3}>
                     <Box marginTop={0} marginBottom={2} textAlign="center">
                       Síða {currentPage} af {totalPages}
