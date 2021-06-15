@@ -200,7 +200,8 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Fyrirtaka
+              Fyrirtaka{' '}
+              <Tooltip text="Hér er hægt að merkja hvaða aðilar málsins mæta í fyrirtöku eða hvort fyrirtakan fari fram rafrænt." />
             </Text>
           </Box>
           <BlueBox>
