@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-community/async-storage'
-// import RNLocalize from 'react-native-localize'
+import RNLocalize from 'react-native-localize'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
 import { zustandFlipper } from '../utils/devtools/flipper-zustand'
 
-export type Locale = 'en-US' | 'is-IS'
+export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
 export type ThemeMode = 'dark' | 'light' | 'efficient'
 export type AppearanceMode = ThemeMode | 'automatic'
 
@@ -31,13 +31,14 @@ export interface PreferencesStore extends State {
   reset(): void
 }
 
-const availableLocales: Locale[] = ['en-US', 'is-IS']
-// const bestAvailableLanguage = RNLocalize.findBestAvailableLanguage(
-//   availableLocales,
-// )?.languageTag
+const availableLocales: Locale[] = ['en-US', 'is-IS', 'is-US', 'en-IS'];
+const bestAvailableLanguage = RNLocalize.findBestAvailableLanguage(
+  availableLocales,
+)?.languageTag
+
 const defaultPreferences = {
   appearanceMode: 'automatic',
-  locale: 'is-IS',
+  locale: bestAvailableLanguage,
   useBiometrics: false,
   dev__useLockScreen: true,
   hasOnboardedBiometrics: false,

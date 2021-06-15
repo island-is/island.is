@@ -64,6 +64,7 @@
 		E305D820260A34D8006565B4 /* IBMPlexSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-Bold.ttf"; sourceTree = "<group>"; };
 		E3364425262F21FA00A188B3 /* RNIsland.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNIsland.m; path = IslandApp/RNIsland.m; sourceTree = "<group>"; };
 		E3364428262F220800A188B3 /* RNIsland.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RNIsland.h; path = IslandApp/RNIsland.h; sourceTree = "<group>"; };
+		E3408CF62677B4330046DEA1 /* is-IS */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "is-IS"; path = "is-IS.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		E37A1AFF2656927A001FE51D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "IslandApp/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E3A9A7372673951500318126 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Settings.bundle; path = IslandApp/Settings.bundle; sourceTree = "<group>"; };
 		E3E51B1A261F586B005661DE /* PassKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PassKit.framework; path = System/Library/Frameworks/PassKit.framework; sourceTree = SDKROOT; };
@@ -235,6 +236,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"is-IS",
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -406,6 +408,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				13B07FB21A68108700A75B9A /* Base */,
+				E3408CF62677B4330046DEA1 /* is-IS */,
 			);
 			name = LaunchScreen.xib;
 			path = IslandApp;
@@ -421,7 +424,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = IslandApp/IslandApp.entitlements;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = J3WWZR9JLF;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -454,7 +457,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = IslandApp/IslandApp.entitlements;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = J3WWZR9JLF;
 				INFOPLIST_FILE = IslandApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

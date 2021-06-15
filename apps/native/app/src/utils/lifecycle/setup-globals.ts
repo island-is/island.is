@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react-native'
-import { LogBox } from 'react-native'
+import { LogBox, Settings } from 'react-native'
 import { Platform } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
 import messaging from '@react-native-firebase/messaging'
@@ -76,4 +76,12 @@ export function setupGlobals() {
 
   // quick actions
   setupQuickActions();
+
+  // set NSUserDefaults
+  if (Platform.OS === 'ios') {
+    Settings.set({
+      version_preference: config.constants.nativeAppVersion,
+      build_preference: config.constants.nativeBuildVersion
+    });
+  }
 }

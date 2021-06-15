@@ -6,11 +6,15 @@ import type {
 import React from 'react'
 import {
   FormattedMessage as IntlFormattedMessage,
+  IntlProvider as IntlIntlProvider,
+  IntlCache,
   IntlShape,
   MessageDescriptor,
-  useIntl as intlUseIntl
+  useIntl as intlUseIntl,
+  IntlConfig
 } from 'react-intl'
 import { Props } from 'react-intl/src/components/message'
+import { OptionalIntlConfig } from 'react-intl/src/components/provider'
 import { TranslatedMessage } from '../messages'
 
 /**
@@ -52,6 +56,8 @@ export interface TypedIntlShape extends IntlShape {
 
 declare function typedUseIntl(): TypedIntlShape
 
+export const IntlProvider = IntlIntlProvider as unknown as React.FunctionComponent<Pick<OptionalIntlConfig, "timeZone" | "formats" | "messages" | "defaultLocale" | "defaultFormats" | "onError" | "textComponent"> & { locale: string }>;
+
 export * from 'react-intl'
-export const FormattedMessage: typeof TypedFormattedMessage = IntlFormattedMessage as typeof TypedFormattedMessage
+export const FormattedMessage: typeof TypedFormattedMessage = IntlFormattedMessage as unknown as typeof TypedFormattedMessage
 export const useIntl: typeof typedUseIntl = intlUseIntl

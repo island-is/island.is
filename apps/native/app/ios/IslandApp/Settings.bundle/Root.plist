@@ -10,26 +10,6 @@
 			<key>Type</key>
 			<string>PSMultiValueSpecifier</string>
 			<key>Title</key>
-			<string>Language</string>
-			<key>Key</key>
-			<string>language_preference</string>
-			<key>DefaultValue</key>
-			<string>is-IS</string>
-			<key>Titles</key>
-			<array>
-				<string>Icelandic</string>
-				<string>English</string>
-			</array>
-			<key>Values</key>
-			<array>
-				<string>is-IS</string>
-				<string>en-US</string>
-			</array>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSMultiValueSpecifier</string>
-			<key>Title</key>
 			<string>Appearance</string>
 			<key>Key</key>
 			<string>appearance_preference</string>
@@ -39,14 +19,28 @@
 			<array>
 				<string>System default</string>
 				<string>Light mode</string>
-        <string>Dark mode</string>
+				<string>Dark mode</string>
 			</array>
 			<key>Values</key>
 			<array>
 				<string>automatic</string>
 				<string>light</string>
-        <string>dark</string>
+				<string>dark</string>
 			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Use Biometrics</string>
+			<key>Key</key>
+			<string>preference_biometrics</string>
+			<key>DefaultValue</key>
+			<false/>
+			<key>TrueValue</key>
+			<string>Use biometrics to unlock app</string>
+			<key>FalseValue</key>
+			<string>Don&apos;t use biometrics to unlock app</string>
 		</dict>
 		<dict>
 			<key>Type</key>
