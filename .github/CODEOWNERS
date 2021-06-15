@@ -101,6 +101,7 @@
 /libs/application/templates/funding-government-projects/                                      @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/ @island-is/sendiradid
 /libs/application/templates/public-debt-payment-plan/                                         @island-is/sendiradid
+/libs/application/templates/complaints-to-althingi-ombudsman/                                 @island-is/sendiradid
 
 /apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos
 /libs/content-search-toolkit/                                                                 @island-is/stefna @island-is/kosmos-kaos

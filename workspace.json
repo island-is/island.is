@@ -1856,6 +1856,28 @@
         }
       }
     },
+    "application-templates-complaints-to-althingi-ombudsman": {
+      "root": "libs/application/templates/complaints-to-althingi-ombudsman",
+      "sourceRoot": "libs/application/templates/complaints-to-althingi-ombudsman/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/complaints-to-althingi-ombudsman/tsconfig.lib.json",
+              "libs/application/templates/complaints-to-althingi-ombudsman/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/complaints-to-althingi-ombudsman/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-data-protection-complaint": {
       "root": "libs/application/templates/data-protection-complaint",
       "sourceRoot": "libs/application/templates/data-protection-complaint/src",

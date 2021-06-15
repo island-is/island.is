@@ -162,5 +162,6 @@ module.exports = {
     '<rootDir>/apps/services/auth-public-api',
     '<rootDir>/libs/service-portal/settings/access-control',
     '<rootDir>/libs/auth/scopes',
+    '<rootDir>/libs/application/templates/complaints-to-althingi-ombudsman',
   ],
 }
