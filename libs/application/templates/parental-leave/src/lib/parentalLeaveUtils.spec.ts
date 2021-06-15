@@ -60,7 +60,7 @@ describe('getExpectedDateOfBirth', () => {
               {
                 hasRights: true,
                 remainingDays: 180,
-                transferredDays: 45,
+                transferredDays: undefined, // Transferred days are only defined for secondary parents
                 parentalRelation: ParentalRelations.primary,
                 expectedDateOfBirth: '2021-05-17',
               },
@@ -134,17 +134,13 @@ describe('getTransferredDays', () => {
 
   it('should return the number of days given to the secondary parent', () => {
     const application = buildApplication({
-      answers: {
-        requestRights: {
-          isRequestingRights: 'yes',
-          requestDays: 45,
-        },
-      },
+      answers: {},
     })
 
     const child = {
       hasRights: true,
       remainingDays: 180,
+      transferredDays: 45,
       parentalRelation: ParentalRelations.secondary,
       expectedDateOfBirth: '2021-05-17',
     } as ChildInformation
@@ -215,7 +211,7 @@ describe('getSelectedChild', () => {
             {
               hasRights: true,
               remainingDays: 180,
-              transferredDays: 45,
+              transferredDays: undefined, // Transferred days are only defined for secondary parents
               parentalRelation: ParentalRelations.primary,
               expectedDateOfBirth: '2021-05-17',
             },
@@ -232,7 +228,7 @@ describe('getSelectedChild', () => {
     expect(res).toEqual({
       hasRights: true,
       remainingDays: 180,
-      transferredDays: 45,
+      transferredDays: undefined,
       parentalRelation: ParentalRelations.primary,
       expectedDateOfBirth: '2021-05-17',
     })

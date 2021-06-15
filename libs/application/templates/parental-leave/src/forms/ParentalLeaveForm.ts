@@ -616,22 +616,20 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers, externalData) => {
                 const selectedChild = getSelectedChild(answers, externalData)
 
-                if (
+                const isSecondaryParent =
                   selectedChild?.parentalRelation ===
-                    ParentalRelations.secondary ||
-                  !selectedChild?.hasRights ||
-                  selectedChild?.remainingDays === 0
-                ) {
+                  ParentalRelations.secondary
+                const hasNoRights = selectedChild?.hasRights === true
+                const hasNoRemainingDays = selectedChild?.remainingDays === 0
+                const canNotGiveRights =
+                  !isSecondaryParent || hasNoRights || hasNoRemainingDays
+
+                if (canNotGiveRights) {
                   return false
                 }
 
-                return (
-                  (answers as {
-                    requestRights: {
-                      isRequestingRights: string
-                    }
-                  })?.requestRights?.isRequestingRights === NO
-                )
+                const { isRequestingRights } = getApplicationAnswers(answers)
+                return isRequestingRights === NO
               },
               component: 'GiveRightsRadio',
             }),
