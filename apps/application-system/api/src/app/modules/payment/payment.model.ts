@@ -10,7 +10,6 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Application } from '../application/application.model'
 
-///Payment table to hold onto fulfilled payments and expiring payments.
 @Table({
   tableName: 'payment',
   timestamps: true,

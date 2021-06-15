@@ -4,7 +4,6 @@ import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 import { ChargeResult } from '@island.is/api/domains/payment'
-import { application } from 'express'
 
 interface Payment {
   chargeItemCode: string

@@ -37,7 +37,11 @@ export const payment: Form = buildForm({
               data: { paymentUrl: string }
             }
             if (!createCharge.error) console.log({ createCharge })
-            window.document.location.href = createCharge.data.paymentUrl
+            const paymentUrl = createCharge.data.paymentUrl
+            const returnUrl = window.document.location.href
+            const redirectUrl = `${paymentUrl}&returnUrl=${encodeURIComponent(returnUrl)}`
+            window.document.location.href = redirectUrl
+
             return 'Sendi þig áfram á greiðsluveitu...'
           },
         }),

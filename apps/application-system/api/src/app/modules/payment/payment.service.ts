@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
-import { CreatePaymentResponseDto } from './dto/createPaymentResponse.dto'
 import {
   ChargeResult,
   ApiDomainsPaymentService,
