@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Case,
   CaseAppealDecision,
@@ -8,27 +8,38 @@ import {
   BlueBox,
   FormContentContainer,
   FormFooter,
+  TimeInputField,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Box,
   GridColumn,
+  GridContainer,
   GridRow,
   Input,
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
 import {
+  getTimeFromDate,
   removeTabsValidateAndSet,
+  validateAndSendTimeToServer,
   validateAndSendToServer,
+  validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import {
+  useCase,
+  useDateTime,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   capitalize,
   formatAccusedByGender,
+  formatDate,
   NounCases,
+  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as styles from './RulingStepTwo.treat'
 
 interface Props {
   workingCase: Case
@@ -39,6 +50,10 @@ interface Props {
 const RulingStepTwoForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
   const { updateCase } = useCase()
+  const [courtDocumentEndEM, setCourtDocumentEndEM] = useState<string>('')
+  const { isValidTime: isValidCourtEndTime } = useDateTime({
+    time: getTimeFromDate(workingCase?.courtEndTime),
+  })
 
   return (
     <>
@@ -56,7 +71,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
           </Box>
           <Input
             name="additionToConclusion"
-            label="Bæta texta við úrskurðarorð"
+            label="Úrskurðarorð"
             placeholder="Hér er hægt að bæta texta við úrskurðarorð eftir þörfum"
             defaultValue={workingCase?.additionToConclusion}
             onChange={(event) =>
@@ -385,6 +400,58 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             </BlueBox>
           </Box>
         </Box>
+        <Box className={styles.courtEndTimeContainer}>
+          <Box marginBottom={2}>
+            <Text as="h3" variant="h3">
+              Þinghald
+            </Text>
+          </Box>
+          <GridContainer>
+            <GridRow>
+              <GridColumn>
+                <TimeInputField
+                  onChange={(evt) =>
+                    validateAndSetTime(
+                      'courtEndTime',
+                      workingCase.courtStartDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      setWorkingCase,
+                      courtDocumentEndEM,
+                      setCourtDocumentEndEM,
+                    )
+                  }
+                  onBlur={(evt) =>
+                    validateAndSendTimeToServer(
+                      'courtEndTime',
+                      workingCase.courtStartDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      updateCase,
+                      setCourtDocumentEndEM,
+                    )
+                  }
+                >
+                  <Input
+                    data-testid="courtEndTime"
+                    name="courtEndTime"
+                    label="Þinghaldi lauk (kk:mm)"
+                    placeholder="Veldu tíma"
+                    defaultValue={formatDate(
+                      workingCase.courtEndTime,
+                      TIME_FORMAT,
+                    )}
+                    errorMessage={courtDocumentEndEM}
+                    hasError={courtDocumentEndEM !== ''}
+                    required
+                  />
+                </TimeInputField>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -393,7 +460,8 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
           nextUrl={`${Constants.R_CASE_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={
             !workingCase.accusedAppealDecision ||
-            !workingCase.prosecutorAppealDecision
+            !workingCase.prosecutorAppealDecision ||
+            !isValidCourtEndTime?.isValid
           }
         />
       </FormContentContainer>
