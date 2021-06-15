@@ -76,12 +76,6 @@ const applicant = z.object({
   // .refine((k) => kennitala.isCompany(k), {
   //   message: 'Skrá þarf kennitölu fyrirtækis eða stofnunar',
   // }),
-  address: z
-    .string()
-    .nonempty({ message: 'Heimilisfang þarf að vera útfyllt' }),
-  zipCode: z
-    .string()
-    .nonempty({ message: 'Póstnúmer og staður þarf að vera útfyllt' }),
 })
 
 const termsOfAgreement = z.object({
