@@ -1,5 +1,5 @@
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   FormFooter,
   Modal,
@@ -20,8 +20,9 @@ import {
   formatDate,
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
+  formatAccusedByGender,
+  NounCases,
 } from '@island.is/judicial-system/formatters'
-import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   AppealDecisionRole,
   CaseData,
@@ -39,11 +40,7 @@ import {
   RequestSignatureResponse,
   SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'
-import {
-  CaseQuery,
-  SendNotificationMutation,
-  TransitionCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
@@ -52,6 +49,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useRouter } from 'next/router'
 import * as style from './Confirmation.treat'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface SigningModalProps {
   workingCase: Case
@@ -72,6 +70,8 @@ const SigningModal: React.FC<SigningModalProps> = ({
     setSignatureConfirmationResponse,
   ] = useState<SignatureConfirmationResponse>()
 
+  const { transitionCase, sendNotification } = useCase()
+
   const { data } = useQuery(SignatureConfirmationQuery, {
     variables: {
       input: {
@@ -84,95 +84,26 @@ const SigningModal: React.FC<SigningModalProps> = ({
   // TODO: Handle case when resSignatureConfirmationResponse is never set
   const resSignatureConfirmationResponse = data?.signatureConfirmation
 
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
-
-  const transitionCase = useCallback(async () => {
-    if (workingCase.state === CaseState.RECEIVED) {
-      // Transition case from received state to either accepted or rejected
-      try {
-        // Parse the transition request
-        const transitionRequest = parseTransition(
-          workingCase.modified,
-          workingCase.decision === CaseDecision.REJECTING
-            ? CaseTransition.REJECT
-            : CaseTransition.ACCEPT,
-        )
-
-        const { data } = await transitionCaseMutation({
-          variables: { input: { id: workingCase.id, ...transitionRequest } },
-        })
-
-        if (!data) {
-          // TODO: Handle error
-          return
-        }
-
-        const { resCase } = data
-
-        if (!resCase) {
-          // TODO: Handle error
-          return
-        }
-
-        setWorkingCase({
-          ...workingCase,
-          state: resCase.state,
-        })
-      } catch (e) {
-        // TODO: Handle error
-      }
-
-      return
-    }
-
-    // Expect case to already have the right state
-    if (
-      workingCase.decision === CaseDecision.REJECTING
-        ? workingCase.state !== CaseState.REJECTED
-        : workingCase.state !== CaseState.ACCEPTED
-    ) {
-      // TODO: Handle error
-    }
-  }, [transitionCaseMutation, workingCase, setWorkingCase])
-
-  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
-
-  const sendNotification = useCallback(async () => {
-    try {
-      const { data } = await sendNotificationMutation({
-        variables: {
-          input: {
-            caseId: workingCase.id,
-            type: NotificationType.RULING,
-          },
-        },
-      })
-
-      if (!data) {
-        // TODO: Handle error
-        return
-      }
-
-      const {
-        sendNotification: { notificationSent },
-      } = data
-
-      if (!notificationSent) {
-        // TODO: Handle error
-      }
-    } catch (e) {
-      // TODO: Handle error
-    }
-  }, [sendNotificationMutation, workingCase.id])
-
   useEffect(() => {
     const completeSigning = async (
       resSignatureConfirmationResponse: SignatureConfirmationResponse,
     ) => {
       if (resSignatureConfirmationResponse.documentSigned) {
-        await transitionCase()
+        const caseCompleted =
+          workingCase.state === CaseState.RECEIVED
+            ? await transitionCase(
+                workingCase,
+                workingCase.decision === CaseDecision.REJECTING
+                  ? CaseTransition.REJECT
+                  : CaseTransition.ACCEPT,
+                setWorkingCase,
+              )
+            : workingCase.state === CaseState.REJECTED ||
+              workingCase.state === CaseState.ACCEPTED
 
-        await sendNotification()
+        if (caseCompleted) {
+          await sendNotification(workingCase.id, NotificationType.RULING)
+        }
       }
 
       setSignatureConfirmationResponse(resSignatureConfirmationResponse)
@@ -439,7 +370,10 @@ export const Confirmation: React.FC = () => {
                       CaseAppealDecision.APPEAL && (
                       <Box>
                         <Text variant="eyebrow" color="blue400">
-                          Yfirlýsing um kæru kærða
+                          {`Yfirlýsing um kæru ${formatAccusedByGender(
+                            workingCase.accusedGender,
+                            NounCases.GENITIVE,
+                          )}`}
                         </Text>
                         <Text>{workingCase.accusedAppealAnnouncement}</Text>
                       </Box>

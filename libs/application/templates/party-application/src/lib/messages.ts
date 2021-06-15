@@ -201,6 +201,11 @@ export const m: MessageDir = {
       defaultMessage: 'Meðmæli í vafa',
       description: 'Invalid signature tooltip',
     },
+    isClosedMessage: {
+      id: 'pa.application:endorsement.form.isClosed.message',
+      defaultMessage: 'Meðmælendalista hefur verið lokað',
+      description: 'Error message if endorsement list has been closed',
+    },
   }),
   endorsementListSubmission: defineMessages({
     title: {
