@@ -22,11 +22,6 @@ import { FormShell } from './FormShell'
 import { NotFound } from './NotFound'
 import * as styles from './FormShell.treat'
 
-function isOnProduction(): boolean {
-  // TODO detect better when the application system is on production
-  return false
-}
-
 const ApplicationLoader: FC<{
   applicationId: string
   nationalRegistryId: string
@@ -97,24 +92,27 @@ const ShellWrapper: FC<{
         const template = await getApplicationTemplateByTypeId(
           application.typeId,
         )
-        if (
-          template !== null &&
-          !(isOnProduction() && !template.readyForProduction)
-        ) {
+
+        if (template !== null) {
           const helper = new ApplicationTemplateHelper(application, template)
           const stateInformation =
             helper.getApplicationStateInformation() || null
+
           if (stateInformation?.roles?.length) {
             const applicationFields = await getApplicationUIFields(
               application.typeId,
             )
+
             const role = template.mapUserToRole(nationalRegistryId, application)
+
             if (!role) {
               throw new Error(formatMessage(coreMessages.userRoleError))
             }
+
             const currentRole = stateInformation.roles.find(
               (r) => r.id === role,
             )
+
             if (currentRole && currentRole.formLoader) {
               const formDescriptor = await currentRole.formLoader()
               setForm(formDescriptor)
@@ -162,13 +160,11 @@ const ShellWrapper: FC<{
 export const ApplicationForm: FC<{
   applicationId: string
   nationalRegistryId: string
-}> = ({ applicationId, nationalRegistryId }) => {
-  return (
-    <FieldProvider>
-      <ApplicationLoader
-        applicationId={applicationId}
-        nationalRegistryId={nationalRegistryId}
-      />
-    </FieldProvider>
-  )
-}
+}> = ({ applicationId, nationalRegistryId }) => (
+  <FieldProvider>
+    <ApplicationLoader
+      applicationId={applicationId}
+      nationalRegistryId={nationalRegistryId}
+    />
+  </FieldProvider>
+)

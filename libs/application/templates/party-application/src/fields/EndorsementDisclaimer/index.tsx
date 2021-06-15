@@ -12,10 +12,12 @@ import EndorsementApproved from '../EndorsementApproved'
 import { GetFullName, GetEndorsements } from '../../graphql/queries'
 import { EndorseList } from '../../graphql/mutations'
 import { SchemaFormValues } from '../../lib/dataSchema'
+import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
+  const endorsementListId = (application.externalData?.createEndorsementList
+    .data as any).id
   const { formatMessage } = useLocale()
-
   const [agreed, setAgreed] = useState(false)
   const [hasEndorsed, setHasEndorsed] = useState(false)
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
@@ -25,6 +27,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const partyName = answers.partyName
   const constituency = application.answers.constituency
   const { data: userData } = useQuery(GetFullName)
+  const isClosed = useIsClosed(endorsementListId)
 
   const { loading, error } = useQuery(GetEndorsements, {
     onCompleted: async ({ endorsementSystemUserEndorsements }) => {
@@ -123,6 +126,11 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               },
             ]}
           />
+          {isClosed && (
+            <Text variant="eyebrow" color="red400">
+              {formatMessage(m.endorsementList.isClosedMessage)}
+            </Text>
+          )}
           <Box
             marginTop={5}
             marginBottom={8}

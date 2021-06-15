@@ -238,7 +238,11 @@ export class NotificationService {
     const attachments = [
       {
         filename: `Krafa um ${
-          existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+          existingCase.type === CaseType.CUSTODY
+            ? 'gæsluvarðhald'
+            : existingCase.type === CaseType.TRAVEL_BAN
+            ? 'farbann'
+            : 'rannsóknarheimild'
         } ${existingCase.policeCaseNumber}.pdf`,
         content: pdf,
         encoding: 'binary',
@@ -275,6 +279,7 @@ export class NotificationService {
   private async sendReadyForCourtNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
+    // TODO: Ignore failed notifications
     const notificaion = await this.notificationModel.findOne({
       where: {
         caseId: existingCase.id,
@@ -287,14 +292,15 @@ export class NotificationService {
     ]
 
     // TODO: Find a better place for this
-    // No need to wait
     if (
       IntegratedCourts.includes(existingCase.courtId) &&
       existingCase.courtCaseNumber
     ) {
+      // No need to wait
       this.uploadRequestPdfToCourt(existingCase)
     }
 
+    // Notify the court only once
     if (!notificaion) {
       promises.push(this.sendReadyForCourtSmsNotificationToCourt(existingCase))
     }
@@ -340,7 +346,7 @@ export class NotificationService {
       existingCase.courtDate,
       existingCase.accusedName,
       existingCase.accusedGender,
-      existingCase.requestedCustodyEndDate,
+      existingCase.requestedValidToDate,
       existingCase.requestedCustodyRestrictions?.includes(
         CaseCustodyRestrictions.ISOLATION,
       ),
@@ -453,7 +459,7 @@ export class NotificationService {
       existingCase.defenderName,
       existingCase.defenderEmail,
       existingCase.decision,
-      existingCase.custodyEndDate,
+      existingCase.validToDate,
       existingCase.custodyRestrictions,
       existingCase.accusedAppealDecision,
       existingCase.prosecutorAppealDecision,
