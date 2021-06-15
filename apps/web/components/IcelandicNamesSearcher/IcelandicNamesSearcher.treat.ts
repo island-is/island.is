@@ -43,3 +43,23 @@ export const alphabetList = style({
   display: 'table',
   width: '100%',
 })
+
+export const icon = style({
+  position: 'relative',
+  display: 'inline-block',
+  top: 2,
+})
+
+export const tooltip = style({
+  position: 'relative',
+  display: 'inline-block',
+  top: 3,
+})
+
+export const data = style({
+  position: 'relative',
+  display: 'flex',
+  flexWrap: 'nowrap',
+  width: '100%',
+  alignItems: 'center',
+})

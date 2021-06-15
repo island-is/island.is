@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { ValueType } from 'react-select/src/types'
-import { Box, Input, Option, Select, Text } from '@island.is/island-ui/core'
+import { Box, Input, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
@@ -17,7 +17,7 @@ import {
   setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   FormSettings,
