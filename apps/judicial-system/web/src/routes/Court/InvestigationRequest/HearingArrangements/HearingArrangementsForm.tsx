@@ -34,7 +34,7 @@ import {
   setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
@@ -358,7 +358,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_OVERVIEW}/${workingCase.id}}`}
+          previousUrl={`${Constants.R_CASE_OVERVIEW}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.R_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isValid || !courtDateIsValid}
