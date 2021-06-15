@@ -28,8 +28,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
       return answers.selectedEndorsements?.indexOf(e.id) !== -1
     })
 
-    intersectingEndorsements?.filter((e) => e.meta.invalidated)
-    return intersectingEndorsements?.length
+    return intersectingEndorsements?.filter((e) => e.meta.invalidated).length
   }
 
   const { register } = useFormContext()
