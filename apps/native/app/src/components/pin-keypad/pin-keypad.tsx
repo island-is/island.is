@@ -1,5 +1,5 @@
 import { dynamicColor, font } from '@island.is/island-ui-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Dimensions,
@@ -7,7 +7,7 @@ import {
   Image,
   Platform,
   useWindowDimensions,
-  View,
+  View
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { testIDs } from '../../utils/test-ids'
@@ -18,7 +18,7 @@ interface PinKeypadProps {
   onInputOut?(value: string): void
   onFaceIdPress?(value: string): void
   onBackPress?(value: string): void
-  faceId?: boolean
+  biometricType?: 'faceid' | 'fingerprint' | 'iris'
   back?: boolean
 }
 
@@ -132,7 +132,7 @@ const clamp = (a: number, min = 0, max = 1) => Math.min(max, Math.max(min, a))
 const invlerp = (x: number, y: number, a: number) => clamp((a - x) / (y - x))
 
 export function PinKeypad({
-  faceId,
+  biometricType,
   back,
   onInput,
   onInputIn,
@@ -145,6 +145,60 @@ export function PinKeypad({
   const size = 50 + 32 * r
   const gutter = 8 + 8 * r
   const intl = useIntl()
+
+
+  const renderBiometricButton = useCallback(
+    () => {
+      switch (biometricType) {
+        case 'faceid':
+          return (
+            <NumButton
+              value="face_id"
+              onPress={onFaceIdPress}
+              icon={require('../../assets/icons/face-id.png')}
+              accessibilityLabel={intl.formatMessage({
+                id: 'onboarding.pinKeypad.accessibilityLabel.faceId',
+              })}
+              testID={testIDs.PIN_KEYPAD_BUTTON_FACEID}
+              size={size}
+              gutter={gutter}
+            />
+          )
+        case 'fingerprint':
+          return (
+            <NumButton
+              value="fingerprint"
+              onPress={onFaceIdPress}
+              icon={require('../../assets/icons/fingerprint.png')}
+              accessibilityLabel={intl.formatMessage({
+                id: 'onboarding.pinKeypad.accessibilityLabel.fingerprint',
+              })}
+              testID={testIDs.PIN_KEYPAD_BUTTON_FINGERPRINT}
+              size={size}
+              gutter={gutter}
+            />
+          )
+        case 'iris':
+          return (
+            <NumButton
+              value="iris"
+              onPress={onFaceIdPress}
+              icon={require('../../assets/icons/iris.png')}
+              accessibilityLabel={intl.formatMessage({
+                id: 'onboarding.pinKeypad.accessibilityLabel.iris',
+              })}
+              testID={testIDs.PIN_KEYPAD_BUTTON_IRIS}
+              size={size}
+              gutter={gutter}
+            />
+          )
+
+        default:
+          return <Gap size={size} gutter={gutter} />
+      }
+    },
+    [],
+  )
 
   return (
     <View>
@@ -236,21 +290,8 @@ export function PinKeypad({
         />
       </Row>
       <Row>
-        {faceId ? (
-          <NumButton
-            value="face_id"
-            onPress={onFaceIdPress}
-            icon={require('../../assets/icons/face-id.png')}
-            accessibilityLabel={intl.formatMessage({
-              id: 'onboarding.pinKeypad.accessibilityLabel.faceId',
-            })}
-            testID={testIDs.PIN_KEYPAD_BUTTON_FACEID}
-            size={size}
-            gutter={gutter}
-          />
-        ) : (
-          <Gap size={size} gutter={gutter} />
-        )}
+        {renderBiometricButton()}
+
         <NumButton
           value="0"
           onPress={onInput}

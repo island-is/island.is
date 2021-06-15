@@ -1,6 +1,6 @@
 import { dynamicColor, font } from '@island.is/island-ui-native'
 import { selectionAsync } from 'expo-haptics'
-import { authenticateAsync } from 'expo-local-authentication'
+import { authenticateAsync, AuthenticationType, supportedAuthenticationTypesAsync } from 'expo-local-authentication'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Animated, Image, SafeAreaView, View } from 'react-native'
@@ -55,6 +55,26 @@ const Center = styled.View`
   align-items: center;
 `
 
+function useBiometricType() {
+  const [
+    type,
+    setSupportedAuthenticationTypes,
+  ] = useState<AuthenticationType[]>([])
+
+  useEffect(() => {
+    supportedAuthenticationTypesAsync().then(setSupportedAuthenticationTypes)
+  }, []);
+
+  if (type.includes(AuthenticationType.FACIAL_RECOGNITION)) {
+    return 'faceid'
+  } else if (type.includes(AuthenticationType.FINGERPRINT)) {
+    return 'fingerprint'
+  } else if (type.includes(AuthenticationType.IRIS)) {
+    return 'iris'
+  }
+  return undefined
+}
+
 export const AppLockScreen: NavigationFunctionComponent<{
   lockScreenActivatedAt?: number
   status: string
@@ -68,6 +88,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
   const [attempts, setAttempts] = useState(0)
   const { useBiometrics } = usePreferencesStore()
   const intl = useIntl()
+  const biometricType = useBiometricType();
 
   const resetLockScreen = useCallback(() => {
     authStore.setState(() => ({
@@ -221,7 +242,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
             onBackPress={onBackPress}
             onFaceIdPress={onFaceIdPress}
             back={code.length > 0}
-            faceId={useBiometrics}
+            biometricType={biometricType}
           />
           <View style={{ height: 64 }} />
         </Center>

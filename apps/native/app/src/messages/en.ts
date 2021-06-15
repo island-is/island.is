@@ -36,6 +36,8 @@ export const en: TranslatedMessages = {
   'onboarding.biometrics.type.fingerprint': 'fingerprint',
   'onboarding.biometrics.type.iris': 'iris scanner',
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Use FaceID',
+  'onboarding.pinKeypad.accessibilityLabel.iris': 'Use Iris',
+  'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Delete character',
 
   // user
