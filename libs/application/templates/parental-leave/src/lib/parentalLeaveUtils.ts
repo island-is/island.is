@@ -595,6 +595,28 @@ export const requiresOtherParentApproval = (
   return isRequestingRights === YES || usePersonalAllowanceFromSpouse === YES
 }
 
+export const otherParentApprovalDescription = (
+  answers: Application['answers'],
+  formatMessage: FormatMessage,
+) => {
+  const applicationAnswers = getApplicationAnswers(answers)
+
+  const {
+    isRequestingRights,
+    usePersonalAllowanceFromSpouse,
+  } = applicationAnswers
+
+  const description =
+    isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
+      ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
+      : isRequestingRights === YES
+      ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
+      : parentalLeaveFormMessages.reviewScreen
+          .otherParentDescRequestingPersonalDiscount
+
+  return formatMessage(description)
+}
+
 export const allowOtherParent = (answers: Application['answers']) => {
   const { otherParent, otherParentRightOfAccess } = getApplicationAnswers(
     answers,
