@@ -21,6 +21,7 @@ import {
   CaseDecision,
   CaseType,
   AccusedPleaDecision,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 import { Institution } from '../../institution'
@@ -414,6 +415,17 @@ export class Case extends Model<Case> {
   courtCaseNumber: string
 
   /**********
+   * The session arrangements - example: ALL_PRESENT
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(SessionArrangements),
+  })
+  @ApiProperty({ enum: SessionArrangements })
+  sessionArrangements: SessionArrangements
+
+  /**********
    * The scheduled date and time of the case's court session
    **********/
   @Column({
@@ -614,14 +626,15 @@ export class Case extends Model<Case> {
   isolationToDate: Date
 
   /**********
-   * The judge's additions to the auto generated text of the case's conclusion - optional
+   * The case conclusion - optional for custody and travel ban cases as the core conclusions
+   * are auto generated
    **********/
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  additionToConclusion: string
+  conclusion: string
 
   /**********
    * The accused's appeal decision - example: APPEAL

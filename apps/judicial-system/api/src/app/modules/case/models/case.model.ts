@@ -10,6 +10,7 @@ import {
   CaseGender,
   CaseState,
   CaseType,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 import { Institution } from '../../institution'
@@ -124,6 +125,9 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly courtCaseNumber?: string
 
+  @Field(() => String, { nullable: true })
+  readonly sessionArrangements?: SessionArrangements
+
   @Field({ nullable: true })
   readonly courtDate?: string
 
@@ -185,7 +189,7 @@ export class Case implements TCase {
   readonly isolationToDate?: string
 
   @Field({ nullable: true })
-  readonly additionToConclusion?: string
+  readonly conclusion?: string
 
   @Field(() => String, { nullable: true })
   readonly accusedAppealDecision?: CaseAppealDecision

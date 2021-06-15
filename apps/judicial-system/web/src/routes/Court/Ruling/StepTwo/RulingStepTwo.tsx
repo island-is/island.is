@@ -135,13 +135,13 @@ export const RulingStepTwo: React.FC = () => {
                 <BlueBox>
                   <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
                   <Input
-                    name="additionToConclusion"
+                    name="conclusion"
                     label="Bæta texta við úrskurðarorð"
                     placeholder="Hér er hægt að bæta texta við úrskurðarorð eftir þörfum"
-                    defaultValue={workingCase?.additionToConclusion}
+                    defaultValue={workingCase?.conclusion}
                     onChange={(event) =>
                       removeTabsValidateAndSet(
-                        'additionToConclusion',
+                        'conclusion',
                         event,
                         [],
                         workingCase,
@@ -150,7 +150,7 @@ export const RulingStepTwo: React.FC = () => {
                     }
                     onBlur={(event) =>
                       validateAndSendToServer(
-                        'additionToConclusion',
+                        'conclusion',
                         event.target.value,
                         [],
                         workingCase,

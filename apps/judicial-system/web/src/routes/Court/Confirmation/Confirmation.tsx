@@ -384,11 +384,9 @@ export const Confirmation: React.FC = () => {
               </Box>
               <Box marginBottom={3}>
                 {getConclusion(workingCase, true)}
-                {workingCase.additionToConclusion && (
+                {workingCase.conclusion && (
                   <Box marginTop={1}>
-                    <Text variant="intro">
-                      {workingCase.additionToConclusion}
-                    </Text>
+                    <Text variant="intro">{workingCase.conclusion}</Text>
                   </Box>
                 )}
               </Box>

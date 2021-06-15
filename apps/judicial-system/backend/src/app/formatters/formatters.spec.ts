@@ -1116,7 +1116,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const judgeName = 'Dalli Dómari'
     const judgeTitle = 'aðal dómarinn'
     const isExtension = false
-    const additionToConclusion = 'Lorem ipsum'
+    const conclusion = 'Lorem ipsum'
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -1137,7 +1137,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       judgeTitle,
       isExtension,
       undefined,
-      additionToConclusion,
+      conclusion,
       isolationToDate,
     )
 
