@@ -1,9 +1,7 @@
 const withTreat = require('next-treat')()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
-const {
-  API_URL = 'http://localhost:3333',
-} = process.env
+const { API_URL = 'http://localhost:3333' } = process.env
 
 const apiPath = '/api'
 const graphqlPath = '/api/graphql'
