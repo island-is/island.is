@@ -15,6 +15,7 @@ import { Unwrap } from '@island.is/shared/types'
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
+import { logger } from '@island.is/logging'
 
 const isRunningOnProductionEnvironment =
   environment.production === true &&
@@ -84,6 +85,7 @@ export async function validateApplicationSchema(
   })
 
   if (schemaFormValidationError) {
+    logger.error('Failed to validate schema', schemaFormValidationError)
     // TODO improve error message
     throw new HttpException(`Schema validation has failed`, 403)
   }

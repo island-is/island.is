@@ -30,6 +30,7 @@ import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-reg
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
 import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
+import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -177,6 +178,13 @@ const autoSchemaFile = environment.production
     }),
     PartyLetterRegistryModule.register({
       baseApiUrl: environment.partyLetterRegistry.baseApiUrl,
+    }),
+    LicenseServiceModule.register({
+      xroad: {
+        xroadBaseUrl: environment.xroad.baseUrl,
+        xroadClientId: environment.xroad.clientId,
+        drivingLicenseSecret: environment.drivingLicense.secret,
+      },
     }),
   ],
 })

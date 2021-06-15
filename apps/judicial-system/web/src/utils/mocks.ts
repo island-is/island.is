@@ -11,15 +11,13 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
-import {
-  CaseQuery,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
   InstitutionsQuery,
   UsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
+import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/utils/hooks/use-case/updateCaseGql'
 
 export const mockCourt = {
   id: 'court_id',
