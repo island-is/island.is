@@ -50,16 +50,6 @@ export const ReviewApplication: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            buildTextField({
-              id: 'applicant.address',
-              title: m.applicantAddress,
-              disabled: true,
-            }),
-            buildTextField({
-              id: 'applicant.zipCode',
-              title: m.applicantZipCode,
-              disabled: true,
-            }),
             //Error in dev tools, missing keys on divider fields...
             buildDividerField({
               title: m.administrativeContactTitle,
@@ -67,11 +57,6 @@ export const ReviewApplication: Form = buildForm({
             buildTextField({
               id: 'administrativeContact.name',
               title: m.administrativeContactName,
-              disabled: true,
-            }),
-            buildTextField({
-              id: 'administrativeContact.email',
-              title: m.administrativeContactEmail,
               disabled: true,
             }),
             buildTextField({

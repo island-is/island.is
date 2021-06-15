@@ -165,7 +165,7 @@ export const m = defineMessages({
   administrativeContactSubTitle: {
     id: 'dpo.application:administrativeContact.subtitle',
     defaultMessage:
-      '<b>Stjórnandi / ábyrgðarmaður stofnunar gagnvart pósthólfi.</b> <br /> Hér þarf að skrá upplýsingar um þann sem ber ábyrgð stofnunarinnar gagnvart stafræna pósthólfinu. <br />Vinsamlega athugið að æskilegt er að skrá netfang og símanúmer sem ekki breytist, helst tengt viðkomandi hlutverki. T.d. ef til er almennt netfang sem beinir erindum til stjórnanda hverju sinni.',
+      '<b>Stjórnandi / ábyrgðarmaður stofnunar gagnvart pósthólfi.</b> <br /> Hér þarf að skrá upplýsingar um þann sem ber ábyrgð stofnunarinnar gagnvart stafræna pósthólfinu.',
     description: '',
   },
   administrativeContactName: {
