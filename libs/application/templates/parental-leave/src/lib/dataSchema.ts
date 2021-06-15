@@ -56,16 +56,16 @@ export const dataSchema = z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z
       .string()
-      .optional()
-      .refine((v) => !isNaN(Number(v))),
+      .refine((v) => !isNaN(Number(v)))
+      .optional(),
   }),
   giveRights: z
     .object({
       isGivingRights: z.enum([YES, NO]),
       giveDays: z
         .string()
-        .optional()
-        .refine((v) => !isNaN(Number(v))),
+        .refine((v) => !isNaN(Number(v)))
+        .optional(),
     })
     .optional(),
   singlePeriod: z.enum([YES, NO]),
