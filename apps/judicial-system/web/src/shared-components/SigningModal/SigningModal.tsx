@@ -82,6 +82,8 @@ const SigningModal: React.FC<SigningModalProps> = ({
     setSignatureConfirmationResponse,
     transitionCase,
     sendNotification,
+    workingCase,
+    setWorkingCase,
   ])
 
   const renderControlCode = () => {
