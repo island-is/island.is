@@ -95,8 +95,8 @@ const LicenseCards = () => {
       variables: {
         locale,
         input: {
-          // includedProviders: [],
-          // excludedProviders?: [],
+          // includedTypes: [],
+          // excludedTypes: [],
           // force: false,
           // onlyList: false,
         },

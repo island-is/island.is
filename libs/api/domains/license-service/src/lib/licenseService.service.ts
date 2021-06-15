@@ -1,16 +1,27 @@
 import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
-import { GenericUserLicense } from './licenceService.type'
-import { GenericDrivingLicenseApi } from './client/driving-license-client'
-import { drivingLicensesToSingleGenericLicense } from './client/driving-license-client/drivingLicenseMappers'
+import {
+  GenericUserLicense,
+  GenericLicenseTypeType,
+} from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 
+import { GenericDrivingLicenseApi } from './client/driving-license-client'
+
 export type GetGenericDrivingLicenseOptions = {
-  includedProviders?: Array<string>
-  excludedProviders?: Array<string>
+  includedTypes?: Array<GenericLicenseTypeType>
+  excludedTypes?: Array<GenericLicenseTypeType>
   force?: boolean
   onlyList?: boolean
 }
+
+const includeType = (
+  type: GenericLicenseTypeType,
+  includedTypes?: Array<GenericLicenseTypeType>,
+  excludedTypes?: Array<GenericLicenseTypeType>,
+) =>
+  (!includedTypes || (includedTypes && includedTypes.includes(type))) &&
+  (!excludedTypes || (excludedTypes && !excludedTypes.includes(type)))
 
 @Injectable()
 export class LicenseServiceService {
@@ -18,59 +29,71 @@ export class LicenseServiceService {
     private readonly drivingLicenseService: GenericDrivingLicenseApi,
   ) {}
 
+  private async getDriversLicense(
+    nationalId: User['nationalId'],
+    force?: boolean,
+  ) {
+    let drivingLicense: GenericUserLicense | null = null
+      drivingLicense = await this.drivingLicenseService.getGenericDrivingLicense(
+        nationalId,
+      )
+
+    if (!drivingLicense) {
+      this.logger.error(
+        `Unable to get DriversLicense for nationalId ${nationalId}`,
+      )
+      return null
+    }
+
+    return drivingLicense
+  }
+
   async getAllLicenses(
     nationalId: User['nationalId'],
     locale: Locale,
     {
-      includedProviders,
-      excludedProviders,
+      includedTypes,
+      excludedTypes,
       force,
       onlyList,
     }: GetGenericDrivingLicenseOptions = {},
   ): Promise<GenericUserLicense[]> {
-    console.log(includedProviders)
+    console.log(includedTypes)
     const licenses: GenericUserLicense[] = []
 
-    const drivingLicense = await this.drivingLicenseService.getGenericDrivingLicense(
-      nationalId,
-    )
-
-    if (!drivingLicense) {
-      // TODO(osk) how do we handle null?
-      throw Error(`unable to get drivers license for nationalId ${nationalId}`)
+    if (includeType('DriversLicense', includedTypes, excludedTypes)) {
+      const drivingLicense = await this.getDriversLicense(nationalId, force)
+      if (drivingLicense) {
+        licenses.push(drivingLicense)
+      }
     }
 
-    const genericDrivingLicense = drivingLicensesToSingleGenericLicense(
-      drivingLicense,
-    )
-
-    if (!genericDrivingLicense) {
-      return []
-    }
-
-    return [genericDrivingLicense]
+    return licenses
   }
 
   async getLicense(
     nationalId: User['nationalId'],
     locale: Locale,
-    providerId: string,
-    licenseType: string, // TODO(osk) actual type/enum
+    licenseType: GenericLicenseTypeType,
     licenseId: string,
   ): Promise<GenericUserLicense | null> {
-    const drivingLicense = await this.drivingLicenseService.getGenericDrivingLicense(
-      nationalId,
-    )
+    let license: GenericUserLicense | null = null
 
-    if (!drivingLicense) {
-      // TODO(osk) how do we handle null?
-      throw Error(`unable to get drivers license for nationalId ${nationalId}`)
+    if (licenseType === 'DriversLicense') {
+      license = await this.getDriversLicense(nationalId, true)
     }
 
-    const genericDrivingLicense = drivingLicensesToSingleGenericLicense(
-      drivingLicense,
-    )
+    if (licenseType !== 'DriversLicense') {
+      throw new Error(`${licenseType} not supported yet`)
+    }
 
-    return genericDrivingLicense
+    if (!license) {
+      throw new Error(
+        `Unable to get ${licenseType} ${licenseId} for nationalId ${nationalId}`,
+      )
+    }
+
+    // TODO(osk) how do we handle null?
+    return license
   }
 }

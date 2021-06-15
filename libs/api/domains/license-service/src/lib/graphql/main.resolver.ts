@@ -11,6 +11,7 @@ import type { Locale } from '@island.is/shared/types'
 
 import { LicenseServiceService } from '../licenseService.service'
 import { GenericUserLicense } from './genericLicense.model'
+import { GenericLicenseTypeType } from '../licenceService.type'
 
 // TODO move these types
 @InputType()
@@ -18,12 +19,12 @@ export class GetGenericLicensesInput {
   @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray()
-  includedProviders?: Array<string>
+  includedTypes?: Array<GenericLicenseTypeType>
 
   @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray()
-  excludedProviders?: Array<string>
+  excludedTypes?: Array<GenericLicenseTypeType>
 
   @Field({ nullable: true })
   @IsOptional()
@@ -39,11 +40,7 @@ export class GetGenericLicensesInput {
 @InputType()
 export class GetGenericLicenseInput {
   @Field(() => String)
-  providerId!: string
-
-  // TODO map to actual type/enum
-  @Field(() => [String])
-  licenseType!: string
+  licenseType!: GenericLicenseTypeType
 
   @Field(() => String)
   licenseId!: string
@@ -62,8 +59,8 @@ export class MainResolver {
     @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
   ) {
     return this.licenseServiceService.getAllLicenses(user.nationalId, locale, {
-      includedProviders: input?.includedProviders,
-      excludedProviders: input?.excludedProviders,
+      includedTypes: input?.includedTypes,
+      excludedTypes: input?.excludedTypes,
       force: input?.force,
       onlyList: input?.onlyList,
     })
@@ -79,7 +76,6 @@ export class MainResolver {
     return this.licenseServiceService.getLicense(
       user.nationalId,
       locale,
-      input.providerId,
       input.licenseType,
       input.licenseId,
     )

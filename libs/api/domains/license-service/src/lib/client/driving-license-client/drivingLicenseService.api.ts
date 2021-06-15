@@ -5,6 +5,8 @@ import { logger } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 
 import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
+import { drivingLicensesToSingleGenericLicense } from './drivingLicenseMappers'
+import { GenericUserLicense } from '../../licenceService.type'
 
 export class GenericDrivingLicenseApi {
   private readonly xroadApiUrl: string
@@ -66,11 +68,11 @@ export class GenericDrivingLicenseApi {
    * Fetch drivers license data from RLS through x-road.
    *
    * @param nationalId NationalId to fetch drivers licence for.
-   * @return {Promise<GenericDrivingLicenseResponse[] | null>} Array of driving license or null if an error occured.
+   * @return {Promise<GenericUserLicense | null>} Latest driving license or null if an error occured.
    */
   async getGenericDrivingLicense(
     nationalId: User['nationalId'],
-  ): Promise<GenericDrivingLicenseResponse[] | null> {
+  ): Promise<GenericUserLicense | null> {
     // TODO(osk) Move into env
     const xroadDrivingLicensePath =
       'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
@@ -114,6 +116,10 @@ export class GenericDrivingLicenseApi {
       },
     )
 
-    return licenses
+    const genericDrivingLicense = drivingLicensesToSingleGenericLicense(
+      licenses,
+    )
+
+    return genericDrivingLicense
   }
 }
