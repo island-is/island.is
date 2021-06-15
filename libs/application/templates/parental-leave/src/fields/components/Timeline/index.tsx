@@ -22,8 +22,8 @@ export interface TimelinePeriod {
   actualDob?: boolean
   startDate: string
   endDate: string
-  ratio: number
-  duration: number
+  ratio: string
+  duration: string
   title: string
   color?: string
   canDelete?: boolean
