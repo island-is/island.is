@@ -21,12 +21,12 @@ import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   isLoading: boolean
+  handleNextButtonClick: () => void
 }
 
 const Confirmation: React.FC<Props> = (props) => {
-  const { workingCase, isLoading } = props
+  const { workingCase, isLoading, handleNextButtonClick } = props
   return (
     <>
       <FormContentContainer>
@@ -169,6 +169,7 @@ const Confirmation: React.FC<Props> = (props) => {
           previousUrl={`${Constants.R_CASE_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextButtonText="Staðfesta og hefja undirritun"
+          onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>
     </>

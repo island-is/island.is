@@ -10,9 +10,9 @@ import {
   SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'
 import { useCase } from '../../utils/hooks'
-import { useQuery } from '@apollo/react-hooks'
 import { SignatureConfirmationQuery } from '../../utils/mutations'
 import { Box, Text } from '@island.is/island-ui/core'
+import { useQuery } from '@apollo/client'
 import { Modal } from '..'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 

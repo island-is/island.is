@@ -14,6 +14,7 @@ import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import ConfirmationForm from './ConfirmationForm'
 import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 const Confirmation = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -32,6 +33,8 @@ const Confirmation = () => {
     setRequestSignatureResponse,
   ] = useState<RequestSignatureResponse>()
 
+  const { requestSignature, isRequestingSignature } = useCase()
+
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
   }, [])
@@ -47,6 +50,25 @@ const Confirmation = () => {
       setRequestSignatureResponse(undefined)
     }
   }, [modalVisible, setRequestSignatureResponse])
+
+  const handleNextButtonClick = async () => {
+    if (!workingCase) {
+      return
+    }
+
+    // Request signature to get control code
+    try {
+      const requestSignatureResponse = await requestSignature(workingCase.id)
+      if (requestSignatureResponse) {
+        setRequestSignatureResponse(requestSignatureResponse)
+        setModalVisible(true)
+      } else {
+        // TODO: Handle error
+      }
+    } catch (e) {
+      // TODO: Handle error
+    }
+  }
 
   return (
     <PageLayout
@@ -64,8 +86,8 @@ const Confirmation = () => {
         <>
           <ConfirmationForm
             workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
             isLoading={loading}
+            handleNextButtonClick={handleNextButtonClick}
           />
           {modalVisible && (
             <SigningModal
