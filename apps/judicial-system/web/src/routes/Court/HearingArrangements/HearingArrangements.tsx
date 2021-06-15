@@ -29,11 +29,8 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  SendNotificationMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   CaseData,
   JudgeSubsections,
@@ -51,7 +48,7 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const HearingArrangements: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -68,7 +65,7 @@ export const HearingArrangements: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { updateCase } = useCase()
+  const { updateCase, sendNotification, isSendingNotification } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -82,24 +79,6 @@ export const HearingArrangements: React.FC = () => {
       errorPolicy: 'all',
     },
   )
-
-  const [
-    sendNotificationMutation,
-    { loading: isSendingNotification },
-  ] = useMutation(SendNotificationMutation)
-
-  const sendNotification = async (id: string) => {
-    const { data } = await sendNotificationMutation({
-      variables: {
-        input: {
-          caseId: id,
-          type: NotificationType.COURT_DATE,
-        },
-      },
-    })
-
-    return data?.sendNotification?.notificationSent
-  }
 
   const judges = (userData?.users || [])
     .filter(
@@ -453,7 +432,10 @@ export const HearingArrangements: React.FC = () => {
               }
               nextIsLoading={isSendingNotification}
               onNextButtonClick={async () => {
-                const notificationSent = await sendNotification(workingCase.id)
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  NotificationType.COURT_DATE,
+                )
 
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
