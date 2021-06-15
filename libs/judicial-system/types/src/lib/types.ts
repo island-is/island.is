@@ -81,6 +81,22 @@ export enum CaseType {
   OTHER = 'OTHER',
 }
 
+export enum ReadableCaseType {
+  CUSTODY = 'gæsluvarðhald',
+  TRAVEL_BAN = 'farbann',
+  SEARCH_WARRANT = 'húsleit',
+  BANKING_SECRECY_WAIVER = 'rof bankaleyndar',
+  PHONE_TAPPING = 'símhlustun',
+  TELECOMMUNICATIONS = 'upplýsingar um fjarskiptasamskipti',
+  TRACKING_EQUIPMENT = 'eftirfararbúnaður',
+  PSYCHIATRIC_EXAMINATION = 'geðrannsókn',
+  SOUND_RECORDING_EQUIPMENT = 'hljóðupptökubúnaði komið fyrir',
+  AUTOPSY = 'krufning',
+  BODY_SEARCH = 'leit og líkamsrannsókn',
+  INTERNET_USAGE = 'upplýsingar um vefnotkun',
+  OTHER = 'annað',
+}
+
 export const RCaseTypes = [
   {
     label: 'Húsleit',
@@ -131,23 +147,6 @@ export const RCaseTypes = [
       },
     ],
   },
-]
-
-const CustodyAndTravelBanTypes = [
-  {
-    label: 'Gæsluvarðhald',
-    value: CaseType.CUSTODY,
-  },
-  {
-    label: 'Farbann',
-    value: CaseType.TRAVEL_BAN,
-  },
-]
-
-export const AllCaseTypes = [
-  ...RCaseTypes.slice(0, 5),
-  ...(RCaseTypes[5].options || []),
-  ...CustodyAndTravelBanTypes,
 ]
 
 export enum CaseState {
