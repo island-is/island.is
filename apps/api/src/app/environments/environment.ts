@@ -104,6 +104,9 @@ const devConfig = {
     username: process.env.PAYMENT_TEST_USER,
     password: process.env.PAYMENT_TEST_PASSWORD,
     url: 'https://tbrws-s.hysing.is',
+    callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL_TEST,
+    callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL_TEST,
+    arkBaseUrl: 'https://uat.arkid.is',
   },
   temporaryVoterRegistry: {
     baseApiUrl: 'http://localhost:4248',
@@ -211,6 +214,9 @@ const prodConfig = {
     username: process.env.PAYMENT_USER,
     password: process.env.PAYMENT_PASSWORD,
     url: process.env.PAYMENT_URL,
+    callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
+    callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
+    arkBaseUrl: process.env.PAYMENT_ARK_URL,
   },
   temporaryVoterRegistry: {
     baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,

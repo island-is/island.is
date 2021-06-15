@@ -11,8 +11,8 @@ import { AwsService } from '../application/files/aws.service'
 import { environment } from '../../../environments'
 import {
   PAYMENT_CONFIG,
-  PaymentConfig,
   PaymentServiceOptions,
+  PaymentConfig,
 } from './payment.configuration'
 
 export interface Config {
@@ -29,7 +29,7 @@ export class PaymentModule {
         PaymentService,
         {
           provide: PAYMENT_CONFIG,
-          useValue: environment.application as PaymentConfig,
+          useValue: environment.templateApi.paymentOptions as PaymentConfig,
         },
         AwsService,
       ],

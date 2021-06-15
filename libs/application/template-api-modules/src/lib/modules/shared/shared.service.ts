@@ -1,20 +1,16 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-
-import { ChargeResult } from '@island.is/api/domains/payment'
 import { EmailService } from '@island.is/email-service'
 import { Application } from '@island.is/application/core'
-
 import {
   BaseTemplateAPIModuleConfig,
   EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
 } from '../../types'
-
 import { createAssignToken, getConfigValue } from './shared.utils'
-import { BaseCharge } from '@island.is/clients/payment'
-import { PaymentService } from '../../../../../../../apps/application-system/api/src/app/modules/payment/payment.service'
+import { ChargeResult } from '@island.is/api/domains/payment'
+import { PaymentService, BaseCharge } from '@island.is/clients/payment'
 
 @Injectable()
 export class SharedTemplateApiService {

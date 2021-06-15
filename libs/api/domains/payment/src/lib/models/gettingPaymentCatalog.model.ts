@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { PaymentCatalog } from '../models/paymentCatalog.model'
+import { PaymentCatalogItem } from '../models/paymentCatalogItem.model'
 
 @ObjectType()
 export class GettingPaymentCatalog {
-  @Field(() => [PaymentCatalog])
-  item!: PaymentCatalog[]
+  @Field(() => [PaymentCatalogItem])
+  items!: PaymentCatalogItem[]
 }

@@ -9,7 +9,7 @@ import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationService } from './application.service'
-import { Application, ApplicationPaymentStatus } from './application.model'
+import { Application, ApplicationPayment } from './application.model'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -42,13 +42,13 @@ export class ApplicationResolver {
     return this.applicationService.findOne(input.id, user, locale)
   }
 
-  @Query(() => ApplicationPaymentStatus, { nullable: true })
-  async applicationPaymentStatus(
+  @Query(() => ApplicationPayment, { nullable: true })
+  async applicationPayment(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('applicationId') applicationId: string,
-  ): Promise<ApplicationPaymentStatus | null> {
+  ): Promise<ApplicationPayment | null> {
     const status = await this.applicationService.getPaymentStatus(
       applicationId,
       user,

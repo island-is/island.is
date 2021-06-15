@@ -113,11 +113,4 @@ export class Application extends Model<Application> {
   })
   @ApiPropertyOptional()
   pruneAt?: Date
-
-  // @Column({
-  //   type: DataType.UUID,
-  //   allowNull: true,
-  // })
-  // @ApiProperty()
-  // paymentReference?: string
 }

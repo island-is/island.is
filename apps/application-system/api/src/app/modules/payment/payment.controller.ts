@@ -62,10 +62,7 @@ export class PaymentController {
   @Post('applications/:application_id/payment')
   @ApiCreatedResponse({ type: CreatePaymentResponseDto })
   @UseInterceptors(ApplicationSerializer)
-  @Audit<CreatePaymentResponseDto>({
-    resources: (app) => app.id,
-  })
-  async paymentApplication(
+  async createCharge(
     @Body()
     paymentDetails: CreatePaymentDto,
     @CurrentUser()
@@ -93,14 +90,17 @@ export class PaymentController {
       expires_at: new Date(),
     }
 
+    
+    const newCharge = await this.paymentModel.create(paymentDto)
+    
     this.auditService.audit({
       user,
       action: 'create',
       resources: paymentDto.application_id as string,
-      meta: { applicationId: paymentDto.application_id },
+      meta: { applicationId: paymentDto.application_id, id: newCharge.id },
     })
-    // possible duplication of model creation.. happens also in service... refactor?
-    return await this.paymentModel.create(paymentDto)
+
+    return newCharge
   }
 
   @Scopes(ApplicationScope.write)

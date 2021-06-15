@@ -1,4 +1,4 @@
-import { PaymentCatalog } from '@island.is/api/schema'
+import { PaymentCatalogItem } from '@island.is/api/schema'
 import {
   BasicDataProvider,
   Application,
@@ -13,11 +13,9 @@ const searchCorrectCatalog = (
   if (keySearch == '' || searchJSON == '') {
     return searchJSON
   }
-
   var resultCatalog = JSON.parse(searchJSON)
   for (var item in resultCatalog) {
     if (resultCatalog[item].chargeItemCode == keySearch) {
-      console.log('Correct catalog found: ' + resultCatalog[item])
       return resultCatalog[item]
     }
   }
@@ -27,11 +25,11 @@ const searchCorrectCatalog = (
 export class PaymentCatalogProvider extends BasicDataProvider {
   type = 'PaymentCatalogProvider'
 
-  async provide(application: Application): Promise<PaymentCatalog[]> {
+  async provide(application: Application): Promise<PaymentCatalogItem[]> {
     const query = `
     query PaymentCatalogProvider($performingOrganizationID: String!) {
-      paymentCatalogPerformingOrg(performingOrganizationID: $performingOrganizationID) {
-        item {
+      paymentCatalog(performingOrganizationID: $performingOrganizationID) {
+        items {
           performingOrgID
           chargeType
           chargeItemCode
@@ -49,23 +47,24 @@ export class PaymentCatalogProvider extends BasicDataProvider {
     })
       .then(async (res: Response) => {
         const response = await res.json()
+        console.log('my response')
+        console.log(JSON.stringify(response, null, 4));
         if (response.errors) {
           return this.handleError()
         }
-        if (response.data.paymentCatalogPerformingOrg != '') {
+        if (response.data.paymentCatalog != '') {
           var correctCatalog = searchCorrectCatalog(
             chargeItemCode,
-            JSON.stringify(response.data.paymentCatalogPerformingOrg.item),
+            JSON.stringify(response.data.paymentCatalog.items),
           )
 
           if (correctCatalog != '') {
             return Promise.resolve(correctCatalog)
           }
         }
-        return Promise.resolve(response.data.paymentCatalogPerformingOrg.item)
+        return Promise.resolve(response.data.paymentCatalog.items)
       })
       .catch(() => {
-        console.log('catch error  ' + this)
         return this.handleError()
       })
   }
@@ -75,7 +74,6 @@ export class PaymentCatalogProvider extends BasicDataProvider {
   }
 
   onProvideError(result: string): FailedDataProviderResult {
-    console.log('provide error : ' + result)
     return {
       date: new Date(),
       reason: result,
@@ -85,7 +83,6 @@ export class PaymentCatalogProvider extends BasicDataProvider {
   }
 
   onProvideSuccess(result: object): SuccessfulDataProviderResult {
-    console.log('provider Succses : ', result)
     return { date: new Date(), status: 'success', data: result }
   }
 }

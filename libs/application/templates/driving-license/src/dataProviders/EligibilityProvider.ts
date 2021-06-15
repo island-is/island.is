@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { ApplicationEligibilityRequirement } from '@island.is/api/schema'
-import { logger } from '@island.is/logging'
 
 export class EligibilityProvider extends BasicDataProvider {
   type = 'EligibilityProvider'
@@ -29,8 +28,6 @@ export class EligibilityProvider extends BasicDataProvider {
     const res = await this.useGraphqlGateway(query, { drivingLicenseType: 'B' })
 
     if (!res.ok) {
-      logger.info(`Failed http request: ${res}`)
-
       return Promise.reject({
         reason: 'Náði ekki sambandi við vefþjónustu',
       })

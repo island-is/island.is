@@ -11,9 +11,8 @@ import {
   Charge,
   Catalog,
   PaymentServiceOptions,
+  PAYMENT_OPTIONS
 } from './payment.type'
-
-export const PAYMENT_OPTIONS = 'PAYMENT_OPTIONS'
 
 export class PaymentAPI extends RESTDataSource {
   constructor(
@@ -21,7 +20,7 @@ export class PaymentAPI extends RESTDataSource {
     private readonly options: PaymentServiceOptions,
   ) {
     super()
-    this.baseURL = this.options.url //`https://tbrws-s.hysing.is/chargeFJS/v1`
+    this.baseURL = this.options.url
     this.initialize({} as DataSourceConfig<any>)
   }
 
@@ -39,7 +38,6 @@ export class PaymentAPI extends RESTDataSource {
     return this.post<ChargeResponse>(`/chargeFJS/v1/charge`, upcomingPayment)
   }
 
-  // could skip promise due to higher lvl graphql promise
   getCatalog() {
     const response = this.get<Catalog>(`/chargeFJS/v1/catalog`)
     return response
@@ -49,47 +47,6 @@ export class PaymentAPI extends RESTDataSource {
     const response = await this.get<Catalog>(
       `/chargeFJS/v1/catalog/performingOrg/${performingOrganizationID}`,
     )
-    //console.log('service param: ' + performingOrganizationID)
-    //console.log('service response: ' + response.item)
     return response
   }
 }
-
-// private readonly xroadApiUrl: string
-//   private readonly xroadClientId: string
-//   private readonly secret: string
-
-//   constructor(xroadBaseUrl: string, xroadClientId: string, secret: string) {
-//     const xroadPath =
-//       'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
-//     this.xroadApiUrl = `${xroadBaseUrl}/${xroadPath}`
-//     this.xroadClientId = xroadClientId
-//     this.secret = secret
-//   }
-
-//   headers() {
-//     return {
-//       'X-Road-Client': this.xroadClientId,
-//       SECRET: this.secret,
-//       Accept: 'application/json',
-//     }
-//   }
-
-//   async postApi(url: string, body: {}) {
-//     const res = await fetch(`${this.xroadApiUrl}/${url}`, {
-//       headers: {
-//         ...this.headers(),
-//         'Content-Type': 'application/json',
-//       },
-//       method: 'POST',
-//       body: JSON.stringify(body),
-//     })
-//     return res.json()
-//   }
-
-//   async requestApi(url: string) {
-//     const res = await fetch(`${this.xroadApiUrl}/${url}`, {
-//       headers: this.headers(),
-//     })
-//     return res.json()
-//   }

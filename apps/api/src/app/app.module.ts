@@ -175,6 +175,9 @@ const autoSchemaFile = environment.production
       password: environment.paymentDomain.password,
       url: environment.paymentDomain.url,
       username: environment.paymentDomain.username,
+      callbackBaseUrl: environment.paymentDomain.callbackBaseUrl,
+      callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl,
+      arkBaseUrl: environment.paymentDomain.arkBaseUrl,
     }),
     PartyLetterRegistryModule.register({
       baseApiUrl: environment.partyLetterRegistry.baseApiUrl,

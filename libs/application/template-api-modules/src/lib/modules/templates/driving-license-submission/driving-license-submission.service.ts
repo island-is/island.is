@@ -7,7 +7,6 @@ import { TemplateApiModuleActionProps } from '../../../types'
 
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
 import { ChargeResult } from '@island.is/api/domains/payment'
-import { application } from 'express'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -25,7 +24,7 @@ interface Payment {
 export class DrivingLicenseSubmissionService {
   constructor(
     private readonly drivingLicenseService: DrivingLicenseService,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService, //private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
   async createCharge({
@@ -69,11 +68,7 @@ export class DrivingLicenseSubmissionService {
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     const { answers } = application
-    const { externalData } = application
     const nationalId = application.applicant
-
-    const payment = externalData.payment.data as Payment
-
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const juristictionId = answers.juristiction
 

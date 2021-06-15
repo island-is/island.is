@@ -34,7 +34,6 @@ const ProviderItem: FC<{
 }> = ({ dataProviderResult = {}, provider }) => {
   const { subTitle, title } = provider
   const { formatMessage } = useLocale()
-  const { parameters } = provider
 
   return (
     <Box marginBottom={3}>

@@ -53,8 +53,10 @@ const devConfig = {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     paymentOptions: {
       url: 'https://tbrws-s.hysing.is',
-      username: 'isl_aranja_p',
-      password: 'vogur.123',
+      username: process.env.PAYMENT_TEST_USER,
+      password: process.env.PAYMENT_TEST_PASS,
+      callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL_TEST,
+      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL_TEST,
     },
   },
   application: {
@@ -126,6 +128,9 @@ const prodConfig = {
       url: process.env.PAYMENT_URL,
       username: process.env.PAYMENT_USERNAME,
       password: process.env.PAYMENT_PASSWORD,
+      callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL_TEST,
+      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL_TEST,
+      arkBaseUrl: process.env.PAYMENT_ARK_URL,
     },
   },
   application: {

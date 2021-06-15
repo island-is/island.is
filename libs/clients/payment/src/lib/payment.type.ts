@@ -2,7 +2,12 @@ export interface PaymentServiceOptions {
   url: string
   username: string
   password: string
+  callbackBaseUrl: string
+  callbackAdditionUrl: string
+  arkBaseUrl: string
 }
+
+export const PAYMENT_OPTIONS = 'PAYMENT_OPTIONS'
 
 export interface BaseCharge {
   performingOrgID: string
@@ -43,7 +48,7 @@ interface PayInfo {
 }
 
 export interface Catalog {
-  item: Item[]
+  items: Item[]
 }
 
 export interface Item {
@@ -52,4 +57,14 @@ export interface Item {
   chargeItemCode: string
   chargeItemName: string
   priceAmount: number
+}
+
+export interface ChargeResult {
+  success: boolean
+  error: Error | null
+  data?: {
+    paymentUrl: string
+    user4: string
+    receptionID: string
+  }
 }

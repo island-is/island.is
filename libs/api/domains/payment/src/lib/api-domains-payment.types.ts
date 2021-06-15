@@ -24,4 +24,7 @@ export interface PaymentServiceOptions {
   url: string
   username: string
   password: string
+  callbackBaseUrl: string
+  callbackAdditionUrl: string
+  arkBaseUrl: string
 }

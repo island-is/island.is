@@ -84,7 +84,7 @@ export class Application {
 }
 
 @ObjectType()
-export class ApplicationPaymentStatus {
+export class ApplicationPayment {
   @Field()
   fulfilled!: boolean
 }
