@@ -35,10 +35,10 @@ import {
   RequestSignatureResponse,
 } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { RequestSignatureMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useRouter } from 'next/router'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as style from './Confirmation.treat'
@@ -53,6 +53,7 @@ export const Confirmation: React.FC = () => {
     setRequestSignatureResponse,
   ] = useState<RequestSignatureResponse>()
 
+  const { requestSignature, isRequestingSignature } = useCase()
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -74,19 +75,6 @@ export const Confirmation: React.FC = () => {
       setRequestSignatureResponse(undefined)
     }
   }, [modalVisible, setRequestSignatureResponse])
-
-  const [
-    requestSignatureMutation,
-    { loading: isRequestingSignature },
-  ] = useMutation(RequestSignatureMutation)
-
-  const requestSignature = async (id: string) => {
-    const { data } = await requestSignatureMutation({
-      variables: { input: { caseId: id } },
-    })
-
-    return data?.requestSignature
-  }
 
   const handleNextButtonClick: () => Promise<void> = async () => {
     if (!workingCase) {

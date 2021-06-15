@@ -3,6 +3,7 @@ import {
   Case,
   CaseTransition,
   NotificationType,
+  RequestSignatureResponse,
   SendNotificationResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
@@ -15,6 +16,7 @@ import { CreateCourtCaseMutation } from './createCourtCaseGql'
 import { UpdateCaseMutation } from './updateCaseGql'
 import { SendNotificationMutation } from './sendNotificationGql'
 import { TransitionCaseMutation } from './transitionCaseGql'
+import { RequestSignatureMutation } from '../../mutations'
 
 type autofillProperties = Pick<
   Case,
@@ -51,6 +53,10 @@ interface SendNotificationMutationResponse {
   sendNotification: SendNotificationResponse
 }
 
+interface RequestSignatureMutationResponse {
+  requestSignature: RequestSignatureResponse
+}
+
 const useCase = () => {
   const [
     createCaseMutation,
@@ -72,6 +78,10 @@ const useCase = () => {
     sendNotificationMutation,
     { loading: isSendingNotification },
   ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
+  const [
+    requestSignatureMutation,
+    { loading: isRequestingSignature },
+  ] = useMutation<RequestSignatureMutationResponse>(RequestSignatureMutation)
 
   const createCase = async (theCase: Case): Promise<string | undefined> => {
     if (isCreatingCase === false) {
@@ -203,6 +213,14 @@ const useCase = () => {
     return Boolean(data?.sendNotification?.notificationSent)
   }
 
+  const requestSignature = async (id: string) => {
+    const { data } = await requestSignatureMutation({
+      variables: { input: { caseId: id } },
+    })
+
+    return data?.requestSignature
+  }
+
   // TODO: find a way for this to work where value is something other then string
   const autofill = (
     key: keyof autofillProperties,
@@ -229,6 +247,8 @@ const useCase = () => {
     isTransitioningCase,
     sendNotification,
     isSendingNotification,
+    requestSignature,
+    isRequestingSignature,
     autofill,
   }
 }
