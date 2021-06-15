@@ -17,6 +17,7 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseType,
   IntegratedCourts,
+  SessionArrangements,
   User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -150,15 +151,23 @@ export class CaseService {
         signedRulingPdf,
         'Sjá viðhengi',
       ),
-      this.sendEmail(
-        existingCase.defenderName,
-        existingCase.defenderEmail,
-        existingCase.courtCaseNumber,
-        signedRulingPdf,
-        'Sjá viðhengi',
-      ),
     ]
 
+    if (
+      existingCase.type === CaseType.CUSTODY ||
+      existingCase.type === CaseType.TRAVEL_BAN ||
+      existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+    ) {
+      promises.push(
+        this.sendEmail(
+          existingCase.defenderName,
+          existingCase.defenderEmail,
+          existingCase.courtCaseNumber,
+          signedRulingPdf,
+          'Sjá viðhengi',
+        ),
+      )
+    }
     if (
       existingCase.type === CaseType.CUSTODY ||
       existingCase.type === CaseType.TRAVEL_BAN
