@@ -17,10 +17,10 @@ import { Constituencies } from '../../types'
 import { constituencyMapper } from '../../constants'
 import sortBy from 'lodash/sortBy'
 import cloneDeep from 'lodash/cloneDeep'
-import set from 'lodash/set'
 import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { SchemaFormValues } from '../../../src/lib/dataSchema'
+import { useFormContext } from 'react-hook-form'
 
 const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const { lang: locale, formatMessage } = useLocale()
@@ -41,19 +41,6 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     refetch()
   }, [endorsementsHook])
 
-  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION, {
-    onError: (error) => {
-      // If there was an error doing the update we will deselect the endorsement
-      toast.error(formatMessage(coreMessages.updateOrSubmitError, { error }))
-
-      const endorsements: any = endorsementsHook?.filter((e: any) => {
-        return answers.selectedEndorsements?.indexOf(e.id) !== -1
-      })
-      console.log('ERROR??', error)
-      setSelectedEndorsements(endorsements ?? [])
-    },
-  })
-
   const maxEndorsements =
     constituencyMapper[answers.constituency as Constituencies].high
   const minEndorsements =
@@ -70,6 +57,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     const tempEndorsements = sortBy(endorsementsHook, 'created')
     return tempEndorsements.sort(() => 0.5 - Math.random())
   }
+  const { setValue, errors, getValues } = useFormContext()
 
   const firstMaxEndorsements = () => {
     setAutoSelect(true)
@@ -109,28 +97,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const updateApplicationWithEndorsements = async (
     newEndorsements: Endorsement[],
   ) => {
-    console.log('new', newEndorsements)
-    const endorsementIds: string[] = newEndorsements.map((e) => e.id)
-    const updatedAnswers = {
-      ...answers,
-      selectedEndorsements: cloneDeep(endorsementIds),
-    }
-
-    await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: {
-            ...updatedAnswers,
-          },
-        },
-        locale,
-      },
-    }).then(() => {
-      set(answers, 'selectedEndorsements', cloneDeep(endorsementIds))
-    })
-
-    console.log('ANSWERS', application.answers)
+    setValue('selectedEndorsements', cloneDeep(newEndorsements))
   }
 
   /* on intital render: decide which radio button should be checked */
@@ -188,7 +155,6 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
             endorsements={endorsementsHook}
             selectedEndorsements={selectedEndorsements}
             onChange={(endorsement) => handleCheckboxChange(endorsement)}
-            disabled={loading}
           />
           <Box
             marginTop={3}

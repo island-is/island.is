@@ -24,14 +24,12 @@ interface EndorsementTableProps {
   endorsements?: Endorsement[]
   selectedEndorsements?: Endorsement[]
   onChange: (endorsement: Endorsement) => void
-  disabled: boolean
 }
 
 const EndorsementTable: FC<EndorsementTableProps> = ({
   endorsements,
   selectedEndorsements,
   onChange,
-  disabled,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -98,7 +96,6 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
           }}
         >
           <Checkbox
-            disabled={disabled}
             checked={selectedEndorsements?.some((e) => e.id === endorsement.id)}
             onChange={() => onChange(endorsement)}
           />
