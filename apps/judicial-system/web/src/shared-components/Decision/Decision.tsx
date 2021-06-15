@@ -44,46 +44,49 @@ const Decision: React.FC<Props> = (props) => {
           backgroundColor="white"
         />
       </Box>
-      <Box marginBottom={workingCase.type === CaseType.CUSTODY ? 2 : 0}>
-        <RadioButton
-          name="case-decision"
-          id="case-decision-rejecting"
-          label={rejectedLabelText}
-          checked={workingCase.decision === CaseDecision.REJECTING}
-          onChange={() => {
-            setAndSendToServer(
-              'decision',
-              CaseDecision.REJECTING,
-              workingCase,
-              setWorkingCase,
-              updateCase,
-            )
-          }}
-          large
-          backgroundColor="white"
-        />
-      </Box>
-      {workingCase.type === CaseType.CUSTODY && (
-        <RadioButton
-          name="case-decision"
-          id="case-decision-accepting-alternative-travel-ban"
-          label={partiallyAcceptedLabelText}
-          checked={
-            workingCase.decision ===
-            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-          }
-          onChange={() => {
-            setAndSendToServer(
-              'decision',
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-              workingCase,
-              setWorkingCase,
-              updateCase,
-            )
-          }}
-          large
-          backgroundColor="white"
-        />
+      <RadioButton
+        name="case-decision"
+        id="case-decision-rejecting"
+        label={rejectedLabelText}
+        checked={workingCase.decision === CaseDecision.REJECTING}
+        onChange={() => {
+          setAndSendToServer(
+            'decision',
+            CaseDecision.REJECTING,
+            workingCase,
+            setWorkingCase,
+            updateCase,
+          )
+        }}
+        large
+        backgroundColor="white"
+      />
+      {workingCase.type !== CaseType.TRAVEL_BAN && (
+        <Box marginTop={2}>
+          <RadioButton
+            name="case-decision"
+            id="case-decision-accepting-partially"
+            label={partiallyAcceptedLabelText}
+            checked={
+              workingCase.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+              workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY
+            }
+            onChange={() => {
+              setAndSendToServer(
+                'decision',
+                workingCase.type === CaseType.CUSTODY
+                  ? CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                  : CaseDecision.ACCEPTING_PARTIALLY,
+                workingCase,
+                setWorkingCase,
+                updateCase,
+              )
+            }}
+            large
+            backgroundColor="white"
+          />
+        </Box>
       )}
     </BlueBox>
   )
