@@ -39,6 +39,26 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     refetch()
   }, [endorsementsHook])
 
+  /* on intital render: decide which radio button should be checked */
+  useEffect(() => {
+    if (
+      answers.selectedEndorsements &&
+      answers.selectedEndorsements.length > 0
+    ) {
+      const endorsements: any = endorsementsHook?.filter((e: any) => {
+        return answers.selectedEndorsements?.indexOf(e.id) !== -1
+      })
+
+      setSelectedEndorsements(endorsements)
+      isEqual(endorsements, firstX())
+        ? setAutoSelect(true)
+        : setChooseRandom(true)
+    } else {
+      firstMaxEndorsements()
+      setAutoSelect(true)
+    }
+  }, [])
+
   const maxEndorsements =
     constituencyMapper[answers.constituency as Constituencies].high
   const minEndorsements =
@@ -97,25 +117,6 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     setValue('selectedEndorsements', cloneDeep(endorsementIds))
   }
 
-  /* on intital render: decide which radio button should be checked */
-  useEffect(() => {
-    if (
-      answers.selectedEndorsements &&
-      answers.selectedEndorsements.length > 0
-    ) {
-      const endorsements: any = endorsementsHook?.filter((e: any) => {
-        return answers.selectedEndorsements?.indexOf(e.id) !== -1
-      })
-
-      setSelectedEndorsements(endorsements)
-      isEqual(endorsements, firstX())
-        ? setAutoSelect(true)
-        : setChooseRandom(true)
-    } else {
-      firstMaxEndorsements()
-      setAutoSelect(true)
-    }
-  }, [])
   return (
     <Box marginBottom={8}>
       <Text>{formatMessage(m.endorsementListSubmission.description)}</Text>
