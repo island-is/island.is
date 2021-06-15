@@ -1,5 +1,3 @@
-import { OptionsType, GroupedOptionsType } from 'react-select'
-
 export enum Feature {
   NONE = 'NONE', // must be at least one
   R_CASES = 'R_CASES',
@@ -194,6 +192,7 @@ export enum CaseAppealDecision {
   APPEAL = 'APPEAL',
   ACCEPT = 'ACCEPT',
   POSTPONE = 'POSTPONE',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
 export enum CaseGender {
@@ -206,11 +205,19 @@ export enum CaseDecision {
   ACCEPTING = 'ACCEPTING',
   REJECTING = 'REJECTING',
   ACCEPTING_ALTERNATIVE_TRAVEL_BAN = 'ACCEPTING_ALTERNATIVE_TRAVEL_BAN',
+  ACCEPTING_PARTIALLY = 'ACCEPTING_PARTIALLY',
 }
 
 export enum AccusedPleaDecision {
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
+}
+
+export enum SessionArrangements {
+  ALL_PRESENT = 'ALL_PRESENT',
+  PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
+  REMOTE_SESSION = 'REMOTE_SESSION',
 }
 
 export type Gender = 'karl' | 'kona' | 'annað'
@@ -251,6 +258,7 @@ export interface Case {
   prosecutor?: User
   sharedWithProsecutorsOffice?: Institution
   courtCaseNumber?: string
+  sessionArrangements?: SessionArrangements
   courtDate?: string
   courtRoom?: string
   courtStartDate?: string
@@ -271,7 +279,7 @@ export interface Case {
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
   isolationToDate?: string
-  additionToConclusion?: string
+  conclusion?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
@@ -354,6 +362,7 @@ export interface UpdateCase {
   prosecutorId?: string
   sharedWithProsecutorsOfficeId?: string
   courtCaseNumber?: string
+  sessionArrangements?: SessionArrangements
   courtDate?: string
   courtRoom?: string
   courtStartDate?: string
@@ -373,7 +382,7 @@ export interface UpdateCase {
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
   isolationToDate?: string
-  additionToConclusion?: string
+  conclusion?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision

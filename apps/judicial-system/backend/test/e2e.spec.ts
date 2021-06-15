@@ -17,6 +17,7 @@ import {
   UserRole,
   AccusedPleaDecision,
   Institution as TInstitution,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
@@ -164,6 +165,7 @@ function remainingProsecutorCaseData() {
 function remainingJudgeCaseData() {
   return {
     courtCaseNumber: 'Court Case Number',
+    sessionArrangements: SessionArrangements.PROSECUTOR_PRESENT,
     courtDate: '2020-09-29T13:00:00.000Z',
     courtRoom: '201',
     courtStartDate: '2020-09-29T13:00:00.000Z',
@@ -183,7 +185,7 @@ function remainingJudgeCaseData() {
     custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
     otherRestrictions: 'Other Restrictions',
     isolationToDate: '2021-09-10T12:00:00.000Z',
-    additionToConclusion: 'Addition to Conclusion',
+    conclusion: 'Addition to Conclusion',
     accusedAppealDecision: CaseAppealDecision.APPEAL,
     accusedAppealAnnouncement: 'Accused Appeal Announcement',
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
@@ -381,6 +383,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
     caseTwo.sharedWithProsecutorsOffice,
   )
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
+  expect(caseOne.sessionArrangements || null).toBe(
+    caseTwo.sessionArrangements || null,
+  )
   expect(caseOne.courtDate || null).toBe(caseTwo.courtDate || null)
   expect(caseOne.courtRoom || null).toBe(caseTwo.courtRoom || null)
   expect(caseOne.courtStartDate || null).toBe(caseTwo.courtStartDate || null)
@@ -416,9 +421,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
     caseTwo.otherRestrictions || null,
   )
   expect(caseOne.isolationToDate || null).toBe(caseTwo.isolationToDate || null)
-  expect(caseOne.additionToConclusion || null).toBe(
-    caseTwo.additionToConclusion || null,
-  )
+  expect(caseOne.conclusion || null).toBe(caseTwo.conclusion || null)
   expect(caseOne.accusedAppealDecision || null).toBe(
     caseTwo.accusedAppealDecision || null,
   )

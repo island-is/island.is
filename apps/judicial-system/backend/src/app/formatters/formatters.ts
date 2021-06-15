@@ -301,7 +301,7 @@ export function formatPrisonRulingEmailNotification(
   judgeTitle: string,
   isExtension: boolean,
   previousDecision: CaseDecision,
-  additionToConclusion?: string,
+  conclusion?: string,
   isolationToDate?: Date,
 ): string {
   return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
@@ -330,7 +330,7 @@ export function formatPrisonRulingEmailNotification(
     previousDecision,
     isolationToDate,
   )}${
-    additionToConclusion ? `<br /><br />${additionToConclusion}` : ''
+    conclusion ? `<br /><br />${conclusion}` : ''
   }<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
     accusedAppealDecision,
     capitalize(formatAccusedByGender(accusedGender)),
