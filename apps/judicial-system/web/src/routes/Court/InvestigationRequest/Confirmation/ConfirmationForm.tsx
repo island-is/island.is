@@ -75,7 +75,7 @@ const Confirmation: React.FC<Props> = (props) => {
             </Text>
           </Box>
         </Box>
-        {workingCase.additionToConclusion && (
+        {workingCase.conclusion && (
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
@@ -83,7 +83,7 @@ const Confirmation: React.FC<Props> = (props) => {
               </Text>
             </Box>
             <Box marginBottom={3}>
-              <Text variant="intro">{workingCase.additionToConclusion}</Text>
+              <Text variant="intro">{workingCase.conclusion}</Text>
             </Box>
           </Box>
         )}

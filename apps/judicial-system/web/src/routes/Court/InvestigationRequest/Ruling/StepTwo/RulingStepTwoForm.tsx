@@ -70,13 +70,13 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <Input
-            name="additionToConclusion"
+            name="conclusion"
             label="Úrskurðarorð"
             placeholder="Hér er hægt að bæta texta við úrskurðarorð eftir þörfum"
-            defaultValue={workingCase?.additionToConclusion}
+            defaultValue={workingCase.conclusion}
             onChange={(event) =>
               removeTabsValidateAndSet(
-                'additionToConclusion',
+                'conclusion',
                 event,
                 [],
                 workingCase,
@@ -85,7 +85,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             }
             onBlur={(event) =>
               validateAndSendToServer(
-                'additionToConclusion',
+                'conclusion',
                 event.target.value,
                 [],
                 workingCase,
