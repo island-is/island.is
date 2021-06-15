@@ -6,5 +6,5 @@ export BRANCH=${BRANCH:-`git branch --show-current`}
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:-}
 export PUBLISH=${PUBLISH:-false}
 export DOCKER_BUILDKIT=1
-export PROJECT_ROOT=$(readlink -m $DIR/../..)
+export PROJECT_ROOT=$(git -C $DIR rev-parse --show-toplevel)
 export CHUNK_SIZE=${CHUNK_SIZE:-2}
