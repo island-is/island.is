@@ -8,10 +8,19 @@ import useCase from '../../utils/hooks/useCase'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  acceptedLabelText: string
+  rejectedLabelText: string
+  partiallyAcceptedLabelText: string
 }
 
 const Decision: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase } = props
+  const {
+    workingCase,
+    setWorkingCase,
+    acceptedLabelText,
+    rejectedLabelText,
+    partiallyAcceptedLabelText,
+  } = props
   const { updateCase } = useCase()
 
   return (
@@ -20,9 +29,7 @@ const Decision: React.FC<Props> = (props) => {
         <RadioButton
           name="case-decision"
           id="case-decision-accepting"
-          label={`Krafa um ${
-            workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
-          } samþykkt`}
+          label={acceptedLabelText}
           checked={workingCase.decision === CaseDecision.ACCEPTING}
           onChange={() => {
             setAndSendToServer(
@@ -41,9 +48,7 @@ const Decision: React.FC<Props> = (props) => {
         <RadioButton
           name="case-decision"
           id="case-decision-rejecting"
-          label={`Kröfu um ${
-            workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
-          } hafnað`}
+          label={rejectedLabelText}
           checked={workingCase.decision === CaseDecision.REJECTING}
           onChange={() => {
             setAndSendToServer(
@@ -62,7 +67,7 @@ const Decision: React.FC<Props> = (props) => {
         <RadioButton
           name="case-decision"
           id="case-decision-accepting-alternative-travel-ban"
-          label="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
+          label={partiallyAcceptedLabelText}
           checked={
             workingCase.decision ===
             CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN

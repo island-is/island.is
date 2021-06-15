@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 import {
   Decision,
   RulingInput,
@@ -26,7 +26,17 @@ const ConclusionDraft: React.FC<Props> = (props) => {
         <Text variant="h3">Úrskurður</Text>
       </Box>
       <Box marginBottom={3}>
-        <Decision workingCase={workingCase} setWorkingCase={setWorkingCase} />
+        <Decision
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          acceptedLabelText={`Krafa um ${
+            workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+          } samþykkt`}
+          rejectedLabelText={`Kröfu um ${
+            workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+          } hafnað`}
+          partiallyAcceptedLabelText="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
+        />
       </Box>
       <Box marginBottom={3}>
         <Text variant="h3">Drög að niðurstöðu</Text>

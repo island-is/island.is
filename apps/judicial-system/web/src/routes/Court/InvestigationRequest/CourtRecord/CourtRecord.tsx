@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseGender } from '@island.is/judicial-system/types'
 import {
   CaseData,
   JudgeSubsections,
@@ -10,9 +10,15 @@ import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import CourtRecordForm from './CourtRecordForm'
+import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import {
+  formatAccusedByGender,
+  NounCases,
+} from '@island.is/judicial-system/formatters'
 
 const CourtRecord = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
+  const { autofill } = useCase()
 
   const router = useRouter()
   const id = router.query.id
@@ -27,7 +33,41 @@ const CourtRecord = () => {
   }, [])
 
   useEffect(() => {
+    const defaultCourtAttendees = (wc: Case): string => {
+      let attendees = ''
+
+      if (wc.registrar) {
+        attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
+      }
+
+      if (wc.prosecutor && wc.accusedName) {
+        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
+          wc.accusedName
+        } ${formatAccusedByGender(wc?.accusedGender || CaseGender.OTHER)}`
+      }
+
+      if (wc.defenderName) {
+        attendees += `\n${
+          wc.defenderName
+        } skipaður verjandi ${formatAccusedByGender(
+          wc?.accusedGender || CaseGender.OTHER,
+          NounCases.GENITIVE,
+        )}`
+      }
+
+      return attendees
+    }
+
     if (!workingCase && data?.case) {
+      const theCase = data.case
+
+      autofill('courtStartDate', new Date().toString(), theCase)
+
+      autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+
+      if (theCase.demands) {
+        autofill('prosecutorDemands', theCase.demands, theCase)
+      }
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])

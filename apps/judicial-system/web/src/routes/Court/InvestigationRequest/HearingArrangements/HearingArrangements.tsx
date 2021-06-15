@@ -55,7 +55,7 @@ const HearingArrangements = () => {
         <HearingArrangementsForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          isLoading={loading}
+          isLoading={loading || userLoading}
           users={users}
         />
       )}

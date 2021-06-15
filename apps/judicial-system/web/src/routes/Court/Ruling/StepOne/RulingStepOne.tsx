@@ -279,6 +279,17 @@ export const RulingStepOne: React.FC = () => {
                 <Decision
                   workingCase={workingCase}
                   setWorkingCase={setWorkingCase}
+                  acceptedLabelText={`Krafa um ${
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann'
+                  } samþykkt`}
+                  rejectedLabelText={`Kröfu um ${
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann'
+                  } hafnað`}
+                  partiallyAcceptedLabelText="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
                 />
               </Box>
             </Box>

@@ -274,7 +274,7 @@ export const CourtRecord: React.FC = () => {
                   {`Réttindi ${formatAccusedByGender(
                     workingCase.accusedGender || CaseGender.OTHER,
                     NounCases.GENITIVE,
-                  )}`}{' '}
+                  )} `}
                   <Text as="span" fontWeight="semiBold" color="red600">
                     *
                   </Text>
