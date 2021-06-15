@@ -35,10 +35,6 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     true,
   )
 
-  useEffect(() => {
-    refetch()
-  }, [endorsementsHook])
-
   /* on intital render: decide which radio button should be checked */
   useEffect(() => {
     if (
