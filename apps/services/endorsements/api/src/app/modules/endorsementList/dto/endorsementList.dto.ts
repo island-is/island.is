@@ -8,10 +8,9 @@ import {
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ValidationRuleDto } from './validationRule.dto'
-import { EndorsementTag } from '../endorsementList.model'
-
 import { ApiProperty } from '@nestjs/swagger'
 import { EndorsementMetaField } from '../../endorsementMetadata/types'
+import { EndorsementTag } from '../constants'
 export class EndorsementListDto {
   @ApiProperty()
   @IsString()
