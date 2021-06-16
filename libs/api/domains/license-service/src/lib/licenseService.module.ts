@@ -1,4 +1,4 @@
-import { Module, DynamicModule } from '@nestjs/common'
+import { Module, DynamicModule, CacheModule } from '@nestjs/common'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { LicenseServiceService } from './licenseService.service'
@@ -22,6 +22,7 @@ export class LicenseServiceModule {
   static register(config: Config): DynamicModule {
     return {
       module: LicenseServiceModule,
+      imports: [CacheModule.register()],
       providers: [
         MainResolver,
         LicenseServiceService,

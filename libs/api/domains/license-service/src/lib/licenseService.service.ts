@@ -1,4 +1,5 @@
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { Cache as CacheManager } from 'cache-manager'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
@@ -9,6 +10,9 @@ import {
 import { Locale } from '@island.is/shared/types'
 
 import { GenericDrivingLicenseApi } from './client/driving-license-client'
+
+const CACHE_KEY = 'licenseService'
+const ONE_DAY = 24 * 60 * 60
 
 export type GetGenericDrivingLicenseOptions = {
   includedTypes?: Array<GenericLicenseTypeType>
@@ -22,24 +26,58 @@ const includeType = (
   includedTypes?: Array<GenericLicenseTypeType>,
   excludedTypes?: Array<GenericLicenseTypeType>,
 ) =>
-  (!includedTypes || (includedTypes && includedTypes.includes(type))) &&
-  (!excludedTypes || (excludedTypes && !excludedTypes.includes(type)))
+  (!includedTypes || includedTypes.includes(type)) &&
+  (!excludedTypes || !excludedTypes.includes(type))
 
 @Injectable()
 export class LicenseServiceService {
   constructor(
     private readonly drivingLicenseService: GenericDrivingLicenseApi,
+    @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
+
+  private getCacheKey(
+    nationalId: string,
+    type: GenericLicenseTypeType,
+  ): string {
+    return `${CACHE_KEY}_${type}_${nationalId}`
+  }
+
+  private async setCache<T>(
+    key: string,
+    value: T,
+    ttl: number = ONE_DAY,
+  ): Promise<void> {
+    await this.cacheManager.set(key, JSON.stringify(value), { ttl })
+  }
+
+  private async getCache<T>(cacheKey: string): Promise<T | null> {
+    const cachedData = await this.cacheManager.get(cacheKey)
+    if (!cachedData) {
+      return null
+    }
+
+    return JSON.parse(cachedData as string)
+  }
 
   private async getDriversLicense(
     nationalId: User['nationalId'],
     force?: boolean,
   ) {
+    const key = this.getCacheKey(nationalId, 'DriversLicense')
     let drivingLicense: GenericUserLicense | null = null
+    const cached = !force ? await this.getCache(key) : null
+    if (!cached) {
       drivingLicense = await this.drivingLicenseService.getGenericDrivingLicense(
         nationalId,
       )
+      if (drivingLicense) {
+        this.setCache(key, drivingLicense)
+      }
+    } else {
+      drivingLicense = cached as GenericUserLicense
+    }
 
     if (!drivingLicense) {
       this.logger.error(
