@@ -84,7 +84,11 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                   <input
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateIdentifier,
+                      validate: isEditing
+                        ? () => {
+                            return true
+                          }
+                        : ValidationUtils.validateIdentityResourceName,
                     })}
                     id="name"
                     name="name"
