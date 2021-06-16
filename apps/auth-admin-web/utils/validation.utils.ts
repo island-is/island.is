@@ -4,6 +4,9 @@ class ValidationUtils {
 
   public static identifierPattern = /^[a-zA-Z0-9_.-]*$/
 
+  /** Pattern that enforeces @domain.is or @domain2-_2.is */
+  public static domainPattern = /@{1}[a-zA-Z0-9_-]*[.]?[a-zA-Z]*$/
+
   /** Pattern that enforces input to @[domain.is] or @[domain.is][/[paths]]*
    */
   public static clientIdPattern = /^@{1}[a-zA-Z0-9_.-]*([/]*[a-zA-Z0-9_\.-])+$/
@@ -30,6 +33,14 @@ class ValidationUtils {
       return true
     }
     const regex = new RegExp(ValidationUtils.emailPattern)
+    return regex.test(input)
+  }
+
+  public static validateDomain(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+    const regex = new RegExp(ValidationUtils.domainPattern)
     return regex.test(input)
   }
 

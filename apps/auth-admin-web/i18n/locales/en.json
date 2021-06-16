@@ -783,7 +783,7 @@
           "label": "Name",
           "placeholder": "@island.is",
           "helpText": "The identifier of this domain",
-          "errorMessage": "The domain is required and can not include invalid characters"
+          "errorMessage": "The domain is required and should be follow the {@domain.is} pattern"
         },
         "description": {
           "label": "Description",
