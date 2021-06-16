@@ -2,7 +2,11 @@
 class ValidationUtils {
   public static emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 
-  public static identifierPattern = /^[@a-zA-Z0-9_.-/]*$/
+  public static identifierPattern = /^[a-zA-Z0-9_.-]*$/
+
+  /** Pattern that enforces input to @[domain.is] or @[domain.is][/[paths]]*
+   */
+  public static clientIdPattern = /^@{1}[a-zA-Z0-9_.-]*([/]*[a-zA-Z0-9_\.-])+$/
 
   /** Pattern for illegal characters in description */
   public static descriptionPattern = /[<>%\$]/
@@ -34,6 +38,30 @@ class ValidationUtils {
       return true
     }
     const regex = new RegExp(ValidationUtils.identifierPattern)
+    return regex.test(input)
+  }
+
+  public static validateClientId(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+    const regex = new RegExp(ValidationUtils.clientIdPattern)
+    return regex.test(input)
+  }
+
+  public static validateApiResourceName(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+    const regex = new RegExp(ValidationUtils.clientIdPattern)
+    return regex.test(input)
+  }
+
+  public static validateIdentityResourceName(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+    const regex = new RegExp(ValidationUtils.clientIdPattern)
     return regex.test(input)
   }
 
@@ -93,7 +121,9 @@ class ValidationUtils {
   }
 
   public static validateApiScope(input: string): boolean {
+    console.log(ValidationUtils.apiScopePattern)
     const regex = new RegExp(ValidationUtils.apiScopePattern)
+    console.log(regex.test(input))
     return regex.test(input)
   }
 }

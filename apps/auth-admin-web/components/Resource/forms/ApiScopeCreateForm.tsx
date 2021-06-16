@@ -80,12 +80,18 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
       return
     }
     setApiScopeNameHintVisible(true)
-    setApiScopeNameIsValid(ValidationUtils.validateApiScope(name))
-    apiScopeNameIsValid
+    const isValid =
+      name.length > 0 ? ValidationUtils.validateClientId(name) : false
+    setApiScopeNameIsValid(isValid)
+    isValid
       ? setApiScopeHintMessage(localization.fields['name'].hintOkMessage)
       : setApiScopeHintMessage(localization.fields['name'].hintErrorMessage)
-    setNameLength(name?.length)
 
+    checkAvailability(name)
+  }
+
+  const checkAvailability = async (name: string) => {
+    setNameLength(name?.length)
     if (name.length === 0) {
       setAvailable(false)
       return
@@ -166,7 +172,11 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   <input
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateDescription,
+                      validate: isEditing
+                        ? () => {
+                            return true
+                          }
+                        : ValidationUtils.validateApiScope,
                     })}
                     id="apiScope.name"
                     name="apiScope.name"

@@ -1658,9 +1658,13 @@
           "label": "Client Id",
           "placeholder": "example-client",
           "helpText": "The unique identifier for this application. No spaces or special characters.",
-          "errorMessage": "The unique identifier for this application. No spaces or special characters.",
+          "errorMessage": "The unique identifier for this application is not in the correct format.",
           "available": "Available",
-          "unAvailable": "Unavailable"
+          "unAvailable": "Unavailable",
+          "pattern": "@{domain}{/optionalPath}{/optionalPath2}",
+          "patternText": "Follow this pattern:",
+          "hintOkMessage": "The Client Id is in a correct format",
+          "hintErrorMessage": "The format of the Client Id is incorrect"
         },
         "clientName": {
           "label": "Display Name",

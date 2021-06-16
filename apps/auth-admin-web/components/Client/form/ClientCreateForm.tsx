@@ -10,6 +10,7 @@ import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
+import HintBox from '../../common/HintBox'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: ClientDTO) => void
@@ -43,6 +44,24 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ClientCreateForm'),
   )
+  const [clientIdHintVisible, setClientIdHintVisible] = useState<boolean>(false)
+  const [clientIdIsValid, setClientIdIsValid] = useState<boolean | null>(null)
+  const [clientIdHintMessage, setClientIdHintMessage] = useState<string>('')
+
+  const onClientIdChange = async (name: string) => {
+    if (isEditing) {
+      return
+    }
+    setClientIdHintVisible(true)
+    const isValid =
+      name.length > 0 ? ValidationUtils.validateClientId(name) : false
+    setClientIdIsValid(isValid)
+    isValid
+      ? setClientIdHintMessage(localization.fields['clientId'].hintOkMessage)
+      : setClientIdHintMessage(localization.fields['clientId'].hintErrorMessage)
+
+    checkAvailability(name)
+  }
 
   const castToNumbers = (obj: ClientDTO): ClientDTO => {
     obj.absoluteRefreshTokenLifetime = +obj.absoluteRefreshTokenLifetime
@@ -122,7 +141,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   }
 
   const checkAvailability = async (clientId: string) => {
-    setClientIdLength(clientId.length)
+    setClientIdLength(clientId?.length)
     if (!clientId) {
       return
     }
@@ -353,14 +372,20 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.clientId"
                       ref={register({
                         required: true,
-                        validate: ValidationUtils.validateIdentifier,
+                        validate: isEditing
+                          ? () => {
+                              return true
+                            }
+                          : ValidationUtils.validateClientId,
                       })}
                       defaultValue={client.clientId}
                       className="client__input"
                       placeholder={localization.fields['clientId'].placeholder}
-                      onChange={(e) => checkAvailability(e.target.value)}
+                      onChange={(e) => onClientIdChange(e.target.value)}
                       title={localization.fields['clientId'].helpText}
                       readOnly={isEditing}
+                      onBlur={() => setClientIdHintVisible(false)}
+                      onFocus={(e) => onClientIdChange(e.target.value)}
                     />
                     <div
                       className={`client__container__field__available ${
@@ -371,6 +396,14 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         ? localization.fields['clientId'].available
                         : localization.fields['clientId'].unAvailable}
                     </div>
+                    <HintBox
+                      helpText={clientIdHintMessage}
+                      pattern={localization.fields['clientId'].pattern}
+                      patternText={localization.fields['clientId'].patternText}
+                      setVisible={clientIdHintVisible}
+                      onVisibleChange={(e) => setClientIdHintVisible(e)}
+                      isValid={clientIdIsValid}
+                    />
                     <HelpBox
                       helpText={localization.fields['clientId'].helpText}
                     />
