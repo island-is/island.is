@@ -134,9 +134,7 @@ class ValidationUtils {
   }
 
   public static validateApiScope(input: string): boolean {
-    console.log(ValidationUtils.apiScopePattern)
     const regex = new RegExp(ValidationUtils.apiScopePattern)
-    console.log(regex.test(input))
     return regex.test(input)
   }
 }
