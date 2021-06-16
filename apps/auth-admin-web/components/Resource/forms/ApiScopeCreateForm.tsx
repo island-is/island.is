@@ -38,6 +38,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   const [nameLength, setNameLength] = useState(0)
   const [domains, setDomains] = useState<Domain[]>([])
   const [domainIsTouched, setDomainIsTouched] = useState<boolean>(false)
+  //#region hint-box
   const [
     apiScopeNameHintVisible,
     setApiScopeNameHintVisible,
@@ -46,6 +47,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   const [apiScopeNameIsValid, setApiScopeNameIsValid] = useState<
     boolean | null
   >(null)
+  //#endregion hint-box
 
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeCreateForm'),
@@ -182,6 +184,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     name="apiScope.name"
                     type="text"
                     className="api-scope-form__input"
+                    title={localization.fields['name'].helpText}
                     defaultValue={props.apiScope.name}
                     readOnly={isEditing || !domainIsTouched}
                     onChange={(e) => onApiScopeNameChange(e.target.value)}

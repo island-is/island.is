@@ -8,6 +8,7 @@ import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
+import HintBox from '../../common/HintBox'
 
 interface Props {
   handleSave?: (object: ApiResourcesDTO) => void
@@ -29,6 +30,11 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiResourceCreateForm'),
   )
+  //#region hint-box
+  const [nameHintVisible, setNameHintVisible] = useState<boolean>(false)
+  const [nameHintMessage, setNameHintMessage] = useState<string>('')
+  const [nameIsValid, setNameIsValid] = useState<boolean | null>(null)
+  //#endregion hint-box
 
   useEffect(() => {
     if (props.apiResource && props.apiResource.name) {
@@ -37,8 +43,23 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
     }
   }, [props.apiResource])
 
+  const onNameChange = async (name: string) => {
+    if (isEditing) {
+      return
+    }
+    setNameHintVisible(true)
+    const isValid =
+      name.length > 0 ? ValidationUtils.validateClientId(name) : false
+    setNameIsValid(isValid)
+    isValid
+      ? setNameHintMessage(localization.fields['name'].hintOkMessage)
+      : setNameHintMessage(localization.fields['name'].hintErrorMessage)
+
+    checkAvailability(name)
+  }
+
   const checkAvailability = async (name: string) => {
-    setNameLength(name.length)
+    setNameLength(name?.length)
     const response = await ResourcesService.getApiResourceByName(name)
     if (response) {
       setAvailable(false)
@@ -152,9 +173,11 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                     className="api-resource-form__input"
                     defaultValue={props.apiResource.name}
                     readOnly={isEditing}
-                    onChange={(e) => checkAvailability(e.target.value)}
+                    onChange={(e) => onNameChange(e.target.value)}
                     title={localization.fields['name'].helpText}
                     placeholder={localization.fields['name'].placeholder}
+                    onBlur={() => setNameHintVisible(false)}
+                    onFocus={(e) => onNameChange(e.target.value)}
                   />
                   <div
                     className={`api-resource-form__container__field__available ${
@@ -165,6 +188,14 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                       ? localization.fields['name'].available
                       : localization.fields['name'].unAvailable}
                   </div>
+                  <HintBox
+                    helpText={nameHintMessage}
+                    pattern={localization.fields['name'].pattern}
+                    patternText={localization.fields['name'].patternText}
+                    setVisible={nameHintVisible}
+                    onVisibleChange={(e) => setNameHintVisible(e)}
+                    isValid={nameIsValid}
+                  />
                   <HelpBox helpText={localization.fields['name'].helpText} />
                   <ErrorMessage
                     as="span"

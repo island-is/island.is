@@ -5,11 +5,11 @@ class ValidationUtils {
   public static identifierPattern = /^[a-zA-Z0-9_.-]*$/
 
   /** Pattern that enforeces @domain.is or @domain2-_2.is */
-  public static domainPattern = /@{1}[a-zA-Z0-9_-]*[.]?[a-zA-Z]*$/
+  public static domainPattern = /@{1}[a-z0-9_-]*[.]?[a-z]*$/
 
   /** Pattern that enforces input to @[domain.is] or @[domain.is][/[paths]]*
    */
-  public static clientIdPattern = /^@{1}[a-zA-Z0-9_.-]*([/]*[a-zA-Z0-9_\.-])+$/
+  public static clientIdPattern = /^@{1}[a-z0-9_.-]*([/]*[a-z0-9_\.-])+$/
 
   /** Pattern for illegal characters in description */
   public static descriptionPattern = /[<>%\$]/
@@ -24,6 +24,8 @@ class ValidationUtils {
 
   public static nationalIdPattern = /^[0-9]*$/
 
+  /** Pattern that enforces input to @[domain.is] or @[domain.is][/[optionalPaths]/[path:optionalAction]]*
+   */
   public static apiScopePattern = /^@[a-z\.]*[/]([a-z][:/]?)*[a-z]+$/
 
   public static scopePattern = /^@([\w-])$/
