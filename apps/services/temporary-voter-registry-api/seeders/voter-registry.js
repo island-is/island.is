@@ -24,11 +24,11 @@ const validateData = (voterRegions) => {
   // we want to make sure the data we are inserting is consistent
   const validRegionNumbers = [1, 2, 3, 4, 5, 6]
   const validRegionNames = [
+    'Reykjavíkurkjördæmi suður',
+    'Reykjavíkurkjördæmi norður',
+    'Suðvesturkjördæmi',
     'Norðvesturkjördæmi',
     'Norðausturkjördæmi',
-    'Reykjavíkurkjördæmi norður',
-    'Reykjavíkurkjördæmi suður',
-    'Suðvesturkjördæmi',
     'Suðurkjördæmi',
   ]
 
