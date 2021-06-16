@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { gql, useQuery, useLazyQuery } from '@apollo/client'
+import { useQuery, useLazyQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
+import {
+  GET_CUSTOMER_CHARGETYPE,
+  GET_CUSTOMER_RECORDS,
+} from '@island.is/service-portal/graphql'
 import format from 'date-fns/format'
 import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
 import {
@@ -32,43 +36,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
 
-const GetCustomerChargeTypeQuery = gql`
-  query GetCustomerChargeTypeQuery {
-    getCustomerChargeType {
-      chargeType {
-        id
-        name
-      }
-    }
-  }
-`
-
-const GetCustomerRecordsQuery = gql`
-  query GetCustomerRecordsQuery($input: GetCustomerRecordsInput!) {
-    getCustomerRecords(input: $input) {
-      records {
-        createDate
-        createTime
-        valueDate
-        performingOrganization
-        collectingOrganization
-        chargeType
-        itemCode
-        chargeItemSubject
-        periodType
-        period
-        amount
-        category
-        subCategory
-        actionCategory
-        reference
-        referenceToLevy
-        accountReference
-      }
-    }
-  }
-`
-
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
@@ -79,13 +46,13 @@ const FinanceTransactions = () => {
   const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>([])
 
   const { data: customerChartypeData } = useQuery<Query>(
-    GetCustomerChargeTypeQuery,
+    GET_CUSTOMER_CHARGETYPE,
   )
   const chargeTypeData: CustomerChargeType =
     customerChartypeData?.getCustomerChargeType || {}
 
   const [loadCustomerRecords, { data, loading, called }] = useLazyQuery(
-    GetCustomerRecordsQuery,
+    GET_CUSTOMER_RECORDS,
   )
 
   useEffect(() => {

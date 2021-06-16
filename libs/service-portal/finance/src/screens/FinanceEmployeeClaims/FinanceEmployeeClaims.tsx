@@ -15,8 +15,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-const FinanceSalary = () => {
-  useNamespaces('sp.finance-salary')
+const FinanceEmployeeClaims = () => {
+  useNamespaces('sp.finance-employee-claims')
   const { formatMessage } = useLocale()
 
   return (
@@ -24,7 +24,7 @@ const FinanceSalary = () => {
       <Stack space={2}>
         <Text variant="h1" as="h1">
           {formatMessage({
-            id: 'service.portal:finance-salary-title',
+            id: 'service.portal:finance-employee-claims-title',
             defaultMessage: 'Laungreiðendakröfur',
           })}
         </Text>
@@ -32,7 +32,7 @@ const FinanceSalary = () => {
           <Column width="8/12">
             <Text variant="intro">
               {formatMessage({
-                id: 'service.portal:finance-salary-intro',
+                id: 'service.portal:finance-employee-claims-intro',
                 defaultMessage:
                   'Eitthvað mega hresst og peppað um laungreiðendakröfur mögulega í tveimur línum.',
               })}
@@ -87,4 +87,4 @@ const FinanceSalary = () => {
   )
 }
 
-export default FinanceSalary
+export default FinanceEmployeeClaims

@@ -50,8 +50,8 @@ export const financeModule: ServicePortalModule = {
       if (data?.employeeClaimsTap) {
         routes.push({
           name: 'Laungreiðendakröfur',
-          path: ServicePortalPath.FinanceSalary,
-          render: () => lazy(() => import('./screens/FinanceSalary')),
+          path: ServicePortalPath.FinanceEmployeeClaims,
+          render: () => lazy(() => import('./screens/FinanceEmployeeClaims')),
         })
       }
     } catch (error) {

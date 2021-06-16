@@ -207,10 +207,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           },
           {
             name: defineMessage({
-              id: 'service.portal:financeSalary',
+              id: 'service.portal:financeEmployeeClaims',
               defaultMessage: 'Laungreiðendakröfur',
             }),
-            path: ServicePortalPath.FinanceSalary,
+            path: ServicePortalPath.FinanceEmployeeClaims,
           },
         ],
         icon: {

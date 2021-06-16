@@ -35,7 +35,7 @@ export enum ServicePortalPath {
   FinanceRoot = '/fjarmal',
   FinanceStatus = '/fjarmal/stada',
   FinanceTransactions = '/fjarmal/faerslur',
-  FinanceSalary = '/fjarmal/laungreidendakrofur',
+  FinanceEmployeeClaims = '/fjarmal/laungreidendakrofur',
   FinanceBills = '/fjarmal/greidslusedlar-og-greidslukvittanir',
   FinanceVehicles = 'https://mitt.samgongustofa.is/',
   FinancePayments = '/greidslur',
