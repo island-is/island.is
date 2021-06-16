@@ -30,7 +30,12 @@ import { useNamespace } from '@island.is/web/hooks'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '../../units/errors'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { FilterMenu, CategoriesProps, FilterProps } from './FilterMenu'
+import {
+  FilterMenu,
+  CategoriesProps,
+  FilterOptions,
+  FilterLabels,
+} from './FilterMenu'
 
 import * as styles from './Organizations.treat'
 
@@ -53,7 +58,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const [page, setPage] = useState<number>(1)
   const { linkResolver } = useLinkResolver()
 
-  const [filter, setFilter] = useState<FilterProps>({
+  const [filter, setFilter] = useState<FilterOptions>({
     raduneyti: [],
     input: '',
   })
@@ -64,7 +69,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const categories: CategoriesProps[] = [
     {
       id: 'raduneyti',
-      label: 'Ráðuneyti',
+      label: n('organizations', 'Ráðuneyti'),
       selected: filter.raduneyti,
       filters: tagsItems
         .filter((x) => x.title)
@@ -95,8 +100,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const base = page === 1 ? 0 : (page - 1) * CARDS_PER_PAGE
   const visibleItems = filteredItems.slice(base, page * CARDS_PER_PAGE)
 
-  const resetPagination = () => {
-    setPage(1)
+  const goToPage = (page: number = 1) => {
+    setPage(page)
     window.scrollTo(0, 0)
   }
 
@@ -104,6 +109,14 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     'stofnanirHeading',
     'Stofnanir Íslenska Ríkisins',
   )} | Ísland.is`
+
+  const filterLabels: FilterLabels = {
+    labelClear: n('filterClear', 'Hreinsa síu'),
+    labelOpen: n('filterOpen', 'Opna síu'),
+    labelClose: n('filterClose', 'Loka síu'),
+    labelTitle: n('filterOrganization', 'Sía stofnanir'),
+    labelResult: n('showResults', 'Sýna niðurstöður'),
+  }
 
   return (
     <>
@@ -138,18 +151,19 @@ const OrganizationPage: Screen<OrganizationProps> = ({
         background="blue100"
         display="inlineBlock"
         width="full"
-        paddingTop={[verticalSpacing, 0]}
+        paddingTop={[verticalSpacing, verticalSpacing, 0]}
       >
         <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
           <SidebarLayout
             contentId="organizations-list"
             sidebarContent={
               <FilterMenu
+                {...filterLabels}
                 categories={categories}
                 filter={filter}
                 setFilter={setFilter}
                 resultCount={filteredItems.length}
-                onBeforeUpdate={resetPagination}
+                onBeforeUpdate={() => goToPage(1)}
               />
             }
             hiddenOnTablet
@@ -162,11 +176,12 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                   paddingBottom={verticalSpacing}
                 >
                   <FilterMenu
+                    {...filterLabels}
                     categories={categories}
                     filter={filter}
                     setFilter={setFilter}
                     resultCount={filteredItems.length}
-                    onBeforeUpdate={resetPagination}
+                    onBeforeUpdate={() => goToPage(1)}
                     asDialog={true}
                   />
                 </GridColumn>
@@ -209,11 +224,11 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                       <Pagination
                         page={page}
                         totalPages={totalPages}
+                        variant="blue"
                         renderLink={(page, className, children) => (
                           <button
                             onClick={() => {
-                              setPage(page)
-                              window.scrollTo(0, 0)
+                              goToPage(page)
                             }}
                           >
                             <span className={styles.srOnly}>
@@ -235,8 +250,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   )
 }
 
-OrganizationPage.getInitialProps = async ({ apolloClient, query, locale }) => {
-  // const slug = query.slug as string
+OrganizationPage.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getOrganizations },

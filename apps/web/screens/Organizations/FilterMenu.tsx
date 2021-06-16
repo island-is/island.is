@@ -3,21 +3,27 @@ import {
   Filter,
   FilterInput,
   FilterMultiChoice,
+  FilterProps,
 } from '@island.is/island-ui/core'
 
-export type FilterProps = {
+export type FilterOptions = {
   raduneyti: Array<string>
   input: string
 }
 
 interface FilterMenuProps {
   categories: ReadonlyArray<CategoriesProps>
-  filter: FilterProps
-  setFilter: Dispatch<SetStateAction<FilterProps>>
+  filter: FilterOptions
+  setFilter: Dispatch<SetStateAction<FilterOptions>>
   asDialog?: boolean
   resultCount: number
   onBeforeUpdate: Function
 }
+
+export type FilterLabels = Pick<
+  FilterProps,
+  'labelClear' | 'labelOpen' | 'labelClose' | 'labelTitle' | 'labelResult'
+>
 
 export type CategoriesProps = {
   id: string
@@ -33,13 +39,18 @@ export const FilterMenu = ({
   asDialog,
   resultCount,
   onBeforeUpdate,
-}: FilterMenuProps) => (
+  labelClear = 'Hreinsa síu',
+  labelOpen = 'Opna síu',
+  labelClose = 'Loka síu',
+  labelTitle = 'Sía stofnanir',
+  labelResult = 'Sýna niðurstöður',
+}: FilterMenuProps & FilterLabels) => (
   <Filter
-    labelClear="Hreinsa síu"
-    labelOpen="Opna síu"
-    labelClose="Loka síu"
-    labelTitle="Sía stofnanir"
-    labelResult="Sýna niðurstöður"
+    labelClear={labelClear}
+    labelOpen={labelOpen}
+    labelClose={labelClose}
+    labelTitle={labelTitle}
+    labelResult={labelResult}
     resultCount={resultCount}
     isDialog={asDialog}
     onFilterClear={() =>
