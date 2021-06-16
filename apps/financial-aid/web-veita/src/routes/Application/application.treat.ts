@@ -56,7 +56,7 @@ export const statusOptions = style({
   paddingTop: theme.spacing[2],
   borderRadius: '12px',
   fontWeight: 'lighter',
-  transition: 'backgroundColor ease 250ms, font-weight ease 50ms',
+  transition: 'background-color ease 250ms, font-weight ease 50ms',
   selectors: {
     '&:hover': {
       backgroundColor: theme.color.blue100,
