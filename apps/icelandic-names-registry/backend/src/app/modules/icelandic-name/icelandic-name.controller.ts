@@ -20,7 +20,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
 
 import { NationalIdGuard } from '../../common'
