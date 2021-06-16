@@ -20,7 +20,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import { AuditService } from '@island.is/nest/audit'
 
 import { NationalIdGuard } from '../../common'
 import { IcelandicNameService } from './icelandic-name.service'
@@ -30,7 +31,10 @@ import { UpdateIcelandicNameBodyDto, CreateIcelandicNameBodyDto } from './dto'
 @Controller('api/icelandic-names-registry')
 @ApiTags('icelandic-names-registry')
 export class IcelandicNameController {
-  constructor(private readonly icelandicNameService: IcelandicNameService) {}
+  constructor(
+    private readonly icelandicNameService: IcelandicNameService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -89,6 +93,7 @@ export class IcelandicNameController {
   async updateNameById(
     @Param('id') id: number,
     @Body() body: UpdateIcelandicNameBodyDto,
+    @CurrentUser() user: User,
   ): Promise<IcelandicName> {
     const [
       affectedRows,
@@ -98,6 +103,13 @@ export class IcelandicNameController {
     if (!affectedRows) {
       throw new BadRequestException(`Could not update user by id: ${id}`)
     }
+
+    this.auditService.audit({
+      user,
+      action: 'updateNameById',
+      resources: `${id}`,
+      meta: { fields: Object.keys(body) },
+    })
 
     return icelandicName
   }
@@ -115,8 +127,18 @@ export class IcelandicNameController {
     status: 400,
     description: 'The request data was missing or had invalid values.',
   })
-  createName(@Body() body: CreateIcelandicNameBodyDto): Promise<IcelandicName> {
-    return this.icelandicNameService.createName(body)
+  createName(
+    @Body() body: CreateIcelandicNameBodyDto,
+    @CurrentUser() user: User,
+  ): Promise<IcelandicName> {
+    return this.auditService.auditPromise<IcelandicName>(
+      {
+        user,
+        action: 'createName',
+        resources: (name) => `${name.id}`,
+      },
+      this.icelandicNameService.createName(body),
+    )
   }
 
   @UseGuards(IdsUserGuard, NationalIdGuard)
@@ -130,12 +152,21 @@ export class IcelandicNameController {
   @ApiNotFoundResponse({
     description: 'The name was not found.',
   })
-  async deleteById(@Param('id') id: number): Promise<number> {
+  async deleteById(
+    @Param('id') id: number,
+    @CurrentUser() user: User,
+  ): Promise<number> {
     const count = await this.icelandicNameService.deleteById(id)
 
     if (count === 0) {
       throw new NotFoundException(`Name with id ${id} was not found!`)
     }
+
+    this.auditService.audit({
+      user,
+      action: 'deleteById',
+      resources: `${id}`,
+    })
 
     return count
   }
