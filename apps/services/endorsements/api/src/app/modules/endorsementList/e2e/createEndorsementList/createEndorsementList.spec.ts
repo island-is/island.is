@@ -3,7 +3,7 @@ import * as request from 'supertest'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { setup } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
-import { EndorsementTag } from '../../endorsementList.model'
+import { EndorsementTag } from '../../constants'
 
 let app: INestApplication
 
