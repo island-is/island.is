@@ -1,4 +1,4 @@
-import { withKnobs } from '@storybook/addon-knobs'
+import { withKnobs, text } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
@@ -23,8 +23,10 @@ storiesOf('Heading', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Heading', () => {
-    return <Heading>Tilkynningar</Heading>
+    const heading = text('Heading Text', 'Tilkynningar');
+    return <Heading>{heading}</Heading>
   })
   .add('Heading With Button', () => {
-    return <Heading button={<Close />}>Tilkynningar</Heading>
+    const heading = text('Heading Text with Button', 'Tilkynningar');
+    return <Heading button={<Close />}>{heading}</Heading>
   })

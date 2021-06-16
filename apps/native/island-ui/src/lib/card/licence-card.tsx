@@ -81,7 +81,7 @@ const ImgWrap = styled.View`
 interface LicenceCardProps {
   title: string
   status: LicenseStatus
-  date?: string
+  date?: Date | string
   agencyLogo: ImageSourcePropType
   type: LicenseType
   nativeID?: string
@@ -118,6 +118,7 @@ export function LicenceCard({
   date,
   status,
 }: LicenceCardProps) {
+  console.log(status, 'status')
   const theme = useTheme()
   const variant = statusIcon[status]
   let titleString = title;
