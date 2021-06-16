@@ -333,6 +333,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       {localization.fields['clientId'].label}
                     </label>
                     <input
+                      id="clientId"
                       type="text"
                       name="client.clientId"
                       ref={register({
