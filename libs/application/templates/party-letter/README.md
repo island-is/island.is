@@ -8,7 +8,7 @@ Application System setup: [Setup](https://docs.devland.is/apps/application-syste
 
 ### Additional setup
 
-There are additional steps required to run this template locally
+There are additional steps required to run this template locally.
 
 ### National Registry Provider
 
