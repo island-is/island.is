@@ -44,13 +44,19 @@ export const generateApplicationEmail: ApplicationEmail = (
       )
     : []
 
+  const contactName = getValueViaPath(application.answers, 'contact.name') as
+    | string
+    | undefined
+  const contactEmail = getValueViaPath(application.answers, 'contact.email') as
+    | string
+    | undefined
   const overview = applicationOverviewTemplate(application)
   const body = dedent(`<h2>Yfirlit umsóknar</h2> ${overview}`)
 
   return {
     from: {
-      name: applicationSenderName,
-      address: applicationSenderEmail,
+      name: contactName ?? applicationSenderName,
+      address: contactEmail ?? applicationSenderEmail,
     },
     to: [
       {
