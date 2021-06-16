@@ -29,6 +29,7 @@ const HomeCircumstancesForm = () => {
     router.pathname,
   ) as NavigationProps
 
+  // TODO: Should use the enum not plain string.
   const options = [
     'WithParents',
     'WithOthers',
@@ -106,6 +107,7 @@ const HomeCircumstancesForm = () => {
 
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
+        // TODO: should be a function out side of the JSX
         onNextButtonClick={() => {
           //Temperary error state
           //Check if any radio is checked

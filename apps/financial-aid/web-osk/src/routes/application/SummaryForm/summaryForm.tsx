@@ -42,6 +42,7 @@ import {
   CreateApplication,
   insertAt,
   aidCalculator,
+  State,
 } from '@island.is/financial-aid/shared'
 
 interface MunicipalityData {
@@ -94,6 +95,7 @@ const SummaryForm = () => {
           employment: form?.employment,
           employmentCustom: form?.employmentCustom,
           formComment: form?.formComment,
+          state: State.NEW,
         },
       },
     })
@@ -113,6 +115,7 @@ const SummaryForm = () => {
     router.pathname,
   ) as NavigationProps
 
+  // Todo: do the calculations
   const calculation = [
     {
       label: 'Full upphæð aðstoðar',
@@ -256,6 +259,7 @@ const SummaryForm = () => {
             <Text fontWeight="semiBold">Kennitala</Text>
             {user?.nationalId && (
               <Text>
+                {/* Todo: put in format functions */}
                 {insertAt(user.nationalId.replace('-', ''), '-', 6) || '-'}
               </Text>
             )}
@@ -265,6 +269,7 @@ const SummaryForm = () => {
             <Text fontWeight="semiBold">Sími</Text>
             {user?.phoneNumber && (
               <Text marginBottom={3}>
+                {/* Todo: put in format functions */}
                 {insertAt(user.phoneNumber.replace('-', ''), '-', 3) || '-'}
               </Text>
             )}
@@ -361,6 +366,7 @@ const SummaryForm = () => {
           </Text>
         </div>
 
+        {/* Put in a component */}
         <ModalBase
           baseId="cancelForm"
           isVisible={isVisible}

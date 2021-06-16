@@ -48,6 +48,9 @@ const AddressForm = () => {
       url: 'https://www.lifeyrismal.is/is/sjodirnir',
     },
   ]
+
+  // todo: too complex
+
   return (
     <FormLayout
       activeSection={navigation?.activeSectionIndex}
@@ -104,6 +107,7 @@ const AddressForm = () => {
         </Box>
       </FormContentContainer>
 
+      {/* TODO: Should not have '/ as the default value' */}
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
         nextUrl={navigation?.nextUrl ?? '/'}

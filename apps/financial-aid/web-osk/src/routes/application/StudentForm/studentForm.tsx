@@ -95,6 +95,8 @@ const StudentForm = () => {
         </Box>
       </FormContentContainer>
 
+      {/* TODO: put into function and rewrite */}
+      {/* TODO: watch Whiplash */}
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
         nextUrl={navigation?.nextUrl ?? '/'}

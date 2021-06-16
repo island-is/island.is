@@ -1,22 +1,40 @@
 import { useEffect, useState, useContext } from 'react'
 
 import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
-import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import {
+  Form,
+  FormContext,
+} from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
+// navigationInfo
 interface ResultProps {
   activeSectionIndex: number
   activeSubSectionIndex?: number
-  prevUrl: string | undefined
-  nextUrl: string | undefined
+  prevUrl?: string
+  nextUrl?: string
 }
 
 const useFormNavigation = (currentUrl: string) => {
   const { form, updateForm } = useContext(FormContext)
 
+  var sections = useNavigationTree()
+
+  // const createNavigationInfo = (
+  //   form: Form | undefined,
+  //   navigationTree: any,
+  // ): ResultProps => {
+  //   return {
+  //     activeSectionIndex: 1,
+  //     activeSubSectionIndex: 2,
+  //     prevUrl: 'lol',
+  //     nextUrl: 'lol',
+  //   }
+  // }
+
+  // better name
   const [result, setResult] = useState<ResultProps>()
 
-  var sections = useNavigationTree(form?.hasIncome)
-
+  // Use types
   const getNextUrl = (obj: {
     name?: string
     url?: string
@@ -25,7 +43,7 @@ const useFormNavigation = (currentUrl: string) => {
   }) => {
     if (obj) {
       if (obj.children) {
-        return obj?.children[0]?.url ?? ''
+        return obj?.children[0]?.url
       } else {
         return obj.url
       }
@@ -42,7 +60,7 @@ const useFormNavigation = (currentUrl: string) => {
   }) => {
     if (obj) {
       if (obj.children) {
-        return obj?.children[obj?.children.length - 1]?.url ?? ''
+        return obj?.children[obj?.children.length - 1]?.url
       } else {
         return obj.url
       }
@@ -52,6 +70,20 @@ const useFormNavigation = (currentUrl: string) => {
   }
 
   useEffect(() => {
+    // nota foreach eða for (const [index, file] of files.entries())
+    // finna sectionið í trénu
+    // Finna út prev og next í trénu
+    // vista state
+    // reyna að nota types
+    // og nöfn sem meika sense
+
+    // const bla = createNavigationInfo(form, sections)
+    // setResult(bla)
+
+    let currentSection = undefined
+
+    sections.find
+
     sections.map((item, index) => {
       if (item.children) {
         item.children.map((el: any, i: number) => {

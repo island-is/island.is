@@ -91,6 +91,7 @@ const IncomeForm = () => {
         </Box>
       </FormContentContainer>
 
+      {/* TODO: clean up function */}
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
         onNextButtonClick={() => {

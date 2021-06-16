@@ -24,12 +24,14 @@ const EmploymentForm = () => {
   const router = useRouter()
 
   const { form, updateForm } = useContext(FormContext)
+  // TODO: hasError?
   const [error, setError] = useState(false)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps
 
+  // TODO: use enum
   const options = ['Working', 'Unemployed', 'CannotWork', 'Other'].map(
     (item) => {
       return {
@@ -98,6 +100,7 @@ const EmploymentForm = () => {
         </Box>
       </FormContentContainer>
 
+      {/* Todo clean up function */}
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
         onNextButtonClick={() => {

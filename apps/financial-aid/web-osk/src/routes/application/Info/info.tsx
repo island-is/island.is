@@ -99,6 +99,7 @@ const ApplicationInfo = () => {
 
       <FormFooter
         onPrevButtonClick={() => {
+          // TODO: Make a logout function
           api.logOut()
           setUser && setUser(undefined)
         }}

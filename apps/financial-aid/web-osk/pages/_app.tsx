@@ -12,7 +12,6 @@ import '../src/styles.css'
 class FinancialAidApplication extends App<AppProps> {
   render() {
     const { Component, pageProps } = this.props
-    // WIP Provider FormProvider
     return (
       <ApolloProvider client={client}>
         <FormProvider>
