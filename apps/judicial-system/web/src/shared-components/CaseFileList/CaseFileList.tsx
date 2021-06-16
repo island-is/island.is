@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import { CaseFile, Modal } from '..'
-import useFileList from '../../utils/hooks/useFileList'
+import { useFileList } from '../../utils/hooks'
 import { AnimatePresence } from 'framer-motion'
 
 interface Props {

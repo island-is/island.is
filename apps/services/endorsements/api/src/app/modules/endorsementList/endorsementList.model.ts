@@ -11,16 +11,7 @@ import {
 import { Endorsement } from '../endorsement/endorsement.model'
 import { EndorsementMetaField } from '../endorsementMetadata/types'
 import { ValidationRuleDto } from './dto/validationRule.dto'
-
-export enum EndorsementTag {
-  PARTY_LETTER_2021 = 'partyLetter2021',
-  PARTY_APPLICATION_NORDAUSTURKJORDAEMI_2021 = 'partyApplicationNordausturkjordaemi2021',
-  PARTY_APPLICATION_NORDVESTURKJORDAEMI_2021 = 'partyApplicationNordvesturkjordaemi2021',
-  PARTY_APPLICATION_REYKJAVIKURKJORDAEMINORDUR_2021 = 'partyApplicationReykjavikurkjordaemiNordur2021',
-  PARTY_APPLICATION_REYKJAVIKURKJORDAEMISUDUR_2021 = 'partyApplicationReykjavikurkjordaemiSudur2021',
-  PARTY_APPLICATION_SUDURKJORDAEMI_2021 = 'partyApplicationSudurkjordaemi2021',
-  PARTY_APPLICATION_SUDVESTURKJORDAEMI_2021 = 'partyApplicationSudvesturkjordaemi2021',
-}
+import { EndorsementTag } from './constants'
 
 @Table({
   tableName: 'endorsement_list',
@@ -87,7 +78,15 @@ export class EndorsementList extends Model<EndorsementList> {
 
   @ApiProperty({ type: () => [Endorsement], required: false })
   @HasMany(() => Endorsement)
-  readonly endorsements?: Endorsement[]
+  endorsements?: Endorsement[]
+
+  @ApiProperty()
+  @Column({
+    type: DataType.JSONB,
+    allowNull: false,
+    defaultValue: '{}',
+  })
+  meta!: object
 
   @ApiProperty({
     type: String,

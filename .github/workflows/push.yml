@@ -194,12 +194,10 @@ jobs:
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+        uses: docker/setup-buildx-action@v1
 
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
@@ -319,12 +317,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
-        if: steps.gather.outcome == 'success'
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+        uses: docker/setup-buildx-action@v1
 
       - name: Building Docker images
         if: steps.gather.outcome == 'success'
