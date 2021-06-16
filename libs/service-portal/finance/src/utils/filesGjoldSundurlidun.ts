@@ -4,19 +4,7 @@ import {
   FinanceStatusDetailsType,
   FinanceStatusDetailsChangeItem,
 } from '../screens/FinanceStatus/FinanceStatusData.types'
-
-const gjoldSundurlidunHeaders = [
-  'Gjaldgrunnur',
-  'Ár og tímabil',
-  'Gjalddagi',
-  'Eindagi',
-  'Höfuðstóll',
-  'Vextir',
-  'Kostnaður',
-  'Greiðslur',
-  'Staða',
-  'Gjaldflokkur',
-]
+import { gjoldSundurlidunHeaders } from './dataHeaders'
 
 export const exportGjoldSundurlidunCSV = async (
   data: FinanceStatusDetailsType,
@@ -38,7 +26,8 @@ export const exportGjoldSundurlidunCSV = async (
     ],
   )
 
-  await downloadCSV(name, gjoldSundurlidunHeaders, dataArray)
+  const headers = [...gjoldSundurlidunHeaders, 'Gjaldflokkur']
+  await downloadCSV(name, headers, dataArray)
 }
 
 export const exportGjoldSundurlidunXSLX = (data: FinanceStatusDetailsType) => {

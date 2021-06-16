@@ -4,45 +4,29 @@ import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from '../screens/FinanceStatus/FinanceStatusData.types'
+import { greidsluStadaHeaders } from './dataHeaders'
 
-export const greidsluStadaHeaders = [
-  'Gjaldflokkur',
-  'Staða',
-  'Umsjónarmaður',
-  'Heimasíða',
-  'Sími',
-  'Netfang',
-]
+const getDataArray = (data: FinanceStatusDataType) =>
+  data.organizations.map((org: FinanceStatusOrganizationType) =>
+    org.chargeTypes.map((chargeType) => [
+      chargeType.name,
+      chargeType.totals.toString(),
+      org.name,
+      org.homepage,
+      org.phone,
+      org.email,
+    ]),
+  )
 
 export const exportGreidslustadaCSV = async (data: FinanceStatusDataType) => {
   const name = 'Staða ríkissjóður stofnanir'
-  const dataArrays = data.organizations.map(
-    (org: FinanceStatusOrganizationType) =>
-      org.chargeTypes.map((chargeType) => [
-        chargeType.name,
-        chargeType.totals,
-        org.name,
-        org.homepage,
-        org.phone,
-        org.email,
-      ]),
-  )
+  const dataArrays = getDataArray(data)
 
   await downloadCSV(name, greidsluStadaHeaders, flatten(dataArrays))
 }
 
 export const exportGreidslustadaXSLX = (data: FinanceStatusDataType) => {
-  const dataArrays = data.organizations.map(
-    (org: FinanceStatusOrganizationType) =>
-      org.chargeTypes.map((chargeType) => [
-        chargeType.name,
-        chargeType.totals.toString(),
-        org.name,
-        org.homepage,
-        org.phone,
-        org.email,
-      ]),
-  )
+  const dataArrays = getDataArray(data)
 
   return flatten(dataArrays)
 }

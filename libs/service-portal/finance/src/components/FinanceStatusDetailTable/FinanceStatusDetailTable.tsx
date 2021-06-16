@@ -1,17 +1,18 @@
 import React, { FC } from 'react'
 import { Table as T } from '@island.is/island-ui/core'
-import { gql, useLazyQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
 import {
   FinanceStatusOrganizationType,
   FinanceStatusDetailsType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
-import amountFormat from '../../utils/amountFormat'
 import { Box, Text, Columns, Column, Button } from '@island.is/island-ui/core'
 import {
   exportGjoldSundurlidunCSV,
   exportGjoldSundurlidunXSLX,
 } from '../../utils/filesGjoldSundurlidun'
-import { downloadXlsx } from '../../utils/downloadFile'
+import amountFormat from '../../utils/amountFormat'
+import { downloadXlsxDocument } from '@island.is/service-portal/graphql'
+import { gjoldSundurlidunHeaders } from '../../utils/dataHeaders'
 import * as styles from './FinanceStatusDetailTable.treat'
 
 const GetExcelSheetData = gql`
@@ -29,35 +30,13 @@ const FinanceStatusDetailTable: FC<Props> = ({
   organization,
   financeStatusDetails,
 }) => {
-  const tableHeaderArray = [
-    'Gjaldgrunnur',
-    'Ár og tímabil',
-    'Gjalddagi',
-    'Eindagi',
-    'Höfuðstóll',
-    'Vextir',
-    'Kostnaður',
-    'Greiðslur',
-    'Staða',
-  ]
-
-  const [loadExcelSheet] = useLazyQuery(GetExcelSheetData, {
-    onCompleted: (data) => {
-      const xlslData = data?.getExcelDocument || null
-      if (xlslData) {
-        downloadXlsx(xlslData.file, xlslData.filename)
-      } else {
-        console.warn('No excel data')
-      }
-    },
-  })
-
+  const { downloadSheet } = downloadXlsxDocument()
   return (
     <Box className={styles.wrapper} background="white">
       <T.Table>
         <T.Head>
           <T.Row>
-            {tableHeaderArray.map((item, i) => (
+            {gjoldSundurlidunHeaders.map((item, i) => (
               <T.HeadData key={i} text={{ truncate: true }}>
                 <Text fontWeight="semiBold" variant="small">
                   {item}
@@ -71,15 +50,9 @@ const FinanceStatusDetailTable: FC<Props> = ({
                   icon="arrowForward"
                   iconType="filled"
                   onClick={() =>
-                    loadExcelSheet({
-                      variables: {
-                        input: {
-                          headers: tableHeaderArray,
-                          data: exportGjoldSundurlidunXSLX(
-                            financeStatusDetails,
-                          ),
-                        },
-                      },
+                    downloadSheet({
+                      headers: gjoldSundurlidunHeaders,
+                      data: exportGjoldSundurlidunXSLX(financeStatusDetails),
                     })
                   }
                   preTextIconType="filled"

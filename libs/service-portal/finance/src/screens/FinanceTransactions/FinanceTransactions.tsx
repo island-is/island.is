@@ -7,6 +7,7 @@ import {
   CustomerChargeType,
   CustomerRecords,
 } from './FinanceTransactionsData.types'
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import {
   Box,
   Text,
@@ -16,10 +17,17 @@ import {
   GridRow,
   GridColumn,
   DatePicker,
-  LoadingDots,
+  SkeletonLoader,
   Select,
   AlertBanner,
+  Hidden,
 } from '@island.is/island-ui/core'
+import { greidsluStadaHeaders } from '../../utils/dataHeaders'
+import {
+  exportHreyfingarCSV,
+  exportHreyfingarXSLX,
+} from '../../utils/filesHreyfingar'
+import { downloadXlsxDocument } from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
@@ -64,6 +72,7 @@ const GetCustomerRecordsQuery = gql`
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
+  const { downloadSheet } = downloadXlsxDocument()
 
   const [fromDate, setFromDate] = useState<string>()
   const [toDate, setToDate] = useState<string>()
@@ -132,6 +141,27 @@ const FinanceTransactions = () => {
           </Column>
         </Columns>
         <Box marginTop={[1, 1, 2, 2, 5]}>
+          {recordsDataArray.length > 0 ? (
+            <GridRow>
+              <GridColumn paddingBottom={2} span={['1/1', '12/12']}>
+                <Hidden print={true}>
+                  <Columns space="p2" align="right">
+                    <Column width="content">
+                      <DropdownExport
+                        onGetCSV={() => exportHreyfingarCSV(recordsDataArray)}
+                        onGetExcel={() =>
+                          downloadSheet({
+                            headers: greidsluStadaHeaders,
+                            data: exportHreyfingarXSLX(recordsDataArray),
+                          })
+                        }
+                      />
+                    </Column>
+                  </Columns>
+                </Hidden>
+              </GridColumn>
+            </GridRow>
+          ) : null}
           <GridRow>
             <GridColumn paddingBottom={[1, 0]} span={['1/1', '4/12']}>
               <Select
@@ -183,7 +213,11 @@ const FinanceTransactions = () => {
               variant="info"
             />
           )}
-          {loading && <LoadingDots large color="gradient" />}
+          {loading && (
+            <Box padding={3}>
+              <SkeletonLoader space={1} height={40} repeat={5} />
+            </Box>
+          )}
           {recordsDataArray.length === 0 && called && !loading && (
             <AlertBanner
               description="Leit skilaði engum niðurstöðum. Vinsamlegast leitaðu aftur."

@@ -1,6 +1,6 @@
 import React from 'react'
 import flatten from 'lodash/flatten'
-import { gql, useQuery, useLazyQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
@@ -11,7 +11,6 @@ import {
   Columns,
   Column,
   Button,
-  DropdownMenu,
   SkeletonLoader,
   AlertBanner,
   Hidden,
@@ -23,14 +22,14 @@ import {
 } from './FinanceStatusData.types'
 import { ExpandHeader, ExpandRow } from '../../components/ExpandableTable'
 import amountFormat from '../../utils/amountFormat'
+import { greidsluStadaHeaders } from '../../utils/dataHeaders'
 import {
   exportGreidslustadaCSV,
   exportGreidslustadaXSLX,
-  greidsluStadaHeaders,
 } from '../../utils/filesGreidslustada'
-import { downloadXlsx } from '../../utils/downloadFile'
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
-import * as styles from './FinanceStatus.treat'
+import { downloadXlsxDocument } from '@island.is/service-portal/graphql'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -38,30 +37,14 @@ const GetFinanceStatusQuery = gql`
   }
 `
 
-const GetExcelSheetData = gql`
-  query GetExcelSheetData($input: ExcelSheetInput!) {
-    getExcelDocument(input: $input)
-  }
-`
-
 const FinanceStatus: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
+  const { downloadSheet } = downloadXlsxDocument()
 
   const { loading, ...statusQuery } = useQuery<Query>(GetFinanceStatusQuery)
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
-
-  const [loadExcelSheet] = useLazyQuery(GetExcelSheetData, {
-    onCompleted: (data) => {
-      const xlslData = data?.getExcelDocument || null
-      if (xlslData) {
-        downloadXlsx(xlslData.file, xlslData.filename)
-      } else {
-        console.warn('No excel data') // Should warn the user with toast?
-      }
-    },
-  })
 
   function getChargeTypeTotal() {
     const organizationChargeTypes = financeStatusData?.organizations?.map(
@@ -129,34 +112,15 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                     </Button>
                   </Column>
                   <Column width="content">
-                    <Box className={styles.buttonWrapper}>
-                      <DropdownMenu
-                        icon="ellipsisHorizontal"
-                        menuLabel="Fleiri möguleikar"
-                        items={[
-                          {
-                            onClick: () =>
-                              exportGreidslustadaCSV(financeStatusData),
-                            title: 'Sækja sem CSV',
-                          },
-                          {
-                            onClick: () =>
-                              loadExcelSheet({
-                                variables: {
-                                  input: {
-                                    headers: greidsluStadaHeaders,
-                                    data: exportGreidslustadaXSLX(
-                                      financeStatusData,
-                                    ),
-                                  },
-                                },
-                              }),
-                            title: 'Sækja sem Excel',
-                          },
-                        ]}
-                        title="Meira"
-                      />
-                    </Box>
+                    <DropdownExport
+                      onGetCSV={() => exportGreidslustadaCSV(financeStatusData)}
+                      onGetExcel={() =>
+                        downloadSheet({
+                          headers: greidsluStadaHeaders,
+                          data: exportGreidslustadaXSLX(financeStatusData),
+                        })
+                      }
+                    />
                   </Column>
                 </Columns>
               </Hidden>
