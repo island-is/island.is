@@ -5,10 +5,13 @@ const sevenDays = 7 * 24 * 60 * 60 * 1000
 
 export function transformCase(theCase: Case): Case {
   theCase.sendRequestToDefender = theCase.sendRequestToDefender ?? false
+  theCase.requestProsecutorOnlySession =
+    theCase.requestProsecutorOnlySession ?? false
+  theCase.isAccusedAbsent = theCase.isAccusedAbsent ?? false
 
-  if (theCase.custodyEndDate) {
-    theCase.isCustodyEndDateInThePast =
-      Date.now() > new Date(theCase.custodyEndDate).getTime()
+  if (theCase.validToDate) {
+    theCase.isValidToDateInThePast =
+      Date.now() > new Date(theCase.validToDate).getTime()
   }
 
   theCase.isAppealDeadlineExpired = theCase.rulingDate

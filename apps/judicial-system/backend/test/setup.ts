@@ -61,12 +61,12 @@ jest.mock('stream-buffers', function () {
 let app: INestApplication
 let sequelize: Sequelize
 
-const truncate = () => {
+const truncate = async () => {
   if (!sequelize) {
     return
   }
 
-  Promise.all(
+  await Promise.all(
     Object.values(sequelize.models).map((model) => {
       if (model.tableName.toLowerCase() === 'sequelize') {
         return null
@@ -99,7 +99,7 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
   return app
 }
 
-beforeAll(() => truncate())
+beforeAll(truncate)
 
 afterAll(async () => {
   if (app && sequelize) {

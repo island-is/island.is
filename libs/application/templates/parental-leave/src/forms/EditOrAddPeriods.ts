@@ -10,10 +10,13 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'
-import { getAllPeriodDates } from '../lib/parentalLeaveUtils'
-import { Period } from '../types'
+import {
+  getApplicationAnswers,
+  getAllPeriodDates,
+} from '../lib/parentalLeaveUtils'
 
 export const EditOrAddPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddPeriods',
@@ -36,11 +39,9 @@ export const EditOrAddPeriods: Form = buildForm({
               description: parentalLeaveFormMessages.startDate.description,
               placeholder: parentalLeaveFormMessages.startDate.placeholder,
               excludeDates: (application) => {
-                const {
-                  answers: { periods },
-                } = application
+                const { periods } = getApplicationAnswers(application.answers)
 
-                return getAllPeriodDates(periods as Period[])
+                return getAllPeriodDates(periods)
               },
             }),
             buildMultiField({
@@ -53,11 +54,11 @@ export const EditOrAddPeriods: Form = buildForm({
                   title: parentalLeaveFormMessages.endDate.label,
                   placeholder: parentalLeaveFormMessages.endDate.placeholder,
                   excludeDates: (application) => {
-                    const {
-                      answers: { periods },
-                    } = application
+                    const { periods } = getApplicationAnswers(
+                      application.answers,
+                    )
 
-                    return getAllPeriodDates(periods as Period[])
+                    return getAllPeriodDates(periods)
                   },
                 }),
               ],
