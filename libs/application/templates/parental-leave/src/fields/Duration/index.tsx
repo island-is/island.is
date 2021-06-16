@@ -122,11 +122,15 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
             <Text variant="h4" as="span">
               {formatMessage(parentalLeaveFormMessages.duration.paymentsRatio)}
               &nbsp;&nbsp;
-              <Tooltip
+              {/* 
+                Remove for first release
+                https://app.asana.com/0/1182378413629561/1200472736049963/f
+               */}
+              {/* <Tooltip
                 text={formatMessage(
                   parentalLeaveFormMessages.paymentPlan.description,
                 )}
-              />
+              /> */}
             </Text>
           </Box>
 
