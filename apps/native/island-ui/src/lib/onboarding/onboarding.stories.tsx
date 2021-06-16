@@ -1,4 +1,4 @@
-import { withKnobs } from '@storybook/addon-knobs'
+import { withKnobs, text } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
@@ -22,10 +22,11 @@ storiesOf('Onboarding', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Notifications', () => {
+    const title = text('Notification Onboarding Title', 'Fáðu tilkynningar um ný rafræn skjöl um leið og þau berast.')
     return (
       <Onboarding
         illustration={<Illustration />}
-        title="Fáðu tilkynningar um ný rafræn skjöl um leið og þau berast."
+        title={title}
         buttonSubmit={
           <Button
             title="Leyfa tilkynningar"
@@ -42,10 +43,11 @@ storiesOf('Onboarding', module)
     )
   })
   .add('Biometrics', () => {
+    const title = text('Biometrics Onboarding Title', 'Þú getur einnig notað FaceId til að opna appið án þess að slá inn PIN.')
     return (
       <Onboarding
         illustration={<Illustration />}
-        title="Þú getur einnig notað FaceId til að opna appið án þess að slá inn PIN."
+        title={title}
         buttonSubmit={
           <Button
             title="Not FaceID"

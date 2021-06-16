@@ -5,7 +5,7 @@ export const en: TranslatedMessages = {
   'login.welcomeMessage': 'Log in to the app with electronic ID',
   'login.loginButtonText': 'Login',
   'login.languageButtonText': 'Íslenska',
-  'login.needHelpButtonText': 'Need help',
+  'login.needHelpButtonText': 'Need help?',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
@@ -63,7 +63,7 @@ export const en: TranslatedMessages = {
   'settings.security.changePinDescription': 'Choose a new 4-digit PIN number',
   'settings.security.useBiometricsLabel': 'Use {biometricType}',
   'settings.security.useBiometricsDescription':
-    'That way you can skip entering your PIN number',
+    'With {biometricType} you don’t need to enter PIN',
   'settings.security.appLockTimeoutLabel': 'App lock timeout',
   'settings.security.appLockTimeoutDescription':
     'Time until app lock will appear',
@@ -73,7 +73,7 @@ export const en: TranslatedMessages = {
   'settings.about.logoutDescription': 'You will have to login again',
 
   // user: personal info
-  'user.natreg.infoBox': 'Your registration in Þjóðskrá Íslands',
+  'user.natreg.infoBox': 'Your registration at Registers Iceland',
   'user.natreg.displayName': 'Display name',
   'user.natreg.nationalId': 'Social ID',
   'user.natreg.birthPlace': 'Birthplace',
@@ -114,11 +114,11 @@ export const en: TranslatedMessages = {
   'home.notifications': 'Notifications',
   'home.welcomeText': 'Hi',
   'home.onboardingModule.card1':
-    'In this first version of the Ísland.is app, you can access electronic documents and certificates from the public sector, receive notifications and see the status of applications.',
+    'This first version of the Ísland.is app allows you to access electronic documents and certificates from the public sector, receive notifications and see the status of your applications.',
   'home.onboardingModule.card2':
-    'The goal of the app is to have at your disposal what you need at any given time in dealing with the public sector.',
+    'The app’s purpose is to provide faster access to your documents, applications, and other dealings with governmental institutions.',
   'home.onboardingModule.card3':
-    'If you have comments or suggestions about something that is missing or that could be improved, we would like to receive a line from you at island@island.is',
+    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at island@island.is',
 
   // inbox
   'inbox.screenTitle': 'Inbox',

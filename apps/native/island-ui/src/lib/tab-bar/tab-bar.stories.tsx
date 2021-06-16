@@ -1,4 +1,4 @@
-import { withKnobs } from '@storybook/addon-knobs'
+import { withKnobs, text } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
@@ -14,17 +14,19 @@ storiesOf('Tab Bar', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Default', () => {
+    const label1 = text('Tab Bar Label 1', 'Upplýsingar')
+    const label2 = text('Tab Bar Label 2', 'Stillingar')
     return (
       <View style={{ width: '100%' }}>
         <TabBar
           values={[
             {
               testID: 'personalinfo',
-              label: 'Personal Info',
+              label: label1,
             },
             {
               testID: 'settings',
-              label: 'Settings',
+              label: label2,
             },
           ]}
           onChange={(selectedIndex) => console.log('test')}

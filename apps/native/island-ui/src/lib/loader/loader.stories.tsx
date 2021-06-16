@@ -1,4 +1,4 @@
-import { withKnobs } from '@storybook/addon-knobs'
+import { withKnobs, text } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
@@ -24,5 +24,6 @@ storiesOf('Loader', module)
     return <Loader />
   })
   .add('Default With Text', () => {
-    return <Loader text="Sæki skjal" />
+    const title = text('Loader Text', 'Sæki skjal')
+    return <Loader text={title} />
   })
