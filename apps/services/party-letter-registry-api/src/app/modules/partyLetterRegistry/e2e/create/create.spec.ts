@@ -1,12 +1,26 @@
-import { setup } from '../../../../../../test/setup'
-import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
+
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+
+import { setup } from '../../../../../../test/setup'
+import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 
 let app: INestApplication
 
 beforeAll(async () => {
-  app = await setup()
+  app = await setup({
+    override: (builder) => {
+      builder
+        .overrideGuard(IdsUserGuard)
+        .useValue(
+          new MockAuthGuard({
+            nationalId: '1234567890',
+          }),
+        )
+        .compile()
+    },
+  })
 })
 
 describe('CreatePartyLetterRegistry', () => {

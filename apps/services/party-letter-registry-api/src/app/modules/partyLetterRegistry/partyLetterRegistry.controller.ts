@@ -1,3 +1,4 @@
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import {
   Body,
   Controller,
@@ -5,6 +6,7 @@ import {
   NotFoundException,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -18,6 +20,7 @@ import { FindByOwnerDto } from './dto/findByOwner.dto'
 import { PartyLetterRegistry } from './partyLetterRegistry.model'
 import { PartyLetterRegistryService } from './partyLetterRegistry.service'
 
+@UseGuards(IdsUserGuard)
 @Controller('party-letter-registry')
 @ApiTags('partyLetterRegistry')
 export class PartyLetterRegistryController {
