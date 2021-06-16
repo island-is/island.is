@@ -61,9 +61,9 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 ? setEndorsements(endorsements)
                 : setEndorsements(
                     endorsements
-                      ? endorsements.filter((x) => {
+                      ? endorsements.filter((x) =>
                           x.meta.invalidated
-                        })
+                        )
                       : endorsements,
                   )
             }}
