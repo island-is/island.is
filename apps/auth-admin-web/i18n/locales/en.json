@@ -1095,11 +1095,11 @@
         "name": {
           "label": "Name",
           "placeholder": "Unique identifier",
-          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request. Use pattern {@domain.is/path/optionalPath2}",
-          "errorMessage": "Name is required and needs to be in the right format",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request. Use pattern {@domain.is/path/optional-path}. Lower case and preferably no numerical characters",
+          "errorMessage": "Name is required and needs to be in the right format. Use lower case characters in the format described here: {@domain.is/path/optional-path}",
           "available": "Available",
           "unAvailable": "Unavailable",
-          "pattern": "@{domain}{/optionalPath}{/optionalPath2}",
+          "pattern": "@{domain}{/optional-path}{/optional-path}",
           "patternText": "Follow this pattern:",
           "hintOkMessage": "The Identity Resource Name is in a correct format",
           "hintErrorMessage": "The format of the Identity Resource Name is incorrect"
@@ -1433,8 +1433,8 @@
         "name": {
           "label": "Name",
           "placeholder": "Unique identifier",
-          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request. Follow this pattern: @{domain}[/{group}]/{resource}[:{action}]",
-          "errorMessage": "Name is required and needs to be in the right format",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request. Follow this pattern: @{domain}[/{group}]/{resource}[:{action}]. Use lower case and no numeric characters",
+          "errorMessage": "Name is required and needs to be in the right format. Use lower case and no numeric characters",
           "available": "Available",
           "unAvailable": "Unavailable",
           "hintOkMessage": "The api scope name is in a correct format",
@@ -1551,11 +1551,11 @@
         "name": {
           "label": "Name",
           "placeholder": "Unique identifier",
-          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request. Use pattern {@domain.is/path/optionalPath2}",
-          "errorMessage": "Name is required and needs to be in the right format",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request. Use pattern {@domain.is/path/optional-path2}. Lower case and preferably no numeric characters.",
+          "errorMessage": "Name is required and needs to be in the right format. Use lower case characters in the pattern described",
           "available": "Available",
           "unAvailable": "Unavailable",
-          "pattern": "@{domain}{/optionalPath}{/optionalPath2}",
+          "pattern": "@{domain}{/optional-path}{/optional-path}",
           "patternText": "Follow this pattern:",
           "hintOkMessage": "The Api Resource Name is in a correct format",
           "hintErrorMessage": "The format of the Api Resource Name is incorrect"
@@ -1665,11 +1665,11 @@
         "clientId": {
           "label": "Client Id",
           "placeholder": "example-client",
-          "helpText": "The unique identifier for this application. No spaces or special characters.",
-          "errorMessage": "The unique identifier for this application is not in the correct format.",
+          "helpText": "The unique identifier for this application. No spaces or special characters. Use lower case characters in the pattern described here: @{domain}{/optional-path}{/optional-path}",
+          "errorMessage": "The unique identifier for this application is not in the correct format. Use lower case, preferably no numeric characters. @{domain}{/optional-path}{/optional-path}",
           "available": "Available",
           "unAvailable": "Unavailable",
-          "pattern": "@{domain}{/optionalPath}{/optionalPath2}",
+          "pattern": "@{domain}{/optional-path}{/optional-path}",
           "patternText": "Follow this pattern:",
           "hintOkMessage": "The Client Id is in a correct format",
           "hintErrorMessage": "The format of the Client Id is incorrect"

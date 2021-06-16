@@ -83,7 +83,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
     }
     setApiScopeNameHintVisible(true)
     const isValid =
-      name.length > 0 ? ValidationUtils.validateClientId(name) : false
+      name.length > 0 ? ValidationUtils.validateApiScope(name) : false
     setApiScopeNameIsValid(isValid)
     isValid
       ? setApiScopeHintMessage(localization.fields['name'].hintOkMessage)

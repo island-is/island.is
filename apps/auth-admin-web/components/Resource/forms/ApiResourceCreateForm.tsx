@@ -49,7 +49,7 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
     }
     setNameHintVisible(true)
     const isValid =
-      name.length > 0 ? ValidationUtils.validateClientId(name) : false
+      name.length > 0 ? ValidationUtils.validateApiResourceName(name) : false
     setNameIsValid(isValid)
     isValid
       ? setNameHintMessage(localization.fields['name'].hintOkMessage)
@@ -126,7 +126,10 @@ const ApiResourceCreateForm: React.FC<Props> = (props) => {
                   />
                 </div>
                 <div className="api-resource-form__container__field">
-                  <label className="client-basic__label" htmlFor="contactEmail">
+                  <label
+                    className="api-resource-form__label"
+                    htmlFor="contactEmail"
+                  >
                     {localization.fields['contactEmail'].label}
                   </label>
                   <input
