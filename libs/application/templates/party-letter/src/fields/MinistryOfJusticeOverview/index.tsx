@@ -15,7 +15,7 @@ const mapToCSVFile = (endorsements: Endorsement[]) => {
   return endorsements.map((endorsement) => {
     return {
       Kennitala: formatKennitala(endorsement.endorser),
-      Dagssetning: format(new Date(endorsement.created), 'dd.MM.yyyy'),
+      Dagsetning: format(new Date(endorsement.created), 'dd.MM.yyyy'),
       Nafn: endorsement.meta.fullName ?? '',
       Heimilisfang: endorsement.meta.address.streetAddress ?? '',
       Póstnúmer: endorsement.meta.address.postalCode ?? '',

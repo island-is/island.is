@@ -25,7 +25,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
   //find selected endorsements from the endorsement system and find how many of them are invalidated
   const endorsementsWithWarning = () => {
     const intersectingEndorsements = endorsementHook?.filter((e: any) => {
-      return answers.selectedEndorsements?.indexOf(e.id) !== -1
+      return answers.endorsements?.indexOf(e.id) !== -1
     })
 
     return intersectingEndorsements?.filter((e) => e.meta.invalidated).length
@@ -64,7 +64,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5">
           {formatMessage(m.overviewSection.signatureCount)}
         </Text>
-        <Text>{answers.selectedEndorsements?.length ?? 0}</Text>
+        <Text>{answers.endorsements?.length ?? 0}</Text>
       </Box>
       <Box marginBottom={3}>
         <Inline space={2}>

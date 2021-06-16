@@ -37,12 +37,9 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
 
   /* on intital render: decide which radio button should be checked */
   useEffect(() => {
-    if (
-      answers.selectedEndorsements &&
-      answers.selectedEndorsements.length > 0
-    ) {
+    if (answers.endorsements && answers.endorsements.length > 0) {
       const endorsements: any = endorsementsHook?.filter((e: any) => {
-        return answers.selectedEndorsements?.indexOf(e.id) !== -1
+        return answers.endorsements?.indexOf(e.id) !== -1
       })
 
       setSelectedEndorsements(sortBy(endorsements, 'created'))
@@ -110,7 +107,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     newEndorsements: Endorsement[],
   ) => {
     const endorsementIds: string[] = newEndorsements.map((e) => e.id)
-    setValue('selectedEndorsements', cloneDeep(endorsementIds))
+    setValue('endorsements', cloneDeep(endorsementIds))
   }
 
   return (

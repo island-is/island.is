@@ -14,11 +14,6 @@ export const Approved: Form = buildForm({
   mode: FormModes.APPROVED,
   children: [
     buildCustomField({
-      id: 'applicationApproved',
-      title: m.applicationApprovedOverview.title,
-      component: 'PartyApplicationApprovedOverview',
-    }),
-    buildCustomField({
       id: 'supremeCourtOverview',
       title: '',
       component: 'SupremeCourtOverview',
