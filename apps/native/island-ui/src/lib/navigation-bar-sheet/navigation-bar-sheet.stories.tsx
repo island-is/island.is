@@ -1,4 +1,4 @@
-import { withKnobs } from '@storybook/addon-knobs'
+import { withKnobs, text } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
@@ -21,11 +21,12 @@ storiesOf('Navigation Bar Sheet', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Default', () => {
+    const title = text('Navigation Bar Sheet Title', 'Notandi')
     return (
       <View style={{ width: '100%' }}>
         <NavigationBarSheet
           componentId="none"
-          title="Notandi"
+          title={title}
           onClosePress={() => console.log('close')}
           style={{ marginHorizontal: 16 }}
         />

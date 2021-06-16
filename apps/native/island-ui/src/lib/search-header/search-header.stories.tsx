@@ -1,4 +1,4 @@
-import { withKnobs } from '@storybook/addon-knobs'
+import { withKnobs, boolean, text, number } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
@@ -21,12 +21,15 @@ storiesOf('Search Header', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Default', () => {
+    const count = number('Search Header Count', 3)
+    const loadingText = text('Search Header Loading Text', 'Leita í skjölum')
+    const resultText = text('Search Header Result Text', 'niðurstöður fundust')
     return (
       <SearchHeader
-        count={3}
-        loading={false}
-        loadingText="Leita í skjölum..."
-        resultText="niðurstöður fundust"
+        count={count}
+        loading={boolean('Loading', false)}
+        loadingText={loadingText}
+        resultText={resultText}
       />
     )
   })
