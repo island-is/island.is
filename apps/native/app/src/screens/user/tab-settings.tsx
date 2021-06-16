@@ -284,9 +284,12 @@ export function TabSettings() {
           )}
           subtitle={
             isEnrolled
-              ? intl.formatMessage({
-                  id: 'settings.security.useBiometricsDescription',
-                })
+              ? intl.formatMessage(
+                  {
+                    id: 'settings.security.useBiometricsDescription',
+                  },
+                  { biometricType },
+                )
               : intl.formatMessage(
                   {
                     id: 'onboarding.biometrics.notEnrolled',

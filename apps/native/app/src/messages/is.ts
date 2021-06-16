@@ -4,10 +4,10 @@ export const is = {
   'login.welcomeMessage': 'Skráðu þig inn í appið með rafrænum skilríkjum',
   'login.loginButtonText': 'Skrá inn',
   'login.languageButtonText': 'English',
-  'login.needHelpButtonText': 'Þarftu hjálp',
+  'login.needHelpButtonText': 'Þarftu aðstoð?',
 
   // app lock
-  'applock.title': 'Sláðu inn 4-tölustafa PIN',
+  'applock.title': 'Sláðu inn 4 tölustafa PIN',
   'applock.attempts': 'tilraunir eftir',
 
   // onboarding
@@ -18,24 +18,24 @@ export const is = {
   'onboarding.appLock.title':
     'Skjálæsing tryggir að enginn geti opnað appið nema þú.',
   'onboarding.appLock.choosePinButtonText': 'Velja PIN',
-  'onboarding.pinCode.enterPin': 'Veldu 4-tölustafa PIN',
-  'onboarding.pinCode.confirmPin': 'Staðfestu PIN númerið',
+  'onboarding.pinCode.enterPin': 'Veldu 4 tölustafa PIN',
+  'onboarding.pinCode.confirmPin': 'Staðfestu PIN-númerið',
   'onboarding.pinCode.goBackButtonText': 'Til baka',
   'onboarding.pinCode.cancelButtonText': 'Hætta við',
   'onboarding.pinCode.nonMatchingPinCodes': 'Númerin pössuðu ekki saman',
   'onboarding.biometrics.title':
     'Þú getur einnig notað {biometricType} til að opna appið án þess að slá inn PIN.',
   'onboarding.biometrics.notEnrolled':
-    'Þitt tæki styður {biometricType} en þú hefur ekki virkt það.',
+    'Tækið þitt styður {biometricType} en þú hefur ekki virkjað það.',
   'onboarding.biometrics.useBiometricsButtonText': 'Nota {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Sleppa því í bili',
   'onboarding.biometrics.type.faceId': 'Face ID',
   'onboarding.biometrics.type.facialRecognition': 'andlitsgreiningu',
   'onboarding.biometrics.type.fingerprint': 'fingrafar',
   'onboarding.biometrics.type.iris': 'augnskanna',
-  'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlits auðkenningu',
-  'onboarding.pinKeypad.accessibilityLabel.iris': 'Nota augnskanna auðkenningu',
-  'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Nota fingrafars auðkenningu',
+  'onboarding.pinKeypad.accessibilityLabel.iris': 'Nota augnskannaauðkenningu',
+  'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Nota fingrafarsauðkenningu',
+  'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlitsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
 
   // user
@@ -58,10 +58,10 @@ export const is = {
     'Fá tilkynningar um stöðu umsókna',
   'settings.security.groupTitle': 'Öryggi og persónuvernd',
   'settings.security.changePinLabel': 'Breyta PIN',
-  'settings.security.changePinDescription': 'Veldu nýtt 4-stafa PIN númer',
+  'settings.security.changePinDescription': 'Veldu nýtt 4 stafa PIN-númer',
   'settings.security.useBiometricsLabel': 'Nota {biometricType}',
   'settings.security.useBiometricsDescription':
-    'Þannig sleppur þú við að nota PIN númerið',
+    'Þannig sleppur þú við að nota PIN-númerið',
   'settings.security.appLockTimeoutLabel': 'Biðtími skjálæsingar',
   'settings.security.appLockTimeoutDescription':
     'Tíminn þar til skjálæsing fer í gang',
@@ -74,7 +74,7 @@ export const is = {
   'user.natreg.infoBox': 'Þín skráning í Þjóðskrá Íslands',
   'user.natreg.displayName': 'Birtingarnafn',
   'user.natreg.nationalId': 'Kennitala',
-  'user.natreg.birthPlace': 'Fæðingastaður',
+  'user.natreg.birthPlace': 'Fæðingarstaður',
   'user.natreg.legalResidence': 'Lögheimili',
   'user.natreg.gender': 'Kyn',
   'user.natreg.genderValue': `{
@@ -95,7 +95,7 @@ export const is = {
     MARRIED {{gender, select, FEMALE {Gift} MALE {Giftur}}}
     UNMARRIED {{gender, select, FEMALE {Ógift} MALE {Ógiftur}}}
     WIDOWED {{gender, select, FEMALE {Ekkja} MALE {Ekkill}}}
-    SEPARATED {{gender, select, FEMALE {Aðskilin} MALE {Aðskilinn}}}
+    SEPARATED {{gender, select, FEMALE {Skilin að borði og sæng} MALE {Skilinn að borði og sæng}}}
     DIVORCED {{gender, select, FEMALE {Fráskilin} MALE {Fráskilinn}}}
     MARRIED_LIVING_SEPARATELY {{gender, select, FEMALE {Gift} MALE {Giftur}}}
     MARRIED_TO_FOREIGN_LAW_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur}}}
@@ -104,7 +104,7 @@ export const is = {
     ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur}}}
   }`,
   'user.natreg.citizenship': 'Ríkisfang',
-  'user.natreg.religion': 'Trú- eða lífskoðunarfélag',
+  'user.natreg.religion': 'Trú- eða lífsskoðunarfélag',
 
   // home
   'home.screenTitle': 'Yfirlit',
@@ -128,7 +128,7 @@ export const is = {
   'inbox.noResultText': 'Engar niðurstöður fundust',
   'inbox.emptyListTitle': 'Hér eru engin skjöl sem stendur',
   'inbox.emptyListDescription':
-    'Þegar þú færð send rafræn skjöl frá hinu opinbera þá birtast þau hér.',
+    'Þegar þú færð send rafræn skjöl frá hinu opinbera birtast þau hér.',
 
   // document detail
   'documentDetail.screenTitle': 'Skjal',
@@ -141,7 +141,7 @@ export const is = {
     'Til að nota skírteini sem gild skilríki þarf að færa þau yfir í Apple Wallet.',
   'wallet.emptyListTitle': 'Hér eru engin skírteini sem stendur',
   'wallet.emptyListDescription':
-    'Þegar þú færð t.d. ökuskírteini, skotvopnaleyfi eða veiðikort frá hinu opinbera þá birtast þau hér.',
+    'Þegar þú færð t.d. ökuskírteini, skotvopnaleyfi eða veiðikort frá hinu opinbera birtast þau hér.',
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
