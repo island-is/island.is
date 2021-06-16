@@ -26,7 +26,17 @@ const getNewToken = async () => {
   return authStore.getState().authorizeResult?.accessToken
 }
 
-const retryLink = new RetryLink()
+const retryLink = new RetryLink({
+  attempts: {
+    max: 3,
+    retryIf(err, _operation) {
+      if (err?.length === 0 || !err) {
+        return true;
+      }
+      return false;
+    }
+  }
+})
 
 const errorLink = onError(
   ({ graphQLErrors, networkError, forward, operation }) => {
@@ -37,8 +47,8 @@ const errorLink = onError(
             return
           }),
         )
-          .filter((value: string) => Boolean(value))
-          .flatMap((accessToken: string) => {
+          .filter((value) => Boolean(value))
+          .flatMap((accessToken: any) => {
             const oldHeaders = operation.getContext().headers
             operation.setContext({
               headers: {
@@ -80,12 +90,20 @@ const obj2cookie = (obj: any = {}) =>
     return acc
   }, [])
 
+const getAndRefreshToken = () => {
+  const { authorizeResult, refresh } = authStore.getState();
+  const isTokenAboutToExpire = new Date(authorizeResult?.accessTokenExpirationDate!).getTime() < Date.now() - (60 * 5 * 1000);
+  if (isTokenAboutToExpire) {
+    // expires in less than 5 minutes, so refresh
+    refresh();
+  }
+  return authorizeResult?.accessToken;
+}
+
 const authLink = setContext(async (_, { headers }) => ({
   headers: {
     ...headers,
-    authorization: `Bearer ${
-      authStore.getState().authorizeResult?.accessToken
-    }`,
+    authorization: `Bearer ${getAndRefreshToken()}`,
     cookie: [
       ...(await CookieManager.get(config.apiEndpoint, true).then(obj2cookie)),
       authStore.getState().cookies,

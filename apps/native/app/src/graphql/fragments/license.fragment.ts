@@ -45,7 +45,6 @@ export const GenericUserLicenseFragment = gql`
       rawData
     }
   }
-  ${GenericLicenseDataFieldFragment}
 `;
 
 

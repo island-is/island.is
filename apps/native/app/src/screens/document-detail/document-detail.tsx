@@ -70,16 +70,15 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
 }> = ({ componentId, docId }) => {
   useNavigationOptions(componentId)
-  const { getOrganizationLogoUrl } = useOrganizationsStore()
-  const { authorizeResult } = useAuthStore()
   const intl = useIntl()
+  const { getOrganizationLogoUrl } = useOrganizationsStore()
+  const [accessToken, setAccessToken] = useState<string>();
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
   })
   const docRes = useQuery<GetDocumentResponse>(GET_DOCUMENT_QUERY, {
     client,
-    fetchPolicy: 'network-only',
     variables: {
       input: {
         id: docId,
@@ -129,7 +128,19 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [res.data])
 
-  const loading = res.loading
+  useEffect(() => {
+    const { authorizeResult, refresh } = authStore.getState();
+    const isExpired = new Date(authorizeResult?.accessTokenExpirationDate!).getTime() < Date.now();
+    if (isExpired) {
+      refresh().then(() => {
+        setAccessToken(authStore.getState().authorizeResult?.accessToken);
+      })
+    } else {
+      setAccessToken(authorizeResult?.accessToken);
+    }
+  }, [])
+
+  const loading = res.loading || !accessToken;
 
   const fadeAnim = useRef(new Animated.Value(0)).current
 
@@ -161,7 +172,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           flex: 1,
         }}
       >
-        {visible &&
+        {visible && accessToken &&
           Platform.select({
             android: (
               <Animated.View
@@ -196,14 +207,14 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                     headers: {
                       'content-type': 'application/x-www-form-urlencoded',
                     },
-                    body: `documentId=${Document.id}&__accessToken=${authorizeResult?.accessToken}`,
+                    body: `documentId=${Document.id}&__accessToken=${accessToken}`,
                     method: 'POST',
                   }}
                 />
               </Animated.View>
             ),
           })}
-        {!loaded && (
+        {(!loaded || !accessToken) && (
           <View
             style={[
               StyleSheet.absoluteFill,

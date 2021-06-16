@@ -171,7 +171,7 @@ export function navigateTo(url: string, extraProps: any = {}) {
   navigateTimeMap.set(url, now)
 
   // setup linking url
-  const linkingUrl = `${config.bundleId}://${url.replace(/^\//, '')}`
+  const linkingUrl = `${config.bundleId}://${String(url).replace(/^\//, '')}`
 
   // evalute and route
   return evaluateUrl(linkingUrl, extraProps)

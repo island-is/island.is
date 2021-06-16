@@ -791,7 +791,7 @@ SPEC CHECKSUMS:
   EXNotifications: c13e078d83ce01c7aeb8e3f44a48c13f50099291
   EXPermissions: 8f8c1c05580c4e02d4ee2c8dd74bfe173ff6a723
   FBLazyVector: 7b423f9e248eae65987838148c36eec1dbfe0b53
-  FBReactNativeSpec: 1d4fcc35d48f0cf39c436af5b555260e3848bf2c
+  FBReactNativeSpec: 5eed47e7fcaec0c54a0655113238b7845c27ae65
   Firebase: 73c3e3b216ec1ecbc54d2ffdd4670c65c749edb1
   FirebaseABTesting: 5b22abfa9a55d5b9cd3d1e500a3ca29f6b1264cb
   FirebaseCore: 3f09591d51292843e2a46f18358d60bf4e996255
