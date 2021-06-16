@@ -4,7 +4,7 @@ import { IsOptional } from 'class-validator'
 export class XlsxDto {
   @ApiProperty()
   @IsOptional()
-  headers!: Array<string | number>
+  headers!: Array<string>
 
   @ApiProperty()
   @IsOptional()

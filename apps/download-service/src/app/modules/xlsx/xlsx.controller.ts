@@ -2,7 +2,8 @@ import { Controller, Post, Header, Res, Body } from '@nestjs/common'
 import { Response } from 'express'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { XlsxDto } from './dto/xlsxDto'
-import * as xlsx from 'node-xlsx'
+import * as XLSX from 'xlsx'
+// const xlsx = require('xlsx')
 import { WritableStreamBuffer } from 'stream-buffers'
 
 @Controller()
@@ -27,9 +28,14 @@ export class XlsxController {
       const dateString = new Date().toISOString().split('T')[0]
       const fileName = `Yfirlit - ${dateString}`
 
-      const widths = resource.headers.map((item) => ({ wch: 25 }))
-      const buffer = xlsx.build([{ name: fileName, data: data }], {
-        '!cols': widths,
+      const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(data)
+      const workbook: XLSX.WorkBook = {
+        Sheets: { [fileName]: worksheet },
+        SheetNames: [fileName],
+      }
+      const excelBuffer: any = XLSX.write(workbook, {
+        bookType: 'xlsx',
+        type: 'buffer',
       })
 
       const streamBuffer = new WritableStreamBuffer({
@@ -37,7 +43,7 @@ export class XlsxController {
         incrementAmount: 10 * 1024,
       })
 
-      streamBuffer.write(buffer)
+      streamBuffer.write(excelBuffer)
       streamBuffer.end()
       return res.status(200).json({
         file: streamBuffer.getContentsAsString('base64'),

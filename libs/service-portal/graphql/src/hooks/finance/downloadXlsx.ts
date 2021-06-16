@@ -1,4 +1,4 @@
-import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery, useQuery } from '@apollo/client'
 import { GET_EXCEL_SHEET_DATA } from '../../lib/queries/getExcelSheetData'
 
 const downloadXlsx = async (output: string, name: string) => {
@@ -16,6 +16,7 @@ const downloadXlsx = async (output: string, name: string) => {
 
 export const downloadXlsxDocument = () => {
   const [loadExcelSheet] = useLazyQuery(GET_EXCEL_SHEET_DATA, {
+    fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       const xlslData = data?.getExcelDocument || null
       if (xlslData) {
@@ -26,12 +27,12 @@ export const downloadXlsxDocument = () => {
     },
   })
 
-  const downloadSheet = (data: any) => {
-    return loadExcelSheet({
+  const downloadSheet = (xlsx: any) => {
+    loadExcelSheet({
       variables: {
         input: {
-          headers: data.headers,
-          data: data.body,
+          headers: xlsx.headers,
+          data: xlsx.data,
         },
       },
     })
