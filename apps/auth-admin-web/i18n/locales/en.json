@@ -1095,7 +1095,7 @@
         "name": {
           "label": "Name",
           "placeholder": "Unique identifier",
-          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request.",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request. Use pattern {@domain.is/path/optionalPath2}",
           "errorMessage": "Name is required and needs to be in the right format",
           "available": "Available",
           "unAvailable": "Unavailable"
@@ -1547,7 +1547,7 @@
         "name": {
           "label": "Name",
           "placeholder": "Unique identifier",
-          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request.",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request. Use pattern {@domain.is/path/optionalPath2}",
           "errorMessage": "Name is required and needs to be in the right format",
           "available": "Available",
           "unAvailable": "Unavailable"
