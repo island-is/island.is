@@ -1,8 +1,14 @@
-import { buildDescriptionField, buildForm, buildSection, Form, FormModes } from "@island.is/application/core";
+import {
+  buildDescriptionField,
+  buildForm,
+  buildSection,
+  Form,
+  FormModes,
+} from '@island.is/application/core'
 
 export const TestApplication: Form = buildForm({
-	id: 'TestApplicationDraftForm',
-	title: 'title',
+  id: 'TestApplicationDraftForm',
+  title: 'title',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
