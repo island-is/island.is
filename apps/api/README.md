@@ -140,7 +140,7 @@ yarn generate @nrwl/node:library api/domains/your-domain
 yarn generate @nrwl/node:library api/your-library
 ```
 
-If your domain needs to expose fields in the GraphQL schema, make sure to export `typeDefs` and `resolvers` in your domain's `index.ts`, then add your domain to the list in `/apps/spi/src/graphql/domains.ts`.
+If your domain needs to expose fields in the GraphQL schema, make sure to export `typeDefs` and `resolvers` in your domain's `index.ts`, then add your domain to the list in `/apps/spi/src/graphql/domains.ts`
 
 ## Code owners and maintainers
 

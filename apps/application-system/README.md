@@ -98,7 +98,7 @@ yarn start api
 
 - [Follow the Reference Template](https://github.com/island-is/island.is/tree/main/libs/application/templates/reference-template)
 
-After following the Reference Template, repeat the steps from [OpenAPI and Swagger](https://github.com/island-is/island.is/tree/main/apps/application-system#openapi-and-swagger) or run `yarn install` to update schemas.
+After following the Reference Template, repeat the steps from [OpenAPI and Swagger](https://github.com/island-is/island.is/tree/main/apps/application-system#openapi-and-swagger) or run `yarn install` to update schemas
 
 ### Testing
 
