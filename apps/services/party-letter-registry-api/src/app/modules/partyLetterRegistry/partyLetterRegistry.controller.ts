@@ -14,6 +14,9 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger'
+
+import { Audit } from '@island.is/nest/audit'
+
 import { CreateDto } from './dto/create.dto'
 import { FindByManagerDto } from './dto/findByManager.dto'
 import { FindByOwnerDto } from './dto/findByOwner.dto'
@@ -72,6 +75,9 @@ export class PartyLetterRegistryController {
     type: CreateDto,
   })
   @Post()
+  @Audit<PartyLetterRegistry>({
+    resources: (partyLetterRegistry) => partyLetterRegistry.partyLetter,
+  })
   async create(@Body() input: CreateDto): Promise<PartyLetterRegistry> {
     return await this.partyLetterRegistryService.create(input)
   }
