@@ -1,4 +1,3 @@
-import React from 'react'
 import { m } from '../lib/messages'
 import {
   buildForm,
