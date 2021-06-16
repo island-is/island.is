@@ -12,6 +12,7 @@ import {
 import * as z from 'zod'
 
 const States = {
+  prerequisites: 'prerequisites',
   draft: 'draft',
   submitted: 'submitted',
 }
@@ -19,6 +20,10 @@ const States = {
 type ComplaintsToAlthingiOmbudsmanEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
+
+enum Roles {
+  APPLICANT = 'applicant',
+}
 
 const dataSchema = z.object({})
 
@@ -34,8 +39,33 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
   ],
   dataSchema,
   stateMachineConfig: {
-    initial: States.draft,
+    initial: States.prerequisites,
     states: {
+      [States.prerequisites]: {
+        meta: {
+          name: 'Skilyrði',
+          progress: 0,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.Prerequisites),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: {
+            target: States.draft,
+          },
+        },
+      },
       [States.draft]: {
         meta: {
           name: 'hello',
@@ -43,7 +73,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/TestApplication').then((val) =>
                   Promise.resolve(val.TestApplication),
@@ -67,7 +97,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
     if (application.state === 'inReview') {
       return 'reviewer'
     }
-    return 'applicant'
+    return Roles.APPLICANT
   },
 }
 
