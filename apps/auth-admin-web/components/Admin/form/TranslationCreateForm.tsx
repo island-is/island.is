@@ -133,7 +133,11 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     type="text"
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateIdentifier,
+                      validate: isEditing
+                        ? () => {
+                            return true
+                          }
+                        : ValidationUtils.validateIdentifier,
                     })}
                     disabled={isEditing}
                     name="translation.className"
@@ -165,7 +169,11 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                     type="text"
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateIdentifier,
+                      validate: isEditing
+                        ? () => {
+                            return true
+                          }
+                        : ValidationUtils.validateIdentifier,
                     })}
                     name="translation.property"
                     defaultValue={translation.property ?? ''}
@@ -195,7 +203,11 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                   type="text"
                   ref={register({
                     required: true,
-                    validate: ValidationUtils.validateIdentifier,
+                    validate: isEditing
+                      ? () => {
+                          return true
+                        }
+                      : ValidationUtils.validateIdentifier,
                   })}
                   name="translation.key"
                   defaultValue={translation.key ?? ''}
