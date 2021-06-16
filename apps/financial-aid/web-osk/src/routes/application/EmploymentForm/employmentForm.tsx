@@ -31,15 +31,17 @@ const EmploymentForm = () => {
     router.pathname,
   ) as NavigationProps
 
-  // TODO: use enum
-  const options = ['Working', 'Unemployed', 'CannotWork', 'Other'].map(
-    (item) => {
-      return {
-        label: getEmploymentStatus[item as Employment],
-        value: item,
-      }
-    },
-  )
+  const options = [
+    Employment.WORKING,
+    Employment.UNEMPLOYED,
+    Employment.CANNOTWORK,
+    Employment.OTHER,
+  ].map((item) => {
+    return {
+      label: getEmploymentStatus[item],
+      value: item,
+    }
+  })
 
   return (
     <FormLayout

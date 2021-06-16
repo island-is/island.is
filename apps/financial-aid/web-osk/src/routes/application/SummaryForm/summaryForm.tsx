@@ -140,7 +140,7 @@ const SummaryForm = () => {
       label: 'Búseta',
       url: 'buseta',
       info:
-        form?.homeCircumstances === 'Other'
+        form?.homeCircumstances === HomeCircumstances.OTHER
           ? form?.homeCircumstancesCustom
           : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
     },

@@ -29,16 +29,15 @@ const HomeCircumstancesForm = () => {
     router.pathname,
   ) as NavigationProps
 
-  // TODO: Should use the enum not plain string.
   const options = [
-    'WithParents',
-    'WithOthers',
-    'OwnPlace',
-    'RegisteredLease',
-    'Other',
+    HomeCircumstances.WITHPARENTS,
+    HomeCircumstances.WITHOTHERS,
+    HomeCircumstances.OWNPLACE,
+    HomeCircumstances.REGISTEREDLEASE,
+    HomeCircumstances.OTHER,
   ].map((item) => {
     return {
-      label: getHomeCircumstances[item as HomeCircumstances],
+      label: getHomeCircumstances[item],
       value: item,
     }
   })
