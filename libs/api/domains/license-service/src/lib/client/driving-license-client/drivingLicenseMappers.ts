@@ -57,6 +57,7 @@ function licenseCategoryClassToLabel(licenseClass: string): string {
 
 export const drivingLicensesToSingleGenericLicense = (
   licenses: GenericDrivingLicenseResponse[],
+  pkpassUrl = '',
 ): GenericUserLicense | null => {
   if (licenses.length === 0) {
     return null
@@ -159,7 +160,7 @@ export const drivingLicensesToSingleGenericLicense = (
       // TODO(osk) what's the standard date format to pass thru?
       updated: new Date().toISOString(),
     },
-    pkpassUrl: '',
+    pkpassUrl,
     payload: {
       data,
       rawData: JSON.stringify(license),
