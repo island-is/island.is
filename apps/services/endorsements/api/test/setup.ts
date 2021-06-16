@@ -7,7 +7,7 @@ import { AppModule } from '../src/app/app.module'
 export let app: INestApplication
 let sequelize: Sequelize
 
-// needed for generic error validation
+// needed for generic error validations
 expect.extend({
   anyOf(value: any, classTypes: any[]) {
     const types = classTypes.map((type) => type.name).join(', ')
