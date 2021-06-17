@@ -9,22 +9,23 @@ const devConfig = {
   port: 4333,
   rsk: {
     xroad: {
-      basePath: process.env.XROAD_BASE_PATH_WITH_ENV,
+      basePath: 'http://localhost:8081/r1/IS-DEV',
       memberClass: XRoadMemberClass.GovernmentInstitution,
-      memberCode: process.env.XROAD_RSK_MEMBER_CODE,
-      apiPath: process.env.XROAD_RSK_API_PATH,
-      clientId: process.env.XROAD_RSK_CLIENT_ID,
+      memberCode: '10006',
+      apiPath:
+        '/Skatturinn-Protected/company-registry-v1/api/companyregistry/members',
+      clientId: 'IS-DEV/GOV/10000/island-is-client',
     },
     username: process.env.RSK_USERNAME,
     password: process.env.RSK_PASSWORD,
   },
   nationalRegistry: {
     xroad: {
-      basePath: process.env.XROAD_BASE_PATH_WITH_ENV,
+      basePath: 'http://localhost:8081/r1/IS-DEV',
       memberClass: XRoadMemberClass.GovernmentInstitution,
-      memberCode: process.env.XROAD_NATIONAL_REGISTRY_MEMBER_CODE,
-      apiPath: process.env.XROAD_NATIONAL_REGISTRY_API_PATH,
-      clientId: process.env.XROAD_NATIONAL_REGISTRY_CLIENT_ID,
+      memberCode: '10001',
+      apiPath: '/SKRA-Protected/Einstaklingar-v1',
+      clientId: 'IS-DEV/GOV/10000/island-is-client',
     },
     authMiddlewareOptions: {
       forwardUserInfo: false,
