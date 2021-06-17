@@ -22,8 +22,11 @@ import {
   ApiScope,
   IdentityResource,
 } from '@island.is/auth-api-lib'
-import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
+import {
+  AuthMiddleware,
+  AuthMiddlewareOptions,
+} from '@island.is/auth-nest-tools'
 
 import {
   DelegationDTO,
@@ -170,10 +173,11 @@ export class DelegationsService {
   async create(
     user: Auth,
     xRoadClient: string,
+    authMiddlewareOptions: AuthMiddlewareOptions,
     delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
     const person = await this.personApi
-      .withMiddleware(new AuthMiddleware(user, false))
+      .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
       .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
         id: user.nationalId,
         xRoadClient: xRoadClient,
