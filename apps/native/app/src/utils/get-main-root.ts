@@ -14,9 +14,12 @@ export const getRightButtons = ({ unreadCount = notificationsStore.getState().un
       accessibilityLabel: 'User',
       id: ButtonRegistry.UserButton,
       testID: testIDs.TOPBAR_USER_BUTTON,
-      icon: require('../../assets/icons/topbar-user.png'),
+      icon: require('../../assets/icons/user.png'),
+      iconInsets: {
+        left: 8,
+      },
       iconBackground: {
-        color: 'transparent',
+        color: '#F2F7FF',
         cornerRadius: 8,
         width: 32,
         height: 32,
@@ -28,10 +31,11 @@ export const getRightButtons = ({ unreadCount = notificationsStore.getState().un
       testID: testIDs.TOPBAR_NOTIFICATIONS_BUTTON,
       icon:
         unreadCount > 0
-          ? require('../../assets/icons/topbar-notifications-bell.png')
-          : require('../../assets/icons/topbar-notifications.png'),
+          ? require('../../assets/icons/notifications-bell.png')
+          : require('../../assets/icons/notifications.png'),
       iconBackground: {
-        color: 'transparent',
+        color: '#F2F7FF',
+        // color: 'transparent',
         cornerRadius: 8,
         width: 32,
         height: 32,
