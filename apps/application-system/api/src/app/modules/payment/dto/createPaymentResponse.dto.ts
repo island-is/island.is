@@ -8,38 +8,21 @@ import {
   IsDate,
 } from 'class-validator'
 
-export class CreatePaymentResponseDto {
-  @Expose()
-  @IsString()
-  id!: string
-
+export class ChargeResponseData {
   @ApiProperty()
   @Expose()
   @IsString()
-  application_id?: string
+  returnUrl!: string
+}
 
+export class CreatePaymentResponseDto {
   @ApiProperty()
   @Expose()
   @IsBoolean()
-  fulfilled?: boolean
+  success!: boolean
 
   @ApiProperty()
   @Expose()
   @IsString()
-  user4?: string
-
-  @ApiProperty()
-  @Expose()
-  @IsObject()
-  definition?: string
-
-  @ApiProperty()
-  @Expose()
-  @IsNumber()
-  amount!: number
-
-  @ApiProperty()
-  @Expose()
-  @IsDate()
-  expires_at!: Date
+  returnUrl!: string | null
 }

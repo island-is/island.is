@@ -68,7 +68,7 @@ export class PaymentController {
     @CurrentUser()
     user: User,
   ): Promise<CreatePaymentResponseDto> {
-    // FIGURE SOME CHECK FOR LEGIT PAYMENT
+    // TODO: FIGURE SOME CHECK FOR LEGIT PAYMENT
     //     `No application found for application id: ${applicationId}`,
 
     const paymentDto: Pick<
@@ -97,6 +97,12 @@ export class PaymentController {
       action: 'create',
       resources: paymentDto.application_id as string,
       meta: { applicationId: paymentDto.application_id, id: newCharge.id },
+    })
+
+    this.paymentService.createCharge(paymentDto.application_id, {
+      charges: [],
+      payeeNationalID: '',
+
     })
 
     return newCharge

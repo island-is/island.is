@@ -13,12 +13,12 @@ export const PAYMENT_OPTIONS = 'PAYMENT_OPTIONS'
 export interface BaseCharge {
   performingOrgID: string
   payeeNationalID: string
-  chargeType: string
   performerNationalID: string
   charges: ChargeItem[]
 }
 
 export interface Charge extends BaseCharge {
+  chargeType: string
   chargeItemSubject: string
   immediateProcess: boolean
   systemID: string
@@ -58,14 +58,4 @@ export interface Item {
   chargeItemCode: string
   chargeItemName: string
   priceAmount: number
-}
-
-export interface ChargeResult {
-  success: boolean
-  error: Error | null
-  data?: {
-    paymentUrl: string
-    user4: string
-    receptionID: string
-  }
 }

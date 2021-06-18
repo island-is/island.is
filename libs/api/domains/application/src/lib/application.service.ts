@@ -71,6 +71,17 @@ export class ApplicationService {
       .catch(handleError)
   }
 
+  async createCharge(
+    applicationId: string,
+    auth: Auth,
+  ): Promise<any> {
+    return await this.paymentApiWithAuth(auth)
+      .paymentControllerCreateCharge({
+        applicationId,
+      })
+      .catch(handleError)
+  }
+
   async findAll(
     user: User,
     locale: Locale,
