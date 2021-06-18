@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { Text, RadioButton, Input, Box } from '@island.is/island-ui/core'
+import React, { useState, useContext } from 'react'
+import { Text, Input, Box } from '@island.is/island-ui/core'
 
 import {
   FormContentContainer,
@@ -23,7 +23,7 @@ const HomeCircumstancesForm = () => {
   const router = useRouter()
 
   const { form, updateForm } = useContext(FormContext)
-  const [error, setError] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -42,6 +42,30 @@ const HomeCircumstancesForm = () => {
     }
   })
 
+  const errorCheck = () => {
+    if (form?.homeCircumstances === undefined) {
+      setHasError(true)
+      return
+    }
+
+    if (
+      form?.homeCircumstances === HomeCircumstances.OTHER &&
+      !Boolean(form?.homeCircumstancesCustom)
+    ) {
+      setHasError(true)
+      return
+    }
+
+    if (
+      form?.homeCircumstances !== HomeCircumstances.OTHER &&
+      form?.homeCircumstancesCustom
+    ) {
+      updateForm({ ...form, homeCircumstancesCustom: '' })
+    }
+
+    router.push(navigation?.nextUrl ?? '')
+  }
+
   return (
     <FormLayout
       activeSection={navigation?.activeSectionIndex}
@@ -54,14 +78,14 @@ const HomeCircumstancesForm = () => {
 
         <RadioButtonContainer
           options={options}
-          error={error && !form?.homeCircumstances}
+          error={hasError && !form?.homeCircumstances}
           isChecked={(value: HomeCircumstances) => {
             return value === form?.homeCircumstances
           }}
           onChange={(value: HomeCircumstances) => {
             updateForm({ ...form, homeCircumstances: value })
-            if (error) {
-              setError(false)
+            if (hasError) {
+              setHasError(false)
             }
           }}
         />
@@ -69,7 +93,7 @@ const HomeCircumstancesForm = () => {
         <div
           className={cn({
             [`errorMessage`]: true,
-            [`showErrorMessage`]: error && !form?.homeCircumstances,
+            [`showErrorMessage`]: hasError && !form?.homeCircumstances,
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
@@ -82,7 +106,8 @@ const HomeCircumstancesForm = () => {
           marginBottom={10}
           className={cn({
             [`${styles.inputContainer}`]: true,
-            [`${styles.inputAppear}`]: form?.homeCircumstances === 'Other',
+            [`${styles.inputAppear}`]:
+              form?.homeCircumstances === HomeCircumstances.OTHER,
           })}
         >
           <Input
@@ -92,7 +117,7 @@ const HomeCircumstancesForm = () => {
             rows={8}
             textarea
             value={form?.homeCircumstancesCustom}
-            hasError={error && !Boolean(form?.homeCircumstancesCustom)}
+            hasError={hasError && !Boolean(form?.homeCircumstancesCustom)}
             errorMessage="Þú þarft að skrifa í textareitinn"
             onChange={(event) => {
               updateForm({
@@ -105,30 +130,8 @@ const HomeCircumstancesForm = () => {
       </FormContentContainer>
 
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
-        // TODO: should be a function out side of the JSX
-        onNextButtonClick={() => {
-          //Temperary error state
-          //Check if any radio is checked
-          if (form?.homeCircumstances && navigation?.nextUrl) {
-            if (form?.homeCircumstances !== 'Other') {
-              //Validation
-              if (form?.homeCircumstancesCustom) {
-                updateForm({ ...form, homeCircumstancesCustom: '' })
-              }
-
-              router.push(navigation?.nextUrl)
-            } else {
-              if (Boolean(form?.homeCircumstancesCustom)) {
-                router.push(navigation?.nextUrl)
-              } else {
-                setError(true)
-              }
-            }
-          } else {
-            setError(true)
-          }
-        }}
+        previousUrl={navigation?.prevUrl}
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )

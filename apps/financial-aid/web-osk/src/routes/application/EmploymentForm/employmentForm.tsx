@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { Text, Input, Box } from '@island.is/island-ui/core'
 
 import {
@@ -24,8 +24,8 @@ const EmploymentForm = () => {
   const router = useRouter()
 
   const { form, updateForm } = useContext(FormContext)
-  // TODO: hasError?
-  const [error, setError] = useState(false)
+
+  const [hasError, setHasError] = useState(false)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -43,6 +43,27 @@ const EmploymentForm = () => {
     }
   })
 
+  const errorCheck = () => {
+    if (form?.employment === undefined) {
+      setHasError(true)
+      return
+    }
+
+    if (
+      form?.employment === Employment.OTHER &&
+      !Boolean(form?.employmentCustom)
+    ) {
+      setHasError(true)
+      return
+    }
+
+    if (form?.employment !== Employment.OTHER && form?.employmentCustom) {
+      updateForm({ ...form, employmentCustom: '' })
+    }
+
+    router.push(navigation?.nextUrl ?? '/')
+  }
+
   return (
     <FormLayout
       activeSection={navigation?.activeSectionIndex}
@@ -55,14 +76,14 @@ const EmploymentForm = () => {
 
         <RadioButtonContainer
           options={options}
-          error={error && !form?.employment}
+          error={hasError && !form?.employment}
           isChecked={(value: Employment) => {
             return value === form?.employment
           }}
           onChange={(value: Employment) => {
             updateForm({ ...form, employment: value })
-            if (error) {
-              setError(false)
+            if (hasError) {
+              setHasError(false)
             }
           }}
         />
@@ -70,7 +91,7 @@ const EmploymentForm = () => {
         <div
           className={cn({
             [`errorMessage`]: true,
-            [`showErrorMessage`]: error && !form?.employment,
+            [`showErrorMessage`]: hasError && !form?.employment,
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
@@ -93,7 +114,7 @@ const EmploymentForm = () => {
             rows={8}
             textarea
             value={form?.employmentCustom}
-            hasError={error && !Boolean(form?.employmentCustom)}
+            hasError={hasError && !Boolean(form?.employmentCustom)}
             errorMessage="Þú þarft að skrifa í textareitinn"
             onChange={(event) => {
               updateForm({ ...form, employmentCustom: event.target.value })
@@ -102,28 +123,9 @@ const EmploymentForm = () => {
         </Box>
       </FormContentContainer>
 
-      {/* Todo clean up function */}
       <FormFooter
         previousUrl={navigation?.prevUrl ?? '/'}
-        onNextButtonClick={() => {
-          if (form?.employment) {
-            if (form?.employment !== 'Other') {
-              //Validation
-              if (form?.employmentCustom) {
-                updateForm({ ...form, employmentCustom: '' })
-              }
-              router.push(navigation?.nextUrl ?? '/')
-            } else {
-              if (Boolean(form?.employmentCustom)) {
-                router.push(navigation?.nextUrl ?? '/')
-              } else {
-                setError(true)
-              }
-            }
-          } else {
-            setError(true)
-          }
-        }}
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )

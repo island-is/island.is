@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
 
 import {
@@ -21,7 +21,7 @@ const ApplicationInfo = () => {
   const { setUser, user } = useContext(UserContext)
 
   const [accept, setAccept] = useState(false)
-  const [error, setError] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -77,12 +77,12 @@ const ApplicationInfo = () => {
             large
             checked={accept}
             onChange={(event) => {
-              if (error) {
-                setError(false)
+              if (hasError) {
+                setHasError(false)
               }
               setAccept(event.target.checked)
             }}
-            hasError={error}
+            hasError={hasError}
             errorMessage={'Þú þarft að samþykkja gagnaöflun'}
           />
         </Box>
@@ -101,17 +101,17 @@ const ApplicationInfo = () => {
         onPrevButtonClick={() => {
           // TODO: Make a logout function
           api.logOut()
-          setUser && setUser(undefined)
         }}
         previousIsDestructive={true}
         nextButtonText="Staðfesta"
         nextButtonIcon="checkmark"
         onNextButtonClick={() => {
           if (!accept) {
-            setError(true)
-          } else {
-            router.push(navigation?.nextUrl ?? '/')
+            setHasError(true)
+            return
           }
+
+          router.push(navigation?.nextUrl ?? '/')
         }}
       />
     </FormLayout>

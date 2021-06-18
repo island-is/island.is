@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useContext } from 'react'
+import React from 'react'
 import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
 
 import {
@@ -7,49 +7,17 @@ import {
   FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-
-import * as styles from './aboutForm.treat'
-import cn from 'classnames'
-
 import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
 import { NavigationProps } from '@island.is/financial-aid/shared'
 
-const AddressForm = () => {
+const AboutForm = () => {
   const router = useRouter()
-
-  const { form, updateForm } = useContext(FormContext)
-  const [error, setError] = useState(false)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps
-
-  const bulletPoints = [
-    'Fjárhagsaðstoð sveitarfélaga er ætlað fólki sem er ekki með vinnu, í óstyrkhæfu námi og hefur ekki rétt á örorkubótum.',
-    'Til að eiga rétt á fjárhagsaðstoð þurfa tekjur og eignir þínar að vera undir ákveðnum viðmiðunarmörkum.',
-    'Fjárhagsaðstoð getur verið í formi láns eða styrks.',
-  ]
-
-  const suggestedLinks = [
-    {
-      text: 'almannatryggingar',
-      url:
-        'https://www.stjornarradid.is/verkefni/almannatryggingar-og-lifeyrir/almannatryggingar/',
-    },
-    {
-      text: 'atvinnuleysisbætur',
-      url: 'https://vinnumalastofnun.is/umsoknir/umsokn-um-atvinnuleysisbaetur',
-    },
-    {
-      text: 'lífeyrissjóðir',
-      url: 'https://www.lifeyrismal.is/is/sjodirnir',
-    },
-  ]
-
-  // todo: too complex
 
   return (
     <FormLayout
@@ -68,27 +36,45 @@ const AddressForm = () => {
 
         <Box marginBottom={5}>
           <BulletList type={'ul'} space={2}>
-            {bulletPoints.map((item, index) => {
-              return <Bullet key={'bulletpoints-' + index}>{item}</Bullet>
-            })}
+            <Bullet>
+              Fjárhagsaðstoð sveitarfélaga er ætlað fólki sem er ekki með vinnu,
+              í óstyrkhæfu námi og hefur ekki rétt á örorkubótum.
+            </Bullet>
+            <Bullet>
+              Til að eiga rétt á fjárhagsaðstoð þurfa tekjur og eignir þínar að
+              vera undir ákveðnum viðmiðunarmörkum.
+            </Bullet>
+            <Bullet>Fjárhagsaðstoð getur verið í formi láns eða styrks.</Bullet>
+
             <Bullet>
               Áður en þú sækir um fjárhagsaðstoð skaltu athuga hvort þú eigir
               rétt á annarskonar aðstoð. Dæmi um önnur úrræði eru{' '}
-              {suggestedLinks.map((item, index) => {
-                return (
-                  <span key={'suggestedLinks-' + index}>
-                    <Link
-                      href={item.url}
-                      color="blue400"
-                      underline="small"
-                      underlineVisibility="always"
-                    >
-                      {item.text}
-                    </Link>
-                    {index !== suggestedLinks.length - 1 ? ', ' : ' '}
-                  </span>
-                )
-              })}
+              <Link
+                href="https://www.stjornarradid.is/verkefni/almannatryggingar-og-lifeyrir/almannatryggingar/"
+                color="blue400"
+                underline="small"
+                underlineVisibility="always"
+              >
+                almannatryggingar
+              </Link>
+              {', '}
+              <Link
+                href="https://vinnumalastofnun.is/umsoknir/umsokn-um-atvinnuleysisbaetur"
+                color="blue400"
+                underline="small"
+                underlineVisibility="always"
+              >
+                atvinnuleysisbætur
+              </Link>
+              {', '}
+              <Link
+                href="https://www.lifeyrismal.is/is/sjodirnir"
+                color="blue400"
+                underline="small"
+                underlineVisibility="always"
+              >
+                lífeyrissjóðir
+              </Link>{' '}
               og sjúkrasjóðir stéttarfélaga.
             </Bullet>
             <Bullet>
@@ -107,13 +93,12 @@ const AddressForm = () => {
         </Box>
       </FormContentContainer>
 
-      {/* TODO: Should not have '/ as the default value' */}
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
-        nextUrl={navigation?.nextUrl ?? '/'}
+        previousUrl={navigation?.prevUrl}
+        nextUrl={navigation?.nextUrl}
       />
     </FormLayout>
   )
 }
 
-export default AddressForm
+export default AboutForm

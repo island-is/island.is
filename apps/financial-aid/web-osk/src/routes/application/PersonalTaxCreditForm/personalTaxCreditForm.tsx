@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { Text } from '@island.is/island-ui/core'
 
 import {
@@ -25,7 +25,7 @@ const PersonalTaxCreditForm = () => {
     router.pathname,
   ) as NavigationProps
 
-  const [error, setError] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   const options = [
     {
@@ -57,14 +57,14 @@ const PersonalTaxCreditForm = () => {
         <RadioButtonContainer
           className={styles.container}
           options={options}
-          error={error && !form?.usePersonalTaxCredit}
+          error={hasError && !form?.usePersonalTaxCredit}
           isChecked={(value: number | boolean) => {
             return value === form?.usePersonalTaxCredit
           }}
           onChange={(value: number | boolean) => {
             updateForm({ ...form, usePersonalTaxCredit: value })
-            if (error) {
-              setError(false)
+            if (hasError) {
+              setHasError(false)
             }
           }}
         />
@@ -73,7 +73,7 @@ const PersonalTaxCreditForm = () => {
           className={cn({
             [`errorMessage`]: true,
             [`showErrorMessage`]:
-              error && form?.usePersonalTaxCredit === undefined,
+              hasError && form?.usePersonalTaxCredit === undefined,
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
@@ -101,11 +101,12 @@ const PersonalTaxCreditForm = () => {
         previousUrl={navigation?.prevUrl ?? '/'}
         nextUrl={navigation?.nextUrl ?? '/'}
         onNextButtonClick={() => {
-          if (form?.usePersonalTaxCredit !== undefined) {
-            router.push(navigation?.nextUrl ?? '/')
-          } else {
-            setError(true)
+          if (form?.usePersonalTaxCredit === undefined) {
+            setHasError(true)
+            return
           }
+
+          router.push(navigation?.nextUrl ?? '/')
         }}
       />
     </FormLayout>

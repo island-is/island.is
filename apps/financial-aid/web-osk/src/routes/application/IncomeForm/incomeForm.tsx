@@ -36,13 +36,6 @@ const IncomeForm = () => {
     },
   ]
 
-  const examples = [
-    'Launaseðlar',
-    'Greiðslur frá Vinnumálastofnun',
-    'Greiðslur frá Tryggingastofnun',
-    'Styrkir frá lífeyrissjóðum',
-  ]
-
   return (
     <FormLayout
       activeSection={navigation?.activeSectionIndex}
@@ -84,22 +77,23 @@ const IncomeForm = () => {
         </Text>
         <Box marginBottom={5}>
           <BulletList type={'ul'} space={2}>
-            {examples.map((item) => {
-              return <Bullet>{item}</Bullet>
-            })}
+            <Bullet>Launaseðlar</Bullet>
+            <Bullet>Greiðslur frá Vinnumálastofnun</Bullet>
+            <Bullet>Greiðslur frá Tryggingastofnun</Bullet>
+            <Bullet>Styrkir frá lífeyrissjóðum</Bullet>
           </BulletList>
         </Box>
       </FormContentContainer>
 
-      {/* TODO: clean up function */}
+      {/* TODO: clean up function, Does it have to be here? */}
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
+        previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => {
-          if (form?.hasIncome !== undefined) {
-            router.push(navigation?.nextUrl ?? '/')
-          } else {
+          if (form?.hasIncome === undefined) {
             setError(true)
+            return
           }
+          router.push(navigation?.nextUrl ?? '/')
         }}
       />
     </FormLayout>

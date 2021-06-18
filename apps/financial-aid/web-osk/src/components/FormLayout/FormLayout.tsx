@@ -13,6 +13,7 @@ import { useRouter } from 'next/router'
 
 import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 interface PageProps {
   children: ReactNode
@@ -28,7 +29,8 @@ const FormLayout: React.FC<PageProps> = ({
   const router = useRouter()
   const { isAuthenticated, setUser, user } = useContext(UserContext)
 
-  const sections = useNavigationTree()
+  const { form, updateForm } = useContext(FormContext)
+  const sections = useNavigationTree(form?.hasIncome)
 
   useEffect(() => {
     if (activeSection !== undefined) {

@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { Text, AlertMessage, Input, Box } from '@island.is/island-ui/core'
+import React, { useContext } from 'react'
+import { Text, Input, Box } from '@island.is/island-ui/core'
 
 import {
   FormContentContainer,
@@ -31,7 +31,6 @@ const Form = () => {
   const router = useRouter()
 
   const { form, updateForm } = useContext(FormContext)
-  const [error, setError] = useState(false)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -158,8 +157,8 @@ const Form = () => {
       </FormContentContainer>
 
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
-        nextUrl={navigation?.nextUrl ?? '/'}
+        previousUrl={navigation?.prevUrl}
+        nextUrl={navigation?.nextUrl}
         nextButtonText={
           form?.bankNumber || form?.ledger || form?.accountNumber
             ? 'Halda áfram'

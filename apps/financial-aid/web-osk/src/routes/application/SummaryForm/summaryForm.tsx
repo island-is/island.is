@@ -6,8 +6,6 @@ import {
   Button,
   LoadingDots,
   Input,
-  ModalBase,
-  Icon,
 } from '@island.is/island-ui/core'
 
 import { useMutation, useQuery } from '@apollo/client'
@@ -21,6 +19,7 @@ import {
   FormContentContainer,
   FormFooter,
   FormLayout,
+  Modal,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
@@ -30,7 +29,6 @@ import * as styles from './summaryForm.treat'
 import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
-import { api } from '@island.is/financial-aid-web/osk/src/services'
 
 import {
   Municipality,
@@ -39,8 +37,8 @@ import {
   HomeCircumstances,
   Employment,
   getEmploymentStatus,
-  CreateApplication,
-  insertAt,
+  formatPhoneNumber,
+  formatNationalId,
   aidCalculator,
   State,
 } from '@island.is/financial-aid/shared'
@@ -52,7 +50,7 @@ interface MunicipalityData {
 const SummaryForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
-  const { setUser, user } = useContext(UserContext)
+  const { user } = useContext(UserContext)
 
   const [isVisible, setIsVisible] = useState(false)
 
@@ -100,6 +98,23 @@ const SummaryForm = () => {
       },
     })
     return data
+  }
+
+  const errorCheck = () => {
+    createApplication()
+      .then(() => {
+        router.push(navigation?.nextUrl ?? '/')
+        router.events.on('routeChangeComplete', (url) => {
+          //Clear session storage
+          updateForm({ submitted: false, incomeFiles: [] })
+        })
+      })
+      .catch((err) =>
+        setFormError({
+          status: true,
+          message: 'Obobb einhvað fór úrskeiðis',
+        }),
+      )
   }
 
   const aidAmount = useMemo(() => {
@@ -240,6 +255,7 @@ const SummaryForm = () => {
             <LoadingDots large />
           </Box>
         )}
+
         <Box marginTop={[4, 4, 5]}>
           <Divider />
         </Box>
@@ -258,10 +274,7 @@ const SummaryForm = () => {
 
             <Text fontWeight="semiBold">Kennitala</Text>
             {user?.nationalId && (
-              <Text>
-                {/* Todo: put in format functions */}
-                {insertAt(user.nationalId.replace('-', ''), '-', 6) || '-'}
-              </Text>
+              <Text>{formatNationalId(user.nationalId)}</Text>
             )}
           </Box>
 
@@ -269,8 +282,7 @@ const SummaryForm = () => {
             <Text fontWeight="semiBold">Sími</Text>
             {user?.phoneNumber && (
               <Text marginBottom={3}>
-                {/* Todo: put in format functions */}
-                {insertAt(user.phoneNumber.replace('-', ''), '-', 3) || '-'}
+                {formatPhoneNumber(user.phoneNumber)}
               </Text>
             )}
 
@@ -366,76 +378,12 @@ const SummaryForm = () => {
           </Text>
         </div>
 
-        {/* Put in a component */}
-        <ModalBase
-          baseId="cancelForm"
+        <Modal
           isVisible={isVisible}
-          onVisibilityChange={(visibility) => {
-            if (visibility !== isVisible) {
-              setIsVisible(visibility)
-            }
+          setIsVisible={(isVisibleBoolean) => {
+            setIsVisible(isVisibleBoolean)
           }}
-          className={styles.modalContainer}
-        >
-          <Box
-            position="relative"
-            background="white"
-            borderRadius="large"
-            paddingY={[8, 8, 12]}
-            paddingX={[3, 3, 15]}
-            className={styles.modal}
-          >
-            <button
-              onClick={() => {
-                setIsVisible(false)
-              }}
-              className={styles.exitModal}
-            >
-              <Icon
-                color="currentColor"
-                icon="close"
-                size="medium"
-                type="filled"
-              />
-            </button>
-            <Text variant="h1" marginBottom={2}>
-              Ertu viss um að þú viljir hætta við?
-            </Text>
-            <Text variant="intro" marginBottom={[5, 5, 7]}>
-              Þú þarft að fylla umsóknina út að nýju ef þú ákveður að koma
-              aftur.
-            </Text>
-
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              className={styles.buttonContainer}
-            >
-              <Box marginBottom={2} marginRight={2}>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setIsVisible(false)
-                  }}
-                >
-                  Nei, ég vil halda áfram
-                </Button>
-              </Box>
-              <Box marginBottom={2}>
-                <Button
-                  colorScheme="destructive"
-                  onClick={() => {
-                    api.logOut()
-                    setUser && setUser(undefined)
-                    updateForm({ submitted: false, incomeFiles: [] })
-                  }}
-                >
-                  Já, hætta við
-                </Button>
-              </Box>
-            </Box>
-          </Box>
-        </ModalBase>
+        />
       </FormContentContainer>
 
       <FormFooter
@@ -444,22 +392,7 @@ const SummaryForm = () => {
         }}
         previousIsDestructive={true}
         nextButtonText="Senda umsókn"
-        onNextButtonClick={() => {
-          createApplication()
-            .then((el) => {
-              router.push(navigation?.nextUrl ?? '/')
-              router.events.on('routeChangeComplete', (url) => {
-                //Clear session storage
-                updateForm({ submitted: false, incomeFiles: [] })
-              })
-            })
-            .catch((err) =>
-              setFormError({
-                status: true,
-                message: 'Obobb einhvað fór úrskeiðis',
-              }),
-            )
-        }}
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )
