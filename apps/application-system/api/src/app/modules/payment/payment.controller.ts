@@ -25,8 +25,11 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { CreatePaymentDto } from './dto/createPayment.dto'
-import { CreatePaymentResponseDto } from './dto/createPaymentResponse.dto'
+import {
+  CreatePaymentDto,
+  CreateChargeDto,
+  CreatePaymentResponseDto,
+} from './dto'
 import { ApplicationSerializer } from '../application/tools/application.serializer'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
@@ -64,12 +67,11 @@ export class PaymentController {
   @UseInterceptors(ApplicationSerializer)
   async createCharge(
     @Body()
-    paymentDetails: CreatePaymentDto,
+    paymentDetails: CreateChargeDto,
     @CurrentUser()
     user: User,
   ): Promise<CreatePaymentResponseDto> {
-    // FIGURE SOME CHECK FOR LEGIT PAYMENT
-    //     `No application found for application id: ${applicationId}`,
+    // TO DO: FIGURE SOME CHECK FOR LEGIT PAYMENT
 
     const paymentDto: Pick<
       BasePayment,
@@ -84,8 +86,8 @@ export class PaymentController {
       application_id: paymentDetails.application_id,
       fulfilled: false,
       reference_id: '',
-      user4: paymentDetails.user4 || '',
-      definition: paymentDetails.definition || '',
+      user4: '',
+      definition: '',
       amount: paymentDetails.amount || 0,
       expires_at: new Date(),
     }

@@ -18,7 +18,11 @@ import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
-import { ApplicationPayment } from './application.model'
+import {
+  ApplicationPayment,
+  ApplicationPaymentCharge,
+} from './application.model'
+import { PaymentService } from '@island.is/clients/payment'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -39,6 +43,7 @@ export class ApplicationService {
   constructor(
     private _applicationApi: ApplicationsApi,
     private _applicationPaymentApi: PaymentsApi,
+    private paymentClientApi: PaymentService,
   ) {}
 
   applicationApiWithAuth(auth: Auth) {
@@ -73,16 +78,28 @@ export class ApplicationService {
 
   async createCharge(
     applicationId: string,
+    amount: number,
     auth: Auth,
   ): Promise<ApplicationPaymentCharge> {
-    const xx = await this.paymentApiWithAuth(auth)
-      .paymentControllerCreatePayment(..etc)
+    const controllerResult = await this.paymentApiWithAuth(
+      auth,
+    ).paymentControllerCreateCharge({
+      applicationId: applicationId,
+      createChargeDto: { applicationId: applicationId, amount: amount },
+      authorization: auth.authorization,
+    })
 
-    const yyy = await this.paymentClientApi.createCharge({ .. etc })
-
-    return {
-      responseWithUrl..
-    }
+    const clientResult = await this.paymentClientApi.createPayment(
+      {
+        performingOrgID: '6509142520',
+        payeeNationalID: auth.nationalId || '',
+        chargeType: 'AY1',
+        performerNationalID: auth.nationalId || '',
+        charges: [{chargeItemCode: 'AY110', quantity: 1, priceAmount: amount, amount: amount, reference: ''}],
+      },
+      applicationId,
+    )
+    return clientResult.data as ApplicationPaymentCharge
   }
 
   async findAll(

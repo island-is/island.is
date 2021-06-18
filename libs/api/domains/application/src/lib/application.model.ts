@@ -88,3 +88,15 @@ export class ApplicationPayment {
   @Field()
   fulfilled!: boolean
 }
+
+@ObjectType()
+export class ApplicationPaymentCharge {
+  @Field()
+  receptionID?: string
+
+  @Field()
+  user4?: string
+
+  @Field()
+  paymentUrl?: string
+}

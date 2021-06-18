@@ -8,7 +8,7 @@ export class CreatePaymentDto {
 
   @IsString()
   @ApiProperty()
-  readonly fulfilled!: boolean
+  readonly fulfilled?: boolean
 
   @IsString()
   @ApiProperty()
@@ -24,5 +24,5 @@ export class CreatePaymentDto {
 
   @IsDate()
   @ApiProperty()
-  readonly expires_at!: Date
+  readonly expires_at?: Date
 }

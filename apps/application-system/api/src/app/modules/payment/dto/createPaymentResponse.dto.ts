@@ -41,5 +41,5 @@ export class CreatePaymentResponseDto {
   @ApiProperty()
   @Expose()
   @IsDate()
-  expires_at!: Date
+  expires_at?: Date
 }
