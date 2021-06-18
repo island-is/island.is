@@ -66,7 +66,7 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                 )}
               </Text>
               <div>
-                <a className={styles.btnLink} href="/minarsidur">
+                <a tabIndex={-1} className={styles.btnLink} href="/minarsidur">
                   <Button as="span">
                     {n('nyjuSidurLink', 'Fara á nýju mínar síður')}
                   </Button>

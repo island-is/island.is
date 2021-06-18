@@ -6,6 +6,9 @@ export const btnLink = style({
   marginRight: theme.spacing[3],
   marginBottom: theme.spacing[3],
   display: 'inline-block',
+  ':hover': {
+    textDecoration: 'none',
+  },
 })
 
 export const link = style({
