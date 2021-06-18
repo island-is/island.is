@@ -1,33 +1,24 @@
 // Draft of the required database types
-
-import {
-  DraftingStatus,
-  HTMLText,
-  ISODate,
-  Kennitala,
-  PlainText,
-  RegName,
-  RegulationType,
-} from './types'
-
-// ---------------------------------------------------------------------------
-// Branded types refering to data structures loaded from Reglugerðagrunnur
-
-declare const _ExtRegulationId__Brand: unique symbol
-export type ExtRegulationId = number & { [_ExtRegulationId__Brand]: true }
-
-declare const _ExtLawChapterId__Brand: unique symbol
-export type ExtLawChapterId = number & { [_ExtLawChapterId__Brand]: true }
-
-declare const _ExtMinistryId__Brand: unique symbol
-export type ExtMinistryId = number & { [_ExtMinistryId__Brand]: true }
+import { HTMLText, ISODate, PlainText, RegName } from '@island.is/regulations'
+import { DraftingStatus, Kennitala, RegulationType } from './types'
 
 // ===========================================================================
 
 declare const _RegulationDraftId__Brand: unique symbol
 export type RegulationDraftId = number & { [_RegulationDraftId__Brand]: true }
 
-export type DB_RegulationDraft = {
+export type DB_RegulationDraft = (
+  | {
+      draftingStatus: Exclude<DraftingStatus, 'shipped'>
+      /** Name (publication id) provided by Stjórnartíðindi's systems as part of shipping/publishing the Regulation */
+      name?: undefined
+    }
+  | {
+      draftingStatus: 'shipped' & DraftingStatus
+      /** Name (publication id) provided by Stjórnartíðindi's systems as part of shipping/publishing the Regulation */
+      name: RegName
+    }
+) & {
   /** Primary key */
   id: RegulationDraftId
 
@@ -43,8 +34,6 @@ export type DB_RegulationDraft = {
    */
   draftingNotes: HTMLText
 
-  draftingStatus: DraftingStatus
-
   /** Requested date of publication in Stjórnartíðindi.
    *
    * Empty means "At the next convenient date" which may be a day or two in the future.
@@ -57,7 +46,7 @@ export type DB_RegulationDraft = {
    */
   idealPublishDate?: ISODate
 
-  ministryId?: ExtMinistryId
+  ministryId?: MinistryId
 
   /** Date signed in the ministry */
   signatureDate?: ISODate
@@ -66,9 +55,6 @@ export type DB_RegulationDraft = {
   effectiveDate?: ISODate
 
   type?: RegulationType
-
-  /** Name (publication id) provided by Stjórnartíðindi's systems as part of  */
-  name?: RegName
 }
 
 // ===========================================================================
@@ -93,7 +79,7 @@ export type DB_DraftLawChapter = {
   /** Primary key */
   id: DraftLawChapterId
   draftId: RegulationDraftId
-  lawChapterId?: ExtLawChapterId
+  lawChapterId?: LawChapterId
 }
 
 // ===========================================================================
@@ -107,7 +93,7 @@ export type DB_DraftRegulationCancel = {
   /** Primary key */
   id: DraftRegulationCancelId
   changingId: RegulationDraftId
-  regulationId: ExtRegulationId
+  regulationId: RegulationId
   date: ISODate
 }
 
@@ -122,8 +108,62 @@ export type DB_DraftRegulationChange = {
   /** Primary key */
   id: DraftRegulationChangeId
   changingId: RegulationDraftId
-  regulationId: ExtRegulationId
+  regulationId: RegulationId
   date: ISODate
   title: PlainText
   text: HTMLText
+}
+
+// ===========================================================================
+// DBx Structures loaded from "Reglugerðagrunnur"
+// ===========================================================================
+
+declare const _MinistryId__Brand: unique symbol
+export type MinistryId = number & { [_MinistryId__Brand]: true }
+
+export type DBx_Ministry = {
+  /** Primary key */
+  id: MinistryId
+  name: string
+  slug: string
+  current: boolean
+  order?: number
+}
+
+// ===========================================================================
+
+declare const _LawChapterId__Brand: unique symbol
+export type LawChapterId = number & { [_LawChapterId__Brand]: true }
+
+export type DBx_LawChapter = {
+  /** Primary key */
+  id: LawChapterId
+  title: string
+  slug: string
+  parentId?: LawChapterId
+}
+
+// ===========================================================================
+
+declare const _RegulationId__Brand: unique symbol
+export type RegulationId = number & { [_RegulationId__Brand]: true }
+
+type RegulationMigrationStatus =
+  | 'raw'
+  | 'unsafe'
+  | 'draft'
+  | 'text_locked'
+  | 'migrated'
+
+export type DBx_Regulation /* Exceprt */ = {
+  /** Primary key */
+  id: RegulationId
+  name: RegName
+  title: PlainText
+  text: HTMLText
+  signatureDate: Date
+  publishedDate: Date
+  effectiveDate: Date
+  status: RegulationMigrationStatus
+  type: RegulationType
 }

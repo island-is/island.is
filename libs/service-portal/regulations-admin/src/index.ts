@@ -13,7 +13,7 @@ export const regulationsAdminModule: ServicePortalModule = {
     {
       name: 'Reglugerðir — skráning',
       // name: defineMessage({
-      //   id: 'service.portal:regulations-admin',
+      //   id: 'service.portal:regulations-admin-home',
       //   defaultMessage: 'Reglugerðir — skráning',
       // }),
       path: ServicePortalPath.RegulationsAdminRoot,
@@ -22,16 +22,7 @@ export const regulationsAdminModule: ServicePortalModule = {
     {
       name: 'Skrá nýja reglugerð',
       // name: defineMessage({
-      //   id: 'service.portal:regulations-admin',
-      //   defaultMessage: 'Reglugerðir — skráning',
-      // }),
-      path: ServicePortalPath.RegulationsAdminNew,
-      render: () => lazy(() => import('./screens/Edit')),
-    },
-    {
-      name: 'Skrá nýja reglugerð',
-      // name: defineMessage({
-      //   id: 'service.portal:regulations-admin',
+      //   id: 'service.portal:regulations-admin-edit',
       //   defaultMessage: 'Reglugerðir — skráning',
       // }),
       path: ServicePortalPath.RegulationsAdminEdit,

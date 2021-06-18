@@ -1,48 +1,26 @@
 import React from 'react'
-import { defineMessages } from 'react-intl'
 import { useAuth } from '@island.is/auth/react'
 
 import { Box, Button } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useNamespaces } from '@island.is/localization'
 import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
-import { WIPRegulations } from '../components/WIPRegulations'
+import { TaskList } from '../components/TaskList'
+import { ShippedRegulations } from '../components/ShippedRegulations'
 import { useHistory, generatePath } from 'react-router-dom'
-
-const msg = defineMessages({
-  title: { id: 'ap.regulations-admin:home-title' },
-  intro: { id: 'ap.regulations-admin:home-intro' },
-  test: { id: 'ap.regulations-admin:test' },
-})
+import { homeMessages as msg } from '../messages'
 
 const Home = () => {
   useNamespaces('ap.regulations-admin')
-  const { formatMessage } = useLocale()
-  const { userInfo } = useAuth()
   const history = useHistory()
 
   return (
     <Box marginBottom={[6, 6, 10]}>
-      <p>
-        {formatMessage(msg.test)} {userInfo?.profile.name}
-      </p>
       <IntroHeader
         title={msg.title}
         intro={msg.intro}
         img="./assets/images/educationLicense.svg"
       />
-      <WIPRegulations />
-      <Button
-        colorScheme="default"
-        iconType="filled"
-        preTextIconType="filled"
-        size="small"
-        variant="primary"
-        onClick={() =>
-          history.push(generatePath(ServicePortalPath.RegulationsAdminNew))
-        }
-      >
-        Skrá nýja reglugerð
-      </Button>
+
       <Button
         colorScheme="default"
         iconType="filled"
@@ -51,13 +29,18 @@ const Home = () => {
         variant="primary"
         onClick={() =>
           history.push(
-            // @ts-expect-error  (Bad typing in @types/react-router-dom)
-            generatePath(ServicePortalPath.RegulationsAdminEdit, { id: 124 }),
+            generatePath(ServicePortalPath.RegulationsAdminEdit, {
+              id: 'new',
+            }),
           )
         }
       >
-        Vinna með reglugerð 124
+        Skrá nýja reglugerð
       </Button>
+
+      <TaskList />
+
+      <ShippedRegulations />
     </Box>
   )
 }

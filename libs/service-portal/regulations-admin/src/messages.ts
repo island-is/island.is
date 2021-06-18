@@ -1,0 +1,295 @@
+import { defineMessages, MessageDescriptor } from 'react-intl'
+import { DraftingStatus } from './types'
+
+export const editorMsgs = defineMessages({
+  step1Headline: {
+    id: 'ap.regulations-admin:draft-step1-headline',
+    defaultMessage: 'Kjarnaupplýsingar',
+  },
+  step2Headline: {
+    id: 'ap.regulations-admin:draft-step2-headline',
+    defaultMessage: 'Skráning lýsigagna',
+  },
+  step3Headline: {
+    id: 'ap.regulations-admin:draft-step3-headline',
+    defaultMessage: 'Breytingar og brottfellingar (áhrifafærslur)',
+  },
+  step4Headline: {
+    id: 'ap.regulations-admin:draft-step4-headline',
+    defaultMessage: 'Staðfesting fyrir útgáfu í Stjórnartíðindum',
+  },
+  step4Intro: {
+    id: 'ap.regulations-admin:draft-step4-intro',
+    defaultMessage:
+      'Vinsamlega yfirfarið að allar skráðar upplýsingar séu réttar',
+  },
+
+  title: {
+    id: 'ap.regulations-admin:draft-labels-title',
+    defaultMessage: 'Titill reglugerðar',
+  },
+
+  text: {
+    id: 'ap.regulations-admin:draft-labels-text',
+    defaultMessage: 'Texti reglugerðar',
+  },
+
+  appendix_legend: {
+    id: 'ap.regulations-admin:draft-appendix-legend',
+    defaultMessage: 'Viðauki %{idx}',
+  },
+  appendix_title: {
+    id: 'ap.regulations-admin:draft-labels-appendix-title',
+    defaultMessage: 'Heiti viðauka',
+  },
+  appendix_text: {
+    id: 'ap.regulations-admin:draft-labels-appendix-title',
+    defaultMessage: 'Texti viðauka',
+  },
+  appendix_add: {
+    id: 'ap.regulations-admin:draft-btn-appendix-add',
+    defaultMessage: 'Bæta við viðauka',
+  },
+  appendix_remove: {
+    id: 'ap.regulations-admin:draft-btn-appendix-remove',
+    defaultMessage: 'Eyða viðauka',
+  },
+  appendix_shiftup: {
+    id: 'ap.regulations-admin:draft-btn-appendix-shiftup',
+    defaultMessage: 'Færa viðauka framar',
+  },
+
+  comments: {
+    id: 'ap.regulations-admin:draft-labels-comments',
+    defaultMessage: 'Athugasemdir ritstjóra',
+  },
+  comments_add: {
+    id: 'ap.regulations-admin:draft-labels-comments-add',
+    defaultMessage: 'Skrá athugasemdir ritstjóra',
+  },
+
+  author_legened: {
+    id: 'ap.regulations-admin:draft-legend-author',
+    defaultMessage: 'Höfundur/tengiliður',
+  },
+  author_legened__plural: {
+    id: 'ap.regulations-admin:draft-legend-author--plural',
+    defaultMessage: 'Höfundar/tengiliðir',
+  },
+  author: {
+    id: 'ap.regulations-admin:draft-legend-author',
+    defaultMessage: 'Kennitala / netfang',
+  },
+  author_add: {
+    id: 'ap.regulations-admin:draft-btn-author-add',
+    defaultMessage: 'Nýr tengiliður',
+  },
+  author_remove: {
+    id: 'ap.regulations-admin:draft-btn-author-remove',
+    defaultMessage: 'Eyða tengilið',
+  },
+
+  draftingNotes: {
+    id: 'ap.regulations-admin:draft-labels-draftingnotes',
+    defaultMessage: 'Minnispunktar / Ábendingar',
+  },
+
+  idealPublishDate: {
+    id: 'ap.regulations-admin:draft-labels-idealpublishdate',
+    defaultMessage: 'Ósk um útgáfudag',
+  },
+  idealPublishDate_soon: {
+    id: 'ap.regulations-admin:draft-opts-idealpublishdate-soon',
+    defaultMessage: 'Við fyrsta tækifæri',
+  },
+  idealPublishDate_fastTrack: {
+    id: 'ap.regulations-admin:draft-otps-idealpublishdate-fasttrack',
+    defaultMessage: '(hraðbirting)',
+  },
+
+  ministry: {
+    id: 'ap.regulations-admin:draft-labels-ministry',
+    defaultMessage: 'Ráðuneyti',
+  },
+
+  lawChapter: {
+    id: 'ap.regulations-admin:draft-labels-lawchapter',
+    defaultMessage: 'Kalar í lagasasfni',
+  },
+  lawChapter_add: {
+    id: 'ap.regulations-admin:draft-btn-lawchapter-add',
+    defaultMessage: 'Bæta við kafla',
+  },
+  lawChapter_remove: {
+    id: 'ap.regulations-admin:draft-btn-lawchapter-remove',
+    defaultMessage: 'Fjarlægja kafla',
+  },
+
+  signatureDate: {
+    id: 'ap.regulations-admin:draft-labels-signaturedate',
+    defaultMessage: 'Undirritunardagur',
+  },
+
+  effectiveDate: {
+    id: 'ap.regulations-admin:draft-labels-effectivedate',
+    defaultMessage: 'Gildistökudagur',
+  },
+  effectiveDate_default: {
+    id: 'ap.regulations-admin:draft-opts-effectivedate-default',
+    defaultMessage: 'Á útgáfudegi',
+  },
+
+  type: {
+    id: 'ap.regulations-admin:draft-labels-type',
+    defaultMessage: 'Tegund reglugerðar',
+  },
+  type_base: {
+    id: 'ap.regulations-admin:draft-opts-type-base',
+    defaultMessage: 'Stofnreglugerð',
+  },
+  type_affecting: {
+    id: 'ap.regulations-admin:draft-opts-type-affecting',
+    defaultMessage: 'Breytingareglugerð',
+  },
+
+  cancellation_add: {
+    id: 'ap.regulations-admin:draft-btn-cancellation-add',
+    defaultMessage: 'Ný brottfelling',
+  },
+  change_add: {
+    id: 'ap.regulations-admin:draft-btn-change-add',
+    defaultMessage: 'Ný texta-/ákvæðabreyting',
+  },
+
+  cancallation_save: {
+    id: 'ap.regulations-admin:draft-btn-cancallation-save',
+    defaultMessage: 'Vista brottfellingu',
+  },
+  change_save: {
+    id: 'ap.regulations-admin:draft-btn-change-save',
+    defaultMessage: 'Vista brottfellingu',
+  },
+  impact_cancel: {
+    id: 'ap.regulations-admin:draft-btn-impact-cancel',
+    defaultMessage: 'Hætta við',
+  },
+  impact_remove: {
+    id: 'ap.regulations-admin:draft-btn-impact-remove',
+    defaultMessage: 'Eyða áhrifafærslu',
+  },
+  change_edit: {
+    id: 'ap.regulations-admin:draft-btn-change-edit',
+    defaultMessage: 'Breyta breytingafærslu',
+  },
+
+  cancelledRegulation: {
+    id: 'ap.regulations-admin:draft-label-cancelledregulation',
+    defaultMessage: 'Reglugerð sem fellur brott',
+  },
+  changedRegulation: {
+    id: 'ap.regulations-admin:draft-label-changedregulation',
+    defaultMessage: 'Stofnreglugerð sem breytist',
+  },
+  impactDate: {
+    id: 'ap.regulations-admin:draft-label-impactdate',
+    defaultMessage: 'Gildistökudagur',
+  },
+
+  changedTitle: {
+    id: 'ap.regulations-admin:draft-label-changedtitle',
+    defaultMessage: 'Nýr titill reglugerðar',
+  },
+  changedText: {
+    id: 'ap.regulations-admin:draft-legend-changedtitle',
+    defaultMessage: 'Uppfærður texti reglugerðar',
+  },
+})
+
+export const warningMessages = defineMessages({
+  impactMissing: {
+    id: 'ap.regulations-admin:warning-impactmissing',
+    defaultMessage:
+      'Breytingareglugerð verður að fella einhverja reglugerð úr gildi eða breyta ákvæðum hennar.',
+  },
+})
+
+export const homeMessages = defineMessages({
+  title: {
+    id: 'ap.regulations-admin:home-title',
+    defaultMessage: 'Skráning reglugerða',
+  },
+  intro: {
+    id: 'ap.regulations-admin:home-intro',
+    defaultMessage: 'Nýskráning og ritstjórn reglugerða er góð skemmtun.',
+  },
+
+  taskListTitle: {
+    id: 'ap.regulations-admin:tasklist-title',
+    defaultMessage: 'Í vinnslu',
+  },
+  shippedTitle: {
+    id: 'ap.regulations-admin:shipped-title',
+    defaultMessage: 'Bíður formlegrar birtingar',
+  },
+
+  cta: {
+    id: 'ap.regulations-admin:task-cta',
+    defaultMessage: 'Halda áfram',
+  },
+
+  publishSoon: editorMsgs.idealPublishDate_soon,
+  publishFastTrack: editorMsgs.idealPublishDate_fastTrack,
+  publishToday: {
+    id: 'ap.regulations-admin:idealpublishdate-today',
+    defaultMessage: 'Í dag',
+  },
+})
+
+export const statusMsgs: Record<
+  DraftingStatus,
+  MessageDescriptor
+> = defineMessages({
+  draft: {
+    id: 'ap.regulations-admin:status-draft',
+    defaultMessage: 'Uppkast',
+  },
+  proposal: {
+    id: 'ap.regulations-admin:status-proposal',
+    defaultMessage: 'Til yfirlestrar',
+  },
+  shipped: {
+    id: 'ap.regulations-admin:status-shipped',
+    defaultMessage: 'Bíður birtingar',
+  },
+})
+
+export const buttonsMsgs = defineMessages({
+  buttonContinue: {
+    id: 'ap.regulations-admin:btn-continue',
+    defaultMessage: 'Halda áfram', // Næsta skref
+  },
+  buttonGoBack: {
+    id: 'ap.regulations-admin:btn-back',
+    defaultMessage: 'Til baka',
+  },
+  buttonSaveDraft: {
+    id: 'ap.regulations-admin:btn-savedraft',
+    defaultMessage: 'Vista drög',
+  },
+  buttonSaveStatus: {
+    id: 'ap.regulations-admin:btn-savestatus',
+    defaultMessage: 'Vista stöðu',
+  },
+  buttonPropose: {
+    id: 'ap.regulations-admin:btn-propose',
+    defaultMessage: 'Senda í yfirlestur',
+  },
+  buttonPrepShipping: {
+    id: 'ap.regulations-admin:btn-prepshipping',
+    defaultMessage: 'Hefja útgáfuferli',
+  },
+  buttonPublish: {
+    id: 'ap.regulations-admin:btn-publish',
+    defaultMessage: 'Senda til útgáfu í stjórnartíðindum',
+  },
+})
