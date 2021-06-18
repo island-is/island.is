@@ -120,7 +120,6 @@ const ClientAllowedScopesForm: React.FC<Props> = (props: Props) => {
                     name="scopeName"
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateScope,
                     })}
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >
