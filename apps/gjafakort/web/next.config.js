@@ -21,10 +21,10 @@ module.exports = withSourceMaps(
         },
         {
           source: '/personuverndarstefna',
-          destination: 'https://island.is/ferdagjof/ferdagjof-personuverndarstefna',
+          destination:
+            'https://island.is/ferdagjof/ferdagjof-personuverndarstefna',
           permanent: true,
         },
-
       ]
     },
 
