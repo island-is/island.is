@@ -1,7 +1,8 @@
 import { Inject, Injectable, MethodNotAllowedException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op, UniqueConstraintError } from 'sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { PartyLetterRegistry } from './partyLetterRegistry.model'
 import { CreateDto } from './dto/create.dto'
 
