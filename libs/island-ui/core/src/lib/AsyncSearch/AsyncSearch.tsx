@@ -11,6 +11,7 @@ import React, {
 import Downshift, { DownshiftProps } from 'downshift'
 import { ControllerStateAndHelpers } from 'downshift/typings'
 import cn from 'classnames'
+import { helperStyles } from '@island.is/island-ui/theme'
 import { Input, InputProps } from './shared/Input/Input'
 import { Label } from './shared/Label/Label'
 import { Menu, MenuProps } from './shared/Menu/Menu'
@@ -317,7 +318,10 @@ export const AsyncSearchInput = forwardRef<
         )}
         {showLabel && <Label {...labelProps}>{label}</Label>}
         {!showLabel && (
-          <label className={styles.srOnly} id={inputProps['aria-labelledby']}>
+          <label
+            className={helperStyles.srOnly}
+            id={inputProps['aria-labelledby']}
+          >
             {inputProps.placeholder}
           </label>
         )}
