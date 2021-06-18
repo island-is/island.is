@@ -22,7 +22,7 @@ export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
 
         Beiðni þinni um tilfærslu réttinda hefur verið hafnað af hinu foreldrinu.
     
-        Til þess að skoða umsókn þína getur þú <a href="${clientLocationOrigin}/umsoknir/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}" target="_blank">smellt hér</a>.
+        Til þess að skoða umsókn þína getur þú <a href="${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}" target="_blank">smellt hér</a>.
     
         Með kveðju,
         Fæðingarorlofssjóðsjóður

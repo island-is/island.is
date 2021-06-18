@@ -24,7 +24,7 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
 
         Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem foreldri í umsókn sinni og er að óska eftir réttindum frá þér.
     
-        Ef þú áttir von á þessum tölvupósti þá getur þú <a href="${clientLocationOrigin}/umsoknir/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.
+        Ef þú áttir von á þessum tölvupósti þá getur þú <a href="${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.
     
         Með kveðju,
         Fæðingarorlofssjóðsjóður
