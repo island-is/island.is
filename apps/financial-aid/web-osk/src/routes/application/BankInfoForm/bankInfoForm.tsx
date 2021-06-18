@@ -113,16 +113,9 @@ const Form = () => {
           Greiðsla fjárhagsaðstoðar
         </Text>
 
-        <Text marginBottom={2}>
+        <Text marginBottom={[3, 3, 4]}>
           Til að geta afgreitt umsóknina þurfum við að fá uppgefinn
           bankareikning í þínu nafni.
-        </Text>
-
-        <Text marginBottom={[3, 3, 4]}>
-          Þér er ekki skylt að gefa upp bankaupplýsingar hér. Ef þú gefur
-          bankaupplýsingarnar upp verða þær geymdar í gagnagrunni Stafræns
-          Íslands. Kjósirðu að gefa þær ekki upp núna verður hringt í þig og
-          óskað eftir þeim ef umsóknin verður samþykkt.
         </Text>
 
         <div className={styles.bankInformationContainer}>
@@ -151,6 +144,17 @@ const Form = () => {
             )
           })}
         </div>
+
+        <Text as="h2" variant="h4" marginBottom={1}>
+          Nánar um bankaupplýsingar
+        </Text>
+
+        <Text marginBottom={[3, 3, 4]} variant="small">
+          Þér er ekki skylt að gefa upp bankaupplýsingar hér. Ef þú gefur
+          bankaupplýsingarnar upp verða þær geymdar í gagnagrunni Stafræns
+          Íslands. Kjósirðu að gefa þær ekki upp núna verður hringt í þig og
+          óskað eftir þeim ef umsóknin verður samþykkt.
+        </Text>
       </FormContentContainer>
 
       <FormFooter

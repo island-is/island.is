@@ -82,16 +82,27 @@ const StudentForm = () => {
         >
           <Input
             backgroundColor="blue"
-            label="Hvaða námi? Dæmi: Viðskiptafræði í HR"
+            label="Hvaða námi?"
             name="education"
-            placeholder="Dæmi: Viðskiptafræði í HR"
+            placeholder="Skrifaðu hér"
             value={form?.studentCustom}
             hasError={error && !Boolean(form?.studentCustom)}
-            errorMessage="Þú þarft að skrifa hvaða nám þú stundar"
+            errorMessage="Þú þarft að skrifa hvaða nám þú stundar. Dæmi: Viðskiptafræði í HR"
             onChange={(
               event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => updateForm({ ...form, studentCustom: event.target.value })}
           />
+          <Box
+            marginTop={1}
+            className={cn({
+              [`errorMessage`]: true,
+              [`showErrorMessage`]: !error,
+            })}
+          >
+            <Text fontWeight="semiBold" variant="small">
+              Dæmi: Viðskiptafræði í HR
+            </Text>
+          </Box>
         </Box>
       </FormContentContainer>
 
