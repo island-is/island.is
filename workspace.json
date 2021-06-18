@@ -7024,8 +7024,7 @@
           "options": {
             "outputPath": "dist/apps/services/party-letter-registry-api",
             "main": "apps/services/party-letter-registry-api/src/main.ts",
-            "tsConfig": "apps/services/party-letter-registry-api/tsconfig.app.json",
-            "webpackConfig": "apps/services/party-letter-registry-api/webpack.config.js"
+            "tsConfig": "apps/services/party-letter-registry-api/tsconfig.app.json"
           },
           "configurations": {
             "production": {
@@ -7033,7 +7032,24 @@
               "extractLicenses": true,
               "inspect": false
             }
-          }
+          },
+          "assets": [
+            {
+              "glob": "*",
+              "input": "apps/services/party-letter-registry-api/migrations",
+              "output": "./migrations"
+            },
+            {
+              "glob": ".sequelizerc",
+              "input": "apps/services/party-letter-registry-api",
+              "output": "./"
+            },
+            {
+              "glob": "sequelize.config.js",
+              "input": "apps/services/party-letter-registry-api",
+              "output": "./"
+            }
+          ]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -7200,8 +7216,7 @@
           "options": {
             "outputPath": "dist/apps/services/temporary-voter-registry-api",
             "main": "apps/services/temporary-voter-registry-api/src/main.ts",
-            "tsConfig": "apps/services/temporary-voter-registry-api/tsconfig.app.json",
-            "webpackConfig": "apps/services/temporary-voter-registry-api/webpack.config.js"
+            "tsConfig": "apps/services/temporary-voter-registry-api/tsconfig.app.json"
           },
           "configurations": {
             "production": {
@@ -7209,7 +7224,24 @@
               "extractLicenses": true,
               "inspect": false
             }
-          }
+          },
+          "assets": [
+            {
+              "glob": "*",
+              "input": "apps/services/temporary-voter-registry-api/migrations",
+              "output": "./migrations"
+            },
+            {
+              "glob": ".sequelizerc",
+              "input": "apps/services/temporary-voter-registry-api",
+              "output": "./"
+            },
+            {
+              "glob": "sequelize.config.js",
+              "input": "apps/services/temporary-voter-registry-api",
+              "output": "./"
+            }
+          ]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
