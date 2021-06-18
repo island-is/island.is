@@ -19,6 +19,12 @@ module.exports = withSourceMaps(
           destination: 'https://island.is/ferdagjof',
           permanent: true,
         },
+        {
+          source: '/personuverndarstefna',
+          destination: 'https://island.is/ferdagjof/ferdagjof-personuverndarstefna',
+          permanent: true,
+        },
+
       ]
     },
 
