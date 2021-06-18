@@ -42,7 +42,9 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
   const { downloadSheet } = downloadXlsxDocument()
 
-  const { loading, ...statusQuery } = useQuery<Query>(GetFinanceStatusQuery)
+  const { loading, error, ...statusQuery } = useQuery<Query>(
+    GetFinanceStatusQuery,
+  )
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
 
@@ -83,6 +85,14 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
           {loading && (
             <Box padding={3}>
               <SkeletonLoader space={1} height={40} repeat={5} />
+            </Box>
+          )}
+          {error && (
+            <Box>
+              <AlertBanner
+                description="Ekki tókst að sækja gögn"
+                variant="error"
+              />
             </Box>
           )}
           {financeStatusData?.message && (

@@ -14,6 +14,7 @@ import {
   DatePicker,
   Button,
   AlertBanner,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { BillReceiptItemTypes } from './FinanceBillsData.types'
@@ -167,6 +168,17 @@ const FinanceBills = () => {
             <AlertBanner
               description="Veldu dagsetningar til að fá niðurstöður"
               variant="info"
+            />
+          )}
+          {loading && (
+            <Box padding={3}>
+              <SkeletonLoader space={1} height={40} repeat={5} />
+            </Box>
+          )}
+          {billsDataArray.length === 0 && called && !loading && (
+            <AlertBanner
+              description="Leit skilaði engum niðurstöðum. Vinsamlegast leitaðu aftur."
+              variant="warning"
             />
           )}
           {billsDataArray.length > 0 ? (
