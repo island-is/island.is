@@ -9,7 +9,7 @@ import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationService } from './application.service'
-import { Application, ApplicationPayment } from './application.model'
+import { Application, ApplicationPayment, ApplicationPaymentCharge } from './application.model'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -59,6 +59,8 @@ export class ApplicationResolver {
       fulfilled: status.fulfilled,
     }
   }
+
+
 
   @Query(() => [Application], { nullable: true })
   async applicationApplications(
