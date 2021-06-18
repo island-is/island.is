@@ -7069,22 +7069,6 @@
             }
           }
         },
-        "nrwl-node-build": {
-          "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/apps/services/endorsements/api-nrwl-node",
-            "main": "apps/services/endorsements/api/src/main.ts",
-            "tsConfig": "apps/services/endorsements/api/tsconfig.app.json"
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false
-            }
-          }
-        },
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
@@ -7174,7 +7158,7 @@
       "prefix": "services-party-letter-registry-api",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/party-letter-registry-api",
@@ -7366,7 +7350,7 @@
       "prefix": "services-temporary-voter-registry-api",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/temporary-voter-registry-api",
