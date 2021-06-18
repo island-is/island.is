@@ -95,7 +95,15 @@ export class ApplicationService {
         payeeNationalID: auth.nationalId || '',
         chargeType: 'AY1',
         performerNationalID: auth.nationalId || '',
-        charges: [{chargeItemCode: 'AY110', quantity: 1, priceAmount: amount, amount: amount, reference: ''}],
+        charges: [
+          {
+            chargeItemCode: 'AY110',
+            quantity: 1,
+            priceAmount: amount,
+            amount: amount,
+            reference: '',
+          },
+        ],
       },
       applicationId,
     )

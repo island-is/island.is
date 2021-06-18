@@ -9,7 +9,11 @@ import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationService } from './application.service'
-import { Application, ApplicationPayment, ApplicationPaymentCharge } from './application.model'
+import {
+  Application,
+  ApplicationPayment,
+  ApplicationPaymentCharge,
+} from './application.model'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -60,7 +64,20 @@ export class ApplicationResolver {
     }
   }
 
+  @Query(() => ApplicationPaymentCharge, { nullable: true })
+  async applicationPaymentCharge(
+    applicationId: string,
+    amount: number,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationPaymentCharge> {
+    const charge = await this.applicationService.createCharge(
+      applicationId,
+      amount,
+      user,
+    )
 
+    return charge
+  }
 
   @Query(() => [Application], { nullable: true })
   async applicationApplications(
