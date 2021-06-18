@@ -3,7 +3,7 @@ import { Case, Institution } from '@island.is/judicial-system/types'
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   DateTime,
   FormContentContainer,

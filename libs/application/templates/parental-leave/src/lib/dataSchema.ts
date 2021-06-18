@@ -2,8 +2,6 @@ import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-import { coreErrorMessages } from '@island.is/application/core'
-
 import { NO, YES, StartDateOptions, MANUAL, SPOUSE } from '../constants'
 import { errorMessages } from './messages'
 
@@ -58,16 +56,16 @@ export const dataSchema = z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z
       .string()
-      .optional()
-      .refine((v) => !isNaN(Number(v))),
+      .refine((v) => !isNaN(Number(v)))
+      .optional(),
   }),
   giveRights: z
     .object({
       isGivingRights: z.enum([YES, NO]),
       giveDays: z
         .string()
-        .optional()
-        .refine((v) => !isNaN(Number(v))),
+        .refine((v) => !isNaN(Number(v)))
+        .optional(),
     })
     .optional(),
   singlePeriod: z.enum([YES, NO]),

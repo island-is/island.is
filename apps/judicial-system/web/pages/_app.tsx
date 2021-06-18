@@ -31,6 +31,9 @@ const getTranslationStrings = ({
     .then((content) => {
       return content?.data?.getTranslations
     })
+    .catch((error) => {
+      console.error(`Error fetching translations: ${error}`)
+    })
 }
 
 interface Props extends AppProps {
@@ -59,7 +62,7 @@ class JudicialSystemApplication extends App<Props> {
       <ApolloProvider client={client}>
         <FeatureProvider>
           <UserProvider>
-            <LocaleProvider locale="is" messages={translations}>
+            <LocaleProvider locale="is" messages={translations || {}}>
               <>
                 <Header />
                 <Component {...pageProps} />

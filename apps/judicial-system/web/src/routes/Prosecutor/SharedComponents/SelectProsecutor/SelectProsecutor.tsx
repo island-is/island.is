@@ -5,7 +5,7 @@ import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/for
 import { Case } from '@island.is/judicial-system/types'
 import { ValueType } from 'react-select'
 import { Option } from '@island.is/island-ui/core'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case

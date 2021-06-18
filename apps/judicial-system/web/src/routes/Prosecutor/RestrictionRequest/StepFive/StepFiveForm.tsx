@@ -11,13 +11,15 @@ import {
 } from '@island.is/island-ui/core'
 import { Case, CaseType } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks/useS3Upload'
+import {
+  useCase,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 interface Props {

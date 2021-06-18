@@ -43,6 +43,7 @@ export function extractAnswersToSubmitFromScreen(
   screen: FormScreen,
 ): FormValue {
   const screenId = screen.id ?? ''
+
   if (
     screen.isPartOfRepeater ||
     (screenId.includes('[') && screenId.includes(']'))

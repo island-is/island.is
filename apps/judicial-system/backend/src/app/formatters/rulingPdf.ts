@@ -278,6 +278,7 @@ export async function getRulingPdfAsString(
         paragraphGap: 0,
       },
     )
+
   if (existingCase.additionToConclusion) {
     doc.text(' ').text(existingCase.additionToConclusion, {
       lineGap: 6,

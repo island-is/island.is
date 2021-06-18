@@ -13,7 +13,6 @@ import {
   ApiOAuth2,
   ApiOkResponse,
   ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'

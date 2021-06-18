@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { MessageDescriptor, useIntl } from 'react-intl'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
   DateTime,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   FormSettings,
   useCaseFormHelper,
@@ -21,6 +22,40 @@ import {
   formatAccusedByGender,
   NounCases,
 } from '@island.is/judicial-system/formatters'
+import { policeDemandsForm } from '@island.is/judicial-system-web/messages'
+
+const courtClaimPrefill: Partial<
+  Record<
+    CaseType,
+    {
+      text: MessageDescriptor
+      format?: {
+        accusedName?: boolean
+        address?: boolean
+      }
+    }
+  >
+> = {
+  [CaseType.SEARCH_WARRANT]: {
+    text: policeDemandsForm.courtClaim.prefill.searchWarrant,
+    format: { accusedName: true, address: true },
+  },
+  [CaseType.BANKING_SECRECY_WAIVER]: {
+    text: policeDemandsForm.courtClaim.prefill.bankingSecrecyWaiver,
+  },
+  [CaseType.PHONE_TAPPING]: {
+    text: policeDemandsForm.courtClaim.prefill.phoneTapping,
+    format: { accusedName: true },
+  },
+  [CaseType.TELECOMMUNICATIONS]: {
+    text: policeDemandsForm.courtClaim.prefill.teleCommunications,
+    format: { accusedName: true },
+  },
+  [CaseType.TRACKING_EQUIPMENT]: {
+    text: policeDemandsForm.courtClaim.prefill.trackingEquipment,
+    format: { accusedName: true },
+  },
+}
 
 interface Props {
   workingCase: Case
@@ -41,7 +76,8 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
-  const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
+  const { updateCase, autofill } = useCase()
   const [, setRequestedValidToDateIsValid] = useState<boolean>(true)
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
@@ -52,23 +88,43 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
     validations,
   )
 
+  useEffect(() => {
+    if (workingCase) {
+      const courtClaim = courtClaimPrefill[workingCase.type]
+      const courtClaimText = courtClaim
+        ? formatMessage(courtClaim.text, {
+            ...(courtClaim.format?.accusedName && {
+              accusedName: workingCase.accusedName,
+            }),
+            ...(courtClaim.format?.address && {
+              address: workingCase.accusedAddress,
+            }),
+          })
+        : ''
+      autofill('demands', courtClaimText, workingCase)
+      setWorkingCase(workingCase)
+    }
+  }, [workingCase, setWorkingCase, autofill])
+
   return (
     <>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Dómkröfur og lagagrundvöllur
+            {formatMessage(policeDemandsForm.general.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Gildistími heimildar
+              {formatMessage(policeDemandsForm.requestToDate.heading)}
             </Text>
           </Box>
           <DateTime
             name="reqValidToDate"
-            datepickerLabel="Heimild gildir til:"
+            datepickerLabel={formatMessage(
+              policeDemandsForm.requestToDate.dateLabel,
+            )}
             minDate={new Date()}
             selectedDate={
               workingCase.requestedValidToDate
@@ -92,14 +148,16 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómkröfur
+              {formatMessage(policeDemandsForm.courtClaim.heading)}
             </Text>
           </Box>
           <Input
             data-testid="demands"
             name="demands"
-            label="Krafa lögreglu"
-            placeholder="Krafa ákæranda"
+            label={formatMessage(policeDemandsForm.courtClaim.label)}
+            placeholder={formatMessage(
+              policeDemandsForm.courtClaim.placeholder,
+            )}
             defaultValue={workingCase.demands}
             errorMessage={demandsEM}
             hasError={demandsEM !== ''}
@@ -132,17 +190,21 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Lagaákvæði sem brot varða við
+              {formatMessage(policeDemandsForm.lawsBroken.heading)}
             </Text>
           </Box>
           <Input
             data-testid="lawsBroken"
             name="lawsBroken"
-            label={`Lagaákvæði sem ætluð brot ${formatAccusedByGender(
-              workingCase.accusedGender,
-              NounCases.GENITIVE,
-            )} þykja varða við`}
-            placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
+            label={formatMessage(policeDemandsForm.lawsBroken.label, {
+              defendant: formatAccusedByGender(
+                workingCase.accusedGender,
+                NounCases.GENITIVE,
+              ),
+            })}
+            placeholder={formatMessage(
+              policeDemandsForm.lawsBroken.placeholder,
+            )}
             defaultValue={workingCase.lawsBroken}
             errorMessage={lawsBrokenEM}
             hasError={lawsBrokenEM !== ''}
@@ -175,14 +237,16 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Lagaákvæði sem krafan er byggð á
+              {formatMessage(policeDemandsForm.legalBasis.heading)}
             </Text>
           </Box>
           <Input
             data-testid="legal-basis"
             name="legal-basis"
-            label="Lagaákvæði sem krafan er byggð á"
-            placeholder="Hvaða lagaákvæðum byggir krafan á?"
+            label={formatMessage(policeDemandsForm.legalBasis.label)}
+            placeholder={formatMessage(
+              policeDemandsForm.legalBasis.placeholder,
+            )}
             defaultValue={workingCase.legalBasis}
             errorMessage={legalBasisEM}
             hasError={legalBasisEM !== ''}

@@ -80,6 +80,7 @@ module.exports = {
     '<rootDir>/libs/auth-nest-tools',
     '<rootDir>/libs/cache',
     '<rootDir>/libs/clients/auth-public-api',
+    '<rootDir>/libs/clients/middlewares',
     '<rootDir>/libs/clients/mms',
     '<rootDir>/libs/clients/national-registry',
     '<rootDir>/libs/clients/regulations',
@@ -162,6 +163,7 @@ module.exports = {
     '<rootDir>/apps/services/auth-public-api',
     '<rootDir>/libs/service-portal/settings/access-control',
     '<rootDir>/libs/auth/scopes',
-    '<rootDir>/libs/clients/middlewares',
+    '<rootDir>/libs/api/domains/license-service',
+    '<rootDir>/libs/service-portal/licenses',
   ],
 }

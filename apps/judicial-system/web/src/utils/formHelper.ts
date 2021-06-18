@@ -100,7 +100,7 @@ export const validateAndSetTime = (
   }
 }
 
-export const setAndSendDateToServer = async (
+export const setAndSendDateToServer = (
   field: string,
   currentValue: string | undefined,
   date: Date | null,
@@ -142,7 +142,7 @@ export const setAndSendDateToServer = async (
   }
 }
 
-export const newSetAndSendDateToServer = async (
+export const newSetAndSendDateToServer = (
   field: string,
   date: Date | undefined,
   isValid: boolean,
@@ -177,7 +177,7 @@ export const newSetAndSendDateToServer = async (
   }
 }
 
-export const validateAndSendToServer = async (
+export const validateAndSendToServer = (
   field: string,
   value: string,
   validations: Validation[],
@@ -195,11 +195,11 @@ export const validateAndSendToServer = async (
   }
 
   if (theCase.id !== '') {
-    await updateCase(theCase.id, parseString(field, value))
+    updateCase(theCase.id, parseString(field, value))
   }
 }
 
-export const validateAndSendTimeToServer = async (
+export const validateAndSendTimeToServer = (
   field: string,
   currentValue: string | undefined,
   time: string,

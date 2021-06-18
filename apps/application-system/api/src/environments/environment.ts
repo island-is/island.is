@@ -23,7 +23,7 @@ const devConfig = {
     audience: '@island.is',
   },
   templateApi: {
-    clientLocationOrigin: 'http://localhost:4242',
+    clientLocationOrigin: 'http://localhost:4242/umsoknir',
     emailOptions: {
       useTestAccount: true,
     },
