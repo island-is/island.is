@@ -2,7 +2,14 @@
 class ValidationUtils {
   public static emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 
-  public static identifierPattern = /^[@a-zA-Z0-9_.-/]*$/
+  public static identifierPattern = /^[a-zA-Z0-9_.-]*$/
+
+  /** Pattern that enforeces @domain.is or @domain2-_2.is */
+  public static domainPattern = /@{1}[a-z0-9_-]*[.]?[a-z]*$/
+
+  /** Pattern that enforces input to @[domain.is] or @[domain.is][/[paths]]*
+   */
+  public static clientIdPattern = /^@{1}[a-z0-9_.-]*([/]*[a-z0-9_\.-])+$/
 
   /** Pattern for illegal characters in description */
   public static descriptionPattern = /[<>%\$]/
@@ -17,6 +24,8 @@ class ValidationUtils {
 
   public static nationalIdPattern = /^[0-9]*$/
 
+  /** Pattern that enforces input to @[domain.is] or @[domain.is][/[optionalPaths]/[path:optionalAction]]*
+   */
   public static apiScopePattern = /^@[a-z\.]*[/]([a-z][:/]?)*[a-z]+$/
 
   public static scopePattern = /^@([\w-])$/
@@ -29,11 +38,43 @@ class ValidationUtils {
     return regex.test(input)
   }
 
+  public static validateDomain(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+    const regex = new RegExp(ValidationUtils.domainPattern)
+    return regex.test(input)
+  }
+
   public static validateIdentifier(input: string): boolean {
     if (input.length === 0) {
       return true
     }
     const regex = new RegExp(ValidationUtils.identifierPattern)
+    return regex.test(input)
+  }
+
+  public static validateClientId(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+    const regex = new RegExp(ValidationUtils.clientIdPattern)
+    return regex.test(input)
+  }
+
+  public static validateApiResourceName(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+    const regex = new RegExp(ValidationUtils.clientIdPattern)
+    return regex.test(input)
+  }
+
+  public static validateIdentityResourceName(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+    const regex = new RegExp(ValidationUtils.clientIdPattern)
     return regex.test(input)
   }
 

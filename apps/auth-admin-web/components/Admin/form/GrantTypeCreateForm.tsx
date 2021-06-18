@@ -83,7 +83,11 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     name="grantType.name"
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateIdentifier,
+                      validate: isEditing
+                        ? () => {
+                            return true
+                          }
+                        : ValidationUtils.validateIdentifier,
                     })}
                     defaultValue={grantType.name}
                     className="grant-type-create-form__input"
