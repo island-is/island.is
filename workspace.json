@@ -7075,8 +7075,7 @@
           "options": {
             "outputPath": "dist/apps/services/endorsements/api-nrwl-node",
             "main": "apps/services/endorsements/api/src/main.ts",
-            "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
-            "webpackConfig": "apps/services/endorsements/api/webpack.config.js"
+            "tsConfig": "apps/services/endorsements/api/tsconfig.app.json"
           },
           "configurations": {
             "production": {
