@@ -12,7 +12,6 @@ import {
 import * as z from 'zod'
 
 const States = {
-  prerequisites: 'prerequisites',
   draft: 'draft',
   submitted: 'submitted',
 }
@@ -39,44 +38,21 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
   ],
   dataSchema,
   stateMachineConfig: {
-    initial: States.prerequisites,
+    initial: States.draft,
     states: {
-      [States.prerequisites]: {
-        meta: {
-          name: 'Skilyrði',
-          progress: 0,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Prerequisites').then((module) =>
-                  Promise.resolve(module.Prerequisites),
-                ),
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
-              write: 'all',
-            },
-          ],
-        },
-        on: {
-          SUBMIT: {
-            target: States.draft,
-          },
-        },
-      },
       [States.draft]: {
         meta: {
           name: 'hello',
-          progress: 0.33,
+          progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/TestApplication').then((val) =>
-                  Promise.resolve(val.TestApplication),
+                import(
+                  '../forms/ComplaintsToAlthingiOmbudsmanApplication'
+                ).then((val) =>
+                  Promise.resolve(val.ComplaintsToAlthingiOmbudsmanApplication),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
