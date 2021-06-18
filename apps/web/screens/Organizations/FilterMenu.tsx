@@ -23,7 +23,7 @@ interface FilterMenuProps {
 export type FilterLabels = Pick<
   FilterProps,
   'labelClear' | 'labelOpen' | 'labelClose' | 'labelTitle' | 'labelResult'
->
+> & { inputPlaceholder?: string }
 
 export type CategoriesProps = {
   id: string
@@ -44,6 +44,7 @@ export const FilterMenu = ({
   labelClose = 'Loka síu',
   labelTitle = 'Sía stofnanir',
   labelResult = 'Sýna niðurstöður',
+  inputPlaceholder = 'Sía eftir leitarorði',
 }: FilterMenuProps & FilterLabels) => (
   <Filter
     labelClear={labelClear}
@@ -62,12 +63,12 @@ export const FilterMenu = ({
   >
     <FilterInput
       name="filter-input"
-      placeholder="Sía eftir leitarorði"
+      placeholder={inputPlaceholder}
       value={filter.input}
       onChange={(value) => setFilter({ ...filter, input: value })}
     />
     <FilterMultiChoice
-      labelClear="Hreinsa val"
+      labelClear={labelClear}
       categories={categories}
       onChange={(event) => {
         onBeforeUpdate()

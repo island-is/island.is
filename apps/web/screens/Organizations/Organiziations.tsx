@@ -11,6 +11,7 @@ import {
   ResponsiveSpace,
   Pagination,
 } from '@island.is/island-ui/core'
+import { helperStyles } from '@island.is/island-ui/theme'
 import {
   Query,
   QueryGetNamespaceArgs,
@@ -36,8 +37,6 @@ import {
   FilterOptions,
   FilterLabels,
 } from './FilterMenu'
-
-import * as styles from './Organizations.treat'
 
 const CARDS_PER_PAGE = 10
 
@@ -69,7 +68,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const categories: CategoriesProps[] = [
     {
       id: 'raduneyti',
-      label: n('organizations', 'Ráðuneyti'),
+      label: n('ministries', 'Ráðuneyti'),
       selected: filter.raduneyti,
       filters: tagsItems
         .filter((x) => x.title)
@@ -116,6 +115,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     labelClose: n('filterClose', 'Loka síu'),
     labelTitle: n('filterOrganization', 'Sía stofnanir'),
     labelResult: n('showResults', 'Sýna niðurstöður'),
+    inputPlaceholder: n('filterBySearchQuery', 'Sía eftir leitarorði'),
   }
 
   return (
@@ -231,7 +231,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                               goToPage(page)
                             }}
                           >
-                            <span className={styles.srOnly}>
+                            <span className={helperStyles.srOnly}>
                               {n('page', 'Síða')}
                             </span>
                             <span className={className}>{children}</span>
