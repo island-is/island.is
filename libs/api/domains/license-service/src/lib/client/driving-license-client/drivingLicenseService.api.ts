@@ -12,7 +12,12 @@ export class LicenseServiceApi {
   private readonly xroadPath: string
   private readonly secret: string
 
-  constructor(xroadBaseUrl: string, xroadClientId: string, xroadPath: string, secret: string) {
+  constructor(
+    xroadBaseUrl: string,
+    xroadClientId: string,
+    xroadPath: string,
+    secret: string,
+  ) {
     this.xroadApiUrl = xroadBaseUrl
     this.xroadClientId = xroadClientId
     this.xroadPath = xroadPath
