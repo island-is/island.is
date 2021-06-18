@@ -74,7 +74,7 @@ class ValidationUtils {
     if (input.length === 0) {
       return true
     }
-    const regex = new RegExp(ValidationUtils.clientIdPattern)
+    const regex = new RegExp(ValidationUtils.identifierPattern)
     return regex.test(input)
   }
 
