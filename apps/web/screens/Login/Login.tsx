@@ -10,6 +10,7 @@ import {
   BulletList,
   Bullet,
   ContentBlock,
+  Button,
   Tag,
 } from '@island.is/island-ui/core'
 import * as styles from './Login.treat'
@@ -54,56 +55,6 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
               span={['12/12', '12/12', '6/12']}
               paddingBottom={[3, 3, 4]}
             >
-              <Text as="h1" variant="h1" marginBottom="p3">
-                {n('gomluSidurTitle', 'Gömlu mínar síður')}
-              </Text>
-              <Text as="p" variant="intro" marginBottom="p5">
-                {n(
-                  'gomluSidurText',
-                  'Gömlu mínar síður á ísland.is. Hér er hægt að nálgast gömlu útgáfuna af mínum síðum með öllum þeim möguleikum sem þar eru í boði.',
-                )}
-              </Text>
-              <Link
-                href="//minarsidur.island.is/"
-                color="blue400"
-                underline="normal"
-                underlineVisibility="always"
-                newTab
-              >
-                {n('gomluSidurLink', 'Fara á gömlu mínar síður')}{' '}
-                <Icon icon="open" type="outline" />
-              </Link>
-            </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '6/12']}
-              paddingBottom={[3, 3, 4]}
-            >
-              <Box
-                flexDirection="column"
-                display="flex"
-                alignItems={['flexStart', 'flexStart', 'center']}
-                height="full"
-              >
-                {oldListItemsArray.length > 0 ? (
-                  <div>
-                    <Text as="h3" variant="h3" marginBottom="p3">
-                      {n('gomluSidurListTitle', 'Á gömlu mínum síðum')}
-                    </Text>
-                    <BulletList type="ul">
-                      {oldListItemsArray.map((li) => (
-                        <Bullet key={li}>{li}</Bullet>
-                      ))}
-                    </BulletList>
-                  </div>
-                ) : null}
-              </Box>
-            </GridColumn>
-          </GridRow>
-          <GridRow marginTop="containerGutter">
-            <GridColumn
-              span={['12/12', '12/12', '6/12']}
-              paddingBottom={[3, 3, 4]}
-            >
               <Tag disabled>{n('nyjuSidurTag', 'Beta útgáfa')}</Tag>
               <Text as="h2" variant="h1" marginBottom="p3" marginTop="p1">
                 {n('nyjuSidurTitle', 'Ný útgáfa af mínum síðum á island.is')}
@@ -114,9 +65,24 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                   'Ný útgáfa minna síðna á ísland.is. Hér er um að ræða beta útgáfu að nýjum mínum síðum, ekki eru allir möguleikar sem eru á gömlu mínum síðum í boði hér ennþá.',
                 )}
               </Text>
-              <a className={styles.link} href="/minarsidur">
-                {n('nyjuSidurLink', 'Fara á nýju mínar síður')}
-              </a>
+              <div>
+                <a className={styles.btnLink} href="/minarsidur">
+                  <Button as="span">
+                    {n('nyjuSidurLink', 'Fara á nýju mínar síður')}
+                  </Button>
+                </a>
+                <Link
+                  href="//minarsidur.island.is/"
+                  color="blue400"
+                  underline="normal"
+                  underlineVisibility="always"
+                  newTab
+                  className={styles.link}
+                >
+                  {n('gomluSidurLink', 'Fara á gömlu mínar síður')}{' '}
+                  <Icon icon="open" type="outline" />
+                </Link>
+              </div>
             </GridColumn>
             <GridColumn
               span={['12/12', '12/12', '6/12']}
@@ -126,10 +92,9 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                 flexDirection="column"
                 display="flex"
                 alignItems={['flexStart', 'flexStart', 'center']}
-                height="full"
               >
                 {newListItemsArray.length > 0 ? (
-                  <div>
+                  <Box marginTop={[1, 0]}>
                     <Text as="h3" variant="h3" marginBottom="p3">
                       {n('nyjuSidurListTitle', 'Á nýjum mínum síðum')}
                     </Text>
@@ -138,7 +103,19 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                         <Bullet key={li}>{li}</Bullet>
                       ))}
                     </BulletList>
-                  </div>
+                  </Box>
+                ) : null}
+                {oldListItemsArray.length > 0 ? (
+                  <Box marginTop={[3, 4]}>
+                    <Text as="h3" variant="h3" marginBottom="p3">
+                      {n('gomluSidurListTitle', 'Á gömlu mínum síðum')}
+                    </Text>
+                    <BulletList type="ul">
+                      {oldListItemsArray.map((li) => (
+                        <Bullet key={li}>{li}</Bullet>
+                      ))}
+                    </BulletList>
+                  </Box>
                 ) : null}
               </Box>
             </GridColumn>
