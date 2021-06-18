@@ -6,10 +6,11 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/core'
 
+// TODO: needs refactoring
 const searchCorrectCatalog = (
   keySearch: string,
   searchJSON: string,
-): string => {
+): string | null => {
   if (keySearch == '' || searchJSON == '') {
     return searchJSON
   }
@@ -19,7 +20,7 @@ const searchCorrectCatalog = (
       return resultCatalog[item]
     }
   }
-  return ''
+  return null
 }
 
 export class PaymentCatalogProvider extends BasicDataProvider {
@@ -39,26 +40,26 @@ export class PaymentCatalogProvider extends BasicDataProvider {
       }
     }
     `
-    /// THIS NEEDS REFACTORING
+    // TODO: Needs refactoring
     let chargeItemCode = 'AY110'
 
     return this.useGraphqlGateway(query, {
       performingOrganizationID: '6509142520',
     })
       .then(async (res: Response) => {
+        // TODO: needs refactoring
         const response = await res.json()
-        console.log('my response')
-        console.log(JSON.stringify(response, null, 4));
         if (response.errors) {
           return this.handleError()
         }
-        if (response.data.paymentCatalog != '') {
-          var correctCatalog = searchCorrectCatalog(
+
+        if (response.data.paymentCatalog !== '') {
+          const correctCatalog = searchCorrectCatalog(
             chargeItemCode,
             JSON.stringify(response.data.paymentCatalog.items),
           )
 
-          if (correctCatalog != '') {
+          if (correctCatalog !== '') {
             return Promise.resolve(correctCatalog)
           }
         }

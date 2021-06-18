@@ -75,14 +75,14 @@ export const application: Form = buildForm({
     }),
     buildSection({
       id: 'requirements',
-      title: 'Skilyrði umsóknar',
+      title: m.applicationEligibilityTitle,
       children: [
         buildMultiField({
           id: 'info',
-          title: 'Skilyrði sem umsækjandi þarf að uppfylla',
+          title: m.eligibilityRequirementTitle,
           children: [
             buildCustomField({
-              title: 'XXYYZZ',
+              title: m.eligibilityRequirementTitle,
               component: 'EligibilitySummary',
               id: 'eligsummary',
             }),
