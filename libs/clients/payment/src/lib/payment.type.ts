@@ -49,7 +49,7 @@ interface PayInfo {
 }
 
 export interface Catalog {
-  items: Item[]
+  item: Item[]
 }
 
 export interface Item {

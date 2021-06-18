@@ -103,8 +103,8 @@ const devConfig = {
   paymentDomain: {
     xRoadPath: process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
     xRoadClientId: process.env.XROAD_CLIENT_ID,
-    username: process.env.PAYMENT_TEST_USER,
-    password: process.env.PAYMENT_TEST_PASSWORD,
+    username: process.env.PAYMENT_USER,
+    password: process.env.PAYMENT_PASSWORD,
     callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL_TEST,
     callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL_TEST,
     arkBaseUrl: 'https://uat.arkid.is',

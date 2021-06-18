@@ -11,15 +11,18 @@ export class PaymentResolver {
   constructor(private paymentService: PaymentAPI) {}
 
   @Query(() => PaymentCatalogResponse)
-  paymentCatalog(
+  async paymentCatalog(
     @Args('performingOrganizationID') performingOrganizationID?: string,
   ): Promise<PaymentCatalogResponse> {
-    if(performingOrganizationID) {
-      return this.paymentService.getCatalogByPerformingOrg(
+    const data = await (performingOrganizationID
+      ? this.paymentService.getCatalogByPerformingOrg(
         performingOrganizationID,
       )
-    } else {
-      return this.paymentService.getCatalog()
+      :  await this.paymentService.getCatalog()
+    )
+
+    return {
+      items: data.item
     }
   }
 }
