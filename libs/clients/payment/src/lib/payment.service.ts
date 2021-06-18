@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { BaseCharge, Charge, PaymentAPI } from '@island.is/clients/payment'
-import { PaymentServiceOptions, PAYMENT_OPTIONS, ChargeResult } from './payment.type'
+import {
+  PaymentServiceOptions,
+  PAYMENT_OPTIONS,
+  ChargeResult,
+} from './payment.type'
 
 @Injectable()
 export class PaymentService {
@@ -24,7 +28,9 @@ export class PaymentService {
   ): Promise<ChargeResult> {
     // TODO: island.is x-road service path for callback.. ??
     // this can actually be a fixed url
-    const callbackUrl = this.options.callbackBaseUrl + applicationId as string + this.options.callbackAdditionUrl
+    const callbackUrl =
+      ((this.options.callbackBaseUrl + applicationId) as string) +
+      this.options.callbackAdditionUrl
     const charge: Charge = {
       ...baseCharge,
       // TODO: this needs to be unique, but can only handle 22 or 23 chars
@@ -39,8 +45,8 @@ export class PaymentService {
         paymentMeans: '',
         authCode: '',
         PAN: '',
-        payableAmount: baseCharge.charges[0].amount
-      }
+        payableAmount: baseCharge.charges[0].amount,
+      },
     }
     try {
       const result = await this.paymentAPI.createCharge(charge)

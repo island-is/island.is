@@ -90,9 +90,8 @@ export class PaymentController {
       expires_at: new Date(),
     }
 
-    
     const newCharge = await this.paymentModel.create(paymentDto)
-    
+
     this.auditService.audit({
       user,
       action: 'create',

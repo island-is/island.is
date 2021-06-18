@@ -16,7 +16,8 @@ export class ApiDomainsPaymentModule {
         },
         {
           provide: ApiDomainsPaymentService,
-          useFactory: () => new ApiDomainsPaymentService(new PaymentAPI(config), config)
+          useFactory: () =>
+            new ApiDomainsPaymentService(new PaymentAPI(config), config),
         },
         PaymentResolver,
       ],

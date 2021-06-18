@@ -101,7 +101,8 @@ const devConfig = {
     clientId: process.env.XROAD_CLIENT_ID ?? 'DEV/GOV/10000/island-is-client',
   },
   paymentDomain: {
-    xRoadPath: process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
+    xRoadPath:
+      process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_USER,
     password: process.env.PAYMENT_PASSWORD,

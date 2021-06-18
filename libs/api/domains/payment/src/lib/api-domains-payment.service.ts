@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { Charge, PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
-import { ChargeResult, PaymentServiceOptions } from './api-domains-payment.types'
+import {
+  ChargeResult,
+  PaymentServiceOptions,
+} from './api-domains-payment.types'
 
 @Injectable()
 export class ApiDomainsPaymentService {
@@ -10,7 +13,7 @@ export class ApiDomainsPaymentService {
     private readonly paymentApi: PaymentAPI,
     @Inject(PAYMENT_OPTIONS)
     private readonly options: PaymentServiceOptions,
-    ) {
+  ) {
     this.baseUrl = this.options.arkBaseUrl
   }
 

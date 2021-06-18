@@ -18,7 +18,7 @@ export class SharedTemplateAPIModule {
         EmailModule.register(config.emailOptions),
         PaymentModule.register({
           xRoadPath: config.xRoadBasePathWithEnv,
-          ...config.paymentOptions
+          ...config.paymentOptions,
         }),
       ],
       providers: [SharedTemplateApiService],

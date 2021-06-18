@@ -370,17 +370,17 @@ export const m = defineMessages({
   examplePaymentPendingField: {
     id: 'dl.application:example.waitingForPayment',
     defaultMessage: 'Augnablik meðan beðið er eftir greiðslu',
-    description: 'One moment while we wait for payment confirmation.'
+    description: 'One moment while we wait for payment confirmation.',
   },
   examplePaymentPendingDescription: {
     id: 'dl.application:example.waitingDescription',
     defaultMessage: 'Texti um hvað er að gerast',
-    description: 'Text about current payment proceedures.'
+    description: 'Text about current payment proceedures.',
   },
   orderDrivingLicense: {
     id: 'dl.application:order.drivingLicense',
     defaultMessage: 'Panta ökuskírteini',
-    description: 'Order driving license'
+    description: 'Order driving license',
   },
   continue: {
     id: 'dl.application.continue',
@@ -415,11 +415,11 @@ export const m = defineMessages({
   eligibilityRequirementTitle: {
     id: 'dl.application.eligibilityTitle',
     defaultMessage: 'Skilyrði sem umsækjandi þarf að uppfylla',
-    description: 'title for requirement component'
+    description: 'title for requirement component',
   },
   applicationEligibilityTitle: {
     id: 'dl.application.applicationEligibilityTitle',
     defaultMessage: 'Skilyrði umsóknar',
-    description: 'title for requirement section'
+    description: 'title for requirement section',
   },
 })

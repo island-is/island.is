@@ -15,14 +15,11 @@ export class PaymentResolver {
     @Args('performingOrganizationID') performingOrganizationID?: string,
   ): Promise<PaymentCatalogResponse> {
     const data = await (performingOrganizationID
-      ? this.paymentService.getCatalogByPerformingOrg(
-        performingOrganizationID,
-      )
-      :  await this.paymentService.getCatalog()
-    )
+      ? this.paymentService.getCatalogByPerformingOrg(performingOrganizationID)
+      : await this.paymentService.getCatalog())
 
     return {
-      items: data.item
+      items: data.item,
     }
   }
 }
