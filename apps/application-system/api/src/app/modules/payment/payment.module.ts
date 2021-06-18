@@ -7,7 +7,6 @@ import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { Payment } from './payment.model'
 import { PaymentController } from './payment.controller'
 import { PaymentService } from './payment.service'
-import { AwsService } from '../application/files/aws.service'
 import { environment } from '../../../environments'
 import {
   PAYMENT_CONFIG,
@@ -31,7 +30,6 @@ export class PaymentModule {
           provide: PAYMENT_CONFIG,
           useValue: environment.templateApi.paymentOptions as PaymentConfig,
         },
-        AwsService,
       ],
       imports: [
         AuditModule.forRoot(environment.audit),
