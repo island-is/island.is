@@ -32,7 +32,7 @@ export interface BaseTemplateAPIModuleConfig {
   attachmentBucket: string
   presignBucket: string
   paymentOptions: {
-    url: string
+    xRoadClientId: string
     username: string
     password: string
     callbackBaseUrl: string

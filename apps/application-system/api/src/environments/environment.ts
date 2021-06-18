@@ -52,9 +52,9 @@ const devConfig = {
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     paymentOptions: {
-      url: 'https://tbrws-s.hysing.is',
+      xRoadClientId: 'IS-DEV/GOV/10000/island-is-client',
       username: process.env.PAYMENT_TEST_USER,
-      password: process.env.PAYMENT_TEST_PASS,
+      password: process.env.PAYMENT_TEST_PASSWORD,
       callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL_TEST,
       callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL_TEST,
     },
@@ -125,7 +125,7 @@ const prodConfig = {
       xroadBaseUrl: process.env.XROAD_BASE_PATH,
     },
     paymentOptions: {
-      url: process.env.PAYMENT_URL,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
       username: process.env.PAYMENT_USERNAME,
       password: process.env.PAYMENT_PASSWORD,
       callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL_TEST,

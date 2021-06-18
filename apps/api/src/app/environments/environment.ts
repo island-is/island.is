@@ -101,9 +101,10 @@ const devConfig = {
     clientId: process.env.XROAD_CLIENT_ID ?? 'DEV/GOV/10000/island-is-client',
   },
   paymentDomain: {
+    xRoadPath: process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_TEST_USER,
     password: process.env.PAYMENT_TEST_PASSWORD,
-    url: 'https://tbrws-s.hysing.is',
     callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL_TEST,
     callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL_TEST,
     arkBaseUrl: 'https://uat.arkid.is',
@@ -211,9 +212,10 @@ const prodConfig = {
     clientId: process.env.XROAD_CLIENT_ID,
   },
   paymentDomain: {
+    xRoadPath: process.env.XROAD_BASE_PATH_WITH_ENV,
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_USER,
     password: process.env.PAYMENT_PASSWORD,
-    url: process.env.PAYMENT_URL,
     callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.PAYMENT_ARK_URL,

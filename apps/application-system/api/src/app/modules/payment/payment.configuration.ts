@@ -1,7 +1,9 @@
 export const PAYMENT_CONFIG = 'PAYMENT_CONFIG'
 
+// TODO: Why two of these?
 export interface PaymentConfig {
-  url?: string
+  xRoadPath: string
+  xRoadClientId: string
   username?: string
   password?: string
   callbackBaseUrl?: string
@@ -10,7 +12,8 @@ export interface PaymentConfig {
 }
 
 export interface PaymentServiceOptions {
-  url: string
+  xRoadPath: string
+  xRoadClientId: string
   username: string
   password: string
   callbackBaseUrl: string

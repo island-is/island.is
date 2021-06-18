@@ -2,7 +2,6 @@ import { Inject } from '@nestjs/common'
 import {
   RESTDataSource,
   RequestOptions,
-  HTTPCache,
 } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import { Base64 } from 'js-base64'
@@ -20,12 +19,14 @@ export class PaymentAPI extends RESTDataSource {
     private readonly options: PaymentServiceOptions,
   ) {
     super()
-    this.baseURL = this.options.url
+
+    this.baseURL = `${this.options.xRoadPath}/GOV/10021/FJS-DEV-Public/`
     this.initialize({} as DataSourceConfig<any>)
   }
 
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
+    request.headers.set('X-Road-Client', this.options.xRoadClientId)
     request.headers.set(
       'Authorization',
       `Basic ${Base64.encode(
@@ -35,17 +36,17 @@ export class PaymentAPI extends RESTDataSource {
   }
 
   createCharge(upcomingPayment: Charge): Promise<ChargeResponse> {
-    return this.post<ChargeResponse>(`/chargeFJS/v1/charge`, upcomingPayment)
+    return this.post<ChargeResponse>(`catalog/charge`, upcomingPayment)
   }
 
   getCatalog() {
-    const response = this.get<Catalog>(`/chargeFJS/v1/catalog`)
+    const response = this.get<Catalog>(`catalog/catalog`)
     return response
   }
 
-  async getCatalogByPerformingOrg(performingOrganizationID: string) {
-    const response = await this.get<Catalog>(
-      `/chargeFJS/v1/catalog/performingOrg/${performingOrganizationID}`,
+  getCatalogByPerformingOrg(performingOrganizationID: string) {
+    const response = this.get<Catalog>(
+      `catalog/catalog/performingOrg/${performingOrganizationID}`,
     )
     return response
   }
