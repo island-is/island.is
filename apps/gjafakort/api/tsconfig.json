@@ -1,8 +1,6 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "types": ["node", "jest"],
     "strict": false
   },
   "include": [],
