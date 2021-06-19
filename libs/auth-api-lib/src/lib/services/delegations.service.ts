@@ -50,21 +50,11 @@ export class DelegationsService {
     private logger: Logger,
   ) {}
 
-  async findAllTo(
-    user: User,
-    xRoadClient: string,
-  ): Promise<DelegationDTO[]> {
+  async findAllTo(user: User, xRoadClient: string): Promise<DelegationDTO[]> {
     const [wards, companies, custom] = await Promise.all([
-      this.findAllWardsTo(
-        user,
-        xRoadClient,
-      ),
-      this.findAllCompaniesTo(
-        user.nationalId,
-      ),
-      this.findAllValidCustomTo(
-        user.nationalId,
-      )
+      this.findAllWardsTo(user, xRoadClient),
+      this.findAllCompaniesTo(user.nationalId),
+      this.findAllValidCustomTo(user.nationalId),
     ])
 
     return uniqBy([...wards, ...companies, ...custom], 'fromNationalId')

@@ -27,6 +27,12 @@ export interface OpenApiFetchOptions {
   // The name of this fetch function, used in logs and opossum stats.
   name: string
 
+  // Timeout for requests. Defaults to 10000ms. Can be disabled by passing false.
+  timeout?: number | false
+
+  // Shortcut to disable circuit breaker. Keeps timeout and logging.
+  enableCircuitBreaker?: boolean
+
   // By default 400 responses are considered warnings and will not open the circuit.
   // This can be changed by passing `treat400ResponsesAsErrors: true`.
   // Either way they will be logged and thrown.
@@ -50,6 +56,7 @@ const createResponseError = async (response: Response, includeBody = false) => {
   const error = new Error(
     `Request failed with status code ${response.status}`,
   ) as FetchError
+  error.name = 'FetchError'
   const { url, status, headers, statusText } = response
   Object.assign(error, { url, status, headers, statusText, response })
 
@@ -104,31 +111,83 @@ export const createEnhancedFetch = (options: OpenApiFetchOptions): FetchAPI => {
   const name = options.name
   const actualFetch = options.fetch ?? fetch
   const logger = options.logger ?? defaultLogger
+  const timeout = options.timeout ?? 10000
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
 
   const enhancedFetch: FetchAPI = async (input, init) => {
-    const response = await actualFetch(input, init)
-    const ok = treat400ResponsesAsErrors ? response.ok : response.status < 500
-    if (!ok) {
-      throw await createResponseError(response, options.logErrorResponseBody)
+    if (init?.signal) {
+      throw new Error('Enhanced Fetch does not currently support signal')
     }
-    return response
+
+    let signal = undefined
+    let timeoutId = null
+
+    if (timeout !== false) {
+      const timeoutController = new AbortController()
+      signal = timeoutController.signal
+      timeoutId = setTimeout(() => {
+        timeoutController.abort()
+      }, timeout)
+    }
+
+    try {
+      const response = await actualFetch(input, {
+        ...init,
+        signal,
+      })
+
+      if (!response.ok) {
+        throw await createResponseError(response, options.logErrorResponseBody)
+      }
+
+      return response
+    } catch (error) {
+      let message = error.message
+      const logLevel =
+        error.name === 'FetchError' &&
+        error.status < 500 &&
+        !treat400ResponsesAsErrors
+          ? 'warn'
+          : 'error'
+      if (error.name === 'AbortError') {
+        message = `Timed out after ${timeout}ms`
+      }
+      logger.log(logLevel, {
+        ...error,
+        url: input,
+        message: `Fetch failure (${name}): ${message}`,
+        // Do not log large response objects.
+        response: undefined,
+      })
+      throw error
+    } finally {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
   }
+
+  const errorFilter = treat400ResponsesAsErrors
+    ? options.opossum?.errorFilter
+    : (error: FetchError) => {
+        if (error.name === 'FetchError' && error.status < 500) {
+          return true
+        }
+        return options.opossum?.errorFilter?.(error) ?? false
+      }
 
   const breaker = new CircuitBreaker(enhancedFetch, {
     name,
+    volumeThreshold: 10,
+    // Types are incorrect. Use our own timeouts so we can disable the circuit
+    // breaker while still supporting timeout logic.
+    timeout: (false as unknown) as number,
+    enabled: options.enableCircuitBreaker !== false,
+
     ...options.opossum,
+    errorFilter,
   })
 
-  breaker.on('failure', async (error, latencyMs, args) => {
-    logger.error({
-      ...error,
-      url: args[0],
-      message: `Fetch failure (${name}): ${error.message}`,
-      // Do not log large response objects.
-      response: undefined,
-    })
-  })
   breaker.on('open', () =>
     logger.error(`Fetch (${name}): Too many errors, circuit breaker opened`),
   )
@@ -139,24 +198,5 @@ export const createEnhancedFetch = (options: OpenApiFetchOptions): FetchAPI => {
     logger.error(`Fetch (${name}): Circuit breaker closed`),
   )
 
-  return async (input, init) => {
-    const response = await breaker.fire(input, init)
-
-    // Log and throw 400 responses, if they have not already been thrown from
-    // inside the circuit breaker.
-    if (!response.ok) {
-      const error = await createResponseError(
-        response,
-        options.logErrorResponseBody,
-      )
-      logger.warn({
-        ...error,
-        message: `Fetch failure (${name}): ${error.message}`,
-        // Do not log large response objects.
-        response: undefined,
-      })
-      throw error
-    }
-    return response
-  }
+  return (input, init) => breaker.fire(input, init)
 }

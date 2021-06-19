@@ -16,7 +16,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 describe('EnhancedFetch', () => {
   let enhancedFetch: FetchAPI
   let fetch: jest.Mock<ReturnType<FetchAPI>>
-  let logger: { warn: jest.Mock; error: jest.Mock }
+  let logger: { log: jest.Mock; error: jest.Mock }
 
   const createTestEnhancedFetch = (
     override?: SetOptional<OpenApiFetchOptions, 'name'>,
@@ -24,10 +24,11 @@ describe('EnhancedFetch', () => {
     createEnhancedFetch({
       name: 'test',
       fetch,
-      // logger: (logger as unknown) as Logger,
+      timeout,
+      logger: (logger as unknown) as Logger,
       ...override,
       opossum: {
-        timeout,
+        volumeThreshold: 0,
         ...override?.opossum,
       },
     })
@@ -35,7 +36,7 @@ describe('EnhancedFetch', () => {
   beforeEach(() => {
     fetch = jest.fn(() => Promise.resolve(fakeResponse()))
     logger = {
-      warn: jest.fn(),
+      log: jest.fn(),
       error: jest.fn(),
     }
     enhancedFetch = createTestEnhancedFetch()
@@ -43,16 +44,27 @@ describe('EnhancedFetch', () => {
 
   it('adds request timeout', async () => {
     // Arrange
-    fetch.mockImplementation(() =>
-      sleep(timeout + 100).then(() => fakeResponse()),
+    fetch.mockImplementation(
+      (input, init) =>
+        new Promise((resolve, reject) => {
+          if (init.signal) {
+            init.signal.addEventListener('abort', () => {
+              const error = new Error('Request aborted')
+              error.name = 'AbortError'
+              reject(error)
+            })
+          }
+          sleep(timeout + 100).then(() => resolve(fakeResponse()))
+        }),
     )
 
     // Act
     const promise = enhancedFetch('/test')
 
     // Assert
-    await expect(promise).rejects.toThrowError('Timed out')
-    expect(logger.error).toHaveBeenCalledWith(
+    await expect(promise).rejects.toThrowError('Request aborted')
+    expect(logger.log).toHaveBeenCalledWith(
+      'error',
       expect.objectContaining({
         message: expect.stringContaining('Timed out'),
         url: '/test',
@@ -62,13 +74,14 @@ describe('EnhancedFetch', () => {
 
   it('logs arbitrary errors', async () => {
     // Arrange
-    fetch.mockRejectedValue(new Error('Test 050686-4189 error'))
+    fetch.mockRejectedValue(new Error('Test error'))
 
     // Act
     await enhancedFetch('/test').catch(() => null)
 
     // Assert
-    expect(logger.error).toHaveBeenCalledWith(
+    expect(logger.log).toHaveBeenCalledWith(
+      'error',
       expect.objectContaining({
         message: expect.stringContaining('Test error'),
         url: '/test',
@@ -89,7 +102,8 @@ describe('EnhancedFetch', () => {
     await enhancedFetch('/test').catch(() => null)
 
     // Assert
-    expect(logger.error).toHaveBeenCalledWith(
+    expect(logger.log).toHaveBeenCalledWith(
+      'error',
       expect.objectContaining({
         message: expect.stringContaining('Request failed with status code 500'),
         url: '/test',
@@ -117,7 +131,8 @@ describe('EnhancedFetch', () => {
 
     // Assert
     expect(error).toMatchObject({ problem })
-    expect(logger.error).toHaveBeenCalledWith(
+    expect(logger.log).toHaveBeenCalledWith(
+      'error',
       expect.objectContaining({ problem }),
     )
   })
@@ -137,7 +152,8 @@ describe('EnhancedFetch', () => {
 
     // Assert
     expect(error).toMatchObject({ body: { yo: 'error' } })
-    expect(logger.error).toHaveBeenCalledWith(
+    expect(logger.log).toHaveBeenCalledWith(
+      'error',
       expect.objectContaining({ body: { yo: 'error' } }),
     )
   })
@@ -152,7 +168,8 @@ describe('EnhancedFetch', () => {
 
     // Assert
     expect(error).toMatchObject({ body: 'My Error' })
-    expect(logger.error).toHaveBeenCalledWith(
+    expect(logger.log).toHaveBeenCalledWith(
+      'error',
       expect.objectContaining({ body: 'My Error' }),
     )
   })

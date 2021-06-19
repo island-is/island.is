@@ -2,10 +2,9 @@
 
 Includes middleware logic for our API clients. Including:
 
-* Circuit breaker
-* Error logging
-* X-Road authentication
-* OAuth2 authentication
+- Circuit breaker
+- Error handling and logging
+- Request timeout
 
 ## Running unit tests
 
