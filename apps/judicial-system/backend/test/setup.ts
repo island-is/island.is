@@ -42,7 +42,7 @@ jest.mock('stream-buffers', function () {
       fn()
     }
     getContentsAsString() {
-      // eslint-disable-line @typescript-eslint/no-empty-function
+      return ''
     }
     getContents() {
       // eslint-disable-line @typescript-eslint/no-empty-function
