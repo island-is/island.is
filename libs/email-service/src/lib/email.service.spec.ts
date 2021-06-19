@@ -29,16 +29,14 @@ const mockCreateTransport = jest.fn(function (
 })
 jest.mock('nodemailer', () => {
   return {
-    default: {
-      createTestAccount: function () {
-        return testAccount
-      },
-      createTransport: jest.fn(function (account) {
-        return mockCreateTransport(account)
-      }),
-      getTestMessageUrl: function () {
-        return 'Test Url'
-      },
+    createTestAccount: function () {
+      return testAccount
+    },
+    createTransport: jest.fn(function (account) {
+      return mockCreateTransport(account)
+    }),
+    getTestMessageUrl: function () {
+      return 'Test Url'
     },
   }
 })
