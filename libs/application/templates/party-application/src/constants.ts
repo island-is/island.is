@@ -18,47 +18,39 @@ export const constituencyMapper: Record<
   {
     region_name: string
     region_number: number
-    // low: parliamentary seats * 30, high: parliamentary seats * 40
-    low: number
-    high: number
+    parliamentary_seats: number
   }
 > = {
   partyApplicationReykjavikurkjordaemiSudur2021: {
     region_name: 'Reykjavíkurkjördæmi suður',
     region_number: 1,
-    low: 330,
-    high: 440,
+    parliamentary_seats: 11,
   },
   partyApplicationReykjavikurkjordaemiNordur2021: {
     region_name: 'Reykjavíkurkjördæmi norður',
     region_number: 2,
-    low: 330,
-    high: 440,
+    parliamentary_seats: 11,
   },
 
   partyApplicationSudvesturkjordaemi2021: {
     region_name: 'Suðvesturkjördæmi',
     region_number: 3,
-    low: 390,
-    high: 520,
+    parliamentary_seats: 13,
   },
   partyApplicationNordvesturkjordaemi2021: {
     region_name: 'Norðvesturkjördæmi',
     region_number: 4,
-    low: 240,
-    high: 320,
+    parliamentary_seats: 8,
   },
   partyApplicationNordausturkjordaemi2021: {
     region_name: 'Norðausturkjördæmi',
     region_number: 5,
-    low: 300,
-    high: 400,
+    parliamentary_seats: 10,
   },
   partyApplicationSudurkjordaemi2021: {
     region_name: 'Suðurkjördæmi',
     region_number: 6,
-    low: 300,
-    high: 400,
+    parliamentary_seats: 10,
   },
 }
 
