@@ -10,7 +10,7 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
-import { Endorsement } from '../../lib/dataSchema'
+import { Endorsement } from '../../types/schema'
 
 const formatDate = (date: string) => {
   try {
@@ -21,25 +21,23 @@ const formatDate = (date: string) => {
 }
 
 interface EndorsementTableProps {
-  endorsements: Endorsement[]
-  selectedEndorsements: Endorsement[]
+  endorsements?: Endorsement[]
+  selectedEndorsements?: Endorsement[]
   onChange: (endorsement: Endorsement) => void
-  disabled: boolean
 }
 
 const EndorsementTable: FC<EndorsementTableProps> = ({
   endorsements,
   selectedEndorsements,
   onChange,
-  disabled,
 }) => {
   const { formatMessage } = useLocale()
 
   const renderRow = (endorsement: Endorsement) => {
-    const rowBackground = endorsement.bulkImported
-      ? 'blue200'
-      : endorsement.hasWarning
+    const rowBackground = endorsement.meta.invalidated
       ? 'yellow200'
+      : endorsement.meta.bulkEndorsement
+      ? 'roseTinted100'
       : 'white'
 
     return (
@@ -49,21 +47,21 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
             background: rowBackground,
           }}
         >
-          {formatDate(endorsement.date)}
+          {formatDate(endorsement.created)}
         </T.Data>
         <T.Data
           box={{
             background: rowBackground,
           }}
         >
-          {endorsement.name}
+          {endorsement.meta.fullName}
         </T.Data>
         <T.Data
           box={{
             background: rowBackground,
           }}
         >
-          {formatKennitala(endorsement.nationalId)}
+          {formatKennitala(endorsement.endorser)}
         </T.Data>
         <T.Data
           box={{
@@ -71,11 +69,11 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
             textAlign: 'right',
           }}
         >
-          {endorsement.hasWarning || endorsement.bulkImported ? (
+          {endorsement.meta.invalidated || endorsement.meta.bulkEndorsement ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.address}
+              {endorsement.meta.address.streetAddress}
               <Box marginLeft={2}>
-                {endorsement.hasWarning && (
+                {endorsement.meta.invalidated && (
                   <Tooltip
                     color="blue400"
                     iconSize="medium"
@@ -84,13 +82,13 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
                     )}
                   />
                 )}
-                {endorsement.bulkImported && (
+                {endorsement.meta.bulkEndorsement && (
                   <Icon icon="attach" color="blue400" />
                 )}
               </Box>
             </Box>
           ) : (
-            endorsement.address
+            endorsement.meta.address.streetAddress
           )}
         </T.Data>
         <T.Data
@@ -99,7 +97,6 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
           }}
         >
           <Checkbox
-            disabled={disabled}
             checked={selectedEndorsements?.some((e) => e.id === endorsement.id)}
             onChange={() => onChange(endorsement)}
           />
