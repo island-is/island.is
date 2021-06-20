@@ -10,4 +10,7 @@ export const NationalRegistryConfig: NationalRegistryModuleConfig = {
     environment.nationalRegistry.xroad.apiPath,
   ),
   xRoadClient: environment.nationalRegistry.xroad.clientId,
+  fetch: {
+    timeout: 5000,
+  }
 }

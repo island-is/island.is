@@ -98,11 +98,7 @@ export class DelegationsService {
           },
       )
     } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error(`Error in findAllWardsTo.\n${error.stack}`)
-      } else {
-        this.logger.error(`Error in findAllWardsTo.\n${JSON.stringify(error)}`)
-      }
+      this.logger.error('Error in findAllWardsTo', error)
     }
 
     return []
@@ -133,13 +129,7 @@ export class DelegationsService {
         }
       }
     } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error(`Error in findAllCompaniesTo.\n${error.stack}`)
-      } else {
-        this.logger.error(
-          `Error in findAllCompaniesTo.\n${JSON.stringify(error)}`,
-        )
-      }
+      this.logger.error('Error in findAllCompaniesTo', error)
     }
 
     return []
