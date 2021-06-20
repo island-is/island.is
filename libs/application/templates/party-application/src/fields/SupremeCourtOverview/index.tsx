@@ -7,6 +7,7 @@ import { ExportAsCSV } from '@island.is/application/ui-components'
 import { SchemaFormValues } from '../../lib/dataSchema'
 import { csvFileName } from '../../constants'
 import { PartyLetterRegistry } from '@island.is/api/schema'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -76,7 +77,12 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.supremeCourt.constituencyLabel)}
           </Text>
-          <Text>{answers.constituency}</Text>
+          <Text>
+            {
+              constituencyMapper[answers.constituency as EndorsementListTags]
+                .region_name
+            }
+          </Text>
         </Box>
       </Box>
     </Box>

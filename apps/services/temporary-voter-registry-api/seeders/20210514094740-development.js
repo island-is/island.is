@@ -40,6 +40,11 @@ module.exports = {
         national_id: '0101305069',
         version: 3,
       },
+      {
+        ...getGenericVoterRegistry(),
+        national_id: '2905912449',
+        version: 3,
+      },
     ]
 
     await queryInterface.bulkInsert('voter_registry', voterRegistry)

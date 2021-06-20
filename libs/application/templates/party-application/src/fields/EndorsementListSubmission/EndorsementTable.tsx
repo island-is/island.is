@@ -41,6 +41,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
       : endorsement.hasWarning
       ? 'yellow200'
       : 'white'
+
     return (
       <T.Row key={endorsement.id}>
         <T.Data

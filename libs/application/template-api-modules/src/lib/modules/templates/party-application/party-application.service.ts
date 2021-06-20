@@ -6,7 +6,6 @@ import {
   generateApplicationRejectedEmail,
   generateApplicationApprovedEmail,
 } from './emailGenerators'
-import { Constituencies } from '@island.is/application/templates/party-application'
 import { EndorsementListTagsEnum } from './gen/fetch'
 import { getSlugFromType } from '@island.is/application/core'
 
@@ -29,21 +28,6 @@ type EndorsementListResponse =
 interface PartyLetterData {
   partyName: string
   partyLetter: string
-}
-
-const constituencyMapper: Record<Constituencies, EndorsementListTagsEnum> = {
-  [Constituencies.NORTH_EAST]:
-    EndorsementListTagsEnum.partyApplicationNordausturkjordaemi2021,
-  [Constituencies.NORTH_WEST]:
-    EndorsementListTagsEnum.partyApplicationNordvesturkjordaemi2021,
-  [Constituencies.RVK_NORTH]:
-    EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiNordur2021,
-  [Constituencies.RVK_SOUTH]:
-    EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiSudur2021,
-  [Constituencies.SOUTH]:
-    EndorsementListTagsEnum.partyApplicationSudurkjordaemi2021,
-  [Constituencies.SOUTH_WEST]:
-    EndorsementListTagsEnum.partyApplicationSudvesturkjordaemi2021,
 }
 
 @Injectable()
@@ -123,8 +107,6 @@ export class PartyApplicationService {
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
-    const constituencyTag =
-      constituencyMapper[application.answers.constituency as Constituencies]
     const CREATE_ENDORSEMENT_LIST_QUERY = `
       mutation EndorsementSystemCreatePartyApplicationEndorsementList($input: CreateEndorsementListDto!) {
         endorsementSystemCreateEndorsementList(input: $input) {
@@ -141,7 +123,7 @@ export class PartyApplicationService {
           title: partyLetter.partyName,
           description: partyLetter.partyLetter,
           endorsementMeta: ['fullName', 'address', 'signedTags'],
-          tags: [constituencyTag],
+          tags: [application.answers.constituency as EndorsementListTagsEnum],
           validationRules: [
             {
               type: 'minAgeAtDate',

@@ -6,6 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { SchemaFormValues } from '../../lib/dataSchema'
 import { ExportAsCSV } from '@island.is/application/ui-components'
 import { csvFileName } from '../../constants'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -46,7 +47,12 @@ const PartyApplicationApprovedOverview: FC<FieldBaseProps> = ({
           <Text variant="h5">
             {formatMessage(m.overviewSection.constituency)}
           </Text>
-          <Text>{answers.constituency}</Text>
+          <Text>
+            {
+              constituencyMapper[answers.constituency as EndorsementListTags]
+                .region_name
+            }
+          </Text>
         </Box>
         <Box width="half">
           <Text variant="h5">

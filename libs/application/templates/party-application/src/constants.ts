@@ -1,4 +1,9 @@
-import { Constituencies } from './types'
+import { EndorsementListTagsEnum } from './types/schema'
+
+export type EndorsementListTags = Exclude<
+  EndorsementListTagsEnum,
+  EndorsementListTagsEnum.PartyLetter2021
+>
 
 export enum API_MODULE_ACTIONS {
   CreateEndorsementList = 'createEndorsementList',
@@ -9,19 +14,52 @@ export enum API_MODULE_ACTIONS {
 }
 
 export const constituencyMapper: Record<
-  Constituencies,
+  EndorsementListTags,
   {
+    region_name: string
+    region_number: number
+    // low: parliamentary seats * 30, high: parliamentary seats * 40
     low: number
     high: number
   }
 > = {
-  // low: parliamentary seats * 30, high: parliamentary seats * 40
-  Norðausturkjördæmi: { low: 300, high: 400 },
-  Norðvesturkjördæmi: { low: 240, high: 320 },
-  'Reykjavíkurkjördæmi norður': { low: 330, high: 440 },
-  'Reykjavíkurkjördæmi suður': { low: 330, high: 440 },
-  Suðurkjördæmi: { low: 300, high: 400 },
-  Suðvesturkjördæmi: { low: 390, high: 520 },
+  partyApplicationReykjavikurkjordaemiSudur2021: {
+    region_name: 'Reykjavíkurkjördæmi suður',
+    region_number: 1,
+    low: 330,
+    high: 440,
+  },
+  partyApplicationReykjavikurkjordaemiNordur2021: {
+    region_name: 'Reykjavíkurkjördæmi norður',
+    region_number: 2,
+    low: 330,
+    high: 440,
+  },
+
+  partyApplicationSudvesturkjordaemi2021: {
+    region_name: 'Suðvesturkjördæmi',
+    region_number: 3,
+    low: 390,
+    high: 520,
+  },
+  partyApplicationNordvesturkjordaemi2021: {
+    region_name: 'Norðvesturkjördæmi',
+    region_number: 4,
+    low: 240,
+    high: 320,
+  },
+  partyApplicationNordausturkjordaemi2021: {
+    region_name: 'Norðausturkjördæmi',
+    region_number: 5,
+    low: 300,
+    high: 400,
+  },
+  partyApplicationSudurkjordaemi2021: {
+    region_name: 'Suðurkjördæmi',
+    region_number: 6,
+    low: 300,
+    high: 400,
+  },
 }
 
 export enum States {
