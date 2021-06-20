@@ -112,17 +112,17 @@ export const createEnhancedFetch = (
   options: EnhancedFetchOptions,
 ): FetchAPI => {
   const name = options.name
-  const actualFetch = options.fetch ?? (fetch as unknown as FetchAPI)
+  const actualFetch = options.fetch ?? ((fetch as unknown) as FetchAPI)
   const logger = options.logger ?? defaultLogger
   const timeout = options.timeout ?? 10000
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
 
   const enhancedFetch: FetchAPI = async (input, init) => {
     try {
-      const response = await actualFetch(input, {
+      const response = await actualFetch(input, ({
         timeout,
         ...init,
-      } as unknown as RequestInit)
+      } as unknown) as RequestInit)
 
       if (!response.ok) {
         throw await createResponseError(response, options.logErrorResponseBody)
@@ -130,7 +130,6 @@ export const createEnhancedFetch = (
 
       return response
     } catch (error) {
-      let message = error.message
       const logLevel =
         error.name === 'FetchError' &&
         error.status < 500 &&
@@ -141,7 +140,7 @@ export const createEnhancedFetch = (
         ...error,
         stack: error.stack,
         url: input,
-        message: `Fetch failure (${name}): ${message}`,
+        message: `Fetch failure (${name}): ${error.message}`,
         // Do not log large response objects.
         response: undefined,
       })
