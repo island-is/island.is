@@ -1,4 +1,5 @@
 import CircuitBreaker from 'opossum'
+import fetch from 'node-fetch'
 import { Logger } from 'winston'
 import { logger as defaultLogger } from '@island.is/logging'
 
@@ -23,7 +24,7 @@ interface FetchError extends Error {
   problem?: FetchProblem
 }
 
-export interface OpenApiFetchOptions {
+export interface EnhancedFetchOptions {
   // The name of this fetch function, used in logs and opossum stats.
   name: string
 
@@ -107,34 +108,21 @@ const createResponseError = async (response: Response, includeBody = false) => {
  * copied to the Error object), and since these errors are thrown "inside" the
  * fetch call, any "post" middlewares will not be invoked for non-200 responses.
  */
-export const createEnhancedFetch = (options: OpenApiFetchOptions): FetchAPI => {
+export const createEnhancedFetch = (
+  options: EnhancedFetchOptions,
+): FetchAPI => {
   const name = options.name
-  const actualFetch = options.fetch ?? fetch
+  const actualFetch = options.fetch ?? (fetch as unknown as FetchAPI)
   const logger = options.logger ?? defaultLogger
   const timeout = options.timeout ?? 10000
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
 
   const enhancedFetch: FetchAPI = async (input, init) => {
-    if (init?.signal) {
-      throw new Error('Enhanced Fetch does not currently support signal')
-    }
-
-    let signal = undefined
-    let timeoutId = null
-
-    if (timeout !== false) {
-      const timeoutController = new AbortController()
-      signal = timeoutController.signal
-      timeoutId = setTimeout(() => {
-        timeoutController.abort()
-      }, timeout)
-    }
-
     try {
       const response = await actualFetch(input, {
+        timeout,
         ...init,
-        signal,
-      })
+      } as unknown as RequestInit)
 
       if (!response.ok) {
         throw await createResponseError(response, options.logErrorResponseBody)
@@ -149,21 +137,15 @@ export const createEnhancedFetch = (options: OpenApiFetchOptions): FetchAPI => {
         !treat400ResponsesAsErrors
           ? 'warn'
           : 'error'
-      if (error.name === 'AbortError') {
-        message = `Timed out after ${timeout}ms`
-      }
       logger.log(logLevel, {
         ...error,
+        stack: error.stack,
         url: input,
         message: `Fetch failure (${name}): ${message}`,
         // Do not log large response objects.
         response: undefined,
       })
       throw error
-    } finally {
-      if (timeoutId) {
-        clearTimeout(timeoutId)
-      }
     }
   }
 
@@ -179,8 +161,9 @@ export const createEnhancedFetch = (options: OpenApiFetchOptions): FetchAPI => {
   const breaker = new CircuitBreaker(enhancedFetch, {
     name,
     volumeThreshold: 10,
-    // Types are incorrect. Use our own timeouts so we can disable the circuit
-    // breaker while still supporting timeout logic.
+    // False disables timeout logic, the types are incorrect.
+    // We want to use our own timeout logic so we can disable the circuit
+    // breaker while still supporting timeouts.
     timeout: (false as unknown) as number,
     enabled: options.enableCircuitBreaker !== false,
 

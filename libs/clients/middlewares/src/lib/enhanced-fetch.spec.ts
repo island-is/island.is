@@ -1,4 +1,4 @@
-import { createEnhancedFetch, OpenApiFetchOptions } from './enhanced-fetch'
+import { createEnhancedFetch, EnhancedFetchOptions } from './enhanced-fetch'
 import { Logger } from 'winston'
 import { Response as FakeResponse } from 'node-fetch'
 import { SetOptional } from 'type-fest'
@@ -19,7 +19,7 @@ describe('EnhancedFetch', () => {
   let logger: { log: jest.Mock; error: jest.Mock }
 
   const createTestEnhancedFetch = (
-    override?: SetOptional<OpenApiFetchOptions, 'name'>,
+    override?: SetOptional<EnhancedFetchOptions, 'name'>,
   ) =>
     createEnhancedFetch({
       name: 'test',
@@ -43,32 +43,13 @@ describe('EnhancedFetch', () => {
   })
 
   it('adds request timeout', async () => {
-    // Arrange
-    fetch.mockImplementation(
-      (input, init) =>
-        new Promise((resolve, reject) => {
-          if (init.signal) {
-            init.signal.addEventListener('abort', () => {
-              const error = new Error('Request aborted')
-              error.name = 'AbortError'
-              reject(error)
-            })
-          }
-          sleep(timeout + 100).then(() => resolve(fakeResponse()))
-        }),
-    )
-
     // Act
-    const promise = enhancedFetch('/test')
+    await enhancedFetch('/test')
 
     // Assert
-    await expect(promise).rejects.toThrowError('Request aborted')
-    expect(logger.log).toHaveBeenCalledWith(
-      'error',
-      expect.objectContaining({
-        message: expect.stringContaining('Timed out'),
-        url: '/test',
-      }),
+    expect(fetch).toHaveBeenCalledWith(
+      '/test',
+      expect.objectContaining({ timeout }),
     )
   })
 
