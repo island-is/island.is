@@ -25,7 +25,8 @@
     "logform",
     "pg-native",
     "form-data",
-    "islandis-login"
+    "islandis-login",
+    "ioredis"
   ],
   "keepNames": true
 }
