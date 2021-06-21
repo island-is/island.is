@@ -1,4 +1,3 @@
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Auth } from './auth'
 
 // These types are copied from our OpenAPI generated api clients.
@@ -40,16 +39,20 @@ export class AuthMiddleware implements Middleware {
     private options: AuthMiddlewareOptions = {
       forwardUserInfo: true,
     },
-    private logger?: Logger,
   ) {}
 
   async pre(context: RequestContext) {
     let bearerToken = this.auth.authorization
 
-    if (this.options.tokenExchangeOptions) {
+    if (
+      this.options.tokenExchangeOptions &&
+      this.options.tokenExchangeOptions.scope
+        .split(' ')
+        .some((s) => !this.auth.scope.includes(s))
+    ) {
       const accessToken = await this.exchangeToken(
         bearerToken.replace('Bearer ', ''),
-        this.options.tokenExchangeOptions,
+        context,
       )
 
       bearerToken = `Bearer ${accessToken}`
@@ -69,61 +72,52 @@ export class AuthMiddleware implements Middleware {
 
   private async exchangeToken(
     accessToken: string,
-    options: TokenExchangeOptions,
+    context: RequestContext,
   ): Promise<string> {
-    try {
-      const response = await fetch(`${options.issuer}/connect/token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          client_id: options.clientId,
-          grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
-          scope: options.scope,
-          client_secret: options.clientSecret,
-          subject_token: accessToken,
-          subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
-        }),
-      })
-
-      if (!response.ok) {
-        this.logError(`Token exchange failed, ${await response.text()}`)
-        return ''
-      }
-
-      const result = await response.json()
-
-      if (
-        result.issued_token_type !=
-        'urn:ietf:params:oauth:token-type:access_token'
-      ) {
-        this.logError(
-          `Token exchange failed, invalid issued token type (${result.issued_token_type})`,
-        )
-        return ''
-      }
-
-      if (result.token_type !== 'Bearer') {
-        this.logError(
-          `Token exchange failed, invalid token type (${result.token_type})`,
-        )
-        return ''
-      }
-
-      return result.access_token
-    } catch (error) {
-      this.logError('Token exchange failed')
-      this.logError(error)
-      return ''
+    if (!this.options.tokenExchangeOptions) {
+      throw new Error('No token exchange options specified')
     }
-  }
 
-  private logError(errorMessage: string) {
-    if (this.logger) {
-      this.logger.error(errorMessage)
-    } else {
-      console.log(errorMessage)
+    const options = this.options.tokenExchangeOptions
+
+    const response = await fetch(`${options.issuer}/connect/token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        client_id: options.clientId,
+        grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
+        scope: options.scope,
+        client_secret: options.clientSecret,
+        subject_token: accessToken,
+        subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(
+        `Token exchange failed for ${context.url}, ${await response.text()}`,
+      )
     }
+
+    const result = await response.json()
+
+    if (
+      result.issued_token_type !=
+      'urn:ietf:params:oauth:token-type:access_token'
+    ) {
+      throw new Error(
+        `Token exchange failed, invalid issued token type (${result.issued_token_type})`,
+      )
+    }
+
+    if (result.token_type !== 'Bearer') {
+      throw new Error(
+        `Token exchange failed, invalid token type (${result.token_type})`,
+      )
+    }
+
+    return result.access_token
   }
 }
