@@ -70,9 +70,7 @@ export class DelegationsService {
   ): Promise<DelegationDTO[]> {
     try {
       const response = await this.personApi
-        .withMiddleware(
-          new AuthMiddleware(auth, authMiddlewareOptions, this.logger),
-        )
+        .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
         .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
           id: auth.nationalId,
           xRoadClient: xRoadClient,
@@ -84,9 +82,7 @@ export class DelegationsService {
 
       const resultPromises = distinct.map(async (nationalId) =>
         this.personApi
-          .withMiddleware(
-            new AuthMiddleware(auth, authMiddlewareOptions, this.logger),
-          )
+          .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
           .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
             id: nationalId,
             xRoadClient: xRoadClient,
