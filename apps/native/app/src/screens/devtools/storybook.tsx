@@ -21,6 +21,7 @@ configure(() => {
   require('../../../../island-ui/src/lib/onboarding/onboarding.stories')
   require('../../../../island-ui/src/lib/search-header/search-header.stories')
   require('../../../../island-ui/src/lib/skeleton/skeleton.stories')
+  require('../../../../island-ui/src/lib/link/link.stories')
 }, module)
 
 export const StorybookUI = getStorybookUI({

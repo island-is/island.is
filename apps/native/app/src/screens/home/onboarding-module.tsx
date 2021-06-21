@@ -70,6 +70,7 @@ export const OnboardingModule = React.memo(() => {
             dark: '#150920',
             light: theme.color.purple100,
           }}
+          hasLink
         />
       </ViewPager>
     </SafeAreaView>

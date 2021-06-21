@@ -36,7 +36,7 @@ const {
       title: {
         text: initialized ? intl.formatMessage({ id: 'home.screenTitle' }) : '',
       },
-      rightButtons: initialized ? getRightButtons() : [],
+      rightButtons: initialized ? getRightButtons({ theme } as any) : [],
     },
     bottomTab: {
       ...({

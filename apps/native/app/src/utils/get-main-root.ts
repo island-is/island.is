@@ -1,5 +1,8 @@
+import { Platform, DynamicColorIOS } from 'react-native'
 import { Layout, OptionsTopBarButton } from 'react-native-navigation'
 import { notificationsStore } from '../stores/notifications-store'
+import { preferencesStore } from '../stores/preferences-store'
+import { getThemeWithPreferences } from './get-theme-with-preferences'
 import {
   ButtonRegistry,
   ComponentRegistry,
@@ -8,15 +11,21 @@ import {
 } from './component-registry'
 import { testIDs } from './test-ids'
 
-export const getRightButtons = ({ unreadCount = notificationsStore.getState().unreadCount } = {}): OptionsTopBarButton[] => {
+export const getRightButtons = ({
+  unreadCount = notificationsStore.getState().unreadCount,
+  theme = getThemeWithPreferences(preferencesStore.getState()),
+} = {}): OptionsTopBarButton[] => {
   return [
     {
       accessibilityLabel: 'User',
       id: ButtonRegistry.UserButton,
       testID: testIDs.TOPBAR_USER_BUTTON,
-      icon: require('../assets/icons/topbar-user.png'),
+      icon: require('../assets/icons/user.png'),
+      iconInsets: {
+        left: 8,
+      },
       iconBackground: {
-        color: 'transparent',
+        color: theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100,
         cornerRadius: 8,
         width: 32,
         height: 32,
@@ -28,10 +37,10 @@ export const getRightButtons = ({ unreadCount = notificationsStore.getState().un
       testID: testIDs.TOPBAR_NOTIFICATIONS_BUTTON,
       icon:
         unreadCount > 0
-          ? require('../assets/icons/topbar-notifications-bell.png')
-          : require('../assets/icons/topbar-notifications.png'),
+          ? require('../assets/icons/notifications-bell.png')
+          : require('../assets/icons/notifications.png'),
       iconBackground: {
-        color: 'transparent',
+        color: theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100,
         cornerRadius: 8,
         width: 32,
         height: 32,

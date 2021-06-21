@@ -24,7 +24,7 @@ const CenterView = ({ children }: any) => (
 storiesOf('Empty States', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
-  .add('Deafult', () => {
+  .add('Default', () => {
     const title = text('Empty List Title', 'Hér eru engin skjöl sem stendur')
     const description = text('Empty List Description', 'Þegar þú færð send rafræn skjöl frá hinu opinbera þá birtast þau hér.')
     return (

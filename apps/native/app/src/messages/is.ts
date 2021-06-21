@@ -116,7 +116,7 @@ export const is = {
   'home.onboardingModule.card2':
     'Markmiðið með appinu er að þú hafir í hendi þér það sem þú þarfnast hverju sinni í samskiptum við hið opinbera.',
   'home.onboardingModule.card3':
-    'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á island@island.is',
+    'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á',
 
   // inbox
   'inbox.screenTitle': 'Skjöl',
