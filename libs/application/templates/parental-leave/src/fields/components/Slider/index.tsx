@@ -183,12 +183,16 @@ const Slider = ({
     switch (event.key) {
       case 'ArrowLeft':
         if (currentIndex > min) {
-          onChange(currentIndex - step)
+          const index = currentIndex - step
+          onChange(index)
+          onChangeEnd?.(index)
         }
         break
       case 'ArrowRight':
         if (currentIndex < max) {
-          onChange(currentIndex + step)
+          const index = currentIndex + step
+          onChange(index)
+          onChangeEnd?.(index)
         }
         break
     }
@@ -201,7 +205,8 @@ const Slider = ({
     const rect = event.currentTarget.getBoundingClientRect()
     const percentClicked = event.nativeEvent.offsetX / rect.width
     const newIndex = Math.max(min, index + roundByNum(percentClicked, step))
-    onChange && onChange(newIndex)
+    onChange?.(newIndex)
+    onChangeEnd?.(newIndex)
   }
 
   return (
