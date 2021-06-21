@@ -10,7 +10,8 @@ export const generateAssignMinistryOfJusticeApplicationEmail: AssignmentEmailTem
     options: { email },
   } = props
 
-  const ministryOfJusticeEmail = 'postur@dmr.is'
+  const ministryOfJusticeEmail =
+    process.env.PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL ?? ''
 
   const subject = 'Meðmæli með listabókstaf'
   const body = dedent(`
@@ -30,7 +31,7 @@ export const generateAssignMinistryOfJusticeApplicationEmail: AssignmentEmailTem
     to: [
       {
         name: '',
-        address: ministryOfJusticeEmail as string,
+        address: ministryOfJusticeEmail,
       },
     ],
     subject,

@@ -8,6 +8,7 @@ import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
 import { FormControl } from '../../../entities/common/Localization'
 import LocalizationUtils from '../../../utils/localization.utils'
+import HintBox from '../../common/HintBox'
 
 interface Props {
   handleSave?: (object: IdentityResourceDTO) => void
@@ -29,6 +30,11 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('IdentityResourceCreateForm'),
   )
+  //#region hint-box
+  const [nameHintVisible, setNameHintVisible] = useState<boolean>(false)
+  const [nameHintMessage, setNameHintMessage] = useState<string>('')
+  const [nameIsValid, setNameIsValid] = useState<boolean | null>(null)
+  //#endregion hint-box
 
   useEffect(() => {
     if (props.identityResource && props.identityResource.name) {
@@ -36,6 +42,23 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
       setAvailable(true)
     }
   }, [props.identityResource])
+
+  const onNameChange = async (name: string) => {
+    if (isEditing) {
+      return
+    }
+    setNameHintVisible(true)
+    const isValid =
+      name.length > 0
+        ? ValidationUtils.validateIdentityResourceName(name)
+        : false
+    setNameIsValid(isValid)
+    isValid
+      ? setNameHintMessage(localization.fields['name'].hintOkMessage)
+      : setNameHintMessage(localization.fields['name'].hintErrorMessage)
+
+    checkAvailability(name)
+  }
 
   const checkAvailability = async (name: string) => {
     setNameLength(name.length)
@@ -84,7 +107,11 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                   <input
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateIdentifier,
+                      validate: isEditing
+                        ? () => {
+                            return true
+                          }
+                        : ValidationUtils.validateIdentityResourceName,
                     })}
                     id="name"
                     name="name"
@@ -92,8 +119,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     className="identity-resource-form__input"
                     defaultValue={props.identityResource.name}
                     readOnly={isEditing}
-                    onChange={(e) => checkAvailability(e.target.value)}
+                    onChange={(e) => onNameChange(e.target.value)}
                     placeholder={localization.fields['name'].placeholder}
+                    onBlur={() => setNameHintVisible(false)}
+                    onFocus={(e) => onNameChange(e.target.value)}
                   />
                   <div
                     className={`identity-resource-form__container__field__available ${
@@ -104,6 +133,14 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       ? localization.fields['name'].available
                       : localization.fields['name'].unAvailable}
                   </div>
+                  <HintBox
+                    helpText={nameHintMessage}
+                    pattern={localization.fields['name'].pattern}
+                    patternText={localization.fields['name'].patternText}
+                    setVisible={nameHintVisible}
+                    onVisibleChange={(e) => setNameHintVisible(e)}
+                    isValid={nameIsValid}
+                  />
                   <HelpBox helpText={localization.fields['name'].helpText} />
                   <ErrorMessage
                     as="span"

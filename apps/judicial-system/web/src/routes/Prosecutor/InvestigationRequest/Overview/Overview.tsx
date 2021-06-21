@@ -28,7 +28,7 @@ export const Overview: React.FC = () => {
   const [modalText, setModalText] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { transitionCase, sendNotification } = useCase()
+  const { transitionCase, sendNotification, isSendingNotification } = useCase()
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',

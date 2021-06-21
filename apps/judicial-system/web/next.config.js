@@ -1,10 +1,7 @@
 const withTreat = require('next-treat')()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
-const {
-  API_URL = 'http://localhost:3333',
-  WEB_PUBLIC_URL = 'http://localhost:4200',
-} = process.env
+const { API_URL = 'http://localhost:3333' } = process.env
 
 const apiPath = '/api'
 const graphqlPath = '/api/graphql'
@@ -24,7 +21,7 @@ module.exports = withTreat(
     },
     publicRuntimeConfig: {
       // Will be available on both server and client
-      apiUrl: `${WEB_PUBLIC_URL}${apiPath}`,
+      apiUrl: apiPath,
       graphqlEndpoint: graphqlPath,
     },
     env: {
