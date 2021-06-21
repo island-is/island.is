@@ -19,6 +19,9 @@ module.exports = {
         CREATE INDEX api_scope__group_id__index
         ON api_scope (group_id);
 
+        CREATE INDEX user_identity_provider_name_provider_subject_id_index
+        ON user_identity (provider_name, provider_subject_id);
+
       COMMIT;
     `)
   },
@@ -30,6 +33,7 @@ module.exports = {
         DROP INDEX grants__subject_id__index;
         DROP INDEX api_scope_group__domain_name__index;
         DROP INDEX api_scope__group_id__index;
+        DROP INDEX user_identity_provider_name_provider_subject_id_index;
       COMMIT;
     `)
   },
