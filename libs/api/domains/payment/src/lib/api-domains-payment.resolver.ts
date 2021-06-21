@@ -13,7 +13,6 @@ export class PaymentResolver {
 
   @Query(() => PaymentCatalogResponse)
   async paymentCatalog(
-    //@Args('performingOrganizationID') performingOrganizationID?: string,
     @Args('input', { type: () => PaymentCatalogInput }) input: PaymentCatalogInput,
   ): Promise<PaymentCatalogResponse> {
     const data = await (input.performingOrganizationID
