@@ -13,7 +13,7 @@ import {
   buildRepeater,
   CustomField,
 } from '@island.is/application/core'
-import { Prerequisites } from '../dataProviders/tempAPITypes'
+import { PaymentType, Prerequisites } from '../dataProviders/tempAPITypes'
 import {
   PaymentPlanExternalData,
   paymentPlanIndexKeyMapper,
@@ -259,13 +259,29 @@ export const PaymentPlanForm: Form = buildForm({
           title: employer.general.disposableIncomePageTitle,
           description: employer.general.disposableIncomePageDescription,
           component: 'DisposableIncome',
+          condition: (_formValue, externalData) => {
+            const paymentPlanList = (externalData as PaymentPlanExternalData)
+              ?.paymentPlanList
+            return (
+              paymentPlanList?.data.find((x) => x.type === PaymentType.O) !==
+              undefined
+            )
+          },
         }),
       ],
     }),
+
     buildSection({
       id: 'paymentPlanSection',
       title: section.paymentPlan,
-      children: buildPaymentPlanSteps(),
+      children: [
+        buildCustomField({
+          id: 'paymentPlanWageDeductionInfo',
+          title: paymentPlan.general.wageDeductionInfoPageTitle,
+          component: 'PaymentPlanWageDeductionInfo',
+        }),
+        ...buildPaymentPlanSteps(),
+      ],
     }),
     buildSection({
       id: 'overview',
