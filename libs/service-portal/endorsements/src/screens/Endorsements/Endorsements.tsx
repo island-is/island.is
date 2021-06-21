@@ -19,7 +19,7 @@ export type UserEndorsement = Pick<
 >
 export type RegionsEndorsementList = Pick<
   EndorsementList,
-  'id' | 'title' | 'description'
+  'id' | 'title' | 'description' | 'meta'
 > & { tags: EndorsementListOpenTagsEnum[] }
 
 export type UserVoterRegion = Pick<
@@ -68,6 +68,7 @@ const GET_REGION_ENDORSEMENTS = gql`
       title
       description
       tags
+      meta
     }
   }
 `
@@ -188,6 +189,7 @@ const Endorsements = () => {
       refetchUserEndorsements()
     },
   })*/
+
   const [unendorseList] = useMutation<boolean>(UNENDORSE_LIST, {
     onCompleted: () => {
       refetchUserEndorsements()
@@ -271,7 +273,7 @@ const Endorsements = () => {
               variant: 'text',
               icon: undefined,
               onClick: () => {
-                window.open(`${baseUrlForm}/${endorsementList.id}`)
+                window.open(`${baseUrlForm}/${endorsementList.meta.applicationId}`)
               },
             }}
           />
