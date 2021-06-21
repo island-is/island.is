@@ -177,9 +177,8 @@ const autoSchemaFile = environment.production
       xroad: {
         xroadBaseUrl: environment.xroad.baseUrl,
         xroadClientId: environment.xroad.clientId,
-      },
-      drivingLicense: {
-        secret: environment.drivingLicense.secret,
+        xroadPath: environment.drivingLicense.xroadPath,
+        drivingLicenseSecret: environment.drivingLicense.secret,
       },
     }),
   ],

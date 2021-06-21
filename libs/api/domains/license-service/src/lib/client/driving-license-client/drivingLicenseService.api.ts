@@ -27,11 +27,18 @@ const dateToPkpassDate = (date: string) => {
 export class GenericDrivingLicenseApi {
   private readonly xroadApiUrl: string
   private readonly xroadClientId: string
+  private readonly xroadPath: string
   private readonly secret: string
 
-  constructor(xroadBaseUrl: string, xroadClientId: string, secret: string) {
+  constructor(
+    xroadBaseUrl: string,
+    xroadClientId: string,
+    xroadPath: string,
+    secret: string,
+  ) {
     this.xroadApiUrl = xroadBaseUrl
     this.xroadClientId = xroadClientId
+    this.xroadPath = xroadPath
     this.secret = secret
   }
 
@@ -171,12 +178,8 @@ export class GenericDrivingLicenseApi {
     nationalId: User['nationalId'],
     getPkpassUrl = true,
   ): Promise<GenericUserLicense | null> {
-    // TODO(osk) Move into env
-    const xroadDrivingLicensePath =
-      'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
-
     const response = await this.requestApi(
-      `${xroadDrivingLicensePath}/api/Okuskirteini/${nationalId}`,
+      `${this.xroadPath}/api/Okuskirteini/${nationalId}`,
     )
 
     // TODO(osk) should this throw or return null? What's the general pattern
