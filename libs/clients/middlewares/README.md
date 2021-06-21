@@ -52,20 +52,8 @@ const fetch = createEnhancedFetch({
 })
 
 async function callApi() {
-  try {
-    const response = await fetch('/test')
-    const body = await response.json()
-  } catch (error) {
-    // For non-200 responses:
-    error.name // FetchError
-    error.response // the response object
-    error.problem // if server returned a standard problem response.
-    error.body // if configured with `logErrorResponseBody`.
-    error.url // the requested url
-    error.status // response status code
-    `error.statusText` // response status text
-    error.headers // response headers
-  }
+  const response = await fetch('/test')
+  return response.json()
 }
 
 // Use with OpenAPI generated api class.

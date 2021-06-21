@@ -1,1 +1,1 @@
-export * from './lib/enhanced-fetch'
+export * from './lib/createEnhancedFetch'

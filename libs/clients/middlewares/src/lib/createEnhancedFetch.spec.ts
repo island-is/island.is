@@ -1,4 +1,4 @@
-import { createEnhancedFetch, EnhancedFetchOptions } from './enhanced-fetch'
+import { createEnhancedFetch, EnhancedFetchOptions } from './createEnhancedFetch'
 import { Logger } from 'winston'
 import { Response as FakeResponse } from 'node-fetch'
 import { SetOptional } from 'type-fest'
