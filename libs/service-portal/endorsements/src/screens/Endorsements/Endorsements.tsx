@@ -137,13 +137,13 @@ const Endorsements = () => {
 
   const endorsementListTags = [EndorsementListOpenTagsEnum.PartyLetter2021]
 
-  //if (userVoterRegion && userVoterRegion.regionNumber > 0) {
-  endorsementListTags.push(
-    regionNumberEndorsementListTagMap[
-      6 as keyof typeof regionNumberEndorsementListTagMap
-    ],
-  )
-  //}
+  if (userVoterRegion && userVoterRegion.regionNumber > 0) {
+    endorsementListTags.push(
+      regionNumberEndorsementListTagMap[
+        userVoterRegion.regionNumber as keyof typeof regionNumberEndorsementListTagMap
+      ],
+    )
+  }
 
   // get all endorsement lists this user should see
   const {
@@ -178,8 +178,6 @@ const Endorsements = () => {
   const endorsementLists = allEndorsementLists.filter(
     ({ id }) => !signedLists.includes(id),
   )
-
-  console.log(endorsementLists)
 
   return (
     <Box marginBottom={[6, 6, 10]}>
