@@ -11,7 +11,8 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { dataProvider, section } from '../lib/messages'
+import { ComplaintsToAlthingiOmbudsman } from '../lib/dataSchema'
+import { dataProvider, information, section } from '../lib/messages'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -47,61 +48,90 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       title: section.information,
       children: [
         buildCustomField({
-          id: 'informationToComplainer',
+          id: 'information.toComplainer',
           title: section.information,
           component: 'InformationToComplainer',
         }),
         buildSubSection({
-          id: 'information.aboutTheComplainer',
+          id: 'information.section.aboutTheComplainer',
           title: section.informationToComplainer,
           children: [
             buildMultiField({
-              id: 'informationAboutTheComplainer',
-              title: 'Upplýsingar um þann sem kvartar',
+              id: 'information.aboutTheComplainer',
+              title: information.general.aboutTheComplainerTitle,
               children: [
                 buildTextField({
-                  id: 'information.title',
-                  title: 'Nafn',
+                  id: 'information.name',
+                  title: information.aboutTheComplainer.name,
                   backgroundColor: 'blue',
+                  disabled: true,
                   required: true,
+                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
+                    application.externalData?.nationalRegistry?.data?.fullName,
                 }),
                 buildTextField({
                   id: 'information.ssn',
-                  title: 'Kennitala',
+                  title: information.aboutTheComplainer.ssn,
+                  format: '######-####',
                   backgroundColor: 'blue',
+                  disabled: true,
                   required: true,
+                  width: 'half',
+                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
+                    application.externalData?.nationalRegistry?.data
+                      ?.nationalId,
                 }),
                 buildTextField({
                   id: 'information.address',
-                  title: 'Heimili',
+                  title: information.aboutTheComplainer.address,
                   backgroundColor: 'blue',
                   required: true,
+                  width: 'half',
+                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      ?.streetAddress,
                 }),
                 buildTextField({
                   id: 'information.postcode',
-                  title: 'Póstnúmer',
+                  title: information.aboutTheComplainer.postcode,
                   backgroundColor: 'blue',
                   required: true,
                   width: 'half',
+                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      ?.postalCode,
                 }),
                 buildTextField({
                   id: 'information.city',
-                  title: 'Staður',
+                  title: information.aboutTheComplainer.city,
                   backgroundColor: 'blue',
                   required: true,
                   width: 'half',
+                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      ?.city,
                 }),
                 buildTextField({
                   id: 'information.email',
-                  title: 'Netfang',
+                  title: information.aboutTheComplainer.email,
                   backgroundColor: 'blue',
                   required: true,
+                  width: 'half',
+                  variant: 'email',
+                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
+                    application.externalData?.userProfile?.data?.email,
                 }),
                 buildTextField({
                   id: 'information.phone',
-                  title: 'Sími',
+                  title: information.aboutTheComplainer.phone,
+                  format: '###-####',
                   backgroundColor: 'blue',
                   required: true,
+                  width: 'half',
+                  variant: 'tel',
+                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
+                    application.externalData?.userProfile?.data
+                      ?.mobilePhoneNumber,
                 }),
               ],
             }),
@@ -115,17 +145,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       children: [
         buildDescriptionField({
           id: 'confirmationCustomField',
-          title: 'name',
-          description: 'Umsókn',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'stepTwo',
-      title: 'section title',
-      children: [
-        buildDescriptionField({
-          id: 'confirmationCustomField2',
           title: 'name',
           description: 'Umsókn',
         }),
