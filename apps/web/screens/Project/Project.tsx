@@ -34,6 +34,7 @@ import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 
 interface ProjectWrapperProps {
   withSidebar?: boolean
@@ -73,7 +74,12 @@ interface PageProps {
 
 const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   const n = useNamespace(namespace)
+  const router = useRouter()
   useContentfulId(projectPage.id)
+
+  const subpage = projectPage.projectSubpages.find((x) => {
+    return x.slug === router.query.subSlug
+  })
 
   return (
     <>
@@ -90,6 +96,7 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
               items={projectPage.sidebarLinks?.map((x) => ({
                 title: x.text,
                 href: x.url,
+                active: router.asPath === x.url,
               }))}
               title="Efnisyfirlit"
               renderLink={(link, item) => {
@@ -103,8 +110,13 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           </>
         }
       >
-        {richText(projectPage.content as SliceType[])}
-        {projectPage.slices.map((slice) => (
+        {!!subpage && (
+          <Text as="h1" variant="h1">
+            {subpage.title}
+          </Text>
+        )}
+        {richText((subpage ?? projectPage).content as SliceType[])}
+        {(subpage ?? projectPage).slices.map((slice) => (
           <OrganizationSlice
             key={slice.id}
             slice={slice}
@@ -114,18 +126,20 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           />
         ))}
       </ProjectWrapper>
-      <Section
-        paddingTop={[8, 8, 6]}
-        paddingBottom={[8, 8, 6]}
-        background="purple100"
-        aria-labelledby="latestNewsTitle"
-      >
-        <LatestNewsSectionSlider
-          label={n('newsAndAnnouncements')}
-          readMoreText={n('seeMore')}
-          items={news}
-        />
-      </Section>
+      {!subpage && (
+        <Section
+          paddingTop={[8, 8, 6]}
+          paddingBottom={[8, 8, 6]}
+          background="purple100"
+          aria-labelledby="latestNewsTitle"
+        >
+          <LatestNewsSectionSlider
+            label={n('newsAndAnnouncements')}
+            readMoreText={n('seeMore')}
+            items={news}
+          />
+        </Section>
+      )}
     </>
   )
 }
@@ -178,7 +192,11 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       ),
   ])
 
-  if (!getProjectPage) {
+  const subpage = getProjectPage?.projectSubpages.find(
+    (x) => x.slug === query.subSlug,
+  )
+
+  if (!getProjectPage || (query.subSlug && !subpage)) {
     throw new CustomNextError(404, 'Project page not found')
   }
 

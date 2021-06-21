@@ -26,6 +26,16 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         title
         slug
       }
+      projectSubpages {
+        title
+        slug
+        content {
+          ...AllSlices
+        }
+        slices {
+          ...AllSlices
+        }
+      }
     }
   }
   ${slices}
