@@ -45,6 +45,7 @@ import { inboxStore, useInboxStore } from '../../stores/inbox-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
+import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
 interface IndexedDocument extends IDocument {
@@ -64,6 +65,7 @@ const {
         placeholder: intl.formatMessage({ id: 'inbox.searchPlaceholder' }),
         tintColor: theme.color.blue400,
       },
+      rightButtons: initialized ? getRightButtons({ theme } as any) : [],
     },
     bottomTab: {
       iconColor: theme.color.blue400,
