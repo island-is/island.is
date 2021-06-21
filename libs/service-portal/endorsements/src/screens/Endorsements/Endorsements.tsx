@@ -181,6 +181,7 @@ const Endorsements = () => {
           tags: endorsementListTags,
         },
       },
+      pollInterval: 2000,
     },
   )
 
