@@ -75,7 +75,9 @@ export class AuthMiddleware implements Middleware {
     context: RequestContext,
   ): Promise<string> {
     if (!this.options.tokenExchangeOptions) {
-      throw new Error('No token exchange options specified')
+      throw new Error(
+        `Token exchange failed for ${context.url}. No token exchange options specified`,
+      )
     }
 
     const options = this.options.tokenExchangeOptions
@@ -108,13 +110,13 @@ export class AuthMiddleware implements Middleware {
       'urn:ietf:params:oauth:token-type:access_token'
     ) {
       throw new Error(
-        `Token exchange failed, invalid issued token type (${result.issued_token_type})`,
+        `Token exchange failed for ${context.url}, invalid issued token type (${result.issued_token_type})`,
       )
     }
 
     if (result.token_type !== 'Bearer') {
       throw new Error(
-        `Token exchange failed, invalid token type (${result.token_type})`,
+        `Token exchange failed for ${context.url}, invalid token type (${result.token_type})`,
       )
     }
 
