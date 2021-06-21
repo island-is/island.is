@@ -2,37 +2,35 @@ import { createStore } from '@island.is/shared/mocking'
 import {
   CustomerChargeType,
   CustomerRecords,
-  BillReceiptModel,
+  DocumentsListModel,
 } from '../../types'
 import {
   getFinanceStatusData,
   getFinanceStatusDetailsData,
   getCustomerChargeTypeData,
   getCustomerRecordsData,
-  getBillReceiptsData,
+  getDocumentsListData,
+  getFinanceDocumentData,
   getExcelDocumentData,
   getCustomerTapControlData,
 } from './static'
-import { application } from './factories'
 
 export const store = createStore(() => {
   const financeStatus = getFinanceStatusData
   const financeStatusDetails = getFinanceStatusDetailsData
   const customerChargeType: CustomerChargeType = getCustomerChargeTypeData
   const customerRecords: CustomerRecords = getCustomerRecordsData
-  const billReceipts: BillReceiptModel = getBillReceiptsData
+  const documentsList: DocumentsListModel = getDocumentsListData
   const tapControl = getCustomerTapControlData
+  const financeDocuments = getFinanceDocumentData
   const excelDocument = getExcelDocumentData
-  const financeDocuments = {
-    docment: application,
-  }
 
   return {
     financeStatus,
     financeStatusDetails,
     customerChargeType,
     customerRecords,
-    billReceipts,
+    documentsList,
     financeDocuments,
     excelDocument,
     tapControl,

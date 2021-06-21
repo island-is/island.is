@@ -1,4 +1,4 @@
-import { useLazyQuery, useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { GET_EXCEL_SHEET_DATA } from '../../lib/queries/getExcelSheetData'
 
 const downloadXlsx = async (output: string, name: string) => {

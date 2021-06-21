@@ -2,14 +2,14 @@ import { Query, Resolver, Args } from '@nestjs/graphql'
 import { GetFinancialOverviewInput } from './dto/getOverview.input'
 import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
 import { ExcelSheetInput } from './dto/getExcelSheet.input'
-import { GetBillReceiptsInput } from './dto/getBillReceipts.input'
+import { GetDocumentsListInput } from './dto/getDocumentsList.input'
 import { GetFinanceDocumentInput } from './dto/getFinanceDocument.input'
 import { UseGuards } from '@nestjs/common'
 import graphqlTypeJson from 'graphql-type-json'
 import { CustomerChargeType } from './models/customerChargeType.model'
 import { FinanceDocumentModel } from './models/financeDocument.model'
 import { CustomerTapsControlModel } from './models/customerTapsControl.model'
-import { BillReceiptModel } from './models/billReceipts.model'
+import { DocumentsListModel } from './models/documentsList.model'
 import { CustomerRecords } from './models/customerRecords.model'
 
 import type { User } from '@island.is/auth-nest-tools'
@@ -60,15 +60,16 @@ export class FinanceResolver {
     )
   }
 
-  @Query(() => BillReceiptModel)
-  async getBillReceipts(
+  @Query(() => DocumentsListModel)
+  async getDocumentsList(
     @CurrentUser() user: User,
-    @Args('input') input: GetBillReceiptsInput,
+    @Args('input') input: GetDocumentsListInput,
   ) {
-    return this.FinanceService.getBillReceipts(
+    return this.FinanceService.getDocumentsList(
       user.nationalId,
       input.dayFrom,
       input.dayTo,
+      input.listPath,
     )
   }
 

@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
 import { Table as T } from '@island.is/island-ui/core'
-import { gql } from '@apollo/client'
 import {
   FinanceStatusOrganizationType,
   FinanceStatusDetailsType,
@@ -14,12 +13,6 @@ import amountFormat from '../../utils/amountFormat'
 import { downloadXlsxDocument } from '@island.is/service-portal/graphql'
 import { gjoldSundurlidunHeaders } from '../../utils/dataHeaders'
 import * as styles from './FinanceStatusDetailTable.treat'
-
-const GetExcelSheetData = gql`
-  query GetExcelSheetData($input: ExcelSheetInput!) {
-    getExcelDocument(input: $input)
-  }
-`
 
 interface Props {
   organization: FinanceStatusOrganizationType

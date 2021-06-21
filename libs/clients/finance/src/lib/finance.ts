@@ -11,7 +11,7 @@ import {
   CustomerChargeType,
   CustomerRecords,
   DocumentTypes,
-  BillReceiptTypes,
+  DocumentsListTypes,
   TapsControlTypes,
 } from './finance.types'
 
@@ -102,13 +102,14 @@ export class FinanceService extends RESTDataSource {
     return response
   }
 
-  async getBillReceipts(
+  async getDocumentsList(
     nationalID: string,
     dayFrom: string,
     dayTo: string,
-  ): Promise<BillReceiptTypes> {
-    const response = await this.get<BillReceiptTypes>(
-      `/documentsList/billReceipt?nationalID=${this.options.financeTestUser}&dayFrom=${dayFrom}&dayTo=${dayTo}`,
+    listPath: string,
+  ): Promise<DocumentsListTypes> {
+    const response = await this.get<DocumentsListTypes>(
+      `/documentsList/${listPath}?nationalID=${this.options.financeTestUser}&dayFrom=${dayFrom}&dayTo=${dayTo}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },

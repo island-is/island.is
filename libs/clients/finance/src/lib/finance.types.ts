@@ -54,11 +54,11 @@ export type DocumentTypes = {
   docment: DocumentDataTypes
 }
 
-export type BillReceiptTypes = {
-  documentsList: BillReceiptItemTypes[]
+export type DocumentsListTypes = {
+  documentsList: DocumentsListItemTypes[]
 }
 
-export type BillReceiptItemTypes = {
+export type DocumentsListItemTypes = {
   id: string
   date: string
   type: string

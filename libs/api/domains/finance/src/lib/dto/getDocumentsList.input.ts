@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
 
 @InputType()
-export class GetBillReceiptsInput {
+export class GetDocumentsListInput {
   @Field()
   @IsString()
   dayFrom!: string
@@ -10,4 +10,8 @@ export class GetBillReceiptsInput {
   @Field()
   @IsString()
   dayTo!: string
+
+  @Field()
+  @IsString()
+  listPath!: string
 }

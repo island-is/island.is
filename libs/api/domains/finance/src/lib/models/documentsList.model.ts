@@ -1,13 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class BillReceiptModel {
-  @Field(() => [BillReceiptItem])
-  documentsList!: BillReceiptItem[]
+export class DocumentsListModel {
+  @Field(() => [DocumentsListItem])
+  documentsList!: DocumentsListItem[]
 }
 
 @ObjectType()
-export class BillReceiptItem {
+export class DocumentsListItem {
   @Field()
   id!: string
 
