@@ -71,7 +71,7 @@ export function formatConclusion(
   previousDecision: CaseDecision,
   isolationToDate?: Date,
 ): string {
-  const isolationIsBeforeValidToDate =
+  const isolationEndsBeforeValidToDate =
     isolationToDate && validToDate > isolationToDate
 
   return decision === CaseDecision.REJECTING
@@ -107,10 +107,10 @@ export function formatConclusion(
           ? ` ${capitalize(
               formatAccusedByGender(accusedGender),
             )} skal sæta einangrun ${
-              isolationIsBeforeValidToDate
-                ? `ekki lengur en til ${`${formatDate(isolationToDate, 'PPPPp')
+              isolationEndsBeforeValidToDate
+                ? `ekki lengur en til ${formatDate(isolationToDate, 'PPPPp')
                     ?.replace('dagur,', 'dagsins')
-                    ?.replace(' kl.', ', kl.')}`}.`
+                    ?.replace(' kl.', ', kl.')}.`
                 : 'á meðan á gæsluvarðhaldinu stendur.'
             }`
           : ''
@@ -340,6 +340,8 @@ export function formatPrisonRulingEmailNotification(
       ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatCustodyRestrictions(
           accusedGender,
           custodyRestrictions,
+          validToDate,
+          isolationToDate,
         )}`
       : ''
   }<br /><br />${judgeName} ${judgeTitle}`

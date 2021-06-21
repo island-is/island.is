@@ -1045,6 +1045,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const judgeName = 'Dalli Dómari'
     const judgeTitle = 'aðal dómarinn'
     const isExtension = false
+    const isolationToDate = new Date('2021-04-06T12:30')
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -1065,6 +1066,8 @@ describe('formatPrisonRulingEmailNotification', () => {
       judgeTitle,
       isExtension,
       undefined,
+      undefined,
+      isolationToDate,
     )
 
     // Assert
@@ -1143,6 +1146,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const judgeName = 'Dalli Dómari'
     const judgeTitle = 'aðal dómarinn'
     const isExtension = false
+    const isolationToDate = new Date('2021-04-06T12:30')
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -1163,6 +1167,8 @@ describe('formatPrisonRulingEmailNotification', () => {
       judgeTitle,
       isExtension,
       undefined,
+      undefined,
+      isolationToDate,
     )
 
     // Assert
@@ -1192,6 +1198,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const judgeName = 'Dalli Dómari'
     const judgeTitle = 'aðal dómarinn'
     const isExtension = false
+    const isolationToDate = new Date('2021-04-06T12:30')
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -1212,6 +1219,8 @@ describe('formatPrisonRulingEmailNotification', () => {
       judgeTitle,
       isExtension,
       undefined,
+      undefined,
+      isolationToDate,
     )
 
     // Assert
@@ -1236,13 +1245,13 @@ describe('formatPrisonRulingEmailNotification', () => {
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
-    const isolationToDate = new Date('2021-04-06T12:30')
     const accusedAppealDecision = CaseAppealDecision.APPEAL
     const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
     const judgeName = 'Dalli Dómari'
     const judgeTitle = 'aðal dómarinn'
     const isExtension = false
     const additionToConclusion = 'Lorem ipsum'
+    const isolationToDate = new Date('2021-04-06T12:30')
 
     // Act
     const res = formatPrisonRulingEmailNotification(
