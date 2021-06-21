@@ -1,4 +1,4 @@
-import { DynamicModule } from '@nestjs/common'
+import { DynamicModule, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { AuditModule } from '@island.is/nest/audit'
@@ -20,6 +20,7 @@ export interface Config {
   secret: string
 }
 
+@Module({})
 export class PaymentModule {
   static register(config?: PaymentServiceOptions): DynamicModule {
     return {

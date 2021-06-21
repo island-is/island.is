@@ -46,6 +46,7 @@ if (process.env.INIT_SCHEMA === 'true') {
 
 @Module({
   imports: [
+    PaymentModule.register(environment.templateApi.paymentOptions as any),
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
     TemplateAPIModule.register(environment.templateApi),
@@ -54,7 +55,6 @@ if (process.env.INIT_SCHEMA === 'true') {
     BullModule,
     SigningModule.register(environment.signingOptions),
     TranslationsModule,
-    PaymentModule,
   ],
   controllers: [ApplicationController],
   providers: [
