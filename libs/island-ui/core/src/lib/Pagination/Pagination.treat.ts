@@ -1,5 +1,10 @@
-import { style } from 'treat'
+import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+
+export const variants = styleMap({
+  purple: {},
+  blue: {},
+})
 
 export const link = style({
   display: 'inline-block',
@@ -15,16 +20,35 @@ export const link = style({
   transition: 'all .1s',
   border: '1px solid transparent',
   ':hover': {
-    color: theme.color.purple400,
-    backgroundColor: theme.color.purple100,
     textDecoration: 'none',
+  },
+  selectors: {
+    [`${variants.purple} &:hover`]: {
+      color: theme.color.purple400,
+      backgroundColor: theme.color.purple100,
+    },
+    [`${variants.blue} &`]: {
+      color: theme.color.blue600,
+    },
+    [`${variants.blue} &:hover`]: {
+      color: theme.color.blue400,
+      backgroundColor: theme.color.white,
+    },
   },
 })
 
 export const linkCurrent = style({
-  backgroundColor: theme.color.purple100,
   fontWeight: 600,
-  color: theme.color.purple400,
+  selectors: {
+    [`${variants.purple} &`]: {
+      backgroundColor: theme.color.purple100,
+      color: theme.color.purple400,
+    },
+    [`${variants.blue} &`]: {
+      backgroundColor: theme.color.white,
+      color: theme.color.blue400,
+    },
+  },
 })
 
 export const edge = style({
@@ -33,14 +57,35 @@ export const edge = style({
   ':hover': {
     transform: 'scale(1.1)',
   },
+  selectors: {
+    [`${variants.purple} &`]: {
+      backgroundColor: theme.color.purple100,
+    },
+    [`${variants.blue} &`]: {
+      backgroundColor: theme.color.white,
+    },
+  },
 })
 
 export const linkDisabled = style({
   margin: 0,
-  border: `1px solid ${theme.color.purple200}`,
   backgroundColor: 'transparent',
   ':hover': {
     backgroundColor: 'transparent',
+  },
+  selectors: {
+    [`${variants.purple} &`]: {
+      border: `1px solid ${theme.color.purple200}`,
+    },
+    [`${variants.purple} &:hover`]: {
+      backgroundColor: 'transparent',
+    },
+    [`${variants.blue} &`]: {
+      border: `1px solid ${theme.color.blue200}`,
+    },
+    [`${variants.blue} &:hover`]: {
+      backgroundColor: 'transparent',
+    },
   },
 })
 
@@ -49,4 +94,9 @@ export const gap = style({
   textAlign: 'center',
   margin: '0 4px',
   minWidth: 40,
+  selectors: {
+    [`${variants.blue} &`]: {
+      color: theme.color.blue600,
+    },
+  },
 })

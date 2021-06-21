@@ -10,6 +10,7 @@ export interface Config {
   xroad: {
     xroadBaseUrl: string
     xroadClientId: string
+    xroadPath: string
     drivingLicenseSecret: string
   }
 }
@@ -28,6 +29,7 @@ export class LicenseServiceModule {
             new LicenseServiceApi(
               config.xroad.xroadBaseUrl,
               config.xroad.xroadClientId,
+              config.xroad.xroadPath,
               config.xroad.drivingLicenseSecret,
             ),
         },
