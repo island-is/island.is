@@ -72,10 +72,10 @@ export function setupGlobals() {
     KeyboardManager.setEnable(true)
     KeyboardManager.setEnableAutoToolbar(true)
     KeyboardManager.setToolbarPreviousNextButtonEnable(true)
-  }
 
-  // quick actions
-  setupQuickActions();
+    // quick actions
+    setupQuickActions();
+  }
 
   // set NSUserDefaults
   if (Platform.OS === 'ios') {
