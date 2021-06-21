@@ -30,6 +30,14 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
+import format from 'date-fns/format'
+
+import {
+  calculateAidFinalAmount,
+  calulateTaxOfAmount,
+  calulatePersonalTaxAllowanceUsed,
+} from '@island.is/financial-aid-web/osk/src/utils/taxCalculator'
+
 import {
   Municipality,
   NavigationProps,
@@ -43,11 +51,17 @@ import {
   State,
 } from '@island.is/financial-aid/shared'
 
+import dateAmounts from '@island.is/financial-aid-web/osk/src/utils/dateAmounts.json'
+
 interface MunicipalityData {
   municipality: Municipality
 }
 
 const SummaryForm = () => {
+  function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+    return obj[key]
+  }
+
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -103,7 +117,10 @@ const SummaryForm = () => {
   const errorCheck = () => {
     createApplication()
       .then(() => {
-        router.push(navigation?.nextUrl ?? '/')
+        if (navigation?.nextUrl) {
+          router.push(navigation?.nextUrl)
+        }
+
         router.events.on('routeChangeComplete', (url) => {
           //Clear session storage
           updateForm({ submitted: false, incomeFiles: [] })
@@ -129,26 +146,6 @@ const SummaryForm = () => {
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps
-
-  // Todo: do the calculations
-  const calculation = [
-    {
-      label: 'Full upphæð aðstoðar',
-      sum: '+ 200.000 kr.',
-    },
-    {
-      label: 'Ofgreidd aðstoð í Feb 2021',
-      sum: '- 10.000 kr.',
-    },
-    {
-      label: 'Skattur',
-      sum: '- 24.900 kr.',
-    },
-    {
-      label: 'Persónuafsláttur',
-      sum: '+ 32.900 kr.',
-    },
-  ]
 
   const overview = [
     {
@@ -216,23 +213,59 @@ const SummaryForm = () => {
         </Text>
         {data && (
           <>
-            {calculation.map((item, index) => {
-              return (
-                <span key={'calculation-' + index}>
-                  <Box
-                    display="flex"
-                    justifyContent="spaceBetween"
-                    alignItems="center"
-                    padding={2}
-                  >
-                    <Text variant="small">{item.label}</Text>
-                    <Text>{item.sum}</Text>
-                  </Box>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              padding={2}
+            >
+              <Text variant="small">Full upphæð aðstoðar </Text>
+              <Text>{aidAmount?.toLocaleString('de-DE')} kr.</Text>
+            </Box>
 
-                  <Divider />
-                </span>
-              )
-            })}
+            <Divider />
+
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              padding={2}
+            >
+              <Text variant="small">Skattur</Text>
+              <Text>
+                -{' '}
+                {aidAmount &&
+                  calulateTaxOfAmount(
+                    aidAmount,
+                    getProperty(dateAmounts, '2021'),
+                  ).toLocaleString('de-DE')}{' '}
+                kr.
+              </Text>
+            </Box>
+
+            <Divider />
+
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              padding={2}
+            >
+              <Text variant="small">Persónuafsláttur</Text>
+              <Text>
+                +{' '}
+                {aidAmount &&
+                  calulatePersonalTaxAllowanceUsed(
+                    aidAmount,
+                    form?.usePersonalTaxCredit,
+                    getProperty(dateAmounts, '2021'),
+                  ).toLocaleString('de-DE')}{' '}
+                kr.
+              </Text>
+            </Box>
+
+            <Divider />
+
             <Box
               display="flex"
               justifyContent="spaceBetween"
@@ -243,7 +276,11 @@ const SummaryForm = () => {
               <Text variant="small">Áætluð aðstoð (hámark)</Text>
               <Text>
                 {aidAmount !== undefined
-                  ? aidAmount?.toLocaleString('de-DE') + ' kr.'
+                  ? calculateAidFinalAmount(
+                      aidAmount,
+                      form?.usePersonalTaxCredit,
+                      getProperty(dateAmounts, '2021'),
+                    ).toLocaleString('de-DE') + ' kr.'
                   : 'Abbabb.. mistókst að reikna'}
               </Text>
             </Box>

@@ -21,10 +21,6 @@ export interface FormStepperChildSection extends FormStepperSection {
 const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
   const { form, updateForm } = useContext(FormContext)
 
-  const [navigationInfo, setNavigationInfo] = useState<NavigationInfoProps>({
-    activeSectionIndex: 0,
-  })
-
   var navigationTree = useNavigationTree(form?.hasIncome)
 
   const findSectionIndex = (navigationTree: FormStepperSection[]) => {
@@ -32,6 +28,7 @@ const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
       if (item.url === currentRoute) {
         return { activeSectionIndex: parseInt(index) }
       }
+
       if (item.children) {
         for (const [childIndex, child] of Object.entries(item.children)) {
           if (child.url === currentRoute) {
@@ -43,6 +40,7 @@ const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
         }
       }
     }
+
     return { activeSectionIndex: 0 }
   }
 
@@ -64,15 +62,16 @@ const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
     ) {
       return getNextUrl(currBranch.children[obj.activeSubSectionIndex + 1])
     }
+
     return getNextUrl(navigationTree[obj.activeSectionIndex + 1])
   }
 
   const getPrevUrl = (obj: FormStepperSection) => {
     if (obj?.children) {
       return obj?.children[obj?.children.length - 1]?.url
-    } else {
-      return obj?.url
     }
+
+    return obj?.url
   }
 
   const findPrevUrl = (obj: NavigationInfoProps) => {
@@ -83,24 +82,32 @@ const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
       currBranch.children &&
       currBranch.children[obj.activeSubSectionIndex - 1]
     ) {
-      return getNextUrl(currBranch.children[obj.activeSubSectionIndex - 1])
+      return getPrevUrl(currBranch.children[obj.activeSubSectionIndex - 1])
     }
 
     return getPrevUrl(navigationTree[obj.activeSectionIndex - 1])
   }
 
-  useEffect(() => {
+  const bla = (navigationTree: FormStepperSection[]) => {
     const findSection = findSectionIndex(navigationTree)
 
     const nextUrl = findNextUrl(findSection)
     const prevUrl = findPrevUrl(findSection)
 
-    setNavigationInfo({
+    return {
       activeSectionIndex: findSection.activeSectionIndex,
       activeSubSectionIndex: findSection?.activeSubSectionIndex,
       prevUrl: prevUrl,
       nextUrl: nextUrl,
-    })
+    }
+  }
+
+  const [navigationInfo, setNavigationInfo] = useState<NavigationInfoProps>(
+    bla(navigationTree),
+  )
+
+  useEffect(() => {
+    setNavigationInfo(bla(navigationTree))
   }, [form?.hasIncome])
 
   return navigationInfo

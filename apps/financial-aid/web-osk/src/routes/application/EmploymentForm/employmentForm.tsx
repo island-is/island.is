@@ -61,7 +61,9 @@ const EmploymentForm = () => {
       updateForm({ ...form, employmentCustom: '' })
     }
 
-    router.push(navigation?.nextUrl ?? '/')
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
   }
 
   return (
@@ -124,7 +126,7 @@ const EmploymentForm = () => {
       </FormContentContainer>
 
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
+        previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>

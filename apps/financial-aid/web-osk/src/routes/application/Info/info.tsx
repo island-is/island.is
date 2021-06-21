@@ -13,8 +13,9 @@ import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
 import { NavigationProps } from '@island.is/financial-aid/shared'
-import { api } from '@island.is/financial-aid-web/osk/src/services'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
 const ApplicationInfo = () => {
   const router = useRouter()
@@ -23,9 +24,22 @@ const ApplicationInfo = () => {
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
 
+  const logOut = useLogOut()
+
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps
+
+  const errorCheck = () => {
+    if (!accept) {
+      setHasError(true)
+      return
+    }
+
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
+  }
 
   return (
     <FormLayout activeSection={0}>
@@ -98,21 +112,11 @@ const ApplicationInfo = () => {
       </FormContentContainer>
 
       <FormFooter
-        onPrevButtonClick={() => {
-          // TODO: Make a logout function
-          api.logOut()
-        }}
+        onPrevButtonClick={() => logOut()}
         previousIsDestructive={true}
         nextButtonText="Staðfesta"
         nextButtonIcon="checkmark"
-        onNextButtonClick={() => {
-          if (!accept) {
-            setHasError(true)
-            return
-          }
-
-          router.push(navigation?.nextUrl ?? '/')
-        }}
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )

@@ -36,7 +36,10 @@ const EmailForm = () => {
       setHasError(true)
       return
     }
-    router.push(navigation?.nextUrl ?? '/')
+
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
   }
 
   return (

@@ -38,6 +38,17 @@ const PersonalTaxCreditForm = () => {
     },
   ]
 
+  const errorCheck = () => {
+    if (form?.usePersonalTaxCredit === undefined) {
+      setHasError(true)
+      return
+    }
+
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
+  }
+
   return (
     <FormLayout
       activeSection={navigation?.activeSectionIndex}
@@ -98,16 +109,8 @@ const PersonalTaxCreditForm = () => {
       </FormContentContainer>
 
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
-        nextUrl={navigation?.nextUrl ?? '/'}
-        onNextButtonClick={() => {
-          if (form?.usePersonalTaxCredit === undefined) {
-            setHasError(true)
-            return
-          }
-
-          router.push(navigation?.nextUrl ?? '/')
-        }}
+        previousUrl={navigation?.prevUrl}
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )

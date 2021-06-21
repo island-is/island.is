@@ -35,6 +35,16 @@ const IncomeForm = () => {
       value: 1,
     },
   ]
+  const errorCheck = () => {
+    if (form?.hasIncome === undefined) {
+      setError(true)
+      return false
+    }
+
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
+  }
 
   return (
     <FormLayout
@@ -85,16 +95,9 @@ const IncomeForm = () => {
         </Box>
       </FormContentContainer>
 
-      {/* TODO: clean up function, Does it have to be here? */}
       <FormFooter
         previousUrl={navigation?.prevUrl}
-        onNextButtonClick={() => {
-          if (form?.hasIncome === undefined) {
-            setError(true)
-            return
-          }
-          router.push(navigation?.nextUrl ?? '/')
-        }}
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )

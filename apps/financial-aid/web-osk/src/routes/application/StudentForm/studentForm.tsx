@@ -52,7 +52,9 @@ const StudentForm = () => {
       updateForm({ ...form, studentCustom: '' })
     }
 
-    router.push(navigation?.nextUrl ?? '/')
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
   }
 
   return (
@@ -125,8 +127,7 @@ const StudentForm = () => {
       </FormContentContainer>
 
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
-        nextUrl={navigation?.nextUrl ?? '/'}
+        previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>

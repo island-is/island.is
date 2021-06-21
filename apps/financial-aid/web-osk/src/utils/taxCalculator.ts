@@ -1,18 +1,18 @@
 // import { AidDateAmountListItem } from './veitaFinancialAidDefinitions'
 
 export interface AidDateAmount {
-  personalTaxAllowance: string
-  taxPercentage: string
+  personalTaxAllowance: number
+  taxPercentage: number
 }
 
 export const calculateAidFinalAmount = (
   amount: number,
-  usePersonalTaxAllowance: boolean,
+  usePersonalTaxAllowance: boolean | undefined,
   dateAmount: AidDateAmount,
 ): number => {
-  const taxPercentage = Number(dateAmount.taxPercentage) / 100
+  const taxPercentage = dateAmount.taxPercentage / 100
 
-  const personalTaxAllowance = Number(dateAmount.personalTaxAllowance)
+  const personalTaxAllowance = dateAmount.personalTaxAllowance
 
   const tax = Math.floor(amount * taxPercentage)
 
@@ -29,17 +29,17 @@ export const calulateTaxOfAmount = (
   amount: number,
   dateAmount: AidDateAmount,
 ): number => {
-  const taxPercentage = Number(dateAmount.taxPercentage) / 100
+  const taxPercentage = dateAmount.taxPercentage / 100
 
   return Math.floor(amount * taxPercentage)
 }
 
 export const calulatePersonalTaxAllowanceUsed = (
   amount: number,
-  usePersonalTaxAllowance: boolean,
+  usePersonalTaxAllowance: boolean | undefined,
   dateAmount: AidDateAmount,
 ): number => {
-  const personalTaxAllowance = Number(dateAmount.personalTaxAllowance)
+  const personalTaxAllowance = dateAmount.personalTaxAllowance
 
   const personalTaxAllowanceUsed = usePersonalTaxAllowance
     ? personalTaxAllowance

@@ -7,6 +7,8 @@ import { api } from '@island.is/financial-aid-web/osk/src/services'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
+
 interface Props {
   isVisible: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
@@ -14,9 +16,8 @@ interface Props {
 
 const Modal: React.FC<Props> = (props: Props) => {
   const { isVisible, setIsVisible } = props
+  const logOut = useLogOut()
 
-  const { updateForm } = useContext(FormContext)
-  const { setUser } = useContext(UserContext)
   return (
     <ModalBase
       baseId="cancelForm"
@@ -85,9 +86,7 @@ const Modal: React.FC<Props> = (props: Props) => {
                   colorScheme="destructive"
                   onClick={(e) => {
                     e.stopPropagation()
-                    api.logOut()
-                    setUser && setUser(undefined)
-                    updateForm({ submitted: false, incomeFiles: [] })
+                    logOut()
                   }}
                 >
                   Já, hætta við
