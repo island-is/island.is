@@ -101,8 +101,8 @@ const devConfig = {
     clientId: process.env.XROAD_CLIENT_ID ?? 'DEV/GOV/10000/island-is-client',
   },
   paymentDomain: {
-    xRoadPath:
-      process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8081/r1/IS-DEV',
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-DEV-Public',
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_USER,
     password: process.env.PAYMENT_PASSWORD,
@@ -213,13 +213,14 @@ const prodConfig = {
     clientId: process.env.XROAD_CLIENT_ID,
   },
   paymentDomain: {
-    xRoadPath: process.env.XROAD_BASE_PATH_WITH_ENV,
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID,
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_USER,
     password: process.env.PAYMENT_PASSWORD,
-    callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
-    callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
-    arkBaseUrl: process.env.PAYMENT_ARK_URL,
+    callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL_TEST,
+    callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL_TEST,
+    arkBaseUrl: 'https://uat.arkid.is',
   },
   temporaryVoterRegistry: {
     baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,

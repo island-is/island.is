@@ -52,12 +52,15 @@ const devConfig = {
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     paymentOptions: {
-      xRoadClientId: 'IS-DEV/GOV/10000/island-is-client',
-      username: process.env.PAYMENT_USER,
-      password: process.env.PAYMENT_PASSWORD,
-      callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL_TEST,
-      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL_TEST,
-    },
+      arkBaseUrl: process.env.PAYMENT_ARK_BASE_URL ?? 'https://uat.arkid.is',
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
+      xRoadClientId: process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
+      xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-DEV-Public',
+      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL ?? '/payment/thiswillneverwork',
+      callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL ?? 'https://localhost:3333/application/',
+      password: process.env.PAYMENT_USER,
+      username: process.env.PAYMENT_PASSWORD,
+    }
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -125,13 +128,15 @@ const prodConfig = {
       xroadBaseUrl: process.env.XROAD_BASE_PATH,
     },
     paymentOptions: {
+      arkBaseUrl: process.env.PAYMENT_ARK_BASE_URL,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
       xRoadClientId: process.env.XROAD_CLIENT_ID,
-      username: process.env.PAYMENT_USERNAME,
-      password: process.env.PAYMENT_PASSWORD,
-      callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL_TEST,
-      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL_TEST,
-      arkBaseUrl: process.env.PAYMENT_ARK_URL,
-    },
+      xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID,
+      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
+      callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
+      password: process.env.PAYMENT_USER,
+      username: process.env.PAYMENT_PASSWORD,
+    }
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,

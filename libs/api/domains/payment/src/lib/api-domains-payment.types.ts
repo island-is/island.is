@@ -19,13 +19,3 @@ export interface Callback {
   chargeItemSubject: string
   status: 'paid' | 'cancelled' | 'recreated' | 'recreatedAndPaid'
 }
-
-export interface PaymentServiceOptions {
-  xRoadPath: string
-  xRoadClientId: string
-  username: string
-  password: string
-  callbackBaseUrl: string
-  callbackAdditionUrl: string
-  arkBaseUrl: string
-}

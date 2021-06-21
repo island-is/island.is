@@ -1,5 +1,6 @@
 export interface PaymentServiceOptions {
-  xRoadPath: string
+  xRoadBaseUrl: string
+  xRoadProviderId: string
   xRoadClientId: string
   username: string
   password: string

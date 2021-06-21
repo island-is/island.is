@@ -7,34 +7,28 @@ import { Payment } from './payment.model'
 import { PaymentController } from './payment.controller'
 import { PaymentService } from './payment.service'
 import { environment } from '../../../environments'
-import {
-  PAYMENT_CONFIG,
-  PaymentServiceOptions,
-  PaymentConfig,
-} from './payment.configuration'
-import { PaymentAPI } from '@island.is/clients/payment'
+import { PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
+import { PaymentServiceOptions } from "@island.is/clients/payment";
 
 export interface Config {
-  xroadBaseUrl: string
-  xroadClientId: string
-  secret: string
+  clientConfig: PaymentServiceOptions
 }
 
 @Module({})
 export class PaymentModule {
-  static register(config?: PaymentServiceOptions): DynamicModule {
+  static register(config: Config): DynamicModule {
     return {
       module: PaymentModule,
       providers: [
         PaymentService,
         {
-          provide: PAYMENT_CONFIG,
-          useValue: environment.templateApi.paymentOptions as PaymentConfig,
+          provide: PAYMENT_OPTIONS,
+          useValue: config.clientConfig,
         },
         {
           provide: PaymentAPI,
           useFactory: () => {
-            return new PaymentAPI(environment.templateApi.paymentOptions as PaymentServiceOptions)
+            return new PaymentAPI(config.clientConfig)
           }
         },
       ],

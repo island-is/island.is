@@ -1,8 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common'
-import { PaymentAPI } from '@island.is/clients/payment'
+import { PaymentAPI, PaymentServiceOptions } from '@island.is/clients/payment'
 import { PaymentResolver } from './api-domains-payment.resolver'
 import { ApiDomainsPaymentService } from './api-domains-payment.service'
-import { PaymentServiceOptions } from './api-domains-payment.types'
 
 @Module({})
 export class ApiDomainsPaymentModule {
