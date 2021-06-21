@@ -10,10 +10,10 @@ import {
   getCustomerChargeTypeData,
   getCustomerRecordsData,
   getBillReceiptsData,
-  getFinanceDocumentData,
   getExcelDocumentData,
   getCustomerTapControlData,
 } from './static'
+import { application } from './factories'
 
 export const store = createStore(() => {
   const financeStatus = getFinanceStatusData
@@ -22,8 +22,10 @@ export const store = createStore(() => {
   const customerRecords: CustomerRecords = getCustomerRecordsData
   const billReceipts: BillReceiptModel = getBillReceiptsData
   const tapControl = getCustomerTapControlData
-  const financeDocuments = getFinanceDocumentData // TODO: Add factories
-  const excelDocument = getExcelDocumentData // TODO: Add factories
+  const excelDocument = getExcelDocumentData
+  const financeDocuments = {
+    docment: application,
+  }
 
   return {
     financeStatus,
