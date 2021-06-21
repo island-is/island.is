@@ -10,6 +10,10 @@ declare const _ISODate__Brand: unique symbol
 /** Valid ISODate string – e.g. `2012-09-30` */
 export type ISODate = string & { [_ISODate__Brand]: true }
 
+declare const _ISODateTime__Brand: unique symbol
+/** Valid UTC ISODateTime string – e.g. `2012-09-30T12:00:00` */
+export type ISODateTime = string & { [_ISODateTime__Brand]: true }
+
 declare const _HTMLText__Brand: unique symbol
 /** HTMLText string – e.g. `I &lt;3 You ` */
 export type HTMLText = string & { [_HTMLText__Brand]: true }

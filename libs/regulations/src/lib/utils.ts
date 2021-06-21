@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { ParsedUrlQuery } from 'querystring'
-import { RegName, RegQueryName } from './types'
+import { ISODate, ISODateTime, RegName, RegQueryName } from './types'
 
 // ---------------------------------------------------------------------------
 
@@ -30,6 +30,28 @@ export const interpolate = (
 // ---------------------------------------------------------------------------
 
 export const isPlural = (n: number) => n % 10 !== 1 || n % 100 === 11
+
+// ---------------------------------------------------------------------------
+
+export function toISODate(date: Date): ISODate
+export function toISODate(date: null | undefined): null
+export function toISODate(date: Date | null | undefined): ISODate | null
+
+export function toISODate(date: Date | null | undefined): ISODate | null {
+  return date ? (date.toISOString().substr(0, 10) as ISODate) : null
+}
+
+// ---------------------------------------------------------------------------
+
+export function toISODateTime(date: Date): ISODateTime
+export function toISODateTime(date: null | undefined): null
+export function toISODateTime(date: Date | null | undefined): ISODateTime | null
+
+export function toISODateTime(
+  date: Date | null | undefined,
+): ISODateTime | null {
+  return date ? (date.toISOString() as ISODateTime) : null
+}
 
 // ---------------------------------------------------------------------------
 
