@@ -11,7 +11,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { section } from '../lib/messages'
+import { dataProvider, section } from '../lib/messages'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -24,14 +24,13 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       children: [
         buildExternalDataProvider({
           id: 'approve.external.data',
-          title: 'Utanaðkomandi gögn',
+          title: dataProvider.header,
           dataProviders: [
             buildDataProviderItem({
               id: 'approve.data',
               type: 'TempDataProvider',
-              title: 'Staðfesting á ákveðnu atriði',
-              subTitle:
-                'Betri lýsing á atriðinu sem er verið að sækja annarsstaðar frá',
+              title: dataProvider.title,
+              subTitle: dataProvider.subtitle,
             }),
           ],
         }),
