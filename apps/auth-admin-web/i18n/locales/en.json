@@ -896,8 +896,12 @@
         "name": {
           "label": "Name",
           "placeholder": "grant-example",
-          "helpText": "The unique name of the Grant Type",
-          "errorMessage": "Name is required and needs to be in the right format"
+          "helpText": "The unique name of the Grant Type. Follow this pattern: grant-type{:optional-paths}",
+          "errorMessage": "Name is required and needs to be in the right format. Follow this pattern: grant-type{:optional-paths}",
+          "pattern": "grant-type{:optional-paths}",
+          "patternText": "Follow this pattern:",
+          "hintOkMessage": "The Grant Type is in a correct format",
+          "hintErrorMessage": "The format of the Grant Type is incorrect"
         },
         "description": {
           "label": "Description",
