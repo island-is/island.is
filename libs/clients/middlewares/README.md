@@ -2,9 +2,9 @@
 
 Includes middleware logic for our API clients. Including:
 
-- Circuit breaker
-- Error handling and logging
-- Request timeout
+- Circuit breaker.
+- Error handling and logging.
+- Request timeout.
 
 ## createEnhancedFetch
 
