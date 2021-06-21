@@ -162,15 +162,16 @@ export function formatCustodyRestrictions(
     return 'Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.'
   }
 
-  const formattedValidToDateAndTime = `${formatDate(
-    validToDate,
-    'PPPp',
-  )?.replace(' kl.', ', kl.')}`
+  const formattedValidToDateAndTime = `${formatDate(validToDate, 'PPPPp')
+    ?.replace('dagur,', 'dagsins')
+    ?.replace(' kl.', ', kl.')}`
 
   const formattedIsolationToDateAndTime = `${formatDate(
     isolationToDate,
-    'PPPp',
-  )?.replace(' kl.', ', kl.')}`
+    'PPPPp',
+  )
+    ?.replace('dagur,', 'dagsins')
+    ?.replace(' kl.', ', kl.')}`
 
   const isolationIsSameAsValidToDate =
     validToDate &&
@@ -183,7 +184,7 @@ export function formatCustodyRestrictions(
     res += `${formatAccusedByGender(accusedGender)} skuli sæta einangrun ${
       isolationIsSameAsValidToDate
         ? 'á meðan á gæsluvarðhaldinu stendur'
-        : `til ${formattedIsolationToDateAndTime}`
+        : `ekki lengur en til ${formattedIsolationToDateAndTime}`
     }`
 
     if (relevantCustodyRestrictions.length === 1) {

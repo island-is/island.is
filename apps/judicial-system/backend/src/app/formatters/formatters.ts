@@ -236,10 +236,10 @@ export function formatPrisonCourtDateEmailNotification(
 ): string {
   const courtText = court?.replace('dómur', 'dóms')
   const courtDateText = formatDate(courtDate, 'PPPPp')
-    ?.replace('dagur', 'daginn')
+    ?.replace('dagur,', 'daginn')
     ?.replace(' kl.', ', kl.')
   const requestedValidToDateText = formatDate(requestedValidToDate, 'PPPPp')
-    ?.replace('dagur', 'dagsins')
+    ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')
   const requestText = `Nafn sakbornings: ${accusedName}.<br /><br />Kyn sakbornings: ${formatGender(
     accusedGender,
@@ -266,7 +266,7 @@ export function formatDefenderCourtDateEmailNotification(
     courtDate,
     'PPPPp',
   )
-    ?.replace('dagur', 'daginn')
+    ?.replace('dagur,', 'daginn')
     ?.replace(
       ' kl.',
       ', kl.',
@@ -381,7 +381,7 @@ export function formatPrisonRevokedEmailNotification(
 ): string {
   const courtText = court?.replace('dómur', 'dóms')
   const courtDateText = formatDate(courtDate, 'PPPPp')
-    ?.replace('dagur', 'daginn')
+    ?.replace('dagur,', 'daginn')
     ?.replace(' kl.', ', kl.')
   const accusedNameText = `Nafn sakbornings: ${accusedName}.`
   const defenderText = defenderName
@@ -402,7 +402,7 @@ export function formatDefenderRevokedEmailNotification(
 ): string {
   const courtText = court?.replace('dómur', 'dómi')
   const courtDateText = formatDate(courtDate, 'PPPPp')
-    ?.replace('dagur', 'daginn')
+    ?.replace('dagur,', 'daginn')
     ?.replace(' kl.', ', kl.')
 
   return `${
