@@ -9,6 +9,7 @@ import IconBE from '../../assets/licenece-type/icon-be.png';
 import IconC from '../../assets/licenece-type/icon-c.png';
 import IconCE from '../../assets/licenece-type/icon-ce.png';
 import IconD from '../../assets/licenece-type/icon-d.png';
+import IconDE from '../../assets/licenece-type/icon-de.png';
 
 const Host = styled.View`
   border-width: ${({ theme }) => theme.border.width.standard}px;
@@ -79,6 +80,9 @@ export function FieldCard(props: FieldCardProps) {
       break;
     case 'CE':
       icon = <Image source={IconCE} resizeMode="contain" height={15} width={40}  />
+      break;
+    case 'DE':
+      icon = <Image source={IconDE} resizeMode="contain" height={15} width={58}  />
       break;
     case 'D':
       icon = <Image source={IconD} resizeMode="contain" height={24} width={24}  />

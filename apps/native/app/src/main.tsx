@@ -12,6 +12,7 @@ import { readAuthorizeResult } from './stores/auth-store'
 import { performanceMetricsAppLaunched } from './utils/performance-metrics'
 
 async function startApp() {
+
   // setup global packages and polyfills
   setupGlobals()
 

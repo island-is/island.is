@@ -31,6 +31,7 @@ import { navigateTo } from '../../lib/deep-linking'
 import { authStore } from '../../stores/auth-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { LicenseStatus, LicenseType } from '../../types/license-type'
+import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
 const {
@@ -42,6 +43,7 @@ const {
       title: {
         text: intl.formatMessage({ id: 'wallet.screenTitle' }),
       },
+      rightButtons: initialized ? getRightButtons({ theme } as any) : [],
     },
     bottomTab: {
       iconColor: theme.color.blue400,

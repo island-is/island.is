@@ -1,20 +1,28 @@
-const { appRootPath } = require("@nrwl/workspace/src/utils/app-root");
-const { resolveRequest } = require('./metro.resolver');
+const { withNxMetro } = require('@nrwl/react-native');
+const { getDefaultConfig } = require('metro-config');
 
 module.exports = (async () => {
-  return {
-    projectRoot: appRootPath,
-    watchFolders: [appRootPath],
-    resolver: {
-      resolveRequest,
+  const {
+    resolver: { sourceExts, assetExts },
+  } = await getDefaultConfig();
+  const { projectRoot, ...cfg } = withNxMetro(
+    {
+      transformer: {
+        // babelTransformerPath: null,
+        getTransformOptions: async () => ({
+          transform: {
+            experimentalImportSupport: true,
+            inlineRequires: false,
+          },
+        }),
+      },
     },
-    transformer: {
-      getTransformOptions: async () => ({
-        transform: {
-          experimentalImportSupport: false,
-          inlineRequires: false,
-        },
-      }),
+    {
+      debug: false,
     },
-  };
+  );
+  cfg.projectRoot = projectRoot;
+  cfg.watchFolders = [projectRoot];
+
+  return cfg;
 })();

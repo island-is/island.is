@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage'
 import { NotificationResponse, setBadgeCountAsync } from 'expo-notifications'
+import { Platform } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
@@ -193,7 +194,9 @@ notificationsStore.subscribe(
     const unreadCount = [...items.values()].reduce((acc, item) => {
       return acc + (item.read ? 0 : 1)
     }, 0)
-    setBadgeCountAsync(unreadCount)
+    if (Platform.OS === 'ios') {
+      setBadgeCountAsync(unreadCount)
+    }
     notificationsStore.setState({ unreadCount })
     rightButtonScreens.forEach((componentId) => {
       Navigation.mergeOptions(componentId, {

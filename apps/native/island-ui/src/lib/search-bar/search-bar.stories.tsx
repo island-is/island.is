@@ -1,4 +1,4 @@
-import { withKnobs } from '@storybook/addon-knobs'
+import { withKnobs, text } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
@@ -14,11 +14,12 @@ storiesOf('Search Bar', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Default', () => {
+    const placehodler = text('Search Bar Placeholder', 'Leita að skjölum...')
     return (
       <View style={{ width: '100%', paddingHorizontal: 16 }}>
         <SearchBar
           value=""
-          placeholder="Leita að skjölum..."
+          placeholder={placehodler}
           returnKeyType="search"
         />
       </View>

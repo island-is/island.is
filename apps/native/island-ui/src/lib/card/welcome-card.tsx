@@ -1,9 +1,19 @@
-import React from 'react'
-import { DynamicColorIOS, ImageSourcePropType, Platform, Image } from 'react-native'
+import React, { useCallback } from 'react'
+import {
+  DynamicColorIOS,
+  ImageSourcePropType,
+  Platform,
+  Image,
+  Linking,
+  TouchableOpacity,
+  Text,
+  Alert,
+} from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 import gridDotSmallSrc from '../../assets/illustrations/grid-dot-small.png'
+import { Link } from '../link/link'
 
 const Host = styled.View<{ color: any }>`
   padding: 0 0 24px;
@@ -20,9 +30,14 @@ const IllustrationImage = styled.Image`
   height: 262px;
 `
 
-const Description = styled.Text`
+const Content = styled.View`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   padding: 0 24px 0;
+`
 
+const Description = styled.Text`
   ${font({
     fontWeight: '300',
     lineHeight: 24,
@@ -44,6 +59,7 @@ interface CardProps {
   imgSrc?: ImageSourcePropType
   style?: any
   grid?: boolean
+  hasLink?: boolean
 }
 
 export function WelcomeCard({
@@ -52,9 +68,11 @@ export function WelcomeCard({
   backgroundColor,
   style,
   grid,
+  hasLink,
 }: CardProps) {
   const theme = useTheme()
   const color = backgroundColor
+
   return (
     <Host color={color} style={style}>
       {grid && (
@@ -77,7 +95,14 @@ export function WelcomeCard({
         </DotGrid>
       )}
       {imgSrc && <IllustrationImage source={imgSrc} resizeMode="cover" />}
-      <Description>{description}</Description>
+      <Content>
+        <Description>{description}</Description>
+        {hasLink && (
+          <Link url="mailto:island@island.is">
+            island@island.is
+          </Link>
+        )}
+      </Content>
     </Host>
   )
 }

@@ -14,6 +14,8 @@ import { client } from '../graphql/client'
 import { config } from '../utils/config'
 import { zustandFlipper } from '../utils/devtools/flipper-zustand'
 import { getAppRoot } from '../utils/lifecycle/get-app-root'
+import { inboxStore } from './inbox-store'
+import { notificationsStore } from './notifications-store'
 import { preferencesStore } from './preferences-store'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${config.bundleId}`
@@ -141,6 +143,11 @@ export const authStore = create<AuthStore>((set, get) => ({
     return true
   },
 }))
+
+authStore.subscribe((userInfo: UserInfo | undefined) => {
+  inboxStore.getState().actions.setNationalId(userInfo?.nationalId ?? null);
+  // notificationsStore.getState().actions.setNationalId(userInfo?.nationalId);
+}, s => s.userInfo);
 
 export const useAuthStore = createUse(authStore)
 

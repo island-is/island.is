@@ -1,7 +1,8 @@
 import { theme } from '@island.is/island-ui/theme'
-import { boolean, number, text, withKnobs } from '@storybook/addon-knobs'
+import { boolean, number, text, withKnobs, select } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
+import { FormattedDateTimeRange } from 'react-intl'
 import { ImageSourcePropType, View } from 'react-native'
 import { LicenseStatus, LicenseType } from '../../../../app/src/types/license-type'
 import agencyLogo from '../../assets/card/agency-logo.png'
@@ -46,14 +47,16 @@ storiesOf('Cards', module)
     )
   })
   .add('Licence Card', () => {
+    const type = select('Licence Card Type', LicenseType, LicenseType.DRIVERS_LICENSE);
+    const status = select('Licence Card Status', LicenseStatus, LicenseStatus.VALID);
     const title = text('Licence Card Title', 'Ökuskýrteini')
     return (
       <LicenceCard
         title={title}
-        status={LicenseStatus.VALID}
-        date="16:24 - 14.03.2022"
+        status={status}
+        date={new Date()}
         agencyLogo={agencyLogo as ImageSourcePropType}
-        type={LicenseType.DRIVERS_LICENSE}
+        type={type}
       />
     )
   })
@@ -81,6 +84,7 @@ storiesOf('Cards', module)
       'Notification Card Message',
       'Skýrteini frá Lögreglusjóra nú aðgengilegt í appinu',
     )
+    const actionTitle = text('Notification Action Title', 'Opna')
     return (
       <NotificationCard
         id="story-demo"
@@ -91,7 +95,7 @@ storiesOf('Cards', module)
         unread={boolean('Is Unread', true)}
         onPress={() => console.log('test')}
         actions={[
-          { text: 'Action', onPress: () => console.log('Action press') },
+          { text: actionTitle, onPress: () => console.log('Action press') },
         ]}
       />
     )
@@ -107,6 +111,7 @@ storiesOf('Cards', module)
       step: 20,
     }
     const progress = number('Status Card Progess', 66, options)
+    const actionTitle = text('Status Card Action Title', 'Opna Umsókn')
     return (
       <StatusCard
         title={title}
@@ -114,7 +119,7 @@ storiesOf('Cards', module)
         description={description}
         badge={<Badge title={badgeTitle} />}
         progress={progress}
-        actions={[{ text: 'Opna umsókn', onPress() {} }]}
+        actions={[{ text: actionTitle, onPress() {} }]}
       />
     )
   })

@@ -1,8 +1,8 @@
-import { withKnobs, text } from '@storybook/addon-knobs'
+import { withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
-import { Loader } from './loader'
+import { Skeleton } from './skeleton'
 
 const CenterView = ({ children }: any) => (
   <View
@@ -11,19 +11,17 @@ const CenterView = ({ children }: any) => (
       justifyContent: 'center',
       alignItems: 'center',
       width: '100%',
+      paddingHorizontal: 16,
     }}
   >
     {children}
   </View>
 )
 
-storiesOf('Loader', module)
+storiesOf('Skeleton', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Default', () => {
-    return <Loader />
+    return <Skeleton active style={{ borderRadius: 4 }} height={17} />
   })
-  .add('Default With Text', () => {
-    const title = text('Loader Text', 'Sæki skjal')
-    return <Loader text={title} />
-  })
+

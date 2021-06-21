@@ -2,8 +2,7 @@ import { withKnobs, text } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
-import { Close } from '../button/close'
-import { Heading } from './heading'
+import { Link } from './link'
 
 const CenterView = ({ children }: any) => (
   <View
@@ -19,14 +18,11 @@ const CenterView = ({ children }: any) => (
   </View>
 )
 
-storiesOf('Heading', module)
+storiesOf('Link', module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
-  .add('Heading', () => {
-    const heading = text('Heading Text', 'Tilkynningar');
-    return <Heading>{heading}</Heading>
+  .add('Default', () => {
+    const linkText = text('Link Text', 'island@island.is');
+    return <Link url="mailto:island@island.is">{linkText}</Link>
   })
-  .add('Heading With Button', () => {
-    const heading = text('Heading Text with Button', 'Tilkynningar');
-    return <Heading button={<Close />}>{heading}</Heading>
-  })
+
