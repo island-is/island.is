@@ -28,7 +28,7 @@ const ApplicationInfo = () => {
   ) as NavigationProps
 
   return (
-    <FormLayout activeSection={navigation?.activeSectionIndex}>
+    <FormLayout activeSection={0}>
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
           Gagnaöflun

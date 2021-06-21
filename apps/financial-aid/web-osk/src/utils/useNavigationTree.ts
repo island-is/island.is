@@ -1,8 +1,4 @@
-import { useEffect, useState } from 'react'
-
-// TODO: Only show /umsokn/gogn if form.income is true
-
-const useNavigationTree = () => {
+const useNavigationTree = (hasIncome: boolean | undefined) => {
   const section = [
     {
       name: 'Gagnaöflun',
@@ -22,33 +18,52 @@ const useNavigationTree = () => {
     },
     {
       name: 'Fjármál',
-      children: [
-        { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
-        { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
-        {
-          type: 'SUB_SECTION',
-          name: 'Skattframtal',
-          url: '/umsokn/skattframtal',
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Persónuafsláttur',
-          url: '/umsokn/personuafslattur',
-        },
-        {
-          type: 'SUB_SECTION',
-          name: 'Bankaupplýsingar',
-          url: '/umsokn/bankaupplysingar',
-        },
-      ],
+      children: hasIncome
+        ? [
+            { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Skattframtal',
+              url: '/umsokn/skattframtal',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Persónuafsláttur',
+              url: '/umsokn/personuafslattur',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Bankaupplýsingar',
+              url: '/umsokn/bankaupplysingar',
+            },
+          ]
+        : [
+            { type: 'SUB_SECTION', name: 'Tekjur', url: '/umsokn/tekjur' },
+            { type: 'SUB_SECTION', name: 'Gögn', url: '/umsokn/gogn' },
+            {
+              type: 'SUB_SECTION',
+              name: 'Skattframtal',
+              url: '/umsokn/skattframtal',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Persónuafsláttur',
+              url: '/umsokn/personuafslattur',
+            },
+            {
+              type: 'SUB_SECTION',
+              name: 'Bankaupplýsingar',
+              url: '/umsokn/bankaupplysingar',
+            },
+          ],
     },
     {
       name: 'Samskipti',
       url: '/umsokn/samskipti',
     },
     {
-      name: 'Útreikningur',
-      url: '/umsokn/utreikningur',
+      name: 'Yfirlit',
+      url: '/umsokn/yfirlit',
     },
     {
       name: 'Staðfesting',

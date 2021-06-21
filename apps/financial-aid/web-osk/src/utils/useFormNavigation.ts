@@ -1,124 +1,109 @@
 import { useEffect, useState, useContext } from 'react'
-
 import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
-import {
-  Form,
-  FormContext,
-} from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
-// navigationInfo
-interface ResultProps {
+interface NavigationInfoProps {
   activeSectionIndex: number
   activeSubSectionIndex?: number
   prevUrl?: string
   nextUrl?: string
 }
+interface FormStepperSection {
+  name: string
+  type?: string
+  url?: string
+  children?: FormStepperChildSection[]
+}
+export interface FormStepperChildSection extends FormStepperSection {
+  href?: string
+}
 
-const useFormNavigation = (currentUrl: string) => {
+const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
   const { form, updateForm } = useContext(FormContext)
 
-  var sections = useNavigationTree()
+  const [navigationInfo, setNavigationInfo] = useState<NavigationInfoProps>({
+    activeSectionIndex: 0,
+  })
 
-  // const createNavigationInfo = (
-  //   form: Form | undefined,
-  //   navigationTree: any,
-  // ): ResultProps => {
-  //   return {
-  //     activeSectionIndex: 1,
-  //     activeSubSectionIndex: 2,
-  //     prevUrl: 'lol',
-  //     nextUrl: 'lol',
-  //   }
-  // }
+  var navigationTree = useNavigationTree(form?.hasIncome)
 
-  // better name
-  const [result, setResult] = useState<ResultProps>()
-
-  // Use types
-  const getNextUrl = (obj: {
-    name?: string
-    url?: string
-    type?: string
-    children?: { type?: string; name?: string; url?: string }[]
-  }) => {
-    if (obj) {
-      if (obj.children) {
-        return obj?.children[0]?.url
-      } else {
-        return obj.url
+  const findSectionIndex = (navigationTree: FormStepperSection[]) => {
+    for (const [index, item] of Object.entries(navigationTree)) {
+      if (item.url === currentRoute) {
+        return { activeSectionIndex: parseInt(index) }
+      }
+      if (item.children) {
+        for (const [childIndex, child] of Object.entries(item.children)) {
+          if (child.url === currentRoute) {
+            return {
+              activeSectionIndex: parseInt(index),
+              activeSubSectionIndex: parseInt(childIndex),
+            }
+          }
+        }
       }
     }
-
-    return '/umsokn'
+    return { activeSectionIndex: 0 }
   }
 
-  const getPrevUrl = (obj: {
-    name?: string
-    url?: string
-    type?: string
-    children?: { type?: string; name?: string; url?: string }[]
-  }) => {
-    if (obj) {
-      if (obj.children) {
-        return obj?.children[obj?.children.length - 1]?.url
-      } else {
-        return obj.url
-      }
+  const getNextUrl = (obj: FormStepperSection) => {
+    if (obj?.children) {
+      return obj?.children[0]?.url
+    } else {
+      return obj?.url
+    }
+  }
+
+  const findNextUrl = (obj: NavigationInfoProps) => {
+    let currBranch = navigationTree[obj?.activeSectionIndex]
+
+    if (
+      obj.activeSubSectionIndex != undefined &&
+      currBranch.children &&
+      currBranch.children[obj.activeSubSectionIndex + 1]
+    ) {
+      return getNextUrl(currBranch.children[obj.activeSubSectionIndex + 1])
+    }
+    return getNextUrl(navigationTree[obj.activeSectionIndex + 1])
+  }
+
+  const getPrevUrl = (obj: FormStepperSection) => {
+    if (obj?.children) {
+      return obj?.children[obj?.children.length - 1]?.url
+    } else {
+      return obj?.url
+    }
+  }
+
+  const findPrevUrl = (obj: NavigationInfoProps) => {
+    let currBranch = navigationTree[obj?.activeSectionIndex]
+
+    if (
+      obj.activeSubSectionIndex != undefined &&
+      currBranch.children &&
+      currBranch.children[obj.activeSubSectionIndex - 1]
+    ) {
+      return getNextUrl(currBranch.children[obj.activeSubSectionIndex - 1])
     }
 
-    return '/umsokn'
+    return getPrevUrl(navigationTree[obj.activeSectionIndex - 1])
   }
 
   useEffect(() => {
-    // nota foreach eða for (const [index, file] of files.entries())
-    // finna sectionið í trénu
-    // Finna út prev og next í trénu
-    // vista state
-    // reyna að nota types
-    // og nöfn sem meika sense
+    const findSection = findSectionIndex(navigationTree)
 
-    // const bla = createNavigationInfo(form, sections)
-    // setResult(bla)
+    const nextUrl = findNextUrl(findSection)
+    const prevUrl = findPrevUrl(findSection)
 
-    let currentSection = undefined
-
-    sections.find
-
-    sections.map((item, index) => {
-      if (item.children) {
-        item.children.map((el: any, i: number) => {
-          if (el.url === currentUrl) {
-            setResult({
-              ...result,
-              activeSectionIndex: index,
-              activeSubSectionIndex: i,
-              nextUrl: getNextUrl(
-                item.children[i + 1]
-                  ? item.children[i + 1]
-                  : sections[index + 1],
-              ),
-              prevUrl: getPrevUrl(
-                item.children[i - 1]
-                  ? item.children[i - 1]
-                  : sections[index - 1],
-              ),
-            })
-          }
-        })
-      } else {
-        if (item.url === currentUrl) {
-          setResult({
-            ...result,
-            activeSectionIndex: index,
-            nextUrl: getNextUrl(sections[index + 1]),
-            prevUrl: getPrevUrl(sections[index - 1]),
-          })
-        }
-      }
+    setNavigationInfo({
+      activeSectionIndex: findSection.activeSectionIndex,
+      activeSubSectionIndex: findSection?.activeSubSectionIndex,
+      prevUrl: prevUrl,
+      nextUrl: nextUrl,
     })
   }, [form?.hasIncome])
 
-  return result
+  return navigationInfo
 }
 
 export default useFormNavigation
