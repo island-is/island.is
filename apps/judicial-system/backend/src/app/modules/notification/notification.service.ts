@@ -476,6 +476,7 @@ export class NotificationService {
       existingCase.parentCase !== null,
       existingCase.parentCase?.decision,
       existingCase.conclusion,
+      existingCase.isolationToDate,
     )
 
     let attachments: Attachment[]

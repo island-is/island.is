@@ -71,7 +71,7 @@ export function formatConclusion(
   previousDecision: CaseDecision,
   isolationToDate?: Date,
 ): string {
-  const isolationIsBeforeValidToDate =
+  const isolationEndsBeforeValidToDate =
     isolationToDate && validToDate > isolationToDate
 
   return decision === CaseDecision.REJECTING
@@ -107,10 +107,10 @@ export function formatConclusion(
           ? ` ${capitalize(
               formatAccusedByGender(accusedGender),
             )} skal sæta einangrun ${
-              isolationIsBeforeValidToDate
-                ? `ekki lengur en til ${`${formatDate(isolationToDate, 'PPPPp')
+              isolationEndsBeforeValidToDate
+                ? `ekki lengur en til ${formatDate(isolationToDate, 'PPPPp')
                     ?.replace('dagur,', 'dagsins')
-                    ?.replace(' kl.', ', kl.')}`}.`
+                    ?.replace(' kl.', ', kl.')}.`
                 : 'á meðan á gæsluvarðhaldinu stendur.'
             }`
           : ''
@@ -236,10 +236,10 @@ export function formatPrisonCourtDateEmailNotification(
 ): string {
   const courtText = court?.replace('dómur', 'dóms')
   const courtDateText = formatDate(courtDate, 'PPPPp')
-    ?.replace('dagur', 'daginn')
+    ?.replace('dagur,', 'daginn')
     ?.replace(' kl.', ', kl.')
   const requestedValidToDateText = formatDate(requestedValidToDate, 'PPPPp')
-    ?.replace('dagur', 'dagsins')
+    ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')
   const requestText = `Nafn sakbornings: ${accusedName}.<br /><br />Kyn sakbornings: ${formatGender(
     accusedGender,
@@ -266,7 +266,7 @@ export function formatDefenderCourtDateEmailNotification(
     courtDate,
     'PPPPp',
   )
-    ?.replace('dagur', 'daginn')
+    ?.replace('dagur,', 'daginn')
     ?.replace(
       ' kl.',
       ', kl.',
@@ -340,6 +340,8 @@ export function formatPrisonRulingEmailNotification(
       ? `<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />${formatCustodyRestrictions(
           accusedGender,
           custodyRestrictions,
+          validToDate,
+          isolationToDate,
         )}`
       : ''
   }<br /><br />${judgeName} ${judgeTitle}`
@@ -379,7 +381,7 @@ export function formatPrisonRevokedEmailNotification(
 ): string {
   const courtText = court?.replace('dómur', 'dóms')
   const courtDateText = formatDate(courtDate, 'PPPPp')
-    ?.replace('dagur', 'daginn')
+    ?.replace('dagur,', 'daginn')
     ?.replace(' kl.', ', kl.')
   const accusedNameText = `Nafn sakbornings: ${accusedName}.`
   const defenderText = defenderName
@@ -400,7 +402,7 @@ export function formatDefenderRevokedEmailNotification(
 ): string {
   const courtText = court?.replace('dómur', 'dómi')
   const courtDateText = formatDate(courtDate, 'PPPPp')
-    ?.replace('dagur', 'daginn')
+    ?.replace('dagur,', 'daginn')
     ?.replace(' kl.', ', kl.')
 
   return `${

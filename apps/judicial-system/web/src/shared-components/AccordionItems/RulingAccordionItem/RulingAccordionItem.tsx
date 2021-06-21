@@ -137,6 +137,8 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
               {formatCustodyRestrictions(
                 workingCase.accusedGender,
                 workingCase.custodyRestrictions,
+                workingCase.validToDate,
+                workingCase.isolationToDate,
               )}
             </Text>
           </Box>

@@ -257,6 +257,8 @@ export const Confirmation: React.FC = () => {
                       {formatCustodyRestrictions(
                         workingCase.accusedGender,
                         workingCase.custodyRestrictions,
+                        workingCase.validToDate,
+                        workingCase.isolationToDate,
                       )}
                     </Text>
                   </Box>
