@@ -23,6 +23,7 @@ export interface FinanceServiceOptions {
   password: string
   financeTestUser?: string
   ttl?: number
+  downloadServiceBaseUrl?: string
 }
 
 export class FinanceService extends RESTDataSource {
@@ -151,7 +152,10 @@ export class FinanceService extends RESTDataSource {
 
     try {
       const response = await axios
-        .post(`http://localhost:3377/download/v1/xlsx`, excelData) // TODO: Add env var for download service for URL.
+        .post(
+          `${this.options.downloadServiceBaseUrl}/download/v1/xlsx`,
+          excelData,
+        )
         .then((res) => res.data)
       return response
     } catch (e) {
