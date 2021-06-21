@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config'
 import { EmailModule } from '@island.is/email-service'
 import { BaseTemplateAPIModuleConfig } from '../../types'
 import { SharedTemplateApiService } from './shared.service'
-import { PaymentModule } from '../../../../../../../apps/application-system/api/src/app/modules/payment/payment.module'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 
 export class SharedTemplateAPIModule {
