@@ -3,18 +3,28 @@ import { defineMessages } from 'react-intl'
 export const dataProvider = defineMessages({
   header: {
     id: 'ctao.application:dataProvider.header',
-    defaultMessage: 'Utanaðkomandi gögn',
+    defaultMessage: 'Gagnaöflun',
     description: 'Name of the header in data provider',
   },
-  title: {
-    id: 'ctao.application:dataProvider.title',
-    defaultMessage: 'Staðfesting á ákveðnu atriði',
-    description: 'Information title in data provider',
+  nationalRegistryTitle: {
+    id: 'ctao.application:dataProvider.nationalRegistryTitle',
+    defaultMessage: 'Grunnupplýsingar frá Þjóðskrá Íslands',
+    description: 'National Registry Title',
   },
-  subtitle: {
-    id: 'ctao.application:dataProvider.subtitle',
+  nationalRegistrySubTitle: {
+    id: 'ctao.application:dataProvider.nationalRegistrySubTitle',
+    defaultMessage: 'Nafn, kennitala og lögheimili.',
+    description: 'National Registry Subtitle',
+  },
+  userProfileTitle: {
+    id: 'ctao.application:dataProvider.userProfileTitle',
+    defaultMessage: 'Upplýsingar úr prófílgrunni á island.is',
+    description: 'User Profile Title',
+  },
+  userProfileSubTitle: {
+    id: 'ctao.application:dataProvider.userProfileSubTitle',
     defaultMessage:
-      'Betri lýsing á atriðinu sem er verið að sækja annarsstaðar frá',
-    description: 'Information subtitle in data provider',
+      'Símanúmer, netfang. Upplýsingar um símanúmer eða netfang er hægt að uppfæra á vefsíðu island.is ef þess þarf.',
+    description: 'User Profile Subtitle',
   },
 })

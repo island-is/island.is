@@ -9,7 +9,7 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import * as z from 'zod'
+import { ComplaintsToAlthingiOmbudsmanSchema } from './dataSchema'
 
 const States = {
   draft: 'draft',
@@ -24,8 +24,6 @@ enum Roles {
   APPLICANT = 'applicant',
 }
 
-const dataSchema = z.object({})
-
 const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ComplaintsToAlthingiOmbudsmanEvent>,
@@ -36,13 +34,13 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations.ComplaintsToAlthingiOmbudsman.translation,
   ],
-  dataSchema,
+  dataSchema: ComplaintsToAlthingiOmbudsmanSchema,
   stateMachineConfig: {
     initial: States.draft,
     states: {
       [States.draft]: {
         meta: {
-          name: 'hello',
+          name: States.draft,
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -69,11 +67,14 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, application: Application): ApplicationRole {
-    if (application.state === 'inReview') {
-      return 'reviewer'
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (id === application.applicant) {
+      return Roles.APPLICANT
     }
-    return Roles.APPLICANT
+    return undefined
   },
 }
 

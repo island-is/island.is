@@ -23,14 +23,20 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       title: section.dataCollection,
       children: [
         buildExternalDataProvider({
-          id: 'approve.external.data',
+          id: 'approveExternalData',
           title: dataProvider.header,
           dataProviders: [
             buildDataProviderItem({
-              id: 'approve.data',
-              type: 'TempDataProvider',
-              title: dataProvider.title,
-              subTitle: dataProvider.subtitle,
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: dataProvider.nationalRegistryTitle,
+              subTitle: dataProvider.nationalRegistrySubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'userProfile',
+              type: 'UserProfileProvider',
+              title: dataProvider.userProfileTitle,
+              subTitle: dataProvider.userProfileSubTitle,
             }),
           ],
         }),
@@ -38,7 +44,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
     }),
     buildSection({
       id: 'information',
-      title: 'Upplýsingar',
+      title: section.information,
       children: [
         buildCustomField({
           id: 'informationToComplainer',
