@@ -2,7 +2,6 @@ import { DynamicModule } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { AuditModule } from '@island.is/nest/audit'
-import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 
 import { Payment } from './payment.model'
 import { PaymentController } from './payment.controller'
@@ -41,7 +40,6 @@ export class PaymentModule {
       imports: [
         AuditModule.forRoot(environment.audit),
         SequelizeModule.forFeature([Payment]),
-        ApiDomainsPaymentModule.register(config as PaymentServiceOptions),
         TranslationsModule,
       ],
       controllers: [PaymentController],
