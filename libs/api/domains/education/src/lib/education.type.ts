@@ -21,37 +21,24 @@ interface Grade {
 }
 
 interface GradeType {
-  serialGrade: Grade
-  elementaryGrade: Grade
+  label: string
+  serialGrade?: Grade
+  elementaryGrade?: Grade
 }
 
-interface BaseGrade {
+interface CourseGrade {
   label: string
-  grade: GradeType
+  gradeSum?: GradeType
   competence: string
   competenceStatus: string
-  progressText: Grade
-}
-
-interface MathGrade extends BaseGrade {
-  calculation: GradeType
-  geometry: GradeType
-  ratiosAndPercentages: GradeType
-  algebra: GradeType
-  numberComprehension: GradeType
-  wordAndNumbers: Grade
-}
-
-interface LanguageGrade extends BaseGrade {
-  reading: GradeType
-  grammar: GradeType
+  progressText?: Grade
+  grades: GradeType[]
+  wordAndNumbers?: Grade
 }
 
 interface GradeResult {
   studentYear: string
-  englishGrade?: LanguageGrade
-  icelandicGrade?: LanguageGrade
-  mathGrade?: MathGrade
+  courses: CourseGrade[]
 }
 
 export interface ExamResult {

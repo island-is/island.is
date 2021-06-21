@@ -7,9 +7,7 @@ import flatten from 'lodash/flatten'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   MMSApi,
-  LanguageGrade,
-  MathGrade,
-  BaseGrade,
+  Grade,
   GradeTypeResult,
   GradeResult,
 } from '@island.is/clients/mms'
@@ -94,11 +92,9 @@ export class EducationService {
         }
 
         const examDates = flatten(
-          studentAssessment.einkunnir.map((einkunn) => [
-            einkunn.islenska?.dagsetning,
-            einkunn.enska?.dagsetning,
-            einkunn.staerdfraedi?.dagsetning,
-          ]),
+          studentAssessment.einkunnir.map((einkunn) =>
+            einkunn.namsgreinar.map((namsgrein) => namsgrein.dagsetning),
+          ),
         ).filter(Boolean) as string[]
 
         return {
@@ -115,6 +111,9 @@ export class EducationService {
   }
 
   private mapGrade(grade: GradeResult) {
+    if (!grade) {
+      return undefined
+    }
     return {
       grade: grade.einkunn,
       label: grade.heiti,
@@ -124,38 +123,21 @@ export class EducationService {
 
   private mapGradeType(grade: GradeTypeResult) {
     return {
+      label: grade.heiti,
       serialGrade: this.mapGrade(grade.radeinkunn),
       elementaryGrade: this.mapGrade(grade.grunnskolaeinkunn),
     }
   }
 
-  private mapBaseGrade(grade: BaseGrade) {
+  private mapCourseGrade(grade: Grade) {
     return {
       label: grade.heiti,
       competence: grade.haefnieinkunn,
       competenceStatus: grade.haefnieinkunnStada,
-      grade: this.mapGradeType(grade.samtals),
+      gradeSum: this.mapGradeType(grade.samtals),
       progressText: this.mapGrade(grade.framfaraTexti),
-    }
-  }
-
-  private mapLanguageGrade(grade: LanguageGrade) {
-    return {
-      ...this.mapBaseGrade(grade),
-      reading: this.mapGradeType(grade.lesskilningur),
-      grammar: this.mapGradeType(grade.malnotkun),
-    }
-  }
-
-  private mapMathGrade(grade: MathGrade) {
-    return {
-      ...this.mapBaseGrade(grade),
+      grades: grade.einkunnir.map((gradeType) => this.mapGradeType(gradeType)),
       wordAndNumbers: this.mapGrade(grade.ordOgTalnadaemi),
-      calculation: this.mapGradeType(grade.reikningurOgAdgerdir),
-      geometry: this.mapGradeType(grade.rumfraedi),
-      ratiosAndPercentages: this.mapGradeType(grade.hlutfollOgProsentur),
-      algebra: this.mapGradeType(grade.algebra),
-      numberComprehension: this.mapGradeType(grade.tolurOgTalnaskilningur),
     }
   }
 
@@ -168,11 +150,9 @@ export class EducationService {
       fullName: familyMember.Nafn,
       grades: studentAssessment.einkunnir.map((einkunn) => ({
         studentYear: einkunn.bekkur,
-        icelandicGrade:
-          einkunn.islenska && this.mapLanguageGrade(einkunn.islenska),
-        englishGrade: einkunn.enska && this.mapLanguageGrade(einkunn.enska),
-        mathGrade:
-          einkunn.staerdfraedi && this.mapMathGrade(einkunn.staerdfraedi),
+        courses: einkunn.namsgreinar.map((namsgrein) =>
+          this.mapCourseGrade(namsgrein),
+        ),
       })),
     }
   }

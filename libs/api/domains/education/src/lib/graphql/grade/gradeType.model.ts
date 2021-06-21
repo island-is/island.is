@@ -4,9 +4,12 @@ import { Grade } from './grade.model'
 
 @ObjectType()
 export class GradeType {
-  @Field(() => Grade)
-  serialGrade!: Grade
+  @Field(() => String)
+  label!: string
 
-  @Field(() => Grade)
-  elementaryGrade!: Grade
+  @Field(() => Grade, { nullable: true })
+  serialGrade?: Grade
+
+  @Field(() => Grade, { nullable: true })
+  elementaryGrade?: Grade
 }

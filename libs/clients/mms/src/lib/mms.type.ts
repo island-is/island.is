@@ -18,40 +18,27 @@ export interface GradeResult {
 }
 
 export interface GradeTypeResult {
-  radeinkunn: GradeResult
-  grunnskolaeinkunn: GradeResult
+  heiti: string
+  radeinkunn?: GradeResult
+  grunnskolaeinkunn?: GradeResult
 }
 
-export interface BaseGrade {
+export interface Grade {
   heiti: string
   dagsetning: string
   haefnieinkunn: string
   haefnieinkunnStada: string
-  samtals: GradeTypeResult
-  framfaraTexti: GradeResult
+  samtals?: GradeTypeResult
+  framfaraTexti?: GradeResult
+  einkunnir: GradeTypeResult[]
+  ordOgTalnadaemi?: GradeResult
 }
 
-export interface MathGrade extends BaseGrade {
-  reikningurOgAdgerdir: GradeTypeResult
-  rumfraedi: GradeTypeResult
-  algebra: GradeTypeResult
-  hlutfollOgProsentur: GradeTypeResult
-  tolurOgTalnaskilningur: GradeTypeResult
-  ordOgTalnadaemi: GradeResult
-}
-
-export interface LanguageGrade extends BaseGrade {
-  lesskilningur: GradeTypeResult
-  malnotkun: GradeTypeResult
-}
-
-export interface Grade {
+export interface CourseGrade {
   bekkur: string
-  enska?: LanguageGrade
-  islenska?: LanguageGrade
-  staerdfraedi?: MathGrade
+  namsgreinar: Grade[]
 }
 
 export interface StudentAssessmentResponse {
-  einkunnir: Grade[]
+  einkunnir: CourseGrade[]
 }
