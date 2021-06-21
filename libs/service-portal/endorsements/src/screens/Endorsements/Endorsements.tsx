@@ -32,9 +32,6 @@ interface UserEndorsementsResponse {
 interface EndorsementListResponse {
   endorsementSystemFindEndorsementLists: RegionsEndorsementList[]
 }
-/*interface EndorseListResponse {
-  endorsementSystemEndorseList: UserEndorsement
-}*/
 interface UserVoterRegionResponse {
   temporaryVoterRegistryGetVoterRegion: UserVoterRegion
 }
@@ -72,27 +69,6 @@ const GET_REGION_ENDORSEMENTS = gql`
     }
   }
 `
-
-/*const ENDORSE_LIST = gql`
-  mutation endorseList($input: FindEndorsementListInput!) {
-    endorsementSystemEndorseList(input: $input) {
-      id
-      endorser
-      endorsementList {
-        id
-        title
-        description
-        tags
-      }
-      meta {
-        fullName
-        address
-      }
-      created
-      modified
-    }
-  }
-`*/
 
 const UNENDORSE_LIST = gql`
   mutation unendorseList($input: FindEndorsementListInput!) {
@@ -185,12 +161,6 @@ const Endorsements = () => {
     },
   )
 
-  /*const [endorseList] = useMutation<EndorseListResponse>(ENDORSE_LIST, {
-    onCompleted: () => {
-      refetchUserEndorsements()
-    },
-  })*/
-
   const [unendorseList] = useMutation<boolean>(UNENDORSE_LIST, {
     onCompleted: () => {
       refetchUserEndorsements()
@@ -274,7 +244,9 @@ const Endorsements = () => {
               variant: 'text',
               icon: undefined,
               onClick: () => {
-                window.open(`${baseUrlForm}/${endorsementList.meta.applicationId}`)
+                window.open(
+                  `${baseUrlForm}/${endorsementList.meta.applicationId}`,
+                )
               },
             }}
           />
