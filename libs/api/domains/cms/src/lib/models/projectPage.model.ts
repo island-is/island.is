@@ -8,6 +8,7 @@ import {
 } from '../unions/slice.union'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { Link, mapLink } from './link.model'
+import { mapProjectSubpage, ProjectSubpage } from './projectSubpage.model'
 
 @ObjectType()
 export class ProjectPage {
@@ -43,6 +44,9 @@ export class ProjectPage {
 
   @Field(() => GenericTag, { nullable: true })
   newsTag!: GenericTag | null
+
+  @Field(() => [ProjectSubpage])
+  projectSubpages!: Array<ProjectSubpage>
 }
 
 export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
@@ -59,4 +63,5 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
     : [],
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
   newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
+  projectSubpages: (fields.projectSubpages ?? []).map(mapProjectSubpage),
 })

@@ -2384,6 +2384,9 @@ export interface IProjectPageFields {
 
   /** News Tag */
   newsTag?: IGenericTag | undefined
+
+  /** Project Subpages */
+  projectSubpages?: IProjectSubpage[] | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -2396,6 +2399,37 @@ export interface IProjectPage extends Entry<IProjectPageFields> {
     contentType: {
       sys: {
         id: 'projectPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IProjectSubpageFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Slices */
+  slices?: (IAccordionSlice | IOneColumnText | ITwoColumnText)[] | undefined
+}
+
+export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'projectSubpage'
         linkType: 'ContentType'
         type: 'Link'
       }
