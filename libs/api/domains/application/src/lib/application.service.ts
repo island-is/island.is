@@ -22,7 +22,6 @@ import {
   ApplicationPayment,
   ApplicationPaymentCharge,
 } from './application.model'
-import { PaymentService } from '@island.is/clients/payment'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
