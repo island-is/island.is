@@ -2,6 +2,7 @@ import {
   AuthConfig,
   AuthModule,
   IdsUserGuard,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { AuditModule, AuditOptions } from '@island.is/nest/audit'
 import { Module } from '@nestjs/common'
@@ -27,6 +28,10 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       useExisting: IdsUserGuard,
     },
     IdsUserGuard, // allows test module to see this provider for mocking auth
+    {
+      provide: 'APP_GUARD',
+      useClass: ScopesGuard,
+    },
   ],
 })
 export class AppModule {}

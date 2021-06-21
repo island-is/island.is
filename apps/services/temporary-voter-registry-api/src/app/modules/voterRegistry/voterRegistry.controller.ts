@@ -1,14 +1,15 @@
 import { CurrentUser, Scopes, User } from '@island.is/auth-nest-tools'
 import { Controller, Get, Query } from '@nestjs/common'
 import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { TemporaryVoterRegistry } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
+import { TemporaryVoterRegistryScope } from '@island.is/auth/scopes'
 import { VoterRegistry } from './voterRegistry.model'
 import { VoterRegistryService } from './voterRegistry.service'
 import { environment } from '../../../environments'
 import { FindOneDto } from './dto/findOne.dto'
-
-const auditNamespace = `${environment.audit.defaultNamespace}/voter-registry`
+@Audit<VoterRegistry>({
+  namespace: `${environment.audit.defaultNamespace}/voter-registry`,
+})
 @Controller('voter-registry')
 @ApiOAuth2([])
 @ApiTags('temporaryVoterRegistry')
@@ -20,11 +21,9 @@ export class VoterRegistryController {
     type: VoterRegistry,
   })
   @Audit<VoterRegistry>({
-    namespace: auditNamespace,
-    action: 'findByAuth',
     resources: (voterRegistry) => voterRegistry.id,
   })
-  @Scopes(TemporaryVoterRegistry.read)
+  @Scopes(TemporaryVoterRegistryScope.read)
   @Get()
   async findByAuth(
     @CurrentUser() { nationalId }: User,

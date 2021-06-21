@@ -1,9 +1,4 @@
-import {
-  Auth,
-  CurrentAuth,
-  CurrentUser,
-  Scopes,
-} from '@island.is/auth-nest-tools'
+import { CurrentAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -31,12 +26,14 @@ import { IsEndorsementListOwnerValidationPipe } from '../endorsementList/pipes/i
 import { BulkEndorsementDto } from './dto/bulkEndorsement.dto'
 import { Endorsement } from './models/endorsement.model'
 import { EndorsementService } from './endorsement.service'
-import { Endorsement as EndorsementScope } from '@island.is/auth/scopes'
+import { EndorsementScope } from '@island.is/auth/scopes'
+import type { User, Auth } from '@island.is/auth-nest-tools'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
-import type { User } from '@island.is/auth-nest-tools'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
-
+@Audit({
+  namespace: auditNamespace,
+})
 @ApiTags('endorsement')
 @ApiOAuth2([])
 @Controller('endorsement-list/:listId/endorsement')
@@ -54,8 +51,6 @@ export class EndorsementController {
   @Scopes(EndorsementScope.endorsementRead)
   @Get()
   @Audit<Endorsement[]>({
-    namespace: auditNamespace,
-    action: 'findAll',
     resources: (endorsement) => endorsement.map((e) => e.id),
     meta: (endorsement) => ({ count: endorsement.length }),
   })
@@ -82,8 +77,6 @@ export class EndorsementController {
   @Scopes(EndorsementScope.endorsementRead)
   @Get('/exists')
   @Audit<Endorsement>({
-    namespace: auditNamespace,
-    action: 'findByAuth',
     resources: (endorsement) => endorsement.id,
   })
   async findByAuth(
@@ -110,8 +103,6 @@ export class EndorsementController {
   @Scopes(EndorsementScope.endorsementWrite)
   @Post()
   @Audit<Endorsement>({
-    namespace: auditNamespace,
-    action: 'create',
     resources: (endorsement) => endorsement.id,
   })
   async create(
@@ -188,9 +179,9 @@ export class EndorsementController {
     // we pass audit manually since we need a request parameter
     this.auditService.audit({
       user,
+      resources: endorsementList.id,
       namespace: auditNamespace,
       action: 'delete',
-      resources: endorsementList.id,
     })
 
     await this.endorsementService.deleteFromListByNationalId({

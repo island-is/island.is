@@ -7,7 +7,7 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { PartyLetterRegistry as PartyLetterRegistryScope } from '@island.is/auth/scopes'
+import { PartyLetterRegistryScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { CreateDto } from './dto/create.dto'
 import { PartyLetterRegistry } from './partyLetterRegistry.model'
@@ -15,7 +15,9 @@ import { PartyLetterRegistryService } from './partyLetterRegistry.service'
 import { environment } from '../../../environments'
 import type { User } from '@island.is/auth-nest-tools'
 
-const auditNamespace = `${environment.audit.defaultNamespace}/party-letter-registry`
+@Audit<PartyLetterRegistry>({
+  namespace: `${environment.audit.defaultNamespace}/party-letter-registry`,
+})
 @Controller('party-letter-registry')
 @ApiOAuth2([])
 @ApiTags('partyLetterRegistry')
@@ -29,8 +31,6 @@ export class PartyLetterRegistryController {
     type: PartyLetterRegistry,
   })
   @Audit<PartyLetterRegistry>({
-    namespace: auditNamespace,
-    action: 'findAsManagerByAuth',
     resources: (voterRegistry) => voterRegistry.partyLetter,
   })
   @Scopes(PartyLetterRegistryScope.read)
@@ -57,8 +57,6 @@ export class PartyLetterRegistryController {
     type: CreateDto,
   })
   @Audit<PartyLetterRegistry>({
-    namespace: auditNamespace,
-    action: 'create',
     resources: (voterRegistry) => voterRegistry.partyLetter,
     meta: (voterRegistry) => ({ owner: voterRegistry.owner }),
   })

@@ -1,4 +1,4 @@
-export enum Endorsement {
+export enum EndorsementScope {
   endorsementRead = '@island.is/endorsement/endorsement:read',
   endorsementWrite = '@island.is/endorsement/endorsement:write',
   endorsementListRead = '@island.is/endorsement/endorsement-list:read',

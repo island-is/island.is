@@ -1,7 +1,7 @@
 const devConfig = {
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '',
+    audience: '@island.is',
   },
   swagger: {
     authUrl: 'https://identity-server.dev01.devland.is/connect/authorize',
@@ -15,7 +15,7 @@ const devConfig = {
 const prodConfig = {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '',
+    audience: '@island.is',
   },
   swagger: {
     authUrl: '',

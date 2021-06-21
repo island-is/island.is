@@ -1,7 +1,7 @@
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import request from 'supertest'
-import { PartyLetterRegistry as PartyLetterRegistryScope } from '@island.is/auth/scopes'
+import { PartyLetterRegistryScope } from '@island.is/auth/scopes'
 
 describe('CreatePartyLetterRegistry', () => {
   it('POST /party-letter-registry should return error when data is invalid', async () => {

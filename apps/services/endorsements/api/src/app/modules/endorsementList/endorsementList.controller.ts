@@ -25,11 +25,12 @@ import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { IsEndorsementListOwnerValidationPipe } from './pipes/isEndorsementListOwnerValidation.pipe'
 import { environment } from '../../../environments'
-import { Endorsement as EndorsementScope } from '@island.is/auth/scopes'
+import { EndorsementScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
-const auditNamespace = `${environment.audit.defaultNamespace}/endorsement-list`
-
+@Audit({
+  namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
+})
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 @ApiOAuth2([])
@@ -63,8 +64,6 @@ export class EndorsementListController {
   @Scopes(EndorsementScope.endorsementRead)
   @Get('/endorsements')
   @Audit<Endorsement[]>({
-    namespace: auditNamespace,
-    action: 'findEndorsements',
     resources: (endorsement) => endorsement.map((e) => e.id),
     meta: (endorsement) => ({ count: endorsement.length }),
   })
@@ -83,8 +82,6 @@ export class EndorsementListController {
   @Scopes(EndorsementScope.endorsementListRead)
   @Get(':listId')
   @Audit<EndorsementList>({
-    namespace: auditNamespace,
-    action: 'findOne',
     resources: (endorsementList) => endorsementList.id,
   })
   async findOne(
@@ -106,8 +103,6 @@ export class EndorsementListController {
   @Scopes(EndorsementScope.endorsementListJusticeDepartmentWrite)
   @Put(':listId/close')
   @Audit<EndorsementList>({
-    namespace: auditNamespace,
-    action: 'close',
     resources: (endorsementList) => endorsementList.id,
   })
   async close(
@@ -129,8 +124,6 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Put(':listId/open')
   @Audit<EndorsementList>({
-    namespace: auditNamespace,
-    action: 'open',
     resources: (endorsementList) => endorsementList.id,
   })
   async open(
@@ -153,8 +146,6 @@ export class EndorsementListController {
   @Scopes(EndorsementScope.endorsementListWrite)
   @Post()
   @Audit<EndorsementList>({
-    namespace: auditNamespace,
-    action: 'create',
     resources: (endorsementList) => endorsementList.id,
     meta: (endorsementList) => ({
       tags: endorsementList.tags,

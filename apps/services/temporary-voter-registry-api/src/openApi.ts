@@ -1,3 +1,4 @@
+import { TemporaryVoterRegistryScope } from '@island.is/auth/scopes'
 import { DocumentBuilder } from '@nestjs/swagger'
 import { environment } from './environments'
 
@@ -13,8 +14,7 @@ export const openApi = new DocumentBuilder()
         authorizationUrl: environment.swagger.authUrl,
         tokenUrl: environment.swagger.tokenUrl,
         scopes: {
-          'openid profile':
-            'Fetches OpenId, Profile and claim needed for authenticated calls',
+          [`openid profile ${TemporaryVoterRegistryScope.read}`]: 'Fetches OpenId, Profile and claim needed for authenticated calls',
         },
       },
     },

@@ -1,7 +1,7 @@
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import request from 'supertest'
-import { PartyLetterRegistry as PartyLetterRegistryScope } from '@island.is/auth/scopes'
+import { PartyLetterRegistryScope } from '@island.is/auth/scopes'
 
 describe('FindByManagerPartyLetterRegistry', () => {
   it('GET /party-letter-registry/manager should return not found error when national owns no letters', async () => {
