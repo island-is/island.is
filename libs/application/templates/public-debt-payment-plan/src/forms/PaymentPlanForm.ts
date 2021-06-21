@@ -10,7 +10,6 @@ import {
   buildMultiField,
   buildTextField,
   buildRadioField,
-  buildRepeater,
   CustomField,
 } from '@island.is/application/core'
 import { PaymentType, Prerequisites } from '../dataProviders/tempAPITypes'
@@ -26,18 +25,12 @@ import { paymentPlan } from '../lib/messages/paymentPlan'
 import { prerequisitesFailed } from '../lib/paymentPlanUtils'
 import { NO, YES } from '../shared/constants'
 
+type PaymentPlanBuildIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
 // Builds a payment plan step that exists of two custom fields:
 // The overview step detailing a list of all payment plans and their status
 // The payment plan step where the user sets up this individual payment plan
-const buildPaymentPlanStep = (index: 0 | 1 | 2 | 3 | 4 | 5): CustomField[] => [
-  buildCustomField({
-    id: `payment-plan-list-${index}`,
-    title: paymentPlan.general.pageTitle,
-    component: 'PaymentPlanList',
-    condition: (_formValue, externalData) => {
-      return index < ((externalData.paymentPlanList?.data as any)?.length || 0)
-    },
-  }),
+const buildPaymentPlanStep = (index: PaymentPlanBuildIndex): CustomField =>
   buildCustomField({
     id: `paymentPlans.${paymentPlanIndexKeyMapper[index]}`,
     title: section.paymentPlan,
@@ -46,17 +39,15 @@ const buildPaymentPlanStep = (index: 0 | 1 | 2 | 3 | 4 | 5): CustomField[] => [
     condition: (_formValue, externalData) => {
       return index < ((externalData.paymentPlanList?.data as any)?.length || 0)
     },
-  }),
-]
+  })
 
-// Compose an array 6 predefined payment plan steps
+// Compose an array 10 predefined payment plan steps
 // Each step will only be rendered in if it's index corresponds to
 // an entry in the payment plan list received by the API
 const buildPaymentPlanSteps = (): CustomField[] =>
-  [...Array(6)].reduce((prev: CustomField[], _curr, index) => {
-    const step = buildPaymentPlanStep(index as 0 | 1 | 2 | 3 | 4 | 5)
-    return [...prev, step[0], step[1]] as CustomField[]
-  }, [] as CustomField[])
+  [...Array(10)].map((_key, index) =>
+    buildPaymentPlanStep(index as PaymentPlanBuildIndex),
+  )
 
 // TODO: Data providers are not called by default on every session start
 // We need to add custom validators to ensure that the application does not
@@ -270,7 +261,6 @@ export const PaymentPlanForm: Form = buildForm({
         }),
       ],
     }),
-
     buildSection({
       id: 'paymentPlanSection',
       title: section.paymentPlan,
@@ -279,6 +269,11 @@ export const PaymentPlanForm: Form = buildForm({
           id: 'paymentPlanWageDeductionInfo',
           title: paymentPlan.general.wageDeductionInfoPageTitle,
           component: 'PaymentPlanWageDeductionInfo',
+        }),
+        buildCustomField({
+          id: `payment-plan-list`,
+          title: paymentPlan.general.pageTitle,
+          component: 'PaymentPlanList',
         }),
         ...buildPaymentPlanSteps(),
       ],
