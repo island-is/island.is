@@ -172,7 +172,8 @@ const autoSchemaFile = environment.production
       xRoadClientId: environment.nationalRegistryXRoad.clientId,
     }),
     ApiDomainsPaymentModule.register({
-      xRoadPath: environment.paymentDomain.xRoadPath,
+      xRoadProviderId: environment.paymentDomain.xRoadProviderId,
+      xRoadBaseUrl: environment.paymentDomain.xRoadBaseUrl,
       xRoadClientId: environment.xroad.clientId,
       password: environment.paymentDomain.password,
       username: environment.paymentDomain.username,

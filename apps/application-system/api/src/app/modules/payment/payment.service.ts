@@ -2,8 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { Op } from 'sequelize'
-import { Charge, PaymentAPI } from '@island.is/clients/payment'
-import { PaymentConfig, PAYMENT_CONFIG } from './payment.configuration'
+import { Charge, PaymentAPI, PaymentServiceOptions, PAYMENT_OPTIONS } from '@island.is/clients/payment'
 import type { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
 
@@ -12,8 +11,8 @@ export class PaymentService {
   constructor(
     @InjectModel(Payment)
     private paymentModel: typeof Payment,
-    @Inject(PAYMENT_CONFIG)
-    private paymentConfig: PaymentConfig,
+    @Inject(PAYMENT_OPTIONS)
+    private paymentConfig: PaymentServiceOptions,
     private paymentApi: PaymentAPI,
   ) {}
 

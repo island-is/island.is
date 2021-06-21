@@ -1,8 +1,8 @@
 import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
 import { startMocking } from '@island.is/shared/mocking'
-import { PaymentAPI, PAYMENT_OPTIONS } from './payment'
-import { Catalog, Item } from './payment.type'
+import { PaymentAPI } from './payment'
+import { Catalog } from './payment.type'
 import { Base64 } from 'js-base64'
 
 // MOCK START

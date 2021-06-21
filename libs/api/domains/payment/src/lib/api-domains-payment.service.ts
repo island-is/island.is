@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { BaseCharge, PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
+import { BaseCharge, PaymentAPI, PaymentServiceOptions, PAYMENT_OPTIONS } from '@island.is/clients/payment'
 import {
   ChargeResult,
-  PaymentServiceOptions,
 } from './api-domains-payment.types'
 
 @Injectable()
