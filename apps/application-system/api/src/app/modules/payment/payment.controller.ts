@@ -26,7 +26,6 @@ import {
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
-  CreatePaymentDto,
   CreateChargeDto,
   CreatePaymentResponseDto,
 } from './dto'
@@ -36,7 +35,6 @@ import { Payment } from './payment.model'
 import { Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
-import { Application } from '../application/application.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
