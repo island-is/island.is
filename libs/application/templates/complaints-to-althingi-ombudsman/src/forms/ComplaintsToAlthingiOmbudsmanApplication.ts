@@ -5,13 +5,15 @@ import {
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSubSection,
   buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { dataProvider, section } from '../lib/messages'
+import { ComplaineeTypes } from '../constants'
+import { dataProvider, section, complainee } from '../lib/messages'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -104,13 +106,56 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'stepOne',
-      title: 'section title',
+      id: 'complaint',
+      title: section.complaint,
       children: [
-        buildDescriptionField({
-          id: 'confirmationCustomField',
-          title: 'name',
-          description: 'Umsókn',
+        buildSubSection({
+          id: 'complainee',
+          title: section.complainee,
+          children: [
+            buildMultiField({
+              id: 'complainee',
+              title: section.complainee,
+              children: [
+                buildRadioField({
+                  id: 'complainee',
+                  title: '',
+                  options: [
+                    {
+                      value: ComplaineeTypes.GOVERNMENT,
+                      label: complainee.labels.governmentComplaint,
+                    },
+                    {
+                      value: ComplaineeTypes.OTHER,
+                      label: complainee.labels.otherComplaint,
+                    },
+                  ],
+                }),
+                buildCustomField({
+                  id: 'complaineeContitions',
+                  component: 'ComplaineeConditions',
+                  title: 'Athugið',
+                  condition: (answers) =>
+                    answers.complainee === ComplaineeTypes.GOVERNMENT,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'complaineeName',
+          title: section.complaineeName,
+          children: [
+            buildTextField({
+              id: 'complaineeName',
+              variant: 'textarea',
+              required: true,
+              title: (answers) =>
+                answers.answers.complainee === ComplaineeTypes.GOVERNMENT
+                  ? complainee.general.complaineeNameGovernment
+                  : complainee.general.complaineeNameOther,
+            }),
+          ],
         }),
       ],
     }),

@@ -21,6 +21,21 @@ export const section = defineMessages({
     defaultMessage: 'Fyrir hvern',
     description: 'Definition of project section title',
   },
+  complaint: {
+    id: 'ctao.application:section.complaint',
+    defaultMessage: 'Kvörtun',
+    description: 'Definition of complaint section title',
+  },
+  complainee: {
+    id: 'ctao.application:section.complainee',
+    defaultMessage: 'Hverjum beinist kvörtunin að?',
+    description: 'Definition of complaint receiver section title',
+  },
+  complaineeName: {
+    id: 'ctao.application:section.complaineeName',
+    defaultMessage: 'Nafn þess sem kvartað er yfir',
+    description: 'Definition of complaint receiver name section title',
+  },
   overview: {
     id: `ctao.application:section.overview`,
     defaultMessage: 'Yfirlit og staðfesting umsóknar',
