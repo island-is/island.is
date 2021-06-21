@@ -1,4 +1,4 @@
-# service-portal-regulations-admin
+# Service Portal Regulations Admin
 
 This library was generated with [Nx](https://nx.dev).
 
