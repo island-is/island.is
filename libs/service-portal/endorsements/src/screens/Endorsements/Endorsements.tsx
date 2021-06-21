@@ -12,6 +12,7 @@ import {
   EndorsementListOpenTagsEnum,
   TemporaryVoterRegistry,
 } from '../../types/schema'
+import { getSlugFromType } from '@island.is/application/core'
 
 export type UserEndorsement = Pick<
   Endorsement,
@@ -117,7 +118,7 @@ const isDev = window.location.origin.includes('beta.dev01.devland.is')
 const isStaging = window.location.origin.includes('beta.staging01.devland.is')
 
 const baseUrlForm = isLocalhost
-  ? 'http://localhost:4242/umsoknir/frambod'
+  ? 'http://localhost:4242/umsoknir'
   : isDev
   ? 'https://beta.dev01.devland.is/umsoknir'
   : isStaging
@@ -136,13 +137,13 @@ const Endorsements = () => {
 
   const endorsementListTags = [EndorsementListOpenTagsEnum.PartyLetter2021]
 
-  if (userVoterRegion && userVoterRegion.regionNumber > 0) {
-    endorsementListTags.push(
-      regionNumberEndorsementListTagMap[
-        userVoterRegion.regionNumber as keyof typeof regionNumberEndorsementListTagMap
-      ],
-    )
-  }
+  //if (userVoterRegion && userVoterRegion.regionNumber > 0) {
+  endorsementListTags.push(
+    regionNumberEndorsementListTagMap[
+      6 as keyof typeof regionNumberEndorsementListTagMap
+    ],
+  )
+  //}
 
   // get all endorsement lists this user should see
   const {
@@ -157,7 +158,7 @@ const Endorsements = () => {
           tags: endorsementListTags,
         },
       },
-      pollInterval: 2000,
+      pollInterval: 20000,
     },
   )
 
@@ -177,6 +178,8 @@ const Endorsements = () => {
   const endorsementLists = allEndorsementLists.filter(
     ({ id }) => !signedLists.includes(id),
   )
+
+  console.log(endorsementLists)
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -245,7 +248,11 @@ const Endorsements = () => {
               icon: undefined,
               onClick: () => {
                 window.open(
-                  `${baseUrlForm}/${endorsementList.meta.applicationId}`,
+                  `${baseUrlForm}/${
+                    getSlugFromType(
+                      endorsementList.meta.applicationTypeId,
+                    ) as string
+                  }/${endorsementList.meta.applicationId}`,
                 )
               },
             }}
