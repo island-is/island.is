@@ -15,6 +15,7 @@ export class PaymentResolver {
   async paymentCatalog(
     @Args('input', { type: () => PaymentCatalogInput }) input: PaymentCatalogInput,
   ): Promise<PaymentCatalogResponse> {
+    console.log('inside api domains resolver')
     const data = await (input.performingOrganizationID
       ? this.paymentService.getCatalogByPerformingOrg(input.performingOrganizationID)
       : await this.paymentService.getCatalog())

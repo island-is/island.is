@@ -22,14 +22,16 @@ const searchCorrectCatalog = (
   }
   return null
 }
-
+// ///$input: CreateCourtCaseInput!) {
+//   createCourtCase(input: $input) {
+//     courtCaseNumber
 export class PaymentCatalogProvider extends BasicDataProvider {
   type = 'PaymentCatalogProvider'
 
   async provide(application: Application): Promise<PaymentCatalogItem[]> {
     const query = `
-    query PaymentCatalogProvider($performingOrganizationID: String!) {
-      paymentCatalog(performingOrganizationID: $performingOrganizationID) {
+    query PaymentCatalogProvider($input: PaymentCatalogInput!) {
+      paymentCatalog(input: $input) {
         items {
           performingOrgID
           chargeType
@@ -44,11 +46,12 @@ export class PaymentCatalogProvider extends BasicDataProvider {
     let chargeItemCode = 'AY110'
 
     return this.useGraphqlGateway(query, {
-      performingOrganizationID: '6509142520',
+      input: { performingOrganizationID: '6509142520' },
     })
       .then(async (res: Response) => {
         // TODO: needs refactoring
         const response = await res.json()
+        console.log(JSON.stringify(response, null, 4))
         if (response.errors) {
           return this.handleError()
         }
