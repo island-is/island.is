@@ -52,7 +52,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         )}
       </Box>
       <AccordionListItem title="Krafa" breakSpaces>
-        <Text>{workingCase.policeDemands}</Text>
+        <Text>{workingCase.prosecutorDemands}</Text>
       </AccordionListItem>
       <AccordionListItem title="Viðstaddir" breakSpaces>
         <Text>{workingCase.courtAttendees}</Text>
@@ -103,9 +103,19 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <Text>
           {`${
             workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
-              ? `Kærði hafnar kröfunni. `
+              ? `${capitalize(
+                  formatAccusedByGender(
+                    workingCase.accusedGender,
+                    NounCases.NOMINATIVE,
+                  ),
+                )} hafnar kröfunni. `
               : workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
-              ? `Kærði samþykkir kröfuna. `
+              ? `${capitalize(
+                  formatAccusedByGender(
+                    workingCase.accusedGender,
+                    NounCases.NOMINATIVE,
+                  ),
+                )} samþykkir kröfuna. `
               : ''
           }${workingCase.accusedPleaAnnouncement}`}
         </Text>

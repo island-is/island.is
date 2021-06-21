@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { EndorsementTag } from '../endorsementList/endorsementList.model'
+import { EndorsementTag } from '../endorsementList/constants'
 
 export class EndorsementMetadata {
   @ApiProperty()

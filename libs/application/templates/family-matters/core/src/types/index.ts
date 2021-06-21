@@ -52,6 +52,7 @@ export interface ExternalData {
 interface MockChildren extends Person {
   livesWithApplicant: 'yes' | undefined
   livesWithBothParents: 'yes' | undefined
+  applicantSoleCustody: 'yes' | undefined
   otherParent: number
 }
 

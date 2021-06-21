@@ -164,5 +164,7 @@ module.exports = {
     '<rootDir>/libs/auth/scopes',
     '<rootDir>/libs/regulations',
     '<rootDir>/libs/service-portal/regulations-admin',
+    '<rootDir>/libs/api/domains/license-service',
+    '<rootDir>/libs/service-portal/licenses',
   ],
 }

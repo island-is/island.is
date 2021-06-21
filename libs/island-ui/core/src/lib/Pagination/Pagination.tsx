@@ -1,9 +1,22 @@
 import React, { ReactNode, Fragment, FC, useMemo } from 'react'
 import cn from 'classnames'
 import uniq from 'lodash/uniq'
+import { Colors } from '@island.is/island-ui/theme'
 import { Icon, IconTypes } from '../Icon/Icon'
 import { Box } from '../Box/Box'
 import * as styles from './Pagination.treat'
+
+type ColorMap = Record<keyof typeof styles.variants, Colors>
+
+const IconColorMap: ColorMap = {
+  blue: 'blue400',
+  purple: 'purple400',
+}
+
+const DisabledIconColorMap: ColorMap = {
+  blue: 'blue300',
+  purple: 'purple300',
+}
 
 const range = (min: number, max: number): number[] =>
   new Array(max - min + 1).fill(0).map((_, i) => min + i)
@@ -11,6 +24,7 @@ const range = (min: number, max: number): number[] =>
 export interface PaginationProps {
   page: number
   totalPages: number
+  variant?: keyof typeof styles.variants
   renderLink: (
     page: number,
     className: string,
@@ -21,6 +35,7 @@ export interface PaginationProps {
 export const Pagination: FC<PaginationProps> = ({
   page,
   totalPages,
+  variant = 'purple',
   renderLink,
 }) => {
   const ranges = useMemo(() => {
@@ -49,19 +64,33 @@ export const Pagination: FC<PaginationProps> = ({
       return renderLink(
         page,
         cn(styles.link, styles.edge),
-        <Icon type={iconType} width={16} height={16} color="purple400" />,
+        <Icon
+          type={iconType}
+          width={16}
+          height={16}
+          color={IconColorMap[variant]}
+        />,
       )
     }
 
     return (
       <span className={cn(styles.link, styles.linkDisabled)}>
-        <Icon type={iconType} width={16} height={16} color="purple300" />
+        <Icon
+          type={iconType}
+          width={16}
+          height={16}
+          color={DisabledIconColorMap[variant]}
+        />
       </span>
     )
   }
 
   return (
-    <Box display="flex" justifyContent="spaceBetween">
+    <Box
+      display="flex"
+      justifyContent="spaceBetween"
+      className={styles.variants[variant]}
+    >
       <div>
         {renderEdgeLink({
           page: page - 1,

@@ -23,7 +23,7 @@ import {
 import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
 import { deorphanize } from '@island.is/island-ui/utils'
 import { useI18n } from '../../i18n'
-import { theme } from '@island.is/island-ui/theme'
+import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { GlobalContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
 import LottieLoader from './LottiePlayer/LottieLoader'
@@ -187,7 +187,7 @@ export const FrontpageSlider = ({
                 return (
                   <Tab key={index} {...tab} className={styles.tabContainer}>
                     <TabBullet selected={selectedIndex === index} />
-                    <span className={styles.srOnly}>{title}</span>
+                    <span className={helperStyles.srOnly}>{title}</span>
                   </Tab>
                 )
               })}

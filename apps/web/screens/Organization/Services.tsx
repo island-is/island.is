@@ -79,8 +79,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active:
-        primaryLink.url === `/stofnanir/${organizationPage.slug}/thjonusta`,
+      active: primaryLink.url === `/s/${organizationPage.slug}/thjonusta`,
     }),
   )
 

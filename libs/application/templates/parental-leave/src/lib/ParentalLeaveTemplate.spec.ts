@@ -27,7 +27,6 @@ function buildApplication(data: {
     attachments: {},
     answers,
     state,
-    status: 'inprogress' as Application['status'],
     externalData,
     status: ApplicationStatus.IN_PROGRESS,
   }

@@ -1,4 +1,5 @@
 import React from 'react'
+import { gql, useQuery } from '@apollo/client'
 import { useLocation, useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 
@@ -7,30 +8,43 @@ import {
   SkeletonLoader,
   GridRow,
   GridColumn,
+  Stack,
   Button,
 } from '@island.is/island-ui/core'
+import { Query, AuthCustomDelegation } from '@island.is/api/schema'
 import { EmptyState } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 
 import { AccessCard } from '../AccessCard'
 
-// TODO: query from graphql
-const accesses = [
-  {
-    title: 'Starfsmaður á plani',
-    nationalId: '0123456789',
-    created: '23.04.2020',
-    id: '467',
-    permissions: ['Umsóknir'],
-  },
-]
+export const AuthDelegationsQuery = gql`
+  query AuthDelegationsQuery {
+    authDelegations {
+      id
+      type
+      toNationalId
+      toName
+      ... on AuthCustomDelegation {
+        validTo
+        scopes {
+          id
+          name
+          displayName
+          validTo
+        }
+      }
+    }
+  }
+`
 
 function Accesses(): JSX.Element {
   const { pathname } = useLocation()
+  const { data, loading } = useQuery<Query>(AuthDelegationsQuery)
   const history = useHistory()
   const { formatMessage } = useLocale()
 
-  const loading = false
+  const authDelegations = ((data || {}).authDelegations ||
+    []) as AuthCustomDelegation[]
 
   return (
     <Box>
@@ -46,28 +60,30 @@ function Accesses(): JSX.Element {
           </Box>
         </GridColumn>
         <GridColumn paddingBottom={4} span="12/12">
-          {loading ? (
-            <SkeletonLoader width="100%" height={206} />
-          ) : accesses.length === 0 ? (
-            <EmptyState
-              title={defineMessage({
-                id: 'service.portal.settings.accessControl:home-no-data',
-                defaultMessage: 'Engin gögn fundust',
-              })}
-            />
-          ) : (
-            accesses.map((item, index) => (
-              <AccessCard
-                key={index}
-                title={item.title}
-                created={item.created}
-                description={item.nationalId}
-                tags={item.permissions}
-                href={`${pathname}/${item.id}`}
-                group="Ísland.is"
+          <Stack space={3}>
+            {loading ? (
+              <SkeletonLoader width="100%" height={206} />
+            ) : authDelegations.length === 0 ? (
+              <EmptyState
+                title={defineMessage({
+                  id: 'service.portal.settings.accessControl:home-no-data',
+                  defaultMessage: 'Engin gögn fundust',
+                })}
               />
-            ))
-          )}
+            ) : (
+              authDelegations.map((delegation) => (
+                <AccessCard
+                  key={delegation.id}
+                  title={delegation.toName}
+                  validTo={delegation.validTo}
+                  description={delegation.toNationalId}
+                  tags={delegation.scopes.map((scope) => scope.displayName)}
+                  href={`${pathname}/${delegation.toNationalId}`}
+                  group="Ísland.is"
+                />
+              ))
+            )}
+          </Stack>
         </GridColumn>
       </GridRow>
     </Box>

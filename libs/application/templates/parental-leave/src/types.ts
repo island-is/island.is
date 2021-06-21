@@ -1,9 +1,12 @@
 import { YES, NO } from './constants'
 
-export type Period = {
+export type Boolean = typeof NO | typeof YES
+
+export interface Period {
   startDate: string
   endDate: string
-  ratio: number
+  ratio: string
+  duration: string
 }
 
 export interface Payment {
@@ -22,5 +25,3 @@ export interface Payment {
     paid: boolean
   }
 }
-
-export type Boolean = typeof NO | typeof YES

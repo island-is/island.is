@@ -54,12 +54,20 @@ export const dataSchema = z.object({
   employerInformation: z.object({ email: z.string().email() }).optional(),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
-    requestDays: z.number().optional(),
+    requestDays: z
+      .string()
+      .refine((v) => !isNaN(Number(v)))
+      .optional(),
   }),
-  giveRights: z.object({
-    isGivingRights: z.enum([YES, NO]),
-    giveDays: z.number().optional(),
-  }),
+  giveRights: z
+    .object({
+      isGivingRights: z.enum([YES, NO]),
+      giveDays: z
+        .string()
+        .refine((v) => !isNaN(Number(v)))
+        .optional(),
+    })
+    .optional(),
   singlePeriod: z.enum([YES, NO]),
   firstPeriodStart: z.enum([
     StartDateOptions.ACTUAL_DATE_OF_BIRTH,
@@ -80,4 +88,5 @@ export const dataSchema = z.object({
   usePersonalAllowance: z.enum([YES, NO]),
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
 })
+
 export type SchemaFormValues = z.infer<typeof dataSchema>

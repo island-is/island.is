@@ -10,6 +10,7 @@ const elFindByTags = require('../src/app/modules/endorsementList/e2e/findByTagsE
 const elClose = require('../src/app/modules/endorsementList/e2e/closeEndorsementList/seed')
 const elFindEndorsements = require('../src/app/modules/endorsementList/e2e/findEndorsementsEndorsementList/seed')
 const elFindOne = require('../src/app/modules/endorsementList/e2e/findOneEndorsementList/seed')
+const elOpen = require('../src/app/modules/endorsementList/e2e/openEndorsementList/seed')
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -23,6 +24,7 @@ module.exports = {
       ...elClose.endorsementLists,
       ...elFindEndorsements.endorsementLists,
       ...elFindOne.endorsementLists,
+      ...elOpen.endorsementLists,
     ]
     const endorsements = [
       ...eBulkSeeds.endorsements,

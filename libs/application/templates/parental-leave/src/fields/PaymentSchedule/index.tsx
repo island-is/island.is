@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 
 import PaymentsTable from './PaymentsTable'
 import { useQuery } from '@apollo/client'
-import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
+import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
 import { getEstimatedPayments } from './estimatedPaymentsQuery'
 
 import * as styles from './PaymentSchedule.treat'

@@ -58,6 +58,7 @@ import {
   AdgerdirPage,
   SubArticle,
   GetSearchResultsTotalQuery,
+  OrganizationSubpage,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 import * as styles from './Search.treat'
@@ -140,6 +141,7 @@ const Search: Screen<CategoryProps> = ({
     // create a map of sidebar type data for easier lookup later
     const typeNames = {
       webNews: n('newsTitle'),
+      webOrganizationSubpage: n('organizationsTitle', 'Opinberir aðilar'),
     }
     const typeCountResults = countResults.typesCount.reduce(
       (typeList: SidebarTagMap, { key, count: total }) => {
@@ -209,7 +211,13 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const searchResultsItems = (searchResults.items as Array<
-    Article & LifeEventPage & AboutPage & News & AdgerdirPage & SubArticle
+    Article &
+      LifeEventPage &
+      AboutPage &
+      News &
+      AdgerdirPage &
+      SubArticle &
+      OrganizationSubpage
   >).map((item) => ({
     title: item.title,
     parentTitle: item.parent?.title,
@@ -217,8 +225,11 @@ const Search: Screen<CategoryProps> = ({
       item.intro ??
       item.seoDescription ??
       item.description ??
-      item.parent.intro,
-    link: linkResolver(typenameResolver(item.__typename), item.slug.split('/')),
+      item.parent?.intro,
+    link: linkResolver(
+      typenameResolver(item.__typename),
+      item?.url ?? item.slug.split('/'),
+    ),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,

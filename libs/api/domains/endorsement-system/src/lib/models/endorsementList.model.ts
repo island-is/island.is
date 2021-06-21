@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import graphqlTypeJson from 'graphql-type-json'
 import { EndorsementListEndorsementMetaEnum } from '../enums/endorsementListEndorsementMeta.enum'
 import { EndorsementListTagsEnum } from '../enums/endorsementListTags.enum'
 import { Endorsement } from './endorsement.model'
@@ -32,6 +33,9 @@ export class EndorsementList {
 
   @Field(() => [Endorsement])
   endorsements?: Endorsement[]
+
+  @Field(() => graphqlTypeJson)
+  meta!: object
 
   @Field()
   created!: string

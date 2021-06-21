@@ -22,7 +22,7 @@ import {
   parseNull,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import formatISO from 'date-fns/formatISO'
 import {
   CaseData,
@@ -100,7 +100,7 @@ export const SignedVerdictOverview: React.FC = () => {
       return 'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.'
     } else if (workingCase.childCase) {
       return 'Framlengingarkrafa hefur þegar verið útbúin.'
-    } else if (workingCase.isCustodyEndDateInThePast) {
+    } else if (workingCase.isValidToDateInThePast) {
       // This must be after the rejected and alternatice decision cases as the custody
       // end date only applies to cases that were accepted by the judge. This must also
       // be after the already extended case as the custody end date may expire after
@@ -234,13 +234,13 @@ export const SignedVerdictOverview: React.FC = () => {
    * 1. Rejected
    *    - state === REJECTED and decision === REJECTING
    * 2. Alternative travel ban accepted and the travel ban end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and custodyEndDate < today
+   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate < today
    * 3. Accepted and the custody end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING and custodyEndDate < today
+   *    - state === ACCEPTED and decision === ACCEPTING and validToDate < today
    * 5. Alternative travel ban accepted and the travel ban end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and custodyEndDate > today
+   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate > today
    * 3. Accepted and the custody end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING and custodyEndDate > today
+   *    - state === ACCEPTED and decision === ACCEPTING and validToDate > today
    */
 
   return (
@@ -248,7 +248,7 @@ export const SignedVerdictOverview: React.FC = () => {
       activeSection={2}
       isLoading={loading}
       notFound={data?.case === undefined}
-      isCustodyEndDateInThePast={workingCase?.isCustodyEndDateInThePast}
+      isValidToDateInThePast={workingCase?.isValidToDateInThePast}
       decision={data?.case?.decision}
       caseType={workingCase?.type}
     >
@@ -272,7 +272,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 workingCase.decision ===
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
                 workingCase.decision === CaseDecision.REJECTING ||
-                workingCase.isCustodyEndDateInThePast ||
+                workingCase.isValidToDateInThePast ||
                 Boolean(workingCase.childCase)
               }
               nextButtonText={`Framlengja ${

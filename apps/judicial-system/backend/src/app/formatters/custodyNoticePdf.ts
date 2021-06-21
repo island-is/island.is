@@ -81,7 +81,7 @@ export async function getCustodyNoticePdfAsString(
     )
     .text(
       `Úrskurður rennur út ${formatDate(
-        existingCase.custodyEndDate,
+        existingCase.validToDate,
         'PPPp',
       ).replace(' kl.', ', kl.')}`,
     )

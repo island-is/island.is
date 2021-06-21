@@ -22,6 +22,7 @@ export const getApplicationTitle = (
   const activeScreen = state.screens[state.activeScreen]
   let activeSection: Section | SubSection =
     state.sections[activeScreen.sectionIndex]
+
   if (activeSection && activeScreen.subSectionIndex >= 0) {
     activeSection = getSubSectionsInSection(
       activeSection,
@@ -32,12 +33,14 @@ export const getApplicationTitle = (
 
   const formName = formatMessage(state.form.title)
   const titleParts = [`${formName} | Ísland.is`]
+
   if (activeSection) {
     const sectionTitle = formatText(
       activeSection.title,
       state.application,
       formatMessage,
     )
+
     titleParts.unshift(sectionTitle)
   }
 

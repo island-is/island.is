@@ -1,6 +1,6 @@
 import { Field, ObjectType, Float } from '@nestjs/graphql'
-import { ParentalLeavePensionFund } from './parentalLeavePensionFund.model'
 
+import { ParentalLeavePensionFund } from './parentalLeavePensionFund.model'
 import { ParentalLeaveUnion } from './parentalLeaveUnion.model'
 
 @ObjectType()
