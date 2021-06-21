@@ -124,7 +124,6 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     title={localization.fields['scopeName'].helpText}
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateScope,
                     })}
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >

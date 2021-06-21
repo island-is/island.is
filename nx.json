@@ -27,6 +27,12 @@
           "schemas/codegen"
         ]
       }
+    },
+    "docker-test": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": []
+      }
     }
   },
   "projects": {
