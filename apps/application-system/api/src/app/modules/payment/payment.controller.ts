@@ -36,6 +36,7 @@ import { Payment } from './payment.model'
 import { Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
+import { Application } from '../application/application.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -92,16 +93,21 @@ export class PaymentController {
       expires_at: new Date(),
     }
 
-    const newCharge = await this.paymentModel.create(paymentDto)
+    const payment = await this.paymentModel.create(paymentDto)
+
+    const chargeResult = this.paymentService.createCharge(payment, user)
 
     this.auditService.audit({
       user,
       action: 'create',
       resources: paymentDto.application_id as string,
-      meta: { applicationId: paymentDto.application_id, id: newCharge.id },
+      meta: { applicationId: paymentDto.application_id, id: payment.id },
     })
 
-    return newCharge
+    return {
+      id: payment.id,
+      paymentUrl: (await chargeResult).paymentUrl,
+    }
   }
 
   @Scopes(ApplicationScope.write)

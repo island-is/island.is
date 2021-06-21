@@ -9,8 +9,8 @@ import {
   AttachmentEmailTemplateGenerator,
 } from '../../types'
 import { createAssignToken, getConfigValue } from './shared.utils'
-import { ChargeResult } from '@island.is/api/domains/payment'
-import { PaymentService, BaseCharge } from '@island.is/clients/payment'
+import { ApiDomainsPaymentService, ChargeResult } from '@island.is/api/domains/payment'
+import { BaseCharge } from '@island.is/clients/payment'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -19,8 +19,8 @@ export class SharedTemplateApiService {
     private readonly emailService: EmailService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
-    @Inject(PaymentService)
-    private readonly paymentService: PaymentService,
+    @Inject(ApiDomainsPaymentService)
+    private readonly paymentService: ApiDomainsPaymentService,
   ) {}
 
   async sendEmail(
@@ -124,7 +124,7 @@ export class SharedTemplateApiService {
     charge: BaseCharge,
     applicationId: string,
   ): Promise<ChargeResult> {
-    return this.paymentService.createPayment(charge, applicationId)
+    return this.paymentService.createCharge(charge)
   }
 
   async makeGraphqlQuery(

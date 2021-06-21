@@ -13,6 +13,7 @@ import {
   PaymentServiceOptions,
   PaymentConfig,
 } from './payment.configuration'
+import { PaymentAPI } from '@island.is/clients/payment'
 
 export interface Config {
   xroadBaseUrl: string
@@ -29,6 +30,12 @@ export class PaymentModule {
         {
           provide: PAYMENT_CONFIG,
           useValue: environment.templateApi.paymentOptions as PaymentConfig,
+        },
+        {
+          provide: PaymentAPI,
+          useFactory: () => {
+            return new PaymentAPI(environment.templateApi.paymentOptions as PaymentServiceOptions)
+          }
         },
       ],
       imports: [

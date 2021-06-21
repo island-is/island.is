@@ -5,7 +5,7 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 
-import { ApplicationsApi, PaymentsApi } from '../../gen/fetch'
+import { ApplicationsApi, CreatePaymentResponseDto, PaymentsApi } from '../../gen/fetch'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
@@ -43,7 +43,6 @@ export class ApplicationService {
   constructor(
     private _applicationApi: ApplicationsApi,
     private _applicationPaymentApi: PaymentsApi,
-    private paymentClientApi: PaymentService,
   ) {}
 
   applicationApiWithAuth(auth: Auth) {
@@ -76,38 +75,18 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async createCharge(
+  createCharge(
     applicationId: string,
     amount: number,
     auth: Auth,
-  ): Promise<ApplicationPaymentCharge> {
-    const controllerResult = await this.paymentApiWithAuth(
+  ): Promise<CreatePaymentResponseDto> {
+    return this.paymentApiWithAuth(
       auth,
     ).paymentControllerCreateCharge({
       applicationId: applicationId,
       createChargeDto: { applicationId: applicationId, amount: amount },
       authorization: auth.authorization,
     })
-
-    const clientResult = await this.paymentClientApi.createPayment(
-      {
-        performingOrgID: '6509142520',
-        payeeNationalID: auth.nationalId || '',
-        chargeType: 'AY1',
-        performerNationalID: auth.nationalId || '',
-        charges: [
-          {
-            chargeItemCode: 'AY110',
-            quantity: 1,
-            priceAmount: amount,
-            amount: amount,
-            reference: '',
-          },
-        ],
-      },
-      applicationId,
-    )
-    return clientResult.data as ApplicationPaymentCharge
   }
 
   async findAll(

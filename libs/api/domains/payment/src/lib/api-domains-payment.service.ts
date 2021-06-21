@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { Charge, PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
+import { BaseCharge, Charge, PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
 import {
   ChargeResult,
   PaymentServiceOptions,
@@ -21,7 +21,7 @@ export class ApiDomainsPaymentService {
     return `${this.baseUrl}/quickpay/pay?doc_num=${docNum}`
   }
 
-  async createCharge(chargeParameters: Charge): Promise<ChargeResult> {
+  async createCharge(chargeParameters: BaseCharge): Promise<ChargeResult> {
     try {
       const charge = await this.paymentApi.createCharge(chargeParameters)
 

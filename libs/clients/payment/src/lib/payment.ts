@@ -8,6 +8,7 @@ import {
   Catalog,
   PaymentServiceOptions,
   PAYMENT_OPTIONS,
+  BaseCharge,
 } from './payment.type'
 
 export class PaymentAPI extends RESTDataSource {
@@ -32,7 +33,7 @@ export class PaymentAPI extends RESTDataSource {
     )
   }
 
-  createCharge(upcomingPayment: Charge): Promise<ChargeResponse> {
+  createCharge(upcomingPayment: BaseCharge): Promise<ChargeResponse> {
     return this.post<ChargeResponse>(`catalog/charge`, upcomingPayment)
   }
 
