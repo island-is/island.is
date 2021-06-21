@@ -20,7 +20,7 @@ export class FrontpageSlider {
   @Field({ nullable: true })
   link?: string
 
-  @Field({ nullable: true })
+  @Field(() => Asset, { nullable: true })
   animationJsonAsset?: Asset | null
 }
 

@@ -1,3 +1,3 @@
-import { Users } from '@island.is/judicial-system-web/src/routes/Shared/Users/Users'
+import { Users } from '@island.is/judicial-system-web/src/routes/Admin/Users/Users'
 
 export default Users

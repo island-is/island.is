@@ -147,6 +147,16 @@ export const m: MessageDir = {
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Label for file upload',
     },
+    uploadSuccess: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Pappírsmeðmælum hefur verið hlaðið upp!',
+      description: 'Upload succeeded text',
+    },
+    uploadFail: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
+      description: 'Upload failed text',
+    },
   }),
   selectNationalId: defineMessages({
     title: {
@@ -338,6 +348,11 @@ export const m: MessageDir = {
       id: 'ple.application:endorsement.form.agree.label',
       defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Label for terms and conditions',
+    },
+    isClosedMessage: {
+      id: 'ple.application:endorsement.form.isClosed.message',
+      defaultMessage: 'Meðmælendalista hefur verið lokað',
+      description: 'Error message if endorsement list has been closed',
     },
     submitButton: {
       id: 'ple.application:endorsement.form.submit.button',

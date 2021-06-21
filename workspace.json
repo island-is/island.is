@@ -17,8 +17,8 @@
     },
     "@nrwl/react": {
       "application": {
-        "style": "scss",
         "linter": "eslint",
+        "style": "scss",
         "pascalCaseFiles": true,
         "babel": true
       },
@@ -1099,6 +1099,27 @@
         }
       }
     },
+    "api-domains-license-service": {
+      "root": "libs/api/domains/license-service",
+      "sourceRoot": "libs/api/domains/license-service/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/license-service/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/license-service"],
+          "options": {
+            "jestConfig": "libs/api/domains/license-service/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-national-registry": {
       "root": "libs/api/domains/national-registry",
       "sourceRoot": "libs/api/domains/national-registry/src",
@@ -1852,6 +1873,28 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-complaints-to-althingi-ombudsman": {
+      "root": "libs/application/templates/complaints-to-althingi-ombudsman",
+      "sourceRoot": "libs/application/templates/complaints-to-althingi-ombudsman/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/complaints-to-althingi-ombudsman/tsconfig.lib.json",
+              "libs/application/templates/complaints-to-althingi-ombudsman/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/complaints-to-althingi-ombudsman/**/*"
+            ]
           }
         }
       }
@@ -5211,7 +5254,13 @@
           },
           "outputs": ["coverage/apps/judicial-system/web"]
         },
-        "docker-next": {}
+        "docker-next": {},
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/web/messages/**/*.{js,ts,tsx}'"
+          }
+        }
       }
     },
     "judicial-system-web-e2e": {
@@ -6440,6 +6489,29 @@
           "options": {
             "parallel": false,
             "command": "graphql-codegen --config libs/service-portal/icelandic-names-registry/codegen.yml"
+          }
+        }
+      }
+    },
+    "service-portal-licenses": {
+      "root": "libs/service-portal/licenses",
+      "sourceRoot": "libs/service-portal/licenses/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/licenses/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/licenses"],
+          "options": {
+            "jestConfig": "libs/service-portal/licenses/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }

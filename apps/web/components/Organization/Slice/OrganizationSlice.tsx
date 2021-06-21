@@ -17,10 +17,6 @@ const HeadingSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.HeadingSlice),
 )
 
-const OfficesSlice = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.OfficesSlice),
-)
-
 const OneColumnTextSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OneColumnTextSlice),
 )
@@ -65,6 +61,10 @@ const MailingListSignupSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.MailingListSignupSlice),
 )
 
+const MultipleStatistics = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.MultipleStatistics),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
   namespace?: Namespace
@@ -89,8 +89,8 @@ const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
       return <FeaturedArticlesSlice slice={slice} namespace={namespace} />
     case 'TwoColumnText':
       return <TwoColumnTextSlice slice={slice} />
-    case 'Offices':
-      return <OfficesSlice slice={slice} />
+    case 'MultipleStatistics':
+      return <MultipleStatistics slice={slice} />
     case 'OneColumnText':
       return <OneColumnTextSlice slice={slice} />
     case 'AccordionSlice':

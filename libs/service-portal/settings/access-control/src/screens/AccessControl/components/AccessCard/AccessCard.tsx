@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import format from 'date-fns/format'
 
 import {
   Box,
@@ -18,7 +19,7 @@ interface PropTypes {
   description: string
   href: string
   tags: string[]
-  created: string
+  validTo: string
 }
 
 function AccessCard({
@@ -27,7 +28,7 @@ function AccessCard({
   description,
   href,
   tags,
-  created,
+  validTo,
 }: PropTypes) {
   const { formatMessage } = useLocale()
 
@@ -50,7 +51,15 @@ function AccessCard({
         </Stack>
         <Inline space="smallGutter">
           <Icon size="small" icon="time" color="blue400" type="outline" />
-          <Text variant="small">{created}</Text>
+          <Text variant="small">
+            {validTo
+              ? format(new Date(validTo), 'dd.MM.yyyy')
+              : formatMessage({
+                  id:
+                    'service.portal.settings.accessControl:home-view-undetermined',
+                  defaultMessage: 'Óákveðið',
+                })}
+          </Text>
         </Inline>
       </Box>
       <Box marginTop={2}>

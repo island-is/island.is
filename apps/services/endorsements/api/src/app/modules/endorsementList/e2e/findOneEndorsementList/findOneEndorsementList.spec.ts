@@ -19,7 +19,7 @@ beforeAll(async () => {
   })
 })
 
-describe('EndorsementList', () => {
+describe('findOneEndorsementList', () => {
   it(`GET /endorsement-list/:listId should return 404 error when uid does not exist`, async () => {
     const response = await request(app.getHttpServer())
       .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777') // random uuid

@@ -164,7 +164,6 @@ const SummaryForm = () => {
         (form?.incomeFiles ? '' : 'ekki') +
         'fengið tekjur í þessum mánuði eða síðasta',
     },
-
     {
       label: 'Staða',
       url: 'atvinna',
@@ -292,7 +291,6 @@ const SummaryForm = () => {
             <LoadingDots large />
           </Box>
         )}
-
         <Box marginTop={[4, 4, 5]}>
           <Divider />
         </Box>

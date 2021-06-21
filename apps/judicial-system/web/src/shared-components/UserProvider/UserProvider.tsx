@@ -33,7 +33,7 @@ interface Props {
 }
 
 const UserProvider: React.FC<Props> = ({ children, authenticated = false }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+  const [isAuthenticated] = useState<boolean>(
     authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME)),
   )
   const [user, setUser] = useState<User>()

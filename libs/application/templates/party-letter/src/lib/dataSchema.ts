@@ -7,15 +7,6 @@ const FileSchema = z.object({
   key: z.string(),
 })
 
-const EndorsementSchema = z.object({
-  id: z.string(),
-  date: z.string(),
-  name: z.string(),
-  nationalId: z.string(),
-  address: z.string(),
-  hasWarning: z.boolean(),
-})
-
 export const PartyLetterSchema = z.object({
   approveTermsAndConditions: z
     .boolean()
@@ -41,14 +32,11 @@ export const PartyLetterSchema = z.object({
       m.validationMessages.partyName.defaultMessage as string,
     ),
   includePapers: z.array(z.string()).optional(),
-  smu: z.string().optional(),
-  endorsements: z.array(EndorsementSchema).optional(), //todo: validate
   email: z
     .string()
     .email(m.validationMessages.emailInvalid.defaultMessage as string),
   documents: z.array(FileSchema).optional(),
 })
 
-export type Endorsement = z.TypeOf<typeof EndorsementSchema>
 export type File = z.TypeOf<typeof FileSchema>
 export type PartyLetter = z.TypeOf<typeof PartyLetterSchema>

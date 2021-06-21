@@ -26,7 +26,7 @@ import {
   IFeaturedArticles,
   IOneColumnText,
   ITwoColumnText,
-  IOffices,
+  IMultipleStatistics,
   IAccordionSlice,
   IOverviewLinks,
 } from '../generated/contentfulTypes'
@@ -73,13 +73,16 @@ import {
   mapFeaturedArticles,
 } from '../models/featuredArticles.model'
 import { mapTwoColumnText, TwoColumnText } from '../models/twoColumnText.model'
-import { mapOffices, Offices } from '../models/offices.model'
 import { mapOneColumnText, OneColumnText } from '../models/oneColumnText.model'
 import {
   AccordionSlice,
   mapAccordionSlice,
 } from '../models/accordionSlice.model'
 import { mapOverviewLinks, OverviewLinks } from '../models/overviewLinks.model'
+import {
+  mapMultipleStatistics,
+  MultipleStatistics,
+} from '../models/multipleStatistics.model'
 
 type SliceTypes =
   | ITimeline
@@ -105,7 +108,7 @@ type SliceTypes =
   | IFeaturedArticles
   | IOneColumnText
   | ITwoColumnText
-  | IOffices
+  | IMultipleStatistics
   | IAccordionSlice
   | IOverviewLinks
 
@@ -138,7 +141,7 @@ export const SliceUnion = createUnionType({
     FeaturedArticles,
     OneColumnText,
     TwoColumnText,
-    Offices,
+    MultipleStatistics,
     AccordionSlice,
     OverviewLinks,
   ],
@@ -194,8 +197,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapOneColumnText(slice as IOneColumnText)
     case 'twoColumnText':
       return mapTwoColumnText(slice as ITwoColumnText)
-    case 'offices':
-      return mapOffices(slice as IOffices)
+    case 'multipleStatistics':
+      return mapMultipleStatistics(slice as IMultipleStatistics)
     case 'accordionSlice':
       return mapAccordionSlice(slice as IAccordionSlice)
     case 'overviewLinks':

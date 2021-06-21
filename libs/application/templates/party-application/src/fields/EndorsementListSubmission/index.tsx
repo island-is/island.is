@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { coreMessages, FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
   Text,
@@ -9,83 +9,49 @@ import {
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { Endorsement, SchemaFormValues } from '../../../src/lib/dataSchema'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { useMutation } from '@apollo/client'
 import isEqual from 'lodash/isEqual'
-import { toast } from '@island.is/island-ui/core'
 import { Constituencies } from '../../types'
 import { constituencyMapper } from '../../constants'
 import sortBy from 'lodash/sortBy'
-
-const ENDORSEMENTS: Endorsement[] = [
-  {
-    id: '1',
-    date: '21.01.2021',
-    name: 'Örvar Þór Sigurðsson',
-    nationalId: '1991921335',
-    address: 'Baugholt 15',
-    hasWarning: false,
-  },
-  {
-    id: '2',
-    date: '21.06.2021',
-    name: 'Þórhildur Tyrfingsdóttir',
-    nationalId: '1991921335',
-    address: 'Miðskógar 17',
-    hasWarning: true,
-  },
-  {
-    id: '3',
-    date: '21.05.2021',
-    name: 'Stefán Haukdal',
-    nationalId: '1991921335',
-    address: 'Skúr hjá mömmu',
-    hasWarning: false,
-  },
-  {
-    id: '4',
-    date: '21.03.2021',
-    name: 'Brian Johannesen',
-    nationalId: '1991921335',
-    address: 'Reykjavík',
-    hasWarning: false,
-  },
-  {
-    id: '5',
-    date: '21.02.2021',
-    name: 'Örvar Þór Sigurðsson',
-    nationalId: '1991921335',
-    address: 'Baugholt 15',
-    hasWarning: false,
-  },
-  {
-    id: '6',
-    date: '21.04.2021',
-    name: 'Örvar Þór Sigurðsson',
-    nationalId: '1991921335',
-    address: 'Baugholt 15',
-    hasWarning: true,
-  },
-]
+import cloneDeep from 'lodash/cloneDeep'
+import { Endorsement } from '../../types/schema'
+import { useEndorsements } from '../../hooks/fetch-endorsements'
+import { SchemaFormValues } from '../../../src/lib/dataSchema'
+import { useFormContext } from 'react-hook-form'
 
 const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
-  const { lang: locale, formatMessage } = useLocale()
+  const { formatMessage } = useLocale()
+  const { setValue } = useFormContext()
   const answers = application.answers as SchemaFormValues
-  const [endorsements] = useState(sortBy(ENDORSEMENTS, 'date'))
   const [selectedEndorsements, setSelectedEndorsements] = useState<
     Endorsement[]
   >([])
   const [autoSelect, setAutoSelect] = useState(false)
   const [chooseRandom, setChooseRandom] = useState(false)
+  const endorsementListId = (application.externalData?.createEndorsementList
+    .data as any).id
+  const { endorsements: endorsementsHook } = useEndorsements(
+    endorsementListId,
+    false,
+  )
 
-  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION, {
-    onError: (error) => {
-      // If there was an error doing the update we will deselect the endorsement
-      toast.error(formatMessage(coreMessages.updateOrSubmitError, { error }))
-      setSelectedEndorsements(answers.endorsements ?? [])
-    },
-  })
+  /* on intital render: decide which radio button should be checked */
+  useEffect(() => {
+    if (answers.endorsements && answers.endorsements.length > 0) {
+      const endorsements: any = endorsementsHook?.filter((e: any) => {
+        return answers.endorsements?.indexOf(e.id) !== -1
+      })
+
+      setSelectedEndorsements(sortBy(endorsements, 'created'))
+      isEqual(endorsements, firstX())
+        ? setAutoSelect(true)
+        : setChooseRandom(true)
+    } else {
+      firstMaxEndorsements()
+      setAutoSelect(true)
+    }
+  }, [])
+
   const maxEndorsements =
     constituencyMapper[answers.constituency as Constituencies].high
   const minEndorsements =
@@ -94,18 +60,18 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     selectedEndorsements.length > maxEndorsements ||
     selectedEndorsements.length < minEndorsements
   const firstX = () => {
-    const tempEndorsements = endorsements
-    return tempEndorsements.slice(0, maxEndorsements)
+    const tempEndorsements = endorsementsHook ?? []
+    return tempEndorsements?.slice(0, maxEndorsements)
   }
   const shuffled = () => {
-    const tempEndorsements = sortBy(endorsements, 'date')
+    const tempEndorsements = endorsementsHook ?? []
     return tempEndorsements.sort(() => 0.5 - Math.random())
   }
 
   const firstMaxEndorsements = () => {
     setAutoSelect(true)
     setChooseRandom(false)
-    setSelectedEndorsements([...firstX()])
+    setSelectedEndorsements(sortBy([...firstX()], 'created'))
     updateApplicationWithEndorsements([...firstX()])
   }
 
@@ -140,44 +106,14 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const updateApplicationWithEndorsements = async (
     newEndorsements: Endorsement[],
   ) => {
-    const updatedAnswers = {
-      ...answers,
-      endorsements: newEndorsements,
-      endorsementsWithWarning: newEndorsements.filter((e) => e.hasWarning),
-    }
-
-    await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: {
-            ...updatedAnswers,
-          },
-        },
-        locale,
-      },
-    }).then((response) => {
-      application.answers = response.data?.updateApplication?.answers
-    })
+    const endorsementIds: string[] = newEndorsements.map((e) => e.id)
+    setValue('endorsements', cloneDeep(endorsementIds))
   }
-
-  /* on intital render: decide which radio button should be checked */
-  useEffect(() => {
-    if (answers.endorsements && answers.endorsements.length > 0) {
-      setSelectedEndorsements(answers.endorsements)
-      isEqual(answers.endorsements, firstX())
-        ? setAutoSelect(true)
-        : setChooseRandom(true)
-    } else {
-      firstMaxEndorsements()
-      setAutoSelect(true)
-    }
-  }, [])
 
   return (
     <Box marginBottom={8}>
       <Text>{formatMessage(m.endorsementListSubmission.description)}</Text>
-      {endorsements && endorsements.length > 0 && (
+      {endorsementsHook && endorsementsHook.length > 0 && (
         <Box>
           <Box
             marginTop={3}
@@ -209,10 +145,9 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
             </Box>
           </Box>
           <EndorsementTable
-            endorsements={endorsements}
+            endorsements={endorsementsHook}
             selectedEndorsements={selectedEndorsements}
             onChange={(endorsement) => handleCheckboxChange(endorsement)}
-            disabled={loading}
           />
           <Box
             marginTop={3}

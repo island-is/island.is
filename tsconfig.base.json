@@ -84,6 +84,9 @@
       "@island.is/api/domains/icelandic-names-registry": [
         "libs/api/domains/icelandic-names-registry/src/index.ts"
       ],
+      "@island.is/api/domains/license-service": [
+        "libs/api/domains/license-service/src/index.ts"
+      ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
@@ -127,6 +130,9 @@
       ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
+      ],
+      "@island.is/application/templates/complaints-to-althingi-ombudsman": [
+        "libs/application/templates/complaints-to-althingi-ombudsman/src/index.ts"
       ],
       "@island.is/application/templates/data-protection-complaint": [
         "libs/application/templates/data-protection-complaint/src/index.ts"
@@ -348,6 +354,9 @@
       ],
       "@island.is/service-portal/icelandic-names-registry": [
         "libs/service-portal/icelandic-names-registry/src/index.ts"
+      ],
+      "@island.is/service-portal/licenses": [
+        "libs/service-portal/licenses/src/index.ts"
       ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"

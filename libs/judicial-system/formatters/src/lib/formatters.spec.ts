@@ -147,9 +147,14 @@ describe('formatCustodyRestrictions', () => {
     // Arrange
     const accusedGender = CaseGender.MALE
     const custodyRestrictions: Array<CaseCustodyRestrictions> = []
+    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(
+      accusedGender,
+      custodyRestrictions,
+      validToDate,
+    )
 
     // Assert
     expect(res).toBe('Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.')
@@ -159,9 +164,16 @@ describe('formatCustodyRestrictions', () => {
     // Arrange
     const accusedGender = CaseGender.MALE
     const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
+    const validToDate = new Date('2021-07-22T11:23')
+    const isolationToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(
+      accusedGender,
+      custodyRestrictions,
+      validToDate,
+      isolationToDate,
+    )
 
     // Assert
     expect(res).toBe(
@@ -176,9 +188,16 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
+    const validToDate = new Date('2021-07-22T11:23')
+    const isolationToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(
+      accusedGender,
+      custodyRestrictions,
+      validToDate,
+      isolationToDate,
+    )
 
     // Assert
     expect(res).toBe(
@@ -194,9 +213,14 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.MEDIA,
       CaseCustodyRestrictions.VISITAION,
     ]
+    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(
+      accusedGender,
+      custodyRestrictions,
+      validToDate,
+    )
 
     // Assert
     expect(res).toBe(
@@ -212,13 +236,39 @@ describe('formatCustodyRestrictions', () => {
       CaseCustodyRestrictions.VISITAION,
       CaseCustodyRestrictions.COMMUNICATION,
     ]
+    const validToDate = new Date('2021-07-22T11:23')
 
     // Act
-    const res = formatCustodyRestrictions(accusedGender, custodyRestrictions)
+    const res = formatCustodyRestrictions(
+      accusedGender,
+      custodyRestrictions,
+      validToDate,
+    )
 
     // Assert
     expect(res).toBe(
       'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
+    )
+  })
+
+  test('should return formatted restrictions for isolation shorter than custody', () => {
+    // Arrange
+    const accusedGender = CaseGender.MALE
+    const custodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
+    const validToDate = new Date('2021-07-22T11:23')
+    const isolationToDate = new Date('2021-06-30T16:00')
+
+    // Act
+    const res = formatCustodyRestrictions(
+      accusedGender,
+      custodyRestrictions,
+      validToDate,
+      isolationToDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að kærði skuli sæta einangrun ekki lengur en til miðvikudagsins 30. júní 2021, kl. 16:00.',
     )
   })
 })
@@ -337,7 +387,7 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '010101-0000'
     const accusedName = 'Glanni Glæpur'
     const court = 'Héraðsdómur Reykjavíkur'
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = true
     const isExtension = false
 
@@ -347,7 +397,7 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       isExtension,
       undefined,
@@ -365,7 +415,7 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const court = 'Héraðsdómur Reykjavíkur'
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
     const isExtension = false
 
@@ -375,7 +425,7 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       isExtension,
       undefined,
@@ -393,7 +443,7 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '011101-0000'
     const accusedName = 'Siggi Sýra'
     const court = 'Héraðsdómur Kjósarskarðs'
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
     const isExtension = true
     const previousDecision = CaseDecision.ACCEPTING
@@ -404,7 +454,7 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       isExtension,
       previousDecision,
@@ -422,7 +472,7 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '011101-0000'
     const accusedName = 'Siggi Sýra'
     const court = 'Héraðsdómur Kjósarskarðs'
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
     const isExtension = true
     const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -433,7 +483,7 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       isExtension,
       previousDecision,
@@ -451,7 +501,7 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const court = 'Héraðsdómur Reykjavíkur'
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
+    const requestedValidToDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
     const isExtension = false
 
@@ -461,7 +511,7 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      requestedCustodyEndDate,
+      requestedValidToDate,
       isolation,
       isExtension,
       undefined,

@@ -10,6 +10,8 @@ import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
 import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
 import ApiScopeGroupCreateFormModal from './ApiScopeGroupCreateFormModal'
+import { Domain } from './../../../entities/models/domain.model'
+import HintBox from '../../common/HintBox'
 
 interface Props {
   handleSave?: (object: ApiScopeDTO) => void
@@ -17,23 +19,54 @@ interface Props {
   apiScope: ApiScopeDTO
 }
 
+interface FormOutput {
+  apiScope: ApiScopeDTO
+}
+
 const ApiScopeCreateForm: React.FC<Props> = (props) => {
-  const { register, handleSubmit, errors, formState } = useForm<ApiScopeDTO>()
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+    setValue,
+  } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [groups, setGroups] = useState<ApiScopeGroup[]>([])
   const [nameLength, setNameLength] = useState(0)
+  const [domains, setDomains] = useState<Domain[]>([])
+  const [domainIsTouched, setDomainIsTouched] = useState<boolean>(false)
+  //#region hint-box
+  const [
+    apiScopeNameHintVisible,
+    setApiScopeNameHintVisible,
+  ] = useState<boolean>(false)
+  const [apiScopeHintMessage, setApiScopeHintMessage] = useState<string>('')
+  const [apiScopeNameIsValid, setApiScopeNameIsValid] = useState<
+    boolean | null
+  >(null)
+  //#endregion hint-box
+
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeCreateForm'),
   )
 
   useEffect(() => {
+    async function getDomains() {
+      const response = await ResourcesService.findAllDomains()
+      if (response) {
+        setDomains(response as Domain[])
+      }
+    }
+
     if (props.apiScope && props.apiScope.name) {
       setIsEditing(true)
       setAvailable(true)
     }
     getGroups()
+    getDomains()
   }, [props.apiScope])
 
   const getGroups = async () => {
@@ -44,8 +77,23 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
     }
   }
 
+  const onApiScopeNameChange = async (name: string) => {
+    if (isEditing) {
+      return
+    }
+    setApiScopeNameHintVisible(true)
+    const isValid =
+      name.length > 0 ? ValidationUtils.validateApiScope(name) : false
+    setApiScopeNameIsValid(isValid)
+    isValid
+      ? setApiScopeHintMessage(localization.fields['name'].hintOkMessage)
+      : setApiScopeHintMessage(localization.fields['name'].hintErrorMessage)
+
+    checkAvailability(name)
+  }
+
   const checkAvailability = async (name: string) => {
-    setNameLength(name.length)
+    setNameLength(name?.length)
     if (name.length === 0) {
       setAvailable(false)
       return
@@ -54,15 +102,24 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
     setAvailable(response)
   }
 
-  const save = async (data: ApiScopeDTO) => {
+  const save = async (data: FormOutput) => {
+    if (data.apiScope.groupId === 'null') {
+      data.apiScope.groupId = null
+    }
     const response = isEditing
-      ? await ResourcesService.updateApiScope(data)
-      : await ResourcesService.createApiScope(data)
+      ? await ResourcesService.updateApiScope(data.apiScope)
+      : await ResourcesService.createApiScope(data.apiScope)
     if (response) {
       if (props.handleSave) {
-        props.handleSave(data)
+        props.handleSave(data.apiScope)
       }
     }
+  }
+
+  const onDomainChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setDomainIsTouched(true)
+    setValue('apiScope.name', e.currentTarget.value)
+    document.getElementById('apiScope.name').focus()
   }
 
   return (
@@ -74,23 +131,74 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
             <div className="api-scope-form__help">{localization.help}</div>
             <form onSubmit={handleSubmit(save)}>
               <div className="api-scope-form__container__fields">
+                <div
+                  className={`api-scope-form__container__field${
+                    isEditing ? ' hidden' : ''
+                  }`}
+                >
+                  <label htmlFor="domain" className="api-scope-form__label">
+                    Domain
+                  </label>
+                  <select
+                    id="domain"
+                    name="domain"
+                    onChange={(e) => onDomainChange(e)}
+                  >
+                    <option value={'null'} disabled={true} selected>
+                      {localization.fields['domain'].selectAnItem}
+                    </option>
+                    {domains.map((domain: Domain) => {
+                      return (
+                        <option
+                          value={domain.name + '/'}
+                          key={domain.name}
+                          selected={props?.apiScope?.name?.includes(
+                            domain.name + '/',
+                          )}
+                          title={domain.description}
+                        >
+                          {domain.name + '/'}
+                        </option>
+                      )
+                    })}
+                  </select>
+                </div>
+
                 <div className="api-scope-form__container__field">
-                  <label htmlFor="name" className="api-scope-form__label">
+                  <label
+                    htmlFor="apiScope.name"
+                    className="api-scope-form__label"
+                  >
                     {localization.fields['name'].label}
                   </label>
                   <input
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateScope,
+                      validate: isEditing
+                        ? () => {
+                            return true
+                          }
+                        : ValidationUtils.validateApiScope,
                     })}
-                    id="name"
-                    name="name"
+                    id="apiScope.name"
+                    name="apiScope.name"
                     type="text"
                     className="api-scope-form__input"
+                    title={localization.fields['name'].helpText}
                     defaultValue={props.apiScope.name}
-                    readOnly={isEditing}
-                    onChange={(e) => checkAvailability(e.target.value)}
+                    readOnly={isEditing || !domainIsTouched}
+                    onChange={(e) => onApiScopeNameChange(e.target.value)}
                     placeholder={localization.fields['name'].placeholder}
+                    onBlur={() => setApiScopeNameHintVisible(false)}
+                    onFocus={(e) => onApiScopeNameChange(e.target.value)}
+                  />
+                  <HintBox
+                    helpText={apiScopeHintMessage}
+                    pattern={localization.fields['name'].pattern}
+                    patternText={localization.fields['name'].patternText}
+                    setVisible={apiScopeNameHintVisible}
+                    onVisibleChange={(e) => setApiScopeNameHintVisible(e)}
+                    isValid={apiScopeNameIsValid}
                   />
                   <div
                     className={`api-scope-form__container__field__available ${
@@ -105,13 +213,14 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   <ErrorMessage
                     as="span"
                     errors={errors}
-                    name="name"
+                    name="apiScope.name"
                     message={localization.fields['name'].errorMessage}
                   />
                 </div>
+
                 <div className="api-scope-form__container__field">
                   <label
-                    htmlFor="displayName"
+                    htmlFor="apiScope.displayName"
                     className="api-scope-form__label"
                   >
                     {localization.fields['displayName'].label}
@@ -121,8 +230,8 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                       required: true,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    id="displayName"
-                    name="displayName"
+                    id="apiScope.displayName"
+                    name="apiScope.displayName"
                     type="text"
                     className="api-scope-form__input"
                     defaultValue={props.apiScope.displayName}
@@ -135,7 +244,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   <ErrorMessage
                     as="span"
                     errors={errors}
-                    name="displayName"
+                    name="apiScope.displayName"
                     message={localization.fields['displayName'].errorMessage}
                   />
                   <TranslationCreateFormDropdown
@@ -147,7 +256,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                 </div>
                 <div className="api-scope-form__container__field">
                   <label
-                    htmlFor="description"
+                    htmlFor="apiScope.description"
                     className="api-scope-form__label"
                   >
                     {localization.fields['description'].label}
@@ -157,8 +266,8 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                       required: false,
                       validate: ValidationUtils.validateDescription,
                     })}
-                    id="description"
-                    name="description"
+                    id="apiScope.description"
+                    name="apiScope.description"
                     type="text"
                     defaultValue={props.apiScope.description}
                     className="api-scope-form__input"
@@ -171,7 +280,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   <ErrorMessage
                     as="span"
                     errors={errors}
-                    name="description"
+                    name="apiScope.description"
                     message={localization.fields['description'].errorMessage}
                   />
                   <TranslationCreateFormDropdown
@@ -182,10 +291,17 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   />
                 </div>
                 <div className="api-scope-form__container__field">
-                  <label htmlFor="groupId" className="api-scope-form__label">
+                  <label
+                    htmlFor="apiScope.groupId"
+                    className="api-scope-form__label"
+                  >
                     {localization.fields['groupId'].label}
                   </label>
-                  <select id="groupId" name="groupId" ref={register()}>
+                  <select
+                    id="apiScope.groupId"
+                    name="apiScope.groupId"
+                    ref={register()}
+                  >
                     <option
                       value={'null'}
                       selected={props.apiScope.groupId === null}
@@ -212,13 +328,16 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">
-                  <label htmlFor="enabled" className="api-scope-form__label">
+                  <label
+                    htmlFor="apiScope.enabled"
+                    className="api-scope-form__label"
+                  >
                     {localization.fields['enabled'].label}
                   </label>
                   <input
                     ref={register}
-                    id="enabled"
-                    name="enabled"
+                    id="apiScope.enabled"
+                    name="apiScope.enabled"
                     type="checkbox"
                     defaultChecked={props.apiScope.enabled}
                     className="api-scope-form__checkbox"
@@ -236,8 +355,8 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   </label>
                   <input
                     ref={register}
-                    id="showInDiscoveryDocument"
-                    name="showInDiscoveryDocument"
+                    id="apiScope.showInDiscoveryDocument"
+                    name="apiScope.showInDiscoveryDocument"
                     type="checkbox"
                     defaultChecked={props.apiScope.showInDiscoveryDocument}
                     className="api-scope-form__checkbox"
@@ -253,13 +372,16 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">
-                  <label htmlFor="emphasize" className="api-scope-form__label">
+                  <label
+                    htmlFor="apiScope.emphasize"
+                    className="api-scope-form__label"
+                  >
                     {localization.fields['emphasize'].label}
                   </label>
                   <input
                     ref={register}
-                    id="emphasize"
-                    name="emphasize"
+                    id="apiScope.emphasize"
+                    name="apiScope.emphasize"
                     defaultChecked={props.apiScope.emphasize}
                     type="checkbox"
                     className="api-scope-form__checkbox"
@@ -272,15 +394,15 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
 
                 <div className="api-scope-form__container__checkbox__field">
                   <label
-                    htmlFor="isAccessControlled"
+                    htmlFor="apiScope.isAccessControlled"
                     className="api-scope-form__label"
                   >
                     {localization.fields['isAccessControlled'].label}
                   </label>
                   <input
                     ref={register}
-                    id="isAccessControlled"
-                    name="isAccessControlled"
+                    id="apiScope.isAccessControlled"
+                    name="apiScope.isAccessControlled"
                     type="checkbox"
                     defaultChecked={props.apiScope.isAccessControlled}
                     className="api-scope-form__checkbox"
@@ -294,13 +416,16 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">
-                  <label htmlFor="required" className="api-scope-form__label">
+                  <label
+                    htmlFor="apiScope.required"
+                    className="api-scope-form__label"
+                  >
                     {localization.fields['required'].label}
                   </label>
                   <input
                     ref={register}
-                    id="required"
-                    name="required"
+                    id="apiScope.required"
+                    name="apiScope.required"
                     defaultChecked={props.apiScope.required}
                     type="checkbox"
                     className="api-scope-form__checkbox"
@@ -316,15 +441,15 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
 
                   <div className="api-scope-form__container__checkbox__field">
                     <label
-                      htmlFor="grantToLegalGuardians"
+                      htmlFor="apiScope.grantToLegalGuardians"
                       className="api-scope-form__label"
                     >
                       {localization.fields['grantToLegalGuardians'].label}
                     </label>
                     <input
                       ref={register}
-                      id="grantToLegalGuardians"
-                      name="grantToLegalGuardians"
+                      id="apiScope.grantToLegalGuardians"
+                      name="apiScope.grantToLegalGuardians"
                       type="checkbox"
                       defaultChecked={props.apiScope.grantToLegalGuardians}
                       className="api-scope-form__checkbox"
@@ -341,15 +466,15 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
 
                   <div className="api-scope-form__container__checkbox__field">
                     <label
-                      htmlFor="grantToProcuringHolders"
+                      htmlFor="apiScope.grantToProcuringHolders"
                       className="api-scope-form__label"
                     >
                       {localization.fields['grantToProcuringHolders'].label}
                     </label>
                     <input
                       ref={register}
-                      id="grantToProcuringHolders"
-                      name="grantToProcuringHolders"
+                      id="apiScope.grantToProcuringHolders"
+                      name="apiScope.grantToProcuringHolders"
                       type="checkbox"
                       defaultChecked={props.apiScope.grantToProcuringHolders}
                       className="api-scope-form__checkbox"
@@ -365,7 +490,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   </div>
                   <div className="api-scope-form__container__checkbox__field">
                     <label
-                      htmlFor="allowExplicitDelegationGrant"
+                      htmlFor="apiScope.allowExplicitDelegationGrant"
                       className="api-scope-form__label"
                     >
                       {
@@ -375,8 +500,8 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     </label>
                     <input
                       ref={register}
-                      id="allowExplicitDelegationGrant"
-                      name="allowExplicitDelegationGrant"
+                      id="apiScope.allowExplicitDelegationGrant"
+                      name="apiScope.allowExplicitDelegationGrant"
                       type="checkbox"
                       defaultChecked={
                         props.apiScope.allowExplicitDelegationGrant
@@ -396,15 +521,15 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   </div>
                   <div className="api-scope-form__container__checkbox__field">
                     <label
-                      htmlFor="automaticDelegationGrant"
+                      htmlFor="apiScope.automaticDelegationGrant"
                       className="api-scope-form__label"
                     >
                       {localization.fields['automaticDelegationGrant'].label}
                     </label>
                     <input
                       ref={register}
-                      id="automaticDelegationGrant"
-                      name="automaticDelegationGrant"
+                      id="apiScope.automaticDelegationGrant"
+                      name="apiScope.automaticDelegationGrant"
                       type="checkbox"
                       defaultChecked={props.apiScope.automaticDelegationGrant}
                       className="api-scope-form__checkbox"
@@ -421,15 +546,15 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
 
                   <div className="api-scope-form__container__checkbox__field">
                     <label
-                      htmlFor="alsoForDelegatedUser"
+                      htmlFor="apiScope.alsoForDelegatedUser"
                       className="api-scope-form__label"
                     >
                       {localization.fields['alsoForDelegatedUser'].label}
                     </label>
                     <input
                       ref={register}
-                      id="alsoForDelegatedUser"
-                      name="alsoForDelegatedUser"
+                      id="apiScope.alsoForDelegatedUser"
+                      name="apiScope.alsoForDelegatedUser"
                       type="checkbox"
                       defaultChecked={props.apiScope.alsoForDelegatedUser}
                       className="api-scope-form__checkbox"

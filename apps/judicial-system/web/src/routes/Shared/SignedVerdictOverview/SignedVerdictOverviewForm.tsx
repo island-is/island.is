@@ -38,7 +38,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import AppealSection from './Components/AppealSection/AppealSection'
-import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
+import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
@@ -93,7 +93,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
       theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
       theCase.type === CaseType.TRAVEL_BAN
 
-    if (theCase.isCustodyEndDateInThePast) {
+    if (theCase.isValidToDateInThePast) {
       return isTravelBan ? 'Farbanni lokið' : 'Gæsluvarðhaldi lokið'
     }
 
@@ -112,19 +112,19 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
       theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
       theCase.type === CaseType.TRAVEL_BAN
 
-    if (theCase.isCustodyEndDateInThePast) {
+    if (theCase.isValidToDateInThePast) {
       return `${
         isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
-      } rann út ${formatDate(theCase.custodyEndDate, 'PPP')} kl. ${formatDate(
-        theCase.custodyEndDate,
+      } rann út ${formatDate(theCase.validToDate, 'PPP')} kl. ${formatDate(
+        theCase.validToDate,
         TIME_FORMAT,
       )}`
     }
 
     return `${
       isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
-    } til ${formatDate(theCase.custodyEndDate, 'PPP')} kl. ${formatDate(
-      theCase.custodyEndDate,
+    } til ${formatDate(theCase.validToDate, 'PPP')} kl. ${formatDate(
+      theCase.validToDate,
       TIME_FORMAT,
     )}`
   }

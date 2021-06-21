@@ -6,6 +6,7 @@ import {
   childrenResidenceInfo,
   formatAddress,
   getSelectedChildrenFromExternalData,
+  sortChildrenByAge,
 } from '@island.is/application/templates/family-matters-core/utils'
 import { contract } from '../../lib/messages'
 
@@ -33,7 +34,7 @@ const TransferOverview = ({ application }: Props) => {
             count: children.length,
           })}
         </Text>
-        {children.map((child) => (
+        {sortChildrenByAge(children).map((child) => (
           <Text key={child.nationalId}>{child.fullName}</Text>
         ))}
       </Box>

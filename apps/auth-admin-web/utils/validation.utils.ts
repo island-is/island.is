@@ -2,7 +2,14 @@
 class ValidationUtils {
   public static emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 
-  public static identifierPattern = /^[@a-zA-Z0-9_.-]*$/
+  public static identifierPattern = /^[a-zA-Z0-9_.-]*$/
+
+  /** Pattern that enforeces @domain.is or @domain2-_2.is */
+  public static domainPattern = /@{1}[a-z0-9_-]*[.]?[a-z]*$/
+
+  /** Pattern that enforces input to @[domain.is] or @[domain.is][/[paths]]*
+   */
+  public static clientIdPattern = /^@{1}[a-z0-9_.-]*([/]*[a-z0-9_\.-])+$/
 
   /** Pattern for illegal characters in description */
   public static descriptionPattern = /[<>%\$]/
@@ -13,10 +20,15 @@ class ValidationUtils {
 
   public static baseUrlPattern = /^http.+(?<!\/)$/
 
+  public static uriPattern = /^.+(?<!\/)$/
+
   public static nationalIdPattern = /^[0-9]*$/
 
-  /** Pattern for illegal characters in scope name */
-  public static scopePattern = /[<>%\$]/
+  /** Pattern that enforces input to @[domain.is] or @[domain.is][/[optionalPaths]/[path:optionalAction]]*
+   */
+  public static apiScopePattern = /^@[a-z\.]*[/]([a-z][:/]?)*[a-z]+$/
+
+  public static scopePattern = /^@([\w-])$/
 
   public static validateEmail(input: string): boolean {
     if (input.length === 0) {
@@ -26,7 +38,39 @@ class ValidationUtils {
     return regex.test(input)
   }
 
+  public static validateDomain(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+    const regex = new RegExp(ValidationUtils.domainPattern)
+    return regex.test(input)
+  }
+
   public static validateIdentifier(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+    const regex = new RegExp(ValidationUtils.identifierPattern)
+    return regex.test(input)
+  }
+
+  public static validateClientId(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+    const regex = new RegExp(ValidationUtils.clientIdPattern)
+    return regex.test(input)
+  }
+
+  public static validateApiResourceName(input: string): boolean {
+    if (input.length === 0) {
+      return true
+    }
+    const regex = new RegExp(ValidationUtils.clientIdPattern)
+    return regex.test(input)
+  }
+
+  public static validateIdentityResourceName(input: string): boolean {
     if (input.length === 0) {
       return true
     }
@@ -48,6 +92,11 @@ class ValidationUtils {
     }
 
     const regex = new RegExp(ValidationUtils.urlPattern)
+    return regex.test(input)
+  }
+
+  public static validateUri(input: string): boolean {
+    const regex = new RegExp(ValidationUtils.uriPattern)
     return regex.test(input)
   }
 
@@ -81,7 +130,12 @@ class ValidationUtils {
       return true
     }
     const regex = new RegExp(ValidationUtils.scopePattern)
-    return !regex.test(input)
+    return regex.test(input)
+  }
+
+  public static validateApiScope(input: string): boolean {
+    const regex = new RegExp(ValidationUtils.apiScopePattern)
+    return regex.test(input)
   }
 }
 export default ValidationUtils

@@ -24,6 +24,8 @@ const JCASelectChildren = ({
         description: selectChildren.general.description,
         ineligible: selectChildren.ineligible.text,
         checkBoxSubLabel: selectChildren.checkboxes.subLabel,
+        // TODO: fix this translation
+        soleCustodySubLabel: selectChildren.checkboxes.subLabel,
       }}
     />
   )

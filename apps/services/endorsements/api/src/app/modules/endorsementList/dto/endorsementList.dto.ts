@@ -4,13 +4,13 @@ import {
   IsString,
   ValidateNested,
   IsArray,
+  IsObject,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ValidationRuleDto } from './validationRule.dto'
-import { EndorsementTag } from '../endorsementList.model'
-
 import { ApiProperty } from '@nestjs/swagger'
 import { EndorsementMetaField } from '../../endorsementMetadata/types'
+import { EndorsementTag } from '../constants'
 export class EndorsementListDto {
   @ApiProperty()
   @IsString()
@@ -19,24 +19,29 @@ export class EndorsementListDto {
   @ApiProperty({ type: String, nullable: true })
   @IsOptional()
   @IsString()
-  description: string | null = null
+  description = ''
 
-  @ApiProperty({ enum: EndorsementMetaField, isArray: true })
+  @ApiProperty({ enum: EndorsementMetaField, isArray: true, nullable: true })
   @IsOptional()
   @IsArray()
   @IsEnum(EndorsementMetaField, { each: true })
   endorsementMeta = [] as EndorsementMetaField[]
 
-  @ApiProperty({ enum: EndorsementTag, isArray: true })
+  @ApiProperty({ enum: EndorsementTag, isArray: true, nullable: true })
   @IsOptional()
   @IsArray()
   @IsEnum(EndorsementTag, { each: true })
   tags = [] as EndorsementTag[]
 
-  @ApiProperty({ type: [ValidationRuleDto] })
+  @ApiProperty({ type: [ValidationRuleDto], nullable: true })
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => ValidationRuleDto)
   @IsArray()
   validationRules = [] as ValidationRuleDto[]
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsObject()
+  meta: object = {}
 }
