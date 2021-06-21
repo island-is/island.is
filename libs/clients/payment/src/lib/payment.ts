@@ -20,8 +20,6 @@ export class PaymentAPI extends RESTDataSource {
       xRoadBaseUrl,
       xRoadProviderId,
     } = this.options
-
-
     this.baseURL = `${xRoadBaseUrl}/r1/${xRoadProviderId}/catalog/`
     this.initialize({} as DataSourceConfig<any>)
   }
@@ -47,7 +45,6 @@ export class PaymentAPI extends RESTDataSource {
   }
 
   getCatalogByPerformingOrg(performingOrganizationID: string) {
-    console.log('payment api service')
     const response = this.get<Catalog>(
       `catalog/catalog/performingOrg/${performingOrganizationID}`,
     )
