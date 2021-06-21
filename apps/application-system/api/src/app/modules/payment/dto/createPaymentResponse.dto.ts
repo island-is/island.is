@@ -5,6 +5,7 @@ import {
 } from 'class-validator'
 
 export class CreatePaymentResponseDto {
+  @ApiProperty()
   @Expose()
   @IsString()
   id!: string

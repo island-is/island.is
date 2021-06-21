@@ -42,8 +42,7 @@ export class PayableDummyTemplateService {
           performerNationalID: applicant,
           // TODO: sýslumannskennitala - rvk
           performingOrgID: payment.performingOrgID,
-        },
-        id,
+        }
       )
       .catch((e) => {
         console.error(e)

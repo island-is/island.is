@@ -31,6 +31,7 @@ import { RequestFileSignatureResponse } from './dto/requestFileSignature.respons
 import { PresignedUrlResponse } from './dto/presignedUrl.response'
 import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
 
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class ApplicationResolver {
