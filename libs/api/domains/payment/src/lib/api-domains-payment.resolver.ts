@@ -4,6 +4,7 @@ import { UseGuards } from '@nestjs/common'
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { PaymentAPI } from '@island.is/clients/payment'
 import { PaymentCatalogResponse } from './models/index'
+import { PaymentCatalogInput } from './dto/paymentCatalogInput.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -12,10 +13,11 @@ export class PaymentResolver {
 
   @Query(() => PaymentCatalogResponse)
   async paymentCatalog(
-    @Args('performingOrganizationID') performingOrganizationID?: string,
+    //@Args('performingOrganizationID') performingOrganizationID?: string,
+    @Args('input', { type: () => PaymentCatalogInput }) input: PaymentCatalogInput,
   ): Promise<PaymentCatalogResponse> {
-    const data = await (performingOrganizationID
-      ? this.paymentService.getCatalogByPerformingOrg(performingOrganizationID)
+    const data = await (input.performingOrganizationID
+      ? this.paymentService.getCatalogByPerformingOrg(input.performingOrganizationID)
       : await this.paymentService.getCatalog())
 
     return {
