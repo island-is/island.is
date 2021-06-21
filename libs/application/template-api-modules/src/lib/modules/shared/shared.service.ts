@@ -122,7 +122,6 @@ export class SharedTemplateApiService {
 
   async createCharge(
     charge: BaseCharge,
-    applicationId: string,
   ): Promise<ChargeResult> {
     return this.paymentService.createCharge(charge)
   }

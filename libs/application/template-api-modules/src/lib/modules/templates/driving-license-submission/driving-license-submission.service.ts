@@ -50,9 +50,7 @@ export class DrivingLicenseSubmissionService {
           performerNationalID: applicant,
           // TODO: sýslumannskennitala - rvk
           performingOrgID: payment.performingOrgID,
-        },
-        id,
-      )
+        })
       .catch((e) => {
         console.error(e)
 

@@ -92,11 +92,8 @@ export class ApplicationPayment {
 @ObjectType()
 export class ApplicationPaymentCharge {
   @Field()
-  receptionID?: string
+  id!: string
 
   @Field()
-  user4?: string
-
-  @Field()
-  paymentUrl?: string
+  paymentUrl!: string
 }

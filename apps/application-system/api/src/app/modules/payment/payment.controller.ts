@@ -24,7 +24,7 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
-import { Audit, AuditService } from '@island.is/nest/audit'
+import { AuditService } from '@island.is/nest/audit'
 import {
   CreateChargeDto,
   CreatePaymentResponseDto,
@@ -93,7 +93,7 @@ export class PaymentController {
 
     const payment = await this.paymentModel.create(paymentDto)
 
-    const chargeResult = this.paymentService.createCharge(payment, user)
+    const chargeResult = await this.paymentService.createCharge(payment, user)
 
     this.auditService.audit({
       user,
@@ -104,7 +104,7 @@ export class PaymentController {
 
     return {
       id: payment.id,
-      paymentUrl: (await chargeResult).paymentUrl,
+      paymentUrl: chargeResult.paymentUrl,
     }
   }
 

@@ -4,7 +4,6 @@ import { DataSourceConfig } from 'apollo-datasource'
 import { Base64 } from 'js-base64'
 import {
   ChargeResponse,
-  Charge,
   Catalog,
   PaymentServiceOptions,
   PAYMENT_OPTIONS,
