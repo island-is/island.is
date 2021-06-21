@@ -81,6 +81,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
     },
     fetchPolicy: 'no-cache',
   })
+
   // TODO: Handle case when resSignatureConfirmationResponse is never set
   const resSignatureConfirmationResponse = data?.signatureConfirmation
 
@@ -89,20 +90,26 @@ const SigningModal: React.FC<SigningModalProps> = ({
       resSignatureConfirmationResponse: SignatureConfirmationResponse,
     ) => {
       if (resSignatureConfirmationResponse.documentSigned) {
-        const caseCompleted =
-          workingCase.state === CaseState.RECEIVED
-            ? await transitionCase(
-                workingCase,
-                workingCase.decision === CaseDecision.REJECTING
-                  ? CaseTransition.REJECT
-                  : CaseTransition.ACCEPT,
-                setWorkingCase,
-              )
-            : workingCase.state === CaseState.REJECTED ||
-              workingCase.state === CaseState.ACCEPTED
+        try {
+          const caseCompleted =
+            workingCase.state === CaseState.RECEIVED
+              ? await transitionCase(
+                  workingCase,
+                  workingCase.decision === CaseDecision.REJECTING
+                    ? CaseTransition.REJECT
+                    : CaseTransition.ACCEPT,
+                  setWorkingCase,
+                )
+              : workingCase.state === CaseState.REJECTED ||
+                workingCase.state === CaseState.ACCEPTED
 
-        if (caseCompleted) {
-          await sendNotification(workingCase.id, NotificationType.RULING)
+          if (caseCompleted) {
+            await sendNotification(workingCase.id, NotificationType.RULING)
+          } else {
+            // TODO: Handle error
+          }
+        } catch (e) {
+          // TODO: Handle error
         }
       }
 
@@ -112,12 +119,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
     if (resSignatureConfirmationResponse) {
       completeSigning(resSignatureConfirmationResponse)
     }
-  }, [
-    resSignatureConfirmationResponse,
-    setSignatureConfirmationResponse,
-    transitionCase,
-    sendNotification,
-  ])
+  }, [resSignatureConfirmationResponse, setSignatureConfirmationResponse])
 
   const renderControlCode = () => {
     return (
