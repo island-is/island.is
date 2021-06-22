@@ -8,11 +8,11 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { State } from '@island.is/financial-aid/shared'
+import { ApplicationState } from '@island.is/financial-aid/shared'
 
 export class UpdateApplicationDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly state: State
+  readonly state: ApplicationState
 }

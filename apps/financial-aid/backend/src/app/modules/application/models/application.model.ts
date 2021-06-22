@@ -12,7 +12,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   HomeCircumstances,
   Employment,
-  State,
+  ApplicationState,
 } from '@island.is/financial-aid/shared'
 
 @Table({
@@ -161,8 +161,8 @@ export class ApplicationModel extends Model<ApplicationModel> {
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: Object.values(State),
+    values: Object.values(ApplicationState),
   })
-  @ApiProperty({ enum: State })
-  state: State
+  @ApiProperty({ enum: ApplicationState })
+  state: ApplicationState
 }

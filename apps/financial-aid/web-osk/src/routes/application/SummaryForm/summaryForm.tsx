@@ -48,7 +48,7 @@ import {
   formatPhoneNumber,
   formatNationalId,
   aidCalculator,
-  State,
+  ApplicationState,
 } from '@island.is/financial-aid/shared'
 
 import dateAmounts from '@island.is/financial-aid-web/osk/src/utils/dateAmounts.json'
@@ -107,7 +107,7 @@ const SummaryForm = () => {
           employment: form?.employment,
           employmentCustom: form?.employmentCustom,
           formComment: form?.formComment,
-          state: State.NEW,
+          state: ApplicationState.NEW,
         },
       },
     })

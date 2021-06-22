@@ -2,7 +2,10 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import { UpdateApplication, State } from '@island.is/financial-aid/shared'
+import {
+  UpdateApplication,
+  ApplicationState,
+} from '@island.is/financial-aid/shared'
 
 @InputType()
 export class UpdateApplicationInput implements UpdateApplication {
@@ -12,5 +15,5 @@ export class UpdateApplicationInput implements UpdateApplication {
 
   @Allow()
   @Field(() => String)
-  readonly state!: State
+  readonly state!: ApplicationState
 }

@@ -4,7 +4,7 @@ import {
   Application,
   HomeCircumstances,
   Employment,
-  State,
+  ApplicationState,
 } from '@island.is/financial-aid/shared'
 
 @ObjectType()
@@ -70,5 +70,5 @@ export class ApplicationModel implements Application {
   readonly formComment?: string
 
   @Field(() => String)
-  readonly state!: State
+  readonly state!: ApplicationState
 }

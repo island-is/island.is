@@ -11,7 +11,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   HomeCircumstances,
   Employment,
-  State,
+  ApplicationState,
 } from '@island.is/financial-aid/shared'
 
 export class CreateApplicationDto {
@@ -103,5 +103,5 @@ export class CreateApplicationDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly state: State
+  readonly state: ApplicationState
 }
