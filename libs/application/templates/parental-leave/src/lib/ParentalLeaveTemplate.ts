@@ -31,7 +31,7 @@ import {
   hasEmployer,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
-import { getSelectedChild } from '../lib/parentalLeaveUtils'
+import { getOtherParentId, getSelectedChild } from '../lib/parentalLeaveUtils'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -55,6 +55,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: parentalLeaveFormMessages.shared.name,
   institution: parentalLeaveFormMessages.shared.institution,
+  readyForProduction: true,
   translationNamespaces: [ApplicationConfigurations.ParentalLeave.translation],
   dataSchema,
   stateMachineConfig: {
@@ -647,15 +648,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       assignToOtherParent: assign((context) => {
         const { application } = context
-        const { answers } = application
-        const otherParentId = getValueViaPath(answers, 'otherParentId')
+        const otherParentId = getOtherParentId(application)
 
         if (
           otherParentId !== undefined &&
           otherParentId !== '' &&
           needsOtherParentApproval(context)
         ) {
-          set(application, 'assignees', [answers.otherParentId])
+          set(application, 'assignees', [otherParentId])
         }
 
         return context
