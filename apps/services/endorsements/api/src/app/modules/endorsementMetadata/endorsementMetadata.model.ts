@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { EndorsementTag } from '../endorsementList/constants'
-import { TemporaryVoterRegistryResponse } from './providers/temporaryVoterRegistry/temporaryVoterRegistry.service'
+import type { TemporaryVoterRegistryResponse } from './providers/temporaryVoterRegistry/temporaryVoterRegistry.service'
 
 export class EndorsementMetadata {
   @ApiProperty()
