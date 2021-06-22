@@ -272,8 +272,10 @@ export class DocumentProviderResolver {
   @Query(() => ProviderStatistics)
   async getStatisticsTotal(
     @Args('input', { nullable: true }) input: StatisticsInput,
+    @CurrentUser() user: User,
   ): Promise<ProviderStatistics> {
     return this.documentProviderService.getStatisticsTotal(
+      user,
       input?.organisationId,
       input?.fromDate,
       input?.toDate,
