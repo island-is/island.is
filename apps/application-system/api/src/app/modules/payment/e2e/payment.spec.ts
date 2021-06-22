@@ -9,14 +9,13 @@ import { PaymentAPI } from '@island.is/clients/payment'
 let app: INestApplication
 
 class MockPaymentApi {
-  async createCharge () {
+  async createCharge() {
     return {
       user4: 'user4',
       receptionID: 'receptionid',
     }
   }
 }
-
 
 const nationalId = '1234564321'
 let server: request.SuperTest<request.Test>
