@@ -15,6 +15,12 @@ export const policeDemandsForm = {
       defaultMessage: 'Gildistími heimildar',
       description: 'Police Demands form Request valid to date: Heading',
     },
+    tooltip: {
+      id: 'judicial.system:forms.policeDemands.requestToDate.tooltip',
+      defaultMessage:
+        'Ef rannsókn á að fara fram yfir ákveðið tímabil er hægt að slá inn gildistíma heimildar hér.',
+      description: 'Police Demands form Request valid to date: Tooltip',
+    },
     dateLabel: {
       id: 'judicial.system:forms.policeDemands.requestToDate.dateLabel',
       defaultMessage: 'Heimild gildir til:',
