@@ -1,4 +1,5 @@
 import {
+  Application,
   buildCustomField,
   buildDataProviderItem,
   buildDescriptionField,
@@ -75,11 +76,11 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   format: '######-####',
                   backgroundColor: 'blue',
                   disabled: true,
-                  required: true,
                   width: 'half',
-                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
-                    application.externalData?.nationalRegistry?.data
-                      ?.nationalId,
+                  defaultValue: (application: Application) =>
+                    (application.externalData.nationalRegistry?.data as {
+                      nationalId?: string
+                    })?.nationalId,
                 }),
                 buildTextField({
                   id: 'information.address',

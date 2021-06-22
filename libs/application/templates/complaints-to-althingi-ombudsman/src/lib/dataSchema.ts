@@ -31,7 +31,13 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   }),
   information: z.object({
     name: z.string().nonempty(error.required.defaultMessage),
-    ssn: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+    ssn: z.string().refine(
+      (x) => {
+        console.log(error.required)
+        return x ? kennitala.isPerson(x) : false
+      },
+      { params: error.required },
+    ),
     address: z.string().nonempty(error.required.defaultMessage),
     postcode: z.string().nonempty(error.required.defaultMessage),
     city: z.string().nonempty(error.required.defaultMessage),
