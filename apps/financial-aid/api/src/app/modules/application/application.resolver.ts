@@ -38,9 +38,9 @@ export class ApplicationResolver {
     input: ApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Application> {
-    this.logger.debug(`Getting applicant ${input.id}`)
+    this.logger.debug(`Getting application ${input.id}`)
 
-    return backendApi.getApplicant(input.id)
+    return backendApi.getApplication(input.id)
   }
 
   @Mutation(() => ApplicationModel, { nullable: true })
@@ -61,6 +61,8 @@ export class ApplicationResolver {
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Application> {
     const { id, ...updateApplication } = input
+
+    this.logger.debug(`updating application ${id}`)
 
     return backendApi.updateApplication(id, updateApplication)
   }

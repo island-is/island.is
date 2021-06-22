@@ -23,7 +23,7 @@ class BackendAPI extends RESTDataSource {
   getApplications(): Promise<Application[]> {
     return this.get('applications')
   }
-  getApplicant(id: string): Promise<Application> {
+  getApplication(id: string): Promise<Application> {
     return this.get(`applications/${id}`)
   }
 
