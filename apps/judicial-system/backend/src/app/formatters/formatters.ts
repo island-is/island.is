@@ -207,18 +207,11 @@ export function formatProsecutorCourtDateEmailNotification(
   courtDate: Date,
   courtRoom: string,
   defenderName: string,
-  spokespersonName: string,
 ): string {
   const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
   const defenderText = defenderName
-    ? `<br /><br />Verjandi sakbornings: ${defenderName}.`
-    : '<br /><br />Verjandi sakbornings hefur ekki verið skráður.'
-  const spokespersonText =
-    type === CaseType.CUSTODY || type === CaseType.TRAVEL_BAN
-      ? ''
-      : spokespersonName
-      ? `<br /><br />Talsmaður sakbornings: ${spokespersonName}.`
-      : '<br /><br />Talsmaður sakbornings hefur ekki verið skráður.'
+    ? `Verjandi sakbornings: ${defenderName}`
+    : 'Verjandi sakbornings hefur ekki verið skráður'
 
   const scheduledCaseText =
     type === CaseType.CUSTODY
@@ -229,7 +222,7 @@ export function formatProsecutorCourtDateEmailNotification(
       ? 'kröfu um rannsóknarheimild'
       : `kröfu um rannsóknarheimild (${caseTypes[type]})`
 
-  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />Dómsalur: ${courtRoom}.${defenderText}${spokespersonText}`
+  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />${defenderText}.`
 }
 
 export function formatPrisonCourtDateEmailNotification(
@@ -285,11 +278,11 @@ export function formatDefenderCourtDateEmailNotification(
 export function formatCourtDateNotificationCondition(
   courtDate: Date,
   defenderEmail: string,
-  spokespersonEmail: string,
 ): string {
-  return `courtDate=${formatDate(courtDate, 'Pp')}${
-    defenderEmail ? `,defenderEmail=${defenderEmail}` : ''
-  }${spokespersonEmail ? `,spokespersonEmail=${spokespersonEmail}` : ''}`
+  return `courtDate=${formatDate(
+    courtDate,
+    'Pp',
+  )},defenderEmail=${defenderEmail}`
 }
 
 export function formatPrisonRulingEmailNotification(

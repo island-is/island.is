@@ -327,7 +327,6 @@ export class NotificationService {
       existingCase.courtDate,
       existingCase.courtRoom,
       existingCase.defenderName,
-      existingCase.spokespersonName,
     )
 
     return this.sendEmail(
@@ -409,7 +408,6 @@ export class NotificationService {
     const condition = formatCourtDateNotificationCondition(
       existingCase.courtDate,
       existingCase.defenderEmail,
-      existingCase.spokespersonEmail,
     )
 
     const notifications = await this.notificationModel.findAll({
