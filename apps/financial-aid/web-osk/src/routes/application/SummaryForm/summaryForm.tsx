@@ -252,7 +252,7 @@ const SummaryForm = () => {
                 {aidAmount &&
                   calulatePersonalTaxAllowanceUsed(
                     aidAmount,
-                    form?.usePersonalTaxCredit,
+                    Boolean(form?.usePersonalTaxCredit),
                     currentYear,
                   ).toLocaleString('de-DE')}{' '}
                 kr.
@@ -273,7 +273,7 @@ const SummaryForm = () => {
                 {aidAmount !== undefined
                   ? calculateAidFinalAmount(
                       aidAmount,
-                      form?.usePersonalTaxCredit,
+                      Boolean(form?.usePersonalTaxCredit),
                       currentYear,
                     ).toLocaleString('de-DE') + ' kr.'
                   : 'Abbabb.. mistókst að reikna'}

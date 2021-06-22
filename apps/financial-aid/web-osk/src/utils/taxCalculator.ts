@@ -13,7 +13,7 @@ export interface TaxInfo {
 
 export const calculateAidFinalAmount = (
   amount: number,
-  usePersonalTaxAllowance: boolean | undefined,
+  usePersonalTaxAllowance: boolean,
   currentYear: string,
 ): number => {
   var taxInfoYear: TaxInfoYear = _taxInfo
@@ -48,7 +48,7 @@ export const calulateTaxOfAmount = (
 
 export const calulatePersonalTaxAllowanceUsed = (
   amount: number,
-  usePersonalTaxAllowance: boolean | undefined,
+  usePersonalTaxAllowance: boolean,
   currentYear: string,
 ): number => {
   var taxInfoYear: TaxInfoYear = _taxInfo

@@ -32,6 +32,7 @@ const EmailForm = () => {
       setHasError(true)
       return
     }
+
     if (!isValid(form?.emailAddress)) {
       setHasError(true)
       return

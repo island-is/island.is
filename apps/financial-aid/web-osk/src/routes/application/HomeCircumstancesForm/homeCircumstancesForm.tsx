@@ -63,7 +63,9 @@ const HomeCircumstancesForm = () => {
       updateForm({ ...form, homeCircumstancesCustom: '' })
     }
 
-    router.push(navigation?.nextUrl ?? '')
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
   }
 
   return (
