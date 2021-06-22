@@ -7,11 +7,16 @@ export const complainee = {
       defaultMessage: 'Hverjum beinist kvörtunin að?',
       description: 'Definition of complainee page title',
     },
-    contitions: {
-      id: `ctao.application:complainee.contitions`,
+    conditionsText: {
+      id: `ctao.application:complainee.conditionsText`,
       defaultMessage:
         'Hlutverk umboðsmanns Alþingis er að hafa eftirlit með stjórnsýslu ríkis og sveitarfélaga. Þess vegna er ekki hægt að kvarta til umboðsmanns yfir Alþingi, dómstólum og einkaaðilum nema í afmörkuðum tilvikum þegar einkaaðilum hefur verið falið opinbert vald til að taka svokallaðar stjórnvaldsákvarðanir. Eitt af skilyrðunum fyrir því að umboðsmaður Alþingis geti tekið kvörtun til meðferðar er æðra stjórnvald hafi fellt úrskurð sinn í málinu eða að kæruleiðir innan stjórnsýslunnar séu að öðru leyti tæmdar.',
       description: 'Definition of complainee conditions message',
+    },
+    conditionsTitle: {
+      id: 'ctao.application:complainee.conditionsTitle',
+      defaultMessage: 'Athugið',
+      description: 'Defination of complainee conditions title',
     },
     complaineeNameGovernment: {
       id: 'ctao.application:complainee.complaineeNameGovernment',

@@ -134,7 +134,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 buildCustomField({
                   id: 'complaineeContitions',
                   component: 'ComplaineeConditions',
-                  title: 'Athugið',
+                  title: complainee.general.conditionsTitle,
                   condition: (answers) =>
                     answers.complainee === ComplaineeTypes.GOVERNMENT,
                 }),

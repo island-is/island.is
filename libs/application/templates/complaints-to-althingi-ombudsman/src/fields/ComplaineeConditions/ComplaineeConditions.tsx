@@ -17,7 +17,7 @@ export const ComplaineeConditions: FC<FieldBaseProps> = ({
         type="info"
         title={formatText(title, application, formatMessage)}
         message={formatText(
-          complainee.general.contitions,
+          complainee.general.conditionsText,
           application,
           formatMessage,
         )}
