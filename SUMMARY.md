@@ -165,7 +165,7 @@
   - [National Registry Clients](libs/clients/national-registry/README.md)
     - [Clients National Registry V1](libs/clients/national-registry/v1/README.md)
     - [Clients National Registry V2](libs/clients/national-registry/v2/README.md)
-  - [Rsk](libs/clients/payment/README.md)
+  - [Ark](libs/clients/payment/README.md)
   - [Regulations](libs/clients/regulations/README.md)
     - [Rsk](libs/clients/rsk/v1/README.md)
     - [RSK V2](libs/clients/rsk/v2/README.md)
