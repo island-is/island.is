@@ -2,6 +2,7 @@ import differenceInMinutes from 'date-fns/differenceInMinutes'
 import differenceInHours from 'date-fns/differenceInHours'
 import differenceInDays from 'date-fns/differenceInDays'
 import differenceInYears from 'date-fns/differenceInYears'
+import { State } from '@island.is/financial-aid/shared'
 
 export const calcDifferenceInDate = (dateCreated: string | undefined) => {
   if (dateCreated) {
@@ -16,10 +17,7 @@ export const calcDifferenceInDate = (dateCreated: string | undefined) => {
   }
 }
 
-export const insertAt = (str: string, sub: string, pos: number) =>
-  `${str.slice(0, pos)}${sub}${str.slice(pos)}`
-
-export const translateMonth = (mon: number) => {
+export const translateMonth = (mon: string) => {
   const months = [
     'Janúar',
     'Febrúar',
@@ -34,7 +32,7 @@ export const translateMonth = (mon: number) => {
     'Nóvember',
     'Desember',
   ]
-  return months.filter((el, i) => i == mon - 1)[0]
+  return months.filter((el, i) => i == parseInt(mon) - 1)[0]
 }
 
 export const calcAge = (ssn: string) => {
@@ -52,4 +50,37 @@ export const calcAge = (ssn: string) => {
 
 export const getFileType = (fileName: string) => {
   return fileName.substring(fileName.lastIndexOf('.') + 1)
+}
+
+export const navLinks = (
+  filterBy?: 'label' | 'link' | 'state',
+  filter?: string | undefined,
+) => {
+  const links = [
+    {
+      label: 'Ný mál',
+      link: '/nymal',
+      state: [State.NEW],
+      headers: ['Nafn', 'Staða', 'Tími án umsjár', 'Tímabil'],
+    },
+    {
+      label: 'Í vinnslu',
+      link: '/vinnslu',
+      state: [State.INPROGRESS],
+      headers: ['Nafn', 'Staða', 'Síðast uppfært', 'Tímabil'],
+    },
+    {
+      label: 'Afgreidd mál',
+      link: '/afgreidd',
+      state: [State.APPROVED, State.REJECTED],
+      headers: ['Nafn', 'Staða', 'Úrlausnartími', 'Tímabil'],
+    },
+  ]
+  if (filterBy === 'state') {
+    return links.filter((i) => i[filterBy].includes(filter as State))[0]
+  } else if (filterBy) {
+    return links.filter((i) => i[filterBy] === filter)[0]
+  } else {
+    return links
+  }
 }

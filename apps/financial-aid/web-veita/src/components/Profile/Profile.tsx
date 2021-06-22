@@ -14,30 +14,42 @@ import cn from 'classnames'
 
 interface Props {
   heading: string
-  info: [
-    {
-      title: string
-      content: string
-      link: string
-      other: string
-    },
-  ]
+  info: {
+    title: string
+    content?: string
+    link?: string
+    other?: string
+  }[]
+  className?: string
 }
 
-const Profile: React.FC<Props> = ({ heading, info }) => {
+const Profile: React.FC<Props> = ({ heading, info, className }) => {
   const router = useRouter()
   // const { isAuthenticated, setUser, user } = useContext(UserContext)
 
   return (
     <>
       {' '}
-      <Text as="h2" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
-        {heading}
-      </Text>
-      <div className={styles.container}>
-        {info.map((item) => {
+      <Box
+        className={cn({
+          [`${styles.headings}`]: true,
+          [`${className}`]: true,
+        })}
+        marginBottom={[2, 2, 3]}
+      >
+        <Text as="h2" variant="h3" color="dark300">
+          {heading}
+        </Text>
+      </Box>
+      <div
+        className={cn({
+          [`${styles.container}`]: true,
+          [`${className}`]: true,
+        })}
+      >
+        {info.map((item, index) => {
           return (
-            <Box>
+            <Box key={'profile-' + index}>
               <Text variant="eyebrow" marginBottom={1}>
                 {item.title}
               </Text>

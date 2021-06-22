@@ -14,6 +14,7 @@ export const container = style({
   paddingBottom: theme.spacing[7],
   display: 'none',
   gridTemplateRows: 'max-content auto max-content',
+  alignItems: 'center',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       display: 'grid',
@@ -27,8 +28,6 @@ export const container = style({
 })
 
 export const logoContainer = style({
-  maxWidth: '160px',
-  display: 'flex',
   marginBottom: theme.spacing[8],
 })
 
@@ -37,26 +36,6 @@ export const logoHfjContainer = style({
   gridTemplateColumns: 'max-content auto',
   alignItems: 'center',
   columnGap: theme.spacing[2],
-  marginBottom: theme.spacing[8],
-})
-
-export const logoHfj = style({
-  width: theme.spacing[4],
-  height: theme.spacing[6],
-})
-
-export const headline = style({
-  position: 'relative',
-  ':before': {
-    content: '""',
-    position: 'absolute',
-    display: 'block',
-    height: theme.spacing[3],
-    width: '2px',
-    left: '0px',
-    backgroundColor: theme.color.purple200,
-    top: 'calc((100%/2) - 12px)',
-  },
 })
 
 export const otherItems = style({})
@@ -70,4 +49,19 @@ export const link = style({
   display: 'block',
   padding: theme.spacing[1],
   marginBottom: theme.spacing[1],
+  borderRadius: theme.spacing[1],
+  selectors: {
+    '&:hover': {
+      textDecoration: 'none !important',
+    },
+  },
+})
+
+export const linkHoverEffect = style({
+  transition: 'background-color 250ms ease',
+  selectors: {
+    '&:hover': {
+      backgroundColor: theme.color.purple200,
+    },
+  },
 })
