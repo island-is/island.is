@@ -20,12 +20,12 @@ export const getRightButtons = ({
       accessibilityLabel: 'User',
       id: ButtonRegistry.UserButton,
       testID: testIDs.TOPBAR_USER_BUTTON,
-      icon: require('../assets/icons/user.png'),
+      icon: require('../assets/icons/topbar-user.png'),
       iconInsets: {
         left: 8,
       },
       iconBackground: {
-        color: theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100,
+        color: 'transparent',
         cornerRadius: 8,
         width: 32,
         height: 32,
@@ -37,10 +37,10 @@ export const getRightButtons = ({
       testID: testIDs.TOPBAR_NOTIFICATIONS_BUTTON,
       icon:
         unreadCount > 0
-          ? require('../assets/icons/notifications-bell.png')
-          : require('../assets/icons/notifications.png'),
+          ? require('../assets/icons/topbar-notifications-bell.png')
+          : require('../assets/icons/topbar-notifications.png'),
       iconBackground: {
-        color: theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100,
+        color: 'transparent',
         cornerRadius: 8,
         width: 32,
         height: 32,
