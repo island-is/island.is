@@ -17,7 +17,7 @@ class MockPaymentApi {
   }
   async getPaymentStatus() {
     return {
-      fulfilled: true
+      fulfilled: true,
     }
   }
   async getCatalog() {
@@ -59,7 +59,7 @@ describe('Application system payments API', () => {
     expect(response.body.paymentUrl).toBeTruthy()
   })
 
-  it(`GET /application/1234567890/payment-status should return not found`, async() => {
+  it(`GET /application/1234567890/payment-status should return not found`, async () => {
     const response = await server
       .get('/application/1234567890/payment-status')
       .expect(404)
@@ -67,7 +67,7 @@ describe('Application system payments API', () => {
     expect(response.body.fulfilled).toBeFalsy
   })
 
-  it(`GET /application/96b5237b-6896-4154-898d-d8feb01d3dcd/payment-status should get payment fulfilled status`, async() => {
+  it(`GET /application/96b5237b-6896-4154-898d-d8feb01d3dcd/payment-status should get payment fulfilled status`, async () => {
     const response = await server
       .get('/application/96b5237b-6896-4154-898d-d8feb01d3dcd/payment-status')
       .send({
@@ -79,13 +79,15 @@ describe('Application system payments API', () => {
   })
 
   //@Post('applications/:application_id/payment/:id')
-  it(`POST /application/32eee126-6b7f-4fca-b9a0-a3618b3e42bf/payment/6b11dc9f-a694-440e-b3dd-7163b5f34815 should update payment fulfilled`, async() => {
+  it(`POST /application/32eee126-6b7f-4fca-b9a0-a3618b3e42bf/payment/6b11dc9f-a694-440e-b3dd-7163b5f34815 should update payment fulfilled`, async () => {
     const response = await server
-      .post('/application/32eee126-6b7f-4fca-b9a0-a3618b3e42bf/payment/6b11dc9f-a694-440e-b3dd-7163b5f34815')
+      .post(
+        '/application/32eee126-6b7f-4fca-b9a0-a3618b3e42bf/payment/6b11dc9f-a694-440e-b3dd-7163b5f34815',
+      )
       .send({
         applicationId: '32eee126-6b7f-4fca-b9a0-a3618b3e42bf',
         id: '6b11dc9f-a694-440e-b3dd-7163b5f34815',
-        callback: 'www.nice-call-back.island.is'
+        callback: 'www.nice-call-back.island.is',
       })
       .expect(404) //should be 202
     //controller action returns void.
