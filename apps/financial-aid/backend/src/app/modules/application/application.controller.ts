@@ -57,18 +57,18 @@ export class ApplicationController {
   })
   async update(
     @Param('id') id: string,
-    @Body() userToUpdate: UpdateApplicationDto,
+    @Body() applicationToUpdate: UpdateApplicationDto,
   ): Promise<ApplicationModel> {
     const {
       numberOfAffectedRows,
-      updatedApplicant,
-    } = await this.applicationService.update(id, userToUpdate)
+      updatedApplication,
+    } = await this.applicationService.update(id, applicationToUpdate)
 
     if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(`User ${id} does not exist`)
+      throw new NotFoundException(`Application ${id} does not exist`)
     }
 
-    return updatedApplicant
+    return updatedApplication
   }
 
   @Post('application')

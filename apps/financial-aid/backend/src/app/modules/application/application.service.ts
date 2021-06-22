@@ -36,16 +36,16 @@ export class ApplicationService {
     update: UpdateApplicationDto,
   ): Promise<{
     numberOfAffectedRows: number
-    updatedApplicant: ApplicationModel
+    updatedApplication: ApplicationModel
   }> {
     const [
       numberOfAffectedRows,
-      [updatedApplicant],
+      [updatedApplication],
     ] = await this.applicationModel.update(update, {
       where: { id },
       returning: true,
     })
 
-    return { numberOfAffectedRows, updatedApplicant }
+    return { numberOfAffectedRows, updatedApplication }
   }
 }
