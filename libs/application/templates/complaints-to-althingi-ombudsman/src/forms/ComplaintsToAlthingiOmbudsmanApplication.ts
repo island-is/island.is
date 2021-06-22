@@ -15,6 +15,7 @@ import {
 import { ComplaintsToAlthingiOmbudsman } from '../lib/dataSchema'
 import { ComplaineeTypes } from '../constants'
 import { dataProvider, information, section, complainee } from '../lib/messages'
+import { isGovernmentComplainee } from '../utils'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -146,15 +147,15 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       title: section.complaint,
       children: [
         buildSubSection({
-          id: 'complainee',
+          id: 'complaint.section.complainee',
           title: section.complainee,
           children: [
             buildMultiField({
-              id: 'complainee',
+              id: 'complaint.complainee',
               title: section.complainee,
               children: [
                 buildRadioField({
-                  id: 'complainee',
+                  id: 'complaint.complainee.type',
                   title: '',
                   options: [
                     {
@@ -168,28 +169,32 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   ],
                 }),
                 buildCustomField({
-                  id: 'complaineeContitions',
+                  id: 'complaint.complainee.contitions',
                   component: 'ComplaineeConditions',
                   title: complainee.general.conditionsTitle,
-                  condition: (answers) =>
-                    answers.complainee === ComplaineeTypes.GOVERNMENT,
+                  condition: (answers) => isGovernmentComplainee(answers),
                 }),
               ],
             }),
           ],
         }),
         buildSubSection({
-          id: 'complaineeName',
+          id: 'complaint.section.complaineeName',
           title: section.complaineeName,
           children: [
             buildTextField({
-              id: 'complaineeName',
+              id: 'complaint.complaineeName.government',
               variant: 'textarea',
               required: true,
-              title: (answers) =>
-                answers.answers.complainee === ComplaineeTypes.GOVERNMENT
-                  ? complainee.general.complaineeNameGovernment
-                  : complainee.general.complaineeNameOther,
+              title: complainee.general.complaineeNameGovernment,
+              condition: (answers) => isGovernmentComplainee(answers),
+            }),
+            buildTextField({
+              id: 'complaint.complaineeName.other',
+              variant: 'textarea',
+              required: true,
+              title: complainee.general.complaineeNameOther,
+              condition: (answers) => !isGovernmentComplainee(answers),
             }),
           ],
         }),

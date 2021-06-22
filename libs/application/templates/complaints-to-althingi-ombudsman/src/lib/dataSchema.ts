@@ -29,7 +29,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
       status: z.enum(['success', 'failure']),
     }),
   }),
-  information: z.object({
+  /* information: z.object({
     name: z.string().nonempty(error.required.defaultMessage),
     ssn: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
     address: z.string().nonempty(error.required.defaultMessage),
@@ -37,7 +37,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
     city: z.string().nonempty(error.required.defaultMessage),
     email: z.string().email().optional(),
     phone: z.string().optional(),
-  }),
+  }), */
 })
 
 export type ComplaintsToAlthingiOmbudsman = z.TypeOf<

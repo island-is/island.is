@@ -19,12 +19,12 @@ export const complainee = {
       description: 'Defination of complainee conditions title',
     },
     complaineeNameGovernment: {
-      id: 'ctao.application:complainee.complaineeNameGovernment',
+      id: 'ctao.application:complainee.complaineeName.government',
       defaultMessage: 'Nafn stjórnvalds sem kvörtun beinist að',
       description: 'Defination of government complainee name title',
     },
     complaineeNameOther: {
-      id: 'ctao.application:complainee.complaineeNameOther',
+      id: 'ctao.application:complainee.complaineeName.other',
       defaultMessage: 'Nafn aðila sem kvörtun beinist að',
       description: 'Defination of other complainee name title',
     },
