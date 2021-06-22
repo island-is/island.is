@@ -76,14 +76,9 @@ export class ApplicationService {
     applicationId: string,
     auth: Auth,
   ) {
-    console.log('==== IS AUTHED? ====')
-    const authed = this.paymentApiWithAuth(
+    return this.paymentApiWithAuth(
       auth,
-    )
-
-    console.log('==== AUTHED ====')
-
-    return authed.paymentControllerCreateCharge({
+    ).paymentControllerCreateCharge({
       applicationId: applicationId,
       createChargeDto: { applicationId },
       authorization: auth.authorization,

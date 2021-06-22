@@ -28,15 +28,10 @@ export class DrivingLicenseSubmissionService {
   ) {}
 
   async createCharge({ application: { id }, authorization, }: TemplateApiModuleActionProps) {
-    const result = await this.sharedTemplateAPIService.createCharge(
+    return this.sharedTemplateAPIService.createCharge(
       authorization,
       id
     )
-
-    console.log('==== create charge result ==== ')
-    console.log(result)
-
-    return result
   }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {

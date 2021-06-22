@@ -72,7 +72,6 @@ export class ApplicationResolver {
     @Args('input') input: ApplicationPaymentChargeInput,
     @CurrentUser() user: User,
   ): Promise<CreatePaymentResponseDto> {
-    console.log('=== applicationPaymentCharge ===')
     return this.applicationService.createCharge(
       input.applicationId,
       user,

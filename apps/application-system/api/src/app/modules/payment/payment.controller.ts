@@ -69,11 +69,6 @@ export class PaymentController {
     @CurrentUser()
     user: User,
   ): Promise<CreatePaymentResponseDto> {
-
-    console.log('==== payment details ====')
-    console.log(paymentDetails)
-
-
     const paymentDto: Pick<
       BasePayment,
       | 'application_id'

@@ -54,13 +54,7 @@ export class ApplicationSerializer
   }
 
   async serialize(model: Application, nationalId: string, locale: Locale) {
-    let application
-    try {
-      application = model.toJSON() as BaseApplication
-    } catch (e) {
-      console.log(e, model)
-      throw e
-    }
+    const application = model.toJSON() as BaseApplication
     const template = await getApplicationTemplateByTypeId(
       application.typeId as ApplicationTypes,
     )
