@@ -152,11 +152,13 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           children: [
             buildMultiField({
               id: 'complainee',
-              title: complainee.general.pageTitle,
+              title: complainee.general.sectionTitle,
+              description: complainee.general.sectionDescription,
               children: [
                 buildRadioField({
                   id: 'complainee.type',
-                  title: complainee.general.complaineeTypeTitle,
+                  title: '',
+                  largeButtons: true,
                   options: [
                     {
                       value: ComplaineeTypes.GOVERNMENT,
@@ -168,12 +170,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                     },
                   ],
                 }),
-                buildCustomField({
-                  id: 'complainee.contitions',
-                  component: 'ComplaineeConditions',
-                  title: complainee.general.conditionsTitle,
-                  condition: (answers) => isGovernmentComplainee(answers),
-                }),
               ],
             }),
           ],
@@ -182,19 +178,24 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           id: 'complaint.section.complaineeName',
           title: section.complaineeName,
           children: [
-            buildTextField({
-              id: 'complaineeName.government',
-              variant: 'textarea',
-              required: true,
-              title: complainee.general.complaineeNameGovernment,
-              condition: (answers) => isGovernmentComplainee(answers),
-            }),
-            buildTextField({
-              id: 'complaineeName.other',
-              variant: 'textarea',
-              required: true,
-              title: complainee.general.complaineeNameOther,
-              condition: (answers) => !isGovernmentComplainee(answers),
+            buildMultiField({
+              id: 'complaineeName',
+              title: complainee.general.sectionTitle,
+              children: [
+                buildTextField({
+                  id: 'complaineeName',
+                  backgroundColor: 'blue',
+                  required: true,
+                  title: (application) =>
+                    isGovernmentComplainee(application.answers)
+                      ? complainee.labels.complaineeNameGovernmentTitle
+                      : complainee.labels.complaineeNameOtherTitle,
+                  placeholder: (application) =>
+                    isGovernmentComplainee(application.answers)
+                      ? complainee.labels.complaineeNameGovernmentPlaceholder
+                      : complainee.labels.complaineeNameOtherPlaceholder,
+                }),
+              ],
             }),
           ],
         }),

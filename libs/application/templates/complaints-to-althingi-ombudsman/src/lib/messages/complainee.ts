@@ -1,50 +1,50 @@
-import { defineMessages } from 'react-intl'
+import { defineMessage, defineMessages } from 'react-intl'
 
 export const complainee = {
   general: defineMessages({
-    pageTitle: {
-      id: `ctao.application:complainee.pageTitle`,
-      defaultMessage: 'Kvörtun',
-      description: 'Complainee page title',
+    sectionTitle: {
+      id: `ctao.application:complainee.sectionTitle`,
+      defaultMessage: 'Upplýsingar um þann sem kvörtun beinist að',
+      description: 'Complainee section title',
     },
-    complaineeTypeTitle: {
-      id: 'ctao.application:complainee.complaineeType',
-      defaultMessage: 'Hverjum beinist kvörtunin að?',
-      description: 'Complainee type radio selection title',
-    },
-    conditionsText: {
-      id: `ctao.application:complainee.conditionsText`,
+    sectionDescription: {
+      id: 'ctao.application:complainee.sectionDescription',
       defaultMessage:
         'Hlutverk umboðsmanns Alþingis er að hafa eftirlit með stjórnsýslu ríkis og sveitarfélaga. Þess vegna er ekki hægt að kvarta til umboðsmanns yfir Alþingi, dómstólum og einkaaðilum nema í afmörkuðum tilvikum þegar einkaaðilum hefur verið falið opinbert vald til að taka svokallaðar stjórnvaldsákvarðanir. Eitt af skilyrðunum fyrir því að umboðsmaður Alþingis geti tekið kvörtun til meðferðar er æðra stjórnvald hafi fellt úrskurð sinn í málinu eða að kæruleiðir innan stjórnsýslunnar séu að öðru leyti tæmdar.',
-      description: 'Complainee conditions message',
-    },
-    conditionsTitle: {
-      id: 'ctao.application:complainee.conditionsTitle',
-      defaultMessage: 'Athugið',
-      description: 'Complainee conditions title',
-    },
-    complaineeNameGovernment: {
-      id: 'ctao.application:complainee.complaineeName.government',
-      defaultMessage: 'Nafn stjórnvalds sem kvörtun beinist að',
-      description: 'Government complainee name title',
-    },
-    complaineeNameOther: {
-      id: 'ctao.application:complainee.complaineeName.other',
-      defaultMessage: 'Nafn aðila sem kvörtun beinist að',
-      description: 'Other complainee name title',
+      description: 'Complainee section description',
     },
   }),
   labels: defineMessages({
     governmentComplaint: {
       id: `ctao.application:complainee.governmentComplaint`,
-      defaultMessage: 'Kvörtun beinist að stjórnvaldi',
+      defaultMessage: 'Kvörtunin beinist að stjórnvaldi',
       description: 'Government complaint radio label',
     },
     otherComplaint: {
       id: `ctao.application:complainee.otherComplaint`,
       defaultMessage:
-        'Kvörtun beinist að öðrum aðila eða starfsmanni stjórnsýslunnar',
+        'Kvörtunin beinist að öðrum aðila eða starfsmanni stjórnsýslunnar',
       description: 'Other complaint radio label',
+    },
+    complaineeNameGovernmentTitle: {
+      id: 'ctao.application:complainee.complaineeName.government.title',
+      defaultMessage: 'Nafn stjórnvalds sem kvörtun beinist að',
+      description: 'Government complainee name input title',
+    },
+    complaineeNameGovernmentPlaceholder: {
+      id: 'ctao.application:complainee.complaineeName.government.placeholder',
+      defaultMessage: 'Settu inn nafn stjórnvalds',
+      description: 'Government complainee name input placeholder',
+    },
+    complaineeNameOtherTitle: {
+      id: 'ctao.application:complainee.complaineeName.other.title',
+      defaultMessage: 'Nafn á öðrum aðila eða starfsmanni stjórnsýslunnar',
+      description: 'Other complainee name input title',
+    },
+    complaineeNameOtherPlaceholder: {
+      id: 'ctao.application:complainee.complaineeName.other.placeholder',
+      defaultMessage: 'Settu inn nafn aðila og eftir atvikum frekari skýringar',
+      description: 'Other complainee name input placeholder',
     },
   }),
 }
