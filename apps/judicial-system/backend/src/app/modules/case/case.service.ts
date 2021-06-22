@@ -158,15 +158,28 @@ export class CaseService {
       existingCase.type === CaseType.TRAVEL_BAN ||
       existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
     ) {
-      promises.push(
-        this.sendEmail(
-          existingCase.defenderName,
-          existingCase.defenderEmail,
-          existingCase.courtCaseNumber,
-          signedRulingPdf,
-          'Sjá viðhengi',
-        ),
-      )
+      if (existingCase.defenderEmail) {
+        promises.push(
+          this.sendEmail(
+            existingCase.defenderName,
+            existingCase.defenderEmail,
+            existingCase.courtCaseNumber,
+            signedRulingPdf,
+            'Sjá viðhengi',
+          ),
+        )
+      }
+      if (existingCase.spokespersonEmail) {
+        promises.push(
+          this.sendEmail(
+            existingCase.spokespersonName,
+            existingCase.spokespersonEmail,
+            existingCase.courtCaseNumber,
+            signedRulingPdf,
+            'Sjá viðhengi',
+          ),
+        )
+      }
     }
     if (
       existingCase.type === CaseType.CUSTODY ||

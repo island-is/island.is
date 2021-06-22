@@ -78,6 +78,21 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly spokespersonName?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly spokespersonEmail?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly spokespersonPhoneNumber?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly courtId?: string
 
   @IsOptional()

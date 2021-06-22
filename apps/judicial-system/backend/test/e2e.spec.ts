@@ -168,6 +168,9 @@ function remainingJudgeCaseData() {
     sessionArrangements: SessionArrangements.PROSECUTOR_PRESENT,
     courtDate: '2020-09-29T13:00:00.000Z',
     courtRoom: '201',
+    spokespersonName: 'Spokesperson Name',
+    spokespersonEmail: 'Spokesperson Email',
+    spokespersonPhoneNumber: '666-6666',
     courtStartDate: '2020-09-29T13:00:00.000Z',
     courtEndTime: '2020-09-29T14:00:00.000Z',
     courtAttendees: 'Court Attendees',
@@ -336,6 +339,15 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.sendRequestToDefender || null).toBe(
     caseTwo.sendRequestToDefender || null,
+  )
+  expect(caseOne.spokespersonName || null).toBe(
+    caseTwo.spokespersonName || null,
+  )
+  expect(caseOne.spokespersonEmail || null).toBe(
+    caseTwo.spokespersonEmail || null,
+  )
+  expect(caseOne.spokespersonPhoneNumber || null).toBe(
+    caseTwo.spokespersonPhoneNumber || null,
   )
   expect(caseOne.courtId || null).toBe(caseTwo.courtId || null)
   expectInstitutionsToMatch(caseOne.court, caseTwo.court)

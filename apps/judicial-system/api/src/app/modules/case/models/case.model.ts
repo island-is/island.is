@@ -65,6 +65,15 @@ export class Case implements TCase {
   @Field({ nullable: true })
   sendRequestToDefender?: boolean
 
+  @Field({ nullable: true })
+  readonly spokespersonName?: string
+
+  @Field({ nullable: true })
+  readonly spokespersonEmail?: string
+
+  @Field({ nullable: true })
+  readonly spokespersonPhoneNumber?: string
+
   @Field(() => Institution, { nullable: true })
   readonly court?: Institution
 
