@@ -2,10 +2,8 @@ import jwt from 'jsonwebtoken'
 import { ConfigService } from '@nestjs/config'
 
 import { Application } from '@island.is/application/core'
-import { ChargeResult } from '@island.is/api/domains/payment'
 
 import { BaseTemplateAPIModuleConfig } from '../../types'
-import { ApplicationPaymentChargeResponse } from '@island.is/api/schema'
 
 export const createAssignToken = (application: Application, secret: string) => {
   const token = jwt.sign(
