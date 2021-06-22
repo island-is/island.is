@@ -88,7 +88,7 @@ const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
     return getPrevUrl(navigationTree[obj.activeSectionIndex - 1])
   }
 
-  const bla = (navigationTree: FormStepperSection[]) => {
+  const createNavigationInfo = (navigationTree: FormStepperSection[]) => {
     const findSection = findSectionIndex(navigationTree)
 
     const nextUrl = findNextUrl(findSection)
@@ -103,11 +103,11 @@ const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
   }
 
   const [navigationInfo, setNavigationInfo] = useState<NavigationInfoProps>(
-    bla(navigationTree),
+    createNavigationInfo(navigationTree),
   )
 
   useEffect(() => {
-    setNavigationInfo(bla(navigationTree))
+    setNavigationInfo(createNavigationInfo(navigationTree))
   }, [form?.hasIncome])
 
   return navigationInfo
