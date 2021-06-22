@@ -12,6 +12,7 @@ services:
     sysctls:
       net.core.somaxconn: '511'
     environment:
+      - ALLOW_EMPTY_PASSWORD=yes
       - IP=0.0.0.0
     ports:
       - '7000-7005:7000-7005'
