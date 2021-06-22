@@ -76,6 +76,11 @@ export class UpdateCaseDto {
   readonly sendRequestToDefender?: boolean
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly defenderIsSpokesperson?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly courtId?: string
