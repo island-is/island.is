@@ -113,7 +113,7 @@ const devConfig = {
     password: process.env.PAYMENT_PASSWORD,
     callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
-    arkBaseUrl: 'https://uat.arkid.is',
+    arkBaseUrl: process.env.ARK_ENDPOINT,
   },
   temporaryVoterRegistry: {
     baseApiUrl: 'http://localhost:4248',
@@ -226,7 +226,7 @@ const prodConfig = {
     password: process.env.PAYMENT_PASSWORD,
     callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
-    arkBaseUrl: 'https://uat.arkid.is',
+    arkBaseUrl: process.env.ARK_ENDPOINT,
   },
   temporaryVoterRegistry: {
     baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
