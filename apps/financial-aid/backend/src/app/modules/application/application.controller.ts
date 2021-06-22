@@ -38,16 +38,16 @@ export class ApplicationController {
   @Get('applications/:id')
   @ApiOkResponse({
     type: ApplicationModel,
-    description: 'Get applicant',
+    description: 'Get application',
   })
   async getById(@Param('id') id: string) {
-    const applicant = await this.applicationService.findById(id)
+    const application = await this.applicationService.findById(id)
 
-    if (!applicant) {
-      throw new NotFoundException(`applicant ${id} not found`)
+    if (!application) {
+      throw new NotFoundException(`application ${id} not found`)
     }
 
-    return applicant
+    return application
   }
 
   @Put('applications/:id')
