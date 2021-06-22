@@ -11,7 +11,7 @@ import {
   FieldBaseProps,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Box, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
@@ -122,11 +122,15 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
             <Text variant="h4" as="span">
               {formatMessage(parentalLeaveFormMessages.duration.paymentsRatio)}
               &nbsp;&nbsp;
-              <Tooltip
+              {/* 
+                Remove for first release
+                https://app.asana.com/0/1182378413629561/1200472736049963/f
+               */}
+              {/* <Tooltip
                 text={formatMessage(
                   parentalLeaveFormMessages.paymentPlan.description,
                 )}
-              />
+              /> */}
             </Text>
           </Box>
 

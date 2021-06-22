@@ -5,17 +5,14 @@ import {
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
-import { FamilyMember } from '@island.is/api/domains/national-registry'
 import {
   getSelectedChild,
-  MANUAL,
   NO,
   ParentalRelations,
   YES,
 } from '@island.is/application/templates/parental-leave'
 
 import {
-  getOtherParentId,
   getPersonalAllowance,
   getEmployer,
   getPensionFund,
@@ -69,44 +66,6 @@ const createExternalDataChild = (
 let application: Application
 beforeEach(() => {
   application = createApplicationBase()
-})
-
-describe('getOtherParentId', () => {
-  it('should return undefined if no parent is selected', () => {
-    application.answers.otherParent = NO
-
-    expect(getOtherParentId(application)).toBeUndefined()
-  })
-
-  it('should return answers.otherParentId if manual is selected', () => {
-    application.answers.otherParent = MANUAL
-
-    const expectedId = '1234567899'
-
-    application.answers.otherParentId = expectedId
-
-    expect(getOtherParentId(application)).toBe(expectedId)
-  })
-
-  it('should return spouse if spouse is selected', () => {
-    const expectedSpouse: Pick<
-      FamilyMember,
-      'fullName' | 'familyRelation' | 'nationalId'
-    > = {
-      familyRelation: 'spouse' as FamilyMember['familyRelation'],
-      fullName: 'Spouse Spouseson',
-      nationalId: '1234567890',
-    }
-
-    application.externalData.family = {
-      data: [expectedSpouse],
-      date: new Date(),
-      status: 'success',
-    }
-    application.answers.otherParent = 'spouse'
-
-    expect(getOtherParentId(application)).toBe(expectedSpouse.nationalId)
-  })
 })
 
 describe('getPersonalAllowance', () => {

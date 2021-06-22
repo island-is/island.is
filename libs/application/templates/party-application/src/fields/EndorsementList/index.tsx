@@ -5,15 +5,11 @@ import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { useQuery } from '@apollo/client'
-import { Endorsement } from '../../lib/dataSchema'
-import { GetEndorsements } from '../../graphql/queries'
 import BulkUpload from '../BulkUpload'
+import { Endorsement } from '../../types/schema'
+import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 
-interface EndorsementData {
-  endorsementSystemGetEndorsements?: Endorsement[]
-}
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const endorsementListId = (application.externalData?.createEndorsementList
@@ -23,37 +19,15 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const [showWarning, setShowWarning] = useState(false)
   const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
   const isClosedHook = useIsClosed(endorsementListId)
-
-  const { data: endorsementsData, refetch } = useQuery<EndorsementData>(
-    GetEndorsements,
-    {
-      variables: {
-        input: {
-          listId: endorsementListId,
-        },
-      },
-      pollInterval: 20000,
-    },
+  const { endorsements: endorsementsHook, refetch } = useEndorsements(
+    endorsementListId,
+    true,
   )
 
   useEffect(() => {
     refetch()
-    const mapToEndorsementList:
-      | Endorsement[]
-      | undefined = endorsementsData?.endorsementSystemGetEndorsements?.map(
-      (x: any) => ({
-        date: x.created,
-        name: x.meta.fullName,
-        nationalId: x.endorser,
-        address: x.meta.address ? x.meta.address.streetAddress : '',
-        hasWarning: x.meta?.invalidated ?? false,
-        id: x.id,
-        bulkImported: x.meta?.bulkEndorsement ?? false,
-      }),
-    )
-
-    setEndorsements(mapToEndorsementList)
-  }, [endorsementsData, updateOnBulkImport])
+    setEndorsements(endorsementsHook)
+  }, [endorsementsHook, updateOnBulkImport])
 
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1
@@ -87,7 +61,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 ? setEndorsements(endorsements)
                 : setEndorsements(
                     endorsements
-                      ? endorsements.filter((x) => x.hasWarning)
+                      ? endorsements.filter((x) => x.meta.invalidated)
                       : endorsements,
                   )
             }}
@@ -105,7 +79,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
               setEndorsements(
                 endorsements && endorsements.length > 0
                   ? endorsements.filter((x) =>
-                      (x.name ?? '').startsWith(e.target.value),
+                      (x.meta.fullName ?? '').startsWith(e.target.value),
                     )
                   : endorsements,
               )

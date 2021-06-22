@@ -10,7 +10,8 @@ export const generateAssignSupremeCourtApplicationEmail: AssignmentEmailTemplate
     options: { email },
   } = props
 
-  const supremeCourtEmail = 'sigridur@kosmosogkaos.is'
+  const supremeCourtEmail =
+    process.env.PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL ?? ''
   const { partyLetter, partyName } = application.externalData
     .partyLetterRegistry?.data as any
 
@@ -33,7 +34,7 @@ export const generateAssignSupremeCourtApplicationEmail: AssignmentEmailTemplate
     to: [
       {
         name: '',
-        address: supremeCourtEmail as string,
+        address: supremeCourtEmail,
       },
     ],
     subject,

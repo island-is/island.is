@@ -27,6 +27,12 @@
           "schemas/codegen"
         ]
       }
+    },
+    "docker-test": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": []
+      }
     }
   },
   "projects": {
@@ -174,6 +180,9 @@
       "tags": []
     },
     "application-templates-children-residence-change": {
+      "tags": []
+    },
+    "application-templates-complaints-to-althingi-ombudsman": {
       "tags": []
     },
     "application-templates-data-protection-complaint": {
