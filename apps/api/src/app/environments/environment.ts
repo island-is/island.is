@@ -94,6 +94,9 @@ const devConfig = {
     username: process.env.FJARMAL_USER ?? '',
     password: process.env.FJARMAL_PASS ?? '',
     financeTestUser: process.env.FINANCE_TEST_USER,
+    xroadApiPath:
+      process.env.XROAD_FINANCES_PATH ??
+      'IS-DEV/GOV/10021/FJS-Public/financeIsland',
   },
   endorsementSystem: {
     baseApiUrl: 'http://localhost:4246',
@@ -218,6 +221,7 @@ const prodConfig = {
     url: process.env.FJARMAL_API ?? '',
     username: process.env.FJARMAL_USER ?? '',
     password: process.env.FJARMAL_PASS ?? '',
+    xroadApiPath: process.env.XROAD_FINANCES_PATH,
     financeTestUser: '',
   },
 }

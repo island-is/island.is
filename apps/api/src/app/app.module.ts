@@ -170,6 +170,9 @@ const autoSchemaFile = environment.production
       password: environment.fjarmalDomain.password,
       financeTestUser: environment.fjarmalDomain.financeTestUser,
       downloadServiceBaseUrl: environment.downloadService.baseUrl,
+      xroadApiPath: environment.fjarmalDomain.xroadApiPath,
+      xroadBaseUrl: environment.xroad.baseUrl,
+      xroadClientId: environment.xroad.clientId,
     }),
     NationalRegistryXRoadModule.register({
       xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,

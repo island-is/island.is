@@ -24,6 +24,9 @@ export interface FinanceServiceOptions {
   financeTestUser?: string
   ttl?: number
   downloadServiceBaseUrl?: string
+  xroadApiPath: string
+  xroadBaseUrl: string
+  xroadClientId: string
 }
 
 export class FinanceService extends RESTDataSource {
@@ -34,12 +37,14 @@ export class FinanceService extends RESTDataSource {
     private logger: Logger,
   ) {
     super()
-    this.baseURL = `${this.options.url}`
+    // http://localhost:8080/r1/IS-DEV/GOV/10021/FJS-Public/financeIsland/customerStatusByOrganization?nationalID=2704685439
+    this.baseURL = `${this.options.xroadBaseUrl}/r1/${this.options.xroadApiPath}`
     this.initialize({} as DataSourceConfig<any>)
   }
 
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
+    request.headers.set('X-Road-Client', this.options.xroadClientId)
     request.headers.set(
       'Authorization',
       `Basic ${Base64.encode(
@@ -132,6 +137,10 @@ export class FinanceService extends RESTDataSource {
   }
 
   async getCustomerTapControl(nationalID: string): Promise<TapsControlTypes> {
+    console.log(
+      'xroadClientIdxroadClientIdxroadClientIdxroadClientId',
+      this.options.xroadClientId,
+    )
     const response = await this.get<TapsControlTypes>(
       `/customerTapsControl?nationalID=${this.options.financeTestUser}`,
       {
