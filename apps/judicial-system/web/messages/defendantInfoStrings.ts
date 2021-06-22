@@ -51,12 +51,12 @@ export const defendantInfoStrings = {
   address: defineMessages({
     label: {
       id: 'judicial.system:component.defendant.address.label',
-      defaultMessage: 'Fullt nafn',
+      defaultMessage: 'Lögheimili/dvalarstaður',
       description: 'Defendant component address field: Label',
     },
     placeholder: {
       id: 'judicial.system:component.defendant.address.placeholder',
-      defaultMessage: 'Fullt nafn',
+      defaultMessage: 'Lögheimili eða dvalarstaður',
       description: 'Defendant component address field: Placeholder',
     },
   }),
