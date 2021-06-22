@@ -151,12 +151,12 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           title: section.complainee,
           children: [
             buildMultiField({
-              id: 'complaint.complainee',
-              title: section.complainee,
+              id: 'complainee',
+              title: complainee.general.pageTitle,
               children: [
                 buildRadioField({
-                  id: 'complaint.complainee.type',
-                  title: '',
+                  id: 'complainee.type',
+                  title: complainee.general.complaineeTypeTitle,
                   options: [
                     {
                       value: ComplaineeTypes.GOVERNMENT,
@@ -169,7 +169,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   ],
                 }),
                 buildCustomField({
-                  id: 'complaint.complainee.contitions',
+                  id: 'complainee.contitions',
                   component: 'ComplaineeConditions',
                   title: complainee.general.conditionsTitle,
                   condition: (answers) => isGovernmentComplainee(answers),
@@ -183,14 +183,14 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           title: section.complaineeName,
           children: [
             buildTextField({
-              id: 'complaint.complaineeName.government',
+              id: 'complaineeName.government',
               variant: 'textarea',
               required: true,
               title: complainee.general.complaineeNameGovernment,
               condition: (answers) => isGovernmentComplainee(answers),
             }),
             buildTextField({
-              id: 'complaint.complaineeName.other',
+              id: 'complaineeName.other',
               variant: 'textarea',
               required: true,
               title: complainee.general.complaineeNameOther,

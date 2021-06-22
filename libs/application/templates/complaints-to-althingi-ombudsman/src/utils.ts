@@ -3,7 +3,7 @@ import { ComplaineeTypes } from './constants'
 
 export const isGovernmentComplainee = (answers: Answer) => {
   return (
-    (answers as { complaint: { complainee: { type: string } } }).complaint
-      ?.complainee?.type === ComplaineeTypes.GOVERNMENT
+    (answers as { complainee: { type: string } }).complainee?.type ===
+    ComplaineeTypes.GOVERNMENT
   )
 }

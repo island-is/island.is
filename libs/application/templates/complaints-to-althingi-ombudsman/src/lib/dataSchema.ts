@@ -1,5 +1,6 @@
 import * as kennitala from 'kennitala'
 import * as z from 'zod'
+import { ComplaineeTypes } from '../constants'
 import { error } from './messages/error'
 
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
@@ -29,7 +30,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
       status: z.enum(['success', 'failure']),
     }),
   }),
-  /* information: z.object({
+  information: z.object({
     name: z.string().nonempty(error.required.defaultMessage),
     ssn: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
     address: z.string().nonempty(error.required.defaultMessage),
@@ -37,7 +38,14 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
     city: z.string().nonempty(error.required.defaultMessage),
     email: z.string().email().optional(),
     phone: z.string().optional(),
-  }), */
+  }),
+  complainee: z.object({
+    type: z.enum([ComplaineeTypes.GOVERNMENT, ComplaineeTypes.OTHER]),
+  }),
+  complaineeName: z.object({
+    government: z.string().nonempty(error.required.defaultMessage),
+    other: z.string().nonempty(error.required.defaultMessage),
+  }),
 })
 
 export type ComplaintsToAlthingiOmbudsman = z.TypeOf<
