@@ -154,9 +154,10 @@ export class CaseService {
     ]
 
     if (
-      existingCase.type === CaseType.CUSTODY ||
-      existingCase.type === CaseType.TRAVEL_BAN ||
-      existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+      existingCase.defenderEmail &&
+      (existingCase.type === CaseType.CUSTODY ||
+        existingCase.type === CaseType.TRAVEL_BAN ||
+        existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT)
     ) {
       promises.push(
         this.sendEmail(
@@ -168,6 +169,7 @@ export class CaseService {
         ),
       )
     }
+
     if (
       existingCase.type === CaseType.CUSTODY ||
       existingCase.type === CaseType.TRAVEL_BAN
