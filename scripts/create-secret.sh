@@ -15,7 +15,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 SSM_PREFIX="/k8s/"
 
 # Minimum length
-MIN_LENGTH="{6,128}"
+MIN_LENGTH="6"
+MAX_LENGTH="128"
 
 # Secret name can only be alphanumeric and dash
 ALPHANUMERIC_DASH="^[a-zA-Z0-9\//_-]"
@@ -89,12 +90,12 @@ validate_length () {
   fi
 
   # Validate minimum length
-  if [[ $1 =~ $ALPHANUMERIC_DASH$MIN_LENGTH ]]
+  if ((${#1} < $MIN_LENGTH || ${#1} > $MAX_LENGTH))
   then
-    printf "%sLength: Ok! %s\n" "$GREEN" "$RESET"
-  else
     printf "%sTo short, should be 6-256 characters long.%s\n" "$RED" "$RESET"
     exit 0
+  else
+    printf "%sLength: Ok! %s\n" "$GREEN" "$RESET"
   fi
 }
 
