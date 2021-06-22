@@ -7,6 +7,7 @@ import {
   UseGuards,
   Get,
   ParseUUIDPipe,
+  BadRequestException,
 } from '@nestjs/common'
 
 import {
@@ -32,6 +33,7 @@ import { Payment } from './payment.model'
 import type { Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
+import { isUuid } from 'uuidv4'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -58,6 +60,10 @@ export class PaymentController {
     @CurrentUser() user: User,
     @Param('application_id', new ParseUUIDPipe()) applicationId: string,
   ): Promise<CreatePaymentResponseDto> {
+    if (!isUuid(applicationId)) {
+      throw new BadRequestException(`ApplicationId is on wrong format.`)
+    }
+
     const paymentDto: Pick<
       BasePayment,
       'application_id' | 'fulfilled' | 'amount' | 'expires_at'
@@ -104,6 +110,11 @@ export class PaymentController {
     @Body() callback: Callback,
     @Param('id') id: string,
   ): Promise<void> {
+    if (!isUuid(applicationId) || !isUuid(id)) {
+      throw new BadRequestException(
+        `ApplicationId or paymentId is on wrong format.`,
+      )
+    }
     if (callback.status !== 'paid') {
       // TODO: no-op.. it would be nice eventually to update all statuses
       return
@@ -134,6 +145,9 @@ export class PaymentController {
   async getPaymentStatus(
     @Param('application_id') applicationId: string,
   ): Promise<PaymentStatusResponseDto> {
+    if (!isUuid(applicationId)) {
+      throw new BadRequestException(`ApplicationId is on wrong format.`)
+    }
     const payment = await this.paymentService.findPaymentByApplicationId(
       applicationId,
     )
