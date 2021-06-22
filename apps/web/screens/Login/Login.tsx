@@ -12,8 +12,10 @@ import {
   ContentBlock,
   Button,
   Tag,
+  Hidden,
 } from '@island.is/island-ui/core'
 import * as styles from './Login.treat'
+import SvgPlant from '../../components/Login/svgPlant'
 import { LoginPageTexts } from '../../components/Login/LoginTexts.types'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -44,8 +46,15 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
     'Samræmd könnunarpróf',
   ])
 
-  const oldListItemsArray = Array.isArray(oldListItems) ? oldListItems : []
   const newListItemsArray = Array.isArray(newListItems) ? newListItems : []
+  const oldListItemsArray = Array.isArray(oldListItems) ? oldListItems : []
+
+  const oldHalf = Math.ceil(oldListItemsArray.length / 2)
+  const oldFirstHalf = oldListItemsArray.slice(0, oldHalf)
+  const oldSecondHalf = oldListItemsArray.slice(
+    oldHalf,
+    oldListItemsArray.length,
+  )
   return (
     <ContentBlock>
       <Box paddingX={[0, 4, 4, 12]} paddingY={[2, 2, 10]} id="main-content">
@@ -88,11 +97,17 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
               span={['12/12', '12/12', '6/12']}
               paddingBottom={[3, 3, 4]}
             >
-              <Box
-                flexDirection="column"
-                display="flex"
-                alignItems={['flexStart', 'flexStart', 'center']}
-              >
+              <Hidden below="md">
+                <Box display="flex" alignItems="center" justifyContent="center">
+                  <SvgPlant />
+                </Box>
+              </Hidden>
+            </GridColumn>
+            <GridColumn
+              span={['12/12', '12/12', '5/12']}
+              paddingBottom={[3, 3, 4]}
+            >
+              <Box flexDirection="column" display="flex">
                 {newListItemsArray.length > 0 ? (
                   <Box marginTop={[1, 0]}>
                     <Text as="h3" variant="h3" marginBottom="p3">
@@ -105,16 +120,39 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                     </BulletList>
                   </Box>
                 ) : null}
+              </Box>
+            </GridColumn>
+            <GridColumn
+              span={['12/12', '12/12', '7/12']}
+              paddingBottom={[3, 3, 4]}
+            >
+              <Box flexDirection="column" display="flex">
                 {oldListItemsArray.length > 0 ? (
-                  <Box marginTop={[3, 4]}>
+                  <Box marginTop={[1, 0]}>
                     <Text as="h3" variant="h3" marginBottom="p3">
                       {n('gomluSidurListTitle', 'Á gömlu mínum síðum')}
                     </Text>
-                    <BulletList type="ul">
-                      {oldListItemsArray.map((li) => (
-                        <Bullet key={li}>{li}</Bullet>
-                      ))}
-                    </BulletList>
+                    <GridContainer>
+                      <GridRow>
+                        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                          <BulletList type="ul">
+                            {oldFirstHalf.map((li) => (
+                              <Bullet key={li}>{li}</Bullet>
+                            ))}
+                          </BulletList>
+                        </GridColumn>
+                        <GridColumn
+                          paddingTop={[1, 1, 1, 0]}
+                          span={['12/12', '12/12', '12/12', '7/12']}
+                        >
+                          <BulletList type="ul">
+                            {oldSecondHalf.map((li) => (
+                              <Bullet key={li}>{li}</Bullet>
+                            ))}
+                          </BulletList>
+                        </GridColumn>
+                      </GridRow>
+                    </GridContainer>
                   </Box>
                 ) : null}
               </Box>
