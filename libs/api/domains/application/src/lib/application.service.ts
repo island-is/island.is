@@ -74,9 +74,8 @@ export class ApplicationService {
 
   createCharge(applicationId: string, auth: Auth) {
     return this.paymentApiWithAuth(auth).paymentControllerCreateCharge({
-      applicationId: applicationId,
-      createChargeDto: { applicationId },
       authorization: auth.authorization,
+      applicationId: applicationId,
     })
   }
 
