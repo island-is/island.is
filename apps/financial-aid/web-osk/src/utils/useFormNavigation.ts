@@ -1,5 +1,7 @@
 import { useEffect, useState, useContext } from 'react'
-import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
+import useNavigationTree, {
+  FormStepperSection,
+} from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 interface NavigationInfoProps {
@@ -8,20 +10,11 @@ interface NavigationInfoProps {
   prevUrl?: string
   nextUrl?: string
 }
-interface FormStepperSection {
-  name: string
-  type?: string
-  url?: string
-  children?: FormStepperChildSection[]
-}
-export interface FormStepperChildSection extends FormStepperSection {
-  href?: string
-}
 
 const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
   const { form, updateForm } = useContext(FormContext)
 
-  var navigationTree = useNavigationTree(form?.hasIncome)
+  var navigationTree = useNavigationTree(Boolean(form?.hasIncome))
 
   const findSectionIndex = (navigationTree: FormStepperSection[]) => {
     for (const [index, item] of Object.entries(navigationTree)) {

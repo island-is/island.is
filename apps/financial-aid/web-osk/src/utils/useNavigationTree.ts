@@ -1,5 +1,12 @@
-const useNavigationTree = (hasIncome: boolean | undefined) => {
-  const section = [
+export interface FormStepperSection {
+  name: string
+  type?: string
+  url?: string
+  children?: FormStepperSection[]
+}
+
+const useNavigationTree = (hasIncome: boolean) => {
+  const section: FormStepperSection[] = [
     {
       name: 'Gagnaöflun',
       url: '/umsokn',

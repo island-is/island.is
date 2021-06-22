@@ -30,7 +30,7 @@ const FormLayout: React.FC<PageProps> = ({
   const { isAuthenticated, setUser, user } = useContext(UserContext)
 
   const { form, updateForm } = useContext(FormContext)
-  const sections = useNavigationTree(form?.hasIncome)
+  const sections = useNavigationTree(Boolean(form?.hasIncome))
 
   useEffect(() => {
     if (activeSection !== undefined) {
