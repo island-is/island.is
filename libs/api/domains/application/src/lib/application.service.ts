@@ -18,10 +18,8 @@ import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
-import {
-  ApplicationPayment,
-  ApplicationPaymentCharge,
-} from './application.model'
+import { ApplicationPayment } from './application.model'
+import { ApplicationPaymentChargeResponse } from './dto/applicationPaymentCharge'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -76,14 +74,18 @@ export class ApplicationService {
 
   createCharge(
     applicationId: string,
-    amount: number,
     auth: Auth,
-  ): Promise<ApplicationPaymentCharge> {
-    return this.paymentApiWithAuth(
+  ) {
+    console.log('==== IS AUTHED? ====')
+    const authed = this.paymentApiWithAuth(
       auth,
-    ).paymentControllerCreateCharge({
+    )
+
+    console.log('==== AUTHED ====')
+
+    return authed.paymentControllerCreateCharge({
       applicationId: applicationId,
-      createChargeDto: { applicationId: applicationId, amount: amount },
+      createChargeDto: { applicationId },
       authorization: auth.authorization,
     })
   }

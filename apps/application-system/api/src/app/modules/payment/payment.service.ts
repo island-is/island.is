@@ -35,9 +35,13 @@ export class PaymentService {
     // this can actually be a fixed url
     const callbackUrl =
       ((this.paymentConfig.callbackBaseUrl + payment.application_id) as string) +
-      this.paymentConfig.callbackAdditionUrl
+      this.paymentConfig.callbackAdditionUrl + payment.id
 
     const charge: Charge = {
+      // TODO: this needs to be unique, but can only handle 22 or 23 chars
+      // should probably be an id or token from the DB charge once implemented
+      chargeItemSubject: payment.id.substring(0, 22),
+      systemID: 'ISL',
       performingOrgID: '6509142520',
       payeeNationalID: user.nationalId,
       chargeType: 'AY1',
@@ -51,20 +55,8 @@ export class PaymentService {
           reference: '',
         },
       ],
-      // TODO: this needs to be unique, but can only handle 22 or 23 chars
-      // should probably be an id or token from the DB charge once implemented
-      chargeItemSubject: payment.id.substring(0, 22),
       immediateProcess: true,
-      systemID: 'ISL',
       returnUrl: callbackUrl,
-      payInfo: {
-        RRN: '',
-        cardType: '',
-        paymentMeans: '',
-        authCode: '',
-        PAN: '',
-        payableAmount: payment.amount,
-      },
     }
 
     const result = await this.paymentApi.createCharge(charge)

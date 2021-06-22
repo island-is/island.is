@@ -88,12 +88,3 @@ export class ApplicationPayment {
   @Field()
   fulfilled!: boolean
 }
-
-@ObjectType()
-export class ApplicationPaymentCharge {
-  @Field()
-  id!: string
-
-  @Field()
-  paymentUrl!: string
-}

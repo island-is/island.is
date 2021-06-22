@@ -25,8 +25,6 @@ export class Payment extends Model<Application> {
     type: DataType.UUID,
     primaryKey: true,
     allowNull: false,
-    autoIncrement: true,
-    unique: true,
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()

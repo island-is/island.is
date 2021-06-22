@@ -2,8 +2,10 @@ import jwt from 'jsonwebtoken'
 import { ConfigService } from '@nestjs/config'
 
 import { Application } from '@island.is/application/core'
+import { ChargeResult } from '@island.is/api/domains/payment'
 
 import { BaseTemplateAPIModuleConfig } from '../../types'
+import { ApplicationPaymentChargeResponse } from '@island.is/api/schema'
 
 export const createAssignToken = (application: Application, secret: string) => {
   const token = jwt.sign(
@@ -32,3 +34,12 @@ export const getConfigValue = (
 
   return value
 }
+
+export const PAYMENT_QUERY = `
+  mutation($input: ApplicationPaymentChargeInput!) {
+    applicationPaymentCharge(input: $input) {
+      id
+      paymentUrl
+    }
+  }
+`

@@ -7,7 +7,7 @@ import {
   Catalog,
   PaymentServiceOptions,
   PAYMENT_OPTIONS,
-  BaseCharge,
+  Charge,
 } from './payment.type'
 
 export class PaymentAPI extends RESTDataSource {
@@ -33,20 +33,25 @@ export class PaymentAPI extends RESTDataSource {
         `${this.options.username}:${this.options.password}`,
       )}`,
     )
+
+    console.log('req headers', request.headers)
   }
 
-  createCharge(upcomingPayment: BaseCharge): Promise<ChargeResponse> {
-    return this.post<ChargeResponse>(`catalog/charge`, upcomingPayment)
+  createCharge(upcomingPayment: Charge): Promise<ChargeResponse> {
+    console.log('createCharge (in paymentApi) upcomingPayment')
+    console.log(this.options)
+    console.log('baseURL: ', this.baseURL)
+    return this.post<ChargeResponse>(`charge`, upcomingPayment)
   }
 
   getCatalog() {
-    const response = this.get<Catalog>(`catalog/catalog`)
+    const response = this.get<Catalog>(`catalog`)
     return response
   }
 
   getCatalogByPerformingOrg(performingOrganizationID: string) {
     const response = this.get<Catalog>(
-      `catalog/catalog/performingOrg/${performingOrganizationID}`,
+      `catalog/performingOrg/${performingOrganizationID}`,
     )
     return response
   }

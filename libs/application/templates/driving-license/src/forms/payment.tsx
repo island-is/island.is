@@ -22,12 +22,13 @@ export const payment: Form = buildForm({
           id: 'info',
           title: m.paymentCapital,
           description: (application) => {
-            const createCharge = application.externalData.createCharge.data as {
-              error: ''
-              data: { paymentUrl: string }
+            const { paymentUrl } = application.externalData.createCharge.data as { paymentUrl: string }
+
+            if (!paymentUrl) {
+              console.log(application.externalData.createCharge)
+              throw new Error()
             }
-            if (!createCharge.error) console.log({ createCharge })
-            const paymentUrl = createCharge.data.paymentUrl
+
             const returnUrl = window.document.location.href
             const redirectUrl = `${paymentUrl}&returnUrl=${encodeURIComponent(
               returnUrl,

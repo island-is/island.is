@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config'
 import { EmailModule } from '@island.is/email-service'
 import { BaseTemplateAPIModuleConfig } from '../../types'
 import { SharedTemplateApiService } from './shared.service'
-import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 
 export class SharedTemplateAPIModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -16,7 +15,6 @@ export class SharedTemplateAPIModule {
           load: [configuration],
         }),
         EmailModule.register(config.emailOptions),
-        ApiDomainsPaymentModule.register(config.paymentOptions),
       ],
       providers: [SharedTemplateApiService],
       exports: [SharedTemplateApiService],

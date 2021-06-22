@@ -8,9 +8,8 @@ import {
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
 } from '../../types'
-import { createAssignToken, getConfigValue } from './shared.utils'
-import { ApiDomainsPaymentService, ChargeResult } from '@island.is/api/domains/payment'
-import { BaseCharge } from '@island.is/clients/payment'
+import { createAssignToken, getConfigValue, PAYMENT_QUERY } from './shared.utils'
+import { ApplicationPaymentChargeResponse } from '@island.is/api/schema'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -19,8 +18,6 @@ export class SharedTemplateApiService {
     private readonly emailService: EmailService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
-    @Inject(ApiDomainsPaymentService)
-    private readonly paymentService: ApiDomainsPaymentService,
   ) {}
 
   async sendEmail(
@@ -120,17 +117,11 @@ export class SharedTemplateApiService {
     return this.emailService.sendEmail(template)
   }
 
-  async createCharge(
-    charge: BaseCharge,
-  ): Promise<ChargeResult> {
-    return this.paymentService.createCharge(charge)
-  }
-
   async makeGraphqlQuery(
     authorization: string,
     query: string,
     variables?: Record<string, any>,
-  ) {
+  ): Promise<Response> {
     const baseApiUrl = getConfigValue(
       this.configService,
       'baseApiUrl',
@@ -145,5 +136,33 @@ export class SharedTemplateApiService {
       },
       body: JSON.stringify({ query, variables }),
     })
+  }
+
+  async createCharge(
+    authorization: string,
+    applicationId: string,
+  ): Promise<ApplicationPaymentChargeResponse> {
+    const result: ApplicationPaymentChargeResponse = await this.makeGraphqlQuery(
+      authorization,
+      PAYMENT_QUERY,
+      {
+        input: {
+          applicationId,
+        }
+      },
+    )
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('graphql query failed')
+        }
+
+        return res
+      })
+      .then(res => res.json())
+      .then(json => {
+        return json.data.applicationPaymentCharge as ApplicationPaymentChargeResponse
+      })
+
+    return result
   }
 }

@@ -27,39 +27,14 @@ export class DrivingLicenseSubmissionService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async createCharge({
-    application: { applicant, externalData, answers, id },
-  }: TemplateApiModuleActionProps) {
-    const payment = externalData.payment.data as Payment
+  async createCharge({ application: { id }, authorization, }: TemplateApiModuleActionProps) {
+    const result = await this.sharedTemplateAPIService.createCharge(
+      authorization,
+      id
+    )
 
-    const chargeItem = {
-      chargeItemCode: payment.chargeItemCode,
-      quantity: 1,
-      priceAmount: payment.priceAmount,
-      amount: payment.priceAmount * 1,
-      reference: 'Fullnaðarskírteini',
-    }
-
-    const result = await this.sharedTemplateAPIService
-      .createCharge(
-        {
-          chargeType: payment.chargeType,
-          charges: [chargeItem],
-          payeeNationalID: applicant,
-          // TODO: possibly somebody else, if 'umboð'
-          performerNationalID: applicant,
-          // TODO: sýslumannskennitala - rvk
-          performingOrgID: payment.performingOrgID,
-        })
-      .catch((e) => {
-        console.error(e)
-
-        return { error: e } as ChargeResult
-      })
-
-    if (result.error || !result.success) {
-      throw new Error('Villa kom upp við að stofna til greiðslu')
-    }
+    console.log('==== create charge result ==== ')
+    console.log(result)
 
     return result
   }

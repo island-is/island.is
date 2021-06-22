@@ -9,15 +9,15 @@ import { PaymentCatalogInput } from './dto/paymentCatalogInput.input'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class PaymentResolver {
-  constructor(private paymentService: PaymentAPI) {}
+  constructor(private paymentClientApi: PaymentAPI) {}
 
   @Query(() => PaymentCatalogResponse)
   async paymentCatalog(
     @Args('input', { type: () => PaymentCatalogInput }) input: PaymentCatalogInput,
   ): Promise<PaymentCatalogResponse> {
     const data = await (input.performingOrganizationID
-      ? this.paymentService.getCatalogByPerformingOrg(input.performingOrganizationID)
-      : await this.paymentService.getCatalog())
+      ? this.paymentClientApi.getCatalogByPerformingOrg(input.performingOrganizationID)
+      : await this.paymentClientApi.getCatalog())
 
     return {
       items: data.item,

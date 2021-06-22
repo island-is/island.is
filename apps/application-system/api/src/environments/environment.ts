@@ -58,8 +58,8 @@ const devConfig = {
       xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-DEV-Public',
       callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL ?? '/payment/thiswillneverwork',
       callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL ?? 'https://localhost:3333/application/',
-      password: process.env.PAYMENT_USER,
-      username: process.env.PAYMENT_PASSWORD,
+      username: process.env.PAYMENT_USER,
+      password: process.env.PAYMENT_PASSWORD,
     }
   },
   application: {
@@ -134,8 +134,8 @@ const prodConfig = {
       xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID,
       callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
       callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
-      password: process.env.PAYMENT_USER,
-      username: process.env.PAYMENT_PASSWORD,
+      username: process.env.PAYMENT_USER,
+      password: process.env.PAYMENT_PASSWORD,
     }
   },
   application: {

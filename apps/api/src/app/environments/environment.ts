@@ -106,8 +106,8 @@ const devConfig = {
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_USER,
     password: process.env.PAYMENT_PASSWORD,
-    callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL_TEST,
-    callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL_TEST,
+    callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
+    callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: 'https://uat.arkid.is',
   },
   temporaryVoterRegistry: {
@@ -218,8 +218,8 @@ const prodConfig = {
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_USER,
     password: process.env.PAYMENT_PASSWORD,
-    callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL_TEST,
-    callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL_TEST,
+    callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
+    callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: 'https://uat.arkid.is',
   },
   temporaryVoterRegistry: {

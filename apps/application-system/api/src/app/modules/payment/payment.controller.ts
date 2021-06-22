@@ -63,31 +63,27 @@ export class PaymentController {
   })
   @Post('applications/:application_id/payment')
   @ApiCreatedResponse({ type: CreatePaymentResponseDto })
-  @UseInterceptors(ApplicationSerializer)
   async createCharge(
     @Body()
     paymentDetails: CreateChargeDto,
     @CurrentUser()
     user: User,
   ): Promise<CreatePaymentResponseDto> {
-    // TO DO: FIGURE SOME CHECK FOR LEGIT PAYMENT
+
+    console.log('==== payment details ====')
+    console.log(paymentDetails)
+
 
     const paymentDto: Pick<
       BasePayment,
       | 'application_id'
       | 'fulfilled'
-      | 'reference_id'
-      | 'user4'
-      | 'definition'
       | 'amount'
       | 'expires_at'
     > = {
       application_id: paymentDetails.application_id,
       fulfilled: false,
-      reference_id: '',
-      user4: '',
-      definition: '',
-      amount: paymentDetails.amount || 0,
+      amount: 8000,
       expires_at: new Date(),
     }
 
@@ -125,7 +121,6 @@ export class PaymentController {
   async paymentApproved(
     @Param('application_id') applicationId: string,
     @Body() callback: Callback,
-    @CurrentUser() user: User,
     @Param('id') id: string,
   ): Promise<void> {
     if (callback.status !== 'paid') {
@@ -133,19 +128,15 @@ export class PaymentController {
       return
     }
 
-    this.auditService.audit({
-      user,
-      action: 'approvePaymentApplication',
-      resources: applicationId,
-      meta: { applicationId, id },
-    })
-
     await this.paymentModel.update(
       {
         fulfilled: true,
       },
       {
-        where: { id },
+        where: {
+          id,
+          application_id: applicationId
+        },
       },
     )
   }
