@@ -82,7 +82,7 @@ export const ApplicationsModule = React.memo(
                 text={intl.formatMessage({
                   id: 'applicationStatusCard.noActiveApplications',
                 })}
-                image={<Image source={leJobss4} height={90} width={42} />}
+                image={<Image source={leJobss4} height={90} width={42} resizeMode="contain" />}
               />
             )}
             {count === 1 && children.slice(0, 1)}
