@@ -21,7 +21,6 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
-  CaseGender,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'

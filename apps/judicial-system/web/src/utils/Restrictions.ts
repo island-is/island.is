@@ -1,7 +1,6 @@
 import {
   capitalize,
   formatAccusedByGender,
-  NounCases,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,

@@ -1,9 +1,5 @@
 import React, { useState } from 'react'
-import {
-  Case,
-  CaseAppealDecision,
-  CaseGender,
-} from '@island.is/judicial-system/types'
+import { Case, CaseAppealDecision } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   FormContentContainer,

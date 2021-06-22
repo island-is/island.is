@@ -20,7 +20,6 @@ import {
 import {
   AccusedPleaDecision,
   Case,
-  CaseGender,
   CaseType,
 } from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'

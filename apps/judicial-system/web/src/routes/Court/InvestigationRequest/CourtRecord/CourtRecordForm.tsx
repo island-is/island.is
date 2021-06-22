@@ -9,11 +9,7 @@ import {
   FormFooter,
   HideableText,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  AccusedPleaDecision,
-  Case,
-  CaseGender,
-} from '@island.is/judicial-system/types'
+import { AccusedPleaDecision, Case } from '@island.is/judicial-system/types'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,

@@ -9,11 +9,7 @@ import {
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import {
-  AccusedPleaDecision,
-  Case,
-  CaseGender,
-} from '@island.is/judicial-system/types'
+import { AccusedPleaDecision, Case } from '@island.is/judicial-system/types'
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 
 interface Props {
