@@ -13,7 +13,6 @@ import {
   getConfigValue,
   PAYMENT_QUERY,
 } from './shared.utils'
-import { ApplicationPaymentChargeResponse } from '@island.is/api/schema'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -145,8 +144,8 @@ export class SharedTemplateApiService {
   async createCharge(
     authorization: string,
     applicationId: string,
-  ): Promise<ApplicationPaymentChargeResponse> {
-    const result: ApplicationPaymentChargeResponse = await this.makeGraphqlQuery(
+  ) {
+    return this.makeGraphqlQuery(
       authorization,
       PAYMENT_QUERY,
       {
@@ -164,10 +163,7 @@ export class SharedTemplateApiService {
       })
       .then((res) => res.json())
       .then((json) => {
-        return json.data
-          .applicationPaymentCharge as ApplicationPaymentChargeResponse
+        return json.data.applicationPaymentCharge
       })
-
-    return result
   }
 }
