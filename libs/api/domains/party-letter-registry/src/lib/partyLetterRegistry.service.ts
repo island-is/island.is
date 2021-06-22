@@ -29,7 +29,7 @@ export class PartyLetterRegistryService {
   async partyLetterRegistryControllerCreate(input: CreateDto) {
     return await this.partyLetterRegistryApi
       .partyLetterRegistryControllerCreate({ createDto: input })
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async partyLetterRegistryControllerFindByManager(

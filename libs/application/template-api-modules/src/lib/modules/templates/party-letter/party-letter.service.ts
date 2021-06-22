@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
@@ -36,6 +38,7 @@ type CreatePartyLetterResponse =
 @Injectable()
 export class PartyLetterService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
@@ -90,6 +93,7 @@ export class PartyLetterService {
       .then((response) => response.json())
 
     if ('errors' in endorsementId) {
+      this.logger.error('Failed to open endorsement list', endorsementId)
       throw new Error('Failed to open endorsement list')
     }
 
@@ -144,6 +148,7 @@ export class PartyLetterService {
       .then((response) => response.json())
 
     if ('errors' in endorsementList) {
+      this.logger.error('Failed to open endorsement list', endorsementList)
       throw new Error('Failed to create endorsement list')
     }
 
