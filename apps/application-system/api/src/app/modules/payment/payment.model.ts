@@ -76,7 +76,7 @@ export class Payment extends Model<Application> {
   definition?: string
 
   @Column({
-    type: DataType.NUMBER,
+    type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
