@@ -11,7 +11,7 @@ module.exports = (async () => {
         // babelTransformerPath: null,
         getTransformOptions: async () => ({
           transform: {
-            experimentalImportSupport: true,
+            experimentalImportSupport: false,
             inlineRequires: false,
           },
         }),
