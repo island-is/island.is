@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { MetadataProvider } from '../../types'
 import { TemporaryVoterRegistryApi } from './gen/fetch'
 
