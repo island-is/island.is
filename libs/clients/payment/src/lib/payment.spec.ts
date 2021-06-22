@@ -3,11 +3,8 @@ import { Test } from '@nestjs/testing'
 import { startMocking } from '@island.is/shared/mocking'
 import { PaymentAPI } from './payment'
 import { Base64 } from 'js-base64'
-import type {
-  Catalog
-} from './payment.type'
+import type { Catalog } from './payment.type'
 import { PAYMENT_OPTIONS } from './payment.type'
-
 
 // MOCK START
 enum expectedResult {
@@ -25,7 +22,6 @@ interface CatalogRestResponse {
 const createCatalogResponse = (
   condition: expectedResult,
 ): CatalogRestResponse => {
-
   switch (condition) {
     case expectedResult.SUCCESS: {
       return {
@@ -213,7 +209,7 @@ const handlers = [
       return res(ctx.status(403), ctx.json(''))
     }
   }),
-  rest.get<Catalog>(('/catalog'), (req, res, ctx) => {
+  rest.get<Catalog>('/catalog', (req, res, ctx) => {
     const { params } = req
     const response = createCatalogResponse(params.condition)
     return res(ctx.status(response.status), ctx.json(response?.body ?? ''))
@@ -232,7 +228,7 @@ const getNestModule = async (condition: expectedResult) => {
         useValue: {
           username: condition === 'empty' ? '' : 'isl_aranja_p', // this condition defines success or failure
           password: condition === 'empty' ? '' : 'vogur.123',
-          xRoadBaseUrl: domain
+          xRoadBaseUrl: domain,
         },
       },
     ],
@@ -393,9 +389,10 @@ describe('getCatalog', () => {
             chargeItemName: 'Staðfesting áritana',
             priceAmount: 2500,
           },
-        ]
-    }}
-    
+        ],
+      },
+    }
+
     const results = createCatalogResponse(expectedResult.SUCCESS)
     expect(results).toStrictEqual(successResults)
   })
