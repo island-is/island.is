@@ -135,6 +135,8 @@ export function formatAppeal(
       return `${
         includeBullet ? '  \u2022  ' : ''
       }${stakeholder} tekur sér lögboðinn frest.`
+    default:
+      return ''
   }
 }
 

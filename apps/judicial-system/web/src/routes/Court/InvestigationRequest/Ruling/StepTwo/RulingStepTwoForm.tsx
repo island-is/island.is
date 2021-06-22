@@ -112,11 +112,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             <BlueBox>
               <Box marginBottom={2}>
                 <Text as="h4" variant="h4">
-                  {capitalize(
-                    formatAccusedByGender(
-                      workingCase.accusedGender || CaseGender.OTHER,
-                    ),
-                  )}{' '}
+                  {capitalize(formatAccusedByGender(workingCase.accusedGender))}{' '}
                   <Text as="span" color="red600" fontWeight="semiBold">
                     *
                   </Text>
@@ -247,8 +243,8 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 name="accusedAppealAnnouncement"
                 data-testid="accusedAppealAnnouncement"
                 label={`Yfirlýsing um kæru ${formatAccusedByGender(
-                  workingCase.accusedGender || CaseGender.OTHER,
-                  NounCases.DATIVE,
+                  workingCase.accusedGender,
+                  NounCases.GENITIVE,
                 )}`}
                 defaultValue={workingCase.accusedAppealAnnouncement}
                 disabled={

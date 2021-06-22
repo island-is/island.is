@@ -43,14 +43,14 @@ const CourtRecord = () => {
       if (wc.prosecutor && wc.accusedName) {
         attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
           wc.accusedName
-        } ${formatAccusedByGender(wc?.accusedGender || CaseGender.OTHER)}`
+        } ${formatAccusedByGender(wc?.accusedGender)}`
       }
 
       if (wc.defenderName) {
         attendees += `\n${
           wc.defenderName
         } skipaður verjandi ${formatAccusedByGender(
-          wc?.accusedGender || CaseGender.OTHER,
+          wc?.accusedGender,
           NounCases.GENITIVE,
         )}`
       }

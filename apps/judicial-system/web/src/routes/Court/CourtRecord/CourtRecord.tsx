@@ -84,14 +84,14 @@ export const CourtRecord: React.FC = () => {
       if (wc.prosecutor && wc.accusedName) {
         attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
           wc.accusedName
-        } ${formatAccusedByGender(wc?.accusedGender || CaseGender.OTHER)}`
+        } ${formatAccusedByGender(wc?.accusedGender)}`
       }
 
       if (wc.defenderName) {
         attendees += `\n${
           wc.defenderName
         } skipaður verjandi ${formatAccusedByGender(
-          wc?.accusedGender || CaseGender.OTHER,
+          wc?.accusedGender,
           NounCases.GENITIVE,
         )}`
       }
@@ -272,7 +272,7 @@ export const CourtRecord: React.FC = () => {
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
                   {`Réttindi ${formatAccusedByGender(
-                    workingCase.accusedGender || CaseGender.OTHER,
+                    workingCase.accusedGender,
                     NounCases.GENITIVE,
                   )} `}
                   <Text as="span" fontWeight="semiBold" color="red600">
@@ -354,12 +354,12 @@ export const CourtRecord: React.FC = () => {
                   data-testid="accusedPleaAnnouncement"
                   name="accusedPleaAnnouncement"
                   label={`Afstaða ${formatAccusedByGender(
-                    workingCase.accusedGender || CaseGender.OTHER,
+                    workingCase.accusedGender,
                     NounCases.GENITIVE,
                   )}`}
                   defaultValue={workingCase.accusedPleaAnnouncement}
                   placeholder={`Hvað hafði ${formatAccusedByGender(
-                    workingCase.accusedGender || CaseGender.OTHER,
+                    workingCase.accusedGender,
                   )} að segja um kröfuna? Mótmælti eða samþykkti?`}
                   onChange={(event) =>
                     removeTabsValidateAndSet(

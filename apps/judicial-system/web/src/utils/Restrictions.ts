@@ -46,7 +46,7 @@ export const isolation = (accusedGender?: CaseGender) =>
       return {
         ...provision,
         title: `${capitalize(
-          formatAccusedByGender(accusedGender, NounCases.NOMINATIVE),
+          formatAccusedByGender(accusedGender),
         )} skal sæta einangrun`,
       }
     })

@@ -82,8 +82,8 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       </AccordionListItem>
       <AccordionListItem
         title={`Réttindi ${formatAccusedByGender(
-          workingCase.accusedGender || CaseGender.OTHER,
-          NounCases.DATIVE,
+          workingCase.accusedGender,
+          NounCases.GENITIVE,
         )}`}
       >
         <Text>
@@ -95,8 +95,8 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       </AccordionListItem>
       <AccordionListItem
         title={`Afstaða ${formatAccusedByGender(
-          workingCase.accusedGender || CaseGender.OTHER,
-          NounCases.DATIVE,
+          workingCase.accusedGender,
+          NounCases.GENITIVE,
         )}`}
         breakSpaces
       >
@@ -104,17 +104,11 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           {`${
             workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
               ? `${capitalize(
-                  formatAccusedByGender(
-                    workingCase.accusedGender,
-                    NounCases.NOMINATIVE,
-                  ),
+                  formatAccusedByGender(workingCase.accusedGender),
                 )} hafnar kröfunni. `
               : workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
               ? `${capitalize(
-                  formatAccusedByGender(
-                    workingCase.accusedGender,
-                    NounCases.NOMINATIVE,
-                  ),
+                  formatAccusedByGender(workingCase.accusedGender),
                 )} samþykkir kröfuna. `
               : ''
           }${workingCase.accusedPleaAnnouncement}`}

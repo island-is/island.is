@@ -32,21 +32,21 @@ export const getAppealDecisionText = (
     case CaseAppealDecision.APPEAL: {
       return `${
         role === AppealDecisionRole.ACCUSED
-          ? capitalize(formatAccusedByGender(accusedGender || CaseGender.OTHER))
+          ? capitalize(formatAccusedByGender(accusedGender))
           : 'Sækjandi'
       } kærir úrskurðinn`
     }
     case CaseAppealDecision.ACCEPT: {
       return `${
         role === AppealDecisionRole.ACCUSED
-          ? capitalize(formatAccusedByGender(accusedGender || CaseGender.OTHER))
+          ? capitalize(formatAccusedByGender(accusedGender))
           : 'Sækjandi'
       } unir úrskurðinum`
     }
     case CaseAppealDecision.POSTPONE: {
       return `${
         role === AppealDecisionRole.ACCUSED
-          ? capitalize(formatAccusedByGender(accusedGender || CaseGender.OTHER))
+          ? capitalize(formatAccusedByGender(accusedGender))
           : 'Sækjandi'
       } tekur sér lögboðinn frest`
     }
@@ -70,9 +70,7 @@ export const getConclusion = (wc: Case, isLarge?: boolean) => {
 }
 
 const getRejectingConclusion = (wc: Case, large?: boolean) => {
-  const genderFormattedAccusedName = formatAccusedByGender(
-    wc.accusedGender || CaseGender.OTHER,
-  )
+  const genderFormattedAccusedName = formatAccusedByGender(wc.accusedGender)
 
   const accusedNameAndNationalId = `${wc.accusedName}, kt. ${formatNationalId(
     wc.accusedNationalId,
@@ -103,7 +101,7 @@ const getRejectingConclusion = (wc: Case, large?: boolean) => {
 
 const getAcceptingConclusion = (wc: Case, large?: boolean) => {
   const genderFormattedAccusedName = capitalize(
-    formatAccusedByGender(wc.accusedGender || CaseGender.OTHER),
+    formatAccusedByGender(wc.accusedGender),
   )
 
   const accusedNameAndNationalId = `${wc.accusedName} kt. ${formatNationalId(
@@ -202,7 +200,7 @@ const getAcceptingAlternativeTravelBanConclusion = (
   large?: boolean,
 ): JSX.Element => {
   const genderFormattedAccusedName = capitalize(
-    formatAccusedByGender(wc.accusedGender || CaseGender.OTHER),
+    formatAccusedByGender(wc.accusedGender),
   )
 
   const accusedNameAndNationalId = `${wc.accusedName} kt. ${formatNationalId(

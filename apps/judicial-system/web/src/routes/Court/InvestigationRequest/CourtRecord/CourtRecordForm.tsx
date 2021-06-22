@@ -204,7 +204,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           <Box marginBottom={1}>
             <Text as="h3" variant="h3">
               {`Réttindi ${formatAccusedByGender(
-                workingCase.accusedGender || CaseGender.OTHER,
+                workingCase.accusedGender,
                 NounCases.GENITIVE,
               )} `}
               <Text as="span" fontWeight="semiBold" color="red600">
@@ -284,12 +284,12 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               data-testid="accusedPleaAnnouncement"
               name="accusedPleaAnnouncement"
               label={`Afstaða ${formatAccusedByGender(
-                workingCase.accusedGender || CaseGender.OTHER,
+                workingCase.accusedGender,
                 NounCases.GENITIVE,
               )}`}
               defaultValue={workingCase.accusedPleaAnnouncement}
               placeholder={`Hvað hafði ${formatAccusedByGender(
-                workingCase.accusedGender || CaseGender.OTHER,
+                workingCase.accusedGender,
               )} að segja um kröfuna? Mótmælti eða samþykkti?`}
               onChange={(event) =>
                 removeTabsValidateAndSet(

@@ -182,9 +182,7 @@ export const RulingStepTwo: React.FC = () => {
                   <Box marginBottom={2}>
                     <Text as="h4" variant="h4">
                       {capitalize(
-                        formatAccusedByGender(
-                          workingCase.accusedGender || CaseGender.OTHER,
-                        ),
+                        formatAccusedByGender(workingCase.accusedGender),
                       )}{' '}
                       <Text as="span" color="red600" fontWeight="semiBold">
                         *
@@ -198,9 +196,7 @@ export const RulingStepTwo: React.FC = () => {
                           name="accused-appeal-decision"
                           id="accused-appeal"
                           label={`${capitalize(
-                            formatAccusedByGender(
-                              workingCase.accusedGender || CaseGender.OTHER,
-                            ),
+                            formatAccusedByGender(workingCase.accusedGender),
                           )} kærir úrskurðinn`}
                           value={CaseAppealDecision.APPEAL}
                           checked={
@@ -230,9 +226,7 @@ export const RulingStepTwo: React.FC = () => {
                           name="accused-appeal-decision"
                           id="accused-accept"
                           label={`${capitalize(
-                            formatAccusedByGender(
-                              workingCase.accusedGender || CaseGender.OTHER,
-                            ),
+                            formatAccusedByGender(workingCase.accusedGender),
                           )} unir úrskurðinum`}
                           value={CaseAppealDecision.ACCEPT}
                           checked={
@@ -266,9 +260,7 @@ export const RulingStepTwo: React.FC = () => {
                           name="accused-appeal-decision"
                           id="accused-postpone"
                           label={`${capitalize(
-                            formatAccusedByGender(
-                              workingCase.accusedGender || CaseGender.OTHER,
-                            ),
+                            formatAccusedByGender(workingCase.accusedGender),
                           )}  tekur sér lögboðinn frest`}
                           value={CaseAppealDecision.POSTPONE}
                           checked={
@@ -300,8 +292,8 @@ export const RulingStepTwo: React.FC = () => {
                     name="accusedAppealAnnouncement"
                     data-testid="accusedAppealAnnouncement"
                     label={`Yfirlýsing um kæru ${formatAccusedByGender(
-                      workingCase.accusedGender || CaseGender.OTHER,
-                      NounCases.DATIVE,
+                      workingCase.accusedGender,
+                      NounCases.GENITIVE,
                     )}`}
                     defaultValue={workingCase.accusedAppealAnnouncement}
                     disabled={

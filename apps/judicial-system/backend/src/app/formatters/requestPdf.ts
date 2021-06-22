@@ -37,6 +37,7 @@ function constructRestrictionRequestPdf(
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
   doc
     .font('Helvetica-Bold')
     .fontSize(26)
@@ -160,23 +161,6 @@ function constructRestrictionRequestPdf(
       paragraphGap: 0,
     })
     .text(' ')
-
-  if (existingCase.requestProsecutorOnlySession) {
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Beiðni um dómþing að varnaraðila fjarstöddum')
-      .font('Helvetica')
-      .fontSize(12)
-      .text(existingCase.prosecutorOnlySessionRequest, {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
-      .text(' ')
-  }
-
-  doc
     .font('Helvetica-Bold')
     .text(
       `${existingCase.prosecutor?.name || ''} ${
@@ -187,6 +171,7 @@ function constructRestrictionRequestPdf(
   setPageNumbers(doc)
 
   doc.end()
+
   return stream
 }
 
@@ -209,6 +194,7 @@ function constructInvestigationRequestPdf(
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
   doc
     .font('Helvetica-Bold')
     .fontSize(26)
@@ -317,6 +303,23 @@ function constructInvestigationRequestPdf(
       paragraphGap: 0,
     })
     .text(' ')
+
+  if (existingCase.requestProsecutorOnlySession) {
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(14)
+      .lineGap(8)
+      .text('Beiðni um dómþing að varnaraðila fjarstöddum')
+      .font('Helvetica')
+      .fontSize(12)
+      .text(existingCase.prosecutorOnlySessionRequest, {
+        lineGap: 6,
+        paragraphGap: 0,
+      })
+      .text(' ')
+  }
+
+  doc
     .font('Helvetica-Bold')
     .text(
       `${existingCase.prosecutor?.name || ''} ${
@@ -327,6 +330,7 @@ function constructInvestigationRequestPdf(
   setPageNumbers(doc)
 
   doc.end()
+
   return stream
 }
 
