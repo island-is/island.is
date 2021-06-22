@@ -63,14 +63,14 @@ const EmailForm = () => {
             name="email"
             label="Netfang"
             placeholder="Sláðu inn netfang"
+            type="email"
+            value={form?.emailAddress}
             onChange={(event) => {
               if (hasError) {
                 setHasError(false)
               }
               updateForm({ ...form, emailAddress: event.target.value })
             }}
-            value={form?.emailAddress}
-            type="email"
             backgroundColor="blue"
             errorMessage="Athugaðu hvort netfang sé rétt slegið inn"
             hasError={hasError}

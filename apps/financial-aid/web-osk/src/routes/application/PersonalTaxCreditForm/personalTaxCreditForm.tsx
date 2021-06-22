@@ -30,11 +30,11 @@ const PersonalTaxCreditForm = () => {
   const options = [
     {
       label: 'Já, nýta persónuafslátt',
-      value: 0,
+      value: 1,
     },
     {
       label: 'Nei, ekki nýta persónuafslátt',
-      value: 1,
+      value: 0,
     },
   ]
 
