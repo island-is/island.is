@@ -143,6 +143,8 @@ export function formatAccusedByGender(
 export function formatCustodyRestrictions(
   accusedGender?: CaseGender,
   custodyRestrictions?: CaseCustodyRestrictions[],
+  validToDate?: Date | string | undefined,
+  isolationToDate?: Date | string | undefined,
 ): string {
   const relevantCustodyRestrictions = custodyRestrictions?.filter(
     (restriction) =>
@@ -160,12 +162,30 @@ export function formatCustodyRestrictions(
     return 'Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.'
   }
 
+  const formattedValidToDateAndTime = `${formatDate(validToDate, 'PPPPp')
+    ?.replace('dagur,', 'dagsins')
+    ?.replace(' kl.', ', kl.')}`
+
+  const formattedIsolationToDateAndTime = `${formatDate(
+    isolationToDate,
+    'PPPPp',
+  )
+    ?.replace('dagur,', 'dagsins')
+    ?.replace(' kl.', ', kl.')}`
+
+  const isolationIsSameAsValidToDate =
+    validToDate &&
+    isolationToDate &&
+    formattedIsolationToDateAndTime === formattedValidToDateAndTime
+
   let res = 'Sækjandi tekur fram að '
 
   if (relevantCustodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION)) {
-    res += `${formatAccusedByGender(
-      accusedGender,
-    )} skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur`
+    res += `${formatAccusedByGender(accusedGender)} skuli sæta einangrun ${
+      isolationIsSameAsValidToDate
+        ? 'á meðan á gæsluvarðhaldinu stendur'
+        : `ekki lengur en til ${formattedIsolationToDateAndTime}`
+    }`
 
     if (relevantCustodyRestrictions.length === 1) {
       return res + '.'
