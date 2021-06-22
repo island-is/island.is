@@ -29,7 +29,7 @@ import { CreateChargeDto, CreatePaymentResponseDto } from './dto'
 import { ApplicationSerializer } from '../application/tools/application.serializer'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
-import { Callback } from '@island.is/api/domains/payment'
+import type { Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 

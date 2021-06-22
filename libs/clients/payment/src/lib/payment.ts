@@ -2,13 +2,13 @@ import { Inject } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import { Base64 } from 'js-base64'
-import {
+import type {
   ChargeResponse,
   Catalog,
   PaymentServiceOptions,
-  PAYMENT_OPTIONS,
   Charge,
 } from './payment.type'
+import { PAYMENT_OPTIONS } from './payment.type'
 
 export class PaymentAPI extends RESTDataSource {
   constructor(

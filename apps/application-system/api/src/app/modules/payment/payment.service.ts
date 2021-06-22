@@ -2,11 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { Op } from 'sequelize'
-import {
+import { PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
+import type {
   Charge,
-  PaymentAPI,
   PaymentServiceOptions,
-  PAYMENT_OPTIONS,
 } from '@island.is/clients/payment'
 import type { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
