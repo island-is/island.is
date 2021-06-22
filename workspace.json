@@ -17,8 +17,8 @@
     },
     "@nrwl/react": {
       "application": {
-        "style": "scss",
         "linter": "eslint",
+        "style": "scss",
         "pascalCaseFiles": true,
         "babel": true
       },
@@ -1873,6 +1873,28 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-complaints-to-althingi-ombudsman": {
+      "root": "libs/application/templates/complaints-to-althingi-ombudsman",
+      "sourceRoot": "libs/application/templates/complaints-to-althingi-ombudsman/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/complaints-to-althingi-ombudsman/tsconfig.lib.json",
+              "libs/application/templates/complaints-to-althingi-ombudsman/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/complaints-to-althingi-ombudsman/**/*"
+            ]
           }
         }
       }
