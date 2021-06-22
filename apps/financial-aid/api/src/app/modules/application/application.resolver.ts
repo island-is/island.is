@@ -13,6 +13,8 @@ import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
 import { ApplicationInput } from './dto'
 
+import { Application } from '@island.is/financial-aid/shared'
+
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => ApplicationModel)
 export class ApplicationResolver {
@@ -24,7 +26,7 @@ export class ApplicationResolver {
   @Query(() => [ApplicationModel], { nullable: false })
   applications(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationModel[]> {
+  ): Promise<Application[]> {
     this.logger.debug('Getting all applications')
 
     return backendApi.getApplications()
@@ -35,7 +37,7 @@ export class ApplicationResolver {
     @Args('input', { type: () => ApplicationInput })
     input: ApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationModel> {
+  ): Promise<Application> {
     this.logger.debug(`Getting applicant ${input.id}`)
 
     return backendApi.getApplicant(input.id)
@@ -46,7 +48,7 @@ export class ApplicationResolver {
     @Args('input', { type: () => CreateApplicationInput })
     input: CreateApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationModel> {
+  ): Promise<Application> {
     this.logger.debug('Creating case')
 
     return backendApi.createApplication(input)
@@ -57,9 +59,7 @@ export class ApplicationResolver {
     @Args('input', { type: () => UpdateApplicationInput })
     input: UpdateApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationModel> {
-    this.logger.debug('Creating case')
-
+  ): Promise<Application> {
     const { id, ...updateApplicant } = input
 
     return backendApi.updateApplication(id, updateApplicant)

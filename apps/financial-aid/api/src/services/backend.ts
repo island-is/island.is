@@ -2,12 +2,12 @@ import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 
 import { Injectable } from '@nestjs/common'
 
-import { Application, Municipality } from '@island.is/financial-aid/shared'
-
 import {
-  CreateApplicationInput,
-  UpdateApplicationInput,
-} from '../app/modules/application/dto'
+  Application,
+  Municipality,
+  UpdateApplication,
+  CreateApplication,
+} from '@island.is/financial-aid/shared'
 
 import { environment } from '../environments'
 
@@ -32,14 +32,14 @@ class BackendAPI extends RESTDataSource {
   }
 
   createApplication(
-    createApplication: CreateApplicationInput,
+    createApplication: CreateApplication,
   ): Promise<Application> {
     return this.post('application', createApplication)
   }
 
   updateApplication(
     id: string,
-    updateApplicant: UpdateApplicationInput,
+    updateApplicant: UpdateApplication,
   ): Promise<Application> {
     return this.put(`applications/${id}`, updateApplicant)
   }

@@ -67,7 +67,6 @@ export interface CreateApplication {
 }
 
 export interface UpdateApplication {
-  id: string
   state?: State
 }
 
