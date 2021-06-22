@@ -141,19 +141,12 @@ export class SharedTemplateApiService {
     })
   }
 
-  async createCharge(
-    authorization: string,
-    applicationId: string,
-  ) {
-    return this.makeGraphqlQuery(
-      authorization,
-      PAYMENT_QUERY,
-      {
-        input: {
-          applicationId,
-        },
+  async createCharge(authorization: string, applicationId: string) {
+    return this.makeGraphqlQuery(authorization, PAYMENT_QUERY, {
+      input: {
+        applicationId,
       },
-    )
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error('graphql query failed')

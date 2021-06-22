@@ -16,10 +16,7 @@ export class PaymentAPI extends RESTDataSource {
     private readonly options: PaymentServiceOptions,
   ) {
     super()
-    const {
-      xRoadBaseUrl,
-      xRoadProviderId,
-    } = this.options
+    const { xRoadBaseUrl, xRoadProviderId } = this.options
     this.baseURL = `${xRoadBaseUrl}/r1/${xRoadProviderId}/catalog/`
     this.initialize({} as DataSourceConfig<any>)
   }
