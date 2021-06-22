@@ -353,6 +353,7 @@ export class NotificationService {
         CaseCustodyRestrictions.ISOLATION,
       ),
       existingCase.defenderName,
+      existingCase.defenderIsSpokesperson,
       existingCase.parentCase &&
         existingCase.parentCase?.decision === CaseDecision.ACCEPTING,
     )

@@ -239,6 +239,7 @@ export function formatPrisonCourtDateEmailNotification(
   requestedValidToDate: Date,
   isolation: boolean,
   defenderName: string,
+  defenderIsSpokesperson: boolean,
   isExtension: boolean,
 ): string {
   const courtText = court?.replace('dómur', 'dóms')
@@ -255,8 +256,12 @@ export function formatPrisonCourtDateEmailNotification(
     ? 'Farið er fram á einangrun.'
     : 'Ekki er farið fram á einangrun.'
   const defenderText = defenderName
-    ? `Verjandi sakbornings: ${defenderName}`
-    : 'Verjandi sakbornings hefur ekki verið skráður'
+    ? `${
+        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+      } sakbornings: ${defenderName}`
+    : `${
+        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+      } sakbornings hefur ekki verið skráður`
 
   return `${prosecutorOffice} hefur sent kröfu um ${
     isExtension ? 'áframhaldandi ' : ''

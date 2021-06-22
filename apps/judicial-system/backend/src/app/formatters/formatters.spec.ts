@@ -837,6 +837,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       requestedValidToDate,
       isolation,
       defenderName,
+      undefined,
       isExtension,
     )
 
@@ -856,6 +857,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
     const defenderName = 'Vala Verja'
+    const defenderIsSpokesperson = true
     const isExtension = false
 
     // Act
@@ -868,12 +870,13 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       requestedValidToDate,
       isolation,
       defenderName,
+      defenderIsSpokesperson,
       isExtension,
     )
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Kynsegin/Annað.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Farið er fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Kynsegin/Annað.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Farið er fram á einangrun.<br /><br />Talsmaður sakbornings: Vala Verja.',
     )
   })
 
@@ -887,6 +890,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const defenderName = 'Vala Verja'
+    const defenderIsSpokesperson = false
     const isExtension = false
 
     // Act
@@ -899,6 +903,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       requestedValidToDate,
       isolation,
       defenderName,
+      defenderIsSpokesperson,
       isExtension,
     )
 
@@ -929,6 +934,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       requestedValidToDate,
       isolation,
       undefined,
+      undefined,
       isExtension,
     )
 
@@ -947,7 +953,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const accusedGender = CaseGender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
-    const defenderName = 'Vala Verja'
+    const defenderIsSpokesperson = true
     const isExtension = true
 
     // Act
@@ -959,13 +965,14 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       accusedGender,
       requestedValidToDate,
       isolation,
-      defenderName,
+      undefined,
+      defenderIsSpokesperson,
       isExtension,
     )
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um áframhaldandi gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 11. febrúar 2021, kl. 12:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um áframhaldandi gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 11. febrúar 2021, kl. 12:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Talsmaður sakbornings hefur ekki verið skráður.',
     )
   })
 })
