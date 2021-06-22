@@ -19,7 +19,7 @@ import {
   FormContentContainer,
   FormFooter,
   FormLayout,
-  Modal,
+  CancelModal,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
@@ -409,7 +409,7 @@ const SummaryForm = () => {
           </Text>
         </div>
 
-        <Modal
+        <CancelModal
           isVisible={isVisible}
           setIsVisible={(isVisibleBoolean) => {
             setIsVisible(isVisibleBoolean)

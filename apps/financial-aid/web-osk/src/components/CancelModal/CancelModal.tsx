@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Text, Box, Button, ModalBase, Icon } from '@island.is/island-ui/core'
 
-import * as styles from './Modal.treat'
+import * as styles from './CancelModal.treat'
 
 import { api } from '@island.is/financial-aid-web/osk/src/services'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
@@ -14,7 +14,7 @@ interface Props {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const Modal: React.FC<Props> = (props: Props) => {
+const CancelModal: React.FC<Props> = (props: Props) => {
   const { isVisible, setIsVisible } = props
   const logOut = useLogOut()
 
@@ -100,4 +100,4 @@ const Modal: React.FC<Props> = (props: Props) => {
   )
 }
 
-export default Modal
+export default CancelModal
