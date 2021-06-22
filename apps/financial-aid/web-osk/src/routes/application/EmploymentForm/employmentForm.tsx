@@ -36,12 +36,10 @@ const EmploymentForm = () => {
     Employment.UNEMPLOYED,
     Employment.CANNOTWORK,
     Employment.OTHER,
-  ].map((item) => {
-    return {
-      label: getEmploymentStatus[item],
-      value: item,
-    }
-  })
+  ].map((item) => ({
+    label: getEmploymentStatus[item],
+    value: item,
+  }))
 
   const errorCheck = () => {
     if (form?.employment === undefined) {

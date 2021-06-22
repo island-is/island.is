@@ -35,12 +35,10 @@ const HomeCircumstancesForm = () => {
     HomeCircumstances.OWNPLACE,
     HomeCircumstances.REGISTEREDLEASE,
     HomeCircumstances.OTHER,
-  ].map((item) => {
-    return {
-      label: getHomeCircumstances[item],
-      value: item,
-    }
-  })
+  ].map((item) => ({
+    label: getHomeCircumstances[item],
+    value: item,
+  }))
 
   const errorCheck = () => {
     if (form?.homeCircumstances === undefined) {
