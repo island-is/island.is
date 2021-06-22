@@ -110,7 +110,7 @@ export class FinanceService extends RESTDataSource {
     listPath: string,
   ): Promise<DocumentsListTypes> {
     const response = await this.get<DocumentsListTypes>(
-      `/documentsList/${listPath}?nationalID=${this.options.financeTestUser}&dayFrom=${dayFrom}&dayTo=${dayTo}`,
+      `/documentsList/${listPath}?nationalID=${this.options.financeTestUser}&dateFrom=${dayFrom}&dateTo=${dayTo}`,
       {
         cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
       },

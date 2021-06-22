@@ -15,12 +15,15 @@ import {
   Button,
   AlertBanner,
   SkeletonLoader,
+  Pagination,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
 import amountFormat from '../../utils/amountFormat'
 import { showPdfDocument } from '@island.is/service-portal/graphql'
+
+const ITEMS_ON_PAGE = 20
 
 interface Props {
   title: string
@@ -48,6 +51,7 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
   const { showPdf } = showPdfDocument()
   const { formatMessage } = useLocale()
 
+  const [page, setPage] = useState(1)
   const [fromDate, setFromDate] = useState<string>()
   const [toDate, setToDate] = useState<string>()
 
@@ -57,6 +61,11 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
 
   const billsDataArray: DocumentsListItemTypes[] =
     data?.getDocumentsList?.documentsList || []
+
+  const totalPages =
+    billsDataArray.length > ITEMS_ON_PAGE
+      ? Math.ceil(billsDataArray.length / ITEMS_ON_PAGE)
+      : 0
 
   useEffect(() => {
     if (toDate && fromDate) {
@@ -164,28 +173,47 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
                 </T.Row>
               </T.Head>
               <T.Body>
-                {billsDataArray.map((listItem) => (
-                  <T.Row key={listItem.id}>
-                    <T.Data>
-                      {format(new Date(listItem.date), dateFormat.is)}
-                    </T.Data>
-                    <T.Data>{listItem.type}</T.Data>
-                    <T.Data>{listItem.note}</T.Data>
-                    <T.Data>{listItem.sender}</T.Data>
-                    <T.Data>{amountFormat(listItem.amount)}</T.Data>
-                    <T.Data>
-                      <Button
-                        size="small"
-                        variant="text"
-                        onClick={() => showPdf(listItem.id)}
-                      >
-                        {formatMessage(m.view)}
-                      </Button>
-                    </T.Data>
-                  </T.Row>
-                ))}
+                {billsDataArray
+                  .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
+                  .map((listItem) => (
+                    <T.Row key={listItem.id}>
+                      <T.Data>
+                        {format(new Date(listItem.date), dateFormat.is)}
+                      </T.Data>
+                      <T.Data>{listItem.type}</T.Data>
+                      <T.Data>{listItem.note}</T.Data>
+                      <T.Data>{listItem.sender}</T.Data>
+                      <T.Data>{amountFormat(listItem.amount)}</T.Data>
+                      <T.Data>
+                        <Button
+                          size="small"
+                          variant="text"
+                          onClick={() => showPdf(listItem.id)}
+                        >
+                          {formatMessage(m.view)}
+                        </Button>
+                      </T.Data>
+                    </T.Row>
+                  ))}
               </T.Body>
             </T.Table>
+          ) : null}
+          {totalPages > 0 ? (
+            <Box paddingTop={8}>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => setPage(page)}
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
+            </Box>
           ) : null}
         </Box>
       </Stack>
