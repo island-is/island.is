@@ -27,6 +27,11 @@ import { ApplicationsModule } from './applications-module'
 import { NotificationsModule } from './notifications-module'
 import { OnboardingModule } from './onboarding-module'
 
+const iconInsets = {
+  top: Platform.OS === 'ios' && Platform.isPad ? 8 : 16,
+  bottom: Platform.OS === 'ios' && Platform.isPad ? 8 : -4,
+};
+
 const {
   useNavigationOptions,
   getNavigationOptions,
@@ -63,12 +68,9 @@ const {
     },
     bottomTab: {
       testID: testIDs.TABBAR_TAB_HOME,
-      iconInsets: {
-        top: 16,
-        bottom: -4,
-      },
-      iconWidth: 42,
-      iconHeight: 42,
+      iconInsets,
+      // iconWidth: 42,
+      // iconHeight: 42,
       disableIconTint: false,
       disableSelectedIconTint: true,
     },

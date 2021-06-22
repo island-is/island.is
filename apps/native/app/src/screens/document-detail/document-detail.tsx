@@ -53,6 +53,9 @@ const {
     },
   }),
   {
+    bottomTabs: {
+      visible: false,
+    },
     topBar: {
       noBorder: true,
       rightButtons: [

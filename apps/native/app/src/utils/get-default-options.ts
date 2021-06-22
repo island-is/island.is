@@ -27,6 +27,10 @@ export function getDefaultOptions(
       borderHeight: 0,
       borderColor: 'transparent',
     },
+    navigationBar: {
+      backgroundColor: theme.shade.background,
+      visible: true,
+    },
     statusBar: Platform.OS === 'android' ? {
       animated: true,
       backgroundColor: theme.shade.background,

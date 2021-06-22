@@ -255,9 +255,6 @@ AppLockScreen.options = {
   topBar: {
     visible: false,
   },
-  navigationBar: {
-    visible: false,
-  },
   layout: {
     backgroundColor: 'transparent',
     componentBackgroundColor: 'transparent',

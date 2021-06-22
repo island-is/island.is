@@ -58,6 +58,10 @@ const {
     topBar: {
       rightButtons: [],
     },
+    bottomTabs: {
+      visible: false,
+      drawBehind: true,
+    },
   },
 )
 
@@ -168,7 +172,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   return (
     <View style={{ flex: 1 }}>
-      <BottomTabsIndicator index={2} total={3} />
+      {/* <BottomTabsIndicator index={2} total={3} /> */}
       <View style={{ height: 140 }} />
       <Information contentInset={{ bottom: 162 }}>
         <SafeAreaView style={{ marginHorizontal: 16 }}>
