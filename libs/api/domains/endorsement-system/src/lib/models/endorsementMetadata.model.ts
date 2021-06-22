@@ -18,4 +18,7 @@ export class EndorsementMetadata {
 
   @Field(() => [EndorsementMetadataSignedTagsEnum], { nullable: true })
   signedTags!: EndorsementMetadataSignedTagsEnum[] | null
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  voterRegion!: object | null
 }
