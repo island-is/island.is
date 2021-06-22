@@ -707,6 +707,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       courtDate,
       courtRoom,
       defenderName,
+      undefined,
     )
 
     // Assert
@@ -721,6 +722,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2020-12-24T18:00')
     const courtRoom = '101'
+    const defenderIsSpokesperson = true
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
@@ -729,11 +731,12 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       courtDate,
       courtRoom,
       undefined,
+      defenderIsSpokesperson,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Talsmaður sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -744,6 +747,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const courtDate = new Date('2021-12-24T10:00')
     const courtRoom = '999'
     const defenderName = 'Valdi Verjandi'
+    const defenderIsSpokesperson = true
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
@@ -752,11 +756,12 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       courtDate,
       courtRoom,
       defenderName,
+      defenderIsSpokesperson,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir farbannskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir farbannskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Talsmaður sakbornings: Valdi Verjandi.',
     )
   })
 
@@ -766,7 +771,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
     const courtRoom = '999'
-    const defenderName = 'Valdi Verjandi'
+    const defenderIsSpokesperson = false
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
@@ -774,12 +779,13 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       court,
       courtDate,
       courtRoom,
-      defenderName,
+      undefined,
+      defenderIsSpokesperson,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild (hljóðupptökubúnaði komið fyrir).<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild (hljóðupptökubúnaði komið fyrir).<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -798,6 +804,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       courtDate,
       courtRoom,
       defenderName,
+      undefined,
     )
 
     // Assert

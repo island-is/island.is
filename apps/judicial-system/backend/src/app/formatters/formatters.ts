@@ -207,11 +207,16 @@ export function formatProsecutorCourtDateEmailNotification(
   courtDate: Date,
   courtRoom: string,
   defenderName: string,
+  defenderIsSpokesperson: boolean,
 ): string {
   const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
   const defenderText = defenderName
-    ? `Verjandi sakbornings: ${defenderName}`
-    : 'Verjandi sakbornings hefur ekki verið skráður'
+    ? `${
+        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+      } sakbornings: ${defenderName}`
+    : `${
+        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+      } sakbornings hefur ekki verið skráður`
 
   const scheduledCaseText =
     type === CaseType.CUSTODY

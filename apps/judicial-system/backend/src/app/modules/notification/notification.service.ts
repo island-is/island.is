@@ -327,6 +327,7 @@ export class NotificationService {
       existingCase.courtDate,
       existingCase.courtRoom,
       existingCase.defenderName,
+      existingCase.defenderIsSpokesperson,
     )
 
     return this.sendEmail(
