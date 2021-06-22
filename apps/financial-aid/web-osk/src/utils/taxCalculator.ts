@@ -1,6 +1,12 @@
-// import { AidDateAmountListItem } from './veitaFinancialAidDefinitions'
+// import { AidtaxInfoListItem } from './veitaFinancialAidDefinitions'
 
-export interface AidDateAmount {
+import _taxInfo from '@island.is/financial-aid-web/osk/src/utils/taxInfo.json'
+
+interface TaxInfoYear {
+  [id: string]: TaxInfo
+}
+
+export interface TaxInfo {
   personalTaxAllowance: number
   taxPercentage: number
 }
@@ -8,11 +14,14 @@ export interface AidDateAmount {
 export const calculateAidFinalAmount = (
   amount: number,
   usePersonalTaxAllowance: boolean | undefined,
-  dateAmount: AidDateAmount,
+  currentYear: string,
 ): number => {
-  const taxPercentage = dateAmount.taxPercentage / 100
+  var TaxInfoYear: TaxInfoYear = _taxInfo
+  const taxInfo = TaxInfoYear[currentYear]
 
-  const personalTaxAllowance = dateAmount.personalTaxAllowance
+  const taxPercentage = taxInfo.taxPercentage / 100
+
+  const personalTaxAllowance = taxInfo.personalTaxAllowance
 
   const tax = Math.floor(amount * taxPercentage)
 
@@ -27,9 +36,12 @@ export const calculateAidFinalAmount = (
 
 export const calulateTaxOfAmount = (
   amount: number,
-  dateAmount: AidDateAmount,
+  currentYear: string,
 ): number => {
-  const taxPercentage = dateAmount.taxPercentage / 100
+  var TaxInfoYear: TaxInfoYear = _taxInfo
+  const taxInfo = TaxInfoYear[currentYear]
+
+  const taxPercentage = taxInfo.taxPercentage / 100
 
   return Math.floor(amount * taxPercentage)
 }
@@ -37,15 +49,18 @@ export const calulateTaxOfAmount = (
 export const calulatePersonalTaxAllowanceUsed = (
   amount: number,
   usePersonalTaxAllowance: boolean | undefined,
-  dateAmount: AidDateAmount,
+  currentYear: string,
 ): number => {
-  const personalTaxAllowance = dateAmount.personalTaxAllowance
+  var TaxInfoYear: TaxInfoYear = _taxInfo
+  const taxInfo = TaxInfoYear[currentYear]
+
+  const personalTaxAllowance = taxInfo.personalTaxAllowance
 
   const personalTaxAllowanceUsed = usePersonalTaxAllowance
     ? personalTaxAllowance
     : 0
 
-  const tax = calulateTaxOfAmount(amount, dateAmount)
+  const tax = calulateTaxOfAmount(amount, currentYear)
 
   // Only show the amount of used personal tax allowence, not the full tax allowence
   return Math.min(personalTaxAllowanceUsed, tax)

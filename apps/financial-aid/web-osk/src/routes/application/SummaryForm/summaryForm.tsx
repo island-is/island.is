@@ -36,6 +36,7 @@ import {
   calculateAidFinalAmount,
   calulateTaxOfAmount,
   calulatePersonalTaxAllowanceUsed,
+  TaxInfo,
 } from '@island.is/financial-aid-web/osk/src/utils/taxCalculator'
 
 import {
@@ -51,16 +52,12 @@ import {
   ApplicationState,
 } from '@island.is/financial-aid/shared'
 
-import dateAmounts from '@island.is/financial-aid-web/osk/src/utils/dateAmounts.json'
-
 interface MunicipalityData {
   municipality: Municipality
 }
 
 const SummaryForm = () => {
-  function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
-    return obj[key]
-  }
+  const currentYear = format(new Date(), 'yyyy')
 
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
@@ -234,10 +231,9 @@ const SummaryForm = () => {
               <Text>
                 -{' '}
                 {aidAmount &&
-                  calulateTaxOfAmount(
-                    aidAmount,
-                    getProperty(dateAmounts, '2021'),
-                  ).toLocaleString('de-DE')}{' '}
+                  calulateTaxOfAmount(aidAmount, currentYear).toLocaleString(
+                    'de-DE',
+                  )}{' '}
                 kr.
               </Text>
             </Box>
@@ -257,7 +253,7 @@ const SummaryForm = () => {
                   calulatePersonalTaxAllowanceUsed(
                     aidAmount,
                     form?.usePersonalTaxCredit,
-                    getProperty(dateAmounts, '2021'),
+                    currentYear,
                   ).toLocaleString('de-DE')}{' '}
                 kr.
               </Text>
@@ -278,7 +274,7 @@ const SummaryForm = () => {
                   ? calculateAidFinalAmount(
                       aidAmount,
                       form?.usePersonalTaxCredit,
-                      getProperty(dateAmounts, '2021'),
+                      currentYear,
                     ).toLocaleString('de-DE') + ' kr.'
                   : 'Abbabb.. mistókst að reikna'}
               </Text>
