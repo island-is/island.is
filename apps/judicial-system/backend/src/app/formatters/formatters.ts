@@ -304,6 +304,7 @@ export function formatPrisonRulingEmailNotification(
   courtEndTime: Date,
   defenderName: string,
   defenderEmail: string,
+  defenderIsSpokesperson: boolean,
   decision: CaseDecision,
   validToDate: Date,
   custodyRestrictions: CaseCustodyRestrictions[],
@@ -322,7 +323,9 @@ export function formatPrisonRulingEmailNotification(
   )}.<br /><br />Þinghaldi lauk kl. ${formatDate(
     courtEndTime,
     'p',
-  )}.<br /><br />Ákærandi: ${prosecutorName}.<br />Verjandi: ${
+  )}.<br /><br />Ákærandi: ${prosecutorName}.<br />${
+    defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+  }: ${
     defenderName
       ? defenderEmail
         ? `${defenderName}, ${defenderEmail}`

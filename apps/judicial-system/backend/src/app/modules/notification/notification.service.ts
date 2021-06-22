@@ -468,6 +468,7 @@ export class NotificationService {
       existingCase.courtEndTime,
       existingCase.defenderName,
       existingCase.defenderEmail,
+      existingCase.defenderIsSpokesperson,
       existingCase.decision,
       existingCase.validToDate,
       existingCase.custodyRestrictions,
