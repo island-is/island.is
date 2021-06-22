@@ -1,4 +1,4 @@
-export enum OmubdsmanComplaintTypeEnum {
+export enum OmbudsmanComplaintTypeEnum {
   PROCEEDINGS = 'proceedings',
-  COURT_DECISION = 'courtDecision',
+  DECISION = 'decision',
 }
