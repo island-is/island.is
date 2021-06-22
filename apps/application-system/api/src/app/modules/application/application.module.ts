@@ -46,7 +46,9 @@ if (process.env.INIT_SCHEMA === 'true') {
 
 @Module({
   imports: [
-    PaymentModule.register({ clientConfig: environment.templateApi.paymentOptions }),
+    PaymentModule.register({
+      clientConfig: environment.templateApi.paymentOptions,
+    }),
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
     TemplateAPIModule.register(environment.templateApi),

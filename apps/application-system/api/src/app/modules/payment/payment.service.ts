@@ -2,7 +2,12 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { Op } from 'sequelize'
-import { Charge, PaymentAPI, PaymentServiceOptions, PAYMENT_OPTIONS } from '@island.is/clients/payment'
+import {
+  Charge,
+  PaymentAPI,
+  PaymentServiceOptions,
+  PAYMENT_OPTIONS,
+} from '@island.is/clients/payment'
 import type { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
 
@@ -16,7 +21,9 @@ export class PaymentService {
     private paymentApi: PaymentAPI,
   ) {}
 
-  async findPaymentByApplicationId(applicationId: string): Promise<Payment | null> {
+  async findPaymentByApplicationId(
+    applicationId: string,
+  ): Promise<Payment | null> {
     return this.paymentModel.findOne({
       where: {
         application_id: { [Op.eq]: applicationId },
@@ -30,12 +37,17 @@ export class PaymentService {
     return `${this.paymentConfig.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
   }
 
-  async createCharge(payment: Payment, user: User): Promise<CreateChargeResult> {
+  async createCharge(
+    payment: Payment,
+    user: User,
+  ): Promise<CreateChargeResult> {
     // TODO: island.is x-road service path for callback.. ??
     // this can actually be a fixed url
     const callbackUrl =
-      ((this.paymentConfig.callbackBaseUrl + payment.application_id) as string) +
-      this.paymentConfig.callbackAdditionUrl + payment.id
+      ((this.paymentConfig.callbackBaseUrl +
+        payment.application_id) as string) +
+      this.paymentConfig.callbackAdditionUrl +
+      payment.id
 
     const charge: Charge = {
       // TODO: this needs to be unique, but can only handle 22 or 23 chars

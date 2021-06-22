@@ -27,11 +27,11 @@ export class DrivingLicenseSubmissionService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async createCharge({ application: { id }, authorization, }: TemplateApiModuleActionProps) {
-    return this.sharedTemplateAPIService.createCharge(
-      authorization,
-      id
-    )
+  async createCharge({
+    application: { id },
+    authorization,
+  }: TemplateApiModuleActionProps) {
+    return this.sharedTemplateAPIService.createCharge(authorization, id)
   }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {

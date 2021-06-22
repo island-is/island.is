@@ -22,7 +22,8 @@ export const payment: Form = buildForm({
           id: 'info',
           title: m.paymentCapital,
           description: (application) => {
-            const { paymentUrl } = application.externalData.createCharge.data as { paymentUrl: string }
+            const { paymentUrl } = application.externalData.createCharge
+              .data as { paymentUrl: string }
 
             if (!paymentUrl) {
               console.log(application.externalData.createCharge)

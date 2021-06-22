@@ -54,13 +54,20 @@ const devConfig = {
     paymentOptions: {
       arkBaseUrl: process.env.PAYMENT_ARK_BASE_URL ?? 'https://uat.arkid.is',
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
-      xRoadClientId: process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-      xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-DEV-Public',
-      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL ?? '/payment/thiswillneverwork',
-      callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL ?? 'https://localhost:3333/application/',
+      xRoadClientId:
+        process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
+      xRoadProviderId:
+        process.env.PAYMENT_XROAD_PROVIDER_ID ??
+        'IS-DEV/GOV/10021/FJS-DEV-Public',
+      callbackAdditionUrl:
+        process.env.PAYMENT_ADDITION_CALLBACK_URL ??
+        '/payment/thiswillneverwork',
+      callbackBaseUrl:
+        process.env.PAYMENT_BASE_CALLBACK_URL ??
+        'https://localhost:3333/application/',
       username: process.env.PAYMENT_USER,
       password: process.env.PAYMENT_PASSWORD,
-    }
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -136,7 +143,7 @@ const prodConfig = {
       callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
       username: process.env.PAYMENT_USER,
       password: process.env.PAYMENT_PASSWORD,
-    }
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,

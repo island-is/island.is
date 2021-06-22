@@ -8,7 +8,11 @@ import {
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
 } from '../../types'
-import { createAssignToken, getConfigValue, PAYMENT_QUERY } from './shared.utils'
+import {
+  createAssignToken,
+  getConfigValue,
+  PAYMENT_QUERY,
+} from './shared.utils'
 import { ApplicationPaymentChargeResponse } from '@island.is/api/schema'
 
 @Injectable()
@@ -148,19 +152,20 @@ export class SharedTemplateApiService {
       {
         input: {
           applicationId,
-        }
+        },
       },
     )
-      .then(res => {
+      .then((res) => {
         if (!res.ok) {
           throw new Error('graphql query failed')
         }
 
         return res
       })
-      .then(res => res.json())
-      .then(json => {
-        return json.data.applicationPaymentCharge as ApplicationPaymentChargeResponse
+      .then((res) => res.json())
+      .then((json) => {
+        return json.data
+          .applicationPaymentCharge as ApplicationPaymentChargeResponse
       })
 
     return result

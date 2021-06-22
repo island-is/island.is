@@ -25,10 +25,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { AuditService } from '@island.is/nest/audit'
-import {
-  CreateChargeDto,
-  CreatePaymentResponseDto,
-} from './dto'
+import { CreateChargeDto, CreatePaymentResponseDto } from './dto'
 import { ApplicationSerializer } from '../application/tools/application.serializer'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
@@ -71,10 +68,7 @@ export class PaymentController {
   ): Promise<CreatePaymentResponseDto> {
     const paymentDto: Pick<
       BasePayment,
-      | 'application_id'
-      | 'fulfilled'
-      | 'amount'
-      | 'expires_at'
+      'application_id' | 'fulfilled' | 'amount' | 'expires_at'
     > = {
       application_id: paymentDetails.application_id,
       fulfilled: false,
@@ -130,7 +124,7 @@ export class PaymentController {
       {
         where: {
           id,
-          application_id: applicationId
+          application_id: applicationId,
         },
       },
     )

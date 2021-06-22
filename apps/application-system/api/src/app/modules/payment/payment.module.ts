@@ -8,7 +8,7 @@ import { PaymentController } from './payment.controller'
 import { PaymentService } from './payment.service'
 import { environment } from '../../../environments'
 import { PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
-import { PaymentServiceOptions } from "@island.is/clients/payment";
+import { PaymentServiceOptions } from '@island.is/clients/payment'
 
 export interface Config {
   clientConfig: PaymentServiceOptions
@@ -29,7 +29,7 @@ export class PaymentModule {
           provide: PaymentAPI,
           useFactory: () => {
             return new PaymentAPI(config.clientConfig)
-          }
+          },
         },
       ],
       imports: [

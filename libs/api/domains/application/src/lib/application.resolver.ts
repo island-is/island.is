@@ -9,10 +9,7 @@ import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationService } from './application.service'
-import {
-  Application,
-  ApplicationPayment,
-} from './application.model'
+import { Application, ApplicationPayment } from './application.model'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -32,7 +29,6 @@ import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
 import { ApplicationPaymentChargeInput } from './dto/applicationPaymentCharge.input'
 import { ApplicationPaymentChargeResponse } from './dto/applicationPaymentCharge'
 import { CreatePaymentResponseDto } from '../../gen/fetch'
-
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -72,10 +68,7 @@ export class ApplicationResolver {
     @Args('input') input: ApplicationPaymentChargeInput,
     @CurrentUser() user: User,
   ): Promise<CreatePaymentResponseDto> {
-    return this.applicationService.createCharge(
-      input.applicationId,
-      user,
-    )
+    return this.applicationService.createCharge(input.applicationId, user)
   }
 
   @Query(() => [Application], { nullable: true })

@@ -13,10 +13,13 @@ export class PaymentResolver {
 
   @Query(() => PaymentCatalogResponse)
   async paymentCatalog(
-    @Args('input', { type: () => PaymentCatalogInput }) input: PaymentCatalogInput,
+    @Args('input', { type: () => PaymentCatalogInput })
+    input: PaymentCatalogInput,
   ): Promise<PaymentCatalogResponse> {
     const data = await (input.performingOrganizationID
-      ? this.paymentClientApi.getCatalogByPerformingOrg(input.performingOrganizationID)
+      ? this.paymentClientApi.getCatalogByPerformingOrg(
+          input.performingOrganizationID,
+        )
       : await this.paymentClientApi.getCatalog())
 
     return {

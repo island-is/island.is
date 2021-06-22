@@ -72,13 +72,8 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  createCharge(
-    applicationId: string,
-    auth: Auth,
-  ) {
-    return this.paymentApiWithAuth(
-      auth,
-    ).paymentControllerCreateCharge({
+  createCharge(applicationId: string, auth: Auth) {
+    return this.paymentApiWithAuth(auth).paymentControllerCreateCharge({
       applicationId: applicationId,
       createChargeDto: { applicationId },
       authorization: auth.authorization,

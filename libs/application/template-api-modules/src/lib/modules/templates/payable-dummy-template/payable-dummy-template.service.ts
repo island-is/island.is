@@ -9,10 +9,13 @@ export class PayableDummyTemplateService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService, //private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
   ) {}
 
-  async createCharge({ application: { id }, authorization, }: TemplateApiModuleActionProps) {
+  async createCharge({
+    application: { id },
+    authorization,
+  }: TemplateApiModuleActionProps) {
     const result = await this.sharedTemplateAPIService.createCharge(
       authorization,
-      id
+      id,
     )
 
     return result
