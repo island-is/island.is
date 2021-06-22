@@ -699,6 +699,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const courtDate = new Date('2020-12-24T18:00')
     const courtRoom = '101'
     const defenderName = 'Valdi Verjandi'
+    const spokespersonName = 'Ekki birt'
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
@@ -707,6 +708,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       courtDate,
       courtRoom,
       defenderName,
+      spokespersonName,
     )
 
     // Assert
@@ -729,6 +731,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       courtDate,
       courtRoom,
       undefined,
+      undefined,
     )
 
     // Assert
@@ -744,6 +747,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const courtDate = new Date('2021-12-24T10:00')
     const courtRoom = '999'
     const defenderName = 'Valdi Verjandi'
+    const spokespersonName = 'Ekki birt'
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
@@ -752,6 +756,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       courtDate,
       courtRoom,
       defenderName,
+      spokespersonName,
     )
 
     // Assert
@@ -775,11 +780,12 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       courtDate,
       courtRoom,
       defenderName,
+      undefined,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild (hljóðupptökubúnaði komið fyrir).<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild (hljóðupptökubúnaði komið fyrir).<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.<br /><br />Talsmaður sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -790,6 +796,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const courtDate = new Date('2021-12-24T10:00')
     const courtRoom = '999'
     const defenderName = 'Valdi Verjandi'
+    const spokespersonName = 'Tal Man'
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
@@ -798,11 +805,12 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       courtDate,
       courtRoom,
       defenderName,
+      spokespersonName,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.<br /><br />Talsmaður sakbornings: Tal Man.',
     )
   })
 })
@@ -1012,14 +1020,34 @@ describe('formatCourtDateNotificationCondition', () => {
     // Arrange
     const courtDate = new Date('2020-12-20T13:32')
     const defenderEmail = 'defender@defenders.is'
+    const spokespersonEmail = 'spokesperson@speakers.is'
 
     // Act
-    const res = formatCourtDateNotificationCondition(courtDate, defenderEmail)
+    const res = formatCourtDateNotificationCondition(
+      courtDate,
+      defenderEmail,
+      spokespersonEmail,
+    )
 
     // Assert
     expect(res).toBe(
-      'courtDate=20.12.2020 13:32,defenderEmail=defender@defenders.is',
+      'courtDate=20.12.2020 13:32,defenderEmail=defender@defenders.is,spokespersonEmail=spokesperson@speakers.is',
     )
+  })
+
+  test('should format prison court date notification with no email', () => {
+    // Arrange
+    const courtDate = new Date('2020-12-20T13:32')
+
+    // Act
+    const res = formatCourtDateNotificationCondition(
+      courtDate,
+      undefined,
+      undefined,
+    )
+
+    // Assert
+    expect(res).toBe('courtDate=20.12.2020 13:32')
   })
 })
 
