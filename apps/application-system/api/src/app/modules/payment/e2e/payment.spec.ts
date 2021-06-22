@@ -1,53 +1,22 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import { EmailService } from '@island.is/email-service'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
-import {
-  ApplicationStatus,
-  ApplicationTypes,
-} from '@island.is/application/core'
-import { ContentfulRepository } from '@island.is/api/domains/cms'
 
 import { setup } from '../../../../../test/setup'
-import { environment } from '../../../../environments'
+import { PaymentAPI } from '@island.is/clients/payment'
 
 let app: INestApplication
 
-const sendMail = () => ({
-  messageId: 'some id',
-})
-
-class MockEmailService {
-  getTransport() {
-    return { sendMail }
-  }
-
-  sendEmail() {
-    return sendMail()
-  }
-}
-
-class MockContentfulRepository {
-  async getLocalizedEntries() {
+class MockPaymentApi {
+  async createCharge () {
     return {
-      items: [
-        {
-          fields: [
-            {
-              fields: {
-                strings: {
-                  en: {},
-                  'is-IS': {},
-                },
-              },
-            },
-          ],
-        },
-      ],
+      user4: 'user4',
+      receptionID: 'receptionid',
     }
   }
 }
+
 
 const nationalId = '1234564321'
 let server: request.SuperTest<request.Test>
@@ -56,10 +25,8 @@ beforeAll(async () => {
   app = await setup({
     override: (builder) => {
       builder
-        .overrideProvider(ContentfulRepository)
-        .useClass(MockContentfulRepository)
-        .overrideProvider(EmailService)
-        .useClass(MockEmailService)
+        .overrideProvider(PaymentAPI)
+        .useClass(MockPaymentApi)
         .overrideGuard(IdsUserGuard)
         .useValue(
           new MockAuthGuard({
@@ -75,13 +42,16 @@ beforeAll(async () => {
 })
 
 describe('Application system payments API', () => {
-  it(`POST /application/:id/payment should create a payment object`, async () => {
+  it(`POST /application/96b5237b-6896-4154-898d-d8feb01d3dcd/payment should create a payment object`, async () => {
     // Act
     const response = await server
-      .post('/applications/1/payment')
+      .post('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment')
       .expect(201)
 
     // Assert
-    expect(response.body.id).toBeTruthy()
+    expect(response.body.paymentUrl).toBeTruthy()
   })
+
+  // TODO: Validate that an application that is in a state that should be pruned
+  // is not listed when (mocked) Date.now > application.pruneAt
 })

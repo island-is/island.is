@@ -6,6 +6,7 @@ import {
   UseInterceptors,
   UseGuards,
   Get,
+  ParseUUIDPipe,
 } from '@nestjs/common'
 
 import {
@@ -25,8 +26,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { AuditService } from '@island.is/nest/audit'
-import { CreateChargeDto, CreatePaymentResponseDto } from './dto'
-import { ApplicationSerializer } from '../application/tools/application.serializer'
+import { CreatePaymentResponseDto } from './dto'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import type { Callback } from '@island.is/api/domains/payment'
@@ -52,25 +52,17 @@ export class PaymentController {
     private paymentModel: typeof Payment,
   ) {}
   @Scopes(ApplicationScope.write)
-  @ApiParam({
-    name: 'application_id',
-    type: String,
-    required: true,
-    description: 'The id of the application to submit payment for.',
-  })
   @Post('applications/:application_id/payment')
   @ApiCreatedResponse({ type: CreatePaymentResponseDto })
   async createCharge(
-    @Body()
-    paymentDetails: CreateChargeDto,
-    @CurrentUser()
-    user: User,
+    @CurrentUser() user: User,
+    @Param('application_id', new ParseUUIDPipe()) applicationId: string,
   ): Promise<CreatePaymentResponseDto> {
     const paymentDto: Pick<
       BasePayment,
       'application_id' | 'fulfilled' | 'amount' | 'expires_at'
     > = {
-      application_id: paymentDetails.application_id,
+      application_id: applicationId,
       fulfilled: false,
       amount: 8000,
       expires_at: new Date(),
