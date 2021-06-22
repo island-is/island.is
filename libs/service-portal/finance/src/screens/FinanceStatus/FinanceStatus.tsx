@@ -16,6 +16,7 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { m } from '../../lib/messages'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
@@ -66,7 +67,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
       <Stack space={2}>
         <Text variant="h1" as="h1">
           {formatMessage({
-            id: 'service.portal:finance-status-title',
+            id: 'sp.finance-status:title',
             defaultMessage: 'Staða við ríkissjóð og stofnanir',
           })}
         </Text>
@@ -74,7 +75,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
           <Column width="8/12">
             <Text variant="intro">
               {formatMessage({
-                id: 'service.portal:finance-status-intro',
+                id: 'sp.finance-status:intro',
                 defaultMessage:
                   'Hafið samband við viðeigandi umsjónarmann til að fá frekari upplýsingar um stöðu og innheimtu.',
               })}
@@ -90,7 +91,9 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
           {error && (
             <Box>
               <AlertBanner
-                description="Ekki tókst að sækja gögn"
+                description={formatMessage({
+                  id: 'service.portal:could-not-fetch',
+                })}
                 variant="error"
               />
             </Box>
@@ -118,7 +121,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                       type="button"
                       variant="utility"
                     >
-                      Prenta
+                      {formatMessage(m.print)}
                     </Button>
                   </Column>
                   <Column width="content">
@@ -137,7 +140,11 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
               <Box marginTop={2}>
                 <T.Table>
                   <ExpandHeader
-                    data={['Gjaldflokkur / stofnun', 'Umsjónarmaður', 'Staða']}
+                    data={[
+                      formatMessage(m.feeCategory),
+                      formatMessage(m.guardian),
+                      formatMessage(m.status),
+                    ]}
                   />
                   <T.Body>
                     {financeStatusData.organizations.map(
@@ -152,7 +159,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                     )}
                     <ExpandRow
                       last
-                      data={['Samtals', '', getChargeTypeTotal()]}
+                      data={[formatMessage(m.total), '', getChargeTypeTotal()]}
                     />
                   </T.Body>
                 </T.Table>

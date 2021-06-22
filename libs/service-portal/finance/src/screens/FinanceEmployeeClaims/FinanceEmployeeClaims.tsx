@@ -8,11 +8,11 @@ const EmployeeClaims = () => {
   return (
     <DocumentScreen
       title={formatMessage({
-        id: 'service.portal:employee-claims-title',
+        id: 'service.portal:finance-employee-claims',
         defaultMessage: 'Laungreiðendakröfur',
       })}
       intro={formatMessage({
-        id: 'service.portal:employee-claims-intro',
+        id: 'sp.employee-claims:intro',
         defaultMessage:
           'Eitthvað mega hresst og peppað um Laungreiðendakröfur mögulega í tveimur línum.',
       })}

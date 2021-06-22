@@ -1,6 +1,8 @@
 import React, { FC, useState } from 'react'
 import format from 'date-fns/format'
 import { Table as T, Box, Pagination } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 import { dateFormat } from '@island.is/shared/constants'
 import amountFormat from '../../utils/amountFormat'
 import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
@@ -15,6 +17,7 @@ interface Props {
 
 const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
   const [page, setPage] = useState(1)
+  const { formatMessage } = useLocale()
 
   const totalPages =
     recordsArray.length > ITEMS_ON_PAGE
@@ -25,11 +28,11 @@ const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
       <T.Table>
         <ExpandHeader
           data={[
-            'Dagsetning',
-            'Gildisdagur',
-            'Umsjónarmaður',
-            'Gjaldliður',
-            'Upphæð',
+            formatMessage(m.date),
+            formatMessage(m.effectiveDate),
+            formatMessage(m.guardian),
+            formatMessage(m.feeItem),
+            formatMessage(m.amount),
           ]}
         />
         <T.Body>
@@ -49,32 +52,38 @@ const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
                 <FinanceTransactionsDetail
                   data={[
                     {
-                      title: 'Framkvæmdaraðili',
+                      title: formatMessage(m.performingOrganization),
                       value: record.performingOrganization,
                     },
                     {
-                      title: 'Gjaldgrunnur',
+                      title: formatMessage(m.feeBase),
                       value: record.chargeItemSubject,
                     },
-                    { title: 'Tímabil', value: record.period },
-                    { title: 'Gjaldflokkur', value: record.chargeType },
+                    { title: formatMessage(m.period), value: record.period },
                     {
-                      title: 'Hreyfingaflokkur',
+                      title: formatMessage(m.chargeType),
+                      value: record.chargeType,
+                    },
+                    {
+                      title: formatMessage(m.recordCategory),
                       value: record.category,
                     },
                     {
-                      title: 'Hreyfingargerð',
+                      title: formatMessage(m.recordAction),
                       value: record.subCategory,
                     },
                     ...(record.actionCategory
                       ? [
                           {
-                            title: 'Aðgerðarflokkur',
+                            title: formatMessage(m.actionCategory),
                             value: record.actionCategory,
                           },
                         ]
                       : []),
-                    { title: 'Tilvísun', value: record.reference },
+                    {
+                      title: formatMessage(m.reference),
+                      value: record.reference,
+                    },
                   ]}
                 />
               </ExpandRow>

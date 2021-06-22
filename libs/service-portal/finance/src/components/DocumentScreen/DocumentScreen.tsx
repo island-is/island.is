@@ -16,6 +16,8 @@ import {
   AlertBanner,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
 import amountFormat from '../../utils/amountFormat'
 import { showPdfDocument } from '@island.is/service-portal/graphql'
@@ -44,6 +46,7 @@ const getFinanceDocumentsListQuery = gql`
 
 const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
   const { showPdf } = showPdfDocument()
+  const { formatMessage } = useLocale()
 
   const [fromDate, setFromDate] = useState<string>()
   const [toDate, setToDate] = useState<string>()
@@ -92,9 +95,9 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
                 icon="calendar"
                 iconType="outline"
                 size="sm"
-                label="Dagsetning frá"
+                label={formatMessage(m.dateFrom)}
                 locale="is"
-                placeholderText="Veldu dagsetningu"
+                placeholderText={formatMessage(m.chooseDate)}
               />
             </GridColumn>
             <GridColumn span={['1/1', '4/12']}>
@@ -107,9 +110,9 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
                 icon="calendar"
                 iconType="outline"
                 size="sm"
-                label="Dagsetning til"
+                label={formatMessage(m.dateTo)}
                 locale="is"
-                placeholderText="Veldu dagsetningu"
+                placeholderText={formatMessage(m.chooseDate)}
               />
             </GridColumn>
           </GridRow>
@@ -117,7 +120,7 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
         <Box marginTop={2}>
           {!called && !loading && (
             <AlertBanner
-              description="Veldu dagsetningar til að fá niðurstöður"
+              description={formatMessage(m.datesForResults)}
               variant="info"
             />
           )}
@@ -128,7 +131,7 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
           )}
           {billsDataArray.length === 0 && called && !loading && (
             <AlertBanner
-              description="Leit skilaði engum niðurstöðum. Vinsamlegast leitaðu aftur."
+              description={formatMessage(m.noResultsTryAgain)}
               variant="warning"
             />
           )}
@@ -137,19 +140,25 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
               <T.Head>
                 <T.Row>
                   <T.HeadData>
-                    <Text variant="eyebrow">Dagsetning</Text>
+                    <Text variant="eyebrow">{formatMessage(m.date)}</Text>
                   </T.HeadData>
                   <T.HeadData>
-                    <Text variant="eyebrow">Tegund</Text>
+                    <Text variant="eyebrow">
+                      {formatMessage(m.transactionType)}
+                    </Text>
                   </T.HeadData>
                   <T.HeadData>
-                    <Text variant="eyebrow">Skýring</Text>
+                    <Text variant="eyebrow">
+                      {formatMessage(m.explanationNote)}
+                    </Text>
                   </T.HeadData>
                   <T.HeadData>
-                    <Text variant="eyebrow">Framkvæmdaraðili</Text>
+                    <Text variant="eyebrow">
+                      {formatMessage(m.performingOrganization)}
+                    </Text>
                   </T.HeadData>
                   <T.HeadData>
-                    <Text variant="eyebrow">Upphæð</Text>
+                    <Text variant="eyebrow">{formatMessage(m.amount)}</Text>
                   </T.HeadData>
                   <T.HeadData></T.HeadData>
                 </T.Row>
@@ -170,7 +179,7 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
                         variant="text"
                         onClick={() => showPdf(listItem.id)}
                       >
-                        Skoða
+                        {formatMessage(m.view)}
                       </Button>
                     </T.Data>
                   </T.Row>

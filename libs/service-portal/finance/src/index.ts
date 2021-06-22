@@ -6,6 +6,7 @@ import {
 } from '@island.is/service-portal/core'
 import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
 import * as Sentry from '@sentry/react'
+import { defineMessage } from 'react-intl'
 import { lazy } from 'react'
 
 export const financeModule: ServicePortalModule = {
@@ -20,12 +21,18 @@ export const financeModule: ServicePortalModule = {
           lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
       },
       {
-        name: 'Staða',
+        name: defineMessage({
+          id: 'service.portal:finance-status',
+          defaultMessage: 'Staða',
+        }),
         path: ServicePortalPath.FinanceStatus,
         render: () => lazy(() => import('./screens/FinanceStatus')),
       },
       {
-        name: 'Greiðsluseðlar og Greiðslukvittanir',
+        name: defineMessage({
+          id: 'service.portal:finance-bills',
+          defaultMessage: 'Greiðsluseðlar og Greiðslukvittanir',
+        }),
         path: ServicePortalPath.FinanceBills,
         render: () => lazy(() => import('./screens/FinanceBills')),
       },
@@ -40,7 +47,10 @@ export const financeModule: ServicePortalModule = {
       // Show customer records:
       if (data?.RecordsTap) {
         routes.push({
-          name: 'Hreyfingar',
+          name: defineMessage({
+            id: 'service.portal:finance-transactions',
+            defaultMessage: 'Hreyfingar',
+          }),
           path: ServicePortalPath.FinanceTransactions,
           render: () => lazy(() => import('./screens/FinanceTransactions')),
         })
@@ -49,7 +59,10 @@ export const financeModule: ServicePortalModule = {
       // Show employee claims:
       if (data?.employeeClaimsTap) {
         routes.push({
-          name: 'Laungreiðendakröfur',
+          name: defineMessage({
+            id: 'service.portal:finance-employee-claims',
+            defaultMessage: 'Laungreiðendakröfur',
+          }),
           path: ServicePortalPath.FinanceEmployeeClaims,
           render: () => lazy(() => import('./screens/FinanceEmployeeClaims')),
         })

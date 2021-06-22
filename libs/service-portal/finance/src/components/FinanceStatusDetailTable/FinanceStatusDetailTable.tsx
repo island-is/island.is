@@ -12,6 +12,8 @@ import {
 import amountFormat from '../../utils/amountFormat'
 import { downloadXlsxDocument } from '@island.is/service-portal/graphql'
 import { gjoldSundurlidunHeaders } from '../../utils/dataHeaders'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 import * as styles from './FinanceStatusDetailTable.treat'
 
 interface Props {
@@ -24,12 +26,24 @@ const FinanceStatusDetailTable: FC<Props> = ({
   financeStatusDetails,
 }) => {
   const { downloadSheet } = downloadXlsxDocument()
+  const { formatMessage } = useLocale()
   return (
     <Box className={styles.wrapper} background="white">
       <T.Table>
         <T.Head>
           <T.Row>
-            {gjoldSundurlidunHeaders.map((item, i) => (
+            {[
+              formatMessage(m.feeBase),
+              formatMessage(m.yearAndSeason),
+              formatMessage(m.dueDate),
+              formatMessage(m.finalDueDate),
+              formatMessage(m.principal),
+              formatMessage(m.interest),
+              formatMessage(m.cost),
+              formatMessage(m.payments),
+              formatMessage(m.status),
+              formatMessage(m.chargeType),
+            ].map((item, i) => (
               <T.HeadData key={i} text={{ truncate: true }}>
                 <Text fontWeight="semiBold" variant="small">
                   {item}
@@ -53,7 +67,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                   type="button"
                   variant="text"
                 >
-                  Sækja Excel
+                  {formatMessage(m.getAsExcel)}
                 </Button>
                 <div className={styles.btnSpacer}>
                   <Button
@@ -71,7 +85,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                     type="button"
                     variant="text"
                   >
-                    Sækja CSV
+                    {formatMessage(m.getAsCsv)}
                   </Button>
                 </div>
               </Box>
@@ -107,7 +121,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
         <Columns>
           <Column width="content">
             <Text fontWeight="semiBold" variant="small">
-              Tengiliða upplýsingar
+              {formatMessage(m.contactInfo)}
             </Text>
           </Column>
         </Columns>
@@ -115,7 +129,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
           {organization.homepage && (
             <Box display="inlineBlock" marginRight={2}>
               <Text variant="small" as="span">
-                Heimasíða:
+                {formatMessage(m.website)}:
               </Text>{' '}
               <a href={`//${organization.homepage}`} target="_blank">
                 <Text color="blue400" variant="small" as="span">
@@ -127,7 +141,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
           {organization.email && (
             <Box display="inlineBlock" marginRight={2}>
               <Text variant="small" as="span">
-                Netfang:
+                {formatMessage(m.email)}:
               </Text>{' '}
               <a href={`mailto:${organization.email}`} target="_blank">
                 <Text color="blue400" variant="small" as="span">
@@ -136,13 +150,12 @@ const FinanceStatusDetailTable: FC<Props> = ({
               </a>
             </Box>
           )}
-          {/* TODO: Format tel display and href?? */}
           {organization.phone && (
             <Box display="inlineBlock">
               <Text variant="small" as="span">
-                Sími:
+                {formatMessage(m.phone)}:
               </Text>{' '}
-              <a href={`tel:${organization.phone}`} target="_blank">
+              <a href={`tel:+354${organization.phone}`} target="_blank">
                 <Text color="blue400" variant="small" as="span">
                   {organization.phone}
                 </Text>

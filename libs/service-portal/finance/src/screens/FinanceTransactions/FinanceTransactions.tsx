@@ -12,6 +12,7 @@ import {
   CustomerRecords,
 } from './FinanceTransactionsData.types'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import { m } from '../../lib/messages'
 import {
   Box,
   Text,
@@ -92,7 +93,7 @@ const FinanceTransactions = () => {
       <Stack space={2}>
         <Text variant="h1" as="h1">
           {formatMessage({
-            id: 'service.portal:finance-transactions-title',
+            id: 'sp.finance-transactions:title',
             defaultMessage: 'Hreyfingar',
           })}
         </Text>
@@ -100,7 +101,7 @@ const FinanceTransactions = () => {
           <Column width="8/12">
             <Text variant="intro">
               {formatMessage({
-                id: 'service.portal:finance-transactions-intro',
+                id: 'sp.finance-transactions:intro',
                 defaultMessage:
                   'Hafið samband við viðeigandi umsjónarmann til að fá frekari upplýsingar um stöðu og innheimtu.',
               })}
@@ -134,8 +135,8 @@ const FinanceTransactions = () => {
               <Select
                 name="faerslur"
                 backgroundColor="blue"
-                placeholder="Færslur"
-                label="Veldu tegund færslu"
+                placeholder={formatMessage(m.transactions)}
+                label={formatMessage(m.transactionsLabel)}
                 size="sm"
                 options={[allChargeTypes, ...chargeTypeSelect]}
                 onChange={(sel) => onDropdownSelect(sel)}
@@ -151,9 +152,9 @@ const FinanceTransactions = () => {
                 icon="calendar"
                 iconType="outline"
                 size="sm"
-                label="Dagsetning frá"
+                label={formatMessage(m.dateFrom)}
                 locale="is"
-                placeholderText="Veldu dagsetningu"
+                placeholderText={formatMessage(m.chooseDate)}
               />
             </GridColumn>
             <GridColumn span={['1/1', '4/12']}>
@@ -166,9 +167,9 @@ const FinanceTransactions = () => {
                 icon="calendar"
                 iconType="outline"
                 size="sm"
-                label="Dagsetning til"
+                label={formatMessage(m.dateTo)}
                 locale="is"
-                placeholderText="Veldu dagsetningu"
+                placeholderText={formatMessage(m.chooseDate)}
               />
             </GridColumn>
           </GridRow>
@@ -176,7 +177,7 @@ const FinanceTransactions = () => {
         <Box marginTop={2}>
           {!called && !loading && (
             <AlertBanner
-              description="Veldu öll leitarskilyrði til að fá niðurstöður"
+              description={formatMessage(m.selectForResults)}
               variant="info"
             />
           )}
@@ -187,7 +188,7 @@ const FinanceTransactions = () => {
           )}
           {recordsDataArray.length === 0 && called && !loading && (
             <AlertBanner
-              description="Leit skilaði engum niðurstöðum. Vinsamlegast leitaðu aftur."
+              description={formatMessage(m.noResultsTryAgain)}
               variant="warning"
             />
           )}

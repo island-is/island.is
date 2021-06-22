@@ -8,11 +8,11 @@ const FinanceBills = () => {
   return (
     <DocumentScreen
       title={formatMessage({
-        id: 'service.portal:finance-bills-title',
+        id: 'service.portal:finance-bills',
         defaultMessage: 'Greiðsluseðlar og Greiðslukvittanir',
       })}
       intro={formatMessage({
-        id: 'service.portal:finance-bills-intro',
+        id: 'sp.finance-bills:intro',
         defaultMessage:
           'Eitthvað mega hresst og peppað um Greiðsluseðla og Greiðslukvittanir mögulega í tveimur línum.',
       })}
