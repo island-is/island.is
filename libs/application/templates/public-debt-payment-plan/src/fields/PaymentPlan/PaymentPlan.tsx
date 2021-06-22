@@ -1,8 +1,10 @@
 import { FieldBaseProps } from '@island.is/application/core'
+import { useAuth } from '@island.is/auth/react'
 import { Box, RadioButton, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useDebounce } from 'react-use'
 import {
   PaymentPlanExternalData,
   PublicDebtPaymentPlan,
@@ -13,9 +15,12 @@ import {
   getEmptyPaymentPlanEntryKey,
   getPaymentPlanKeyById,
 } from '../../shared/utils'
+import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 import { PlanSlider } from '../components/PlanSlider/PlanSlider'
 import { PaymentPlanCard } from '../PaymentPlanList/PaymentPlanCard/PaymentPlanCard'
 import * as styles from './PaymentPlan.treat'
+import { useDebouncedSliderValues } from './useDebouncedSliderValues'
+import { useMockPaymentPlan } from './useMockPaymentPlan'
 
 type PaymentModeState = null | 'amount' | 'months'
 
@@ -24,7 +29,8 @@ type PaymentModeState = null | 'amount' | 'months'
 export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const [paymentMode, setPaymentMode] = useState<PaymentModeState>(null)
-  const { register, errors } = useFormContext()
+  const { register } = useFormContext()
+  const { userInfo } = useAuth()
   const externalData = application.externalData as PaymentPlanExternalData
   const answers = application.answers as PublicDebtPaymentPlan
   const index = field.defaultValue as number
@@ -36,8 +42,10 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     payment?.id || '',
   )
   // If no entry is found, find an empty entry to assign to this payment
-  const answerKey =
-    entryKey || getEmptyPaymentPlanEntryKey(answers.paymentPlans)
+  const answerKey = (entryKey ||
+    getEmptyPaymentPlanEntryKey(
+      answers.paymentPlans,
+    )) as keyof typeof answers.paymentPlans
 
   if (!answerKey) {
     // There is no entry available for this plan
@@ -47,9 +55,31 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   }
 
   const entry = `paymentPlans.${answerKey}`
+  const currentAnswers = answers.paymentPlans[answerKey]
+  const {
+    debouncedAmount,
+    debouncedMonths,
+    setAmount,
+    setMonths,
+  } = useDebouncedSliderValues(currentAnswers)
+  const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
+    userInfo?.profile.nationalId,
+    payment?.type,
+    debouncedAmount,
+    debouncedMonths,
+  )
 
   const handleSelectPaymentMode = (mode: PaymentModeState) => {
     setPaymentMode(mode)
+  }
+
+  const handleAmountChange = (value: number) => {
+    setMonths(undefined)
+    setAmount(value)
+  }
+  const handleMonthChange = (value: number) => {
+    setMonths(value)
+    setAmount(undefined)
   }
 
   if (!payment)
@@ -105,6 +135,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
           currentValue={30000}
           multiplier={10000}
           heading={paymentPlan.labels.chooseAmountPerMonth}
+          onChange={handleAmountChange}
           label={{
             singular: 'kr.',
             plural: 'kr.',
@@ -129,6 +160,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
           maxValue={12}
           currentValue={12}
           heading={paymentPlan.labels.chooseNumberOfMonths}
+          onChange={handleMonthChange}
           label={{
             singular: formatMessage(shared.month),
             plural: formatMessage(shared.months),
@@ -144,6 +176,9 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
             </Box>
           }
         />
+      )}
+      {(isLoading || paymentPlanResults) && (
+        <PaymentPlanTable isLoading={isLoading} data={paymentPlanResults} />
       )}
     </div>
   )
