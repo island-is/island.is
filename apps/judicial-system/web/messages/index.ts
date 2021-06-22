@@ -1,2 +1,5 @@
+export * from './defendantInfoStrings'
+export * from './defenderInfoStrings'
 export * from './login'
 export * from './policeDemandsForm'
+export * from './restrictionDefendantForm'
