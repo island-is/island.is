@@ -5,6 +5,8 @@ import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/for
 import { Case, Institution } from '@island.is/judicial-system/types'
 import { ValueType } from 'react-select'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useIntl } from 'react-intl'
+import { selectCourtStrings as m } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -15,6 +17,7 @@ interface Props {
 const SelectCourt: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, courts } = props
   const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
 
   const selectCourts = courts.map((court) => ({
     label: court.name,
@@ -29,12 +32,12 @@ const SelectCourt: React.FC<Props> = (props) => {
     <>
       <Box marginBottom={3}>
         <Text as="h3" variant="h3">
-          Dómstóll
+          {formatMessage(m.heading)}
         </Text>
       </Box>
       <Select
         name="court"
-        label="Veldu dómstól"
+        label={formatMessage(m.select.label)}
         defaultValue={defaultCourt}
         options={selectCourts}
         onChange={(selectedOption: ValueType<ReactSelectOption>) =>
