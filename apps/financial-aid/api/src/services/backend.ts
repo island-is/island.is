@@ -39,9 +39,9 @@ class BackendAPI extends RESTDataSource {
 
   updateApplication(
     id: string,
-    updateApplicant: UpdateApplication,
+    updateApplication: UpdateApplication,
   ): Promise<Application> {
-    return this.put(`applications/${id}`, updateApplicant)
+    return this.put(`applications/${id}`, updateApplication)
   }
 }
 
