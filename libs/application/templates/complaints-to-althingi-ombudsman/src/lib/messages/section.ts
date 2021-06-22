@@ -31,4 +31,9 @@ export const section = defineMessages({
     defaultMessage: 'Takk fyrir umsóknina',
     description: 'Submitted Section Title',
   },
+  complaintInformation: {
+    id: `ctao.application:section.complaintInformation`,
+    defaultMessage: 'Upplýsingar um kvörtunarefnið',
+    description: 'Definition of complaint information',
+  },
 })

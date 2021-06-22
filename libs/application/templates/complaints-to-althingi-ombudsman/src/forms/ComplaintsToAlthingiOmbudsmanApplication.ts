@@ -1,10 +1,10 @@
 import {
   buildCustomField,
   buildDataProviderItem,
-  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSubSection,
   buildTextField,
@@ -12,7 +12,13 @@ import {
   FormModes,
 } from '@island.is/application/core'
 import { ComplaintsToAlthingiOmbudsman } from '../lib/dataSchema'
-import { dataProvider, information, section } from '../lib/messages'
+import {
+  dataProvider,
+  information,
+  section,
+  complaintInformation,
+} from '../lib/messages'
+import { OmubdsmanComplaintTypeEnum } from '../shared/constants'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -140,13 +146,22 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'stepOne',
-      title: 'section title',
+      id: 'complaintInformation',
+      title: section.complaintInformation,
       children: [
-        buildDescriptionField({
-          id: 'confirmationCustomField',
-          title: 'name',
-          description: 'Umsókn',
+        buildRadioField({
+          id: 'section.complaintInformation.complaintType',
+          title: section.complaintInformation,
+          options: [
+            {
+              label: complaintInformation.courtDecisionRadioLabel,
+              value: OmubdsmanComplaintTypeEnum.COURT_DECISION,
+            },
+            {
+              label: complaintInformation.proceedingsLabel,
+              value: OmubdsmanComplaintTypeEnum.PROCEEDINGS,
+            },
+          ],
         }),
       ],
     }),
