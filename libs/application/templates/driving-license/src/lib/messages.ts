@@ -372,6 +372,11 @@ export const m = defineMessages({
     defaultMessage: 'Augnablik meðan beðið er eftir greiðslu',
     description: 'One moment while we wait for payment confirmation.',
   },
+  examplePaymentPendingFieldError: {
+    id: 'dl.application:example.waitingForPaymentError',
+    defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
+    description: 'An error came up while getting payment information',
+  },
   examplePaymentPendingDescription: {
     id: 'dl.application:example.waitingDescription',
     defaultMessage: 'Texti um hvað er að gerast',

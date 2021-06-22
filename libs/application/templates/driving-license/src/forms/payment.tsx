@@ -26,7 +26,6 @@ export const payment: Form = buildForm({
               .data as { paymentUrl: string }
 
             if (!paymentUrl) {
-              console.log(application.externalData.createCharge)
               throw new Error()
             }
 

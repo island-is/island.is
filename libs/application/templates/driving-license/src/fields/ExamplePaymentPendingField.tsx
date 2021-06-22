@@ -37,10 +37,8 @@ export const ExamplePaymentPendingField: FC<Props> = ({
     fulfilled: false,
   }
 
-  console.log({ paymentStatus })
-
   if (queryError) {
-    return <Text>Villa kom upp við að sækja upplýsingar um greiðslu</Text>
+    return <Text>{m.examplePaymentPendingFieldError}</Text>
   }
 
   return (
