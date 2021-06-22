@@ -66,18 +66,6 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly spokespersonName?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly spokespersonEmail?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly spokespersonPhoneNumber?: string
-
-  @Allow()
-  @Field({ nullable: true })
   readonly courtId?: string
 
   @Allow()

@@ -182,36 +182,6 @@ export class Case extends Model<Case> {
   sendRequestToDefender: boolean
 
   /**********
-   * The name of the accused's spokesperson - optional
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  spokespersonName: string
-
-  /**********
-   * The email address of the accused's spokesperson - optional
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  spokespersonEmail: string
-
-  /**********
-   * The phone number of the accused's spokesperson - optional
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  spokespersonPhoneNumber: string
-
-  /**********
    * The surrogate key of the court assigned to the case
    **********/
   @Column({
