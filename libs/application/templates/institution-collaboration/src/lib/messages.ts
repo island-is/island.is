@@ -1,6 +1,13 @@
 import { defineMessages } from 'react-intl'
 
 export const institutionApplicationMessages = {
+  application: defineMessages({
+    applicationName: {
+      id: 'ia.application:application.name',
+      defaultMessage: 'Umsókn um samstarf við Stafrænt Ísland',
+      description: 'Application for collaboration with Stafrænt Ísland',
+    },
+  }),
   applicant: defineMessages({
     formName: {
       id: 'ia.application:form.name',
