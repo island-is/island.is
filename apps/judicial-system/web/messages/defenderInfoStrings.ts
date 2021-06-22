@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-// Strings for Prosecutor restriction request defendantForm
+// Strings for defender info components
 export const defenderInfoStrings = {
   name: defineMessages({
     label: {

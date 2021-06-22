@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-// Strings for Prosecutor restriction request defendantForm
+// Strings for defendant info components
 export const defendantInfoStrings = {
   gender: defineMessages({
     label: {
