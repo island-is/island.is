@@ -28,20 +28,10 @@ export class DelegationsController {
   @Get()
   @ApiOkResponse({ isArray: true })
   async findAllTo(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    const wards = await this.delegationsService.findAllWardsTo(
+    return this.delegationsService.findAllTo(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
     )
-
-    const companies = await this.delegationsService.findAllCompaniesTo(
-      user.nationalId,
-    )
-
-    const custom = await this.delegationsService.findAllValidCustomTo(
-      user.nationalId,
-    )
-
-    return [...wards, ...companies, ...custom]
   }
 
   @Scopes('@identityserver.api/authentication')

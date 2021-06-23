@@ -3,6 +3,7 @@
   "compilerOptions": {
     "allowJs": true,
     "types": ["node", "jest"],
+    "esModuleInterop": true,
     "strictPropertyInitialization": false //TODO: Perhaps needs to be removed
   },
   "include": [],
