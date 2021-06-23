@@ -100,7 +100,11 @@ const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
                     title={localization.fields['domainName'].helpText}
                   >
                     {domains.map((domain: Domain) => {
-                      return <option value={domain.name}>{domain.name}</option>
+                      return (
+                        <option value={domain.name} key={domain.name}>
+                          {domain.name}
+                        </option>
+                      )
                     })}
                   </select>
                   <HelpBox

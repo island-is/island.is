@@ -31,6 +31,9 @@ export class Case implements TCase {
   @Field(() => String)
   readonly type!: CaseType
 
+  @Field({ nullable: true })
+  readonly description?: string
+
   @Field(() => String)
   readonly state!: CaseState
 
@@ -74,13 +77,16 @@ export class Case implements TCase {
   readonly requestedCourtDate?: string
 
   @Field({ nullable: true })
-  readonly requestedCustodyEndDate?: string
+  readonly requestedValidToDate?: string
 
   @Field({ nullable: true })
-  readonly otherDemands?: string
+  readonly demands?: string
 
   @Field({ nullable: true })
   readonly lawsBroken?: string
+
+  @Field({ nullable: true })
+  readonly legalBasis?: string
 
   @Field(() => [String], { nullable: true })
   readonly custodyProvisions?: CaseCustodyProvisions[]
@@ -95,13 +101,13 @@ export class Case implements TCase {
   readonly caseFacts?: string
 
   @Field({ nullable: true })
-  readonly witnessAccounts?: string
-
-  @Field({ nullable: true })
-  readonly investigationProgress?: string
-
-  @Field({ nullable: true })
   readonly legalArguments?: string
+
+  @Field({ nullable: true })
+  requestProsecutorOnlySession?: boolean
+
+  @Field({ nullable: true })
+  readonly prosecutorOnlySessionRequest?: string
 
   @Field({ nullable: true })
   readonly comments?: string
@@ -134,13 +140,13 @@ export class Case implements TCase {
   readonly courtAttendees?: string
 
   @Field({ nullable: true })
-  readonly policeDemands?: string
+  readonly prosecutorDemands?: string
 
   @Field(() => [String], { nullable: true })
   readonly courtDocuments?: string[]
 
   @Field({ nullable: true })
-  readonly additionToConclusion?: string
+  isAccusedAbsent?: boolean
 
   @Field(() => String, { nullable: true })
   readonly accusedPleaDecision?: AccusedPleaDecision
@@ -164,10 +170,10 @@ export class Case implements TCase {
   readonly decision?: CaseDecision
 
   @Field({ nullable: true })
-  readonly custodyEndDate?: string
+  readonly validToDate?: string
 
   @Field({ nullable: true })
-  isCustodyEndDateInThePast?: boolean
+  isValidToDateInThePast?: boolean
 
   @Field(() => [String], { nullable: true })
   readonly custodyRestrictions?: CaseCustodyRestrictions[]
@@ -176,7 +182,10 @@ export class Case implements TCase {
   readonly otherRestrictions?: string
 
   @Field({ nullable: true })
-  readonly isolationTo?: string
+  readonly isolationToDate?: string
+
+  @Field({ nullable: true })
+  readonly additionToConclusion?: string
 
   @Field(() => String, { nullable: true })
   readonly accusedAppealDecision?: CaseAppealDecision

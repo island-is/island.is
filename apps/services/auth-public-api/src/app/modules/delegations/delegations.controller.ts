@@ -1,18 +1,4 @@
 import {
-  DelegationsService,
-  DelegationDTO,
-  UpdateDelegationDTO,
-} from '@island.is/auth-api-lib'
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-  CurrentActor,
-  CurrentUser,
-  ActorScopes,
-} from '@island.is/auth-nest-tools'
-import {
   Body,
   Controller,
   Delete,
@@ -21,21 +7,48 @@ import {
   Post,
   Put,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import {
+  DelegationsService,
+  DelegationDTO,
+  UpdateDelegationDTO,
+  CreateDelegationDTO,
+} from '@island.is/auth-api-lib'
+import {
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  CurrentActor,
+  CurrentUser,
+  ActorScopes,
+} from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
+import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { environment } from '../../../environments'
+
+const namespace = '@island.is/auth-public-api/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
 @Controller('public/delegations')
+@Audit({ namespace })
 export class DelegationsController {
-  constructor(private readonly delegationsService: DelegationsService) {}
+  constructor(
+    private readonly delegationsService: DelegationsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @ActorScopes(AuthScope.actorDelegations)
   @Get()
   @ApiOkResponse({ type: [DelegationDTO] })
+  @Audit<DelegationDTO[]>({
+    resources: (delegations) => delegations.map((delegation) => delegation.id),
+  })
   async findAllTo(@CurrentActor() user: User): Promise<DelegationDTO[]> {
     const wards = await this.delegationsService.findAllWardsTo(
       user,
@@ -56,57 +69,118 @@ export class DelegationsController {
   @Scopes(AuthScope.writeDelegations)
   @Post()
   @ApiCreatedResponse({ type: DelegationDTO })
-  async create(
+  @Audit<DelegationDTO>({
+    resources: (delegation) => delegation?.id,
+  })
+  create(
     @CurrentUser() user: User,
-    @Body() delegation: UpdateDelegationDTO,
+    @Body() delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    return await this.delegationsService.create(user.nationalId, delegation)
+    return this.delegationsService.create(
+      user,
+      environment.nationalRegistry.xroad.clientId ?? '',
+      delegation,
+    )
   }
 
   @Scopes(AuthScope.writeDelegations)
-  @Put(':id')
+  @Put(':toNationalId')
   @ApiCreatedResponse({ type: DelegationDTO })
-  async update(
+  update(
     @CurrentUser() user: User,
     @Body() delegation: UpdateDelegationDTO,
-    @Param('id') id: string,
+    @Param('toNationalId') toNationalId: string,
   ): Promise<DelegationDTO | null> {
-    return await this.delegationsService.update(user.nationalId, delegation, id)
+    return this.auditService.auditPromise<DelegationDTO>(
+      {
+        user,
+        namespace,
+        action: 'update',
+        resources: (delegation) => delegation?.id,
+        meta: { fields: Object.keys(delegation) },
+      },
+      this.delegationsService.update(user.nationalId, delegation, toNationalId),
+    )
   }
 
   @Scopes(AuthScope.writeDelegations)
-  @Delete('public/delegations/custom/delete/from/:id')
+  @Delete('custom/delete/from/:id')
   @ApiCreatedResponse()
-  async deleteFrom(
+  deleteFrom(
     @CurrentUser() user: User,
     @Param('id') id: string,
   ): Promise<number> {
-    return await this.delegationsService.deleteFrom(user.nationalId, id)
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'deleteFrom',
+        resources: id,
+      },
+      this.delegationsService.deleteFrom(user.nationalId, id),
+    )
   }
 
   @Scopes(AuthScope.writeDelegations)
-  @Delete('public/delegations/custom/delete/to/:id')
+  @Delete('custom/delete/to/:toNationalId')
   @ApiCreatedResponse()
-  async deleteTo(
+  deleteTo(
     @CurrentUser() user: User,
-    @Param('id') id: string,
+    @Param('toNationalId') toNationalId: string,
   ): Promise<number> {
-    return await this.delegationsService.deleteTo(user.nationalId, id)
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'deleteTo',
+        resources: toNationalId,
+      },
+      this.delegationsService.deleteTo(user.nationalId, toNationalId),
+    )
   }
 
   @Scopes(AuthScope.readDelegations)
-  @Get('public/delegations/custom/findone/:id')
+  @Get('custom/findone/:id')
   @ApiOkResponse({ type: DelegationDTO })
-  async findOne(
+  @Audit<DelegationDTO>({
+    resources: (delegation) => delegation?.id,
+  })
+  findOne(
     @CurrentUser() user: User,
     @Param('id') id: string,
   ): Promise<DelegationDTO | null> {
-    return await this.delegationsService.findOne(user.nationalId, id)
+    return this.delegationsService.findOne(user.nationalId, id)
   }
 
   @Scopes(AuthScope.readDelegations)
-  @Get('public/delegations/custom/to')
+  @Get('custom/findone/to/:nationalId')
+  @ApiOkResponse({ type: DelegationDTO })
+  @Audit<DelegationDTO>({
+    resources: (delegation) => delegation?.id,
+  })
+  async findOneTo(
+    @CurrentUser() user: User,
+    @Param('nationalId') nationalId: string,
+  ): Promise<DelegationDTO | null> {
+    const delegation = await this.delegationsService.findOneTo(
+      user.nationalId,
+      nationalId,
+    )
+    if (!delegation) {
+      throw new NotFoundException(
+        `Delegation<from: ${user.nationalId};to: ${nationalId}> was not found`,
+      )
+    }
+
+    return delegation.toDTO()
+  }
+
+  @Scopes(AuthScope.readDelegations)
+  @Get('custom/to')
   @ApiOkResponse({ type: [DelegationDTO] })
+  @Audit<DelegationDTO[]>({
+    resources: (delegations) => delegations.map((delegation) => delegation?.id),
+  })
   async findAllCustomTo(
     @CurrentUser() user: User,
   ): Promise<DelegationDTO[] | null> {
@@ -114,8 +188,11 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
-  @Get('public/delegations/custom/from')
+  @Get('custom/from')
   @ApiOkResponse({ type: [DelegationDTO] })
+  @Audit<DelegationDTO[]>({
+    resources: (delegations) => delegations.map((delegation) => delegation?.id),
+  })
   async findAllCustomFrom(
     @CurrentUser() user: User,
   ): Promise<DelegationDTO[] | null> {

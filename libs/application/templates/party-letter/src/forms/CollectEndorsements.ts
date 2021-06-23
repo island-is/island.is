@@ -32,35 +32,6 @@ export const CollectEndorsements: Form = buildForm({
               title: m.collectEndorsements.title,
               component: 'EndorsementList',
             }),
-
-            buildCheckboxField({
-              id: 'includePapers',
-              title: '',
-              strong: true,
-              options: [
-                {
-                  value: 'yes',
-                  label: m.fileUpload.includePapers,
-                },
-              ],
-              defaultValue: '',
-            }),
-            buildCustomField({
-              id: 'fileUploadDisclaimer',
-              title: m.collectEndorsements.title,
-              component: 'FileUploadDisclaimer',
-            }),
-            buildFileUploadField({
-              condition: (answer) => answer.includePapers !== undefined,
-              id: 'documents',
-              title: '',
-              introduction: '',
-              maxSize: 10000000,
-              uploadAccept: '.xlsx',
-              uploadHeader: m.fileUpload.fileUploadHeader,
-              uploadDescription: m.fileUpload.uploadDescription,
-              uploadButtonLabel: m.fileUpload.uploadButtonLabel,
-            }),
           ],
         }),
       ],

@@ -39,7 +39,7 @@ export class OrganizationPage {
   @Field(() => [SliceUnion])
   bottomSlices!: Array<typeof SliceUnion | null>
 
-  @Field({ nullable: true })
+  @Field(() => GenericTag, { nullable: true })
   newsTag!: GenericTag | null
 
   @Field(() => [LinkGroup])
@@ -51,7 +51,7 @@ export class OrganizationPage {
   @Field(() => Organization)
   organization!: Organization | null
 
-  @Field({ nullable: true })
+  @Field(() => Image, { nullable: true })
   featuredImage!: Image | null
 
   @Field(() => [FooterItem])

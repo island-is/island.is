@@ -39,6 +39,10 @@ export const truncate = style({
   whiteSpace: 'nowrap',
 })
 
+export const strikethrough = style({
+  textDecoration: 'line-through',
+})
+
 export const base = style({
   ['-webkit-font-smoothing' as any]: 'antialiased',
 })

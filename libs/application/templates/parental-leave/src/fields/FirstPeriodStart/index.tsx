@@ -1,14 +1,16 @@
 import React, { FC, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { useFormContext } from 'react-hook-form'
-import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
-import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+
+import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { StartDateOptions } from '../../constants'
 
 type ValidAnswers = StartDateOptions | undefined
@@ -77,6 +79,7 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
           onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
           largeButtons
         />
+
         <input
           type="hidden"
           value={

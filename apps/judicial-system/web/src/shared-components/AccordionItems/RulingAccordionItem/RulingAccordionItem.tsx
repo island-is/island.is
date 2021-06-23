@@ -12,8 +12,10 @@ import {
 import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
+  formatAccusedByGender,
   formatAlternativeTravelBanRestrictions,
   formatCustodyRestrictions,
+  NounCases,
 } from '@island.is/judicial-system/formatters'
 import * as style from './RulingAccordionItem.treat'
 
@@ -103,7 +105,10 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
               <Box marginBottom={2}>
                 <Text variant="eyebrow" color="blue400">
-                  Yfirlýsing um kæru kærða
+                  {`Yfirlýsing um kæru ${formatAccusedByGender(
+                    workingCase.accusedGender,
+                    NounCases.GENITIVE,
+                  )}`}
                 </Text>
                 <Text>{workingCase.accusedAppealAnnouncement}</Text>
               </Box>
@@ -132,6 +137,8 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
               {formatCustodyRestrictions(
                 workingCase.accusedGender,
                 workingCase.custodyRestrictions,
+                workingCase.validToDate,
+                workingCase.isolationToDate,
               )}
             </Text>
           </Box>

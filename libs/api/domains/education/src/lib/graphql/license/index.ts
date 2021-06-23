@@ -1,3 +1,3 @@
-export { License } from './license.model'
-export { SignedLicense } from './signedLicense.model'
-export { FetchEducationSignedLicenseUrlInput } from './license.input'
+export { EducationLicense } from './educationLicense.model'
+export { EducationSignedLicense } from './educationSignedLicense.model'
+export { FetchEducationSignedLicenseUrlInput } from './educationLicense.input'

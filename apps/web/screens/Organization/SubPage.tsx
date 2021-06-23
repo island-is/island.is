@@ -61,8 +61,8 @@ const SubPage: Screen<SubPageProps> = ({
   const { linkResolver } = useLinkResolver()
   useContentfulId(organizationPage.id)
 
-  const pageUrl = `/stofnanir/${organizationPage.slug}/${subpage.slug}`
-  const parentSubpageUrl = `/stofnanir/${organizationPage.slug}/${subpage.parentSubpage}`
+  const pageUrl = `/s/${organizationPage.slug}/${subpage.slug}`
+  const parentSubpageUrl = `/s/${organizationPage.slug}/${subpage.parentSubpage}`
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
@@ -106,10 +106,7 @@ const SubPage: Screen<SubPageProps> = ({
       <GridContainer>
         <Box paddingY={4}>
           <GridRow>
-            <GridColumn
-              span={['9/9', '9/9', '7/9']}
-              offset={['9/9', '9/9', '1/9']}
-            >
+            <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
               <GridContainer>
                 <GridRow>
                   <GridColumn

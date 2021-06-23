@@ -84,7 +84,11 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     name="idp.name"
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateIdentifier,
+                      validate: isEditing
+                        ? () => {
+                            return true
+                          }
+                        : ValidationUtils.validateIdentifier,
                     })}
                     defaultValue={idp.name}
                     className="idp-provider-create-form__input"

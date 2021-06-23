@@ -27,8 +27,6 @@ const Index: React.FC = () => {
 
   const getDomain = async (name: string) => {
     const response = await ResourcesService.getDomain(name)
-    console.log('getDomain')
-    console.log(response)
     if (response) {
       const dto = response as DomainDTO
       setDomain(dto)

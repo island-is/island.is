@@ -16,6 +16,8 @@ import {
   ApiScopeUser,
   ApiScopeGroup,
   Domain,
+  DelegationScope,
+  Delegation,
 } from '@island.is/auth-api-lib'
 
 @Module({
@@ -33,6 +35,8 @@ import {
       ApiScopeUser,
       ApiScopeGroup,
       Domain,
+      DelegationScope,
+      Delegation,
     ]),
   ],
   controllers: [ResourcesController],

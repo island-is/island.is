@@ -13,6 +13,13 @@ interface DataValueProps {
 export const DataValue = ({ label, value }: DataValueProps) => (
   <Box className={styles.dataValue}>
     <Label>{label}</Label>
-    {typeof value === 'string' ? <Text>{value}</Text> : value}
+
+    {value === undefined ? (
+      '—'
+    ) : typeof value === 'string' ? (
+      <Text>{value}</Text>
+    ) : (
+      value
+    )}
   </Box>
 )

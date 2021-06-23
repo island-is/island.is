@@ -1,0 +1,3 @@
+import ComplaintsToAlthingiOmbudsmanTemplate from './lib/ComplaintsToAlthingiOmbudsmanTemplate'
+
+export default ComplaintsToAlthingiOmbudsmanTemplate

@@ -5,5 +5,5 @@ import { IsString } from 'class-validator'
 export class GetParentalLeavesEntitlementsInput {
   @Field(() => String)
   @IsString()
-  dateOfBirth!: Date
+  dateOfBirth!: string
 }

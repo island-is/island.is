@@ -5,6 +5,13 @@ export const SPOUSE = 'spouse'
 
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
+export const MILLISECONDS_IN_A_DAY = 24 * 3600 * 1000
+
+export enum ParentalRelations {
+  primary = 'primary',
+  secondary = 'secondary',
+}
+
 export enum API_MODULE_ACTIONS {
   assignOtherParent = 'assignOtherParent',
   assignEmployer = 'assignEmployer',

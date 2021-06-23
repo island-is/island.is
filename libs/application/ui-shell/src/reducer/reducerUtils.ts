@@ -1,3 +1,4 @@
+import { getDefaultValues } from '@apollo/client/utilities'
 import {
   ExternalData,
   ExternalDataProvider,
@@ -19,6 +20,7 @@ import {
   shouldShowFormItem,
   SubSection,
 } from '@island.is/application/core'
+
 import {
   ExternalDataProviderScreen,
   FieldDef,
@@ -32,14 +34,19 @@ export const findCurrentScreen = (
   answers: FormValue,
 ): number => {
   let currentScreen = 0
+  let missingAnswerBeforeCurrentIndex = false
+  let currentAnswerIndex = 0
+
   screens.forEach((screen, index) => {
     if (screen.type === FormItemTypes.MULTI_FIELD) {
       let numberOfAnsweredQuestionsInScreen = 0
+
       screen.children.forEach((field) => {
         if (getValueViaPath(answers, field.id) !== undefined) {
           numberOfAnsweredQuestionsInScreen++
         }
       })
+
       if (numberOfAnsweredQuestionsInScreen === screen.children.length) {
         currentScreen = index + 1
       } else if (numberOfAnsweredQuestionsInScreen > 0) {
@@ -49,10 +56,25 @@ export const findCurrentScreen = (
       if (getValueViaPath(answers, screen.id) !== undefined) {
         currentScreen = index
       }
-    } else if (screen.id && getValueViaPath(answers, screen.id) !== undefined) {
-      currentScreen = index + 1
+    } else if (screen.id) {
+      if (
+        getValueViaPath(answers, screen.id) === undefined &&
+        index > currentAnswerIndex
+      ) {
+        missingAnswerBeforeCurrentIndex = true
+        currentAnswerIndex = index
+      }
+
+      if (
+        !missingAnswerBeforeCurrentIndex &&
+        getValueViaPath(answers, screen.id) !== undefined
+      ) {
+        currentScreen = index + 1
+        currentAnswerIndex = index
+      }
     }
   })
+
   return Math.min(currentScreen, screens.length - 1)
 }
 
@@ -64,16 +86,19 @@ export const moveToScreen = (
   if (screenIndex < 0) {
     return 0
   }
+
   if (screenIndex >= screens.length) {
     return screens.length - 1
   }
 
   const screen = screens[screenIndex]
+
   if (!screen.isNavigable) {
     if (isMovingForward) {
       // skip this screen and go to the next one
       return moveToScreen(screens, screenIndex + 1, isMovingForward)
     }
+
     return moveToScreen(screens, screenIndex - 1, isMovingForward)
   }
 
@@ -126,11 +151,14 @@ export function convertMultiFieldToScreen(
 ): MultiFieldScreen {
   let isMultiFieldVisible = false
   const children: FieldDef[] = []
+
   multiField.children.forEach((field) => {
     const isFieldVisible = shouldShowFormItem(field, answers, externalData)
+
     if (isFieldVisible) {
       isMultiFieldVisible = true
     }
+
     children.push({
       ...field,
       isNavigable: isFieldVisible && isParentNavigable,
@@ -138,6 +166,7 @@ export function convertMultiFieldToScreen(
       subSectionIndex,
     })
   })
+
   return {
     ...multiField,
     isNavigable: isMultiFieldVisible && isParentNavigable,
@@ -157,18 +186,23 @@ function convertRepeaterToScreens(
 ): FormScreen[] {
   const { id, children } = repeater
   const newScreens: FormScreen[] = []
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function recursiveMap(field: FormLeaf, fn: (l: FormLeaf) => FormLeaf): any {
     if (Array.isArray(field.children)) {
       return (field.children as FormLeaf[]).map((c) => recursiveMap(c, fn))
     }
+
     return fn(field)
   }
+
   const repeatedValues = getValueViaPath(answers, id, []) as unknown[]
+
   for (let i = 0; i < repeatedValues.length; i++) {
     children.forEach((field) => {
       let grandChildren = field.children
       let fieldId = field.id
+
       if (Array.isArray(field.children)) {
         grandChildren = recursiveMap(field, (c) => ({
           ...c,
@@ -177,6 +211,7 @@ function convertRepeaterToScreens(
       } else {
         fieldId = `${id}[${i}].${field.id}`
       }
+
       newScreens.push(
         ...convertLeafToScreens(
           {
@@ -194,6 +229,7 @@ function convertRepeaterToScreens(
       )
     })
   }
+
   return [
     {
       ...repeater,
@@ -247,6 +283,7 @@ function convertLeafToScreens(
       ),
     ]
   }
+
   return [
     convertFieldToScreen(
       leaf,
@@ -269,6 +306,7 @@ function convertFormNodeToScreens(
   subSectionIndex: number,
 ): FormScreen[] {
   const { children } = formNode
+
   if (isValidScreen(formNode)) {
     return convertLeafToScreens(
       formNode as FormLeaf,
@@ -279,27 +317,33 @@ function convertFormNodeToScreens(
       subSectionIndex,
     )
   }
+
   let screens: FormScreen[] = []
   let newScreens: FormScreen[] = []
+
   if (children) {
     for (let i = 0; i < children.length; i++) {
       const child = children[i]
       const sections = getSectionsInForm(form, answers, externalData)
+
       if (child.type === FormItemTypes.SECTION) {
         subSectionIndex = -1
         sectionIndex = findSectionIndex(sections, child as Section)
       } else if (child.type === FormItemTypes.SUB_SECTION) {
         const section = sections[sectionIndex]
+
         const subSections = getSubSectionsInSection(
           section,
           answers,
           externalData,
         )
+
         subSectionIndex =
           !section || sectionIndex === -1
             ? -1
             : findSubSectionIndex(subSections, child as SubSection)
       }
+
       newScreens = convertFormNodeToScreens(
         child,
         answers,
@@ -309,11 +353,13 @@ function convertFormNodeToScreens(
         sectionIndex,
         subSectionIndex,
       )
+
       if (newScreens.length) {
         screens = [...screens, ...newScreens]
       }
     }
   }
+
   return screens
 }
 
@@ -339,6 +385,7 @@ export function getNavigableSectionsInForm(
   externalData: ExternalData,
 ): Section[] {
   const sections: Section[] = []
+
   form.children.forEach((child) => {
     if (
       child.type === FormItemTypes.SECTION &&
@@ -352,5 +399,6 @@ export function getNavigableSectionsInForm(
       })
     }
   })
+
   return sections
 }

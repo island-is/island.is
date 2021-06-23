@@ -13,7 +13,6 @@ import {
   ApiOAuth2,
   ApiOkResponse,
   ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
@@ -115,6 +114,29 @@ export class EndorsementListController {
     endorsementList: EndorsementList,
   ): Promise<EndorsementList> {
     return await this.endorsementListService.close(endorsementList)
+  }
+
+  @ApiOkResponse({
+    description: 'Open a single endorsements list by id',
+    type: EndorsementList,
+  })
+  @ApiParam({ name: 'listId', type: 'string' })
+  @Put(':listId/open')
+  @Audit<EndorsementList>({
+    namespace: auditNamespace,
+    action: 'open',
+    resources: (endorsementList) => endorsementList.id,
+  })
+  async open(
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+      IsEndorsementListOwnerValidationPipe,
+    )
+    endorsementList: EndorsementList,
+  ): Promise<EndorsementList> {
+    return await this.endorsementListService.open(endorsementList)
   }
 
   @ApiOkResponse({

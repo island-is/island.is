@@ -124,12 +124,15 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     title={localization.fields['scopeName'].helpText}
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateScope,
                     })}
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >
                     {scopes.map((scope: ApiScope) => {
-                      return <option value={scope.name}>{scope.name}</option>
+                      return (
+                        <option value={scope.name} key={scope.name}>
+                          {scope.name}
+                        </option>
+                      )
                     })}
                   </select>
                   <HelpBox

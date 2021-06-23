@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import { Box, GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import {
   Application,
   formatText,
@@ -74,7 +74,7 @@ const FormMultiField: FC<{
             span={['1/1', '1/1', span]}
             paddingBottom={index === children.length - 1 ? 0 : space}
           >
-            <Box paddingTop={1}>
+            <Box>
               <FormField
                 application={application}
                 showFieldName
