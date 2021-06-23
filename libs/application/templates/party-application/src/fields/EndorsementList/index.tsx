@@ -9,6 +9,7 @@ import BulkUpload from '../BulkUpload'
 import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
+import sortBy from 'lodash/sortBy'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -16,7 +17,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     .data as any).id
   const [searchTerm, setSearchTerm] = useState('')
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
-  const [showWarning, setShowWarning] = useState(false)
+  const [showOnlyInvalidated, setShowOnlyInvalidated] = useState(false)
   const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
   const isClosedHook = useIsClosed(endorsementListId)
   const { endorsements: endorsementsHook, refetch } = useEndorsements(
@@ -26,7 +27,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
 
   useEffect(() => {
     refetch()
-    setEndorsements(endorsementsHook)
+    setEndorsements(sortBy(endorsementsHook, 'created'))
   }, [endorsementsHook, updateOnBulkImport])
 
   const namesCountString = formatMessage(
@@ -34,6 +35,28 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
       ? m.endorsementList.namesCount
       : m.endorsementList.nameCount,
   )
+
+  const filter = (searchTerm: string, showInvalidated: boolean) => {
+    //filter with both filters
+    if (searchTerm !== '' && showInvalidated) {
+      return endorsementsHook?.filter(
+        (x) =>
+          searchTerm !== '' &&
+          x.meta.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) &&
+          x.meta.invalidated,
+      )
+      //filter with only invalidated
+    } else if (searchTerm === '' && showInvalidated) {
+      return endorsementsHook?.filter((x) => x.meta.invalidated)
+      //filter only with search
+    } else if (searchTerm !== '' && !showInvalidated) {
+      return endorsementsHook?.filter(
+        (x) =>
+          searchTerm !== '' &&
+          x.meta.fullName?.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+    } else return endorsementsHook
+  }
 
   return (
     <Box marginBottom={8}>
@@ -53,17 +76,10 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         >
           <Checkbox
             label={formatMessage(m.endorsementList.invalidSignatures)}
-            checked={showWarning}
+            checked={showOnlyInvalidated}
             onChange={() => {
-              setShowWarning(!showWarning)
-              setSearchTerm('')
-              showWarning
-                ? setEndorsements(endorsements)
-                : setEndorsements(
-                    endorsements
-                      ? endorsements.filter((x) => x.meta.invalidated)
-                      : endorsements,
-                  )
+              setShowOnlyInvalidated(!showOnlyInvalidated)
+              setEndorsements(filter(searchTerm, !showOnlyInvalidated))
             }}
           />
 
@@ -76,13 +92,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value)
-              setEndorsements(
-                endorsements && endorsements.length > 0
-                  ? endorsements.filter((x) =>
-                      (x.meta.fullName ?? '').startsWith(e.target.value),
-                    )
-                  : endorsements,
-              )
+              setEndorsements(filter(e.target.value, showOnlyInvalidated))
             }}
           />
         </Box>

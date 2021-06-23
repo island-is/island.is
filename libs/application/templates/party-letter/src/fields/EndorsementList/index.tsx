@@ -9,6 +9,7 @@ import { useEndorsements } from '../../hooks/useFetchEndorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import { Endorsement } from '../../types/schema'
 import BulkUpload from '../BulkUpload'
+import sortBy from 'lodash/sortBy'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -26,7 +27,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
 
   useEffect(() => {
     refetch()
-    setEndorsements(endorsementsHook)
+    setEndorsements(sortBy(endorsementsHook, 'created'))
   }, [endorsementsHook, updateOnBulkImport])
 
   const namesCountString = formatMessage(

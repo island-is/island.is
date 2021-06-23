@@ -71,7 +71,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const firstMaxEndorsements = () => {
     setAutoSelect(true)
     setChooseRandom(false)
-    setSelectedEndorsements(sortBy([...firstX()], 'created'))
+    setSelectedEndorsements([...firstX()])
     updateApplicationWithEndorsements([...firstX()])
   }
 
