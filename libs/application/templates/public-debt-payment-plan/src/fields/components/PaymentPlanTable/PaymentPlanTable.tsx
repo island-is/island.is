@@ -37,7 +37,7 @@ export const PaymentPlanTable = ({ isLoading, data }: Props) => {
   const handleExpandTable = () => setIsExpanded(true)
 
   return (
-    <Box marginY={5}>
+    <Box marginTop={5}>
       <AccordionItem
         id="payment-plan-table"
         label="Greiðsluáætlun skuldar"

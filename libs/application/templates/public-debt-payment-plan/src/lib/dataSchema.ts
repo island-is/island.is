@@ -70,6 +70,10 @@ export const PublicDebtPaymentPlanSchema = z.object({
     four: paymentPlanSchema,
     five: paymentPlanSchema,
     six: paymentPlanSchema,
+    seven: paymentPlanSchema,
+    eight: paymentPlanSchema,
+    nine: paymentPlanSchema,
+    ten: paymentPlanSchema,
   }),
 })
 

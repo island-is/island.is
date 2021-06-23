@@ -50,7 +50,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   if (!answerKey) {
     // There is no entry available for this plan
     // The user can not continue the application
-    // TODO: Better UX for this
+    // TODO: Better UX and error logging for this
     return <div>No more available entries in schema</div>
   }
 
