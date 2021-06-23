@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   DateTime,
   FormContentContainer,
@@ -117,7 +117,11 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(policeDemandsForm.requestToDate.heading)}
+              {formatMessage(policeDemandsForm.requestToDate.heading)}{' '}
+              <Tooltip
+                placement="right"
+                text={formatMessage(policeDemandsForm.requestToDate.tooltip)}
+              />
             </Text>
           </Box>
           <DateTime

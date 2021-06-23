@@ -31,6 +31,12 @@ const TaxReturnForm = () => {
     router.pathname,
   ) as NavigationProps
 
+  const errorCheck = () => {
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
+  }
+
   return (
     <FormLayout
       activeSection={navigation?.activeSectionIndex}
@@ -103,11 +109,9 @@ const TaxReturnForm = () => {
       </FormContentContainer>
 
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
+        previousUrl={navigation?.prevUrl}
         nextButtonText="Halda áfram"
-        onNextButtonClick={() => {
-          router.push(navigation?.nextUrl ?? '/')
-        }}
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )
