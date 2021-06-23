@@ -9,7 +9,12 @@ import {
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { AccusedPleaDecision, Case } from '@island.is/judicial-system/types'
+import {
+  AccusedPleaDecision,
+  Case,
+  CaseAppealDecision,
+  CaseType,
+} from '@island.is/judicial-system/types'
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 
 interface Props {
@@ -77,10 +82,15 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Text>
       </AccordionListItem>
       <AccordionListItem
-        title={`Réttindi ${formatAccusedByGender(
-          workingCase.accusedGender,
-          NounCases.GENITIVE,
-        )}`}
+        title={`Réttindi ${
+          workingCase.type === CaseType.CUSTODY ||
+          workingCase.type === CaseType.TRAVEL_BAN
+            ? formatAccusedByGender(
+                workingCase.accusedGender,
+                NounCases.GENITIVE,
+              )
+            : 'varnaraðila'
+        }`}
       >
         <Text>
           Sakborning er bent á að honum sé óskylt að svara spurningum er varða
@@ -89,27 +99,41 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.
         </Text>
       </AccordionListItem>
-      <AccordionListItem
-        title={`Afstaða ${formatAccusedByGender(
-          workingCase.accusedGender,
-          NounCases.GENITIVE,
-        )}`}
-        breakSpaces
-      >
-        <Text>
-          {`${
-            workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
-              ? `${capitalize(
-                  formatAccusedByGender(workingCase.accusedGender),
-                )} hafnar kröfunni. `
-              : workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
-              ? `${capitalize(
-                  formatAccusedByGender(workingCase.accusedGender),
-                )} samþykkir kröfuna. `
-              : ''
-          }${workingCase.accusedPleaAnnouncement}`}
-        </Text>
-      </AccordionListItem>
+      {workingCase.accusedAppealDecision !==
+        CaseAppealDecision.NOT_APPLICABLE && (
+        <AccordionListItem
+          title={`Afstaða ${
+            workingCase.type === CaseType.CUSTODY ||
+            workingCase.type === CaseType.TRAVEL_BAN
+              ? formatAccusedByGender(
+                  workingCase.accusedGender,
+                  NounCases.GENITIVE,
+                )
+              : 'varnaraðila'
+          }`}
+          breakSpaces
+        >
+          <Text>
+            {`${
+              workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
+                ? `${capitalize(
+                    workingCase.type === CaseType.CUSTODY ||
+                      workingCase.type === CaseType.TRAVEL_BAN
+                      ? formatAccusedByGender(workingCase.accusedGender)
+                      : 'varnaraðili',
+                  )} hafnar kröfunni. `
+                : workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
+                ? `${capitalize(
+                    workingCase.type === CaseType.CUSTODY ||
+                      workingCase.type === CaseType.TRAVEL_BAN
+                      ? formatAccusedByGender(workingCase.accusedGender)
+                      : 'varnaraðili',
+                  )} samþykkir kröfuna. `
+                : ''
+            }${workingCase.accusedPleaAnnouncement}`}
+          </Text>
+        </AccordionListItem>
+      )}
       <AccordionListItem title="Málflutningur" breakSpaces>
         <Text>{workingCase.litigationPresentations}</Text>
       </AccordionListItem>

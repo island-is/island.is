@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Case } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
@@ -9,13 +9,25 @@ import {
   PoliceRequestAccordionItem,
   RulingInput,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Input,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import {
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case
@@ -26,9 +38,19 @@ interface Props {
 const RulingStepOneForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
   const { user } = useContext(UserContext)
+  const { updateCase } = useCase()
+
+  const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
+  const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
 
   const validations: FormSettings = {
     ruling: {
+      validations: ['empty'],
+    },
+    courtCaseFacts: {
+      validations: ['empty'],
+    },
+    courtLegalArguments: {
       validations: ['empty'],
     },
   }
@@ -73,6 +95,92 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
+              Greinargerð um málsatvik{' '}
+              <Tooltip text="Greinargerð lögreglu er forbókuð hér fyrir neðan. Hægt er að breyta textanum og mun hann birtast með þeim hætti í úrskurði dómara." />
+            </Text>
+          </Box>
+          <Box marginBottom={5}>
+            <Input
+              data-testid="courtCaseFacts"
+              name="courtCaseFacts"
+              label="Málsatvik"
+              defaultValue={workingCase.courtCaseFacts}
+              placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'courtCaseFacts',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  courtCaseFactsEM,
+                  setCourtCaseFactsEM,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'courtCaseFacts',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setCourtCaseFactsEM,
+                )
+              }
+              errorMessage={courtCaseFactsEM}
+              hasError={courtCaseFactsEM !== ''}
+              textarea
+              rows={16}
+              required
+            />
+          </Box>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              Greinargerð um lagarök{' '}
+              <Tooltip text="Greinargerð lögreglu er forbókuð hér fyrir neðan. Hægt er að breyta textanum og mun hann birtast með þeim hætti í úrskurði dómara." />
+            </Text>
+          </Box>
+          <Box marginBottom={5}>
+            <Input
+              data-testid="courtLegalArguments"
+              name="courtLegalArguments"
+              label="Lagarök"
+              defaultValue={workingCase.courtLegalArguments}
+              placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'courtLegalArguments',
+                  event,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  courtLegalArgumentsEM,
+                  setCourtLegalArgumentsEM,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'courtLegalArguments',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setCourtLegalArgumentsEM,
+                )
+              }
+              errorMessage={courtLegalArgumentsEM}
+              hasError={courtLegalArgumentsEM !== ''}
+              textarea
+              rows={16}
+              required
+            />
+          </Box>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
               Úrskurður{' '}
               <Text as="span" fontWeight="semiBold" color="red600">
                 *
@@ -104,9 +212,9 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
-          nextUrl={`${Constants.R_CASE_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.IC_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isValid || !workingCase.decision}
         />
       </FormContentContainer>

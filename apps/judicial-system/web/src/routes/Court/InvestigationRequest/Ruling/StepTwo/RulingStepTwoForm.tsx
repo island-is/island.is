@@ -456,9 +456,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
-          nextUrl={`${Constants.R_CASE_CONFIRMATION_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.IC_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={
             !workingCase.conclusion ||
             !workingCase.accusedAppealDecision ||

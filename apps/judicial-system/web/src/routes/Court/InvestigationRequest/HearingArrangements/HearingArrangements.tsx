@@ -58,7 +58,7 @@ const HearingArrangements = () => {
       if (notificationSent && !window.Cypress) {
         setModalVisible(true)
       } else {
-        router.push(`${Constants.R_CASE_COURT_RECORD_ROUTE}/${id}`)
+        router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${id}`)
       }
     }
   }
@@ -89,7 +89,7 @@ const HearingArrangements = () => {
               title="Tilkynning um fyrirtökutíma hefur verið send"
               text="Tilkynning um fyrirtökutíma hefur verið send á ákæranda, fangelsi og verjanda hafi verjandi verið skráður."
               handlePrimaryButtonClick={() => {
-                router.push(`${Constants.R_CASE_COURT_RECORD_ROUTE}/${id}`)
+                router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${id}`)
               }}
               primaryButtonText="Loka glugga"
             />

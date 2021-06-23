@@ -359,9 +359,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
-          nextUrl={`${Constants.R_CASE_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.IC_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
           nextIsDisabled={
             !isValid ||
             !courtRecordStartDateIsValid ||

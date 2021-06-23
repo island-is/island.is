@@ -159,7 +159,7 @@ const Confirmation: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextButtonText="Staðfesta og hefja undirritun"
           onNextButtonClick={handleNextButtonClick}

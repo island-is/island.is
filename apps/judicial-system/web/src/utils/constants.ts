@@ -15,25 +15,23 @@ export const STEP_FOUR_ROUTE = '/krafa/greinargerd'
 export const STEP_FIVE_ROUTE = '/krafa/rannsoknargogn'
 export const STEP_SIX_ROUTE = '/krafa/stadfesta'
 
-// R-cases
-export const NEW_R_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
-export const R_CASE_DEFENDANT_ROUTE = '/krafa/rannsoknarheimild/varnaradili'
-export const R_CASE_HEARING_ARRANGEMENTS_ROUTE =
+// Investigation cases - prosecutor
+export const NEW_IC_ROUTE = '/krafa/ny/rannsoknarheimild'
+export const IC_DEFENDANT_ROUTE = '/krafa/rannsoknarheimild/varnaradili'
+export const IC_HEARING_ARRANGEMENTS_ROUTE =
   '/krafa/rannsoknarheimild/fyrirtaka'
-export const R_CASE_POLICE_DEMANDS_ROUTE =
+export const IC_POLICE_DEMANDS_ROUTE =
   '/krafa/rannsoknarheimild/domkrofur-og-lagaakvaedi'
-export const R_CASE_POLICE_REPORT_ROUTE = '/krafa/rannsoknarheimild/greinargerd'
-export const R_CASE_CASE_FILES_ROUTE = '/krafa/rannsoknarheimild/rannsoknargogn'
-export const R_CASE_POLICE_CONFIRMATION_ROUTE =
-  '/krafa/rannsoknarheimild/stadfesta'
-export const R_CASE_OVERVIEW = '/domur/rannsoknarheimild/yfirlit'
-export const R_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
+export const IC_POLICE_REPORT_ROUTE = '/krafa/rannsoknarheimild/greinargerd'
+export const IC_CASE_FILES_ROUTE = '/krafa/rannsoknarheimild/rannsoknargogn'
+export const IC_POLICE_CONFIRMATION_ROUTE = '/krafa/rannsoknarheimild/stadfesta'
+export const IC_OVERVIEW_ROUTE = '/domur/rannsoknarheimild/yfirlit'
+export const IC_COURT_HEARING_ARRANGEMENTS_ROUTE =
   '/domur/rannsoknarheimild/fyrirtaka'
-export const R_CASE_COURT_RECORD_ROUTE = '/domur/rannsoknarheimild/thingbok'
-export const R_CASE_RULING_STEP_ONE_ROUTE = '/domur/rannsoknarheimild/urskurdur'
-export const R_CASE_RULING_STEP_TWO_ROUTE =
-  '/domur/rannsoknarheimild/urskurdarord'
-export const R_CASE_CONFIRMATION_ROUTE = '/domur/rannsoknarheimild/stadfesta'
+export const IC_COURT_RECORD_ROUTE = '/domur/rannsoknarheimild/thingbok'
+export const IC_RULING_STEP_ONE_ROUTE = '/domur/rannsoknarheimild/urskurdur'
+export const IC_RULING_STEP_TWO_ROUTE = '/domur/rannsoknarheimild/urskurdarord'
+export const IC_CONFIRMATION_ROUTE = '/domur/rannsoknarheimild/stadfesta'
 
 // Court
 export const JUDGE_SINGLE_REQUEST_BASE_ROUTE = '/domur/krafa'

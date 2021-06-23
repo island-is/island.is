@@ -138,7 +138,7 @@ export const Requests: React.FC = () => {
           `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${caseToOpen.id}`,
         )
       } else {
-        router.push(`${Constants.R_CASE_OVERVIEW}/${caseToOpen.id}`)
+        router.push(`${Constants.IC_OVERVIEW_ROUTE}/${caseToOpen.id}`)
       }
     } else {
       if (
@@ -147,7 +147,7 @@ export const Requests: React.FC = () => {
       ) {
         router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
       } else {
-        router.push(`${Constants.R_CASE_DEFENDANT_ROUTE}/${caseToOpen.id}`)
+        router.push(`${Constants.IC_DEFENDANT_ROUTE}/${caseToOpen.id}`)
       }
     }
   }
@@ -173,7 +173,7 @@ export const Requests: React.FC = () => {
                         title: 'Farbann',
                       },
                       {
-                        href: Constants.NEW_R_CASE_ROUTE,
+                        href: Constants.NEW_IC_ROUTE,
                         title: 'Rannsóknarheimild',
                       },
                     ]
