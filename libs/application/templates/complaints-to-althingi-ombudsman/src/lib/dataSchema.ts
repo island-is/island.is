@@ -1,6 +1,7 @@
 import * as kennitala from 'kennitala'
 import * as z from 'zod'
 import { OmbudsmanComplaintTypeEnum } from '../shared'
+import { ComplaineeTypes } from '../constants'
 import { error } from './messages/error'
 
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
@@ -45,6 +46,10 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
       OmbudsmanComplaintTypeEnum.PROCEEDINGS,
     ]),
   }),
+  complainee: z.object({
+    type: z.enum([ComplaineeTypes.GOVERNMENT, ComplaineeTypes.OTHER]),
+  }),
+  complaineeName: z.string().nonempty(error.required.defaultMessage),
 })
 
 export type ComplaintsToAlthingiOmbudsman = z.TypeOf<

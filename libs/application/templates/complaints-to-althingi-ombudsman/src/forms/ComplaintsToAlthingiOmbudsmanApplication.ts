@@ -13,13 +13,16 @@ import {
   FormValue,
 } from '@island.is/application/core'
 import { ComplaintsToAlthingiOmbudsman } from '../lib/dataSchema'
+import { OmbudsmanComplaintTypeEnum } from '../shared/constants'
+import { ComplaineeTypes } from '../constants'
 import {
   dataProvider,
   information,
   section,
+  complainee,
   complaintInformation,
 } from '../lib/messages'
-import { OmbudsmanComplaintTypeEnum } from '../shared/constants'
+import { isGovernmentComplainee } from '../utils'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -190,6 +193,65 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
 
                 return complaintType === OmbudsmanComplaintTypeEnum.PROCEEDINGS
               },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'complaint',
+      title: section.complaint,
+      children: [
+        buildSubSection({
+          id: 'complaint.section.complainee',
+          title: section.complainee,
+          children: [
+            buildMultiField({
+              id: 'complainee',
+              title: complainee.general.sectionTitle,
+              description: complainee.general.sectionDescription,
+              children: [
+                buildRadioField({
+                  id: 'complainee.type',
+                  title: '',
+                  largeButtons: true,
+                  options: [
+                    {
+                      value: ComplaineeTypes.GOVERNMENT,
+                      label: complainee.labels.governmentComplaint,
+                    },
+                    {
+                      value: ComplaineeTypes.OTHER,
+                      label: complainee.labels.otherComplaint,
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'complaint.section.complaineeName',
+          title: section.complaineeName,
+          children: [
+            buildMultiField({
+              id: 'complaineeName',
+              title: complainee.general.sectionTitle,
+              children: [
+                buildTextField({
+                  id: 'complaineeName',
+                  backgroundColor: 'blue',
+                  required: true,
+                  title: (application) =>
+                    isGovernmentComplainee(application.answers)
+                      ? complainee.labels.complaineeNameGovernmentTitle
+                      : complainee.labels.complaineeNameOtherTitle,
+                  placeholder: (application) =>
+                    isGovernmentComplainee(application.answers)
+                      ? complainee.labels.complaineeNameGovernmentPlaceholder
+                      : complainee.labels.complaineeNameOtherPlaceholder,
+                }),
+              ],
             }),
           ],
         }),
