@@ -16,7 +16,8 @@ export const DAYS_IN_MONTH = 30
  * Convert a number of days into a floored number of months
  */
 export const daysToMonths = (days: number) => {
-  const fullMonths = Math.floor(days / DAYS_IN_MONTH)
+  const ceilOrFloor = days < 0 ? Math.ceil : Math.floor
+  const fullMonths = ceilOrFloor(days / DAYS_IN_MONTH)
   const restDays = days % DAYS_IN_MONTH
   const ratio = restDays / DAYS_IN_MONTH
 
