@@ -13,7 +13,7 @@ import {
   ExternalData,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { Constituencies } from '../types'
+import { EndorsementListTags, constituencyMapper } from '../constants'
 import Logo from '../assets/Logo'
 import { PartyLetterRegistryPartyLetter } from '../dataProviders/partyLetterRegistry'
 
@@ -42,25 +42,46 @@ export const ConstituencyForm: Form = buildForm({
           defaultValue: '',
           options: [
             {
-              value: Constituencies.NORTH_EAST,
-              label: Constituencies.NORTH_EAST,
+              value: 'partyApplicationReykjavikurkjordaemiSudur2021' as EndorsementListTags,
+              label:
+                constituencyMapper[
+                  'partyApplicationReykjavikurkjordaemiSudur2021' as EndorsementListTags
+                ].region_name,
             },
             {
-              value: Constituencies.NORTH_WEST,
-              label: Constituencies.NORTH_WEST,
+              value: 'partyApplicationReykjavikurkjordaemiNordur2021' as EndorsementListTags,
+              label:
+                constituencyMapper[
+                  'partyApplicationReykjavikurkjordaemiNordur2021' as EndorsementListTags
+                ].region_name,
             },
             {
-              value: Constituencies.RVK_NORTH,
-              label: Constituencies.RVK_NORTH,
+              value: 'partyApplicationSudvesturkjordaemi2021' as EndorsementListTags,
+              label:
+                constituencyMapper[
+                  'partyApplicationSudvesturkjordaemi2021' as EndorsementListTags
+                ].region_name,
             },
             {
-              value: Constituencies.RVK_SOUTH,
-              label: Constituencies.RVK_SOUTH,
+              value: 'partyApplicationNordvesturkjordaemi2021' as EndorsementListTags,
+              label:
+                constituencyMapper[
+                  'partyApplicationNordvesturkjordaemi2021' as EndorsementListTags
+                ].region_name,
             },
-            { value: Constituencies.SOUTH, label: Constituencies.SOUTH },
             {
-              value: Constituencies.SOUTH_WEST,
-              label: Constituencies.SOUTH_WEST,
+              value: 'partyApplicationNordausturkjordaemi2021' as EndorsementListTags,
+              label:
+                constituencyMapper[
+                  'partyApplicationNordausturkjordaemi2021' as EndorsementListTags
+                ].region_name,
+            },
+            {
+              value: 'partyApplicationSudurkjordaemi2021' as EndorsementListTags,
+              label:
+                constituencyMapper[
+                  'partyApplicationSudurkjordaemi2021' as EndorsementListTags
+                ].region_name,
             },
           ],
         }),
