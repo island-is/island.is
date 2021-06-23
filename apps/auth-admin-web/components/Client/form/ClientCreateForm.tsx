@@ -152,7 +152,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
       const savedClient = await edit(clientObject)
 
       if (baseUrlRequired) {
-        console.log('Setting defaults on edited client')
         if (savedClient.redirectUris?.length > 0) {
           ClientService.setDefaults(savedClient, data.baseUrl)
         }
