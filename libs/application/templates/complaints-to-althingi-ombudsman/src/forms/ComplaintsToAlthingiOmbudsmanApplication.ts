@@ -10,6 +10,7 @@ import {
   buildTextField,
   Form,
   FormModes,
+  FormValue,
 } from '@island.is/application/core'
 import { ComplaintsToAlthingiOmbudsman } from '../lib/dataSchema'
 import {
@@ -154,7 +155,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           title: section.complaintInformation,
           children: [
             buildRadioField({
-              id: 'complainType',
+              id: 'complaintInformation.complaintType',
               title: '',
               options: [
                 {
@@ -168,26 +169,26 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               ],
             }),
             buildCustomField({
-              id: 'section.complaintInformation.alertMessage',
+              id: 'complaintInformation.decisionAlertMessage',
               title: complaintInformation.alertMessageTitle,
               component: 'FieldAlertMessage',
               description: complaintInformation.decisionAlertMessage,
               condition: (formValue) => {
-                return (
-                  formValue.complainType === OmbudsmanComplaintTypeEnum.DECISION
-                )
+                const complaintType = (formValue.complaintInformation as FormValue)
+                  ?.complaintType
+                return complaintType === OmbudsmanComplaintTypeEnum.DECISION
               },
             }),
             buildCustomField({
-              id: 'section.complaintInformation.alertMessage',
+              id: 'complaintInformation.proceedingsAlertMessage',
               title: complaintInformation.alertMessageTitle,
               component: 'FieldAlertMessage',
               description: complaintInformation.proceedingsAlertMessage,
               condition: (formValue) => {
-                return (
-                  formValue.complainType ===
-                  OmbudsmanComplaintTypeEnum.PROCEEDINGS
-                )
+                const complaintType = (formValue.complaintInformation as FormValue)
+                  ?.complaintType
+
+                return complaintType === OmbudsmanComplaintTypeEnum.PROCEEDINGS
               },
             }),
           ],

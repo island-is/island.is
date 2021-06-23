@@ -1,5 +1,6 @@
 import * as kennitala from 'kennitala'
 import * as z from 'zod'
+import { OmbudsmanComplaintTypeEnum } from '../shared'
 import { error } from './messages/error'
 
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
@@ -37,6 +38,12 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
     city: z.string().nonempty(error.required.defaultMessage),
     email: z.string().email().optional(),
     phone: z.string().optional(),
+  }),
+  complaintInformation: z.object({
+    complaintType: z.enum([
+      OmbudsmanComplaintTypeEnum.DECISION,
+      OmbudsmanComplaintTypeEnum.PROCEEDINGS,
+    ]),
   }),
 })
 
