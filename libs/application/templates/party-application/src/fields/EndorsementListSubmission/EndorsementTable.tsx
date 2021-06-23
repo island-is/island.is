@@ -39,6 +39,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
       : endorsement.meta.bulkEndorsement
       ? 'roseTinted100'
       : 'white'
+
     return (
       <T.Row key={endorsement.id}>
         <T.Data
