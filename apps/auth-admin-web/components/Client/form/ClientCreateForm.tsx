@@ -29,6 +29,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
     errors,
     formState,
     setValue,
+    clearErrors,
   } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [show, setShow] = useState(false)
@@ -44,9 +45,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ClientCreateForm'),
   )
+  const [baseUrlRequired, setBaseUrlRequired] = useState<boolean>(true)
+  //#region hintbox
   const [clientIdHintVisible, setClientIdHintVisible] = useState<boolean>(false)
   const [clientIdIsValid, setClientIdIsValid] = useState<boolean | null>(null)
   const [clientIdHintMessage, setClientIdHintMessage] = useState<string>('')
+  //#endregion hintbox
 
   const onClientIdChange = async (name: string) => {
     if (isEditing) {
@@ -99,11 +103,19 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
       setIsEditing(true)
       setAvailable(true)
       setClientTypeSelected(true)
+      manageBaseUrlValidation(false)
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
     }
     setClient({ ...props.client })
   }, [props.client])
+
+  const manageBaseUrlValidation = (shouldValidate: boolean) => {
+    setBaseUrlRequired(shouldValidate)
+    if (!shouldValidate) {
+      clearErrors('baseUrl')
+    }
+  }
 
   const create = async (data: ClientDTO): Promise<Client | null> => {
     const response = await ClientService.create(data)
@@ -116,7 +128,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
     return null
   }
 
-  const edit = async (data: ClientDTO) => {
+  const edit = async (data: ClientDTO): Promise<Client> => {
     // We delete the client id in the service. That's why we do a deep copy
     const handleObject = { ...data }
     const response = await ClientService.update(data, props.client.clientId)
@@ -126,6 +138,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
         props.onNextButtonClick(handleObject)
       }
     }
+    return response
   }
 
   const save = async (data: FormOutput) => {
@@ -136,7 +149,14 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
         ClientService.setDefaults(savedClient, data.baseUrl)
       }
     } else {
-      edit(clientObject)
+      const savedClient = await edit(clientObject)
+
+      if (baseUrlRequired) {
+        console.log('Setting defaults on edited client')
+        if (savedClient.redirectUris?.length > 0) {
+          ClientService.setDefaults(savedClient, data.baseUrl)
+        }
+      }
     }
   }
 
@@ -180,6 +200,13 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   }
 
   const setClientType = async (clientType: string) => {
+    let baseUrlShouldValidate = true
+
+    // User is editing and the Client type is not changing from Machine
+    if (isEditing && props.client.clientType !== 'machine') {
+      baseUrlShouldValidate = false
+    }
+
     if (clientType) {
       if (clientType === 'spa' || clientType === 'native') {
         setValue('client.requireClientSecret', false)
@@ -189,6 +216,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
       if (clientType === 'web' || clientType === 'machine') {
         setValue('client.requireClientSecret', true)
         setValue('client.requirePkce', false)
+
+        if (clientType === 'machine') {
+          baseUrlShouldValidate = false
+        }
       }
 
       setClientTypeInfo(getClientTypeHTML(clientType))
@@ -197,6 +228,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
       setClientTypeInfo(getClientTypeHTML(''))
       setClientTypeSelected(false)
     }
+    manageBaseUrlValidation(baseUrlShouldValidate)
   }
 
   return (
@@ -449,13 +481,14 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       <label className="client__label" htmlFor="baseUrl">
                         {localization.fields['baseUrl'].label}
                       </label>
+
                       <input
                         id="baseUrl"
-                        readOnly={isEditing}
+                        readOnly={isEditing && !baseUrlRequired}
                         name="baseUrl"
                         type="text"
                         ref={register({
-                          required: !isEditing,
+                          required: baseUrlRequired,
                           validate: ValidationUtils.validateBaseUrl,
                         })}
                         defaultValue={client.clientUri ?? ''}
