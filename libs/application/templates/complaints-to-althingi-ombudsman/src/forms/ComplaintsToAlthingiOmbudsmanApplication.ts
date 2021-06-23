@@ -23,11 +23,13 @@ import {
   complaintInformation,
 } from '../lib/messages'
 import { isGovernmentComplainee } from '../utils'
+import Logo from '../assets/Logo'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
   title: 'Kvörtun til umboðsmanns Alþingis',
   mode: FormModes.APPLYING,
+  logo: Logo,
   children: [
     buildSection({
       id: 'conditions',

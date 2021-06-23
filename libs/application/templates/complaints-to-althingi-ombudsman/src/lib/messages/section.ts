@@ -28,7 +28,7 @@ export const section = defineMessages({
   },
   complainee: {
     id: 'ctao.application:section.complainee',
-    defaultMessage: 'Hverjum beinist kvörtunin að?',
+    defaultMessage: 'Kvörtun beinist að',
     description: 'Definition of complaint receiver section title',
   },
   complaineeName: {
