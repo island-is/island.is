@@ -3,13 +3,13 @@ import Identicon from 'identicon.js'
 import { createHash } from 'crypto'
 
 interface Props {
-  ssn: string
+  nationalId: string
   size: number
 }
 
-const GeneratedProfile: FunctionComponent<Props> = ({ ssn, size }) => {
+const GeneratedProfile: FunctionComponent<Props> = ({ nationalId, size }) => {
   const data = new Identicon(
-    createHash('sha1').update(ssn, 'ascii').digest('hex'),
+    createHash('sha1').update(nationalId, 'ascii').digest('hex'),
     {
       size,
       background: [255, 255, 255, 0],
