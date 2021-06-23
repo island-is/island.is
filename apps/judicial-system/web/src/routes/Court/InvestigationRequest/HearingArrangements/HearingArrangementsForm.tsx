@@ -443,6 +443,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.R_CASE_OVERVIEW}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextIsDisabled={!isValid || !courtDateIsValid}
+          nextButtonText="Staðfesta og senda"
           onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>
