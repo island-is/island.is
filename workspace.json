@@ -2950,6 +2950,27 @@
         }
       }
     },
+    "clients-middlewares": {
+      "root": "libs/clients/middlewares",
+      "sourceRoot": "libs/clients/middlewares/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/middlewares/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/middlewares"],
+          "options": {
+            "jestConfig": "libs/clients/middlewares/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "clients-mms": {
       "root": "libs/clients/mms",
       "sourceRoot": "libs/clients/mms/src",
