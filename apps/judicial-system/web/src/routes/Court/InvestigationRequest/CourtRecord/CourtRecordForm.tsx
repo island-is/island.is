@@ -17,18 +17,13 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  capitalize,
-  caseTypes,
-  formatAccusedByGender,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './CourtRecord.treat'
+import { caseTypes } from '@island.is/judicial-system/formatters'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as styles from './CourtRecord.treat'
 
 interface Props {
   workingCase: Case
@@ -199,13 +194,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={1}>
             <Text as="h3" variant="h3">
-              {`Réttindi ${formatAccusedByGender(
-                workingCase.accusedGender,
-                NounCases.GENITIVE,
-              )} `}
-              <Text as="span" fontWeight="semiBold" color="red600">
-                *
-              </Text>
+              Réttindi varnaraðila
             </Text>
           </Box>
           <Box marginBottom={2}>
@@ -225,10 +214,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                   updateCase,
                 )
               }
-              tooltip={`Með því að fela forbókun um réttindi ${formatAccusedByGender(
-                workingCase.accusedGender,
-                NounCases.GENITIVE,
-              )} birtist hún ekki í Þingbók málsins.`}
+              tooltip="Með því að fela forbókun um réttindi varnaraðila birtist hún ekki í Þingbók málsins."
             />
           </Box>
           <BlueBox>
@@ -236,9 +222,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="accusedPleaDecision"
                 id="accused-plea-decision-accepting"
-                label={`${capitalize(
-                  formatAccusedByGender(workingCase.accusedGender),
-                )} hafnar kröfunni`}
+                label="Varnaraðili hafnar kröfunni"
                 checked={
                   workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
                 }
@@ -257,9 +241,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="accusedPleaDecision"
                 id="accused-plea-decision-rejecting"
-                label={`${capitalize(
-                  formatAccusedByGender(workingCase.accusedGender),
-                )} samþykkir kröfuna`}
+                label="Varnaraðili samþykkir kröfuna"
                 checked={
                   workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
                 }
@@ -276,17 +258,34 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 backgroundColor="white"
               />
             </div>
+            <Box marginBottom={2}>
+              <RadioButton
+                name="accusedPleaDecision"
+                id="accused-plea-decision-na"
+                label="Á ekki við"
+                checked={
+                  workingCase.accusedPleaDecision ===
+                  AccusedPleaDecision.NOT_APPLICABLE
+                }
+                onChange={() => {
+                  setAndSendToServer(
+                    'accusedPleaDecision',
+                    AccusedPleaDecision.NOT_APPLICABLE,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+              />
+            </Box>
             <Input
               data-testid="accusedPleaAnnouncement"
               name="accusedPleaAnnouncement"
-              label={`Afstaða ${formatAccusedByGender(
-                workingCase.accusedGender,
-                NounCases.GENITIVE,
-              )}`}
+              label="Afstaða varnaraðila"
               defaultValue={workingCase.accusedPleaAnnouncement}
-              placeholder={`Hvað hafði ${formatAccusedByGender(
-                workingCase.accusedGender,
-              )} að segja um kröfuna? Mótmælti eða samþykkti?`}
+              placeholder="Hvað hafði varnaraðili að segja um kröfuna? Mótmælti eða samþykkti?"
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'accusedPleaAnnouncement',

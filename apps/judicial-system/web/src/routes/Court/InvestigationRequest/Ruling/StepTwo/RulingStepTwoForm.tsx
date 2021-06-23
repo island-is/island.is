@@ -27,13 +27,7 @@ import {
   useDateTime,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import {
-  capitalize,
-  formatAccusedByGender,
-  formatDate,
-  NounCases,
-  TIME_FORMAT,
-} from '@island.is/judicial-system/formatters'
+import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './RulingStepTwo.treat'
 
@@ -90,6 +84,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             }
             rows={7}
             textarea
+            required
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -108,7 +103,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             <BlueBox>
               <Box marginBottom={2}>
                 <Text as="h4" variant="h4">
-                  {capitalize(formatAccusedByGender(workingCase.accusedGender))}{' '}
+                  Varnaraðili{' '}
                   <Text as="span" color="red600" fontWeight="semiBold">
                     *
                   </Text>
@@ -238,10 +233,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
               <Input
                 name="accusedAppealAnnouncement"
                 data-testid="accusedAppealAnnouncement"
-                label={`Yfirlýsing um kæru ${formatAccusedByGender(
-                  workingCase.accusedGender,
-                  NounCases.GENITIVE,
-                )}`}
+                label="Yfirlýsing um kæru varnaraðila"
                 defaultValue={workingCase.accusedAppealAnnouncement}
                 disabled={
                   workingCase.accusedAppealDecision !==
@@ -468,6 +460,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
           nextIsLoading={isLoading}
           nextUrl={`${Constants.R_CASE_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={
+            !workingCase.conclusion ||
             !workingCase.accusedAppealDecision ||
             !workingCase.prosecutorAppealDecision ||
             !isValidCourtEndTime?.isValid
