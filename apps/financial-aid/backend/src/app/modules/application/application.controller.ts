@@ -5,6 +5,7 @@ import {
   Post,
   UseGuards,
   Param,
+  Put,
   NotFoundException,
 } from '@nestjs/common'
 
@@ -13,7 +14,7 @@ import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import { ApplicationService } from './application.service'
 import { ApplicationModel } from './models'
 
-import { CreateApplicationDto } from './dto'
+import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
 import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
 import type { User } from '@island.is/financial-aid/shared'
@@ -37,16 +38,37 @@ export class ApplicationController {
   @Get('applications/:id')
   @ApiOkResponse({
     type: ApplicationModel,
-    description: 'Get applicant',
+    description: 'Get application',
   })
   async getById(@Param('id') id: string) {
-    const applicant = await this.applicationService.findById(id)
+    const application = await this.applicationService.findById(id)
 
-    if (!applicant) {
-      throw new NotFoundException(`applicant ${id} not found`)
+    if (!application) {
+      throw new NotFoundException(`application ${id} not found`)
     }
 
-    return applicant
+    return application
+  }
+
+  @Put('applications/:id')
+  @ApiOkResponse({
+    type: ApplicationModel,
+    description: 'Updates an existing application',
+  })
+  async update(
+    @Param('id') id: string,
+    @Body() applicationToUpdate: UpdateApplicationDto,
+  ): Promise<ApplicationModel> {
+    const {
+      numberOfAffectedRows,
+      updatedApplication,
+    } = await this.applicationService.update(id, applicationToUpdate)
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Application ${id} does not exist`)
+    }
+
+    return updatedApplication
   }
 
   @Post('application')

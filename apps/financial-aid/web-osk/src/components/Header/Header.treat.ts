@@ -54,15 +54,6 @@ export const userProfileImage = style({
   marginRight: `${theme.spacing[1]}px`,
 })
 
-export const userButton = style({
-  display: 'flex',
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      display: 'none',
-    },
-  },
-})
-
 export const desktopText = style({
   display: 'block',
   '@media': {
