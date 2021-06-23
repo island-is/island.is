@@ -8,12 +8,28 @@ export const GetFullName = gql`
   }
 `
 
+export const GetUserEndorsements = gql`
+  query endorsementSystemUserEndorsements {
+    endorsementSystemUserEndorsements {
+      endorsementListId
+    }
+  }
+`
+
 export const GetSingleEndorsementList = gql`
   query endorsementSystemGetSingleEndorsementList(
     $input: FindEndorsementListInput!
   ) {
     endorsementSystemGetSingleEndorsementList(input: $input) {
       closedDate
+    }
+  }
+`
+
+export const GetVoterRegion = gql`
+  query getVoterRegion {
+    temporaryVoterRegistryGetVoterRegion {
+      regionNumber
     }
   }
 `

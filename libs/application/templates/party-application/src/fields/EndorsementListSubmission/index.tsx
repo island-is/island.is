@@ -10,8 +10,7 @@ import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import isEqual from 'lodash/isEqual'
-import { Constituencies } from '../../types'
-import { constituencyMapper } from '../../constants'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 import sortBy from 'lodash/sortBy'
 import cloneDeep from 'lodash/cloneDeep'
 import { Endorsement } from '../../types/schema'
@@ -53,9 +52,11 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   }, [])
 
   const maxEndorsements =
-    constituencyMapper[answers.constituency as Constituencies].high
+    constituencyMapper[answers.constituency as EndorsementListTags]
+      .parliamentary_seats * 40
   const minEndorsements =
-    constituencyMapper[answers.constituency as Constituencies].low
+    constituencyMapper[answers.constituency as EndorsementListTags]
+      .parliamentary_seats * 30
   const showWarning =
     selectedEndorsements.length > maxEndorsements ||
     selectedEndorsements.length < minEndorsements
