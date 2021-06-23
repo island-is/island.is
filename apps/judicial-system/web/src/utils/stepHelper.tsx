@@ -9,7 +9,6 @@ import {
   formatAccusedByGender,
   formatDate,
   formatNationalId,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import {
   Case,
@@ -120,7 +119,10 @@ const getAcceptingConclusion = (wc: Case, large?: boolean) => {
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}`
 
-  const formattedIsolationToDateAndTime = `${formatDate(wc.isolationTo, 'PPPPp')
+  const formattedIsolationToDateAndTime = `${formatDate(
+    wc.isolationToDate,
+    'PPPPp',
+  )
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}`
 
@@ -130,8 +132,8 @@ const getAcceptingConclusion = (wc: Case, large?: boolean) => {
 
   const isolationIsSameAsValidToDate =
     wc.validToDate &&
-    wc.isolationTo &&
-    compareAsc(parseISO(wc.validToDate), parseISO(wc.isolationTo)) === 0
+    wc.isolationToDate &&
+    compareAsc(parseISO(wc.validToDate), parseISO(wc.isolationToDate)) === 0
 
   return (
     <Text variant={large ? 'intro' : 'default'}>

@@ -37,6 +37,6 @@ export class PartyLetterRegistryService {
   ) {
     return await this.partyLetterRegistryApi
       .partyLetterRegistryControllerFindByManager(input)
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
   }
 }

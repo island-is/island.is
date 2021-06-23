@@ -20,18 +20,17 @@ const HintBox: React.FC<Props> = (props: Props) => {
   return (
     <div className="hintbox">
       <div className={`hintbox__content ${show === true ? 'show' : 'hidden'}`}>
-        <input
-          id={props.helpText}
-          onBlur={() => props.onVisibleChange(false)}
-          className="fake-input"
-        />
         <a
           className="hintbox__content__button__close"
           onClick={() => props.onVisibleChange(false)}
         >
           &times;
         </a>
-        <p className={`hintbox__help-text${props.isValid ? '' : ' invalid'}`}>
+        <p
+          className={`hintbox__help-text${
+            props.isValid ? ' valid' : ' invalid'
+          }`}
+        >
           {props.helpText}
         </p>
         <p

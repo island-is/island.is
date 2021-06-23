@@ -5,6 +5,7 @@ import {
   CaseCustodyProvisions,
   CaseState,
   CaseType,
+  ReadableCaseType,
 } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
@@ -71,6 +72,10 @@ const OverviewForm: React.FC<Props> = (props) => {
               {
                 title: 'Ákærandi',
                 value: `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`,
+              },
+              {
+                title: 'Tegund kröfu',
+                value: capitalize(ReadableCaseType[workingCase.type]),
               },
             ]}
             accusedName={workingCase.accusedName}

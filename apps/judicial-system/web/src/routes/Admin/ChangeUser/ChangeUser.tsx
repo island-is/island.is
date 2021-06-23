@@ -8,7 +8,7 @@ import {
   UpdateUserMutation,
   UserQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
-import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
+import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { useRouter } from 'next/router'
 import UserForm from '../UserForm/UserForm'
 

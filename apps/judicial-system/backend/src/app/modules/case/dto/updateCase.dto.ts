@@ -210,9 +210,9 @@ export class UpdateCaseDto {
   readonly courtDocuments?: string
 
   @IsOptional()
-  @IsString()
+  @IsBoolean()
   @ApiPropertyOptional()
-  readonly additionToConclusion?: string
+  readonly isAccusedAbsent?: boolean
 
   @IsOptional()
   @IsEnum(AccusedPleaDecision)
@@ -267,7 +267,12 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly isolationTo?: Date
+  readonly isolationToDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly additionToConclusion?: string
 
   @IsOptional()
   @IsEnum(CaseAppealDecision)

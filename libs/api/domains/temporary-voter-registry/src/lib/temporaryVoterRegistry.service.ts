@@ -31,6 +31,6 @@ export class TemporaryVoterRegistryService {
   ) {
     return await this.temporaryVoterRegistryApi
       .voterRegistryControllerFindOne(input)
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
   }
 }

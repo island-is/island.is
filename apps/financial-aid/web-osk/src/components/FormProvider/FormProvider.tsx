@@ -22,6 +22,7 @@ export interface Form {
   interview?: boolean
   submitted: boolean
   section?: Array<string>
+  formComment?: string
 }
 
 export const initialState = { submitted: false, incomeFiles: [] }

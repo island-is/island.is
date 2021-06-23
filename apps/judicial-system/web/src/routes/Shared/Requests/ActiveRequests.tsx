@@ -5,9 +5,9 @@ import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import * as styles from './Requests.treat'
 import { mapCaseStateToTagVariant } from './utils'
 import {
-  AllCaseTypes,
   Case,
   CaseState,
+  ReadableCaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -19,6 +19,7 @@ import {
   SortConfig,
 } from '@island.is/judicial-system-web/src/types'
 import localeIS from 'date-fns/locale/is'
+import { capitalize } from '@island.is/judicial-system/formatters'
 
 interface Props {
   cases: Case[]
@@ -190,10 +191,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
             </td>
             <td className={styles.td}>
               <Box component="span" display="flex" flexDirection="column">
-                <Text as="span">
-                  {AllCaseTypes.find((caseType) => caseType.value === c.type)
-                    ?.label ?? 'Óþekkt'}
-                </Text>
+                <Text as="span">{capitalize(ReadableCaseType[c.type])}</Text>
                 {c.parentCase && (
                   <Text as="span" variant="small" color="dark400">
                     Framlenging

@@ -23,7 +23,7 @@ const CreateAuthDelegationMutation = gql`
   mutation CreateAuthDelegationMutation($input: CreateAuthDelegationInput!) {
     createAuthDelegation(input: $input) {
       id
-      fromName
+      toName
       toNationalId
     }
   }
@@ -35,7 +35,7 @@ const AuthDelegationQuery = gql`
       id
       type
       toNationalId
-      fromName
+      toName
     }
   }
 `
@@ -64,7 +64,7 @@ function GrantAccess() {
 
   useEffect(() => {
     if (authDelegation) {
-      setValue('name', authDelegation.fromName)
+      setValue('name', authDelegation.toName)
     }
   }, [authDelegation, setValue])
 
@@ -189,7 +189,12 @@ function GrantAccess() {
           </GridColumn>
         </GridRow>
         <Box display="flex" justifyContent="flexEnd">
-          <Button type="submit" icon="arrowForward" disabled={loading}>
+          <Button
+            type="submit"
+            icon="arrowForward"
+            disabled={loading}
+            loading={loading}
+          >
             {formatMessage({
               id: 'service.portal.settings.accessControl:grant-form-submit',
               defaultMessage: 'Áfram',

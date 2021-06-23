@@ -14,9 +14,13 @@ import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.mod
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
 import { ParentalLeave } from '../models/parentalLeaves.model'
+import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
+import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
 import { GetParentalLeavesEntitlementsInput } from '../dto/getParentalLeavesEntitlements.input'
 import { GetParentalLeavesEstimatedPaymentPlanInput } from '../dto/getParentalLeavesEstimatedPaymentPlan.input'
 import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
+import { GetParentalLeavesPeriodEndDateInput } from '../dto/getParentalLeavesPeriodEndDate.input'
+import { GetParentalLeavesPeriodLengthInput } from '../dto/getParentalLeavesPeriodLength.input'
 import { DirectorateOfLabourService } from './directorate-of-labour.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
@@ -53,6 +57,7 @@ export class DirectorateOfLabourResolver {
       user.nationalId,
     )
   }
+
   @Query(() => [ParentalLeavePaymentPlan], { nullable: true })
   async getParentalLeavesApplicationPaymentPlan(
     @Args('input') input: GetParentalLeavesApplicationPaymentPlanInput,
@@ -62,6 +67,32 @@ export class DirectorateOfLabourResolver {
       input.dateOfBirth,
       input.applicationId,
       user.nationalId,
+    )
+  }
+
+  @Query(() => ParentalLeavePeriodEndDate)
+  async getParentalLeavesPeriodEndDate(
+    @Args('input') input: GetParentalLeavesPeriodEndDateInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfLabourService.getParentalLeavesPeriodEndDate(
+      user.nationalId,
+      input.startDate,
+      input.length,
+      input.percentage,
+    )
+  }
+
+  @Query(() => ParentalLeavePeriodLength)
+  async getParentalLeavesPeriodsLength(
+    @Args('input') input: GetParentalLeavesPeriodLengthInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfLabourService.getParentalLeavesPeriodsLength(
+      user.nationalId,
+      input.startDate,
+      input.endDate,
+      input.percentage,
     )
   }
 

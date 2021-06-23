@@ -77,6 +77,7 @@ export const ScreenFooter: FC<FooterProps> = ({
   ) {
     return null
   }
+
   function renderSubmitButtons() {
     if (!submitField || submitField.placement === 'screen') {
       return (
@@ -89,6 +90,7 @@ export const ScreenFooter: FC<FooterProps> = ({
         </Button>
       )
     }
+
     return (
       <>
         {submitField?.actions.map(({ event, type, name }) => {

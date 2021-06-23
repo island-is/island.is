@@ -1,7 +1,7 @@
 .hintbox {
   position: absolute;
   top: 10px;
-  right: 120px;
+  right: 110px;
   border-width: 3px;
   z-index: 1;
 
@@ -31,6 +31,12 @@
   }
 
   .invalid {
+    font-weight: $weight-semi-bold;
     color: $color-error;
+  }
+
+  .valid {
+    font-weight: $weight-semi-bold;
+    color: $color-ok;
   }
 }

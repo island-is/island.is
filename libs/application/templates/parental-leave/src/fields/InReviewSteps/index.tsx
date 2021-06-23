@@ -13,10 +13,11 @@ import Review from '../Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getExpectedDateOfBirth,
+  otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
 import { handleSubmitError } from '../../lib/parentalLeaveClientUtils'
-import { NO, States as ApplicationStates, YES } from '../../constants'
+import { NO, States as ApplicationStates } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
@@ -55,11 +56,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   refetch,
   errors,
 }) => {
-  const {
-    isSelfEmployed,
-    isRequestingRights,
-    usePersonalAllowanceFromSpouse,
-  } = useApplicationAnswers(application)
+  const { isSelfEmployed } = useApplicationAnswers(application)
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -95,20 +92,15 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   }
 
   if (requiresOtherParentApproval(application.answers)) {
-    const description =
-      isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
-        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingBoth
-        : isRequestingRights === YES
-        ? parentalLeaveFormMessages.reviewScreen.otherParentDescRequestingRights
-        : parentalLeaveFormMessages.reviewScreen
-            .otherParentDescRequestingPersonalDiscount
-
     steps.unshift({
       state: statesMap['otherParent'][application.state],
       title: formatMessage(
         parentalLeaveFormMessages.reviewScreen.otherParentTitle,
       ),
-      description: formatMessage(description),
+      description: otherParentApprovalDescription(
+        application.answers,
+        formatMessage,
+      ),
     })
   }
 
@@ -198,25 +190,18 @@ const InReviewSteps: FC<FieldBaseProps> = ({
 
       {screenState === 'steps' ? (
         <Box marginTop={7} marginBottom={8}>
-          {steps.map((step, index) => {
-            return (
-              <ReviewSection
-                key={index}
-                application={application}
-                index={index + 1}
-                {...step}
-              />
-            )
-          })}
+          {steps.map((step, index) => (
+            <ReviewSection
+              key={index}
+              application={application}
+              index={index + 1}
+              {...step}
+            />
+          ))}
         </Box>
       ) : (
         <Box marginTop={7} marginBottom={8}>
-          <Review
-            application={application}
-            field={field}
-            errors={errors}
-            editable={false}
-          />
+          <Review application={application} field={field} errors={errors} />
         </Box>
       )}
     </Box>

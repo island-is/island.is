@@ -27,6 +27,12 @@
           "schemas/codegen"
         ]
       }
+    },
+    "docker-test": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": []
+      }
     }
   },
   "projects": {
@@ -112,6 +118,9 @@
     "api-domains-icelandic-names-registry": {
       "tags": []
     },
+    "api-domains-license-service": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
@@ -171,6 +180,9 @@
       "tags": []
     },
     "application-templates-children-residence-change": {
+      "tags": []
+    },
+    "application-templates-complaints-to-althingi-ombudsman": {
       "tags": []
     },
     "application-templates-data-protection-complaint": {
@@ -545,6 +557,9 @@
       "tags": []
     },
     "service-portal-icelandic-names-registry": {
+      "tags": []
+    },
+    "service-portal-licenses": {
       "tags": []
     },
     "service-portal-settings-access-control": {

@@ -50,6 +50,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
           )}
         />
       )}
+
       <Box marginTop={showDescription ? 3 : undefined} marginBottom={3}>
         <Timeline
           initDate={dobDate}
@@ -64,6 +65,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
           editable={editable}
         />
       </Box>
+
       {editable && (
         <Button size="small" icon="add" onClick={expandRepeater}>
           {formatMessage(parentalLeaveFormMessages.leavePlan.addAnother)}

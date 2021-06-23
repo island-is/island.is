@@ -24,11 +24,11 @@ export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
 
   const context = useMemo<FeatureFlagClient>(() => {
     const userAuth =
-      userInfo && userInfo.profile.sid !== undefined
+      userInfo && userInfo.profile.nationalId !== undefined
         ? {
-            id: userInfo.profile.sid,
+            id: userInfo.profile.nationalId,
             attributes: {
-              nationalId: userInfo.profile.nationalId as string,
+              nationalId: userInfo.profile.nationalId,
             },
           }
         : undefined

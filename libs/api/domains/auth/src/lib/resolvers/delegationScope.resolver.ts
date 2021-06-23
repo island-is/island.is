@@ -1,6 +1,7 @@
 import { Parent, Resolver, ResolveField } from '@nestjs/graphql'
 
 import type { DelegationScopeDTO } from '@island.is/clients/auth-public-api'
+import { ScopeType } from '@island.is/clients/auth-public-api'
 
 import { DelegationScope } from '../models'
 
@@ -16,10 +17,21 @@ export class DelegationScopeResolver {
     return delegationScope.scopeName
   }
 
+  @ResolveField('type')
+  resolveType(@Parent() delegationScope: DelegationScopeDTO): string {
+    return delegationScope.scopeName
+      ? ScopeType.ApiScope
+      : delegationScope.identityResourceName
+      ? ScopeType.IdentityResource
+      : ''
+  }
+
   @ResolveField('displayName')
   resolveDisplayName(@Parent() delegationScope: DelegationScopeDTO): string {
-    // TODO: missing implementation in auth-public-api
-    const split = delegationScope.scopeName.split('/')
-    return split[split.length - 1]
+    return (
+      delegationScope.apiScope?.displayName ??
+      delegationScope.identityResource?.displayName ??
+      ''
+    )
   }
 }

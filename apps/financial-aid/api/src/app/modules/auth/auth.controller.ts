@@ -1,4 +1,4 @@
-import IslandisLogin, { VerifyResult } from 'islandis-login'
+import IslandisLogin, { VerifyUser } from 'islandis-login'
 import { Entropy } from 'entropy-string'
 import { uuid } from 'uuidv4'
 import { CookieOptions, Request, Response } from 'express'
@@ -12,6 +12,8 @@ import {
   Res,
   Query,
   Req,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -75,7 +77,7 @@ export class AuthController {
   @Get('login')
   login(
     @Res() res: Response,
-    @Query('returnUrl') returnUrl: string,
+    @Query('returnUrl', new DefaultValuePipe('/umsokn')) returnUrl: string,
     @Query('nationalId') nationalId: string,
   ) {
     this.logger.debug(`Received login request with return url ${returnUrl}`)
@@ -87,9 +89,10 @@ export class AuthController {
       const fakeUser = this.authService.fakeUser(nationalId)
 
       if (fakeUser) {
-        return this.logInUser(fakeUser, res, returnUrl || '/umsokn')
+        return this.logInUser(fakeUser, res, returnUrl)
       }
     }
+
     res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
 
     const authId = uuid()
@@ -112,27 +115,28 @@ export class AuthController {
   ) {
     this.logger.debug('Received callback request')
 
-    let verifyResult: VerifyResult
-    try {
-      verifyResult = await this.loginIS.verify(token)
-    } catch (err) {
-      this.logger.error(err)
-
-      return res.redirect('/?villa=innskraning-ogild')
-    }
-
-    const { user: islandUser } = verifyResult
+    let islandUser: VerifyUser | undefined = undefined
 
     const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
 
-    if (!islandUser || (authId && islandUser.authId !== authId)) {
-      this.logger.error('Could not verify user authenticity', {
-        extra: {
-          authId,
-          userAuthId: islandUser?.authId,
-        },
-      })
+    try {
+      const verifyResult = await this.loginIS.verify(token)
 
+      if (verifyResult.user && verifyResult.user.authId === authId) {
+        islandUser = verifyResult.user
+      } else {
+        this.logger.error('Could not verify user authenticity', {
+          extra: {
+            authId,
+            userAuthId: verifyResult.user?.authId,
+          },
+        })
+      }
+    } catch (err) {
+      this.logger.error(err)
+    }
+
+    if (!islandUser) {
       return res.redirect('/?villa=innskraning-ogild')
     }
 

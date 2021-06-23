@@ -11,15 +11,13 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
-import {
-  CaseQuery,
-  UpdateCaseMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
   InstitutionsQuery,
   UsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
+import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/utils/hooks/use-case/updateCaseGql'
 
 export const mockCourt = {
   id: 'court_id',
@@ -123,7 +121,7 @@ const testCase1 = {
     CaseCustodyRestrictions.MEDIA,
     CaseCustodyRestrictions.ISOLATION,
   ],
-  isolationTo: '2020-09-16T19:50:08.033Z',
+  isolationToDate: '2020-09-16T19:50:08.033Z',
   accusedAppealDecision: CaseAppealDecision.APPEAL,
   accusedAppealAnnouncement: 'accusedAppealAnnouncement test',
   prosecutorAppealDecision: CaseAppealDecision.APPEAL,
@@ -222,7 +220,7 @@ const testCase3 = {
   ruling: null,
   decision: null,
   validToDate: null,
-  isolationTo: '2020-09-16T19:51:00.000Z',
+  isolationToDate: '2020-09-16T19:51:00.000Z',
   custodyRestrictions: null,
   accusedAppealDecision: null,
   accusedAppealAnnouncement: null,

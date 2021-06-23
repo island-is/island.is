@@ -5,5 +5,10 @@
     "types": ["node", "jest"],
     "strictPropertyInitialization": false //TODO: Perhaps needs to be removed
   },
-  "include": []
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
 }

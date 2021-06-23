@@ -4,14 +4,14 @@ import { GetEndorsements } from '../graphql/queries'
 import { Endorsement } from '../types/schema'
 
 interface EndorsementData {
-  endorsementSystemGetEndorsements?: Endorsement
+  endorsementSystemGetEndorsements?: Endorsement[]
 }
 
 export const useEndorsements = (
   endorsementListId: string,
   shouldPoll: boolean,
 ) => {
-  const { data: endorsementsData } = useQuery<EndorsementData>(
+  const { data: endorsementsData, refetch } = useQuery<EndorsementData>(
     GetEndorsements,
     {
       variables: {
@@ -19,9 +19,12 @@ export const useEndorsements = (
           listId: endorsementListId,
         },
       },
-      pollInterval: shouldPoll ? 2000 : 0,
+      pollInterval: shouldPoll ? 20000 : 0,
     },
   )
 
-  return endorsementsData?.endorsementSystemGetEndorsements ?? []
+  return {
+    endorsements: endorsementsData?.endorsementSystemGetEndorsements,
+    refetch,
+  }
 }

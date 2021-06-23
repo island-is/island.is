@@ -130,6 +130,8 @@ export async function getCustodyNoticePdfAsString(
       formatCustodyRestrictions(
         existingCase.accusedGender,
         existingCase.custodyRestrictions,
+        existingCase.validToDate,
+        existingCase.isolationToDate,
       ),
       {
         lineGap: 6,

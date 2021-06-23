@@ -42,6 +42,12 @@ export class Delegation extends Model<Delegation> {
   })
   toNationalId!: string
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  toName!: string
+
   @CreatedAt
   readonly created!: Date
 
@@ -57,6 +63,7 @@ export class Delegation extends Model<Delegation> {
       fromName: this.fromDisplayName,
       fromNationalId: this.fromNationalId,
       toNationalId: this.toNationalId,
+      toName: this.toName,
       scopes: this.delegationScopes
         ? this.delegationScopes.map((scope) => scope.toDTO())
         : [],

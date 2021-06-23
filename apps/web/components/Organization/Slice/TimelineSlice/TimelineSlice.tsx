@@ -60,22 +60,31 @@ const mapEvents = (
   return byYear
 }
 
-interface TimelineComponentProps {
-  eventMap: Map<number, Map<number, Timeline['events']>>
-}
-
-const TimelineComponent: React.FC<TimelineComponentProps> = ({ eventMap }) => {
-  const { getMonthByIndex } = useDateUtils()
-
+const getTimeline = (
+  eventMap: Map<number, Map<number, Timeline['events']>>,
+  getMonthByIndex,
+) => {
   let i = 0
   let offset = 50
   let lastTimestamp = 0
   let lastYear = 0
 
+  let currentMonth = 0
+
   const items = []
+
+  const today = new Date()
+  today.setMonth(today.getMonth() - 1)
 
   Array.from(eventMap.entries(), ([year, eventsByMonth]) => {
     Array.from(eventsByMonth.entries(), ([month, monthEvents]) => {
+      const monthDate = new Date(`${year}-${month + 1}`)
+
+      // we want to find the closest month to today and center the timeline view on it
+      if (currentMonth === 0 && monthDate >= today) {
+        currentMonth = offset
+      }
+
       offset += 100
       items.push(
         <MonthItem
@@ -113,7 +122,7 @@ const TimelineComponent: React.FC<TimelineComponentProps> = ({ eventMap }) => {
     })
   })
 
-  return <div>{items}</div>
+  return { currentMonth, items }
 }
 
 interface SliceProps {
@@ -121,8 +130,17 @@ interface SliceProps {
 }
 
 export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
+  const { getMonthByIndex } = useDateUtils()
+
   const frameRef = useRef<HTMLDivElement>(null)
-  const [position, setPosition] = useState(0)
+  const [position, setPosition] = useState(-1)
+
+  const eventMap = useMemo(() => mapEvents(slice.events), [slice.events])
+
+  const { currentMonth, items } = useMemo(
+    () => getTimeline(eventMap, getMonthByIndex),
+    [],
+  )
 
   const moveTimeline = (dir: 'left' | 'right') => {
     if (dir === 'right') {
@@ -138,22 +156,21 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
   }
 
   useEffect(() => {
+    setPosition(currentMonth - 100)
+    frameRef.current.scrollTo({
+      left: currentMonth - 100,
+    })
+  }, [currentMonth])
+
+  useEffect(() => {
+    // used to ignore initial state
+    if (position < 0) return
+
     frameRef.current.scrollTo({
       left: position,
       behavior: 'smooth',
     })
   }, [position])
-
-  useEffect(() => {
-    setPosition(frameRef.current.scrollWidth - frameRef.current.offsetWidth)
-    frameRef.current.scrollTo({
-      left: frameRef.current.scrollWidth - frameRef.current.offsetWidth + 50,
-    })
-  }, [frameRef])
-
-  const eventMap = useMemo(() => mapEvents(slice.events), [slice.events])
-
-  const { getMonthByIndex } = useDateUtils()
 
   const months = flatten(
     Array.from(eventMap).map((x) => {
@@ -163,7 +180,17 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
     }),
   )
 
-  const [month, setMonth] = useState(months.length - 1)
+  const [month, setMonth] = useState(() => {
+    const today = new Date()
+
+    const futureMonths = months
+      .map((x, idx) =>
+        x.year >= today.getFullYear() && x.month >= today.getMonth() ? idx : 0,
+      )
+      .filter((x) => x > 0)
+
+    return Math.min(...futureMonths)
+  })
 
   const monthEvents = eventMap.get(months[month].year).get(months[month].month)
 
@@ -212,7 +239,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
               </ArrowButtonShadow>
               <div className={timelineStyles.timelineGradient} />
               <div ref={frameRef} className={timelineStyles.timelineComponent}>
-                <TimelineComponent eventMap={eventMap} />
+                {items}
               </div>
             </div>
           </Hidden>

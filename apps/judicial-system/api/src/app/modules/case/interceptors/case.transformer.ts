@@ -7,6 +7,7 @@ export function transformCase(theCase: Case): Case {
   theCase.sendRequestToDefender = theCase.sendRequestToDefender ?? false
   theCase.requestProsecutorOnlySession =
     theCase.requestProsecutorOnlySession ?? false
+  theCase.isAccusedAbsent = theCase.isAccusedAbsent ?? false
 
   if (theCase.validToDate) {
     theCase.isValidToDateInThePast =

@@ -253,6 +253,12 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             }
           }
         }
+        ... on OrganizationSubpage {
+          id
+          title
+          url
+          intro
+        }
       }
       tagCounts {
         key

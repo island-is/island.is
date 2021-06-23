@@ -53,8 +53,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useRouter } from 'next/router'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
+import {
+  useCase,
+  useDateTime,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import * as style from './RulingStepTwo.treat'
 
 export const RulingStepTwo: React.FC = () => {
