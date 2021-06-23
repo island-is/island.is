@@ -343,6 +343,7 @@ jobs:
     timeout-minutes: 5
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
     steps:
       - uses: actions/checkout@v2
 
