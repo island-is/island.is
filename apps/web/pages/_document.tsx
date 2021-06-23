@@ -33,7 +33,7 @@ class MyDocument extends Document<Props> {
               async
               defer
               data-domain={domain}
-              src="https://plausible.io/js/plausible3.js"
+              src="https://plausible.io/js/plausible.js"
             ></script>
           )}
         </Head>
