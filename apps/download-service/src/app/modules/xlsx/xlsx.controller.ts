@@ -3,7 +3,6 @@ import { Response } from 'express'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { XlsxDto } from './dto/xlsxDto'
 import * as XLSX from 'xlsx'
-// const xlsx = require('xlsx')
 import { WritableStreamBuffer } from 'stream-buffers'
 
 @Controller()
@@ -52,8 +51,6 @@ export class XlsxController {
         filename: fileName,
       })
     }
-
-    console.log('error here')
 
     res.status(400).json({ error: 'Data missing from body' })
     return

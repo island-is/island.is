@@ -131,7 +131,11 @@ const FinanceStatusDetailTable: FC<Props> = ({
               <Text variant="small" as="span">
                 {formatMessage(m.website)}:
               </Text>{' '}
-              <a href={`//${organization.homepage}`} target="_blank">
+              <a
+                href={`//${organization.homepage}`}
+                rel="noreferrer noopener"
+                target="_blank"
+              >
                 <Text color="blue400" variant="small" as="span">
                   {organization.homepage}
                 </Text>
@@ -143,7 +147,11 @@ const FinanceStatusDetailTable: FC<Props> = ({
               <Text variant="small" as="span">
                 {formatMessage(m.email)}:
               </Text>{' '}
-              <a href={`mailto:${organization.email}`} target="_blank">
+              <a
+                href={`mailto:${organization.email}`}
+                rel="noreferrer noopener"
+                target="_blank"
+              >
                 <Text color="blue400" variant="small" as="span">
                   {organization.email}
                 </Text>
@@ -155,7 +163,11 @@ const FinanceStatusDetailTable: FC<Props> = ({
               <Text variant="small" as="span">
                 {formatMessage(m.phone)}:
               </Text>{' '}
-              <a href={`tel:+354${organization.phone}`} target="_blank">
+              <a
+                href={`tel:+354${organization.phone}`}
+                rel="noreferrer noopener"
+                target="_blank"
+              >
                 <Text color="blue400" variant="small" as="span">
                   {organization.phone}
                 </Text>

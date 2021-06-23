@@ -90,13 +90,12 @@ const devConfig = {
       'https://reglugerdir-api.herokuapp.com/api/v1',
   },
   fjarmalDomain: {
-    url: process.env.FJARMAL_API ?? '',
     username: process.env.FJARMAL_USER ?? '',
     password: process.env.FJARMAL_PASS ?? '',
-    financeTestUser: process.env.FINANCE_TEST_USER,
     xroadApiPath:
       process.env.XROAD_FINANCES_PATH ??
       'IS-DEV/GOV/10021/FJS-Public/financeIsland',
+    ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
   },
   endorsementSystem: {
     baseApiUrl: 'http://localhost:4246',
@@ -218,11 +217,10 @@ const prodConfig = {
     baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
   },
   fjarmalDomain: {
-    url: process.env.FJARMAL_API ?? '',
     username: process.env.FJARMAL_USER ?? '',
     password: process.env.FJARMAL_PASS ?? '',
     xroadApiPath: process.env.XROAD_FINANCES_PATH,
-    financeTestUser: '',
+    ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
   },
 }
 

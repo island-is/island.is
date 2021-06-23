@@ -18,15 +18,13 @@ import {
 export const FINANCE_OPTIONS = 'FINANCE_OPTIONS'
 
 export interface FinanceServiceOptions {
-  url: string
   username: string
   password: string
-  financeTestUser?: string
-  ttl?: number
-  downloadServiceBaseUrl?: string
   xroadApiPath: string
   xroadBaseUrl: string
   xroadClientId: string
+  downloadServiceBaseUrl: string
+  ttl?: number
 }
 
 export class FinanceService extends RESTDataSource {
@@ -37,7 +35,6 @@ export class FinanceService extends RESTDataSource {
     private logger: Logger,
   ) {
     super()
-    // http://localhost:8080/r1/IS-DEV/GOV/10021/FJS-Public/financeIsland/customerStatusByOrganization?nationalID=2704685439
     this.baseURL = `${this.options.xroadBaseUrl}/r1/${this.options.xroadApiPath}`
     this.initialize({} as DataSourceConfig<any>)
   }
@@ -55,10 +52,10 @@ export class FinanceService extends RESTDataSource {
 
   async getFinanceStatus(nationalID: string): Promise<FinanceStatus | null> {
     const response = await this.get<FinanceStatus | null>(
-      // `/customerStatusByOrganization?nationalID=${nationalID}`,
-      `/customerStatusByOrganization?nationalID=${this.options.financeTestUser}`,
+      `/customerStatusByOrganization?nationalID=${nationalID}`,
+      {},
       {
-        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+        cacheOptions: { ttl: this.options.ttl },
       },
     )
     return response
@@ -70,10 +67,10 @@ export class FinanceService extends RESTDataSource {
     chargeTypeID: string,
   ): Promise<FinanceStatusDetails | null> {
     const response = await this.get<FinanceStatusDetails | null>(
-      // `/customerStatusByOrganizationDetails?nationalID=${nationalID}&OrgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
-      `/customerStatusByOrganizationDetails?nationalID=${this.options.financeTestUser}&OrgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
+      `/customerStatusByOrganizationDetails?nationalID=${nationalID}&OrgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
+      {},
       {
-        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+        cacheOptions: { ttl: this.options.ttl },
       },
     )
     return response
@@ -83,9 +80,10 @@ export class FinanceService extends RESTDataSource {
     nationalID: string,
   ): Promise<CustomerChargeType | null> {
     const response = await this.get<CustomerChargeType | null>(
-      `/customerChargeType?nationalID=${this.options.financeTestUser}`,
+      `/customerChargeType?nationalID=${nationalID}`,
+      {},
       {
-        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+        cacheOptions: { ttl: this.options.ttl },
       },
     )
     return response
@@ -100,9 +98,10 @@ export class FinanceService extends RESTDataSource {
     const chargeTypeArray = chargeTypeID.map((item) => `&chargeTypeID=${item}`)
     const chargeTypeString = chargeTypeArray.join('')
     const response = await this.get<CustomerRecords | null>(
-      `/customerRecords?nationalID=${this.options.financeTestUser}&dayFrom=${dayFrom}&dayTo=${dayTo}${chargeTypeString}`,
+      `/customerRecords?nationalID=${nationalID}&dayFrom=${dayFrom}&dayTo=${dayTo}${chargeTypeString}`,
+      {},
       {
-        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+        cacheOptions: { ttl: this.options.ttl },
       },
     )
     return response
@@ -115,9 +114,10 @@ export class FinanceService extends RESTDataSource {
     listPath: string,
   ): Promise<DocumentsListTypes> {
     const response = await this.get<DocumentsListTypes>(
-      `/documentsList/${listPath}?nationalID=${this.options.financeTestUser}&dateFrom=${dayFrom}&dateTo=${dayTo}`,
+      `/documentsList/${listPath}?nationalID=${nationalID}&dateFrom=${dayFrom}&dateTo=${dayTo}`,
+      {},
       {
-        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+        cacheOptions: { ttl: this.options.ttl },
       },
     )
     return response
@@ -128,23 +128,21 @@ export class FinanceService extends RESTDataSource {
     documentID: string,
   ): Promise<DocumentTypes> {
     const response = await this.get<DocumentTypes>(
-      `/document?nationalID=${this.options.financeTestUser}&documentID=${documentID}`,
+      `/document?nationalID=${nationalID}&documentID=${documentID}`,
+      {},
       {
-        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+        cacheOptions: { ttl: this.options.ttl },
       },
     )
     return response
   }
 
   async getCustomerTapControl(nationalID: string): Promise<TapsControlTypes> {
-    console.log(
-      'xroadClientIdxroadClientIdxroadClientIdxroadClientId',
-      this.options.xroadClientId,
-    )
     const response = await this.get<TapsControlTypes>(
-      `/customerTapsControl?nationalID=${this.options.financeTestUser}`,
+      `/customerTapsControl?nationalID=${nationalID}`,
+      {},
       {
-        cacheOptions: { ttl: 0 /* this.options.ttl ?? 600 */ },
+        cacheOptions: { ttl: this.options.ttl },
       },
     )
     return response

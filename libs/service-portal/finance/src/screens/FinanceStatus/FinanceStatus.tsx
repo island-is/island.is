@@ -91,9 +91,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
           {error && (
             <Box>
               <AlertBanner
-                description={formatMessage({
-                  id: 'service.portal:could-not-fetch',
-                })}
+                description={formatMessage(m.errorFetch)}
                 variant="error"
               />
             </Box>

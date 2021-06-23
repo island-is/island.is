@@ -165,10 +165,9 @@ const autoSchemaFile = environment.production
       url: environment.regulationsDomain.url,
     }),
     FinanceModule.register({
-      url: environment.fjarmalDomain.url,
       username: environment.fjarmalDomain.username,
       password: environment.fjarmalDomain.password,
-      financeTestUser: environment.fjarmalDomain.financeTestUser,
+      ttl: environment.fjarmalDomain.ttl,
       downloadServiceBaseUrl: environment.downloadService.baseUrl,
       xroadApiPath: environment.fjarmalDomain.xroadApiPath,
       xroadBaseUrl: environment.xroad.baseUrl,

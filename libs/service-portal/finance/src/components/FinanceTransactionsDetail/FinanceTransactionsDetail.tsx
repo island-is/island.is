@@ -9,7 +9,7 @@ import {
 import * as styles from './FinanceTransactionsDetail.treat'
 
 interface Props {
-  data: Array<any> // TODO: Add correct api info when that's available
+  data: Array<{ title: string; value?: string | number }>
 }
 
 const FinanceTransactionsDetail: FC<Props> = ({ data }) => {
