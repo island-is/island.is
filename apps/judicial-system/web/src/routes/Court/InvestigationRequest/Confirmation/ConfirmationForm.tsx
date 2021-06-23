@@ -9,11 +9,7 @@ import {
   PoliceRequestAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { Case, CaseAppealDecision } from '@island.is/judicial-system/types'
-import {
-  formatAccusedByGender,
-  formatDate,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
+import { formatDate, NounCases } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './Confirmation.treat'
 import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -135,10 +131,7 @@ const Confirmation: React.FC<Props> = (props) => {
                   CaseAppealDecision.APPEAL && (
                   <Box>
                     <Text variant="eyebrow" color="blue400">
-                      {`Yfirlýsing um kæru ${formatAccusedByGender(
-                        workingCase.accusedGender,
-                        NounCases.GENITIVE,
-                      )}`}
+                      Yfirlýsing um kæru varnaraðila
                     </Text>
                     <Text>{workingCase.accusedAppealAnnouncement}</Text>
                   </Box>

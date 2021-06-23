@@ -11,10 +11,6 @@ import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import CourtRecordForm from './CourtRecordForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  formatAccusedByGender,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
 
 const CourtRecord = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -41,18 +37,11 @@ const CourtRecord = () => {
       }
 
       if (wc.prosecutor && wc.accusedName) {
-        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
-          wc.accusedName
-        } ${formatAccusedByGender(wc?.accusedGender)}`
+        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${wc.accusedName} varnaraðili`
       }
 
       if (wc.defenderName) {
-        attendees += `\n${
-          wc.defenderName
-        } skipaður verjandi ${formatAccusedByGender(
-          wc?.accusedGender,
-          NounCases.GENITIVE,
-        )}`
+        attendees += `\n${wc.defenderName} skipaður verjandi varnaraðila`
       }
 
       return attendees
