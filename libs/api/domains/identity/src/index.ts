@@ -1,1 +1,1 @@
-export * from './lib/api-domains-identity.module'
+export { IdentityModule } from './lib/identity.module'
