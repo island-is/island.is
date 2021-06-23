@@ -22,7 +22,6 @@ import {
 } from '@island.is/web/components'
 import Head from 'next/head'
 import {
-  Box,
   GridColumn,
   GridContainer,
   GridRow,
@@ -31,7 +30,6 @@ import {
 } from '@island.is/island-ui/core'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -127,18 +125,20 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
         ))}
       </ProjectWrapper>
       {!subpage && (
-        <Section
-          paddingTop={[8, 8, 6]}
-          paddingBottom={[8, 8, 6]}
-          background="purple100"
-          aria-labelledby="latestNewsTitle"
-        >
-          <LatestNewsSectionSlider
-            label={n('newsAndAnnouncements')}
-            readMoreText={n('seeMore')}
-            items={news}
-          />
-        </Section>
+        <div style={{ overflow: 'hidden' }}>
+          <Section
+            paddingTop={[8, 8, 6]}
+            paddingBottom={[8, 8, 6]}
+            background="purple100"
+            aria-labelledby="latestNewsTitle"
+          >
+            <LatestNewsSectionSlider
+              label={n('newsAndAnnouncements')}
+              readMoreText={n('seeMore')}
+              items={news}
+            />
+          </Section>
+        </div>
       )}
     </>
   )
