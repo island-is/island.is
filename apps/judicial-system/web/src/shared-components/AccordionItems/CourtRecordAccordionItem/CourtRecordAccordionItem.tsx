@@ -65,7 +65,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             return (
               <>
                 {`${capitalize(courtDocument)} þingmerkt nr. ${index + 2}.`}
-                {index <= (workingCase.courtDocuments || []).length && (
+                {index <= (workingCase.courtDocuments ?? []).length && (
                   <>
                     <br />
                     <br />

@@ -111,7 +111,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                     placeholder="R-X/ÁÁÁÁ"
                     size="sm"
                     backgroundColor="white"
-                    value={workingCase.courtCaseNumber || ''}
+                    value={workingCase.courtCaseNumber ?? ''}
                     icon={
                       workingCase.courtCaseNumber && createCaseSuccess
                         ? 'checkmark'
@@ -162,13 +162,13 @@ const OverviewForm: React.FC<Props> = (props) => {
               {
                 title: 'Embætti',
                 value: `${
-                  workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
                 }`,
               },
               {
                 title: 'Ósk um fyrirtökudag og tíma',
                 value: `${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ||
+                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
@@ -188,7 +188,7 @@ const OverviewForm: React.FC<Props> = (props) => {
             accusedNationalId={workingCase.accusedNationalId}
             accusedAddress={workingCase.accusedAddress}
             defender={{
-              name: workingCase.defenderName || '',
+              name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
@@ -313,7 +313,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           </Box>
           <CaseFileList
             caseId={workingCase.id}
-            files={workingCase.files || []}
+            files={workingCase.files ?? []}
             canOpenFiles={
               workingCase.judge !== null && workingCase.judge?.id === user?.id
             }

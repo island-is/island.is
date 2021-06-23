@@ -47,7 +47,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         <AccordionListItem title="Tími handtöku">
           <Text>
             {`${capitalize(
-              formatDate(workingCase.arrestDate, 'PPPP') || '',
+              formatDate(workingCase.arrestDate, 'PPPP') ?? '',
             )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
           </Text>
         </AccordionListItem>
@@ -56,7 +56,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         <AccordionListItem title="Ósk um fyrirtökudag og tíma">
           <Text>
             {`${capitalize(
-              formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
+              formatDate(workingCase.requestedCourtDate, 'PPPP') ?? '',
             )} eftir kl. ${formatDate(
               workingCase.requestedCourtDate,
               TIME_FORMAT,

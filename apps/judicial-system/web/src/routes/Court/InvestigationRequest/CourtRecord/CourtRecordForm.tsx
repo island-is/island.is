@@ -185,7 +185,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             tagVariant="darkerBlue"
             text="Rannsóknargögn málsins liggja frammi."
             caseId={workingCase.id}
-            selectedCourtDocuments={workingCase.courtDocuments || []}
+            selectedCourtDocuments={workingCase.courtDocuments ?? []}
             onUpdateCase={updateCase}
             setWorkingCase={setWorkingCase}
             workingCase={workingCase}

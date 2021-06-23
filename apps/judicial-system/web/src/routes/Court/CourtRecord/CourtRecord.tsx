@@ -261,7 +261,7 @@ export const CourtRecord: React.FC = () => {
                 tagVariant="darkerBlue"
                 text="Rannsóknargögn málsins liggja frammi."
                 caseId={workingCase.id}
-                selectedCourtDocuments={workingCase.courtDocuments || []}
+                selectedCourtDocuments={workingCase.courtDocuments ?? []}
                 onUpdateCase={updateCase}
                 setWorkingCase={setWorkingCase}
                 workingCase={workingCase}
@@ -437,10 +437,10 @@ export const CourtRecord: React.FC = () => {
               nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
               nextIsDisabled={
                 !courtRecordStartDateIsValid ||
-                !validate(workingCase.courtAttendees || '', 'empty').isValid ||
-                !validate(workingCase.prosecutorDemands || '', 'empty')
+                !validate(workingCase.courtAttendees ?? '', 'empty').isValid ||
+                !validate(workingCase.prosecutorDemands ?? '', 'empty')
                   .isValid ||
-                !validate(workingCase.litigationPresentations || '', 'empty')
+                !validate(workingCase.litigationPresentations ?? '', 'empty')
                   .isValid ||
                 !workingCase.accusedPleaDecision
               }

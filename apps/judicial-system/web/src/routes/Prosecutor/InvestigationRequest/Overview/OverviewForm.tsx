@@ -56,13 +56,13 @@ const OverviewForm: React.FC<Props> = (props) => {
               {
                 title: 'Embætti',
                 value: `${
-                  workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
                 }`,
               },
               {
                 title: 'Ósk um fyrirtökudag og tíma',
                 value: `${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ||
+                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
@@ -82,7 +82,7 @@ const OverviewForm: React.FC<Props> = (props) => {
             accusedNationalId={workingCase.accusedNationalId}
             accusedAddress={workingCase.accusedAddress}
             defender={{
-              name: workingCase.defenderName || '',
+              name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
@@ -217,7 +217,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               <Box marginY={3}>
                 <CaseFileList
                   caseId={workingCase.id}
-                  files={workingCase.files || []}
+                  files={workingCase.files ?? []}
                 />
               </Box>
             </AccordionItem>
