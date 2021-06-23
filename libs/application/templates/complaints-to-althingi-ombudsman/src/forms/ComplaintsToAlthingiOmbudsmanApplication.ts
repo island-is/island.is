@@ -150,55 +150,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'complaintInformation',
-      title: section.complaintInformation,
-      children: [
-        buildMultiField({
-          id: 'section.complaintInformation',
-          title: section.complaintInformation,
-          children: [
-            buildRadioField({
-              id: 'complaintInformation.complaintType',
-              title: '',
-              options: [
-                {
-                  label: complaintInformation.decisionRadioLabel,
-                  value: OmbudsmanComplaintTypeEnum.DECISION,
-                },
-                {
-                  label: complaintInformation.proceedingsLabel,
-                  value: OmbudsmanComplaintTypeEnum.PROCEEDINGS,
-                },
-              ],
-            }),
-            buildCustomField({
-              id: 'complaintInformation.decisionAlertMessage',
-              title: complaintInformation.alertMessageTitle,
-              component: 'FieldAlertMessage',
-              description: complaintInformation.decisionAlertMessage,
-              condition: (formValue) => {
-                const complaintType = (formValue.complaintInformation as FormValue)
-                  ?.complaintType
-                return complaintType === OmbudsmanComplaintTypeEnum.DECISION
-              },
-            }),
-            buildCustomField({
-              id: 'complaintInformation.proceedingsAlertMessage',
-              title: complaintInformation.alertMessageTitle,
-              component: 'FieldAlertMessage',
-              description: complaintInformation.proceedingsAlertMessage,
-              condition: (formValue) => {
-                const complaintType = (formValue.complaintInformation as FormValue)
-                  ?.complaintType
-
-                return complaintType === OmbudsmanComplaintTypeEnum.PROCEEDINGS
-              },
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
       id: 'complaint',
       title: section.complaint,
       children: [
@@ -250,6 +201,57 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                     isGovernmentComplainee(application.answers)
                       ? complainee.labels.complaineeNameGovernmentPlaceholder
                       : complainee.labels.complaineeNameOtherPlaceholder,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'complaint.section.complaintInformation',
+          title: section.complaintInformation,
+          children: [
+            buildMultiField({
+              id: 'section.complaintInformation',
+              title: section.complaintInformation,
+              children: [
+                buildRadioField({
+                  id: 'complaintInformation.complaintType',
+                  title: '',
+                  options: [
+                    {
+                      label: complaintInformation.decisionRadioLabel,
+                      value: OmbudsmanComplaintTypeEnum.DECISION,
+                    },
+                    {
+                      label: complaintInformation.proceedingsLabel,
+                      value: OmbudsmanComplaintTypeEnum.PROCEEDINGS,
+                    },
+                  ],
+                }),
+                buildCustomField({
+                  id: 'complaintInformation.decisionAlertMessage',
+                  title: complaintInformation.alertMessageTitle,
+                  component: 'FieldAlertMessage',
+                  description: complaintInformation.decisionAlertMessage,
+                  condition: (formValue) => {
+                    const complaintType = (formValue.complaintInformation as FormValue)
+                      ?.complaintType
+                    return complaintType === OmbudsmanComplaintTypeEnum.DECISION
+                  },
+                }),
+                buildCustomField({
+                  id: 'complaintInformation.proceedingsAlertMessage',
+                  title: complaintInformation.alertMessageTitle,
+                  component: 'FieldAlertMessage',
+                  description: complaintInformation.proceedingsAlertMessage,
+                  condition: (formValue) => {
+                    const complaintType = (formValue.complaintInformation as FormValue)
+                      ?.complaintType
+
+                    return (
+                      complaintType === OmbudsmanComplaintTypeEnum.PROCEEDINGS
+                    )
+                  },
                 }),
               ],
             }),
