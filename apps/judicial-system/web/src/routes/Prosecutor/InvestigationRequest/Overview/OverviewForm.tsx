@@ -240,7 +240,7 @@ const OverviewForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT

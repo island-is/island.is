@@ -440,7 +440,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_OVERVIEW}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextIsDisabled={!isValid || !courtDateIsValid}
           nextButtonText="Staðfesta og senda"

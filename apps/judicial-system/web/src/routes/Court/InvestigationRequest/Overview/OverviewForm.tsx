@@ -331,7 +331,7 @@ const OverviewForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={Constants.REQUEST_LIST_ROUTE}
           nextIsLoading={isLoading}
-          nextUrl={`${Constants.R_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isValid}
         />
       </FormContentContainer>
