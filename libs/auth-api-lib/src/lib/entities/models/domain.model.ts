@@ -44,7 +44,7 @@ export class Domain extends Model<Domain> {
   @ApiProperty({
     example: '0123456789',
   })
-  national_id!: string
+  nationalId!: string
 
   @CreatedAt
   @ApiProperty()

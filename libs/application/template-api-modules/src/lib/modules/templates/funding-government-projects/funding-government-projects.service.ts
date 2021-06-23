@@ -7,10 +7,8 @@ import {
   generateApplicationEmail,
   generateConfirmationEmail,
 } from './emailGenerators'
-import {
-  FUNDING_GOVERNMENT_PROJECTS_CONFIG,
-  FundingGovernmentProjectsConfig,
-} from './config/fundingFovernmentProjectsConfig'
+import type { FundingGovernmentProjectsConfig } from './config/fundingFovernmentProjectsConfig'
+import { FUNDING_GOVERNMENT_PROJECTS_CONFIG } from './config/fundingFovernmentProjectsConfig'
 import { FileStorageService } from '@island.is/file-storage'
 import { Application, getValueViaPath } from '@island.is/application/core'
 import { FundingAttachment } from './types'

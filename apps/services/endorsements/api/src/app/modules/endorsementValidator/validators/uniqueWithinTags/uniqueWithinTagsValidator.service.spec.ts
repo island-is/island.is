@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing'
-import { EndorsementTag } from '../../../endorsementList/endorsementList.model'
+import { EndorsementTag } from '../../../endorsementList/constants'
 import {
   UniqueWithinTagsInput,
   UniqueWithinTagsValidatorService,

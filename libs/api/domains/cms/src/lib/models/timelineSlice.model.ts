@@ -11,6 +11,9 @@ export class TimelineSlice {
   @Field()
   title?: string
 
+  @Field()
+  intro?: string
+
   @Field(() => [TimelineEvent])
   events!: TimelineEvent[]
 }
@@ -22,5 +25,6 @@ export const mapTimelineSlice = ({
   typename: 'TimelineSlice',
   id: sys.id,
   title: fields.title ?? '',
+  intro: fields.intro ?? '',
   events: (fields.events ?? []).map(mapTimelineEvent),
 })

@@ -7,10 +7,8 @@ import {
   generateApplicationEmail,
   generateConfirmationEmail,
 } from './emailGenerators'
-import {
-  INSTITUTION_COLLABORATION_CONFIG,
-  InstitutionCollaborationConfig,
-} from './config/institutionApplicationServiceConfig'
+import type { InstitutionCollaborationConfig } from './config/institutionApplicationServiceConfig'
+import { INSTITUTION_COLLABORATION_CONFIG } from './config/institutionApplicationServiceConfig'
 import { FileStorageService } from '@island.is/file-storage'
 import { Application, getValueViaPath } from '@island.is/application/core'
 import { InstitutionAttachment } from './types'

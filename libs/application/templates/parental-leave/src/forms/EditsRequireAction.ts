@@ -19,11 +19,11 @@ export const EditsRequireAction: Form = buildForm({
   mode: FormModes.REJECTED,
   children: [
     buildSection({
-      id: 'Edits not approved, require action',
-      title: '',
+      id: 'EditsRequireAction.section',
+      title: parentalLeaveFormMessages.editFlow.editsNotApprovedTitle,
       children: [
         buildCustomField({
-          id: 'editsRequireAction',
+          id: 'editsRequireAction.field',
           title: parentalLeaveFormMessages.editFlow.editsNotApprovedTitle,
           component: 'EditsRequireAction',
         }),

@@ -1,5 +1,5 @@
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
-import React from 'react'
+import React, { ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import { motion } from 'framer-motion'
 
@@ -7,7 +7,7 @@ import * as styles from './Modal.treat'
 
 interface ModalProps {
   title: string
-  text: string | JSX.Element
+  text: string | ReactNode
   primaryButtonText: string
   secondaryButtonText?: string
   handleClose?: () => void

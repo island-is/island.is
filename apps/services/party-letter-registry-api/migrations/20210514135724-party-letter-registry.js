@@ -7,15 +7,9 @@ module.exports = {
     // try is here to make sure this safely fails if index creation fails
     try {
       await queryInterface.createTable('party_letter_registry', {
-        id: {
-          type: Sequelize.INTEGER,
-          autoIncrement: true,
-          primaryKey: true,
-        },
         party_letter: {
           type: Sequelize.CHAR(2),
-          allowNull: false,
-          unique: true,
+          primaryKey: true,
         },
         party_name: {
           type: Sequelize.STRING,
@@ -28,6 +22,7 @@ module.exports = {
         },
         managers: {
           type: Sequelize.ARRAY(Sequelize.STRING),
+          unique: true,
           allowNull: false,
         },
         created: {

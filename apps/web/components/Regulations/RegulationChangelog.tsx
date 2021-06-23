@@ -3,22 +3,17 @@ import * as s from './RegulationsSidebarBox.treat'
 import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+import { ISODate, interpolate, prettyName } from '@island.is/regulations'
 import {
-  ISODate,
   RegulationHistoryItem,
   RegulationMaybeDiff,
-} from './Regulations.types'
+} from '@island.is/regulations/web'
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,
 } from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import {
-  interpolate,
-  prettyName,
-  useDateUtils,
-  useRegulationLinkResolver,
-} from './regulationUtils'
+import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
 
 type Effects = Array<RegulationHistoryItem>
 
@@ -174,7 +169,9 @@ export const useRegulationEffectPrepper = (
   )
 
   return {
-    boxTitle: interpolate(txt('historyTitle'), { name: regulation.name }),
+    boxTitle: interpolate(txt('historyTitle'), {
+      name: prettyName(regulation.name),
+    }),
     hasPastEffects: effects.past.length > 0,
     hasFutureEffects: effects.future.length > 0,
     isViewingCurrent,

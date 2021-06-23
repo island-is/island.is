@@ -1,4 +1,5 @@
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { Union, PensionFund } from '@island.is/clients/vmst'
@@ -29,19 +30,19 @@ export class DirectorateOfLabourService {
   async getUnions(): Promise<Union[]> {
     return await this.directorateOfLabourRepository
       .getUnions()
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async getPensionFunds(): Promise<PensionFund[]> {
     return await this.directorateOfLabourRepository
       .getPensionFunds()
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async getPrivatePensionFunds(): Promise<PensionFund[]> {
     return await this.directorateOfLabourRepository
       .getPrivatePensionFunds()
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async getParentalLeavesEntitlements(
@@ -50,13 +51,13 @@ export class DirectorateOfLabourService {
   ): Promise<ParentalLeaveEntitlement | null> {
     return await this.directorateOfLabourRepository
       .getParentalLeavesEntitlements(dateOfBirth, nationalId)
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async getParentalLeaves(nationalId: string): Promise<ParentalLeave[] | null> {
     return await this.directorateOfLabourRepository
       .getParentalLeaves(nationalId)
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async getParentalLeavesApplicationPaymentPlan(
@@ -70,7 +71,7 @@ export class DirectorateOfLabourService {
         applicationId,
         nationalId,
       )
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async getParentalLeavesEstimatedPaymentPlan(
@@ -80,7 +81,39 @@ export class DirectorateOfLabourService {
   ): Promise<ParentalLeavePaymentPlan[]> {
     return await this.directorateOfLabourRepository
       .getParentalLeavesEstimatedPaymentPlan(dateOfBirth, period, nationalId)
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
+  }
+
+  async getParentalLeavesPeriodEndDate(
+    nationalId: string,
+    startDate: string,
+    length: string,
+    percentage: string,
+  ) {
+    return await this.directorateOfLabourRepository
+      .getParentalLeavesPeriodEndDate(
+        nationalId,
+        new Date(startDate),
+        length,
+        percentage,
+      )
+      .catch(this.handleError.bind(this))
+  }
+
+  async getParentalLeavesPeriodsLength(
+    nationalId: string,
+    startDate: string,
+    endDate: string,
+    percentage: string,
+  ) {
+    return await this.directorateOfLabourRepository
+      .getParentalLeavesPeriodsLength(
+        nationalId,
+        new Date(startDate),
+        new Date(endDate),
+        percentage,
+      )
+      .catch(this.handleError.bind(this))
   }
 
   async getPregnancyStatus(
@@ -88,6 +121,6 @@ export class DirectorateOfLabourService {
   ): Promise<PregnancyStatus | null> {
     return await this.directorateOfLabourRepository
       .getPregnancyStatus(nationalId)
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
   }
 }

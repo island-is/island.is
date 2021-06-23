@@ -13,8 +13,8 @@ export class ValidationRule {
   @IsEnum(ValidationRuleDtoTypeEnum)
   type!: ValidationRuleDtoTypeEnum
 
-  @Field(() => graphqlTypeJson)
+  @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()
   @IsObject()
-  value?: object
+  value!: object | null
 }

@@ -3,7 +3,7 @@ import { gql, useQuery, useMutation } from '@apollo/client'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 
-import { Query, Mutation, License } from '@island.is/api/schema'
+import { Query, Mutation, EducationLicense } from '@island.is/api/schema'
 import { Box, Button, SkeletonLoader } from '@island.is/island-ui/core'
 import { EducationCard, EmptyState } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
@@ -39,7 +39,7 @@ const LicenseCards = () => {
   const { educationLicense = [] } = data || {}
   const anchorRef = useRef<HTMLAnchorElement>(null)
 
-  const handleDownload = async (license: License) => {
+  const handleDownload = async (license: EducationLicense) => {
     const { data } = await fetchEducationSignedLicenseUrl({
       variables: { input: { licenseId: license.id } },
     })

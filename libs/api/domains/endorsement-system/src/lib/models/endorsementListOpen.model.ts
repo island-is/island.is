@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { EndorsementListOpenTagsEnum } from '../enums/endorsementListOpenTagsEnum'
 
 @ObjectType()
 export class EndorsementListOpen {
@@ -10,4 +11,7 @@ export class EndorsementListOpen {
 
   @Field({ nullable: true })
   description!: string | null
+
+  @Field(() => [EndorsementListOpenTagsEnum], { nullable: true })
+  tags?: EndorsementListOpenTagsEnum[]
 }

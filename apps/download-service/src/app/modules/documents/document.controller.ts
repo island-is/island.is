@@ -13,7 +13,8 @@ import { GetDocumentDto } from './dto/getDocument.dto'
 import { Response } from 'express'
 import { ReadableStreamBuffer } from 'stream-buffers'
 import { DocumentClient } from '@island.is/clients/documents'
-import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('documents')

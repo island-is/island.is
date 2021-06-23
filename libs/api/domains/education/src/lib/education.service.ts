@@ -4,7 +4,7 @@ import { uuid } from 'uuidv4'
 import * as kennitala from 'kennitala'
 import flatten from 'lodash/flatten'
 
-import { User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   MMSApi,
   LanguageGrade,
@@ -17,8 +17,12 @@ import {
   ISLFjolskyldan,
 } from '@island.is/clients/national-registry-v1'
 
-import { Config } from './education.module'
-import { License, ExamFamilyOverview, ExamResult } from './education.type'
+import type { Config } from './education.module'
+import {
+  EducationLicense,
+  ExamFamilyOverview,
+  ExamResult,
+} from './education.type'
 import { S3Service } from './s3.service'
 import { getYearInterval } from './education.utils'
 
@@ -34,7 +38,9 @@ export class EducationService {
     private readonly nationalRegistryApi: NationalRegistryApi,
   ) {}
 
-  async getLicenses(nationalId: User['nationalId']): Promise<License[]> {
+  async getLicenses(
+    nationalId: User['nationalId'],
+  ): Promise<EducationLicense[]> {
     const licenses = await this.mmsApi.getLicenses(nationalId)
 
     return licenses.map((license) => ({

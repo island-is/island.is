@@ -2,7 +2,9 @@ import parse from 'date-fns/parse'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import enGB from 'date-fns/locale/en-GB'
+import sortBy from 'lodash/sortBy'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import kennitala from 'kennitala'
 import { Address, Child, NationalRegistry, Person } from '../types'
 
 export const formatSsn = (ssn: string) => {
@@ -99,4 +101,10 @@ export const getOtherParentInformation = (
 export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone?.formatNational() || phoneNumber
+}
+
+export const sortChildrenByAge = (children: Child[]): Child[] => {
+  return sortBy(children, (child) => {
+    return kennitala.info(child.nationalId)?.birthday
+  })
 }

@@ -102,6 +102,25 @@ describe('isCaseBlockedFromUser', () => {
     expect(res).toBe(false)
   })
 
+  it('should be possible to share case with other prosecutors office', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.NEW,
+      prosecutor: { institutionId: 'Prosecutors Office' },
+      sharedWithProsecutorsOfficeId: 'Another Prosecutors Office',
+    } as Case
+    const user = {
+      role: UserRole.PROSECUTOR,
+      institution: { id: 'Another Prosecutors Office' },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(res).toBe(false)
+  })
+
   it('other courts should be hidden from registrars', () => {
     // Arrange
     const theCase = {
@@ -202,6 +221,7 @@ describe('getCasesQueryFilter', () => {
             {
               '$prosecutor.institution_id$': 'Prosecutors Office Id',
             },
+            { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
           ],
         },
       ],

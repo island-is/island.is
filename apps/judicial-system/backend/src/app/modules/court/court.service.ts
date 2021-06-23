@@ -6,8 +6,12 @@ import { CourtClientService } from '@island.is/judicial-system/court-client'
 export class CourtService {
   constructor(private readonly courtClientService: CourtClientService) {}
 
-  createDocument(courtCaseNumber: string, streamId: string): Promise<string> {
-    return this.courtClientService.createDocument({
+  createDocument(
+    courtId: string,
+    courtCaseNumber: string,
+    streamId: string,
+  ): Promise<string> {
+    return this.courtClientService.createDocument(courtId, {
       caseNumber: courtCaseNumber,
       subject: 'Krafa',
       fileName: 'Krafa.pdf',
@@ -16,8 +20,8 @@ export class CourtService {
     })
   }
 
-  createThingbok(courtCaseNumber: string, streamId: string) {
-    return this.courtClientService.createThingbok({
+  createThingbok(courtId: string, courtCaseNumber: string, streamId: string) {
+    return this.courtClientService.createThingbok(courtId, {
       caseNumber: courtCaseNumber,
       subject: 'Þingbók og úrskurður',
       fileName: 'Þingbók og úrskurður.pdf',
@@ -25,8 +29,8 @@ export class CourtService {
     })
   }
 
-  uploadStream(pdf: Buffer): Promise<string> {
-    return this.courtClientService.uploadStream({
+  uploadStream(courtId: string, pdf: Buffer): Promise<string> {
+    return this.courtClientService.uploadStream(courtId, {
       value: pdf,
       options: { filename: 'upload.pdf', contentType: 'application/pdf' },
     })

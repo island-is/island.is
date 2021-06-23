@@ -81,6 +81,7 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                               link.slug,
                             ])}
                             skipTab
+                            newTab={true}
                           >
                             <Button icon="arrowForward" variant="text">
                               {linkTitle}

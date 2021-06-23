@@ -17,6 +17,7 @@ export const ACTIVE_PARTIES: { letter: string; name: string }[] = [
   { letter: 'D', name: 'Sjálfstæðisflokkur' },
   { letter: 'F', name: 'Flokkur fólksins' },
   { letter: 'M', name: 'Miðflokkurinn' },
+  { letter: 'O', name: 'Frjálslyndi lýðræðisflokkurinn' },
   { letter: 'P', name: 'Píratar' },
   { letter: 'R', name: 'Alþýðufylkingin' },
   {
@@ -28,6 +29,7 @@ export const ACTIVE_PARTIES: { letter: string; name: string }[] = [
     name: 'Dögun – stjórnmálasamtök um réttlæti, sanngirni og lýðræði',
   },
   { letter: 'V', name: 'Vinstrihreyfingin – grænt framboð' },
+  { letter: 'Þ', name: 'Frelsisflokkurinn' },
 ]
 
 const PartyLetter: FC<FieldBaseProps> = () => {
@@ -38,9 +40,9 @@ const PartyLetter: FC<FieldBaseProps> = () => {
 
   const renderPartyList = (list: { letter: string; name: string }[]) => (
     <Stack space={1}>
-      {list.map((party) => {
+      {list.map((party, index) => {
         return (
-          <Text variant="small" key={party.letter}>
+          <Text variant="small" key={index}>
             <strong>{`${party.letter}-listi: `}</strong> {party.name}
           </Text>
         )

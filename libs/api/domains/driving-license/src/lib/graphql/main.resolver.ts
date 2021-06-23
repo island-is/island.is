@@ -1,10 +1,10 @@
 import { Args, Query, Mutation, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { DrivingLicenseService } from '../drivingLicense.service'
 import { DrivingLicense } from './drivingLicense.model'

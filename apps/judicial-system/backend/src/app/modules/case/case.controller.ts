@@ -26,9 +26,9 @@ import {
   CaseState,
   CaseTransition,
   IntegratedCourts,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -59,6 +59,8 @@ const prosecutorUpdateRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD,
   dtoFields: [
+    'type',
+    'description',
     'policeCaseNumber',
     'accusedNationalId',
     'accusedName',
@@ -72,17 +74,21 @@ const prosecutorUpdateRule = {
     'leadInvestigator',
     'arrestDate',
     'requestedCourtDate',
-    'requestedCustodyEndDate',
-    'otherDemands',
+    'requestedValidToDate',
+    'demands',
     'lawsBroken',
+    'legalBasis',
     'custodyProvisions',
     'requestedCustodyRestrictions',
     'requestedOtherRestrictions',
     'caseFacts',
     'legalArguments',
+    'requestProsecutorOnlySession',
+    'prosecutorOnlySessionRequest',
     'comments',
     'caseFilesComments',
     'prosecutorId',
+    'sharedWithProsecutorsOfficeId',
   ],
 } as RolesRule
 
@@ -96,20 +102,21 @@ const courtFields = [
   'courtStartDate',
   'courtEndTime',
   'courtAttendees',
-  'policeDemands',
+  'prosecutorDemands',
   'courtDocuments',
+  'isAccusedAbsent',
   'accusedPleaDecision',
   'accusedPleaAnnouncement',
   'litigationPresentations',
   'courtCaseFacts',
   'courtLegalArguments',
   'ruling',
-  'additionToConclusion',
   'decision',
-  'custodyEndDate',
+  'validToDate',
   'custodyRestrictions',
   'otherRestrictions',
-  'isolationTo',
+  'isolationToDate',
+  'additionToConclusion',
   'accusedAppealDecision',
   'accusedAppealAnnouncement',
   'prosecutorAppealDecision',
@@ -337,7 +344,7 @@ export class CaseController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<Case> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     return existingCase
   }
@@ -355,7 +362,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     const pdf = await this.caseService.getRequestPdf(existingCase)
 
@@ -383,7 +390,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     const pdf = await this.caseService.getRulingPdf(existingCase)
 
@@ -471,12 +478,12 @@ export class CaseController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<Case> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
 
     if (existingCase.childCase) {
       return existingCase.childCase
     }
 
-    return this.caseService.extend(existingCase)
+    return this.caseService.extend(existingCase, user)
   }
 }

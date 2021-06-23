@@ -1,9 +1,10 @@
 import * as s from './RegulationStatus.treat'
 
 import React from 'react'
-import { ISODate, RegulationMaybeDiff } from './Regulations.types'
-import { Hidden, Text } from '@island.is/island-ui/core'
-import { interpolate, useDateUtils } from './regulationUtils'
+import { ISODate, interpolate } from '@island.is/regulations'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
+import { Hidden, Link, Text } from '@island.is/island-ui/core'
+import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { Ball, BallColor } from './Ball'
@@ -11,14 +12,7 @@ import { Ball, BallColor } from './Ball'
 // ---------------------------------------------------------------------------
 
 export type RegulationStatusProps = {
-  regulation: Pick<
-    RegulationMaybeDiff,
-    | 'repealedDate'
-    | 'timelineDate'
-    | 'lastAmendDate'
-    | 'effectiveDate'
-    | 'history'
-  >
+  regulation: RegulationMaybeDiff
   urlDate?: ISODate
   texts: RegulationPageTexts
 }
@@ -27,8 +21,11 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
   const { regulation, urlDate, texts } = props
   const { formatDate } = useDateUtils()
   const txt = useNamespace(texts)
+  const { linkToRegulation } = useRegulationLinkResolver()
 
   const {
+    type,
+    name,
     timelineDate,
     lastAmendDate,
     effectiveDate,
@@ -62,6 +59,22 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
     return nextItem ? nextItem.date : today // fall back to `today`, because whatever, It should never happen...
   }
 
+  const renderLinkToCurrent = () => {
+    const textKey = !repealedDate
+      ? 'statusLinkToCurrent'
+      : 'statusLinkToRepealed'
+    const labelKey = !repealedDate
+      ? 'statusLinkToCurrent_long'
+      : 'statusLinkToRepealed_long'
+    return (
+      <small className={s.linkToCurrent}>
+        <Link href={linkToRegulation(name)} aria-label={txt(labelKey)}>
+          {txt(textKey)}
+        </Link>
+      </small>
+    )
+  }
+
   return (
     <>
       <div className={s.printText}>
@@ -85,9 +98,18 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
                   </small>
                 )}
               </>
+            ) : !lastAmendDate ? (
+              <>
+                {txt(
+                  type === 'base'
+                    ? 'statusCurrentBase'
+                    : 'statusCurrentAmending',
+                ) + ' '}
+                {onDateText}
+              </>
             ) : (
               <>
-                {txt('statusCurrent') + ' '}
+                {txt('statusCurrentUpdated') + ' '}
                 {onDateText ||
                   (lastAmendDate && (
                     <small className={s.metaDate}>
@@ -107,7 +129,8 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
                     date: formatDate(timelineDate),
                   })}
                 </small>
-              )}
+              )}{' '}
+              {renderLinkToCurrent()}
             </>
           ) : (
             <>
@@ -123,7 +146,8 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
                     dateTo: formatDate(getNextHistoryDate()),
                   })}
                 </small>
-              )}
+              )}{' '}
+              {renderLinkToCurrent()}
             </>
           )}
         </Text>

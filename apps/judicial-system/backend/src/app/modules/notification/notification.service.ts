@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
 import {
@@ -93,29 +94,26 @@ export class NotificationService {
     }
   }
 
-  private async sendSms(smsText: string): Promise<Recipient> {
+  private async sendSms(
+    mobileNumbers: string,
+    smsText: string,
+  ): Promise<Recipient> {
     // Production or local development with judge mobile number
-    if (
-      environment.production ||
-      environment.notifications.courtMobileNumbers
-    ) {
+    if (environment.production || mobileNumbers) {
       try {
-        await this.smsService.sendSms(
-          environment.notifications.courtMobileNumbers.split(','),
-          smsText,
-        )
+        await this.smsService.sendSms(mobileNumbers.split(','), smsText)
       } catch (error) {
         this.logger.error('Failed to send sms to court mobile number', error)
 
         return {
-          address: environment.notifications.courtMobileNumbers,
+          address: mobileNumbers,
           success: false,
         }
       }
     }
 
     return {
-      address: environment.notifications.courtMobileNumbers,
+      address: mobileNumbers,
       success: true,
     }
   }
@@ -197,7 +195,10 @@ export class NotificationService {
       existingCase.requestedCourtDate,
     )
 
-    return await this.sendSms(smsText)
+    return await this.sendSms(
+      environment.notifications.courtsMobileNumbers[existingCase.courtId],
+      smsText,
+    )
   }
 
   private async sendHeadsUpNotifications(
@@ -221,7 +222,10 @@ export class NotificationService {
       existingCase.court?.name,
     )
 
-    return this.sendSms(smsText)
+    return this.sendSms(
+      environment.notifications.courtsMobileNumbers[existingCase.courtId],
+      smsText,
+    )
   }
 
   private async sendReadyForCourtEmailNotificationToProsecutor(
@@ -234,7 +238,11 @@ export class NotificationService {
     const attachments = [
       {
         filename: `Krafa um ${
-          existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+          existingCase.type === CaseType.CUSTODY
+            ? 'gæsluvarðhald'
+            : existingCase.type === CaseType.TRAVEL_BAN
+            ? 'farbann'
+            : 'rannsóknarheimild'
         } ${existingCase.policeCaseNumber}.pdf`,
         content: pdf,
         encoding: 'binary',
@@ -254,8 +262,12 @@ export class NotificationService {
     const pdf = await getRequestPdfAsBuffer(existingCase)
 
     try {
-      const streamId = await this.courtService.uploadStream(pdf)
+      const streamId = await this.courtService.uploadStream(
+        existingCase.courtId,
+        pdf,
+      )
       await this.courtService.createDocument(
+        existingCase.courtId,
         existingCase.courtCaseNumber,
         streamId,
       )
@@ -267,6 +279,7 @@ export class NotificationService {
   private async sendReadyForCourtNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
+    // TODO: Ignore failed notifications
     const notificaion = await this.notificationModel.findOne({
       where: {
         caseId: existingCase.id,
@@ -279,14 +292,15 @@ export class NotificationService {
     ]
 
     // TODO: Find a better place for this
-    // No need to wait
     if (
       IntegratedCourts.includes(existingCase.courtId) &&
       existingCase.courtCaseNumber
     ) {
+      // No need to wait
       this.uploadRequestPdfToCourt(existingCase)
     }
 
+    // Notify the court only once
     if (!notificaion) {
       promises.push(this.sendReadyForCourtSmsNotificationToCourt(existingCase))
     }
@@ -332,7 +346,7 @@ export class NotificationService {
       existingCase.courtDate,
       existingCase.accusedName,
       existingCase.accusedGender,
-      existingCase.requestedCustodyEndDate,
+      existingCase.requestedValidToDate,
       existingCase.requestedCustodyRestrictions?.includes(
         CaseCustodyRestrictions.ISOLATION,
       ),
@@ -445,7 +459,7 @@ export class NotificationService {
       existingCase.defenderName,
       existingCase.defenderEmail,
       existingCase.decision,
-      existingCase.custodyEndDate,
+      existingCase.validToDate,
       existingCase.custodyRestrictions,
       existingCase.accusedAppealDecision,
       existingCase.prosecutorAppealDecision,
@@ -454,6 +468,7 @@ export class NotificationService {
       existingCase.parentCase !== null,
       existingCase.parentCase?.decision,
       existingCase.additionToConclusion,
+      existingCase.isolationToDate,
     )
 
     let attachments: Attachment[]
@@ -517,7 +532,10 @@ export class NotificationService {
       existingCase.courtDate,
     )
 
-    return await this.sendSms(smsText)
+    return await this.sendSms(
+      environment.notifications.courtsMobileNumbers[existingCase.courtId],
+      smsText,
+    )
   }
 
   private sendRevokedEmailNotificationToPrison(
@@ -577,7 +595,7 @@ export class NotificationService {
 
     const courtWasBeenNotified = await this.existsRevokableNotification(
       existingCase.id,
-      environment.notifications.courtMobileNumbers,
+      environment.notifications.courtsMobileNumbers[existingCase.courtId],
     )
 
     if (courtWasBeenNotified) {

@@ -14,7 +14,7 @@ export const accessControlModule: ServicePortalModule = {
     const routes: ServicePortalRoute[] = [
       {
         name: defineMessage({
-          id: 'service.portal:accessControl',
+          id: 'service.portal.settings.accessControl:root-title',
           defaultMessage: 'Aðgangsstýring',
         }),
         path: ServicePortalPath.SettingsAccessControl,
@@ -22,7 +22,7 @@ export const accessControlModule: ServicePortalModule = {
       },
       {
         name: defineMessage({
-          id: 'service.portal:accessControlGrant',
+          id: 'service.portal.settings.accessControl:root-grant-ritle',
           defaultMessage: 'Veita aðgang',
         }),
         path: ServicePortalPath.SettingsAccessControlGrant,
@@ -30,7 +30,7 @@ export const accessControlModule: ServicePortalModule = {
       },
       {
         name: defineMessage({
-          id: 'service.portal:accessControlAccess',
+          id: 'service.portal.settings.accessControl:root-access-title',
           defaultMessage: 'Aðgangur',
         }),
         path: ServicePortalPath.SettingsAccessControlAccess,

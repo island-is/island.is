@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { FieldDef } from '../types'
 import {
   Application,
   Field,
@@ -8,7 +7,9 @@ import {
   RecordObject,
   SetBeforeSubmitCallback,
 } from '@island.is/application/core'
-import { useFields } from './FieldContext'
+
+import { useFields } from '../context/FieldContext'
+import { FieldDef } from '../types'
 
 const FormField: FC<{
   application: Application

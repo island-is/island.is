@@ -1,4 +1,5 @@
 import React, { ComponentType } from 'react'
+import cn from 'classnames'
 import ReactSelect, {
   components,
   ValueType,
@@ -13,8 +14,10 @@ import ReactSelect, {
   InputProps,
   ControlProps,
   Props,
+  OptionsType,
+  GroupedOptionsType,
 } from 'react-select'
-import cn from 'classnames'
+import { formatGroupLabel } from 'react-select/src/builtins'
 import * as styles from './Select.treat'
 import { Icon } from '../IconRC/Icon'
 import { InputBackgroundColor } from '../Input/types'
@@ -32,9 +35,9 @@ interface AriaError {
 
 export interface SelectProps {
   name: string
+  options: OptionsType<Option> | GroupedOptionsType<Option>
   id?: string
   disabled?: boolean
-  options: ReadonlyArray<Option>
   hasError?: boolean
   errorMessage?: string
   noOptionsMessage?: string
@@ -53,6 +56,7 @@ export interface SelectProps {
   backgroundColor?: InputBackgroundColor
   required?: boolean
   ariaError?: AriaError
+  formatGroupLabel?: formatGroupLabel<Option>
 }
 
 export const Select = ({
@@ -73,6 +77,7 @@ export const Select = ({
   size = 'md',
   backgroundColor = 'white',
   required,
+  formatGroupLabel,
 }: SelectProps) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -108,6 +113,7 @@ export const Select = ({
         size={size}
         required={required}
         ariaError={ariaError as AriaError}
+        formatGroupLabel={formatGroupLabel}
         components={{
           Control,
           Input,

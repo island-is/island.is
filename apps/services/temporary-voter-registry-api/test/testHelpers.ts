@@ -3,3 +3,9 @@ export const errorExpectedStructure = {
   message: expect.anyOf([String, Array]),
   statusCode: expect.any(Number),
 }
+export const emptyResponseExpectedStructure = {
+  id: '0',
+  regionNumber: 0,
+  regionName: 'Ekki á skrá',
+  nationalId: expect.any(String),
+}

@@ -92,7 +92,7 @@ export const eventModal = style({
   whiteSpace: 'normal',
   maxWidth: 660,
   margin: 'auto',
-  backgroundColor: theme.color.purple100,
+  backgroundColor: theme.color.white,
   '@keyframes': {
     from: {
       opacity: 0,

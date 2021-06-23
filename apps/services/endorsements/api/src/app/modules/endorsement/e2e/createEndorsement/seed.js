@@ -29,7 +29,7 @@ module.exports = {
     {
       ...getGenericEndorsementList(),
       id: '9c0b4106-4213-43be-a6b2-ff324f4ba011',
-      endorsement_meta: ['fullName', 'address'],
+      endorsement_meta: ['fullName', 'address', 'voterRegion'],
     },
   ],
   endorsements: [

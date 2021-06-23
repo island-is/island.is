@@ -7,6 +7,6 @@ bootstrap({
   appModule: AppModule,
   name: 'services-temporary-voter-registry-api',
   openApi,
-  port: 4247,
+  port: 4248,
   swaggerPath: '',
 })

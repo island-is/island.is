@@ -4,11 +4,11 @@ import { Document } from './models/document.model'
 import { GetDocumentInput } from './dto/getDocumentInput'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 

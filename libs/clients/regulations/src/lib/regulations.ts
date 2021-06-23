@@ -1,9 +1,8 @@
 import { Inject } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
+import { ISODate, RegQueryName, Year } from '@island.is/regulations'
 import {
-  ISODate,
-  RegQueryName,
   Regulation,
   RegulationLawChapterTree,
   RegulationListItem,
@@ -12,8 +11,7 @@ import {
   RegulationSearchResults,
   RegulationViewTypes,
   RegulationYears,
-  Year,
-} from './regulations.types'
+} from '@island.is/regulations/web'
 import pickBy from 'lodash/pickBy'
 import identity from 'lodash/identity'
 

@@ -1,12 +1,12 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import { Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 
 import { ApplicationService } from './application.service'
 import { Application } from './application.model'

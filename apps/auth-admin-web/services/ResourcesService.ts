@@ -4,6 +4,7 @@ import { ApiResourceSecretDTO } from '../entities/dtos/api-resource-secret.dto'
 import { ApiResourcesDTO } from '../entities/dtos/api-resources-dto'
 import { ApiScopeDTO } from '../entities/dtos/api-scope-dto'
 import { ApiScopeGroupDTO } from '../entities/dtos/api-scope-group.dto'
+import { DomainDTO } from '../entities/dtos/domain.dto'
 import IdentityResourceDTO from '../entities/dtos/identity-resource.dto'
 import { UserClaimDTO } from '../entities/dtos/user-claim-dto'
 import { ApiResourceScope } from '../entities/models/api-resource-scope.model'
@@ -13,8 +14,10 @@ import { ApiResource } from '../entities/models/api-resource.model'
 import { ApiScopeGroup } from '../entities/models/api-scope-group.model'
 import { ApiScopeUserClaim } from '../entities/models/api-scope-user-claim.model'
 import { ApiScope } from '../entities/models/api-scope.model'
+import { Domain } from '../entities/models/domain.model'
 import { IdentityResourceUserClaim } from '../entities/models/identity-resource-user-claim.model'
 import { IdentityResource } from '../entities/models/identity-resource.model'
+import { PagedRowsDTO } from '../entities/models/paged-rows.dto'
 import { BaseService } from './BaseService'
 
 export class ResourcesService extends BaseService {
@@ -264,7 +267,7 @@ export class ResourcesService extends BaseService {
   }
 
   /** Delete Api Scope from Api Resource Scope */
-  static async DeleteApiResourceScopeByScopeName(
+  static async deleteApiResourceScopeByScopeName(
     scopeName: string,
   ): Promise<number | null> {
     return BaseService.DELETE(
@@ -398,4 +401,42 @@ export class ResourcesService extends BaseService {
     return BaseService.GET(`api-scope-group`)
   }
   // #endregion ApiScopeGroup
+
+  // #region Domain
+
+  /** Find all domains with or without paging */
+  static async findAllDomains(
+    searchString: string | null = null,
+    page: number | null = null,
+    count: number | null = null,
+  ): Promise<Domain[] | PagedRowsDTO<Domain>> {
+    return BaseService.GET(
+      `domain?searchString=${searchString}&page=${page}&count=${count}`,
+    )
+  }
+
+  /** Gets domain by it's name */
+  static async getDomain(name: string): Promise<Domain> {
+    return BaseService.GET(`domain/${name}`)
+  }
+
+  /** Creates a new Domain */
+  static async createDomain(domain: DomainDTO): Promise<Domain> {
+    return BaseService.POST(`domain`, domain)
+  }
+
+  /** Updates an existing Domain */
+  static async updateDomain(
+    domain: DomainDTO,
+    name: string,
+  ): Promise<[number, Domain[]]> {
+    return BaseService.PUT(`domain/${name}`, domain)
+  }
+
+  /** Delete Domain */
+  static async deleteDomain(name: string): Promise<number> {
+    return BaseService.DELETE(`domain/${name}`)
+  }
+
+  // #endregion Domain
 }

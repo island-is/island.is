@@ -5,14 +5,11 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 
 interface Props {
   prosecutorPostponedAppealDate?: string
-  handleProsecutorAppealDismissal?: () => void
+  withdrawProsecutorAppealDate?: () => void
 }
 
 const ProsecutorInfo: React.FC<Props> = (props) => {
-  const {
-    prosecutorPostponedAppealDate,
-    handleProsecutorAppealDismissal,
-  } = props
+  const { prosecutorPostponedAppealDate, withdrawProsecutorAppealDate } = props
 
   const animateInAndOut = {
     visible: { y: 0, opacity: 1, transition: { duration: 0.4, delay: 0.4 } },
@@ -32,7 +29,7 @@ const ProsecutorInfo: React.FC<Props> = (props) => {
           prosecutorPostponedAppealDate,
           'PPPp',
         )}`}
-        onDismiss={handleProsecutorAppealDismissal}
+        onDismiss={withdrawProsecutorAppealDate}
         fluid
         light
       />

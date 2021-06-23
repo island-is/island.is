@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, BoxProps } from '@island.is/island-ui/core'
-import { HTMLText } from './Regulations.types'
+import { HTMLText } from '@island.is/regulations'
 
 export type HTMLDumpProps = BoxProps & {
   html: HTMLText

@@ -34,7 +34,7 @@ export function buildForm(data: {
 export function buildMultiField(data: {
   id?: string
   condition?: Condition
-  title: MessageDescriptor | string
+  title: FormText
   description?: FormText
   space?: BoxProps['paddingTop']
   children: Field[]
@@ -55,7 +55,7 @@ export function buildRepeater(data: {
 export function buildSection(data: {
   id?: string
   condition?: Condition
-  title: MessageDescriptor | string
+  title: FormText
   children: SectionChildren[]
 }): Section {
   return { ...data, type: FormItemTypes.SECTION }

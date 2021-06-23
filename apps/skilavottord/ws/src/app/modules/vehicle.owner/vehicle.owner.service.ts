@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { VehicleOwnerModel } from './model/vehicle.owner.model'
 import { VehicleModel } from '../vehicle/model/vehicle.model'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { RecyclingRequestModel } from '../recycling.request/model/recycling.request.model'
 
 @Injectable()

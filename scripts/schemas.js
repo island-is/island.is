@@ -1,6 +1,6 @@
 const { stat, writeFile } = require('fs')
-const { spawn } = require('child_process')
 const { promisify } = require('util')
+const { exec } = require('./utils')
 
 /**
  * Because get-files-touched-by.sh cannot get files from nx cache
@@ -24,21 +24,6 @@ const TARGETS = [
   'schemas/build-graphql-schema', // Output api.graphql based on graphql app modules
   'schemas/codegen', // Output clients schemas (*.d.ts) based on codegen.yml
 ]
-
-const exec = (command) => {
-  return new Promise((resolve, reject) => {
-    const cmd = spawn(command, { stdio: 'inherit', shell: true })
-    cmd.on('exit', (exitCode) => {
-      if (exitCode === 0) {
-        resolve()
-      } else {
-        const error = new Error('Command exited with non-zero exit code.')
-        error.code = exitCode
-        reject(error)
-      }
-    })
-  })
-}
 
 const fileExists = async (path) =>
   !!(await promisify(stat)(path).catch((_) => false))

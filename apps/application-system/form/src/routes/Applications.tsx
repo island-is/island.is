@@ -103,6 +103,7 @@ export const Applications: FC = () => {
                 {formatMessage(coreMessages.applications)}
               </Text>
             </Box>
+
             {data?.applicationApplications && (
               <ApplicationList
                 applications={data.applicationApplications}
@@ -111,6 +112,7 @@ export const Applications: FC = () => {
                 }
               />
             )}
+
             <Box
               marginTop={5}
               marginBottom={5}

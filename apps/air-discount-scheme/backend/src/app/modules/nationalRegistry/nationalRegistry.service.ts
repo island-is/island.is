@@ -1,7 +1,8 @@
 import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   NationalRegistryGeneralLookupResponse,
   NationalRegistryFamilyLookupResponse,

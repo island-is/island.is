@@ -1,6 +1,9 @@
-// This file can be replaced during build by using the `fileReplacements` array.
-// When building for production, this file is replaced with `environment.prod.ts`.
-
-export const environment = {
+const devConfig = {
   production: false,
 }
+
+const prodConfig = {
+  production: true,
+}
+
+export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

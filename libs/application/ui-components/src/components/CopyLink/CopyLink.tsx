@@ -20,9 +20,11 @@ const CopyLink: FC<CopyLinkProps> = ({
       padding={3}
       borderRadius="large"
     >
-      <Text variant="h5" color="blue400">
-        {linkUrl}
-      </Text>
+      <Box style={{ overflowWrap: 'anywhere' }} paddingRight={4}>
+        <Text variant="h5" color="blue400">
+          {linkUrl}
+        </Text>
+      </Box>
       <Box>
         <Button
           onClick={() => copyToClipboard(linkUrl)}

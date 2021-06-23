@@ -11,11 +11,11 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
   CurrentUser,
   IdsAuthGuard,
 } from '@island.is/auth-nest-tools'

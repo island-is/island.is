@@ -5,6 +5,7 @@ export interface Auth {
   client: string
   actor?: {
     nationalId: string
+    scope: string[]
   }
   ip?: string
   userAgent?: string

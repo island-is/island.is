@@ -18,6 +18,7 @@ export default {
     'frontpage',
   ],
   nestedContentTypes: [
+    'subArticle',
     'processEntry',
     'embeddedVideo',
     'author',
@@ -47,6 +48,8 @@ export default {
     'featured',
     'frontpageSlider',
     'namespace',
+    'timeline',
+    'timelineEvent',
   ],
   contentful: {
     space: process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',

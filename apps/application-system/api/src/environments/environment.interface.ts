@@ -1,4 +1,4 @@
-import { AuthConfig } from '@island.is/auth-nest-tools'
+import type { AuthConfig } from '@island.is/auth-nest-tools'
 import { TemplateAPIConfig } from '@island.is/application/template-api-modules'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { SigningServiceOptions } from '@island.is/dokobit-signing'

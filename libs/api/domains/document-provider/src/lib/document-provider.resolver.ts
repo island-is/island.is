@@ -1,11 +1,11 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
 
@@ -272,8 +272,10 @@ export class DocumentProviderResolver {
   @Query(() => ProviderStatistics)
   async getStatisticsTotal(
     @Args('input', { nullable: true }) input: StatisticsInput,
+    @CurrentUser() user: User,
   ): Promise<ProviderStatistics> {
     return this.documentProviderService.getStatisticsTotal(
+      user,
       input?.organisationId,
       input?.fromDate,
       input?.toDate,

@@ -7,10 +7,8 @@ import {
   generateApplicationEmail,
   generateConfirmationEmail,
 } from './emailGenerators'
-import {
-  LoginServiceConfig,
-  LOGIN_SERVICE_CONFIG,
-} from './config/loginServiceConfig'
+import type { LoginServiceConfig } from './config/loginServiceConfig'
+import { LOGIN_SERVICE_CONFIG } from './config/loginServiceConfig'
 
 @Injectable()
 export class LoginServiceService {

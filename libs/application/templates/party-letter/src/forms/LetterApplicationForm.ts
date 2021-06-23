@@ -12,6 +12,7 @@ import {
   buildDataProviderItem,
   Application,
   getValueViaPath,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { User } from '@island.is/api/domains/national-registry'
 import { UserCompany } from '../dataProviders/CurrentUserCompanies'
@@ -41,12 +42,13 @@ export const LetterApplicationForm: Form = buildForm({
         buildExternalDataProvider({
           id: 'approveTermsAndConditions',
           title: m.externalDataSection.title,
-          subTitle: m.externalDataSection.subTitle,
+          subTitle: m.externalDataSection.subtitle,
+          checkboxLabel: m.externalDataSection.agree,
           dataProviders: [
             buildDataProviderItem({
               id: 'dmr',
               type: undefined,
-              title: m.externalDataSection.dmrTitle,
+              title: '',
               subTitle: m.externalDataSection.dmrSubtitle,
             }),
             buildDataProviderItem({
@@ -162,10 +164,11 @@ export const LetterApplicationForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
+              refetchApplicationAfterSubmit: true,
               title: m.overview.title,
               actions: [
                 {
-                  event: 'SUBMIT',
+                  event: DefaultEvents.SUBMIT,
                   name: 'Hefja söfnun',
                   type: 'primary',
                 },

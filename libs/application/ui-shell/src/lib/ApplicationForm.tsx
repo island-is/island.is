@@ -1,8 +1,7 @@
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
-import { RefetchProvider } from '../context/RefetchContext'
 
+import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
   Application,
   ApplicationTemplateHelper,
@@ -17,27 +16,16 @@ import {
 import { useApplicationNamespaces, useLocale } from '@island.is/localization'
 import { Box, LoadingIcon } from '@island.is/island-ui/core'
 
+import { RefetchProvider } from '../context/RefetchContext'
+import { FieldProvider, useFields } from '../context/FieldContext'
 import { FormShell } from './FormShell'
-import { FieldProvider, useFields } from '../components/FieldContext'
 import { NotFound } from './NotFound'
 import * as styles from './FormShell.treat'
-
-function isOnProduction(): boolean {
-  // TODO detect better when the application system is on production
-  return false
-}
 
 const ApplicationLoader: FC<{
   applicationId: string
   nationalRegistryId: string
-  setApplicationName: Dispatch<SetStateAction<string | undefined>>
-  setInstitutionName: Dispatch<SetStateAction<string | undefined>>
-}> = ({
-  applicationId,
-  nationalRegistryId,
-  setApplicationName,
-  setInstitutionName,
-}) => {
+}> = ({ applicationId, nationalRegistryId }) => {
   const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
     variables: {
@@ -73,12 +61,6 @@ const ApplicationLoader: FC<{
     return <NotFound />
   }
 
-  setApplicationName(application.name)
-
-  if (application.institution) {
-    setInstitutionName(application.institution)
-  }
-
   return (
     <RefetchProvider
       value={() => {
@@ -110,24 +92,27 @@ const ShellWrapper: FC<{
         const template = await getApplicationTemplateByTypeId(
           application.typeId,
         )
-        if (
-          template !== null &&
-          !(isOnProduction() && !template.readyForProduction)
-        ) {
+
+        if (template !== null) {
           const helper = new ApplicationTemplateHelper(application, template)
           const stateInformation =
             helper.getApplicationStateInformation() || null
+
           if (stateInformation?.roles?.length) {
             const applicationFields = await getApplicationUIFields(
               application.typeId,
             )
+
             const role = template.mapUserToRole(nationalRegistryId, application)
+
             if (!role) {
               throw new Error(formatMessage(coreMessages.userRoleError))
             }
+
             const currentRole = stateInformation.roles.find(
               (r) => r.id === role,
             )
+
             if (currentRole && currentRole.formLoader) {
               const formDescriptor = await currentRole.formLoader()
               setForm(formDescriptor)
@@ -175,22 +160,11 @@ const ShellWrapper: FC<{
 export const ApplicationForm: FC<{
   applicationId: string
   nationalRegistryId: string
-  setApplicationName: Dispatch<SetStateAction<string | undefined>>
-  setInstitutionName: Dispatch<SetStateAction<string | undefined>>
-}> = ({
-  applicationId,
-  nationalRegistryId,
-  setApplicationName,
-  setInstitutionName,
-}) => {
-  return (
-    <FieldProvider>
-      <ApplicationLoader
-        applicationId={applicationId}
-        nationalRegistryId={nationalRegistryId}
-        setApplicationName={setApplicationName}
-        setInstitutionName={setInstitutionName}
-      />
-    </FieldProvider>
-  )
-}
+}> = ({ applicationId, nationalRegistryId }) => (
+  <FieldProvider>
+    <ApplicationLoader
+      applicationId={applicationId}
+      nationalRegistryId={nationalRegistryId}
+    />
+  </FieldProvider>
+)

@@ -12,10 +12,10 @@ beforeAll(async () => {
 describe('CreatePartyLetterRegistry', () => {
   it('POST /party-letter-registry should return error when data is invalid', async () => {
     const requestData = {
-      partyLetter: 'A',
+      partyLetter: 'Z',
       partyName: 'The awesome party',
-      owner: '0000000002',
-      managers: ['0000000001'],
+      owner: '0000000002', // invalid national id
+      managers: ['0000000001'], // invalid national id
     }
     const response = await request(app.getHttpServer())
       .post('/party-letter-registry')
@@ -30,7 +30,7 @@ describe('CreatePartyLetterRegistry', () => {
   it('POST /party-letter-registry should fail to assign an existing letter', async () => {
     const nationalId = '0101305069'
     const requestData = {
-      partyLetter: 'B',
+      partyLetter: 'Y',
       partyName: 'The awesome party',
       owner: nationalId,
       managers: [nationalId],
@@ -48,7 +48,7 @@ describe('CreatePartyLetterRegistry', () => {
   it('POST /party-letter-registry should create a new entry', async () => {
     const nationalId = '0101303019'
     const requestData = {
-      partyLetter: 'C',
+      partyLetter: 'V',
       partyName: 'The awesome party',
       owner: nationalId,
       managers: [nationalId],

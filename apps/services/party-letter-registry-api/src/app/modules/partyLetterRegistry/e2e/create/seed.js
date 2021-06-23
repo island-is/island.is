@@ -6,7 +6,7 @@ module.exports = {
   partyLetterRegistry: [
     {
       ...getGenericPartyLetterRegistry(),
-      party_letter: 'B',
+      party_letter: 'Y',
     },
   ],
 }

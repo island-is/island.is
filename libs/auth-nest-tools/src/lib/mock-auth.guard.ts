@@ -1,6 +1,8 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
+import { CanActivate, Injectable } from '@nestjs/common'
+import type { ExecutionContext } from '@nestjs/common'
 import { getRequest } from './getRequest'
-import { Auth } from './auth'
+import type { Auth } from './auth'
+import type { User } from './user'
 
 @Injectable()
 export class MockAuthGuard implements CanActivate {
@@ -20,7 +22,7 @@ export class MockAuthGuard implements CanActivate {
     const request = getRequest(context)
     request.auth = this.auth
     if (this.auth.nationalId) {
-      request.user = this.auth
+      request.user = this.auth as User
     }
     return true
   }

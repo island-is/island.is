@@ -330,7 +330,7 @@
     }
   },
   "user": {
-    "title": "Ferðagjöfin þín",
+    "title": "Til hamingju, þú hefur sótt ferðagjöfina þína!",
     "intro": "Til að nota Ferðagjöfina sækir þú smáforritið Ferðagjöf, sem er fáanlegt bæði fyrir Apple iOS og Android snjalltæki. Í smáforritinu getur þú nýtt Ferðagjöfina, séð yfirlit yfir ferðaþjónustufyrirtæki eða gefið öðrum Ferðagjöfina. Ef þú kýst að sækja ekki smáforritið má búa til gjafakóða á strikamerki hér að neðan.",
     "appStore": {
       "title": "Sæktu smáforritið fyrir Apple iOS eða Android.",

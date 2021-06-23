@@ -18,11 +18,13 @@ interface Props {
   name?: string
   locale?: Locale
   label: string
+  size?: DatePickerProps['size']
   placeholder?: string
   backgroundColor?: DatePickerBackgroundColor
   maxDate?: DatePickerProps['maxDate']
   minDate?: DatePickerProps['minDate']
   excludeDates?: DatePickerProps['excludeDates']
+  onChange?: (_: string) => void
 }
 
 const df = 'yyyy-MM-dd'
@@ -35,11 +37,13 @@ export const DatePickerController: FC<Props> = ({
   name = id,
   locale,
   label,
+  size,
   placeholder,
   backgroundColor,
   maxDate,
   minDate,
   excludeDates,
+  onChange = () => undefined,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -47,10 +51,11 @@ export const DatePickerController: FC<Props> = ({
     <Controller
       defaultValue={defaultValue}
       name={name}
-      render={({ onChange, value }) => (
+      render={({ onChange: onControllerChange, value }) => (
         <DatePicker
           hasError={error !== undefined}
           disabled={disabled}
+          size={size}
           id={id}
           errorMessage={error}
           locale={locale}
@@ -64,8 +69,9 @@ export const DatePickerController: FC<Props> = ({
           handleChange={(date) => {
             clearErrors(id)
             const newVal = format(date, df)
-            onChange(newVal)
+            onControllerChange(newVal)
             setValue(name, newVal)
+            onChange(newVal)
           }}
         />
       )}

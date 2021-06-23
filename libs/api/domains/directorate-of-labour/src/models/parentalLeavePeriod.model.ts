@@ -16,4 +16,7 @@ export class ParentalLeavePeriod {
 
   @Field(() => Boolean)
   paid!: boolean
+
+  @Field(() => String, { nullable: true })
+  rightsCodePeriod?: string | null
 }

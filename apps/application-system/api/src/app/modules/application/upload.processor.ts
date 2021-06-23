@@ -3,10 +3,8 @@ import { Job } from 'bull'
 import { ApplicationService } from './application.service'
 import { FileStorageService } from '@island.is/file-storage'
 import { Inject } from '@nestjs/common'
-import {
-  APPLICATION_CONFIG,
-  ApplicationConfig,
-} from './application.configuration'
+import type { ApplicationConfig } from './application.configuration'
+import { APPLICATION_CONFIG } from './application.configuration'
 import AmazonS3URI from 'amazon-s3-uri'
 
 interface JobData {

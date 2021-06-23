@@ -1,4 +1,5 @@
-import { CurrentUser, User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -10,8 +11,16 @@ import {
   ParseUUIDPipe,
   Post,
 } from '@nestjs/common'
-import { ApiOAuth2, ApiParam, ApiTags } from '@nestjs/swagger'
-import { environment } from '../../../environments/environment'
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOAuth2,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger'
+import { environment } from '../../../environments'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementListById.pipe'
 import { IsEndorsementListOwnerValidationPipe } from '../endorsementList/pipes/isEndorsementListOwnerValidation.pipe'
@@ -30,6 +39,11 @@ export class EndorsementController {
     private readonly auditService: AuditService,
   ) {}
 
+  @ApiOkResponse({
+    description: 'Finds all endorsements in a given list',
+    type: [Endorsement],
+  })
+  @ApiParam({ name: 'listId', type: String })
   @Get()
   @Audit<Endorsement[]>({
     namespace: auditNamespace,
@@ -37,7 +51,6 @@ export class EndorsementController {
     resources: (endorsement) => endorsement.map((e) => e.id),
     meta: (endorsement) => ({ count: endorsement.length }),
   })
-  @ApiParam({ name: 'listId', type: 'string' })
   async findAll(
     @Param(
       'listId',
@@ -51,13 +64,18 @@ export class EndorsementController {
     })
   }
 
+  @ApiOkResponse({
+    description:
+      'Uses current authenticated users national id to find any existing endorsement in a given list',
+    type: Endorsement,
+  })
+  @ApiParam({ name: 'listId', type: String })
   @Get('/exists')
   @Audit<Endorsement>({
     namespace: auditNamespace,
     action: 'findByUser',
     resources: (endorsement) => endorsement.id,
   })
-  @ApiParam({ name: 'listId', type: 'string' })
   async findByUser(
     @Param(
       'listId',
@@ -73,13 +91,18 @@ export class EndorsementController {
     })
   }
 
+  @ApiCreatedResponse({
+    description:
+      'Uses the authenticated users national id to create an endorsement',
+    type: Endorsement,
+  })
+  @ApiParam({ name: 'listId', type: String })
   @Post()
   @Audit<Endorsement>({
     namespace: auditNamespace,
     action: 'create',
     resources: (endorsement) => endorsement.id,
   })
-  @ApiParam({ name: 'listId', type: 'string' })
   async create(
     @Param(
       'listId',
@@ -95,6 +118,14 @@ export class EndorsementController {
     })
   }
 
+  @ApiCreatedResponse({
+    description: 'Creates multiple endorsements given an array of national ids',
+    type: [Endorsement],
+  })
+  @ApiParam({ name: 'listId', type: String })
+  @ApiBody({
+    type: BulkEndorsementDto,
+  })
   @Post('/bulk')
   @Audit<Endorsement[]>({
     namespace: auditNamespace,
@@ -102,7 +133,6 @@ export class EndorsementController {
     resources: (endorsement) => endorsement.map((e) => e.id),
     meta: (endorsement) => ({ count: endorsement.length }),
   })
-  @ApiParam({ name: 'listId', type: 'string' })
   async bulkCreate(
     @Param(
       'listId',
@@ -119,9 +149,13 @@ export class EndorsementController {
     })
   }
 
+  @ApiNoContentResponse({
+    description:
+      'Uses the authenticated users national id to remove endorsement form a given list',
+  })
+  @ApiParam({ name: 'listId', type: String })
   @Delete()
   @HttpCode(204)
-  @ApiParam({ name: 'listId', type: 'string' })
   async delete(
     @Param(
       'listId',
@@ -130,7 +164,7 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @CurrentUser() user: User,
-  ): Promise<unknown> {
+  ): Promise<undefined> {
     // we pass audit manually since we need a request parameter
     this.auditService.audit({
       user,

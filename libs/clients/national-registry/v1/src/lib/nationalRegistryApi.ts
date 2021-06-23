@@ -1,7 +1,7 @@
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import Soap from 'soap'
 
-import { User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
 import {
   GetViewISLFjolskyldanDto,

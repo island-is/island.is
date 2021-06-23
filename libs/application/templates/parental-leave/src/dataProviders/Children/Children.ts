@@ -9,24 +9,27 @@ import {
 } from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/utils/shared'
 
-import {
+import type {
   ChildInformation,
   ChildrenAndExistingApplications,
   ChildrenWithoutRightsAndExistingApplications,
 } from './types'
 import {
+  applicationsToChildInformation,
   getChildrenAndExistingApplications,
   getChildrenFromMockData,
 } from './Children-utils'
-import { States, YES, NO } from '../../constants'
+import { States, YES, NO, ParentalRelations } from '../../constants'
 import {
   ParentalLeave,
   ParentalLeaveEntitlement,
   PregnancyStatus,
-} from '../../types/schema'
+} from '@island.is/api/domains/directorate-of-labour'
+
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { calculateRemainingNumberOfDays } from '../../lib/directorateOfLabour.utils'
-import { getSelectedChild } from '../../parentalLeaveUtils'
+import { getSelectedChild } from '../../lib/parentalLeaveUtils'
+import { Boolean } from '../../types'
 
 export interface PregnancyStatusAndRightsResults {
   childrenAndExistingApplications: ChildrenAndExistingApplications
@@ -34,6 +37,8 @@ export interface PregnancyStatusAndRightsResults {
   hasRights: boolean
   hasActivePregnancy: boolean
 }
+
+const isRunningOnProduction = isRunningOnEnvironment('production')
 
 const parentalLeavesAndPregnancyStatus = `
   query GetParentalLeavesAndPregnancyStatus {
@@ -55,7 +60,6 @@ const parentalLeavesAndPregnancyStatus = `
   }
 `
 
-const isRunningOnProduction = isRunningOnEnvironment('production')
 const parentalLeavesEntitlements = `
   query GetParentalLeavesEntitlements($input: GetParentalLeavesEntitlementsInput!) {
     getParentalLeavesEntitlements(input: $input) {
@@ -133,13 +137,14 @@ export class Children extends BasicDataProvider {
         application.answers,
         application.externalData,
       )
+
       if (!selectedChild) {
         return false
       }
 
       // We only use applications from primary parents to allow
       // secondary parents to apply, not the other way around
-      if (selectedChild.parentalRelation !== 'primary') {
+      if (selectedChild.parentalRelation !== ParentalRelations.primary) {
         return false
       }
 
@@ -161,16 +166,88 @@ export class Children extends BasicDataProvider {
     return calculateRemainingNumberOfDays(dateOfBirth, parentalLeaves, rights)
   }
 
+  async getMockData(
+    application: Application,
+    customTemplateFindQuery: CustomTemplateFindQuery,
+  ) {
+    const useApplication = getValueViaPath(
+      application.answers,
+      'mock.useMockedApplication',
+      NO,
+    ) as Boolean
+
+    if (useApplication === NO) {
+      const children = getChildrenFromMockData(application)
+
+      if (!children.hasRights) {
+        return Promise.reject({
+          reason: parentalLeaveFormMessages.shared.childrenError,
+        })
+      }
+
+      return {
+        children: [children],
+        existingApplications: [],
+      }
+    }
+
+    const applicationId = getValueViaPath(
+      application.answers,
+      'mock.useMockedApplicationId',
+    ) as string
+
+    const applicationFromPrimaryParent = await customTemplateFindQuery({
+      id: applicationId,
+    })
+
+    const childrenWhereOtherParent = applicationsToChildInformation(
+      applicationFromPrimaryParent,
+      true,
+    )
+
+    const children: ChildInformation[] = []
+
+    for (const child of childrenWhereOtherParent) {
+      const parentalLeavesEntitlements = {
+        independentMonths: 6,
+        transferableMonths: 0,
+      }
+
+      const transferredDays =
+        child.transferredDays === undefined ? 0 : child.transferredDays
+
+      const remainingDays =
+        this.remainingDays(
+          child.expectedDateOfBirth,
+          [],
+          parentalLeavesEntitlements,
+        ) + transferredDays
+
+      children.push({
+        ...child,
+        remainingDays,
+        hasRights:
+          parentalLeavesEntitlements.independentMonths > 0 ||
+          parentalLeavesEntitlements.transferableMonths > 0,
+      })
+    }
+
+    return {
+      children,
+      existingApplications: [],
+    }
+  }
+
   async provide(
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
   ): Promise<ChildrenAndExistingApplications> {
     const useMockData =
-      getValueViaPath(application.answers, 'useMockData', NO) === YES
+      getValueViaPath(application.answers, 'mock.useMockData', NO) === YES
     const shouldUseMockData = useMockData && !isRunningOnProduction
 
     if (shouldUseMockData) {
-      return getChildrenFromMockData(application)
+      return await this.getMockData(application, customTemplateFindQuery)
     }
 
     const parentalLeavesAndPregnancyStatus = await this.queryParentalLeavesAndPregnancyStatus()
@@ -194,6 +271,8 @@ export class Children extends BasicDataProvider {
       const transferredDays =
         child.transferredDays === undefined ? 0 : child.transferredDays
 
+      // Transferred days are only added to remaining days for secondary parents
+      // since the primary parent makes the choice for them
       const remainingDays =
         this.remainingDays(
           child.expectedDateOfBirth,

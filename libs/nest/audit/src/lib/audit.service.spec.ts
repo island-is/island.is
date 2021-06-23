@@ -2,11 +2,12 @@ import { mock } from 'jest-mock-extended'
 
 import { Test, TestingModule } from '@nestjs/testing'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { AuditService } from './audit.service'
 import { AUDIT_OPTIONS, AuditOptions } from '@island.is/nest/audit'
-import { User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import SpyInstance = jest.SpyInstance
 
 jest.mock('@island.is/logging', () => {
@@ -35,6 +36,7 @@ const user: User = {
   nationalId: '1234567890',
   actor: {
     nationalId: '2234567890',
+    scope: [],
   },
   scope: [],
   authorization: '',

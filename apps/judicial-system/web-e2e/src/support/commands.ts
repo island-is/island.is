@@ -81,6 +81,10 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
       graphqlRequest.alias = 'gqlSignatureConfirmationResponse'
 
       return { fixture: 'signatureConfirmationResponse' }
+    } else if (graphqlRequest.body.query.includes('InstitutionsQuery')) {
+      graphqlRequest.alias = 'gqlInstitutionsQuery'
+
+      return { fixture: 'institutionsQueryResponse' }
     }
   }
 }

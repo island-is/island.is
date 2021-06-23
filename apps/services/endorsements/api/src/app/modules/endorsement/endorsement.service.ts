@@ -8,11 +8,9 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { isPerson } from 'kennitala'
 import { Endorsement } from './endorsement.model'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  EndorsementList,
-  EndorsementTag,
-} from '../endorsementList/endorsementList.model'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementMetadataService } from '../endorsementMetadata/endorsementMetadata.service'
 import {
   EndorsementValidatorService,
@@ -21,6 +19,7 @@ import {
 import { EndorsementMetadata } from '../endorsementMetadata/endorsementMetadata.model'
 import { Op, Sequelize, UniqueConstraintError } from 'sequelize'
 import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
+import { EndorsementTag } from '../endorsementList/constants'
 
 interface FindEndorsementInput {
   listId: string

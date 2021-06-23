@@ -1,11 +1,11 @@
 import { UseGuards } from '@nestjs/common'
 import { Resolver, Query } from '@nestjs/graphql'
 
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User as AuthUser,
 } from '@island.is/auth-nest-tools'
 
 import { NationalRegistryFamilyMember } from './models'

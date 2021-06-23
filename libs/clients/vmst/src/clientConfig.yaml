@@ -179,6 +179,82 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentPlansResponse'
+  '/users/{nationalRegistryId}/parental-leaves/periods/end-date':
+    get:
+      tags:
+        - ParentalLeave
+      operationId: ParentalLeave_GetPeriodEndDate
+      parameters:
+        - name: nationalRegistryId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          x-position: 2
+        - name: length
+          in: query
+          schema:
+            type: string
+            nullable: true
+          x-position: 3
+        - name: percentage
+          in: query
+          schema:
+            type: string
+            nullable: true
+          x-position: 4
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PeriodEndDateResponse'
+  '/users/{nationalRegistryId}/parental-leaves/periods/length':
+    get:
+      tags:
+        - ParentalLeave
+      operationId: ParentalLeave_GetPeriodLength
+      parameters:
+        - name: nationalRegistryId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          x-position: 2
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          x-position: 3
+        - name: percentage
+          in: query
+          schema:
+            type: string
+            nullable: true
+          x-position: 4
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PeriodLengthResponse'
   /pension-funds:
     get:
       tags:
@@ -287,10 +363,11 @@ components:
         rightsCode:
           type: string
           minLength: 1
-        attachment:
-          type: string
-          format: byte
+        attachments:
+          type: array
           nullable: true
+          items:
+            $ref: '#/components/schemas/Attachment'
     PaymentInfo:
       type: object
       additionalProperties: false
@@ -383,6 +460,20 @@ components:
           minLength: 1
         nationalRegistryId:
           type: string
+          minLength: 1
+    Attachment:
+      type: object
+      additionalProperties: false
+      required:
+        - attachmentType
+        - attachmentBytes
+      properties:
+        attachmentType:
+          type: string
+          minLength: 1
+        attachmentBytes:
+          type: string
+          format: byte
           minLength: 1
     PostParentalLeaveResponse:
       type: object
@@ -483,6 +574,20 @@ components:
         estimatedPayment:
           type: number
           format: float
+    PeriodEndDateResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        periodEndDate:
+          type: string
+          format: date-time
+    PeriodLengthResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        periodLength:
+          type: integer
+          format: int32
     PensionFundsResponse:
       type: object
       additionalProperties: false

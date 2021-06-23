@@ -9,7 +9,7 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
-import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
+import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
 import { dateFormat } from '@island.is/shared/constants'
 
 import { States as ApplicationStates } from '../../constants'

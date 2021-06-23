@@ -27,19 +27,26 @@ export const CurrentUserQuery = gql`
   }
 `
 
-const UserProvider: React.FC = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    Boolean(Cookies.get(CSRF_COOKIE_NAME)),
+// Setting authenticated to true forces current user query in tests
+interface Props {
+  authenticated?: boolean
+}
+
+const UserProvider: React.FC<Props> = ({ children, authenticated = false }) => {
+  const [isAuthenticated] = useState<boolean>(
+    authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME)),
   )
   const [user, setUser] = useState<User>()
 
-  const { data } = useQuery(CurrentUserQuery, { fetchPolicy: 'no-cache' })
+  const { data } = useQuery(CurrentUserQuery, {
+    fetchPolicy: 'no-cache',
+    skip: !isAuthenticated || Boolean(user),
+  })
   const loggedInUser = data?.currentUser
 
   useEffect(() => {
     if (loggedInUser && !user) {
       setUser(loggedInUser)
-      setIsAuthenticated(true)
     }
   }, [setUser, loggedInUser, user])
 

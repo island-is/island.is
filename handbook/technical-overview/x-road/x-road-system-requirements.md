@@ -39,11 +39,13 @@ Fyrir uppsetningu á X-Road þarf stýrikerfisnotanda með “sudo” réttindi.
 
 ### **IP tölur Miðjunar á Íslandi**
 
-| **IS IP Address Whitelist** | **IS - Production** | **IS test**       | **IS dev**       |
-| :-------------------------- | :------------------ | :---------------- | :--------------- |
-| Central Server              | 176.57.224.0/25     | 176.57.224.128/25 | 176.57.227.96/27 |
-| Central Monitoring Server   | 176.57.224.0/25     | 176.57.224.128/25 | 76.57.227.96/27  |
-| Managment Security Server   | 176.57.224.0/25     | 176.57.224.128/25 | 176.57.227.96/27 |
+| **IS IP Address Whitelist** | **IS - Production** | **IS test**        | **IS dev**        |
+| :-------------------------- | :------------------ | :----------------- | :---------------- |
+| Central Server              | 176.57.224.0/25     | 176.57.224.128/25  | 176.57.227.96/27  |
+| Managment Security Server   | 176.57.224.0/25     | 176.57.224.128/25  | 176.57.227.96/27  |
+| Central Monitoring Server   | **34.252.193.131**  | **34.253.108.248** | **3.250.245.108** |
+
+**Mikilvægt** er að X-Road öryggisþjónar stofnana og fyrirtækja hafi **opið fyrir umferð frá vaktþjónum í miðju Straumsins** - _Monitoring Security Server_ (sbr. mynd að ofan) - á portum **5500 og 5577**, svo sé hægt að sinna umhverfis- og aðgerðavöktun á Straumnum.
 
 ### **IP tölur og nöfn:**
 

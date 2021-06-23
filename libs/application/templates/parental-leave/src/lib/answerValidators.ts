@@ -15,12 +15,15 @@ import {
 import isEmpty from 'lodash/isEmpty'
 import has from 'lodash/has'
 
-import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { Period } from '../types'
 import { minPeriodDays, usageMaxMonths } from '../config'
 import { NO, YES } from '../constants'
 import { isValidEmail } from './isValidEmail'
 import { errorMessages } from './messages'
+import {
+  getApplicationAnswers,
+  getExpectedDateOfBirth,
+} from './parentalLeaveUtils'
 
 const EMPLOYER = 'employer'
 const FIRST_PERIOD_START = 'firstPeriodStart'
@@ -79,12 +82,15 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const buildError = buildValidationError(PERIODS, newPeriodIndex)
     const expectedDateOfBirth = getExpectedDateOfBirth(application)
     const dob = expectedDateOfBirth as string
-    const answeredPeriods = application.answers.periods as Period[]
+    const { periods: answeredPeriods } = getApplicationAnswers(
+      application.answers,
+    )
     const lastAnsweredPeriod = answeredPeriods?.[answeredPeriods.length - 1]
 
     if (isEmpty(period)) {
       let message = errorMessages.periodsStartDateRequired
       let field = 'startDate'
+
       if (
         (!answeredPeriods &&
           application.answers.firstPeriodStart &&
@@ -95,7 +101,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
         field = 'endDate'
         message = errorMessages.periodsEndDateRequired
       }
-      return buildError(message, field)
+
+      if (!lastAnsweredPeriod?.startDate) {
+        return buildError(message, field)
+      }
     }
 
     if (period?.startDate !== undefined) {
@@ -217,7 +226,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       const field = 'ratio'
       const { startDate, endDate, ratio } = period
       const diff = differenceInDays(parseISO(endDate), parseISO(startDate))
-      const diffWithRatio = (diff * ratio) / 100
+      const diffWithRatio = (diff * Number(ratio)) / 100
 
       // We want to make sure the ratio doesn't affect the minimum number of days selected
       if (diffWithRatio < minPeriodDays) {

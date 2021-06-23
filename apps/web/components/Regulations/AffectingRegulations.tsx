@@ -2,17 +2,12 @@ import * as s from './RegulationDisplay.treat'
 
 import React, { Fragment, memo } from 'react'
 import { Link } from '@island.is/island-ui/core'
-import { RegulationMaybeDiff } from './Regulations.types'
+import { interpolate, prettyName, useDomid } from '@island.is/regulations'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import uniqBy from 'lodash/uniqBy'
-import {
-  interpolate,
-  prettyName,
-  useDomid,
-  useRegulationLinkResolver,
-} from './regulationUtils'
+import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { useDateUtils } from './regulationUtils'
 
 export type AffectingRegulationsProps = {
   regulation: RegulationMaybeDiff

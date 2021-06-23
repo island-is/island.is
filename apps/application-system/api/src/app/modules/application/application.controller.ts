@@ -38,13 +38,13 @@ import {
   ApplicationStatus,
   CustomTemplateFindQuery,
 } from '@island.is/application/core'
-import { Unwrap, Locale } from '@island.is/shared/types'
+import type { Unwrap, Locale } from '@island.is/shared/types'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   Scopes,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import {

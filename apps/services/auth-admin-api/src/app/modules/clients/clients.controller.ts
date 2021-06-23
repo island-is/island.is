@@ -24,16 +24,16 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   Scopes,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { environment } from '../../../environments/environment'
+import { environment } from '../../../environments/'
 
 const namespace = `${environment.audit.defaultNamespace}/clients`
 

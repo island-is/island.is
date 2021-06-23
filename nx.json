@@ -27,6 +27,12 @@
           "schemas/codegen"
         ]
       }
+    },
+    "docker-test": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": []
+      }
     }
   },
   "projects": {
@@ -70,6 +76,9 @@
     "api-domains-application": {
       "tags": []
     },
+    "api-domains-auth": {
+      "tags": []
+    },
     "api-domains-cms": {
       "tags": []
     },
@@ -106,10 +115,16 @@
     "api-domains-icelandic-names-registry": {
       "tags": []
     },
+    "api-domains-license-service": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
     "api-domains-national-registry-x-road": {
+      "tags": []
+    },
+    "api-domains-party-letter-registry": {
       "tags": []
     },
     "api-domains-regulations": {
@@ -119,6 +134,9 @@
       "tags": []
     },
     "api-domains-syslumenn": {
+      "tags": []
+    },
+    "api-domains-temporary-voter-registry": {
       "tags": []
     },
     "api-domains-translations": {
@@ -159,6 +177,9 @@
       "tags": []
     },
     "application-templates-children-residence-change": {
+      "tags": []
+    },
+    "application-templates-complaints-to-althingi-ombudsman": {
       "tags": []
     },
     "application-templates-data-protection-complaint": {
@@ -246,6 +267,10 @@
     "cache": {
       "tags": []
     },
+    "clients-auth-public-api": {
+      "implicitDependencies": ["services-auth-public-api"],
+      "tags": []
+    },
     "clients-document-provider": {
       "tags": []
     },
@@ -313,6 +338,24 @@
       "tags": []
     },
     "file-storage": {
+      "tags": []
+    },
+    "financial-aid-api": {
+      "tags": []
+    },
+    "financial-aid-auth": {
+      "tags": []
+    },
+    "financial-aid-backend": {
+      "tags": []
+    },
+    "financial-aid-shared": {
+      "tags": []
+    },
+    "financial-aid-web-osk": {
+      "tags": []
+    },
+    "financial-aid-web-veita": {
       "tags": []
     },
     "gjafakort-api": {
@@ -431,6 +474,9 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-validators": {
+      "tags": []
+    },
     "nova-sms": {
       "tags": []
     },
@@ -441,6 +487,9 @@
       "tags": []
     },
     "reference-next-app": {
+      "tags": []
+    },
+    "regulations": {
       "tags": []
     },
     "service-portal": {
@@ -489,6 +538,9 @@
     "service-portal-eligibility": {
       "tags": []
     },
+    "service-portal-endorsements": {
+      "tags": []
+    },
     "service-portal-family": {
       "tags": []
     },
@@ -502,6 +554,9 @@
       "tags": []
     },
     "service-portal-icelandic-names-registry": {
+      "tags": []
+    },
+    "service-portal-licenses": {
       "tags": []
     },
     "service-portal-settings-access-control": {

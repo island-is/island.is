@@ -4,7 +4,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import { environment } from '../../../environments/environment'
+import { environment } from '../../../environments/'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('claims')

@@ -61,7 +61,7 @@ const ApiScopeResourceForm: React.FC<Props> = (props) => {
   const save = async (data: ApiResourceScopeDTO) => {
     // Remove Api Resource from Api Resource Scope
     if (data.apiResourceName === 'null') {
-      const response = await ResourcesService.DeleteApiResourceScopeByScopeName(
+      const response = await ResourcesService.deleteApiResourceScopeByScopeName(
         props.apiScope.name,
       )
       if (response) {

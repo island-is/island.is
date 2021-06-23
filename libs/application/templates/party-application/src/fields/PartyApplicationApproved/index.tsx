@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { Approved } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 
-const PartyApplicationApproved: FC<FieldBaseProps> = () => {
+const PartyApplicationApproved: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -47,7 +47,8 @@ const PartyApplicationApproved: FC<FieldBaseProps> = () => {
         justifyContent="flexEnd"
         alignItems="flexEnd"
         height="full"
-        marginTop={10}
+        marginTop={8}
+        marginBottom={10}
       >
         <svg
           width="100%"

@@ -61,6 +61,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'person',
         },
+        children: [
+          // Medmaeli
+          {
+            name: defineMessage({
+              id: 'service.portal:endorsements',
+              defaultMessage: 'Meðmæli',
+            }),
+            path: ServicePortalPath.Endorsements,
+          },
+        ],
       },
       {
         name: defineMessage({
@@ -163,6 +173,18 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           type: 'outline',
           icon: 'fileTrayFull',
+        },
+      },
+
+      {
+        name: defineMessage({
+          id: 'service.portal:licenses',
+          defaultMessage: 'Skilríki',
+        }),
+        path: ServicePortalPath.LicensesRoot,
+        icon: {
+          type: 'outline',
+          icon: 'business',
         },
       },
 

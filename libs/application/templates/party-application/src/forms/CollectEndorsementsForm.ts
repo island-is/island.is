@@ -8,12 +8,15 @@ import {
   buildFileUploadField,
   Form,
   FormModes,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
+import Logo from '../assets/Logo'
 
 export const CollectEndorsementsForm: Form = buildForm({
   id: 'CollectEndorsement',
   title: m.constituencySection.title,
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -28,34 +31,6 @@ export const CollectEndorsementsForm: Form = buildForm({
               id: 'endorsements',
               title: m.endorsementList.title,
               component: 'EndorsementList',
-            }),
-            buildCheckboxField({
-              id: 'includePapers',
-              title: '',
-              strong: true,
-              options: [
-                {
-                  value: 'yes',
-                  label: m.collectEndorsements.includePapers,
-                },
-              ],
-              defaultValue: '',
-            }),
-            buildCustomField({
-              id: 'fileUploadDisclaimer',
-              title: m.collectEndorsements.title,
-              component: 'FileUploadDisclaimer',
-            }),
-            buildFileUploadField({
-              condition: (answer) => answer.includePapers !== undefined,
-              id: 'documents',
-              title: '',
-              introduction: '',
-              maxSize: 10000000,
-              uploadAccept: '.xlsx',
-              uploadHeader: m.collectEndorsements.fileUploadHeader,
-              uploadDescription: m.collectEndorsements.uploadDescription,
-              uploadButtonLabel: m.collectEndorsements.uploadButtonLabel,
             }),
           ],
         }),
@@ -93,7 +68,7 @@ export const CollectEndorsementsForm: Form = buildForm({
               placement: 'footer',
               actions: [
                 {
-                  event: 'SUBMIT',
+                  event: DefaultEvents.SUBMIT,
                   name: m.overviewSection.submitApplication,
                   type: 'primary',
                 },

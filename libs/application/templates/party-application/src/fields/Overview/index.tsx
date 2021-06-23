@@ -4,7 +4,9 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Inline, Input, Tooltip } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { PartyApplicationAnswers } from '../../lib/PartyApplicationTemplate'
+import { SchemaFormValues } from '../../lib/dataSchema'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
+import { useEndorsements } from '../../hooks/fetch-endorsements'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -13,7 +15,23 @@ export interface Props extends FieldBaseProps {
 
 const Overview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const answers = (application as any).answers as PartyApplicationAnswers
+  const { externalData } = application
+  const answers = application.answers as SchemaFormValues
+  const endorsementListId = (externalData?.createEndorsementList.data as any).id
+  const { endorsements: endorsementHook } = useEndorsements(
+    endorsementListId,
+    false,
+  )
+
+  //find selected endorsements from the endorsement system and find how many of them are invalidated
+  const endorsementsWithWarning = () => {
+    const intersectingEndorsements = endorsementHook?.filter((e: any) => {
+      return answers.endorsements?.indexOf(e.id) !== -1
+    })
+
+    return intersectingEndorsements?.filter((e) => e.meta.invalidated).length
+  }
+
   const { register } = useFormContext()
 
   return (
@@ -25,7 +43,13 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5">
           {formatMessage(m.overviewSection.responsiblePerson)}
         </Text>
-        <Text>{'Örvar Þór Sigurðsson'}</Text>
+        <Text>
+          {
+            (externalData.nationalRegistry?.data as {
+              fullName?: string
+            })?.fullName
+          }
+        </Text>
       </Box>
       <Box marginBottom={3}>
         <Text variant="h5">{formatMessage(m.overviewSection.partyType)}</Text>
@@ -35,13 +59,18 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5">
           {formatMessage(m.overviewSection.constituency)}
         </Text>
-        <Text>{answers.constituency}</Text>
+        <Text>
+          {
+            constituencyMapper[answers.constituency as EndorsementListTags]
+              .region_name
+          }
+        </Text>
       </Box>
       <Box marginBottom={3}>
         <Text variant="h5">
           {formatMessage(m.overviewSection.signatureCount)}
         </Text>
-        <Text>{answers.endorsements ? answers.endorsements.length : 0}</Text>
+        <Text>{answers.endorsements?.length ?? 0}</Text>
       </Box>
       <Box marginBottom={3}>
         <Inline space={2}>
@@ -56,22 +85,19 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
             />
           </Box>
         </Inline>
-        <Text>
-          {answers.endorsementsWithWarning
-            ? answers.endorsementsWithWarning.length
-            : 0}
-        </Text>
+        <Text>{endorsementsWithWarning()}</Text>
       </Box>
-      <Box marginBottom={3}>
+      <Box marginBottom={3} width="half">
         <Text variant="h5" marginBottom={2}>
           {formatMessage(m.overviewSection.emailLabel)}
         </Text>
         <Input
-          id="email"
-          name="email"
+          id="responsiblePersonEmail"
+          name="responsiblePersonEmail"
           backgroundColor="blue"
           label={formatMessage(m.overviewSection.emailPlaceholder)}
           ref={register}
+          defaultValue=""
         />
       </Box>
     </>

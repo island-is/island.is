@@ -8,6 +8,7 @@ import {
   buildSubmitField,
   Form,
   FormModes,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
@@ -16,7 +17,7 @@ export const CollectEndorsements: Form = buildForm({
   id: 'Collect endorsements',
   title: m.endorsementForm.title,
   logo: Logo,
-  mode: FormModes.REVIEW,
+  mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'endorsementSection',
@@ -30,35 +31,6 @@ export const CollectEndorsements: Form = buildForm({
               id: 'endorsements',
               title: m.collectEndorsements.title,
               component: 'EndorsementList',
-            }),
-
-            buildCheckboxField({
-              id: 'includePapers',
-              title: '',
-              strong: true,
-              options: [
-                {
-                  value: 'yes',
-                  label: m.fileUpload.includePapers,
-                },
-              ],
-              defaultValue: () => '',
-            }),
-            buildCustomField({
-              id: 'fileUploadDisclaimer',
-              title: m.collectEndorsements.title,
-              component: 'FileUploadDisclaimer',
-            }),
-            buildFileUploadField({
-              condition: (answer) => answer.includePapers !== undefined,
-              id: 'documents',
-              title: '',
-              introduction: '',
-              maxSize: 10000000,
-              uploadAccept: '.xlsx',
-              uploadHeader: m.fileUpload.fileUploadHeader,
-              uploadDescription: m.fileUpload.uploadDescription,
-              uploadButtonLabel: m.fileUpload.uploadButtonLabel,
             }),
           ],
         }),
@@ -84,7 +56,7 @@ export const CollectEndorsements: Form = buildForm({
               title: m.overview.title,
               actions: [
                 {
-                  event: 'SUBMIT',
+                  event: DefaultEvents.SUBMIT,
                   name: m.overview.submitButton,
                   type: 'primary',
                 },

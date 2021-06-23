@@ -22,13 +22,18 @@ interface Middleware {
  * Middleware that adds user authorization and information to OpenAPI Client requests.
  */
 export class AuthMiddleware implements Middleware {
-  constructor(private auth: Auth) {}
+  constructor(private auth: Auth, private forwardUserInfo: boolean = true) {}
 
   async pre(context: RequestContext) {
     context.init.headers = Object.assign({}, context.init.headers, {
       authorization: this.auth.authorization,
-      'User-Agent': this.auth.userAgent,
-      'X-Real-IP': this.auth.ip,
     })
+
+    if (this.forwardUserInfo) {
+      context.init.headers = Object.assign({}, context.init.headers, {
+        'User-Agent': this.auth.userAgent,
+        'X-Real-IP': this.auth.ip,
+      })
+    }
   }
 }

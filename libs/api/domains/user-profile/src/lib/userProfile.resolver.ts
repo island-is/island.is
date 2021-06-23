@@ -7,11 +7,11 @@ import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { UserProfile } from './userProfile.model'
 import { ConfirmResponse, Response } from './response.model'
 import { UserProfileService } from './userProfile.service'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 

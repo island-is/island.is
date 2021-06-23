@@ -2,13 +2,13 @@ import React, { FC } from 'react'
 
 import { Application } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-
 import { useLocale } from '@island.is/localization'
 
 import Timeline from '../components/Timeline'
-import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
-import { Period } from '../../types'
-
+import {
+  formatPeriods,
+  getExpectedDateOfBirth,
+} from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
 interface ReviewScreenProps {
@@ -19,7 +19,6 @@ interface ReviewScreenProps {
 
 const EditPeriodsReview: FC<ReviewScreenProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-
   const dob = getExpectedDateOfBirth(application)
   const dobDate = dob ? new Date(dob) : null
 
@@ -36,12 +35,7 @@ const EditPeriodsReview: FC<ReviewScreenProps> = ({ application }) => {
               titleSmall={formatMessage(
                 parentalLeaveFormMessages.shared.dateOfBirthTitle,
               )}
-              // TODO: Once we have the data, add the otherParentPeriods here.
-              //  periods={formatPeriods(
-              //   application.answers.periods as Period[],
-              //   otherParentPeriods,
-              // )}
-              periods={formatPeriods(application.answers.periods as Period[])}
+              periods={formatPeriods(application, formatMessage)}
             />
           )) || (
             <Text>

@@ -58,3 +58,5 @@ export const configureMock = (user?: MockUser) => {
     },
   } as unknown) as UserManager
 }
+
+export { User, UserManager }

@@ -1,9 +1,15 @@
 import {
+  Year,
+  getParams,
+  prettyName,
+  isPlural,
+  interpolate,
+} from '@island.is/regulations'
+import {
   RegulationLawChapterTree,
   RegulationMinistryList,
   RegulationSearchResults,
-  Year,
-} from '../../components/Regulations/Regulations.types'
+} from '@island.is/regulations/web'
 import { RegulationHomeTexts } from '../../components/Regulations/RegulationTexts.types'
 
 import React, { useEffect, useState, useRef } from 'react'
@@ -28,12 +34,8 @@ import {
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationsSearchSection } from '../../components/Regulations/RegulationsSearchSection'
 import {
-  getParams,
-  prettyName,
   RegulationSearchFilters,
   useRegulationLinkResolver,
-  isPlural,
-  interpolate,
 } from '../../components/Regulations/regulationUtils'
 import { getUiTexts } from '../../components/Regulations/getUiTexts'
 import {
@@ -82,13 +84,14 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
   const txt = useNamespace(props.texts)
   const anchor = useRef<HTMLDivElement>(null)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
-  const totalItems = props.regulations?.totalItems ?? 0
-  const stepSize = props.regulations?.perPage ?? 18
-  const totalPages = props.regulations?.totalPages ?? 0
-  const [currentPage, setCurrentPage] = useState(props.regulations.page ?? 1)
+  const regulations = props.regulations
+  const totalItems = regulations.totalItems || 0
+  const stepSize = regulations.perPage || 18
+  const totalPages = regulations.totalPages || 1
+  const [currentPage, setCurrentPage] = useState(regulations.page || 1)
 
   useEffect(() => {
-    setCurrentPage(props.regulations.page ?? 1)
+    setCurrentPage(regulations.page || 1)
   }, [totalItems])
 
   const breadCrumbs = (
@@ -112,6 +115,11 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
           paddingBottom: [4, 4, 8],
         }
       : {}
+
+  const resultItems = props.regulations?.data || []
+  const firstResultOrd = (currentPage - 1) * stepSize + 1
+  const lastResultOrd = firstResultOrd - 1 + resultItems.length
+  const hasPaging = totalItems > stepSize
 
   return (
     <SubpageLayout
@@ -160,16 +168,16 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                           ),
                           { count: totalItems.toLocaleString('is') },
                         )}
-                        , birti {(currentPage - 1) * stepSize + 1} -{' '}
-                        {(currentPage - 1) * stepSize + stepSize}
+                        {hasPaging &&
+                          `, birti ${firstResultOrd} – ${lastResultOrd}`}
                       </Text>
                     )}
                   </GridColumn>
                 </GridRow>
 
                 <GridRow>
-                  {props.regulations?.data?.length > 0 &&
-                    props.regulations.data.map((reg, i) => (
+                  {resultItems.length > 0 &&
+                    resultItems.map((reg, i) => (
                       <GridColumn
                         key={reg.name}
                         span={['1/1', '1/2', '1/2', '1/3']}
@@ -190,7 +198,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                       </GridColumn>
                     ))}
                 </GridRow>
-                {currentPage && totalItems > stepSize && (
+                {hasPaging && (
                   <Box marginTop={3}>
                     <Box marginTop={0} marginBottom={2} textAlign="center">
                       Síða {currentPage} af {totalPages}
@@ -267,7 +275,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
       .query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
         query: GET_SUBPAGE_HEADER_QUERY,
         variables: {
-          input: { id: 'reglugerdir', lang: locale },
+          input: { id: 'regulations-intro', lang: locale },
         },
       })
       .then((res) => res.data?.getSubpageHeader),

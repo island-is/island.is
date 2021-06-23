@@ -86,6 +86,7 @@ const ApplicationList = ({ applications, onClick }: Props) => {
         if (!slug) {
           return null
         }
+
         return (
           <ActionCard
             key={`${application.id}-${index}`}

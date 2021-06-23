@@ -3,7 +3,7 @@ import {
   FieldBaseProps,
   DateField,
   formatText,
-  MaybeWithApplication,
+  MaybeWithApplicationAndField,
   Application,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
@@ -31,37 +31,45 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
   const { formatMessage, lang } = useLocale()
 
   const computeMinDate = (
-    maybeMinDate: MaybeWithApplication<Date>,
-    application: Application,
+    maybeMinDate: MaybeWithApplicationAndField<Date>,
+    memoApplication: Application,
+    memoField: DateField,
   ) => {
     if (typeof maybeMinDate === 'function') {
-      return maybeMinDate(application)
+      return maybeMinDate(memoApplication, memoField)
     }
 
     return maybeMinDate
   }
 
   const computeExcludeDates = (
-    maybeExcludeDates: MaybeWithApplication<Date[]>,
-    application: Application,
+    maybeExcludeDates: MaybeWithApplicationAndField<Date[]>,
+    memoApplication: Application,
+    memoField: DateField,
   ) => {
     if (typeof maybeExcludeDates === 'function') {
-      return maybeExcludeDates(application)
+      return maybeExcludeDates(memoApplication, memoField)
     }
 
     return maybeExcludeDates
   }
 
   const finalMinDate = useMemo(
-    () => computeMinDate(minDate as MaybeWithApplication<Date>, application),
-    [minDate, application],
+    () =>
+      computeMinDate(
+        minDate as MaybeWithApplicationAndField<Date>,
+        application,
+        field,
+      ),
+    [minDate, application, field],
   )
 
   const finalExcludeDates = useMemo(
     () =>
       computeExcludeDates(
-        excludeDates as MaybeWithApplication<Date[]>,
+        excludeDates as MaybeWithApplicationAndField<Date[]>,
         application,
+        field,
       ),
     [excludeDates, application],
   )

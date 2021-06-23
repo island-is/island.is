@@ -5,7 +5,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectModel } from '@nestjs/sequelize'
 import { GrantDto } from '../entities/dto/grant.dto'
 import { WhereOptions } from 'sequelize/types'
@@ -51,7 +52,7 @@ export class GrantsService {
 
     this.logger.debug(`Finding all grants with filter `, whereOptions)
 
-    return await this.grantModel.findAll({
+    return this.grantModel.findAll({
       where: whereOptions,
     })
   }
@@ -64,7 +65,7 @@ export class GrantsService {
       throw new BadRequestException('Key must be provided')
     }
 
-    return await this.grantModel.findByPk(key)
+    return this.grantModel.findByPk(key)
   }
 
   /** Removes a grant by subjectId and other properties if provided */
@@ -94,7 +95,7 @@ export class GrantsService {
 
     this.logger.debug(`Removing grants with filter `, whereOptions)
 
-    return await this.grantModel.destroy({
+    return this.grantModel.destroy({
       where: whereOptions,
     })
   }
@@ -107,7 +108,7 @@ export class GrantsService {
       throw new BadRequestException('Key must be provided')
     }
 
-    return await this.grantModel.destroy({
+    return this.grantModel.destroy({
       where: {
         key: key,
       },
@@ -127,9 +128,9 @@ export class GrantsService {
     const existing = await this.grantModel.findByPk(key)
 
     if (!existing) {
-      throw new NotFoundException('Grant not found')
+      return this.createAsync(grant)
     }
 
-    return await existing.update({ ...grant })
+    return existing.update({ ...grant })
   }
 }

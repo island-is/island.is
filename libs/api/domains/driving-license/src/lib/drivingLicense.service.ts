@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   DrivingLicense,
   DrivingLicenseType,

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { EndorsementMetaField } from '../endorsementMetadata/endorsementMetadata.service'
+import { EndorsementMetaField } from '../endorsementMetadata/types'
 import { MinAgeValidatorService } from './validators/minAge/minAgeValidator.service'
 import { MinAgeByDateValidatorService } from './validators/minAgeByDate/minAgeByDateValidator.service'
 import { UniqueWithinTagsValidatorService } from './validators/uniqueWithinTags/uniqueWithinTagsValidator.service'

@@ -1,6 +1,7 @@
 import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 
 import { BackendAPI } from './services'
 import { IcelandicName } from './models/icelandicName.model'

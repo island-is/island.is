@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import { Auth, User, AuthMiddleware } from '@island.is/auth-nest-tools'
+import type { Auth, User } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 
 import { ApplicationsApi } from '../../gen/fetch'

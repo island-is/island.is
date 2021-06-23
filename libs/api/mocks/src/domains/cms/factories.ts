@@ -10,7 +10,6 @@ import {
   FrontpageSlider,
   GenericPage,
   GroupedMenu,
-  Homepage,
   Html,
   Image,
   LifeEventPage,
@@ -189,11 +188,6 @@ export const featured = factory<Featured>({
   thing: () => referenceLink(),
   title: ({ thing }) => title(),
   attention: () => faker.random.boolean(),
-})
-
-export const homepage = factory<Homepage>({
-  id: () => faker.random.uuid(),
-  featuredThings: () => featured.list(3),
 })
 
 export const genericPage = factory<GenericPage>({

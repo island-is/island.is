@@ -12,7 +12,8 @@ import {
   EndorsementControllerBulkCreateRequest,
   EndorsementControllerFindAllRequest,
   EndorsementControllerFindByUserRequest,
-  EndorsementListControllerFindByTagRequest,
+  EndorsementListControllerFindByTagsRequest,
+  EndorsementListControllerOpenRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
@@ -94,11 +95,11 @@ export class EndorsementSystemService {
 
   // Endorsement list endpoints
   async endorsementListControllerFindLists(
-    input: EndorsementListControllerFindByTagRequest,
+    input: EndorsementListControllerFindByTagsRequest,
     auth: Auth,
   ) {
     return await this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerFindByTag(input)
+      .endorsementListControllerFindByTags(input)
       .catch(handleError)
   }
 
@@ -123,6 +124,15 @@ export class EndorsementSystemService {
   ) {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerClose(input)
+      .catch(handleError)
+  }
+
+  async endorsementListControllerOpen(
+    input: EndorsementListControllerOpenRequest,
+    auth: Auth,
+  ) {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerOpen(input)
       .catch(handleError)
   }
 

@@ -1,6 +1,6 @@
 import * as s from './RegulationDisplay.treat'
 
-import { RegName } from './Regulations.types'
+import { RegName, prettyName } from '@island.is/regulations'
 import { RegulationPageTexts } from './RegulationTexts.types'
 
 import React, { useRef } from 'react'
@@ -13,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
-import { prettyName, useRegulationLinkResolver } from './regulationUtils'
+import { useRegulationLinkResolver } from './regulationUtils'
 import { useIntersection } from 'react-use'
 
 export type RegulationLayoutProps = {

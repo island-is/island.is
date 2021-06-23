@@ -36,7 +36,7 @@ export const PartyLetterSchema = z.object({
     .string()
     .email(m.validationMessages.emailInvalid.defaultMessage as string),
   documents: z.array(FileSchema).optional(),
-  endorsements: z.array(z.string()), // todo validate that endorsements are >= 300
 })
+
 export type File = z.TypeOf<typeof FileSchema>
 export type PartyLetter = z.TypeOf<typeof PartyLetterSchema>

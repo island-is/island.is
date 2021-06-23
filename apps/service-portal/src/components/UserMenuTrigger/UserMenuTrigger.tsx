@@ -1,5 +1,4 @@
 import React, { FC, useRef } from 'react'
-import { useClickAway } from 'react-use'
 import { Box, Button, Hidden } from '@island.is/island-ui/core'
 import { useAuth } from '@island.is/auth/react'
 
@@ -29,15 +28,8 @@ const UserMenuTrigger: FC<{}> = () => {
   const handleClick = () =>
     setMenuState(userMenuState === 'open' ? 'closed' : 'open')
 
-  useClickAway(ref, () =>
-    userMenuState === 'open' ? setMenuState('closed') : null,
-  )
-
   const { userInfo } = useAuth()
 
-  useClickAway(ref, () =>
-    userMenuState === 'open' ? setMenuState('closed') : null,
-  )
   return (
     <Box display="flex" position="relative" height="full" ref={ref}>
       <Hidden below="md">

@@ -7,7 +7,8 @@ import { createHash } from 'crypto'
 import { Injectable, Inject } from '@nestjs/common'
 import { ApiProperty } from '@nestjs/swagger'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 export const SIGNING_OPTIONS = 'SIGNING_OPTIONS'
 

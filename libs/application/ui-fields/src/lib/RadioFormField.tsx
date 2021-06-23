@@ -20,6 +20,7 @@ import { getDefaultValue } from '../getDefaultValue'
 interface Props extends FieldBaseProps {
   field: RadioField
 }
+
 const RadioFormField: FC<Props> = ({
   showFieldName = false,
   field,
@@ -37,15 +38,15 @@ const RadioFormField: FC<Props> = ({
   } = field
   const { formatMessage } = useLocale()
 
-  const finalOptions = useMemo(() => buildFieldOptions(options, application), [
-    options,
-    application,
-  ])
+  const finalOptions = useMemo(
+    () => buildFieldOptions(options, application, field),
+    [options, application],
+  )
 
   return (
-    <Box>
+    <Box paddingTop={field.space}>
       {showFieldName && (
-        <Text variant={'h4'}>
+        <Text variant="h4" as="h4">
           {formatText(title, application, formatMessage)}
         </Text>
       )}
@@ -78,6 +79,7 @@ const RadioFormField: FC<Props> = ({
               ),
             }),
           }))}
+          onSelect={field.onSelect}
         />
       </Box>
     </Box>

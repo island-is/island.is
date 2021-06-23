@@ -2,7 +2,7 @@ import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-import { NO, YES, StartDateOptions, MANUAL } from '../constants'
+import { NO, YES, StartDateOptions, MANUAL, SPOUSE } from '../constants'
 import { errorMessages } from './messages'
 
 const PersonalAllowance = z
@@ -36,7 +36,14 @@ export const dataSchema = z.object({
   personalAllowance: PersonalAllowance,
   personalAllowanceFromSpouse: PersonalAllowance,
   payments: z.object({
-    bank: z.string().nonempty(),
+    bank: z.string().refine(
+      (b) => {
+        const bankAccount = b.toString()
+
+        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+      },
+      { params: errorMessages.bank },
+    ),
     pensionFund: z.string(),
     privatePensionFund: z.string().optional(),
     privatePensionFundPercentage: z.enum(['2', '4', '']).optional(),
@@ -47,12 +54,20 @@ export const dataSchema = z.object({
   employerInformation: z.object({ email: z.string().email() }).optional(),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
-    requestDays: z.number().optional(),
+    requestDays: z
+      .string()
+      .refine((v) => !isNaN(Number(v)))
+      .optional(),
   }),
-  giveRights: z.object({
-    isGivingRights: z.enum([YES, NO]),
-    giveDays: z.number().optional(),
-  }),
+  giveRights: z
+    .object({
+      isGivingRights: z.enum([YES, NO]),
+      giveDays: z
+        .string()
+        .refine((v) => !isNaN(Number(v)))
+        .optional(),
+    })
+    .optional(),
   singlePeriod: z.enum([YES, NO]),
   firstPeriodStart: z.enum([
     StartDateOptions.ACTUAL_DATE_OF_BIRTH,
@@ -60,7 +75,7 @@ export const dataSchema = z.object({
     StartDateOptions.SPECIFIC_DATE,
   ]),
   confirmLeaveDuration: z.enum(['duration', 'specificDate']),
-  otherParent: z.enum(['spouse', NO, MANUAL]).optional(),
+  otherParent: z.enum([SPOUSE, NO, MANUAL]).optional(),
   otherParentName: z.string().optional(),
   otherParentId: z
     .string()
@@ -69,7 +84,9 @@ export const dataSchema = z.object({
       params: errorMessages.otherParentId,
     }),
   otherParentRightOfAccess: z.enum([YES, NO]).optional(),
+  otherParentEmail: z.string().email(),
   usePersonalAllowance: z.enum([YES, NO]),
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
 })
+
 export type SchemaFormValues = z.infer<typeof dataSchema>

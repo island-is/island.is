@@ -132,6 +132,7 @@ const ApiScopeGroupList: React.FC = () => {
                   <tr>
                     <th>{localization.columns['groupId'].headerText}</th>
                     <th>{localization.columns['name'].headerText}</th>
+                    <th>{localization.columns['displayName'].headerText}</th>
                     <th>{localization.columns['description'].headerText}</th>
                     <th colSpan={2}></th>
                   </tr>
@@ -142,6 +143,7 @@ const ApiScopeGroupList: React.FC = () => {
                       <tr key={group.id}>
                         <td>{group.id}</td>
                         <td>{group.name}</td>
+                        <td>{group.displayName}</td>
                         <td>{group.description}</td>
                         <td className="api-scope-group-list__table__button">
                           <Link

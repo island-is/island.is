@@ -47,6 +47,7 @@ describe('ui-shell-utils', () => {
           title: 'Repeater',
           children: [],
         })
+
         const screen: RepeaterScreen = {
           sectionIndex: 0,
           subSectionIndex: 0,
@@ -58,12 +59,14 @@ describe('ui-shell-utils', () => {
           extractAnswersToSubmitFromScreen(currentAnswers, screen),
         ).toEqual({})
       })
+
       it('when the current screen is an external data provider', () => {
         const externalDataProvider = buildExternalDataProvider({
           id: 'arrayField',
           title: 'Repeater',
           dataProviders: [],
         })
+
         const screen: ExternalDataProviderScreen = {
           sectionIndex: 0,
           subSectionIndex: 0,
@@ -74,11 +77,13 @@ describe('ui-shell-utils', () => {
           extractAnswersToSubmitFromScreen(currentAnswers, screen),
         ).toEqual({})
       })
+
       it('when the current screen includes a question that is not part of the passed in form value', () => {
         const textField = buildTextField({
           id: 'notPartOfAnything',
           title: 'Question?',
         })
+
         const screen: FieldDef = buildFieldDef(textField)
 
         expect(
@@ -86,6 +91,7 @@ describe('ui-shell-utils', () => {
         ).toEqual({})
       })
     })
+
     describe('should only return the answers that are part of the screen', () => {
       it('when it is a single field', () => {
         const textField = buildTextField({ id: 'theField', title: 'Question?' })
@@ -103,6 +109,7 @@ describe('ui-shell-utils', () => {
           id: 'nestedField.someStuff',
           title: 'Question?',
         })
+
         const screen: FieldDef = buildFieldDef(textField)
 
         expect(
@@ -111,24 +118,29 @@ describe('ui-shell-utils', () => {
           nestedField: { someStuff: 'sick' },
         })
       })
+
       it('when the screen is a multifield', () => {
         const name = 'Question?'
+
         const children = [
           buildTextField({ id: 'theField', title: name }),
           buildTextField({ id: 'nestedField.someStuff', title: name }),
           buildTextField({ id: 'nestedField.yetMore', title: name }),
         ]
+
         const multiField = buildMultiField({
           id: 'someId',
           title: name,
           children,
         })
+
         const screen: MultiFieldScreen = {
           sectionIndex: 0,
           subSectionIndex: 0,
           ...multiField,
           children: children.map(buildFieldDef),
         }
+
         expect(
           extractAnswersToSubmitFromScreen(currentAnswers, screen),
         ).toEqual({
@@ -140,6 +152,7 @@ describe('ui-shell-utils', () => {
         })
       })
     })
+
     describe('repeater children', () => {
       it('should return the whole array', () => {
         const screenA: FieldDef = buildFieldDef(
@@ -148,23 +161,27 @@ describe('ui-shell-utils', () => {
             title: 'Question?',
           }),
         )
+
         const screen0B: FieldDef = buildFieldDef(
           buildTextField({
             id: 'arrayField[0].b',
             title: 'Question?',
           }),
         )
+
         expect(
           extractAnswersToSubmitFromScreen(currentAnswers, screenA),
         ).toEqual({
           arrayField: [{ a: 1, b: 2, c: 3 }, { a: 4 }],
         })
+
         expect(
           extractAnswersToSubmitFromScreen(currentAnswers, screen0B),
         ).toEqual({
           arrayField: [{ a: 1, b: 2, c: 3 }, { a: 4 }],
         })
       })
+
       it('should work for multifields that are part of repeaters', () => {
         const children = [
           buildTextField({
@@ -176,11 +193,13 @@ describe('ui-shell-utils', () => {
             title: 'Question b?',
           }),
         ]
+
         const multiField = buildMultiField({
           id: 'anyMultifieldId',
           title: 'multi',
           children,
         })
+
         const screen: MultiFieldScreen = {
           sectionIndex: 0,
           subSectionIndex: 0,
@@ -188,6 +207,7 @@ describe('ui-shell-utils', () => {
           ...multiField,
           children: children.map(buildFieldDef),
         }
+
         expect(
           extractAnswersToSubmitFromScreen(currentAnswers, screen),
         ).toEqual({

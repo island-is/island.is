@@ -1,62 +1,84 @@
 import React, { FC } from 'react'
 import { Application } from '@island.is/application/core'
-import { Box, Table as T, Tooltip } from '@island.is/island-ui/core'
+import { Box, Table as T, Tooltip, Text, Icon } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import format from 'date-fns/format'
+import { format as formatKennitala } from 'kennitala'
+import { Endorsement } from '../../types/schema'
 
-export interface Signature {
-  date: string
-  name: string
-  nationalRegistry: string
-  address: string
-  hasWarning?: boolean
+const formatDate = (date: string) => {
+  try {
+    return format(new Date(date), 'dd.MM.yyyy')
+  } catch {
+    return date
+  }
 }
 
 interface EndorsementTableProps {
   application: Application
-  signatures?: Signature[]
+  endorsements?: Endorsement[]
 }
 
-const EndorsementTable: FC<EndorsementTableProps> = ({ signatures }) => {
+const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
   const { formatMessage } = useLocale()
-  const renderRow = (signature: Signature, index: number) => {
-    const cell = Object.entries(signature)
+  const renderRow = (endorsement: Endorsement) => {
+    const rowBackground = endorsement.meta.invalidated
+      ? 'yellow200'
+      : endorsement.meta.bulkEndorsement
+      ? 'roseTinted100'
+      : 'white'
     return (
-      <T.Row key={index}>
-        {cell.map(([_key, value], i) => {
-          if (typeof value === 'string') {
-            return (
-              <T.Data
-                key={i}
-                box={{
-                  background: signature.hasWarning ? 'yellow200' : 'white',
-                  textAlign: value === signature.address ? 'right' : 'left',
-                }}
-              >
-                {signature.hasWarning && value === signature.address ? (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="flexEnd"
-                  >
-                    {value}
-                    <Box marginLeft={2}>
-                      <Tooltip
-                        color="yellow600"
-                        iconSize="medium"
-                        text={formatMessage(m.endorsementList.signatureInvalid)}
-                      />
-                    </Box>
-                  </Box>
-                ) : (
-                  value
+      <T.Row key={endorsement.id}>
+        <T.Data
+          box={{
+            background: rowBackground,
+          }}
+        >
+          {formatDate(endorsement.created)}
+        </T.Data>
+        <T.Data
+          box={{
+            background: rowBackground,
+          }}
+        >
+          {endorsement.meta.fullName}
+        </T.Data>
+        <T.Data
+          box={{
+            background: rowBackground,
+          }}
+        >
+          {formatKennitala(endorsement.endorser)}
+        </T.Data>
+        <T.Data
+          box={{
+            background: rowBackground,
+            textAlign: 'right',
+          }}
+        >
+          {endorsement.meta.invalidated || endorsement.meta.bulkEndorsement ? (
+            <Box display="flex" alignItems="center" justifyContent="flexEnd">
+              {endorsement.meta.address.streetAddress}
+              <Box marginLeft={2}>
+                {endorsement.meta.invalidated && (
+                  <Tooltip
+                    color="blue400"
+                    iconSize="medium"
+                    text={formatMessage(
+                      m.endorsementList.signatureInvalidTooltip,
+                    )}
+                  />
                 )}
-              </T.Data>
-            )
-          } else {
-            return null
-          }
-        })}
+                {endorsement.meta.bulkEndorsement && (
+                  <Icon icon="attach" color="blue400" />
+                )}
+              </Box>
+            </Box>
+          ) : (
+            <Text>{endorsement.meta.address.streetAddress}</Text>
+          )}
+        </T.Data>
       </T.Row>
     )
   }
@@ -76,9 +98,8 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ signatures }) => {
         </T.Row>
       </T.Head>
       <T.Body>
-        {signatures &&
-          signatures.length &&
-          signatures.map((signature, index) => renderRow(signature, index))}
+        {!!endorsements?.length &&
+          endorsements.map((endorsements) => renderRow(endorsements))}
       </T.Body>
     </T.Table>
   )

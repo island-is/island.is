@@ -1,7 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/endorsement.model'
@@ -20,11 +21,14 @@ export class EndorsementListService {
     private logger: Logger,
   ) {}
 
-  async findListsByTag(tag: string) {
-    this.logger.debug(`Finding endorsement lists by tag "${tag}"`)
+  async findListsByTags(tags: string[]) {
+    this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
     // TODO: Add option to get only open endorsement lists
+
     return this.endorsementListModel.findAll({
-      where: { tags: { [Op.contains]: [tag] } },
+      where: {
+        tags: { [Op.overlap]: tags },
+      },
     })
   }
 
@@ -50,7 +54,7 @@ export class EndorsementListService {
       include: [
         {
           model: EndorsementList,
-          attributes: ['id', 'title', 'description'],
+          attributes: ['id', 'title', 'description', 'tags'],
         },
       ],
     })
@@ -61,15 +65,13 @@ export class EndorsementListService {
     return await endorsementList.update({ closedDate: new Date() })
   }
 
+  async open(endorsementList: EndorsementList): Promise<EndorsementList> {
+    this.logger.debug('Opening endorsement list', endorsementList.id)
+    return await endorsementList.update({ closedDate: null })
+  }
+
   async create(list: createInput) {
     this.logger.debug('Creating endorsement list')
-    return this.endorsementListModel.create({
-      title: list.title,
-      description: list.description,
-      endorsementMeta: list.endorsementMeta,
-      tags: list.tags,
-      validationRules: list.validationRules,
-      owner: list.owner,
-    })
+    return this.endorsementListModel.create(list)
   }
 }

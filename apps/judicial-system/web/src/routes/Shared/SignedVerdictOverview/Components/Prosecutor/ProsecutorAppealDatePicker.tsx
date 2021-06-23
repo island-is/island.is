@@ -5,13 +5,13 @@ import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
 import * as styles from '../AppealSection/AppealSection.treat'
 
 interface Props {
-  handleProsecutorAppeal: (date?: Date) => void
+  setProsecutorAppealDate: (date?: Date) => void
   isInitialMount: boolean
 }
 
 const ProsecutorAppealDatePicker: React.FC<Props> = (props) => {
-  const { handleProsecutorAppeal, isInitialMount } = props
-  const [prosecutorAppealDate, setProsecutorAppealDate] = useState<Date>()
+  const { setProsecutorAppealDate, isInitialMount } = props
+  const [appealDate, setAppealDate] = useState<Date>()
 
   const animateInAndOut = {
     visible: {
@@ -39,15 +39,16 @@ const ProsecutorAppealDatePicker: React.FC<Props> = (props) => {
       <div className={styles.appealInnerWrapper}>
         <DateTime
           name="prosecutorAppealDate"
-          maxDate={new Date()}
-          onChange={(date) => setProsecutorAppealDate(date)}
           size="sm"
+          datepickerPlaceholder="Hvenær var kært?"
+          onChange={(date) => setAppealDate(date)}
+          maxDate={new Date()}
           blueBox={false}
         />
         <Box className={styles.appealButton}>
           <Button
-            onClick={() => handleProsecutorAppeal(prosecutorAppealDate)}
-            disabled={!prosecutorAppealDate}
+            onClick={() => setProsecutorAppealDate(appealDate)}
+            disabled={!appealDate}
           >
             Sækjandi kærir
           </Button>

@@ -1,4 +1,4 @@
-import React, { FC, useReducer } from 'react'
+import React, { FC, useEffect, useReducer } from 'react'
 import cn from 'classnames'
 import {
   Application,
@@ -23,6 +23,7 @@ import { ActionTypes } from '../reducer/ReducerTypes'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { useHistorySync } from '../hooks/useHistorySync'
 import { useApplicationTitle } from '../hooks/useApplicationTitle'
+import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import * as styles from './FormShell.treat'
 
 export const FormShell: FC<{
@@ -31,6 +32,7 @@ export const FormShell: FC<{
   form: Form
   dataSchema: Schema
 }> = ({ application, nationalRegistryId, form, dataSchema }) => {
+  const { setInfo } = useHeaderInfo()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {
@@ -45,21 +47,26 @@ export const FormShell: FC<{
     },
     initializeReducer,
   )
-
-  useHistorySync(state, dispatch)
-  useApplicationTitle(state)
-
   const {
     activeScreen,
     application: storedApplication,
     sections,
     screens,
   } = state
-
   const { mode = FormModes.APPLYING, renderLastScreenButton } = state.form
   const showProgressTag = mode !== FormModes.APPLYING
   const currentScreen = screens[activeScreen]
   const FormLogo = form.logo
+
+  useHistorySync(state, dispatch)
+  useApplicationTitle(state)
+
+  useEffect(() => {
+    setInfo({
+      applicationName: application.name,
+      institutionName: application?.institution,
+    })
+  }, [setInfo, application])
 
   return (
     <Box

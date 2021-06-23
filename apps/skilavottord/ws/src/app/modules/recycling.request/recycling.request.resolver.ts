@@ -5,7 +5,8 @@ import {
   RecyclingRequestUnion,
 } from './model/recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'
-import { logger, Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { VehicleModel } from '../vehicle/model/vehicle.model'
 import { Authorize } from '../auth'
 
@@ -21,7 +22,7 @@ export class RecyclingRequestResolver {
   @Query(() => [RecyclingRequestModel])
   async skilavottordAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
     const res = await this.recyclingRequestService.findAll()
-    logger.info(
+    this.logger.info(
       'skilavottordAllRecyclingRequests response:' +
         JSON.stringify(res, null, 2),
     )
@@ -33,7 +34,7 @@ export class RecyclingRequestResolver {
     @Args('permno') perm: string,
   ): Promise<RecyclingRequestModel[]> {
     const res = await this.recyclingRequestService.findAllWithPermno(perm)
-    logger.info(
+    this.logger.info(
       'skilavottordRecyclingRequest responce:' + JSON.stringify(res, null, 2),
     )
     return res

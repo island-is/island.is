@@ -5,9 +5,9 @@ const { getGenericPartyLetterRegistry } = require('../test/seedHelpers')
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const partyLetterRegistry = [
-      getGenericPartyLetterRegistry(),
-      getGenericPartyLetterRegistry(),
-      getGenericPartyLetterRegistry(),
+      { ...getGenericPartyLetterRegistry(), party_letter: 'A' },
+      { ...getGenericPartyLetterRegistry(), party_letter: 'B' },
+      { ...getGenericPartyLetterRegistry(), party_letter: 'C' },
     ]
 
     await queryInterface.bulkInsert(

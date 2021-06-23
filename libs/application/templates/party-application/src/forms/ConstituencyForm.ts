@@ -3,18 +3,31 @@ import {
   buildSection,
   buildSubmitField,
   buildCustomField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
   Form,
   FormModes,
   buildRadioField,
   buildMultiField,
-  buildExternalDataProvider,
-  buildDataProviderItem,
+  DefaultEvents,
+  ExternalData,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
+import { EndorsementListTags, constituencyMapper } from '../constants'
+import Logo from '../assets/Logo'
+import { PartyLetterRegistryPartyLetter } from '../dataProviders/partyLetterRegistry'
+
+const hasPartyLetter = (externalData: ExternalData) => {
+  const partyLetter = externalData.partyLetterRegistry
+    ?.data as PartyLetterRegistryPartyLetter
+
+  return !!partyLetter?.partyLetter
+}
 
 export const ConstituencyForm: Form = buildForm({
   id: 'Constitunecy',
   title: m.constituencySection.title,
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -28,18 +41,48 @@ export const ConstituencyForm: Form = buildForm({
           largeButtons: true,
           defaultValue: '',
           options: [
-            { value: 'Norðausturkjördæmi', label: 'Norðausturkjördæmi' },
-            { value: 'Norðvesturkjördæmi', label: 'Norðvesturkjördæmi' },
             {
-              value: 'Reykjavíkurkjördæmi norður',
-              label: 'Reykjavíkurkjördæmi norður',
+              value: 'partyApplicationReykjavikurkjordaemiSudur2021' as EndorsementListTags,
+              label:
+                constituencyMapper[
+                  'partyApplicationReykjavikurkjordaemiSudur2021' as EndorsementListTags
+                ].region_name,
             },
             {
-              value: 'Reykjavíkurkjördæmi suður',
-              label: 'Reykjavíkurkjördæmi suður',
+              value: 'partyApplicationReykjavikurkjordaemiNordur2021' as EndorsementListTags,
+              label:
+                constituencyMapper[
+                  'partyApplicationReykjavikurkjordaemiNordur2021' as EndorsementListTags
+                ].region_name,
             },
-            { value: 'Suðurkjördæmi', label: 'Suðurkjördæmi' },
-            { value: 'Suðvesturkjördæmi', label: 'Suðvesturkjördæmi' },
+            {
+              value: 'partyApplicationSudvesturkjordaemi2021' as EndorsementListTags,
+              label:
+                constituencyMapper[
+                  'partyApplicationSudvesturkjordaemi2021' as EndorsementListTags
+                ].region_name,
+            },
+            {
+              value: 'partyApplicationNordvesturkjordaemi2021' as EndorsementListTags,
+              label:
+                constituencyMapper[
+                  'partyApplicationNordvesturkjordaemi2021' as EndorsementListTags
+                ].region_name,
+            },
+            {
+              value: 'partyApplicationNordausturkjordaemi2021' as EndorsementListTags,
+              label:
+                constituencyMapper[
+                  'partyApplicationNordausturkjordaemi2021' as EndorsementListTags
+                ].region_name,
+            },
+            {
+              value: 'partyApplicationSudurkjordaemi2021' as EndorsementListTags,
+              label:
+                constituencyMapper[
+                  'partyApplicationSudurkjordaemi2021' as EndorsementListTags
+                ].region_name,
+            },
           ],
         }),
       ],
@@ -59,7 +102,45 @@ export const ConstituencyForm: Form = buildForm({
               id: 'disclaimer',
               type: undefined,
               title: '',
-              subTitle: m.disclaimerSection.descriptionPt2,
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'partyLetterRegistry',
+              type: 'PartyLetterRegistryProvider',
+              title: '',
+              subTitle: '',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'partyLetterFailed',
+      title: '',
+      condition: (_, externalData) => {
+        return !hasPartyLetter(externalData)
+      },
+      children: [
+        buildMultiField({
+          id: 'partyLetterFailed',
+          title: '',
+          children: [
+            buildCustomField({
+              id: 'intro',
+              title: '',
+              component: 'PartyLetterFailed',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              title: '',
+              placement: 'footer',
+              actions: [],
             }),
           ],
         }),
@@ -68,6 +149,9 @@ export const ConstituencyForm: Form = buildForm({
     buildSection({
       id: 'overviewSection',
       title: m.constituencySection.confirmationTitle,
+      condition: (_, externalData) => {
+        return hasPartyLetter(externalData)
+      },
       children: [
         buildMultiField({
           id: 'overviewSubmit',
@@ -83,9 +167,11 @@ export const ConstituencyForm: Form = buildForm({
               id: 'submit',
               title: '',
               placement: 'footer',
+
+              refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: 'SUBMIT',
+                  event: DefaultEvents.SUBMIT,
                   name: m.overviewSection.submitButton,
                   type: 'primary',
                 },

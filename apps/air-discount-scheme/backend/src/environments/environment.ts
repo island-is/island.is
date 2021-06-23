@@ -1,6 +1,6 @@
 import { Airlines } from '@island.is/air-discount-scheme/consts'
 
-export default {
+const devConfig = {
   production: false,
   environment: 'local',
   sentry: {
@@ -27,3 +27,32 @@ export default {
     ],
   },
 }
+
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.REDIS_URL_NODE_01) {
+    throw new Error('Missing REDIS_URL_NODE_01 environment.')
+  }
+}
+
+const prodConfig = {
+  production: true,
+  environment: process.env.ENVIRONMENT,
+  sentry: {
+    dsn: process.env.SENTRY_DSN,
+  },
+  nationalRegistry: {
+    url: 'https://skeyti.advania.is/ords/slrv/registry/v1.0',
+    username: 'si_flugfargjold',
+    password: process.env.NATIONAL_REGISTRY_PASSWORD,
+  },
+  airlineApiKeys: {
+    [Airlines.icelandair]: process.env.ICELANDAIR_API_KEY,
+    [Airlines.ernir]: process.env.ERNIR_API_KEY,
+    [Airlines.norlandair]: process.env.NORLANDAIR_API_KEY,
+  },
+  redis: {
+    urls: [process.env.REDIS_URL_NODE_01!],
+  },
+}
+
+export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

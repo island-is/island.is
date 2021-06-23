@@ -21,7 +21,8 @@ import {
   CreateHelpdeskInput,
 } from './dto'
 import { OrganisationsApi, ProvidersApi } from '../../gen/fetch'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import type { Auth } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -379,21 +380,20 @@ export class DocumentProviderService {
   //-------------------- STATISTICS --------------------------
 
   async getStatisticsTotal(
+    authorization: Auth,
     organisationId?: string,
     fromDate?: string,
     toDate?: string,
-    authorization?: string,
   ): Promise<ProviderStatistics> {
     let providers = undefined
 
     // Get external provider ids if organisationId is included
     if (organisationId) {
-      const orgProviders = await this.organisationsApi.organisationControllerGetOrganisationsProviders(
-        {
-          id: organisationId,
-          authorization,
-        },
-      )
+      const orgProviders = await this.organisationsApiWithAuth(
+        authorization,
+      ).organisationControllerGetOrganisationsProviders({
+        id: organisationId,
+      })
 
       // Filter out null values and only set providers if organisation has external providers
       if (orgProviders) {

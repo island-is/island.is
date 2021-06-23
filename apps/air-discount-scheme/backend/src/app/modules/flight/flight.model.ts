@@ -11,7 +11,7 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 
-import {
+import type {
   Flight as TFlight,
   FlightLeg as TFlightLeg,
   UserInfo,

@@ -13,6 +13,8 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 import { ApiScopeGroup } from './api-scope-group.model'
+import { ApiScopesDTO } from '../dto/api-scopes.dto'
+import { DelegationScope } from './delegation-scope.model'
 
 @Table({
   tableName: 'api_scope',
@@ -176,4 +178,24 @@ export class ApiScope extends Model<ApiScope> {
   @ApiPropertyOptional()
   @BelongsTo(() => ApiScopeGroup)
   group?: ApiScopeGroup
+
+  @HasMany(() => DelegationScope)
+  delegationScopes?: DelegationScope[]
+
+  toDTO(): ApiScopesDTO {
+    return {
+      name: this.name,
+      enabled: this.enabled,
+      displayName: this.displayName,
+      description: this.description,
+      showInDiscoveryDocument: this.showInDiscoveryDocument,
+      grantToLegalGuardians: this.grantToLegalGuardians,
+      grantToProcuringHolders: this.grantToProcuringHolders,
+      allowExplicitDelegationGrant: this.allowExplicitDelegationGrant,
+      automaticDelegationGrant: this.automaticDelegationGrant,
+      alsoForDelegatedUser: this.alsoForDelegatedUser,
+      required: this.required,
+      emphasize: this.emphasize,
+    }
+  }
 }

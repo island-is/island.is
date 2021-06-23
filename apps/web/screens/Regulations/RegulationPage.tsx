@@ -1,10 +1,9 @@
+import { ISODate, RegQueryName } from '@island.is/regulations'
 import {
   Regulation,
   RegulationRedirect,
-  ISODate,
-  RegQueryName,
   RegulationDiff,
-} from '../../components/Regulations/Regulations.types'
+} from '@island.is/regulations/web'
 import { RegulationPageTexts } from '../../components/Regulations/RegulationTexts.types'
 
 import React from 'react'
@@ -14,7 +13,6 @@ import getConfig from 'next/config'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { RegulationRedirectMessage } from '../../components/Regulations/RegulationRedirectMessage'
 import { RegulationDisplay } from '../../components/Regulations/RegulationDisplay'
-import { getParams } from '../../components/Regulations/regulationUtils'
 import { getUiTexts } from '../../components/Regulations/getUiTexts'
 import {
   GetRegulationQuery,

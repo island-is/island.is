@@ -3,13 +3,15 @@ import {
   ISODate,
   RegName,
   RegQueryName,
+  Year,
+} from '@island.is/regulations'
+import {
   Regulation,
   RegulationMinistryList,
   RegulationRedirect,
   RegulationSearchResults,
   RegulationYears,
-  Year,
-} from './regulations.types'
+} from '@island.is/regulations/web'
 
 // Regulation name, need to replace / with - before sending to the api
 export const demoRegName = '0244/2021'.replace('/', '-') as RegQueryName

@@ -13,9 +13,8 @@ export const headerContainer = style({
   height: 385,
   ...themeUtils.responsiveStyle({
     lg: {
-      background: `url('https://images.ctfassets.net/8k0h54kbe6bj/5LpuUMoH5JrsmG0dn6ncNh/dd569ad88510a0d1a1590110f0c36899/image_65_shutterstock.png')`,
+      background: `url('https://images.ctfassets.net/8k0h54kbe6bj/1UwZEiLUXwiy0qyMcFQztZ/1f74ca98866e4ad7e85c45c58bf64568/image_65_shutterstock__1_.png')`,
       backgroundRepeat: 'no-repeat !important',
-      backgroundPosition: '-48px 0 !important',
     },
   }),
 })

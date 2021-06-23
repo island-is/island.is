@@ -9,19 +9,13 @@ import { CaseType } from '@island.is/judicial-system/types'
 export class CourtService {
   constructor(private readonly courtClientService: CourtClientService) {}
 
-  createCustodyCourtCase(policeCaseNumber: string): Promise<string> {
-    return this.courtClientService.createCustodyCase({
-      basedOn: 'Rannsóknarhagsmunir',
-      sourceNumber: policeCaseNumber,
-    })
-  }
-
   createCourtCase(
+    courtId: string,
     type: CaseType,
     policeCaseNumber: string,
     isExtension: boolean,
   ): Promise<string> {
-    return this.courtClientService.createCase({
+    return this.courtClientService.createCase(courtId, {
       caseType: 'R - Rannsóknarmál',
       subtype:
         type === CaseType.CUSTODY

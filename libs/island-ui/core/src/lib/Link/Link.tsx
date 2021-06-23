@@ -21,6 +21,7 @@ export interface LinkProps extends NextLinkProps {
   skipTab?: boolean
   onClick?: () => void
   pureChildren?: boolean
+  newTab?: boolean
 }
 
 // Next link that can handle external urls
@@ -38,6 +39,7 @@ export const Link: React.FC<LinkProps> = ({
   underline,
   underlineVisibility = 'hover',
   pureChildren,
+  newTab = false,
   ...linkProps
 }) => {
   const isInternal = isLinkInternal(href as string)
@@ -78,6 +80,7 @@ export const Link: React.FC<LinkProps> = ({
           <a
             className={classNames}
             {...linkProps}
+            {...(newTab && { target: '_blank' })}
             tabIndex={skipTab ? -1 : undefined}
           >
             {children}

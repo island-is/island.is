@@ -14,7 +14,8 @@ import {
   Req,
 } from '@nestjs/common'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
