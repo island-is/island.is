@@ -59,6 +59,7 @@ export function formatCustodyProvisions(
     .slice(0, -1)
 }
 
+// This expression is always called with case type CUSTODY or TRAVEL_BAN
 export function formatConclusion(
   type: CaseType,
   accusedNationalId: string,
@@ -295,6 +296,7 @@ export function formatCourtDateNotificationCondition(
   )},defenderEmail=${defenderEmail}`
 }
 
+// This function is only intended for case type CUSTODY
 export function formatPrisonRulingEmailNotification(
   accusedNationalId: string,
   accusedName: string,
