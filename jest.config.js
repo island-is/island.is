@@ -165,5 +165,6 @@ module.exports = {
     '<rootDir>/libs/application/templates/complaints-to-althingi-ombudsman',
     '<rootDir>/libs/api/domains/license-service',
     '<rootDir>/libs/service-portal/licenses',
+    '<rootDir>/libs/api/domains/identity',
   ],
 }
