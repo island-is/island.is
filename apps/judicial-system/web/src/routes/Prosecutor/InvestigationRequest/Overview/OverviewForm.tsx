@@ -123,16 +123,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               id="id_2"
               label="Lagaákvæði sem krafan er byggð á"
             >
-              {workingCase.custodyProvisions &&
-                workingCase.custodyProvisions.map(
-                  (custodyProvision: CaseCustodyProvisions, index) => {
-                    return (
-                      <div key={index}>
-                        <Text>{laws[custodyProvision]}</Text>
-                      </div>
-                    )
-                  },
-                )}
+              <Text>{workingCase.legalBasis}</Text>
             </AccordionItem>
             <AccordionItem
               labelVariant="h3"
