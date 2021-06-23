@@ -1,11 +1,21 @@
 import { setup } from '../../../../../test/setup'
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 
 let app: INestApplication
 
 beforeAll(async () => {
-  app = await setup()
+  app = await setup({
+    override: (builder) => {
+      builder.overrideGuard(IdsUserGuard).useValue(
+        new MockAuthGuard({
+          nationalId: '1234567890',
+          scope: [],
+        }),
+      )
+    },
+  })
 })
 
 describe('Resource', () => {

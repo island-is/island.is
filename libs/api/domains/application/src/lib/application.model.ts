@@ -82,3 +82,9 @@ export class Application {
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
 }
+
+@ObjectType()
+export class ApplicationPayment {
+  @Field()
+  fulfilled!: boolean
+}

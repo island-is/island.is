@@ -109,10 +109,14 @@ const DefendantForm: React.FC<Props> = (props) => {
                     updateCase,
                   )
                 }
-                defaultValue={{
-                  value: CaseType[workingCase.type],
-                  label: capitalize(ReadableCaseType[workingCase.type]),
-                }}
+                defaultValue={
+                  workingCase?.id
+                    ? {
+                        value: CaseType[workingCase.type],
+                        label: capitalize(ReadableCaseType[workingCase.type]),
+                      }
+                    : undefined
+                }
                 formatGroupLabel={() => (
                   <div
                     style={{

@@ -1,17 +1,18 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-
 import { EmailService } from '@island.is/email-service'
 import { Application } from '@island.is/application/core'
-
 import {
   BaseTemplateAPIModuleConfig,
   EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
 } from '../../types'
-
-import { createAssignToken, getConfigValue } from './shared.utils'
+import {
+  createAssignToken,
+  getConfigValue,
+  PAYMENT_QUERY,
+} from './shared.utils'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -123,7 +124,7 @@ export class SharedTemplateApiService {
     authorization: string,
     query: string,
     variables?: Record<string, any>,
-  ) {
+  ): Promise<Response> {
     const baseApiUrl = getConfigValue(
       this.configService,
       'baseApiUrl',
@@ -138,5 +139,24 @@ export class SharedTemplateApiService {
       },
       body: JSON.stringify({ query, variables }),
     })
+  }
+
+  async createCharge(authorization: string, applicationId: string) {
+    return this.makeGraphqlQuery(authorization, PAYMENT_QUERY, {
+      input: {
+        applicationId,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('graphql query failed')
+        }
+
+        return res
+      })
+      .then((res) => res.json())
+      .then((json) => {
+        return json.data.applicationPaymentCharge
+      })
   }
 }

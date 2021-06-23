@@ -27,6 +27,7 @@ import { formatProsecutorDemands } from '@island.is/judicial-system/formatters'
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
+  const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
   const [
     legalArgumentsErrorMessage,
@@ -73,6 +74,10 @@ export const StepFour: React.FC = () => {
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
+      {
+        value: workingCase?.demands || '',
+        validations: ['empty'],
+      },
       {
         value: workingCase?.caseFacts || '',
         validations: ['empty'],
@@ -122,26 +127,32 @@ export const StepFour: React.FC = () => {
                   label="Dómkröfur"
                   placeholder="Hér er hægt að bæta texta við dómkröfurnar eftir þörfum..."
                   defaultValue={workingCase?.demands}
+                  errorMessage={demandsErrorMessage}
+                  hasError={demandsErrorMessage !== ''}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'demands',
                       event,
-                      [],
+                      ['empty'],
                       workingCase,
                       setWorkingCase,
+                      demandsErrorMessage,
+                      setDemandsErrorMessage,
                     )
                   }
                   onBlur={(event) =>
                     validateAndSendToServer(
                       'demands',
                       event.target.value,
-                      [],
+                      ['empty'],
                       workingCase,
                       updateCase,
+                      setDemandsErrorMessage,
                     )
                   }
                   rows={7}
                   textarea
+                  required
                 />
               </Box>
             </Box>
