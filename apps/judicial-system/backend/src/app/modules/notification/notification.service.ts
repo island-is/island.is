@@ -455,9 +455,9 @@ export class NotificationService {
 
   /* RULING notifications */
 
-  private async sendRulingEmailNotificationToPrison(
+  private async sendRulingEmailNotificationToProsecutorAndPrison(
     existingCase: Case,
-  ): Promise<Recipient> {
+  ): Promise<Recipient[]> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
     const html = formatPrisonRulingEmailNotification(
       existingCase.accusedNationalId,
@@ -495,22 +495,22 @@ export class NotificationService {
       ]
     }
 
-    // TODO: Consider adding the prosecutor as cc to the prison email
-    await this.sendEmail(
-      existingCase.prosecutor?.name,
-      existingCase.prosecutor?.email,
-      subject,
-      html,
-      attachments,
-    )
-
-    return this.sendEmail(
-      'Gæsluvarðhaldsfangelsi',
-      environment.notifications.prisonEmail,
-      subject,
-      html,
-      attachments,
-    )
+    return Promise.all([
+      this.sendEmail(
+        existingCase.prosecutor?.name,
+        existingCase.prosecutor?.email,
+        subject,
+        html,
+        attachments,
+      ),
+      this.sendEmail(
+        'Gæsluvarðhaldsfangelsi',
+        environment.notifications.prisonEmail,
+        subject,
+        html,
+        attachments,
+      ),
+    ])
   }
 
   private async sendRulingNotifications(
@@ -522,13 +522,15 @@ export class NotificationService {
       }
     }
 
-    const recipient = await this.sendRulingEmailNotificationToPrison(
+    const recipients = await this.sendRulingEmailNotificationToProsecutorAndPrison(
       existingCase,
     )
 
-    return this.recordNotification(existingCase.id, NotificationType.RULING, [
-      recipient,
-    ])
+    return this.recordNotification(
+      existingCase.id,
+      NotificationType.RULING,
+      recipients,
+    )
   }
 
   /* REVOKED notifications */
