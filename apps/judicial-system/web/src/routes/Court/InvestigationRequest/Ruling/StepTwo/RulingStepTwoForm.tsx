@@ -90,6 +90,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             }
             rows={7}
             textarea
+            required
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -468,6 +469,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
           nextIsLoading={isLoading}
           nextUrl={`${Constants.R_CASE_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={
+            !workingCase.conclusion ||
             !workingCase.accusedAppealDecision ||
             !workingCase.prosecutorAppealDecision ||
             !isValidCourtEndTime?.isValid
