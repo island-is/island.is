@@ -6,6 +6,7 @@ import {
   generateApplicationRejectedEmail,
   generateApplicationApprovedEmail,
 } from './emailGenerators'
+import { getSlugFromType } from '@island.is/application/core'
 
 type ErrorResponse = {
   errors: {
@@ -116,6 +117,7 @@ export class PartyLetterService {
         }
       }
     `
+    const applicationSlug = getSlugFromType(application.typeId) as string
 
     const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
@@ -124,10 +126,17 @@ export class PartyLetterService {
           description: application.answers.partyLetter,
           endorsementMeta: ['fullName', 'address', 'signedTags'],
           tags: ['partyLetter2021'],
-          validationRules: [],
+          validationRules: [
+            {
+              type: 'minAge',
+              value: {
+                age: 18,
+              },
+            },
+          ],
           meta: {
             // to be able to link back to this application
-            applicationTypeId: application.typeId,
+            applicationTypeId: applicationSlug,
             applicationId: application.id,
           },
         },

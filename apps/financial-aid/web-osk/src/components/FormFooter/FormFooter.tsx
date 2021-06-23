@@ -6,6 +6,7 @@ import * as styles from './FormFooter.treat'
 import cn from 'classnames'
 interface Props {
   hidePreviousButton?: boolean
+  onPrevButtonClick?: () => void
   previousIsDestructive?: boolean
   previousUrl?: string
   previousIsDisabled?: boolean
@@ -45,7 +46,11 @@ const FormFooter: React.FC<Props> = (props: Props) => {
                   variant="ghost"
                   disabled={props.previousIsDisabled}
                   onClick={() => {
-                    router.push(props.previousUrl || '')
+                    if (props.onPrevButtonClick) {
+                      props.onPrevButtonClick()
+                    } else if (props.previousUrl) {
+                      router.push(props.previousUrl)
+                    }
                   }}
                 >
                   {props.previousIsDestructive ? 'Hætta við' : 'Til baka'}
@@ -64,7 +69,11 @@ const FormFooter: React.FC<Props> = (props: Props) => {
                   type="button"
                   size="large"
                   onClick={() => {
-                    router.push(props.previousUrl || '')
+                    if (props.onPrevButtonClick) {
+                      props.onPrevButtonClick()
+                    } else if (props.previousUrl) {
+                      router.push(props.previousUrl)
+                    }
                   }}
                 />
               </Box>
