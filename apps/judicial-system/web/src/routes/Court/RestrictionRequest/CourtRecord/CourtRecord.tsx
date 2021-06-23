@@ -36,7 +36,7 @@ import {
   newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useRouter } from 'next/router'
-import { validate } from '../../../utils/validate'
+import { validate } from '../../../../utils/validate'
 import * as styles from './CourtRecord.treat'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
