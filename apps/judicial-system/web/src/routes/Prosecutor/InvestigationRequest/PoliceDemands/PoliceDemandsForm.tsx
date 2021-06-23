@@ -17,12 +17,8 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import {
-  formatAccusedByGender,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
 import { policeDemandsForm } from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 const courtClaimPrefill: Partial<
   Record<
@@ -201,10 +197,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             data-testid="lawsBroken"
             name="lawsBroken"
             label={formatMessage(policeDemandsForm.lawsBroken.label, {
-              defendant: formatAccusedByGender(
-                workingCase.accusedGender,
-                NounCases.GENITIVE,
-              ),
+              defendant: 'varnaraðila',
             })}
             placeholder={formatMessage(
               policeDemandsForm.lawsBroken.placeholder,
