@@ -21,6 +21,7 @@ export enum ServicePortalPath {
   SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
   SettingsPersonalInformationEditLanguage = '/stillingar/personuupplysingar/breyta-tungumali',
   SettingsPersonalInformationEmailConfirmation = '/stillingar/personuupplysingar/stadfesta-netfang/:hash',
+  SettingsExternal = 'https://minarsidur.island.is/minar-sidur/minn-adgangur/stillingar/',
 
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',
@@ -50,14 +51,17 @@ export enum ServicePortalPath {
 
   // Education
   EducationRoot = '/menntun',
-  EducationLicense = '/menntun/leyfisbref',
   EducationDegree = '/menntun/profgradur',
   EducationCareer = '/menntun/namsferill',
   EducationStudentAssessment = '/menntun/namsferill/:nationalId/samraemd-prof',
   EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
 
+  // Education License
+  EducationLicense = '/leyfisbref',
+
   // Assets
-  AssetsRoot = '/eignir',
+  AssetsRoot = '/fasteignir',
+  AssetsVehicles = '/okutaeki',
 
   // Messages
   MessagesRoot = '/skilabod',
