@@ -6,6 +6,8 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/core'
 
+const CHARGE_ITEM_CODE = 'AY110'
+
 // TODO: needs refactoring
 const searchCorrectCatalog = (
   keySearch: string,
@@ -14,17 +16,15 @@ const searchCorrectCatalog = (
   if (keySearch == '' || searchJSON == '') {
     return searchJSON
   }
-  var resultCatalog = JSON.parse(searchJSON)
-  for (var item in resultCatalog) {
+  const resultCatalog = JSON.parse(searchJSON)
+  for (const item in resultCatalog) {
     if (resultCatalog[item].chargeItemCode == keySearch) {
       return resultCatalog[item]
     }
   }
   return null
 }
-// ///$input: CreateCourtCaseInput!) {
-//   createCourtCase(input: $input) {
-//     courtCaseNumber
+
 export class PaymentCatalogProvider extends BasicDataProvider {
   type = 'PaymentCatalogProvider'
 
@@ -42,8 +42,6 @@ export class PaymentCatalogProvider extends BasicDataProvider {
       }
     }
     `
-    // TODO: Needs refactoring
-    let chargeItemCode = 'AY110'
 
     return this.useGraphqlGateway(query, {
       input: { performingOrganizationID: '6509142520' },
@@ -58,7 +56,7 @@ export class PaymentCatalogProvider extends BasicDataProvider {
 
         if (response.data.paymentCatalog !== '') {
           const correctCatalog = searchCorrectCatalog(
-            chargeItemCode,
+            CHARGE_ITEM_CODE,
             JSON.stringify(response.data.paymentCatalog.items),
           )
 
