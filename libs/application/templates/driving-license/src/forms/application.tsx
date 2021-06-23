@@ -346,9 +346,9 @@ export const application: Form = buildForm({
             buildKeyValueField({
               label: m.overviewPaymentCharge,
               value: ({ externalData }) => {
-                /// needs a lot of refactoring
-                let str = Object.values(externalData.payment.data as object)
-                /// more refactoring
+                // needs a lot of refactoring
+                const str = Object.values(externalData.payment.data as object)
+                // more refactoring
                 return (parseInt(str[1], 10) + ' kr.') as StaticText
               },
               width: 'full',
