@@ -142,6 +142,8 @@ export const serviceSetup = (services: {
         '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH_TEST',
       DOCUMENT_PROVIDER_TOKEN_URL_TEST:
         '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST',
+      DRIVING_LICENSE_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_XROAD_PATH',
+      DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET',
       HEALTH_INSURANCE_XROAD_WSDLURL: '/k8s/api/HEALTH_INSURANCE_XROAD_WSDLURL',
       SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST',
       REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL',
@@ -194,6 +196,10 @@ export const serviceSetup = (services: {
     })
     .readiness('/health')
     .liveness('/liveness')
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '256Mi' },
+    })
     .grantNamespaces(
       'nginx-ingress-external',
       'api-catalogue',

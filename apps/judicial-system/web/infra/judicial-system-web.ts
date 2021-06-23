@@ -12,6 +12,7 @@ export const serviceSetup = (services: {
         staging: 'https://judicial-system.staging01.devland.is',
         prod: 'https://rettarvorslugatt.island.is',
       },
+      INTERNAL_API_URL: ref((h) => `http://${h.svc(services.api)}`),
     })
     .liveness('/liveness')
     .readiness('/readiness')

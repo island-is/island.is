@@ -109,6 +109,12 @@ export const serviceSetup = (services: {
       SERVICE_DOCUMENTS_BASEPATH: ref(
         (h) => `http://${h.svc(services.documentsService)}`,
       ),
+      PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL: 's@kogk.is',
+      PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: {
+        dev: 's@kogk.is',
+        staging: 's@kogk.is',
+        prod: 'postur@dmr.is',
+      },
     })
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -140,4 +146,8 @@ export const serviceSetup = (services: {
     .postgres(postgresInfo)
     .liveness('/liveness')
     .readiness('/liveness')
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '256Mi' },
+    })
     .grantNamespaces('nginx-ingress-external', 'islandis')

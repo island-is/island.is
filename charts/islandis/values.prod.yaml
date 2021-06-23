@@ -68,6 +68,13 @@ api:
     default: 2
     max: 10
     min: 2
+  resources:
+    limits:
+      cpu: 400m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
   secrets:
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
     CONTENTFUL_ACCESS_TOKEN: /k8s/api/CONTENTFUL_ACCESS_TOKEN
@@ -80,6 +87,8 @@ api:
     DOCUMENT_PROVIDER_CLIENT_SECRET_TEST: /k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST
     DOCUMENT_PROVIDER_TOKEN_URL: /k8s/api/DOCUMENT_PROVIDER_TOKEN_URL
     DOCUMENT_PROVIDER_TOKEN_URL_TEST: /k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST
+    DRIVING_LICENSE_SECRET: /k8s/api/DRIVING_LICENSE_SECRET
+    DRIVING_LICENSE_XROAD_PATH: /k8s/api/DRIVING_LICENSE_XROAD_PATH
     HEALTH_INSURANCE_XROAD_PASSWORD: /k8s/health-insurance/XROAD-PASSWORD
     HEALTH_INSURANCE_XROAD_USERNAME: /k8s/health-insurance/XROAD-USER
     HEALTH_INSURANCE_XROAD_WSDLURL: /k8s/api/HEALTH_INSURANCE_XROAD_WSDLURL
@@ -128,6 +137,8 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
     NOVA_USERNAME: IslandIs_User_Production
+    PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL: s@kogk.is
+    PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: postur@dmr.is
     REDIS_URL_NODE_01: >-
       clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379
     SERVICE_DOCUMENTS_BASEPATH: http://web-services-documents.services-documents.svc.cluster.local
@@ -171,6 +182,13 @@ application-system-api:
     default: 2
     max: 10
     min: 2
+  resources:
+    limits:
+      cpu: 400m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
   secrets:
     AUTH_JWT_SECRET: /k8s/application-system/api/AUTH_JWT_SECRET
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
@@ -606,6 +624,13 @@ service-portal-api:
     default: 2
     max: 10
     min: 2
+  resources:
+    limits:
+      cpu: 400m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
   secrets:
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
     DB_PASS: /k8s/service-portal/api/DB_PASSWORD
@@ -821,6 +846,13 @@ web:
     default: 2
     max: 10
     min: 2
+  resources:
+    limits:
+      cpu: 400m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
   secrets:
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
     SENTRY_DSN: /k8s/web/SENTRY_DSN

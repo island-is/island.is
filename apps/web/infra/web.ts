@@ -48,6 +48,10 @@ export const serviceSetup = (services: {
     })
     .liveness('/liveness')
     .readiness('/readiness')
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '200m', memory: '256Mi' },
+    })
     .extraAttributes({
       dev: {},
       staging: { basicAuth: '/k8s/web/basic_auth' },

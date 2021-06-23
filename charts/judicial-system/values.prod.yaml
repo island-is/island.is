@@ -19,6 +19,7 @@ judicial-system-api:
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     AUTH_AUDIENCE: rettarvorslugatt.island.is
     BACKEND_URL: http://web-judicial-system-backend
+    CONTENTFUL_HOST: cdn.contentful.com
     HIDDEN_FEATURES: R_CASES
     SAML_ENTRY_POINT: https://innskraning.island.is/?id=rettarvorslugatt.prod
     XROAD_BASE_PATH_WITH_ENV: https://securityserver.island.is/r1/IS
@@ -56,6 +57,7 @@ judicial-system-api:
   secrets:
     AUTH_JWT_SECRET: /k8s/judicial-system/AUTH_JWT_SECRET
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    CONTENTFUL_ACCESS_TOKEN: /k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN
     COURTS_CREDENTIALS: /k8s/judicial-system/COURTS_CREDENTIALS
     SECRET_TOKEN: /k8s/judicial-system/SECRET_TOKEN
     XROAD_CLIENT_CERT: /k8s/judicial-system/XROAD_CLIENT_CERT
@@ -153,6 +155,7 @@ judicial-system-web:
   enabled: true
   env:
     API_URL: https://rettarvorslugatt.island.is
+    INTERNAL_API_URL: http://web-judicial-system-api
   grantNamespaces:
     - nginx-ingress-external
   grantNamespacesEnabled: true
