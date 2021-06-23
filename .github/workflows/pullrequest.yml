@@ -189,7 +189,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/Cypress
-          key: cypress-${{ needs.prepare.outputs.node-modules-hash }}
+          key: cypress-cache-${{ needs.prepare.outputs.node-modules-hash }}
 
       - name: Cache for generated files
         uses: actions/cache@v2

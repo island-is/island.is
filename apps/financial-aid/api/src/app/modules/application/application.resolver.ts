@@ -8,10 +8,12 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BackendAPI } from '../../../services'
 
 import { ApplicationModel } from './models'
-import { CreateApplicationInput } from './dto'
+import { CreateApplicationInput, UpdateApplicationInput } from './dto'
 import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
 import { ApplicationInput } from './dto'
+
+import { Application } from '@island.is/financial-aid/shared'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => ApplicationModel)
@@ -24,7 +26,7 @@ export class ApplicationResolver {
   @Query(() => [ApplicationModel], { nullable: false })
   applications(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationModel[]> {
+  ): Promise<Application[]> {
     this.logger.debug('Getting all applications')
 
     return backendApi.getApplications()
@@ -35,10 +37,10 @@ export class ApplicationResolver {
     @Args('input', { type: () => ApplicationInput })
     input: ApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationModel> {
-    this.logger.debug(`Getting applicant ${input.id}`)
+  ): Promise<Application> {
+    this.logger.debug(`Getting application ${input.id}`)
 
-    return backendApi.getApplicant(input.id)
+    return backendApi.getApplication(input.id)
   }
 
   @Mutation(() => ApplicationModel, { nullable: true })
@@ -46,9 +48,22 @@ export class ApplicationResolver {
     @Args('input', { type: () => CreateApplicationInput })
     input: CreateApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationModel> {
+  ): Promise<Application> {
     this.logger.debug('Creating case')
 
     return backendApi.createApplication(input)
+  }
+
+  @Mutation(() => ApplicationModel, { nullable: true })
+  updateApplication(
+    @Args('input', { type: () => UpdateApplicationInput })
+    input: UpdateApplicationInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Application> {
+    const { id, ...updateApplication } = input
+
+    this.logger.debug(`updating application ${id}`)
+
+    return backendApi.updateApplication(id, updateApplication)
   }
 }
