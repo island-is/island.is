@@ -38,12 +38,12 @@ export const complainee = {
     },
     complaineeNameOtherTitle: {
       id: 'ctao.application:complainee.complaineeName.other.title',
-      defaultMessage: 'Nafn á öðrum aðila eða starfsmanni stjórnsýslunnar',
+      defaultMessage: 'Nafn á aðila sem kvörtun beinist að',
       description: 'Other complainee name input title',
     },
     complaineeNameOtherPlaceholder: {
       id: 'ctao.application:complainee.complaineeName.other.placeholder',
-      defaultMessage: 'Settu inn nafn aðila og eftir atvikum frekari skýringar',
+      defaultMessage: 'Settu inn nafn aðila',
       description: 'Other complainee name input placeholder',
     },
   }),

@@ -1,4 +1,10 @@
-import { AlertMessage, Button, Inline, Link } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Button,
+  Inline,
+  Link,
+  ResponsiveSpace,
+} from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
@@ -11,6 +17,8 @@ type FieldAlertMessageProps = {
         title: string
         url: string
       }[]
+      spaceTop?: ResponsiveSpace
+      spaceBottom?: ResponsiveSpace
     }
   }
 }
@@ -23,7 +31,7 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box marginBottom={5}>
+    <Box marginBottom={props.spaceBottom} marginTop={props.spaceTop}>
       <AlertMessage
         type="info"
         title={formatText(title, application, formatMessage)}

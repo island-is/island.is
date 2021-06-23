@@ -1,7 +1,6 @@
 import * as kennitala from 'kennitala'
 import * as z from 'zod'
-import { OmbudsmanComplaintTypeEnum } from '../shared'
-import { ComplaineeTypes } from '../constants'
+import { OmbudsmanComplaintTypeEnum, ComplaineeTypes } from '../shared'
 import { error } from './messages/error'
 
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({

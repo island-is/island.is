@@ -6,14 +6,14 @@ export const complaintInformation = defineMessages({
     defaultMessage: 'Upplýsingar um kvörtunarefnið',
     description: 'Information about the complaint',
   },
-  decisionRadioLabel: {
+  decisionLabel: {
     id: 'ctao.application:section.complaintInformation.decision',
-    defaultMessage: 'Ákvörðun',
+    defaultMessage: 'Kvörtunin varðar ákvörðun eða útskurð stjórnvalds',
     description: 'Label for court decision radio',
   },
   proceedingsLabel: {
     id: 'ctao.application:section.complaintInformation.proceedings',
-    defaultMessage: 'Málsmeðferð eða öðrum athöfnum stjórnvalds',
+    defaultMessage: 'Kvörtunin varðar málsmeðferð eða aðra athöfn stjórnvalds',
     description: 'Label for proceedings radio',
   },
   decisionAlertMessage: {
