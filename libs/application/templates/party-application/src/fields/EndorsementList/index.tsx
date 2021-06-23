@@ -18,6 +18,7 @@ import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import { sortBy, debounce } from 'lodash'
 import { hardcodedList } from '../../types/hardcodedlist'
 import { paginate, PAGE_SIZE, totalPages as pages } from '../components/utils'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -57,6 +58,15 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     filter(searchTerm, showOnlyInvalidated)
   }, [searchTerm, showOnlyInvalidated])
 
+  const voterRegionMismatch = (region: number) => {
+    return (
+      region !==
+      constituencyMapper[
+        application.answers.constituency as EndorsementListTags
+      ].region_number
+    )
+  }
+
   const filter = (searchTerm: string, showInvalidated: boolean) => {
     //filter by both search and invalidated
     if (searchTerm !== '' && showInvalidated) {
@@ -64,14 +74,14 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         (x) =>
           searchTerm !== '' &&
           x.meta.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) &&
-          x.meta.invalidated,
+          voterRegionMismatch(x.meta.voterRegion),
       )
       handlePagination(1, filterByBoth)
     }
     //filter by invalidated
     else if (searchTerm === '' && showInvalidated) {
-      const filterByInvalidated = endorsementsHook?.filter(
-        (x) => x.meta.invalidated,
+      const filterByInvalidated = endorsementsHook?.filter((x) =>
+        voterRegionMismatch(x.meta.voterRegion),
       )
       handlePagination(1, filterByInvalidated)
 
