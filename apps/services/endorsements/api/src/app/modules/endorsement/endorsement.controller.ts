@@ -48,7 +48,7 @@ export class EndorsementController {
     type: [Endorsement],
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementScope.endorsementRead)
+  @Scopes(EndorsementScope.read)
   @Get()
   @Audit<Endorsement[]>({
     resources: (endorsement) => endorsement.map((e) => e.id),
@@ -74,7 +74,7 @@ export class EndorsementController {
     type: Endorsement,
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementScope.endorsementRead)
+  @Scopes(EndorsementScope.read)
   @Get('/exists')
   @Audit<Endorsement>({
     resources: (endorsement) => endorsement.id,
@@ -100,7 +100,7 @@ export class EndorsementController {
     type: Endorsement,
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementScope.endorsementWrite)
+  @Scopes(EndorsementScope.write)
   @Post()
   @Audit<Endorsement>({
     resources: (endorsement) => endorsement.id,
@@ -131,7 +131,7 @@ export class EndorsementController {
   @ApiBody({
     type: BulkEndorsementDto,
   })
-  @Scopes(EndorsementScope.endorsementWrite)
+  @Scopes(EndorsementScope.write)
   @Post('/bulk')
   @Audit<EndorsementBulkCreate>({
     namespace: auditNamespace,
@@ -164,7 +164,7 @@ export class EndorsementController {
       'Uses the authenticated users national id to remove endorsement form a given list',
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementScope.endorsementWrite)
+  @Scopes(EndorsementScope.write)
   @Delete()
   @HttpCode(204)
   async delete(

@@ -1,7 +1,7 @@
 export enum EndorsementScope {
-  endorsementRead = '@island.is/endorsement/endorsement:read',
-  endorsementWrite = '@island.is/endorsement/endorsement:write',
-  endorsementListRead = '@island.is/endorsement/endorsement-list:read',
-  endorsementListWrite = '@island.is/endorsement/endorsement-list:write',
-  endorsementListJusticeDepartmentWrite = '@island.is/endorsement/endorsement-list-justice-department:write',
+  read = '@island.is/endorsement:read',
+  write = '@island.is/endorsement:write',
+  listRead = '@island.is/endorsement/list:read',
+  listWrite = '@island.is/endorsement/list:write',
+  listJusticeDepartmentWrite = '@island.is/endorsement/list/justice-department:write',
 }

@@ -30,7 +30,7 @@ describe('bulkCreateEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement/bulk should partially succeed when list contains some existing national ids`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementScope.endorsementWrite],
+      scope: [EndorsementScope.write],
     })
     const nationalIds = ['0101304339', '0101304339']
     const response = await request(app.getHttpServer())
@@ -56,7 +56,7 @@ describe('bulkCreateEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement/bulk should fail to create endorsements on a closed list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementScope.endorsementWrite],
+      scope: [EndorsementScope.write],
     })
     const nationalIds = ['0101304339']
     const response = await request(app.getHttpServer())
@@ -74,7 +74,7 @@ describe('bulkCreateEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement/bulk should fail to create endorsements on other peoples lists`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementScope.endorsementWrite],
+      scope: [EndorsementScope.write],
     })
     const nationalIds = ['0101304339']
     const response = await request(app.getHttpServer())
@@ -92,7 +92,7 @@ describe('bulkCreateEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement/bulk should create new endorsements and populate metadata`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementScope.endorsementWrite],
+      scope: [EndorsementScope.write],
     })
     const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c1'
     const nationalIds = ['0101303369', '0101305069', '0101303019']

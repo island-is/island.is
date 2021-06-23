@@ -61,7 +61,7 @@ export class EndorsementListController {
     description: 'Finds all endorsements for the currently authenticated user',
     type: [Endorsement],
   })
-  @Scopes(EndorsementScope.endorsementRead)
+  @Scopes(EndorsementScope.read)
   @Get('/endorsements')
   @Audit<Endorsement[]>({
     resources: (endorsement) => endorsement.map((e) => e.id),
@@ -79,7 +79,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementScope.endorsementListRead)
+  @Scopes(EndorsementScope.listRead)
   @Get(':listId')
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -100,7 +100,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementScope.endorsementListJusticeDepartmentWrite)
+  @Scopes(EndorsementScope.listJusticeDepartmentWrite)
   @Put(':listId/close')
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -143,7 +143,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiBody({ type: EndorsementListDto })
-  @Scopes(EndorsementScope.endorsementListWrite)
+  @Scopes(EndorsementScope.listWrite)
   @Post()
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,

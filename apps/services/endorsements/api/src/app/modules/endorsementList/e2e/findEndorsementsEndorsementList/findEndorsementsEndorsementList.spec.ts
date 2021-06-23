@@ -24,7 +24,7 @@ describe('findEndorsementsEndorsementList', () => {
   it(`GET /endorsement-list/endorsements should return 200 and a list of endorsements`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementScope.endorsementRead],
+      scope: [EndorsementScope.read],
     })
 
     const response = await request(app.getHttpServer())

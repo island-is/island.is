@@ -43,7 +43,7 @@ describe('createEndorsementList', () => {
   it(`POST /endorsement-list should return error when list data is invalid`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementScope.endorsementListWrite],
+      scope: [EndorsementScope.listWrite],
     })
     const validEndorsementList = {
       title: 'Some title',
@@ -99,7 +99,7 @@ describe('createEndorsementList', () => {
   it(`POST /endorsement-list should create new endorsement list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementScope.endorsementListWrite],
+      scope: [EndorsementScope.listWrite],
     })
     const newEndorsementList = {
       title: 'Some title',

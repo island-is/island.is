@@ -3,10 +3,6 @@ const devConfig = {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
   },
-  swagger: {
-    authUrl: 'https://identity-server.dev01.devland.is/connect/authorize',
-    tokenUrl: 'https://identity-server.dev01.devland.is/connect/token',
-  },
   audit: {
     defaultNamespace: '@island.is/services-temporary-voter-registry-api',
   },
@@ -16,10 +12,6 @@ const prodConfig = {
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@island.is',
-  },
-  swagger: {
-    authUrl: '',
-    tokenUrl: '',
   },
   audit: {
     groupName: process.env.AUDIT_GROUP_NAME, // used in cloudwatch

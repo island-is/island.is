@@ -12,10 +12,10 @@ export const openApi = new DocumentBuilder()
     type: 'oauth2',
     flows: {
       authorizationCode: {
-        authorizationUrl: environment.swagger.authUrl,
-        tokenUrl: environment.swagger.tokenUrl,
+        authorizationUrl: `${environment.auth.issuer}/connect/authorize`,
+        tokenUrl: `${environment.auth.issuer}/connect/token`,
         scopes: {
-          [`openid profile ${EndorsementScope.endorsementRead} ${EndorsementScope.endorsementWrite} ${EndorsementScope.endorsementListRead} ${EndorsementScope.endorsementListWrite} ${EndorsementScope.endorsementListJusticeDepartmentWrite}`]: 'Fetches OpenId, Profile and claim needed for authenticated calls',
+          [`openid profile ${EndorsementScope.read} ${EndorsementScope.write} ${EndorsementScope.listRead} ${EndorsementScope.listWrite} ${EndorsementScope.listJusticeDepartmentWrite}`]: 'Fetches OpenId, Profile and claim needed for authenticated calls',
         },
       },
     },
