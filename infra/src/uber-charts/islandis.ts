@@ -33,9 +33,11 @@ const appSystemForm = appSystemFormSetup({})
 const servicePortalApi = servicePortalApiSetup()
 const servicePortal = servicePortalSetup({})
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
-const endorsement = endorsementServiceSetup()
 const partyLetterRegistry = partyLetterServiceSetup()
 const temporaryVoterRegistry = temporaryVoterRegistryServiceSetup()
+const endorsement = endorsementServiceSetup({
+  servicesTemporaryVoterRegistryApi: temporaryVoterRegistry,
+})
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
