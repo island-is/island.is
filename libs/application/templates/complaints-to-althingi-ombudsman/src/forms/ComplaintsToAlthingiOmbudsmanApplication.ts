@@ -155,7 +155,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           children: [
             buildRadioField({
               id: 'complainType',
-              title: section.complaintInformation,
+              title: '',
               options: [
                 {
                   label: complaintInformation.decisionRadioLabel,

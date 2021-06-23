@@ -33,7 +33,7 @@ export const section = defineMessages({
   },
   complaintInformation: {
     id: `ctao.application:section.complaintInformation`,
-    defaultMessage: 'Upplýsingar um kvörtunarefnið',
+    defaultMessage: 'Kvörtunarefnið',
     description: 'Definition of complaint information',
   },
 })
