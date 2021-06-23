@@ -161,6 +161,7 @@
   - [Auth Public API Client](libs/clients/auth-public-api/README.md)
   - [Clients Document Provider](libs/clients/document-provider/README.md)
   - [Documents (Pósthólf)](libs/clients/documents/README.md)
+  - [Client Middlewares](libs/clients/middlewares/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
   - [National Registry Clients](libs/clients/national-registry/README.md)
     - [Clients National Registry V1](libs/clients/national-registry/v1/README.md)
