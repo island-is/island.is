@@ -19,7 +19,6 @@ const getPdfURL = (base64Pdf: string) => {
 }
 
 const documentIsPdf = (data: any) => {
-  console.log('ispdf, data', data)
   return (data?.type || '').toLowerCase() === 'pdf' && data?.document
 }
 
@@ -31,7 +30,7 @@ export const showPdfDocument = () => {
       if (pdfData && documentIsPdf(pdfData)) {
         window.open(getPdfURL(pdfData.document))
       } else {
-        console.warn('No PDF data') // Should warn the user with toast?
+        console.warn('No PDF data')
       }
     },
   })

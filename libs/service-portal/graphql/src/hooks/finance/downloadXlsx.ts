@@ -22,7 +22,7 @@ export const downloadXlsxDocument = () => {
       if (xlslData) {
         downloadXlsx(xlslData.file, xlslData.filename)
       } else {
-        console.warn('No excel data') // Should warn the user with toast?
+        console.warn('No excel data')
       }
     },
   })
