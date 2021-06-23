@@ -17,6 +17,7 @@ export enum ApplicationTypes {
   FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
   PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
   JOINT_CUSTODY_AGREEMENT = 'JointCustodyAgreement',
+  COMPLAINTS_TO_ALTHINGI_OMBUDSMAN = 'ComplaintsToAlthingiOmbudsman',
 }
 
 export const ApplicationConfigurations = {
@@ -91,5 +92,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.JOINT_CUSTODY_AGREEMENT]: {
     slug: 'forsja-barns',
     translation: 'jca.application',
+  },
+  [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {
+    slug: 'kvortun-til-umbodsmanns-althingis',
+    translation: 'ctao.application',
   },
 }

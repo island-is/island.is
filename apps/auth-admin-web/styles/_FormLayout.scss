@@ -143,6 +143,7 @@
       left: 55%;
       border-radius: 5px;
       border: solid 1px $color-border;
+      z-index: 1;
 
       .detail-title {
         font-weight: $weight-semi-bold;

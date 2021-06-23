@@ -11,6 +11,7 @@ import {
   TagProps,
   FocusableBox,
   TagVariant,
+  Hyphen,
 } from '@island.is/island-ui/core'
 import { ColorSchemeContext } from '@island.is/web/context'
 import { BackgroundImage } from '@island.is/web/components'
@@ -109,7 +110,7 @@ export const Card = ({
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
               <Text as="h3" variant="h3" color={titleColor}>
-                {title}
+                <Hyphen>{title}</Hyphen>
               </Text>
             </Box>
           </Box>

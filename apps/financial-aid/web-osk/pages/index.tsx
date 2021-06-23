@@ -5,12 +5,15 @@ import {
   GetCurrentUserQuery,
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 import { Application } from '@island.is/financial-aid/shared'
+import { Button, GridContainer } from '@island.is/island-ui/core'
+import { useRouter } from 'next/router'
 
 interface ApplicationData {
   applications: Application[]
 }
 
 const Index = () => {
+  const router = useRouter()
   // const { data, error, loading } = useQuery<ApplicationData>(
   //   GetApplicationQuery,
   //   {
@@ -28,12 +31,22 @@ const Index = () => {
     errorPolicy: 'all',
   })
 
-  console.log(data)
-  console.log(error)
-
   return (
     <div className="">
-      {/* HELOO {loading ? 'loading...' : data?.applications[0].name} */}
+      <GridContainer>
+        <Button
+          onClick={() => {
+            router.push('/api/auth/login?nationalId=0000000000')
+          }}
+          data-testid="logout-button"
+          preTextIconType="filled"
+          size="small"
+          type="button"
+          variant="primary"
+        >
+          Login
+        </Button>
+      </GridContainer>
     </div>
   )
 }
