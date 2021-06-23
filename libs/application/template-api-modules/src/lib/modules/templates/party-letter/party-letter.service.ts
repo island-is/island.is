@@ -180,6 +180,7 @@ export class PartyLetterService {
       .then((response) => response.json())
 
     if ('errors' in partyLetter) {
+      this.logger.error('Failed to register party letter', partyLetter)
       throw new Error('Failed to register party letter')
     }
 
