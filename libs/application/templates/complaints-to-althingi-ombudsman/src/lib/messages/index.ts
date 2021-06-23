@@ -1,3 +1,4 @@
+export * from './complainee'
 export * from './dataProvider'
 export * from './error'
 export * from './information'

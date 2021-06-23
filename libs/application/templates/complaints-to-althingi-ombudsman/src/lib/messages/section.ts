@@ -9,26 +9,41 @@ export const section = defineMessages({
   information: {
     id: `ctao.application:section.information`,
     defaultMessage: 'Upplýsingar',
-    description: 'Definition of applicant section title',
+    description: 'Definition of information section title',
   },
-  informationToComplainer: {
-    id: `ctao.application:section.informationToComplainer`,
-    defaultMessage: 'Um þann sem kvartar',
-    description: 'Definition of Information About Institution section title',
+  complainee: {
+    id: `ctao.application:section.Complainee`,
+    defaultMessage: 'Kvartað fyrir',
+    description: 'Definition of complainee section title',
   },
   forWhom: {
     id: `ctao.application:section.forWhom`,
-    defaultMessage: 'Fyrir hvern',
-    description: 'Definition of project section title',
+    defaultMessage: 'Kvörtun beinist að',
+    description: 'Definition of forWhom section title',
+  },
+  about: {
+    id: `ctao.application:section.about`,
+    defaultMessage: 'Kvörtunarefnið',
+    description: 'Definition of about section title',
+  },
+  judged: {
+    id: `ctao.application:section.judged`,
+    defaultMessage: 'Lagt fyrir dómstóla',
+    description: 'Definition of judged section title',
+  },
+  attachments: {
+    id: `ctao.application:section.attachments`,
+    defaultMessage: 'Viðhengi',
+    description: 'Definition of attechments section title',
   },
   overview: {
     id: `ctao.application:section.overview`,
-    defaultMessage: 'Yfirlit og staðfesting umsóknar',
-    description: 'Overview Section Title',
+    defaultMessage: 'Yfirlit',
+    description: 'Definition of overview section title',
   },
   submitted: {
     id: `ctao.application:section.submitted`,
-    defaultMessage: 'Takk fyrir umsóknina',
-    description: 'Submitted Section Title',
+    defaultMessage: 'Staðfesting',
+    description: 'Definition of submitted section title',
   },
 })
