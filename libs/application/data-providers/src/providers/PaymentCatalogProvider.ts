@@ -49,7 +49,6 @@ export class PaymentCatalogProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         // TODO: needs refactoring
         const response = await res.json()
-        console.log(JSON.stringify(response, null, 4))
         if (response.errors) {
           return this.handleError()
         }
