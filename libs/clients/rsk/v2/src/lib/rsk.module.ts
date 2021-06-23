@@ -1,11 +1,13 @@
 import { DynamicModule } from '@nestjs/common'
-import fetch from 'isomorphic-fetch'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import type { EnhancedFetchOptions } from '@island.is/clients/middlewares'
 import { RskApi, RskApiConfiguration } from './rsk.api'
 
 export interface RskModuleConfig {
   xRoadPath: string
   xRoadClient: string
   basicAuth: string
+  fetch?: Partial<EnhancedFetchOptions>
 }
 
 export class RskModule {
@@ -17,7 +19,10 @@ export class RskModule {
     }
 
     const providerConfiguration = new RskApiConfiguration({
-      fetchApi: fetch,
+      fetchApi: createEnhancedFetch({
+        name: 'clients-rsk-v2',
+        ...config.fetch,
+      }),
       basePath: config.xRoadPath,
       headers,
     })
