@@ -1,5 +1,11 @@
 import { ResourcesService, ApiScope } from '@island.is/auth-api-lib'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -12,7 +18,11 @@ export class ApiScopeController {
   @Scopes('@island.is/auth/delegations:read')
   @Get()
   @ApiOkResponse({ type: [ApiScope] })
-  async findAllWithExplicitDelegationGrant(): Promise<ApiScope[]> {
-    return await this.resourcesService.findApiScopesWithExplicitDelegationGrant()
+  async findAllWithExplicitDelegationGrant(
+    @CurrentUser() user: User,
+  ): Promise<ApiScope[]> {
+    return this.resourcesService.findAllowedDelegationApiScopeListForUser(
+      user.scope,
+    )
   }
 }

@@ -346,6 +346,47 @@ export class ResourcesService {
     })
   }
 
+  /** Filters out scopes that don't have delegation grant and are access controlled */
+  async findAllowedDelegationApiScopeListForUser(scopes: string[]) {
+    this.logger.debug(`Finding allowed api scopes for scopes ${scopes}`)
+    return this.apiScopeModel.findAll({
+      where: {
+        name: {
+          [Op.in]: scopes,
+        },
+        allowExplicitDelegationGrant: true,
+        isAccessControlled: false,
+      },
+    })
+
+    // const allowedScopes = userScopes.filter(
+    //   (x) => x.allowExplicitDelegationGrant && !x.isAccessControlled,
+    // )
+    // return allowedScopes
+  }
+
+  /** Filters out Identity Resources that don't have delegation grant and are access controlled */
+  async findAllowedDelegationIdentityResourceListForUser(
+    identityResources: string[],
+  ) {
+    this.logger.debug(
+      `Finding allowed Identity Resources for identity resources: ${identityResources}`,
+    )
+    return this.identityResourceModel.findAll({
+      where: {
+        name: {
+          [Op.in]: identityResources,
+        },
+        allowExplicitDelegationGrant: true,
+      },
+    })
+
+    // const allowedIdentityResources = userIdentityResources.filter(
+    //   (x) => x.allowExplicitDelegationGrant
+    // )
+    // return allowedIdentityResources
+  }
+
   /** Gets Api scopes with Explicit Delegation Grant */
   async findIdentityResourcesWithExplicitDelegationGrant(): Promise<
     IdentityResource[]
