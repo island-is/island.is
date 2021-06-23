@@ -277,6 +277,9 @@
     "clients-documents": {
       "tags": []
     },
+    "clients-middlewares": {
+      "tags": []
+    },
     "clients-mms": {
       "tags": []
     },

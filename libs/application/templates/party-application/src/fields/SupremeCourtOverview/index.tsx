@@ -7,6 +7,7 @@ import { ExportAsCSV } from '@island.is/application/ui-components'
 import { SchemaFormValues } from '../../lib/dataSchema'
 import { csvFileName } from '../../constants'
 import { PartyLetterRegistry } from '@island.is/api/schema'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { Endorsement } from '../../types/schema'
 import format from 'date-fns/format'
@@ -21,6 +22,8 @@ const mapToCSVFile = (endorsements: Endorsement[]) => {
       Heimilisfang: endorsement.meta.address.streetAddress ?? '',
       Póstnúmer: endorsement.meta.address.postalCode ?? '',
       Borg: endorsement.meta.address.city ?? '',
+      'Meðmæli í vafa': endorsement.meta.invalidated ? 'X' : '',
+      'Meðmæli á pappír': endorsement.meta.bulkEndorsement ? 'X' : '',
     }
   })
 }
@@ -99,7 +102,12 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.supremeCourt.constituencyLabel)}
           </Text>
-          <Text>{answers.constituency}</Text>
+          <Text>
+            {
+              constituencyMapper[answers.constituency as EndorsementListTags]
+                .region_name
+            }
+          </Text>
         </Box>
       </Box>
     </Box>
