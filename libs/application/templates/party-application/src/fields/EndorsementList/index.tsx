@@ -1,6 +1,12 @@
 import React, { FC, useState, useEffect } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Input,
+  Checkbox,
+  Pagination,
+} from '@island.is/island-ui/core'
 import { CopyLink } from '@island.is/application/ui-components'
 import EndorsementTable from './EndorsementTable'
 import { m } from '../../lib/messages'
@@ -9,53 +15,86 @@ import BulkUpload from '../BulkUpload'
 import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
-import sortBy from 'lodash/sortBy'
+import { sortBy, debounce } from 'lodash'
+import { hardcodedList } from '../../types/hardcodedlist'
+import { paginate, PAGE_SIZE, totalPages as pages } from '../components/utils'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
   const [searchTerm, setSearchTerm] = useState('')
-  const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
+  const endorsementsHook = sortBy(hardcodedList, 'created')
+
+  const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>(
+    paginate(endorsementsHook, PAGE_SIZE, 1),
+  )
+  const [filteredEndorsements, setFilteredEndorsements] = useState<
+    Endorsement[] | undefined
+  >(endorsementsHook)
   const [showOnlyInvalidated, setShowOnlyInvalidated] = useState(false)
   const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
   const isClosedHook = useIsClosed(endorsementListId)
-  const { endorsements: endorsementsHook, refetch } = useEndorsements(
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(pages(endorsementsHook?.length))
+  /*const { endorsements: endorsementsHook, refetch } = useEndorsements(
     endorsementListId,
     true,
-  )
+  )*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     refetch()
     setEndorsements(sortBy(endorsementsHook, 'created'))
   }, [endorsementsHook, updateOnBulkImport])
-
+*/
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1
       ? m.endorsementList.namesCount
       : m.endorsementList.nameCount,
   )
 
+  useEffect(() => {
+    filter(searchTerm, showOnlyInvalidated)
+  }, [searchTerm, showOnlyInvalidated])
+
   const filter = (searchTerm: string, showInvalidated: boolean) => {
-    //filter with both filters
+    //filter by both search and invalidated
     if (searchTerm !== '' && showInvalidated) {
-      return endorsementsHook?.filter(
+      const filterByBoth = endorsementsHook?.filter(
         (x) =>
           searchTerm !== '' &&
           x.meta.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) &&
           x.meta.invalidated,
       )
-      //filter with only invalidated
-    } else if (searchTerm === '' && showInvalidated) {
-      return endorsementsHook?.filter((x) => x.meta.invalidated)
-      //filter only with search
-    } else if (searchTerm !== '' && !showInvalidated) {
-      return endorsementsHook?.filter(
+      handlePagination(1, filterByBoth)
+    }
+    //filter by invalidated
+    else if (searchTerm === '' && showInvalidated) {
+      const filterByInvalidated = endorsementsHook?.filter(
+        (x) => x.meta.invalidated,
+      )
+      handlePagination(1, filterByInvalidated)
+
+      //filter by search
+    } else if (!!searchTerm.length && !showInvalidated) {
+      const filterBySearch = endorsementsHook?.filter(
         (x) =>
           searchTerm !== '' &&
           x.meta.fullName?.toLowerCase().includes(searchTerm.toLowerCase()),
       )
-    } else return endorsementsHook
+      handlePagination(1, filterBySearch)
+    } else handlePagination(1, endorsementsHook)
+  }
+
+  const handlePagination = (
+    page: number,
+    endorsements: Endorsement[] | undefined,
+  ) => {
+    const sortEndorements = sortBy(endorsements, 'created')
+    setPage(page)
+    setTotalPages(pages(endorsements?.length))
+    setFilteredEndorsements(sortEndorements)
+    setEndorsements(paginate(sortEndorements, 10, page))
   }
 
   return (
@@ -65,7 +104,9 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
       />
       <Text variant="h3">{`${
-        endorsements && endorsements.length > 0 ? endorsements.length : 0
+        endorsementsHook && endorsementsHook.length > 0
+          ? endorsementsHook.length
+          : 0
       } ${namesCountString}`}</Text>
       <Box marginTop={2}>
         <Box
@@ -79,7 +120,6 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             checked={showOnlyInvalidated}
             onChange={() => {
               setShowOnlyInvalidated(!showOnlyInvalidated)
-              setEndorsements(filter(searchTerm, !showOnlyInvalidated))
             }}
           />
 
@@ -90,10 +130,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             backgroundColor="blue"
             size="sm"
             value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value)
-              setEndorsements(filter(e.target.value, showOnlyInvalidated))
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </Box>
         <Box marginY={3}>
@@ -102,6 +139,23 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             endorsements={endorsements}
           />
         </Box>
+        {!!endorsementsHook?.length && (
+          <Box marginY={2}>
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              renderLink={(page, className, children) => (
+                <Box
+                  cursor="pointer"
+                  className={className}
+                  onClick={() => handlePagination(page, filteredEndorsements)}
+                >
+                  {children}
+                </Box>
+              )}
+            />
+          </Box>
+        )}
         {!isClosedHook ? (
           <Box marginY={5}>
             <BulkUpload
