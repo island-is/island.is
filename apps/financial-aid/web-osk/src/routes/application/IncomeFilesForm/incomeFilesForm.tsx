@@ -20,11 +20,17 @@ const IncomeFilesForm = () => {
   const { form, updateForm } = useContext(FormContext)
 
   const [state, dispatch] = useReducer(form?.incomeFiles, form?.incomeFiles)
-  const [error, setError] = useState<string | undefined>(undefined)
+  const [error, setError] = useState<string>()
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps
+
+  const errorCheck = () => {
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
+  }
 
   return (
     <FormLayout
@@ -68,11 +74,9 @@ const IncomeFilesForm = () => {
       </FormContentContainer>
 
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
+        previousUrl={navigation?.prevUrl}
         nextButtonText="Skila gögnum seinna"
-        onNextButtonClick={() => {
-          router.push(navigation?.nextUrl ?? '/')
-        }}
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )
