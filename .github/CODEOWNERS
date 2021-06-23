@@ -161,4 +161,4 @@
 
 # Infrastructure configuration
 infra/                                                                                        @island-is/devops
-/charts  
+/charts                                                                                       @island-is/devops
