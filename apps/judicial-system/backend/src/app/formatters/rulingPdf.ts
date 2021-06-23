@@ -554,36 +554,44 @@ function constructInvestigationRulingPdf(existingCase: Case) {
       )
   }
 
+  // Only show accused plea if applicable
+  if (
+    existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT ||
+    existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
+  ) {
+    doc
+      .text(' ')
+      .font('Helvetica-Bold')
+      .fontSize(14)
+      .lineGap(8)
+      .text(
+        `Afstaða ${formatAccusedByGender(
+          existingCase.accusedGender,
+          NounCases.GENITIVE,
+        )}`,
+      )
+      .font('Helvetica')
+      .fontSize(12)
+      .text(
+        `${
+          existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
+            ? `${capitalize(
+                formatAccusedByGender(existingCase.accusedGender),
+              )} samþykkir kröfuna. `
+            : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
+            ? `${capitalize(
+                formatAccusedByGender(existingCase.accusedGender),
+              )} hafnar kröfunni. `
+            : ''
+        }${existingCase.accusedPleaAnnouncement || ''}`,
+        {
+          lineGap: 6,
+          paragraphGap: 0,
+        },
+      )
+  }
+
   doc
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
-    .text(
-      `Afstaða ${formatAccusedByGender(
-        existingCase.accusedGender,
-        NounCases.GENITIVE,
-      )}`,
-    )
-    .font('Helvetica')
-    .fontSize(12)
-    .text(
-      `${
-        existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
-          ? `${capitalize(
-              formatAccusedByGender(existingCase.accusedGender),
-            )} samþykkir kröfuna. `
-          : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
-          ? `${capitalize(
-              formatAccusedByGender(existingCase.accusedGender),
-            )} hafnar kröfunni. `
-          : ''
-      }${existingCase.accusedPleaAnnouncement || ''}`,
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
