@@ -154,6 +154,10 @@ export const en: TranslatedMessages = {
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
 
+  // applications screen
+  'applications.title': 'Applications',
+  'applications.bottomTabText': 'Applications',
+
   // cards
   'applicationStatusCard.openButtonLabel': 'Open application',
   'applicationStatusCard.state': `{

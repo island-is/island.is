@@ -152,6 +152,10 @@ export const is = {
   // notification detail
   'notificationDetail.screenTitle': 'Tilkynning',
 
+  // applications screen
+  'applications.title': 'Umsóknir',
+  'applications.bottomTabText': 'Umsóknir',
+
   // cards
   'applicationStatusCard.openButtonLabel': 'Opna umsókn',
   'applicationStatusCard.state': `{

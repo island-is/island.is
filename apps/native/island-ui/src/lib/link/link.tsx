@@ -3,8 +3,7 @@ import { Alert, Linking } from 'react-native'
 import styled from 'styled-components/native'
 import { font } from '../../utils/font'
 
-const Host = styled.TouchableOpacity`
-`
+const Host = styled.TouchableOpacity``
 
 const Text = styled.Text`
   ${font({
@@ -13,24 +12,21 @@ const Text = styled.Text`
   })}
 `
 
-interface HeadingProps {
+interface LinkProps {
   url: string
   children: React.ReactNode
 }
 
-export function Link({ url, children }: HeadingProps) {
-
+export function Link({ url, children }: LinkProps) {
   const handlePress = useCallback(async () => {
-    const supported = await Linking.canOpenURL(url);
+    const supported = await Linking.canOpenURL(url)
 
     if (supported) {
-      console.log('opnar')
-      await Linking.openURL(url);
+      await Linking.openURL(url)
     } else {
-      console.log('ekki opna')
-      Alert.alert(`Don't know how to open this URL: ${url}`);
+      Alert.alert(`Don't know how to open this URL: ${url}`)
     }
-  }, [url]);
+  }, [url])
 
   return (
     <Host onPress={handlePress}>

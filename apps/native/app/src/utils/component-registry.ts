@@ -15,6 +15,7 @@ export const ComponentRegistry = {
   OnboardingNotificationsScreen: `${prefix}.screens.OnboardingNotifications`,
   HomeScreen: `${prefix}.screens.Home`,
   InboxScreen: `${prefix}.screens.Inbox`,
+  ApplicationsScreen: `${prefix}.screens.ApplicationsScreen`,
   WalletScreen: `${prefix}.screens.Wallet`,
   UserScreen: `${prefix}.screens.User`,
   WalletPassScreen: `${prefix}.screens.WalletPass`,
@@ -38,6 +39,7 @@ export const StackRegistry = {
   InboxStack: `${prefix}.stack.InboxStack`,
   HomeStack: `${prefix}.stack.HomeStack`,
   WalletStack: `${prefix}.stack.WalletStack`,
+  ApplicationsStack: `${prefix}.stack.ApplicationsStack`,
 };
 
 

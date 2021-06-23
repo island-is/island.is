@@ -93,6 +93,7 @@ const rightButtonScreens = [
   ComponentRegistry.HomeScreen,
   ComponentRegistry.InboxScreen,
   ComponentRegistry.WalletScreen,
+  ComponentRegistry.ApplicationsScreen,
 ]
 
 export function actionsForNotification(

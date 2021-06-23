@@ -3,6 +3,7 @@ import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
 import { Link } from './link'
+import { LinkText } from './link-text'
 
 const CenterView = ({ children }: any) => (
   <View
@@ -24,5 +25,9 @@ storiesOf('Link', module)
   .add('Default', () => {
     const linkText = text('Link Text', 'island@island.is');
     return <Link url="mailto:island@island.is">{linkText}</Link>
+  })
+  .add('Link Text', () => {
+    const linkText = text('LinkText Text', 'Umsóknir');
+    return <LinkText>{linkText}</LinkText>
   })
 

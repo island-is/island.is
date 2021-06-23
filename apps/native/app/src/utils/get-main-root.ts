@@ -120,6 +120,24 @@ export function getMainRoot(): Layout {
             ],
           },
         },
+        {
+          stack: {
+            id: StackRegistry.ApplicationsStack,
+            children: [
+              {
+                component: {
+                  id: ComponentRegistry.ApplicationsScreen,
+                  name: ComponentRegistry.ApplicationsScreen,
+                  options: {
+                    topBar: {
+                      rightButtons,
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
       ],
     },
   }

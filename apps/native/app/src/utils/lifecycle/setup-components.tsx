@@ -16,6 +16,7 @@ import { OnboardingPinCodeScreen } from '../../screens/onboarding/onboarding-pin
 import { UserScreen } from '../../screens/user/user'
 import { WalletPassScreen } from '../../screens/wallet-pass/wallet-pass'
 import { WalletScreen } from '../../screens/wallet/wallet'
+import { ApplicationsScreen } from '../../screens/applications/applications'
 import { WebViewScreen } from '../../screens/webview/webview'
 import { ComponentRegistry as CR } from '../component-registry'
 import { registerComponent } from '../register-component'
@@ -35,6 +36,7 @@ export function registerAllComponents() {
   registerComponent(CR.HomeScreen, HomeScreen)
   registerComponent(CR.InboxScreen, InboxScreen)
   registerComponent(CR.WalletScreen, WalletScreen)
+  registerComponent(CR.ApplicationsScreen, ApplicationsScreen)
   registerComponent(CR.UserScreen, UserScreen)
   registerComponent(CR.AppLockScreen, AppLockScreen)
   registerComponent(CR.WalletPassScreen, WalletPassScreen)

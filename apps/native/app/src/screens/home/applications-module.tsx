@@ -5,12 +5,14 @@ import {
   StatusCard,
   StatusCardSkeleton,
   ViewPager,
+  LinkText,
 } from '@island.is/island-ui-native'
 import React from 'react'
-import { Image, SafeAreaView } from 'react-native'
+import { Image, SafeAreaView, Text, TouchableOpacity } from 'react-native'
 import { useTheme } from 'styled-components/native'
 import leJobss4 from '../../assets/illustrations/le-jobs-s4.png'
 import { IApplication } from '../../graphql/fragments/application.fragment'
+import { navigateTo } from '../../lib/deep-linking'
 import { useIntl } from '../../lib/intl'
 import { openBrowser } from '../../lib/rn-island'
 import { config } from '../../utils/config'
@@ -82,7 +84,19 @@ export const ApplicationsModule = React.memo(
                 text={intl.formatMessage({
                   id: 'applicationStatusCard.noActiveApplications',
                 })}
-                image={<Image source={leJobss4} height={90} width={42} resizeMode="contain" />}
+                image={
+                  <Image
+                    source={leJobss4}
+                    height={90}
+                    width={42}
+                    resizeMode="contain"
+                  />
+                }
+                link={
+                  <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
+                    <LinkText>Skoða umsóknir</LinkText>
+                  </TouchableOpacity>
+                }
               />
             )}
             {count === 1 && children.slice(0, 1)}

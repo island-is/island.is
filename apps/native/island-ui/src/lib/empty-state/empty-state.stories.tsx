@@ -1,11 +1,12 @@
 import { withKnobs, text } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
-import { Image, View } from 'react-native'
+import { Image, View, TouchableOpacity } from 'react-native'
 import illustrationSrc from '../../assets/empty-list/LE-Company-S3.png'
 import leJobss4 from '../../assets/illustrations/le-jobs-s4.png'
 import { EmptyCard } from './empty-card'
 import { EmptyList } from './empty-list'
+import { LinkText } from '@island.is/island-ui-native'
 
 const CenterView = ({ children }: any) => (
   <View
@@ -42,6 +43,7 @@ storiesOf('Empty States', module)
        <EmptyCard
           text={description}
           image={<Image source={leJobss4} height={90} width={42} />}
+          link={<LinkText>Skoða umsóknir</LinkText>}
         />
       </View>
     )

@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/react-native'
 import { Base64 } from 'js-base64'
 import { Navigation, Options } from 'react-native-navigation'
 import { addRoute, addScheme } from '../../lib/deep-linking'
+import { ApplicationsScreen } from '../../screens/applications/applications'
 import { DocumentDetailScreen } from '../../screens/document-detail/document-detail'
 import { authStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
@@ -39,6 +40,13 @@ export function setupRoutes() {
   addRoute('/wallet', () => {
     Navigation.dismissAllModals()
     selectTab(2)
+  })
+
+
+  addRoute('/applications', async () => {
+    Navigation.dismissAllModals()
+
+    selectTab(3)
   })
 
   addRoute('/notification/:id', (passProps: any) => {
