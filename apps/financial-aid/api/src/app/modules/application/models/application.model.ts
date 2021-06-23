@@ -4,6 +4,7 @@ import {
   Application,
   HomeCircumstances,
   Employment,
+  ApplicationState,
 } from '@island.is/financial-aid/shared'
 
 @ObjectType()
@@ -64,4 +65,10 @@ export class ApplicationModel implements Application {
 
   @Field({ nullable: true })
   readonly interview?: boolean
+
+  @Field({ nullable: true })
+  readonly formComment?: string
+
+  @Field(() => String)
+  readonly state!: ApplicationState
 }

@@ -14,12 +14,14 @@ interface Props {
   title: string
   nationalId?: string
   familyRelation?: string
+  currentUser?: boolean
 }
 
 export const FamilyMemberCard: FC<Props> = ({
   title,
   nationalId,
   familyRelation,
+  currentUser,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -94,10 +96,14 @@ export const FamilyMemberCard: FC<Props> = ({
           marginLeft="auto"
         >
           <Link
-            to={ServicePortalPath.FamilyMember.replace(
-              ':nationalId',
-              nationalId,
-            )}
+            to={
+              currentUser
+                ? ServicePortalPath.UserInfo
+                : ServicePortalPath.FamilyMember.replace(
+                    ':nationalId',
+                    nationalId,
+                  )
+            }
           >
             <Button variant="text" size="small">
               {formatMessage({

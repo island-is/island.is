@@ -14,4 +14,7 @@ export const RskConfig: RskModuleConfig = {
   basicAuth: `${Base64.encode(
     `${environment.rsk.username}:${environment.rsk.password}`,
   )}`,
+  fetch: {
+    timeout: 5000,
+  },
 }
