@@ -835,7 +835,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Kona.<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Farið er fram á einangrun.<br /><br />Verjandi sakbornings: Varði Varnari.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Kona.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Farið er fram á einangrun.<br /><br />Verjandi sakbornings: Varði Varnari.',
     )
   })
 
@@ -866,7 +866,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Kynsegin/Annað.<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Farið er fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Kynsegin/Annað.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Farið er fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
     )
   })
 
@@ -897,7 +897,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
     )
   })
 
@@ -927,7 +927,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -958,7 +958,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um áframhaldandi gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 11. febrúar 2021, kl. 12:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um áframhaldandi gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 11. febrúar 2021, kl. 12:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
     )
   })
 })
@@ -981,7 +981,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn, 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
     )
   })
 
@@ -1002,7 +1002,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn, 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
     )
   })
 })
@@ -1045,6 +1045,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const judgeName = 'Dalli Dómari'
     const judgeTitle = 'aðal dómarinn'
     const isExtension = false
+    const isolationToDate = new Date('2021-04-06T12:30')
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -1065,6 +1066,8 @@ describe('formatPrisonRulingEmailNotification', () => {
       judgeTitle,
       isExtension,
       undefined,
+      undefined,
+      isolationToDate,
     )
 
     // Assert
@@ -1143,6 +1146,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const judgeName = 'Dalli Dómari'
     const judgeTitle = 'aðal dómarinn'
     const isExtension = false
+    const isolationToDate = new Date('2021-04-06T12:30')
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -1163,6 +1167,8 @@ describe('formatPrisonRulingEmailNotification', () => {
       judgeTitle,
       isExtension,
       undefined,
+      undefined,
+      isolationToDate,
     )
 
     // Assert
@@ -1192,6 +1198,7 @@ describe('formatPrisonRulingEmailNotification', () => {
     const judgeName = 'Dalli Dómari'
     const judgeTitle = 'aðal dómarinn'
     const isExtension = false
+    const isolationToDate = new Date('2021-04-06T12:30')
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -1212,6 +1219,8 @@ describe('formatPrisonRulingEmailNotification', () => {
       judgeTitle,
       isExtension,
       undefined,
+      undefined,
+      isolationToDate,
     )
 
     // Assert
@@ -1236,13 +1245,13 @@ describe('formatPrisonRulingEmailNotification', () => {
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
-    const isolationToDate = new Date('2021-04-06T12:30')
     const accusedAppealDecision = CaseAppealDecision.APPEAL
     const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
     const judgeName = 'Dalli Dómari'
     const judgeTitle = 'aðal dómarinn'
     const isExtension = false
     const additionToConclusion = 'Lorem ipsum'
+    const isolationToDate = new Date('2021-04-06T12:30')
 
     // Act
     const res = formatPrisonRulingEmailNotification(
@@ -1376,7 +1385,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Aðalsaksóknari hefur afturkallað kröfu um gæsluvarðhald sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn, 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
+      'Aðalsaksóknari hefur afturkallað kröfu um gæsluvarðhald sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
     )
   })
 })
@@ -1401,7 +1410,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Gæsluvarðhaldskrafa sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn, 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 000000-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Gæsluvarðhaldskrafa sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 000000-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
 
@@ -1424,7 +1433,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Farbannskrafa sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn, 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Farbannskrafa sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
 })
