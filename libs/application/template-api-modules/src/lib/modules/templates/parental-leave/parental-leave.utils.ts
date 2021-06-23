@@ -1,3 +1,4 @@
+import { join } from 'path'
 import get from 'lodash/get'
 
 import {
@@ -250,3 +251,9 @@ export const transformApplicationToParentalLeaveDTO = (
     attachments,
   }
 }
+
+export const pathToAsset = (file: string) =>
+  join(
+    __dirname,
+    `../../../../libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/${file}`,
+  )

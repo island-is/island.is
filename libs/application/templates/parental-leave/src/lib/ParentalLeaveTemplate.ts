@@ -13,7 +13,6 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
-  getValueViaPath,
 } from '@island.is/application/core'
 
 import {

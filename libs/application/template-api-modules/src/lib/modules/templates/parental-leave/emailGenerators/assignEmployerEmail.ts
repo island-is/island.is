@@ -1,42 +1,22 @@
-import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
 
-import { AssignmentEmailTemplateGenerator } from '../../../../types'
+import { Message } from '@island.is/email-service'
 
+import { AssignmentEmailTemplateGenerator } from '../../../../types'
+import { pathToAsset } from '../parental-leave.utils'
+
+// TODO handle translations
 export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGenerator = (
   props,
   assignLink,
-) => {
+): Message => {
   const {
     application,
-    options: { email, locale },
+    options: { email },
   } = props
 
   const employerEmail = get(application.answers, 'employer.email')
-
-  // TODO translate using locale
-  const subject =
-    locale === 'is'
-      ? 'Yfirferð á umsókn um fæðingarorlof'
-      : 'Request for review on paternity leave'
-  const body =
-    locale === 'is'
-      ? dedent(`Góðan dag.
-
-        Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem atvinnuveitanda í umsókn sinni.
-
-        Ef þú áttir von á þessum tölvupósti þá getur þú <a href="${assignLink}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.
-
-        Með kveðju,
-        Fæðingarorlofssjóðsjóður`)
-      : dedent(`Hello.
-
-        An application from applicant with national registry ${application.applicant} awaits your approval.
-
-        To review, <a href="${assignLink}">click here</a>.
-
-        Best regards,
-        Fæðingarorlofssjóður`)
+  const subject = 'Yfirferð á umsókn um fæðingarorlof'
 
   return {
     from: {
@@ -50,9 +30,47 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
       },
     ],
     subject,
-    html: `<p>${body
-      .split('')
-      .map((c) => (c === '\n' ? `<br />\n` : c))
-      .join('')}</p>`,
+    template: {
+      title: subject,
+      body: [
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('logo.jpg'),
+            alt: 'Vinnumálastofnun merki',
+          },
+        },
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('notification.jpg'),
+            alt: 'Barn myndskreyting',
+          },
+        },
+        { component: 'Heading', context: { copy: subject } },
+        { component: 'Copy', context: { copy: 'Góðan dag.' } },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem atvinnuveitanda í umsókn sinni.`,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú smellt neðan.`,
+          },
+        },
+        {
+          component: 'Button',
+          context: {
+            copy: 'Yfirfara umsókn',
+            href: assignLink,
+          },
+        },
+        { component: 'Copy', context: { copy: 'Með kveðju,' } },
+        { component: 'Copy', context: { copy: 'Fæðingarorlofssjóðsjóður' } },
+      ],
+    },
   }
 }

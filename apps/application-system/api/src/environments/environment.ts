@@ -26,6 +26,7 @@ const devConfig = {
     clientLocationOrigin: 'http://localhost:4242/umsoknir',
     emailOptions: {
       useTestAccount: true,
+      useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
     },
     email: {
       sender: 'Devland.is',
@@ -106,6 +107,7 @@ const prodConfig = {
     clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN,
     emailOptions: {
       useTestAccount: false,
+      useNodemailerApp: false,
       options: {
         region: process.env.EMAIL_REGION,
       },
