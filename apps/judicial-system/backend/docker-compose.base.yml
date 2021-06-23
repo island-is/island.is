@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   db_judicial_system:
-    image: postgres:11.6
+    image: public.ecr.aws/bitnami/postgresql:11.12.0
     container_name: db_judicial_system
     networks:
       - local
