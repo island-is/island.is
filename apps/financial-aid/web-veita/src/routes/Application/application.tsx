@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   Divider,
-  ModalBase,
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
@@ -14,7 +13,7 @@ import cn from 'classnames'
 
 import { useQuery, useMutation } from '@apollo/client'
 import {
-  GetApplicantyQuery,
+  GetApplicationQuery,
   UpdateApplicationMutation,
 } from '../../../graphql/sharedGql'
 import {
@@ -24,7 +23,7 @@ import {
   getEmploymentStatus,
   Employment,
   insertAt,
-  State,
+  ApplicationState,
   getState,
 } from '@island.is/financial-aid/shared'
 import format from 'date-fns/format'
@@ -42,13 +41,10 @@ import {
   Profile,
   Files,
   AdminLayout,
+  StateModal,
 } from '../../components'
 
 interface ApplicantData {
-  application: Application
-}
-
-interface SaveData {
   application: Application
 }
 
@@ -57,47 +53,26 @@ const ApplicationProfile = () => {
 
   const [isVisible, setIsVisible] = useState(false)
 
-  const [state, setState] = useState<string | undefined>(undefined)
   const [prevUrl, setPrevUrl] = useState<any | undefined>(undefined)
 
-  const statusOptions = [
-    State.NEW,
-    State.INPROGRESS,
-    State.APPROVED,
-    State.REJECTED,
-  ]
+  const { data, error, loading } = useQuery<ApplicantData>(
+    GetApplicationQuery,
+    {
+      variables: { input: { id: router.query.id } },
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
 
-  const [
-    updateApplicationMutation,
-    { loading: saveLoading },
-  ] = useMutation<SaveData>(UpdateApplicationMutation)
-
-  const saveStateApplication = async (applicant: Application, state: State) => {
-    if (saveLoading === false && applicant) {
-      await updateApplicationMutation({
-        variables: {
-          input: {
-            id: applicant.id,
-            state: state,
-          },
-        },
-      })
-    }
-    setIsVisible(false)
-    setState(state)
-  }
-
-  const { data, error, loading } = useQuery<ApplicantData>(GetApplicantyQuery, {
-    variables: { input: { id: router.query.id } },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const [applicationState, setApplicationState] = useState<
+    ApplicationState | undefined
+  >(data?.application?.state)
 
   useEffect(() => {
     if (data?.application) {
-      setState(data.application.state)
+      setApplicationState(data.application.state)
       //WIP
-      setPrevUrl(navLinks('state', data.application.state))
+      setPrevUrl(navLinks('applicationState', data.application.state))
     }
   }, [data?.application?.state])
 
@@ -209,9 +184,6 @@ const ApplicationProfile = () => {
       },
     ]
 
-    const filesTest = ['/lokaprof2021.docx', '/hengill_ultra_reglur_2021.pdf']
-    const filesSkattTest = ['/lokaprof2021.docx']
-
     return (
       <AdminLayout>
         <Box
@@ -268,7 +240,7 @@ const ApplicationProfile = () => {
                 type="button"
                 variant="primary"
               >
-                {getState[state as State]}
+                {getState[applicationState as ApplicationState]}
               </Button>
             </Box>
 
@@ -307,72 +279,24 @@ const ApplicationProfile = () => {
                 Gögn frá umsækjanda
               </Text>
             </Box>
-            <Files
-              heading="Skattframtal"
-              filesArr={filesSkattTest}
-              className={styles.widtAlmostFull}
-            />
-
-            <Files
-              heading="Tekjugögn"
-              filesArr={filesTest}
-              className={styles.widtAlmostFull}
-            />
+            <Files heading="Skattframtal" className={styles.widtAlmostFull} />
+            <Files heading="Tekjugögn" className={styles.widtAlmostFull} />
           </>
         </Box>
 
-        <ModalBase
-          baseId="changeStatus"
-          isVisible={isVisible}
-          onVisibilityChange={(visibility) => {
-            if (visibility !== isVisible) {
-              setIsVisible(visibility)
-            }
-          }}
-          className={styles.modalBase}
-        >
-          {/* //WIP take out error */}
-          {({ closeModal }) => (
-            <Box onClick={closeModal} className={styles.modalContainer}>
-              <Box
-                position="relative"
-                background="white"
-                borderRadius="large"
-                className={styles.modal}
-              >
-                <Box
-                  paddingLeft={4}
-                  paddingY={2}
-                  background="blue400"
-                  className={styles.modalHeadline}
-                >
-                  <Text fontWeight="semiBold" color="white">
-                    Stöðubreyting
-                  </Text>
-                </Box>
-                <Box padding={4}>
-                  {statusOptions.map((item, index) => {
-                    return (
-                      <button
-                        key={'statusoptions-' + index}
-                        className={cn({
-                          [`${styles.statusOptions}`]: true,
-                          [`${styles.activeState}`]: item === state,
-                        })}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          saveStateApplication(data.application, item)
-                        }}
-                      >
-                        {getState[item as State]}
-                      </button>
-                    )
-                  })}
-                </Box>
-              </Box>
-            </Box>
-          )}
-        </ModalBase>
+        {applicationState && (
+          <StateModal
+            isVisible={isVisible}
+            setIsVisible={(isVisibleBoolean) => {
+              setIsVisible(isVisibleBoolean)
+            }}
+            setApplicationState={(applicationState: ApplicationState) => {
+              setApplicationState(applicationState)
+            }}
+            application={data.application}
+            applicationState={applicationState}
+          />
+        )}
       </AdminLayout>
     )
   }

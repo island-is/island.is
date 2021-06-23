@@ -3,11 +3,11 @@ import React, { createContext, useEffect, useState } from 'react'
 import {
   Application,
   UpdateApplication,
-  State,
+  ApplicationState,
   getState,
 } from '@island.is/financial-aid/shared'
 
-import { GetApplicationQuery } from '../../../graphql/sharedGql'
+import { GetApplicationsQuery } from '../../../graphql/sharedGql'
 
 interface ApplicationsProvider {
   applications?: Application[]
@@ -19,7 +19,7 @@ const ApplicationsProvider: React.FC = ({ children }) => {
   const [applications, setApplications] = useState<Application[]>([])
 
   const { data, error, loading } = useQuery<ApplicationsProvider>(
-    GetApplicationQuery,
+    GetApplicationsQuery,
     {
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',

@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 
-export const GetApplicantyQuery = gql`
+export const GetApplicationQuery = gql`
   query GetApplicantyQuery($input: ApplicationInput!) {
     application(input: $input) {
       id
@@ -36,7 +36,7 @@ export const UpdateApplicationMutation = gql`
     }
   }
 `
-export const GetApplicationQuery = gql`
+export const GetApplicationsQuery = gql`
   query GetApplicationQuery {
     applications {
       id

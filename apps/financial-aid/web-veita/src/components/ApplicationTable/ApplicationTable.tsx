@@ -1,6 +1,5 @@
-import React, { ReactNode, useContext } from 'react'
-import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
+import React, { ReactNode } from 'react'
+import { Text } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
 import * as styles from './ApplicationTable.treat'
@@ -8,9 +7,14 @@ import * as styles from './ApplicationTable.treat'
 import cn from 'classnames'
 
 interface PageProps {
-  applications: any //WIP
+  applications: TableBodyProps[] //WIP
   header: String[]
   className?: string
+}
+
+interface TableBodyProps {
+  listElement: JSX.Element[]
+  link: string
 }
 
 const ApplicationTable: React.FC<PageProps> = ({
@@ -25,7 +29,7 @@ const ApplicationTable: React.FC<PageProps> = ({
           [`${styles.tableContainer}`]: true,
           [`${className}`]: true,
         })}
-        key={applications}
+        key={'apps'}
       >
         <thead>
           <tr>
@@ -52,13 +56,13 @@ const ApplicationTable: React.FC<PageProps> = ({
         </thead>
 
         <tbody className={styles.tableBody}>
-          {applications.map((item: any, index: number) => {
+          {applications.map((item: TableBodyProps, index: number) => {
             return (
               <Link href={'application/' + item.link} key={'key-' + index}>
                 <tr className={styles.link}>
-                  {item?.arr && (
+                  {item?.listElement && (
                     <>
-                      {item.arr.map((el: ReactNode, i: number) => {
+                      {item.listElement.map((el: ReactNode, i: number) => {
                         return (
                           <td
                             className={cn({

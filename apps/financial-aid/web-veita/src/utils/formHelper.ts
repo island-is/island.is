@@ -2,7 +2,7 @@ import differenceInMinutes from 'date-fns/differenceInMinutes'
 import differenceInHours from 'date-fns/differenceInHours'
 import differenceInDays from 'date-fns/differenceInDays'
 import differenceInYears from 'date-fns/differenceInYears'
-import { State } from '@island.is/financial-aid/shared'
+import { ApplicationState } from '@island.is/financial-aid/shared'
 
 export const calcDifferenceInDate = (dateCreated: string | undefined) => {
   if (dateCreated) {
@@ -53,31 +53,34 @@ export const getFileType = (fileName: string) => {
 }
 
 export const navLinks = (
-  filterBy?: 'label' | 'link' | 'state',
+  filterBy?: 'label' | 'link' | 'applicationState',
   filter?: string | undefined,
 ) => {
   const links = [
     {
       label: 'Ný mál',
       link: '/nymal',
-      state: [State.NEW],
+      applicationState: [ApplicationState.NEW],
       headers: ['Nafn', 'Staða', 'Tími án umsjár', 'Tímabil'],
     },
     {
-      label: 'Í vinnslu',
+      label: 'Mál í vinnslu',
       link: '/vinnslu',
-      state: [State.INPROGRESS],
+      applicationState: [ApplicationState.INPROGRESS],
       headers: ['Nafn', 'Staða', 'Síðast uppfært', 'Tímabil'],
     },
     {
       label: 'Afgreidd mál',
       link: '/afgreidd',
-      state: [State.APPROVED, State.REJECTED],
+      applicationState: [ApplicationState.APPROVED, ApplicationState.REJECTED],
       headers: ['Nafn', 'Staða', 'Úrlausnartími', 'Tímabil'],
     },
   ]
-  if (filterBy === 'state') {
-    return links.filter((i) => i[filterBy].includes(filter as State))[0]
+
+  if (filterBy === 'applicationState') {
+    return links.filter((i) =>
+      i[filterBy].includes(filter as ApplicationState),
+    )[0]
   } else if (filterBy) {
     return links.filter((i) => i[filterBy] === filter)[0]
   } else {

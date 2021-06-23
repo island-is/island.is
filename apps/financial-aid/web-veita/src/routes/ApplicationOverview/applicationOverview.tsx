@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext, useReducer } from 'react'
-import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
+import React, { useEffect, useState, useContext } from 'react'
+import { Text, Box, Tag } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import {
   AdminLayout,
@@ -8,18 +8,7 @@ import {
   GenerateName,
 } from '../../components'
 
-import * as styles from './applicationOverview.treat'
-import cn from 'classnames'
-
-import { useQuery, useMutation } from '@apollo/client'
-import { GetApplicationQuery } from '../../../graphql/sharedGql'
-
-import {
-  Application,
-  UpdateApplication,
-  State,
-  getState,
-} from '@island.is/financial-aid/shared'
+import { ApplicationState, getState } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
 
@@ -31,19 +20,7 @@ import {
 
 import { ApplicationsContext } from '../../components/ApplicationsProvider/ApplicationsProvider'
 
-interface ApplicationData {
-  applications: Application[]
-}
-
-interface NavigationLinks {
-  label?: string
-  link?: string
-  state?: State
-  secState?: State
-  headers?: string[]
-}
-
-const ApplicationOverview = () => {
+export const ApplicationOverview = () => {
   const router = useRouter()
 
   const { applications } = useContext(ApplicationsContext)
@@ -69,25 +46,25 @@ const ApplicationOverview = () => {
           className={`contentUp delay-50`}
           header={currentState?.headers}
           applications={applications
-            .filter((item) => currentState?.state.includes(item?.state))
-            .map((item) => {
-              return {
-                arr: [
-                  <Box display="flex" alignItems="center">
-                    <GeneratedProfile size={32} />
-                    <Box marginLeft={2}>
-                      <Text variant="h5">{GenerateName(item.nationalId)}</Text>
-                    </Box>
-                  </Box>,
-                  <Text> {getState[item.state as State]}</Text>,
-                  <Text> {calcDifferenceInDate(item.modified)}</Text>,
-                  <Text>
-                    {translateMonth(format(new Date(item.created), 'M'))}
-                  </Text>,
-                ],
-                link: item.id,
-              }
-            })}
+            .filter((item) =>
+              currentState?.applicationState.includes(item?.state),
+            )
+            .map((item) => ({
+              listElement: [
+                <Box display="flex" alignItems="center">
+                  <GeneratedProfile size={32} />
+                  <Box marginLeft={2}>
+                    <Text variant="h5">{GenerateName(item.nationalId)}</Text>
+                  </Box>
+                </Box>,
+                <Text> {getState[item.state as ApplicationState]}</Text>,
+                <Text> {calcDifferenceInDate(item.modified)}</Text>,
+                <Text>
+                  {translateMonth(format(new Date(item.created), 'M'))}
+                </Text>,
+              ],
+              link: item.id,
+            }))}
         />
       )}
     </AdminLayout>
