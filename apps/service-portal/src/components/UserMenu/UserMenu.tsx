@@ -50,52 +50,40 @@ const UserMenu = ({ state, onClose, onRouteChange }: UserMenuProps) => {
       dropdownItems={
         <>
           <Box>
-            <Box
-              display="flex"
-              alignItems="center"
-              marginBottom={1}
-              className={styles.breakWord}
-            >
-              <Box display="flex" alignItems="center" marginRight={2}>
-                <Icon type="outline" icon="mail" color="blue300" />
+            {userProfile?.email && (
+              <Box
+                display="flex"
+                alignItems="center"
+                marginBottom={1}
+                className={styles.breakWord}
+              >
+                <Box display="flex" alignItems="center" marginRight={2}>
+                  <Icon type="outline" icon="mail" color="blue300" />
+                </Box>
+
+                <Text>{userProfile.email}</Text>
               </Box>
+            )}
+            {userProfile?.mobilePhoneNumber && (
+              <Box
+                display="flex"
+                alignItems="center"
+                marginBottom={2}
+                className={styles.breakWord}
+              >
+                <Box display="flex" alignItems="center" marginRight={2}>
+                  <Icon type="outline" icon="call" color="blue300" />
+                </Box>
 
-              <Text>
-                {userProfile?.email ??
-                  formatMessage({
-                    id: 'service.portal:missing-userProfile-email',
-                    defaultMessage: 'Tölvupóst vantar',
-                  })}
-              </Text>
-            </Box>
-
-            <Box
-              display="flex"
-              alignItems="center"
-              marginBottom={2}
-              className={styles.breakWord}
-            >
-              <Box display="flex" alignItems="center" marginRight={2}>
-                <Icon type="outline" icon="call" color="blue300" />
+                <Text>{userProfile.mobilePhoneNumber}</Text>
               </Box>
+            )}
 
-              <Text>
-                {userProfile?.mobilePhoneNumber ??
-                  formatMessage({
-                    id: 'service.portal:missing-userProfile-mobilePhoneNumber',
-                    defaultMessage: 'Símanúmer vantar',
-                  })}
-              </Text>
-            </Box>
-
-            <Link
-              to={ServicePortalPath.SettingsPersonalInformation}
-              onClick={onRouteChange}
-            >
+            <Link to={ServicePortalPath.SettingsRoot} onClick={onRouteChange}>
               <Button variant="text" icon="arrowForward" size="small">
                 {formatMessage({
-                  id: 'global:edit',
-                  defaultMessage: 'Breyta',
+                  id: 'sp.settings:edit',
+                  defaultMessage: 'Breyta stillingum',
                 })}
               </Button>
             </Link>
