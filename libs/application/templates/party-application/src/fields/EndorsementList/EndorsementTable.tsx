@@ -59,7 +59,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
         >
           {endorsement.meta.invalidated || endorsement.meta.bulkEndorsement ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.meta.address.streetAddress}
+              {endorsement.meta.address}
               <Box marginLeft={2}>
                 {endorsement.meta.invalidated && (
                   <Tooltip
@@ -76,7 +76,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
               </Box>
             </Box>
           ) : (
-            <Text>{endorsement.meta.address.streetAddress}</Text>
+            endorsement.meta.address
           )}
         </T.Data>
       </T.Row>
