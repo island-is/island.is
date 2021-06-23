@@ -93,8 +93,8 @@ const devConfig = {
       'https://reglugerdir-api.herokuapp.com/api/v1',
   },
   fjarmalDomain: {
-    username: process.env.FJARMAL_USER ?? '',
-    password: process.env.FJARMAL_PASS ?? '',
+    username: process.env.FINANCE_USER ?? '',
+    password: process.env.FINANCE_PASS ?? '',
     xroadApiPath:
       process.env.XROAD_FINANCES_PATH ??
       'IS-DEV/GOV/10021/FJS-Public/financeIsland',
@@ -221,8 +221,8 @@ const prodConfig = {
     baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
   },
   fjarmalDomain: {
-    username: process.env.FJARMAL_USER ?? '',
-    password: process.env.FJARMAL_PASS ?? '',
+    username: process.env.FINANCE_USER ?? '',
+    password: process.env.FINANCE_PASS ?? '',
     xroadApiPath: process.env.XROAD_FINANCES_PATH,
     ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
   },
