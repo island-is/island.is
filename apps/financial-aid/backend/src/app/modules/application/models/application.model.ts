@@ -9,7 +9,11 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
+import {
+  HomeCircumstances,
+  Employment,
+  ApplicationState,
+} from '@island.is/financial-aid/shared'
 
 @Table({
   tableName: 'applications',
@@ -146,4 +150,19 @@ export class ApplicationModel extends Model<ApplicationModel> {
   })
   @ApiProperty()
   interview: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  formComment: string
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(ApplicationState),
+  })
+  @ApiProperty({ enum: ApplicationState })
+  state: ApplicationState
 }
