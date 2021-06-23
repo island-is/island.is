@@ -1,6 +1,6 @@
 import { defineMessage, defineMessages } from 'react-intl'
 
-// Strings for select court component
+// Strings for request court form
 export const requestCourtForm = {
   heading: defineMessage({
     id: 'judicial.system:form.requestCourt.heading',
