@@ -6,6 +6,7 @@ import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
 import { Endorsement } from '../../types/schema'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 const formatDate = (date: string) => {
   try {
@@ -20,10 +21,18 @@ interface EndorsementTableProps {
   endorsements?: Endorsement[]
 }
 
-const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
+const EndorsementTable: FC<EndorsementTableProps> = ({
+  endorsements,
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const renderRow = (endorsement: Endorsement) => {
-    const rowBackground = endorsement.meta.invalidated
+    const voterRegionMismatch =
+      endorsement.meta.voterRegion !==
+      constituencyMapper[
+        application.answers.constituency as EndorsementListTags
+      ].region_number
+    const rowBackground = voterRegionMismatch
       ? 'yellow200'
       : endorsement.meta.bulkEndorsement
       ? 'roseTinted100'
@@ -57,11 +66,11 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
             textAlign: 'right',
           }}
         >
-          {endorsement.meta.invalidated || endorsement.meta.bulkEndorsement ? (
+          {voterRegionMismatch || endorsement.meta.bulkEndorsement ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
               {endorsement.meta.address}
               <Box marginLeft={2}>
-                {endorsement.meta.invalidated && (
+                {voterRegionMismatch && (
                   <Tooltip
                     color="blue400"
                     iconSize="medium"

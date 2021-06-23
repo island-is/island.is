@@ -44,6 +44,7 @@ export const GetEndorsements = gql`
         address
         invalidated
         bulkEndorsement
+        voterRegion
       }
       created
       modified

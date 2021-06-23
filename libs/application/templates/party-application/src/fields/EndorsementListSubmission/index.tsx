@@ -146,6 +146,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
             </Box>
           </Box>
           <EndorsementTable
+            application={application}
             endorsements={endorsementsHook}
             selectedEndorsements={selectedEndorsements}
             onChange={(endorsement) => handleCheckboxChange(endorsement)}

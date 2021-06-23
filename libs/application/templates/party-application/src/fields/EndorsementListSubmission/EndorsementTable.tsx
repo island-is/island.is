@@ -11,6 +11,8 @@ import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
 import { Endorsement } from '../../types/schema'
+import { Application } from '@island.is/application/core'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 const formatDate = (date: string) => {
   try {
@@ -21,12 +23,14 @@ const formatDate = (date: string) => {
 }
 
 interface EndorsementTableProps {
+  application: Application
   endorsements?: Endorsement[]
   selectedEndorsements?: Endorsement[]
   onChange: (endorsement: Endorsement) => void
 }
 
 const EndorsementTable: FC<EndorsementTableProps> = ({
+  application,
   endorsements,
   selectedEndorsements,
   onChange,
@@ -34,7 +38,12 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
   const { formatMessage } = useLocale()
 
   const renderRow = (endorsement: Endorsement) => {
-    const rowBackground = endorsement.meta.invalidated
+    const voterRegionMismatch =
+      endorsement.meta.voterRegion !==
+      constituencyMapper[
+        application.answers.constituency as EndorsementListTags
+      ].region_number
+    const rowBackground = voterRegionMismatch
       ? 'yellow200'
       : endorsement.meta.bulkEndorsement
       ? 'roseTinted100'
@@ -69,11 +78,11 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
             textAlign: 'right',
           }}
         >
-          {endorsement.meta.invalidated || endorsement.meta.bulkEndorsement ? (
+          {voterRegionMismatch || endorsement.meta.bulkEndorsement ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
               {endorsement.meta.address.streetAddress}
               <Box marginLeft={2}>
-                {endorsement.meta.invalidated && (
+                {voterRegionMismatch && (
                   <Tooltip
                     color="blue400"
                     iconSize="medium"
