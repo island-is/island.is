@@ -38,6 +38,6 @@ export class PartyLetterRegistryService {
   async partyLetterRegistryControllerFindByManager(auth: User) {
     return await this.partyLetterRegistryApiWithAuth(auth)
       .partyLetterRegistryControllerFindAsManagerByAuth()
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
   }
 }
