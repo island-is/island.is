@@ -1,4 +1,9 @@
-import { HomeCircumstances, Employment, KeyMapping } from './types'
+import {
+  HomeCircumstances,
+  Employment,
+  KeyMapping,
+  ApplicationState,
+} from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
   Unknown: 'Óþekkt',
@@ -16,8 +21,21 @@ export const getEmploymentStatus: KeyMapping<Employment, string> = {
   Other: 'Ekkert að ofan lýsir mínum aðstæðum',
 }
 
+export const getState: KeyMapping<ApplicationState, string> = {
+  New: 'Ný umsókn',
+  InProgress: 'Í vinnslu',
+  Rejected: 'Synjað',
+  Approved: 'Samþykkt',
+}
+
 export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`
+
+export const formatPhoneNumber = (phoneNumber: string) =>
+  insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
+
+export const formatNationalId = (nationalId: string) =>
+  insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,
