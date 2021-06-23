@@ -15,8 +15,16 @@ export const printText = style({
 export const metaDate = style({
   display: 'inline-block',
   fontSize: '.75em',
+  marginRight: '.5em',
 
   '::before': {
     content: '" –  "',
   },
+})
+export const linkToCurrent = style({
+  display: 'inline-block',
+  fontSize: '.75em',
+
+  '::before': { content: '"("' },
+  '::after': { content: '")"' },
 })
