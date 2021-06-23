@@ -131,7 +131,9 @@ module.exports = {
                        c.isolation,
                        c.isExtension,
                        c.previousDecision,
-                     )}${c.demands ? `\n\n${c.demands}` : ''}' \
+                     ).replace(/\'/g, "''")}${
+                      c.demands ? `\n\n${c.demands.replace(/\'/g, "''")}` : ''
+                    }' \
                      WHERE "id" = '${c.id}'`,
                     { transaction: t },
                   )
@@ -172,7 +174,11 @@ module.exports = {
                   return queryInterface.sequelize.query(
                     `UPDATE "case" \
                      SET "other_demands" = ${
-                       idx >= 0 ? `'${c.other_demands.slice(idx + 2)}'` : 'NULL'
+                       idx >= 0
+                         ? `'${c.other_demands
+                             .slice(idx + 2)
+                             .replace(/\'/g, "''")}'`
+                         : 'NULL'
                      } \
                      WHERE "id" = '${c.id}'`,
                     { transaction: t },

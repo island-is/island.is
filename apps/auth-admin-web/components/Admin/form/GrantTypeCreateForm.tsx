@@ -8,6 +8,8 @@ import { GrantTypeService } from './../../../services/GrantTypeService'
 import ValidationUtils from './../../../utils/validation.utils'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
+import HintBox from './../../common/HintBox'
+
 interface Props {
   grantType: GrantTypeDTO
   handleSaveButtonClicked?: (response: GrantType) => void
@@ -26,6 +28,11 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('GrantTypeCreateForm'),
   )
+  //#region hint-box
+  const [nameHintVisible, setNameHintVisible] = useState<boolean>(false)
+  const [nameHintMessage, setNameHintMessage] = useState<string>('')
+  const [nameIsValid, setNameIsValid] = useState<boolean | null>(null)
+  //#endregion hint-box
 
   useEffect(() => {
     if (props.grantType && props.grantType.name) {
@@ -40,6 +47,16 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
       }
       return response
     }
+  }
+
+  const onNameChange = async (name: string) => {
+    setNameHintVisible(true)
+    const isValid =
+      name.length > 0 ? ValidationUtils.validateGrantType(name) : false
+    setNameIsValid(isValid)
+    isValid
+      ? setNameHintMessage(localization.fields['name'].hintOkMessage)
+      : setNameHintMessage(localization.fields['name'].hintErrorMessage)
   }
 
   const create = async (data: FormOutput): Promise<void> => {
@@ -83,13 +100,28 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     name="grantType.name"
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateIdentifier,
+                      validate: isEditing
+                        ? () => {
+                            return true
+                          }
+                        : ValidationUtils.validateGrantType,
                     })}
                     defaultValue={grantType.name}
                     className="grant-type-create-form__input"
                     placeholder={localization.fields['name'].placeholder}
                     title={localization.fields['name'].helpText}
                     readOnly={isEditing}
+                    onBlur={() => setNameHintVisible(false)}
+                    onFocus={(e) => onNameChange(e.target.value)}
+                    onChange={(e) => onNameChange(e.target.value)}
+                  />
+                  <HintBox
+                    helpText={nameHintMessage}
+                    pattern={localization.fields['name'].pattern}
+                    patternText={localization.fields['name'].patternText}
+                    setVisible={nameHintVisible}
+                    onVisibleChange={(e) => setNameHintVisible(e)}
+                    isValid={nameIsValid}
                   />
                   <HelpBox helpText={localization.fields['name'].helpText} />
                   <ErrorMessage

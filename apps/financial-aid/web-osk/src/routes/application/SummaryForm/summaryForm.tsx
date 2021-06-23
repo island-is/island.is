@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   LoadingDots,
+  Input,
 } from '@island.is/island-ui/core'
 
 import { useMutation, useQuery } from '@apollo/client'
@@ -18,6 +19,7 @@ import {
   FormContentContainer,
   FormFooter,
   FormLayout,
+  CancelModal,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
@@ -28,6 +30,15 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
+import format from 'date-fns/format'
+
+import {
+  calculateAidFinalAmount,
+  calulateTaxOfAmount,
+  calulatePersonalTaxAllowanceUsed,
+  TaxInfo,
+} from '@island.is/financial-aid-web/osk/src/utils/taxCalculator'
+
 import {
   Municipality,
   NavigationProps,
@@ -35,9 +46,10 @@ import {
   HomeCircumstances,
   Employment,
   getEmploymentStatus,
-  CreateApplication,
-  insertAt,
+  formatPhoneNumber,
+  formatNationalId,
   aidCalculator,
+  ApplicationState,
 } from '@island.is/financial-aid/shared'
 
 interface MunicipalityData {
@@ -45,9 +57,13 @@ interface MunicipalityData {
 }
 
 const SummaryForm = () => {
+  const currentYear = format(new Date(), 'yyyy')
+
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
   const { user } = useContext(UserContext)
+
+  const [isVisible, setIsVisible] = useState(false)
 
   const { data, error, loading } = useQuery<MunicipalityData>(
     GetMunicipalityQuery,
@@ -87,10 +103,32 @@ const SummaryForm = () => {
           interview: Boolean(form?.interview),
           employment: form?.employment,
           employmentCustom: form?.employmentCustom,
+          formComment: form?.formComment,
+          state: ApplicationState.NEW,
         },
       },
     })
     return data
+  }
+
+  const errorCheck = () => {
+    createApplication()
+      .then(() => {
+        if (navigation?.nextUrl) {
+          router.push(navigation?.nextUrl)
+        }
+
+        router.events.on('routeChangeComplete', (url) => {
+          //Clear session storage
+          updateForm({ submitted: false, incomeFiles: [] })
+        })
+      })
+      .catch((err) =>
+        setFormError({
+          status: true,
+          message: 'Obobb einhvað fór úrskeiðis',
+        }),
+      )
   }
 
   const aidAmount = useMemo(() => {
@@ -106,38 +144,12 @@ const SummaryForm = () => {
     router.pathname,
   ) as NavigationProps
 
-  const calculation = [
-    {
-      label: 'Full upphæð aðstoðar',
-      sum: '+ 200.000 kr.',
-    },
-    {
-      label: 'Ofgreidd aðstoð í Feb 2021',
-      sum: '- 10.000 kr.',
-    },
-    {
-      label: 'Skattur',
-      sum: '- 24.900 kr.',
-    },
-    {
-      label: 'Persónuafsláttur',
-      sum: '+ 32.900 kr.',
-    },
-  ]
-
   const overview = [
-    {
-      label: 'Heimili',
-      // url: 'heimili',
-      info: form?.customAddress
-        ? form?.customHomeAddress + ', ' + form?.customPostalCode
-        : 'Hafnargata 3, 220 Hafnarfjörður',
-    },
     {
       label: 'Búseta',
       url: 'buseta',
       info:
-        form?.homeCircumstances === 'Other'
+        form?.homeCircumstances === HomeCircumstances.OTHER
           ? form?.homeCircumstancesCustom
           : getHomeCircumstances[form?.homeCircumstances as HomeCircumstances],
     },
@@ -156,6 +168,11 @@ const SummaryForm = () => {
         ? form?.employmentCustom
         : getEmploymentStatus[form?.employment as Employment],
     },
+    {
+      label: 'Netfang',
+      url: 'samskipti',
+      info: form?.emailAddress,
+    },
   ]
 
   return (
@@ -167,7 +184,12 @@ const SummaryForm = () => {
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Yfirlit umsóknar
         </Text>
-        <Box display="flex" alignItems="center" marginBottom={1}>
+        <Box
+          display="flex"
+          alignItems="center"
+          flexWrap="wrap"
+          marginBottom={1}
+        >
           <Box marginRight={1}>
             <Text as="h2" variant="h3" marginBottom={1}>
               Áætluð aðstoð
@@ -187,23 +209,58 @@ const SummaryForm = () => {
         </Text>
         {data && (
           <>
-            {calculation.map((item, index) => {
-              return (
-                <span key={'calculation-' + index}>
-                  <Box
-                    display="flex"
-                    justifyContent="spaceBetween"
-                    alignItems="center"
-                    padding={2}
-                  >
-                    <Text variant="small">{item.label}</Text>
-                    <Text>{item.sum}</Text>
-                  </Box>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              padding={2}
+            >
+              <Text variant="small">Full upphæð aðstoðar </Text>
+              <Text>{aidAmount?.toLocaleString('de-DE')} kr.</Text>
+            </Box>
 
-                  <Divider />
-                </span>
-              )
-            })}
+            <Divider />
+
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              padding={2}
+            >
+              <Text variant="small">Skattur</Text>
+              <Text>
+                -{' '}
+                {aidAmount &&
+                  calulateTaxOfAmount(aidAmount, currentYear).toLocaleString(
+                    'de-DE',
+                  )}{' '}
+                kr.
+              </Text>
+            </Box>
+
+            <Divider />
+
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              padding={2}
+            >
+              <Text variant="small">Persónuafsláttur</Text>
+              <Text>
+                +{' '}
+                {aidAmount &&
+                  calulatePersonalTaxAllowanceUsed(
+                    aidAmount,
+                    Boolean(form?.usePersonalTaxCredit),
+                    currentYear,
+                  ).toLocaleString('de-DE')}{' '}
+                kr.
+              </Text>
+            </Box>
+
+            <Divider />
+
             <Box
               display="flex"
               justifyContent="spaceBetween"
@@ -214,7 +271,11 @@ const SummaryForm = () => {
               <Text variant="small">Áætluð aðstoð (hámark)</Text>
               <Text>
                 {aidAmount !== undefined
-                  ? aidAmount?.toLocaleString('de-DE') + ' kr.'
+                  ? calculateAidFinalAmount(
+                      aidAmount,
+                      Boolean(form?.usePersonalTaxCredit),
+                      currentYear,
+                    ).toLocaleString('de-DE') + ' kr.'
                   : 'Abbabb.. mistókst að reikna'}
               </Text>
             </Box>
@@ -244,9 +305,7 @@ const SummaryForm = () => {
 
             <Text fontWeight="semiBold">Kennitala</Text>
             {user?.nationalId && (
-              <Text>
-                {insertAt(user.nationalId.replace('-', ''), '-', 6) || '-'}
-              </Text>
+              <Text>{formatNationalId(user.nationalId)}</Text>
             )}
           </Box>
 
@@ -254,12 +313,12 @@ const SummaryForm = () => {
             <Text fontWeight="semiBold">Sími</Text>
             {user?.phoneNumber && (
               <Text marginBottom={3}>
-                {insertAt(user.phoneNumber.replace('-', ''), '-', 3) || '-'}
+                {formatPhoneNumber(user.phoneNumber)}
               </Text>
             )}
 
-            <Text fontWeight="semiBold">Netfang</Text>
-            <Text>{form?.emailAddress}</Text>
+            <Text fontWeight="semiBold">Heimili</Text>
+            <Text>Hafnargata 3, 220 Hafnarfjörður</Text>
           </Box>
         </Box>
         {overview.map((item, index) => {
@@ -301,7 +360,7 @@ const SummaryForm = () => {
           justifyContent="spaceBetween"
           alignItems="flexStart"
           paddingY={[4, 4, 5]}
-          marginBottom={[2, 2, 10]}
+          marginBottom={[2, 2, 5]}
         >
           <Box marginRight={3}>
             <Text fontWeight="semiBold">Gögn</Text>
@@ -320,6 +379,25 @@ const SummaryForm = () => {
           </Button>
         </Box>
 
+        <Box marginBottom={[3, 3, 4]}>
+          <Text variant="h3">Annað sem þú vilt koma á framfæri?</Text>
+        </Box>
+
+        <Box marginBottom={[4, 4, 10]}>
+          <Input
+            backgroundColor={'blue'}
+            label="Athugasemd"
+            name="formComment"
+            placeholder="Skrifaðu hér"
+            rows={8}
+            textarea
+            value={form?.formComment}
+            onChange={(event) => {
+              updateForm({ ...form, formComment: event.target.value })
+            }}
+          />
+        </Box>
+
         <div
           className={cn({
             [`errorMessage`]: true,
@@ -330,28 +408,22 @@ const SummaryForm = () => {
             {formError.message}
           </Text>
         </div>
+
+        <CancelModal
+          isVisible={isVisible}
+          setIsVisible={(isVisibleBoolean) => {
+            setIsVisible(isVisibleBoolean)
+          }}
+        />
       </FormContentContainer>
 
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
-        nextButtonText="Senda umsókn"
-        onNextButtonClick={() => {
-          createApplication()
-            .then((el) => {
-              router.push(navigation?.nextUrl ?? '/')
-
-              // router.events.on('routeChangeComplete', (url) => {
-              //   //Clear session storage
-              //   updateForm({ submitted: false, incomeFiles: [] })
-              // })
-            })
-            .catch((err) =>
-              setFormError({
-                status: true,
-                message: 'Obobb einhvað fór úrskeiðis',
-              }),
-            )
+        onPrevButtonClick={() => {
+          setIsVisible(!isVisible)
         }}
+        previousIsDestructive={true}
+        nextButtonText="Senda umsókn"
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )
