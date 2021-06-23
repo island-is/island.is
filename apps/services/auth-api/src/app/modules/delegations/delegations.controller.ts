@@ -68,7 +68,9 @@ export class DelegationsController {
           user.nationalId,
           fromNationalId,
         )
-        scopes = result.map((s) => s.scopeName ?? s.identityResourceName ?? '')
+        scopes = result
+          .filter((s) => s.apiScope || s.identityResource)
+          .map((s) => s.apiScope?.name ?? s.identityResource?.name ?? '')
         break
       }
     }
