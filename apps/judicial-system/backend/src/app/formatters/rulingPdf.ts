@@ -24,7 +24,9 @@ import { formatAppeal, formatConclusion } from './formatters'
 import { setPageNumbers } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
-function constructRestrictionRulingPdf(existingCase: Case) {
+function constructRestrictionRulingPdf(
+  existingCase: Case,
+): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -442,7 +444,9 @@ function constructRestrictionRulingPdf(existingCase: Case) {
   return stream
 }
 
-function constructInvestigationRulingPdf(existingCase: Case) {
+function constructInvestigationRulingPdf(
+  existingCase: Case,
+): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -754,7 +758,9 @@ function constructInvestigationRulingPdf(existingCase: Case) {
   return stream
 }
 
-function constructRulingPdf(existingCase: Case) {
+function constructRulingPdf(
+  existingCase: Case,
+): streamBuffers.WritableStreamBuffer {
   return existingCase.type === CaseType.CUSTODY ||
     existingCase.type === CaseType.TRAVEL_BAN
     ? constructRestrictionRulingPdf(existingCase)
