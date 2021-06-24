@@ -1,12 +1,22 @@
 import React, { useState, useCallback, FC } from 'react'
+import { useLocale } from '@island.is/localization'
+import { ApolloError } from '@apollo/client'
 import AnimateHeight from 'react-animate-height'
-import { Table as T } from '@island.is/island-ui/core'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Text,
+  LoadingDots,
+  Table as T,
+} from '@island.is/island-ui/core'
+import { m } from '../../lib/messages'
 import * as styles from './ExpandableTable.treat'
 
 interface Props {
   data: Array<string | number>
   last?: boolean
+  loading?: boolean
+  error?: ApolloError
   onExpandCallback?: () => void
 }
 
@@ -15,7 +25,10 @@ const ExpandableLine: FC<Props> = ({
   onExpandCallback,
   children,
   last,
+  loading,
+  error,
 }) => {
+  const { formatMessage } = useLocale()
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
 
@@ -42,12 +55,14 @@ const ExpandableLine: FC<Props> = ({
           <T.Data
             key={i}
             box={{
-              background: closed && !expanded ? 'transparent' : 'blue100',
-              borderColor: closed && !expanded ? 'blue200' : 'blue100',
+              background: fullClose || loading ? 'transparent' : 'blue100',
+              borderColor: fullClose || loading ? 'blue200' : 'blue100',
               position: 'relative',
             }}
           >
-            {!fullClose && i === 0 ? <div className={styles.line} /> : null}
+            {!fullClose && i === 0 && !loading ? (
+              <div className={styles.line} />
+            ) : null}
             <Text variant={last ? 'eyebrow' : 'small'} as="span">
               {item}
             </Text>
@@ -56,12 +71,12 @@ const ExpandableLine: FC<Props> = ({
         <T.Data
           box={{
             alignItems: 'flexEnd',
-            background: closed && !expanded ? 'transparent' : 'blue100',
-            borderColor: closed && !expanded ? 'blue200' : 'blue100',
+            background: fullClose || loading ? 'transparent' : 'blue100',
+            borderColor: fullClose || loading ? 'blue200' : 'blue100',
             printHidden: true,
           }}
         >
-          {!last && (
+          {!last && !loading && (
             <Box display="flex" alignItems="flexEnd" justifyContent="flexEnd">
               <Button
                 circle
@@ -75,6 +90,16 @@ const ExpandableLine: FC<Props> = ({
                 type="button"
                 variant="primary"
               />
+            </Box>
+          )}
+          {loading && (
+            <Box
+              className={styles.loader}
+              display="flex"
+              alignItems="center"
+              justifyContent="flexEnd"
+            >
+              <LoadingDots single />
             </Box>
           )}
         </T.Data>
@@ -95,6 +120,18 @@ const ExpandableLine: FC<Props> = ({
           >
             <div className={styles.line} />
             {children}
+            {error && (
+              <Box
+                paddingY={3}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Text variant="eyebrow" as="span">
+                  {formatMessage(m.errorFetch)}
+                </Text>
+              </Box>
+            )}
           </AnimateHeight>
         </T.Data>
       </T.Row>

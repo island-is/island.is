@@ -9,3 +9,8 @@ export const line = style({
   top: 0,
   position: 'absolute',
 })
+
+export const loader = style({
+  minHeight: 24,
+  minWidth: 24,
+})

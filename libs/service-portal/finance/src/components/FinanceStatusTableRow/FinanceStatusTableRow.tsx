@@ -21,7 +21,7 @@ interface Props {
 }
 
 const FinanceStatusTableRow: FC<Props> = ({ organization, chargeType }) => {
-  const [getDetailsQuery, { ...detailsQuery }] = useLazyQuery(
+  const [getDetailsQuery, { loading, error, ...detailsQuery }] = useLazyQuery(
     GetFinanceStatusDetailsQuery,
   )
   const financeStatusDetails: FinanceStatusDetailsType =
@@ -45,6 +45,8 @@ const FinanceStatusTableRow: FC<Props> = ({ organization, chargeType }) => {
         organization.name,
         amountFormat(chargeType.totals),
       ]}
+      loading={loading}
+      error={error}
     >
       {financeStatusDetails?.chargeItemSubjects?.length > 0 ? (
         <FinanceStatusDetailTable
