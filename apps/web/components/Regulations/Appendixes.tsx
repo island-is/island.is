@@ -4,7 +4,7 @@ import React, { memo } from 'react'
 import { HTMLText, PlainText, useDomid } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
-import { HTMLDump } from './HTMLDump'
+import { HTMLDump } from '@island.is/regulations'
 
 const hasDiff = (text: string) => /<(del|ins)/.test(text)
 
