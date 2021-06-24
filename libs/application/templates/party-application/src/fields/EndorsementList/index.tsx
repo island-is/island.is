@@ -15,7 +15,7 @@ import BulkUpload from '../BulkUpload'
 import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
-import { sortBy, debounce } from 'lodash'
+import sortBy from 'lodash/sortBy'
 import { hardcodedList } from '../../types/hardcodedlist'
 import { paginate, PAGE_SIZE, totalPages as pages } from '../components/utils'
 import { constituencyMapper, EndorsementListTags } from '../../constants'
@@ -48,6 +48,10 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     setEndorsements(sortBy(endorsementsHook, 'created'))
   }, [endorsementsHook, updateOnBulkImport])
 */
+  const minEndorsements =
+    constituencyMapper[application.answers.constituency as EndorsementListTags]
+      .parliamentary_seats * 30
+
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1
       ? m.endorsementList.namesCount
@@ -113,11 +117,16 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         linkUrl={window.location.href}
         buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
       />
-      <Text variant="h3">{`${
-        endorsementsHook && endorsementsHook.length > 0
-          ? endorsementsHook.length
-          : 0
-      } ${namesCountString}`}</Text>
+      <Text marginTop={6} variant="h3">
+        {`${
+          endorsementsHook && endorsementsHook.length > 0
+            ? endorsementsHook.length
+            : 0
+        } ${namesCountString}` +
+          '(af ' +
+          minEndorsements +
+          ')'}
+      </Text>
       <Box marginTop={2}>
         <Box
           display="flex"
@@ -150,7 +159,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
           />
         </Box>
         {!!endorsementsHook?.length && (
-          <Box marginY={2}>
+          <Box marginY={3}>
             <Pagination
               page={page}
               totalPages={totalPages}

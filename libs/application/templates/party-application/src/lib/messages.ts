@@ -153,12 +153,12 @@ export const m: MessageDir = {
     },
     nameCount: {
       id: 'pa.application:endorsementList.name.count',
-      defaultMessage: 'nafn á lista (af 500)',
+      defaultMessage: 'nafn á lista ',
       description: 'X name on list',
     },
     namesCount: {
       id: 'pa.application:endorsementList.names.count',
-      defaultMessage: 'nöfn á lista (af 500)',
+      defaultMessage: 'nöfn á lista ',
       description: 'X names on list',
     },
     invalidSignatures: {
