@@ -419,20 +419,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'attachments',
-      title: section.attachments,
-      children: [
-        buildFileUploadField({
-          id: 'attachments.fileUpload',
-          title: attachments.title,
-          introduction: attachments.introduction,
-          uploadDescription: attachments.uploadDescription,
-          uploadHeader: attachments.uploadHeader,
-          uploadButtonLabel: attachments.uploadButtonLabel,
-        }),
-      ],
-    }),
-    buildSection({
       id: 'courtAction',
       title: section.courtAction,
       children: [
@@ -450,6 +436,20 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               ],
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'attachments',
+      title: section.attachments,
+      children: [
+        buildFileUploadField({
+          id: 'attachments.fileUpload',
+          title: attachments.title,
+          introduction: attachments.introduction,
+          uploadDescription: attachments.uploadDescription,
+          uploadHeader: attachments.uploadHeader,
+          uploadButtonLabel: attachments.uploadButtonLabel,
         }),
       ],
     }),

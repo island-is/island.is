@@ -37,8 +37,15 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
     ]),
   }),
   complaintDescription: z.object({
-    complaineeName: z.string().nonempty(error.required.defaultMessage),
-    complaintDescription: z.string().nonempty(error.required.defaultMessage),
+    decisionDate: z.string().optional(), // TODO: Validate this block
+    complaineeName: z.string().refine((val) => (val ? val.length > 0 : false), {
+      params: error.required,
+    }),
+    complaintDescription: z
+      .string()
+      .refine((val) => (val ? val.length > 0 : false), {
+        params: error.required,
+      }),
   }),
   courtActionAnswer: z.enum([YES, NO]),
 })
