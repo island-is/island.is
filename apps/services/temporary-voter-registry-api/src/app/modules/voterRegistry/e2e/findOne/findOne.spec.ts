@@ -3,7 +3,7 @@ import {
   emptyResponseExpectedStructure,
   errorExpectedStructure,
 } from '../../../../../../test/testHelpers'
-import * as request from 'supertest'
+import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
 let app: INestApplication
