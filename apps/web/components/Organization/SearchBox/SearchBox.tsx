@@ -15,6 +15,7 @@ import {
 import { GET_ORGANIZATION_SERVICES_QUERY } from '@island.is/web/screens/queries'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
+import { flatten } from 'lodash'
 
 interface SearchBoxProps {
   organizationPage: Query['getOrganizationPage']
@@ -55,8 +56,8 @@ export const SearchBox = ({
           value: o.slug,
         }))
         .concat(
-          organizationPage.menuLinks
-            .map((x) => [
+          flatten(
+            organizationPage.menuLinks.map((x) => [
               {
                 type: 'url',
                 label: x.primaryLink.text,
@@ -67,8 +68,8 @@ export const SearchBox = ({
                 label: y.text,
                 value: y.url,
               })),
-            ])
-            .flat(),
+            ]),
+          ),
         ) ?? [],
     [data],
   )
