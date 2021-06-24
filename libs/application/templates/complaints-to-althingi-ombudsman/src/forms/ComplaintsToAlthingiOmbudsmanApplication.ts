@@ -239,7 +239,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   : '',
               children: [
                 buildDateField({
-                  id: 'decisionDate',
+                  id: 'complaintDescription.decisionDate',
                   title: complaintDescription.labels.decisionDateTitle,
                   placeholder:
                     complaintDescription.labels.decisionDatePlaceholder,
@@ -250,7 +250,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                     OmbudsmanComplaintTypeEnum.DECISION,
                 }),
                 buildTextField({
-                  id: 'complaineeName',
+                  id: 'complaintDescription.complaineeName',
                   backgroundColor: 'blue',
                   required: true,
                   title: (application) =>
@@ -264,7 +264,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 }),
 
                 buildTextField({
-                  id: 'complaintDescription',
+                  id: 'complaintDescription.complaintDescription',
                   title: complaintDescription.labels.complaintDescriptionTitle,
                   rows: 6,
                   placeholder:
