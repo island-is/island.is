@@ -79,7 +79,6 @@ export class DelegationsController {
     @CurrentUser() user: User,
     @Body() delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    console.log(delegation)
     if (!this.validateLength(delegation)) {
       throw new BadRequestException(
         'Delegations to scopes seem illegit. Make sure you have access to these scopes',
