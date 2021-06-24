@@ -555,7 +555,7 @@ function constructInvestigationRulingPdf(existingCase: Case) {
   }
 
   // Only show accused plea if applicable
-  if (existingCase.accusedPleaDecision === AccusedPleaDecision.NOT_APPLICABLE) {
+  if (existingCase.accusedPleaDecision !== AccusedPleaDecision.NOT_APPLICABLE) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
