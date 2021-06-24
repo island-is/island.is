@@ -46,6 +46,7 @@ export interface TextProps {
   lineHeight?: keyof typeof lineHeightStyles
   title?: string
   strikethrough?: boolean
+  className?: string
 }
 
 type GetTextStylesProps = Pick<
@@ -58,24 +59,31 @@ type GetTextStylesProps = Pick<
   | 'strikethrough'
 >
 
-export const getTextStyles = ({
-  color,
-  truncate,
-  fontWeight,
-  lineHeight,
-  variant = 'default',
-  strikethrough,
-}: GetTextStylesProps) =>
-  cn(base, {
-    [variantStyles[variant!]]: variant,
-    [colors[color!]]: color,
-    [fontWeightStyles[fontWeight!]]: fontWeight,
-    [lineHeightStyles[lineHeight!]]: lineHeight,
-    [defaultFontWeights[variant!]]: variant && !fontWeight,
-    [defaultLineHeights[variant!]]: variant && !lineHeight,
-    [truncateStyle]: truncate,
-    [strikethroughStyle]: strikethrough,
-  })
+export const getTextStyles = (
+  {
+    color,
+    truncate,
+    fontWeight,
+    lineHeight,
+    variant = 'default',
+    strikethrough,
+  }: GetTextStylesProps,
+  className?: string,
+) =>
+  cn(
+    base,
+    {
+      [variantStyles[variant!]]: variant,
+      [colors[color!]]: color,
+      [fontWeightStyles[fontWeight!]]: fontWeight,
+      [lineHeightStyles[lineHeight!]]: lineHeight,
+      [defaultFontWeights[variant!]]: variant && !fontWeight,
+      [defaultLineHeights[variant!]]: variant && !lineHeight,
+      [truncateStyle]: truncate,
+      [strikethroughStyle]: strikethrough,
+    },
+    className,
+  )
 
 export const Text = forwardRef<HTMLElement, TextProps>(
   (
@@ -96,6 +104,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
       title,
       as = 'p',
       strikethrough,
+      className,
     },
     ref,
   ) => {
@@ -110,14 +119,17 @@ export const Text = forwardRef<HTMLElement, TextProps>(
         paddingTop={paddingTop}
         paddingBottom={paddingBottom}
         paddingY={paddingY}
-        className={getTextStyles({
-          color,
-          truncate,
-          fontWeight,
-          lineHeight,
-          variant,
-          strikethrough,
-        })}
+        className={getTextStyles(
+          {
+            color,
+            truncate,
+            fontWeight,
+            lineHeight,
+            variant,
+            strikethrough,
+          },
+          className,
+        )}
         ref={ref}
         title={title}
       >
