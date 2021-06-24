@@ -1,7 +1,7 @@
 import React, { ReactNode, useRef } from 'react'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { editorMsgs } from '../messages'
+import { EditorInput } from '../components/EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { RegulationDraft } from '../types-api'
 
@@ -33,6 +33,8 @@ export type EditBasicsProps = {
 export const EditBasics = (props: EditBasicsProps) => {
   const { formatMessage } = useIntl()
   const { draft } = props
+  const textRef = useRef(() => draft.text)
+
   return (
     <>
       <Wrap>
@@ -40,6 +42,16 @@ export const EditBasics = (props: EditBasicsProps) => {
           label={formatMessage(msg.title)}
           name="title"
           value={draft.title}
+        />
+      </Wrap>
+
+      <Wrap>
+        <EditorInput
+          label={formatMessage(msg.text)}
+          baseText={draft.text}
+          isImpact={false}
+          draftId={draft.id}
+          valueRef={textRef}
         />
       </Wrap>
     </>
