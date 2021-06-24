@@ -87,7 +87,7 @@ describe('FileService', () => {
         nationalRegistry: {
           data: { ...parentA },
           status: 'success',
-          date: new Date(),
+          date: new Date().toISOString(),
         },
       },
     } as unknown) as Application)
@@ -114,6 +114,8 @@ describe('FileService', () => {
     jest
       .spyOn(awsService, 'getFile')
       .mockImplementation(() => Promise.resolve({ Body: 'body' }))
+
+    jest.spyOn(awsService, 'fileExists').mockResolvedValue(false)
 
     jest
       .spyOn(awsService, 'uploadFile')

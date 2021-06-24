@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common'
-import * as request from 'supertest'
+import request from 'supertest'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { setup } from '../../../../../../test/setup'
 import { Endorsement } from '../../endorsement.model'
