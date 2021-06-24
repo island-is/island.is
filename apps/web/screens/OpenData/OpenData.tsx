@@ -13,11 +13,8 @@ import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
 import {
   Section,
-  Categories,
-  SearchInput,
-  FrontpageSlider,
-  LatestNewsSectionSlider,
-  FactsCardsSection
+  FactsCardsSection,
+  DataLinkSection,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
@@ -25,47 +22,163 @@ import { useLinkResolver } from '../../hooks/useLinkResolver'
 const OpenDataPage: Screen = () => {
   const { linkResolver } = useLinkResolver()
 
+  // Hard coded values for now
+  const cards = [
+    {
+      title: 'CLARIN á Íslandi',
+      description:
+        'Árnastofnun',
+      link: {
+        href: '/flokkur/akstur-og-bifreidar',
+      },
+    },
+    {
+      title: 'Gagnasöfn Orkustofunar',
+      description:
+        'Gögn um orkurannsóknir og orkunýtingu',
+      link: {
+        href: '/flokkur/atvinnurekstur-og-sjalfstaett-starfandi',
+      },
+    },
+    {
+      title: 'Gagnagátt Umhverfisstofnunar',
+      description: '',
+      link: {
+        href: '/flokkur/domstolar-og-rettarfar',
+      },
+    },
+    {
+      title: 'Gagnabrunnur Veðurstofunnar',
+      description: 'Veðurstofa Íslands',
+      link: {
+        href: '/flokkur/fjarmal-og-skattar',
+      },
+    },
+    {
+      title: 'Hagstofa Íslands',
+      description:
+        'Talnaefni og tilraunatölfræði',
+      link: {
+        href: '/flokkur/fjolskylda-og-velferd',
+      },
+    },
+    {
+      title: 'Landupplýsingagátt',
+      description:
+        'Landmælingar Íslands',
+      link: {
+        href: '/flokkur/heilbrigdismal',
+      },
+    },
+    {
+      title: 'Loftgæði á Íslandi',
+      description:
+        'Umhverfisstofnun',
+      link: {
+        href: '/flokkur/husnaedismal',
+      },
+    },
+    {
+      title: 'Lýðheilsuvísir Landlæknis',
+      description:
+        '',
+      link: {
+        href: '/flokkur/idnadur',
+      },
+    },
+    {
+      title: 'Mælaborð ferðaþjónustunnar',
+      description:
+        'Ferðamálastofa',
+      link: {
+        href: '/flokkur/innflytjendamal',
+      },
+    },
+    {
+      title: 'Mælaborð Tryggingastofnunar',
+      description:
+        '',
+      link: {
+        href: '/flokkur/launthegi-rettindi-og-lifeyrir',
+      },
+    },
+    {
+      title: 'Mælaborð Vinnumálastofnunar',
+      description:
+        '',
+      link: {
+        href: '/flokkur/malefni-fatlads-folks',
+      },
+    },
+    {
+      title: 'Opingogn.is',
+      description:
+        'Opin gögn frá opinberum aðilum á Íslandi',
+      link: {
+        href: '/flokkur/samfelag-og-rettindi',
+      },
+    },
+    {
+      title: 'Opin gögn Reykjavíkurborgar',
+      description: '',
+      link: {
+        href: '/flokkur/samgongur',
+      },
+    },
+  ]
+
+  const dataLinkDescription = "[Undanfarin misseri hafa ...] Í þessu samhengi teljast til opinberra gagna öll gögn sem safnað hefur verið saman, vistuð með skipulegum eða kerfisbundnum hætti af opinberum aðilum og eru eða geta verið birt og varðveitt með rafrænum hætti. Hér eru tenglar á helstu vefi sem tengjast opnum gögnum á Íslandi."
 
   return (
     <Box paddingY={[2, 2, 10]} id="main-content">
       <Section aria-labelledby="lifeEventsTitle" background="purple100">
         {/* <Inline space={4}>
           <Stack space={2}> */}
-            <GridContainer>
-              <GridRow>
-                <GridColumn>
-                  <Box paddingX={[3, 3, 8]}>
-                    <Breadcrumbs
-                      items={[
-                        {
-                          title: 'Ísland.is',
-                          href: '/',
-                        },
-                        {
-                          title: 'Gagnatorg',
-                        },
-                      ]}
-                      renderLink={(link) => {
-                        return (
-                          <NextLink {...linkResolver('homepage')} passHref>
-                            {link}
-                          </NextLink>
-                        )
-                      }}
-                    />
-                  </Box>
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-          {/* </Stack>
+        <GridContainer>
+          <GridRow>
+            <GridColumn>
+              <Box paddingX={[3, 3, 8]}>
+                <Breadcrumbs
+                  items={[
+                    {
+                      title: 'Ísland.is',
+                      href: '/',
+                    },
+                    {
+                      title: 'Gagnatorg',
+                    },
+                  ]}
+                  renderLink={(link) => {
+                    return (
+                      <NextLink {...linkResolver('homepage')} passHref>
+                        {link}
+                      </NextLink>
+                    )
+                  }}
+                />
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+        {/* </Stack>
         </Inline> */}
       </Section>
-      <Section
-        aria-labelledby="factsCardsTitle"
-      >
+      <Section aria-labelledby="factsCardsTitle">
         <FactsCardsSection
-          title='Stafrænt Ísland'
-          linkTitle='hér kemur linkur'
+          title="Stafrænt Ísland"
+          linkTitle="hér kemur linkur"
+        />
+      </Section>
+      <Section
+        paddingTop={[8, 8, 6]}
+        paddingBottom={[8, 8, 6]}
+        aria-labelledby="serviceCategoriesTitle"
+      >
+        <DataLinkSection
+          title={'Oping gögn á Íslandi'}
+          titleId="OpenDataLinksTitle"
+          description={dataLinkDescription}
+          cards={cards}
         />
       </Section>
     </Box>

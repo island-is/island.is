@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 
-export type ColorSchemes = 'blue' | 'purple' | 'red'
+export type ColorSchemes = 'blue' | 'purple' | 'red' 
 
 export interface ColorSchemeInterface {
   colorScheme: ColorSchemes
