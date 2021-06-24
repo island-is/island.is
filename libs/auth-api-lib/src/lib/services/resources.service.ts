@@ -356,13 +356,9 @@ export class ResourcesService {
         },
         allowExplicitDelegationGrant: true,
         isAccessControlled: false,
+        alsoForDelegatedUser: false,
       },
     })
-
-    // const allowedScopes = userScopes.filter(
-    //   (x) => x.allowExplicitDelegationGrant && !x.isAccessControlled,
-    // )
-    // return allowedScopes
   }
 
   /** Filters out Identity Resources that don't have delegation grant and are access controlled */
@@ -378,13 +374,9 @@ export class ResourcesService {
           [Op.in]: identityResources,
         },
         allowExplicitDelegationGrant: true,
+        alsoForDelegatedUser: false,
       },
     })
-
-    // const allowedIdentityResources = userIdentityResources.filter(
-    //   (x) => x.allowExplicitDelegationGrant
-    // )
-    // return allowedIdentityResources
   }
 
   /** Gets Api scopes with Explicit Delegation Grant */
