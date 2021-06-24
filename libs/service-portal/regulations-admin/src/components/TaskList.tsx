@@ -34,7 +34,7 @@ export const TaskList = () => {
 
   if (loading) {
     return (
-      <Box marginTop={[4, 4, 6]}>
+      <Box marginBottom={[4, 4, 6]}>
         <SkeletonLoader height={80} repeat={3} space={1} />
       </Box>
     )
@@ -61,9 +61,9 @@ export const TaskList = () => {
   }
 
   return (
-    <Box marginTop={[4, 4, 6]}>
+    <Box marginBottom={[4, 4, 6]}>
       <Text variant="h2" as="h2" marginBottom={2}>
-        {formatMessage(msg.shippedTitle)}
+        {formatMessage(msg.taskListTitle)}
       </Text>
       <Stack space={2}>
         {regulationDraft.map((item) => {

@@ -21,6 +21,8 @@ const Home = () => {
         img="./assets/images/educationLicense.svg"
       />
 
+      <TaskList />
+
       <Button
         colorScheme="default"
         iconType="filled"
@@ -37,8 +39,6 @@ const Home = () => {
       >
         Skrá nýja reglugerð
       </Button>
-
-      <TaskList />
 
       <ShippedRegulations />
     </Box>
