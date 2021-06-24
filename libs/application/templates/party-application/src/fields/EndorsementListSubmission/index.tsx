@@ -95,7 +95,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
       deselectEndorsement(endorsement)
     } else {
       const addToEndorsements = [
-        ...selectedEndorsements ? selectedEndorsements : [],
+        ...(selectedEndorsements ? selectedEndorsements : []),
         endorsement,
       ]
       setSelectedEndorsements(addToEndorsements)
@@ -109,7 +109,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     )
     setSelectedEndorsements([...(removeFromSelected ? removeFromSelected : [])])
     updateApplicationWithEndorsements([
-      ...removeFromSelected ? removeFromSelected : [],
+      ...(removeFromSelected ? removeFromSelected : []),
     ])
   }
 
