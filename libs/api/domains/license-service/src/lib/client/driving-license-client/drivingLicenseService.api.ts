@@ -1,5 +1,7 @@
 import fetch, { Response } from 'node-fetch'
 import * as kennitala from 'kennitala'
+import format from 'date-fns/format';
+import parse from 'date-fns/parse';
 import { Cache as CacheManager } from 'cache-manager'
 import { Injectable, Inject, CACHE_MANAGER } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
@@ -21,13 +23,17 @@ import {
 } from '../../licenceService.type'
 import { Config } from '../../licenseService.module'
 
-// TODO(osk) refactor
-const dateToPkpassDate = (date: string) => {
+// PkPass service wants dates in DD-MM-YYYY format
+const dateToPkpassDate = (date: string): string => {
   if (!date) {
     return ''
   }
-  // PkPass service wants dates in DD-MM-YYYY format
-  return date.substr(0, 10).split('-').reverse().join('-')
+
+  try {
+    return format(new Date(date), 'dd-MM-yyyy')
+  } catch (e) {
+    return ''
+  }
 }
 
 @Injectable()
@@ -201,12 +207,12 @@ export class GenericDrivingLicenseApi
   ) {
     return {
       nafn: license.nafn,
-      gildirTil: dateToPkpassDate(license.gildirTil || ''),
+      gildirTil: dateToPkpassDate(license.gildirTil ?? ''),
       faedingardagur: dateToPkpassDate(
-        kennitala.info(license.kennitala || '').birthday.toISOString(),
+        kennitala.info(license.kennitala ?? '').birthday.toISOString(),
       ),
       faedingarstadur: license.faedingarStadurHeiti,
-      utgafuDagsetning: dateToPkpassDate(license.utgafuDagsetning || ''),
+      utgafuDagsetning: dateToPkpassDate(license.utgafuDagsetning ?? ''),
       nafnUtgafustadur: license.nafnUtgafustadur,
       kennitala: license.kennitala,
       id: license.id,
@@ -214,15 +220,15 @@ export class GenericDrivingLicenseApi
         return {
           id: rettindi.id,
           nr: rettindi.nr,
-          utgafuDags: dateToPkpassDate(rettindi.utgafuDags || ''),
-          gildirTil: dateToPkpassDate(rettindi.gildirTil || ''),
+          utgafuDags: dateToPkpassDate(rettindi.utgafuDags ?? ''),
+          gildirTil: dateToPkpassDate(rettindi.gildirTil ?? ''),
           aths: rettindi.aths,
         }
       }),
       mynd: {
         id: license.mynd?.id,
         kennitala: license.mynd?.kennitala,
-        skrad: dateToPkpassDate(license.mynd?.skrad || ''),
+        skrad: dateToPkpassDate(license.mynd?.skrad ?? ''),
         mynd: license.mynd?.mynd,
         gaedi: license.mynd?.gaedi,
         forrit: license.mynd?.forrit,

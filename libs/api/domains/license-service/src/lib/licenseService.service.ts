@@ -58,9 +58,8 @@ export class LicenseServiceService {
         try {
           const data = JSON.parse(cachedData as string) as GenericLicenseCached
 
-          // TODO(osk) check again
-          const x = add(data.fetch.updated, { seconds: ttl })
-          if (compareAsc(x, new Date()) < 0) {
+          const cacheMaxAge = add(data.fetch.updated, { seconds: ttl })
+          if (compareAsc(cacheMaxAge, new Date()) < 0) {
             data.fetch.status = GenericUserLicenseFetchStatus.Stale
           }
         } catch (e) {
