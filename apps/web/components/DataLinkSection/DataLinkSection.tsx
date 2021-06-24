@@ -4,10 +4,10 @@ import {
   GridRow,
   GridColumn,
   GridContainer,
-  ColorSchemeContext,
+  Box,
 } from '@island.is/island-ui/core'
 import { BackgroundSchemeContext} from '../../context'
-import { Card } from '../Card/Card'
+import { BackgroundImage, Card } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 interface Card {
@@ -20,6 +20,7 @@ interface DataLinkSectionProps {
   title?: string
   titleId?: string
   description?: string
+  image?: { title: string; url: string }
   cards: Card[]
 }
 
@@ -27,18 +28,30 @@ export const DataLinkSection = ({
   title = 'Þjónustuflokkar',
   titleId,
   description,
+  image,
   cards,
 }: DataLinkSectionProps) => {
   const titleProps = titleId ? { id: titleId } : {}
 
   return (
     <GridContainer>
-      <GridRow>
-        <GridColumn span={['6/12', '6/12', '12/12']}>
+      <GridRow marginBottom={10}>
+        <GridColumn span={['6/12', '6/12', '6/12']}>
           <Text variant="h3" as="h2" paddingBottom={4} {...titleProps}>
             {title}
           </Text>
           <Text paddingBottom={4}>{description}</Text>
+        </GridColumn>
+        <GridColumn span={['6/12', '6/12', '6/12']}>
+          <Box
+          width='full'>
+            <BackgroundImage
+            width={600}
+            positionX='right'
+            backgroundSize="contain"
+            image={image}
+          />
+          </Box>
         </GridColumn>
       </GridRow>
 

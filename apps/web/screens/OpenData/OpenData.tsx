@@ -127,6 +127,11 @@ const OpenDataPage: Screen = () => {
     },
   ]
 
+  const image = {
+    title: 'company',
+    url: "//images.ctfassets.net/8k0h54kbe6bj/3CpwPzdLqnw65iAv9lPFUJ/bb52802cd0e409cc03f6f0903423894a/company-life-event.svg"
+  }
+
   const dataLinkDescription = "[Undanfarin misseri hafa ...] Í þessu samhengi teljast til opinberra gagna öll gögn sem safnað hefur verið saman, vistuð með skipulegum eða kerfisbundnum hætti af opinberum aðilum og eru eða geta verið birt og varðveitt með rafrænum hætti. Hér eru tenglar á helstu vefi sem tengjast opnum gögnum á Íslandi."
 
   return (
@@ -177,6 +182,7 @@ const OpenDataPage: Screen = () => {
         <DataLinkSection
           title={'Oping gögn á Íslandi'}
           titleId="OpenDataLinksTitle"
+          image={image}
           description={dataLinkDescription}
           cards={cards}
         />
