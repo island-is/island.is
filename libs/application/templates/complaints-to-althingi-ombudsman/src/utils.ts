@@ -13,3 +13,10 @@ export const getComplaintType = (answers: Answer) => {
     complaintInformation: { complaintType: OmbudsmanComplaintTypeEnum }
   }).complaintInformation?.complaintType
 }
+
+export const getDateAYearBack = () => {
+  const d = new Date()
+  const aYearAgo = d.getFullYear() - 1
+  d.setFullYear(aYearAgo)
+  return d
+}

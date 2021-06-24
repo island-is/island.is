@@ -29,7 +29,11 @@ import {
   ComplaineeTypes,
   OmbudsmanComplaintTypeEnum,
 } from '../shared/constants'
-import { getComplaintType, isGovernmentComplainee } from '../utils'
+import {
+  getComplaintType,
+  getDateAYearBack,
+  isGovernmentComplainee,
+} from '../utils'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -365,6 +369,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                     complaintDescription.labels.decisionDatePlaceholder,
                   backgroundColor: 'blue',
                   width: 'half',
+                  minDate: getDateAYearBack(),
                   condition: (answers) =>
                     getComplaintType(answers) ===
                     OmbudsmanComplaintTypeEnum.DECISION,
