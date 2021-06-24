@@ -3,7 +3,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 
 export const loader = style({
-  display: 'inline-block',
+  display: 'block',
   height: '1em',
   width: '100%',
   position: 'relative',

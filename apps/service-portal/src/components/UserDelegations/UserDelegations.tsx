@@ -1,6 +1,11 @@
 import React from 'react'
 import { useAuth } from '@island.is/auth/react'
-import { Stack, Text, TopicCard } from '@island.is/island-ui/core'
+import {
+  Stack,
+  Text,
+  TopicCard,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useActorDelegationsQuery } from '@island.is/service-portal/graphql'
 
@@ -22,7 +27,17 @@ export const UserDelegations = ({ onSwitch }: UserDelegationsProps) => {
 
   // Loading or no delegations.
   if (!data || data.authActorDelegations.length === 0) {
-    return null
+    return (
+      <Stack space={1}>
+        <Text variant="h5" as="h5" marginBottom={1}>
+          {formatMessage({
+            id: 'service.portal:loadingData',
+            defaultMessage: `Sæki gögn`,
+          })}
+        </Text>
+        <SkeletonLoader height={59} borderRadius="large" />
+      </Stack>
+    )
   }
 
   let delegations: Delegation[] = data.authActorDelegations.map(
