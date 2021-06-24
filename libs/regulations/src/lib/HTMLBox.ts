@@ -9,5 +9,8 @@ export type HTMLBoxProps = BoxProps & {
 
 export const HTMLBox = (props: HTMLBoxProps) => {
   const { html, ...boxProps } = props
-  return <Box {...boxProps} dangerouslySetInnerHTML={{ __html: html }} />
+  return React.createElement(Box, {
+    ...boxProps,
+    dangerouslySetInnerHTML: { __html: html },
+  })
 }
