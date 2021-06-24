@@ -129,15 +129,7 @@ const OpenDataPage: Screen = () => {
 
   return (
     <Box id="main-content">
-      <Section
-        aria-labelledby="lifeEventsTitle"
-        backgroundBleed={{
-          bleedAmount: 500,
-          bleedDirection: 'top',
-          fromColor: 'white',
-          toColor: 'blue100',
-        }}
-      >
+      <Section aria-labelledby="lifeEventsTitle" background="blue100">
         <GridContainer>
           <GridRow>
             <GridColumn span={['5/12', '5/12', '5/12']}>
@@ -162,7 +154,8 @@ const OpenDataPage: Screen = () => {
                 />
               </Box>
               <Text variant="h1" as="h1" paddingBottom={4}>
-                Aukið traust og gagnsæi <br/>með opnum gögnum
+                Aukið traust og gagnsæi <br />
+                með opnum gögnum
               </Text>
               <Text paddingBottom={4}>
                 [Elevator pitch fyrir opin gögn og að markmiðið sé að hvetja til
