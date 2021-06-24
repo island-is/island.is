@@ -2,6 +2,7 @@ import { createLogger, format, LoggerOptions, transports } from 'winston'
 import { utilities } from 'nest-winston'
 
 import { SentryTransport } from './transports'
+import { removeNationalIds } from './remove-national-ids'
 
 // Default log settings for debug mode
 let logLevel = 'debug'
@@ -9,6 +10,7 @@ let logFormat = format.combine(
   format.errors({ stack: true }),
   format.timestamp(),
   utilities.format.nestLike('App'),
+  removeNationalIds(),
 )
 
 // Production overrides
@@ -18,6 +20,7 @@ if (process.env.NODE_ENV === 'production') {
     format.errors({ stack: true }),
     format.timestamp(),
     format.json(),
+    removeNationalIds(),
   )
 }
 
