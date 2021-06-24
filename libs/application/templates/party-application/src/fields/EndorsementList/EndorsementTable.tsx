@@ -26,6 +26,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
+  const withBulkImport = endorsements?.some((x) => x.meta.bulkEndorsement)
   const renderRow = (endorsement: Endorsement) => {
     const voterRegionMismatch =
       endorsement.meta.voterRegion?.voterRegionNumber !==
@@ -66,7 +67,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
             textAlign: 'right',
           }}
         >
-          {voterRegionMismatch || endorsement.meta.bulkEndorsement ? (
+          {voterRegionMismatch ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
               {endorsement.meta.address}
               <Box marginLeft={2}>
@@ -79,15 +80,24 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
                     )}
                   />
                 )}
-                {endorsement.meta.bulkEndorsement && (
-                  <Icon icon="attach" color="blue400" />
-                )}
               </Box>
             </Box>
           ) : (
             endorsement.meta.address
           )}
         </T.Data>
+        {withBulkImport && (
+          <T.Data
+            box={{
+              background: rowBackground,
+              textAlign: 'right',
+            }}
+          >
+            {endorsement.meta.bulkEndorsement && (
+              <Icon icon="attach" color="blue400" />
+            )}
+          </T.Data>
+        )}
       </T.Row>
     )
   }
@@ -104,6 +114,9 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
           <T.HeadData box={{ textAlign: 'right' }}>
             {formatMessage(m.endorsementList.thAddress)}
           </T.HeadData>
+          {withBulkImport && (
+            <T.HeadData></T.HeadData>
+          )}
         </T.Row>
       </T.Head>
       <T.Body>
