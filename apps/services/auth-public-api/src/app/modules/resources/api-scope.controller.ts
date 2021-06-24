@@ -4,11 +4,10 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-
+import type { User } from '@island.is/auth-nest-tools'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('api-scope')
 @Controller('public/api-scope')
