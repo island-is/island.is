@@ -12,7 +12,7 @@ interface Props {
 
 const HideableText: React.FC<Props> = (props) => {
   const { text, onToggleVisibility, tooltip, defaultIsVisible } = props
-  const [isVisible, setIsVisible] = useState<boolean>(defaultIsVisible || false)
+  const [isVisible, setIsVisible] = useState<boolean>(defaultIsVisible ?? false)
 
   const renderVisibilityButton = () => (
     <button

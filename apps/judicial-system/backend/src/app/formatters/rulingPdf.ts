@@ -160,7 +160,7 @@ function constructRestrictionRulingPdf(existingCase: Case) {
               formatAccusedByGender(existingCase.accusedGender),
             )} hafnar kröfunni. `
           : ''
-      }${existingCase.accusedPleaAnnouncement || ''}`,
+      }${existingCase.accusedPleaAnnouncement ?? ''}`,
       {
         lineGap: 6,
         paragraphGap: 0,
@@ -283,8 +283,8 @@ function constructRestrictionRulingPdf(existingCase: Case) {
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `${existingCase.judge?.name || 'Dómari hefur ekki verið skráður'} ${
-        existingCase.judge?.title || ''
+      `${existingCase.judge?.name ?? 'Dómari hefur ekki verið skráður'} ${
+        existingCase.judge?.title ?? ''
       }`,
       {
         align: 'center',
@@ -335,7 +335,7 @@ function constructRestrictionRulingPdf(existingCase: Case) {
       )
       .font('Helvetica')
       .fontSize(12)
-      .text(existingCase.accusedAppealAnnouncement, {
+      .text(existingCase.accusedAppealAnnouncement ?? '', {
         lineGap: 6,
         paragraphGap: 0,
       })
@@ -350,7 +350,7 @@ function constructRestrictionRulingPdf(existingCase: Case) {
       .text('Yfirlýsing um kæru sækjanda')
       .font('Helvetica')
       .fontSize(12)
-      .text(existingCase.prosecutorAppealAnnouncement, {
+      .text(existingCase.prosecutorAppealAnnouncement ?? '', {
         lineGap: 6,
         paragraphGap: 0,
       })
@@ -555,10 +555,7 @@ function constructInvestigationRulingPdf(existingCase: Case) {
   }
 
   // Only show accused plea if applicable
-  if (
-    existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT ||
-    existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
-  ) {
+  if (existingCase.accusedPleaDecision !== AccusedPleaDecision.NOT_APPLICABLE) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
@@ -583,7 +580,7 @@ function constructInvestigationRulingPdf(existingCase: Case) {
                 formatAccusedByGender(existingCase.accusedGender),
               )} hafnar kröfunni. `
             : ''
-        }${existingCase.accusedPleaAnnouncement || ''}`,
+        }${existingCase.accusedPleaAnnouncement ?? ''}`,
         {
           lineGap: 6,
           paragraphGap: 0,
@@ -685,8 +682,8 @@ function constructInvestigationRulingPdf(existingCase: Case) {
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `${existingCase.judge?.name || 'Dómari hefur ekki verið skráður'} ${
-        existingCase.judge?.title || ''
+      `${existingCase.judge?.name ?? 'Dómari hefur ekki verið skráður'} ${
+        existingCase.judge?.title ?? ''
       }`,
       {
         align: 'center',
@@ -715,13 +712,20 @@ function constructInvestigationRulingPdf(existingCase: Case) {
     )
     .font('Helvetica-Bold')
     .lineGap(6)
-    .text(
+
+  // Only show accused appeal decision if applicable
+  if (
+    existingCase.accusedAppealDecision !== CaseAppealDecision.NOT_APPLICABLE
+  ) {
+    doc.text(
       formatAppeal(
         existingCase.accusedAppealDecision,
         capitalize(formatAccusedByGender(existingCase.accusedGender)),
       ),
     )
-    .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
+  }
+
+  doc.text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
 
   if (existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL) {
     doc
@@ -737,7 +741,7 @@ function constructInvestigationRulingPdf(existingCase: Case) {
       )
       .font('Helvetica')
       .fontSize(12)
-      .text(existingCase.accusedAppealAnnouncement, {
+      .text(existingCase.accusedAppealAnnouncement ?? '', {
         lineGap: 6,
         paragraphGap: 0,
       })
@@ -752,7 +756,7 @@ function constructInvestigationRulingPdf(existingCase: Case) {
       .text('Yfirlýsing um kæru sækjanda')
       .font('Helvetica')
       .fontSize(12)
-      .text(existingCase.prosecutorAppealAnnouncement, {
+      .text(existingCase.prosecutorAppealAnnouncement ?? '', {
         lineGap: 6,
         paragraphGap: 0,
       })

@@ -55,7 +55,7 @@ function constructRestrictionRequestPdf(
     })
     .fontSize(16)
     .text(
-      `Embætti: ${existingCase.prosecutor?.institution?.name || 'Ekki skráð'}`,
+      `Embætti: ${existingCase.prosecutor?.institution?.name ?? 'Ekki skráð'}`,
       {
         align: 'center',
       },
@@ -163,8 +163,8 @@ function constructRestrictionRequestPdf(
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `${existingCase.prosecutor?.name || ''} ${
-        existingCase.prosecutor?.title || ''
+      `${existingCase.prosecutor?.name ?? ''} ${
+        existingCase.prosecutor?.title ?? ''
       }`,
     )
 
@@ -207,7 +207,7 @@ function constructInvestigationRequestPdf(
     })
     .fontSize(16)
     .text(
-      `Embætti: ${existingCase.prosecutor?.institution?.name || 'Ekki skráð'}`,
+      `Embætti: ${existingCase.prosecutor?.institution?.name ?? 'Ekki skráð'}`,
       {
         align: 'center',
       },
@@ -322,8 +322,8 @@ function constructInvestigationRequestPdf(
   doc
     .font('Helvetica-Bold')
     .text(
-      `${existingCase.prosecutor?.name || ''} ${
-        existingCase.prosecutor?.title || ''
+      `${existingCase.prosecutor?.name ?? ''} ${
+        existingCase.prosecutor?.title ?? ''
       }`,
     )
 

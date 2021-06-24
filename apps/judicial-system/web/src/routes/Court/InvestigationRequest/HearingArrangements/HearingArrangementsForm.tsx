@@ -110,7 +110,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     }
   }
 
-  const judges = (users?.users || [])
+  const judges = (users?.users ?? [])
     .filter(
       (user: User) =>
         user.role === UserRole.JUDGE &&
@@ -120,7 +120,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       return { label: judge.name, value: judge.id }
     })
 
-  const registrars = (users?.users || [])
+  const registrars = (users?.users ?? [])
     .filter(
       (user: User) =>
         user.role === UserRole.REGISTRAR &&

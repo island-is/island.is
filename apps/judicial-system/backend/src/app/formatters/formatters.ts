@@ -59,6 +59,7 @@ export function formatCustodyProvisions(
     .slice(0, -1)
 }
 
+// This expression is always called with case type CUSTODY or TRAVEL_BAN
 export function formatConclusion(
   type: CaseType,
   accusedNationalId: string,
@@ -147,7 +148,7 @@ export function formatCourtHeadsUpSmsNotification(
   requestedCourtDate: Date,
 ): string {
   // Prosecutor
-  const prosecutorText = ` Ákærandi: ${prosecutorName || 'Ekki skráður'}.`
+  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
 
   // Arrest date
   const arrestDateText = arrestDate
@@ -184,10 +185,10 @@ export function formatCourtReadyForCourtSmsNotification(
   court: string,
 ) {
   // Prosecutor
-  const prosecutorText = ` Ákærandi: ${prosecutorName || 'Ekki skráður'}.`
+  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
 
   // Court
-  const courtText = ` Dómstóll: ${court || 'Ekki skráður'}.`
+  const courtText = ` Dómstóll: ${court ?? 'Ekki skráður'}.`
 
   const submittedCaseText =
     type === CaseType.CUSTODY
@@ -295,6 +296,7 @@ export function formatCourtDateNotificationCondition(
   )},defenderEmail=${defenderEmail}`
 }
 
+// This function is only intended for case type CUSTODY
 export function formatPrisonRulingEmailNotification(
   accusedNationalId: string,
   accusedName: string,
@@ -369,7 +371,7 @@ export function formatCourtRevokedSmsNotification(
   courtDate: Date,
 ) {
   // Prosecutor
-  const prosecutorText = ` Ákærandi: ${prosecutorName || 'Ekki skráður'}.`
+  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
 
   // Court date
   const courtDateText = courtDate

@@ -61,7 +61,7 @@ export const StepFour: React.FC = () => {
           theCase.requestedValidToDate,
           theCase.requestedCustodyRestrictions?.includes(
             CaseCustodyRestrictions.ISOLATION,
-          ) || false,
+          ) ?? false,
           theCase.parentCase !== undefined,
           theCase.parentCase?.decision,
         ),
@@ -75,15 +75,15 @@ export const StepFour: React.FC = () => {
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
       {
-        value: workingCase?.demands || '',
+        value: workingCase?.demands ?? '',
         validations: ['empty'],
       },
       {
-        value: workingCase?.caseFacts || '',
+        value: workingCase?.caseFacts ?? '',
         validations: ['empty'],
       },
       {
-        value: workingCase?.legalArguments || '',
+        value: workingCase?.legalArguments ?? '',
         validations: ['empty'],
       },
     ]

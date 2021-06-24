@@ -153,7 +153,7 @@ export const Overview: React.FC = () => {
                   {
                     title: 'Embætti',
                     value: `${
-                      workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                      workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
                     }`,
                   },
                   {
@@ -163,7 +163,7 @@ export const Overview: React.FC = () => {
                         workingCase.requestedCourtDate,
                         'PPPP',
                         true,
-                      ) || '',
+                      ) ?? '',
                     )} eftir kl. ${formatDate(
                       workingCase.requestedCourtDate,
                       TIME_FORMAT,
@@ -184,14 +184,14 @@ export const Overview: React.FC = () => {
                             workingCase.parentCase.validToDate,
                             'PPPP',
                             true,
-                          ) || '',
+                          ) ?? '',
                         )} kl. ${formatDate(
                           workingCase.parentCase.validToDate,
                           TIME_FORMAT,
                         )}`
                       : workingCase.arrestDate
                       ? `${capitalize(
-                          formatDate(workingCase.arrestDate, 'PPPP', true) ||
+                          formatDate(workingCase.arrestDate, 'PPPP', true) ??
                             '',
                         )} kl. ${formatDate(
                           workingCase.arrestDate,
@@ -204,7 +204,7 @@ export const Overview: React.FC = () => {
                 accusedNationalId={workingCase.accusedNationalId}
                 accusedAddress={workingCase.accusedAddress}
                 defender={{
-                  name: workingCase.defenderName || '',
+                  name: workingCase.defenderName ?? '',
                   email: workingCase.defenderEmail,
                   phoneNumber: workingCase.defenderPhoneNumber,
                 }}
@@ -343,7 +343,7 @@ export const Overview: React.FC = () => {
                   <Box marginY={3}>
                     <CaseFileList
                       caseId={workingCase.id}
-                      files={workingCase.files || []}
+                      files={workingCase.files ?? []}
                     />
                   </Box>
                 </AccordionItem>
