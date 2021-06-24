@@ -118,6 +118,9 @@
     "api-domains-icelandic-names-registry": {
       "tags": []
     },
+    "api-domains-identity": {
+      "tags": []
+    },
     "api-domains-license-service": {
       "tags": []
     },

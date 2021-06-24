@@ -115,6 +115,7 @@
     - [API Domains Endorsement System](libs/api/domains/endorsement-system/README.md)
     - [API Domains Finance](libs/api/domains/finance/README.md)
     - [API Domains Health Insurance](libs/api/domains/health-insurance/README.md)
+    - [API Domains Identity](libs/api/domains/identity/README.md)
     - [API Domains License Service](libs/api/domains/license-service/README.md)
     - [API Domains Party Letter Registry](libs/api/domains/party-letter-registry/README.md)
     - [API Domains Rsk](libs/api/domains/payment/README.md)

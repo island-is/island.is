@@ -1120,6 +1120,27 @@
         }
       }
     },
+    "api-domains-identity": {
+      "root": "libs/api/domains/identity",
+      "sourceRoot": "libs/api/domains/identity/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/identity/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/identity"],
+          "options": {
+            "jestConfig": "libs/api/domains/identity/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-license-service": {
       "root": "libs/api/domains/license-service",
       "sourceRoot": "libs/api/domains/license-service/src",
