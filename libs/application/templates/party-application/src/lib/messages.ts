@@ -198,7 +198,7 @@ export const m: MessageDir = {
     },
     signatureInvalidTooltip: {
       id: 'pa.application:endorsementList.tooltip',
-      defaultMessage: 'Meðmæli í vafa',
+      defaultMessage: 'Meðmæli í vafa, yfirkjörstjórn þarf að yfirfara aldur, búsetu og kjördæmi',
       description: 'Invalid signature tooltip',
     },
     isClosedMessage: {
