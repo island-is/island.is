@@ -13,6 +13,7 @@ import { Application, ActionCardTag } from './Application'
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
 export enum DefaultEvents {
+  PAYMENT = 'PAYMENT',
   APPROVE = 'APPROVE',
   ASSIGN = 'ASSIGN',
   REJECT = 'REJECT',

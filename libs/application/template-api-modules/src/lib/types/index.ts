@@ -2,6 +2,7 @@ import { SendMailOptions } from 'nodemailer'
 
 import { Application } from '@island.is/application/core'
 import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/driving-license'
+import { PaymentServiceOptions } from '@island.is/clients/payment'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -31,6 +32,7 @@ export interface BaseTemplateAPIModuleConfig {
   drivingLicense: DrivingLicenseApiConfig
   attachmentBucket: string
   presignBucket: string
+  paymentOptions: PaymentServiceOptions
 }
 
 export interface TemplateApiModuleActionProps {

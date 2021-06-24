@@ -6,6 +6,22 @@ export const m = defineMessages({
     defaultMessage: 'Ég hef kynnt mér ofangreint',
     description: 'I understand',
   },
+  externalDataTitle: {
+    id: 'dl.system:externalData.title',
+    defaultMessage: 'Umsókn um fullnaðarskírteini',
+    description: 'Title of the application',
+  },
+  externalDataSubTitle: {
+    id: 'dl.system:externalData.subTitle',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
+    description: 'The following data will be retrieved electronically',
+  },
+  eligibilitySummaryTitle: {
+    id: 'dl.application:eligibility.title',
+    defaultMessage:
+      'Skilyrði sem umsækjandi um fullnaðarskírteini þarf að uppfylla',
+    description: 'Headline showing up above the list of requirements',
+  },
   yes: {
     id: 'dl.application:shared.yes',
     defaultMessage: 'Já',
@@ -25,11 +41,6 @@ export const m = defineMessages({
     id: 'dl.application:externalData.section',
     defaultMessage: 'Ökuréttindi',
     description: 'Driving license',
-  },
-  externalDataTitle: {
-    id: 'dl.application:externalData.title',
-    defaultMessage: 'Upplýsingasöfnun og skilyrði',
-    description: 'Information gathering and conditions',
   },
   nationalRegistryTitle: {
     id: 'dl.application:nationalRegistry.title',
@@ -126,13 +137,13 @@ export const m = defineMessages({
   },
   informationSectionTitle: {
     id: 'dl.application:informationSection.title',
-    defaultMessage: 'Upplýsingar',
+    defaultMessage: 'Afhending',
     description: 'Information',
   },
-  informationMultiFieldTitle: {
-    id: 'dl.application:informationMultiField.title',
-    defaultMessage: 'Upplýsingar',
-    description: 'Information',
+  pickupLocationTitle: {
+    id: 'dl.application:pickuplocation',
+    defaultMessage: 'Afhendingarstaður',
+    description: 'location for pickup',
   },
   informationApplicant: {
     id: 'dl.application:information.applicant',
@@ -301,7 +312,7 @@ export const m = defineMessages({
   overviewBringCertificateData: {
     id: 'dl.application:overview.bringCertificateData',
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
-    description: 'I bring a certificate from a doctor',
+    description: `I'll bring a certificate from a doctor`,
   },
   overviewSubmit: {
     id: 'dl.application:overview.submit',
@@ -311,21 +322,109 @@ export const m = defineMessages({
   overviewDone: {
     id: 'dl.application:overview.done',
     defaultMessage: 'Staðfesting',
-    description: 'Glæsilegt',
+    description: 'Confirmation',
   },
-  requirementUnmetDrivingAssessment: {
-    id: 'dl.application:requirementunmet.drivingassessment',
-    defaultMessage: 'Gilt akstursmat finnst ekki á skrá',
+  overviewPaymentCharge: {
+    id: 'dl.application:overview.paymentcharge',
+    defaultMessage: 'Greiðsla',
+    description: 'Cost',
+  },
+  requirementUnmetDrivingAssessmentTitle: {
+    id: 'dl.application:requirementunmet.drivingassessmenttitle',
+    defaultMessage: 'Akstursmat',
     description: 'requirement unmet assessment',
   },
-  requirementUnmetDrivingSchool: {
-    id: 'dl.application:requirementunmet.drivingschool',
-    defaultMessage: 'Hefur ekki lokið ökuskóla 3',
+  requirementUnmetDrivingAssessmentDescription: {
+    id: 'dl.application:requirementunmet.drivingassessmentdescription',
+    defaultMessage: 'Ökukennari þarf að hafa staðfest akstursmat',
+    description: 'requirement unmet assessment',
+  },
+  requirementUnmetDrivingSchoolTitle: {
+    id: 'dl.application:requirementunmet.drivingschooltitle',
+    defaultMessage: 'Ökuskóli 3',
     description: 'requirement unmet driving school',
   },
-  requirementUnmetDeniedByService: {
-    id: 'dl.application:requirementunmet.deniedbyservice',
-    defaultMessage: 'Má ekki sækja um valin réttindi skv ökuskírteinaskrá',
+  requirementUnmetDrivingSchoolDescription: {
+    id: 'dl.application:requirementunmet.drivingschooldescription',
+    defaultMessage:
+      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini',
+    description: 'requirement unmet driving school',
+  },
+  requirementUnmetDeniedByServiceTitle: {
+    id: 'dl.application:requirementunmet.deniedbyservicetitle',
+    defaultMessage: 'Ökuskírteinaskrá',
     description: 'requirement unmet api returned false',
+  },
+  requirementUnmetDeniedByServiceDescription: {
+    id: 'dl.application:requirementunmet.deniedbyservicedescription',
+    defaultMessage:
+      'Ökuskírteinaskrá þarf að heimila að þú megir sækja um fullnaðarskírteini',
+    description: 'requirement unmet api returned false',
+  },
+  errorDataProvider: {
+    id: 'dl.application:error.dataProvider',
+    defaultMessage:
+      'Villa kom upp við að sækja upplýsingar úr vefþjónustu. Reyndu aftur síðar',
+    description: 'Unhandled error in driving license data provider',
+  },
+  examplePaymentPendingField: {
+    id: 'dl.application:example.waitingForPayment',
+    defaultMessage: 'Augnablik meðan beðið er eftir greiðslu',
+    description: 'One moment while we wait for payment confirmation.',
+  },
+  examplePaymentPendingFieldError: {
+    id: 'dl.application:example.waitingForPaymentError',
+    defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
+    description: 'An error came up while getting payment information',
+  },
+  examplePaymentPendingDescription: {
+    id: 'dl.application:example.waitingDescription',
+    defaultMessage: 'Texti um hvað er að gerast',
+    description: 'Text about current payment proceedures.',
+  },
+  orderDrivingLicense: {
+    id: 'dl.application:order.drivingLicense',
+    defaultMessage: 'Panta ökuskírteini',
+    description: 'Order driving license',
+  },
+  continue: {
+    id: 'dl.application.continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Continue',
+  },
+  payment: {
+    id: 'dl.application.DrivingLicenseApplicationPaymentForm',
+    defaultMessage: 'greiðsla',
+    description: 'payment',
+  },
+  paymentCapital: {
+    id: 'dl.application.awaitingPayment',
+    defaultMessage: 'Greiðsla',
+    description: 'Payment',
+  },
+  forwardingToPayment: {
+    id: 'dl.application.forwardingToPayment',
+    defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
+    description: 'Forwarding you to payment handler...',
+  },
+  paymentPendingConfirmation: {
+    id: 'dl.application.forwardingToPayment',
+    defaultMessage: 'Beðið eftir staðfestingu greiðsluveitu',
+    description: 'Pending confirmation from payment handler',
+  },
+  applicationForDrivingLicense: {
+    id: 'dl.application.applicationForDrivingLicense',
+    defaultMessage: 'Umsókn um ökuskilríki',
+    description: 'Application for driving license',
+  },
+  eligibilityRequirementTitle: {
+    id: 'dl.application.eligibilityTitle',
+    defaultMessage: 'Skilyrði sem umsækjandi þarf að uppfylla',
+    description: 'title for requirement component',
+  },
+  applicationEligibilityTitle: {
+    id: 'dl.application.applicationEligibilityTitle',
+    defaultMessage: 'Skilyrði umsóknar',
+    description: 'title for requirement section',
   },
 })
