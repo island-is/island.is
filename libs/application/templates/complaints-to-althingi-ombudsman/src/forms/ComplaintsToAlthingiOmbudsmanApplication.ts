@@ -26,7 +26,11 @@ import {
   complaintInformation,
   complaintDescription,
 } from '../lib/messages'
-import { getComplaintType, isGovernmentComplainee } from '../utils'
+import {
+  getComplaintType,
+  getDateAYearBack,
+  isGovernmentComplainee,
+} from '../utils'
 import Logo from '../assets/Logo'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
@@ -245,6 +249,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                     complaintDescription.labels.decisionDatePlaceholder,
                   backgroundColor: 'blue',
                   width: 'half',
+                  minDate: getDateAYearBack(),
                   condition: (answers) =>
                     getComplaintType(answers) ===
                     OmbudsmanComplaintTypeEnum.DECISION,
