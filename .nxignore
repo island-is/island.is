@@ -1,5 +1,6 @@
-# helm
-/helm
+# helm related files
+apps/**/infra/*
+libs/**/infra/*
 
 # gjafakort
 apps/gjafakort/bin

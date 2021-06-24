@@ -8,10 +8,7 @@ import {
 } from '@nestjs/common'
 import { PdfTypes } from '@island.is/application/core'
 import { Application } from './../application.model'
-import {
-  SigningService,
-  SigningServiceResponse,
-} from '@island.is/dokobit-signing'
+import { SigningService } from '@island.is/dokobit-signing'
 import {
   BucketTypePrefix,
   DokobitFileName,

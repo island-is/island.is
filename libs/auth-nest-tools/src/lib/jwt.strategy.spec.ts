@@ -103,4 +103,24 @@ describe('JwtStrategy#validate', () => {
     expect(user.actor!.nationalId).toEqual(payload.act!.nationalId)
     expect(user.actor!.scope).toEqual(payload.act!.scope)
   })
+
+  it('supports actor claim', async () => {
+    // Arrange
+    const payload: JwtPayload = {
+      nationalId: '1234567890',
+      scope: ['test-scope-1'],
+      client_id: 'test-client',
+      actor: {
+        nationalId: '1234564321',
+        scope: ['test-scope-2'],
+      },
+    }
+
+    // Act
+    const user = await jwtStrategy.validate(fakeRequest, payload)
+
+    // Assert
+    expect(user.actor!.nationalId).toEqual(payload.actor!.nationalId)
+    expect(user.actor!.scope).toEqual(payload.actor!.scope)
+  })
 })
