@@ -112,6 +112,8 @@ export const Services: EnvironmentServices = {
     downloadService,
     nameRegistryBackend,
     endorsement,
+    partyLetterRegistry,
+    temporaryVoterRegistry,
   ],
 }
 
