@@ -4,7 +4,7 @@ import React, { memo } from 'react'
 import { HTMLText, useDomid } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
-import { HTMLDump } from '@island.is/regulations'
+import { HTMLBox } from '@island.is/regulations'
 
 const hasDiff = (text: string) => /<(?:del|ins)/.test(text)
 
@@ -41,7 +41,7 @@ export const Appendixes = memo((props: AppendixesProps) => {
                 labelUse="h2"
                 label={
                   diffing ? (
-                    <HTMLDump
+                    <HTMLBox
                       component="span"
                       className={s.bodyText}
                       html={appendix.title as HTMLText}
@@ -52,7 +52,7 @@ export const Appendixes = memo((props: AppendixesProps) => {
                 }
                 startExpanded={hasDiff(appendix.text)}
               >
-                <HTMLDump className={s.bodyText} html={appendix.text} />
+                <HTMLBox className={s.bodyText} html={appendix.text} />
               </AccordionItem>
             )
           )
