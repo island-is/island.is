@@ -56,4 +56,9 @@ export const section = defineMessages({
     defaultMessage: 'Viðhengi',
     description: 'Definition of attachments',
   },
+  courtAction: {
+    id: `ctao.application:section.courtAction`,
+    defaultMessage: 'Lagt fyrir dómstóla',
+    description: 'Definition of court action',
+  },
 })

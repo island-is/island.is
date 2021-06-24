@@ -7,3 +7,6 @@ export enum ComplaineeTypes {
   GOVERNMENT = 'government',
   OTHER = 'other',
 }
+
+export const YES = 'yes'
+export const NO = 'no'

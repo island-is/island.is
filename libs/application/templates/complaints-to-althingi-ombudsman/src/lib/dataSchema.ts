@@ -49,6 +49,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
     type: z.enum([ComplaineeTypes.GOVERNMENT, ComplaineeTypes.OTHER]),
   }),
   complaineeName: z.string().nonempty(error.required.defaultMessage),
+  courtActionAnswer: z.enum([YES, NO]),
 })
 
 export type ComplaintsToAlthingiOmbudsman = z.TypeOf<
