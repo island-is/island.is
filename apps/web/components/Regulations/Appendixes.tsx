@@ -4,7 +4,7 @@ import React, { memo } from 'react'
 import { HTMLText, PlainText, useDomid } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
-import { HTMLDump } from '@island.is/regulations'
+import { HTMLBox } from '@island.is/regulations'
 
 const hasDiff = (text: string) => /<(del|ins)/.test(text)
 
@@ -56,7 +56,7 @@ export const Appendixes = memo((props: AppendixesProps) => {
                   title.asHtml && (
                     // NOTE: This horrible hack is because AccordionItem's label can't be JSX.Element/ReactNode
                     <Text variant="h3" as="h2">
-                      <HTMLDump
+                      <HTMLBox
                         component="span"
                         className={s.bodyText}
                         html={title.asHtml}
@@ -66,7 +66,7 @@ export const Appendixes = memo((props: AppendixesProps) => {
                 }
                 startExpanded={hasDiff(appendix.text)}
               >
-                <HTMLDump className={s.bodyText} html={appendix.text} />
+                <HTMLBox className={s.bodyText} html={appendix.text} />
               </AccordionItem>
             )
           )

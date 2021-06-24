@@ -18,7 +18,7 @@ import { useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationStatus } from './RegulationStatus'
 import { Appendixes } from './Appendixes'
-import { HTMLDump } from '@island.is/regulations'
+import { HTMLBox } from '@island.is/regulations'
 import { CommentsBox } from './CommentsBox'
 import { RegulationInfoBox } from './RegulationInfoBox'
 import { RegulationEffectsBox } from './RegulationEffectsBox'
@@ -107,7 +107,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               {regulation.title}
             </Text>
 
-            <HTMLDump className={s.bodyText} html={regulation.text} />
+            <HTMLBox className={s.bodyText} html={regulation.text} />
 
             <Appendixes
               key={key}
