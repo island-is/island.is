@@ -453,6 +453,24 @@ export const m: MessageDir = {
       defaultMessage: 'Stjórnmálasamtök',
       description: 'Label for party name',
     },
+    alertMessageTitle: {
+      id: 'pa.application:endorsement.alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Alert message title',
+    },
+    alertDescriptionVoterRegistryNotFound: {
+      id: 'pa.application:endorsement.alert.descrtipion.voter.registry',
+      defaultMessage:
+        'Þú fannst ekki í kjörskrá ertu viss um að vilja halda áfram?',
+      description:
+        'Alert message if signaturee was not found in temp voter reg',
+    },
+    alertDescriptionWrongConstituency: {
+      id: 'pa.application:endorsement.alert.descrtipion.wrong.constituency',
+      defaultMessage:
+        'Þú ert ekki með skráða búsetu í þessu kjördæmi ertu viss um að vilja halda áfram?',
+      description: 'Alert message if signaturee is in the wrong constituency',
+    },
   }),
   endorsementApproved: defineMessages({
     title: {

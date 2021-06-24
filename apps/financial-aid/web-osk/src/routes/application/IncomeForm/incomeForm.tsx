@@ -35,13 +35,16 @@ const IncomeForm = () => {
       value: 1,
     },
   ]
+  const errorCheck = () => {
+    if (form?.hasIncome === undefined) {
+      setError(true)
+      return false
+    }
 
-  const examples = [
-    'Launaseðlar',
-    'Greiðslur frá Vinnumálastofnun',
-    'Greiðslur frá Tryggingastofnun',
-    'Styrkir frá lífeyrissjóðum',
-  ]
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
+  }
 
   return (
     <FormLayout
@@ -75,7 +78,7 @@ const IncomeForm = () => {
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að svara
+            Þú þarft að velja einn valmöguleika
           </Text>
         </div>
 
@@ -84,22 +87,17 @@ const IncomeForm = () => {
         </Text>
         <Box marginBottom={5}>
           <BulletList type={'ul'} space={2}>
-            {examples.map((item) => {
-              return <Bullet>{item}</Bullet>
-            })}
+            <Bullet>Launaseðlar</Bullet>
+            <Bullet>Greiðslur frá Vinnumálastofnun</Bullet>
+            <Bullet>Greiðslur frá Tryggingastofnun</Bullet>
+            <Bullet>Styrkir frá lífeyrissjóðum</Bullet>
           </BulletList>
         </Box>
       </FormContentContainer>
 
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
-        onNextButtonClick={() => {
-          if (form?.hasIncome !== undefined) {
-            router.push(navigation?.nextUrl ?? '/')
-          } else {
-            setError(true)
-          }
-        }}
+        previousUrl={navigation?.prevUrl}
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )

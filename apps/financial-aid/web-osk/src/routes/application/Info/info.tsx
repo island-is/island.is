@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useState, useContext } from 'react'
 import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
 
 import {
@@ -13,19 +13,36 @@ import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
 import { NavigationProps } from '@island.is/financial-aid/shared'
+import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
 const ApplicationInfo = () => {
   const router = useRouter()
+  const { setUser, user } = useContext(UserContext)
 
   const [accept, setAccept] = useState(false)
-  const [error, setError] = useState(false)
+  const [hasError, setHasError] = useState(false)
+
+  const logOut = useLogOut()
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps
 
+  const errorCheck = () => {
+    if (!accept) {
+      setHasError(true)
+      return
+    }
+
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
+  }
+
   return (
-    <FormLayout activeSection={navigation?.activeSectionIndex}>
+    <FormLayout activeSection={0}>
       <FormContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
           Gagnaöflun
@@ -74,12 +91,12 @@ const ApplicationInfo = () => {
             large
             checked={accept}
             onChange={(event) => {
-              if (error) {
-                setError(false)
+              if (hasError) {
+                setHasError(false)
               }
               setAccept(event.target.checked)
             }}
-            hasError={error}
+            hasError={hasError}
             errorMessage={'Þú þarft að samþykkja gagnaöflun'}
           />
         </Box>
@@ -95,16 +112,11 @@ const ApplicationInfo = () => {
       </FormContentContainer>
 
       <FormFooter
+        onPrevButtonClick={() => logOut()}
         previousIsDestructive={true}
         nextButtonText="Staðfesta"
         nextButtonIcon="checkmark"
-        onNextButtonClick={() => {
-          if (!accept) {
-            setError(true)
-          } else {
-            router.push(navigation?.nextUrl ?? '/')
-          }
-        }}
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )
