@@ -25,7 +25,7 @@ import { MessageDescriptor } from 'react-intl'
 // `
 
 const getEmptyDraft = (): RegulationDraft => ({
-  id: 0, // falsy id to signify that the draft is, as of yet, unsaved
+  id: 0,
   draftingStatus: 'draft',
   draftingNotes: '' as HTMLText,
   authors: [],
@@ -39,31 +39,34 @@ const getEmptyDraft = (): RegulationDraft => ({
 
 // ---------------------------------------------------------------------------
 
-type Step = '1' | '2' | '3' | '4'
-type StepComponent = (props: { draft: RegulationDraft }) => ReturnType<FC>
+type Step = 'basics' | 'meta' | 'impacts' | 'review'
+type StepComponent = (props: {
+  draft: RegulationDraft
+  new?: boolean
+}) => ReturnType<FC>
 
 const steps: Record<Step, StepComponent> = {
-  '1': EditBasics,
-  '2': () => <p>Skref 2</p>,
-  '3': () => <p>Skref 3</p>,
-  '4': () => <p>Skref 4</p>,
+  basics: EditBasics,
+  meta: () => <p>Skref 2</p>,
+  impacts: () => <p>Skref 3</p>,
+  review: () => <p>Skref 4</p>,
 }
 
 const introMsgs: Record<
   Step,
   { title: MessageDescriptor; intro?: MessageDescriptor }
 > = {
-  1: { title: editorMsgs.step1Headline },
-  2: { title: editorMsgs.step2Headline },
-  3: { title: editorMsgs.step3Headline },
-  4: { title: editorMsgs.step4Headline, intro: editorMsgs.step4Intro },
+  basics: { title: editorMsgs.step1Headline },
+  meta: { title: editorMsgs.step2Headline },
+  impacts: { title: editorMsgs.step3Headline },
+  review: { title: editorMsgs.step4Headline, intro: editorMsgs.step4Intro },
 }
 
 // ---------------------------------------------------------------------------
 
 const assertStep = (maybeStep?: string): Step => {
   if (!maybeStep) {
-    return '1'
+    return 'basics'
   }
   if (maybeStep in steps) {
     return maybeStep as Step
@@ -95,7 +98,7 @@ const Edit = () => {
 
   const { data, loading } = useMockQuery(
     id !== 'new' && { regulationDraft: mockDraftRegulations[id] },
-    id === 'new',
+    isNew,
   )
   // const { data, loading } = useQuery<Query>(RegulationDraftQuery, {
   //   variables: { id },
@@ -104,9 +107,8 @@ const Edit = () => {
 
   let regulationDraft = data ? data.regulationDraft : undefined
 
-  const [draft, setDraft] = useState(() =>
-    id === 'new' ? getEmptyDraft() : undefined,
-  )
+  const [draft, setDraft] = useState(isNew ? getEmptyDraft : undefined)
+
   useEffect(() => {
     if (regulationDraft) {
       setDraft(regulationDraft)
@@ -135,7 +137,11 @@ const Edit = () => {
         )}
       </Box>
 
-      {draft ? <EditorStep draft={draft} /> : <SkeletonLoader height={120} />}
+      {draft ? (
+        <EditorStep new={id === 'new'} draft={draft} />
+      ) : (
+        <SkeletonLoader height={120} />
+      )}
     </Fragment>
   )
 }
