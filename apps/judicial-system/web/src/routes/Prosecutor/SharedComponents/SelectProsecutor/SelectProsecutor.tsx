@@ -7,7 +7,7 @@ import { Case } from '@island.is/judicial-system/types'
 import { ValueType } from 'react-select'
 import { Option } from '@island.is/island-ui/core'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { selectProsecutorStrings as m } from '@island.is/judicial-system-web/messages'
+import { selectProsecutor as m } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case

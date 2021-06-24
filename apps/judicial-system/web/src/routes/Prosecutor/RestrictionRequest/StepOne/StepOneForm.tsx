@@ -25,7 +25,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import {
   restrictionDefendantForm,
-  defenderInfoStrings,
+  defenderInfo,
 } from '@island.is/judicial-system-web/messages'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
@@ -152,10 +152,8 @@ export const StepOneForm: React.FC<Props> = (props) => {
               <Input
                 data-testid="defenderName"
                 name="defenderName"
-                label={formatMessage(defenderInfoStrings.name.label)}
-                placeholder={formatMessage(
-                  defenderInfoStrings.name.placeholder,
-                )}
+                label={formatMessage(defenderInfo.name.label)}
+                placeholder={formatMessage(defenderInfo.name.placeholder)}
                 defaultValue={workingCase.defenderName}
                 onChange={(event) => setField(event.target)}
                 onBlur={(event) => validateAndSendToServer(event.target)}
@@ -165,10 +163,8 @@ export const StepOneForm: React.FC<Props> = (props) => {
               <Input
                 data-testid="defenderEmail"
                 name="defenderEmail"
-                label={formatMessage(defenderInfoStrings.email.label)}
-                placeholder={formatMessage(
-                  defenderInfoStrings.email.placeholder,
-                )}
+                label={formatMessage(defenderInfo.email.label)}
+                placeholder={formatMessage(defenderInfo.email.placeholder)}
                 defaultValue={workingCase.defenderEmail}
                 errorMessage={defenderEmailErrorMessage}
                 hasError={defenderEmailErrorMessage !== ''}
@@ -186,9 +182,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 <Input
                   data-testid="defenderPhoneNumber"
                   name="defenderPhoneNumber"
-                  label={formatMessage(defenderInfoStrings.phoneNumber.label)}
+                  label={formatMessage(defenderInfo.phoneNumber.label)}
                   placeholder={formatMessage(
-                    defenderInfoStrings.phoneNumber.placeholder,
+                    defenderInfo.phoneNumber.placeholder,
                   )}
                   defaultValue={workingCase.defenderPhoneNumber}
                   errorMessage={defenderPhoneNumberErrorMessage}
@@ -198,8 +194,8 @@ export const StepOneForm: React.FC<Props> = (props) => {
             </Box>
             <Checkbox
               name="sendRequestToDefender"
-              label={formatMessage(defenderInfoStrings.sendRequest.label)}
-              tooltip={formatMessage(defenderInfoStrings.sendRequest.tooltip, {
+              label={formatMessage(defenderInfo.sendRequest.label)}
+              tooltip={formatMessage(defenderInfo.sendRequest.tooltip, {
                 caseType:
                   workingCase.type === CaseType.CUSTODY
                     ? 'gæsluvarðhaldskröfuna'

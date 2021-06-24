@@ -1,7 +1,7 @@
 import { defineMessage } from 'react-intl'
 
 // Strings for select court component
-export const requestCourtDateStrings = {
+export const requestCourtDate = {
   heading: defineMessage({
     id: 'judicial.system:component.requestCourtDate.heading',
     defaultMessage: 'Ósk um fyrirtökudag og tíma',

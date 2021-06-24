@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
 import { useIntl } from 'react-intl'
-import { requestCourtDateStrings as m } from '@island.is/judicial-system-web/messages'
+import { requestCourtDate as m } from '@island.is/judicial-system-web/messages'
 import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
 
 interface Props {

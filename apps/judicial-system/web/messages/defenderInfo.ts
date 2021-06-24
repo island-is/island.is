@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 // Strings for defender info components
-export const defenderInfoStrings = {
+export const defenderInfo = {
   name: defineMessages({
     label: {
       id: 'judicial.system:component.defender.name.label',
