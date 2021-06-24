@@ -42,6 +42,7 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
     }
   }
 
+  const navChildren = nav?.children?.filter((child) => !child.navHide)
   return (
     <Box>
       {nav.heading && (
@@ -71,12 +72,12 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
       >
         {formatMessage(nav.name)}
       </NavItem>
-      {Array.isArray(nav.children) && nav.children.length > 0 && (
+      {Array.isArray(navChildren) && navChildren.length > 0 && (
         <AnimateHeight duration={300} height={isModuleActive ? 'auto' : 0}>
           <div>
             <Box className={styles.subnav} marginTop={2}>
               <Stack space={1}>
-                {nav.children.map((child, index) => (
+                {navChildren.map((child, index) => (
                   <SubNavItem
                     path={child.path}
                     key={`child-${index}`}

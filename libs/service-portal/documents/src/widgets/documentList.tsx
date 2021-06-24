@@ -52,7 +52,7 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
           <Button variant="primary">
             {formatMessage({
               id: 'sp.documents:goto-documents',
-              defaultMessage: 'Fara í rafræn skjöl',
+              defaultMessage: 'Fara í pósthólf',
             })}
           </Button>
         </Link>

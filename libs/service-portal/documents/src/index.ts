@@ -7,7 +7,7 @@ import { defineMessage } from 'react-intl'
 
 const rootName = defineMessage({
   id: 'sp.documents:title',
-  defaultMessage: 'Rafræn Skjöl',
+  defaultMessage: 'Pósthólf',
 })
 
 export const documentsModule: ServicePortalModule = {
