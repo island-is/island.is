@@ -20,7 +20,6 @@ import {
 import {
   AccusedPleaDecision,
   Case,
-  CaseGender,
   CaseType,
 } from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'
@@ -37,7 +36,7 @@ import {
   newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useRouter } from 'next/router'
-import { validate } from '../../../utils/validate'
+import { validate } from '../../../../utils/validate'
 import * as styles from './CourtRecord.treat'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -84,14 +83,14 @@ export const CourtRecord: React.FC = () => {
       if (wc.prosecutor && wc.accusedName) {
         attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
           wc.accusedName
-        } ${formatAccusedByGender(wc?.accusedGender || CaseGender.OTHER)}`
+        } ${formatAccusedByGender(wc?.accusedGender)}`
       }
 
       if (wc.defenderName) {
         attendees += `\n${
           wc.defenderName
         } skipaður verjandi ${formatAccusedByGender(
-          wc?.accusedGender || CaseGender.OTHER,
+          wc?.accusedGender,
           NounCases.GENITIVE,
         )}`
       }
@@ -262,7 +261,7 @@ export const CourtRecord: React.FC = () => {
                 tagVariant="darkerBlue"
                 text="Rannsóknargögn málsins liggja frammi."
                 caseId={workingCase.id}
-                selectedCourtDocuments={workingCase.courtDocuments || []}
+                selectedCourtDocuments={workingCase.courtDocuments ?? []}
                 onUpdateCase={updateCase}
                 setWorkingCase={setWorkingCase}
                 workingCase={workingCase}
@@ -272,9 +271,9 @@ export const CourtRecord: React.FC = () => {
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
                   {`Réttindi ${formatAccusedByGender(
-                    workingCase.accusedGender || CaseGender.OTHER,
+                    workingCase.accusedGender,
                     NounCases.GENITIVE,
-                  )}`}{' '}
+                  )} `}
                   <Text as="span" fontWeight="semiBold" color="red600">
                     *
                   </Text>
@@ -354,12 +353,12 @@ export const CourtRecord: React.FC = () => {
                   data-testid="accusedPleaAnnouncement"
                   name="accusedPleaAnnouncement"
                   label={`Afstaða ${formatAccusedByGender(
-                    workingCase.accusedGender || CaseGender.OTHER,
+                    workingCase.accusedGender,
                     NounCases.GENITIVE,
                   )}`}
                   defaultValue={workingCase.accusedPleaAnnouncement}
                   placeholder={`Hvað hafði ${formatAccusedByGender(
-                    workingCase.accusedGender || CaseGender.OTHER,
+                    workingCase.accusedGender,
                   )} að segja um kröfuna? Mótmælti eða samþykkti?`}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
@@ -438,10 +437,10 @@ export const CourtRecord: React.FC = () => {
               nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
               nextIsDisabled={
                 !courtRecordStartDateIsValid ||
-                !validate(workingCase.courtAttendees || '', 'empty').isValid ||
-                !validate(workingCase.prosecutorDemands || '', 'empty')
+                !validate(workingCase.courtAttendees ?? '', 'empty').isValid ||
+                !validate(workingCase.prosecutorDemands ?? '', 'empty')
                   .isValid ||
-                !validate(workingCase.litigationPresentations || '', 'empty')
+                !validate(workingCase.litigationPresentations ?? '', 'empty')
                   .isValid ||
                 !workingCase.accusedPleaDecision
               }

@@ -245,7 +245,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             {
               title: 'Embætti',
               value: `${
-                workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
               }`,
             },
             { title: 'Dómstóll', value: workingCase.court?.name },
@@ -256,7 +256,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           accusedNationalId={workingCase.accusedNationalId}
           accusedAddress={workingCase.accusedAddress}
           defender={{
-            name: workingCase.defenderName || '',
+            name: workingCase.defenderName ?? '',
             email: workingCase.defenderEmail,
             phoneNumber: workingCase.defenderPhoneNumber,
           }}
@@ -309,7 +309,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           >
             <CaseFileList
               caseId={workingCase.id}
-              files={workingCase.files || []}
+              files={workingCase.files ?? []}
               canOpenFiles={canCaseFilesBeOpened()}
             />
           </AccordionItem>
