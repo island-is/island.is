@@ -110,7 +110,7 @@ platform :ios do
     match(type: "appstore", readonly: true, app_identifier: [ options[:app_identifier], options[:app_identifier_richnotifications]])
 
 
-    clear_derived_data
+    # clear_derived_data
 
     update_project_provisioning(
       xcodeproj: "ios/IslandApp.xcodeproj",
