@@ -35,7 +35,7 @@ export const UserDelegations = ({ onSwitch }: UserDelegationsProps) => {
             defaultMessage: `Sæki gögn`,
           })}
         </Text>
-        <SkeletonLoader height={59} borderRadius="large" />
+        <SkeletonLoader display="block" height={59} borderRadius="large" />
       </Stack>
     )
   }
