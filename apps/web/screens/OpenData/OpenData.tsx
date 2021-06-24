@@ -6,8 +6,9 @@ import {
   GridRow,
   GridColumn,
   Breadcrumbs,
-  Inline,
-  Stack,
+  Text,
+  Link,
+  Button,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
@@ -26,16 +27,14 @@ const OpenDataPage: Screen = () => {
   const cards = [
     {
       title: 'CLARIN á Íslandi',
-      description:
-        'Árnastofnun',
+      description: 'Árnastofnun',
       link: {
         href: '/flokkur/akstur-og-bifreidar',
       },
     },
     {
       title: 'Gagnasöfn Orkustofunar',
-      description:
-        'Gögn um orkurannsóknir og orkunýtingu',
+      description: 'Gögn um orkurannsóknir og orkunýtingu',
       link: {
         href: '/flokkur/atvinnurekstur-og-sjalfstaett-starfandi',
       },
@@ -56,64 +55,56 @@ const OpenDataPage: Screen = () => {
     },
     {
       title: 'Hagstofa Íslands',
-      description:
-        'Talnaefni og tilraunatölfræði',
+      description: 'Talnaefni og tilraunatölfræði',
       link: {
         href: '/flokkur/fjolskylda-og-velferd',
       },
     },
     {
       title: 'Landupplýsingagátt',
-      description:
-        'Landmælingar Íslands',
+      description: 'Landmælingar Íslands',
       link: {
         href: '/flokkur/heilbrigdismal',
       },
     },
     {
       title: 'Loftgæði á Íslandi',
-      description:
-        'Umhverfisstofnun',
+      description: 'Umhverfisstofnun',
       link: {
         href: '/flokkur/husnaedismal',
       },
     },
     {
       title: 'Lýðheilsuvísir Landlæknis',
-      description:
-        '',
+      description: '',
       link: {
         href: '/flokkur/idnadur',
       },
     },
     {
       title: 'Mælaborð ferðaþjónustunnar',
-      description:
-        'Ferðamálastofa',
+      description: 'Ferðamálastofa',
       link: {
         href: '/flokkur/innflytjendamal',
       },
     },
     {
       title: 'Mælaborð Tryggingastofnunar',
-      description:
-        '',
+      description: '',
       link: {
         href: '/flokkur/launthegi-rettindi-og-lifeyrir',
       },
     },
     {
       title: 'Mælaborð Vinnumálastofnunar',
-      description:
-        '',
+      description: '',
       link: {
         href: '/flokkur/malefni-fatlads-folks',
       },
     },
     {
       title: 'Opingogn.is',
-      description:
-        'Opin gögn frá opinberum aðilum á Íslandi',
+      description: 'Opin gögn frá opinberum aðilum á Íslandi',
       link: {
         href: '/flokkur/samfelag-og-rettindi',
       },
@@ -129,20 +120,28 @@ const OpenDataPage: Screen = () => {
 
   const image = {
     title: 'company',
-    url: "//images.ctfassets.net/8k0h54kbe6bj/3CpwPzdLqnw65iAv9lPFUJ/bb52802cd0e409cc03f6f0903423894a/company-life-event.svg"
+    url:
+      '//images.ctfassets.net/8k0h54kbe6bj/3CpwPzdLqnw65iAv9lPFUJ/bb52802cd0e409cc03f6f0903423894a/company-life-event.svg',
   }
 
-  const dataLinkDescription = "[Undanfarin misseri hafa ...] Í þessu samhengi teljast til opinberra gagna öll gögn sem safnað hefur verið saman, vistuð með skipulegum eða kerfisbundnum hætti af opinberum aðilum og eru eða geta verið birt og varðveitt með rafrænum hætti. Hér eru tenglar á helstu vefi sem tengjast opnum gögnum á Íslandi."
+  const dataLinkDescription =
+    '[Undanfarin misseri hafa ...] Í þessu samhengi teljast til opinberra gagna öll gögn sem safnað hefur verið saman, vistuð með skipulegum eða kerfisbundnum hætti af opinberum aðilum og eru eða geta verið birt og varðveitt með rafrænum hætti. Hér eru tenglar á helstu vefi sem tengjast opnum gögnum á Íslandi.'
 
   return (
-    <Box paddingY={[2, 2, 10]} id="main-content">
-      <Section aria-labelledby="lifeEventsTitle" background="purple100">
-        {/* <Inline space={4}>
-          <Stack space={2}> */}
+    <Box id="main-content">
+      <Section
+        aria-labelledby="lifeEventsTitle"
+        backgroundBleed={{
+          bleedAmount: 500,
+          bleedDirection: 'top',
+          fromColor: 'white',
+          toColor: 'blue100',
+        }}
+      >
         <GridContainer>
           <GridRow>
-            <GridColumn>
-              <Box paddingX={[3, 3, 8]}>
+            <GridColumn span={['5/12', '5/12', '5/12']}>
+              <Box marginBottom={3}>
                 <Breadcrumbs
                   items={[
                     {
@@ -162,11 +161,33 @@ const OpenDataPage: Screen = () => {
                   }}
                 />
               </Box>
+              <Text variant="h1" as="h1" paddingBottom={4}>
+                Aukið traust og gagnsæi <br/>með opnum gögnum
+              </Text>
+              <Text paddingBottom={4}>
+                [Elevator pitch fyrir opin gögn og að markmiðið sé að hvetja til
+                nýtingar á gögnunum í þágu nýsköpunar, atvinnulífs og rannsókna.
+                Hér er hægt að skoða og vinna með gögn frá Rannís ...]
+              </Text>
+              <Box
+                display={'flex'}
+                justifyContent="flexStart"
+                marginTop={[3, 3, 3]}
+              >
+                <Link {...linkResolver('lifeevents')} skipTab>
+                  <Button
+                    icon="arrowForward"
+                    iconType="filled"
+                    variant="text"
+                    as="span"
+                  >
+                    Skoða mælaborð Rannís
+                  </Button>
+                </Link>
+              </Box>
             </GridColumn>
           </GridRow>
         </GridContainer>
-        {/* </Stack>
-        </Inline> */}
       </Section>
       <Section aria-labelledby="factsCardsTitle">
         <FactsCardsSection
@@ -180,7 +201,7 @@ const OpenDataPage: Screen = () => {
         aria-labelledby="serviceCategoriesTitle"
       >
         <DataLinkSection
-          title={'Oping gögn á Íslandi'}
+          title={'Opin gögn á Íslandi'}
           titleId="OpenDataLinksTitle"
           image={image}
           description={dataLinkDescription}
