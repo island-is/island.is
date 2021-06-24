@@ -1,29 +1,27 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Icon, Text, Tooltip } from '@island.is/island-ui/core'
 import * as styles from './HideableText.treat'
-import { motion, AnimatePresence } from 'framer-motion'
 
 interface Props {
   text: string
   onToggleVisibility: (isVisible: boolean) => void
-  defaultIsVisible?: boolean
+  isHidden?: boolean
   tooltip?: string
 }
 
 const HideableText: React.FC<Props> = (props) => {
-  const { text, onToggleVisibility, tooltip, defaultIsVisible } = props
-  const [isVisible, setIsVisible] = useState<boolean>(defaultIsVisible ?? false)
+  const { text, onToggleVisibility, tooltip, isHidden } = props
 
   const renderVisibilityButton = () => (
     <button
       className={styles.eyeButton}
       onClick={() => {
-        setIsVisible(!isVisible)
-        onToggleVisibility(!isVisible)
+        onToggleVisibility(!isHidden)
       }}
     >
       <AnimatePresence>
-        {!isVisible && (
+        {isHidden && (
           <motion.span
             initial={{ width: 0 }}
             animate={{ width: 30 }}
@@ -35,17 +33,14 @@ const HideableText: React.FC<Props> = (props) => {
       <Icon
         icon="eye"
         type="outline"
-        color={isVisible ? 'blue400' : 'dark300'}
+        color={isHidden ? 'dark300' : 'blue400'}
       />
     </button>
   )
 
   return (
     <div className={styles.hideableTextContainer}>
-      <Text
-        strikethrough={!isVisible}
-        color={isVisible ? 'dark400' : 'dark300'}
-      >
+      <Text strikethrough={isHidden} color={isHidden ? 'dark300' : 'dark400'}>
         {text}
       </Text>
       {tooltip ? (
