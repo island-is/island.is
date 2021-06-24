@@ -37,11 +37,12 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as styles from './HearingArrangements.treat'
 
 interface Props {
   workingCase: Case
@@ -277,7 +278,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               Skrá fyrirtökutíma
             </Text>
           </Box>
-          <Box marginBottom={3}>
+          <Box marginBottom={2}>
             <BlueBox>
               <Box marginBottom={2}>
                 <DateTime
@@ -344,10 +345,48 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <BlueBox>
-            <Box marginBottom={3}>
+            <div className={styles.defenderOptions}>
+              <RadioButton
+                name="defender-type-defender"
+                id="defender-type-defender"
+                label="Verjandi"
+                checked={workingCase.defenderIsSpokesperson === false}
+                onChange={() => {
+                  setAndSendToServer(
+                    'defenderIsSpokesperson',
+                    false,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+              />
+              <RadioButton
+                name="defender-type-spokesperson"
+                id="defender-type-spokesperson"
+                label="Talsmaður"
+                checked={workingCase.defenderIsSpokesperson === true}
+                onChange={() => {
+                  setAndSendToServer(
+                    'defenderIsSpokesperson',
+                    true,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+              />
+            </div>
+            <Box marginBottom={2}>
               <Input
                 name="defenderName"
-                label="Nafn verjanda"
+                label={`Nafn ${
+                  workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
+                }`}
                 defaultValue={workingCase.defenderName}
                 placeholder="Fullt nafn"
                 onChange={(event) =>
@@ -370,10 +409,12 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }
               />
             </Box>
-            <Box marginBottom={3}>
+            <Box marginBottom={2}>
               <Input
                 name="defenderEmail"
-                label="Netfang verjanda"
+                label={`Netfang ${
+                  workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
+                }`}
                 defaultValue={workingCase.defenderEmail}
                 placeholder="Netfang"
                 errorMessage={defenderEmailEM}
@@ -428,7 +469,9 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             >
               <Input
                 name="defenderPhoneNumber"
-                label="Símanúmer verjanda"
+                label={`Símanúmer ${
+                  workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
+                }`}
                 defaultValue={workingCase.defenderPhoneNumber}
                 placeholder="Símanúmer"
                 errorMessage={defenderPhoneNumberEM}

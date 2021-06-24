@@ -41,7 +41,9 @@ const CourtRecord = () => {
       }
 
       if (wc.defenderName) {
-        attendees += `\n${wc.defenderName} skipaður verjandi varnaraðila`
+        attendees += `\n${wc.defenderName} skipaður ${
+          wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+        } varnaraðila`
       }
 
       return attendees

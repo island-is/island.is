@@ -87,7 +87,11 @@ const HearingArrangements = () => {
           {modalVisible && (
             <Modal
               title="Tilkynning um fyrirtökutíma hefur verið send"
-              text="Tilkynning um fyrirtökutíma hefur verið send á ákæranda, fangelsi og verjanda hafi verjandi verið skráður."
+              text={`Tilkynning um fyrirtökutíma hefur verið send á ákæranda, fangelsi og ${
+                workingCase.defenderIsSpokesperson ? 'talsmann' : 'verjanda'
+              } hafi ${
+                workingCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+              } verið skráður.`}
               handlePrimaryButtonClick={() => {
                 router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${id}`)
               }}
