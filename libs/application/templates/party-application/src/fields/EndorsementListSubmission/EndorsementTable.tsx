@@ -36,10 +36,10 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
   onChange,
 }) => {
   const { formatMessage } = useLocale()
-
+  const withBulkImport = endorsements?.some((x) => x.meta.bulkEndorsement)
   const renderRow = (endorsement: Endorsement) => {
     const voterRegionMismatch =
-      endorsement.meta.voterRegion !==
+      endorsement.meta.voterRegion?.voterRegionNumber !==
       constituencyMapper[
         application.answers.constituency as EndorsementListTags
       ].region_number
@@ -78,7 +78,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
             textAlign: 'right',
           }}
         >
-          {voterRegionMismatch || endorsement.meta.bulkEndorsement ? (
+          {voterRegionMismatch ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
               {endorsement.meta.address.streetAddress}
               <Box marginLeft={2}>
@@ -91,15 +91,24 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
                     )}
                   />
                 )}
-                {endorsement.meta.bulkEndorsement && (
-                  <Icon icon="attach" color="blue400" />
-                )}
               </Box>
             </Box>
           ) : (
             endorsement.meta.address.streetAddress
           )}
         </T.Data>
+        {withBulkImport && (
+          <T.Data
+            box={{
+              background: rowBackground,
+              textAlign: 'right',
+            }}
+          >
+            {endorsement.meta.bulkEndorsement && (
+              <Icon icon="attach" color="blue400" />
+            )}
+          </T.Data>
+        )}
         <T.Data
           box={{
             background: rowBackground,
@@ -126,6 +135,9 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
           <T.HeadData box={{ textAlign: 'right' }}>
             {formatMessage(m.endorsementList.thAddress)}
           </T.HeadData>
+          {withBulkImport && (
+            <T.HeadData></T.HeadData>
+          )}
           <T.HeadData></T.HeadData>
         </T.Row>
       </T.Head>
