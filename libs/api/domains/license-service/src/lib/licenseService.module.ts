@@ -6,15 +6,39 @@ import { LicenseServiceService } from './licenseService.service'
 import { MainResolver } from './graphql/main.resolver'
 
 import { GenericDrivingLicenseApi } from './client/driving-license-client'
+import {
+  CONFIG_PROVIDER,
+  GenericLicenseClient,
+  GenericLicenseMetadata,
+  GenericLicenseProviderId,
+  GenericLicenseType,
+  GENERIC_LICENSE_FACTORY,
+} from './licenceService.type'
 
 export interface Config {
   xroad: {
-    xroadBaseUrl: string
-    xroadClientId: string
-    xroadPath: string
-    drivingLicenseSecret: string
+    baseUrl: string
+    clientId: string
+    path: string
+    secret: string
+  }
+  pkpass: {
+    apiKey: string
+    apiUrl: string
+    secretKey: string
   }
 }
+
+export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
+  {
+    type: GenericLicenseType.DriversLicense,
+    provider: {
+      id: GenericLicenseProviderId.NationalPoliceCommissioner,
+    },
+    pkpass: true,
+    timeout: 100,
+  },
+]
 
 @Module({})
 export class LicenseServiceModule {
@@ -30,14 +54,23 @@ export class LicenseServiceModule {
           useValue: logger,
         },
         {
-          provide: GenericDrivingLicenseApi,
-          useFactory: async () =>
-            new GenericDrivingLicenseApi(
-              config.xroad.xroadBaseUrl,
-              config.xroad.xroadClientId,
-              config.xroad.xroadPath,
-              config.xroad.drivingLicenseSecret,
-            ),
+          provide: CONFIG_PROVIDER,
+          useValue: config,
+        },
+        {
+          provide: GENERIC_LICENSE_FACTORY,
+          useFactory:
+            () =>
+            async (
+              type: GenericLicenseType,
+            ): Promise<GenericLicenseClient<unknown> | null> => {
+              switch (type) {
+                case GenericLicenseType.DriversLicense:
+                  return new GenericDrivingLicenseApi(config, logger, null)
+                default:
+                  return null
+              }
+            },
         },
       ],
       exports: [LicenseServiceService],

@@ -1,92 +1,110 @@
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 import { Cache as CacheManager } from 'cache-manager'
+import add from 'date-fns/add'
+import compareAsc from 'date-fns/compareAsc'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import {
   GenericUserLicense,
   GenericLicenseTypeType,
+  CONFIG_PROVIDER,
+  GENERIC_LICENSE_FACTORY,
+  GenericLicenseType,
+  GenericLicenseClient,
+  GenericLicenseMetadata,
+  GenericLicenseUserdata,
+  GenericUserLicenseFetchStatus,
+  GenericUserLicenseStatus,
+  GenericLicenseCached,
+  GenericLicenseUserdataExternal,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 
-import { GenericDrivingLicenseApi } from './client/driving-license-client'
+import { AVAILABLE_LICENSES, Config } from './licenseService.module'
 
 const CACHE_KEY = 'licenseService'
-const ONE_DAY = 24 * 60 * 60
 
-export type GetGenericDrivingLicenseOptions = {
+export type GetGenericLicenseOptions = {
   includedTypes?: Array<GenericLicenseTypeType>
   excludedTypes?: Array<GenericLicenseTypeType>
   force?: boolean
   onlyList?: boolean
 }
-
-const includeType = (
-  type: GenericLicenseTypeType,
-  includedTypes?: Array<GenericLicenseTypeType>,
-  excludedTypes?: Array<GenericLicenseTypeType>,
-) =>
-  (!includedTypes || includedTypes.includes(type)) &&
-  (!excludedTypes || !excludedTypes.includes(type))
-
 @Injectable()
 export class LicenseServiceService {
   constructor(
-    private readonly drivingLicenseService: GenericDrivingLicenseApi,
+    @Inject(GENERIC_LICENSE_FACTORY)
+    private genericLicenseFactory: (
+      type: GenericLicenseType,
+    ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(CONFIG_PROVIDER) private config: Config,
   ) {}
 
-  private getCacheKey(
+  private async getCachedOrCache(
+    license: GenericLicenseMetadata,
     nationalId: string,
-    type: GenericLicenseTypeType,
-  ): string {
-    return `${CACHE_KEY}_${type}_${nationalId}`
-  }
+    fetch: () => Promise<GenericLicenseUserdata | null>,
+    ttl = 0,
+  ): Promise<GenericLicenseCached> {
+    const cacheKey = `${CACHE_KEY}_${license.type}_${nationalId}`
 
-  private async setCache<T>(
-    key: string,
-    value: T,
-    ttl: number = ONE_DAY,
-  ): Promise<void> {
-    await this.cacheManager.set(key, JSON.stringify(value), { ttl })
-  }
+    if (ttl > 0) {
+      const cachedData = await this.cacheManager.get(cacheKey)
 
-  private async getCache<T>(cacheKey: string): Promise<T | null> {
-    const cachedData = await this.cacheManager.get(cacheKey)
-    if (!cachedData) {
-      return null
-    }
+      if (cachedData) {
+        try {
+          const data = JSON.parse(cachedData as string) as GenericLicenseCached
 
-    return JSON.parse(cachedData as string)
-  }
-
-  private async getDriversLicense(
-    nationalId: User['nationalId'],
-    force?: boolean,
-  ) {
-    const key = this.getCacheKey(nationalId, 'DriversLicense')
-    let drivingLicense: GenericUserLicense | null = null
-    const cached = !force ? await this.getCache(key) : null
-    if (!cached) {
-      drivingLicense = await this.drivingLicenseService.getGenericDrivingLicense(
-        nationalId,
-      )
-      if (drivingLicense) {
-        this.setCache(key, drivingLicense)
+          // TODO(osk) check again
+          const x = add(data.fetch.updated, { seconds: ttl })
+          if (compareAsc(x, new Date()) < 0) {
+            data.fetch.status = GenericUserLicenseFetchStatus.Stale
+          }
+        } catch (e) {
+          this.logger.warn('Unable to parse cached data for license', {
+            license,
+          })
+          // fall through to actual fetch of fresh fresh data
+        }
       }
-    } else {
-      drivingLicense = cached as GenericUserLicense
     }
 
-    if (!drivingLicense) {
-      this.logger.error(
-        `Unable to get DriversLicense for nationalId ${nationalId}`,
-      )
-      return null
+    const data = await fetch()
+
+    if (!data) {
+      this.logger.warn('No data for generic license returned', {
+        license,
+      })
+      return {
+        data: null,
+        fetch: {
+          status: GenericUserLicenseFetchStatus.Error,
+          updated: new Date(),
+        },
+      }
     }
 
-    return drivingLicense
+    const dataWithFetch: GenericLicenseCached = {
+      data,
+      fetch: {
+        status: GenericUserLicenseFetchStatus.Fetched,
+        updated: new Date(),
+      },
+    }
+
+    try {
+      dataWithFetch
+      await this.cacheManager.set(cacheKey, JSON.stringify(data), { ttl })
+    } catch (e) {
+      this.logger.warn('Unable to cache data for license', {
+        license,
+      })
+    }
+
+    return dataWithFetch
   }
 
   async getAllLicenses(
@@ -97,16 +115,63 @@ export class LicenseServiceService {
       excludedTypes,
       force,
       onlyList,
-    }: GetGenericDrivingLicenseOptions = {},
+    }: GetGenericLicenseOptions = {},
   ): Promise<GenericUserLicense[]> {
-    console.log(includedTypes)
     const licenses: GenericUserLicense[] = []
 
-    if (includeType('DriversLicense', includedTypes, excludedTypes)) {
-      const drivingLicense = await this.getDriversLicense(nationalId, force)
-      if (drivingLicense) {
-        licenses.push(drivingLicense)
+    for (const license of AVAILABLE_LICENSES) {
+      if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
+        continue
       }
+
+      if (includedTypes && includedTypes.indexOf(license.type) < 0) {
+        continue
+      }
+
+      let licenseDataFromService: GenericLicenseCached | null = null
+      if (!onlyList) {
+        const licenseService = await this.genericLicenseFactory(license.type)
+
+        if (!licenseService) {
+          this.logger.warn('No license service from generic license factory', {
+            type: license.type,
+            provider: license.provider,
+          })
+        } else {
+          licenseDataFromService = await this.getCachedOrCache(
+            license,
+            nationalId,
+            async () => await licenseService.getLicense(nationalId),
+            force ? 0 : license.timeout,
+          )
+
+          if (!licenseDataFromService) {
+            this.logger.warn('No license data returned from service', {
+              type: license.type,
+              provider: license.provider,
+            })
+          }
+        }
+      }
+
+      const licenseUserdata = licenseDataFromService?.data ?? {
+        status: GenericUserLicenseStatus.Unknown,
+      }
+
+      const fetch = licenseDataFromService?.fetch ?? {
+        status: GenericUserLicenseFetchStatus.Error,
+        updated: new Date(),
+      }
+      const combined: GenericUserLicense = {
+        nationalId,
+        license: {
+          ...license,
+          ...licenseUserdata,
+        },
+        fetch,
+      }
+
+      licenses.push(combined)
     }
 
     return licenses
@@ -115,26 +180,56 @@ export class LicenseServiceService {
   async getLicense(
     nationalId: User['nationalId'],
     locale: Locale,
-    licenseType: GenericLicenseTypeType,
-    licenseId: string,
-  ): Promise<GenericUserLicense | null> {
-    let license: GenericUserLicense | null = null
+    licenseType: GenericLicenseType,
+  ): Promise<GenericUserLicense> {
+    let licenseUserdata: GenericLicenseUserdataExternal | null = null
 
-    if (licenseType === 'DriversLicense') {
-      license = await this.getDriversLicense(nationalId, true)
+    const license = AVAILABLE_LICENSES.find((i) => i.type === licenseType)
+    const licenseService = await this.genericLicenseFactory(licenseType)
+
+    if (license && licenseService) {
+      licenseUserdata = await licenseService.getLicenseDetail(nationalId)
+    } else {
+      throw new Error(`${licenseType} not supported`)
     }
 
-    if (licenseType !== 'DriversLicense') {
-      throw new Error(`${licenseType} not supported yet`)
+    return {
+      nationalId,
+      license: {
+        ...license,
+        status: licenseUserdata?.status ?? GenericUserLicenseStatus.Unknown,
+      },
+      fetch: {
+        status: licenseUserdata
+          ? GenericUserLicenseFetchStatus.Fetched
+          : GenericUserLicenseFetchStatus.Error,
+        updated: new Date(),
+      },
+      payload: licenseUserdata?.payload ?? undefined,
+    }
+  }
+
+  async generatePkPass(
+    nationalId: User['nationalId'],
+    locale: Locale,
+    licenseType: GenericLicenseType,
+  ) {
+    let pkPassUrl: string | null = null
+
+    const licenseService = await this.genericLicenseFactory(licenseType)
+
+    if (licenseService) {
+      pkPassUrl = await licenseService.getPkPassUrl(nationalId)
+    } else {
+      throw new Error(`${licenseType} not supported`)
     }
 
-    if (!license) {
+    if (!pkPassUrl) {
       throw new Error(
-        `Unable to get ${licenseType} ${licenseId} for nationalId ${nationalId}`,
+        `Unable to get pkpass for ${licenseType} for nationalId ${nationalId}`,
       )
     }
 
-    // TODO(osk) how do we handle null?
-    return license
+    return pkPassUrl
   }
 }
