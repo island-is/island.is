@@ -122,7 +122,7 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
             </Text>
             <Text as="h1" variant="h3" marginBottom={[2, 4]}>
               {regulation.showingDiff ? (
-                <HTMLDump
+                <HTMLBox
                   component="span"
                   className={s.bodyText}
                   html={regulation.title}
