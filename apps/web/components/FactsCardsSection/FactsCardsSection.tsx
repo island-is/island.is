@@ -1,10 +1,7 @@
 import React from 'react'
 import {
-  Text,
   GridContainer,
   Box,
-  Link,
-  Button,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { FactsCard, SimpleSlider } from '@island.is/web/components'
@@ -12,12 +9,10 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface FactsSectionProps {
   title?: string
-  linkTitle?: string
 }
 
 export const FactsCardsSection = ({
-  title = 'Lífsviðburðir',
-  linkTitle,
+  title
 }: FactsSectionProps) => {
   const { linkResolver } = useLinkResolver()
   const facts = [
@@ -147,19 +142,8 @@ export const FactsCardsSection = ({
                 )
               },
             )}
+          carousleContoler={true}
         />
-        <Box display={'flex'} justifyContent="flexEnd" marginTop={[3, 3, 4]}>
-          <Link {...linkResolver('lifeevents')} skipTab>
-            <Button
-              icon="arrowForward"
-              iconType="filled"
-              variant="text"
-              as="span"
-            >
-              {linkTitle}
-            </Button>
-          </Link>
-        </Box>
       </Box>
     </GridContainer>
   )

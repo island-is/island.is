@@ -26,6 +26,7 @@ interface SimpleSliderProps {
   breakpoints?: SlideState['breakpoints']
   slideWidthOffset?: SlideState['slideWidthOffset']
   items: ReactNode[]
+  carousleContoler?: boolean
 }
 
 interface SlideState {
@@ -44,6 +45,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
   slideWidthOffset = 0,
   breakpoints = {},
   title,
+  carousleContoler,
 }) => {
   const start = useRef(0)
   const touchDirection = useRef(null)
@@ -236,6 +238,23 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
               </Box>
             )
           })}
+        </Box>
+      )}
+      {carousleContoler && (
+        <Box display={'flex'} justifyContent="flexEnd" marginTop={[3, 3, 4]}>
+          <Inline space={2}>
+            {items.map((x, index) => {
+              return (
+                <button
+                  key={index}
+                  className={cn(styles.dot, {
+                    [styles.dotActive]: index === slideState.current,
+                  })}
+                  onClick={() => goTo(index)}
+                />
+              )
+            })}
+          </Inline>
         </Box>
       )}
     </Box>

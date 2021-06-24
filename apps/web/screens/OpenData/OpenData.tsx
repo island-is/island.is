@@ -185,7 +185,6 @@ const OpenDataPage: Screen = () => {
       <Section aria-labelledby="factsCardsTitle">
         <FactsCardsSection
           title="Stafrænt Ísland"
-          linkTitle="hér kemur linkur"
         />
       </Section>
       <Section
