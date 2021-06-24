@@ -2,7 +2,6 @@ import React, { useContext } from 'react'
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import {
   Case,
-  CaseCustodyProvisions,
   CaseState,
   CaseType,
   ReadableCaseType,
@@ -17,7 +16,6 @@ import {
 import {
   capitalize,
   formatDate,
-  laws,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
