@@ -33,6 +33,8 @@ import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-r
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { AuditModule } from '@island.is/nest/audit'
 
+import { maskOutFieldsMiddleware } from './graphql.middleware'
+
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
@@ -47,6 +49,9 @@ const autoSchemaFile = environment.production
       playground,
       autoSchemaFile,
       path: '/api/graphql',
+      buildSchemaOptions: {
+        fieldMiddleware: [maskOutFieldsMiddleware],
+      },
       plugins: [
         responseCachePlugin({
           shouldReadFromCache: ({
