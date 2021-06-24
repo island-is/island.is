@@ -4,6 +4,7 @@ import {
   buildDataProviderItem,
   buildDateField,
   buildExternalDataProvider,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -23,6 +24,7 @@ import {
   dataProvider,
   information,
   section,
+  attachments,
 } from '../lib/messages'
 import {
   ComplainedForTypes,
@@ -410,6 +412,20 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               ],
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'attachments',
+      title: section.attachments,
+      children: [
+        buildFileUploadField({
+          id: 'attachments.fileUpload',
+          title: attachments.title,
+          introduction: attachments.introduction,
+          uploadDescription: attachments.uploadDescription,
+          uploadHeader: attachments.uploadHeader,
+          uploadButtonLabel: attachments.uploadButtonLabel,
         }),
       ],
     }),
