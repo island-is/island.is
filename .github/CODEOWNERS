@@ -85,7 +85,9 @@
 /apps/service-portal*/                                                                        @island-is/hugsmidjan
 /apps/services/user-profile/                                                                  @island-is/hugsmidjan
 /libs/api/domains/documents/                                                                  @island-is/hugsmidjan
+/libs/api/domains/finance/                                                                    @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                          @island-is/hugsmidjan
+/libs/clients/finance/                                                                        @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                           @island-is/hugsmidjan
 /libs/service-portal/applications/                                                            @island-is/hugsmidjan
 /libs/service-portal/assets/                                                                  @island-is/hugsmidjan
