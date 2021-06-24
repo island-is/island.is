@@ -103,6 +103,18 @@ const devConfig = {
       process.env.XROAD_TJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',
     clientId: process.env.XROAD_CLIENT_ID ?? 'DEV/GOV/10000/island-is-client',
   },
+  paymentDomain: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId:
+      process.env.PAYMENT_XROAD_PROVIDER_ID ??
+      'IS-DEV/GOV/10021/FJS-DEV-Public',
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+    username: process.env.PAYMENT_USER,
+    password: process.env.PAYMENT_PASSWORD,
+    callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
+    callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
+    arkBaseUrl: process.env.ARK_ENDPOINT,
+  },
   temporaryVoterRegistry: {
     baseApiUrl: 'http://localhost:4248',
   },
@@ -205,6 +217,16 @@ const prodConfig = {
     memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE,
     apiPath: process.env.XROAD_TJODSKRA_API_PATH,
     clientId: process.env.XROAD_CLIENT_ID,
+  },
+  paymentDomain: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID,
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+    username: process.env.PAYMENT_USER,
+    password: process.env.PAYMENT_PASSWORD,
+    callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
+    callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
+    arkBaseUrl: process.env.ARK_ENDPOINT,
   },
   temporaryVoterRegistry: {
     baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
