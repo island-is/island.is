@@ -1,25 +1,12 @@
 import * as s from './RegulationDisplay.treat'
 
 import React, { memo } from 'react'
-import { HTMLText, PlainText, useDomid } from '@island.is/regulations'
+import { HTMLText, useDomid } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
-import { HTMLDump } from './HTMLDump'
+import { HTMLBox } from '@island.is/regulations'
 
-const hasDiff = (text: string) => /<(del|ins)/.test(text)
-
-const getSafeTitle = (title: string) =>
-  hasDiff(title)
-    ? {
-        asPlainText: undefined,
-        asHtml: title as HTMLText,
-      }
-    : {
-        asPlainText: title
-          .replace(/&gt;/g, '>')
-          .replace(/&lt;/g, '<') as PlainText,
-        asHtml: undefined,
-      }
+const hasDiff = (text: string) => /<(?:del|ins)/.test(text)
 
 // ---------------------------------------------------------------------------
 
@@ -44,7 +31,6 @@ export const Appendixes = memo((props: AppendixesProps) => {
       <Accordion singleExpand={false}>
         {appendixes.map((appendix, i) => {
           const id = 'appendix' + i + domid
-          const title = getSafeTitle(appendix.title)
 
           return (
             appendix.text && (
@@ -55,7 +41,7 @@ export const Appendixes = memo((props: AppendixesProps) => {
                 labelUse="h2"
                 label={
                   diffing ? (
-                    <HTMLDump
+                    <HTMLBox
                       component="span"
                       className={s.bodyText}
                       html={appendix.title as HTMLText}
@@ -66,7 +52,7 @@ export const Appendixes = memo((props: AppendixesProps) => {
                 }
                 startExpanded={hasDiff(appendix.text)}
               >
-                <HTMLDump className={s.bodyText} html={appendix.text} />
+                <HTMLBox className={s.bodyText} html={appendix.text} />
               </AccordionItem>
             )
           )

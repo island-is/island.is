@@ -186,6 +186,7 @@
   - [Audit Module](libs/nest/audit/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
 - [Plausible](libs/plausible/README.md)
+- [Regulations](libs/regulations/README.md)
 - [Service Portal](libs/service-portal/README.md)
   - [Service Portal Applications](libs/service-portal/applications/README.md)
   - [Service Portal Core](libs/service-portal/core/README.md)

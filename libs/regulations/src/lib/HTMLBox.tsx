@@ -1,13 +1,13 @@
 import React from 'react'
 import { Box, BoxProps } from '@island.is/island-ui/core'
-import { HTMLText } from '@island.is/regulations'
+import { HTMLText } from './types'
 
-export type HTMLDumpProps = BoxProps & {
+export type HTMLBoxProps = BoxProps & {
   html: HTMLText
   dangerouslySetInnerHTML?: undefined
 }
 
-export const HTMLDump = (props: HTMLDumpProps) => {
+export const HTMLBox = (props: HTMLBoxProps) => {
   const { html, ...boxProps } = props
   return <Box {...boxProps} dangerouslySetInnerHTML={{ __html: html }} />
 }
