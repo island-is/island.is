@@ -148,6 +148,7 @@ application-system-api:
     XROAD_BASE_PATH_WITH_ENV: http://securityserver.dev01.devland.is/r1/IS-DEV
     XROAD_CLIENT_ID: IS-DEV/GOV/10000/island-is-client
     XROAD_HEALTH_INSURANCE_ID: IS-DEV/GOV/10007/SJUKRA-Protected
+    XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_VMST_MEMBER_CODE: '10003'
   grantNamespaces:
     - nginx-ingress-external
@@ -212,6 +213,7 @@ application-system-api:
     SYSLUMENN_PASSWORD: /k8s/application-system/api/SYSLUMENN_PASSWORD
     SYSLUMENN_USERNAME: /k8s/application-system/api/SYSLUMENN_USERNAME
     VMST_API_KEY: /k8s/vmst-client/VMST_API_KEY
+    XROAD_TJODSKRA_API_PATH: /k8s/application-system-api/XROAD_TJODSKRA_API_PATH
     XROAD_VMST_API_PATH: /k8s/application-system-api/XROAD_VMST_API_PATH
   securityContext:
     allowPrivilegeEscalation: false

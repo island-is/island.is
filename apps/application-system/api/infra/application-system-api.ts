@@ -56,6 +56,11 @@ export const serviceSetup = (services: {
         staging: 'http://securityserver.staging01.devland.is',
         prod: 'http://securityserver.island.is',
       },
+      XROAD_TJODSKRA_MEMBER_CODE: {
+        dev: '10001',
+        staging: '10001',
+        prod: '10001',
+      },
       XROAD_VMST_MEMBER_CODE: {
         dev: '10003',
         staging: '7005942039',
@@ -121,6 +126,8 @@ export const serviceSetup = (services: {
       HEALTH_INSURANCE_XROAD_WSDLURL:
         '/k8s/application-system-api/HEALTH_INSURANCE_XROAD_WSDLURL',
       XROAD_VMST_API_PATH: '/k8s/application-system-api/XROAD_VMST_API_PATH',
+      XROAD_TJODSKRA_API_PATH:
+        '/k8s/application-system-api/XROAD_TJODSKRA_API_PATH',
       DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
       SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN',
