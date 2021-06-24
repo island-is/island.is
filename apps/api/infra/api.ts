@@ -174,6 +174,9 @@ export const serviceSetup = (services: {
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
       DOCUMENT_PROVIDER_ADMINS:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS',
+      PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
+      PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',
+      PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
     })
 
     .ingress({
