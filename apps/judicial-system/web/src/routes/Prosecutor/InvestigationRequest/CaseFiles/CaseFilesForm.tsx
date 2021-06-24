@@ -130,8 +130,8 @@ const CaseFilesForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.R_CASE_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={false}
           nextIsLoading={isLoading}
         />

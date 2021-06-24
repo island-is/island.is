@@ -64,7 +64,7 @@ const Defendant = () => {
         : theCase.id
 
     if (caseId) {
-      router.push(`${constants.R_CASE_HEARING_ARRANGEMENTS_ROUTE}/${caseId}`)
+      router.push(`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${caseId}`)
     }
 
     // TODO: Handle creation error
