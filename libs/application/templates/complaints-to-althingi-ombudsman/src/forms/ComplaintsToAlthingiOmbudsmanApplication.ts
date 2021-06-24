@@ -1,4 +1,5 @@
 import {
+  Application,
   buildCustomField,
   buildDataProviderItem,
   buildDateField,
@@ -13,25 +14,26 @@ import {
   FormModes,
   FormValue,
 } from '@island.is/application/core'
-import { ComplaintsToAlthingiOmbudsman } from '../lib/dataSchema'
+import Logo from '../assets/Logo'
 import {
-  OmbudsmanComplaintTypeEnum,
-  ComplaineeTypes,
-} from '../shared/constants'
-import {
+  complainedFor,
+  complainee,
+  complaintDescription,
+  complaintInformation,
   dataProvider,
   information,
   section,
-  complainee,
-  complaintInformation,
-  complaintDescription,
 } from '../lib/messages'
+import {
+  ComplainedForTypes,
+  ComplaineeTypes,
+  OmbudsmanComplaintTypeEnum,
+} from '../shared/constants'
 import {
   getComplaintType,
   getDateAYearBack,
   isGovernmentComplainee,
 } from '../utils'
-import Logo from '../assets/Logo'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -45,7 +47,9 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: dataProvider.header,
+          title: dataProvider.dataProviderHeader,
+          subTitle: dataProvider.dataProviderSubTitle,
+          checkboxLabel: dataProvider.dataProviderCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
               id: 'nationalRegistry',
@@ -67,93 +71,209 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       id: 'information',
       title: section.information,
       children: [
-        buildCustomField({
-          id: 'information.toComplainer',
-          title: section.information,
-          component: 'InformationToComplainer',
-        }),
-        buildSubSection({
-          id: 'information.section.aboutTheComplainer',
-          title: section.informationToComplainer,
+        buildMultiField({
+          id: 'information.aboutTheComplainer',
+          title: information.general.aboutTheComplainerTitle,
           children: [
-            buildMultiField({
-              id: 'information.aboutTheComplainer',
-              title: information.general.aboutTheComplainerTitle,
-              children: [
-                buildTextField({
-                  id: 'information.name',
-                  title: information.aboutTheComplainer.name,
-                  backgroundColor: 'blue',
-                  disabled: true,
-                  required: true,
-                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
-                    application.externalData?.nationalRegistry?.data?.fullName,
-                }),
-                buildTextField({
-                  id: 'information.ssn',
-                  title: information.aboutTheComplainer.ssn,
-                  format: '######-####',
-                  backgroundColor: 'blue',
-                  disabled: true,
-                  required: true,
-                  width: 'half',
-                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
-                    application.externalData?.nationalRegistry?.data
-                      ?.nationalId,
-                }),
-                buildTextField({
-                  id: 'information.address',
-                  title: information.aboutTheComplainer.address,
-                  backgroundColor: 'blue',
-                  required: true,
-                  width: 'half',
-                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
-                    application.externalData?.nationalRegistry?.data?.address
-                      ?.streetAddress,
-                }),
-                buildTextField({
-                  id: 'information.postcode',
-                  title: information.aboutTheComplainer.postcode,
-                  backgroundColor: 'blue',
-                  required: true,
-                  width: 'half',
-                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
-                    application.externalData?.nationalRegistry?.data?.address
-                      ?.postalCode,
-                }),
-                buildTextField({
-                  id: 'information.city',
-                  title: information.aboutTheComplainer.city,
-                  backgroundColor: 'blue',
-                  required: true,
-                  width: 'half',
-                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
-                    application.externalData?.nationalRegistry?.data?.address
-                      ?.city,
-                }),
-                buildTextField({
-                  id: 'information.email',
-                  title: information.aboutTheComplainer.email,
-                  backgroundColor: 'blue',
-                  required: true,
-                  width: 'half',
-                  variant: 'email',
-                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
-                    application.externalData?.userProfile?.data?.email,
-                }),
-                buildTextField({
-                  id: 'information.phone',
-                  title: information.aboutTheComplainer.phone,
-                  format: '###-####',
-                  backgroundColor: 'blue',
-                  required: true,
-                  width: 'half',
-                  variant: 'tel',
-                  defaultValue: (application: ComplaintsToAlthingiOmbudsman) =>
-                    application.externalData?.userProfile?.data
-                      ?.mobilePhoneNumber,
-                }),
+            buildTextField({
+              id: 'information.name',
+              title: information.aboutTheComplainer.name,
+              backgroundColor: 'white',
+              disabled: true,
+              width: 'half',
+              defaultValue: (application: Application) =>
+                (application.externalData?.nationalRegistry?.data as {
+                  fullName?: string
+                })?.fullName || '',
+            }),
+            buildTextField({
+              id: 'information.ssn',
+              title: information.aboutTheComplainer.ssn,
+              format: '######-####',
+              backgroundColor: 'white',
+              disabled: true,
+              width: 'half',
+              defaultValue: (application: Application) =>
+                (application.externalData?.nationalRegistry?.data as {
+                  nationalId?: string
+                })?.nationalId || '',
+            }),
+            buildTextField({
+              id: 'information.address',
+              title: information.aboutTheComplainer.address,
+              backgroundColor: 'white',
+              disabled: true,
+              width: 'half',
+              defaultValue: (application: Application) =>
+                (application.externalData?.nationalRegistry?.data as {
+                  address?: {
+                    streetAddress?: string
+                  }
+                })?.address?.streetAddress || '',
+            }),
+            buildTextField({
+              id: 'information.postcode',
+              title: information.aboutTheComplainer.postcode,
+              backgroundColor: 'white',
+              disabled: true,
+              width: 'half',
+              defaultValue: (application: Application) =>
+                (application.externalData?.nationalRegistry?.data as {
+                  address?: {
+                    postalCode?: string
+                  }
+                })?.address?.postalCode || '',
+            }),
+            buildTextField({
+              id: 'information.city',
+              title: information.aboutTheComplainer.city,
+              backgroundColor: 'white',
+              disabled: true,
+              width: 'half',
+              defaultValue: (application: Application) =>
+                (application.externalData?.nationalRegistry?.data as {
+                  address?: {
+                    city?: string
+                  }
+                })?.address?.city || '',
+            }),
+            buildTextField({
+              id: 'information.email',
+              title: information.aboutTheComplainer.email,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+              variant: 'email',
+              defaultValue: (application: Application) =>
+                (application.externalData?.userProfile?.data as {
+                  email?: string
+                })?.email,
+            }),
+            buildTextField({
+              id: 'information.phone',
+              title: information.aboutTheComplainer.phone,
+              format: '###-####',
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+              variant: 'tel',
+              defaultValue: (application: Application) =>
+                (application.externalData?.userProfile?.data as {
+                  mobilePhoneNumber?: string
+                })?.mobilePhoneNumber,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'complainedFor',
+      title: section.complainedFor,
+      children: [
+        buildMultiField({
+          id: 'complainedForDecision',
+          title: complainedFor.decision.title,
+          description: complainedFor.decision.description,
+          children: [
+            buildRadioField({
+              id: 'complainedForDecision.radio',
+              title: '',
+              options: [
+                {
+                  value: ComplainedForTypes.MYSELF,
+                  label: complainedFor.decision.myselfLabel,
+                },
+                {
+                  value: ComplainedForTypes.SOMEONEELSE,
+                  label: complainedFor.decision.someoneelseLabel,
+                },
               ],
+              largeButtons: true,
+              width: 'half',
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'complainedForInformation',
+          title: complainedFor.information.title,
+          condition: (formValue) => {
+            const radio = (formValue.complainedForDecision as FormValue)?.radio
+            return radio === ComplainedForTypes.SOMEONEELSE
+          },
+          children: [
+            // TODO: Add required fields to data schema.
+            // First find out what is suppose to be required
+            buildTextField({
+              id: 'complainedForInformation.name',
+              title: information.aboutTheComplainer.name,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.ssn',
+              title: information.aboutTheComplainer.ssn,
+              format: '######-####',
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.address',
+              title: information.aboutTheComplainer.address,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.postcode',
+              title: information.aboutTheComplainer.postcode,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.city',
+              title: information.aboutTheComplainer.city,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.email',
+              title: information.aboutTheComplainer.email,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+              variant: 'email',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.phone',
+              title: information.aboutTheComplainer.phone,
+              format: '###-####',
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+              variant: 'tel',
+            }),
+            buildCustomField(
+              {
+                id: 'complainedForInformation.titleField',
+                title: complainedFor.information.fieldTitle,
+                component: 'FieldTitle',
+              },
+              {
+                marginTop: 4,
+              },
+            ),
+            buildTextField({
+              id: 'complainedForInformation.textarea',
+              title: complainedFor.information.textareaTitle,
+              placeholder: complainedFor.information.textareaPlaceholder,
+              backgroundColor: 'blue',
+              required: true,
+              variant: 'textarea',
+              rows: 6,
             }),
           ],
         }),

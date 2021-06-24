@@ -1,44 +1,32 @@
-import * as kennitala from 'kennitala'
+// import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as z from 'zod'
-import { OmbudsmanComplaintTypeEnum, ComplaineeTypes } from '../shared'
+import { ComplaineeTypes, OmbudsmanComplaintTypeEnum } from '../shared'
 import { error } from './messages/error'
 
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  externalData: z.object({
-    nationalRegistry: z.object({
-      data: z.object({
-        address: z.object({
-          city: z.string(),
-          code: z.string(),
-          postalCode: z.string(),
-          streetAddress: z.string(),
-        }),
-        fullName: z.string(),
-        legalResidence: z.string(),
-        nationalId: z.string(),
-      }),
-      date: z.string(),
-      status: z.enum(['success', 'failure']),
-    }),
-    userProfile: z.object({
-      data: z.object({
-        email: z.string(),
-        mobilePhoneNumber: z.string(),
-      }),
-      date: z.string(),
-      status: z.enum(['success', 'failure']),
-    }),
-  }),
-  information: z.object({
-    name: z.string().nonempty(error.required.defaultMessage),
+  approveExternalData: z.boolean().refine((v) => v, { params: error.required }),
+  /* information: z.object({
+    name: z.string().nonempty(),
     ssn: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().nonempty(error.required.defaultMessage),
-    postcode: z.string().nonempty(error.required.defaultMessage),
-    city: z.string().nonempty(error.required.defaultMessage),
-    email: z.string().email().optional(),
-    phone: z.string().optional(),
-  }),
+    address: z.string().nonempty(),
+    postcode: z.string().nonempty(),
+    city: z.string().nonempty(),
+    email: z
+      .string()
+      .email()
+      .refine((val) => (val ? val.length > 0 : false), {
+        params: error.required,
+      }),
+    phone: z.string().refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        return phoneNumber && phoneNumber.isValid()
+      },
+      {
+        params: error.required,
+      },
+    ),
+  }), */
   complainee: z.object({
     type: z.enum([ComplaineeTypes.GOVERNMENT, ComplaineeTypes.OTHER]),
   }),
