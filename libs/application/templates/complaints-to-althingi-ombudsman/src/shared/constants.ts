@@ -12,3 +12,5 @@ export enum ComplainedForTypes {
   MYSELF = 'myself',
   SOMEONEELSE = 'someoneelse',
 }
+export const YES = 'yes'
+export const NO = 'no'

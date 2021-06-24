@@ -25,10 +25,13 @@ import {
   information,
   section,
   attachments,
+  courtAction,
 } from '../lib/messages'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
+  YES,
+  NO,
   OmbudsmanComplaintTypeEnum,
 } from '../shared/constants'
 import {
@@ -426,6 +429,27 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           uploadDescription: attachments.uploadDescription,
           uploadHeader: attachments.uploadHeader,
           uploadButtonLabel: attachments.uploadButtonLabel,
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'courtAction',
+      title: section.courtAction,
+      children: [
+        buildMultiField({
+          id: 'courtAction.question',
+          title: courtAction.title,
+          description: courtAction.description,
+          children: [
+            buildRadioField({
+              id: 'courtActionAnswer',
+              title: '',
+              options: [
+                { value: YES, label: courtAction.yes },
+                { value: NO, label: courtAction.no },
+              ],
+            }),
+          ],
         }),
       ],
     }),
