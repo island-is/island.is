@@ -25,29 +25,20 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
   const [searchTerm, setSearchTerm] = useState('')
-  const endorsementsHook = sortBy(hardcodedList, 'created')
 
-  const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>(
-    paginate(endorsementsHook, PAGE_SIZE, 1),
-  )
+  const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
   const [filteredEndorsements, setFilteredEndorsements] = useState<
     Endorsement[] | undefined
-  >(endorsementsHook)
+  >()
   const [showOnlyInvalidated, setShowOnlyInvalidated] = useState(false)
-  const [updateOnBulkImport, setUpdateOnBulkImport] = useState(false)
   const isClosedHook = useIsClosed(endorsementListId)
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(pages(endorsementsHook?.length))
-  /*const { endorsements: endorsementsHook, refetch } = useEndorsements(
+  const [totalPages, setTotalPages] = useState(0)
+  const { endorsements: endorsementsHook, refetch } = useEndorsements(
     endorsementListId,
     true,
-  )*/
+  )
 
-  /*useEffect(() => {
-    refetch()
-    setEndorsements(sortBy(endorsementsHook, 'created'))
-  }, [endorsementsHook, updateOnBulkImport])
-*/
   const minEndorsements =
     constituencyMapper[application.answers.constituency as EndorsementListTags]
       .parliamentary_seats * 30
@@ -60,7 +51,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
 
   useEffect(() => {
     filter(searchTerm, showOnlyInvalidated)
-  }, [searchTerm, showOnlyInvalidated])
+  }, [endorsementsHook, searchTerm, showOnlyInvalidated])
 
   const voterRegionMismatch = (region: number) => {
     return (
@@ -180,7 +171,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             <BulkUpload
               application={application}
               onSuccess={() => {
-                setUpdateOnBulkImport(true)
+                refetch()
               }}
             />
           </Box>

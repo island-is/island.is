@@ -68,7 +68,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
         >
           {voterRegionMismatch || endorsement.meta.bulkEndorsement ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.meta.address}
+              {endorsement.meta.address.streetAddress}
               <Box marginLeft={2}>
                 {voterRegionMismatch && (
                   <Tooltip
@@ -85,7 +85,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
               </Box>
             </Box>
           ) : (
-            endorsement.meta.address
+            endorsement.meta.address.streetAddress
           )}
         </T.Data>
       </T.Row>
