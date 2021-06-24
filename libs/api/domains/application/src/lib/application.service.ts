@@ -72,10 +72,12 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  createCharge(applicationId: string, auth: Auth) {
+  createCharge(applicationId: string, auth: Auth, chargeItemCode: string) {
+    console.log('libs application service === ' + chargeItemCode)
     return this.paymentApiWithAuth(auth).paymentControllerCreateCharge({
       authorization: auth.authorization,
       applicationId: applicationId,
+      chargeItemCode: chargeItemCode,
     })
   }
 

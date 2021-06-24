@@ -6,7 +6,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 @Injectable()
 export class PayableDummyTemplateService {
   constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService, //private readonly apiDomainsPaymentService: ApiDomainsPaymentService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
   async createCharge({
@@ -16,6 +16,7 @@ export class PayableDummyTemplateService {
     const result = await this.sharedTemplateAPIService.createCharge(
       authorization,
       id,
+      'AY110'
     )
 
     return result
