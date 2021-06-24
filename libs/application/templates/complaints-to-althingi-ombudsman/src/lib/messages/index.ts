@@ -1,4 +1,7 @@
+export * from './complainedFor'
 export * from './complainee'
+export * from './complaintDescription'
+export * from './complaintInformation'
 export * from './dataProvider'
 export * from './error'
 export * from './information'

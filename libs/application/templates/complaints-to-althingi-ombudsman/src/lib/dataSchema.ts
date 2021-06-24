@@ -1,5 +1,6 @@
 // import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as z from 'zod'
+import { ComplaineeTypes, OmbudsmanComplaintTypeEnum } from '../shared'
 import { error } from './messages/error'
 
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
@@ -26,6 +27,19 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
       },
     ),
   }), */
+  complainee: z.object({
+    type: z.enum([ComplaineeTypes.GOVERNMENT, ComplaineeTypes.OTHER]),
+  }),
+  complaintInformation: z.object({
+    complaintType: z.enum([
+      OmbudsmanComplaintTypeEnum.DECISION,
+      OmbudsmanComplaintTypeEnum.PROCEEDINGS,
+    ]),
+  }),
+  complaintDescription: z.object({
+    complaineeName: z.string().nonempty(error.required.defaultMessage),
+    complaintDescription: z.string().nonempty(error.required.defaultMessage),
+  }),
 })
 
 export type ComplaintsToAlthingiOmbudsman = z.TypeOf<
