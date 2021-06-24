@@ -1,5 +1,7 @@
 import {
   Field,
+  Extensions,
+  MiddlewareContext,
   ObjectType,
   InterfaceType,
   ID,
@@ -39,6 +41,22 @@ export class Identity {
   type!: IdentityType
 }
 
+const validateIf = ({ context, source }: MiddlewareContext): boolean => {
+  return (context as any).req.user.nationalId !== source.nationalId
+}
+
+@Extensions({
+  validateIf,
+  validFields: [
+    'address',
+    'age',
+    'fullName',
+    'birthday',
+    'type',
+    'name',
+    'nationalId',
+  ],
+})
 @ObjectType({
   implements: Identity,
 })
