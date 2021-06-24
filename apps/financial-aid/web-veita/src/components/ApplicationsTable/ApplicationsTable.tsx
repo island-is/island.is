@@ -7,7 +7,7 @@ import * as styles from './ApplicationsTable.treat'
 import cn from 'classnames'
 
 interface PageProps {
-  applications: TableBodyProps[] //WIP
+  applications: TableBodyProps[]
   header: string[]
   className?: string
   [key: string]: any
@@ -86,9 +86,9 @@ const ApplicationsTable: React.FC<PageProps> = ({
         </tbody>
       </table>
     )
-  } else {
-    return <div>Enginn umsókn</div>
   }
+
+  return <div>Engar umsóknir</div>
 }
 
 export default ApplicationsTable

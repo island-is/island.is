@@ -2,7 +2,6 @@ import App, { AppProps } from 'next/app'
 import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
 import React from 'react'
-import { Header } from '../src/components'
 import { client } from '../graphql'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 
@@ -19,7 +18,6 @@ class FinancialAidApplication extends App<AppProps> {
         <AdminProvider>
           <ApplicationsProvider>
             <Component {...pageProps} />
-
             <style jsx global>{`
               @font-face {
                 font-family: 'IBM Plex Sans';

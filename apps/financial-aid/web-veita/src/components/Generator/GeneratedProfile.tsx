@@ -1,6 +1,5 @@
 import { FunctionComponent } from 'react'
-// import Identicon from 'identicon.js'
-// import md5 from 'md5'
+import Identicon from 'identicon.js'
 
 interface Props {
   ssn?: string

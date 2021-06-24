@@ -1,12 +1,5 @@
-import React, { useContext } from 'react'
-import {
-  ModalBase,
-  Text,
-  Box,
-  Button,
-  GridContainer,
-  ButtonProps,
-} from '@island.is/island-ui/core'
+import React from 'react'
+import { ModalBase, Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './StateModal.treat'
 import cn from 'classnames'
@@ -25,9 +18,7 @@ interface Props {
   isVisible: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
   applicationState: ApplicationState
-  setApplicationState: React.Dispatch<
-    React.SetStateAction<ApplicationState | undefined>
-  >
+  setApplicationState: (applicationState: ApplicationState) => void
   application: Application
 }
 
@@ -85,7 +76,6 @@ const StateModal: React.FC<Props> = (props: Props) => {
       }}
       className={styles.modalBase}
     >
-      {/* //WIP take out error */}
       {({
         closeModal,
       }: {

@@ -2,8 +2,6 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const tableContainer = style({
-  // borderCollapse: 'separate',
-  // borderSpacing: `0px ${theme.spacing[4]}px`,
   marginBottom: theme.spacing[4],
   marginRight: -theme.spacing[2],
   marginLeft: -theme.spacing[2],

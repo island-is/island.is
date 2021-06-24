@@ -1,1 +1,1 @@
-export { default as ApplicationTable } from './ApplicationTable'
+export { default as ApplicationsTable } from './ApplicationsTable'

@@ -1,12 +1,5 @@
 import React, { useContext } from 'react'
-import {
-  Logo,
-  Text,
-  Box,
-  Button,
-  GridContainer,
-  ButtonProps,
-} from '@island.is/island-ui/core'
+import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
@@ -14,30 +7,18 @@ import { LogoHfj } from '../'
 
 import * as styles from './Nav.treat'
 import cn from 'classnames'
-
-import { api } from '../../services'
-import { AdminContext } from '../AdminProvider/AdminProvider'
 import { ApplicationsContext } from '../ApplicationsProvider/ApplicationsProvider'
+
+import { useLogOut } from '../../utils/useLogOut'
 
 import { navigationElements } from '../../utils/formHelper'
 
 const Nav: React.FC = () => {
   const router = useRouter()
 
-  const { isAuthenticated, setAdmin, admin } = useContext(AdminContext)
+  const logOut = useLogOut()
 
   const { applications } = useContext(ApplicationsContext)
-
-  const otherItems = [
-    {
-      label: 'Útskráning',
-      icon: 'logOut',
-      onclick: () => {
-        api.logOut()
-        setAdmin && setAdmin(undefined)
-      },
-    },
-  ]
 
   return (
     <nav className={styles.container}>
@@ -86,25 +67,19 @@ const Nav: React.FC = () => {
         })}
       </div>
 
-      <Box marginTop={4}>
-        {otherItems.map((item, index) => {
-          return (
-            <Box display="block" marginBottom={2} key={index}>
-              <Button
-                colorScheme="default"
-                iconType="outline"
-                onClick={item.onclick}
-                preTextIcon={item.icon as ButtonProps['icon']}
-                preTextIconType="outline"
-                size="default"
-                type="button"
-                variant="text"
-              >
-                {item.label}
-              </Button>
-            </Box>
-          )
-        })}
+      <Box display="block" marginBottom={2} marginTop={4}>
+        <Button
+          colorScheme="default"
+          iconType="outline"
+          onClick={() => logOut()}
+          preTextIcon="logOut"
+          preTextIconType="outline"
+          size="default"
+          type="button"
+          variant="text"
+        >
+          Útskráning
+        </Button>
       </Box>
     </nav>
   )

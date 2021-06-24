@@ -1,13 +1,5 @@
-import React, { useContext } from 'react'
-import {
-  Logo,
-  Text,
-  Box,
-  Button,
-  GridContainer,
-  Link,
-} from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
+import React from 'react'
+import { Text, Box, Link } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.treat'
 import cn from 'classnames'
@@ -24,9 +16,6 @@ interface Props {
 }
 
 const Profile: React.FC<Props> = ({ heading, info, className }) => {
-  const router = useRouter()
-  // const { isAuthenticated, setUser, user } = useContext(UserContext)
-
   return (
     <>
       {' '}
