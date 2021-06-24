@@ -27,26 +27,33 @@ export const getAppealDecisionText = (
   role: AppealDecisionRole,
   appealDecision?: CaseAppealDecision,
   accusedGender?: CaseGender,
+  caseType?: CaseType,
 ) => {
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL: {
       return `${
         role === AppealDecisionRole.ACCUSED
-          ? capitalize(formatAccusedByGender(accusedGender))
+          ? caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+            ? capitalize(formatAccusedByGender(accusedGender))
+            : 'Varnaraðili'
           : 'Sækjandi'
       } kærir úrskurðinn`
     }
     case CaseAppealDecision.ACCEPT: {
       return `${
         role === AppealDecisionRole.ACCUSED
-          ? capitalize(formatAccusedByGender(accusedGender))
+          ? caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+            ? capitalize(formatAccusedByGender(accusedGender))
+            : 'Varnaraðili'
           : 'Sækjandi'
       } unir úrskurðinum`
     }
     case CaseAppealDecision.POSTPONE: {
       return `${
         role === AppealDecisionRole.ACCUSED
-          ? capitalize(formatAccusedByGender(accusedGender))
+          ? caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+            ? capitalize(formatAccusedByGender(accusedGender))
+            : 'Varnaraðili'
           : 'Sækjandi'
       } tekur sér lögboðinn frest`
     }

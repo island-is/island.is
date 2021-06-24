@@ -537,12 +537,7 @@ function constructInvestigationRulingPdf(existingCase: Case) {
       .font('Helvetica-Bold')
       .fontSize(14)
       .lineGap(8)
-      .text(
-        `Réttindi ${formatAccusedByGender(
-          existingCase.accusedGender,
-          NounCases.GENITIVE,
-        )}`,
-      )
+      .text('Réttindi varnaraðila')
       .font('Helvetica')
       .fontSize(12)
       .text(
@@ -561,24 +556,15 @@ function constructInvestigationRulingPdf(existingCase: Case) {
       .font('Helvetica-Bold')
       .fontSize(14)
       .lineGap(8)
-      .text(
-        `Afstaða ${formatAccusedByGender(
-          existingCase.accusedGender,
-          NounCases.GENITIVE,
-        )}`,
-      )
+      .text('Afstaða varnaraðila')
       .font('Helvetica')
       .fontSize(12)
       .text(
         `${
           existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
-            ? `${capitalize(
-                formatAccusedByGender(existingCase.accusedGender),
-              )} samþykkir kröfuna. `
+            ? 'Varnaraðili samþykkir kröfuna. '
             : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
-            ? `${capitalize(
-                formatAccusedByGender(existingCase.accusedGender),
-              )} hafnar kröfunni. `
+            ? 'Varnaraðili hafnar kröfunni. '
             : ''
         }${existingCase.accusedPleaAnnouncement ?? ''}`,
         {
@@ -717,12 +703,7 @@ function constructInvestigationRulingPdf(existingCase: Case) {
   if (
     existingCase.accusedAppealDecision !== CaseAppealDecision.NOT_APPLICABLE
   ) {
-    doc.text(
-      formatAppeal(
-        existingCase.accusedAppealDecision,
-        capitalize(formatAccusedByGender(existingCase.accusedGender)),
-      ),
-    )
+    doc.text(formatAppeal(existingCase.accusedAppealDecision, 'Varnaraðili'))
   }
 
   doc.text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
@@ -733,12 +714,7 @@ function constructInvestigationRulingPdf(existingCase: Case) {
       .font('Helvetica-Bold')
       .fontSize(14)
       .lineGap(8)
-      .text(
-        `Yfirlýsing um kæru ${formatAccusedByGender(
-          existingCase.accusedGender,
-          NounCases.GENITIVE,
-        )}`,
-      )
+      .text('Yfirlýsing um kæru varnaraðila')
       .font('Helvetica')
       .fontSize(12)
       .text(existingCase.accusedAppealAnnouncement ?? '', {

@@ -59,7 +59,7 @@ export function formatCustodyProvisions(
     .slice(0, -1)
 }
 
-// This expression is always called with case type CUSTODY or TRAVEL_BAN
+// This function is always called with case type CUSTODY or TRAVEL_BAN
 export function formatConclusion(
   type: CaseType,
   accusedNationalId: string,
