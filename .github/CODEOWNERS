@@ -13,6 +13,8 @@
 # Organisation name is @island-is, not @island.is
 
 
+/libs/api/domains/identity/                                                                   @island-is/core
+
 /apps/web*/                                                                                   @island-is/kosmos-kaos
 /apps/services/endorsements/                                                                  @island-is/kosmos-kaos
 /apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
