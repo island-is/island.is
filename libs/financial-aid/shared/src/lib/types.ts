@@ -17,6 +17,7 @@ export enum Employment {
 export enum ApplicationState {
   NEW = 'New',
   INPROGRESS = 'InProgress',
+  DATANEEDED = 'DataNeeded',
   REJECTED = 'Rejected',
   APPROVED = 'Approved',
 }
