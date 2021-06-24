@@ -1,3 +1,3 @@
-import ApplicationOverview from '../src/routes/ApplicationOverview/applicationOverview'
+import ApplicationsOverview from '../src/routes/ApplicationsOverview/applicationsOverview'
 
-export default ApplicationOverview
+export default ApplicationsOverview

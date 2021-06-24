@@ -2,14 +2,15 @@ import React, { ReactNode } from 'react'
 import { Text } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
-import * as styles from './ApplicationTable.treat'
+import * as styles from './ApplicationsTable.treat'
 
 import cn from 'classnames'
 
 interface PageProps {
   applications: TableBodyProps[] //WIP
-  header: String[]
+  header: string[]
   className?: string
+  [key: string]: any
 }
 
 interface TableBodyProps {
@@ -17,10 +18,11 @@ interface TableBodyProps {
   link: string
 }
 
-const ApplicationTable: React.FC<PageProps> = ({
+const ApplicationsTable: React.FC<PageProps> = ({
   applications,
   header,
   className,
+  key,
 }) => {
   if (applications && applications.length > 0) {
     return (
@@ -29,7 +31,7 @@ const ApplicationTable: React.FC<PageProps> = ({
           [`${styles.tableContainer}`]: true,
           [`${className}`]: true,
         })}
-        key={applications}
+        key={key}
       >
         <thead>
           <tr>
@@ -89,4 +91,4 @@ const ApplicationTable: React.FC<PageProps> = ({
   }
 }
 
-export default ApplicationTable
+export default ApplicationsTable

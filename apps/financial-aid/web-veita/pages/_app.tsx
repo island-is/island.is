@@ -13,15 +13,13 @@ import '../src/styles.css'
 class FinancialAidApplication extends App<AppProps> {
   render() {
     const { Component, pageProps } = this.props
-    // WIP Provider FormProvider
+
     return (
       <ApolloProvider client={client}>
         <AdminProvider>
           <ApplicationsProvider>
-            {/* <Header /> */}
-            {/* <AdminLayout> */}
             <Component {...pageProps} />
-            {/* </AdminLayout> */}
+
             <style jsx global>{`
               @font-face {
                 font-family: 'IBM Plex Sans';

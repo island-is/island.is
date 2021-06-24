@@ -72,16 +72,3 @@ export const navigationElements = [
     headers: ['Nafn', 'Staða', 'Úrlausnartími', 'Tímabil'],
   },
 ]
-
-export const navLinks = (
-  filterBy?: 'label' | 'link' | 'applicationState',
-  filter?: string | undefined,
-) => {
-  if (filterBy === 'applicationState') {
-    return navigationElements.find((i) =>
-      i[filterBy].includes(filter as ApplicationState),
-    )
-  } else if (filterBy) {
-    return navigationElements.find((i) => i[filterBy] === filter)
-  }
-}
