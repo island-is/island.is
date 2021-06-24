@@ -63,7 +63,7 @@ describe('Confirmation route', () => {
     ).toBeInTheDocument()
   })
 
-  test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, async () => {
+  test(`should not display prosecutor or judge appeal announcements if appeal decision is not ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -91,7 +91,7 @@ describe('Confirmation route', () => {
     ).not.toBeInTheDocument()
   })
 
-  test(`should display prosecutor and judge appeal announcements if appeal decition is ${CaseAppealDecision.APPEAL}`, async () => {
+  test(`should display prosecutor and judge appeal announcements if appeal decision is ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({

@@ -2,7 +2,6 @@ import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import React, { useContext, useEffect, useState } from 'react'
 import {
   FormFooter,
-  Modal,
   PoliceRequestAccordionItem,
   CourtRecordAccordionItem,
   PdfButton,
@@ -15,7 +14,6 @@ import {
   getConclusion,
   getAppealDecisionText,
 } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   formatDate,
   formatCustodyRestrictions,
@@ -33,150 +31,17 @@ import {
   Case,
   CaseAppealDecision,
   CaseDecision,
-  CaseState,
-  CaseTransition,
   CaseType,
-  NotificationType,
   RequestSignatureResponse,
-  SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import {
-  RequestSignatureMutation,
-  SignatureConfirmationQuery,
-} from '@island.is/judicial-system-web/src/utils/mutations'
 import { useRouter } from 'next/router'
-import * as style from './Confirmation.treat'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-
-interface SigningModalProps {
-  workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
-  requestSignatureResponse?: RequestSignatureResponse
-  setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const SigningModal: React.FC<SigningModalProps> = ({
-  workingCase,
-  setWorkingCase,
-  requestSignatureResponse,
-  setModalVisible,
-}) => {
-  const router = useRouter()
-  const [
-    signatureConfirmationResponse,
-    setSignatureConfirmationResponse,
-  ] = useState<SignatureConfirmationResponse>()
-
-  const { transitionCase, sendNotification } = useCase()
-
-  const { data } = useQuery(SignatureConfirmationQuery, {
-    variables: {
-      input: {
-        caseId: workingCase.id,
-        documentToken: requestSignatureResponse?.documentToken,
-      },
-    },
-    fetchPolicy: 'no-cache',
-  })
-
-  // TODO: Handle case when resSignatureConfirmationResponse is never set
-  const resSignatureConfirmationResponse = data?.signatureConfirmation
-
-  useEffect(() => {
-    const completeSigning = async (
-      resSignatureConfirmationResponse: SignatureConfirmationResponse,
-    ) => {
-      if (resSignatureConfirmationResponse.documentSigned) {
-        try {
-          const caseCompleted =
-            workingCase.state === CaseState.RECEIVED
-              ? await transitionCase(
-                  workingCase,
-                  workingCase.decision === CaseDecision.REJECTING
-                    ? CaseTransition.REJECT
-                    : CaseTransition.ACCEPT,
-                  setWorkingCase,
-                )
-              : workingCase.state === CaseState.REJECTED ||
-                workingCase.state === CaseState.ACCEPTED
-
-          if (caseCompleted) {
-            await sendNotification(workingCase.id, NotificationType.RULING)
-          } else {
-            // TODO: Handle error
-          }
-        } catch (e) {
-          // TODO: Handle error
-        }
-      }
-
-      setSignatureConfirmationResponse(resSignatureConfirmationResponse)
-    }
-
-    if (resSignatureConfirmationResponse) {
-      completeSigning(resSignatureConfirmationResponse)
-    }
-  }, [resSignatureConfirmationResponse, setSignatureConfirmationResponse])
-
-  const renderControlCode = () => {
-    return (
-      <>
-        <Box marginBottom={2}>
-          <Text variant="h2" color="blue400">
-            {`Öryggistala: ${requestSignatureResponse?.controlCode}`}
-          </Text>
-        </Box>
-        <Text>
-          Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu ef sama
-          öryggistala birtist í símanum þínum.
-        </Text>
-      </>
-    )
-  }
-
-  return (
-    <Modal
-      title={
-        !signatureConfirmationResponse
-          ? 'Rafræn undirritun'
-          : signatureConfirmationResponse.documentSigned
-          ? 'Úrskurður hefur verið staðfestur og undirritaður'
-          : signatureConfirmationResponse.code === 7023 // User cancelled
-          ? 'Notandi hætti við undirritun'
-          : 'Undirritun tókst ekki'
-      }
-      text={
-        !signatureConfirmationResponse
-          ? renderControlCode()
-          : signatureConfirmationResponse.documentSigned
-          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.'
-          : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
-      }
-      secondaryButtonText={
-        !signatureConfirmationResponse
-          ? undefined
-          : signatureConfirmationResponse.documentSigned
-          ? 'Loka glugga'
-          : 'Loka og reyna aftur'
-      }
-      primaryButtonText={signatureConfirmationResponse ? 'Senda ábendingu' : ''}
-      handlePrimaryButtonClick={() => {
-        window.open(Constants.FEEDBACK_FORM_URL, '_blank')
-        router.push(Constants.REQUEST_LIST_ROUTE)
-      }}
-      handleSecondaryButtonClick={async () => {
-        if (signatureConfirmationResponse?.documentSigned === true) {
-          router.push(Constants.REQUEST_LIST_ROUTE)
-        } else {
-          setModalVisible(false)
-        }
-      }}
-    />
-  )
-}
+import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as style from './Confirmation.treat'
 
 export const Confirmation: React.FC = () => {
   const router = useRouter()
@@ -188,6 +53,7 @@ export const Confirmation: React.FC = () => {
     setRequestSignatureResponse,
   ] = useState<RequestSignatureResponse>()
 
+  const { requestSignature, isRequestingSignature } = useCase()
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -209,19 +75,6 @@ export const Confirmation: React.FC = () => {
       setRequestSignatureResponse(undefined)
     }
   }, [modalVisible, setRequestSignatureResponse])
-
-  const [
-    requestSignatureMutation,
-    { loading: isRequestingSignature },
-  ] = useMutation(RequestSignatureMutation)
-
-  const requestSignature = async (id: string) => {
-    const { data } = await requestSignatureMutation({
-      variables: { input: { caseId: id } },
-    })
-
-    return data?.requestSignature
-  }
 
   const handleNextButtonClick: () => Promise<void> = async () => {
     if (!workingCase) {
@@ -315,11 +168,9 @@ export const Confirmation: React.FC = () => {
               </Box>
               <Box marginBottom={3}>
                 {getConclusion(workingCase, true)}
-                {workingCase.additionToConclusion && (
+                {workingCase.conclusion && (
                   <Box marginTop={1}>
-                    <Text variant="intro">
-                      {workingCase.additionToConclusion}
-                    </Text>
+                    <Text variant="intro">{workingCase.conclusion}</Text>
                   </Box>
                 )}
               </Box>
