@@ -157,7 +157,7 @@ export const JudgeOverview: React.FC = () => {
                         placeholder="R-X/ÁÁÁÁ"
                         size="sm"
                         backgroundColor="white"
-                        value={workingCase.courtCaseNumber || ''}
+                        value={workingCase.courtCaseNumber ?? ''}
                         icon={
                           workingCase.courtCaseNumber && createCourtCaseSuccess
                             ? 'checkmark'
@@ -203,7 +203,7 @@ export const JudgeOverview: React.FC = () => {
                   {
                     title: 'Embætti',
                     value: `${
-                      workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                      workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
                     }`,
                   },
                   {
@@ -213,7 +213,7 @@ export const JudgeOverview: React.FC = () => {
                         workingCase.requestedCourtDate,
                         'PPPP',
                         true,
-                      ) || '',
+                      ) ?? '',
                     )} eftir kl. ${formatDate(
                       workingCase.requestedCourtDate,
                       TIME_FORMAT,
@@ -234,14 +234,14 @@ export const JudgeOverview: React.FC = () => {
                             workingCase.parentCase.validToDate,
                             'PPPP',
                             true,
-                          ) || '',
+                          ) ?? '',
                         )} kl. ${formatDate(
                           workingCase.parentCase.validToDate,
                           TIME_FORMAT,
                         )}`
                       : workingCase.arrestDate
                       ? `${capitalize(
-                          formatDate(workingCase.arrestDate, 'PPPP', true) ||
+                          formatDate(workingCase.arrestDate, 'PPPP', true) ??
                             '',
                         )} kl. ${formatDate(
                           workingCase.arrestDate,
@@ -254,7 +254,7 @@ export const JudgeOverview: React.FC = () => {
                 accusedNationalId={workingCase.accusedNationalId}
                 accusedAddress={workingCase.accusedAddress}
                 defender={{
-                  name: workingCase.defenderName || '',
+                  name: workingCase.defenderName ?? '',
                   email: workingCase.defenderEmail,
                   phoneNumber: workingCase.defenderPhoneNumber,
                 }}
@@ -411,7 +411,7 @@ export const JudgeOverview: React.FC = () => {
                 </Box>
                 <CaseFileList
                   caseId={workingCase.id}
-                  files={workingCase.files || []}
+                  files={workingCase.files ?? []}
                   canOpenFiles={
                     workingCase.judge !== null &&
                     workingCase.judge?.id === user?.id
@@ -441,7 +441,7 @@ export const JudgeOverview: React.FC = () => {
               nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
               nextIsDisabled={isNextDisabled([
                 {
-                  value: workingCase.courtCaseNumber || '',
+                  value: workingCase.courtCaseNumber ?? '',
                   validations: ['empty'],
                 },
               ])}
