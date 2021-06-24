@@ -58,8 +58,8 @@ export const serviceSetup = (services: {
       },
       XROAD_TJODSKRA_MEMBER_CODE: {
         dev: '10001',
-        staging: '10001',
-        prod: '10001',
+        staging: '6503760649',
+        prod: '6503760649',
       },
       XROAD_VMST_MEMBER_CODE: {
         dev: '10003',
