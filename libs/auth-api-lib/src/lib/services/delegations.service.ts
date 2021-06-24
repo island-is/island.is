@@ -149,6 +149,7 @@ export class DelegationsService {
               { validFrom: { [Op.lt]: now } },
               { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
             ],
+            scopeName: { [Op.not]: null },
           },
         },
       ],

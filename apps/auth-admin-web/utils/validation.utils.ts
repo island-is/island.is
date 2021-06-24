@@ -29,7 +29,7 @@ class ValidationUtils {
 
   /** Pattern that enforces input to @[domain.is] or @[domain.is][/[optionalPaths]/[path:optionalAction]]*
    */
-  public static apiScopePattern = /^@[a-z\.]*[/]([a-z][:/]?)*[a-z]+$/
+  public static apiScopePattern = /^@[a-z\.]*[/]([a-z][:/]?)*[a-z-]+$/
 
   public static scopePattern = /^@([\w-])$/
 
