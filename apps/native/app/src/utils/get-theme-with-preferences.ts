@@ -20,7 +20,7 @@ export const themes = {
   dark: {
     isDark: true,
     shade: {
-      background: '#000000',
+      background: '#000024',
       foreground: '#F2F2F5',
       shade700: '#6E6E6E',
       shade600: '#4F4F50',

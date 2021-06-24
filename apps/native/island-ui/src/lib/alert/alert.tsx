@@ -47,7 +47,7 @@ type VariantStyles = {
 
 const darkBackgroundColor = (color: string, colors: any) => {
   if (color === colors.blue100) {
-    return '#001333'
+    return '#00003c'
   }
   return color
 }

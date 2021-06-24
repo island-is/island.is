@@ -13,7 +13,12 @@ export function getDefaultOptions(
           ? {
               color: theme.shade.background,
             }
-          : {},
+          : {
+            color: DynamicColorIOS({
+              dark: theme.shades.dark.background,
+              light: theme.shades.light.background,
+            }),
+          },
       backButton: {
         color: theme.color.blue400,
       },
@@ -53,7 +58,16 @@ export function getDefaultOptions(
             fitSystemWindows: true,
             topMargin: 0,
           }
-        : {},
+        : {
+          backgroundColor: DynamicColorIOS({
+            dark: theme.shades.dark.background,
+            light: theme.shades.light.background,
+          }),
+          componentBackgroundColor: DynamicColorIOS({
+            dark: theme.shades.dark.background,
+            light: theme.shades.light.background,
+          }),
+        },
     bottomTabs: {
       animateTabSelection: false,
       elevation: 0,
@@ -64,7 +78,12 @@ export function getDefaultOptions(
         ? {
             backgroundColor: theme.shade.background,
           }
-        : {}),
+        : {
+          backgroundColor: DynamicColorIOS({
+            dark: theme.shades.dark.background,
+            light: theme.shades.light.background,
+          }),
+        }),
     },
   }
 }

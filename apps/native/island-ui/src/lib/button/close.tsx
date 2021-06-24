@@ -12,6 +12,11 @@ const Host = styled.View`
   width: 24px;
   height: 24px;
   border-radius: 24px;
+  border-width: 1px;
+  border-color: ${dynamicColor((props) => ({
+    dark: props.theme.color.blue400,
+    light: 'transparent',
+  }))};
   background-color: ${dynamicColor((props) => ({
     dark: props.theme.shades.dark.shade100,
     light: props.theme.color.blue100,

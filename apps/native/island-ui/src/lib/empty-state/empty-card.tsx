@@ -12,7 +12,11 @@ const Host = styled.View`
   border-width: 1px;
   border-color: ${dynamicColor(({ theme }) => ({
     light: theme.color.blue200,
-    dark: theme.shades.dark.shade300
+    dark: theme.color.dark400
+  }))};
+  background-color: ${dynamicColor(({ theme }) => ({
+    light: 'transparent',
+    dark: theme.color.dark400
   }))};
   align-items: center;
   justify-content: space-between;

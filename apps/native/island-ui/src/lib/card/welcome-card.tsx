@@ -4,10 +4,6 @@ import {
   ImageSourcePropType,
   Platform,
   Image,
-  Linking,
-  TouchableOpacity,
-  Text,
-  Alert,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'

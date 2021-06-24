@@ -11,8 +11,12 @@ const Host = styled.View`
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade300,
+    dark: theme.color.dark400,
     light: theme.color.blue200,
+  }))};
+  background-color: ${dynamicColor(({ theme }) => ({
+    dark: theme.color.dark400,
+    light: 'transparent',
   }))};
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
@@ -21,7 +25,7 @@ const ActionsContainer = styled.View`
   border-top-width: ${({ theme }) => theme.border.width.standard}px;
   border-top-color: ${dynamicColor((props) => ({
     light: props.theme.color.blue200,
-    dark: 'shade300',
+    dark: props.theme.color.blue600,
   }))};
   flex-direction: row;
 `

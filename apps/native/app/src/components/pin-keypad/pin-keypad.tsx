@@ -44,7 +44,7 @@ const NumButtonTouchable = styled.TouchableHighlight<{
   align-items: center;
   justify-content: center;
   background-color: ${dynamicColor((props) => ({
-    dark: 'shade300',
+    dark: props.theme.color.dark400,
     light: props.theme.color.blue100,
   }))};
   margin: ${(props) => props.gutter ?? 16}px;

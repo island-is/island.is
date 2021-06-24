@@ -9,12 +9,13 @@ import checkmarkIcon from '../../assets/icons/checkmark.png'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
-const Host = styled.SafeAreaView<{ background: boolean }>`
-  margin-right: 16px;
+const Host = styled.SafeAreaView<{ background: boolean, unread: boolean }>`
+
   flex-direction: row;
-  background-color: ${dynamicColor((props) =>
-    props.background ? 'background' : 'transparent',
-  )};
+  background-color: ${dynamicColor((props) => ({
+    light: props.background ? 'background' : 'transparent',
+    dark: props.unread ? theme.color.dark400 : 'transparent'
+  }))};
 `
 
 const Icon = styled.View`
@@ -23,12 +24,8 @@ const Icon = styled.View`
   justify-content: center;
 `
 
-const Logo = styled.Image`
-  width: 24px;
-  height: 24px;
-`
-
 const Content = styled.View`
+  padding-right: ${({ theme }) => theme.spacing[2]}px;;
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
@@ -196,7 +193,7 @@ export function ListItem({
   const [background, setBackground] = useState(false)
 
   const content = (
-    <Host background={background}>
+    <Host background={background} unread={unread}>
       {icon ? <Icon>{icon}</Icon> : null}
       <Content>
         <Row>

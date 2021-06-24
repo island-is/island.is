@@ -33,7 +33,7 @@ import { getMockLicenseItem } from '../wallet/wallet'
 const Information = styled.ScrollView`
   flex: 1;
   background-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade100,
+    dark: theme.shades.dark.background,
     light: theme.color.blue100,
   }))};
   border-top-left-radius: 16px;

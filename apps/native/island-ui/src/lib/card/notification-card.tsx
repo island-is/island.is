@@ -8,7 +8,7 @@ import { font } from '../../utils/font'
 const Host = styled.TouchableHighlight`
   border-radius: ${({ theme }) => theme.border.radius.large};
   background-color: ${dynamicColor((props) => ({
-    dark: 'shade100',
+    dark: props.theme.color.dark400,
     light: props.theme.color.blueberry100,
   }))};
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;

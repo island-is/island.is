@@ -45,7 +45,7 @@ export const OnboardingModule = React.memo(() => {
           imgSrc={illustration1}
           grid
           backgroundColor={{
-            dark: '#150920',
+            dark: theme.color.dark400,
             light: theme.color.purple100,
           }}
         />
@@ -56,7 +56,7 @@ export const OnboardingModule = React.memo(() => {
           })}
           imgSrc={illustration2}
           backgroundColor={{
-            dark: '#150920',
+            dark: theme.color.dark400,
             light: theme.color.purple100,
           }}
         />
@@ -67,7 +67,7 @@ export const OnboardingModule = React.memo(() => {
           })}
           imgSrc={illustration3}
           backgroundColor={{
-            dark: '#150920',
+            dark: theme.color.dark400,
             light: theme.color.purple100,
           }}
           hasLink
