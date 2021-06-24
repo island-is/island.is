@@ -113,6 +113,7 @@ const Confirmation: React.FC<Props> = (props) => {
                 AppealDecisionRole.ACCUSED,
                 workingCase.accusedAppealDecision,
                 workingCase.accusedGender,
+                workingCase.type,
               )}
             </Text>
           </Box>
