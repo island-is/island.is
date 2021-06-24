@@ -1,28 +1,19 @@
 import React from 'react'
+import { BoxProps } from '../Box/types'
 import { Box } from '../Box/Box'
-import * as styleRefs from './Divider.treat'
+import * as styles from './Divider.treat'
 
 export interface DividerProps {
-  weight?: keyof typeof styleRefs.weight
+  weight?: keyof typeof styles.weight
+  marginTop?: BoxProps['marginTop']
+  marginBottom?: BoxProps['marginBottom']
 }
 
-const defaultWeight = 'regular'
-
-export const Divider = ({ weight = defaultWeight }: DividerProps) => {
-  const styles = {
-    ...styleRefs,
-  }
-
-  return (
-    <Box position="relative">
-      <Box
-        position="absolute"
-        width="full"
-        className={[
-          styles.base,
-          styles.weight[weight] || styles.weight[defaultWeight],
-        ]}
-      />
-    </Box>
-  )
-}
+export const Divider = (props: DividerProps) => (
+  <Box
+    width="full"
+    className={[styles.base, styles.weight[props.weight || 'regular']]}
+    marginTop={props.marginTop}
+    marginBottom={props.marginBottom}
+  />
+)
