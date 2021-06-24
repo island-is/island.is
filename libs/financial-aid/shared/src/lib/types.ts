@@ -101,6 +101,10 @@ export interface User {
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
 
+export interface PresignedPost {
+  url: string
+}
+
 // export type HomeCircumstances =
 //   | 'Unknown'
 //   | 'WithParents'
