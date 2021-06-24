@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { Text, Input, Box } from '@island.is/island-ui/core'
 
 import {
@@ -24,7 +24,7 @@ const StudentForm = () => {
     router.pathname,
   ) as NavigationProps
 
-  const [error, setError] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   const options = [
     {
@@ -36,6 +36,26 @@ const StudentForm = () => {
       value: 1,
     },
   ]
+
+  const errorCheck = () => {
+    if (form?.student === undefined) {
+      setHasError(true)
+      return
+    }
+
+    if (form?.student && !Boolean(form?.studentCustom)) {
+      setHasError(true)
+      return
+    }
+
+    if (!form?.student && form?.studentCustom) {
+      updateForm({ ...form, studentCustom: '' })
+    }
+
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
+  }
 
   return (
     <FormLayout
@@ -50,14 +70,14 @@ const StudentForm = () => {
         <div>
           <RadioButtonContainer
             options={options}
-            error={error && form?.student === undefined}
+            error={hasError && form?.student === undefined}
             isChecked={(value: number | boolean) => {
               return value === form?.student
             }}
             onChange={(value: number | boolean) => {
               updateForm({ ...form, student: value })
-              if (error) {
-                setError(false)
+              if (hasError) {
+                setHasError(false)
               }
             }}
           />
@@ -66,11 +86,11 @@ const StudentForm = () => {
         <div
           className={cn({
             [`errorMessage`]: true,
-            [`showErrorMessage`]: error && form?.student === undefined,
+            [`showErrorMessage`]: hasError && form?.student === undefined,
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að svara
+            Þú þarft að velja einn valmöguleika
           </Text>
         </div>
         <Box
@@ -84,38 +104,31 @@ const StudentForm = () => {
             backgroundColor="blue"
             label="Hvaða námi?"
             name="education"
-            placeholder="Dæmi: Viðskiptafræði í HR"
+            placeholder="Skrifaðu hér"
             value={form?.studentCustom}
-            hasError={error && form?.studentCustom === undefined}
-            errorMessage="Þú þarft að fylla út"
+            hasError={hasError && !Boolean(form?.studentCustom)}
+            errorMessage="Þú þarft að skrifa hvaða nám þú stundar. Dæmi: Viðskiptafræði í HR"
             onChange={(
               event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => updateForm({ ...form, studentCustom: event.target.value })}
           />
+          <Box
+            marginTop={1}
+            className={cn({
+              [`errorMessage`]: true,
+              [`showErrorMessage`]: !hasError,
+            })}
+          >
+            <Text fontWeight="semiBold" variant="small">
+              Dæmi: Viðskiptafræði í HR
+            </Text>
+          </Box>
         </Box>
       </FormContentContainer>
 
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
-        nextUrl={navigation?.nextUrl ?? '/'}
-        onNextButtonClick={() => {
-          if (form?.student !== undefined) {
-            if (form?.student) {
-              if (form?.studentCustom === '') {
-                setError(true)
-              } else {
-                router.push(navigation?.nextUrl ?? '/')
-              }
-            } else {
-              if (form?.studentCustom) {
-                updateForm({ ...form, studentCustom: '' })
-              }
-              router.push(navigation?.nextUrl ?? '/')
-            }
-          } else {
-            setError(true)
-          }
-        }}
+        previousUrl={navigation?.prevUrl}
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )

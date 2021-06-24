@@ -1,92 +1,109 @@
 import { useEffect, useState, useContext } from 'react'
-
-import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
+import useNavigationTree, {
+  FormStepperSection,
+} from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
-interface ResultProps {
+interface NavigationInfoProps {
   activeSectionIndex: number
   activeSubSectionIndex?: number
-  prevUrl: string | undefined
-  nextUrl: string | undefined
+  prevUrl?: string
+  nextUrl?: string
 }
 
-const useFormNavigation = (currentUrl: string) => {
+const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
   const { form, updateForm } = useContext(FormContext)
 
-  const [result, setResult] = useState<ResultProps>()
+  var navigationTree = useNavigationTree(Boolean(form?.hasIncome))
 
-  var sections = useNavigationTree(form?.hasIncome)
-
-  const getNextUrl = (obj: {
-    name?: string
-    url?: string
-    type?: string
-    children?: { type?: string; name?: string; url?: string }[]
-  }) => {
-    if (obj) {
-      if (obj.children) {
-        return obj?.children[0]?.url ?? ''
-      } else {
-        return obj.url
+  const findSectionIndex = (navigationTree: FormStepperSection[]) => {
+    for (const [index, item] of Object.entries(navigationTree)) {
+      if (item.url === currentRoute) {
+        return { activeSectionIndex: parseInt(index) }
       }
-    }
 
-    return '/umsokn'
-  }
-
-  const getPrevUrl = (obj: {
-    name?: string
-    url?: string
-    type?: string
-    children?: { type?: string; name?: string; url?: string }[]
-  }) => {
-    if (obj) {
-      if (obj.children) {
-        return obj?.children[obj?.children.length - 1]?.url ?? ''
-      } else {
-        return obj.url
-      }
-    }
-
-    return '/umsokn'
-  }
-
-  useEffect(() => {
-    sections.map((item, index) => {
       if (item.children) {
-        item.children.map((el: any, i: number) => {
-          if (el.url === currentUrl) {
-            setResult({
-              ...result,
-              activeSectionIndex: index,
-              activeSubSectionIndex: i,
-              nextUrl: getNextUrl(
-                item.children[i + 1]
-                  ? item.children[i + 1]
-                  : sections[index + 1],
-              ),
-              prevUrl: getPrevUrl(
-                item.children[i - 1]
-                  ? item.children[i - 1]
-                  : sections[index - 1],
-              ),
-            })
+        for (const [childIndex, child] of Object.entries(item.children)) {
+          if (child.url === currentRoute) {
+            return {
+              activeSectionIndex: parseInt(index),
+              activeSubSectionIndex: parseInt(childIndex),
+            }
           }
-        })
-      } else {
-        if (item.url === currentUrl) {
-          setResult({
-            ...result,
-            activeSectionIndex: index,
-            nextUrl: getNextUrl(sections[index + 1]),
-            prevUrl: getPrevUrl(sections[index - 1]),
-          })
         }
       }
-    })
+    }
+
+    return { activeSectionIndex: 0 }
+  }
+
+  const getNextUrl = (obj: FormStepperSection) => {
+    if (obj?.children) {
+      return obj?.children[0]?.url
+    } else {
+      return obj?.url
+    }
+  }
+
+  const findNextUrl = (obj: NavigationInfoProps) => {
+    let currBranch = navigationTree[obj?.activeSectionIndex]
+
+    if (
+      obj.activeSubSectionIndex != undefined &&
+      currBranch.children &&
+      currBranch.children[obj.activeSubSectionIndex + 1]
+    ) {
+      return getNextUrl(currBranch.children[obj.activeSubSectionIndex + 1])
+    }
+
+    return getNextUrl(navigationTree[obj.activeSectionIndex + 1])
+  }
+
+  const getPrevUrl = (obj: FormStepperSection) => {
+    if (obj?.children) {
+      return obj?.children[obj?.children.length - 1]?.url
+    }
+
+    return obj?.url
+  }
+
+  const findPrevUrl = (obj: NavigationInfoProps) => {
+    let currBranch = navigationTree[obj?.activeSectionIndex]
+
+    if (
+      obj.activeSubSectionIndex != undefined &&
+      currBranch.children &&
+      currBranch.children[obj.activeSubSectionIndex - 1]
+    ) {
+      return getPrevUrl(currBranch.children[obj.activeSubSectionIndex - 1])
+    }
+
+    return getPrevUrl(navigationTree[obj.activeSectionIndex - 1])
+  }
+
+  const createNavigationInfo = (navigationTree: FormStepperSection[]) => {
+    const findSection = findSectionIndex(navigationTree)
+
+    const nextUrl = findNextUrl(findSection)
+    const prevUrl = findPrevUrl(findSection)
+
+    return {
+      activeSectionIndex: findSection.activeSectionIndex,
+      activeSubSectionIndex: findSection?.activeSubSectionIndex,
+      prevUrl: prevUrl,
+      nextUrl: nextUrl,
+    }
+  }
+
+  const [navigationInfo, setNavigationInfo] = useState<NavigationInfoProps>(
+    createNavigationInfo(navigationTree),
+  )
+
+  useEffect(() => {
+    setNavigationInfo(createNavigationInfo(navigationTree))
   }, [form?.hasIncome])
 
-  return result
+  return navigationInfo
 }
 
 export default useFormNavigation
