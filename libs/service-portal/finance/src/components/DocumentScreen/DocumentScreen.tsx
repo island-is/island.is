@@ -55,7 +55,7 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
   const [fromDate, setFromDate] = useState<string>()
   const [toDate, setToDate] = useState<string>()
 
-  const [loadDocumentsList, { data, loading, called }] = useLazyQuery(
+  const [loadDocumentsList, { data, loading, called, error }] = useLazyQuery(
     getFinanceDocumentsListQuery,
   )
 
@@ -127,6 +127,12 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
           </GridRow>
         </Box>
         <Box marginTop={2}>
+          {error && (
+            <AlertBanner
+              description={formatMessage(m.errorFetch)}
+              variant="error"
+            />
+          )}
           {!called && !loading && (
             <AlertBanner
               description={formatMessage(m.datesForResults)}
@@ -138,7 +144,7 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
               <SkeletonLoader space={1} height={40} repeat={5} />
             </Box>
           )}
-          {billsDataArray.length === 0 && called && !loading && (
+          {billsDataArray.length === 0 && called && !loading && !error && (
             <AlertBanner
               description={formatMessage(m.noResultsTryAgain)}
               variant="warning"

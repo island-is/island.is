@@ -52,7 +52,7 @@ const FinanceTransactions = () => {
   const chargeTypeData: CustomerChargeType =
     customerChartypeData?.getCustomerChargeType || {}
 
-  const [loadCustomerRecords, { data, loading, called }] = useLazyQuery(
+  const [loadCustomerRecords, { data, loading, called, error }] = useLazyQuery(
     GET_CUSTOMER_RECORDS,
   )
 
@@ -175,6 +175,12 @@ const FinanceTransactions = () => {
           </GridRow>
         </Box>
         <Box marginTop={2}>
+          {error && (
+            <AlertBanner
+              description={formatMessage(m.errorFetch)}
+              variant="error"
+            />
+          )}
           {!called && !loading && (
             <AlertBanner
               description={formatMessage(m.selectForResults)}
@@ -186,7 +192,7 @@ const FinanceTransactions = () => {
               <SkeletonLoader space={1} height={40} repeat={5} />
             </Box>
           )}
-          {recordsDataArray.length === 0 && called && !loading && (
+          {recordsDataArray.length === 0 && called && !loading && !error && (
             <AlertBanner
               description={formatMessage(m.noResultsTryAgain)}
               variant="warning"
