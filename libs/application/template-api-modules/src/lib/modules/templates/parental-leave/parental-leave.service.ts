@@ -14,6 +14,7 @@ import {
   getAvailableRightsInDays,
   getAvailablePersonalRightsInDays,
   YES,
+  StartDateOptions,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -111,9 +112,11 @@ export class ParentalLeaveService {
     application: Application,
     nationalRegistryId: string,
   ): Promise<Period[]> {
-    const { periods: originalPeriods } = getApplicationAnswers(
-      application.answers,
-    )
+    const {
+      periods: originalPeriods,
+      firstPeriodStart,
+    } = getApplicationAnswers(application.answers)
+
     const answers = cloneDeep(originalPeriods).sort((a, b) => {
       const dateA = new Date(a.startDate)
       const dateB = new Date(b.startDate)
@@ -122,14 +125,16 @@ export class ParentalLeaveService {
     })
 
     const periods: Period[] = []
-
     const maximumDaysToSpend = getAvailableRightsInDays(application)
     const maximumPersonalDaysToSpend = getAvailablePersonalRightsInDays(
       application,
     )
+    const isActualDateOfBirth =
+      firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
     let numberOfDaysAlreadySpent = 0
 
-    for (const period of answers) {
+    for (const [index, period] of answers.entries()) {
+      const isFirstPeriod = index === 0
       const startDate = new Date(period.startDate)
       const endDate = new Date(period.endDate)
       const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
@@ -163,7 +168,10 @@ export class ParentalLeaveService {
       ) {
         // We know its a normal period and it will not exceed personal rights
         periods.push({
-          from: period.startDate,
+          from:
+            isFirstPeriod && isActualDateOfBirth
+              ? apiConstants.actualDateOfBirth
+              : period.startDate,
           to: period.endDate,
           ratio: Number(period.ratio),
           approved: false,
@@ -204,7 +212,10 @@ export class ParentalLeaveService {
 
         // Add the period using personal rights
         periods.push({
-          from: period.startDate,
+          from:
+            isFirstPeriod && isActualDateOfBirth
+              ? apiConstants.actualDateOfBirth
+              : period.startDate,
           to: format(getNormalPeriodEndDate.periodEndDate, df),
           ratio: Number(period.ratio),
           approved: false,
