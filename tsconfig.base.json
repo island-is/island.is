@@ -15,6 +15,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "baseUrl": ".",
     "strict": true,
     "paths": {
@@ -98,6 +99,9 @@
       ],
       "@island.is/api/domains/party-letter-registry": [
         "libs/api/domains/party-letter-registry/src/index.ts"
+      ],
+      "@island.is/api/domains/payment": [
+        "libs/api/domains/payment/src/index.ts"
       ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
@@ -185,6 +189,9 @@
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
       ],
+      "@island.is/application/templates/payable-dummy-template": [
+        "libs/application/templates/payable-dummy-template/src/index.ts"
+      ],
       "@island.is/application/templates/public-debt-payment-plan": [
         "libs/application/templates/public-debt-payment-plan/src/index.ts"
       ],
@@ -212,6 +219,9 @@
         "libs/clients/document-provider/src/index.ts"
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
+      "@island.is/clients/middlewares": [
+        "libs/clients/middlewares/src/index.ts"
+      ],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
       "@island.is/clients/national-registry-v1": [
         "libs/clients/national-registry/v1/src/index.ts"
@@ -219,6 +229,7 @@
       "@island.is/clients/national-registry-v2": [
         "libs/clients/national-registry/v2/src/index.ts"
       ],
+      "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],

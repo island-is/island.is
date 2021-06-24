@@ -115,6 +115,7 @@ export interface DataProviderItem {
   readonly title: StaticText
   readonly subTitle?: StaticText
   readonly source?: string
+  readonly parameters?: any
 }
 
 export interface FieldBaseProps {

@@ -160,3 +160,7 @@
 /libs/api/domains/regulations/                                                                @island-is/hugsmidjan
 /apps/web/screens/Regulations/                                                                @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                             @island-is/hugsmidjan
+
+# Infrastructure configuration
+infra/                                                                                        @island-is/devops
+/charts                                                                                       @island-is/devops
