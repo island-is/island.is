@@ -3,6 +3,7 @@ import {
   buildDataProviderItem,
   buildDateField,
   buildExternalDataProvider,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -25,6 +26,7 @@ import {
   complainee,
   complaintInformation,
   complaintDescription,
+  attachments,
 } from '../lib/messages'
 import { getComplaintType, isGovernmentComplainee } from '../utils'
 import Logo from '../assets/Logo'
@@ -285,6 +287,20 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               ],
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'attachments',
+      title: section.attachments,
+      children: [
+        buildFileUploadField({
+          id: 'attachments.fileUpload',
+          title: attachments.title,
+          introduction: attachments.introduction,
+          uploadDescription: attachments.uploadDescription,
+          uploadHeader: attachments.uploadHeader,
+          uploadButtonLabel: attachments.uploadButtonLabel,
         }),
       ],
     }),
