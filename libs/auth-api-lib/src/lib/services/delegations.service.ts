@@ -53,9 +53,13 @@ export class DelegationsService {
     private logger: Logger,
   ) {}
 
-  async findAllTo(user: User, xRoadClient: string): Promise<DelegationDTO[]> {
+  async findAllTo(
+    user: User,
+    xRoadClient: string,
+    authMiddlewareOptions: AuthMiddlewareOptions,
+  ): Promise<DelegationDTO[]> {
     const [wards, companies, custom] = await Promise.all([
-      this.findAllWardsTo(user, xRoadClient),
+      this.findAllWardsTo(user, xRoadClient, authMiddlewareOptions),
       this.findAllCompaniesTo(user.nationalId),
       this.findAllValidCustomTo(user.nationalId),
     ])
