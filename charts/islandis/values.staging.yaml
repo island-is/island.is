@@ -892,3 +892,4 @@ xroad-collector:
       eks.amazonaws.com/role-arn: arn:aws:iam::261174024191:role/xroad-collector
     create: true
     name: xroad-collector
+
