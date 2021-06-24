@@ -95,11 +95,10 @@ export const FactsCard = ({
         <Box
           position="relative"
           style={{
-            width: shouldStack ? '100%' : '30%',
-            ...(shouldStack && { height: '100%' }),
+            width: shouldStack ? '100%' : '204px',
+            height: shouldStack ? '100%' : '204px',
+            top: !shouldStack && '-51px',
           }}
-          marginBottom={shouldStack ? 1 : 0}
-          marginLeft={shouldStack ? 0 : 1}
         >
           <BackgroundImage
             width={300}
@@ -121,7 +120,7 @@ export const FrameWrapper = ({ children }) => {
       className={cn(styles.card)}
       position="relative"
       borderRadius="large"
-      overflow="hidden"
+      overflow="visible"
       background="blue100"
       outline="none"
       padding={[2, 2, 4]}
