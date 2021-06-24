@@ -15,7 +15,6 @@ require('ts-node').register({
   compilerOptions: {
     ...tsconfig.compilerOptions,
     module: 'commonjs',
-    esModuleInterop: true,
   },
   transpileOnly: true,
 })

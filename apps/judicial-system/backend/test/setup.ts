@@ -33,9 +33,7 @@ jest.mock('pdfkit', function () {
     }
   }
 
-  return {
-    default: MockPDFDocument,
-  }
+  return MockPDFDocument
 })
 
 jest.mock('stream-buffers', function () {
@@ -44,7 +42,7 @@ jest.mock('stream-buffers', function () {
       fn()
     }
     getContentsAsString() {
-      // eslint-disable-line @typescript-eslint/no-empty-function
+      return ''
     }
     getContents() {
       // eslint-disable-line @typescript-eslint/no-empty-function
@@ -52,9 +50,7 @@ jest.mock('stream-buffers', function () {
   }
 
   return {
-    default: {
-      WritableStreamBuffer: MockWritableStreamBuffer,
-    },
+    WritableStreamBuffer: MockWritableStreamBuffer,
   }
 })
 

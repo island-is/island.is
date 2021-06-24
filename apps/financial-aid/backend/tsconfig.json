@@ -1,11 +1,7 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node", "jest"],
-    "emitDecoratorMetadata": true,
-    "target": "es2015",
-    "strict": false,
-    "experimentalDecorators": true
+    "strict": false
   },
   "include": [],
   "allowJs": true,

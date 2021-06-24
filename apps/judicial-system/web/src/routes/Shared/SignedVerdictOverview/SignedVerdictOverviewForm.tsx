@@ -130,14 +130,23 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   }
 
   const canCaseFilesBeOpened = () => {
-    if (
-      !workingCase?.isAppealGracePeriodExpired &&
+    const isAppealGracePeriodExpired = workingCase?.isAppealGracePeriodExpired
+
+    const isProsecutorWithAccess =
       user?.role === UserRole.PROSECUTOR &&
-      user.institution?.id === workingCase.prosecutor?.institution?.id &&
+      user.institution?.id === workingCase.prosecutor?.institution?.id
+
+    const isCourtRoleWithAccess =
+      (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR) &&
+      user?.institution?.id === workingCase.court?.id &&
       (workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
         workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
         Boolean(workingCase?.accusedPostponedAppealDate) ||
         Boolean(workingCase?.prosecutorPostponedAppealDate))
+
+    if (
+      !isAppealGracePeriodExpired &&
+      (isProsecutorWithAccess || isCourtRoleWithAccess)
     ) {
       return true
     } else {
