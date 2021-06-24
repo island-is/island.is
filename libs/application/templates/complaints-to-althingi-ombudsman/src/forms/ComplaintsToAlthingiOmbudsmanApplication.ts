@@ -3,7 +3,6 @@ import {
   buildCustomField,
   buildDataProviderItem,
   buildDateField,
-  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
@@ -13,7 +12,6 @@ import {
   buildTextField,
   Form,
   FormModes,
-  FormValue,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
 import {
@@ -163,15 +161,25 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'complainee',
+      id: 'complainedFor',
       title: section.complainedFor,
       children: [
         buildMultiField({
-          id: 'complaineeInformation',
+          id: 'complainedForDecision',
           title: complainedFor.general.complainedForTitle,
+          description: `Almennt getur maður ekki kvartað til 
+              umboðsmanns Alþingis yfir því að aðrir hafi verið 
+              beittir rangsleitni af hálfu stjórnvalda. Ef maður 
+              hefur sérstök tengsl við þann sem ákvörðun eða 
+              athöfn stjórnvalds sem kvörtunin lýtur að er hægt 
+              að kvarta fyrir hans hönd. Þá þarf að koma fram 
+              hver séu tengsl milli þess sem kvartar og þess sem 
+              kvörtunin varðar, t.d. ef um er að ræða foreldri. 
+              Eftir atvikum er líka rétt að senda skriflegt umboð, 
+              t.d. ef vinur gætir hagsmuna þess sem kvörtunin varðar.`,
           children: [
             buildRadioField({
-              id: 'complaineeInformation.radio',
+              id: 'complainedForDecision.radio',
               title: '',
               options: [
                 { value: 'myself', label: 'Mig' },
@@ -180,15 +188,72 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               largeButtons: true,
               width: 'half',
             }),
-            buildDescriptionField({
-              id: 'complaineeInformation.description',
-              title: 'Athugið',
+          ],
+        }),
+        buildMultiField({
+          id: 'complainedForInformation',
+          title: complainedFor.general.complainedForInformationTitle,
+          children: [
+            buildTextField({
+              id: 'complainedForInformation.name',
+              title: information.aboutTheComplainer.name,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.ssn',
+              title: information.aboutTheComplainer.ssn,
+              format: '######-####',
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.address',
+              title: information.aboutTheComplainer.address,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.postcode',
+              title: information.aboutTheComplainer.postcode,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.city',
+              title: information.aboutTheComplainer.city,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.email',
+              title: information.aboutTheComplainer.email,
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+              variant: 'email',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.phone',
+              title: information.aboutTheComplainer.phone,
+              format: '###-####',
+              backgroundColor: 'blue',
+              required: true,
+              width: 'half',
+              variant: 'tel',
+            }),
+            buildTextField({
+              id: 'complainedForInformation.textarea',
+              title: information.aboutTheComplainer.phone,
               description: 'hello',
-              condition: (formValue) => {
-                const radioValue = (formValue.complaineeInformation as FormValue)
-                  ?.radio
-                return radioValue === 'myself'
-              },
+              backgroundColor: 'blue',
+              required: true,
+              variant: 'textarea',
             }),
           ],
         }),
