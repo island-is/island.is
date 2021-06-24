@@ -71,7 +71,9 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         <Text>{workingCase.lawsBroken}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði sem krafan er byggð á" breakSpaces>
-        {workingCase.custodyProvisions &&
+        {workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.TRAVEL_BAN ? (
+          workingCase.custodyProvisions &&
           workingCase.custodyProvisions.map(
             (custodyProvision: CaseCustodyProvisions, index) => {
               return (
@@ -80,7 +82,10 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
                 </div>
               )
             },
-          )}
+          )
+        ) : (
+          <Text>{workingCase.legalBasis}</Text>
+        )}
       </AccordionListItem>
       <Box marginBottom={1}>
         <Text variant="h5">{`Takmarkanir og tilhögun ${
