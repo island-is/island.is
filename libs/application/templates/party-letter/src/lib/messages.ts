@@ -88,7 +88,7 @@ export const m: MessageDir = {
     },
     searchbar: {
       id: 'ple.application:endorsement.list.search',
-      defaultMessage: 'Leitaðu hér',
+      defaultMessage: 'Leitaðu að nafni',
       description: 'Searchbar placeholder',
     },
   }),

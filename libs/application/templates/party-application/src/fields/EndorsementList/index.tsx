@@ -16,8 +16,7 @@ import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import sortBy from 'lodash/sortBy'
-import { hardcodedList } from '../../types/hardcodedlist'
-import { paginate, PAGE_SIZE, totalPages as pages } from '../components/utils'
+import { paginate, totalPages as pages } from '../components/utils'
 import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
@@ -43,6 +42,10 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     constituencyMapper[application.answers.constituency as EndorsementListTags]
       .parliamentary_seats * 30
 
+  const maxEndorsements =
+    constituencyMapper[application.answers.constituency as EndorsementListTags]
+      .parliamentary_seats * 40
+
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1
       ? m.endorsementList.namesCount
@@ -53,13 +56,11 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     filter(searchTerm, showOnlyInvalidated)
   }, [endorsementsHook, searchTerm, showOnlyInvalidated])
 
+  const constituency =
+    constituencyMapper[application.answers.constituency as EndorsementListTags]
+
   const voterRegionMismatch = (region: number) => {
-    return (
-      region !==
-      constituencyMapper[
-        application.answers.constituency as EndorsementListTags
-      ].region_number
-    )
+    return region !== constituency.region_number
   }
 
   const filter = (searchTerm: string, showInvalidated: boolean) => {
@@ -108,17 +109,25 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         linkUrl={window.location.href}
         buttonTitle={formatMessage(m.endorsementList.copyLinkButton)}
       />
-      <Text marginTop={6} variant="h3">
-        {`${
-          endorsementsHook && endorsementsHook.length > 0
+      <Box marginTop={4} display="flex" alignItems="baseline">
+        <Text variant="h2">
+          {endorsementsHook && endorsementsHook.length > 0
             ? endorsementsHook.length
-            : 0
-        } ${namesCountString}` +
-          '(af ' +
+            : 0}
+        </Text>
+        <Box marginLeft={1}>
+          <Text variant="default">{namesCountString}</Text>
+        </Box>
+      </Box>
+      <Text variant="small" color="dark300">
+        {'Leyfilegur fjöldi meðmæla í ' +
+          constituency.region_name +
+          ' er á bilinu ' +
           minEndorsements +
-          ')'}
+          '-' +
+          maxEndorsements}
       </Text>
-      <Box marginTop={2}>
+      <Box marginTop={4}>
         <Box
           display="flex"
           justifyContent="spaceBetween"

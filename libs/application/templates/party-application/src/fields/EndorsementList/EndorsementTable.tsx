@@ -69,7 +69,11 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
         >
           {voterRegionMismatch ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.meta.address.streetAddress}
+              {endorsement.meta.address.streetAddress +
+                ', ' +
+                endorsement.meta.address.postalCode +
+                ' ' +
+                endorsement.meta.address.city}
               <Box marginLeft={2}>
                 {voterRegionMismatch && (
                   <Tooltip
@@ -83,7 +87,11 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
               </Box>
             </Box>
           ) : (
-            endorsement.meta.address.streetAddress
+            endorsement.meta.address.streetAddress +
+            ', ' +
+            endorsement.meta.address.postalCode +
+            ' ' +
+            endorsement.meta.address.city
           )}
         </T.Data>
         {withBulkImport && (
@@ -114,9 +122,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
           <T.HeadData box={{ textAlign: 'right' }}>
             {formatMessage(m.endorsementList.thAddress)}
           </T.HeadData>
-          {withBulkImport && (
-            <T.HeadData></T.HeadData>
-          )}
+          {withBulkImport && <T.HeadData></T.HeadData>}
         </T.Row>
       </T.Head>
       <T.Body>
