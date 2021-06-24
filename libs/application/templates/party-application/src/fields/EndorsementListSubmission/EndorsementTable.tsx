@@ -39,7 +39,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
 
   const renderRow = (endorsement: Endorsement) => {
     const voterRegionMismatch =
-      endorsement.meta.voterRegion.voterRegionNumber !==
+      endorsement.meta.voterRegion?.voterRegionNumber !==
       constituencyMapper[
         application.answers.constituency as EndorsementListTags
       ].region_number
