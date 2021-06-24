@@ -1,5 +1,4 @@
 @import '../../../../libs/island-ui/fonts/fonts.css';
-
 /* You can add global styles to this file, and also import other style files */
 
 #root {
@@ -104,4 +103,34 @@ input[type='number'] {
     transform: translate3d(0, 0, 0);
     opacity: 1;
   }
+}
+
+.tags {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.14;
+  display: block;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.approved {
+  background-color: #f2fefc;
+  color: #00b39e;
+}
+
+.outDatedOrDenied {
+  background-color: #fff2f6;
+  color: #ff0050;
+}
+
+.processing {
+  background-color: #f8f5fa;
+  color: #6a2ea0;
+}
+
+.new {
+  background-color: #f2f7ff;
+  color: #0061ff;
 }

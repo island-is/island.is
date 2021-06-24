@@ -10,6 +10,7 @@ export const container = style({
   paddingRight: theme.spacing[6],
   backgroundColor: theme.color.purple100,
   width: '25.4%',
+  minHeight: '100%',
   paddingTop: theme.spacing[5],
   paddingBottom: theme.spacing[7],
   display: 'none',

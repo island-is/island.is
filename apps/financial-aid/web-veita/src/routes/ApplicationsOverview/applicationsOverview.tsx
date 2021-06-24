@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text, Box, Tag } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import {
   AdminLayout,
@@ -16,6 +16,7 @@ import {
   navigationElements,
   calcDifferenceInDate,
   translateMonth,
+  getTagByState,
 } from '../../utils/formHelper'
 
 import { ApplicationsContext } from '../../components/ApplicationsProvider/ApplicationsProvider'
@@ -37,30 +38,31 @@ export const ApplicationsOverview = () => {
   )
 
   if (findCurrentNavigationEl) {
-    const [currentState, setState] = useState<NavigationElement>(
-      findCurrentNavigationEl,
-    )
+    const [
+      currentNavigationEl,
+      setCurrentNavigationEl,
+    ] = useState<NavigationElement>(findCurrentNavigationEl)
 
     useEffect(() => {
-      setState(findCurrentNavigationEl)
+      setCurrentNavigationEl(findCurrentNavigationEl)
     }, [router.pathname])
 
     return (
       <AdminLayout>
-        <Box className={`contentUp delay-25`} key={currentState.label}>
+        <Box className={`contentUp delay-25`} key={currentNavigationEl.label}>
           <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={4}>
-            {currentState.label}
+            {currentNavigationEl.label}
           </Text>
         </Box>
 
         {applications && (
           <ApplicationsTable
             className={`contentUp delay-50`}
-            key={currentState.link}
-            header={currentState.headers}
+            key={currentNavigationEl.link}
+            header={currentNavigationEl.headers}
             applications={applications
               .filter((item) =>
-                currentState?.applicationState.includes(item?.state),
+                currentNavigationEl?.applicationState.includes(item?.state),
               )
               .map((item) => ({
                 listElement: [
@@ -70,7 +72,12 @@ export const ApplicationsOverview = () => {
                       <Text variant="h5">{GenerateName(item.nationalId)}</Text>
                     </Box>
                   </Box>,
-                  <Text> {getState[item.state]}</Text>,
+                  <Box>
+                    <div className={`tags ${getTagByState(item.state)}`}>
+                      {getState[item.state]}
+                    </div>
+                  </Box>,
+
                   <Text> {calcDifferenceInDate(item.modified)}</Text>,
                   <Text>
                     {translateMonth(format(new Date(item.created), 'M'))}

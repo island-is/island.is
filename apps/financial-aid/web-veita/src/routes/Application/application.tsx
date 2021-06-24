@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useReducer } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   LoadingDots,
   Text,
@@ -9,13 +9,10 @@ import {
 import { useRouter } from 'next/router'
 
 import * as styles from './application.treat'
-import cn from 'classnames'
 
-import { useQuery, useMutation } from '@apollo/client'
-import {
-  GetApplicationQuery,
-  UpdateApplicationMutation,
-} from '../../../graphql/sharedGql'
+import { useQuery } from '@apollo/client'
+import { GetApplicationQuery } from '../../../graphql/sharedGql'
+
 import {
   Application,
   getHomeCircumstances,
@@ -26,6 +23,7 @@ import {
   ApplicationState,
   getState,
 } from '@island.is/financial-aid/shared'
+
 import format from 'date-fns/format'
 
 import {
@@ -33,6 +31,7 @@ import {
   calcAge,
   navigationElements,
   translateMonth,
+  getTagByState,
 } from '../../utils/formHelper'
 
 import {
@@ -51,7 +50,7 @@ interface ApplicantData {
 const ApplicationProfile = () => {
   const router = useRouter()
 
-  const [isVisible, setIsVisible] = useState(false)
+  const [isModalVisible, setModalVisible] = useState(false)
 
   const [prevUrl, setPrevUrl] = useState<any | undefined>(undefined)
 
@@ -81,7 +80,7 @@ const ApplicationProfile = () => {
   }, [data?.application?.state])
 
   if (data?.application) {
-    const applicationArr = [
+    const applicationInfo = [
       {
         title: 'Tímabil',
         content:
@@ -196,7 +195,13 @@ const ApplicationProfile = () => {
           className={`${styles.applicantWrapper}`}
         >
           <Box className={`contentUp   ${styles.widtAlmostFull} `}>
-            <Box marginBottom={3}>
+            <Box
+              marginBottom={3}
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              width="full"
+            >
               {prevUrl && (
                 <Button
                   colorScheme="default"
@@ -213,6 +218,10 @@ const ApplicationProfile = () => {
                   {prevUrl?.label}
                 </Button>
               )}
+
+              <div className={`tags ${getTagByState(data.application.state)}`}>
+                {getState[data.application.state]}
+              </div>
             </Box>
 
             <Box
@@ -237,14 +246,14 @@ const ApplicationProfile = () => {
                 icon="pencil"
                 iconType="filled"
                 onClick={() => {
-                  setIsVisible(!isVisible)
+                  setModalVisible(!isModalVisible)
                 }}
                 preTextIconType="filled"
                 size="default"
                 type="button"
-                variant="primary"
+                variant="ghost"
               >
-                {getState[applicationState as ApplicationState]}
+                Breyta stöðu
               </Button>
             </Box>
 
@@ -264,7 +273,7 @@ const ApplicationProfile = () => {
 
           <Profile
             heading="Umsókn"
-            info={applicationArr}
+            info={applicationInfo}
             className={`contentUp delay-50`}
           />
           <Profile
@@ -290,9 +299,9 @@ const ApplicationProfile = () => {
 
         {applicationState && (
           <StateModal
-            isVisible={isVisible}
+            isVisible={isModalVisible}
             setIsVisible={(isVisibleBoolean) => {
-              setIsVisible(isVisibleBoolean)
+              setModalVisible(isVisibleBoolean)
             }}
             setApplicationState={(applicationState: ApplicationState) => {
               setApplicationState(applicationState)
@@ -330,7 +339,7 @@ const ApplicationProfile = () => {
           </Button>
         </Box>
         <Text color="red400" fontWeight="semiBold" marginTop={4}>
-          Abbabab Notendi ekki fundinn, fara tilbaka og reyndu vinsamlegast
+          Abbabab Notendi ekki fundinn, farðu tilbaka og reyndu vinsamlegast
           aftur{' '}
         </Text>
       </AdminLayout>

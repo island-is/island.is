@@ -72,3 +72,18 @@ export const navigationElements = [
     headers: ['Nafn', 'Staða', 'Úrlausnartími', 'Tímabil'],
   },
 ]
+
+export const getTagByState = (state: ApplicationState) => {
+  switch (state) {
+    case ApplicationState.NEW:
+      return 'new'
+    case ApplicationState.INPROGRESS:
+      return 'processing'
+    case ApplicationState.APPROVED:
+      return 'approved'
+    case ApplicationState.REJECTED:
+      return 'outDatedOrDenied'
+    default:
+      return 'new'
+  }
+}
