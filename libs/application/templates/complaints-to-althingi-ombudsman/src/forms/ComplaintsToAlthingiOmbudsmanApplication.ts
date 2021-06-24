@@ -12,6 +12,7 @@ import {
   buildTextField,
   Form,
   FormModes,
+  FormValue,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
 import {
@@ -24,6 +25,7 @@ import {
   section,
 } from '../lib/messages'
 import {
+  ComplainedForTypes,
   ComplaineeTypes,
   OmbudsmanComplaintTypeEnum,
 } from '../shared/constants'
@@ -166,24 +168,21 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       children: [
         buildMultiField({
           id: 'complainedForDecision',
-          title: complainedFor.general.complainedForTitle,
-          description: `Almennt getur maður ekki kvartað til 
-              umboðsmanns Alþingis yfir því að aðrir hafi verið 
-              beittir rangsleitni af hálfu stjórnvalda. Ef maður 
-              hefur sérstök tengsl við þann sem ákvörðun eða 
-              athöfn stjórnvalds sem kvörtunin lýtur að er hægt 
-              að kvarta fyrir hans hönd. Þá þarf að koma fram 
-              hver séu tengsl milli þess sem kvartar og þess sem 
-              kvörtunin varðar, t.d. ef um er að ræða foreldri. 
-              Eftir atvikum er líka rétt að senda skriflegt umboð, 
-              t.d. ef vinur gætir hagsmuna þess sem kvörtunin varðar.`,
+          title: complainedFor.decision.title,
+          description: complainedFor.decision.description,
           children: [
             buildRadioField({
               id: 'complainedForDecision.radio',
               title: '',
               options: [
-                { value: 'myself', label: 'Mig' },
-                { value: 'other', label: 'Annan' },
+                {
+                  value: ComplainedForTypes.MYSELF,
+                  label: complainedFor.decision.myselfLabel,
+                },
+                {
+                  value: ComplainedForTypes.SOMEONEELSE,
+                  label: complainedFor.decision.someoneelseLabel,
+                },
               ],
               largeButtons: true,
               width: 'half',
@@ -192,8 +191,14 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
         }),
         buildMultiField({
           id: 'complainedForInformation',
-          title: complainedFor.general.complainedForInformationTitle,
+          title: complainedFor.information.title,
+          condition: (formValue) => {
+            const radio = (formValue.complainedForDecision as FormValue)?.radio
+            return radio === ComplainedForTypes.SOMEONEELSE
+          },
           children: [
+            // TODO: Add required fields to data schema.
+            // First find out what is suppose to be required
             buildTextField({
               id: 'complainedForInformation.name',
               title: information.aboutTheComplainer.name,
@@ -247,13 +252,24 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               width: 'half',
               variant: 'tel',
             }),
+            buildCustomField(
+              {
+                id: 'complainedForInformation.titleField',
+                title: complainedFor.information.fieldTitle,
+                component: 'FieldTitle',
+              },
+              {
+                marginTop: 4,
+              },
+            ),
             buildTextField({
               id: 'complainedForInformation.textarea',
-              title: information.aboutTheComplainer.phone,
-              description: 'hello',
+              title: complainedFor.information.textareaTitle,
+              placeholder: complainedFor.information.textareaPlaceholder,
               backgroundColor: 'blue',
               required: true,
               variant: 'textarea',
+              rows: 6,
             }),
           ],
         }),
