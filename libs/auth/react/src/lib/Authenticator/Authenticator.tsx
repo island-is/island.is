@@ -48,6 +48,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         user = await userManager.signinSilent()
         dispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user })
       } catch (error) {
+        console.error('Authenticator: Silent signin failed', error)
         dispatch({ type: ActionType.SIGNIN_FAILURE })
       }
 
@@ -69,7 +70,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
             }
 
       dispatch({
-        type: ActionType.SIGNIN_START,
+        type: ActionType.SWITCH_USER,
       })
       return userManager.signinRedirect({
         state: history.location.pathname + history.location.search,
@@ -86,9 +87,6 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         type: ActionType.LOGGING_OUT,
       })
       await userManager.signoutRedirect()
-      dispatch({
-        type: ActionType.LOGGED_OUT,
-      })
     },
     [userManager, dispatch],
   )
