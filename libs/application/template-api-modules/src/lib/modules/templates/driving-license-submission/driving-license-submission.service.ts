@@ -6,10 +6,18 @@ import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
-import { User } from '@island.is/api/domains/national-registry'
+import { ChargeResult } from '@island.is/api/domains/payment'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
+}
+
+interface Payment {
+  chargeItemCode: string
+  chargeItemName: string
+  priceAmount: number
+  performingOrgID: string
+  chargeType: string
 }
 
 @Injectable()
@@ -19,10 +27,16 @@ export class DrivingLicenseSubmissionService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
+  async createCharge({
+    application: { id },
+    authorization,
+  }: TemplateApiModuleActionProps) {
+    return this.sharedTemplateAPIService.createCharge(authorization, id)
+  }
+
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     const { answers } = application
     const nationalId = application.applicant
-
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const juristictionId = answers.juristiction
 
