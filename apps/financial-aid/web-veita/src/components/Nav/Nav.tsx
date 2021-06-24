@@ -19,7 +19,7 @@ import { api } from '../../services'
 import { AdminContext } from '../AdminProvider/AdminProvider'
 import { ApplicationsContext } from '../ApplicationsProvider/ApplicationsProvider'
 
-import { navLinks } from '../../utils/formHelper'
+import { navigationElements } from '../../utils/formHelper'
 
 const Nav: React.FC = () => {
   const router = useRouter()
@@ -59,8 +59,7 @@ const Nav: React.FC = () => {
       </header>
 
       <div>
-        {/* //WIP */}
-        {navLinks().map((item: any, index: number) => {
+        {navigationElements.map((item: any, index: number) => {
           return (
             <Link href={item.link} key={'NavigationLinks-' + index}>
               <a
@@ -76,7 +75,7 @@ const Nav: React.FC = () => {
                   <Text fontWeight="semiBold" color="dark300">
                     {
                       applications?.filter((el) =>
-                        item?.state?.includes(el?.state),
+                        item?.applicationState?.includes(el?.state),
                       ).length
                     }
                   </Text>

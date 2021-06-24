@@ -52,38 +52,36 @@ export const getFileType = (fileName: string) => {
   return fileName.substring(fileName.lastIndexOf('.') + 1)
 }
 
+export const navigationElements = [
+  {
+    label: 'Ný mál',
+    link: '/nymal',
+    applicationState: [ApplicationState.NEW],
+    headers: ['Nafn', 'Staða', 'Tími án umsjár', 'Tímabil'],
+  },
+  {
+    label: 'Mál í vinnslu',
+    link: '/vinnslu',
+    applicationState: [ApplicationState.INPROGRESS],
+    headers: ['Nafn', 'Staða', 'Síðast uppfært', 'Tímabil'],
+  },
+  {
+    label: 'Afgreidd mál',
+    link: '/afgreidd',
+    applicationState: [ApplicationState.APPROVED, ApplicationState.REJECTED],
+    headers: ['Nafn', 'Staða', 'Úrlausnartími', 'Tímabil'],
+  },
+]
+
 export const navLinks = (
   filterBy?: 'label' | 'link' | 'applicationState',
   filter?: string | undefined,
 ) => {
-  const links = [
-    {
-      label: 'Ný mál',
-      link: '/nymal',
-      applicationState: [ApplicationState.NEW],
-      headers: ['Nafn', 'Staða', 'Tími án umsjár', 'Tímabil'],
-    },
-    {
-      label: 'Mál í vinnslu',
-      link: '/vinnslu',
-      applicationState: [ApplicationState.INPROGRESS],
-      headers: ['Nafn', 'Staða', 'Síðast uppfært', 'Tímabil'],
-    },
-    {
-      label: 'Afgreidd mál',
-      link: '/afgreidd',
-      applicationState: [ApplicationState.APPROVED, ApplicationState.REJECTED],
-      headers: ['Nafn', 'Staða', 'Úrlausnartími', 'Tímabil'],
-    },
-  ]
-
   if (filterBy === 'applicationState') {
-    return links.filter((i) =>
+    return navigationElements.find((i) =>
       i[filterBy].includes(filter as ApplicationState),
-    )[0]
+    )
   } else if (filterBy) {
-    return links.filter((i) => i[filterBy] === filter)[0]
-  } else {
-    return links
+    return navigationElements.find((i) => i[filterBy] === filter)
   }
 }

@@ -13,24 +13,35 @@ import { ApplicationState, getState } from '@island.is/financial-aid/shared'
 import format from 'date-fns/format'
 
 import {
-  navLinks,
+  navigationElements,
   calcDifferenceInDate,
   translateMonth,
 } from '../../utils/formHelper'
 
 import { ApplicationsContext } from '../../components/ApplicationsProvider/ApplicationsProvider'
 
+export interface NavigationElement {
+  label: string
+  link: string
+  applicationState: ApplicationState[]
+  headers: string[]
+}
+
 export const ApplicationOverview = () => {
   const router = useRouter()
 
   const { applications } = useContext(ApplicationsContext)
+
+  const findCurrentNavigationEl = navigationElements.find(
+    (i) => i.link === router.pathname,
+  )
   //WIP
-  const [currentState, setState] = useState<any>(
-    navLinks('link', router.pathname),
+  const [currentState, setState] = useState<NavigationElement | undefined>(
+    findCurrentNavigationEl,
   )
 
   useEffect(() => {
-    setState(navLinks('link', router.pathname))
+    setState(findCurrentNavigationEl)
   }, [router.pathname])
 
   return (
@@ -57,7 +68,7 @@ export const ApplicationOverview = () => {
                     <Text variant="h5">{GenerateName(item.nationalId)}</Text>
                   </Box>
                 </Box>,
-                <Text> {getState[item.state as ApplicationState]}</Text>,
+                <Text> {getState[item.state]}</Text>,
                 <Text> {calcDifferenceInDate(item.modified)}</Text>,
                 <Text>
                   {translateMonth(format(new Date(item.created), 'M'))}

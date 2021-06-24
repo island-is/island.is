@@ -29,7 +29,7 @@ const ApplicationTable: React.FC<PageProps> = ({
           [`${styles.tableContainer}`]: true,
           [`${className}`]: true,
         })}
-        key={'apps'}
+        key={applications}
       >
         <thead>
           <tr>

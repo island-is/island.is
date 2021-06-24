@@ -31,7 +31,7 @@ import format from 'date-fns/format'
 import {
   calcDifferenceInDate,
   calcAge,
-  navLinks,
+  navigationElements,
   translateMonth,
 } from '../../utils/formHelper'
 
@@ -72,7 +72,11 @@ const ApplicationProfile = () => {
     if (data?.application) {
       setApplicationState(data.application.state)
       //WIP
-      setPrevUrl(navLinks('applicationState', data.application.state))
+      setPrevUrl(
+        navigationElements.find((i) =>
+          i.applicationState.includes(data.application.state),
+        ),
+      )
     }
   }, [data?.application?.state])
 
