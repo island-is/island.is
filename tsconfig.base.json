@@ -85,6 +85,9 @@
       "@island.is/api/domains/icelandic-names-registry": [
         "libs/api/domains/icelandic-names-registry/src/index.ts"
       ],
+      "@island.is/api/domains/identity": [
+        "libs/api/domains/identity/src/index.ts"
+      ],
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
