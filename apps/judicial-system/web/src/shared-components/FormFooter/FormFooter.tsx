@@ -24,7 +24,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
         variant="ghost"
         disabled={props.previousIsDisabled}
         onClick={() => {
-          router.push(props.previousUrl || '')
+          router.push(props.previousUrl ?? '')
         }}
       >
         Til baka

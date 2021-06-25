@@ -9,6 +9,7 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { RskApi } from '@island.is/clients/rsk/v2'
+import uniqBy from 'lodash/uniqBy'
 import type { CompaniesResponse } from '@island.is/clients/rsk/v2'
 import { uuid } from 'uuidv4'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
@@ -22,7 +23,7 @@ import {
   IdentityResource,
 } from '@island.is/auth-api-lib'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import type { Auth } from '@island.is/auth-nest-tools'
+import type { Auth, User } from '@island.is/auth-nest-tools'
 
 import {
   DelegationDTO,
@@ -48,6 +49,16 @@ export class DelegationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
+
+  async findAllTo(user: User, xRoadClient: string): Promise<DelegationDTO[]> {
+    const [wards, companies, custom] = await Promise.all([
+      this.findAllWardsTo(user, xRoadClient),
+      this.findAllCompaniesTo(user.nationalId),
+      this.findAllValidCustomTo(user.nationalId),
+    ])
+
+    return uniqBy([...wards, ...companies, ...custom], 'fromNationalId')
+  }
 
   async findAllWardsTo(
     auth: Auth,
@@ -87,11 +98,7 @@ export class DelegationsService {
           },
       )
     } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error(`Error in findAllWardsTo.\n${error.stack}`)
-      } else {
-        this.logger.error(`Error in findAllWardsTo.\n${JSON.stringify(error)}`)
-      }
+      this.logger.error('Error in findAllWardsTo', error)
     }
 
     return []
@@ -122,13 +129,7 @@ export class DelegationsService {
         }
       }
     } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error(`Error in findAllCompaniesTo.\n${error.stack}`)
-      } else {
-        this.logger.error(
-          `Error in findAllCompaniesTo.\n${JSON.stringify(error)}`,
-        )
-      }
+      this.logger.error('Error in findAllCompaniesTo', error)
     }
 
     return []
@@ -154,7 +155,11 @@ export class DelegationsService {
       ],
     })
 
-    return result.map((d) => d.toDTO())
+    const filtered = result.filter(
+      (x) => x.delegationScopes !== null && x.delegationScopes!.length > 0,
+    )
+
+    return filtered.map((d) => d.toDTO())
   }
 
   async create(
