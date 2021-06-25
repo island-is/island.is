@@ -54,7 +54,6 @@ export const DataLinkSection = ({
           </Box>
         </GridColumn>
       </GridRow>
-
       <GridRow>
         {cards.map((card, index) => {
           return (

@@ -1,21 +1,8 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-import { LinkProps } from 'next/link'
-import {
-  Box,
-  Stack,
-  Text,
-  Tag,
-  Inline,
-  TagProps,
-  FocusableBox,
-  TagVariant,
-  Hyphen,
-} from '@island.is/island-ui/core'
-import { ColorSchemeContext } from '@island.is/web/context'
+import { Box, Stack, Text, Hyphen } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
-import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './FactsCard.treat'
 
@@ -32,39 +19,11 @@ export interface FactsCardProps {
   description: string
 }
 
-export const FactsCard = ({
-  title,
-  subTitle,
-  image,
-  description,
-}: FactsCardProps) => {
-  const { colorScheme } = useContext(ColorSchemeContext)
+export const FactsCard = ({ title, image, description }: FactsCardProps) => {
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 360
   const hasImage = image?.title.length > 0
-
-  let borderColor = null
-  let titleColor = null
-
-  switch (colorScheme) {
-    case 'red':
-      borderColor = 'red200'
-      titleColor = 'red600'
-      break
-    case 'blue':
-      borderColor = 'blue200'
-      titleColor = 'blue400'
-      break
-    case 'purple':
-      borderColor = 'purple200'
-      titleColor = 'purple400'
-      break
-    default:
-      borderColor = 'purple200'
-      titleColor = 'blue400'
-      break
-  }
 
   const items = (
     <Box

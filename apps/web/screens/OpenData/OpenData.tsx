@@ -23,7 +23,7 @@ import { useLinkResolver } from '../../hooks/useLinkResolver'
 const OpenDataPage: Screen = () => {
   const { linkResolver } = useLinkResolver()
 
-  // Hard coded values for now
+  // Hard coded values for the data links cards section, will be removed once connected to contentful
   const cards = [
     {
       title: 'CLARIN á Íslandi',
@@ -129,7 +129,7 @@ const OpenDataPage: Screen = () => {
 
   return (
     <Box id="main-content">
-      <Section aria-labelledby="lifeEventsTitle" background="blue100">
+      <Section aria-labelledby="openDataHeroTitle" background="blue100">
         <GridContainer>
           <GridRow>
             <GridColumn span={['5/12', '5/12', '5/12']}>
@@ -182,15 +182,14 @@ const OpenDataPage: Screen = () => {
           </GridRow>
         </GridContainer>
       </Section>
+      {/* TODO: Will need to change the props so facts card get their data from a query */}
       <Section aria-labelledby="factsCardsTitle">
-        <FactsCardsSection
-          title="Stafrænt Ísland"
-        />
+        <FactsCardsSection title="Stafrænt Ísland" />
       </Section>
       <Section
         paddingTop={[8, 8, 6]}
         paddingBottom={[8, 8, 6]}
-        aria-labelledby="serviceCategoriesTitle"
+        aria-labelledby="dataLinksSection"
       >
         <DataLinkSection
           title={'Opin gögn á Íslandi'}

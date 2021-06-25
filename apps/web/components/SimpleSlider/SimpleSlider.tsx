@@ -2,14 +2,20 @@ import React, {
   useState,
   useRef,
   useEffect,
-  useLayoutEffect,
   TouchEventHandler,
   FC,
   ReactNode,
 } from 'react'
 import cn from 'classnames'
-import { useWindowSize, useMountedState } from 'react-use'
-import { Box, Button, Hidden, Inline, Text } from '@island.is/island-ui/core'
+import { useWindowSize } from 'react-use'
+import {
+  Box,
+  Button,
+  Hidden,
+  Inline,
+  Text,
+  Logo,
+} from '@island.is/island-ui/core'
 
 import * as styles from './SimpleSlider.treat'
 
@@ -27,6 +33,7 @@ interface SimpleSliderProps {
   slideWidthOffset?: SlideState['slideWidthOffset']
   items: ReactNode[]
   carousleContoler?: boolean
+  logo?: boolean
 }
 
 interface SlideState {
@@ -46,6 +53,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
   breakpoints = {},
   title,
   carousleContoler,
+  logo,
 }) => {
   const start = useRef(0)
   const touchDirection = useRef(null)
@@ -174,25 +182,30 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
     >
       {!!title && (
         <Box paddingBottom={4}>
-          <Text variant="h3">{title}</Text>
+          <Inline space={2}>
+            {logo && <Logo width={24} iconOnly />}
+            <Text variant="h3">{title}</Text>
+          </Inline>
         </Box>
       )}
       <Box className={styles.nav}>
-        <Hidden above="sm">
-          <Inline space={2}>
-            {items.map((x, index) => {
-              return (
-                <button
-                  key={index}
-                  className={cn(styles.dot, {
-                    [styles.dotActive]: index === slideState.current,
-                  })}
-                  onClick={() => goTo(index)}
-                />
-              )
-            })}
-          </Inline>
-        </Hidden>
+        {!carousleContoler && (
+          <Hidden above="sm">
+            <Inline space={2}>
+              {items.map((x, index) => {
+                return (
+                  <button
+                    key={index}
+                    className={cn(styles.dot, {
+                      [styles.dotActive]: index === slideState.current,
+                    })}
+                    onClick={() => goTo(index)}
+                  />
+                )
+              })}
+            </Inline>
+          </Hidden>
+        )}
         <Hidden below="md">
           <Inline space={2}>
             <Button
