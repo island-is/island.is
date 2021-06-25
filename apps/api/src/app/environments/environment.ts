@@ -126,6 +126,9 @@ const devConfig = {
     apiUrl: process.env.PKPASS_API_URL,
     secretKey: process.env.PKPASS_SECRET_KEY,
   },
+  audit: {
+    defaultNamespace: '@island.is/api',
+  },
 }
 
 const prodConfig = {
@@ -243,6 +246,11 @@ const prodConfig = {
     apiKey: process.env.PKPASS_API_KEY,
     apiUrl: process.env.PKPASS_API_URL,
     secretKey: process.env.PKPASS_SECRET_KEY,
+  },
+  audit: {
+    defaultNamespace: '@island.is/api',
+    groupName: process.env.AUDIT_GROUP_NAME,
+    serviceName: 'api',
   },
 }
 
