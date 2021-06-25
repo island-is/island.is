@@ -8,7 +8,6 @@ import { User } from '@island.is/auth-nest-tools'
 import {
   GenericUserLicense,
   GenericLicenseTypeType,
-  CONFIG_PROVIDER,
   GENERIC_LICENSE_FACTORY,
   GenericLicenseType,
   GenericLicenseClient,
@@ -21,7 +20,7 @@ import {
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 
-import { AVAILABLE_LICENSES, Config } from './licenseService.module'
+import { AVAILABLE_LICENSES } from './licenseService.module'
 
 const CACHE_KEY = 'licenseService'
 
@@ -40,7 +39,6 @@ export class LicenseServiceService {
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject(CONFIG_PROVIDER) private config: Config,
   ) {}
 
   private async getCachedOrCache(
