@@ -44,7 +44,6 @@ export class PaymentService {
         payment.application_id) as string) +
       this.paymentConfig.callbackAdditionUrl +
       payment.id
-
     const charge: Charge = {
       // TODO: this needs to be unique, but can only handle 22 or 23 chars
       // should probably be an id or token from the DB charge once implemented
