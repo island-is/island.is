@@ -195,7 +195,7 @@ const autoSchemaFile = environment.production
         apiKey: environment.pkpass.apiKey,
         apiUrl: environment.pkpass.apiUrl,
         secretKey: environment.pkpass.secretKey,
-      }
+      },
     }),
   ],
 })

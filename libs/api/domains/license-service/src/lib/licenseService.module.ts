@@ -59,18 +59,16 @@ export class LicenseServiceModule {
         },
         {
           provide: GENERIC_LICENSE_FACTORY,
-          useFactory:
-            () =>
-            async (
-              type: GenericLicenseType,
-            ): Promise<GenericLicenseClient<unknown> | null> => {
-              switch (type) {
-                case GenericLicenseType.DriversLicense:
-                  return new GenericDrivingLicenseApi(config, logger, null)
-                default:
-                  return null
-              }
-            },
+          useFactory: () => async (
+            type: GenericLicenseType,
+          ): Promise<GenericLicenseClient<unknown> | null> => {
+            switch (type) {
+              case GenericLicenseType.DriversLicense:
+                return new GenericDrivingLicenseApi(config, logger, null)
+              default:
+                return null
+            }
+          },
         },
       ],
       exports: [LicenseServiceService],

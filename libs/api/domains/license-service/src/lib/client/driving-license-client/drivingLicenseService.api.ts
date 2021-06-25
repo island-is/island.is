@@ -1,7 +1,7 @@
 import fetch, { Response } from 'node-fetch'
 import * as kennitala from 'kennitala'
-import format from 'date-fns/format';
-import parse from 'date-fns/parse';
+import format from 'date-fns/format'
+import parse from 'date-fns/parse'
 import { Cache as CacheManager } from 'cache-manager'
 import { Injectable, Inject, CACHE_MANAGER } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
@@ -38,8 +38,7 @@ const dateToPkpassDate = (date: string): string => {
 
 @Injectable()
 export class GenericDrivingLicenseApi
-  implements GenericLicenseClient<GenericDrivingLicenseResponse>
-{
+  implements GenericLicenseClient<GenericDrivingLicenseResponse> {
   private readonly xroadApiUrl: string
   private readonly xroadClientId: string
   private readonly xroadPath: string

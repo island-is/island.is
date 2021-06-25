@@ -89,7 +89,7 @@ const generatePkPassMutation = gql`
       pkpassUrl
     }
   }
-`;
+`
 
 const DataFields = ({ fields }: { fields: GenericLicenseDataField[] }) => {
   if (!fields || fields.length === 0) {
@@ -135,17 +135,14 @@ type LicenseProps = {
 const License = ({ licenseType }: LicenseProps) => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
-  const { data, loading: queryLoading } = useQuery<Query>(
-    GenericLicenseQuery,
-    {
-      variables: {
-        locale,
-        input: {
-          licenseType,
-        },
+  const { data, loading: queryLoading } = useQuery<Query>(GenericLicenseQuery, {
+    variables: {
+      locale,
+      input: {
+        licenseType,
       },
     },
-  )
+  })
 
   const { genericLicense = null } = data ?? {}
 
@@ -153,11 +150,8 @@ const License = ({ licenseType }: LicenseProps) => {
     return <SkeletonLoader width="100%" height={158} />
   }
 
-  return (
-    <DataFields fields={genericLicense?.payload?.data ?? []} />
-  )
+  return <DataFields fields={genericLicense?.payload?.data ?? []} />
 }
-
 
 type PkPassProps = {
   licenseType: string
@@ -167,9 +161,7 @@ const PkPass = ({ licenseType }: PkPassProps) => {
   const [pkpass, setPkpass] = useState<string | null>(null)
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
-  const [generatePkPass, { loading }] = useMutation(
-    generatePkPassMutation,
-  )
+  const [generatePkPass, { loading }] = useMutation(generatePkPassMutation)
 
   const onClick = async () => {
     const response = await generatePkPass({
@@ -244,11 +236,11 @@ const LicenseCards = () => {
           </dl>
           <>
             <h2>Gögn skilríkis</h2>
-            {showLicense && (
-              <License licenseType={license.license.type} />
-            )}
+            {showLicense && <License licenseType={license.license.type} />}
             {!showLicense && (
-              <Button onClick={() => setShowLicense(true)}>Sækja skilríki</Button>
+              <Button onClick={() => setShowLicense(true)}>
+                Sækja skilríki
+              </Button>
             )}
           </>
           <>
@@ -256,9 +248,7 @@ const LicenseCards = () => {
             {license.license.pkpass && (
               <PkPass licenseType={license.license.type} />
             )}
-            {!license.license.pkpass && (
-              <p>Skírteini hefur ekki pkpass</p>
-            )}
+            {!license.license.pkpass && <p>Skírteini hefur ekki pkpass</p>}
           </>
         </Box>
       ))}
