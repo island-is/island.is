@@ -11,23 +11,30 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
+import { AuditService } from '@island.is/nest/audit'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class DocumentResolver {
-  constructor(private documentService: DocumentService) {}
+  constructor(
+    private documentService: DocumentService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @Query(() => DocumentDetails, { nullable: true })
   async getDocument(
     @Args('input') input: GetDocumentInput,
     @CurrentUser() user: User,
   ): Promise<DocumentDetails> {
-    const result = await this.documentService.findByDocumentId(
-      user.nationalId,
-      input.id,
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace: '@island.is/api/document',
+        action: 'getDocument',
+        resources: input.id,
+      },
+      this.documentService.findByDocumentId(user.nationalId, input.id),
     )
-
-    return result
   }
 
   @Query(() => [Document], { nullable: true })
