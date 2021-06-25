@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   AsyncSearchInput,
   Box,
   Button,
-  Link,
   Text,
+  Link,
 } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import {
@@ -17,14 +17,14 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
 
 interface SearchBoxProps {
-  organization: string
+  organizationPage: Query['getOrganizationPage']
   placeholder: string
   noResultsText: string
   searchAllText: string
 }
 
 export const SearchBox = ({
-  organization,
+  organizationPage,
   placeholder,
   noResultsText,
   searchAllText,
@@ -38,12 +38,37 @@ export const SearchBox = ({
       variables: {
         input: {
           lang: 'is',
-          organization,
+          organization: organizationPage.slug,
           size: 500,
           sort: SortField.Popular,
         },
       },
     },
+  )
+
+  const items = useMemo(
+    () =>
+      data?.getArticles
+        .map((o) => ({
+          type: 'article',
+          label: o.title,
+          value: o.slug,
+        }))
+        .concat(
+          ...organizationPage.menuLinks.map((x) => [
+            {
+              type: 'url',
+              label: x.primaryLink.text,
+              value: x.primaryLink.url,
+            },
+            ...x.childrenLinks.map((y) => ({
+              type: 'url',
+              label: y.text,
+              value: y.url,
+            })),
+          ]),
+        ) ?? [],
+    [data],
   )
 
   const [value, setValue] = useState('')
@@ -52,12 +77,11 @@ export const SearchBox = ({
   const [hasFocus, setHasFocus] = useState(false)
 
   useEffect(() => {
-    const newOpts = data?.getArticles
-      ?.filter(
+    const newOpts = items
+      .filter(
         (item) =>
-          value && item.title.toLowerCase().includes(value.toLowerCase()),
+          value && item.label.toLowerCase().includes(value.toLowerCase()),
       )
-      .map((o) => ({ label: o.title, value: o.slug }))
       .slice(0, 5)
 
     if (!value) {
@@ -99,7 +123,11 @@ export const SearchBox = ({
                 <Box paddingY={1}>
                   <Link
                     key={x.value}
-                    href={linkResolver('Article' as LinkType, [x.value]).href}
+                    href={
+                      x.type === 'url'
+                        ? x.value
+                        : linkResolver('Article' as LinkType, [x.value]).href
+                    }
                     underline="normal"
                   >
                     <Text key={x.value} as="span">
