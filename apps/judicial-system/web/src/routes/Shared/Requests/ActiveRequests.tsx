@@ -40,17 +40,17 @@ const ActiveRequests: React.FC<Props> = (props) => {
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
   useMemo(() => {
-    const sortedCases = cases || []
+    const sortedCases = cases ?? []
 
     if (sortConfig) {
       sortedCases.sort((a: Case, b: Case) => {
         // Credit: https://stackoverflow.com/a/51169
         return sortConfig.direction === 'ascending'
           ? ('' + a[sortConfig.key]).localeCompare(
-              b[sortConfig.key]?.toString() || '',
+              b[sortConfig.key]?.toString() ?? '',
             )
           : ('' + b[sortConfig.key]).localeCompare(
-              a[sortConfig.key]?.toString() || '',
+              a[sortConfig.key]?.toString() ?? '',
             )
       })
     }

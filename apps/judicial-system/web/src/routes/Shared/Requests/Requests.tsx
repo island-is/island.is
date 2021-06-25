@@ -130,9 +130,16 @@ export const Requests: React.FC = () => {
     ) {
       router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`)
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
-      router.push(
-        `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${caseToOpen.id}`,
-      )
+      if (
+        caseToOpen.type === CaseType.CUSTODY ||
+        caseToOpen.type === CaseType.TRAVEL_BAN
+      ) {
+        router.push(
+          `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${caseToOpen.id}`,
+        )
+      } else {
+        router.push(`${Constants.IC_OVERVIEW_ROUTE}/${caseToOpen.id}`)
+      }
     } else {
       if (
         caseToOpen.type === CaseType.CUSTODY ||
@@ -140,7 +147,7 @@ export const Requests: React.FC = () => {
       ) {
         router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
       } else {
-        router.push(`${Constants.R_CASE_DEFENDANT_ROUTE}/${caseToOpen.id}`)
+        router.push(`${Constants.IC_DEFENDANT_ROUTE}/${caseToOpen.id}`)
       }
     }
   }
@@ -166,7 +173,7 @@ export const Requests: React.FC = () => {
                         title: 'Farbann',
                       },
                       {
-                        href: Constants.NEW_R_CASE_ROUTE,
+                        href: Constants.NEW_IC_ROUTE,
                         title: 'Rannsóknarheimild',
                       },
                     ]
