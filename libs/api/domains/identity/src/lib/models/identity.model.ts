@@ -9,6 +9,7 @@ import {
 } from '@nestjs/graphql'
 
 import { NationalRegistryUser } from '@island.is/api/domains/national-registry'
+import type { GraphQLContext } from '@island.is/auth-nest-tools'
 
 import { IdentityType } from '../identity.type'
 import { Address } from './address.model'
@@ -41,8 +42,8 @@ export class Identity {
   type!: IdentityType
 }
 
-const validateIf = ({ context, source }: MiddlewareContext): boolean => {
-  return (context as any).req.user.nationalId !== source.nationalId
+const isExternalUser = ({ context, source }: MiddlewareContext): boolean => {
+  return (context as GraphQLContext).req.user.nationalId !== source.nationalId
 }
 
 @Extensions({
