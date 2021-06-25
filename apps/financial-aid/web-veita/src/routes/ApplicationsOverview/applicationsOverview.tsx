@@ -33,11 +33,13 @@ export const ApplicationsOverview = () => {
 
   const { applications } = useContext(ApplicationsContext)
 
+  // Todo ekki el
   const findCurrentNavigationEl = navigationElements.find(
     (i) => i.link === router.pathname,
   )
 
   if (findCurrentNavigationEl) {
+    // Todo do we need this state? could be a function?
     const [
       currentNavigationEl,
       setCurrentNavigationEl,
@@ -59,7 +61,7 @@ export const ApplicationsOverview = () => {
           <ApplicationsTable
             className={`contentUp delay-50`}
             key={currentNavigationEl.link}
-            header={currentNavigationEl.headers}
+            header={currentNavigationEl.headers} // Todo headers?
             applications={applications
               .filter((item) =>
                 currentNavigationEl?.applicationState.includes(item?.state),

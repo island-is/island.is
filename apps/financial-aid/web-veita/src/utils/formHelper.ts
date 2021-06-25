@@ -6,17 +6,22 @@ import { ApplicationState } from '@island.is/financial-aid/shared'
 
 export const calcDifferenceInDate = (dateCreated: string | undefined) => {
   if (dateCreated) {
-    if (differenceInMinutes(new Date(), new Date(dateCreated)) < 60) {
-      return differenceInMinutes(new Date(), new Date(dateCreated)) + ' min'
+    const minutes = differenceInMinutes(new Date(), new Date(dateCreated))
+
+    if (minutes < 60) {
+      return `${minutes} min`
     }
+    // Todo: fix rest
     if (differenceInHours(new Date(), new Date(dateCreated)) < 24) {
       return differenceInHours(new Date(), new Date(dateCreated)) + ' klst'
-    } else {
-      return differenceInDays(new Date(), new Date(dateCreated)) + ' dagar'
     }
+
+    // Todo: check if it ends with 1 lol
+    return differenceInDays(new Date(), new Date(dateCreated)) + ' dagar'
   }
 }
 
+// Todo use int
 export const translateMonth = (mon: string) => {
   const months = [
     'Janúar',
@@ -32,26 +37,30 @@ export const translateMonth = (mon: string) => {
     'Nóvember',
     'Desember',
   ]
-  return months.filter((el, i) => i == parseInt(mon) - 1)[0]
+
+  return months[parseInt(mon) - 1]
 }
 
 export const calcAge = (ssn: string) => {
   const year = ssn.substring(4, 6)
   const significant = ssn.substring(9, 10)
 
-  let birtDay = new Date(
+  let birthDay = new Date(
     Number(`${Number(significant) < 8 ? '2' : '1'}${significant}${year}`),
     Number(ssn.substring(2, 4)) - 1,
     Number(ssn.substring(0, 2)),
   )
 
-  return differenceInYears(new Date(), birtDay)
+  return differenceInYears(new Date(), birthDay)
 }
 
 export const getFileType = (fileName: string) => {
+  // Todo: hande no file type?
+
   return fileName.substring(fileName.lastIndexOf('.') + 1)
 }
 
+// Navigation items?
 export const navigationElements = [
   {
     label: 'Ný mál',
@@ -83,7 +92,5 @@ export const getTagByState = (state: ApplicationState) => {
       return 'approved'
     case ApplicationState.REJECTED:
       return 'outDatedOrDenied'
-    default:
-      return 'new'
   }
 }
