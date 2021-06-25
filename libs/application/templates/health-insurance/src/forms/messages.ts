@@ -515,7 +515,7 @@ export const m = defineMessages({
   externalDataCheckbox: {
     id: 'hi.application:externalDataCheckbox',
     defaultMessage: 'Ég skil að ofangreindra gagna verður aflað',
-    description: 'I understand that the data mentioned above will be obtained',
+    description: 'I understand that the above data will be collected',
   },
   externalDataSubtitle: {
     id: 'hi.application:externalDataSubtitle',
