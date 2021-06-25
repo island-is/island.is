@@ -91,7 +91,7 @@ export const RulingStepOne: React.FC = () => {
           theCase.id,
           parseArray(
             'custodyRestrictions',
-            theCase.requestedCustodyRestrictions || [],
+            theCase.requestedCustodyRestrictions ?? [],
           ),
         )
       }
@@ -128,7 +128,7 @@ export const RulingStepOne: React.FC = () => {
     ) {
       updateCase(
         workingCase.id,
-        parseString('ruling', workingCase.parentCase.ruling || ''),
+        parseString('ruling', workingCase.parentCase.ruling ?? ''),
       )
       setWorkingCase({
         ...workingCase,
@@ -166,12 +166,12 @@ export const RulingStepOne: React.FC = () => {
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <AccordionItem
                   id="caseFileList"
-                  label={`Rannsóknargögn (${workingCase.files?.length || 0})`}
+                  label={`Rannsóknargögn (${workingCase.files?.length ?? 0})`}
                   labelVariant="h3"
                 >
                   <CaseFileList
                     caseId={workingCase.id}
-                    files={workingCase.files || []}
+                    files={workingCase.files ?? []}
                     canOpenFiles={
                       workingCase.judge !== null &&
                       workingCase.judge?.id === user?.id
@@ -279,6 +279,17 @@ export const RulingStepOne: React.FC = () => {
                 <Decision
                   workingCase={workingCase}
                   setWorkingCase={setWorkingCase}
+                  acceptedLabelText={`Krafa um ${
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann'
+                  } samþykkt`}
+                  rejectedLabelText={`Kröfu um ${
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann'
+                  } hafnað`}
+                  partiallyAcceptedLabelText="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
                 />
               </Box>
             </Box>
@@ -411,7 +422,7 @@ export const RulingStepOne: React.FC = () => {
                 !workingCase.courtCaseFacts ||
                 !workingCase.courtLegalArguments ||
                 !workingCase.decision ||
-                !validate(workingCase.ruling || '', 'empty').isValid ||
+                !validate(workingCase.ruling ?? '', 'empty').isValid ||
                 (workingCase.decision !== CaseDecision.REJECTING &&
                   (!validToDateIsValid || !isolationToIsValid))
               }

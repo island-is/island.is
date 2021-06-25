@@ -80,7 +80,7 @@ export const HearingArrangements: React.FC = () => {
     },
   )
 
-  const judges = (userData?.users || [])
+  const judges = (userData?.users ?? [])
     .filter(
       (user: User) =>
         user.role === UserRole.JUDGE &&
@@ -90,7 +90,7 @@ export const HearingArrangements: React.FC = () => {
       return { label: judge.name, value: judge.id }
     })
 
-  const registrars = (userData?.users || [])
+  const registrars = (userData?.users ?? [])
     .filter(
       (user: User) =>
         user.role === UserRole.REGISTRAR &&
@@ -132,15 +132,15 @@ export const HearingArrangements: React.FC = () => {
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
       {
-        value: workingCase?.courtRoom || '',
+        value: workingCase?.courtRoom ?? '',
         validations: ['empty'],
       },
       {
-        value: workingCase?.defenderEmail || '',
+        value: workingCase?.defenderEmail ?? '',
         validations: ['email-format'],
       },
       {
-        value: workingCase?.defenderPhoneNumber || '',
+        value: workingCase?.defenderPhoneNumber ?? '',
         validations: ['phonenumber'],
       },
     ]

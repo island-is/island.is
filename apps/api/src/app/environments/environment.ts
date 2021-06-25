@@ -121,6 +121,9 @@ const devConfig = {
   partyLetterRegistry: {
     baseApiUrl: 'http://localhost:4251',
   },
+  audit: {
+    defaultNamespace: '@island.is/api',
+  },
 }
 
 const prodConfig = {
@@ -233,6 +236,11 @@ const prodConfig = {
   },
   partyLetterRegistry: {
     baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
+  },
+  audit: {
+    defaultNamespace: '@island.is/api',
+    groupName: process.env.AUDIT_GROUP_NAME,
+    serviceName: 'api',
   },
 }
 

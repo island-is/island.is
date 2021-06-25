@@ -61,6 +61,7 @@ export const ExtendCaseMutation = gql`
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
+      defenderIsSpokesperson
       court {
         id
         type
@@ -92,6 +93,7 @@ export const ExtendCaseMutation = gql`
         name
       }
       courtCaseNumber
+      sessionArrangements
       courtDate
       courtRoom
       courtStartDate
@@ -112,7 +114,7 @@ export const ExtendCaseMutation = gql`
       custodyRestrictions
       otherRestrictions
       isolationToDate
-      additionToConclusion
+      conclusion
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision

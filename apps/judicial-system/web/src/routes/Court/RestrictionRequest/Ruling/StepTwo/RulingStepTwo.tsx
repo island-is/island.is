@@ -21,7 +21,6 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseType,
-  CaseGender,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -137,13 +136,13 @@ export const RulingStepTwo: React.FC = () => {
                 <BlueBox>
                   <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
                   <Input
-                    name="additionToConclusion"
+                    name="conclusion"
                     label="Bæta texta við úrskurðarorð"
                     placeholder="Hér er hægt að bæta texta við úrskurðarorð eftir þörfum"
-                    defaultValue={workingCase?.additionToConclusion}
+                    defaultValue={workingCase?.conclusion}
                     onChange={(event) =>
                       removeTabsValidateAndSet(
-                        'additionToConclusion',
+                        'conclusion',
                         event,
                         [],
                         workingCase,
@@ -152,7 +151,7 @@ export const RulingStepTwo: React.FC = () => {
                     }
                     onBlur={(event) =>
                       validateAndSendToServer(
-                        'additionToConclusion',
+                        'conclusion',
                         event.target.value,
                         [],
                         workingCase,
@@ -182,9 +181,7 @@ export const RulingStepTwo: React.FC = () => {
                   <Box marginBottom={2}>
                     <Text as="h4" variant="h4">
                       {capitalize(
-                        formatAccusedByGender(
-                          workingCase.accusedGender || CaseGender.OTHER,
-                        ),
+                        formatAccusedByGender(workingCase.accusedGender),
                       )}{' '}
                       <Text as="span" color="red600" fontWeight="semiBold">
                         *
@@ -195,12 +192,10 @@ export const RulingStepTwo: React.FC = () => {
                     <GridRow>
                       <GridColumn span="6/12">
                         <RadioButton
-                          name="accused-appeal-decition"
+                          name="accused-appeal-decision"
                           id="accused-appeal"
                           label={`${capitalize(
-                            formatAccusedByGender(
-                              workingCase.accusedGender || CaseGender.OTHER,
-                            ),
+                            formatAccusedByGender(workingCase.accusedGender),
                           )} kærir úrskurðinn`}
                           value={CaseAppealDecision.APPEAL}
                           checked={
@@ -227,12 +222,10 @@ export const RulingStepTwo: React.FC = () => {
                       </GridColumn>
                       <GridColumn span="6/12">
                         <RadioButton
-                          name="accused-appeal-decition"
+                          name="accused-appeal-decision"
                           id="accused-accept"
                           label={`${capitalize(
-                            formatAccusedByGender(
-                              workingCase.accusedGender || CaseGender.OTHER,
-                            ),
+                            formatAccusedByGender(workingCase.accusedGender),
                           )} unir úrskurðinum`}
                           value={CaseAppealDecision.ACCEPT}
                           checked={
@@ -263,12 +256,10 @@ export const RulingStepTwo: React.FC = () => {
                     <GridRow>
                       <GridColumn span="7/12">
                         <RadioButton
-                          name="accused-appeal-decition"
+                          name="accused-appeal-decision"
                           id="accused-postpone"
                           label={`${capitalize(
-                            formatAccusedByGender(
-                              workingCase.accusedGender || CaseGender.OTHER,
-                            ),
+                            formatAccusedByGender(workingCase.accusedGender),
                           )}  tekur sér lögboðinn frest`}
                           value={CaseAppealDecision.POSTPONE}
                           checked={
@@ -300,8 +291,8 @@ export const RulingStepTwo: React.FC = () => {
                     name="accusedAppealAnnouncement"
                     data-testid="accusedAppealAnnouncement"
                     label={`Yfirlýsing um kæru ${formatAccusedByGender(
-                      workingCase.accusedGender || CaseGender.OTHER,
-                      NounCases.DATIVE,
+                      workingCase.accusedGender,
+                      NounCases.GENITIVE,
                     )}`}
                     defaultValue={workingCase.accusedAppealAnnouncement}
                     disabled={
@@ -346,7 +337,7 @@ export const RulingStepTwo: React.FC = () => {
                     <GridRow>
                       <GridColumn span="6/12">
                         <RadioButton
-                          name="prosecutor-appeal-decition"
+                          name="prosecutor-appeal-decision"
                           id="prosecutor-appeal"
                           label="Sækjandi kærir úrskurðinn"
                           value={CaseAppealDecision.APPEAL}
@@ -375,7 +366,7 @@ export const RulingStepTwo: React.FC = () => {
                       </GridColumn>
                       <GridColumn span="6/12">
                         <RadioButton
-                          name="prosecutor-appeal-decition"
+                          name="prosecutor-appeal-decision"
                           id="prosecutor-accept"
                           label="Sækjandi unir úrskurðinum"
                           value={CaseAppealDecision.ACCEPT}
@@ -408,7 +399,7 @@ export const RulingStepTwo: React.FC = () => {
                     <GridRow>
                       <GridColumn span="7/12">
                         <RadioButton
-                          name="prosecutor-appeal-decition"
+                          name="prosecutor-appeal-decision"
                           id="prosecutor-postpone"
                           label="Sækjandi tekur sér lögboðinn frest"
                           value={CaseAppealDecision.POSTPONE}
