@@ -46,8 +46,8 @@ export class IdentityResolver {
     } as Identity
   }
 
-  @ResolveField('name')
-  resolveName(@Parent() identity: Identity & NationalRegistryUser) {
+  @ResolveField('name', () => String)
+  resolveName(@Parent() identity: Identity & NationalRegistryUser): string {
     if (identity.type === IdentityType.Person) {
       return identity.fullName
     }

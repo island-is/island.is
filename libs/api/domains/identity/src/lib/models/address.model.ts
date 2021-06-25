@@ -1,13 +1,7 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('IdentityAddress')
 export class Address {
-  @Field(() => ID)
-  code!: string
-
-  @Field(() => String, { nullable: true })
-  lastUpdated?: string
-
   @Field(() => String, { nullable: true })
   streetAddress?: string
 
