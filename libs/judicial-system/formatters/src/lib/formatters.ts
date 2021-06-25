@@ -129,7 +129,7 @@ export function formatAccusedByGender(
   isInvestigationCase?: boolean,
 ) {
   if (isInvestigationCase) {
-    return 'varnaraðili'
+    return nounCase === NounCases.NOMINATIVE ? 'varnaraðili' : 'varnaraðila'
   } else {
     switch (accusedGender) {
       case CaseGender.MALE:
