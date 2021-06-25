@@ -181,5 +181,3 @@ export class EndorsementController {
     return
   }
 }
-
-// TODO: Make bulk import return national ids that failed to upload maybe (success message {succeeded: string[], failed: string[]})
