@@ -16,18 +16,18 @@ export class PaymentAPI extends RESTDataSource {
     private readonly options: PaymentServiceOptions,
   ) {
     super()
-    const { XROAD_BASE_URL, XROAD_PROVIDER_ID } = this.options
-    this.baseURL = `${XROAD_BASE_URL}/r1/${XROAD_PROVIDER_ID}/catalog/`
+    const { xRoadBaseUrl, xRoadProviderId } = this.options
+    this.baseURL = `${xRoadBaseUrl}/r1/${xRoadProviderId}/catalog/`
     this.initialize({} as DataSourceConfig<any>)
   }
 
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
-    request.headers.set('X-Road-Client', this.options.XROAD_CLIENT_ID)
+    request.headers.set('X-Road-Client', this.options.xRoadClientId)
     request.headers.set(
       'Authorization',
       `Basic ${Base64.encode(
-        `${this.options.PAYMENT_USERNAME}:${this.options.PAYMENT_PASSWORD}`,
+        `${this.options.username}:${this.options.password}`,
       )}`,
     )
   }

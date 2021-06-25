@@ -30,7 +30,7 @@ export class PaymentService {
   }
 
   private makePaymentUrl(docNum: string): string {
-    return `${this.paymentConfig.ARK_BASE_URL}/quickpay/pay?doc_num=${docNum}`
+    return `${this.paymentConfig.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
   }
 
   async createCharge(
@@ -40,11 +40,11 @@ export class PaymentService {
     // TODO: island.is x-road service path for callback.. ??
     // this can actually be a fixed url
     const callbackUrl =
-      ((this.paymentConfig.CALLBACK_BASE_URL +
+      ((this.paymentConfig.callbackBaseUrl +
         payment.application_id) as string) +
-      this.paymentConfig.CALLBACK_ADDITION_URL +
+      this.paymentConfig.callbackAdditionUrl +
       payment.id
-
+    console.log('payment service === ' + JSON.stringify(payment))
     const charge: Charge = {
       // TODO: this needs to be unique, but can only handle 22 or 23 chars
       // should probably be an id or token from the DB charge once implemented
