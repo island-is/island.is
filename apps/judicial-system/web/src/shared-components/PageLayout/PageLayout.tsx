@@ -22,7 +22,8 @@ import {
   getCourtSections,
   getCustodyAndTravelBanProsecutorSection,
   getExtenstionSections,
-  getRCaseProsecutorSection,
+  getInvestigationCaseCourtSections,
+  getInvestigationCaseProsecutorSection,
 } from './Sections'
 
 interface PageProps {
@@ -85,8 +86,10 @@ const PageLayout: React.FC<PageProps> = ({
           caseType,
           activeSubSection,
         )
-      : getRCaseProsecutorSection(caseId, activeSubSection),
-    getCourtSections(caseId, activeSubSection),
+      : getInvestigationCaseProsecutorSection(caseId, activeSubSection),
+    caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+      ? getCourtSections(caseId, activeSubSection)
+      : getInvestigationCaseCourtSections(caseId, activeSubSection),
     {
       name: caseResult(),
     },
