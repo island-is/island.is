@@ -130,9 +130,9 @@ async function migrateBootstrap() {
 }
 
 //export default async () => {
- migrateBootstrap().catch((error) => {
-    logger.error('ERROR: ', error)
-    // take down container on error to prevent this search indexer from going live
-    throw error
-  })
+migrateBootstrap().catch((error) => {
+  logger.error('ERROR: ', error)
+  // take down container on error to prevent this search indexer from going live
+  throw error
+})
 //}

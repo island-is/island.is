@@ -13,7 +13,10 @@ import {
   TagVariant,
   Hyphen,
 } from '@island.is/island-ui/core'
-import { ColorSchemeContext, BackgroundSchemeContext } from '@island.is/web/context'
+import {
+  ColorSchemeContext,
+  BackgroundSchemeContext,
+} from '@island.is/web/context'
 import { BackgroundImage } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 

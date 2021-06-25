@@ -6,7 +6,7 @@ import {
   GridContainer,
   Box,
 } from '@island.is/island-ui/core'
-import { BackgroundSchemeContext} from '../../context'
+import { BackgroundSchemeContext } from '../../context'
 import { BackgroundImage, Card } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
@@ -43,14 +43,13 @@ export const DataLinkSection = ({
           <Text paddingBottom={4}>{description}</Text>
         </GridColumn>
         <GridColumn span={['6/12', '6/12', '6/12']}>
-          <Box
-          width='full'>
+          <Box width="full">
             <BackgroundImage
-            width={600}
-            positionX='right'
-            backgroundSize="contain"
-            image={image}
-          />
+              width={600}
+              positionX="right"
+              backgroundSize="contain"
+              image={image}
+            />
           </Box>
         </GridColumn>
       </GridRow>
@@ -62,7 +61,9 @@ export const DataLinkSection = ({
               span={['12/12', '6/12', '6/12', '4/12']}
               paddingBottom={3}
             >
-              <BackgroundSchemeContext.Provider value={{ backgroundScheme: 'blue' }}>
+              <BackgroundSchemeContext.Provider
+                value={{ backgroundScheme: 'blue' }}
+              >
                 <Card {...card} />
               </BackgroundSchemeContext.Provider>
             </GridColumn>

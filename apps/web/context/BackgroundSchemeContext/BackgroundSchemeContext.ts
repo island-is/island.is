@@ -6,8 +6,10 @@ export interface BackgroundSchemeInterface {
   backgroundScheme: BackgroundSchemes
 }
 
-export const BackgroundSchemeContext = createContext<BackgroundSchemeInterface>({
-  backgroundScheme: 'white',
-})
+export const BackgroundSchemeContext = createContext<BackgroundSchemeInterface>(
+  {
+    backgroundScheme: 'white',
+  },
+)
 
 export default BackgroundSchemeContext
