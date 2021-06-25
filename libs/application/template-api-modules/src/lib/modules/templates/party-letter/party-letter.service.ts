@@ -6,7 +6,32 @@ import {
   generateApplicationRejectedEmail,
   generateApplicationApprovedEmail,
 } from './emailGenerators'
-import { getSlugFromType } from '@island.is/application/core'
+
+const CLOSE_ENDORSEMENT = `
+  mutation EndorsementSystemCloseEndorsementList($input: FindEndorsementListInput!) {
+    endorsementSystemCloseEndorsementList(input: $input) {
+      id
+      closedDate
+    }
+  }
+`
+
+const OPEN_ENDORSEMENT = `
+  mutation EndorsementSystemOpenEndorsementList($input: FindEndorsementListInput!) {
+    endorsementSystemOpenEndorsementList(input: $input) {
+      id
+      closedDate
+    }
+  }
+`
+
+const CREATE_ENDORSEMENT_LIST_QUERY = `
+  mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
+    endorsementSystemCreateEndorsementList(input: $input) {
+      id
+    }
+  }
+`
 
 type ErrorResponse = {
   errors: {
@@ -43,60 +68,58 @@ export class PartyLetterService {
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
-    const CLOSE_ENDORSEMENT = `
-    mutation {
-      endorsementSystemCloseEndorsementList(input: {
-        listId: "${
-          (application.externalData?.createEndorsementList.data as any).id
-        }",
-      }) {
-        id
-        closedDate
-      }
-    }
-  `
-    const endorsementId: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CLOSE_ENDORSEMENT)
-      .then((response) => response.json())
+    const listId = (application.externalData?.createEndorsementList.data as any)
+      .id
 
-    if ('errors' in endorsementId) {
-      throw new Error('Failed to close endorsement list')
-    }
-
-    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      generateAssignMinistryOfJusticeApplicationEmail,
-      application,
-    )
+    return this.sharedTemplateAPIService
+      .makeGraphqlQuery(authorization, CLOSE_ENDORSEMENT, {
+        input: {
+          listId,
+        },
+      })
+      .then((res) => {
+        return res.json()
+      })
+      .then(async (json) => {
+        if (json.errors) {
+          throw new Error('Failed to close endorsement list')
+        }
+        if (json.data) {
+          await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+            generateAssignMinistryOfJusticeApplicationEmail,
+            application,
+          )
+        }
+      })
   }
 
   async applicationRejected({
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
-    const OPEN_ENDORSEMENT = `
-      mutation {
-        endorsementSystemOpenEndorsementList(input: {
-          listId: "${
-            (application.externalData?.createEndorsementList.data as any).id
-          }",
-        }) {
-          id
-          closedDate
+    const listId = (application.externalData?.createEndorsementList.data as any)
+      .id
+
+    return this.sharedTemplateAPIService
+      .makeGraphqlQuery(authorization, OPEN_ENDORSEMENT, {
+        input: {
+          listId,
+        },
+      })
+      .then((res) => {
+        return res.json()
+      })
+      .then(async (json) => {
+        if (json.errors) {
+          throw new Error('Failed to open endorsement list')
         }
-      }
-    `
-    const endorsementId: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, OPEN_ENDORSEMENT)
-      .then((response) => response.json())
-
-    if ('errors' in endorsementId) {
-      throw new Error('Failed to open endorsement list')
-    }
-
-    await this.sharedTemplateAPIService.sendEmail(
-      generateApplicationRejectedEmail,
-      application,
-    )
+        if (json.data) {
+          await this.sharedTemplateAPIService.sendEmail(
+            generateApplicationRejectedEmail,
+            application,
+          )
+        }
+      })
   }
 
   async applicationApproved({ application }: TemplateApiModuleActionProps) {
@@ -110,15 +133,6 @@ export class PartyLetterService {
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
-    const CREATE_ENDORSEMENT_LIST_QUERY = `
-      mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
-        endorsementSystemCreateEndorsementList(input: $input) {
-          id
-        }
-      }
-    `
-    const applicationSlug = getSlugFromType(application.typeId) as string
-
     const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
         input: {
@@ -136,7 +150,7 @@ export class PartyLetterService {
           ],
           meta: {
             // to be able to link back to this application
-            applicationTypeId: applicationSlug,
+            applicationTypeId: application.typeId,
             applicationId: application.id,
           },
         },
