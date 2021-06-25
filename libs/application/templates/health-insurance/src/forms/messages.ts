@@ -26,7 +26,7 @@ export const m = defineMessages({
     defaultMessage:
       'Upplýsingar um nafn, kennitölu og heimilisfang <br>Upplýsingar um börn og maka <br>Upplýsingar um síðasta búsetuland <br>Upplýsingar um hvernær viðkomandi var skráður í landið',
     description:
-      'Registers Iceland is the Icelandic State’s base registry. It records certain basic information on all persons who are or have been domiciled in Iceland and Icelandic citizens residing abroad, as well as any changes to their status.',
+      'Info about name, national id and address <br>Information about children and spouse <br>Information about the last country of residence <br>Information on when the person was registered in the country.',
   },
   directorateOfLaborTitle: {
     id: 'hi.application:externalData.directorateOfLabor.title',
@@ -38,7 +38,7 @@ export const m = defineMessages({
     defaultMessage:
       'Upplýsingar um atvinnuleysisbætur <br>Upplýsingar um atvinnuleysisbætur erlendis (U2 vottorð) <br>Upplýsingar um brottför frá öðru landi til Íslands: Réttur til atvinnuleysisbóta (U1 vottorð)',
     description:
-      'The Directorate of Labour bears overall responsibility for public labour exchanges and handles day-to-day operations of the Unemployment Insurance Fund, the Maternity and Paternity Leave Fund and the Wage Guarantee Fund.',
+      'Information on unemployment benefits <br>Information on unemployment benefits abroad (U2 certificate) <br>Information on departure from another country to Iceland: Entitlement to unemployment benefits (U1 certificate)',
   },
   internalRevenueTitle: {
     id: 'hi.application:externalData.internalRevenue.title',
@@ -50,7 +50,7 @@ export const m = defineMessages({
     defaultMessage:
       'Upplýsingar um skattgreiðslur (mán/ár)<br>Nafn atvinnurekanda',
     description:
-      'Handles the collection of taxes and duties as well as oversees the legitimacy of tax returns. The Directorate of Internal Revenue also plays a multifaceted customs role at the border and provides society with protection against illegal import and export of goods.',
+      'Information on tax payments (month/year) <br> Name of employer',
   },
   socialInsuranceAdministrationTitle: {
     id: 'hi.application:externalData.insuranceAdministration.title',
@@ -62,14 +62,14 @@ export const m = defineMessages({
     defaultMessage:
       'Upplýsingar um örorkumat (stöðu) <br>Upplýsingar um greiðslur vegna örorku (stöðu)',
     description:
-      "Handles the public pension system, as well as child's pension, spouse's pension, disability grant, age-related disability supplement, guaranteed income and household supplement.",
+      'Information on disability assessment (status) <br> Information on disability payments (status)',
   },
   dataProvidersMoreInfo: {
     id: 'hi.application:externalData.moreInfo',
     defaultMessage:
       'Nánari upplýsingar um vinnslu persónuupplýsinga hjá Sjúkratryggingum Íslands <a href="https://www.sjukra.is/personuvernd" target="_blank" style="color:#0061ff">Persónuverndarsíðu SÍ</a>',
     description:
-      'Further details on what information is obtained from the above institutions and what personal data will be passed on can be found on IHI’s <a href="https://www.sjukra.is/english/privacy" target="_blank" style="color:#0061ff">Privacy page</a>',
+      'Further information on the processing of personal information by Sjúkratryggingar Íslands <a href="https://www.sjukra.is/personuvernd" target="_blank" style="color:#0061ff"> SÍ Privacy Page </a>',
   },
   confirmationOfResidencyTitle: {
     id: 'hi.application:confirmationOfResidency.title',
@@ -520,7 +520,8 @@ export const m = defineMessages({
   externalDataSubtitle: {
     id: 'hi.application:externalDataSubtitle',
     defaultMessage:
-      'Unnið verður með persónugreinanleg gögn frá eftirfarandi stofnunum',
-    description: 'Personal data from the following sources will be processed',
+      'Unnið verður með persónugreinanleg gögn frá eftirfarandi stofnunum við vinnslu umsóknarinnar',
+    description:
+      'Personally identifiable data from the following institutions will be processed during the processing of the application',
   },
 })
