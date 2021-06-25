@@ -62,7 +62,6 @@ const DescriptionText = ({ text, format, textProps }: Props) => {
   // it does not work for some reason. That is the reason for this special handling here.
   // We will take a look at this later with the localization team.
   const formattedMarkdown = markdown.replace(/&#39;/g, '&apos;')
-  console.log('bla', formattedMarkdown.replace(/\\n\\n/g, ' \\n '))
   return (
     <Markdown
       options={{
