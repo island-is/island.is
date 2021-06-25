@@ -164,18 +164,17 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
                   </T.HeadData>
                   <T.HeadData>
                     <Text variant="eyebrow">
-                      {formatMessage(m.explanationNote)}
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text variant="eyebrow">
                       {formatMessage(m.performingOrganization)}
                     </Text>
                   </T.HeadData>
                   <T.HeadData>
                     <Text variant="eyebrow">{formatMessage(m.amount)}</Text>
                   </T.HeadData>
-                  <T.HeadData></T.HeadData>
+                  <T.HeadData>
+                    <Text variant="eyebrow">
+                      {formatMessage(m.explanationNote)}
+                    </Text>
+                  </T.HeadData>
                 </T.Row>
               </T.Head>
               <T.Body>
@@ -186,19 +185,18 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
                       <T.Data>
                         {format(new Date(listItem.date), dateFormat.is)}
                       </T.Data>
-                      <T.Data>{listItem.type}</T.Data>
-                      <T.Data>{listItem.note}</T.Data>
-                      <T.Data>{listItem.sender}</T.Data>
-                      <T.Data>{amountFormat(listItem.amount)}</T.Data>
                       <T.Data>
                         <Button
                           size="small"
                           variant="text"
                           onClick={() => showPdf(listItem.id)}
                         >
-                          {formatMessage(m.view)}
+                          {listItem.type}
                         </Button>
                       </T.Data>
+                      <T.Data>{listItem.sender}</T.Data>
+                      <T.Data>{amountFormat(listItem.amount)}</T.Data>
+                      <T.Data>{listItem.note}</T.Data>
                     </T.Row>
                   ))}
               </T.Body>
