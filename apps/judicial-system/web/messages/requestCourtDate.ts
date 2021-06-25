@@ -15,13 +15,13 @@ export const requestCourtDate = {
   }),
   dateInput: defineMessage({
     timeLabel: {
-      id: 'judicial.system:component.selectCourt.select.timeLabel',
+      id: 'judicial.system:component.requestCourtDate.select.timeLabel',
       defaultMessage: 'Ósk um tíma (kk:mm)',
       description: 'Request court date component date input: Time Label',
     },
   }),
   courtDate: defineMessage({
-    id: 'judicial.system:component.selectCourt.select.timeLabel',
+    id: 'judicial.system:component.requestCourtDate.courtDate',
     defaultMessage: 'Fyrirtökudegi og tíma hefur verið úthlutað',
     description: 'Request court date component set court date: Text',
   }),
