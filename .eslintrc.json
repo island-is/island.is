@@ -37,9 +37,6 @@
     {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nrwl/nx/typescript"],
-      "parserOptions": {
-        "project": "./tsconfig.*?.json"
-      },
       "rules": {
         "@typescript-eslint/no-extra-semi": "off",
         "@typescript-eslint/explicit-member-accessibility": "off",
