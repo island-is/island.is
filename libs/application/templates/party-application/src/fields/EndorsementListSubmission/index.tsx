@@ -7,7 +7,7 @@ import {
   IconDeprecated as Icon,
   Pagination,
 } from '@island.is/island-ui/core'
-import EndorsementTable from './EndorsementTable'
+import EndorsementTable from '../EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import isEqual from 'lodash/isEqual'
@@ -24,7 +24,9 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const answers = application.answers as SchemaFormValues
-  const [endorsementsPage, setEndorsementsPage] = useState<Endorsement[] | undefined>()
+  const [endorsementsPage, setEndorsementsPage] = useState<
+    Endorsement[] | undefined
+  >()
   const [selectedEndorsements, setSelectedEndorsements] = useState<
     Endorsement[] | undefined
   >([])
@@ -46,7 +48,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
         const endorsements: any = endorsementsHook?.filter((e: any) => {
           return answers.endorsements?.indexOf(e.id) !== -1
         })
-  
+
         setSelectedEndorsements(sortBy(endorsements, 'created'))
         isEqual(endorsements, firstX())
           ? setAutoSelect(true)
@@ -175,7 +177,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
             application={application}
             endorsements={sortBy(endorsementsPage, 'created')}
             selectedEndorsements={selectedEndorsements}
-            onChange={(endorsement) => handleCheckboxChange(endorsement)}
+            onTableSelect={(endorsement) => handleCheckboxChange(endorsement)}
           />
           {!!endorsementsHook?.length && (
             <Box marginY={3}>

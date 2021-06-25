@@ -8,7 +8,7 @@ import {
   Pagination,
 } from '@island.is/island-ui/core'
 import { CopyLink } from '@island.is/application/ui-components'
-import EndorsementTable from './EndorsementTable'
+import EndorsementTable from '../EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import BulkUpload from '../BulkUpload'

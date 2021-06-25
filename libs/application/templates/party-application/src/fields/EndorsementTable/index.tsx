@@ -1,11 +1,17 @@
 import React, { FC } from 'react'
-import { Application } from '@island.is/application/core'
-import { Box, Table as T, Tooltip, Text, Icon } from '@island.is/island-ui/core'
+import {
+  Box,
+  Table as T,
+  Tooltip,
+  Checkbox,
+  Icon,
+} from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
 import { Endorsement } from '../../types/schema'
+import { Application } from '@island.is/application/core'
 import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 const formatDate = (date: string) => {
@@ -19,11 +25,15 @@ const formatDate = (date: string) => {
 interface EndorsementTableProps {
   application: Application
   endorsements?: Endorsement[]
+  selectedEndorsements?: Endorsement[]
+  onTableSelect?: (endorsement: Endorsement) => void
 }
 
 const EndorsementTable: FC<EndorsementTableProps> = ({
-  endorsements,
   application,
+  endorsements,
+  selectedEndorsements,
+  onTableSelect,
 }) => {
   const { formatMessage } = useLocale()
   const withBulkImport = endorsements?.some((x) => x.meta.bulkEndorsement)
@@ -38,6 +48,13 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
       : endorsement.meta.bulkEndorsement
       ? 'roseTinted100'
       : 'white'
+    const fullAddress =
+      endorsement.meta.address.streetAddress +
+      ', ' +
+      endorsement.meta.address.postalCode +
+      ' ' +
+      endorsement.meta.address.city
+
     return (
       <T.Row key={endorsement.id}>
         <T.Data
@@ -69,29 +86,21 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
         >
           {voterRegionMismatch ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.meta.address.streetAddress +
-                ', ' +
-                endorsement.meta.address.postalCode +
-                ' ' +
-                endorsement.meta.address.city}
+              {fullAddress}
               <Box marginLeft={2}>
                 {voterRegionMismatch && (
                   <Tooltip
                     color="blue400"
                     iconSize="medium"
                     text={formatMessage(
-                      m.endorsementList.signatureInvalidTooltip,
+                      m.endorsementListSubmission.invalidEndorsement,
                     )}
                   />
                 )}
               </Box>
             </Box>
           ) : (
-            endorsement.meta.address.streetAddress +
-            ', ' +
-            endorsement.meta.address.postalCode +
-            ' ' +
-            endorsement.meta.address.city
+            fullAddress
           )}
         </T.Data>
         {withBulkImport && (
@@ -104,6 +113,20 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
             {endorsement.meta.bulkEndorsement && (
               <Icon icon="attach" color="blue400" />
             )}
+          </T.Data>
+        )}
+        {onTableSelect && (
+          <T.Data
+            box={{
+              background: rowBackground,
+            }}
+          >
+            <Checkbox
+              checked={selectedEndorsements?.some(
+                (e) => e.id === endorsement.id,
+              )}
+              onChange={() => onTableSelect ?? endorsement}
+            />
           </T.Data>
         )}
       </T.Row>
@@ -123,11 +146,13 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
             {formatMessage(m.endorsementList.thAddress)}
           </T.HeadData>
           {withBulkImport && <T.HeadData></T.HeadData>}
+          {onTableSelect && <T.HeadData></T.HeadData>}
         </T.Row>
       </T.Head>
       <T.Body>
-        {!!endorsements?.length &&
-          endorsements.map((endorsements) => renderRow(endorsements))}
+        {endorsements &&
+          endorsements.length &&
+          endorsements.map((endorsement) => renderRow(endorsement))}
       </T.Body>
     </T.Table>
   )
