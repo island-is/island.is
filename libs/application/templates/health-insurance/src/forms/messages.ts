@@ -24,7 +24,7 @@ export const m = defineMessages({
   nationalRegistrySubTitle: {
     id: 'hi.application:externalData.nationalRegistry.subtitle',
     defaultMessage:
-      'Þjóðskrá skráir grunnupplýsingar um alla einstaklinga sem búa eða hafa búið á Íslandi og íslenska ríkisborgara sem búa erlendis, sem og allar breytingar á högum þeirra.',
+      'Upplýsingar um nafn, kennitölu og heimilisfang <br>Upplýsingar um börn og maka <br>Upplýsingar um síðasta búsetuland <br>Upplýsingar um hvernær viðkomandi var skráður í landið',
     description:
       'Registers Iceland is the Icelandic State’s base registry. It records certain basic information on all persons who are or have been domiciled in Iceland and Icelandic citizens residing abroad, as well as any changes to their status.',
   },
@@ -36,7 +36,7 @@ export const m = defineMessages({
   directorateOfLaborSubTitle: {
     id: 'hi.application:externalData.directorateOfLabor.subtitle',
     defaultMessage:
-      'Vinnumálastofnun fer m.a. með yfirstjórn vinnumiðlunar í landinu og daglega afgreiðslu Atvinnuleysistryggingasjóðs,  Fæðingarorlofssjóðs, Ábyrgðarsjóðs launa auk fjölmargra annara vinnumarkaðstengdra verkefna.',
+      'Upplýsingar um atvinnuleysisbætur <br>Upplýsingar um atvinnuleysisbætur erlendis (U2 vottorð) <br>Upplýsingar um brottför frá öðru landi til Íslands: Réttur til atvinnuleysisbóta (U1 vottorð)',
     description:
       'The Directorate of Labour bears overall responsibility for public labour exchanges and handles day-to-day operations of the Unemployment Insurance Fund, the Maternity and Paternity Leave Fund and the Wage Guarantee Fund.',
   },
@@ -48,7 +48,7 @@ export const m = defineMessages({
   internalRevenueSubTitle: {
     id: 'hi.application:externalData.internalRevenue.subtitle',
     defaultMessage:
-      'Skatturinn annast álagningu skatta, tolla og annarra gjalda auk þess að viðhafa eftirlit með réttmæti skattskila. Skatturinn gegnir margþættu tollgæsluhlutverki á landamærum og veitir samfélaginu vernd gegn ólögmætum inn- og útflutningi vöru.',
+      'Upplýsingar um skattgreiðslur (mán/ár)<br>Nafn atvinnurekanda',
     description:
       'Handles the collection of taxes and duties as well as oversees the legitimacy of tax returns. The Directorate of Internal Revenue also plays a multifaceted customs role at the border and provides society with protection against illegal import and export of goods.',
   },
@@ -60,14 +60,14 @@ export const m = defineMessages({
   socialInsuranceAdministrationSubtitle: {
     id: 'hi.application:externalData.insuranceAdministration.subTitle',
     defaultMessage:
-      'Hlutverk TR er að framfylgja lögum um almannatryggingar, lögum um félagslega aðstoð og lögum um málefni langveikra barna auk þess að sinna öðrum verkefnum sem stofnuninni eru falin hverju sinni.',
+      'Upplýsingar um örorkumat (stöðu) <br>Upplýsingar um greiðslur vegna örorku (stöðu)',
     description:
       "Handles the public pension system, as well as child's pension, spouse's pension, disability grant, age-related disability supplement, guaranteed income and household supplement.",
   },
   dataProvidersMoreInfo: {
     id: 'hi.application:externalData.moreInfo',
     defaultMessage:
-      'Nánari útlistun á hvaða upplýsinga er aflað frá ofangreindum stofnunum og hvaða upplýsingum verður miðlað áfram er að finna undir <a href="https://www.sjukra.is/personuvernd" target="_blank" style="color:#0061ff">Persónuverndarsíðu SÍ</a>',
+      'Nánari upplýsingar um vinnslu persónuupplýsinga hjá Sjúkratryggingum Íslands <a href="https://www.sjukra.is/personuvernd" target="_blank" style="color:#0061ff">Persónuverndarsíðu SÍ</a>',
     description:
       'Further details on what information is obtained from the above institutions and what personal data will be passed on can be found on IHI’s <a href="https://www.sjukra.is/english/privacy" target="_blank" style="color:#0061ff">Privacy page</a>',
   },
@@ -514,10 +514,8 @@ export const m = defineMessages({
   },
   externalDataCheckbox: {
     id: 'hi.application:externalDataCheckbox',
-    defaultMessage:
-      'Ég staðfesti að hafa lesið þessar upplýsingar um vinnslu persónuupplýsinga í tengslum við þessa umsókn',
-    description:
-      'I confirm that I have read these terms for processing of my personal data regarding this application',
+    defaultMessage: 'Ég skil að ofangreindra gagna verður aflað',
+    description: 'I understand that the data mentioned above will be obtained',
   },
   externalDataSubtitle: {
     id: 'hi.application:externalDataSubtitle',
