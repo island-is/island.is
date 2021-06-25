@@ -125,7 +125,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
               checked={selectedEndorsements?.some(
                 (e) => e.id === endorsement.id,
               )}
-              onChange={() => onTableSelect ?? endorsement}
+              onChange={() => onTableSelect(endorsement)}
             />
           </T.Data>
         )}
