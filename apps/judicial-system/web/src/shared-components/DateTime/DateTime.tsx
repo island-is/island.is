@@ -62,7 +62,7 @@ const DateTime: React.FC<Props> = (props) => {
     const validations: Validation[] = ['empty', 'time-format']
 
     const timeError = validations.find(
-      (v) => validate(time || '', v).isValid === false,
+      (v) => validate(time ?? '', v).isValid === false,
     )
 
     return (

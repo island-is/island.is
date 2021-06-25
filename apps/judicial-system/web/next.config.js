@@ -25,7 +25,7 @@ module.exports = withTreat(
       graphqlEndpoint: graphqlPath,
     },
     env: {
-      API_MOCKS: process.env.API_MOCKS || '',
+      API_MOCKS: process.env.API_MOCKS ?? '',
     },
     devIndicators: {
       autoPrerender: false,

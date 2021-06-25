@@ -135,7 +135,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
             workingCase.type === CaseType.CUSTODY ||
             workingCase.type === CaseType.TRAVEL_BAN
               ? Constants.STEP_SIX_ROUTE
-              : Constants.R_CASE_POLICE_CONFIRMATION_ROUTE
+              : Constants.IC_POLICE_CONFIRMATION_ROUTE
           }/${workingCase.id}`}
           nextIsDisabled={false}
         />

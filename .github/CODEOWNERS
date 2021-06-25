@@ -13,6 +13,8 @@
 # Organisation name is @island-is, not @island.is
 
 
+/libs/api/domains/identity/                                                                   @island-is/core
+
 /apps/web*/                                                                                   @island-is/kosmos-kaos
 /apps/services/endorsements/                                                                  @island-is/kosmos-kaos
 /apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
@@ -25,6 +27,7 @@
 /libs/api/domains/party-letter-registry/                                                      @island-is/kosmos-kaos
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
 /libs/application/templates/party-application/                                                @island-is/kosmos-kaos
+/libs/application/templates/payable-dummy-template/                                           @island-is/kosmos-kaos
 /libs/service-portal/endorsements/                                                            @island-is/kosmos-kaos
 /libs/application/template-api-modules/src/lib/modules/templates/party-application/           @island-is/kosmos-kaos
 /libs/application/template-api-modules/src/lib/modules/templates/party-letter/                @island-is/kosmos-kaos
@@ -158,3 +161,7 @@
 /libs/api/domains/regulations/                                                                @island-is/hugsmidjan
 /apps/web/screens/Regulations/                                                                @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                             @island-is/hugsmidjan
+
+# Infrastructure configuration
+infra/                                                                                        @island-is/devops
+/charts                                                                                       @island-is/devops

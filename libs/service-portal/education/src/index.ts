@@ -12,7 +12,11 @@ export const educationModule: ServicePortalModule = {
       name: 'Menntun',
       path: ServicePortalPath.EducationRoot,
       render: () =>
-        lazy(() => import('./screens/EducationOverview/EducationOverview')),
+        lazy(() =>
+          import(
+            '../../education-career/src/screens/EducationCareer/EducationCareer'
+          ),
+        ),
     },
   ],
 }

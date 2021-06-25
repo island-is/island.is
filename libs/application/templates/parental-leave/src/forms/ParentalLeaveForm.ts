@@ -41,7 +41,6 @@ import {
   FILE_SIZE_LIMIT,
   MANUAL,
   NO,
-  SPOUSE,
   ParentalRelations,
   StartDateOptions,
   YES,
