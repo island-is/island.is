@@ -549,6 +549,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const periods = getValueViaPath(answers, 'periods') as Period[]
 
+  const firstPeriodStart = getValueViaPath(
+    answers,
+    'firstPeriodStart',
+  ) as SchemaFormValues['firstPeriodStart']
+
   return {
     otherParent,
     otherParentRightOfAccess,
@@ -578,6 +583,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicantEmail,
     applicantPhoneNumber,
     periods,
+    firstPeriodStart,
   }
 }
 

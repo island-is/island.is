@@ -93,6 +93,7 @@ export function buildDataProviderItem(data: {
   title: MessageDescriptor | string
   subTitle?: MessageDescriptor | string
   source?: string
+  parameters?: any
 }): DataProviderItem {
   return data
 }

@@ -1,5 +1,5 @@
 import { setup } from '../../../../../../test/setup'
-import * as request from 'supertest'
+import request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
 import { NationalRegistryService } from '../../../nationalRegistry'
 
