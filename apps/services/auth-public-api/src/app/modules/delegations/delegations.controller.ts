@@ -8,6 +8,7 @@ import {
   Put,
   UseGuards,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -16,6 +17,7 @@ import {
   DelegationDTO,
   UpdateDelegationDTO,
   CreateDelegationDTO,
+  ResourcesService,
 } from '@island.is/auth-api-lib'
 import {
   IdsUserGuard,
@@ -41,6 +43,7 @@ export class DelegationsController {
   constructor(
     private readonly delegationsService: DelegationsService,
     private readonly auditService: AuditService,
+    private readonly resourcesService: ResourcesService,
   ) {}
 
   @ActorScopes(AuthScope.actorDelegations)
@@ -66,10 +69,33 @@ export class DelegationsController {
     @CurrentUser() user: User,
     @Body() delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
+    if (!this.validateLength(delegation)) {
+      throw new BadRequestException(
+        'Delegations to scopes seem illegit. Make sure you have access to these scopes',
+      )
+    }
+
     return this.delegationsService.create(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
       delegation,
+    )
+  }
+
+  async validateLength(delegation: CreateDelegationDTO | UpdateDelegationDTO) {
+    if (delegation.scopes.length === 0) {
+      return true
+    }
+
+    const allowedIdentityResources = await this.resourcesService.findAllowedDelegationIdentityResourceListForUser(
+      delegation.scopes.map((x) => x.name),
+    )
+    const allowedApiScopes = await this.resourcesService.findAllowedDelegationApiScopeListForUser(
+      delegation.scopes.map((x) => x.name),
+    )
+    return (
+      delegation.scopes.length ===
+      allowedIdentityResources.length + allowedApiScopes.length
     )
   }
 
@@ -81,6 +107,12 @@ export class DelegationsController {
     @Body() delegation: UpdateDelegationDTO,
     @Param('toNationalId') toNationalId: string,
   ): Promise<DelegationDTO | null> {
+    if (!this.validateLength(delegation)) {
+      throw new BadRequestException(
+        'Delegations to scopes seem illegit. Make sure you have access to these scopes',
+      )
+    }
+
     return this.auditService.auditPromise<DelegationDTO>(
       {
         user,
