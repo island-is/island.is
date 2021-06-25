@@ -3,8 +3,8 @@ import {
   AsyncSearchInput,
   Box,
   Button,
-  Link,
   Text,
+  Link,
 } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import {
