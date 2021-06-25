@@ -6,7 +6,7 @@ const t = 'pdpp.application'
 export const application = defineMessages({
   institutionName: {
     id: `pdpp.application:application.institutionName`,
-    defaultMessage: 'Fjársýsla Ríkisins',
+    defaultMessage: 'Innheimtumaður ríkissjóðs',
     description: 'Name of the Public Debt Payment Plan institution',
   },
   name: {
