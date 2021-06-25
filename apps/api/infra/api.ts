@@ -119,9 +119,9 @@ export const serviceSetup = (services: {
         staging: 'https://api.staging01.devland.is',
       },
       XROAD_TJODSKRA_MEMBER_CODE: {
-        prod: '10001',
+        prod: '6503760649',
         dev: '10001',
-        staging: '10001',
+        staging: '6503760649',
       },
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
