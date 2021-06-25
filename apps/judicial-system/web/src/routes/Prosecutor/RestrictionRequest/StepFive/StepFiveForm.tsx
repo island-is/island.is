@@ -5,8 +5,6 @@ import {
   Box,
   ContentBlock,
   InputFileUpload,
-  BulletList,
-  Bullet,
   Input,
   Tooltip,
 } from '@island.is/island-ui/core'
