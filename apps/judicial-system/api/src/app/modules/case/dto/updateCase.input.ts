@@ -11,6 +11,7 @@ import {
   AccusedPleaDecision,
   UpdateCase,
   CaseType,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -62,6 +63,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly sendRequestToDefender?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defenderIsSpokesperson?: boolean
 
   @Allow()
   @Field({ nullable: true })
@@ -144,6 +149,10 @@ export class UpdateCaseInput implements UpdateCase {
   readonly courtCaseNumber?: string
 
   @Allow()
+  @Field(() => String, { nullable: true })
+  readonly sessionArrangements?: SessionArrangements
+
+  @Allow()
   @Field({ nullable: true })
   readonly courtDate?: string
 
@@ -221,7 +230,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly additionToConclusion?: string
+  readonly conclusion?: string
 
   @Allow()
   @Field(() => String, { nullable: true })

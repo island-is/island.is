@@ -99,9 +99,7 @@ const HearingArrangements = () => {
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
       ) {
-        router.push(
-          `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
-        )
+        router.push(`${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
       } else {
         setModalVisible(true)
       }
@@ -143,7 +141,7 @@ const HearingArrangements = () => {
               handleClose={() => setModalVisible(false)}
               handleSecondaryButtonClick={() =>
                 router.push(
-                  `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                  `${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                 )
               }
               handlePrimaryButtonClick={async () => {
@@ -154,7 +152,7 @@ const HearingArrangements = () => {
 
                 if (notificationSent) {
                   router.push(
-                    `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                    `${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                   )
                 }
               }}

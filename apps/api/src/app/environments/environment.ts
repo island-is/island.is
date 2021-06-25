@@ -129,6 +129,9 @@ const devConfig = {
   partyLetterRegistry: {
     baseApiUrl: 'http://localhost:4251',
   },
+  audit: {
+    defaultNamespace: '@island.is/api',
+  },
 }
 
 const prodConfig = {
@@ -247,6 +250,11 @@ const prodConfig = {
     password: process.env.FINANCE_PASS ?? '',
     xroadApiPath: process.env.XROAD_FINANCES_PATH,
     ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
+  },
+  audit: {
+    defaultNamespace: '@island.is/api',
+    groupName: process.env.AUDIT_GROUP_NAME,
+    serviceName: 'api',
   },
 }
 

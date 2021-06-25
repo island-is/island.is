@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
 import formatISO from 'date-fns/formatISO'
 
+import { LocaleProvider } from '@island.is/localization'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import {
   mockCaseQueries,
@@ -50,7 +51,9 @@ describe('Custody petition, step two', () => {
         addTypename={false}
       >
         <UserProvider>
-          <StepTwo />
+          <LocaleProvider locale="is" messages={{}}>
+            <StepTwo />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -114,7 +117,9 @@ describe('Custody petition, step two', () => {
         addTypename={false}
       >
         <UserProvider>
-          <StepTwo />
+          <LocaleProvider locale="is" messages={{}}>
+            <StepTwo />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -146,7 +151,9 @@ describe('Custody petition, step two', () => {
         addTypename={false}
       >
         <UserProvider>
-          <StepTwo />
+          <LocaleProvider locale="is" messages={{}}>
+            <StepTwo />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
