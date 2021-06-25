@@ -331,7 +331,10 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     />
                   )}
                   {pageDescription && (
-                    <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
+                    <Box
+                      paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}
+                      paddingBottom={[4, 4, 6]}
+                    >
                       <Text variant="default">{pageDescription}</Text>
                     </Box>
                   )}

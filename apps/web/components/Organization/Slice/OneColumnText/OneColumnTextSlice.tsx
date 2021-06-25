@@ -16,7 +16,7 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           borderTopWidth="standard"
           borderColor="standard"
           paddingTop={[4, 4, 6]}
-          paddingBottom={[4, 5, 10]}
+          paddingBottom={[4, 4, 6]}
         >
           <Text
             variant="h2"

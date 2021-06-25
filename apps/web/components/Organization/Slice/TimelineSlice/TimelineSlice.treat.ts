@@ -94,6 +94,7 @@ export const timelineGradient = style({
 export const timelineContainer = style({
   width: '100%',
   height: 700,
+  marginLeft: 10,
   overflow: 'hidden',
   position: 'relative',
 })
