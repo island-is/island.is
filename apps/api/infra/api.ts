@@ -177,6 +177,9 @@ export const serviceSetup = (services: {
       FINANCE_PASS: '/k8s/service-portal/FINANCE_PASS',
       FINANCE_USER: '/k8s/service-portal/FINANCE_USER',
       XROAD_FINANCES_PATH: '/k8s/service-portal/XROAD_FINANCES_PATH',
+      PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
+      PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',
+      PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
       XROAD_BASE_URL: '/k8s/application-system-api/XROAD_BASE_PATH',
       XROAD_PROVIDER_ID:
         '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID',

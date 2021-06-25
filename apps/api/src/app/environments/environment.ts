@@ -129,6 +129,11 @@ const devConfig = {
   partyLetterRegistry: {
     baseApiUrl: 'http://localhost:4251',
   },
+  pkpass: {
+    apiKey: process.env.PKPASS_API_KEY,
+    apiUrl: process.env.PKPASS_API_URL,
+    secretKey: process.env.PKPASS_SECRET_KEY,
+  },
   audit: {
     defaultNamespace: '@island.is/api',
   },
@@ -250,6 +255,11 @@ const prodConfig = {
     password: process.env.FINANCE_PASS ?? '',
     xroadApiPath: process.env.XROAD_FINANCES_PATH,
     ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
+  },
+  pkpass: {
+    apiKey: process.env.PKPASS_API_KEY,
+    apiUrl: process.env.PKPASS_API_URL,
+    secretKey: process.env.PKPASS_SECRET_KEY,
   },
   audit: {
     defaultNamespace: '@island.is/api',
