@@ -107,6 +107,14 @@ api:
     XROAD_VMST_API_PATH: /k8s/api/XROAD_VMST_API_PATH
     ZENDESK_CONTACT_FORM_EMAIL: /k8s/api/ZENDESK_CONTACT_FORM_EMAIL
     ZENDESK_CONTACT_FORM_TOKEN: /k8s/api/ZENDESK_CONTACT_FORM_TOKEN
+    arkBaseUrl: /k8s/application-system-api/ARK_ENDPOINT
+    callbackAdditionUrl: /k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL
+    callbackBaseUrl: /k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL
+    password: /k8s/application-system-api/PAYMENT_PASSWORD
+    username: /k8s/application-system-api/PAYMENT_USER
+    xRoadBaseUrl: /k8s/application-system-api/XROAD_BASE_PATH
+    xRoadClientId: /k8s/application-system-api/XROAD_CLIENT_ID
+    xRoadProviderId: /k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -209,6 +217,14 @@ application-system-api:
     SYSLUMENN_USERNAME: /k8s/application-system/api/SYSLUMENN_USERNAME
     VMST_API_KEY: /k8s/vmst-client/VMST_API_KEY
     XROAD_VMST_API_PATH: /k8s/application-system-api/XROAD_VMST_API_PATH
+    arkBaseUrl: /k8s/application-system-api/ARK_ENDPOINT
+    callbackAdditionUrl: /k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL
+    callbackBaseUrl: /k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL
+    password: /k8s/application-system-api/PAYMENT_PASSWORD
+    username: /k8s/application-system-api/PAYMENT_USER
+    xRoadBaseUrl: /k8s/application-system-api/XROAD_BASE_PATH
+    xRoadClientId: /k8s/application-system-api/XROAD_CLIENT_ID
+    xRoadProviderId: /k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

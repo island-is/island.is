@@ -174,6 +174,14 @@ export const serviceSetup = (services: {
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
       DOCUMENT_PROVIDER_ADMINS:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS',
+      xRoadBaseUrl: '/k8s/application-system-api/XROAD_BASE_PATH',
+      xRoadProviderId: '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID',
+      xRoadClientId: '/k8s/application-system-api/XROAD_CLIENT_ID',
+      username: '/k8s/application-system-api/PAYMENT_USER',
+      password: '/k8s/application-system-api/PAYMENT_PASSWORD',
+      callbackBaseUrl: '/k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL',
+      callbackAdditionUrl: '/k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL',
+      arkBaseUrl: '/k8s/application-system-api/ARK_ENDPOINT',
     })
 
     .ingress({
