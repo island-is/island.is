@@ -52,21 +52,21 @@ const devConfig = {
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     paymentOptions: {
-      ARK_BASE_URL: process.env.ARK_ENDPOINT,
-      XROAD_BASE_URL: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
-      XROAD_CLIENT_ID:
+      arkBaseUrl: process.env.ARK_ENDPOINT,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
+      xRoadClientId:
         process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-      XROAD_PROVIDER_ID:
+      xRoadProviderId:
         process.env.PAYMENT_XROAD_PROVIDER_ID ??
         'IS-DEV/GOV/10021/FJS-DEV-Public',
-      CALLBACK_ADDITION_URL:
+      callbackAdditionUrl:
         process.env.PAYMENT_ADDITION_CALLBACK_URL ??
         '/payment/thiswillneverwork',
-      CALLBACK_BASE_URL:
+      callbackBaseUrl:
         process.env.PAYMENT_BASE_CALLBACK_URL ??
         'https://localhost:3333/application/',
-      PAYMENT_USERNAME: process.env.PAYMENT_USER,
-      PAYMENT_PASSWORD: process.env.PAYMENT_PASSWORD,
+      username: process.env.PAYMENT_USER,
+      password: process.env.PAYMENT_PASSWORD,
     },
   },
   application: {
@@ -135,14 +135,14 @@ const prodConfig = {
       xroadBaseUrl: process.env.XROAD_BASE_PATH,
     },
     paymentOptions: {
-      ARK_BASE_URL: process.env.ARK_ENDPOINT,
-      XROAD_BASE_URL: process.env.XROAD_BASE_PATH,
-      XROAD_CLIENT_ID: process.env.XROAD_CLIENT_ID,
-      XROAD_PROVIDER_ID: process.env.PAYMENT_XROAD_PROVIDER_ID,
-      CALLBACK_ADDITION_URL: process.env.PAYMENT_ADDITION_CALLBACK_URL,
-      CALLBACK_BASE_URL: process.env.PAYMENT_BASE_CALLBACK_URL,
-      PAYMENT_USERNAME: process.env.PAYMENT_USER,
-      PAYMENT_PASSWORD: process.env.PAYMENT_PASSWORD,
+      arkBaseUrl: process.env.ARK_ENDPOINT,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID,
+      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
+      callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
+      username: process.env.PAYMENT_USER,
+      password: process.env.PAYMENT_PASSWORD,
     },
   },
   application: {
