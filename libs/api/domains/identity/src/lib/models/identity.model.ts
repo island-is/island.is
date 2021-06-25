@@ -47,16 +47,18 @@ const isExternalUser = ({ context, source }: MiddlewareContext): boolean => {
 }
 
 @Extensions({
-  validateIf,
-  validFields: [
-    'address',
-    'age',
-    'fullName',
-    'birthday',
-    'type',
-    'name',
-    'nationalId',
-  ],
+  filterFields: {
+    condition: isExternalUser,
+    fields: [
+      'address',
+      'age',
+      'fullName',
+      'birthday',
+      'type',
+      'name',
+      'nationalId',
+    ],
+  },
 })
 @ObjectType({
   implements: Identity,
