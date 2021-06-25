@@ -138,6 +138,15 @@ export const serviceSetup = (services: {
       SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
       NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD',
+      PAYMENT_XROAD_PROVIDER_ID:
+        '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID',
+      PAYMENT_USERNAME: '/k8s/application-system-api/PAYMENT_USER',
+      PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD',
+      CALLBACK_BASE_URL:
+        '/k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL',
+      CALLBACK_ADDITION_URL:
+        '/k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL',
+      ARK_BASE_URL: '/k8s/application-system-api/ARK_ENDPOINT',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
