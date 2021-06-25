@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import {
   LoadingDots,
   Text,
@@ -29,7 +29,7 @@ import format from 'date-fns/format'
 import {
   calcDifferenceInDate,
   calcAge,
-  navigationElements,
+  navigationItems,
   translateMonth,
   getTagByState,
 } from '../../utils/formHelper'
@@ -72,7 +72,7 @@ const ApplicationProfile = () => {
       setApplicationState(data.application.state)
       //WIP
       setPrevUrl(
-        navigationElements.find((i) =>
+        navigationItems.find((i) =>
           i.applicationState.includes(data.application.state),
         ),
       )
@@ -84,8 +84,9 @@ const ApplicationProfile = () => {
       {
         title: 'Tímabil',
         content:
-          translateMonth(format(new Date(data.application.created), 'M')) +
-          format(new Date(data.application.created), ' y'),
+          translateMonth(
+            parseInt(format(new Date(data.application.created), 'M')),
+          ) + format(new Date(data.application.created), ' y'),
       },
       {
         title: 'Sótt um',
@@ -219,9 +220,11 @@ const ApplicationProfile = () => {
                 </Button>
               )}
 
-              <div className={`tags ${getTagByState(data.application.state)}`}>
-                {getState[data.application.state]}
-              </div>
+              {applicationState && (
+                <div className={`tags ${getTagByState(applicationState)}`}>
+                  {getState[applicationState]}
+                </div>
+              )}
             </Box>
 
             <Box
@@ -319,32 +322,30 @@ const ApplicationProfile = () => {
         <LoadingDots />
       </AdminLayout>
     )
-  } else {
-    return (
-      <AdminLayout>
-        <Box>
-          <Button
-            colorScheme="default"
-            iconType="filled"
-            onClick={() => {
-              router.push('/')
-            }}
-            preTextIcon="arrowBack"
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="text"
-          >
-            Í vinnslu
-          </Button>
-        </Box>
-        <Text color="red400" fontWeight="semiBold" marginTop={4}>
-          Abbabab Notendi ekki fundinn, farðu tilbaka og reyndu vinsamlegast
-          aftur{' '}
-        </Text>
-      </AdminLayout>
-    )
   }
+  return (
+    <AdminLayout>
+      <Box>
+        <Button
+          colorScheme="default"
+          iconType="filled"
+          onClick={() => {
+            router.push('/')
+          }}
+          preTextIcon="arrowBack"
+          preTextIconType="filled"
+          size="small"
+          type="button"
+          variant="text"
+        >
+          Í vinnslu
+        </Button>
+      </Box>
+      <Text color="red400" fontWeight="semiBold" marginTop={4}>
+        Abbabab Notendi ekki fundinn, farðu tilbaka og reyndu vinsamlegast aftur{' '}
+      </Text>
+    </AdminLayout>
+  )
 }
 
 export default ApplicationProfile

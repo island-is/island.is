@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, LoadingDots } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 import {
   AdminLayout,
   ApplicationsTable,
@@ -8,18 +9,26 @@ import {
   GenerateName,
 } from '../../components'
 
-import { ApplicationState, getState } from '@island.is/financial-aid/shared'
+import {
+  ApplicationState,
+  getState,
+  Application,
+} from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
 
+import { GetApplicationsQuery } from '../../../graphql/sharedGql'
+
 import {
-  navigationElements,
+  navigationItems,
   calcDifferenceInDate,
   translateMonth,
   getTagByState,
 } from '../../utils/formHelper'
 
-import { ApplicationsContext } from '../../components/ApplicationsProvider/ApplicationsProvider'
+interface ApplicationsProvider {
+  applications?: Application[]
+}
 
 export interface NavigationElement {
   label: string
@@ -31,40 +40,35 @@ export interface NavigationElement {
 export const ApplicationsOverview = () => {
   const router = useRouter()
 
-  const { applications } = useContext(ApplicationsContext)
+  const { data, error, loading } = useQuery<ApplicationsProvider>(
+    GetApplicationsQuery,
+    {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
 
-  // Todo ekki el
-  const findCurrentNavigationEl = navigationElements.find(
+  const currentNavigationItem = navigationItems.find(
     (i) => i.link === router.pathname,
   )
 
-  if (findCurrentNavigationEl) {
-    // Todo do we need this state? could be a function?
-    const [
-      currentNavigationEl,
-      setCurrentNavigationEl,
-    ] = useState<NavigationElement>(findCurrentNavigationEl)
-
-    useEffect(() => {
-      setCurrentNavigationEl(findCurrentNavigationEl)
-    }, [router.pathname])
-
+  if (currentNavigationItem) {
     return (
       <AdminLayout>
-        <Box className={`contentUp delay-25`} key={currentNavigationEl.label}>
+        <Box className={`contentUp delay-25`} key={currentNavigationItem.label}>
           <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={4}>
-            {currentNavigationEl.label}
+            {currentNavigationItem.label}
           </Text>
         </Box>
 
-        {applications && (
+        {data?.applications && (
           <ApplicationsTable
             className={`contentUp delay-50`}
-            key={currentNavigationEl.link}
-            header={currentNavigationEl.headers} // Todo headers?
-            applications={applications
+            key={router.pathname}
+            headers={currentNavigationItem.headers}
+            applications={data.applications
               .filter((item) =>
-                currentNavigationEl?.applicationState.includes(item?.state),
+                currentNavigationItem?.applicationState.includes(item?.state),
               )
               .map((item) => ({
                 listElement: [
@@ -82,17 +86,19 @@ export const ApplicationsOverview = () => {
 
                   <Text> {calcDifferenceInDate(item.modified)}</Text>,
                   <Text>
-                    {translateMonth(format(new Date(item.created), 'M'))}
+                    {translateMonth(
+                      parseInt(format(new Date(item.created), 'M')),
+                    )}
                   </Text>,
                 ],
                 link: item.id,
               }))}
           />
         )}
+        {loading && <LoadingDots />}
       </AdminLayout>
     )
   }
-
   return (
     <div>
       <Box className={`contentUp delay-25`}>

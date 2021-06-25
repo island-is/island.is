@@ -8,7 +8,7 @@ import cn from 'classnames'
 
 interface PageProps {
   applications: TableBodyProps[]
-  header: string[]
+  headers: string[]
   className?: string
   [key: string]: any
 }
@@ -20,7 +20,7 @@ interface TableBodyProps {
 
 const ApplicationsTable: React.FC<PageProps> = ({
   applications,
-  header,
+  headers,
   className,
   key,
 }) => {
@@ -35,12 +35,12 @@ const ApplicationsTable: React.FC<PageProps> = ({
       >
         <thead>
           <tr>
-            {header && (
+            {headers && (
               <>
-                {header.map((item, index) => {
+                {headers.map((item, index) => {
                   return (
                     <th
-                      key={'header-' + index}
+                      key={'headers-' + index}
                       className={cn({
                         [`${styles.tablePadding}`]: true,
                         [`${styles.firstChildPadding}`]: index === 0,

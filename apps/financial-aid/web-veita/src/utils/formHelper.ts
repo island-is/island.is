@@ -2,27 +2,36 @@ import differenceInMinutes from 'date-fns/differenceInMinutes'
 import differenceInHours from 'date-fns/differenceInHours'
 import differenceInDays from 'date-fns/differenceInDays'
 import differenceInYears from 'date-fns/differenceInYears'
+import differenceInWeeks from 'date-fns/differenceInWeeks'
 import { ApplicationState } from '@island.is/financial-aid/shared'
+
+export const isPluralInIcelandic = (value: number): boolean =>
+  value % 10 !== 1 || value % 100 === 11
 
 export const calcDifferenceInDate = (dateCreated: string | undefined) => {
   if (dateCreated) {
     const minutes = differenceInMinutes(new Date(), new Date(dateCreated))
+    const hours = differenceInHours(new Date(), new Date(dateCreated))
+    const days = differenceInDays(new Date(), new Date(dateCreated))
+    const weeks = differenceInWeeks(new Date(), new Date(dateCreated))
 
     if (minutes < 60) {
       return `${minutes} min`
     }
-    // Todo: fix rest
-    if (differenceInHours(new Date(), new Date(dateCreated)) < 24) {
-      return differenceInHours(new Date(), new Date(dateCreated)) + ' klst'
+
+    if (hours < 24) {
+      return `${hours} klst`
     }
 
-    // Todo: check if it ends with 1 lol
-    return differenceInDays(new Date(), new Date(dateCreated)) + ' dagar'
+    if (days < 7) {
+      return `${days} ${isPluralInIcelandic(days) ? 'dagar' : 'dagur'}`
+    }
+
+    return `${weeks} ${isPluralInIcelandic(weeks) ? 'vikur' : 'vika'}`
   }
 }
 
-// Todo use int
-export const translateMonth = (mon: string) => {
+export const translateMonth = (month: number) => {
   const months = [
     'Janúar',
     'Febrúar',
@@ -38,7 +47,7 @@ export const translateMonth = (mon: string) => {
     'Desember',
   ]
 
-  return months[parseInt(mon) - 1]
+  return months[month - 1]
 }
 
 export const calcAge = (ssn: string) => {
@@ -55,13 +64,12 @@ export const calcAge = (ssn: string) => {
 }
 
 export const getFileType = (fileName: string) => {
-  // Todo: hande no file type?
+  // Todo: hande no file type? Handle when files is ready?
 
   return fileName.substring(fileName.lastIndexOf('.') + 1)
 }
 
-// Navigation items?
-export const navigationElements = [
+export const navigationItems = [
   {
     label: 'Ný mál',
     link: '/nymal',

@@ -11,7 +11,7 @@ import { ApplicationsContext } from '../ApplicationsProvider/ApplicationsProvide
 
 import { useLogOut } from '../../utils/useLogOut'
 
-import { navigationElements } from '../../utils/formHelper'
+import { navigationItems } from '../../utils/formHelper'
 
 const Nav: React.FC = () => {
   const router = useRouter()
@@ -40,7 +40,7 @@ const Nav: React.FC = () => {
       </header>
 
       <div>
-        {navigationElements.map((item: any, index: number) => {
+        {navigationItems.map((item: any, index: number) => {
           return (
             <Link href={item.link} key={'NavigationLinks-' + index}>
               <a
