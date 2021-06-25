@@ -1,4 +1,5 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import {
   Text,
   Box,
@@ -19,8 +20,10 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
+import { caseFiles as m } from '@island.is/judicial-system-web/messages'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-components/MarkdownWrapper/MarkdownWrapper'
 
 interface Props {
   workingCase: Case
@@ -29,6 +32,7 @@ interface Props {
 
 export const StepFiveForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
+  const { formatMessage } = useIntl()
 
   const {
     files,
@@ -44,44 +48,31 @@ export const StepFiveForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Rannsóknargögn
+            {formatMessage(m.heading)}
           </Text>
         </Box>
         <Box marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Meðferð gagna
+              {formatMessage(m.description.heading)}
             </Text>
           </Box>
-          <BulletList type="ul">
-            <Bullet>
-              Hér er hægt að hlaða upp rannsóknargögnum til að sýna dómara.
-            </Bullet>
-            <Box marginTop={1}>
-              <Bullet>
-                Gögnin eru eingöngu aðgengileg dómara í málinu og aðgengi að
-                þeim lokast þegar dómari hefur úrskurðað.
-              </Bullet>
-            </Box>
-            <Box marginTop={1}>
-              <Bullet>
-                Gögnin verða ekki lögð fyrir eða flutt í málakerfi dómstóls nema
-                annar hvor aðilinn kæri úrskurðinn.
-              </Bullet>
-            </Box>
-          </BulletList>
+          <MarkdownWrapper
+            text={m.description.list}
+            textProps={{ marginBottom: 0 }}
+          />
         </Box>
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
-            Rannsóknargögn
+            {formatMessage(m.files.heading)}
           </Text>
         </Box>
         <Box marginBottom={10}>
           <ContentBlock>
             <InputFileUpload
               fileList={files}
-              header="Dragðu skjöl hingað til að hlaða upp"
-              buttonLabel="Velja skjöl til að hlaða upp"
+              header={formatMessage(m.files.label)}
+              buttonLabel={formatMessage(m.files.buttonLabel)}
               onChange={onChange}
               onRemove={onRemove}
               onRetry={onRetry}
@@ -93,19 +84,19 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <Box>
           <Box marginBottom={3}>
             <Text variant="h3" as="h3">
-              Athugasemdir vegna rannsóknargagna{' '}
+              {formatMessage(m.comments.heading)}{' '}
               <Tooltip
                 placement="right"
                 as="span"
-                text="Hér er hægt að skrá athugasemdir til dómara og dómritara varðandi rannsóknargögnin."
+                text={formatMessage(m.comments.tooltip)}
               />
             </Text>
           </Box>
           <Box marginBottom={10}>
             <Input
               name="caseFilesComments"
-              label="Skilaboð"
-              placeholder="Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi gögnin?"
+              label={formatMessage(m.comments.label)}
+              placeholder={formatMessage(m.comments.placeholder)}
               defaultValue={workingCase?.caseFilesComments}
               onChange={(event) =>
                 removeTabsValidateAndSet(
