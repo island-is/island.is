@@ -103,7 +103,7 @@ const FinanceTransactions = () => {
               {formatMessage({
                 id: 'sp.finance-transactions:intro',
                 defaultMessage:
-                  'Hafið samband við viðeigandi umsjónarmann til að fá frekari upplýsingar um stöðu og innheimtu.',
+                  'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
               })}
             </Text>
           </Column>

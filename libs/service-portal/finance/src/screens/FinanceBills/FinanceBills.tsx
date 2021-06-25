@@ -14,7 +14,7 @@ const FinanceBills = () => {
       intro={formatMessage({
         id: 'sp.finance-bills:intro',
         defaultMessage:
-          'Eitthvað mega hresst og peppað um Greiðsluseðla og Greiðslukvittanir mögulega í tveimur línum.',
+          'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
       })}
       listPath="billReceipt"
     />

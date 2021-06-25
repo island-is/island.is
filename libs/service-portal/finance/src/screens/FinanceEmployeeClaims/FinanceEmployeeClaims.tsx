@@ -14,7 +14,7 @@ const EmployeeClaims = () => {
       intro={formatMessage({
         id: 'sp.employee-claims:intro',
         defaultMessage:
-          'Eitthvað mega hresst og peppað um Laungreiðendakröfur mögulega í tveimur línum.',
+          'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
       })}
       listPath="employeeClaims"
     />
