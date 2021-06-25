@@ -18,6 +18,7 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 
 import { IdentityType } from './identity.type'
+import { IdentityInput } from './identity.input'
 import { Identity, IdentityPerson, IdentityCompany } from './models'
 
 @UseGuards(IdsUserGuard)
@@ -29,9 +30,9 @@ export class IdentityResolver {
   @Query(() => Identity, { name: 'identity', nullable: true })
   async getIdentity(
     @CurrentUser() user: User,
-    @Args('nationalId', { nullable: true }) optionalNationalId?: string,
+    @Args('input', { nullable: true }) input: IdentityInput,
   ): Promise<Identity | null> {
-    const nationalId = optionalNationalId || user.nationalId
+    const nationalId = input?.nationalId || user.nationalId
 
     if (kennitala.isCompany(nationalId)) {
       // TODO: not supported for now
