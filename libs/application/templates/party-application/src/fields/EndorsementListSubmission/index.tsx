@@ -24,6 +24,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const answers = application.answers as SchemaFormValues
+  const [endorsementsPage, setEndorsementsPage] = useState<Endorsement[] | undefined>()
   const [selectedEndorsements, setSelectedEndorsements] = useState<
     Endorsement[] | undefined
   >([])
@@ -40,20 +41,24 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
 
   /* on intital render: decide which radio button should be checked */
   useEffect(() => {
-    if (answers.endorsements && answers.endorsements.length > 0) {
-      const endorsements: any = endorsementsHook?.filter((e: any) => {
-        return answers.endorsements?.indexOf(e.id) !== -1
-      })
-
-      setSelectedEndorsements(sortBy(endorsements, 'created'))
-      isEqual(endorsements, firstX())
-        ? setAutoSelect(true)
-        : setChooseRandom(true)
-    } else {
-      firstMaxEndorsements()
-      setAutoSelect(true)
+    if (endorsementsHook) {
+      if (answers.endorsements && answers.endorsements.length > 0) {
+        const endorsements: any = endorsementsHook?.filter((e: any) => {
+          return answers.endorsements?.indexOf(e.id) !== -1
+        })
+  
+        setSelectedEndorsements(sortBy(endorsements, 'created'))
+        isEqual(endorsements, firstX())
+          ? setAutoSelect(true)
+          : setChooseRandom(true)
+      } else {
+        firstMaxEndorsements()
+        setAutoSelect(true)
+      }
+      setEndorsementsPage(endorsementsHook)
+      handlePagination(1, endorsementsHook)
     }
-  }, [])
+  }, [endorsementsHook])
 
   const maxEndorsements =
     constituencyMapper[answers.constituency as EndorsementListTags]
@@ -126,8 +131,8 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   ) => {
     const sortEndorements = sortBy(endorsements, 'created')
     setPage(page)
-    setTotalPages(pages(selectedEndorsements?.length))
-    setSelectedEndorsements(paginate(sortEndorements, 10, page))
+    setTotalPages(pages(endorsementsHook?.length))
+    setEndorsementsPage(paginate(sortEndorements, 10, page))
   }
 
   return (
@@ -168,11 +173,11 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
           </Box>
           <EndorsementTable
             application={application}
-            endorsements={endorsementsHook}
+            endorsements={sortBy(endorsementsPage, 'created')}
             selectedEndorsements={selectedEndorsements}
             onChange={(endorsement) => handleCheckboxChange(endorsement)}
           />
-          {!!selectedEndorsements?.length && (
+          {!!endorsementsHook?.length && (
             <Box marginY={3}>
               <Pagination
                 page={page}
@@ -181,7 +186,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
                   <Box
                     cursor="pointer"
                     className={className}
-                    onClick={() => handlePagination(page, selectedEndorsements)}
+                    onClick={() => handlePagination(page, endorsementsHook)}
                   >
                     {children}
                   </Box>

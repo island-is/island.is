@@ -47,8 +47,8 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
 
   const filter = (searchTerm: string) => {
     if (searchTerm !== '') {
-      const filterBySearch = endorsementsHook?.filter(
-        (x) => x.meta.fullName?.toLowerCase().includes(searchTerm.toLowerCase()),
+      const filterBySearch = endorsementsHook?.filter((x) =>
+        x.meta.fullName?.toLowerCase().includes(searchTerm.toLowerCase()),
       )
       handlePagination(1, filterBySearch)
     } else handlePagination(1, endorsementsHook)
