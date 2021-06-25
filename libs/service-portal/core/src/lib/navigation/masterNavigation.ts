@@ -197,6 +197,20 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'business',
         },
       },
+
+      // Ökutæki
+      {
+        name: defineMessage({
+          id: 'service.portal:vehicles',
+          defaultMessage: 'Ökutæki',
+        }),
+        path: ServicePortalPath.AssetsVehicles,
+        systemRoute: true,
+        icon: {
+          type: 'outline',
+          icon: 'car',
+        },
+      },
     ],
   },
   {
@@ -221,20 +235,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           type: 'outline',
           icon: 'home',
-        },
-      },
-
-      // Ökutæki
-      {
-        name: defineMessage({
-          id: 'service.portal:vehicles',
-          defaultMessage: 'Ökutæki',
-        }),
-        path: ServicePortalPath.AssetsVehicles,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'car',
         },
       },
 
