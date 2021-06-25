@@ -17,12 +17,8 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import {
-  formatAccusedByGender,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
 import { policeDemandsForm } from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 const courtClaimPrefill: Partial<
   Record<
@@ -201,10 +197,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             data-testid="lawsBroken"
             name="lawsBroken"
             label={formatMessage(policeDemandsForm.lawsBroken.label, {
-              defendant: formatAccusedByGender(
-                workingCase.accusedGender,
-                NounCases.GENITIVE,
-              ),
+              defendant: 'varnaraðila',
             })}
             placeholder={formatMessage(
               policeDemandsForm.lawsBroken.placeholder,
@@ -283,8 +276,8 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.R_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isValid}
           nextIsLoading={isLoading}
         />

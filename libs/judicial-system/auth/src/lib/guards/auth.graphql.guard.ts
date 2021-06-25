@@ -17,7 +17,7 @@ export class JwtGraphQlAuthGuard extends AuthGuard('jwt') {
 
   handleRequest<TUser extends User>(err: Error, user: TUser): TUser {
     if (err || !user) {
-      throw new AuthenticationError((err && err.message) || 'Unauthorized')
+      throw new AuthenticationError(err?.message ?? 'Unauthorized')
     }
 
     return user
