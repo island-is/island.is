@@ -4,20 +4,25 @@ import { Box, Button } from '@island.is/island-ui/core'
 import {
   capitalize,
   formatAccusedByGender,
+  NounCases,
 } from '@island.is/judicial-system/formatters'
-import * as styles from '../AppealSection/AppealSection.treat'
 import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
-import { CaseGender } from '@island.is/judicial-system/types'
+import { Case, CaseGender, CaseType } from '@island.is/judicial-system/types'
+import * as styles from '../AppealSection/AppealSection.treat'
 
 interface Props {
+  workingCase: Case
   setAccusedAppealDate: (date?: Date) => void
-  accusedGender: CaseGender
   isInitialMount: boolean
 }
 
 const AccusedAppealDatePicker: React.FC<Props> = (props) => {
-  const { setAccusedAppealDate, accusedGender, isInitialMount } = props
+  const { workingCase, setAccusedAppealDate, isInitialMount } = props
   const [appealDate, setAppealDate] = useState<Date>()
+
+  const isInvestiagionCase =
+    workingCase.type !== CaseType.CUSTODY &&
+    workingCase.type !== CaseType.TRAVEL_BAN
 
   const animateInAndOut = {
     visible: {
@@ -56,7 +61,13 @@ const AccusedAppealDatePicker: React.FC<Props> = (props) => {
             onClick={() => setAccusedAppealDate(appealDate)}
             disabled={!appealDate}
           >
-            {`${capitalize(formatAccusedByGender(accusedGender))} kærir`}
+            {`${capitalize(
+              formatAccusedByGender(
+                workingCase.accusedGender,
+                NounCases.NOMINATIVE,
+                isInvestiagionCase,
+              ),
+            )} kærir`}
           </Button>
         </Box>
       </div>
