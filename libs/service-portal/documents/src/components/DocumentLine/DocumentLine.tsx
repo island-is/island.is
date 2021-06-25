@@ -17,9 +17,10 @@ import { User } from 'oidc-client'
 interface Props {
   documentLine: Document
   userInfo: User
+  img?: string
 }
 
-const DocumentLine: FC<Props> = ({ documentLine, userInfo }) => {
+const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
   const onClickHandler = () => {
     // Create form elements
     const form = document.createElement('form')
@@ -88,6 +89,7 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo }) => {
               paddingBottom={[1, 0]}
               overflow="hidden"
             >
+              {img && <img className={styles.image} src={img} alt={img} />}
               {documentLine.fileType === 'url' && documentLine.url ? (
                 <Link href={documentLine.url}>
                   <button className={styles.button}>
