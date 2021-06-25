@@ -142,9 +142,9 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID',
       PAYMENT_USERNAME: '/k8s/application-system-api/PAYMENT_USER',
       PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD',
-      CALLBACK_BASE_URL:
+      PAYMENT_BASE_CALLBACK_URL:
         '/k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL',
-      CALLBACK_ADDITION_URL:
+      PAYMENT_ADDITION_CALLBACK_URL:
         '/k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL',
       ARK_BASE_URL: '/k8s/application-system-api/ARK_ENDPOINT',
     })
