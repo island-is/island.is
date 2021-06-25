@@ -130,14 +130,23 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   }
 
   const canCaseFilesBeOpened = () => {
-    if (
-      !workingCase?.isAppealGracePeriodExpired &&
+    const isAppealGracePeriodExpired = workingCase?.isAppealGracePeriodExpired
+
+    const isProsecutorWithAccess =
       user?.role === UserRole.PROSECUTOR &&
-      user.institution?.id === workingCase.prosecutor?.institution?.id &&
+      user.institution?.id === workingCase.prosecutor?.institution?.id
+
+    const isCourtRoleWithAccess =
+      (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR) &&
+      user?.institution?.id === workingCase.court?.id &&
       (workingCase?.accusedAppealDecision === CaseAppealDecision.APPEAL ||
         workingCase?.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
         Boolean(workingCase?.accusedPostponedAppealDate) ||
         Boolean(workingCase?.prosecutorPostponedAppealDate))
+
+    if (
+      !isAppealGracePeriodExpired &&
+      (isProsecutorWithAccess || isCourtRoleWithAccess)
     ) {
       return true
     } else {
@@ -236,7 +245,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             {
               title: 'Embætti',
               value: `${
-                workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
               }`,
             },
             { title: 'Dómstóll', value: workingCase.court?.name },
@@ -247,7 +256,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           accusedNationalId={workingCase.accusedNationalId}
           accusedAddress={workingCase.accusedAddress}
           defender={{
-            name: workingCase.defenderName || '',
+            name: workingCase.defenderName ?? '',
             email: workingCase.defenderEmail,
             phoneNumber: workingCase.defenderPhoneNumber,
           }}
@@ -300,7 +309,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           >
             <CaseFileList
               caseId={workingCase.id}
-              files={workingCase.files || []}
+              files={workingCase.files ?? []}
               canOpenFiles={canCaseFilesBeOpened()}
             />
           </AccordionItem>

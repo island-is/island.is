@@ -113,14 +113,24 @@ export class DelegationScopeService {
         {
           model: ApiScope,
           where: {
-            allowExplicitDelegationGrant: true,
+            [Op.and]: [
+              {
+                allowExplicitDelegationGrant: true,
+                alsoForDelegatedUser: false,
+              },
+            ],
           },
           required: false,
         },
         {
           model: IdentityResource,
           where: {
-            allowExplicitDelegationGrant: true,
+            [Op.and]: [
+              {
+                allowExplicitDelegationGrant: true,
+                alsoForDelegatedUser: false,
+              },
+            ],
           },
           required: false,
         },
@@ -130,11 +140,19 @@ export class DelegationScopeService {
 
   async findAllProcurationScopes(): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
-      where: { grantToProcuringHolders: true },
+      where: {
+        [Op.and]: [
+          { grantToProcuringHolders: true, alsoForDelegatedUser: false },
+        ],
+      },
     })
 
     const identityResources = await this.identityResourceModel.findAll({
-      where: { grantToProcuringHolders: true },
+      where: {
+        [Op.and]: [
+          { grantToProcuringHolders: true, alsoForDelegatedUser: false },
+        ],
+      },
     })
 
     return [
@@ -145,11 +163,19 @@ export class DelegationScopeService {
 
   async findAllLegalGuardianScopes(): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
-      where: { grantToLegalGuardians: true },
+      where: {
+        [Op.and]: [
+          { grantToLegalGuardians: true, alsoForDelegatedUser: false },
+        ],
+      },
     })
 
     const identityResources = await this.identityResourceModel.findAll({
-      where: { grantToLegalGuardians: true },
+      where: {
+        [Op.and]: [
+          { grantToLegalGuardians: true, alsoForDelegatedUser: false },
+        ],
+      },
     })
 
     return [
@@ -160,11 +186,19 @@ export class DelegationScopeService {
 
   async findAllAutomaticScopes(): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
-      where: { automaticDelegationGrant: true },
+      where: {
+        [Op.and]: [
+          { automaticDelegationGrant: true, alsoForDelegatedUser: false },
+        ],
+      },
     })
 
     const identityResources = await this.identityResourceModel.findAll({
-      where: { automaticDelegationGrant: true },
+      where: {
+        [Op.and]: [
+          { automaticDelegationGrant: true, alsoForDelegatedUser: false },
+        ],
+      },
     })
 
     return [
