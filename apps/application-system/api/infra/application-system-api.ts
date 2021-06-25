@@ -144,7 +144,8 @@ export const serviceSetup = (services: {
       username: '/k8s/application-system-api/PAYMENT_USER',
       password: '/k8s/application-system-api/PAYMENT_PASSWORD',
       callbackBaseUrl: '/k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL',
-      callbackAdditionUrl: '/k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL',
+      callbackAdditionUrl:
+        '/k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL',
       arkBaseUrl: '/k8s/application-system-api/ARK_ENDPOINT',
     })
     .initContainer({
