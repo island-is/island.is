@@ -155,7 +155,11 @@ export class DelegationsService {
       ],
     })
 
-    return result.map((d) => d.toDTO())
+    const filtered = result.filter(
+      (x) => x.delegationScopes !== null && x.delegationScopes!.length > 0,
+    )
+
+    return filtered.map((d) => d.toDTO())
   }
 
   async create(
