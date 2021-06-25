@@ -1,3 +1,5 @@
+import { Request } from 'express'
+
 import { Auth } from './auth'
 import { User } from './user'
 
