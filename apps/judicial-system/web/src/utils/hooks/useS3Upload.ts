@@ -9,7 +9,7 @@ import {
 import { Case, PresignedPost } from '@island.is/judicial-system/types'
 
 export const useS3Upload = (workingCase?: Case) => {
-  const [files, _setFiles] = useState<UploadFile[]>([])
+  const [files, setFiles] = useState<UploadFile[]>([])
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const filesRef = useRef<UploadFile[]>(files)
 
@@ -20,7 +20,7 @@ export const useS3Upload = (workingCase?: Case) => {
       return uploadCaseFile
     })
 
-    setFiles(uploadCaseFiles || [])
+    setFilesRefAndState(uploadCaseFiles ?? [])
   }, [workingCase?.files])
 
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
@@ -93,9 +93,9 @@ export const useS3Upload = (workingCase?: Case) => {
    * Sets ref and state value
    * @param files Files to set to state.
    */
-  const setFiles = (files: UploadFile[]) => {
+  const setFilesRefAndState = (files: UploadFile[]) => {
     filesRef.current = files
-    _setFiles(files)
+    setFiles(files)
   }
 
   /**
@@ -119,14 +119,16 @@ export const useS3Upload = (workingCase?: Case) => {
       return newFile.key === file.key ? file : newFile
     })
 
-    setFiles(updatedFiles)
+    setFilesRefAndState(updatedFiles)
   }
 
   const removeFileFromState = (file: UploadFile) => {
     const newFiles = [...files]
 
     if (newFiles.includes(file)) {
-      setFiles(newFiles.filter((fileInFiles) => fileInFiles !== file))
+      setFilesRefAndState(
+        newFiles.filter((fileInFiles) => fileInFiles !== file),
+      )
     }
   }
 
@@ -166,7 +168,7 @@ export const useS3Upload = (workingCase?: Case) => {
     const newUploadFiles = newFiles as UploadFile[]
 
     if (!isRetry) {
-      setFiles([...newUploadFiles, ...files])
+      setFilesRefAndState([...newUploadFiles, ...files])
     }
 
     newUploadFiles.forEach(async (file) => {

@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
 
+import { LocaleProvider } from '@island.is/localization'
 import {
   mockCaseQueries,
   mockInstitutionsQuery,
@@ -31,7 +32,9 @@ describe('/krafa with an id', () => {
         addTypename={false}
       >
         <UserProvider>
-          <StepOne />
+          <LocaleProvider locale="is" messages={{}}>
+            <StepOne />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -91,7 +94,9 @@ describe('/krafa with an id', () => {
         addTypename={false}
       >
         <UserProvider>
-          <StepOne />
+          <LocaleProvider locale="is" messages={{}}>
+            <StepOne />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -123,7 +128,9 @@ describe('/krafa with an id', () => {
         addTypename={false}
       >
         <UserProvider>
-          <StepOne />
+          <LocaleProvider locale="is" messages={{}}>
+            <StepOne />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -157,7 +164,9 @@ describe('/krafa without ID', () => {
         addTypename={false}
       >
         <UserProvider>
-          <StepOne type={CaseType.CUSTODY} />
+          <LocaleProvider locale="is" messages={{}}>
+            <StepOne type={CaseType.CUSTODY} />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -188,7 +197,9 @@ describe('/krafa without ID', () => {
         addTypename={false}
       >
         <UserProvider>
-          <StepOne type={CaseType.CUSTODY} />
+          <LocaleProvider locale="is" messages={{}}>
+            <StepOne type={CaseType.CUSTODY} />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -236,7 +247,9 @@ describe('/krafa without ID', () => {
         addTypename={false}
       >
         <UserProvider>
-          <StepOne type={CaseType.CUSTODY} />
+          <LocaleProvider locale="is" messages={{}}>
+            <StepOne type={CaseType.CUSTODY} />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )

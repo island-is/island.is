@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
+import { useIntl } from 'react-intl'
 import { Case, CaseGender } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
+import { defendantInfo } from '@island.is/judicial-system-web/messages'
 import {
   removeTabsValidateAndSet,
   setAndSendToServer,
@@ -19,6 +21,7 @@ interface Props {
 const DefendantInfo: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
 
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
     '',
@@ -38,7 +41,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
     <BlueBox>
       <Box marginBottom={2}>
         <Text as="h4" variant="h4">
-          Kyn{' '}
+          {formatMessage(defendantInfo.gender.label)}{' '}
           <Text as="span" color="red600" fontWeight="semiBold">
             *
           </Text>
@@ -49,7 +52,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           <RadioButton
             name="accusedGender"
             id="genderMale"
-            label="Karl"
+            label={formatMessage(defendantInfo.gender.male)}
             value={CaseGender.MALE}
             checked={workingCase.accusedGender === CaseGender.MALE}
             onChange={() =>
@@ -69,7 +72,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           <RadioButton
             name="accusedGender"
             id="genderFemale"
-            label="Kona"
+            label={formatMessage(defendantInfo.gender.female)}
             value={CaseGender.FEMALE}
             checked={workingCase.accusedGender === CaseGender.FEMALE}
             onChange={() =>
@@ -89,7 +92,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           <RadioButton
             name="accusedGender"
             id="genderOther"
-            label="Kynsegin/Annað"
+            label={formatMessage(defendantInfo.gender.other)}
             value={CaseGender.OTHER}
             checked={workingCase.accusedGender === CaseGender.OTHER}
             onChange={() =>
@@ -135,8 +138,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
           <Input
             data-testid="nationalId"
             name="accusedNationalId"
-            label="Kennitala"
-            placeholder="Kennitala"
+            label={formatMessage(defendantInfo.nationalId.label)}
+            placeholder={formatMessage(defendantInfo.nationalId.placeholder)}
             defaultValue={workingCase.accusedNationalId}
             errorMessage={nationalIdErrorMessage}
             hasError={nationalIdErrorMessage !== ''}
@@ -148,8 +151,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
         <Input
           data-testid="accusedName"
           name="accusedName"
-          label="Fullt nafn"
-          placeholder="Fullt nafn"
+          label={formatMessage(defendantInfo.name.label)}
+          placeholder={formatMessage(defendantInfo.name.label)}
           defaultValue={workingCase.accusedName}
           errorMessage={accusedNameErrorMessage}
           hasError={accusedNameErrorMessage !== ''}
@@ -180,8 +183,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
       <Input
         data-testid="accusedAddress"
         name="accusedAddress"
-        label="Lögheimili/dvalarstaður"
-        placeholder="Lögheimili eða dvalarstaður"
+        label={formatMessage(defendantInfo.address.label)}
+        placeholder={formatMessage(defendantInfo.address.label)}
         defaultValue={workingCase.accusedAddress}
         errorMessage={accusedAddressErrorMessage}
         hasError={

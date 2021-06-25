@@ -1,5 +1,5 @@
+import { UseGuards } from '@nestjs/common'
 import { Resolver, Query, ResolveField, Parent, Context } from '@nestjs/graphql'
-import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -7,11 +7,14 @@ import {
   IdsUserGuard,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
+import { Audit } from '@island.is/nest/audit'
+
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
+import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Resolver(() => NationalRegistryPerson)
+@Audit({ namespace: '@island.is/api/national-registry-x-road' })
 export class NationalRegistryXRoadResolver {
   constructor(
     private nationalRegistryXRoadService: NationalRegistryXRoadService,
@@ -20,6 +23,7 @@ export class NationalRegistryXRoadResolver {
   @Query(() => NationalRegistryPerson, {
     name: 'nationalRegistryUserV2',
   })
+  @Audit()
   async nationalRegistryPersons(
     @CurrentUser() user: User,
   ): Promise<NationalRegistryPerson | undefined> {
@@ -30,6 +34,7 @@ export class NationalRegistryXRoadResolver {
   }
 
   @ResolveField('children', () => [NationalRegistryPerson])
+  @Audit()
   async resolveChildren(
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
