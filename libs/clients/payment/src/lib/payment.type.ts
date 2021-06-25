@@ -1,12 +1,12 @@
 export interface PaymentServiceOptions {
-  xRoadBaseUrl: string
-  xRoadProviderId: string
-  xRoadClientId: string
-  username: string
-  password: string
-  callbackBaseUrl: string
-  callbackAdditionUrl: string
-  arkBaseUrl: string
+  XROAD_BASE_URL: string
+  XROAD_PROVIDER_ID: string
+  XROAD_CLIENT_ID: string
+  PAYMENT_USERNAME: string
+  PAYMENT_PASSWORD: string
+  CALLBACK_BASE_URL: string
+  CALLBACK_ADDITION_URL: string
+  ARK_BASE_URL: string
 }
 
 export const PAYMENT_OPTIONS = 'PAYMENT_OPTIONS'
