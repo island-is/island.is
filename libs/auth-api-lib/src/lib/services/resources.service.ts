@@ -355,9 +355,8 @@ export class ResourcesService {
           [Op.in]: scopes,
         },
         allowExplicitDelegationGrant: true,
-        isAccessControlled: false,
-        alsoForDelegatedUser: false,
       },
+      include: [ApiScopeGroup],
     })
   }
 
