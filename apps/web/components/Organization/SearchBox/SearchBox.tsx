@@ -55,7 +55,7 @@ export const SearchBox = ({
           value: o.slug,
         }))
         .concat(
-          organizationPage.menuLinks.flatMap((x) => [
+          ...organizationPage.menuLinks.map((x) => [
             {
               type: 'url',
               label: x.primaryLink.text,
