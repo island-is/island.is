@@ -69,7 +69,9 @@ export class PaymentCatalogProvider extends BasicDataProvider {
     })
   }
 
-  onProvideError(result: any): FailedDataProviderResult {
+  onProvideError(
+    result: FailedDataProviderResult['data'],
+  ): FailedDataProviderResult {
     return {
       date: new Date(),
       reason: 'Villa kom upp við að sækja upplýsingar frá Fjársýslunni',
