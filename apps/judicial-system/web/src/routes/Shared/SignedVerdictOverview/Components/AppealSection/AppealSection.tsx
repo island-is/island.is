@@ -2,11 +2,7 @@ import React, { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import {
-  Case,
-  CaseAppealDecision,
-  CaseGender,
-} from '@island.is/judicial-system/types'
+import { Case, CaseAppealDecision } from '@island.is/judicial-system/types'
 import * as styles from './AppealSection.treat'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'

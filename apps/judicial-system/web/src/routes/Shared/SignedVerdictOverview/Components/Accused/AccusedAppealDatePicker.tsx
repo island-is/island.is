@@ -7,7 +7,7 @@ import {
   NounCases,
 } from '@island.is/judicial-system/formatters'
 import { DateTime } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, CaseGender, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 import * as styles from '../AppealSection/AppealSection.treat'
 
 interface Props {

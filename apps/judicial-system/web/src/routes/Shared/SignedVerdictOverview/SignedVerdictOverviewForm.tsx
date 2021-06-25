@@ -26,7 +26,6 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
   CaseType,
   ReadableCaseType,
   UserRole,
