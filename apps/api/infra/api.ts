@@ -119,9 +119,9 @@ export const serviceSetup = (services: {
         staging: 'https://api.staging01.devland.is',
       },
       XROAD_TJODSKRA_MEMBER_CODE: {
-        prod: '10001',
+        prod: '6503760649',
         dev: '10001',
-        staging: '10001',
+        staging: '6503760649',
       },
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
@@ -174,6 +174,12 @@ export const serviceSetup = (services: {
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
       DOCUMENT_PROVIDER_ADMINS:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS',
+      XROAD_BASE_URL: '/k8s/application-system-api/XROAD_BASE_PATH',
+      XROAD_PROVIDER_ID:
+        '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID',
+      XROAD_CLIENT_ID: '/k8s/application-system-api/XROAD_CLIENT_ID',
+      PAYMENT_USERNAME: '/k8s/application-system-api/PAYMENT_USER',
+      PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD',
     })
 
     .ingress({
