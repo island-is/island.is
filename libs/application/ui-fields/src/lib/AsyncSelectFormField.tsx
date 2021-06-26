@@ -17,6 +17,7 @@ import { getDefaultValue } from '../getDefaultValue'
 interface Props extends FieldBaseProps {
   field: AsyncSelectField
 }
+
 const AsyncSelectFormField: FC<Props> = ({ application, error, field }) => {
   const {
     id,
@@ -28,6 +29,7 @@ const AsyncSelectFormField: FC<Props> = ({ application, error, field }) => {
     disabled,
     onSelect,
     backgroundColor,
+    isSearchable,
   } = field
   const { formatMessage } = useLocale()
   const apolloClient = useApolloClient()
@@ -83,6 +85,7 @@ const AsyncSelectFormField: FC<Props> = ({ application, error, field }) => {
           }
           onSelect={onSelect}
           backgroundColor={backgroundColor}
+          isSearchable={isSearchable}
         />
       </Box>
     </div>
