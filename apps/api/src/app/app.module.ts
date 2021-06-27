@@ -31,6 +31,7 @@ import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
 import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
+import { AuditModule } from '@island.is/nest/audit'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -60,6 +61,7 @@ const autoSchemaFile = environment.production
       ],
     }),
     AuthDomainModule.register(environment.authPublicApi),
+    AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
@@ -186,10 +188,15 @@ const autoSchemaFile = environment.production
     }),
     LicenseServiceModule.register({
       xroad: {
-        xroadBaseUrl: environment.xroad.baseUrl,
-        xroadClientId: environment.xroad.clientId,
-        xroadPath: environment.drivingLicense.xroadPath,
-        drivingLicenseSecret: environment.drivingLicense.secret,
+        baseUrl: environment.xroad.baseUrl,
+        clientId: environment.xroad.clientId,
+        path: environment.drivingLicense.xroadPath,
+        secret: environment.drivingLicense.secret,
+      },
+      pkpass: {
+        apiKey: environment.pkpass.apiKey,
+        apiUrl: environment.pkpass.apiUrl,
+        secretKey: environment.pkpass.secretKey,
       },
     }),
   ],

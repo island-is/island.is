@@ -121,6 +121,14 @@ const devConfig = {
   partyLetterRegistry: {
     baseApiUrl: 'http://localhost:4251',
   },
+  pkpass: {
+    apiKey: process.env.PKPASS_API_KEY,
+    apiUrl: process.env.PKPASS_API_URL,
+    secretKey: process.env.PKPASS_SECRET_KEY,
+  },
+  audit: {
+    defaultNamespace: '@island.is/api',
+  },
 }
 
 const prodConfig = {
@@ -233,6 +241,16 @@ const prodConfig = {
   },
   partyLetterRegistry: {
     baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
+  },
+  pkpass: {
+    apiKey: process.env.PKPASS_API_KEY,
+    apiUrl: process.env.PKPASS_API_URL,
+    secretKey: process.env.PKPASS_SECRET_KEY,
+  },
+  audit: {
+    defaultNamespace: '@island.is/api',
+    groupName: process.env.AUDIT_GROUP_NAME,
+    serviceName: 'api',
   },
 }
 
