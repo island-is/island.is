@@ -21,7 +21,7 @@ const CopyLink: FC<CopyLinkProps> = ({
       borderRadius="large"
     >
       <Box style={{ overflowWrap: 'anywhere' }} paddingRight={4}>
-        <Text variant="default" color="blue400">
+        <Text variant="h5" color="blue400">
           {linkUrl}
         </Text>
       </Box>
@@ -29,12 +29,8 @@ const CopyLink: FC<CopyLinkProps> = ({
         <Button
           onClick={() => copyToClipboard(linkUrl)}
           type="button"
-          variant="ghost"
+          variant="text"
           nowrap
-          colorScheme="light"
-          icon="copy"
-          iconType="outline"
-          size="small"
         >
           {buttonTitle}
         </Button>
