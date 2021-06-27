@@ -7,17 +7,14 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isPerson } from 'kennitala'
-import { Endorsement } from './endorsement.model'
+import { Endorsement } from './models/endorsement.model'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementMetadataService } from '../endorsementMetadata/endorsementMetadata.service'
-import {
-  EndorsementValidatorService,
-  ValidationRule,
-} from '../endorsementValidator/endorsementValidator.service'
+import { EndorsementValidatorService } from '../endorsementValidator/endorsementValidator.service'
 import { EndorsementMetadata } from '../endorsementMetadata/endorsementMetadata.model'
-import { Op, Sequelize, UniqueConstraintError } from 'sequelize'
+import { Op, UniqueConstraintError } from 'sequelize'
 import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
 
@@ -49,9 +46,19 @@ interface FindEndorsementsInput {
   listId: string
 }
 
-interface InvalidateEndorsementsInput {
+interface FindUserEndorsementsByTagsInput {
   nationalId: string
   tags: EndorsementTag[]
+}
+
+interface ProcessEndorsementInput {
+  nationalId: string
+  endorsementList: EndorsementList
+}
+
+export interface NationalIdError {
+  nationalId: string
+  message: string
 }
 
 @Injectable()
@@ -118,29 +125,36 @@ export class EndorsementService {
     return true
   }
 
-  private invalidateEndorsementsIfExist = async (
-    input: InvalidateEndorsementsInput,
-  ) => {
-    const endorsementsToInvalidate = await this.findUserEndorsementsByTags(
-      input,
-    )
+  private processEndorsement = async ({
+    nationalId,
+    endorsementList,
+  }: ProcessEndorsementInput) => {
+    // get metadata for this national id
+    const metadata = await this.getEndorsementMetadataForNationalId({
+      nationalId,
+      endorsementList,
+    })
 
-    // we have no endorsements to invalidate, return false to indicate so
-    if (!endorsementsToInvalidate.length) {
-      return false
+    // run all validations for this national id
+    await this.validateEndorsement({
+      listId: endorsementList.id,
+      validationRules: endorsementList.validationRules,
+      metadata,
+      nationalId,
+    })
+
+    return {
+      endorser: nationalId,
+      endorsementListId: endorsementList.id,
+      // this removes validation fields fetched by meta service
+      meta: {
+        ...this.metadataService.pruneMetadataFields(
+          metadata,
+          endorsementList.endorsementMeta,
+        ),
+        bulkEndorsement: false, // defaults to false we overwrite this value in bulk import
+      },
     }
-
-    await Promise.all(
-      endorsementsToInvalidate.map((endorsement) => {
-        return endorsement.update({
-          meta: Sequelize.literal(
-            `meta || '${JSON.stringify({ invalidated: true })}'`, // || operator in postgres concatenates objects in jsonb fields
-          ),
-        })
-      }),
-    )
-
-    return true
   }
 
   async findEndorsements({ listId }: FindEndorsementsInput) {
@@ -173,7 +187,7 @@ export class EndorsementService {
   async findUserEndorsementsByTags({
     nationalId,
     tags,
-  }: InvalidateEndorsementsInput) {
+  }: FindUserEndorsementsByTagsInput) {
     this.logger.debug(
       `Finding endorsements by tags "${tags.join(
         ', ',
@@ -199,49 +213,26 @@ export class EndorsementService {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
 
-    // get all metadata required for this endorsement
-    const allEndorsementMetadata = await this.getEndorsementMetadataForNationalId(
-      { nationalId, endorsementList: endorsementList },
-    )
-
-    // run requested validators with fetched metadata
-    await this.validateEndorsement({
-      listId: endorsementList.id,
-      validationRules: endorsementList.validationRules,
-      metadata: allEndorsementMetadata,
+    const endorsement = await this.processEndorsement({
       nationalId,
+      endorsementList,
     })
 
-    return this.endorsementModel
-      .create({
-        endorser: nationalId,
-        endorsementListId: endorsementList.id,
-        // this removes validation fields fetched by meta service
-        meta: {
-          ...this.metadataService.pruneMetadataFields(
-            allEndorsementMetadata,
-            endorsementList.endorsementMeta,
-          ),
-          bulkEndorsement: false,
-          invalidated: false,
-        },
-      })
-      .catch((error) => {
-        // map meaningful sequelize errors to custom errors, else return error
-        switch (error.constructor) {
-          case UniqueConstraintError: {
-            throw new MethodNotAllowedException([
-              'Endorsement already exists in list',
-            ])
-          }
-          default: {
-            throw error
-          }
+    return this.endorsementModel.create(endorsement).catch((error) => {
+      // map meaningful sequelize errors to custom errors, else return error
+      switch (error.constructor) {
+        case UniqueConstraintError: {
+          throw new MethodNotAllowedException([
+            'Endorsement already exists in list',
+          ])
         }
-      })
+        default: {
+          throw error
+        }
+      }
+    })
   }
 
-  // TODO: Combine with create single endorsement if able
   async bulkCreateEndorsementOnList({
     nationalIds,
     endorsementList,
@@ -253,57 +244,52 @@ export class EndorsementService {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
 
+    const failedNationalIds: NationalIdError[] = []
+
     // create an endorsement document for each national id
     const endorsements = await Promise.all(
       nationalIds.map(async (nationalId) => {
-        // get metadata for this national id
-        const metadata = await this.getEndorsementMetadataForNationalId({
+        const endorsement = await this.processEndorsement({
           nationalId,
           endorsementList,
+        }).catch((error: Error) => {
+          // we swallow the error here and return undefined
+          failedNationalIds.push({
+            nationalId,
+            message: error.message,
+          })
+          return undefined
         })
 
-        // we remove unique within tag cause bulk imports invalidate existing signatures
-        const bulkValidationRules = endorsementList.validationRules.filter(
-          (rule) => rule.type !== ValidationRule.UNIQUE_WITHIN_TAGS,
-        )
-        // run all validations for this national id
-        await this.validateEndorsement({
-          listId: endorsementList.id,
-          validationRules: bulkValidationRules,
-          metadata,
-          nationalId,
-        })
-
-        /**
-         * Bulk imported endorsement might already exist.
-         * If we find an endorsement belonging to the same set of tags as the bulk imported endorsement
-         * all endorsements are invalidated as instructed by the Ministry of Justice
-         */
-        const invalidated = await this.invalidateEndorsementsIfExist({
-          nationalId,
-          tags: endorsementList.tags,
-        })
+        // we return false here to be able to remove this result from the bulk create query
+        if (!endorsement) {
+          return false
+        }
 
         return {
-          endorser: nationalId,
-          endorsementListId: endorsementList.id,
-          // this removes validation fields fetched by meta service
-          meta: {
-            ...this.metadataService.pruneMetadataFields(
-              metadata,
-              endorsementList.endorsementMeta,
-            ),
-            bulkEndorsement: true,
-            invalidated,
-          },
+          ...endorsement,
+          meta: { ...endorsement.meta, bulkEndorsement: true }, // we overwrite the bulk import value
         }
       }),
     )
 
-    return this.endorsementModel.bulkCreate(endorsements, {
-      ignoreDuplicates: true, // this ignores endorsements that would cause unique constraint errors when inserting into this list
-      returning: true,
-    })
+    const validEndorsements = endorsements.filter(
+      (endorsement): endorsement is Exclude<typeof endorsement, false> =>
+        Boolean(endorsement),
+    )
+
+    const createdEndorsements = await this.endorsementModel.bulkCreate(
+      validEndorsements,
+      {
+        ignoreDuplicates: true, // this ignores endorsements that would cause unique constraint errors when inserting into this list
+        returning: true,
+      },
+    )
+
+    return {
+      succeeded: createdEndorsements,
+      failed: failedNationalIds,
+    }
   }
 
   async deleteFromListByNationalId({
