@@ -13,6 +13,7 @@ describe('bulkCreateEndorsement', () => {
       nationalId: authNationalId,
       scope: [],
     })
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalIds = ['0101304339', '0101304339']
     const response = await request(app.getHttpServer())
       .post(
@@ -32,6 +33,7 @@ describe('bulkCreateEndorsement', () => {
       nationalId: authNationalId,
       scope: [EndorsementScope.write],
     })
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalIds = ['0101304339', '0101304339']
     const response = await request(app.getHttpServer())
       .post(
@@ -58,6 +60,7 @@ describe('bulkCreateEndorsement', () => {
       nationalId: authNationalId,
       scope: [EndorsementScope.write],
     })
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalIds = ['0101304339']
     const response = await request(app.getHttpServer())
       .post(
@@ -76,6 +79,7 @@ describe('bulkCreateEndorsement', () => {
       nationalId: authNationalId,
       scope: [EndorsementScope.write],
     })
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalIds = ['0101304339']
     const response = await request(app.getHttpServer())
       .post(
@@ -95,6 +99,7 @@ describe('bulkCreateEndorsement', () => {
       scope: [EndorsementScope.write],
     })
     const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c1'
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalIds = ['0101303369', '0101305069', '0101303019']
     const response = await request(app.getHttpServer())
       .post(`/endorsement-list/${listId}/endorsement/bulk`)

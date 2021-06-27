@@ -15,12 +15,12 @@ export interface TemporaryVoterRegistryResponse {
 @Injectable()
 export class TemporaryVoterRegistryService implements MetadataProvider {
   constructor(
-    private readonly _temporaryVoterRegistryApi: TemporaryVoterRegistryApi,
+    private readonly temporaryVoterRegistryApi: TemporaryVoterRegistryApi,
   ) {}
   metadataKey = 'temporaryVoterRegistry'
 
   private temporaryVoterRegistryApiWithAuth(auth: Auth) {
-    return this._temporaryVoterRegistryApi.withMiddleware(
+    return this.temporaryVoterRegistryApi.withMiddleware(
       new AuthMiddleware(auth),
     )
   }

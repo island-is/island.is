@@ -7,6 +7,7 @@ describe('FindByManagerPartyLetterRegistry', () => {
   it('GET /party-letter-registry/manager should return not found error when national owns no letters', async () => {
     const app = await getAuthenticatedApp({
       scope: [PartyLetterRegistryScope.read],
+      // eslint-disable-next-line local-rules/disallow-kennitalas
       nationalId: '0101302209',
     })
     const response = await request(app.getHttpServer())
@@ -22,6 +23,7 @@ describe('FindByManagerPartyLetterRegistry', () => {
   it('GET /party-letter-registry/manager should return error when scope is missing', async () => {
     const app = await getAuthenticatedApp({
       scope: [],
+      // eslint-disable-next-line local-rules/disallow-kennitalas
       nationalId: '0101302209',
     })
     const response = await request(app.getHttpServer())
@@ -35,6 +37,7 @@ describe('FindByManagerPartyLetterRegistry', () => {
     })
   })
   it('GET /party-letter-registry/manager should return a party letter entry', async () => {
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101305069'
     const app = await getAuthenticatedApp({
       scope: [PartyLetterRegistryScope.read],

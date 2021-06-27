@@ -29,7 +29,9 @@ describe('CreatePartyLetterRegistry', () => {
     const requestData = {
       partyLetter: 'Q',
       partyName: 'The awesome party',
+      // eslint-disable-next-line local-rules/disallow-kennitalas
       owner: '0101305069',
+      // eslint-disable-next-line local-rules/disallow-kennitalas
       managers: ['0101305069'],
     }
     const response = await request(app.getHttpServer())
@@ -46,6 +48,7 @@ describe('CreatePartyLetterRegistry', () => {
     const app = await getAuthenticatedApp({
       scope: [PartyLetterRegistryScope.write],
     })
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101305069'
     const requestData = {
       partyLetter: 'Y',
@@ -67,6 +70,7 @@ describe('CreatePartyLetterRegistry', () => {
     const app = await getAuthenticatedApp({
       scope: [PartyLetterRegistryScope.write],
     })
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101303019'
     const requestData = {
       partyLetter: 'V',
