@@ -89,7 +89,13 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
               paddingBottom={[1, 0]}
               overflow="hidden"
             >
-              {img && <img className={styles.image} src={img} alt={img} />}
+              {img && (
+                <img
+                  className={styles.image}
+                  src={img}
+                  alt={documentLine.subject}
+                />
+              )}
               {documentLine.fileType === 'url' && documentLine.url ? (
                 <Link href={documentLine.url}>
                   <button className={styles.button}>
