@@ -1,4 +1,4 @@
-import { CurrentUser, Scopes, User } from '@island.is/auth-nest-tools'
+import { CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { Controller, Get, Query } from '@nestjs/common'
 import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
@@ -7,6 +7,7 @@ import { VoterRegistry } from './voterRegistry.model'
 import { VoterRegistryService } from './voterRegistry.service'
 import { environment } from '../../../environments'
 import { FindOneDto } from './dto/findOne.dto'
+import type { User } from '@island.is/auth-nest-tools'
 @Audit<VoterRegistry>({
   namespace: `${environment.audit.defaultNamespace}/voter-registry`,
 })
