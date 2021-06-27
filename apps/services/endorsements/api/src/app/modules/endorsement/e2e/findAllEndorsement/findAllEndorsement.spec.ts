@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { setup } from '../../../../../../test/setup'
-import { Endorsement } from '../../endorsement.model'
+import { Endorsement } from '../../models/endorsement.model'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { authNationalId } from './seed'
 

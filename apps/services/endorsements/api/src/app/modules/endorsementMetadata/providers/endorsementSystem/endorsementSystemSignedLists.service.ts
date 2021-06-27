@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Endorsement } from '../../../endorsement/endorsement.model'
+import { Endorsement } from '../../../endorsement/models/endorsement.model'
 import { EndorsementList } from '../../../endorsementList/endorsementList.model'
 import { EndorsementTag } from '../../../endorsementList/constants'
 import { MetadataProvider } from '../../types'
