@@ -12,6 +12,7 @@ import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { Endorsement } from '../../types/schema'
 import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
+import sortBy from 'lodash/sortBy'
 
 const mapToCSVFile = (endorsements: Endorsement[]) => {
   return endorsements.map((endorsement) => {
@@ -88,7 +89,7 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Box marginTop={3} marginBottom={5}>
             {endorsements?.length && (
               <ExportAsCSV
-                data={mapToCSVFile(endorsements) as object[]}
+                data={mapToCSVFile(sortBy(endorsements, 'created')) as object[]}
                 filename={csvFileName(
                   partyLetterRegistry?.partyLetter,
                   partyLetterRegistry?.partyName,
