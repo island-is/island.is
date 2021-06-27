@@ -3,10 +3,11 @@ import {
   emptyResponseExpectedStructure,
   errorExpectedStructure,
 } from '../../../../../../test/testHelpers'
-import * as request from 'supertest'
+import request from 'supertest'
 
 describe('findByAuthVoterRegistry', () => {
   it('GET /voter-registry should return error when auth does not have the requested scope', async () => {
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101302989'
     const app = await getAuthenticatedApp({ nationalId, scope: [] })
     const response = await request(app.getHttpServer())
@@ -20,6 +21,7 @@ describe('findByAuthVoterRegistry', () => {
     })
   })
   it('GET /voter-registry should return not registered response when trying to fetch older version', async () => {
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101303019'
     const app = await getAuthenticatedApp({ nationalId })
     const response = await request(app.getHttpServer())
@@ -33,6 +35,7 @@ describe('findByAuthVoterRegistry', () => {
     })
   })
   it('GET /voter-registry should return entry from current version', async () => {
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101302989'
     const app = await getAuthenticatedApp({ nationalId })
     const response = await request(app.getHttpServer())
