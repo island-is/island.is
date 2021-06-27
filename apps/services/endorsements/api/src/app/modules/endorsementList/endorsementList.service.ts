@@ -61,17 +61,17 @@ export class EndorsementListService {
   }
 
   async close(endorsementList: EndorsementList): Promise<EndorsementList> {
-    this.logger.debug('Closing endorsement list', endorsementList.id)
+    this.logger.info(`Closing endorsement list: ${endorsementList.id}`)
     return await endorsementList.update({ closedDate: new Date() })
   }
 
   async open(endorsementList: EndorsementList): Promise<EndorsementList> {
-    this.logger.debug('Opening endorsement list', endorsementList.id)
+    this.logger.info(`Opening endorsement list: ${endorsementList.id}`)
     return await endorsementList.update({ closedDate: null })
   }
 
   async create(list: createInput) {
-    this.logger.debug('Creating endorsement list')
+    this.logger.info(`Creating endorsement list: ${list.title}`)
     return this.endorsementListModel.create(list)
   }
 }

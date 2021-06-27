@@ -130,7 +130,7 @@ export const LetterApplicationForm: Form = buildForm({
                 ) as string) ?? '',
             }),
             buildCustomField({
-              id: 'partyLetter',
+              id: 'selectPartyLetter',
               title: m.selectPartyLetter.title,
               component: 'PartyLetter',
             }),

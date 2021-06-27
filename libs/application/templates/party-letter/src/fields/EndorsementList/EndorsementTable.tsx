@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Application } from '@island.is/application/core'
-import { Box, Table as T, Tooltip, Icon } from '@island.is/island-ui/core'
+import { Table as T, Icon } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
@@ -22,11 +22,15 @@ interface EndorsementTableProps {
 
 const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
   const { formatMessage } = useLocale()
-
+  const withBulkImport = endorsements?.some((x) => x.meta.bulkEndorsement)
   const renderRow = (endorsement: Endorsement) => {
-    const rowBackground = endorsement.meta.invalidated
-      ? 'yellow200'
-      : endorsement.meta.bulkEndorsement
+    const fullAddress =
+      endorsement.meta.address.streetAddress +
+      ', ' +
+      endorsement.meta.address.postalCode +
+      ' ' +
+      endorsement.meta.address.city
+    const rowBackground = endorsement.meta.bulkEndorsement
       ? 'roseTinted100'
       : 'white'
     return (
@@ -58,26 +62,20 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
             textAlign: 'right',
           }}
         >
-          {endorsement.meta.invalidated || endorsement.meta.bulkEndorsement ? (
-            <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.meta.address.streetAddress}
-              <Box marginLeft={2}>
-                {endorsement.meta.invalidated && (
-                  <Tooltip
-                    color="blue400"
-                    iconSize="medium"
-                    text={formatMessage(m.validationMessages.signatureInvalid)}
-                  />
-                )}
-                {endorsement.meta.bulkEndorsement && (
-                  <Icon icon="attach" color="blue400" />
-                )}
-              </Box>
-            </Box>
-          ) : (
-            endorsement.meta.address.streetAddress
-          )}
+          {fullAddress}
         </T.Data>
+        {withBulkImport && (
+          <T.Data
+            box={{
+              background: rowBackground,
+              textAlign: 'right',
+            }}
+          >
+            {endorsement.meta.bulkEndorsement && (
+              <Icon icon="attach" color="blue400" />
+            )}
+          </T.Data>
+        )}
       </T.Row>
     )
   }
@@ -94,6 +92,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
           <T.HeadData box={{ textAlign: 'right' }}>
             {formatMessage(m.endorsementTable.thAddress)}
           </T.HeadData>
+          {withBulkImport && <T.HeadData></T.HeadData>}
         </T.Row>
       </T.Head>
       <T.Body>
