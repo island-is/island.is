@@ -53,7 +53,6 @@ export enum ServicePortalPath {
   EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
 
   // Education License
-  EducationLicenseOld = '/menntun/leyfisbref',
   EducationLicense = '/leyfisbref',
 
   // Assets

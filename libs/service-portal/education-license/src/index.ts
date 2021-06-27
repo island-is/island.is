@@ -18,13 +18,5 @@ export const educationLicenseModule: ServicePortalModule = {
       path: ServicePortalPath.EducationLicense,
       render: () => lazy(() => import('./screens/EducationLicense')),
     },
-    {
-      name: defineMessage({
-        id: 'service.portal:educationLicense',
-        defaultMessage: 'Leyfisbréf',
-      }),
-      path: ServicePortalPath.EducationLicenseOld,
-      render: () => lazy(() => import('./screens/EducationLicenseRedirect')),
-    },
   ],
 }
