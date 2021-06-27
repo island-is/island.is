@@ -92,7 +92,7 @@ export class AuthController {
       return res.redirect('/?villa=innskraning-ogild')
     }
 
-    const { authId } = req.cookies[REDIRECT_COOKIE_NAME] || {}
+    const { authId } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
     const { user } = verifyResult
     if (!user || (authId && user.authId !== authId)) {
       this.logger.error('Could not verify user authenticity', {

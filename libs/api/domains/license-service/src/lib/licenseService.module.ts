@@ -1,37 +1,74 @@
-import { Module, DynamicModule } from '@nestjs/common'
+import { Module, DynamicModule, CacheModule } from '@nestjs/common'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { LicenseServiceService } from './licenseService.service'
 
 import { MainResolver } from './graphql/main.resolver'
 
-import { LicenseServiceApi } from './client/driving-license-client/drivingLicenseService.api'
+import { GenericDrivingLicenseApi } from './client/driving-license-client'
+import {
+  CONFIG_PROVIDER,
+  GenericLicenseClient,
+  GenericLicenseMetadata,
+  GenericLicenseProviderId,
+  GenericLicenseType,
+  GENERIC_LICENSE_FACTORY,
+} from './licenceService.type'
 
 export interface Config {
   xroad: {
-    xroadBaseUrl: string
-    xroadClientId: string
-    xroadPath: string
-    drivingLicenseSecret: string
+    baseUrl: string
+    clientId: string
+    path: string
+    secret: string
+  }
+  pkpass: {
+    apiKey: string
+    apiUrl: string
+    secretKey: string
   }
 }
+
+export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
+  {
+    type: GenericLicenseType.DriversLicense,
+    provider: {
+      id: GenericLicenseProviderId.NationalPoliceCommissioner,
+    },
+    pkpass: true,
+    timeout: 100,
+  },
+]
 
 @Module({})
 export class LicenseServiceModule {
   static register(config: Config): DynamicModule {
     return {
       module: LicenseServiceModule,
+      imports: [CacheModule.register()],
       providers: [
         MainResolver,
         LicenseServiceService,
         {
-          provide: LicenseServiceApi,
-          useFactory: async () =>
-            new LicenseServiceApi(
-              config.xroad.xroadBaseUrl,
-              config.xroad.xroadClientId,
-              config.xroad.xroadPath,
-              config.xroad.drivingLicenseSecret,
-            ),
+          provide: LOGGER_PROVIDER,
+          useValue: logger,
+        },
+        {
+          provide: CONFIG_PROVIDER,
+          useValue: config,
+        },
+        {
+          provide: GENERIC_LICENSE_FACTORY,
+          useFactory: () => async (
+            type: GenericLicenseType,
+          ): Promise<GenericLicenseClient<unknown> | null> => {
+            switch (type) {
+              case GenericLicenseType.DriversLicense:
+                return new GenericDrivingLicenseApi(config, logger, null)
+              default:
+                return null
+            }
+          },
         },
       ],
       exports: [LicenseServiceService],

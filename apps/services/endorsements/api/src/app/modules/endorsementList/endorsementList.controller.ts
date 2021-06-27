@@ -20,7 +20,7 @@ import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
-import { Endorsement } from '../endorsement/endorsement.model'
+import { Endorsement } from '../endorsement/models/endorsement.model'
 import { BypassAuth, CurrentUser } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { IsEndorsementListOwnerValidationPipe } from './pipes/isEndorsementListOwnerValidation.pipe'
@@ -47,7 +47,9 @@ export class EndorsementListController {
     @Query() { tags }: FindEndorsementListByTagsDto,
   ): Promise<EndorsementList[]> {
     // TODO: Add pagination
-    return await this.endorsementListService.findListsByTags(tags)
+    return await this.endorsementListService.findListsByTags(
+      !Array.isArray(tags) ? [tags] : tags, // query parameters of length one are not arrays, we normalize all tags input to arrays here
+    )
   }
 
   /**

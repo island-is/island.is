@@ -153,12 +153,12 @@ export const m: MessageDir = {
     },
     nameCount: {
       id: 'pa.application:endorsementList.name.count',
-      defaultMessage: 'nafn á lista (af 500)',
+      defaultMessage: 'nafn á lista',
       description: 'X name on list',
     },
     namesCount: {
       id: 'pa.application:endorsementList.names.count',
-      defaultMessage: 'nöfn á lista (af 500)',
+      defaultMessage: 'nöfn á lista',
       description: 'X names on list',
     },
     invalidSignatures: {
@@ -168,7 +168,7 @@ export const m: MessageDir = {
     },
     searchbar: {
       id: 'pa.application:endorsementList.search',
-      defaultMessage: 'Leitaðu hér',
+      defaultMessage: 'Leitaðu að nafni',
       description: 'Searchbar placeholder',
     },
     thDate: {
@@ -198,7 +198,8 @@ export const m: MessageDir = {
     },
     signatureInvalidTooltip: {
       id: 'pa.application:endorsementList.tooltip',
-      defaultMessage: 'Meðmæli í vafa',
+      defaultMessage:
+        'Meðmæli í vafa, yfirkjörstjórn þarf að yfirfara aldur, búsetu og kjördæmi',
       description: 'Invalid signature tooltip',
     },
     isClosedMessage: {
@@ -262,7 +263,7 @@ export const m: MessageDir = {
     },
     warningMessagePt2: {
       id: 'pa.application:endorsementListSubmission.warningMessagePt2',
-      defaultMessage: '. Afhakaðu í réttan fjölda til að skila lista.',
+      defaultMessage: '. Hakaðu í réttan fjölda til að skila lista.',
       description: 'Warning message',
     },
   }),

@@ -28,9 +28,9 @@ module.exports = {
           },
         ]),
         owner: '1111111111',
-        meta: {
+        meta: JSON.stringify({
           applicationId: 'someId',
-        },
+        }),
         created: new Date(),
         modified: new Date(),
       },
@@ -51,9 +51,9 @@ module.exports = {
           },
         ]),
         owner: '1111111111',
-        meta: {
+        meta: JSON.stringify({
           applicationId: 'someId',
-        },
+        }),
         created: new Date(),
         modified: new Date(),
       },
@@ -86,9 +86,9 @@ module.exports = {
           },
         ]),
         owner: '1111111111',
-        meta: {
+        meta: JSON.stringify({
           applicationId: 'someId',
-        },
+        }),
         created: new Date(),
         modified: new Date(),
       },
@@ -121,9 +121,9 @@ module.exports = {
           },
         ]),
         owner: '1111111111',
-        meta: {
+        meta: JSON.stringify({
           applicationId: 'someId',
-        },
+        }),
         created: new Date(),
         modified: new Date(),
       },

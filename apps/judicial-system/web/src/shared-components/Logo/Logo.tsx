@@ -13,7 +13,7 @@ const Logo: React.FC = () => {
       <Box marginRight={2}>
         <LandWightsLogo />
       </Box>
-      <p className={styles.logoText}>{user?.institution?.name || ''}</p>
+      <p className={styles.logoText}>{user?.institution?.name ?? ''}</p>
     </div>
   )
 }
