@@ -236,12 +236,15 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToMinistryOfJustice: assign((context) => {
+        const ministryOfJusticeIds = process.env.MINISTRY_OF_JUSTICE_ASSIGNEES?.split(
+          ',',
+        ) ?? ['']
         return {
           ...context,
           application: {
             ...context.application,
             // todo: get list of ministry of justice national ids
-            assignees: ['0000000000'],
+            assignees: ministryOfJusticeIds,
           },
         }
       }),
@@ -259,7 +262,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     // todo map to ministry of justice natioanl ids
-    if (application.assignees.includes('0000000000')) {
+    if (application.assignees.includes(nationalId)) {
       return Roles.ASSIGNEE
     }
     // TODO: Applicant can recommend his own list
