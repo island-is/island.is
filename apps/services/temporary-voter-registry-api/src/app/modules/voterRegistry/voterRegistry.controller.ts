@@ -33,7 +33,6 @@ export class VoterRegistryController {
   }
 
   // TODO: This should get a system scope, or we should allow systems to get the read scope
-  // TODO: Add tests for this once its design is finalized
   @ApiOkResponse({
     description: 'Finds voter registry entry given user authentication',
     type: VoterRegistry,
