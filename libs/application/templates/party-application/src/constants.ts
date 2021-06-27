@@ -73,3 +73,10 @@ export const csvFileName = (partyLetter: string, partyName: string): string => {
   const strippedPartyLetter = partyLetter.toString().replace(/\s/g, '')
   return `Meðmælendalisti-${strippedPartyName}(${strippedPartyLetter}).csv`
 }
+
+
+
+export enum SelectedRadio {
+  AUTO,
+  RANDOM,
+}

@@ -8,7 +8,6 @@ import {
   Pagination,
 } from '@island.is/island-ui/core'
 import { CopyLink } from '@island.is/application/ui-components'
-import EndorsementTable from '../EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import BulkUpload from '../BulkUpload'
@@ -16,13 +15,21 @@ import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import sortBy from 'lodash/sortBy'
-import { paginate, totalPages as pages } from '../components/utils'
+import {
+  paginate,
+  totalPages as pages,
+  minAndMaxEndorsements,
+} from '../components/utils'
+import { EndorsementTable } from '../components/EndorsementsTable'
 import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
+  const { min: minEndorsements, max: maxEndorsements } = minAndMaxEndorsements(
+    application.answers.constituency as EndorsementListTags,
+  )
   const [searchTerm, setSearchTerm] = useState('')
 
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
@@ -37,14 +44,6 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     endorsementListId,
     true,
   )
-
-  const minEndorsements =
-    constituencyMapper[application.answers.constituency as EndorsementListTags]
-      .parliamentary_seats * 30
-
-  const maxEndorsements =
-    constituencyMapper[application.answers.constituency as EndorsementListTags]
-      .parliamentary_seats * 40
 
   const namesCountString = formatMessage(
     endorsements && endorsements.length > 1
