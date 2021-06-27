@@ -93,7 +93,7 @@ api:
     HEALTH_INSURANCE_XROAD_USERNAME: /k8s/health-insurance/XROAD-USER
     HEALTH_INSURANCE_XROAD_WSDLURL: /k8s/api/HEALTH_INSURANCE_XROAD_WSDLURL
     PAYMENT_PASSWORD: /k8s/application-system-api/PAYMENT_PASSWORD
-    PAYMENT_USERNAME: /k8s/application-system-api/PAYMENT_USER
+    PAYMENT_USER: /k8s/application-system-api/PAYMENT_USER
     PAYMENT_XROAD_PROVIDER_ID: /k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID
     PKPASS_API_KEY: /k8s/api/PKPASS_API_KEY
     PKPASS_API_URL: /k8s/api/PKPASS_API_URL
@@ -216,7 +216,7 @@ application-system-api:
     PAYMENT_ADDITION_CALLBACK_URL: /k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL
     PAYMENT_BASE_CALLBACK_URL: /k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL
     PAYMENT_PASSWORD: /k8s/application-system-api/PAYMENT_PASSWORD
-    PAYMENT_USERNAME: /k8s/application-system-api/PAYMENT_USER
+    PAYMENT_USER: /k8s/application-system-api/PAYMENT_USER
     PAYMENT_XROAD_PROVIDER_ID: /k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID
     SYSLUMENN_HOST: /k8s/application-system-api/SYSLUMENN_HOST
     SYSLUMENN_PASSWORD: /k8s/application-system/api/SYSLUMENN_PASSWORD
