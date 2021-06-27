@@ -35,6 +35,7 @@ import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 import { isUuid } from 'uuidv4'
 import { Json } from 'sequelize/types/lib/utils'
+import { CreateChargeInput } from './dto/createChargeInput.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -60,7 +61,7 @@ export class PaymentController {
   async createCharge(
     @CurrentUser() user: User,
     @Param('application_id', new ParseUUIDPipe()) applicationId: string,
-    @Param('charge_item_code') chargeItemCode: string,
+    @Body() payload: CreateChargeInput,
   ): Promise<CreatePaymentResponseDto> {
     if (!isUuid(applicationId)) {
       throw new BadRequestException(`ApplicationId is on wrong format.`)
@@ -68,11 +69,11 @@ export class PaymentController {
     // un sure if chargeitemcode reaches controller.
     const paymentDto: Pick<
       BasePayment,
-      'application_id' | 'fulfilled' | 'definition' | 'amount' | 'expires_at'
+      'application_id' | 'fulfilled' | 'user4' | 'amount' | 'expires_at'
     > = {
       application_id: applicationId,
       fulfilled: false,
-      definition: {'chargeItemCode': chargeItemCode} as any,
+      user4: payload.chargeItemCode,
       amount: 8000,
       expires_at: new Date(),
     }

@@ -75,9 +75,9 @@ export class ApplicationService {
   createCharge(applicationId: string, auth: Auth, chargeItemCode: string) {
     console.log('libs application service === ' + chargeItemCode)
     return this.paymentApiWithAuth(auth).paymentControllerCreateCharge({
-      authorization: auth.authorization,
       applicationId: applicationId,
-      chargeItemCode: chargeItemCode,
+      body: { chargeItemCode: chargeItemCode },
+      authorization: auth.authorization,
     })
   }
 
