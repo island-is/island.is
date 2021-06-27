@@ -47,7 +47,9 @@ export class EndorsementListController {
     @Query() { tags }: FindEndorsementListByTagsDto,
   ): Promise<EndorsementList[]> {
     // TODO: Add pagination
-    return await this.endorsementListService.findListsByTags(tags)
+    return await this.endorsementListService.findListsByTags(
+      !Array.isArray(tags) ? [tags] : tags, // query parameters of length one are not arrays, we normalize all tags input to arrays here
+    )
   }
 
   /**

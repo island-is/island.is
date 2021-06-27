@@ -18,4 +18,10 @@ export class EndorsementListOpen {
 
   @ApiProperty({ enum: EndorsementTag, isArray: true })
   tags?: EndorsementTag[]
+
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
+  closedDate!: Date | null
 }
