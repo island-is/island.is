@@ -34,8 +34,8 @@ export const GetEndorsements = gql`
       meta {
         fullName
         address
-        invalidated
         bulkEndorsement
+        voterRegion
       }
       created
       modified

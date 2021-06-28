@@ -273,7 +273,9 @@ export const SignedVerdictOverview: React.FC = () => {
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
                 workingCase.decision === CaseDecision.REJECTING ||
                 workingCase.isValidToDateInThePast ||
-                Boolean(workingCase.childCase)
+                Boolean(workingCase.childCase) ||
+                (workingCase.type !== CaseType.CUSTODY &&
+                  workingCase.type !== CaseType.TRAVEL_BAN)
               }
               nextButtonText={`Framlengja ${
                 workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'

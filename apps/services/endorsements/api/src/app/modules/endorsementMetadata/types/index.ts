@@ -1,6 +1,7 @@
 import { EndorsementSystemSignedListsResponse } from '../providers/endorsementSystem/endorsementSystemSignedLists.service'
 import { NationalRegistryUserResponse } from '../providers/nationalRegistry.service'
 import { TemporaryVoterRegistryResponse } from '../providers/temporaryVoterRegistry/temporaryVoterRegistry.service'
+import type { Auth } from '@island.is/auth-nest-tools'
 
 // add types for new metadata providers here
 export type MetadataProviderResponse = {
@@ -30,6 +31,7 @@ export interface MetadataProvider {
   metadataKey: string
   getData: (
     input: MetadataInput,
+    auth: Auth,
   ) => Promise<MetadataProviderResponse[keyof MetadataProviderResponse]>
 }
 

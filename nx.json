@@ -109,10 +109,16 @@
     "api-domains-file-upload": {
       "tags": []
     },
+    "api-domains-finance": {
+      "tags": []
+    },
     "api-domains-health-insurance": {
       "tags": []
     },
     "api-domains-icelandic-names-registry": {
+      "tags": []
+    },
+    "api-domains-identity": {
       "tags": []
     },
     "api-domains-license-service": {
@@ -281,6 +287,9 @@
       "tags": []
     },
     "clients-documents": {
+      "tags": []
+    },
+    "clients-finance": {
       "tags": []
     },
     "clients-middlewares": {

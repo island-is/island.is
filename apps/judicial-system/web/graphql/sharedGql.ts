@@ -18,6 +18,7 @@ export const CaseQuery = gql`
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
+      defenderIsSpokesperson
       court {
         id
         name
@@ -54,6 +55,7 @@ export const CaseQuery = gql`
         name
       }
       courtCaseNumber
+      sessionArrangements
       courtDate
       courtRoom
       courtStartDate
@@ -74,7 +76,7 @@ export const CaseQuery = gql`
       custodyRestrictions
       otherRestrictions
       isolationToDate
-      additionToConclusion
+      conclusion
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision

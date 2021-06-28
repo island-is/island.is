@@ -4,6 +4,7 @@ import {
   Case,
   CaseAppealDecision,
   CaseDecision,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import {
   getConclusion,
@@ -54,10 +55,12 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </Text>
         </Box>
         <Box marginBottom={3}>
-          {getConclusion(workingCase)}
-          {workingCase.additionToConclusion && (
+          {(workingCase.type === CaseType.CUSTODY ||
+            workingCase.type === CaseType.TRAVEL_BAN) &&
+            getConclusion(workingCase)}
+          {workingCase.conclusion && (
             <Box marginTop={1}>
-              <Text>{workingCase.additionToConclusion}</Text>
+              <Text>{workingCase.conclusion}</Text>
             </Box>
           )}
         </Box>
@@ -125,29 +128,31 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             )}
         </Box>
       )}
-      {workingCase.decision === CaseDecision.ACCEPTING && (
-        <Box>
-          <Box marginBottom={1}>
-            <Text as="h3" variant="h3">
-              Tilhögun gæsluvarðhalds
-            </Text>
-          </Box>
-          <Box marginBottom={2}>
+      {(workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.TRAVEL_BAN) &&
+        workingCase.decision === CaseDecision.ACCEPTING && (
+          <Box>
+            <Box marginBottom={1}>
+              <Text as="h3" variant="h3">
+                Tilhögun gæsluvarðhalds
+              </Text>
+            </Box>
+            <Box marginBottom={2}>
+              <Text>
+                {formatCustodyRestrictions(
+                  workingCase.accusedGender,
+                  workingCase.custodyRestrictions,
+                  workingCase.validToDate,
+                  workingCase.isolationToDate,
+                )}
+              </Text>
+            </Box>
             <Text>
-              {formatCustodyRestrictions(
-                workingCase.accusedGender,
-                workingCase.custodyRestrictions,
-                workingCase.validToDate,
-                workingCase.isolationToDate,
-              )}
+              Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
+              bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
             </Text>
           </Box>
-          <Text>
-            Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
-            atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
-          </Text>
-        </Box>
-      )}
+        )}
       {workingCase.decision ===
         CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && (
         <Box>

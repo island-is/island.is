@@ -3,7 +3,10 @@ import { environment } from './environments'
 import {
   ApplicationScope,
   NationalRegistryScope,
+  PartyLetterRegistryScope,
+  TemporaryVoterRegistryScope,
   UserProfileScope,
+  EndorsementScope,
 } from '@island.is/auth/scopes'
 
 const userMocked = process.env.API_MOCKS === 'true'
@@ -21,5 +24,6 @@ if (userMocked) {
     client_id: 'island-is-1',
     scope: `openid profile api_resource.scope ${ApplicationScope.read} ${ApplicationScope.write} ${UserProfileScope.read} ${NationalRegistryScope.individuals}`,
     post_logout_redirect_uri: `${window.location.origin}`,
+    userStorePrefix: 'as.',
   })
 }
