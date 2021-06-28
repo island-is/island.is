@@ -31,17 +31,17 @@ export class UserResolver {
     return this.nationalRegistryService.getUser(user.nationalId)
   }
 
-  @ResolveField('citizenship', () => Citizenship)
+  @ResolveField('citizenship', () => Citizenship, { nullable: true })
   resolveCitizenship(@Parent() user: User): Citizenship {
     return user.citizenship
   }
 
-  @ResolveField('legalResidence', () => String)
+  @ResolveField('legalResidence', () => String, { nullable: true })
   resolveLegalResidence(@Parent() { address }: User): string {
     return `${address.streetAddress}, ${address.postalCode} ${address.city}`
   }
 
-  @ResolveField('birthPlace', () => String)
+  @ResolveField('birthPlace', () => String, { nullable: true })
   resolveBirthPlace(@Parent() { birthPlace }: User): string {
     return birthPlace.city
   }
