@@ -1,67 +1,81 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
 
 
-const data =  [
+const data = [
   {
-      fund_year: 2016,
-      sott: 6131632000.0,
-      veitt: 2461778000.0
-  },
-  {
-      fund_year: 2015,
-      sott: 5353397000.0,
-      veitt: 2114543000.0
-  },
-  {
-      fund_year: 2017,
-      sott: 4958341520.0,
-      veitt: 2406155000.0
-  },
-  {
-      fund_year: 2018,
-      sott: 3635487800.0,
-      veitt: 1833837000.0
-  },
-  {
-      fund_year: 2014,
-      sott: 3200600000.0,
-      veitt: 1057143000.0
-  },
-  {
-      fund_year: 2019,
-      sott: 3084307900.0,
-      veitt: 1594440000.0
-  },
-  {
-      fund_year: 2020,
-      sott: 2068266500.0,
-      veitt: 1152500000.0
-  },
-  {
-      fund_year: 2013,
-      sott: 1960191000.0,
-      veitt: 606991000.0
-  },
-  {
-      fund_year: 2012,
-      sott: 476517000.0,
-      veitt: 163385000.0
-  },
-  {
-      fund_year: 2011,
-      sott: 465416500.0,
-      veitt: 157583000.0
+      fund_year: 2021,
+      sott: 72,
+      veitt: 0.0
   },
   {
       fund_year: 2010,
-      sott: 70046566.0,
-      veitt: 127632000.0
+      sott: 109,
+      veitt: 23.0
+  },
+  {
+      fund_year: 2012,
+      sott: 188,
+      veitt: 53.0
+  },
+  {
+      fund_year: 2011,
+      sott: 223,
+      veitt: 46.0
+  },
+  {
+      fund_year: 2014,
+      sott: 234,
+      veitt: 56.0
+  },
+  {
+      fund_year: 2015,
+      sott: 268,
+      veitt: 87.0
+  },
+  {
+      fund_year: 2013,
+      sott: 326,
+      veitt: 61.0
+  },
+  {
+      fund_year: 2016,
+      sott: 492,
+      veitt: 106.0
+  },
+  {
+      fund_year: 2017,
+      sott: 508,
+      veitt: 101.0
+  },
+  {
+      fund_year: 2018,
+      sott: 600,
+      veitt: 84.0
+  },
+  {
+      fund_year: 2019,
+      sott: 630,
+      veitt: 76.0
+  },
+  {
+      fund_year: 2020,
+      sott: 882,
+      veitt: 89.0
   }
 ]
 
+const renderColorfulLegendText = (value: string, entry: any) => {
+  return <span style={{color: "#00003C"}}>{value}</span>
+}
+
+const renderLabel = (value: string) => {
+  return <span style={{color: "#00003C"}}>{value}</span>
+}
+
+
 export const SimpleBarChart = () => {
-  const sorted_data = data.sort((a, b) => {return b.fund_year - a.fund_year})
+  const sorted_data = data.sort((a, b) => {return a.fund_year - b.fund_year})
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
@@ -69,7 +83,7 @@ export const SimpleBarChart = () => {
           height={300}
           data={sorted_data}
           margin={{
-            top: 5,
+            top: 30,
             right: 30,
             left: 20,
             bottom: 5,
@@ -79,9 +93,9 @@ export const SimpleBarChart = () => {
           <XAxis dataKey="fund_year"/>
           <YAxis/>
           <Tooltip />
-          <Legend iconType='circle'/>
-          <Bar dataKey="sott" fill="#99C0FF" radius={[20,20,0,0]} width={16} fontFamily="IBM Plex Sans"/>
-          <Bar dataKey="veitt" fill="#0061FF" radius={[20,20,0,0]} width={16}/>
+          <Legend iconType='circle' align="right" formatter={renderColorfulLegendText}/>
+          <Bar dataKey="sott" fill="#99C0FF" stackId='a' barSize={16} /> 
+          <Bar dataKey="veitt" fill="#0061FF" radius={[20,20,0,0]} stackId='a' barSize={16}/>
         </BarChart>
       </ResponsiveContainer>
     )
