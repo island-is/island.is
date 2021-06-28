@@ -11,7 +11,7 @@ import {
   EndorsementListControllerFindOneRequest,
   EndorsementControllerBulkCreateRequest,
   EndorsementControllerFindAllRequest,
-  EndorsementControllerFindByUserRequest,
+  EndorsementControllerFindByAuthRequest,
   EndorsementListControllerFindByTagsRequest,
   EndorsementListControllerOpenRequest,
 } from '../../gen/fetch'
@@ -56,12 +56,12 @@ export class EndorsementSystemService {
       .catch(handleError)
   }
 
-  async endorsementControllerFindByUser(
-    input: EndorsementControllerFindByUserRequest,
+  async endorsementControllerFindByAuth(
+    input: EndorsementControllerFindByAuthRequest,
     auth: Auth,
   ) {
     return await this.endorsementApiWithAuth(auth)
-      .endorsementControllerFindByUser(input)
+      .endorsementControllerFindByAuth(input)
       .catch(handleError)
   }
 

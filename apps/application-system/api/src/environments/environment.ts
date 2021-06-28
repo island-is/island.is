@@ -52,7 +52,7 @@ const devConfig = {
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     paymentOptions: {
-      arkBaseUrl: process.env.ARK_ENDPOINT,
+      arkBaseUrl: process.env.ARK_BASE_URL,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
       xRoadClientId:
         process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
@@ -135,7 +135,7 @@ const prodConfig = {
       xroadBaseUrl: process.env.XROAD_BASE_PATH,
     },
     paymentOptions: {
-      arkBaseUrl: process.env.ARK_ENDPOINT,
+      arkBaseUrl: process.env.ARK_BASE_URL,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID,
