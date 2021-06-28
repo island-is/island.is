@@ -130,7 +130,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                       : 'varnaraðili',
                   )} samþykkir kröfuna. `
                 : ''
-            }${workingCase.accusedPleaAnnouncement}`}
+            }${workingCase.accusedPleaAnnouncement ?? ''}`}
           </Text>
         </AccordionListItem>
       )}
