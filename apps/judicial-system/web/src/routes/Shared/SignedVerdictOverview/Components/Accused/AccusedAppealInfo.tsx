@@ -5,21 +5,21 @@ import {
   capitalize,
   formatAccusedByGender,
   formatDate,
+  NounCases,
 } from '@island.is/judicial-system/formatters'
-import { CaseGender } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 
 interface Props {
-  accusedGender: CaseGender
-  accusedPostponedAppealDate?: string
+  workingCase: Case
   withdrawAccusedAppealDate?: () => void
 }
 
 const AccusedAppealInfo: React.FC<Props> = (props) => {
-  const {
-    accusedGender,
-    accusedPostponedAppealDate,
-    withdrawAccusedAppealDate,
-  } = props
+  const { workingCase, withdrawAccusedAppealDate } = props
+
+  const isInvestigationCase =
+    workingCase.type !== CaseType.CUSTODY &&
+    workingCase.type !== CaseType.TRAVEL_BAN
 
   const animateInAndOut = {
     visible: { y: 0, opacity: 1, transition: { duration: 0.4, delay: 0.4 } },
@@ -36,9 +36,13 @@ const AccusedAppealInfo: React.FC<Props> = (props) => {
     >
       <InfoBox
         text={`${capitalize(
-          formatAccusedByGender(accusedGender),
+          formatAccusedByGender(
+            workingCase.accusedGender,
+            NounCases.NOMINATIVE,
+            isInvestigationCase,
+          ),
         )} hefur kært úrskurðinn ${formatDate(
-          accusedPostponedAppealDate,
+          workingCase.accusedPostponedAppealDate,
           'PPPp',
         )}`}
         onDismiss={withdrawAccusedAppealDate}

@@ -26,6 +26,7 @@ import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
+import { FinanceModule } from '@island.is/api/domains/finance'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
@@ -180,6 +181,15 @@ const autoSchemaFile = environment.production
     }),
     RegulationsModule.register({
       url: environment.regulationsDomain.url,
+    }),
+    FinanceModule.register({
+      username: environment.fjarmalDomain.username,
+      password: environment.fjarmalDomain.password,
+      ttl: environment.fjarmalDomain.ttl,
+      downloadServiceBaseUrl: environment.downloadService.baseUrl,
+      xroadApiPath: environment.fjarmalDomain.xroadApiPath,
+      xroadBaseUrl: environment.xroad.baseUrl,
+      xroadClientId: environment.xroad.clientId,
     }),
     NationalRegistryXRoadModule.register({
       xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
