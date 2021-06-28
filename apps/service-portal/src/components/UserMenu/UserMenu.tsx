@@ -46,7 +46,10 @@ const UserMenu = ({ state, onClose, onRouteChange }: UserMenuProps) => {
       language={lang}
       dropdownState={state}
       setDropdownState={onClose}
-      onLogout={signOut}
+      onLogout={() => {
+        onClose()
+        signOut()
+      }}
       dropdownItems={
         <>
           <Box>
@@ -88,7 +91,7 @@ const UserMenu = ({ state, onClose, onRouteChange }: UserMenuProps) => {
               </Button>
             </Link>
           </Box>
-          {showDelegations.value && <UserDelegations />}
+          {showDelegations.value && <UserDelegations onSwitch={onClose} />}
         </>
       }
       switchLanguage={handleLanguageChange}

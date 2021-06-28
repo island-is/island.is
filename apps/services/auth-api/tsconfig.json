@@ -2,14 +2,15 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "allowJs": true,
-    "types": ["node", "jest"],
-    "esModuleInterop": true,
     "strictPropertyInitialization": false //TODO: Perhaps needs to be removed
   },
   "include": [],
   "references": [
     {
       "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
     }
   ]
 }

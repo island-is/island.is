@@ -149,6 +149,13 @@ export const generateYamlForFeature = (
   }
 }
 
+export const resolveWithMaxLength = (str: string, max: number) => {
+  if (str.length > max) {
+    return `${str.substr(0, Math.ceil(max / 3))}${str.substr((-max / 3) * 2)}`
+  }
+  return str
+}
+
 export const getPostgresInfoForFeature = (
   feature: string,
   postgres?: PostgresInfo,
@@ -159,12 +166,14 @@ export const getPostgresInfoForFeature = (
       '/k8s/',
       `/k8s/feature-${feature}-`,
     )
-    postgresCopy.name = `feature_${postgresIdentifier(feature)}_${
-      postgres.name
-    }`
-    postgresCopy.username = `feature_${postgresIdentifier(feature)}_${
-      postgres.username
-    }`
+    postgresCopy.name = resolveWithMaxLength(
+      `feature_${postgresIdentifier(feature)}_${postgres.name}`,
+      60,
+    )
+    postgresCopy.username = resolveWithMaxLength(
+      `feature_${postgresIdentifier(feature)}_${postgres.username}`,
+      60,
+    )
     return postgresCopy
   }
   return postgres
