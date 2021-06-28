@@ -58,8 +58,16 @@ const Greeting: FC<{}> = () => {
             {isNonBinary && formatMessage(m.nonBinaryGreeting)}
             {!knownGender &&
               (isEveningGreeting
-                ? formatMessage(m.eveningGreeting)
-                : formatMessage(m.dayGreeting))}
+                ? formatMessage({
+                    defaultMessage: 'Góða kvöldið,',
+                    description: 'Welcome the user during the evening',
+                    id: 'service.portal:good-evening',
+                  })
+                : formatMessage({
+                    defaultMessage: 'Góðan dag,',
+                    description: 'Welcome the user during the day',
+                    id: 'service.portal:good-day',
+                  }))}
           </Text>
           <Text variant="h1" as="h1" marginBottom={1}>
             {userInfo?.profile.name}

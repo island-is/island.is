@@ -16,6 +16,7 @@ jobs:
     outputs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
+      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
@@ -117,6 +118,7 @@ jobs:
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
+          echo "::set-output name=BUILD_ID::$GITHUB_RUN_ID-$(uuidgen)"
 
       - name: Prepare build targets
         id: build_projects
@@ -173,6 +175,7 @@ jobs:
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       API_MOCKS: 'true'
       NODE_OPTIONS: --max-old-space-size=4096
+      E2E_BUILD_ID: ${{needs.prepare.outputs.E2E_BUILD_ID}}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
