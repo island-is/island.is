@@ -6121,10 +6121,10 @@
   dependencies:
     "@types/express" "*"
 
-"@types/pdfkit@0.10.6":
-  version "0.10.6"
-  resolved "https://registry.yarnpkg.com/@types/pdfkit/-/pdfkit-0.10.6.tgz#9ddde7e642e6c3f1245134456a03fbc4b67dc4b5"
-  integrity sha512-o6R2fO/fhg392YNYahiaNGZ8CNdSKMmf5W0LvyjJ/63mLQEPTgl6M9vb4zKoHaGpsP43VimuBz+xgVevsPy8jA==
+"@types/pdfkit@0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@types/pdfkit/-/pdfkit-0.11.0.tgz#838ad3c62573508f4975a10bd62d3ee363db3262"
+  integrity sha512-vPFsKobO4sKviWjlSUBaBRbtNjvMdbGh6EjYoGLsSpDNFckaHm9WD7cKNFcp+qoG/+CaQs5xfc/T+aJCQXm31w==
   dependencies:
     "@types/node" "*"
 

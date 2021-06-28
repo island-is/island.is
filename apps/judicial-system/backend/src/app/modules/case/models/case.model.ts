@@ -370,6 +370,16 @@ export class Case extends Model<Case> {
   comments: string
 
   /**********
+   * The casefiles - optional
+   **********/
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: true,
+  })
+  @ApiProperty()
+  files: string[]
+
+  /**********
    * Comments from the prosecutor to the court regarding the accompanying case files - optional
    **********/
   @Column({
