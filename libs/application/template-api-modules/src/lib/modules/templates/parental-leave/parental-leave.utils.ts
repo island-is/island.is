@@ -20,6 +20,7 @@ import {
   getApplicationExternalData,
   getOtherParentId,
 } from '@island.is/application/templates/parental-leave'
+import { isRunningOnEnvironment } from '@island.is/utils/shared'
 
 import { apiConstants } from './constants'
 
@@ -253,11 +254,7 @@ export const transformApplicationToParentalLeaveDTO = (
 }
 
 export const pathToAsset = (file: string) => {
-  const isLocalhost = (process.env.XROAD_VMST_API_PATH ?? 'localhost').includes(
-    'localhost',
-  )
-
-  if (isLocalhost) {
+  if (isRunningOnEnvironment('local')) {
     return join(
       __dirname,
       `../../../../libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/${file}`,

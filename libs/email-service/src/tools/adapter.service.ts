@@ -8,6 +8,7 @@ import juice from 'juice'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { isRunningOnEnvironment } from '@island.is/utils/shared'
 
 import { ImageComponent, Template } from '../types'
 
@@ -21,7 +22,10 @@ export class AdapterService {
   } = {}
 
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {
-    const files = glob.sync('libs/email-service/src/tools/design/*.hbs')
+    const path = isRunningOnEnvironment('local')
+      ? 'libs/email-service/src/tools/design/*.hbs'
+      : 'email-service-assets/*.hbs'
+    const files = glob.sync(path)
 
     files.forEach((file) => this.precompile(file))
   }
