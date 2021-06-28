@@ -11,5 +11,7 @@
   "videosFolder": "../../dist/cypress/apps/web-e2e/videos",
   "screenshotsFolder": "../../dist/cypress/apps/web-e2e/screenshots",
   "chromeWebSecurity": false,
+  "viewportWidth": 1024,
+  "viewportHeight": 768,
   "projectId": "xw5cuj"
 }

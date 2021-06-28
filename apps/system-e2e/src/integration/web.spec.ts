@@ -9,7 +9,6 @@ describe('web', () => {
   })
   it('should navigate homepage', () => {
     cy.visit('/')
-    cy.scrollTo(0, 700)
     cy.contains('Að eignast barn')
   })
 })
