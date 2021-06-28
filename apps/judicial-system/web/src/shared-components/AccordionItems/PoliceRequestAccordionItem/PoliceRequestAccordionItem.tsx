@@ -79,8 +79,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         <Text>{workingCase.lawsBroken}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði sem krafan er byggð á" breakSpaces>
-        {workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.TRAVEL_BAN ? (
+        {isRestrictionCase ? (
           workingCase.custodyProvisions &&
           workingCase.custodyProvisions.map(
             (custodyProvision: CaseCustodyProvisions, index) => {
