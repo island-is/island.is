@@ -12,11 +12,7 @@ const devConfig = {
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '',
-  },
-  swagger: {
-    authUrl: 'https://identity-server.dev01.devland.is/connect/authorize',
-    tokenUrl: 'https://identity-server.dev01.devland.is/connect/token',
+    audience: '@island.is',
   },
   apiMock: process.env.API_MOCKS === 'true',
   audit: {
@@ -38,11 +34,7 @@ const prodConfig = {
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '',
-  },
-  swagger: {
-    authUrl: '',
-    tokenUrl: '',
+    audience: '@island.is',
   },
   apiMock: false,
   audit: {

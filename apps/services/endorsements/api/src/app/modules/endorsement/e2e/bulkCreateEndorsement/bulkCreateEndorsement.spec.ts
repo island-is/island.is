@@ -1,27 +1,39 @@
-import { INestApplication } from '@nestjs/common'
 import request from 'supertest'
-import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
-import { setup } from '../../../../../../test/setup'
+import { EndorsementScope } from '@island.is/auth/scopes'
+import { authNationalId } from './seed'
+import { getAuthenticatedApp } from '../../../../../../test/setup'
 import {
   errorExpectedStructure,
   metaDataResponse,
 } from '../../../../../../test/testHelpers'
-import { authNationalId } from './seed'
-
-let app: INestApplication
-beforeAll(async () => {
-  app = await setup({
-    override: (builder) => {
-      builder
-        .overrideProvider(IdsUserGuard)
-        .useValue(new MockAuthGuard({ nationalId: authNationalId }))
-        .compile()
-    },
-  })
-})
 
 describe('bulkCreateEndorsement', () => {
+  it(`POST /endorsement-list/:listId/endorsement/bulk should fail and return 403 error if scope is missing`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [],
+    })
+    // eslint-disable-next-line local-rules/disallow-kennitalas
+    const nationalIds = ['0101304339', '0101304339']
+    const response = await request(app.getHttpServer())
+      .post(
+        `/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c1/endorsement/bulk`,
+      )
+      .send({ nationalIds })
+      .expect(403)
+
+    expect(response.body).toMatchObject({
+      ...errorExpectedStructure,
+      statusCode: 403,
+    })
+  })
+
   it(`POST /endorsement-list/:listId/endorsement/bulk should partially succeed when list contains some existing national ids`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementScope.write],
+    })
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalIds = ['0101304339', '0101304339']
     const response = await request(app.getHttpServer())
       .post(
@@ -44,6 +56,11 @@ describe('bulkCreateEndorsement', () => {
     )
   })
   it(`POST /endorsement-list/:listId/endorsement/bulk should fail to create endorsements on a closed list`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementScope.write],
+    })
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalIds = ['0101304339']
     const response = await request(app.getHttpServer())
       .post(
@@ -58,6 +75,11 @@ describe('bulkCreateEndorsement', () => {
     })
   })
   it(`POST /endorsement-list/:listId/endorsement/bulk should fail to create endorsements on other peoples lists`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementScope.write],
+    })
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalIds = ['0101304339']
     const response = await request(app.getHttpServer())
       .post(
@@ -72,7 +94,12 @@ describe('bulkCreateEndorsement', () => {
     })
   })
   it(`POST /endorsement-list/:listId/endorsement/bulk should create new endorsements and populate metadata`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementScope.write],
+    })
     const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba0c1'
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalIds = ['0101303369', '0101305069', '0101303019']
     const response = await request(app.getHttpServer())
       .post(`/endorsement-list/${listId}/endorsement/bulk`)
