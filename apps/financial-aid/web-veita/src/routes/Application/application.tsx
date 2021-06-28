@@ -236,7 +236,10 @@ const ApplicationProfile = () => {
             >
               <Box display="flex" alignItems="center">
                 <Box marginRight={2}>
-                  <GeneratedProfile size={48} />
+                  <GeneratedProfile
+                    size={48}
+                    nationalId={data.application.nationalId}
+                  />
                 </Box>
 
                 <Text as="h2" variant="h1">

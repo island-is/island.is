@@ -1,13 +1,7 @@
-import React, { useEffect, useState, useContext, useReducer } from 'react'
+import React, { useEffect } from 'react'
 import { Logo, Text, Box, Link } from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
-import {
-  AdminLayout,
-  ApplicationTable,
-  GeneratedProfile,
-  GenerateName,
-  LogoHfj,
-} from '../../components'
+
+import { LogoHfj } from '../../components'
 
 import * as styles from './login.treat'
 import cn from 'classnames'

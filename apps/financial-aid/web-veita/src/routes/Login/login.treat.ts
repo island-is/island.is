@@ -2,6 +2,9 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const gridWrapper = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'space-between',
   alignItems: 'center',
   paddingLeft: theme.spacing[3],
   paddingRight: theme.spacing[3],
@@ -31,10 +34,10 @@ export const loginContainer = style({
   gridColumn: '1/-1',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      gridColumn: '2 / span 7',
+      gridColumn: '3 / span 8',
     },
     [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
-      gridColumn: '2 / span 6',
+      gridColumn: '3 / span 6',
     },
   },
 })

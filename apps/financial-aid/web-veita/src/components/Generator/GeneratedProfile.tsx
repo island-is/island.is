@@ -9,7 +9,7 @@ interface Props {
 
 const GeneratedProfile: FunctionComponent<Props> = ({ nationalId, size }) => {
   const data = new Identicon(
-    createHash('2305952249').update(nationalId, 'ascii').digest('hex'),
+    createHash('sha1').update(nationalId, 'ascii').digest('hex'),
     {
       size,
       background: [255, 255, 255, 0],

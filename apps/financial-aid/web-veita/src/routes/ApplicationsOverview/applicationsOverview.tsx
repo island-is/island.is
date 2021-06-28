@@ -73,7 +73,7 @@ export const ApplicationsOverview = () => {
               .map((item) => ({
                 listElement: [
                   <Box display="flex" alignItems="center">
-                    <GeneratedProfile size={32} />
+                    <GeneratedProfile size={32} nationalId={item.nationalId} />
                     <Box marginLeft={2}>
                       <Text variant="h5">{GenerateName(item.nationalId)}</Text>
                     </Box>
