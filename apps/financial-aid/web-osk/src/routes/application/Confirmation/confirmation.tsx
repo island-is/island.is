@@ -101,15 +101,6 @@ const Confirmation = () => {
           </BulletList>
         </Box>
       </FormContentContainer>
-
-      {/* <FormFooter
-        hidePreviousButton={true}
-        nextButtonText="Sjá stöðu umsóknar"
-        nextButtonIcon="open"
-        onNextButtonClick={() => {
-          router.push(navigation?.nextUrl ?? '/umsokn')
-        }}
-      /> */}
     </FormLayout>
   )
 }
