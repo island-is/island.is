@@ -16,22 +16,38 @@ import { EndorsementListTags } from '../constants'
 const assignees = (constituency: EndorsementListTags) => {
   switch (constituency) {
     case 'partyApplicationReykjavikurkjordaemiSudur2021': {
-      return process.env.RVK_SOUTH_ASSIGNEES?.split(',') ?? []
+      return (
+        process.env.PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS?.split(',') ??
+        []
+      )
     }
     case 'partyApplicationReykjavikurkjordaemiNordur2021': {
-      return process.env.RVK_NORTH_ASSIGNEES?.split(',') ?? []
+      return (
+        process.env.PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS?.split(',') ??
+        []
+      )
     }
     case 'partyApplicationSudvesturkjordaemi2021': {
-      return process.env.SOUTH_WEST_ASSIGNEES?.split(',') ?? []
+      return (
+        process.env.PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS?.split(',') ??
+        []
+      )
     }
     case 'partyApplicationNordvesturkjordaemi2021': {
-      return process.env.NORTH_WEST_ASSIGNEES?.split(',') ?? []
+      return (
+        process.env.PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS?.split(',') ??
+        []
+      )
     }
     case 'partyApplicationNordausturkjordaemi2021': {
-      return process.env.NORTH_ASSIGNEES?.split(',') ?? []
+      return (
+        process.env.PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS?.split(',') ?? []
+      )
     }
     case 'partyApplicationSudurkjordaemi2021': {
-      return process.env.SOUTH_ASSIGNEES?.split(',') ?? []
+      return (
+        process.env.PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS?.split(',') ?? []
+      )
     }
     default: {
       return []

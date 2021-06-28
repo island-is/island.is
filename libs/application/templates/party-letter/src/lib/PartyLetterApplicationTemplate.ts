@@ -240,7 +240,8 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
           ...context,
           application: {
             ...context.application,
-            assignees: process.env.PARTY_LETTER_ASSIGNEES?.split(',') ?? [],
+            assignees:
+              process.env.PARTY_LETTER_ASSIGNED_ADMINS?.split(',') ?? [],
           },
         }
       }),
