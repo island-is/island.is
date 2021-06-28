@@ -146,7 +146,7 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL',
       PAYMENT_ADDITION_CALLBACK_URL:
         '/k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL',
-      ARK_BASE_URL: '/k8s/application-system-api/ARK_ENDPOINT',
+      ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

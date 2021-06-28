@@ -21,14 +21,16 @@ import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
-import { BypassAuth, CurrentUser } from '@island.is/auth-nest-tools'
+import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { IsEndorsementListOwnerValidationPipe } from './pipes/isEndorsementListOwnerValidation.pipe'
 import { environment } from '../../../environments'
+import { EndorsementScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
-const auditNamespace = `${environment.audit.defaultNamespace}/endorsement-list`
-
+@Audit({
+  namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
+})
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 @ApiOAuth2([])
@@ -38,7 +40,7 @@ export class EndorsementListController {
   ) {}
 
   @ApiOkResponse({
-    description: 'Finds all endorsement lists belonging to a given tag',
+    description: 'Finds all endorsement lists belonging to given tags',
     type: [EndorsementList],
   })
   @Get()
@@ -59,10 +61,9 @@ export class EndorsementListController {
     description: 'Finds all endorsements for the currently authenticated user',
     type: [Endorsement],
   })
+  @Scopes(EndorsementScope.read)
   @Get('/endorsements')
   @Audit<Endorsement[]>({
-    namespace: auditNamespace,
-    action: 'findEndorsements',
     resources: (endorsement) => endorsement.map((e) => e.id),
     meta: (endorsement) => ({ count: endorsement.length }),
   })
@@ -78,10 +79,9 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
+  @Scopes(EndorsementScope.listRead)
   @Get(':listId')
   @Audit<EndorsementList>({
-    namespace: auditNamespace,
-    action: 'findOne',
     resources: (endorsementList) => endorsementList.id,
   })
   async findOne(
@@ -100,10 +100,9 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
+  @Scopes(EndorsementScope.listJusticeDepartmentWrite)
   @Put(':listId/close')
   @Audit<EndorsementList>({
-    namespace: auditNamespace,
-    action: 'close',
     resources: (endorsementList) => endorsementList.id,
   })
   async close(
@@ -125,8 +124,6 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Put(':listId/open')
   @Audit<EndorsementList>({
-    namespace: auditNamespace,
-    action: 'open',
     resources: (endorsementList) => endorsementList.id,
   })
   async open(
@@ -146,10 +143,9 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiBody({ type: EndorsementListDto })
+  @Scopes(EndorsementScope.listWrite)
   @Post()
   @Audit<EndorsementList>({
-    namespace: auditNamespace,
-    action: 'create',
     resources: (endorsementList) => endorsementList.id,
     meta: (endorsementList) => ({
       tags: endorsementList.tags,
