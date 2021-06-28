@@ -3,7 +3,6 @@ import {
   Controller,
   Param,
   Post,
-  UseInterceptors,
   UseGuards,
   Get,
   ParseUUIDPipe,
@@ -34,8 +33,8 @@ import type { Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 import { isUuid } from 'uuidv4'
-import { Json } from 'sequelize/types/lib/utils'
 import { CreateChargeInput } from './dto/createChargeInput.dto'
+import { PaymentAPI } from '@island.is/clients/payment'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -52,6 +51,7 @@ export class PaymentController {
   constructor(
     private readonly auditService: AuditService,
     private readonly paymentService: PaymentService,
+    private readonly paymentAPI: PaymentAPI,
     @InjectModel(Payment)
     private paymentModel: typeof Payment,
   ) {}
@@ -77,6 +77,8 @@ export class PaymentController {
       amount: 8000,
       expires_at: new Date(),
     }
+
+    const catalogInformation = await this.paymentAPI.getCatalogByPerformingOrg('6509142520')
 
     const payment = await this.paymentModel.create(paymentDto)
 
