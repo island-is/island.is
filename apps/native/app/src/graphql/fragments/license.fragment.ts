@@ -37,7 +37,6 @@ export const GenericUserLicenseFragment = gql`
       status
       updated
     }
-    pkpassUrl
     payload {
       data {
         ...GenericLicenseDataFieldFragment
@@ -67,6 +66,20 @@ export interface IGenericLicenseDataField {
   }>
 }
 
+export enum GenericUserLicenseStatus {
+  Unknown = 'Unknown',
+  HasLicense = 'HasLicense',
+  NotAvailable = 'NotAvailable',
+}
+
+export enum GenericUserLicenseFetchStatus {
+  Fetched = 'Fetched',
+  NotFetched = 'NotFetched',
+  Fetching = 'Fetching',
+  Error = 'Error',
+  Stale = 'Stale',
+}
+
 export interface IGenericUserLicense {
   nationalId: string;
   license: {
@@ -74,13 +87,12 @@ export interface IGenericUserLicense {
     provider: {
       id: string;
     }
-    pkpass: string;
-    timeout: string;
-    status: string;
+    pkpass: boolean;
+    timeout: number;
+    status: GenericUserLicenseStatus;
   }
-  pkpassUrl: string;
   fetch: {
-    status: string;
+    status: GenericUserLicenseFetchStatus;
     updated: string;
   }
   payload: {

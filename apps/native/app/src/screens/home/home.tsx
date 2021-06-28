@@ -146,7 +146,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         }}
         data={data}
         renderItem={renderItem}
-        style={{ flex: 1 }}
+        style={{ flex: 1, maxWidth: 720, marginLeft: 'auto', marginRight: 'auto' }}
         scrollEventThrottle={16}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],

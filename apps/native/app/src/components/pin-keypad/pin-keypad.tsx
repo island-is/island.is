@@ -7,7 +7,7 @@ import {
   Image,
   Platform,
   useWindowDimensions,
-  View
+  View,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { testIDs } from '../../utils/test-ids'
@@ -34,10 +34,12 @@ interface NumButtonProps {
   onPressOut?(value: string): void
 }
 
-const NumButtonTouchable = styled.TouchableHighlight<{
+interface NumButtonTouchableProps {
   size?: number
   gutter?: number
-}>`
+}
+
+const NumButtonTouchable = styled.TouchableHighlight<NumButtonTouchableProps>`
   width: ${(props) => props.size ?? 64}px;
   height: ${(props) => props.size ?? 64}px;
   border-radius: ${(props) => (props.size ?? 64) / 2}px;
@@ -146,59 +148,55 @@ export function PinKeypad({
   const gutter = 8 + 8 * r
   const intl = useIntl()
 
+  const renderBiometricButton = useCallback(() => {
+    switch (biometricType) {
+      case 'faceid':
+        return (
+          <NumButton
+            value="face_id"
+            onPress={onFaceIdPress}
+            icon={require('../../assets/icons/face-id.png')}
+            accessibilityLabel={intl.formatMessage({
+              id: 'onboarding.pinKeypad.accessibilityLabel.faceId',
+            })}
+            testID={testIDs.PIN_KEYPAD_BUTTON_FACEID}
+            size={size}
+            gutter={gutter}
+          />
+        )
+      case 'fingerprint':
+        return (
+          <NumButton
+            value="fingerprint"
+            onPress={onFaceIdPress}
+            icon={require('../../assets/icons/fingerprint.png')}
+            accessibilityLabel={intl.formatMessage({
+              id: 'onboarding.pinKeypad.accessibilityLabel.fingerprint',
+            })}
+            testID={testIDs.PIN_KEYPAD_BUTTON_FINGERPRINT}
+            size={size}
+            gutter={gutter}
+          />
+        )
+      case 'iris':
+        return (
+          <NumButton
+            value="iris"
+            onPress={onFaceIdPress}
+            icon={require('../../assets/icons/iris.png')}
+            accessibilityLabel={intl.formatMessage({
+              id: 'onboarding.pinKeypad.accessibilityLabel.iris',
+            })}
+            testID={testIDs.PIN_KEYPAD_BUTTON_IRIS}
+            size={size}
+            gutter={gutter}
+          />
+        )
 
-  const renderBiometricButton = useCallback(
-    () => {
-      switch (biometricType) {
-        case 'faceid':
-          return (
-            <NumButton
-              value="face_id"
-              onPress={onFaceIdPress}
-              icon={require('../../assets/icons/face-id.png')}
-              accessibilityLabel={intl.formatMessage({
-                id: 'onboarding.pinKeypad.accessibilityLabel.faceId',
-              })}
-              testID={testIDs.PIN_KEYPAD_BUTTON_FACEID}
-              size={size}
-              gutter={gutter}
-            />
-          )
-        case 'fingerprint':
-          return (
-            <NumButton
-              value="fingerprint"
-              onPress={onFaceIdPress}
-              icon={require('../../assets/icons/fingerprint.png')}
-              accessibilityLabel={intl.formatMessage({
-                id: 'onboarding.pinKeypad.accessibilityLabel.fingerprint',
-              })}
-              testID={testIDs.PIN_KEYPAD_BUTTON_FINGERPRINT}
-              size={size}
-              gutter={gutter}
-            />
-          )
-        case 'iris':
-          return (
-            <NumButton
-              value="iris"
-              onPress={onFaceIdPress}
-              icon={require('../../assets/icons/iris.png')}
-              accessibilityLabel={intl.formatMessage({
-                id: 'onboarding.pinKeypad.accessibilityLabel.iris',
-              })}
-              testID={testIDs.PIN_KEYPAD_BUTTON_IRIS}
-              size={size}
-              gutter={gutter}
-            />
-          )
-
-        default:
-          return <Gap size={size} gutter={gutter} />
-      }
-    },
-    [],
-  )
+      default:
+        return <Gap size={size} gutter={gutter} />
+    }
+  }, [biometricType])
 
   return (
     <View>
@@ -291,7 +289,6 @@ export function PinKeypad({
       </Row>
       <Row>
         {renderBiometricButton()}
-
         <NumButton
           value="0"
           onPress={onInput}

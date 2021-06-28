@@ -19,10 +19,13 @@ export interface GetLicenseResponse {
   genericLicense?: IGenericUserLicense
 }
 
+export enum GenericLicenseType {
+  DriversLicense = 'DriversLicense',
+  HuntingLicense = 'HuntingLicense',
+}
+
 export interface GetGenericLicenseInput {
   input: {
-    providerId: string
-    licenseType: string[]
-    licenseId: string
+    licenseType: GenericLicenseType
   }
 }

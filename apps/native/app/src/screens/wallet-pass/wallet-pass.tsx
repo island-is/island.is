@@ -11,22 +11,32 @@ import {
 import { atob } from 'js-base64'
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Button, Platform, SafeAreaView, View } from 'react-native'
+import {
+  Button,
+  Platform,
+  SafeAreaView,
+  View,
+  ActivityIndicator,
+} from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { client } from '../../graphql/client'
 import {
+  GenericUserLicenseStatus,
   IGenericLicenseDataField,
   IGenericUserLicense,
 } from '../../graphql/fragments/license.fragment'
+import { GENERATE_PKPASS_MUTATION } from '../../graphql/queries/generate-pkpass.mutation'
 import {
+  GenericLicenseType,
   GetGenericLicenseInput,
   GetLicenseResponse,
   GET_GENERIC_LICENSE_QUERY,
 } from '../../graphql/queries/get-license.query'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { LicenseStatus } from '../../types/license-type'
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -108,7 +118,7 @@ const FieldRender = ({ data, level = 1 }: any) => {
 
             case 'Category':
               return (
-                <FieldCard key={key} code={name} title={label}>
+                <FieldCard key={key} code={name} title="">
                   <FieldRow>{FieldRender({ data: fields, level: 3 })}</FieldRow>
                 </FieldCard>
               )
@@ -136,30 +146,40 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       client,
       variables: {
         input: {
-          licenseId: 'noop', // @todo hard coded for now
-          licenseType: ['DriversLicense'], // @todo hard coded for now
-          providerId: 'NationalPoliceCommissioner', // @todo hard coded for now
+          licenseType: GenericLicenseType.DriversLicense,
         },
       },
     },
   )
 
   const data: IGenericUserLicense = {
-    ...licenseRes.data?.genericLicense,
     ...item,
-  };
+    ...licenseRes.data?.genericLicense,
+  }
 
   const onAddPkPass = () => {
     PassKit.canAddPasses().then((result: boolean) => {
       if (result) {
-        fetch(data.pkpassUrl)
-          .then((res) => res.text())
-          .then((res) => PassKit.addPass(atob(res), 'com.snjallveskid'))
-          .then(() => {
-            // done
+        client
+          .mutate({
+            mutation: GENERATE_PKPASS_MUTATION,
+            variables: {
+              input: {
+                licenseType: GenericLicenseType.DriversLicense,
+              },
+            },
           })
-          .catch((err) => {
-            alert('Failed to add pass')
+          .then(({ data }) => {
+            console.log({ data })
+            fetch(data.pkpassUrl)
+              .then((res) => res.text())
+              .then((res) => PassKit.addPass(atob(res), 'com.snjallveskid'))
+              .then(() => {
+                // done
+              })
+              .catch((err) => {
+                alert('Failed to add pass')
+              })
           })
       } else {
         alert('You cannot use passes')
@@ -167,13 +187,18 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     })
   }
 
+  const fields = data?.payload?.data ?? []
+
   return (
     <View style={{ flex: 1 }}>
-      {/* <BottomTabsIndicator index={2} total={3} /> */}
       <View style={{ height: 140 }} />
       <Information contentInset={{ bottom: 162 }}>
         <SafeAreaView style={{ marginHorizontal: 16 }}>
-          <FieldRender data={data?.payload.data} />
+          {!data?.payload?.data && licenseRes.loading ? (
+            <ActivityIndicator size="large" style={{ marginTop: 32 }} />
+          ) : (
+            <FieldRender data={fields} />
+          )}
         </SafeAreaView>
         <View style={{ height: 60 }} />
       </Information>
@@ -189,11 +214,15 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         }}
       >
         <LicenceCard
-          nativeID={`license-${data?.license.type}_destination`}
+          nativeID={`license-${data?.license?.type}_destination`}
           title={data?.license.type}
           type={data?.license.type as any}
-          date={data?.fetch.updated}
-          status={data?.license.status as any}
+          date={new Date(Number(data?.fetch.updated))}
+          status={
+            data.license.status === GenericUserLicenseStatus.HasLicense
+              ? LicenseStatus.VALID
+              : LicenseStatus.NOT_VALID
+          }
           agencyLogo={agencyLogo}
         />
       </SafeAreaView>
