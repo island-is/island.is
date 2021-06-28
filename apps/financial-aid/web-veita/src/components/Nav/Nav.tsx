@@ -7,9 +7,10 @@ import { LogoHfj } from '../'
 
 import * as styles from './Nav.treat'
 import cn from 'classnames'
-import { ApplicationsContext } from '../ApplicationsProvider/ApplicationsProvider'
+import { NavigationStatisticsContext } from '../NavigationStatisticsProvider/NavigationStatisticsProvider'
 
 import { useLogOut } from '../../utils/useLogOut'
+import { ApplicationState } from '@island.is/financial-aid/shared'
 
 import { navigationItems } from '../../utils/formHelper'
 
@@ -18,7 +19,7 @@ const Nav: React.FC = () => {
 
   const logOut = useLogOut()
 
-  const { applications } = useContext(ApplicationsContext)
+  const { statistics } = useContext(NavigationStatisticsContext)
 
   return (
     <nav className={styles.container}>
@@ -54,11 +55,13 @@ const Nav: React.FC = () => {
                 <Box display="flex" justifyContent="spaceBetween">
                   <Text fontWeight="semiBold">{item.label}</Text>
                   <Text fontWeight="semiBold" color="dark300">
-                    {
-                      applications?.filter((el) =>
-                        item?.applicationState?.includes(el?.state),
-                      ).length
-                    }
+                    {item.applicationState
+                      .map((state: ApplicationState) => {
+                        if (statistics) {
+                          return statistics[state]
+                        }
+                      })
+                      .reduce((a: number, b: number) => a + b, 0)}
                   </Text>
                 </Box>
               </a>

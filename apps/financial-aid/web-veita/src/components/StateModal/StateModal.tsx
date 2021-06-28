@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { ModalBase, Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './StateModal.treat'
@@ -7,6 +7,8 @@ import cn from 'classnames'
 import { useMutation } from '@apollo/client'
 
 import { UpdateApplicationMutation } from '../../../graphql/sharedGql'
+
+import { NavigationStatisticsContext } from '../NavigationStatisticsProvider/NavigationStatisticsProvider'
 
 import {
   getState,
@@ -42,6 +44,15 @@ const StateModal: React.FC<Props> = (props: Props) => {
     ApplicationState.REJECTED,
   ]
 
+  const { statistics, setStatistics } = useContext(NavigationStatisticsContext)
+
+  const overZeroCheck = (num: number) => {
+    if (num === 0) {
+      return false
+    }
+    return true
+  }
+
   const [
     updateApplicationMutation,
     { loading: saveLoading },
@@ -51,6 +62,8 @@ const StateModal: React.FC<Props> = (props: Props) => {
     applicant: Application,
     state: ApplicationState,
   ) => {
+    const prevState = applicant.state
+
     if (saveLoading === false && applicant) {
       await updateApplicationMutation({
         variables: {
@@ -63,6 +76,14 @@ const StateModal: React.FC<Props> = (props: Props) => {
     }
     setIsVisible(false)
     setApplicationState(state)
+
+    if (statistics && setStatistics) {
+      setStatistics((preState) => ({
+        ...preState,
+        [prevState]: statistics[prevState] - 1,
+        [state]: statistics[state] + 1,
+      }))
+    }
   }
 
   return (

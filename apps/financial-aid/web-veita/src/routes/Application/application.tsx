@@ -216,7 +216,7 @@ const ApplicationProfile = () => {
                   type="button"
                   variant="text"
                 >
-                  {prevUrl?.label}
+                  Til baka
                 </Button>
               )}
 

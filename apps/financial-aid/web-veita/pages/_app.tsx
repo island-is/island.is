@@ -5,7 +5,7 @@ import React from 'react'
 import { client } from '../graphql'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 
-import { ApplicationsProvider, AdminProvider } from '../src/components'
+import { NavigationStatisticsProvider, AdminProvider } from '../src/components'
 
 import '../src/styles.css'
 
@@ -16,7 +16,7 @@ class FinancialAidApplication extends App<AppProps> {
     return (
       <ApolloProvider client={client}>
         <AdminProvider>
-          <ApplicationsProvider>
+          <NavigationStatisticsProvider>
             <Component {...pageProps} />
             <style jsx global>{`
               @font-face {
@@ -76,7 +76,7 @@ class FinancialAidApplication extends App<AppProps> {
                     format('woff');
               }
             `}</style>
-          </ApplicationsProvider>
+          </NavigationStatisticsProvider>
         </AdminProvider>
       </ApolloProvider>
     )
