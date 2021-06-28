@@ -20,6 +20,12 @@ import {
   TemporaryVoterRegistryResponse,
   TemporaryVoterRegistryService,
 } from './providers/temporaryVoterRegistry/temporaryVoterRegistry.service'
+import type { Auth } from '@island.is/auth-nest-tools'
+
+interface ExecuteProvidersInput {
+  providers: MetadataProviderService
+  input: MetadataInput
+}
 
 @Injectable()
 export class EndorsementMetadataService {
@@ -70,13 +76,13 @@ export class EndorsementMetadataService {
   }
 
   async executeProviders(
-    providers: MetadataProviderService,
-    input: MetadataInput,
+    { providers, input }: ExecuteProvidersInput,
+    auth: Auth,
   ) {
     // execute all provided providers
     const metadataRequests = Object.entries(providers).map(
       async ([providerKey, provider]) => ({
-        [providerKey]: await provider.getData(input),
+        [providerKey]: await provider.getData(input, auth),
       }),
     )
 
@@ -122,11 +128,12 @@ export class EndorsementMetadataService {
     )
   }
 
-  async getMetadata(input: MetadataInput): Promise<EndorsementMetadata> {
-    const requiredProviders = this.findProvidersByRequestedMetadataFields(
-      input.fields,
-    )
-    const providerData = await this.executeProviders(requiredProviders, input)
+  async getMetadata(
+    input: MetadataInput,
+    auth: Auth,
+  ): Promise<EndorsementMetadata> {
+    const providers = this.findProvidersByRequestedMetadataFields(input.fields)
+    const providerData = await this.executeProviders({ providers, input }, auth)
     return this.mapProviderDataToFields(input.fields, providerData)
   }
 }
