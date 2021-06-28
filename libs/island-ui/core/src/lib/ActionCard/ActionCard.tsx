@@ -28,6 +28,7 @@ type ActionCardProps = {
     size?: ButtonSizes
     icon?: 'arrowForward'
     onClick?: () => void
+    disabled?: boolean
   }
   secondaryCta?: {
     label: string
@@ -168,7 +169,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               </Box>
             )}
             <Box>
-              <Button variant={cta.variant} size="small" onClick={cta.onClick}>
+              <Button
+                variant={cta.variant}
+                size="small"
+                onClick={cta.onClick}
+                disabled={cta.disabled}
+              >
                 {cta.label}
               </Button>
             </Box>
