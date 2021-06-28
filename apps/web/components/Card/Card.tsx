@@ -13,10 +13,7 @@ import {
   TagVariant,
   Hyphen,
 } from '@island.is/island-ui/core'
-import {
-  ColorSchemeContext,
-  BackgroundSchemeContext,
-} from '@island.is/web/context'
+import { ColorSchemeContext } from '@island.is/web/context'
 import { BackgroundImage } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
@@ -52,7 +49,6 @@ export const Card = ({
   link,
 }: CardProps) => {
   const { colorScheme } = useContext(ColorSchemeContext)
-  const { backgroundScheme } = useContext(BackgroundSchemeContext)
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 360
@@ -61,7 +57,6 @@ export const Card = ({
   let borderColor = null
   let titleColor = null
   let tagVariant = 'purple' as TagVariant
-  let background = null
 
   switch (colorScheme) {
     case 'red':
@@ -82,16 +77,6 @@ export const Card = ({
     default:
       borderColor = 'purple200'
       titleColor = 'blue400'
-      background = 'white'
-      break
-  }
-  switch (backgroundScheme) {
-    case 'blue':
-      background = 'blue100'
-      borderColor = 'transparent'
-      break
-    default:
-      background = 'white'
       break
   }
 
@@ -183,7 +168,7 @@ export const Card = ({
         height="full"
         width="full"
         flexGrow={1}
-        background={background}
+        background="white"
         borderColor={borderColor}
         borderWidth="standard"
       >
@@ -202,7 +187,7 @@ export const Frame = ({ children }) => {
       position="relative"
       borderRadius="large"
       overflow="hidden"
-      background="transparent"
+      background="white"
       outline="none"
       padding={[2, 2, 4]}
     >

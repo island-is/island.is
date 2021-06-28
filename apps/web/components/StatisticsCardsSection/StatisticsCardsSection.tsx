@@ -1,17 +1,17 @@
 import React from 'react'
 import { GridContainer, Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { FactsCard, SimpleSlider } from '@island.is/web/components'
+import { StatisticsCard, SimpleSlider } from '@island.is/web/components'
 
-interface FactsSectionProps {
+interface StatisticsSectionProps {
   title?: string
 }
 
-export const FactsCardsSection = ({ title }: FactsSectionProps) => {
+export const StatisticsCardsSection = ({ title }: StatisticsSectionProps) => {
   // TODO: Get this data from contnetful, this is just placeholders
-  const facts = [
+  const statistics = [
     {
-      __typename: 'facts',
+      __typename: 'statistics',
       id: '2F6n9qoAWTG1ekp12VTQOD',
       title: 'Stafræn ökuskírteini',
       slug: 'ad-eignast-barn',
@@ -24,7 +24,7 @@ export const FactsCardsSection = ({ title }: FactsSectionProps) => {
       },
     },
     {
-      __typename: 'facts',
+      __typename: 'statistics',
       id: '62xAXAZgossE07lA4ZT7MO',
       title: 'Að missa ástvin',
       slug: 'ad-missa-astvin',
@@ -37,7 +37,7 @@ export const FactsCardsSection = ({ title }: FactsSectionProps) => {
       },
     },
     {
-      __typename: 'facts',
+      __typename: 'statistics',
       id: '5SMAerVNcWJZ5dsVBLKkAL',
       title: 'Að fara á eftirlaun',
       slug: 'ad-fara-a-eftirlaun',
@@ -50,7 +50,7 @@ export const FactsCardsSection = ({ title }: FactsSectionProps) => {
       },
     },
     {
-      __typename: 'facts',
+      __typename: 'statistics',
       id: '3sb9ux26eA4S3qxqDMziv3',
       title: 'Að fara út á vinnumarkaðinn',
       slug: 'ad-fara-ut-a-vinnumarkadinn',
@@ -63,7 +63,7 @@ export const FactsCardsSection = ({ title }: FactsSectionProps) => {
       },
     },
     {
-      __typename: 'facts',
+      __typename: 'statistics',
       id: '3Ijidl3zaUPkC9qIqfXqpY',
       title: 'Að flytja',
       slug: 'ad-flytja',
@@ -76,7 +76,7 @@ export const FactsCardsSection = ({ title }: FactsSectionProps) => {
       },
     },
     {
-      __typename: 'facts',
+      __typename: 'statistics',
       id: '1nWCYhKhUGfWYGQVfHcUR0',
       title: 'Að hefja nám',
       slug: 'ad-hefja-nam',
@@ -89,7 +89,7 @@ export const FactsCardsSection = ({ title }: FactsSectionProps) => {
       },
     },
     {
-      __typename: 'facts',
+      __typename: 'statistics',
       id: '3vTJup1Nk3lwB6AtzhX1ps',
       title: 'Að stofna fyrirtæki',
       slug: 'ad-stofna-fyrirtaeki',
@@ -126,11 +126,11 @@ export const FactsCardsSection = ({ title }: FactsSectionProps) => {
               slideCount: 3,
             },
           }}
-          items={facts
+          items={statistics
             .filter((x) => x.slug && x.title)
             .map(({ title, thumbnail, intro }, index) => {
               return (
-                <FactsCard
+                <StatisticsCard
                   key={index}
                   title={title}
                   description={intro}
@@ -149,4 +149,4 @@ export const FactsCardsSection = ({ title }: FactsSectionProps) => {
   )
 }
 
-export default FactsCardsSection
+export default StatisticsCardsSection

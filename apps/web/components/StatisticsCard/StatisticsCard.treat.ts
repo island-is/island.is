@@ -6,7 +6,6 @@ export const card = style({
   height: '124px',
   width: '100%',
   flexDirection: 'column',
-  cursor: 'pointer',
   boxSizing: 'border-box',
   minHeight: 124,
   textDecoration: 'none',

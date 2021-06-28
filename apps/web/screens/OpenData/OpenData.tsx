@@ -14,7 +14,7 @@ import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
 import {
   Section,
-  FactsCardsSection,
+  StatisticsCardsSection,
   DataLinkSection,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -184,7 +184,7 @@ const OpenDataPage: Screen = () => {
       </Section>
       {/* TODO: Will need to change the props so facts card get their data from a query */}
       <Section aria-labelledby="factsCardsTitle">
-        <FactsCardsSection title="Stafrænt Ísland" />
+        <StatisticsCardsSection title="Stafrænt Ísland" />
       </Section>
       <Section
         paddingTop={[8, 8, 6]}

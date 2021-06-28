@@ -4,22 +4,22 @@ import cn from 'classnames'
 import { Box, Stack, Text, Hyphen } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
 
-import * as styles from './FactsCard.treat'
+import * as styles from './StatisticsCard.treat'
 
-export type FactsCardTagsProps = {
+export type StatisticsCardsTagsProps = {
   href?: string
   title: string
   subTitle?: string
 }
 
-export interface FactsCardProps {
+export interface StatisticsCardsProps {
   title: string
   subTitle?: string
   image?: { title: string; url: string }
   description: string
 }
 
-export const FactsCard = ({ title, image, description }: FactsCardProps) => {
+export const StatisticsCard = ({ title, image, description }: StatisticsCardsProps) => {
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 360
@@ -36,7 +36,7 @@ export const FactsCard = ({ title, image, description }: FactsCardProps) => {
     >
       <Box style={{ width: shouldStack ? '100%' : hasImage ? '70%' : '100%' }}>
         <Stack space={1}>
-          <Box display="flex" flexDirection="row" alignItems="center">
+          <Box display="flex" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
               <Text variant="eyebrow">
                 <Hyphen>{title}</Hyphen>
@@ -73,7 +73,7 @@ export const FactsCard = ({ title, image, description }: FactsCardProps) => {
   return <FrameWrapper>{items}</FrameWrapper>
 }
 
-export const FrameWrapper = ({ children }) => {
+const FrameWrapper = ({ children }) => {
   return (
     <Box
       className={cn(styles.card)}
@@ -89,4 +89,4 @@ export const FrameWrapper = ({ children }) => {
   )
 }
 
-export default FactsCard
+export default StatisticsCard
