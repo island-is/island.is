@@ -12,9 +12,6 @@ export class EndorsementMetadata {
   @ApiProperty()
   bulkEndorsement!: boolean
 
-  @ApiProperty()
-  invalidated!: boolean
-
   @ApiProperty({ enum: EndorsementTag, isArray: true })
   signedTags!: EndorsementTag[]
 
