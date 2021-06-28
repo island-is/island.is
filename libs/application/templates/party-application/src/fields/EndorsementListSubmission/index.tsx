@@ -47,7 +47,6 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
   const [selectedRadio, setSelecteRadio] = useState<SelectedRadio>(
     SelectedRadio.AUTO,
   )
-
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
 
@@ -55,12 +54,12 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
   useEffect(() => {
     if (endorsements) {
       if (endorsmentAnswers && !!endorsmentAnswers?.length) {
-        endorsements?.filter((e) => {
-          return endorsmentAnswers.indexOf(e?.id) !== -1
+        const mapToEndorsement = endorsements?.filter((endorsement) => {
+          return endorsmentAnswers.indexOf(endorsement?.id) !== -1
         })
 
-        setSelectedEndorsements(sortBy(endorsements, 'created'))
-        isEqual(endorsements, firstX())
+        setSelectedEndorsements(sortBy(mapToEndorsement, 'created'))
+        isEqual(mapToEndorsement, firstX())
           ? setSelecteRadio(SelectedRadio.AUTO)
           : setSelecteRadio(SelectedRadio.RANDOM)
       } else {

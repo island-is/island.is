@@ -144,6 +144,7 @@ export interface AsyncSelectField extends BaseField {
   onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
+  isSearchable?: boolean
 }
 
 export interface TextField extends BaseField {

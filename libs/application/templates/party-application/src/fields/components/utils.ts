@@ -4,14 +4,14 @@ export const PAGE_SIZE = 10
 
 export function paginate(
   endorsements: Endorsement[] | undefined,
-  page_size: number,
-  page_number: number,
+  pageSize: number,
+  pageNumber: number,
 ) {
   if (endorsements === undefined) return
   else {
     return endorsements.slice(
-      (page_number - 1) * page_size,
-      page_number * page_size,
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize,
     )
   }
 }
@@ -25,7 +25,7 @@ export function totalPages(endorsementsLength: number | undefined) {
 
 export function minAndMaxEndorsements(constituency: EndorsementListTags) {
   const max = 5
-    /*constituencyMapper[constituency as EndorsementListTags]
+  /*constituencyMapper[constituency as EndorsementListTags]
       .parliamentary_seats * 40*/
   const min =
     constituencyMapper[constituency as EndorsementListTags]

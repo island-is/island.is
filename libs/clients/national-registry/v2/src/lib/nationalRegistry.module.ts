@@ -1,5 +1,6 @@
 import { DynamicModule } from '@nestjs/common'
-import fetch from 'isomorphic-fetch'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import type { EnhancedFetchOptions } from '@island.is/clients/middlewares'
 
 import {
   Configuration,
@@ -11,12 +12,16 @@ import {
 export interface ModuleConfig {
   xRoadPath: string
   xRoadClient: string
+  fetch?: Partial<EnhancedFetchOptions>
 }
 
 export class NationalRegistryModule {
   static register(config: ModuleConfig): DynamicModule {
     const providerConfiguration = new Configuration({
-      fetchApi: fetch,
+      fetchApi: createEnhancedFetch({
+        name: 'clients-national-registry-v2',
+        ...config.fetch,
+      }),
       basePath: config.xRoadPath,
     })
 

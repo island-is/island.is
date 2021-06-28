@@ -4,15 +4,20 @@ const t = 'pdpp.application'
 
 // Global string for the application
 export const application = defineMessages({
+  institutionName: {
+    id: `pdpp.application:application.institutionName`,
+    defaultMessage: 'Innheimtumaður ríkissjóðs',
+    description: 'Name of the Public Debt Payment Plan institution',
+  },
   name: {
     id: `pdpp.application:application.name`,
     defaultMessage: 'Umsókn um greiðsludreifingu skulda',
-    description: 'Name of the Login Service application',
+    description: 'Name of the Public Debt Payment Plan application',
   },
   description: {
     id: `pdpp.application:application.description`,
     defaultMessage: 'Lýsing á umsókn um greiðsludreifingu skulda',
-    description: 'Description of the Login Service application',
+    description: 'Description of the Public Debt Payment Plan application',
   },
 })
 
