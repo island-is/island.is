@@ -11,4 +11,5 @@ export const zIndex = {
   actionSidebar: 12,
   menu: 13,
   modal: 13,
+  authOverlay: 14,
 }
