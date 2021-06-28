@@ -252,8 +252,17 @@ export const transformApplicationToParentalLeaveDTO = (
   }
 }
 
-export const pathToAsset = (file: string) =>
-  join(
-    __dirname,
-    `../../../../libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/${file}`,
+export const pathToAsset = (file: string) => {
+  const isLocalhost = (process.env.XROAD_VMST_API_PATH ?? 'localhost').includes(
+    'localhost',
   )
+
+  if (isLocalhost) {
+    return join(
+      __dirname,
+      `../../../../libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/${file}`,
+    )
+  }
+
+  return join(__dirname, `./parental-leave-assets/${file}`)
+}
