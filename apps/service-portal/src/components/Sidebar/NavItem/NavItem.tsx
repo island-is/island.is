@@ -27,7 +27,7 @@ const NavItemContent: FC<Props> = ({
       display="flex"
       alignItems="center"
       justifyContent="spaceBetween"
-      cursor={ enabled === false ? undefined : "pointer"}
+      cursor={enabled === false ? undefined : 'pointer'}
       position="relative"
       onClick={enabled === false ? undefined : onClick}
       className={styles.navItem}
@@ -39,9 +39,10 @@ const NavItemContent: FC<Props> = ({
               type={icon.type}
               icon={icon.icon}
               size="medium"
-              color={ enabled === false 
-                ? 'dark200'
-                : active
+              color={
+                enabled === false
+                  ? 'dark200'
+                  : active
                   ? variant === 'blue'
                     ? 'blue600'
                     : 'blueberry600'
@@ -54,11 +55,13 @@ const NavItemContent: FC<Props> = ({
         ) : null}
         <Text
           fontWeight={active ? 'semiBold' : 'regular'}
-          color={ enabled === false 
-            ? 'dark200'
-            : variant === 'blue'
+          color={
+            enabled === false
+              ? 'dark200'
+              : variant === 'blue'
               ? 'blue600'
-              : 'blueberry600'}
+              : 'blueberry600'
+          }
         >
           {children}
         </Text>
@@ -76,9 +79,9 @@ const NavItem: FC<Props> = (props) => {
     props.enabled === false ? (
       <NavItemContent {...props} />
     ) : (
-    <Link to={props.path}>
-      <NavItemContent {...props} />
-    </Link>
+      <Link to={props.path}>
+        <NavItemContent {...props} />
+      </Link>
     )
   ) : (
     <NavItemContent {...props} />
