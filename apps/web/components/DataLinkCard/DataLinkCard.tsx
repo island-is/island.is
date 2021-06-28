@@ -84,7 +84,7 @@ export const DataLinkCard = ({
 const FrameWrapper = ({ children }) => {
   return (
     <Box
-      className={cn(styles.card)}
+      className={styles.card}
       position="relative"
       borderRadius="large"
       overflow="hidden"
