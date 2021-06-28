@@ -16,6 +16,7 @@ import {
   Section,
   StatisticsCardsSection,
   DataLinkSection,
+  SimpleBarChart
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
@@ -174,6 +175,9 @@ const OpenDataPage: Screen = () => {
                   </Button>
                 </Link>
               </Box>
+            </GridColumn>
+            <GridColumn span="7/12">
+              <SimpleBarChart/>
             </GridColumn>
           </GridRow>
         </GridContainer>
