@@ -3,12 +3,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 
 export const loader = style({
-  display: 'inline-block',
   height: '1em',
-  width: '100%',
-  position: 'relative',
-  overflow: 'hidden',
-  backgroundColor: theme.color.purple100,
   ':after': {
     position: 'absolute',
     top: 0,
@@ -29,10 +24,3 @@ export const loader = style({
     },
   },
 })
-
-export const borderRadius = {
-  ...styleMap(
-    mapToStyleProperty(theme.border.radius, 'borderRadius'),
-    'borderRadius',
-  ),
-}

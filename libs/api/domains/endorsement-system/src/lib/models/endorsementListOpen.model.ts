@@ -14,4 +14,7 @@ export class EndorsementListOpen {
 
   @Field(() => [EndorsementListOpenTagsEnum], { nullable: true })
   tags?: EndorsementListOpenTagsEnum[]
+
+  @Field({ nullable: true })
+  closedDate!: string | null
 }
