@@ -29,6 +29,9 @@ export interface TimelinePeriod {
   canDelete?: boolean
 }
 
+const isFirstPeriodUsingActualDateOfBirth = (periods: TimelinePeriod[]) =>
+  periods?.[0].actualDob
+
 const Panel: FC<{
   editable: boolean
   initDate: Date
@@ -49,6 +52,7 @@ const Panel: FC<{
   const { formatMessage } = useLocale()
   const formatStyle = isMobile ? 'dd MMM' : 'dd MMM yyyy'
   const titleLabel = isMobile ? titleSmall : title
+  const firstPeriodUsingActualDateOfBirth = periods?.[0]?.actualDob
 
   return (
     <Box className={styles.panel}>
@@ -57,8 +61,12 @@ const Panel: FC<{
           <Text variant="small" as="span" fontWeight="semiBold" color="blue400">
             {titleLabel}
           </Text>
+
           <br />
-          {format(initDate, 'dd MMM yyyy')}
+
+          {firstPeriodUsingActualDateOfBirth
+            ? ''
+            : format(initDate, 'dd MMM yyyy')}
         </Text>
         <Box className={styles.firstPanelRowSeparator} />
       </Box>
@@ -83,7 +91,9 @@ const Panel: FC<{
             <Text variant="small" as="span" fontWeight="semiBold">
               {p.title}
             </Text>
+
             <br />
+
             {p.actualDob
               ? formatMessage(
                   parentalLeaveFormMessages.reviewScreen.periodActualDob,
@@ -91,9 +101,10 @@ const Panel: FC<{
                     duration: p.duration,
                   },
                 )
-              : format(parseISO(p.startDate), formatStyle)}
-            {' — '}
-            {format(parseISO(p.endDate), formatStyle)}
+              : `${format(parseISO(p.startDate), formatStyle)} - ${format(
+                  parseISO(p.endDate),
+                  formatStyle,
+                )}`}
           </Text>
         </Box>
       ))}

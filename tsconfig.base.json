@@ -15,6 +15,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "baseUrl": ".",
     "strict": true,
     "paths": {
@@ -83,6 +84,9 @@
       ],
       "@island.is/api/domains/icelandic-names-registry": [
         "libs/api/domains/icelandic-names-registry/src/index.ts"
+      ],
+      "@island.is/api/domains/identity": [
+        "libs/api/domains/identity/src/index.ts"
       ],
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
@@ -253,6 +257,7 @@
       "@island.is/feature-flags": ["libs/feature-flags/src/index.ts"],
       "@island.is/file-storage": ["libs/file-storage/src/index.ts"],
       "@island.is/financial-aid-web/osk*": ["apps/financial-aid/web-osk/*"],
+      "@island.is/financial-aid-web/veita*": ["apps/financial-aid/web-veita/*"],
       "@island.is/financial-aid/auth": ["libs/financial-aid/auth/src/index.ts"],
       "@island.is/financial-aid/shared": [
         "libs/financial-aid/shared/src/index.ts"

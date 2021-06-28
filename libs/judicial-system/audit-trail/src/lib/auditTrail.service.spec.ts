@@ -20,15 +20,11 @@ jest.mock('@island.is/logging', () => {
 const auditTrail = mock<Logger>()
 jest.mock('winston', () => {
   return {
-    default: {
-      createLogger: () => auditTrail,
-    },
+    createLogger: () => auditTrail,
   }
 })
 jest.mock('winston-cloudwatch', () => {
-  return {
-    default: class WinstonCloudWatch {},
-  }
+  return class WinstonCloudWatch {}
 })
 
 describe('AuditTrailService generic', () => {

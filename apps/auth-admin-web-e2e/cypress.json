@@ -7,7 +7,7 @@
   "supportFile": "./src/support/index.ts",
   "pageLoadTimeout": 240000,
   "responseTimeout": 120000,
-  "video": true,
+  "video": false,
   "videosFolder": "../../dist/cypress/apps/auth-admin-web-e2e/videos",
   "screenshotsFolder": "../../dist/cypress/apps/auth-admin-web-e2e/screenshots",
   "chromeWebSecurity": false

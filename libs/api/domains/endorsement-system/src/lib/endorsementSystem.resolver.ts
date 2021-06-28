@@ -13,6 +13,7 @@ import { EndorsementList } from './models/endorsementList.model'
 import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
 import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
 import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
+import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver('EndorsementSystemResolver')
@@ -57,7 +58,7 @@ export class EndorsementSystemResolver {
   async endorsementSystemBulkEndorseList(
     @Args('input') { listId, nationalIds }: BulkEndorseListInput,
     @CurrentUser() user: User,
-  ): Promise<Endorsement[]> {
+  ): Promise<EndorsementBulkCreate> {
     return await this.endorsementSystemService.endorsementControllerBulkCreate(
       {
         listId,
