@@ -10,7 +10,34 @@ import {
 } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { assign } from 'xstate'
-import { API_MODULE_ACTIONS, States, Roles } from '../constants'
+import { ApiModuleActions, States, Roles } from '../constants'
+import { EndorsementListTags } from '../constants'
+
+const assignees = (constituency: EndorsementListTags) => {
+  switch (constituency) {
+    case 'partyApplicationReykjavikurkjordaemiSudur2021': {
+      return process.env.RVK_SOUTH_ASSIGNEES?.split(',') ?? []
+    }
+    case 'partyApplicationReykjavikurkjordaemiNordur2021': {
+      return process.env.RVK_NORTH_ASSIGNEES?.split(',') ?? []
+    }
+    case 'partyApplicationSudvesturkjordaemi2021': {
+      return process.env.SOUTH_WEST_ASSIGNEES?.split(',') ?? []
+    }
+    case 'partyApplicationNordvesturkjordaemi2021': {
+      return process.env.NORTH_WEST_ASSIGNEES?.split(',') ?? []
+    }
+    case 'partyApplicationNordausturkjordaemi2021': {
+      return process.env.NORTH_ASSIGNEES?.split(',') ?? []
+    }
+    case 'partyApplicationSudurkjordaemi2021': {
+      return process.env.SOUTH_ASSIGNEES?.split(',') ?? []
+    }
+    default: {
+      return []
+    }
+  }
+}
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -65,7 +92,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.CreateEndorsementList,
+            apiModuleAction: ApiModuleActions.CreateEndorsementList,
           },
           roles: [
             {
@@ -107,7 +134,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.AssignSupremeCourt,
+            apiModuleAction: ApiModuleActions.AssignSupremeCourt,
           },
           roles: [
             {
@@ -151,7 +178,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.ApplicationRejected,
+            apiModuleAction: ApiModuleActions.ApplicationRejected,
           },
           roles: [
             {
@@ -202,7 +229,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.AssignSupremeCourt,
+            apiModuleAction: ApiModuleActions.AssignSupremeCourt,
           },
           roles: [
             {
@@ -247,7 +274,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.ApplicationApproved,
+            apiModuleAction: ApiModuleActions.ApplicationApproved,
           },
           roles: [
             {
@@ -275,14 +302,13 @@ const PartyApplicationTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToSupremeCourt: assign((context) => {
-        const supremeCourtIds = process.env.SUPREME_COURT_ASSIGNEES?.split(
-          ',',
-        ) ?? ['']
         return {
           ...context,
           application: {
             ...context.application,
-            assignees: supremeCourtIds,
+            assignees: assignees(
+              context.application.answers.constituency as EndorsementListTags,
+            ),
           },
         }
       }),
