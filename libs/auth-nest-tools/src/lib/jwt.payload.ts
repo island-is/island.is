@@ -6,4 +6,8 @@ export interface JwtPayload {
     nationalId: string
     scope?: string | string[]
   }
+  actor?: {
+    nationalId: string
+    scope?: string | string[]
+  }
 }

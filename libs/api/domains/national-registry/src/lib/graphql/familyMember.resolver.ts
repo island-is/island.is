@@ -7,6 +7,7 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
 
 import { NationalRegistryFamilyMember } from './models'
 import { NationalRegistryService } from '../nationalRegistry.service'
@@ -14,6 +15,7 @@ import { FamilyMember } from '../types'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => NationalRegistryFamilyMember)
+@Audit({ namespace: '@island.is/api/national-registry' })
 export class FamilyMemberResolver {
   constructor(
     private readonly nationalRegistryService: NationalRegistryService,
@@ -23,6 +25,7 @@ export class FamilyMemberResolver {
     name: 'nationalRegistryFamily',
     nullable: true,
   })
+  @Audit()
   getMyFamily(@CurrentUser() user: AuthUser): Promise<FamilyMember[]> {
     return this.nationalRegistryService.getFamily(user.nationalId)
   }

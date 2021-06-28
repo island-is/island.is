@@ -13,12 +13,12 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     <InfoScreen
       title={defineMessage({
         id: 'sp.assets:title',
-        defaultMessage: 'Eignir',
+        defaultMessage: 'Fasteignir',
       })}
       intro={defineMessage({
         id: 'sp.assets:intro',
         defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir
-        fjármál á næstunni.`,
+        fasteignir á næstunni.`,
       })}
       list={{
         title: defineMessage({
@@ -41,25 +41,12 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           }),
         ],
       }}
-      institutionTitle={defineMessage({
-        id: 'sp.assets:institution',
-        defaultMessage: 'Samgöngustofa',
+      externalHref="https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir"
+      externalLinkTitle={defineMessage({
+        id: 'sp.assets:external-link-title',
+        defaultMessage: 'Skoða fasteignir',
       })}
-      institutionDescription={defineMessage({
-        id: 'sp.assets:institution-description',
-        defaultMessage: `
-          Vinnumálastofnun heyrir undir félagsmálráðuneytið og fer m.a. með
-          yfirstjórn vinnumiðlunar í landinu og daglega afgreiðslu
-          Atvinnuleysistryggingasjóðs, Fæðingarorlofssjóðs, Ábyrgðarsjóðs
-          launa auk fjölmargra annara vinnumarkaðstengdra verkefna.
-        `,
-      })}
-      institutionHref="https://www.samgongustofa.is/"
-      institutionLinkTitle={defineMessage({
-        id: 'sp.assets:institution-link-title',
-        defaultMessage: 'Vefur samgöngustofu - www.samgongustofa.is/',
-      })}
-      figure="/assets/images/bedroom.jpg"
+      figure="./assets/images/bedroom.jpg"
     />
   )
 }

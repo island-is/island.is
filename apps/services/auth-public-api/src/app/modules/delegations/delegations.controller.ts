@@ -8,6 +8,7 @@ import {
   Put,
   UseGuards,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -16,6 +17,7 @@ import {
   DelegationDTO,
   UpdateDelegationDTO,
   CreateDelegationDTO,
+  ResourcesService,
 } from '@island.is/auth-api-lib'
 import {
   IdsUserGuard,
@@ -35,13 +37,48 @@ const namespace = '@island.is/auth-public-api/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
-@Controller('public/delegations')
+@Controller('public/v1/delegations')
 @Audit({ namespace })
 export class DelegationsController {
   constructor(
     private readonly delegationsService: DelegationsService,
     private readonly auditService: AuditService,
+    private readonly resourcesService: ResourcesService,
   ) {}
+
+  /**
+   * Validates that the delegation scopes belong to user and are valid for delegation
+   * @param scopes user.scope object
+   * @param delegation requested delegations
+   * @returns
+   */
+  async validateScopes(
+    scopes: string[],
+    delegation: CreateDelegationDTO | UpdateDelegationDTO,
+  ) {
+    if (delegation.scopes.length === 0) {
+      return true
+    }
+
+    // All request delegation scopes need to be associated with the user.scope object. In this case the scopes parameter
+    if (
+      !delegation.scopes.map((x) => x.name).every((y) => scopes.includes(y))
+    ) {
+      return false
+    }
+
+    // Check if the requested scopes are valid
+    const allowedIdentityResources = await this.resourcesService.findAllowedDelegationIdentityResourceListForUser(
+      delegation.scopes.map((x) => x.name),
+    )
+    const allowedApiScopes = await this.resourcesService.findAllowedDelegationApiScopeListForUser(
+      delegation.scopes.map((x) => x.name),
+    )
+    return (
+      delegation.scopes.length ===
+      allowedIdentityResources.length + allowedApiScopes.length
+    )
+  }
 
   @ActorScopes(AuthScope.actorDelegations)
   @Get()
@@ -50,20 +87,10 @@ export class DelegationsController {
     resources: (delegations) => delegations.map((delegation) => delegation.id),
   })
   async findAllTo(@CurrentActor() user: User): Promise<DelegationDTO[]> {
-    const wards = await this.delegationsService.findAllWardsTo(
+    return this.delegationsService.findAllTo(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
     )
-
-    const companies = await this.delegationsService.findAllCompaniesTo(
-      user.nationalId,
-    )
-
-    const custom = await this.delegationsService.findAllValidCustomTo(
-      user.nationalId,
-    )
-
-    return [...wards, ...companies, ...custom]
   }
 
   @Scopes(AuthScope.writeDelegations)
@@ -76,6 +103,12 @@ export class DelegationsController {
     @CurrentUser() user: User,
     @Body() delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
+    if (!this.validateScopes(user.scope, delegation)) {
+      throw new BadRequestException(
+        'Delegations to scopes seem illegit. Make sure you have access to these scopes',
+      )
+    }
+
     return this.delegationsService.create(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
@@ -91,6 +124,12 @@ export class DelegationsController {
     @Body() delegation: UpdateDelegationDTO,
     @Param('toNationalId') toNationalId: string,
   ): Promise<DelegationDTO | null> {
+    if (!this.validateScopes(user.scope, delegation)) {
+      throw new BadRequestException(
+        'Delegations to scopes seem illegit. Make sure you have access to these scopes',
+      )
+    }
+
     return this.auditService.auditPromise<DelegationDTO>(
       {
         user,

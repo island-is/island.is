@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common'
-import * as request from 'supertest'
+import request from 'supertest'
 import { setup } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { EndorsementTag } from '../../constants'
 
 let app: INestApplication
-
+// this is a unauthenticated app
 beforeAll(async () => {
   app = await setup()
 })

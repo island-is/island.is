@@ -105,9 +105,8 @@ export class DelegationScopeService {
         {
           model: Delegation,
           where: {
-            [Op.and]: [
-              { toNationalId: toNationalId, fromNationalId: fromNationalId },
-            ],
+            toNationalId: toNationalId,
+            fromNationalId: fromNationalId,
           },
         },
         {
@@ -130,11 +129,17 @@ export class DelegationScopeService {
 
   async findAllProcurationScopes(): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
-      where: { grantToProcuringHolders: true },
+      where: {
+        grantToProcuringHolders: true,
+        alsoForDelegatedUser: false,
+      },
     })
 
     const identityResources = await this.identityResourceModel.findAll({
-      where: { grantToProcuringHolders: true },
+      where: {
+        grantToProcuringHolders: true,
+        alsoForDelegatedUser: false,
+      },
     })
 
     return [
@@ -145,11 +150,17 @@ export class DelegationScopeService {
 
   async findAllLegalGuardianScopes(): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
-      where: { grantToLegalGuardians: true },
+      where: {
+        grantToLegalGuardians: true,
+        alsoForDelegatedUser: false,
+      },
     })
 
     const identityResources = await this.identityResourceModel.findAll({
-      where: { grantToLegalGuardians: true },
+      where: {
+        grantToLegalGuardians: true,
+        alsoForDelegatedUser: false,
+      },
     })
 
     return [
@@ -160,11 +171,15 @@ export class DelegationScopeService {
 
   async findAllAutomaticScopes(): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
-      where: { automaticDelegationGrant: true },
+      where: {
+        automaticDelegationGrant: true,
+      },
     })
 
     const identityResources = await this.identityResourceModel.findAll({
-      where: { automaticDelegationGrant: true },
+      where: {
+        automaticDelegationGrant: true,
+      },
     })
 
     return [

@@ -109,10 +109,16 @@
     "api-domains-file-upload": {
       "tags": []
     },
+    "api-domains-finance": {
+      "tags": []
+    },
     "api-domains-health-insurance": {
       "tags": []
     },
     "api-domains-icelandic-names-registry": {
+      "tags": []
+    },
+    "api-domains-identity": {
       "tags": []
     },
     "api-domains-license-service": {
@@ -125,6 +131,9 @@
       "tags": []
     },
     "api-domains-party-letter-registry": {
+      "tags": []
+    },
+    "api-domains-payment": {
       "tags": []
     },
     "api-domains-regulations": {
@@ -230,6 +239,9 @@
     "application-templates-passport": {
       "tags": []
     },
+    "application-templates-payable-dummy-template": {
+      "tags": []
+    },
     "application-templates-public-debt-payment-plan": {
       "tags": []
     },
@@ -277,6 +289,12 @@
     "clients-documents": {
       "tags": []
     },
+    "clients-finance": {
+      "tags": []
+    },
+    "clients-middlewares": {
+      "tags": []
+    },
     "clients-mms": {
       "tags": []
     },
@@ -284,6 +302,9 @@
       "tags": []
     },
     "clients-national-registry-v2": {
+      "tags": []
+    },
+    "clients-payment": {
       "tags": []
     },
     "clients-regulations": {
