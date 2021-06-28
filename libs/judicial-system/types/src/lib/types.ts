@@ -95,7 +95,7 @@ export enum ReadableCaseType {
   OTHER = 'annað',
 }
 
-export const RCaseTypes = [
+export const ICaseTypes = [
   {
     label: 'Húsleit',
     value: CaseType.SEARCH_WARRANT,

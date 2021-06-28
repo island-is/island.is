@@ -13,7 +13,9 @@ interface Props {
   placeholder?: string
   onSelect?: (s: Option, onChange: (t: unknown) => void) => void
   backgroundColor?: InputBackgroundColor
+  isSearchable?: boolean
 }
+
 export const SelectController: FC<Props> = ({
   error,
   defaultValue,
@@ -25,6 +27,7 @@ export const SelectController: FC<Props> = ({
   placeholder,
   onSelect,
   backgroundColor,
+  isSearchable,
 }) => {
   const { clearErrors } = useFormContext()
   return (
@@ -43,6 +46,7 @@ export const SelectController: FC<Props> = ({
           label={label}
           placeholder={placeholder}
           value={options.find((option) => option.value === value)}
+          isSearchable={isSearchable}
           onChange={(newVal) => {
             clearErrors(id)
             onChange((newVal as Option).value)

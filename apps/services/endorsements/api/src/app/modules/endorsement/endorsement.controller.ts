@@ -25,8 +25,9 @@ import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementListById.pipe'
 import { IsEndorsementListOwnerValidationPipe } from '../endorsementList/pipes/isEndorsementListOwnerValidation.pipe'
 import { BulkEndorsementDto } from './dto/bulkEndorsement.dto'
-import { Endorsement } from './endorsement.model'
-import { EndorsementService } from './endorsement.service'
+import { Endorsement } from './models/endorsement.model'
+import { EndorsementService, NationalIdError } from './endorsement.service'
+import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 
@@ -120,18 +121,18 @@ export class EndorsementController {
 
   @ApiCreatedResponse({
     description: 'Creates multiple endorsements given an array of national ids',
-    type: [Endorsement],
+    type: EndorsementBulkCreate,
   })
   @ApiParam({ name: 'listId', type: String })
   @ApiBody({
     type: BulkEndorsementDto,
   })
   @Post('/bulk')
-  @Audit<Endorsement[]>({
+  @Audit<EndorsementBulkCreate>({
     namespace: auditNamespace,
     action: 'bulkCreate',
-    resources: (endorsement) => endorsement.map((e) => e.id),
-    meta: (endorsement) => ({ count: endorsement.length }),
+    resources: (response) => response.succeeded.map((e) => e.id),
+    meta: (response) => ({ count: response.succeeded.length }),
   })
   async bulkCreate(
     @Param(
@@ -142,7 +143,7 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @Body() { nationalIds }: BulkEndorsementDto,
-  ): Promise<Endorsement[]> {
+  ): Promise<EndorsementBulkCreate> {
     return await this.endorsementService.bulkCreateEndorsementOnList({
       nationalIds,
       endorsementList,
