@@ -29,6 +29,7 @@ interface Props {
   institutionDescription?: MessageDescriptor
   institutionHref?: string
   institutionLinkTitle?: MessageDescriptor
+  inProgress?: boolean
   figure: string
 }
 
@@ -39,6 +40,7 @@ export const InfoScreen: FC<Props> = ({
   externalHref,
   externalLinkTitle,
   figure,
+  inProgress = true,
 }) => {
   const { formatMessage } = useLocale()
   const trackExternalLinkClick = () => {
@@ -55,12 +57,14 @@ export const InfoScreen: FC<Props> = ({
                   <Text variant="h1" as="h1">
                     {formatMessage(title)}
                   </Text>
-                  <Tag variant="blue">
-                    {formatMessage({
-                      id: 'service.portal:in-progress',
-                      defaultMessage: 'Í vinnslu',
-                    })}
-                  </Tag>
+                  {inProgress && (
+                    <Tag variant="blue">
+                      {formatMessage({
+                        id: 'service.portal:in-progress',
+                        defaultMessage: 'Í vinnslu',
+                      })}
+                    </Tag>
+                  )}
                 </Inline>
               </Box>
               <Box marginBottom={[3, 4, 6]}>
