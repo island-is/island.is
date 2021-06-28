@@ -142,7 +142,6 @@ export class SharedTemplateApiService {
   }
 
   async createCharge(authorization: string, applicationId: string, chargeItemCode: string) {
-    console.log('shared service === ' + chargeItemCode)
     return this.makeGraphqlQuery(authorization, PAYMENT_QUERY, {
       input: {
         applicationId,

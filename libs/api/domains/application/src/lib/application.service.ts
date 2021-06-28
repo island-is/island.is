@@ -73,12 +73,12 @@ export class ApplicationService {
   }
 
   createCharge(applicationId: string, auth: Auth, chargeItemCode: string) {
-    console.log('libs application service === ' + chargeItemCode)
     return this.paymentApiWithAuth(auth).paymentControllerCreateCharge({
       applicationId: applicationId,
       body: { chargeItemCode: chargeItemCode },
       authorization: auth.authorization,
     })
+    .catch(handleError)
   }
 
   async findAll(

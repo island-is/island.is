@@ -32,7 +32,6 @@ export class DrivingLicenseSubmissionService {
     authorization,
   }: TemplateApiModuleActionProps) {
     const parsedPaymentData = JSON.parse(JSON.stringify(externalData.payment.data))
-    console.log('submission svc === ' + parsedPaymentData.chargeItemCode)
     return this.sharedTemplateAPIService.createCharge(authorization, id, parsedPaymentData.chargeItemCode)
   }
 
