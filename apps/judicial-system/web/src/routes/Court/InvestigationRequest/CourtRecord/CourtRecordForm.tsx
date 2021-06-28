@@ -9,7 +9,11 @@ import {
   FormFooter,
   HideableText,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { AccusedPleaDecision, Case } from '@island.is/judicial-system/types'
+import {
+  AccusedPleaDecision,
+  Case,
+  CaseType,
+} from '@island.is/judicial-system/types'
 import {
   newSetAndSendDateToServer,
   removeTabsValidateAndSet,
@@ -17,7 +21,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { caseTypes } from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
   FormSettings,
   useCaseFormHelper,
@@ -180,7 +184,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <CourtDocuments
-            title={`Krafa um ${caseTypes[workingCase.type]}`}
+            title={`Krafa - ${capitalize(caseTypes[workingCase.type])}`}
             tagText="Þingmerkt nr. 1"
             tagVariant="darkerBlue"
             text="Rannsóknargögn málsins liggja frammi."
