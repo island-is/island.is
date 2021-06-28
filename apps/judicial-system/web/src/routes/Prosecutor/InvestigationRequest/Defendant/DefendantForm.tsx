@@ -9,7 +9,7 @@ import {
 import {
   Case,
   CaseType,
-  RCaseTypes,
+  ICaseTypes,
   ReadableCaseType,
 } from '@island.is/judicial-system/types'
 import {
@@ -97,7 +97,7 @@ const DefendantForm: React.FC<Props> = (props) => {
             <Box marginBottom={3}>
               <Select
                 name="petition-type"
-                options={RCaseTypes as ReactSelectOption[]}
+                options={ICaseTypes as ReactSelectOption[]}
                 label="Tegund kröfu"
                 placeholder="Veldu tegund kröfu"
                 onChange={(selectedOption: ValueType<ReactSelectOption>) =>

@@ -6,6 +6,9 @@ import type { Logger } from '@island.is/logging'
 import { PartyLetterRegistry } from './partyLetterRegistry.model'
 import { CreateDto } from './dto/create.dto'
 
+interface CreateInput extends CreateDto {
+  owner: string
+}
 @Injectable()
 export class PartyLetterRegistryService {
   constructor(
@@ -33,7 +36,7 @@ export class PartyLetterRegistryService {
     })
   }
 
-  create(input: CreateDto) {
+  create(input: CreateInput) {
     this.logger.info(`Creating new party letter entry for ${input.partyLetter}`)
     return this.partyLetterRegistryModel
       .create({

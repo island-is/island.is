@@ -31,7 +31,10 @@ const devConfig = {
     accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
   },
   emailOptions: {
-    useTestAccount: true,
+    useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
+    options: {
+      region: process.env.EMAIL_REGION,
+    },
   },
   admin: {
     users:

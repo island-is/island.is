@@ -8265,7 +8265,7 @@
             }
           }
         },
-        "e2e-ci": {
+        "e2e-ci-disabled": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn e2e-ci -n web-e2e -d dist/apps/web -c"
