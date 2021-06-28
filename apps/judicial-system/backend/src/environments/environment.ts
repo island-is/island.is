@@ -10,7 +10,7 @@ const devConfig = {
     prisonEmail: process.env.PRISON_EMAIL,
     prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
     courtsMobileNumbers: JSON.parse(
-      process.env.COURTS_MOBILE_NUMBERS || '{}',
+      process.env.COURTS_MOBILE_NUMBERS ?? '{}',
     ) as {
       [key: string]: string
     },
@@ -31,7 +31,10 @@ const devConfig = {
     accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
   },
   emailOptions: {
-    useTestAccount: true,
+    useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
+    options: {
+      region: process.env.EMAIL_REGION,
+    },
   },
   admin: {
     users:
@@ -44,17 +47,17 @@ const devConfig = {
     timeToLiveGet: '5',
   },
   xRoad: {
-    basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV || '',
-    clientId: process.env.XROAD_CLIENT_ID || '',
-    clientCert: process.env.XROAD_CLIENT_CERT || '',
-    clientKey: process.env.XROAD_CLIENT_KEY || '',
-    clientCa: process.env.XROAD_CLIENT_PEM || '',
+    basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
+    clientId: process.env.XROAD_CLIENT_ID ?? '',
+    clientCert: process.env.XROAD_CLIENT_CERT ?? '',
+    clientKey: process.env.XROAD_CLIENT_KEY ?? '',
+    clientCa: process.env.XROAD_CLIENT_PEM ?? '',
   },
   courtClientOptions: {
-    apiPath: process.env.XROAD_COURT_API_PATH || '',
-    memberCode: process.env.XROAD_COURT_MEMBER_CODE || '',
+    apiPath: process.env.XROAD_COURT_API_PATH ?? '',
+    memberCode: process.env.XROAD_COURT_MEMBER_CODE ?? '',
     serviceOptions: JSON.parse(
-      process.env.COURTS_CREDENTIALS || '{}',
+      process.env.COURTS_CREDENTIALS ?? '{}',
     ) as CourtClientServiceOptions,
   },
 }
@@ -154,7 +157,7 @@ const prodConfig = {
   },
   notifications: {
     courtsMobileNumbers: JSON.parse(
-      process.env.COURTS_MOBILE_NUMBERS || '{}',
+      process.env.COURTS_MOBILE_NUMBERS ?? '{}',
     ) as {
       [key: string]: string
     },
@@ -202,7 +205,7 @@ const prodConfig = {
     apiPath: process.env.XROAD_COURT_API_PATH,
     memberCode: process.env.XROAD_COURT_MEMBER_CODE,
     serviceOptions: JSON.parse(
-      process.env.COURTS_CREDENTIALS || '{}',
+      process.env.COURTS_CREDENTIALS ?? '{}',
     ) as CourtClientServiceOptions,
   },
 }
