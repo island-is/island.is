@@ -22,6 +22,10 @@ interface Props {
 }
 
 const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
+  const isRestrictionCase =
+    workingCase.type === CaseType.CUSTODY ||
+    workingCase.type === CaseType.TRAVEL_BAN
+
   return (
     <AccordionItem id="id_2" label="Þingbók" labelVariant="h3">
       <Box marginBottom={2}>
@@ -59,8 +63,10 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <Text>{workingCase.courtAttendees}</Text>
       </AccordionListItem>
       <AccordionListItem title="Dómskjöl">
-        <Text>{`Krafa um ${
-          caseTypes[workingCase.type]
+        <Text>{`Krafa ${
+          isRestrictionCase
+            ? `um ${caseTypes[workingCase.type]}`
+            : `- ${capitalize(caseTypes[workingCase.type])}`
         } þingmerkt nr. 1.`}</Text>
         <Text>
           Rannsóknargögn málsins liggja frammi.

@@ -5,6 +5,7 @@ import {
   CaseDecision,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
@@ -109,6 +110,12 @@ const SigningModal: React.FC<SigningModalProps> = ({
     )
   }
 
+  const renderSuccessText = (caseType: CaseType) => {
+    return caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+      ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.'
+      : 'Úrskurður hefur verið sendur á ákæranda, dómritara og dómara sem kvað upp úrskurð. Úrskurðir eru eingöngu sendir á verjanda eða talsmann varnaraðila séu þeir viðstaddir þinghald. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.'
+  }
+
   return (
     <Modal
       title={
@@ -124,7 +131,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
         !signatureConfirmationResponse
           ? renderControlCode()
           : signatureConfirmationResponse.documentSigned
-          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.'
+          ? renderSuccessText(workingCase.type)
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
       }
       secondaryButtonText={
