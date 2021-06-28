@@ -1,5 +1,5 @@
-import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
+import { dedent } from 'ts-dedent'
 import { AssignmentEmailTemplateGenerator } from '../../../../types'
 
 export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
@@ -27,7 +27,7 @@ export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
       ${applicantName} (kt. ${applicantNationalId}) hefur óskað eftir að gerast skjalaveita í pósthólfinu.
       Umsóknin var framkvæmd af einstaklingi með kt. ${application.applicant}.
       Ef þú áttir von á þessum tölvupósti þá getur þú <a href="${assignLink}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.
-      Tölvupóstfang umsækjandans er <a href="mailto:${applicantEmail}">${applicantEmail}</a>.
+      Netfang umsækjandans er <a href="mailto:${applicantEmail}">${applicantEmail}</a>.
 
       Með kveðju,
       starfsfólk island.is
