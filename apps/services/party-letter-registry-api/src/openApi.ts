@@ -1,4 +1,4 @@
-import { PartyLetterRegistryScope } from '@island.is/auth/scopes'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 import { DocumentBuilder } from '@nestjs/swagger'
 import { environment } from './environments'
 
@@ -14,7 +14,7 @@ export const openApi = new DocumentBuilder()
         authorizationUrl: `${environment.auth.issuer}/connect/authorize`,
         tokenUrl: `${environment.auth.issuer}/connect/token`,
         scopes: {
-          [`openid profile ${PartyLetterRegistryScope.read} ${PartyLetterRegistryScope.write}`]: 'Fetches OpenId, Profile and claim needed for authenticated calls',
+          [`openid profile ${EndorsementsScope.actor}`]: 'Fetches OpenId, Profile and claim needed for authenticated calls',
         },
       },
     },

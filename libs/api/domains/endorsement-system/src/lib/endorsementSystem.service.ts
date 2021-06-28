@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import {
   EndorsementApi,
@@ -16,34 +16,34 @@ import {
   EndorsementListControllerOpenRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-
-const handleError = async (error: any) => {
-  logger.error(JSON.stringify(error))
-
-  if (error.json) {
-    const json = await error.json()
-
-    logger.error(json)
-
-    throw new ApolloError(JSON.stringify(json), error.status)
-  }
-
-  throw new ApolloError('Failed to resolve request', error.status)
-}
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class EndorsementSystemService {
   constructor(
-    private readonly _endorsementApi: EndorsementApi,
-    private readonly _endorsementListApi: EndorsementListApi,
+    private readonly endorsementApi: EndorsementApi,
+    private readonly endorsementListApi: EndorsementListApi,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
+  async handleError(error: any): Promise<never> {
+    this.logger.error(JSON.stringify(error))
+
+    if (error.json) {
+      const json = await error.json()
+      this.logger.error(json)
+      throw new ApolloError(JSON.stringify(json), error.status)
+    }
+
+    throw new ApolloError('Failed to resolve request', error.status)
+  }
+
   endorsementApiWithAuth(auth: Auth) {
-    return this._endorsementApi.withMiddleware(new AuthMiddleware(auth))
+    return this.endorsementApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   endorsementListApiWithAuth(auth: Auth) {
-    return this._endorsementListApi.withMiddleware(new AuthMiddleware(auth))
+    return this.endorsementListApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   // Endorsement endpoints
@@ -53,7 +53,7 @@ export class EndorsementSystemService {
   ) {
     return await this.endorsementApiWithAuth(auth)
       .endorsementControllerFindAll(input)
-      .catch(handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async endorsementControllerFindByAuth(
@@ -62,7 +62,7 @@ export class EndorsementSystemService {
   ) {
     return await this.endorsementApiWithAuth(auth)
       .endorsementControllerFindByAuth(input)
-      .catch(handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async endorsementControllerCreate(
@@ -71,7 +71,7 @@ export class EndorsementSystemService {
   ) {
     return await this.endorsementApiWithAuth(auth)
       .endorsementControllerCreate(input)
-      .catch(handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async endorsementControllerBulkCreate(
@@ -80,7 +80,7 @@ export class EndorsementSystemService {
   ) {
     return await this.endorsementApiWithAuth(auth)
       .endorsementControllerBulkCreate(input)
-      .catch(handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async endorsementControllerDelete(
@@ -89,7 +89,7 @@ export class EndorsementSystemService {
   ) {
     const result = await this.endorsementApiWithAuth(auth)
       .endorsementControllerDelete(input)
-      .catch(handleError)
+      .catch(this.handleError.bind(this))
     return Boolean(result)
   }
 
@@ -100,13 +100,13 @@ export class EndorsementSystemService {
   ) {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerFindByTags(input)
-      .catch(handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async endorsementListControllerFindEndorsements(auth: Auth) {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerFindEndorsements()
-      .catch(handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async endorsementListControllerFindOne(
@@ -115,25 +115,7 @@ export class EndorsementSystemService {
   ) {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerFindOne(input)
-      .catch(handleError)
-  }
-
-  async endorsementListControllerClose(
-    input: EndorsementListControllerCloseRequest,
-    auth: Auth,
-  ) {
-    return await this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerClose(input)
-      .catch(handleError)
-  }
-
-  async endorsementListControllerOpen(
-    input: EndorsementListControllerOpenRequest,
-    auth: Auth,
-  ) {
-    return await this.endorsementListApiWithAuth(auth)
-      .endorsementListControllerOpen(input)
-      .catch(handleError)
+      .catch(this.handleError.bind(this))
   }
 
   async endorsementListControllerCreate(
@@ -142,6 +124,6 @@ export class EndorsementSystemService {
   ) {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerCreate(endorsementList)
-      .catch(handleError)
+      .catch(this.handleError.bind(this))
   }
 }

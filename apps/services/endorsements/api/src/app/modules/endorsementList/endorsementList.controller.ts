@@ -25,7 +25,7 @@ import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { IsEndorsementListOwnerValidationPipe } from './pipes/isEndorsementListOwnerValidation.pipe'
 import { environment } from '../../../environments'
-import { EndorsementScope } from '@island.is/auth/scopes'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
 @Audit({
@@ -61,7 +61,7 @@ export class EndorsementListController {
     description: 'Finds all endorsements for the currently authenticated user',
     type: [Endorsement],
   })
-  @Scopes(EndorsementScope.read)
+  @Scopes(EndorsementsScope.actor)
   @Get('/endorsements')
   @Audit<Endorsement[]>({
     resources: (endorsement) => endorsement.map((e) => e.id),
@@ -79,7 +79,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementScope.listRead)
+  @Scopes(EndorsementsScope.actor)
   @Get(':listId')
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -100,7 +100,6 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementScope.listJusticeDepartmentWrite)
   @Put(':listId/close')
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -143,7 +142,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiBody({ type: EndorsementListDto })
-  @Scopes(EndorsementScope.listWrite)
+  @Scopes(EndorsementsScope.actor)
   @Post()
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,

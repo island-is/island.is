@@ -6,7 +6,6 @@ import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { authNationalId } from './seed'
 
 let app: INestApplication
-
 beforeAll(async () => {
   app = await setup({
     override: (builder) => {

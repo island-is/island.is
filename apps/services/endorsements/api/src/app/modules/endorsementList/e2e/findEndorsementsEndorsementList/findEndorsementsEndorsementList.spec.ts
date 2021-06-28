@@ -1,4 +1,4 @@
-import { EndorsementScope } from '@island.is/auth/scopes'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 import request from 'supertest'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { getAuthenticatedApp } from '../../../../../../test/setup'
@@ -24,7 +24,7 @@ describe('findEndorsementsEndorsementList', () => {
   it(`GET /endorsement-list/endorsements should return 200 and a list of endorsements`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementScope.read],
+      scope: [EndorsementsScope.actor],
     })
 
     const response = await request(app.getHttpServer())
