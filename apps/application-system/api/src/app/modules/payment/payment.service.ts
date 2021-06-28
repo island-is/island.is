@@ -3,7 +3,11 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { Op } from 'sequelize'
 import { PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
-import type { Charge, PaymentServiceOptions, Item } from '@island.is/clients/payment'
+import type {
+  Charge,
+  PaymentServiceOptions,
+  Item,
+} from '@island.is/clients/payment'
 import type { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
 import { isEqual } from 'lodash'
@@ -37,14 +41,15 @@ export class PaymentService {
   async findPaymentByApplicationId(
     applicationId: string,
   ): Promise<Payment | null> {
-    return this.paymentModel.findOne({
-      where: {
-        application_id: { [Op.eq]: applicationId },
-      },
-      limit: 1,
-      order: [['modified', 'DESC']],
-    })
-    .catch(handleError)
+    return this.paymentModel
+      .findOne({
+        where: {
+          application_id: { [Op.eq]: applicationId },
+        },
+        limit: 1,
+        order: [['modified', 'DESC']],
+      })
+      .catch(handleError)
   }
 
   private makePaymentUrl(docNum: string): string {
@@ -69,7 +74,8 @@ export class PaymentService {
       chargeItemSubject: payment.id.substring(0, 22),
       systemID: 'ISL',
       // The OR values can be removed later when the system will be more robust.
-      performingOrgID: paymentDefinition?.performingOrganizationID || '6509142520',
+      performingOrgID:
+        paymentDefinition?.performingOrganizationID || '6509142520',
       payeeNationalID: user.nationalId,
       chargeType: paymentDefinition?.chargeType || 'AY1',
       performerNationalID: user.nationalId,
@@ -92,20 +98,23 @@ export class PaymentService {
     }
   }
 
-
-  async searchCorrectCatalog (
+  async searchCorrectCatalog(
     chargeItemCode: string,
     searchJSON: string,
   ): Promise<Item> {
     if (chargeItemCode == '' || searchJSON == '') {
-      return Promise.reject(new Error('Bad search catalog parameters.')).catch(handleError)
+      return Promise.reject(new Error('Bad search catalog parameters.')).catch(
+        handleError,
+      )
     }
     const resultCatalog = JSON.parse(searchJSON)
     for (const item in resultCatalog) {
-      if(isEqual(resultCatalog[item].chargeItemCode, chargeItemCode)) {
+      if (isEqual(resultCatalog[item].chargeItemCode, chargeItemCode)) {
         return Promise.resolve(resultCatalog[item])
       }
     }
-    return Promise.reject(new Error('No catalog found with ' + chargeItemCode)).catch(handleError)
+    return Promise.reject(
+      new Error('No catalog found with ' + chargeItemCode),
+    ).catch(handleError)
   }
 }

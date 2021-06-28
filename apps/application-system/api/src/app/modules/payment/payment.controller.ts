@@ -66,14 +66,20 @@ export class PaymentController {
     if (!isUuid(applicationId)) {
       throw new BadRequestException(`ApplicationId is on wrong format.`)
     }
-    const allCatalogs = await this.paymentAPI.getCatalogByPerformingOrg('6509142520')
+    const allCatalogs = await this.paymentAPI.getCatalogByPerformingOrg(
+      '6509142520',
+    )
 
-    const catalog = await this.paymentService.searchCorrectCatalog(
-      payload.chargeItemCode, 
-      JSON.stringify(allCatalogs.item)
-    ).catch((error) => {
-      throw new BadRequestException('Catalog request failed or bad input ' + error)
-    })
+    const catalog = await this.paymentService
+      .searchCorrectCatalog(
+        payload.chargeItemCode,
+        JSON.stringify(allCatalogs.item),
+      )
+      .catch((error) => {
+        throw new BadRequestException(
+          'Catalog request failed or bad input ' + error,
+        )
+      })
 
     const paymentDto: Pick<
       BasePayment,
@@ -82,7 +88,12 @@ export class PaymentController {
       application_id: applicationId,
       fulfilled: false,
       amount: catalog.priceAmount,
-      definition: { chargeItemName: catalog.chargeItemName, chargeItemCode: catalog.chargeItemCode, performingOrganiationID: catalog.performingOrgID, chargeType: catalog.chargeType } as any,
+      definition: {
+        chargeItemName: catalog.chargeItemName,
+        chargeItemCode: catalog.chargeItemCode,
+        performingOrganiationID: catalog.performingOrgID,
+        chargeType: catalog.chargeType,
+      } as any,
       expires_at: new Date(),
     }
 
