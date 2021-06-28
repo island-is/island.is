@@ -17,7 +17,6 @@ enum States {
   DRAFT = 'draft',
   DONE = 'done',
   PAYMENT = 'payment',
-  PAYMENT_PENDING = 'paymentPending',
   PAID = 'paid,',
 }
 
@@ -91,9 +90,9 @@ const PayableDummyTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../../../driving-license/src/forms/payment'
-                ).then((val) => Promise.resolve(val.payment)),
+                import('../forms/Payment').then((val) =>
+                  Promise.resolve(val.payment),
+                ),
               actions: [
                 { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
               ],
@@ -102,24 +101,7 @@ const PayableDummyTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          '*': { target: States.PAYMENT_PENDING },
-        },
-      },
-      [States.PAYMENT_PENDING]: {
-        meta: {
-          name: 'Greiða',
-          progress: 0.9,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import(
-                  '../../../driving-license/src/forms/paymentPending'
-                ).then((val) => Promise.resolve(val.PaymentPending)),
-              read: 'all',
-            },
-          ],
+          '*': { target: States.DONE },
         },
       },
       [States.DONE]: {
@@ -131,7 +113,7 @@ const PayableDummyTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../../../driving-license/src/forms/done').then((val) =>
+                import('../forms/Done').then((val) =>
                   Promise.resolve(val.done),
                 ),
               read: 'all',
