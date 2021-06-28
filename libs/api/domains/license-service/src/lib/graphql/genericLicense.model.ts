@@ -8,7 +8,6 @@ import {
   GenericUserLicenseFetchStatus,
   GenericLicenseProviderId,
 } from '../licenceService.type'
-import { IsOptional } from 'class-validator'
 
 registerEnumType(GenericLicenseType, {
   name: 'GenericLicenseType',
@@ -85,15 +84,14 @@ export class GenericUserLicense {
   @Field(() => GenericLicenseFetch, { description: 'Info about license fetch' })
   fetch!: GenericLicenseFetch
 
-  @Field({
-    nullable: true,
-    description: 'Possible URL of pkpass version of license',
-  })
-  pkpassUrl?: string
-
   @Field(() => Payload, {
     nullable: true,
     description: 'Potential payload of license, both parsed and raw',
   })
   payload?: Payload
+}
+@ObjectType()
+export class GenericPkPass {
+  @Field(() => String)
+  pkpassUrl!: string
 }

@@ -101,7 +101,8 @@ const devConfig = {
     memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE ?? '10001',
     apiPath:
       process.env.XROAD_TJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',
-    clientId: process.env.XROAD_CLIENT_ID ?? 'DEV/GOV/10000/island-is-client',
+    clientId:
+      process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
   },
   paymentDomain: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
@@ -113,13 +114,21 @@ const devConfig = {
     password: process.env.PAYMENT_PASSWORD,
     callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
-    arkBaseUrl: process.env.ARK_ENDPOINT,
+    arkBaseUrl: process.env.ARK_BASE_URL,
   },
   temporaryVoterRegistry: {
     baseApiUrl: 'http://localhost:4248',
   },
   partyLetterRegistry: {
     baseApiUrl: 'http://localhost:4251',
+  },
+  pkpass: {
+    apiKey: process.env.PKPASS_API_KEY,
+    apiUrl: process.env.PKPASS_API_URL,
+    secretKey: process.env.PKPASS_SECRET_KEY,
+  },
+  audit: {
+    defaultNamespace: '@island.is/api',
   },
 }
 
@@ -226,13 +235,23 @@ const prodConfig = {
     password: process.env.PAYMENT_PASSWORD,
     callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
-    arkBaseUrl: process.env.ARK_ENDPOINT,
+    arkBaseUrl: process.env.ARK_BASE_URL,
   },
   temporaryVoterRegistry: {
     baseApiUrl: process.env.TEMPORARY_VOTER_REGISTRY_BASE_API_URL,
   },
   partyLetterRegistry: {
     baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
+  },
+  pkpass: {
+    apiKey: process.env.PKPASS_API_KEY,
+    apiUrl: process.env.PKPASS_API_URL,
+    secretKey: process.env.PKPASS_SECRET_KEY,
+  },
+  audit: {
+    defaultNamespace: '@island.is/api',
+    groupName: process.env.AUDIT_GROUP_NAME,
+    serviceName: 'api',
   },
 }
 

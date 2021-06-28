@@ -5,7 +5,7 @@ import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { EndorsementTag } from '../../constants'
 
 let app: INestApplication
-
+// this is a unauthenticated app
 beforeAll(async () => {
   app = await setup()
 })

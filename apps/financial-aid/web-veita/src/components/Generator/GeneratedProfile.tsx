@@ -1,25 +1,22 @@
 import { FunctionComponent } from 'react'
 import Identicon from 'identicon.js'
+import { createHash } from 'crypto'
 
 interface Props {
-  ssn?: string
+  nationalId: string
   size: number
 }
 
-const GeneratedProfile: FunctionComponent<Props> = ({ ssn, size }) => {
-  // const data = new Identicon(md5(ssn), {
-  //   size,
-  //   background: [255, 255, 255, 0],
-  //   format: 'svg',
-  //   margin: 0.1,
-  // })
-
-  const data = {
-    size,
-    background: [255, 255, 255, 0],
-    format: 'svg',
-    margin: 0.1,
-  }
+const GeneratedProfile: FunctionComponent<Props> = ({ nationalId, size }) => {
+  const data = new Identicon(
+    createHash('2305952249').update(nationalId, 'ascii').digest('hex'),
+    {
+      size,
+      background: [255, 255, 255, 0],
+      format: 'svg',
+      margin: 0.1,
+    },
+  )
 
   return (
     <img

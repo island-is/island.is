@@ -92,6 +92,12 @@ api:
     HEALTH_INSURANCE_XROAD_PASSWORD: /k8s/health-insurance/XROAD-PASSWORD
     HEALTH_INSURANCE_XROAD_USERNAME: /k8s/health-insurance/XROAD-USER
     HEALTH_INSURANCE_XROAD_WSDLURL: /k8s/api/HEALTH_INSURANCE_XROAD_WSDLURL
+    PAYMENT_PASSWORD: /k8s/application-system-api/PAYMENT_PASSWORD
+    PAYMENT_USER: /k8s/application-system-api/PAYMENT_USER
+    PAYMENT_XROAD_PROVIDER_ID: /k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID
+    PKPASS_API_KEY: /k8s/api/PKPASS_API_KEY
+    PKPASS_API_URL: /k8s/api/PKPASS_API_URL
+    PKPASS_SECRET_KEY: /k8s/api/PKPASS_SECRET_KEY
     POSTHOLF_BASE_PATH: /k8s/documents/POSTHOLF_BASE_PATH
     POSTHOLF_CLIENTID: /k8s/documents/POSTHOLF_CLIENTID
     POSTHOLF_CLIENT_SECRET: /k8s/documents/POSTHOLF_CLIENT_SECRET
@@ -192,6 +198,7 @@ application-system-api:
       cpu: 100m
       memory: 256Mi
   secrets:
+    ARK_BASE_URL: /k8s/application-system-api/ARK_BASE_URL
     AUTH_JWT_SECRET: /k8s/application-system/api/AUTH_JWT_SECRET
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
     CONTENTFUL_ACCESS_TOKEN: /k8s/api/CONTENTFUL_ACCESS_TOKEN
@@ -208,6 +215,11 @@ application-system-api:
     HEALTH_INSURANCE_XROAD_WSDLURL: /k8s/application-system-api/HEALTH_INSURANCE_XROAD_WSDLURL
     NOVA_PASSWORD: /k8s/application-system/api/NOVA_PASSWORD
     NOVA_URL: /k8s/application-system-api/NOVA_URL
+    PAYMENT_ADDITION_CALLBACK_URL: /k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL
+    PAYMENT_BASE_CALLBACK_URL: /k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL
+    PAYMENT_PASSWORD: /k8s/application-system-api/PAYMENT_PASSWORD
+    PAYMENT_USER: /k8s/application-system-api/PAYMENT_USER
+    PAYMENT_XROAD_PROVIDER_ID: /k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID
     SYSLUMENN_HOST: /k8s/application-system-api/SYSLUMENN_HOST
     SYSLUMENN_PASSWORD: /k8s/application-system/api/SYSLUMENN_PASSWORD
     SYSLUMENN_USERNAME: /k8s/application-system/api/SYSLUMENN_USERNAME
@@ -348,6 +360,8 @@ endorsement-system-api:
     DB_HOST: dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com
     DB_NAME: services_endorsements_api
     DB_USER: services_endorsements_api
+    TEMPORARY_VOTER_REGISTRY_API_URL: >-
+      http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local
   grantNamespaces:
     - islandis
   grantNamespacesEnabled: true
@@ -492,6 +506,54 @@ island-ui-storybook:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  strategy:
+    type: Recreate
+party-letter-registry-api:
+  enabled: true
+  env:
+    DB_HOST: dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com
+    DB_NAME: services_party_letter_registry_api
+    DB_USER: services_party_letter_registry_api
+  grantNamespaces:
+    - islandis
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: /liveness
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: /liveness
+      timeoutSeconds: 3
+  image:
+    repository: >-
+      821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-party-letter-registry-api
+  initContainer:
+    containers:
+      - args:
+          - sequelize-cli
+          - db:migrate
+        command:
+          - npx
+        name: migrations
+    env:
+      DB_HOST: dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com
+      DB_NAME: services_party_letter_registry_api
+      DB_USER: services_party_letter_registry_api
+    secrets:
+      DB_PASS: /k8s/services-party-letter-registry-api/DB_PASSWORD
+  namespace: party-letter-registry
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  secrets:
+    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    DB_PASS: /k8s/services-party-letter-registry-api/DB_PASSWORD
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -866,6 +928,54 @@ skilavottord-ws:
     SAMGONGUSTOFA_SOAP_URL: /k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL
     SAMGONGUSTOFA_SOAP_USER: /k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER
     SKILAVOTTORD_USER_LIST: /k8s/skilavottord/SKILAVOTTORD_USER_LIST
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  strategy:
+    type: Recreate
+temporary-voter-registry-api:
+  enabled: true
+  env:
+    DB_HOST: dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com
+    DB_NAME: services_temporary_voter_registry_api
+    DB_USER: services_temporary_voter_registry_api
+  grantNamespaces:
+    - islandis
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: /liveness
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: /liveness
+      timeoutSeconds: 3
+  image:
+    repository: >-
+      821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-temporary-voter-registry-api
+  initContainer:
+    containers:
+      - args:
+          - sequelize-cli
+          - db:migrate
+        command:
+          - npx
+        name: migrations
+    env:
+      DB_HOST: dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com
+      DB_NAME: services_temporary_voter_registry_api
+      DB_USER: services_temporary_voter_registry_api
+    secrets:
+      DB_PASS: /k8s/services-temporary-voter-registry-api/DB_PASSWORD
+  namespace: temporary-voter-registry
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  secrets:
+    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    DB_PASS: /k8s/services-temporary-voter-registry-api/DB_PASSWORD
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
