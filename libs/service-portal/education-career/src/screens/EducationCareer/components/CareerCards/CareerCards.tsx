@@ -8,6 +8,7 @@ import {
   ServicePortalPath,
   EducationCard,
   EmptyState,
+  m,
 } from '@island.is/service-portal/core'
 import * as styles from './CareerCards.treat'
 import { defineMessage } from 'react-intl'
@@ -60,10 +61,7 @@ const CareerCards = () => {
                   iconType="outline"
                   nowrap
                 >
-                  {formatMessage({
-                    id: 'service.portal:education-more',
-                    defaultMessage: 'Skoða nánar',
-                  })}
+                  {formatMessage(m.viewDetail)}
                 </Button>
               </Link>
             }
@@ -72,12 +70,7 @@ const CareerCards = () => {
       ))}
       {educationExamFamilyOverviews.length === 0 && (
         <Box marginTop={8}>
-          <EmptyState
-            title={defineMessage({
-              id: 'service.portal:education-no-data',
-              defaultMessage: 'Engin gögn fundust',
-            })}
-          />
+          <EmptyState title={m.noDataFound} />
         </Box>
       )}
     </>

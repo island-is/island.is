@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react'
 import { Button, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 import {
   PhoneForm,
   PhoneFormInternalStep,
@@ -26,14 +27,8 @@ export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
     <>
       <Text variant="h1" as="h1" marginBottom={3}>
         {step === 'form'
-          ? formatMessage({
-              id: 'service.portal:tel-number',
-              defaultMessage: 'Símanúmer',
-            })
-          : formatMessage({
-              id: 'service.portal:tel-confirm-code',
-              defaultMessage: 'Staðfestingarkóði',
-            })}
+          ? formatMessage(m.telNumber)
+          : formatMessage(m.telConfirmCode)}
       </Text>
       <Text variant="intro" marginBottom={7}>
         {step === 'form'
@@ -57,16 +52,10 @@ export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
         onInternalStepChange={handleFormInternalStepChange}
         renderBackButton={() => (
           <Button variant="ghost" onClick={onBack}>
-            {formatMessage({
-              id: 'service.portal:go-back',
-              defaultMessage: 'Til baka',
-            })}
+            {formatMessage(m.goBack)}
           </Button>
         )}
-        submitButtonText={defineMessage({
-          id: 'service.portal:next-step',
-          defaultMessage: 'Næsta skref',
-        })}
+        submitButtonText={m.nextStep}
         onSubmit={onSubmit}
       />
     </>

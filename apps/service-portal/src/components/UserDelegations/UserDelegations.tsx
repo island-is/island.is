@@ -8,6 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useActorDelegationsQuery } from '@island.is/service-portal/graphql'
+import { m } from '@island.is/service-portal/core'
 
 interface UserDelegationsProps {
   onSwitch?: (delegation: Delegation) => void
@@ -30,10 +31,7 @@ export const UserDelegations = ({ onSwitch }: UserDelegationsProps) => {
     return (
       <Stack space={1}>
         <Text variant="h5" as="h5" marginBottom={1}>
-          {formatMessage({
-            id: 'service.portal:loadingData',
-            defaultMessage: `Sæki gögn`,
-          })}
+          {formatMessage(m.loadingData)}
         </Text>
         <SkeletonLoader display="block" height={59} borderRadius="large" />
       </Stack>
@@ -67,10 +65,7 @@ export const UserDelegations = ({ onSwitch }: UserDelegationsProps) => {
   return (
     <Stack space={1}>
       <Text variant="h5" as="h5" marginBottom={1}>
-        {formatMessage({
-          id: 'service.portal:user-delegation-list',
-          defaultMessage: `Aðgangar/umboð`,
-        })}
+        {formatMessage(m.userDelegationList)}
       </Text>
       {delegations.map((delegation) => (
         <TopicCard

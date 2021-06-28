@@ -16,7 +16,7 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { m } from '@island.is/service-portal/core'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,

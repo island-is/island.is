@@ -3,6 +3,7 @@ import {
   ServicePortalModule,
   ServicePortalPath,
   ServicePortalRoute,
+  m,
 } from '@island.is/service-portal/core'
 // import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
 // import * as Sentry from '@sentry/react'
@@ -15,40 +16,28 @@ export const financeModule: ServicePortalModule = {
   routes: async () => {
     const routes: ServicePortalRoute[] = [
       {
-        name: 'Fjármál',
+        name: m.finance,
         path: ServicePortalPath.FinanceRoot,
         render: () =>
           lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
       },
       {
-        name: defineMessage({
-          id: 'service.portal:finance-status',
-          defaultMessage: 'Staða',
-        }),
+        name: m.financeStatus,
         path: ServicePortalPath.FinanceStatus,
         render: () => lazy(() => import('./screens/FinanceStatus')),
       },
       {
-        name: defineMessage({
-          id: 'service.portal:finance-bills',
-          defaultMessage: 'Greiðsluseðlar og Greiðslukvittanir',
-        }),
+        name: m.financeBills,
         path: ServicePortalPath.FinanceBills,
         render: () => lazy(() => import('./screens/FinanceBills')),
       },
       {
-        name: defineMessage({
-          id: 'service.portal:finance-transactions',
-          defaultMessage: 'Hreyfingar',
-        }),
+        name: m.financeTransactions,
         path: ServicePortalPath.FinanceTransactions,
         render: () => lazy(() => import('./screens/FinanceTransactions')),
       },
       {
-        name: defineMessage({
-          id: 'service.portal:finance-employee-claims',
-          defaultMessage: 'Laungreiðendakröfur',
-        }),
+        name: m.financeEmployeeClaims,
         path: ServicePortalPath.FinanceEmployeeClaims,
         render: () => lazy(() => import('./screens/FinanceEmployeeClaims')),
       },

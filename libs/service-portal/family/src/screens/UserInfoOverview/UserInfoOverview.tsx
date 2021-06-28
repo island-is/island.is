@@ -11,7 +11,7 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
 
@@ -40,10 +40,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
               <Text variant="h1" as="h1">
-                {formatMessage({
-                  id: 'service.portal:my-info',
-                  defaultMessage: 'Mínar upplýsingar',
-                })}
+                {formatMessage(m.myInfo)}
               </Text>
               <Text as="p" variant="intro">
                 {formatMessage({
@@ -68,15 +65,12 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
         </Box>
       )}
       <Stack space={2}>
-        {called && !loading && !error && nationalRegistryFamily?.length === 0 && (
-          <AlertMessage
-            type="info"
-            title={formatMessage({
-              id: 'service.portal:no-data-present',
-              defaultMessage: 'Engar upplýsingar til staðar',
-            })}
-          />
-        )}
+        {called &&
+          !loading &&
+          !error &&
+          nationalRegistryFamily?.length === 0 && (
+            <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
+          )}
         <FamilyMemberCard
           title={userInfo.profile.name || ''}
           nationalId={userInfo.profile.nationalId}
