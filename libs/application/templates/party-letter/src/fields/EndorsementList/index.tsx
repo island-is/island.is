@@ -82,7 +82,9 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 : 0}
             </Text>
             <Box marginLeft={1}>
-              <Text variant="default">{formatMessage(m.endorsementList.namesCount)}</Text>
+              <Text variant="default">
+                {formatMessage(m.endorsementList.namesCount)}
+              </Text>
             </Box>
           </Box>
           <Input
