@@ -45,7 +45,7 @@ export const DataLinkCard = ({
       alignItems="stretch"
       justifyContent="flexEnd"
     >
-      <Box style={{ width: '100%' }}>
+      <Box width='full'>
         <Stack space={1}>
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
