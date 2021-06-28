@@ -5778,11 +5778,6 @@
   resolved "https://registry.yarnpkg.com/@types/identicon.js/-/identicon.js-2.3.0.tgz#b1c8df6dbaaabf569b7b2ab3c3a32910f0ea9bc2"
   integrity sha512-5IcozLuaUkQCjeNqS8GcgEfkWSQB1DdADhrbvmZOCAjdRPPXstR7EqKxf4xA5AfBLCZTlHudIEhVaQca3wiOpQ==
 
-"@types/image-to-base64@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@types/image-to-base64/-/image-to-base64-2.1.0.tgz#8c77b09b7988df3a9a2a4278bbcc27efabbec379"
-  integrity sha512-UgmqJVJyPIkzzI23TWqLc9iO+hZTzNoVD0rEf+I70FeKtcxxvLIlKJ5CrejkxkvDc/8/lk9yswSYZoAv8eyOYQ==
-
 "@types/ioredis@*":
   version "4.22.0"
   resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.22.0.tgz#b07cc3405d98bae50a642b20790471b4c3c390a9"
@@ -15556,13 +15551,6 @@ image-size@~0.5.0:
   version "0.5.5"
   resolved "https://registry.yarnpkg.com/image-size/-/image-size-0.5.5.tgz#09dfd4ab9d20e29eb1c3e80b8990378df9e3cb9c"
   integrity sha1-Cd/Uq50g4p6xw+gLiZA3jfnjy5w=
-
-image-to-base64@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/image-to-base64/-/image-to-base64-2.2.0.tgz#743039f59dee15a5953a621ea8beeacbc487f99d"
-  integrity sha512-Z+aMwm/91UOQqHhrz7Upre2ytKhWejZlWV/JxUTD1sT7GWWKFDJUEV5scVQKnkzSgPHFuQBUEWcanO+ma0PSVw==
-  dependencies:
-    node-fetch "^2.6.0"
 
 immediate@~3.0.5:
   version "3.0.6"

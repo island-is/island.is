@@ -3,7 +3,6 @@ import { basename, extname } from 'path'
 import { Attachment } from 'nodemailer/lib/mailer'
 import { Inject, Injectable } from '@nestjs/common'
 import handlebars from 'handlebars'
-import imageToBase64 from 'image-to-base64'
 import glob from 'glob'
 import juice from 'juice'
 
@@ -45,7 +44,7 @@ export class AdapterService {
   private async convertImageToBase64(path: string) {
     if (!this.cachedImages[path]) {
       try {
-        const base64 = await imageToBase64(path)
+        const base64 = readFileSync(path, 'base64')
 
         this.cachedImages[path] = base64
 
