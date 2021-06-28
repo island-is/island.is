@@ -79,7 +79,10 @@ export const navigationItems = [
   {
     label: 'Mál í vinnslu',
     link: '/vinnslu',
-    applicationState: [ApplicationState.INPROGRESS],
+    applicationState: [
+      ApplicationState.INPROGRESS,
+      ApplicationState.DATANEEDED,
+    ],
     headers: ['Nafn', 'Staða', 'Síðast uppfært', 'Tímabil'],
   },
   {
@@ -99,6 +102,8 @@ export const getTagByState = (state: ApplicationState) => {
     case ApplicationState.APPROVED:
       return 'approved'
     case ApplicationState.REJECTED:
+      return 'outDatedOrDenied'
+    case ApplicationState.DATANEEDED:
       return 'outDatedOrDenied'
   }
 }

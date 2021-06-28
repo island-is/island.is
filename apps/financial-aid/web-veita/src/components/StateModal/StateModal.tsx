@@ -33,6 +33,7 @@ const StateModal: React.FC<Props> = (props: Props) => {
   const statusOptions = [
     ApplicationState.NEW,
     ApplicationState.INPROGRESS,
+    ApplicationState.DATANEEDED,
     ApplicationState.APPROVED,
     ApplicationState.REJECTED,
   ]
