@@ -68,7 +68,7 @@ export class PaymentController {
     }
     const allCatalogs = await this.paymentAPI.getCatalogByPerformingOrg(
       '6509142520',
-    )
+    ).catch()
 
     const catalog = await this.paymentService
       .searchCorrectCatalog(

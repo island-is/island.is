@@ -67,6 +67,7 @@ export class PaymentService {
         payment.application_id) as string) +
       this.paymentConfig.callbackAdditionUrl +
       payment.id
+    // payment definition needs refactoring so E2E tests work.
     const paymentDefinition = JSON.parse(payment.definition as string)
     const charge: Charge = {
       // TODO: this needs to be unique, but can only handle 22 or 23 chars
