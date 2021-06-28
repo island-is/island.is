@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Case,
@@ -16,7 +17,7 @@ import { CreateCourtCaseMutation } from './createCourtCaseGql'
 import { UpdateCaseMutation } from './updateCaseGql'
 import { SendNotificationMutation } from './sendNotificationGql'
 import { TransitionCaseMutation } from './transitionCaseGql'
-import { RequestSignatureMutation } from '../../mutations'
+import { RequestSignatureMutation } from './requestSignatureGql'
 
 type autofillProperties = Pick<
   Case,
@@ -83,158 +84,175 @@ const useCase = () => {
     { loading: isRequestingSignature },
   ] = useMutation<RequestSignatureMutationResponse>(RequestSignatureMutation)
 
-  const createCase = async (theCase: Case): Promise<string | undefined> => {
-    if (isCreatingCase === false) {
-      const { data } = await createCaseMutation({
-        variables: {
-          input: {
-            type: theCase.type,
-            policeCaseNumber: theCase.policeCaseNumber,
-            accusedNationalId: theCase.accusedNationalId.replace('-', ''),
-            accusedName: theCase.accusedName,
-            accusedAddress: theCase.accusedAddress,
-            accusedGender: theCase.accusedGender,
-            defenderName: theCase.defenderName,
-            defenderEmail: theCase.defenderEmail,
-            defenderPhoneNumber: theCase.defenderPhoneNumber,
-            sendRequestToDefender: theCase.sendRequestToDefender,
-            leadInvestigator: theCase.leadInvestigator,
-            courtId: theCase.court?.id,
-            description: theCase.description,
-          },
-        },
-      })
-
-      if (data) {
-        return data.createCase?.id
-      }
-    }
-  }
-
-  const createCourtCase = async (
-    workingCase: Case,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
-    setCourtCaseNumberErrorMessage: React.Dispatch<
-      React.SetStateAction<string>
-    >,
-  ): Promise<void> => {
-    if (isCreatingCourtCase === false) {
-      try {
-        const { data, errors } = await createCourtCaseMutation({
+  const createCase = useMemo(
+    () => async (theCase: Case): Promise<string | undefined> => {
+      if (isCreatingCase === false) {
+        const { data } = await createCaseMutation({
           variables: {
             input: {
-              caseId: workingCase.id,
-              courtId: workingCase.court?.id,
-              type: workingCase.type,
-              policeCaseNumber: workingCase.policeCaseNumber,
-              isExtension: Boolean(workingCase.parentCase?.id),
+              type: theCase.type,
+              policeCaseNumber: theCase.policeCaseNumber,
+              accusedNationalId: theCase.accusedNationalId.replace('-', ''),
+              accusedName: theCase.accusedName,
+              accusedAddress: theCase.accusedAddress,
+              accusedGender: theCase.accusedGender,
+              defenderName: theCase.defenderName,
+              defenderEmail: theCase.defenderEmail,
+              defenderPhoneNumber: theCase.defenderPhoneNumber,
+              sendRequestToDefender: theCase.sendRequestToDefender,
+              leadInvestigator: theCase.leadInvestigator,
+              courtId: theCase.court?.id,
+              description: theCase.description,
             },
           },
         })
 
-        if (data?.createCourtCase?.courtCaseNumber && !errors) {
-          setWorkingCase({
-            ...workingCase,
-            courtCaseNumber: data.createCourtCase.courtCaseNumber,
+        if (data) {
+          return data.createCase?.id
+        }
+      }
+    },
+    [createCaseMutation, isCreatingCase],
+  )
+
+  const createCourtCase = useMemo(
+    () => async (
+      workingCase: Case,
+      setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>,
+      setCourtCaseNumberErrorMessage: React.Dispatch<
+        React.SetStateAction<string>
+      >,
+    ): Promise<void> => {
+      if (isCreatingCourtCase === false) {
+        try {
+          const { data, errors } = await createCourtCaseMutation({
+            variables: {
+              input: {
+                caseId: workingCase.id,
+                courtId: workingCase.court?.id,
+                type: workingCase.type,
+                policeCaseNumber: workingCase.policeCaseNumber,
+                isExtension: Boolean(workingCase.parentCase?.id),
+              },
+            },
           })
 
-          setCourtCaseNumberErrorMessage('')
+          if (data?.createCourtCase?.courtCaseNumber && !errors) {
+            setWorkingCase({
+              ...workingCase,
+              courtCaseNumber: data.createCourtCase.courtCaseNumber,
+            })
 
-          return
+            setCourtCaseNumberErrorMessage('')
+
+            return
+          }
+        } catch (error) {
+          // Catch all so we can set an eror message
         }
-      } catch (error) {
-        // Catch all so we can set an eror message
+
+        setCourtCaseNumberErrorMessage(
+          'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
+        )
+      }
+    },
+    [createCourtCaseMutation, isCreatingCourtCase],
+  )
+
+  const updateCase = useMemo(
+    () => (id: string, updateCase: UpdateCase) => {
+      // Only update if id has been set
+      if (!id) {
+        return
       }
 
-      setCourtCaseNumberErrorMessage(
-        'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
-      )
-    }
-  }
-
-  const updateCase = (id: string, updateCase: UpdateCase) => {
-    // Only update if id has been set
-    if (!id) {
-      return
-    }
-
-    updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-
-    // TODO: Handle errors and perhaps wait for and do something with the result
-  }
-
-  const transitionCase = async (
-    workingCase: Case,
-    transition: CaseTransition,
-    setWorkingCase?: React.Dispatch<React.SetStateAction<Case | undefined>>,
-  ): Promise<boolean> => {
-    try {
-      const transitionRequest = parseTransition(
-        workingCase.modified,
-        transition,
-      )
-
-      const { data } = await transitionCaseMutation({
-        variables: { input: { id: workingCase.id, ...transitionRequest } },
+      updateCaseMutation({
+        variables: { input: { id, ...updateCase } },
       })
 
-      if (!data?.transitionCase?.state) {
+      // TODO: Handle errors and perhaps wait for and do something with the result
+    },
+    [updateCaseMutation],
+  )
+
+  const transitionCase = useMemo(
+    () => async (
+      workingCase: Case,
+      transition: CaseTransition,
+      setWorkingCase?: React.Dispatch<React.SetStateAction<Case | undefined>>,
+    ): Promise<boolean> => {
+      try {
+        const transitionRequest = parseTransition(
+          workingCase.modified,
+          transition,
+        )
+
+        const { data } = await transitionCaseMutation({
+          variables: { input: { id: workingCase.id, ...transitionRequest } },
+        })
+
+        if (!data?.transitionCase?.state) {
+          return false
+        }
+
+        if (setWorkingCase) {
+          setWorkingCase({
+            ...workingCase,
+            state: data.transitionCase.state,
+          })
+        }
+
+        return true
+      } catch (e) {
         return false
       }
+    },
+    [transitionCaseMutation],
+  )
 
-      if (setWorkingCase) {
-        setWorkingCase({
-          ...workingCase,
-          state: data.transitionCase.state,
-        })
-      }
-
-      return true
-    } catch (e) {
-      return false
-    }
-  }
-
-  const sendNotification = async (
-    id: string,
-    notificationType: NotificationType,
-  ): Promise<boolean> => {
-    const { data } = await sendNotificationMutation({
-      variables: {
-        input: {
-          caseId: id,
-          type: notificationType,
+  const sendNotification = useMemo(
+    () => async (
+      id: string,
+      notificationType: NotificationType,
+    ): Promise<boolean> => {
+      const { data } = await sendNotificationMutation({
+        variables: {
+          input: {
+            caseId: id,
+            type: notificationType,
+          },
         },
-      },
-    })
+      })
 
-    return Boolean(data?.sendNotification?.notificationSent)
-  }
+      return Boolean(data?.sendNotification?.notificationSent)
+    },
+    [sendNotificationMutation],
+  )
 
-  const requestSignature = async (id: string) => {
-    const { data } = await requestSignatureMutation({
-      variables: { input: { caseId: id } },
-    })
+  const requestSignature = useMemo(
+    () => async (id: string) => {
+      const { data } = await requestSignatureMutation({
+        variables: { input: { caseId: id } },
+      })
 
-    return data?.requestSignature
-  }
+      return data?.requestSignature
+    },
+    [requestSignatureMutation],
+  )
 
   // TODO: find a way for this to work where value is something other then string
-  const autofill = (
-    key: keyof autofillProperties,
-    value: string,
-    workingCase: Case,
-  ) => {
-    if (!workingCase[key]) {
-      workingCase[key] = value
+  const autofill = useMemo(
+    () => (key: keyof autofillProperties, value: string, workingCase: Case) => {
+      if (!workingCase[key]) {
+        workingCase[key] = value
 
-      if (workingCase[key]) {
-        updateCase(workingCase.id, parseString(key, value))
+        if (workingCase[key]) {
+          updateCase(workingCase.id, parseString(key, value))
+        }
       }
-    }
-  }
+    },
+    [updateCase],
+  )
 
   return {
     createCase,
