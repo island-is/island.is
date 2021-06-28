@@ -188,10 +188,15 @@ const autoSchemaFile = environment.production
     }),
     LicenseServiceModule.register({
       xroad: {
-        xroadBaseUrl: environment.xroad.baseUrl,
-        xroadClientId: environment.xroad.clientId,
-        xroadPath: environment.drivingLicense.xroadPath,
-        drivingLicenseSecret: environment.drivingLicense.secret,
+        baseUrl: environment.xroad.baseUrl,
+        clientId: environment.xroad.clientId,
+        path: environment.drivingLicense.xroadPath,
+        secret: environment.drivingLicense.secret,
+      },
+      pkpass: {
+        apiKey: environment.pkpass.apiKey,
+        apiUrl: environment.pkpass.apiUrl,
+        secretKey: environment.pkpass.secretKey,
       },
     }),
   ],

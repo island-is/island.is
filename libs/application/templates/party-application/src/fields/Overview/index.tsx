@@ -22,14 +22,19 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
     endorsementListId,
     false,
   )
+  const constituency =
+    constituencyMapper[answers.constituency as EndorsementListTags]
 
-  //find selected endorsements from the endorsement system and find how many of them are invalidated
+  //find selected endorsements from the endorsement system and find how many of them are with region mismatch
   const endorsementsWithWarning = () => {
     const intersectingEndorsements = endorsementHook?.filter((e: any) => {
       return answers.endorsements?.indexOf(e.id) !== -1
     })
 
-    return intersectingEndorsements?.filter((e) => e.meta.invalidated).length
+    return intersectingEndorsements?.filter(
+      (e) =>
+        e.meta.voterRegion?.voterRegionNumber !== constituency.region_number,
+    ).length
   }
 
   const { register } = useFormContext()
@@ -59,12 +64,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5">
           {formatMessage(m.overviewSection.constituency)}
         </Text>
-        <Text>
-          {
-            constituencyMapper[answers.constituency as EndorsementListTags]
-              .region_name
-          }
-        </Text>
+        <Text>{constituency.region_name}</Text>
       </Box>
       <Box marginBottom={3}>
         <Text variant="h5">

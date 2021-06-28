@@ -15,7 +15,7 @@ export const DefaultSkeletonLoader = () => {
     <Box padding={5}>
       <Columns space={3}>
         <Column width="content">
-          <SL width={100} height={100} />
+          <SL width={100} height={100} display="block" />
         </Column>
         <Column>
           <h1>

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { EndorsementTag } from '../endorsementList/constants'
+import { EndorsementTag } from '../../endorsementList/constants'
 
 // this exists to provide a pruned version of the endorsement list
 
@@ -18,4 +18,10 @@ export class EndorsementListOpen {
 
   @ApiProperty({ enum: EndorsementTag, isArray: true })
   tags?: EndorsementTag[]
+
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
+  closedDate!: Date | null
 }

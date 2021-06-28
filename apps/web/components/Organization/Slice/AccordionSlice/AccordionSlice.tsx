@@ -47,6 +47,8 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
                   cta={{
                     label: item.link?.text ?? 'Default',
                     icon: 'arrowForward',
+                    onClick: () =>
+                      !!item.link && window.open(item.link?.url, '_blank'),
                   }}
                 />
               </Box>
