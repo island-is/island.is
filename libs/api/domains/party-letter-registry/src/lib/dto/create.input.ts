@@ -15,4 +15,8 @@ export class CreatePartyLetterDto {
   @Field(() => [String])
   @IsNationalId({ each: true })
   managers!: string[]
+
+  @Field()
+  @IsNationalId()
+  owner!: string
 }

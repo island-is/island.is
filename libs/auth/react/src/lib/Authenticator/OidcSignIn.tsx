@@ -1,6 +1,7 @@
-import React, { ReactElement, useEffect } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
+import AuthenticatorErrorScreen from './AuthenticatorErrorScreen'
 import { getUserManager } from '../userManager'
 import { ActionType, AuthDispatch } from './Authenticator.state'
 
@@ -10,6 +11,7 @@ interface Props {
 
 export const OidcSignIn = ({ authDispatch }: Props): ReactElement => {
   const history = useHistory()
+  const [hasError, setHasError] = useState(false)
 
   const init = async function init() {
     const userManager = getUserManager()
@@ -23,8 +25,8 @@ export const OidcSignIn = ({ authDispatch }: Props): ReactElement => {
       const url = typeof user.state === 'string' ? user.state : '/'
       history.push(url)
     } catch (error) {
-      console.error(error)
-      window.location.replace(window.location.origin)
+      console.error('Error in oidc callback', error)
+      setHasError(true)
     }
   }
 
@@ -32,7 +34,11 @@ export const OidcSignIn = ({ authDispatch }: Props): ReactElement => {
     init()
   }, [])
 
-  return <AuthenticatorLoadingScreen />
+  return hasError ? (
+    <AuthenticatorErrorScreen />
+  ) : (
+    <AuthenticatorLoadingScreen />
+  )
 }
 
 export default OidcSignIn
