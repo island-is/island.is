@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { IsOptional } from 'class-validator'
 
 export class XlsxDto {
   @ApiProperty()
-  headers!: Array<string>
+  @IsOptional()
+  headers?: Array<string>
 
   @ApiProperty()
-  data!: Array<Array<string | number>>
+  @IsOptional()
+  data?: Array<Array<string | number>>
 }
