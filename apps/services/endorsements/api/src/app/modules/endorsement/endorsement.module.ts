@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { Endorsement } from './endorsement.model'
+import { Endorsement } from './models/endorsement.model'
 import { EndorsementController } from './endorsement.controller'
 import { EndorsementService } from './endorsement.service'
 import { EndorsementMetadataModule } from '../endorsementMetadata/endorsementMetadata.module'

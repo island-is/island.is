@@ -1,11 +1,18 @@
 import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
 import { getConnectionToken } from '@nestjs/sequelize'
-import { INestApplication, Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { PartyLetterRegistryScope } from '@island.is/auth/scopes'
+import type { INestApplication, Type } from '@nestjs/common'
 
 export let app: INestApplication
 let sequelize: Sequelize
+
+interface SetupAuthInput {
+  scope: PartyLetterRegistryScope[]
+  nationalId?: string
+}
 
 // needed for generic error validation
 expect.extend({
@@ -28,7 +35,7 @@ expect.extend({
   },
 })
 
-export const setup = async (options?: Partial<TestServerOptions>) => {
+const setup = async (options?: Partial<TestServerOptions>) => {
   app = await testServer({
     appModule: AppModule,
     ...options,
@@ -37,6 +44,24 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
 
   return app
 }
+
+export const getAuthenticatedApp = ({
+  scope,
+  nationalId = '1234567890',
+}: SetupAuthInput): Promise<INestApplication> =>
+  setup({
+    override: (builder) => {
+      builder
+        .overrideProvider(IdsUserGuard)
+        .useValue(
+          new MockAuthGuard({
+            nationalId,
+            scope,
+          }),
+        )
+        .compile()
+    },
+  })
 
 afterAll(async () => {
   if (app && sequelize) {
