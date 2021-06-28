@@ -52,7 +52,7 @@ const ApplicationProfile = () => {
 
   const [isModalVisible, setModalVisible] = useState(false)
 
-  const [prevUrl, setPrevUrl] = useState<any | undefined>(undefined)
+  const [prevUrl, setPrevUrl] = useState<any>()
 
   const { data, error, loading } = useQuery<ApplicantData>(
     GetApplicationQuery,
@@ -63,34 +63,31 @@ const ApplicationProfile = () => {
     },
   )
 
-  const [applicationState, setApplicationState] = useState<
-    ApplicationState | undefined
-  >(data?.application?.state)
+  const [application, setApplication] = useState<Application>()
 
   useEffect(() => {
     if (data?.application) {
-      setApplicationState(data.application.state)
-      //WIP
+      setApplication(data.application)
+      // //WIP
       setPrevUrl(
         navigationItems.find((i) =>
           i.applicationState.includes(data.application.state),
         ),
       )
     }
-  }, [data?.application?.state])
+  }, [data])
 
-  if (data?.application) {
+  if (application) {
     const applicationInfo = [
       {
         title: 'Tímabil',
         content:
-          translateMonth(
-            parseInt(format(new Date(data.application.created), 'M')),
-          ) + format(new Date(data.application.created), ' y'),
+          translateMonth(parseInt(format(new Date(application.created), 'M'))) +
+          format(new Date(application.created), ' y'),
       },
       {
         title: 'Sótt um',
-        content: format(new Date(data.application.created), 'dd.MM.y  · kk:mm'),
+        content: format(new Date(application.created), 'dd.MM.y  · kk:mm'),
       },
       {
         title: 'Sótt um',
@@ -105,12 +102,12 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Aldur',
-        content: calcAge(data.application.nationalId) + ' ára',
+        content: calcAge(application.nationalId) + ' ára',
       },
       {
         title: 'Kennitala',
         content:
-          insertAt(data.application.nationalId.replace('-', ''), '-', 6) || '-',
+          insertAt(application.nationalId.replace('-', ''), '-', 6) || '-',
       },
       {
         title: 'Netfang',
@@ -120,9 +117,8 @@ const ApplicationProfile = () => {
       {
         title: 'Sími',
         content:
-          insertAt(data.application.phoneNumber.replace('-', ''), '-', 3) ||
-          '-',
-        link: 'tel:' + data.application.phoneNumber,
+          insertAt(application.phoneNumber.replace('-', ''), '-', 3) || '-',
+        link: 'tel:' + application.phoneNumber,
       },
       {
         title: 'Bankareikningur',
@@ -164,27 +160,27 @@ const ApplicationProfile = () => {
         title: 'Búsetuform',
         content:
           getHomeCircumstances[
-            data.application.homeCircumstances as HomeCircumstances
+            application.homeCircumstances as HomeCircumstances
           ],
-        other: data.application.homeCircumstancesCustom,
+        other: application.homeCircumstancesCustom,
       },
       {
         title: 'Atvinna',
-        content: getEmploymentStatus[data.application.employment as Employment],
-        other: data.application.employmentCustom,
+        content: getEmploymentStatus[application.employment as Employment],
+        other: application.employmentCustom,
       },
       {
         title: 'Lánshæft nám',
-        content: data.application.student ? 'Já' : 'Nei',
-        other: data.application.studentCustom,
+        content: application.student ? 'Já' : 'Nei',
+        other: application.studentCustom,
       },
       {
         title: 'Hefur haft tekjur',
-        content: data.application.hasIncome ? 'Já' : 'Nei',
+        content: application.hasIncome ? 'Já' : 'Nei',
       },
       {
         title: 'Athugasemd',
-        other: data.application.formComment,
+        other: application.formComment,
       },
     ]
 
@@ -220,9 +216,9 @@ const ApplicationProfile = () => {
                 </Button>
               )}
 
-              {applicationState && (
-                <div className={`tags ${getTagByState(applicationState)}`}>
-                  {getState[applicationState]}
+              {application.state && (
+                <div className={`tags ${getTagByState(application.state)}`}>
+                  {getState[application.state]}
                 </div>
               )}
             </Box>
@@ -238,12 +234,12 @@ const ApplicationProfile = () => {
                 <Box marginRight={2}>
                   <GeneratedProfile
                     size={48}
-                    nationalId={data.application.nationalId}
+                    nationalId={application.nationalId}
                   />
                 </Box>
 
                 <Text as="h2" variant="h1">
-                  {GenerateName(data.application.nationalId)}
+                  {GenerateName(application.nationalId)}
                 </Text>
               </Box>
 
@@ -272,7 +268,7 @@ const ApplicationProfile = () => {
                 </Text>
               </Box>
               <Text variant="small">
-                {calcDifferenceInDate(data.application.created)}
+                {calcDifferenceInDate(application.created)}
               </Text>
             </Box>
           </Box>
@@ -293,27 +289,38 @@ const ApplicationProfile = () => {
             className={`contentUp delay-100`}
           />
           <>
-            <Box marginBottom={[2, 2, 3]} className={styles.widtAlmostFull}>
+            <Box
+              marginBottom={[2, 2, 3]}
+              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+            >
               <Text as="h2" variant="h3" color="dark300">
                 Gögn frá umsækjanda
               </Text>
             </Box>
-            <Files heading="Skattframtal" className={styles.widtAlmostFull} />
-            <Files heading="Tekjugögn" className={styles.widtAlmostFull} />
+            <Files
+              heading="Skattframtal"
+              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+            />
+            <Files
+              heading="Tekjugögn"
+              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+            />
           </>
         </Box>
 
-        {applicationState && (
+        {application.state && (
           <StateModal
             isVisible={isModalVisible}
-            setIsVisible={(isVisibleBoolean) => {
+            onVisiblityChange={(isVisibleBoolean) => {
               setModalVisible(isVisibleBoolean)
             }}
-            setApplicationState={(applicationState: ApplicationState) => {
-              setApplicationState(applicationState)
+            onStateChange={(applicationState: ApplicationState) => {
+              setApplication({
+                ...application,
+                state: applicationState,
+              })
             }}
-            application={data.application}
-            applicationState={applicationState}
+            application={application}
           />
         )}
       </AdminLayout>

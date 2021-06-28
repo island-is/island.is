@@ -18,9 +18,8 @@ import {
 
 interface Props {
   isVisible: boolean
-  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
-  applicationState: ApplicationState
-  setApplicationState: (applicationState: ApplicationState) => void
+  onVisiblityChange: React.Dispatch<React.SetStateAction<boolean>>
+  onStateChange: (applicationState: ApplicationState) => void
   application: Application
 }
 
@@ -29,13 +28,7 @@ interface SaveData {
 }
 
 const StateModal: React.FC<Props> = (props: Props) => {
-  const {
-    isVisible,
-    setIsVisible,
-    setApplicationState,
-    applicationState,
-    application,
-  } = props
+  const { isVisible, onVisiblityChange, onStateChange, application } = props
 
   const statusOptions = [
     ApplicationState.NEW,
@@ -46,36 +39,29 @@ const StateModal: React.FC<Props> = (props: Props) => {
 
   const { statistics, setStatistics } = useContext(NavigationStatisticsContext)
 
-  const overZeroCheck = (num: number) => {
-    if (num === 0) {
-      return false
-    }
-    return true
-  }
-
   const [
     updateApplicationMutation,
     { loading: saveLoading },
   ] = useMutation<SaveData>(UpdateApplicationMutation)
 
   const saveStateApplication = async (
-    applicant: Application,
+    application: Application,
     state: ApplicationState,
   ) => {
-    const prevState = applicant.state
+    const prevState = application.state
 
-    if (saveLoading === false && applicant) {
+    if (saveLoading === false && application) {
       await updateApplicationMutation({
         variables: {
           input: {
-            id: applicant.id,
+            id: application.id,
             state: state,
           },
         },
       })
     }
-    setIsVisible(false)
-    setApplicationState(state)
+    onVisiblityChange(false)
+    onStateChange(state)
 
     if (statistics && setStatistics) {
       setStatistics((preState) => ({
@@ -92,7 +78,7 @@ const StateModal: React.FC<Props> = (props: Props) => {
       isVisible={isVisible}
       onVisibilityChange={(visibility) => {
         if (visibility !== isVisible) {
-          setIsVisible(visibility)
+          onVisiblityChange(visibility)
         }
       }}
       className={styles.modalBase}
@@ -126,7 +112,7 @@ const StateModal: React.FC<Props> = (props: Props) => {
                     key={'statusoptions-' + index}
                     className={cn({
                       [`${styles.statusOptions}`]: true,
-                      [`${styles.activeState}`]: item === applicationState,
+                      [`${styles.activeState}`]: item === application.state,
                     })}
                     onClick={(e) => {
                       e.stopPropagation()

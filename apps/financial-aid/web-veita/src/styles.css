@@ -93,6 +93,9 @@ input[type='number'] {
 .delay-100 {
   animation-delay: 100ms;
 }
+.delay-125 {
+  animation-delay: 125ms;
+}
 
 @keyframes ptContentUp {
   from {
