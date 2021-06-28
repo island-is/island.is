@@ -132,7 +132,7 @@ const OpenDataPage: Screen = () => {
       <Section aria-labelledby="openDataHeroTitle" background="blue100">
         <GridContainer>
           <GridRow>
-            <GridColumn span={['5/12', '5/12', '5/12']}>
+            <GridColumn span="5/12">
               <Box marginBottom={3}>
                 <Breadcrumbs
                   items={[
@@ -162,11 +162,7 @@ const OpenDataPage: Screen = () => {
                 nýtingar á gögnunum í þágu nýsköpunar, atvinnulífs og rannsókna.
                 Hér er hægt að skoða og vinna með gögn frá Rannís ...]
               </Text>
-              <Box
-                display={'flex'}
-                justifyContent="flexStart"
-                marginTop={[3, 3, 3]}
-              >
+              <Box display={'flex'} justifyContent="flexStart" marginTop={3}>
                 <Link {...linkResolver('lifeevents')} skipTab>
                   <Button
                     icon="arrowForward"

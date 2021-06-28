@@ -36,13 +36,13 @@ export const DataLinkSection = ({
   return (
     <GridContainer>
       <GridRow marginBottom={10}>
-        <GridColumn span='5/12'>
+        <GridColumn span="5/12">
           <Text variant="h1" as="h1" paddingBottom={4} {...titleProps}>
             {title}
           </Text>
           <Text paddingBottom={4}>{description}</Text>
         </GridColumn>
-        <GridColumn span='6/12'>
+        <GridColumn span="6/12">
           <Box width="full">
             <BackgroundImage
               width={600}

@@ -19,7 +19,6 @@ export type DataLinkCardTagsProps = {
   subTitle?: string
 }
 
-
 export interface DataLinkCardProps {
   title: string
   description: string
@@ -37,29 +36,28 @@ export const DataLinkCard = ({
 
   const shouldStack = width < 360
 
-
   const items = (
-      <Box
-        ref={ref}
-        display="flex"
-        flexGrow={1}
-        flexDirection={shouldStack ? 'columnReverse' : 'row'}
-        alignItems="stretch"
-        justifyContent="flexEnd"
-      >
-        <Box style={{ width: '100%' }}>
-          <Stack space={1}>
-            <Box display="flex" flexDirection="row" alignItems="center">
-              <Box display="inlineFlex" flexGrow={1}>
-                <Text as="h3" variant="h3" color="blue400">
-                  <Hyphen>{title}</Hyphen>
-                </Text>
-              </Box>
+    <Box
+      ref={ref}
+      display="flex"
+      flexGrow={1}
+      flexDirection={shouldStack ? 'columnReverse' : 'row'}
+      alignItems="stretch"
+      justifyContent="flexEnd"
+    >
+      <Box style={{ width: '100%' }}>
+        <Stack space={1}>
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <Box display="inlineFlex" flexGrow={1}>
+              <Text as="h3" variant="h3" color="blue400">
+                <Hyphen>{title}</Hyphen>
+              </Text>
             </Box>
-            {description && <Text>{description}</Text>}
-          </Stack>
-        </Box>
+          </Box>
+          {description && <Text>{description}</Text>}
+        </Stack>
       </Box>
+    </Box>
   )
 
   if (link?.href) {

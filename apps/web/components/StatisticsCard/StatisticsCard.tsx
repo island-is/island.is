@@ -19,7 +19,11 @@ export interface StatisticsCardsProps {
   description: string
 }
 
-export const StatisticsCard = ({ title, image, description }: StatisticsCardsProps) => {
+export const StatisticsCard = ({
+  title,
+  image,
+  description,
+}: StatisticsCardsProps) => {
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 360
