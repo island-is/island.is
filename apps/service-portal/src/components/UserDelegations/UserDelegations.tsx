@@ -23,7 +23,7 @@ export const UserDelegations = ({ onSwitch }: UserDelegationsProps) => {
   const { userInfo, switchUser } = useAuth()
   const { data } = useActorDelegationsQuery()
   const currentNationalId = userInfo?.profile.nationalId as string
-  const actor = userInfo?.profile.act
+  const actor = userInfo?.profile.actor
 
   // Loading or no delegations.
   if (!data || data.authActorDelegations.length === 0) {
