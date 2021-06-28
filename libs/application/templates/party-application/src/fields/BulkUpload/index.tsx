@@ -79,7 +79,7 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
         data.map((d: any) => {
           /**  Getting the value of the first column from the JSON object */
           const nationalId = d[Object.keys(d)[0]]
-          mapArray.push(nationalId.toString())
+          mapArray.push(nationalId.toString().replace(/[^0-9]/g, ''))
         })
         onBulkUpload(mapArray)
       } catch (e) {

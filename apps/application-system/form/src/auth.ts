@@ -3,7 +3,10 @@ import { environment } from './environments'
 import {
   ApplicationScope,
   NationalRegistryScope,
+  PartyLetterRegistryScope,
+  TemporaryVoterRegistryScope,
   UserProfileScope,
+  EndorsementScope,
 } from '@island.is/auth/scopes'
 
 const userMocked = process.env.API_MOCKS === 'true'

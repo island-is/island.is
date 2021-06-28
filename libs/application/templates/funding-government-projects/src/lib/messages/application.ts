@@ -7,6 +7,11 @@ export const application = defineMessages({
     defaultMessage: 'Umsókn um fjármögnun ríkisverkefnis',
     description: 'Name of the Funding Government Projects application',
   },
+  institutionName: {
+    id: `affgp.application:application.institutionName`,
+    defaultMessage: 'Fjármála- og Efnahagsráðuneytið',
+    description: 'Name of the Funding Government Projects institution',
+  },
   description: {
     id: `affgp.application:application.description`,
     defaultMessage: 'Lýsing á umsókn um fjármögnun ríkisverkefnis',
