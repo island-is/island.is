@@ -49,7 +49,7 @@ export const Draft: Form = buildForm({
             buildSubmitField({
               id: 'toDraft',
               placement: 'footer',
-              title: 'Æði æði æði, ennþá meiri gæði',
+              title: 'Umsókn um greislu',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

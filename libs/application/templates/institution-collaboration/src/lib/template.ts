@@ -73,6 +73,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.INSTITUTION_COLLABORATION,
   name: m.application.applicationName,
+  institution: m.application.institutionName,
   readyForProduction: true,
   dataSchema,
   stateMachineConfig: {
