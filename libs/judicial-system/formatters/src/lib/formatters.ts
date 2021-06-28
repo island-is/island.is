@@ -126,15 +126,20 @@ export enum NounCases {
 export function formatAccusedByGender(
   accusedGender?: CaseGender,
   nounCase: NounCases = NounCases.NOMINATIVE,
+  isInvestigationCase?: boolean,
 ) {
-  switch (accusedGender) {
-    case CaseGender.MALE:
-      return nounCase === NounCases.NOMINATIVE ? 'kærði' : 'kærða'
-    case CaseGender.FEMALE:
-      return nounCase === NounCases.NOMINATIVE ? 'kærða' : 'kærðu'
-    case CaseGender.OTHER:
-    default:
-      return 'kærða'
+  if (isInvestigationCase) {
+    return nounCase === NounCases.NOMINATIVE ? 'varnaraðili' : 'varnaraðila'
+  } else {
+    switch (accusedGender) {
+      case CaseGender.MALE:
+        return nounCase === NounCases.NOMINATIVE ? 'kærði' : 'kærða'
+      case CaseGender.FEMALE:
+        return nounCase === NounCases.NOMINATIVE ? 'kærða' : 'kærðu'
+      case CaseGender.OTHER:
+      default:
+        return 'kærða'
+    }
   }
 }
 
