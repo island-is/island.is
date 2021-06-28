@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
@@ -6,6 +8,32 @@ import {
   generateApplicationRejectedEmail,
   generateApplicationApprovedEmail,
 } from './emailGenerators'
+
+const CLOSE_ENDORSEMENT = `
+  mutation EndorsementSystemCloseEndorsementList($input: FindEndorsementListInput!) {
+    endorsementSystemCloseEndorsementList(input: $input) {
+      id
+      closedDate
+    }
+  }
+`
+
+const OPEN_ENDORSEMENT = `
+  mutation EndorsementSystemOpenEndorsementList($input: FindEndorsementListInput!) {
+    endorsementSystemOpenEndorsementList(input: $input) {
+      id
+      closedDate
+    }
+  }
+`
+
+const CREATE_ENDORSEMENT_LIST_QUERY = `
+  mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
+    endorsementSystemCreateEndorsementList(input: $input) {
+      id
+    }
+  }
+`
 
 type ErrorResponse = {
   errors: {
@@ -32,10 +60,10 @@ type CreatePartyLetterResponse =
       }
     }
   | ErrorResponse
-
 @Injectable()
 export class PartyLetterService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
@@ -43,60 +71,60 @@ export class PartyLetterService {
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
-    const CLOSE_ENDORSEMENT = `
-    mutation {
-      endorsementSystemCloseEndorsementList(input: {
-        listId: "${
-          (application.externalData?.createEndorsementList.data as any).id
-        }",
-      }) {
-        id
-        closedDate
-      }
-    }
-  `
-    const endorsementId: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CLOSE_ENDORSEMENT)
-      .then((response) => response.json())
+    const listId = (application.externalData?.createEndorsementList.data as any)
+      .id
 
-    if ('errors' in endorsementId) {
-      throw new Error('Failed to close endorsement list')
-    }
-
-    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      generateAssignMinistryOfJusticeApplicationEmail,
-      application,
-    )
+    return this.sharedTemplateAPIService
+      .makeGraphqlQuery(authorization, CLOSE_ENDORSEMENT, {
+        input: {
+          listId,
+        },
+      })
+      .then((res) => {
+        return res.json()
+      })
+      .then(async (json) => {
+        if (json.errors) {
+          this.logger.error('Failed to close endorsement list', listId)
+          throw new Error('Failed to close endorsement list')
+        }
+        if (json.data) {
+          await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+            generateAssignMinistryOfJusticeApplicationEmail,
+            application,
+          )
+        }
+      })
   }
 
   async applicationRejected({
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
-    const OPEN_ENDORSEMENT = `
-      mutation {
-        endorsementSystemOpenEndorsementList(input: {
-          listId: "${
-            (application.externalData?.createEndorsementList.data as any).id
-          }",
-        }) {
-          id
-          closedDate
+    const listId = (application.externalData?.createEndorsementList.data as any)
+      .id
+
+    return this.sharedTemplateAPIService
+      .makeGraphqlQuery(authorization, OPEN_ENDORSEMENT, {
+        input: {
+          listId,
+        },
+      })
+      .then((res) => {
+        return res.json()
+      })
+      .then(async (json) => {
+        if (json.errors) {
+          this.logger.error('Failed to open endorsement list', listId)
+          throw new Error('Failed to open endorsement list')
         }
-      }
-    `
-    const endorsementId: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, OPEN_ENDORSEMENT)
-      .then((response) => response.json())
-
-    if ('errors' in endorsementId) {
-      throw new Error('Failed to open endorsement list')
-    }
-
-    await this.sharedTemplateAPIService.sendEmail(
-      generateApplicationRejectedEmail,
-      application,
-    )
+        if (json.data) {
+          await this.sharedTemplateAPIService.sendEmail(
+            generateApplicationRejectedEmail,
+            application,
+          )
+        }
+      })
   }
 
   async applicationApproved({ application }: TemplateApiModuleActionProps) {
@@ -110,25 +138,32 @@ export class PartyLetterService {
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
-    const CREATE_ENDORSEMENT_LIST_QUERY = `
-      mutation {
-        endorsementSystemCreateEndorsementList(input: {
-          title: "${application.answers.partyName}",
-          description: "${application.answers.partyLetter}",
-          endorsementMeta: [fullName, address, signedTags],
-          tags: [partyLetter2021],
-          validationRules: [],
-        }) {
-          id
-        }
-      }
-    `
-
     const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY)
+      .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
+        input: {
+          title: application.answers.partyName,
+          description: application.answers.partyLetter,
+          endorsementMeta: ['fullName', 'address', 'signedTags'],
+          tags: ['partyLetter2021'],
+          validationRules: [
+            {
+              type: 'minAge',
+              value: {
+                age: 18,
+              },
+            },
+          ],
+          meta: {
+            // to be able to link back to this application
+            applicationTypeId: application.typeId,
+            applicationId: application.id,
+          },
+        },
+      })
       .then((response) => response.json())
 
     if ('errors' in endorsementList) {
+      this.logger.error('Failed to open endorsement list', endorsementList)
       throw new Error('Failed to create endorsement list')
     }
 
@@ -160,6 +195,7 @@ export class PartyLetterService {
       .then((response) => response.json())
 
     if ('errors' in partyLetter) {
+      this.logger.error('Failed to register party letter', partyLetter)
       throw new Error('Failed to register party letter')
     }
 

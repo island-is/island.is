@@ -7,6 +7,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
+  getAvailablePersonalRightsInMonths,
   getAvailableRightsInMonths,
   getSelectedChild,
 } from '../../lib/parentalLeaveUtils'
@@ -28,13 +29,7 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
     isGivingRights,
     giveDays,
   } = useApplicationAnswers(application)
-  const selectedChild = getSelectedChild(
-    application.answers,
-    application.externalData,
-  )
-  const personalMonths = selectedChild?.remainingDays
-    ? daysToMonths(selectedChild?.remainingDays)
-    : undefined
+  const personalMonths = getAvailablePersonalRightsInMonths(application)
   const total = round(getAvailableRightsInMonths(application))
   const requested = daysToMonths(requestDays)
   const given = daysToMonths(giveDays)
@@ -51,14 +46,12 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
           </Text>
 
           <Box display="inline">
-            {personalMonths && (
-              <Text as="span">
-                {formatMessage(
-                  parentalLeaveFormMessages.reviewScreen.rightsPersonalMonths,
-                  { months: personalMonths },
-                )}
-              </Text>
-            )}
+            <Text as="span">
+              {formatMessage(
+                parentalLeaveFormMessages.reviewScreen.rightsPersonalMonths,
+                { months: personalMonths },
+              )}
+            </Text>
 
             {isRequestingRights === YES && requestDays > 0 && (
               <>

@@ -11,11 +11,11 @@ export class EndorsementMetadata {
   address!: object | null
 
   @Field({ nullable: true })
-  invalidated!: boolean | null
-
-  @Field({ nullable: true })
   bulkEndorsement!: boolean | null
 
   @Field(() => [EndorsementMetadataSignedTagsEnum], { nullable: true })
   signedTags!: EndorsementMetadataSignedTagsEnum[] | null
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  voterRegion!: object | null
 }

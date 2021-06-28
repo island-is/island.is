@@ -22,10 +22,10 @@ export class LifeEventPage {
   @Field({ nullable: true })
   intro?: string
 
-  @Field({ nullable: true })
+  @Field(() => Image, { nullable: true })
   image?: Image | null
 
-  @Field({ nullable: true })
+  @Field(() => Image, { nullable: true })
   thumbnail?: Image | null
 
   @Field(() => [SliceUnion])

@@ -1,16 +1,12 @@
 import { Query, Resolver } from '@nestjs/graphql'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { TemporaryVoterRegistry } from './models/temporaryVoterRegistry.model'
 import { TemporaryVoterRegistryService } from './temporaryVoterRegistry.service'
 import { VoterRegistry } from '../../gen/fetch'
 import type { User } from '@island.is/auth-nest-tools'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard)
 @Resolver('TemporaryVoterRegistryResolver')
 export class TemporaryVoterRegistryResolver {
   constructor(
@@ -19,12 +15,10 @@ export class TemporaryVoterRegistryResolver {
 
   @Query(() => TemporaryVoterRegistry, { nullable: true })
   async temporaryVoterRegistryGetVoterRegion(
-    @CurrentUser() { nationalId }: User,
+    @CurrentUser() auth: User,
   ): Promise<VoterRegistry> {
-    return this.temporaryVoterRegistryService.temporaryVoterRegistryControllerFindOne(
-      {
-        nationalId,
-      },
+    return this.temporaryVoterRegistryService.temporaryVoterRegistryControllerFindByAuth(
+      auth,
     )
   }
 }

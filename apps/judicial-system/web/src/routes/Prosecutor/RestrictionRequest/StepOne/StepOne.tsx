@@ -14,8 +14,10 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 
 import { StepOneForm } from './StepOneForm'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
+import {
+  useCase,
+  useInstitution,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   type?: CaseType

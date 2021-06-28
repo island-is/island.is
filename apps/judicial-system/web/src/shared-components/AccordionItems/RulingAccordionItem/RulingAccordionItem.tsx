@@ -55,9 +55,9 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Box>
         <Box marginBottom={3}>
           {getConclusion(workingCase)}
-          {workingCase.additionToConclusion && (
+          {workingCase.conclusion && (
             <Box marginTop={1}>
-              <Text>{workingCase.additionToConclusion}</Text>
+              <Text>{workingCase.conclusion}</Text>
             </Box>
           )}
         </Box>
@@ -137,6 +137,8 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
               {formatCustodyRestrictions(
                 workingCase.accusedGender,
                 workingCase.custodyRestrictions,
+                workingCase.validToDate,
+                workingCase.isolationToDate,
               )}
             </Text>
           </Box>

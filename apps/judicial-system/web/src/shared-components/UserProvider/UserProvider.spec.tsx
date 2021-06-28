@@ -1,6 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
+import { LocaleProvider } from '@island.is/localization'
 import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
 import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
@@ -29,7 +30,9 @@ describe('UserProvider', () => {
     render(
       <MockedProvider mocks={[mockJudgeQuery]} addTypename={false}>
         <UserProvider authenticated={true}>
-          <Header />
+          <LocaleProvider locale="is" messages={{}}>
+            <Header />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )

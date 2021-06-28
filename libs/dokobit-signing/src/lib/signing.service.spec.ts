@@ -40,13 +40,11 @@ const testStatusResponse = {
 }
 
 jest.mock('form-data', function () {
-  return {
-    default: function () {
-      this.append = jest.fn(function (key: string, value: string) {
-        this[key] = value
-      })
-      return this
-    },
+  return function () {
+    this.append = jest.fn(function (key: string, value: string) {
+      this[key] = value
+    })
+    return this
   }
 })
 
@@ -73,10 +71,8 @@ const fetchMock = jest.fn(function (
   }
 })
 jest.mock('node-fetch', function () {
-  return {
-    default: async function (url: RequestInfo, init: RequestInit) {
-      return fetchMock(url, init)
-    },
+  return async function (url: RequestInfo, init: RequestInit) {
+    return fetchMock(url, init)
   }
 })
 

@@ -106,10 +106,7 @@ const SubPage: Screen<SubPageProps> = ({
       <GridContainer>
         <Box paddingY={4}>
           <GridRow>
-            <GridColumn
-              span={['9/9', '9/9', '7/9']}
-              offset={['9/9', '9/9', '1/9']}
-            >
+            <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
               <GridContainer>
                 <GridRow>
                   <GridColumn

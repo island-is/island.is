@@ -21,6 +21,7 @@ export enum ServicePortalPath {
   SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
   SettingsPersonalInformationEditLanguage = '/stillingar/personuupplysingar/breyta-tungumali',
   SettingsPersonalInformationEmailConfirmation = '/stillingar/personuupplysingar/stadfesta-netfang/:hash',
+  SettingsExternal = 'https://minarsidur.island.is/minar-sidur/minn-adgangur/stillingar/',
 
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',
@@ -33,6 +34,10 @@ export enum ServicePortalPath {
 
   // Fjarmal
   FinanceRoot = '/fjarmal',
+  FinanceStatus = '/fjarmal/stada',
+  FinanceTransactions = '/fjarmal/faerslur',
+  FinanceEmployeeClaims = '/fjarmal/laungreidendakrofur',
+  FinanceBills = '/fjarmal/greidslusedlar-og-greidslukvittanir',
   FinanceVehicles = 'https://mitt.samgongustofa.is/',
   FinancePayments = '/greidslur',
   FinanceExternal = 'https://minarsidur.island.is/minar-sidur/fjarmal/fjarmal-stada-vid-rikissjod-og-stofnanir/',
@@ -46,14 +51,17 @@ export enum ServicePortalPath {
 
   // Education
   EducationRoot = '/menntun',
-  EducationLicense = '/menntun/leyfisbref',
   EducationDegree = '/menntun/profgradur',
   EducationCareer = '/menntun/namsferill',
   EducationStudentAssessment = '/menntun/namsferill/:nationalId/samraemd-prof',
   EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
 
+  // Education License
+  EducationLicense = '/leyfisbref',
+
   // Assets
-  AssetsRoot = '/eignir',
+  AssetsRoot = '/fasteignir',
+  AssetsVehicles = '/okutaeki',
 
   // Messages
   MessagesRoot = '/skilabod',
@@ -65,6 +73,9 @@ export enum ServicePortalPath {
 
   // Icelandic Names Registry
   IcelandicNamesRegistryRoot = '/mannanafnaskra',
+
+  // Licenses service
+  LicensesRoot = '/min-gogn/skilriki',
 
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first

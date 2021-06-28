@@ -4,7 +4,7 @@ import { User, UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useMutation } from '@apollo/client'
 import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
-import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
+import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { useRouter } from 'next/router'
 import UserForm from '../UserForm/UserForm'
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -10,7 +11,8 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { reportForm } from '@island.is/judicial-system-web/messages'
 import {
   FormSettings,
   useCaseFormHelper,
@@ -33,6 +35,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       validations: ['empty'],
     },
   }
+  const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
@@ -41,12 +44,14 @@ const PoliceReportForm: React.FC<Props> = (props) => {
     setWorkingCase,
     validations,
   )
-
+  const defaultProsecutorOnlySessionRequest = formatMessage(
+    reportForm.prosecutorOnly.input.defaultValue,
+  )
   useEffect(() => {
     if (workingCase.requestProsecutorOnlySession) {
       autofill(
         'prosecutorOnlySessionRequest',
-        'Beðið er um að krafan verði tekin fyrir án þess að þeir sem hún beinist að verði kvaddir á dómþingið.',
+        defaultProsecutorOnlySessionRequest,
         workingCase,
       )
     }
@@ -57,7 +62,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Greinargerð
+            {formatMessage(reportForm.heading)}
           </Text>
         </Box>
         <Box marginBottom={5}>
@@ -68,19 +73,19 @@ const PoliceReportForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Greinargerð um málsatvik{' '}
+              {formatMessage(reportForm.facts.heading)}{' '}
               <Tooltip
                 placement="right"
                 as="span"
-                text="Málsatvik, hvernig meðferð þessa máls hófst, skal skrá hér ásamt framburðum vitna og sakborninga ef til eru. Einnig er gott að taka fram stöðu rannsóknar og næstu skref."
+                text={formatMessage(reportForm.facts.tooltip)}
               />
             </Text>
           </Box>
           <Input
             data-testid="caseFacts"
             name="caseFacts"
-            label="Málsatvik"
-            placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+            label={formatMessage(reportForm.facts.label)}
+            placeholder={formatMessage(reportForm.facts.placeholder)}
             errorMessage={caseFactsEM}
             hasError={caseFactsEM !== ''}
             defaultValue={workingCase?.caseFacts}
@@ -113,11 +118,11 @@ const PoliceReportForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Greinargerð um lagarök{' '}
+              {formatMessage(reportForm.legalArguments.heading)}{' '}
               <Tooltip
                 placement="right"
                 as="span"
-                text="Lagarök og lagaákvæði sem eiga við brotið og kröfuna skal taka fram hér."
+                text={formatMessage(reportForm.legalArguments.tooltip)}
               />
             </Text>
           </Box>
@@ -125,8 +130,8 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             <Input
               data-testid="legalArguments"
               name="legalArguments"
-              label="Lagarök"
-              placeholder="Hver eru lagarökin fyrir kröfu um gæsluvarðhald?"
+              label={formatMessage(reportForm.legalArguments.label)}
+              placeholder={formatMessage(reportForm.legalArguments.placeholder)}
               defaultValue={workingCase?.legalArguments}
               errorMessage={legalArgumentsEM}
               hasError={legalArgumentsEM !== ''}
@@ -161,8 +166,12 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               <Box marginBottom={2}>
                 <Checkbox
                   name="request-prosecutor-only-session"
-                  label="Beiðni um dómþing að varnaraðila fjarstöddum"
-                  tooltip="Hér er hægt að setja fram kröfu um að dómþing fari fram að varnaraðila fjarstöddum sé það nauðsynlegt vegna rannsóknarhagsmuna. Með því að haka í reitinn birtist krafan neðst í skjalinu."
+                  label={formatMessage(
+                    reportForm.prosecutorOnly.checkbox.label,
+                  )}
+                  tooltip={formatMessage(
+                    reportForm.prosecutorOnly.checkbox.tooltip,
+                  )}
                   checked={workingCase.requestProsecutorOnlySession}
                   onChange={(evt) => {
                     setWorkingCase({
@@ -179,8 +188,10 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               </Box>
               <Input
                 name="prosecutor-only-session-request"
-                label="Beiðni"
-                placeholder="Er þess óskað að varnaraðili sé ekki viðstaddur dómþing?"
+                label={formatMessage(reportForm.prosecutorOnly.input.label)}
+                placeholder={formatMessage(
+                  reportForm.prosecutorOnly.input.placeholder,
+                )}
                 disabled={workingCase.requestProsecutorOnlySession === false}
                 defaultValue={workingCase.prosecutorOnlySessionRequest}
                 onChange={(event) =>
@@ -209,18 +220,20 @@ const PoliceReportForm: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={10}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Athugasemdir vegna málsmeðferðar{' '}
+                {formatMessage(reportForm.proceduralComments.heading)}{' '}
                 <Tooltip
                   placement="right"
                   as="span"
-                  text="Hér er hægt að skrá athugasemdir til dómara og dómritara um hagnýt atriði sem tengjast fyrirtökunni eða málsmeðferðinni, og eru ekki hluti af sjálfri kröfunni."
+                  text={formatMessage(reportForm.proceduralComments.tooltip)}
                 />
               </Text>
             </Box>
             <Input
               name="comments"
-              label="Athugasemdir"
-              placeholder="Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi fyrirtökuna eða málsmeðferðina?"
+              label={formatMessage(reportForm.proceduralComments.label)}
+              placeholder={formatMessage(
+                reportForm.proceduralComments.placeholder,
+              )}
               defaultValue={workingCase?.comments}
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -248,8 +261,8 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.R_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isValid}
           nextIsLoading={isLoading}
         />

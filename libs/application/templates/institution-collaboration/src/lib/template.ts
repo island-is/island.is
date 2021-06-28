@@ -10,6 +10,7 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { YES, NO } from '../constants'
+import { institutionApplicationMessages as m } from './messages'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -71,7 +72,8 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.INSTITUTION_COLLABORATION,
-  name: 'Application Application',
+  name: m.application.applicationName,
+  institution: m.application.institutionName,
   readyForProduction: true,
   dataSchema,
   stateMachineConfig: {

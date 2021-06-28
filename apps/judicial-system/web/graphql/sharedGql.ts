@@ -18,6 +18,7 @@ export const CaseQuery = gql`
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
+      defenderIsSpokesperson
       court {
         id
         name
@@ -54,6 +55,7 @@ export const CaseQuery = gql`
         name
       }
       courtCaseNumber
+      sessionArrangements
       courtDate
       courtRoom
       courtStartDate
@@ -74,7 +76,7 @@ export const CaseQuery = gql`
       custodyRestrictions
       otherRestrictions
       isolationToDate
-      additionToConclusion
+      conclusion
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision
@@ -113,41 +115,6 @@ export const CaseQuery = gql`
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
-    }
-  }
-`
-
-export const UpdateCaseMutation = gql`
-  mutation UpdateCaseMutation($input: UpdateCaseInput!) {
-    updateCase(input: $input) {
-      id
-      modified
-    }
-  }
-`
-
-export const TransitionCaseMutation = gql`
-  mutation TransitionCaseMutation($input: TransitionCaseInput!) {
-    transitionCase(input: $input) {
-      id
-      modified
-      state
-      prosecutor {
-        name
-        title
-      }
-      judge {
-        name
-        title
-      }
-    }
-  }
-`
-
-export const SendNotificationMutation = gql`
-  mutation SendNotificationMutation($input: SendNotificationInput!) {
-    sendNotification(input: $input) {
-      notificationSent
     }
   }
 `

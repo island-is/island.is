@@ -17,6 +17,9 @@ export interface ServicePortalNavigationItem {
   icon?: Pick<IconProps, 'icon' | 'type'>
   children?: ServicePortalNavigationItem[]
 
+  // Hides the child item from the navigation bar, displays the breadcrumb.
+  navHide?: boolean
+
   // These two fields are used for the MVP version of the service portal where
   // the routes are pretty uniform, this will most likely be removed in the future
   // Optional header to be displayed above the nav item in the sidebar
@@ -114,7 +117,9 @@ export interface ServicePortalModule {
    * The service portal shell will define these as routes
    * within itself and use the provided render function to render out the component
    */
-  routes: (props: ServicePortalModuleProps) => ServicePortalRoute[]
+  routes: (
+    props: ServicePortalModuleProps,
+  ) => Promise<ServicePortalRoute[]> | ServicePortalRoute[]
   /**
    * Global components will always be rendered by default
    * These are usually utility components that prompt the user about certain

@@ -67,6 +67,9 @@ export class DelegationScope extends Model<DelegationScope> {
   @BelongsTo(() => IdentityResource)
   identityResource?: any
 
+  @BelongsTo(() => Delegation)
+  delegation!: Delegation
+
   @Column({
     type: DataType.DATE,
     allowNull: false,

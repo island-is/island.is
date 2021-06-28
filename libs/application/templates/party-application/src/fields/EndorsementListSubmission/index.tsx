@@ -1,95 +1,83 @@
 import React, { FC, useState, useEffect } from 'react'
-import { coreMessages, FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
   Text,
   RadioButton,
   IconDeprecated as Icon,
+  Pagination,
 } from '@island.is/island-ui/core'
-import EndorsementTable from './EndorsementTable'
+import EndorsementTable from '../EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { Endorsement, SchemaFormValues } from '../../../src/lib/dataSchema'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { useMutation } from '@apollo/client'
 import isEqual from 'lodash/isEqual'
-import { toast } from '@island.is/island-ui/core'
-import { Constituencies } from '../../types'
-import { constituencyMapper } from '../../constants'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 import sortBy from 'lodash/sortBy'
 import cloneDeep from 'lodash/cloneDeep'
-import set from 'lodash/set'
-import { GetEndorsements } from '../../graphql/queries'
-import { useQuery } from '@apollo/client'
-
-interface EndorsementData {
-  endorsementSystemGetEndorsements?: Endorsement[]
-}
+import { Endorsement } from '../../types/schema'
+import { useEndorsements } from '../../hooks/fetch-endorsements'
+import { SchemaFormValues } from '../../../src/lib/dataSchema'
+import { useFormContext } from 'react-hook-form'
+import { paginate, totalPages as pages } from '../components/utils'
 
 const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
-  const { lang: locale, formatMessage } = useLocale()
+  const { formatMessage } = useLocale()
+  const { setValue } = useFormContext()
   const answers = application.answers as SchemaFormValues
-  const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
+  const [endorsementsPage, setEndorsementsPage] = useState<
+    Endorsement[] | undefined
+  >()
   const [selectedEndorsements, setSelectedEndorsements] = useState<
-    Endorsement[]
+    Endorsement[] | undefined
   >([])
   const [autoSelect, setAutoSelect] = useState(false)
   const [chooseRandom, setChooseRandom] = useState(false)
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
-
-  const { data: endorsementsData, refetch } = useQuery<EndorsementData>(
-    GetEndorsements,
-    {
-      variables: {
-        input: {
-          listId: endorsementListId,
-        },
-      },
-      pollInterval: 20000,
-    },
+  const { endorsements: endorsementsHook } = useEndorsements(
+    endorsementListId,
+    false,
   )
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(0)
 
+  /* on intital render: decide which radio button should be checked */
   useEffect(() => {
-    refetch()
-    const mapToEndorsementList:
-      | Endorsement[]
-      | undefined = endorsementsData?.endorsementSystemGetEndorsements?.map(
-      (x: any) => ({
-        date: x.created,
-        name: x.meta.fullName,
-        nationalId: x.endorser,
-        address: x.meta.address ? x.meta.address.streetAddress : '',
-        hasWarning: x.meta?.invalidated ?? false,
-        id: x.id,
-        bulkImported: x.meta?.bulkEndorsement ?? false,
-      }),
-    )
+    if (endorsementsHook) {
+      if (answers.endorsements && answers.endorsements.length > 0) {
+        const endorsements: any = endorsementsHook?.filter((e: any) => {
+          return answers.endorsements?.indexOf(e.id) !== -1
+        })
 
-    setEndorsements(sortBy(mapToEndorsementList, 'date'))
-  }, [endorsementsData])
+        setSelectedEndorsements(sortBy(endorsements, 'created'))
+        isEqual(endorsements, firstX())
+          ? setAutoSelect(true)
+          : setChooseRandom(true)
+      } else {
+        firstMaxEndorsements()
+        setAutoSelect(true)
+      }
+      setEndorsementsPage(endorsementsHook)
+      handlePagination(1, endorsementsHook)
+    }
+  }, [endorsementsHook])
 
-  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION, {
-    onError: (error) => {
-      // If there was an error doing the update we will deselect the endorsement
-      toast.error(formatMessage(coreMessages.updateOrSubmitError, { error }))
-      setSelectedEndorsements(answers.endorsements ?? [])
-    },
-  })
   const maxEndorsements =
-    constituencyMapper[answers.constituency as Constituencies].high
+    constituencyMapper[answers.constituency as EndorsementListTags]
+      .parliamentary_seats * 40
   const minEndorsements =
-    constituencyMapper[answers.constituency as Constituencies].low
+    constituencyMapper[answers.constituency as EndorsementListTags]
+      .parliamentary_seats * 30
   const showWarning =
-    selectedEndorsements.length > maxEndorsements ||
-    selectedEndorsements.length < minEndorsements
+    (selectedEndorsements && selectedEndorsements.length > maxEndorsements) ||
+    (selectedEndorsements && selectedEndorsements.length < minEndorsements)
   const firstX = () => {
-    const tempEndorsements = endorsements ?? []
+    const tempEndorsements = [...(endorsementsHook ?? [])]
     return tempEndorsements?.slice(0, maxEndorsements)
   }
   const shuffled = () => {
-    const tempEndorsements = sortBy(endorsements, 'date')
-    return tempEndorsements.sort(() => 0.5 - Math.random())
+    const tempEndorsements = [...(endorsementsHook ?? [])]
+    return tempEndorsements?.sort(() => 0.5 - Math.random())
   }
 
   const firstMaxEndorsements = () => {
@@ -113,61 +101,46 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
     if (selectedEndorsements?.some((e) => e.id === endorsement.id)) {
       deselectEndorsement(endorsement)
     } else {
-      const addToEndorsements = [...selectedEndorsements, endorsement]
+      const addToEndorsements = [
+        ...(selectedEndorsements ? selectedEndorsements : []),
+        endorsement,
+      ]
       setSelectedEndorsements(addToEndorsements)
       updateApplicationWithEndorsements(addToEndorsements)
     }
   }
 
   const deselectEndorsement = (endorsement: Endorsement) => {
-    const removeFromSelected = selectedEndorsements.filter(
+    const removeFromSelected = selectedEndorsements?.filter(
       (e) => e.id !== endorsement.id,
     )
-    setSelectedEndorsements([...removeFromSelected])
-    updateApplicationWithEndorsements([...removeFromSelected])
+    setSelectedEndorsements([...(removeFromSelected ? removeFromSelected : [])])
+    updateApplicationWithEndorsements([
+      ...(removeFromSelected ? removeFromSelected : []),
+    ])
   }
 
   const updateApplicationWithEndorsements = async (
     newEndorsements: Endorsement[],
   ) => {
-    const updatedAnswers = {
-      ...answers,
-      endorsements: newEndorsements,
-      endorsementsWithWarning: newEndorsements.filter((e) => e.hasWarning),
-    }
-
-    await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: {
-            ...updatedAnswers,
-          },
-        },
-        locale,
-      },
-    }).then(() => {
-      set(answers, 'endorsements', cloneDeep(newEndorsements))
-    })
+    const endorsementIds: string[] = newEndorsements.map((e) => e.id)
+    setValue('endorsements', cloneDeep(endorsementIds))
   }
 
-  /* on intital render: decide which radio button should be checked */
-  useEffect(() => {
-    if (answers.endorsements && answers.endorsements.length > 0) {
-      setSelectedEndorsements(answers.endorsements)
-      isEqual(answers.endorsements, firstX())
-        ? setAutoSelect(true)
-        : setChooseRandom(true)
-    } else {
-      firstMaxEndorsements()
-      setAutoSelect(true)
-    }
-  }, [])
+  const handlePagination = (
+    page: number,
+    endorsements: Endorsement[] | undefined,
+  ) => {
+    const sortEndorements = sortBy(endorsements, 'created')
+    setPage(page)
+    setTotalPages(pages(endorsementsHook?.length))
+    setEndorsementsPage(paginate(sortEndorements, 10, page))
+  }
 
   return (
     <Box marginBottom={8}>
       <Text>{formatMessage(m.endorsementListSubmission.description)}</Text>
-      {endorsements && endorsements.length > 0 && (
+      {endorsementsHook && endorsementsHook.length > 0 && (
         <Box>
           <Box
             marginTop={3}
@@ -180,7 +153,9 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
               id="autoSelect"
               label={
                 formatMessage(m.endorsementListSubmission.selectAuto) +
-                maxEndorsements
+                (endorsementsHook.length < maxEndorsements
+                  ? endorsementsHook.length
+                  : maxEndorsements)
               }
               checked={autoSelect}
               onChange={() => {
@@ -199,11 +174,28 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
             </Box>
           </Box>
           <EndorsementTable
-            endorsements={endorsements}
+            application={application}
+            endorsements={sortBy(endorsementsPage, 'created')}
             selectedEndorsements={selectedEndorsements}
-            onChange={(endorsement) => handleCheckboxChange(endorsement)}
-            disabled={loading}
+            onTableSelect={(endorsement) => handleCheckboxChange(endorsement)}
           />
+          {!!endorsementsHook?.length && (
+            <Box marginY={3}>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => handlePagination(page, endorsementsHook)}
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
+            </Box>
+          )}
           <Box
             marginTop={3}
             display="flex"
@@ -214,7 +206,11 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
               {formatMessage(m.endorsementListSubmission.chosenEndorsements)}
             </Text>
             <Text variant="h5">
-              {selectedEndorsements.length + '/' + maxEndorsements}
+              {selectedEndorsements?.length +
+                '/' +
+                (endorsementsHook.length < maxEndorsements
+                  ? endorsementsHook.length
+                  : maxEndorsements)}
             </Text>
           </Box>
           {showWarning && (
@@ -230,20 +226,22 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
             >
               <Icon type="alert" color="yellow600" width={26} />
               <Box marginLeft={3}>
-                {selectedEndorsements.length > maxEndorsements && (
-                  <Text fontWeight="semiBold" variant="small">
-                    {formatMessage(
-                      m.endorsementListSubmission.warningMessageTitleHigh,
-                    )}
-                  </Text>
-                )}
-                {selectedEndorsements.length < minEndorsements && (
-                  <Text fontWeight="semiBold" variant="small">
-                    {formatMessage(
-                      m.endorsementListSubmission.warningMessageTitleLow,
-                    )}
-                  </Text>
-                )}
+                {selectedEndorsements &&
+                  selectedEndorsements.length > maxEndorsements && (
+                    <Text fontWeight="semiBold" variant="small">
+                      {formatMessage(
+                        m.endorsementListSubmission.warningMessageTitleHigh,
+                      )}
+                    </Text>
+                  )}
+                {selectedEndorsements &&
+                  selectedEndorsements.length < minEndorsements && (
+                    <Text fontWeight="semiBold" variant="small">
+                      {formatMessage(
+                        m.endorsementListSubmission.warningMessageTitleLow,
+                      )}
+                    </Text>
+                  )}
                 <Text variant="small">
                   {formatMessage(
                     m.endorsementListSubmission.warningMessagePt1,

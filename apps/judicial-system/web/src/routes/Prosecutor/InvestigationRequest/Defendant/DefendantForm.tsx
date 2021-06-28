@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { ValueType } from 'react-select/src/types'
-import { Box, Input, Option, Select, Text } from '@island.is/island-ui/core'
+import { Box, Input, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
@@ -9,7 +9,7 @@ import {
 import {
   Case,
   CaseType,
-  RCaseTypes,
+  ICaseTypes,
   ReadableCaseType,
 } from '@island.is/judicial-system/types'
 import {
@@ -17,7 +17,7 @@ import {
   setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   FormSettings,
@@ -97,7 +97,7 @@ const DefendantForm: React.FC<Props> = (props) => {
             <Box marginBottom={3}>
               <Select
                 name="petition-type"
-                options={RCaseTypes as ReactSelectOption[]}
+                options={ICaseTypes as ReactSelectOption[]}
                 label="Tegund kröfu"
                 placeholder="Veldu tegund kröfu"
                 onChange={(selectedOption: ValueType<ReactSelectOption>) =>
@@ -109,10 +109,14 @@ const DefendantForm: React.FC<Props> = (props) => {
                     updateCase,
                   )
                 }
-                defaultValue={{
-                  value: CaseType[workingCase.type],
-                  label: capitalize(ReadableCaseType[workingCase.type]),
-                }}
+                defaultValue={
+                  workingCase?.id
+                    ? {
+                        value: CaseType[workingCase.type],
+                        label: capitalize(ReadableCaseType[workingCase.type]),
+                      }
+                    : undefined
+                }
                 formatGroupLabel={() => (
                   <div
                     style={{
