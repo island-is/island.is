@@ -22,6 +22,8 @@ export const ComponentRegistry = {
   NotificationsScreen: `${prefix}.screens.Notifications`,
   NotificationDetailScreen: `${prefix}.screens.NotificationDetail`,
   WebViewScreen: `${prefix}.screens.WebViewScreen`,
+  LicenseScannerScreen: `${prefix}.screens.LicenseScannerScreen`,
+  LicenseScanDetailScreen: `${prefix}.screens.LicenseScanDetailScreen`,
 
   // ui components
   AndroidSearchBar: `${prefix}.ui.AndroidSearchBar`,
@@ -31,6 +33,7 @@ export const ButtonRegistry = {
   UserButton: `${prefix}.button.UserButton`,
   NotificationsButton: `${prefix}.button.NotificationsButton`,
   ShareButton: `${prefix}.button.ShareButton`,
+  ScanLicenseButton: `${prefix}.button.ScanLicenseButton`,
 }
 
 export const StackRegistry = {
@@ -38,6 +41,7 @@ export const StackRegistry = {
   InboxStack: `${prefix}.stack.InboxStack`,
   HomeStack: `${prefix}.stack.HomeStack`,
   WalletStack: `${prefix}.stack.WalletStack`,
+  LicenseScannerStack: `${prefix}.stack.LicenseScannerStack`,
 };
 
 

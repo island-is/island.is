@@ -16,7 +16,6 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
 import {
   IGenericLicenseDataField,
@@ -28,7 +27,6 @@ import {
   GET_GENERIC_LICENSE_QUERY,
 } from '../../graphql/queries/get-license.query'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
-import { getMockLicenseItem } from '../wallet/wallet'
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -149,8 +147,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const data: IGenericUserLicense = {
     ...licenseRes.data?.genericLicense,
     ...item,
-    ...getMockLicenseItem(intl),
-  }
+  };
 
   const onAddPkPass = () => {
     PassKit.canAddPasses().then((result: boolean) => {

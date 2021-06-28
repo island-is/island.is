@@ -11,7 +11,7 @@ import { Image, SafeAreaView } from 'react-native'
 import { useTheme } from 'styled-components/native'
 import leJobss4 from '../../assets/illustrations/le-jobs-s4.png'
 import { IApplication } from '../../graphql/fragments/application.fragment'
-import { useIntl } from '../../lib/intl'
+import { useIntl } from 'react-intl'
 import { openBrowser } from '../../lib/rn-island'
 import { config } from '../../utils/config'
 

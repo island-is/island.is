@@ -37,6 +37,8 @@ interface FieldProps {
   style?: any
 }
 
+const isJSONDate = (str: string) => str && !!str.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
+
 export function Field({
   label,
   value,
@@ -45,7 +47,7 @@ export function Field({
   size = 'small',
   style,
 }: FieldProps) {
-  const isDate = value && value instanceof Date;
+  const isDate = value && (value instanceof Date || isJSONDate(value));
 
   return (
     <Host compact={compact} style={style}>

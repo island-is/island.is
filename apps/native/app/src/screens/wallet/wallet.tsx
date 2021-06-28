@@ -33,6 +33,7 @@ import { usePreferencesStore } from '../../stores/preferences-store'
 import { LicenseStatus, LicenseType } from '../../types/license-type'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
+import { ButtonRegistry } from '../../utils/component-registry'
 
 const {
   useNavigationOptions,
@@ -44,6 +45,12 @@ const {
         text: intl.formatMessage({ id: 'wallet.screenTitle' }),
       },
       rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+      leftButtons: [{
+        id: ButtonRegistry.ScanLicenseButton,
+        testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
+        icon: require('../../assets/icons/navbar-scan.png'),
+        color: theme.color.blue400
+      }],
     },
     bottomTab: {
       iconColor: theme.color.blue400,
@@ -53,7 +60,6 @@ const {
     },
   }),
   {
-    topBar: {},
     bottomTab: {
       testID: testIDs.TABBAR_TAB_WALLET,
       iconInsets: {
@@ -209,6 +215,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useEffect(() => {
     if (!res.loading) {
+      console.log(res.error);
       if (res.error) {
         // overwrite thing with mock user license
         setLicenseItems([getMockLicenseItem(intl)])

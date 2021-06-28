@@ -7,7 +7,7 @@ import {
 import messaging from '@react-native-firebase/messaging'
 import React from 'react'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { FormattedMessage, useIntl } from '../../lib/intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'

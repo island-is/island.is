@@ -2,7 +2,7 @@ import { Heading, NotificationCard } from '@island.is/island-ui-native'
 import React, { useCallback } from 'react'
 import { SafeAreaView } from 'react-native'
 import { navigateToNotification } from '../../lib/deep-linking'
-import { useIntl } from '../../lib/intl'
+import { useIntl } from 'react-intl'
 import {
   Notification,
   actionsForNotification,

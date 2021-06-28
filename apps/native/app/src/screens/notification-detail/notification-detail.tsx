@@ -12,7 +12,7 @@ import {
 } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
-import { useIntl } from '../../lib/intl'
+import { useIntl } from 'react-intl'
 import {
   actionsForNotification,
   useNotificationsStore,

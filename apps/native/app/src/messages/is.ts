@@ -5,6 +5,12 @@ export const is = {
   'login.loginButtonText': 'Skrá inn',
   'login.languageButtonText': 'English',
   'login.needHelpButtonText': 'Þarftu aðstoð?',
+  'login.outdatedBrowserTitle': 'Gamall vafri',
+  'login.outdatedBrowserMessage': 'Vafrinn þinn er of gamall, vinsamlegast uppfærið hann í gegnum Play Store',
+  'login.outdatedBrowserUpdateButton': 'Uppfæra',
+  'login.outdatedBrowserCancelButton': 'Hætta við',
+  'login.networkErrorTitle': 'Villa kom upp',
+  'login.networkErrorMessage': '\nEkki náðist samband við innskráningarþjónustu.\n\nVinsamlegast athugið netsamband á tækinu eða reynið aftur síðar.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
@@ -145,6 +151,13 @@ export const is = {
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
+
+  // license scanner
+  'licenseScanner.title': 'Ökuskírteina skanni',
+  'licenseScanner.helperMessage': 'Snúðu símanum að strikamerkinu',
+  'licenseScanner.awaitingPermission': 'Bið um leyfi til að nota myndavél',
+  'licenseScanner.noCameraAccess': 'Myndavél ekki aðgengileg',
+  'licenseScannerDetail.driverLicenseNumber': 'Númer ökuskírteinis',
 
   // notifications
   'notifications.screenTitle': 'Tilkynningar',

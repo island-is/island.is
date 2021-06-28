@@ -6,6 +6,12 @@ export const en: TranslatedMessages = {
   'login.loginButtonText': 'Login',
   'login.languageButtonText': 'Íslenska',
   'login.needHelpButtonText': 'Need help?',
+  'login.outdatedBrowserTitle': 'Outdated browser',
+  'login.outdatedBrowserMessage': 'You have an unsupported browser version, please update it through the Play Store.',
+  'login.outdatedBrowserUpdateButton': 'Update',
+  'login.outdatedBrowserCancelButton': 'Cancel',
+  'login.networkErrorTitle': 'Network error',
+  'login.networkErrorMessage': '\nCould not contact the login service.\n\nPlease check your device internet connection or try again later.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
@@ -143,6 +149,13 @@ export const en: TranslatedMessages = {
 
   // wallet pass
   'walletPass.screenTitle': 'Pass',
+
+  // license scanner
+  'licenseScanner.title': 'Scan driver license',
+  'licenseScanner.helperMessage': 'Point device at barcode',
+  'licenseScanner.awaitingPermission': 'Asking for camera permissions',
+  'licenseScanner.noCameraAccess': 'Camera not available',
+  'licenseScannerDetail.driverLicenseNumber': 'Driver license number',
 
   // notifications
   'notifications.screenTitle': 'Notifications',

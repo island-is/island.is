@@ -28,7 +28,7 @@ import CodePush, {
   LocalPackage,
 } from '../../../../node_modules/react-native-code-push'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
-import { useIntl } from '../../lib/intl'
+import { useIntl } from 'react-intl'
 import { showPicker } from '../../lib/show-picker'
 import { authStore } from '../../stores/auth-store'
 import {

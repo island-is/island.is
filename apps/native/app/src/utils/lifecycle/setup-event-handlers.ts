@@ -115,11 +115,13 @@ export function setupEventHandlers() {
   // handle navigation topBar buttons
   Navigation.events().registerNavigationButtonPressedListener(
     ({ buttonId }) => {
-      if (buttonId === ButtonRegistry.UserButton) {
-        navigateTo('/user')
-      }
-      if (buttonId === ButtonRegistry.NotificationsButton) {
-        navigateTo('/notifications')
+      switch (buttonId) {
+        case ButtonRegistry.UserButton:
+          return navigateTo('/user');
+        case ButtonRegistry.NotificationsButton:
+          return navigateTo('/notifications')
+        case ButtonRegistry.ScanLicenseButton:
+          return navigateTo('/license-scanner');
       }
     },
   )

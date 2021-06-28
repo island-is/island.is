@@ -53,7 +53,11 @@ if (__DEV__) {
 }
 
 // ignore expo warnings
-LogBox.ignoreLogs([/^Constants\.manifest is null/, /RCTRootView cancelTouches/])
+LogBox.ignoreLogs([
+  /^Constants\.manifest is null/,
+  /RCTRootView cancelTouches/,
+  /toggling bottomTabs visibility is deprecated on iOS/,
+])
 
 // set default timezone
 if (!!(global as any).HermesInternal) {
@@ -74,14 +78,14 @@ export function setupGlobals() {
     KeyboardManager.setToolbarPreviousNextButtonEnable(true)
 
     // quick actions
-    setupQuickActions();
+    setupQuickActions()
   }
 
   // set NSUserDefaults
   if (Platform.OS === 'ios') {
     Settings.set({
       version_preference: config.constants.nativeAppVersion,
-      build_preference: config.constants.nativeBuildVersion
-    });
+      build_preference: config.constants.nativeBuildVersion,
+    })
   }
 }
