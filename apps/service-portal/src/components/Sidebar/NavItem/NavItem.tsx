@@ -8,6 +8,7 @@ interface Props {
   path?: ServicePortalPath
   icon?: Pick<IconProps, 'icon' | 'type'>
   active: boolean
+  enabled?: boolean
   external?: boolean
   variant?: 'blue' | 'blueberry'
   onClick?: () => void
@@ -16,6 +17,7 @@ interface Props {
 const NavItemContent: FC<Props> = ({
   icon,
   active,
+  enabled,
   onClick,
   variant = 'blue',
   children,
@@ -25,9 +27,9 @@ const NavItemContent: FC<Props> = ({
       display="flex"
       alignItems="center"
       justifyContent="spaceBetween"
-      cursor="pointer"
+      cursor={ enabled === false ? undefined : "pointer"}
       position="relative"
-      onClick={onClick}
+      onClick={enabled === false ? undefined : onClick}
       className={styles.navItem}
     >
       <Box display="flex" height="full" alignItems="center">
@@ -37,8 +39,9 @@ const NavItemContent: FC<Props> = ({
               type={icon.type}
               icon={icon.icon}
               size="medium"
-              color={
-                active
+              color={ enabled === false 
+                ? 'dark200'
+                : active
                   ? variant === 'blue'
                     ? 'blue600'
                     : 'blueberry600'
@@ -51,7 +54,11 @@ const NavItemContent: FC<Props> = ({
         ) : null}
         <Text
           fontWeight={active ? 'semiBold' : 'regular'}
-          color={variant === 'blue' ? 'blue600' : 'blueberry600'}
+          color={ enabled === false 
+            ? 'dark200'
+            : variant === 'blue'
+              ? 'blue600'
+              : 'blueberry600'}
         >
           {children}
         </Text>
@@ -66,9 +73,13 @@ const NavItem: FC<Props> = (props) => {
       <NavItemContent {...props} />
     </a>
   ) : props.path ? (
+    props.enabled === false ? (
+      <NavItemContent {...props} />
+    ) : (
     <Link to={props.path}>
       <NavItemContent {...props} />
     </Link>
+    )
   ) : (
     <NavItemContent {...props} />
   )

@@ -39,6 +39,7 @@ const RouteLoader: FC<{
 }> = React.memo(({ routes, userInfo, client }) => (
   <Switch>
     {routes.map((route) => (
+      route.enabled === false ? ( null ) : (
       <Route
         path={route.path}
         exact
@@ -47,6 +48,7 @@ const RouteLoader: FC<{
           <RouteComponent route={route} userInfo={userInfo} client={client} />
         )}
       />
+      )
     ))}
     {routes.length > 0 && <Route component={NotFound} />}
   </Switch>
