@@ -38,7 +38,7 @@ export interface Application {
   bankNumber?: string
   ledger?: string
   accountNumber?: string
-  interview: boolean
+  interview?: boolean
   employmentCustom?: string
   homeCircumstancesCustom?: string
   studentCustom?: string
