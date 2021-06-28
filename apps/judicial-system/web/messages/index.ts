@@ -1,3 +1,4 @@
+export * from './caseFiles'
 export * from './defendantInfo'
 export * from './defenderInfo'
 export * from './login'

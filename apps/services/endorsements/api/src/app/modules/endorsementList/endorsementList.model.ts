@@ -8,7 +8,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Endorsement } from '../endorsement/endorsement.model'
+import { Endorsement } from '../endorsement/models/endorsement.model'
 import { EndorsementMetaField } from '../endorsementMetadata/types'
 import { ValidationRuleDto } from './dto/validationRule.dto'
 import { EndorsementTag } from './constants'

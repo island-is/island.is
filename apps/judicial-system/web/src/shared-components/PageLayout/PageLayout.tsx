@@ -57,22 +57,36 @@ const PageLayout: React.FC<PageProps> = ({
   const { user } = useContext(UserContext)
 
   const caseResult = () => {
-    if (
+    const decisionIsRejecting =
       decision === CaseDecision.REJECTING ||
       parentCaseDecision === CaseDecision.REJECTING
-    ) {
-      return 'Kröfu hafnað'
-    } else if (
+
+    const decisionIsAccepting =
       decision === CaseDecision.ACCEPTING ||
       parentCaseDecision === CaseDecision.ACCEPTING
-    ) {
-      return isValidToDateInThePast
-        ? 'Gæsluvarðhaldi lokið'
-        : 'Gæsluvarðhald virkt'
-    } else if (
+
+    const decisionIsAcceptingAlternativeTravelBan =
       decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
       parentCaseDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-    ) {
+
+    const isInvestigationCase =
+      caseType !== CaseType.CUSTODY && caseType !== CaseType.TRAVEL_BAN
+
+    if (decisionIsRejecting) {
+      if (isInvestigationCase) {
+        return 'Kröfu um rannsóknarheimild hafnað'
+      } else {
+        return 'Kröfu hafnað'
+      }
+    } else if (decisionIsAccepting) {
+      if (isInvestigationCase) {
+        return 'Krafa um rannsóknarheimild samþykkt'
+      } else {
+        return isValidToDateInThePast
+          ? 'Gæsluvarðhaldi lokið'
+          : 'Gæsluvarðhald virkt'
+      }
+    } else if (decisionIsAcceptingAlternativeTravelBan) {
       return isValidToDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
     } else {
       return 'Niðurstaða'
