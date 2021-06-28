@@ -31,6 +31,7 @@ export class DelegationsController {
     return this.delegationsService.findAllTo(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
+      environment.nationalRegistry.authMiddlewareOptions,
     )
   }
 
