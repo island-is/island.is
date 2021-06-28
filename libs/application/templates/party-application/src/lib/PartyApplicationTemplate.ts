@@ -11,8 +11,33 @@ import {
 import { dataSchema } from './dataSchema'
 import { assign } from 'xstate'
 import { ApiModuleActions, States, Roles } from '../constants'
-import { EndorsementListTags, constituencyMapper } from '../constants'
+import { EndorsementListTags } from '../constants'
 
+const assignees = (constituency: EndorsementListTags) => {
+  switch (constituency) {
+    case 'partyApplicationReykjavikurkjordaemiSudur2021': {
+      return process.env.RVK_SOUTH_ASSIGNEES?.split(',') ?? []
+    }
+    case 'partyApplicationReykjavikurkjordaemiNordur2021': {
+      return process.env.RVK_NORTH_ASSIGNEES?.split(',') ?? []
+    }
+    case 'partyApplicationSudvesturkjordaemi2021': {
+      return process.env.SOUTH_WEST_ASSIGNEES?.split(',') ?? []
+    }
+    case 'partyApplicationNordvesturkjordaemi2021': {
+      return process.env.NORTH_WEST_ASSIGNEES?.split(',') ?? []
+    }
+    case 'partyApplicationNordausturkjordaemi2021': {
+      return process.env.NORTH_ASSIGNEES?.split(',') ?? []
+    }
+    case 'partyApplicationSudurkjordaemi2021': {
+      return process.env.SOUTH_ASSIGNEES?.split(',') ?? []
+    }
+    default: {
+      return []
+    }
+  }
+}
 type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
@@ -280,10 +305,9 @@ const PartyApplicationTemplate: ApplicationTemplate<
           ...context,
           application: {
             ...context.application,
-            assignees:
-              constituencyMapper[
-                context.application.answers.constituency as EndorsementListTags
-              ].assignees,
+            assignees: assignees(
+              context.application.answers.constituency as EndorsementListTags,
+            ),
           },
         }
       }),
