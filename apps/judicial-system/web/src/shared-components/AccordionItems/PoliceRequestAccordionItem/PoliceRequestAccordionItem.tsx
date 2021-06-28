@@ -23,10 +23,16 @@ interface Props {
 const PoliceRequestAccordionItem: React.FC<Props> = ({
   workingCase,
 }: Props) => {
+  const isInvestigationCase =
+    workingCase.type !== CaseType.CUSTODY &&
+    workingCase.type !== CaseType.TRAVEL_BAN
+
   return (
     <AccordionItem
       id="id_1"
-      label={`Krafa um ${caseTypes[workingCase.type]}`}
+      label={`Krafa um ${
+        isInvestigationCase ? 'rannsóknarheimild' : caseTypes[workingCase.type]
+      }`}
       labelVariant="h3"
     >
       <Box marginBottom={2}>
@@ -87,28 +93,33 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
           <Text>{workingCase.legalBasis}</Text>
         )}
       </AccordionListItem>
-      <Box marginBottom={1}>
-        <Text variant="h5">{`Takmarkanir og tilhögun ${
-          workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-        }`}</Text>
-      </Box>
-      <Box marginBottom={4}>
-        <Text>
-          {formatRequestedCustodyRestrictions(
-            workingCase.type,
-            workingCase.requestedCustodyRestrictions,
-            workingCase.requestedOtherRestrictions,
-          )
-            .split('\n')
-            .map((requestedCustodyRestriction, index) => {
-              return (
-                <span key={index} className={styles.block}>
-                  <Text as="span">{requestedCustodyRestriction}</Text>
-                </span>
+      {(workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.TRAVEL_BAN) && (
+        <>
+          <Box marginBottom={1}>
+            <Text variant="h5">{`Takmarkanir og tilhögun ${
+              workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
+            }`}</Text>
+          </Box>
+          <Box marginBottom={4}>
+            <Text>
+              {formatRequestedCustodyRestrictions(
+                workingCase.type,
+                workingCase.requestedCustodyRestrictions,
+                workingCase.requestedOtherRestrictions,
               )
-            })}
-        </Text>
-      </Box>
+                .split('\n')
+                .map((requestedCustodyRestriction, index) => {
+                  return (
+                    <span key={index} className={styles.block}>
+                      <Text as="span">{requestedCustodyRestriction}</Text>
+                    </span>
+                  )
+                })}
+            </Text>
+          </Box>
+        </>
+      )}
       <Box marginBottom={2}>
         <Text variant="h4" as="h4">
           Greinargerð um málsatvik og lagarök
