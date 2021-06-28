@@ -101,7 +101,8 @@ const devConfig = {
     memberCode: process.env.XROAD_TJODSKRA_MEMBER_CODE ?? '10001',
     apiPath:
       process.env.XROAD_TJODSKRA_API_PATH ?? '/SKRA-Protected/Einstaklingar-v1',
-    clientId: process.env.XROAD_CLIENT_ID ?? 'DEV/GOV/10000/island-is-client',
+    clientId:
+      process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
   },
   paymentDomain: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
