@@ -198,7 +198,7 @@ application-system-api:
       cpu: 100m
       memory: 256Mi
   secrets:
-    ARK_BASE_URL: /k8s/application-system-api/ARK_ENDPOINT
+    ARK_BASE_URL: /k8s/application-system-api/ARK_BASE_URL
     AUTH_JWT_SECRET: /k8s/application-system/api/AUTH_JWT_SECRET
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
     CONTENTFUL_ACCESS_TOKEN: /k8s/api/CONTENTFUL_ACCESS_TOKEN
