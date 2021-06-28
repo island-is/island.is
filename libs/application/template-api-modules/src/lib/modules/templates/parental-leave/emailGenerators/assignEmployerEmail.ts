@@ -58,7 +58,7 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
         {
           component: 'Copy',
           context: {
-            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú smellt neðan.`,
+            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú smellt á takkann hér fyrir neðan.`,
           },
         },
         {
@@ -69,7 +69,7 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
           },
         },
         { component: 'Copy', context: { copy: 'Með kveðju,' } },
-        { component: 'Copy', context: { copy: 'Fæðingarorlofssjóðsjóður' } },
+        { component: 'Copy', context: { copy: 'Fæðingarorlofssjóður' } },
       ],
     },
   }

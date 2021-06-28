@@ -59,7 +59,7 @@ export const generateApplicationApprovedByEmployerEmail: EmailTemplateGenerator 
           },
         },
         { component: 'Copy', context: { copy: 'Með kveðju,' } },
-        { component: 'Copy', context: { copy: 'Fæðingarorlofssjóðsjóður' } },
+        { component: 'Copy', context: { copy: 'Fæðingarorlofssjóður' } },
       ],
     },
   }

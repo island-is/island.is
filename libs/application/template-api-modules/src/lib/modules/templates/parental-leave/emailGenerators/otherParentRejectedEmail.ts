@@ -58,7 +58,8 @@ export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
         {
           component: 'Copy',
           context: {
-            copy: 'Til þess að skoða umsókn þína getur þú smellt neðan.',
+            copy:
+              'Til þess að skoða umsókn þína getur þú smellt á takkann hér fyrir neðan.',
           },
         },
         {
