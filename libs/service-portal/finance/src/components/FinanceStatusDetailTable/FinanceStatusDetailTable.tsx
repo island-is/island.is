@@ -19,11 +19,13 @@ import * as styles from './FinanceStatusDetailTable.treat'
 interface Props {
   organization: FinanceStatusOrganizationType
   financeStatusDetails: FinanceStatusDetailsType
+  token: string
 }
 
 const FinanceStatusDetailTable: FC<Props> = ({
   organization,
   financeStatusDetails,
+  token,
 }) => {
   const { downloadSheet } = downloadXlsxDocument()
   const { formatMessage } = useLocale()
@@ -60,6 +62,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                     downloadSheet({
                       headers: gjoldSundurlidunHeaders,
                       data: exportGjoldSundurlidunXSLX(financeStatusDetails),
+                      token: token,
                     })
                   }
                   preTextIconType="filled"

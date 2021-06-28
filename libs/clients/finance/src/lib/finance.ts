@@ -151,10 +151,12 @@ export class FinanceService extends RESTDataSource {
   async getExcelDocument(
     sheetHeaders: (string | number)[],
     sheetData: (string | number)[][],
+    token: string,
   ): Promise<any> {
     const excelData = {
       headers: sheetHeaders,
       data: sheetData,
+      __accessToken: token,
     }
 
     try {

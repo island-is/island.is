@@ -91,6 +91,10 @@ export class FinanceResolver {
 
   @Query(() => graphqlTypeJson)
   async getExcelDocument(@Args('input') input: ExcelSheetInput) {
-    return this.FinanceService.getExcelDocument(input.headers, input.data)
+    return this.FinanceService.getExcelDocument(
+      input.headers,
+      input.data,
+      input.token,
+    )
   }
 }

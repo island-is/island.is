@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
@@ -37,7 +38,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
 
-const FinanceTransactions = () => {
+const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
   const { downloadSheet } = downloadXlsxDocument()
@@ -121,6 +122,7 @@ const FinanceTransactions = () => {
                           downloadSheet({
                             headers: greidsluStadaHeaders,
                             data: exportHreyfingarXSLX(recordsDataArray),
+                            token: userInfo.access_token,
                           })
                         }
                       />

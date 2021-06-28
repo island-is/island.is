@@ -33,6 +33,7 @@ export const downloadXlsxDocument = () => {
         input: {
           headers: xlsx.headers,
           data: xlsx.data,
+          token: xlsx.token,
         },
       },
     })
