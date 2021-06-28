@@ -7,6 +7,7 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
+import { ParentalLeaveForm } from '@island.is/application/templates/parental-leave'
 
 import {
   convertFormToScreens,
@@ -121,6 +122,14 @@ describe('reducerUtils', () => {
       )
       expect(findCurrentScreen(screens, { person: [] })).toBe(2)
       expect(findCurrentScreen(screens, { first: 'asdf' })).toBe(2)
+    })
+
+    it('should be able to find the current screen within a complex forms', () => {
+      const res = findCurrentScreen(ParentalLeaveForm.children as FormScreen[], {
+        'applicant.email': 'test@google.com'
+      })
+
+      console.log('-res', res);
     })
   })
 

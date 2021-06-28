@@ -37,6 +37,56 @@ export const findCurrentScreen = (
   let missingAnswerBeforeCurrentIndex = false
   let currentAnswerIndex = 0
 
+  for (const [index, screen] of screens.entries()) {
+    if (screen.type === FormItemTypes.MULTI_FIELD) {
+      let numberOfAnsweredQuestionsInScreen = 0
+
+      screen.children.forEach((field) => {
+        if (getValueViaPath(answers, field.id) !== undefined) {
+          numberOfAnsweredQuestionsInScreen++
+        }
+      })
+
+      if (numberOfAnsweredQuestionsInScreen === screen.children.length) {
+        currentScreen = index + 1
+      } else if (numberOfAnsweredQuestionsInScreen > 0) {
+        currentScreen = index
+      }
+    } else if (screen.type === FormItemTypes.REPEATER) {
+      if (getValueViaPath(answers, screen.id) !== undefined) {
+        currentScreen = index
+      }
+    } else if (screen.id) {
+      if (
+        getValueViaPath(answers, screen.id) === undefined &&
+        index > currentAnswerIndex
+      ) {
+        missingAnswerBeforeCurrentIndex = true
+        currentAnswerIndex = index
+      }
+
+      if (
+        !missingAnswerBeforeCurrentIndex &&
+        getValueViaPath(answers, screen.id) !== undefined
+      ) {
+        currentScreen = index + 1
+        currentAnswerIndex = index
+      }
+    }
+  }
+
+  return Math.min(currentScreen, screens.length - 1)
+}
+
+/*
+export const findCurrentScreen = (
+  screens: FormScreen[],
+  answers: FormValue,
+): number => {
+  let currentScreen = 0
+  let missingAnswerBeforeCurrentIndex = false
+  let currentAnswerIndex = 0
+
   screens.forEach((screen, index) => {
     if (screen.type === FormItemTypes.MULTI_FIELD) {
       let numberOfAnsweredQuestionsInScreen = 0
@@ -77,6 +127,7 @@ export const findCurrentScreen = (
 
   return Math.min(currentScreen, screens.length - 1)
 }
+*/
 
 export const moveToScreen = (
   screens: FormScreen[],
