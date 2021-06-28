@@ -5,7 +5,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
-import { Endorsement } from '../endorsement/endorsement.model'
+import { Endorsement } from '../endorsement/models/endorsement.model'
 
 interface createInput extends EndorsementListDto {
   owner: string

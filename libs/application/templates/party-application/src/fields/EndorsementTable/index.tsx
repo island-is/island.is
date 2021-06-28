@@ -11,6 +11,8 @@ import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
 import { Endorsement } from '../../types/schema'
+import { Application } from '@island.is/application/core'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 const formatDate = (date: string) => {
   try {
@@ -21,24 +23,37 @@ const formatDate = (date: string) => {
 }
 
 interface EndorsementTableProps {
+  application: Application
   endorsements?: Endorsement[]
   selectedEndorsements?: Endorsement[]
-  onChange: (endorsement: Endorsement) => void
+  onTableSelect?: (endorsement: Endorsement) => void
 }
 
 const EndorsementTable: FC<EndorsementTableProps> = ({
+  application,
   endorsements,
   selectedEndorsements,
-  onChange,
+  onTableSelect,
 }) => {
   const { formatMessage } = useLocale()
-
+  const withBulkImport = endorsements?.some((x) => x.meta.bulkEndorsement)
   const renderRow = (endorsement: Endorsement) => {
-    const rowBackground = endorsement.meta.invalidated
+    const voterRegionMismatch =
+      endorsement.meta.voterRegion?.voterRegionNumber !==
+      constituencyMapper[
+        application.answers.constituency as EndorsementListTags
+      ].region_number
+    const rowBackground = voterRegionMismatch
       ? 'yellow200'
       : endorsement.meta.bulkEndorsement
       ? 'roseTinted100'
       : 'white'
+    const fullAddress =
+      endorsement.meta.address.streetAddress +
+      ', ' +
+      endorsement.meta.address.postalCode +
+      ' ' +
+      endorsement.meta.address.city
 
     return (
       <T.Row key={endorsement.id}>
@@ -69,11 +84,11 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
             textAlign: 'right',
           }}
         >
-          {endorsement.meta.invalidated || endorsement.meta.bulkEndorsement ? (
+          {voterRegionMismatch ? (
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.meta.address.streetAddress}
+              {fullAddress}
               <Box marginLeft={2}>
-                {endorsement.meta.invalidated && (
+                {voterRegionMismatch && (
                   <Tooltip
                     color="blue400"
                     iconSize="medium"
@@ -82,25 +97,38 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
                     )}
                   />
                 )}
-                {endorsement.meta.bulkEndorsement && (
-                  <Icon icon="attach" color="blue400" />
-                )}
               </Box>
             </Box>
           ) : (
-            endorsement.meta.address.streetAddress
+            fullAddress
           )}
         </T.Data>
-        <T.Data
-          box={{
-            background: rowBackground,
-          }}
-        >
-          <Checkbox
-            checked={selectedEndorsements?.some((e) => e.id === endorsement.id)}
-            onChange={() => onChange(endorsement)}
-          />
-        </T.Data>
+        {withBulkImport && (
+          <T.Data
+            box={{
+              background: rowBackground,
+              textAlign: 'right',
+            }}
+          >
+            {endorsement.meta.bulkEndorsement && (
+              <Icon icon="attach" color="blue400" />
+            )}
+          </T.Data>
+        )}
+        {onTableSelect && (
+          <T.Data
+            box={{
+              background: rowBackground,
+            }}
+          >
+            <Checkbox
+              checked={selectedEndorsements?.some(
+                (e) => e.id === endorsement.id,
+              )}
+              onChange={() => onTableSelect(endorsement)}
+            />
+          </T.Data>
+        )}
       </T.Row>
     )
   }
@@ -117,7 +145,8 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
           <T.HeadData box={{ textAlign: 'right' }}>
             {formatMessage(m.endorsementList.thAddress)}
           </T.HeadData>
-          <T.HeadData></T.HeadData>
+          {withBulkImport && <T.HeadData></T.HeadData>}
+          {onTableSelect && <T.HeadData></T.HeadData>}
         </T.Row>
       </T.Head>
       <T.Body>

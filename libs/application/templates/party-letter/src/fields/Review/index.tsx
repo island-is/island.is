@@ -14,8 +14,6 @@ const Review = ({ application }: FieldBaseProps) => {
   const answers = application.answers as PartyLetter
   const { endorsements } = useEndorsements(endorsementListId, false)
   const endorsementCount = endorsements?.length ?? 0
-  const endorsementsWarningCount =
-    endorsements?.filter((x) => x.meta.invalidated)?.length ?? 0
 
   const labelMapper: Record<IDS, string> = {
     ssd: formatMessage(m.overview.responsibleParty),
@@ -53,10 +51,6 @@ const Review = ({ application }: FieldBaseProps) => {
         getValueViaPath(answers, IDS.PartyLetter) as string,
       )}
       {reviewItem(labelMapper[IDS.Endorsements], endorsementCount.toString())}
-      {reviewItem(
-        labelMapper[IDS.Warnings],
-        endorsementsWarningCount.toString(),
-      )}
       {answers.documents
         ? reviewItem(
             labelMapper[IDS.Documents],
