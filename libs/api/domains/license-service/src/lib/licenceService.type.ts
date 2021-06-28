@@ -1,13 +1,14 @@
-// export type LICENSE_TYPE = 'DRIVERS_LICENSE' // | 'HUNTING_LICENSE'
-
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
   HuntingLicense = 'HuntingLicense',
 }
+export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
 export enum GenericLicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
+  EnvironmentAgency = 'EnvironmentAgency',
 }
+export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
 
 export enum GenericUserLicenseStatus {
   Unknown = 'Unknown',
@@ -28,18 +29,6 @@ export enum GenericLicenseDataFieldType {
   Category = 'Category',
   Value = 'Value',
 }
-
-/*
-export const LICENSE_TITLES: Record<LICENSE_TYPE, string> = {
-  DRIVERS_LICENSE: 'Ökuskírteini',
-  // HUNTING_LICENSE: 'Veiðikort',
-}
-
-export const LICENSE_PROVIDERS: Record<LICENSE_TYPE, keyof typeof PROVIDERS> = {
-  DRIVERS_LICENSE: 'national-police-commissioner',
-  // HUNTING_LICENSE: 'environment-agency',
-}
-*/
 
 export type GenericLicenseProvider = {
   id: GenericLicenseProviderId
@@ -69,16 +58,6 @@ export type GenericLicenseMetadata = {
   */
 }
 
-export type GenericLicenseUserdata = {
-  status: GenericUserLicenseStatus
-}
-
-export type GenericLicenseFetch = {
-  status: GenericUserLicenseFetchStatus
-  updated: string
-}
-
-// TODO(osk) document
 export type GenericLicenseDataField = {
   type: GenericLicenseDataFieldType
   name?: string
@@ -89,13 +68,59 @@ export type GenericLicenseDataField = {
 
 export type GenericUserLicensePayload = {
   data: Array<GenericLicenseDataField>
-  rawData: any
+  rawData: unknown
+}
+
+export type GenericLicenseUserdata = {
+  status: GenericUserLicenseStatus
+}
+
+// Bit of an awkward type, it contains data from any external API, but we don't know if it's
+// too narrow or not until we bring in more licenses
+export type GenericLicenseUserdataExternal = {
+  status: GenericUserLicenseStatus
+  payload?: GenericUserLicensePayload | null
+}
+
+export type GenericLicenseFetch = {
+  status: GenericUserLicenseFetchStatus
+  updated: Date
+}
+
+export type GenericLicenseCached = {
+  data: GenericLicenseUserdata | null
+  fetch: GenericLicenseFetch
+  payload?: GenericUserLicensePayload
 }
 
 export type GenericUserLicense = {
   nationalId: string
   license: GenericLicenseMetadata & GenericLicenseUserdata
   fetch: GenericLicenseFetch
-  pkpassUrl?: string
   payload?: GenericUserLicensePayload
 }
+
+/**
+ * Interface for client services, fetches generic payload and status from a third party API.
+ * Only one license per client to start with.
+ */
+export interface GenericLicenseClient<LicenseType> {
+  // This might be cached
+  getLicense: (
+    nationalId: string,
+  ) => Promise<GenericLicenseUserdataExternal | null>
+
+  // This will never be cached
+  getLicenseDetail: (
+    nationalId: string,
+  ) => Promise<GenericLicenseUserdataExternal | null>
+
+  getPkPassUrl: (
+    nationalId: string,
+    data?: LicenseType,
+  ) => Promise<string | null>
+}
+
+export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
+
+export const CONFIG_PROVIDER = 'config_provider'

@@ -2,10 +2,11 @@ import { configure, configureMock } from '@island.is/auth/react'
 import {
   ApplicationScope,
   AuthScope,
+  TemporaryVoterRegistryScope,
   UserProfileScope,
   NationalRegistryScope,
+  EndorsementScope,
 } from '@island.is/auth/scopes'
-
 import { environment } from './environments'
 
 const userMocked = process.env.API_MOCKS === 'true'
