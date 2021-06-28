@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import {
   Box,
   Table as T,
@@ -29,12 +29,12 @@ interface EndorsementTableProps {
   onTableSelect?: (endorsement: Endorsement) => void
 }
 
-const EndorsementTable: FC<EndorsementTableProps> = ({
+export const EndorsementTable = ({
   application,
   endorsements,
   selectedEndorsements,
   onTableSelect,
-}) => {
+}: EndorsementTableProps) => {
   const { formatMessage } = useLocale()
   const withBulkImport = endorsements?.some((x) => x.meta.bulkEndorsement)
   const renderRow = (endorsement: Endorsement) => {
@@ -150,12 +150,9 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
         </T.Row>
       </T.Head>
       <T.Body>
-        {endorsements &&
-          endorsements.length &&
+        {!!endorsements?.length &&
           endorsements.map((endorsement) => renderRow(endorsement))}
       </T.Body>
     </T.Table>
   )
 }
-
-export default EndorsementTable
