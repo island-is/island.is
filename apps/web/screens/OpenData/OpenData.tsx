@@ -9,6 +9,7 @@ import {
   Text,
   Link,
   Button,
+  GridColumns,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
@@ -16,10 +17,12 @@ import {
   Section,
   StatisticsCardsSection,
   DataLinkSection,
-  SimpleBarChart
+  MixedChart,
+  SimplePieChart
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
+import { useFullscreen } from 'react-use'
 
 const OpenDataPage: Screen = () => {
   const { linkResolver } = useLinkResolver()
@@ -177,7 +180,7 @@ const OpenDataPage: Screen = () => {
               </Box>
             </GridColumn>
             <GridColumn span="7/12">
-              <SimpleBarChart/>
+              <MixedChart/>
             </GridColumn>
           </GridRow>
         </GridContainer>
@@ -185,6 +188,20 @@ const OpenDataPage: Screen = () => {
       {/* TODO: Will need to change the props so facts card get their data from a query */}
       <Section aria-labelledby="factsCardsTitle">
         <StatisticsCardsSection title="Stafrænt Ísland" />
+      </Section>
+      <Section>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span='4/12'>
+            <Box style={{height: '646px'}}>
+            <SimplePieChart />
+            </Box>
+          </GridColumn>
+          <GridColumn span='8/12'>
+            <MixedChart />
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
       </Section>
       <Section
         paddingTop={[8, 8, 6]}

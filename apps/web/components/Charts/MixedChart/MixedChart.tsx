@@ -80,7 +80,7 @@ const renderLabel = (value: string) => {
 }
 
 
-export const SimpleBarChart = () => {
+export const MixedChart = () => {
   const sorted_data = data.sort((a, b) => {return a.fund_year - b.fund_year})
     return (
       <ResponsiveContainer width="100%" height="100%">
@@ -90,7 +90,7 @@ export const SimpleBarChart = () => {
           data={sorted_data}
           margin={{
             top: 30,
-            right: 30,
+            right: 0,
             left: 20,
             bottom: 5,
           }}
@@ -109,4 +109,4 @@ export const SimpleBarChart = () => {
     )
 }
 
-export default SimpleBarChart
+export default MixedChart

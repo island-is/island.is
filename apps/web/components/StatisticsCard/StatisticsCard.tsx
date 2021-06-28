@@ -54,7 +54,7 @@ export const StatisticsCard = ({
           )}
         </Stack>
       </Box>
-      {hasImage && (
+      {hasImage && !shouldStack && (
         <Box
           position="relative"
           style={{
