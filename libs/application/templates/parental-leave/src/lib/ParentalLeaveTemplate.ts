@@ -22,6 +22,7 @@ import {
   ParentalRelations,
   NO,
   MANUAL,
+  SPOUSE,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -30,7 +31,11 @@ import {
   hasEmployer,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
-import { getOtherParentId, getSelectedChild } from '../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getOtherParentId,
+  getSelectedChild,
+} from '../lib/parentalLeaveUtils'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -97,6 +102,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        exit: 'setOtherParentIdIfSelectedSpouse',
         meta: {
           name: States.DRAFT,
           actionCard: {
@@ -642,6 +648,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers } = application
 
         unset(answers, 'tempPeriods')
+
+        return context
+      }),
+      setOtherParentIdIfSelectedSpouse: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.otherParent === SPOUSE) {
+          // Specifically persist the national registry id of the spouse
+          // into answers.otherParentId since it is used when the other
+          // parent is applying for parental leave to see if there
+          // have already been any applications created by the primary parent
+          set(
+            application.answers,
+            'otherParentId',
+            getOtherParentId(application),
+          )
+        }
 
         return context
       }),
