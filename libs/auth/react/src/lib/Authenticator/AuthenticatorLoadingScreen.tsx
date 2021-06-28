@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, LoadingIcon } from '@island.is/island-ui/core'
-import * as styles from './AuthenticatorLoadingScreen.treat'
+import * as styles from './Authenticator.treat'
 
 const AuthenticatorLoadingScreen = () => {
   return (
@@ -8,7 +8,7 @@ const AuthenticatorLoadingScreen = () => {
       display="flex"
       justifyContent="center"
       alignItems="center"
-      className={styles.wrapper}
+      className={styles.fullScreen}
       role="progressbar"
       aria-valuetext="Er að vinna í innskráningu"
     >

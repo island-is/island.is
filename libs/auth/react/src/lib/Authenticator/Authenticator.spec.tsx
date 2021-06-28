@@ -11,19 +11,24 @@ jest.mock('../userManager')
 const mockedGetUserManager = getUserManager as jest.Mock
 const mockedGetAuthSettings = getAuthSettings as jest.Mock
 
-const Wrapper: FC = ({ children }) => <MemoryRouter>{children}</MemoryRouter>
+const RootRoute: FC = ({ children }) => <MemoryRouter>{children}</MemoryRouter>
+const CallbackRoute: FC = ({ children }) => (
+  <MemoryRouter initialEntries={[mockedGetAuthSettings().redirectPath]}>
+    {children}
+  </MemoryRouter>
+)
 const Greeting = () => {
   const { userInfo } = useAuth()
   return <>Hello {userInfo?.profile.name}</>
 }
-const renderAuthenticator = () =>
+const renderAuthenticator = ({ wrapper = RootRoute } = {}) =>
   render(
     <Authenticator>
       <h2>
         <Greeting />
       </h2>
     </Authenticator>,
-    { wrapper: Wrapper },
+    { wrapper },
   )
 
 type MinimalUser = {
@@ -42,6 +47,7 @@ type MinimalUserManager = {
   getUser: jest.Mock<Promise<MinimalUser>>
   signinRedirect: jest.Mock
   signinSilent: jest.Mock
+  signinRedirectCallback: jest.Mock
 }
 
 describe('Authenticator', () => {
@@ -68,11 +74,12 @@ describe('Authenticator', () => {
       getUser: jest.fn(),
       signinRedirect: jest.fn(),
       signinSilent: jest.fn(),
+      signinRedirectCallback: jest.fn(),
     }
     mockedGetUserManager.mockReturnValue(userManager)
     mockedGetAuthSettings.mockReturnValue({
       redirectPath: '/callback',
-      redirectPathSilent: 'callback-silent',
+      redirectPathSilent: '/callback-silent',
     })
   })
 
@@ -141,5 +148,18 @@ describe('Authenticator', () => {
     // Assert
     await expectSignin()
     expect(userManager.signinSilent).toHaveBeenCalled()
+  })
+
+  it('shows error screen if signin has an error', async () => {
+    // Arrange
+    userManager.signinRedirectCallback.mockRejectedValue(
+      new Error('Test error'),
+    )
+
+    // Act
+    const { findByText } = renderAuthenticator({ wrapper: CallbackRoute })
+
+    // Assert
+    await findByText('Innskráning mistókst.')
   })
 })

@@ -140,7 +140,7 @@ export const serviceSetup = (services: {
       NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD',
       PAYMENT_XROAD_PROVIDER_ID:
         '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID',
-      PAYMENT_USERNAME: '/k8s/application-system-api/PAYMENT_USER',
+      PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER',
       PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD',
       PAYMENT_BASE_CALLBACK_URL:
         '/k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL',
