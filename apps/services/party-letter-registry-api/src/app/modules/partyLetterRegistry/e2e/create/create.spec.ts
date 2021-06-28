@@ -1,16 +1,13 @@
-import { setup } from '../../../../../../test/setup'
+import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import request from 'supertest'
-import { INestApplication } from '@nestjs/common'
-
-let app: INestApplication
-
-beforeAll(async () => {
-  app = await setup()
-})
+import { PartyLetterRegistryScope } from '@island.is/auth/scopes'
 
 describe('CreatePartyLetterRegistry', () => {
   it('POST /party-letter-registry should return error when data is invalid', async () => {
+    const app = await getAuthenticatedApp({
+      scope: [PartyLetterRegistryScope.write],
+    })
     const requestData = {
       partyLetter: 'Z',
       partyName: 'The awesome party',
@@ -27,7 +24,31 @@ describe('CreatePartyLetterRegistry', () => {
       statusCode: 400,
     })
   })
+  it('POST /party-letter-registry should return error when scope is missing', async () => {
+    const app = await getAuthenticatedApp({ scope: [] })
+    const requestData = {
+      partyLetter: 'Q',
+      partyName: 'The awesome party',
+      // eslint-disable-next-line local-rules/disallow-kennitalas
+      owner: '0101305069',
+      // eslint-disable-next-line local-rules/disallow-kennitalas
+      managers: ['0101305069'],
+    }
+    const response = await request(app.getHttpServer())
+      .post('/party-letter-registry')
+      .send(requestData)
+      .expect(403)
+
+    expect(response.body).toMatchObject({
+      ...errorExpectedStructure,
+      statusCode: 403,
+    })
+  })
   it('POST /party-letter-registry should fail to assign an existing letter', async () => {
+    const app = await getAuthenticatedApp({
+      scope: [PartyLetterRegistryScope.write],
+    })
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101305069'
     const requestData = {
       partyLetter: 'Y',
@@ -46,6 +67,10 @@ describe('CreatePartyLetterRegistry', () => {
     })
   })
   it('POST /party-letter-registry should create a new entry', async () => {
+    const app = await getAuthenticatedApp({
+      scope: [PartyLetterRegistryScope.write],
+    })
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101303019'
     const requestData = {
       partyLetter: 'V',

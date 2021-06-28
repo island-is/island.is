@@ -1,12 +1,7 @@
 name: Monorepo pipeline - pull request
 
 on:
-  pull_request:
-    paths-ignore:
-      - 'charts/**'
-      - 'infra/**'
-      - '**/infra/**'
-
+  pull_request: {}
   workflow_dispatch: {}
 
 jobs:

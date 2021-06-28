@@ -26,12 +26,13 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
   CaseType,
+  ReadableCaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
+  capitalize,
   formatDate,
   getShortRestrictionByValue,
   TIME_FORMAT,
@@ -83,34 +84,48 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
    * decided only accept an alternative travel ban and finally we
    * assume that the actual custody was accepted.
    */
-
   const titleForCase = (theCase: Case) => {
-    if (theCase.decision === CaseDecision.REJECTING) {
-      return 'Kröfu hafnað'
-    }
-
     const isTravelBan =
       theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
       theCase.type === CaseType.TRAVEL_BAN
+
+    const isInvestigationCase =
+      theCase.type !== CaseType.CUSTODY && theCase.type !== CaseType.TRAVEL_BAN
+
+    if (theCase.decision === CaseDecision.REJECTING) {
+      if (isInvestigationCase) {
+        return 'Kröfu um rannsóknarheimild hafnað'
+      } else {
+        return 'Kröfu hafnað'
+      }
+    }
 
     if (theCase.isValidToDateInThePast) {
       return isTravelBan ? 'Farbanni lokið' : 'Gæsluvarðhaldi lokið'
     }
 
-    return isTravelBan ? 'Farbann virkt' : 'Gæsluvarðhald virkt'
+    return isTravelBan
+      ? 'Farbann virkt'
+      : isInvestigationCase
+      ? 'Krafa um rannsóknarheimild samþykkt'
+      : 'Gæsluvarðhald virkt'
   }
 
   const subtitleForCase = (theCase: Case) => {
-    if (theCase.decision === CaseDecision.REJECTING) {
+    const isTravelBan =
+      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+      theCase.type === CaseType.TRAVEL_BAN
+
+    if (
+      theCase.decision === CaseDecision.REJECTING ||
+      (theCase.type !== CaseType.CUSTODY &&
+        theCase.type !== CaseType.TRAVEL_BAN)
+    ) {
       return `Úrskurðað ${formatDate(
         theCase.courtEndTime,
         'PPP',
       )} kl. ${formatDate(theCase.courtEndTime, TIME_FORMAT)}`
     }
-
-    const isTravelBan =
-      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      theCase.type === CaseType.TRAVEL_BAN
 
     if (theCase.isValidToDateInThePast) {
       return `${
@@ -245,18 +260,28 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             {
               title: 'Embætti',
               value: `${
-                workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
               }`,
             },
             { title: 'Dómstóll', value: workingCase.court?.name },
             { title: 'Ákærandi', value: workingCase.prosecutor?.name },
             { title: 'Dómari', value: workingCase.judge?.name },
+            // Conditionally add this field based on case type
+            ...(workingCase.type !== CaseType.CUSTODY &&
+            workingCase.type !== CaseType.TRAVEL_BAN
+              ? [
+                  {
+                    title: 'Tegund kröfu',
+                    value: capitalize(ReadableCaseType[workingCase.type]),
+                  },
+                ]
+              : []),
           ]}
           accusedName={workingCase.accusedName}
           accusedNationalId={workingCase.accusedNationalId}
           accusedAddress={workingCase.accusedAddress}
           defender={{
-            name: workingCase.defenderName || '',
+            name: workingCase.defenderName ?? '',
             email: workingCase.defenderEmail,
             phoneNumber: workingCase.defenderPhoneNumber,
           }}
@@ -269,29 +294,11 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           user?.role === UserRole.REGISTRAR) && (
           <Box marginBottom={7}>
             <AppealSection
-              rulingDate={workingCase.rulingDate}
-              accusedGender={
-                // Handle missing gender
-                workingCase.accusedGender ?? CaseGender.OTHER
-              }
-              accusedAppealDecision={workingCase.accusedAppealDecision}
-              prosecutorAppealDecision={workingCase.prosecutorAppealDecision}
-              accusedPostponedAppealDate={
-                workingCase.accusedPostponedAppealDate
-              }
-              prosecutorPostponedAppealDate={
-                workingCase.prosecutorPostponedAppealDate
-              }
+              workingCase={workingCase}
               setAccusedAppealDate={setAccusedAppealDate}
               setProsecutorAppealDate={setProsecutorAppealDate}
               withdrawAccusedAppealDate={withdrawAccusedAppealDate}
               withdrawProsecutorAppealDate={withdrawProsecutorAppealDate}
-              isAppealDeadlineExpired={
-                workingCase.isAppealDeadlineExpired ?? false
-              }
-              isAppealGracePeriodExpired={
-                workingCase.isAppealGracePeriodExpired ?? false
-              }
             />
           </Box>
         )}
@@ -309,7 +316,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           >
             <CaseFileList
               caseId={workingCase.id}
-              files={workingCase.files || []}
+              files={workingCase.files ?? []}
               canOpenFiles={canCaseFilesBeOpened()}
             />
           </AccordionItem>
@@ -330,7 +337,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         />
       </Box>
       {user?.role === UserRole.PROSECUTOR &&
-        user.institution?.id === workingCase.prosecutor?.institution?.id && (
+        user.institution?.id === workingCase.prosecutor?.institution?.id &&
+        (workingCase.type === CaseType.CUSTODY ||
+          workingCase.type === CaseType.TRAVEL_BAN) && (
           <Box marginBottom={9}>
             <Box marginBottom={3}>
               <Text variant="h3">

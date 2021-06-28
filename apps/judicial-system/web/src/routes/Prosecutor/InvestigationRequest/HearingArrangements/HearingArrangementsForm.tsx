@@ -103,7 +103,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={async () => await handleNextButtonClick()}
           nextIsDisabled={!isValid}
           nextIsLoading={isLoading}

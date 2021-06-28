@@ -268,7 +268,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
           nextIsDisabled={
-            !validate(workingCase.lawsBroken || '', 'empty').isValid ||
+            !validate(workingCase.lawsBroken ?? '', 'empty').isValid ||
             !requestedValidToDateIsValid ||
             !workingCase.custodyProvisions ||
             workingCase.custodyProvisions?.length === 0
