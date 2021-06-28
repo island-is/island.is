@@ -198,6 +198,49 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      // Fjarmal
+      {
+        name: defineMessage({
+          id: 'service.portal:finance',
+          defaultMessage: 'Fjármál',
+        }),
+        path: ServicePortalPath.FinanceStatus,
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:finance-status',
+              defaultMessage: 'Staða',
+            }),
+            path: ServicePortalPath.FinanceStatus,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:finance-transactions',
+              defaultMessage: 'Hreyfingar',
+            }),
+            path: ServicePortalPath.FinanceTransactions,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:finance-bills',
+              defaultMessage: 'Greiðsluseðlar og Greiðslukvittanir',
+            }),
+            path: ServicePortalPath.FinanceBills,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:finance-employee-claims',
+              defaultMessage: 'Laungreiðendakröfur',
+            }),
+            path: ServicePortalPath.FinanceEmployeeClaims,
+          },
+        ],
+        icon: {
+          type: 'outline',
+          icon: 'cellular',
+        },
+      },
+
       // Ökutæki
       {
         name: defineMessage({
@@ -213,6 +256,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       },
     ],
   },
+
   {
     name: defineMessage({
       id: 'service.portal:actions',
