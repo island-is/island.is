@@ -43,10 +43,6 @@ export const JudgeOverview: React.FC = () => {
     fetchPolicy: 'no-cache',
   })
 
-  if (workingCase?.state === CaseState.SUBMITTED && !isTransitioningCase) {
-    transitionCase(workingCase, CaseTransition.RECEIVE, setWorkingCase)
-  }
-
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
@@ -57,8 +53,24 @@ export const JudgeOverview: React.FC = () => {
     }
   }, [workingCase, setWorkingCase, data])
 
-  const handleCreateCourtCase = (workingCase: Case) => {
-    createCourtCase(workingCase, setWorkingCase, setCourtCaseNumberEM)
+  // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
+  useEffect(() => {
+    if (
+      workingCase?.courtCaseNumber &&
+      workingCase?.state === CaseState.SUBMITTED &&
+      !isTransitioningCase
+    ) {
+      transitionCase(workingCase, CaseTransition.RECEIVE, setWorkingCase)
+    }
+  }, [
+    workingCase,
+    workingCase?.courtCaseNumber,
+    isTransitioningCase,
+    transitionCase,
+  ])
+
+  const handleCreateCourtCase = async (workingCase: Case) => {
+    await createCourtCase(workingCase, setWorkingCase, setCourtCaseNumberEM)
 
     if (courtCaseNumberEM === '') {
       setCreateCourtCaseSuccess(true)
