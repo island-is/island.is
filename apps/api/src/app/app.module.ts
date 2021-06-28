@@ -16,6 +16,7 @@ import { TranslationsModule } from '@island.is/api/domains/translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
+import { IdentityModule } from '@island.is/api/domains/identity'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { HealthController } from './health.controller'
 import { environment } from './environments'
@@ -34,6 +35,8 @@ import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-r
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { AuditModule } from '@island.is/nest/audit'
 
+import { maskOutFieldsMiddleware } from './graphql.middleware'
+
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
@@ -48,6 +51,9 @@ const autoSchemaFile = environment.production
       playground,
       autoSchemaFile,
       path: '/api/graphql',
+      buildSchemaOptions: {
+        fieldMiddleware: [maskOutFieldsMiddleware],
+      },
       plugins: [
         responseCachePlugin({
           shouldReadFromCache: ({
@@ -145,6 +151,14 @@ const autoSchemaFile = environment.production
     }),
     CommunicationsModule,
     ApiCatalogueModule,
+    IdentityModule.register({
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+        user: environment.nationalRegistry.user,
+        password: environment.nationalRegistry.password,
+        host: environment.nationalRegistry.host,
+      },
+    }),
     AuthModule.register(environment.auth),
     SyslumennModule.register({
       url: environment.syslumennService.url,
