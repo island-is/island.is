@@ -151,14 +151,9 @@ export const m: MessageDir = {
       defaultMessage: 'Afrita tengil',
       description: 'Copy link title',
     },
-    nameCount: {
-      id: 'pa.application:endorsementList.name.count',
-      defaultMessage: 'nafn á lista',
-      description: 'X name on list',
-    },
     namesCount: {
       id: 'pa.application:endorsementList.names.count',
-      defaultMessage: 'nöfn á lista',
+      defaultMessage: 'meðmæli á lista',
       description: 'X names on list',
     },
     invalidSignatures: {
