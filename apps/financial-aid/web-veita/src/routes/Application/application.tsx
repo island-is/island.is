@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   LoadingDots,
   Text,
@@ -11,7 +11,7 @@ import { useRouter } from 'next/router'
 import * as styles from './application.treat'
 
 import { useQuery } from '@apollo/client'
-import { GetApplicationQuery } from '../../../graphql/sharedGql'
+import { GetApplicationQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 import {
   Application,
@@ -32,7 +32,7 @@ import {
   navigationItems,
   translateMonth,
   getTagByState,
-} from '../../utils/formHelper'
+} from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 import {
   GeneratedProfile,
@@ -41,7 +41,7 @@ import {
   Files,
   AdminLayout,
   StateModal,
-} from '../../components'
+} from '@island.is/financial-aid-web/veita/src/components'
 
 interface ApplicantData {
   application: Application

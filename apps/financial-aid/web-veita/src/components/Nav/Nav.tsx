@@ -3,16 +3,16 @@ import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import { LogoHfj } from '../'
+import { LogoHfj } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './Nav.treat'
 import cn from 'classnames'
-import { NavigationStatisticsContext } from '../NavigationStatisticsProvider/NavigationStatisticsProvider'
+import { NavigationStatisticsContext } from '@island.is/financial-aid-web/veita/src/components/NavigationStatisticsProvider/NavigationStatisticsProvider'
 
-import { useLogOut } from '../../utils/useLogOut'
+import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
 import { ApplicationState } from '@island.is/financial-aid/shared'
 
-import { navigationItems } from '../../utils/formHelper'
+import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 const Nav: React.FC = () => {
   const router = useRouter()

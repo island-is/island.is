@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
-import { api } from '../../services'
-import { AdminContext } from '../components/AdminProvider/AdminProvider'
+import { api } from '@island.is/financial-aid-web/veita/services'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 export const useLogOut = () => {
   const { setAdmin } = useContext(AdminContext)

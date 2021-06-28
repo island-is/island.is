@@ -2,12 +2,15 @@ import App, { AppProps } from 'next/app'
 import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
 import React from 'react'
-import { client } from '../graphql'
-import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
+import { client } from '@island.is/financial-aid-web/veita/graphql'
+import { withHealthchecks } from '@island.is/financial-aid-web/veita/units/Healthchecks/withHealthchecks'
 
-import { NavigationStatisticsProvider, AdminProvider } from '../src/components'
+import {
+  NavigationStatisticsProvider,
+  AdminProvider,
+} from '@island.is/financial-aid-web/veita/src/components'
 
-import '../src/styles.css'
+import '@island.is/financial-aid-web/veita/src/styles.css'
 
 class FinancialAidApplication extends App<AppProps> {
   render() {

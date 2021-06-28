@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect } from 'react'
 
-import { Nav } from '../Nav'
+import { Nav } from '@island.is/financial-aid-web/veita/src/components/Nav'
 
 import * as styles from './AdminLayout.treat'
 

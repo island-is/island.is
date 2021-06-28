@@ -6,9 +6,9 @@ import cn from 'classnames'
 
 import { useMutation } from '@apollo/client'
 
-import { UpdateApplicationMutation } from '../../../graphql/sharedGql'
+import { UpdateApplicationMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
-import { NavigationStatisticsContext } from '../NavigationStatisticsProvider/NavigationStatisticsProvider'
+import { NavigationStatisticsContext } from '@island.is/financial-aid-web/veita/src/components/NavigationStatisticsProvider/NavigationStatisticsProvider'
 
 import {
   getState,
@@ -133,7 +133,7 @@ const StateModal: React.FC<Props> = (props: Props) => {
                       saveStateApplication(application, item)
                     }}
                   >
-                    {getState[item as ApplicationState]}
+                    {getState[item]}
                   </button>
                 )
               })}

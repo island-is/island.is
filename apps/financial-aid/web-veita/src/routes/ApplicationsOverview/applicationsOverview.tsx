@@ -7,7 +7,7 @@ import {
   ApplicationsTable,
   GeneratedProfile,
   GenerateName,
-} from '../../components'
+} from '@island.is/financial-aid-web/veita/src/components'
 
 import {
   ApplicationState,
@@ -17,14 +17,14 @@ import {
 
 import format from 'date-fns/format'
 
-import { GetApplicationsQuery } from '../../../graphql/sharedGql'
+import { GetApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 import {
   navigationItems,
   calcDifferenceInDate,
   translateMonth,
   getTagByState,
-} from '../../utils/formHelper'
+} from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 interface ApplicationsProvider {
   applications?: Application[]

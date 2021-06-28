@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/client'
 import React, { createContext, useEffect, useState } from 'react'
-import { Application, ApplicationState } from '@island.is/financial-aid/shared'
+import { Application } from '@island.is/financial-aid/shared'
 
-import { GetApplicationsQuery } from '../../../graphql/sharedGql'
+import { GetApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 interface ApplicationsProvider {
   applications?: Application[]
