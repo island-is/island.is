@@ -25,7 +25,8 @@
     "logform",
     "pg-native",
     "form-data",
-    "bull"
+    "bull",
+    "pseudomap"
   ],
   "keepNames": true
 }

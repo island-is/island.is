@@ -193,8 +193,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildAsyncSelectField({
                   title: parentalLeaveFormMessages.shared.pensionFund,
                   id: 'payments.pensionFund',
-                  width: 'half',
                   loadingError: parentalLeaveFormMessages.errors.loading,
+                  isSearchable: true,
                   loadOptions: async ({ apolloClient }) => {
                     const {
                       data,
@@ -213,8 +213,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildAsyncSelectField({
                   title: parentalLeaveFormMessages.shared.union,
                   id: 'payments.union',
-                  width: 'half',
                   loadingError: parentalLeaveFormMessages.errors.loading,
+                  isSearchable: true,
                   loadOptions: async ({ apolloClient }) => {
                     const { data } = await apolloClient.query<GetUnionsQuery>({
                       query: GetUnions,
@@ -252,8 +252,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   condition: (answers) => answers.usePrivatePensionFund === YES,
                   id: 'payments.privatePensionFund',
                   title: parentalLeaveFormMessages.shared.privatePensionFund,
-                  width: 'half',
                   loadingError: parentalLeaveFormMessages.errors.loading,
+                  isSearchable: true,
                   loadOptions: async ({ apolloClient }) => {
                     const {
                       data,
@@ -274,7 +274,6 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'payments.privatePensionFundPercentage',
                   title:
                     parentalLeaveFormMessages.shared.privatePensionFundRatio,
-                  width: 'half',
                   options: [
                     { label: '2%', value: '2' },
                     { label: '4%', value: '4' },

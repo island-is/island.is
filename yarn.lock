@@ -5489,7 +5489,7 @@
     "@types/cache-manager" "*"
     "@types/ioredis" "*"
 
-"@types/cache-manager@*":
+"@types/cache-manager@*", "@types/cache-manager@3.4.0":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@types/cache-manager/-/cache-manager-3.4.0.tgz#414136ea3807a8cd071b8f20370c5df5dbffd382"
   integrity sha512-XVbn2HS+O+Mk2SKRCjr01/8oD5p2Tv1fxxdBqJ0+Cl+UBNiz0WVY5rusHpMGx+qF6Vc2pnRwPVwSKbGaDApCpw==
@@ -5772,6 +5772,11 @@
   integrity sha512-GNkDE7bTv6Sf8JbV2GksknKOsk7OznNYHSdrtvPJXO0qJ9odZig6IZKUi5RFGi6d1bf6dgIAe4uXi3DBc7069Q==
   dependencies:
     "@types/node" "*"
+
+"@types/identicon.js@2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@types/identicon.js/-/identicon.js-2.3.0.tgz#b1c8df6dbaaabf569b7b2ab3c3a32910f0ea9bc2"
+  integrity sha512-5IcozLuaUkQCjeNqS8GcgEfkWSQB1DdADhrbvmZOCAjdRPPXstR7EqKxf4xA5AfBLCZTlHudIEhVaQca3wiOpQ==
 
 "@types/ioredis@*":
   version "4.22.0"
@@ -15395,6 +15400,11 @@ icss-utils@^5.0.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/icss-utils/-/icss-utils-5.1.0.tgz#c6be6858abd013d768e98366ae47e25d5887b1ae"
   integrity sha512-soFhflCVWLfRNOPU3iv5Z9VUdT44xFRbzjLsEzSr5AQmgqPMTHdU3PMT1Cf1ssx8fLNJDA1juftYl+PUcv3MqA==
+
+identicon.js@2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/identicon.js/-/identicon.js-2.3.3.tgz#c505b8d60ecc6ea13bbd991a33964c44c1ad60a1"
+  integrity sha512-/qgOkXKZ7YbeCYbawJ9uQQ3XJ3uBg9VDpvHjabCAPp6aRMhjLaFAxG90+1TxzrhKaj6AYpVGrx6UXQfQA41UEA==
 
 identity-obj-proxy@3.0.0:
   version "3.0.0"
