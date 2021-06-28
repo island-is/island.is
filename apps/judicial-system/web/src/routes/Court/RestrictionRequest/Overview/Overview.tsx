@@ -34,22 +34,16 @@ import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import {
-  validateAndSendToServer,
-  removeTabsValidateAndSet,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import ConclusionDraft from './Components/ConclusionDraft'
 import { AnimatePresence } from 'framer-motion'
+import OverviewForm from './OverviewForm'
 
 export const JudgeOverview: React.FC = () => {
-  const [
-    courtCaseNumberErrorMessage,
-    setCourtCaseNumberErrorMessage,
-  ] = useState('')
+  const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
@@ -60,13 +54,7 @@ export const JudgeOverview: React.FC = () => {
   const id = router.query.id
 
   const { user } = useContext(UserContext)
-  const {
-    createCourtCase,
-    isCreatingCourtCase,
-    updateCase,
-    transitionCase,
-    isTransitioningCase,
-  } = useCase()
+  const { createCourtCase, transitionCase, isTransitioningCase } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -87,10 +75,10 @@ export const JudgeOverview: React.FC = () => {
     }
   }, [workingCase, setWorkingCase, data])
 
-  const handleClick = (workingCase: Case) => {
-    createCourtCase(workingCase, setWorkingCase, setCourtCaseNumberErrorMessage)
+  const handleCreateCourtCase = (workingCase: Case) => {
+    createCourtCase(workingCase, setWorkingCase, setCourtCaseNumberEM)
 
-    if (courtCaseNumberErrorMessage === '') {
+    if (courtCaseNumberEM === '') {
       setCreateCourtCaseSuccess(true)
     }
   }
@@ -109,94 +97,16 @@ export const JudgeOverview: React.FC = () => {
     >
       {workingCase ? (
         <>
+          <OverviewForm
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            handleCreateCourtCase={handleCreateCourtCase}
+            createCourtCaseSuccess={createCourtCaseSuccess}
+            setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
+            courtCaseNumberEM={courtCaseNumberEM}
+            setCourtCaseNumberEM={setCourtCaseNumberEM}
+          />
           <FormContentContainer>
-            <Box marginBottom={10}>
-              <Text as="h1" variant="h1">
-                {`Yfirlit ${
-                  workingCase.type === CaseType.CUSTODY
-                    ? 'gæsluvarðhaldskröfu'
-                    : 'farbannskröfu'
-                }`}
-              </Text>
-            </Box>
-            <Box component="section" marginBottom={6}>
-              <Box marginBottom={2}>
-                <Text as="h2" variant="h3">
-                  Málsnúmer héraðsdóms
-                </Text>
-              </Box>
-              <Box marginBottom={2}>
-                <Text>
-                  Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn
-                  málsnúmer sem er þegar til í Auði. Athugið að gögn verða
-                  sjálfkrafa vistuð á það málsnúmer sem slegið er inn.
-                </Text>
-              </Box>
-              <BlueBox>
-                <div className={styles.createCourtCaseContainer}>
-                  <Box display="flex">
-                    {workingCase.court &&
-                      IntegratedCourts.includes(workingCase.court.id) && (
-                        <div className={styles.createCourtCaseButton}>
-                          <Button
-                            size="small"
-                            onClick={() => handleClick(workingCase)}
-                            loading={isCreatingCourtCase}
-                            disabled={Boolean(workingCase.courtCaseNumber)}
-                            fluid
-                          >
-                            Stofna nýtt mál
-                          </Button>
-                        </div>
-                      )}
-                    <div className={styles.createCourtCaseInput}>
-                      <Input
-                        data-testid="courtCaseNumber"
-                        name="courtCaseNumber"
-                        label="Mál nr."
-                        placeholder="R-X/ÁÁÁÁ"
-                        size="sm"
-                        backgroundColor="white"
-                        value={workingCase.courtCaseNumber ?? ''}
-                        icon={
-                          workingCase.courtCaseNumber && createCourtCaseSuccess
-                            ? 'checkmark'
-                            : undefined
-                        }
-                        errorMessage={courtCaseNumberErrorMessage}
-                        hasError={
-                          !isCreatingCourtCase &&
-                          courtCaseNumberErrorMessage !== ''
-                        }
-                        onChange={(event) => {
-                          setCreateCourtCaseSuccess(false)
-                          removeTabsValidateAndSet(
-                            'courtCaseNumber',
-                            event,
-                            ['empty'],
-                            workingCase,
-                            setWorkingCase,
-                            courtCaseNumberErrorMessage,
-                            setCourtCaseNumberErrorMessage,
-                          )
-                        }}
-                        onBlur={(event) => {
-                          validateAndSendToServer(
-                            'courtCaseNumber',
-                            event.target.value,
-                            ['empty'],
-                            workingCase,
-                            updateCase,
-                            setCourtCaseNumberErrorMessage,
-                          )
-                        }}
-                        required
-                      />
-                    </div>
-                  </Box>
-                </div>
-              </BlueBox>
-            </Box>
             <Box component="section" marginBottom={5}>
               <InfoCard
                 data={[
