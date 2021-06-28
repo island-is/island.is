@@ -35,12 +35,6 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     setEndorsements(sortBy(endorsementsHook, 'created'))
   }, [endorsementsHook, updateOnBulkImport])
 
-  const namesCountString = formatMessage(
-    endorsementsHook && endorsementsHook.length > 1
-      ? m.endorsementList.namesCount
-      : m.endorsementList.nameCount,
-  )
-
   useEffect(() => {
     filter(searchTerm)
   }, [endorsementsHook, searchTerm])
@@ -88,7 +82,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 : 0}
             </Text>
             <Box marginLeft={1}>
-              <Text variant="default">{namesCountString}</Text>
+              <Text variant="default">{formatMessage(m.endorsementList.namesCount)}</Text>
             </Box>
           </Box>
           <Input
