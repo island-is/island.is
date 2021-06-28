@@ -150,8 +150,7 @@ const EndorsementTable: FC<EndorsementTableProps> = ({
         </T.Row>
       </T.Head>
       <T.Body>
-        {endorsements &&
-          endorsements.length &&
+        {!!endorsements?.length &&
           endorsements.map((endorsement) => renderRow(endorsement))}
       </T.Body>
     </T.Table>
