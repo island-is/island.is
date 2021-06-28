@@ -294,6 +294,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'settings',
         },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:accessControl',
+              defaultMessage: 'Aðgangsstýring',
+            }),
+            path: ServicePortalPath.SettingsAccessControl,
+          },
+        ],
       },
 
       // Mín réttindi
