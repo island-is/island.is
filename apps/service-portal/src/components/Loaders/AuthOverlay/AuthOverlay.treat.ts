@@ -1,4 +1,6 @@
 import { style } from 'treat'
+import { zIndex } from '@island.is/service-portal/constants'
+
 export const overlay = style({
   position: 'fixed',
   top: 0,
@@ -8,7 +10,7 @@ export const overlay = style({
   alignItems: 'center',
   width: '100%',
   height: '100%',
-  zIndex: 2,
+  zIndex: zIndex.authOverlay,
   backgroundColor: 'rgba(255, 255, 255, 0.8)',
   '@keyframes': {
     '0%': {
