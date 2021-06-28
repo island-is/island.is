@@ -15,6 +15,8 @@ import {
   buildDividerField,
   Form,
   FormModes,
+  DefaultEvents,
+  StaticText,
 } from '@island.is/application/core'
 import { NationalRegistryUser, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
@@ -28,12 +30,14 @@ export const application: Form = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'type',
+      id: 'externalData',
       title: m.externalDataSection,
       children: [
         buildExternalDataProvider({
-          title: 'Umsókn um fullnaðarskírteini',
+          title: m.externalDataTitle,
           id: 'approveExternalData',
+          subTitle: m.externalDataSubTitle,
+          checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
               id: 'nationalRegistry',
@@ -60,22 +64,44 @@ export const application: Form = buildForm({
               title: '',
               subTitle: '',
             }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentCatalogProvider',
+              title: '',
+            }),
           ],
         }),
       ],
     }),
+    buildSection({
+      id: 'requirements',
+      title: m.applicationEligibilityTitle,
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.eligibilityRequirementTitle,
+          children: [
+            buildCustomField({
+              title: m.eligibilityRequirementTitle,
+              component: 'EligibilitySummary',
+              id: 'eligsummary',
+            }),
+          ],
+        }),
+      ],
+    }),
+
     buildSection({
       id: 'user',
       title: m.informationSectionTitle,
       children: [
         buildMultiField({
           id: 'info',
-          title: m.informationMultiFieldTitle,
+          title: m.pickupLocationTitle,
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
-              value: ({ externalData: { nationalRegistry } }) =>
-                (nationalRegistry.data as NationalRegistryUser).fullName,
+              value: '',
             }),
             buildDividerField({
               title: '',
@@ -222,6 +248,19 @@ export const application: Form = buildForm({
           space: 1,
           description: m.overviewMultiFieldDescription,
           children: [
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: m.orderDrivingLicense,
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.continue,
+                  type: 'primary',
+                },
+              ],
+            }),
             buildKeyValueField({
               label: m.overviewSubType,
               value: ({ answers: { subType } }) => subType as string[],
@@ -303,25 +342,16 @@ export const application: Form = buildForm({
                 return options
               },
             }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'payment',
-      title: 'Greiðsla',
-      children: [
-        buildMultiField({
-          id: 'paymentFinal',
-          title: 'Greiðsla',
-          children: [
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: 'Panta ökuskírteini',
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
+            buildDividerField({}),
+            buildKeyValueField({
+              label: m.overviewPaymentCharge,
+              value: ({ externalData }) => {
+                // needs a lot of refactoring
+                const str = Object.values(externalData.payment.data as object)
+                // more refactoring
+                return (parseInt(str[1], 10) + ' kr.') as StaticText
+              },
+              width: 'full',
             }),
           ],
         }),

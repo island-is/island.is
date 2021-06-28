@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
@@ -6,6 +8,7 @@ import {
   generateApplicationRejectedEmail,
   generateApplicationApprovedEmail,
 } from './emailGenerators'
+import { getSlugFromType } from '@island.is/application/core'
 
 type ErrorResponse = {
   errors: {
@@ -35,6 +38,7 @@ type CreatePartyLetterResponse =
 @Injectable()
 export class PartyLetterService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
@@ -89,6 +93,7 @@ export class PartyLetterService {
       .then((response) => response.json())
 
     if ('errors' in endorsementId) {
+      this.logger.error('Failed to open endorsement list', endorsementId)
       throw new Error('Failed to open endorsement list')
     }
 
@@ -116,6 +121,7 @@ export class PartyLetterService {
         }
       }
     `
+    const applicationSlug = getSlugFromType(application.typeId) as string
 
     const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
@@ -124,10 +130,17 @@ export class PartyLetterService {
           description: application.answers.partyLetter,
           endorsementMeta: ['fullName', 'address', 'signedTags'],
           tags: ['partyLetter2021'],
-          validationRules: [],
+          validationRules: [
+            {
+              type: 'minAge',
+              value: {
+                age: 18,
+              },
+            },
+          ],
           meta: {
             // to be able to link back to this application
-            applicationTypeId: application.typeId,
+            applicationTypeId: applicationSlug,
             applicationId: application.id,
           },
         },
@@ -135,6 +148,7 @@ export class PartyLetterService {
       .then((response) => response.json())
 
     if ('errors' in endorsementList) {
+      this.logger.error('Failed to open endorsement list', endorsementList)
       throw new Error('Failed to create endorsement list')
     }
 
@@ -166,6 +180,7 @@ export class PartyLetterService {
       .then((response) => response.json())
 
     if ('errors' in partyLetter) {
+      this.logger.error('Failed to register party letter', partyLetter)
       throw new Error('Failed to register party letter')
     }
 

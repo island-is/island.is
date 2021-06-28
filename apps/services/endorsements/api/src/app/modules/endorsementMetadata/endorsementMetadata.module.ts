@@ -9,7 +9,7 @@ import { NationalRegistryUserService } from './providers/nationalRegistry/nation
 import { environment } from '../../../environments'
 import { NationalRegistryApiMock } from './providers/nationalRegistry/mock/nationalRegistryApiMock'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { Endorsement } from '../endorsement/endorsement.model'
+import { Endorsement } from '../endorsement/models/endorsement.model'
 import { EndorsementSystemSignedListsService } from './providers/endorsementSystem/endorsementSystemSignedLists.service'
 import {
   Configuration,

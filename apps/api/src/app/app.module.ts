@@ -27,9 +27,11 @@ import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-reg
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
+import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
 import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
+import { AuditModule } from '@island.is/nest/audit'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -59,6 +61,7 @@ const autoSchemaFile = environment.production
       ],
     }),
     AuthDomainModule.register(environment.authPublicApi),
+    AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
@@ -170,15 +173,30 @@ const autoSchemaFile = environment.production
       xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
       xRoadClientId: environment.nationalRegistryXRoad.clientId,
     }),
+    ApiDomainsPaymentModule.register({
+      xRoadProviderId: environment.paymentDomain.xRoadProviderId,
+      xRoadBaseUrl: environment.paymentDomain.xRoadBaseUrl,
+      xRoadClientId: environment.xroad.clientId,
+      password: environment.paymentDomain.password,
+      username: environment.paymentDomain.username,
+      callbackBaseUrl: environment.paymentDomain.callbackBaseUrl,
+      callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl,
+      arkBaseUrl: environment.paymentDomain.arkBaseUrl,
+    }),
     PartyLetterRegistryModule.register({
       baseApiUrl: environment.partyLetterRegistry.baseApiUrl,
     }),
     LicenseServiceModule.register({
       xroad: {
-        xroadBaseUrl: environment.xroad.baseUrl,
-        xroadClientId: environment.xroad.clientId,
-        xroadPath: environment.drivingLicense.xroadPath,
-        drivingLicenseSecret: environment.drivingLicense.secret,
+        baseUrl: environment.xroad.baseUrl,
+        clientId: environment.xroad.clientId,
+        path: environment.drivingLicense.xroadPath,
+        secret: environment.drivingLicense.secret,
+      },
+      pkpass: {
+        apiKey: environment.pkpass.apiKey,
+        apiUrl: environment.pkpass.apiUrl,
+        secretKey: environment.pkpass.secretKey,
       },
     }),
   ],

@@ -1,20 +1,28 @@
 import { ResourcesService, IdentityResource } from '@island.is/auth-api-lib'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import type { User } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('api-scope')
-@Controller('public/identity-resources')
+@Controller('public/v1/identity-resources')
 export class IdentityResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
   @Scopes('@island.is/auth/delegations:read')
   @Get()
   @ApiOkResponse({ type: [IdentityResource] })
-  async findIdentityResourcesWithExplicitDelegationGrant(): Promise<
-    IdentityResource[]
-  > {
-    return await this.resourcesService.findIdentityResourcesWithExplicitDelegationGrant()
+  async findIdentityResourcesWithExplicitDelegationGrant(
+    @CurrentUser() user: User,
+  ): Promise<IdentityResource[]> {
+    return this.resourcesService.findAllowedDelegationIdentityResourceListForUser(
+      user.scope,
+    )
   }
 }

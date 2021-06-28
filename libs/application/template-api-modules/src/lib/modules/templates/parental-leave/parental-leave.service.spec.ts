@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/core'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ParentalLeaveApi } from '@island.is/clients/vmst'
+import { StartDateOptions } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
 import {
@@ -106,7 +107,7 @@ describe('ParentalLeaveService', () => {
   })
 
   describe('createPeriodsDTO', () => {
-    it('should return two periods, one standard and one using the right period code', async () => {
+    it('should return 2 periods, one standard and one using the right period code', async () => {
       const application = createApplication()
       const res = await parentalLeaveService.createPeriodsDTO(
         application,
@@ -116,6 +117,42 @@ describe('ParentalLeaveService', () => {
       expect(res).toEqual([
         {
           from: '2021-05-17',
+          to: '2021-11-16',
+          ratio: 100,
+          approved: false,
+          paid: false,
+          rightsCodePeriod: null,
+        },
+        {
+          from: '2021-11-17',
+          to: '2022-01-01',
+          ratio: 100,
+          approved: false,
+          paid: false,
+          rightsCodePeriod: apiConstants.rights.receivingRightsId,
+        },
+      ])
+    })
+
+    it('should return 2 periods, one standard and mark it as ActualDateOfBirth and one using the right period code', async () => {
+      const application = createApplication()
+
+      const extendedApplication = {
+        ...application,
+        answers: {
+          ...application.answers,
+          firstPeriodStart: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+        },
+      }
+
+      const res = await parentalLeaveService.createPeriodsDTO(
+        extendedApplication,
+        nationalId,
+      )
+
+      expect(res).toEqual([
+        {
+          from: 'date_of_birth',
           to: '2021-11-16',
           ratio: 100,
           approved: false,

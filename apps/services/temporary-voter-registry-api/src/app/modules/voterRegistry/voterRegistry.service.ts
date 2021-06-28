@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { VoterRegistry } from './voterRegistry.model'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import environment from '../../../environments/environment'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class VoterRegistryService {
@@ -34,11 +34,22 @@ export class VoterRegistryService {
     return version
   }
 
-  async findByNationalId(nationalId: string): Promise<VoterRegistry | null> {
+  // we return a not registered entry when no entry is found in registry
+  getEmptyRegistryResponse = (nationalId: string): VoterRegistry =>
+    ({
+      id: '0',
+      regionNumber: 0,
+      regionName: 'Ekki á skrá',
+      nationalId: nationalId,
+    } as VoterRegistry)
+
+  async findByNationalId(nationalId: string): Promise<VoterRegistry> {
     this.logger.debug(`Finding resource for nationalId - "${nationalId}"`)
     const currentVersion = await this.getVersion()
-    return this.voterRegistryModel.findOne({
+    const response = await this.voterRegistryModel.findOne({
       where: { nationalId, version: currentVersion },
     })
+
+    return response ?? this.getEmptyRegistryResponse(nationalId)
   }
 }
