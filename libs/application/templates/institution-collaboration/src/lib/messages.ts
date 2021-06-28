@@ -7,6 +7,11 @@ export const institutionApplicationMessages = {
       defaultMessage: 'Umsókn um samstarf við Stafrænt Ísland',
       description: 'Application for collaboration with Stafrænt Ísland',
     },
+    institutionName: {
+      id: 'ia.application:application.institutionName',
+      defaultMessage: 'Stafrænt Ísland',
+      description: 'Application for collaboration institution name',
+    },
   }),
   applicant: defineMessages({
     formName: {

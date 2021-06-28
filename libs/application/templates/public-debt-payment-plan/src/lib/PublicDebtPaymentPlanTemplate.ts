@@ -32,6 +32,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN,
   name: application.name,
+  institution: application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],
