@@ -5,6 +5,8 @@ import {
   RegulationDraftId,
   DBx_LawChapter,
   DBx_Regulation,
+  DB_DraftRegulationCancel,
+  DB_DraftRegulationChange,
 } from './types-database'
 import { DraftingStatus } from './types'
 import { Regulation } from '@island.is/regulations/web'
@@ -31,6 +33,16 @@ export type RegulationDraft = {
 
 // ---------------------------------------------------------------------------
 
+export type DraftRegulationCancel = DB_DraftRegulationCancel
+
+// ---------------------------------------------------------------------------
+
+export type DraftRegulationChange = Omit<DB_DraftRegulationChange, 'text'> &
+  Pick<Regulation, 'text' | 'appendixes' | 'comments'>
+
+// ---------------------------------------------------------------------------
+
+/** List of regulations that the draft impacts (cancels or updates) */
 export type RegulationOption = (
   | {
       id: DBx_Regulation['id']

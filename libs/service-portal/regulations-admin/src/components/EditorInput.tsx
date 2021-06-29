@@ -2,10 +2,10 @@ import * as s from './EditorInput.treat'
 import { classes } from './Editor.treat'
 import React, { MutableRefObject } from 'react'
 import {
-  Editor as _Editor,
+  Editor as RegulationsEditor,
   EditorProps,
 } from '@hugsmidjan/regulations-editor/Editor'
-import { HTMLText, RegName } from '@island.is/regulations'
+import { HTMLText } from '@island.is/regulations'
 import { RegulationDraft } from '../types-api'
 
 type EditorInputProps = Omit<EditorProps, 'valueRef' | 'name'> & {
@@ -21,7 +21,11 @@ export const EditorInput = (props: EditorInputProps) => {
   return (
     <div className={s.wrap}>
       <h4 className={s.label}>{props.label}</h4>
-      <_Editor {...props} classes={classes} name={'draft-' + props.draftId} />
+      <RegulationsEditor
+        {...props}
+        classes={classes}
+        name={'draft-' + props.draftId}
+      />
     </div>
   )
 }

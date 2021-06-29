@@ -1,4 +1,9 @@
 // TODO: add link to original DOC/PDF file in Stjórnartíðindi's data store.
+
+import { FC } from 'react'
+import { MessageDescriptor } from 'react-intl'
+import { RegulationDraft } from './types-api'
+
 /** Regulations are roughly classified based on whether they contain
  * any original text/stipulations, or whether they **only**  prescribe
  * changes to other regulations.
@@ -28,3 +33,7 @@ export type UserRole = 'author' | 'editor'
 declare const _Kennitala__Brand: unique symbol
 /** Icelandic national census id number  */
 export type Kennitala = string & { [_Kennitala__Brand]: true }
+
+// ---------------------------------------------------------------------------
+
+export type Step = 'basics' | 'meta' | 'impacts' | 'review'

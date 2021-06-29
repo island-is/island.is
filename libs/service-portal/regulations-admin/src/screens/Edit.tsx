@@ -1,14 +1,20 @@
-import React, { FC, Fragment, useEffect, useState } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import React, { FC, Fragment } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { mockDraftRegulations, useMockQuery } from '../_mockData'
 import { RegulationDraft } from '../types-api'
 import { RegulationDraftId } from '../types-database'
-import { HTMLText } from '@island.is/regulations'
-import { EditBasics } from './EditBasics'
+import { EditBasics } from '../components/EditBasics'
+import { EditMeta } from '../components/EditMeta'
 import { editorMsgs } from '../messages'
+import { Step } from '../types'
+import { ButtonBar } from '../components/ButtonBar'
+import {
+  useDraftingState,
+  DraftIdFromParam,
+  steps,
+} from '../state/useDraftingState'
 import { MessageDescriptor } from 'react-intl'
 // import { gql, useQuery } from '@apollo/client'
 // import { Query } from '@island.is/api/schema'
@@ -24,42 +30,35 @@ import { MessageDescriptor } from 'react-intl'
 //   }
 // `
 
-const getEmptyDraft = (): RegulationDraft => ({
-  id: 0,
-  draftingStatus: 'draft',
-  draftingNotes: '' as HTMLText,
-  authors: [],
-  title: '',
-  text: '' as HTMLText,
-  appendixes: [],
-  comments: '' as HTMLText,
-  ministry: undefined,
-  lawChapters: [],
-})
-
-// ---------------------------------------------------------------------------
-
-type Step = 'basics' | 'meta' | 'impacts' | 'review'
-type StepComponent = (props: {
+export type StepComponent = (props: {
   draft: RegulationDraft
   new?: boolean
 }) => ReturnType<FC>
 
-const steps: Record<Step, StepComponent> = {
-  basics: EditBasics,
-  meta: () => <p>Skref 2</p>,
-  impacts: () => <p>Skref 3</p>,
-  review: () => <p>Skref 4</p>,
-}
-
-const introMsgs: Record<
+const stepData: Record<
   Step,
-  { title: MessageDescriptor; intro?: MessageDescriptor }
+  {
+    title: MessageDescriptor
+    intro?: MessageDescriptor
+    Component: StepComponent
+  }
 > = {
-  basics: { title: editorMsgs.step1Headline },
-  meta: { title: editorMsgs.step2Headline },
-  impacts: { title: editorMsgs.step3Headline },
-  review: { title: editorMsgs.step4Headline, intro: editorMsgs.step4Intro },
+  basics: {
+    title: editorMsgs.step1Headline,
+    Component: EditBasics,
+  },
+  meta: {
+    title: editorMsgs.step2Headline,
+    Component: EditMeta,
+  },
+  impacts: {
+    title: editorMsgs.step3Headline,
+    Component: () => <p>Skref 3</p>,
+  },
+  review: {
+    title: editorMsgs.step4Headline,
+    Component: () => <p>Skref 4</p>,
+  },
 }
 
 // ---------------------------------------------------------------------------
@@ -73,7 +72,7 @@ const assertStep = (maybeStep?: string): Step => {
   }
   throw new Error('Invalid RegulationDraft editing Step')
 }
-const assertDraftId = (maybeId: string): 'new' | RegulationDraftId => {
+const assertDraftId = (maybeId: string): DraftIdFromParam => {
   if (maybeId === 'new') {
     return maybeId
   }
@@ -88,60 +87,40 @@ const assertDraftId = (maybeId: string): 'new' | RegulationDraftId => {
 
 const Edit = () => {
   useNamespaces('ap.regulations-admin')
-  const { formatMessage } = useLocale()
+  const t = useLocale().formatMessage
   const params = useParams<{ id: string; step?: string }>()
-  const history = useHistory()
   const id = assertDraftId(params.id)
-  const step = assertStep(params.step)
+  const stepName = assertStep(params.step)
 
-  const isNew = id === 'new'
+  const { state, stepNav, actions } = useDraftingState(id, stepName)
+  const { loading, error, savingStatus, draft, valid, impacts } = state
 
-  const { data, loading } = useMockQuery(
-    id !== 'new' && { regulationDraft: mockDraftRegulations[id] },
-    isNew,
-  )
-  // const { data, loading } = useQuery<Query>(RegulationDraftQuery, {
-  //   variables: { id },
-  //   skip: id !== 'new',
-  // })
-
-  let regulationDraft = data ? data.regulationDraft : undefined
-
-  const [draft, setDraft] = useState(isNew ? getEmptyDraft : undefined)
-
-  useEffect(() => {
-    if (regulationDraft) {
-      setDraft(regulationDraft)
-    } else if (draft && draft.id) {
-      setDraft(getEmptyDraft())
-    }
-  }, [regulationDraft])
+  const step = stepData[stepName]
 
   if (!loading && !draft) {
     throw new Error(`Regulation ${id} not found`)
   }
 
-  const EditorStep = steps[step]
-  const txt = introMsgs[step]
-
   return (
     <Fragment key={id}>
       <Box marginBottom={[2, 2, 4]}>
         <Text as="h1" variant="h1">
-          {formatMessage(txt.title)}
+          {t(step.title)}
         </Text>
-        {txt.intro && (
+        {step.intro && (
           <Text as="p" marginTop={1}>
-            {formatMessage(txt.intro)}
+            {t(step.intro)}
           </Text>
         )}
       </Box>
 
       {draft ? (
-        <EditorStep new={id === 'new'} draft={draft} />
+        <step.Component new={id === 'new'} draft={draft} />
       ) : (
         <SkeletonLoader height={120} />
       )}
+
+      <ButtonBar stepNav={stepNav} actions={actions} />
     </Fragment>
   )
 }

@@ -1,4 +1,4 @@
-import { HTMLText, PlainText, RegName, toISODate } from '@island.is/regulations'
+import { HTMLText, RegName, toISODate } from '@island.is/regulations'
 import { startOfDay } from 'date-fns/esm'
 import { useEffect, useRef, useState } from 'react'
 import { Kennitala } from './types'
@@ -19,20 +19,35 @@ import {
 
 export const useMockQuery = <T>(data: T, skip?: boolean) => {
   const [loading, setLoading] = useState(!skip)
+  const [error, setError] = useState<Error | undefined>(undefined)
 
   const timeout = useRef<ReturnType<typeof setTimeout> | null>()
   useEffect(() => {
     const d = Math.random()
     timeout.current = setTimeout(() => {
+      if (Math.random() < 0.1) {
+        setError(new Error('Mock data loading error'))
+      }
       setLoading(false)
-    }, 1500 * d * d)
+    }, 1000 * d * d)
     return () => {
       timeout.current && clearTimeout(timeout.current)
     }
   }, [])
 
-  return loading || skip ? { loading } : { data, loading: false }
+  return loading || skip
+    ? { loading }
+    : error
+    ? { error, loading: false }
+    : { data, loading: false }
 }
+
+// ---------------------------------------------------------------------------
+
+export const mockSave = (draft: RegulationDraft) =>
+  new Promise((resolve, reject) => {
+    setTimeout(resolve, 800)
+  })
 
 // ---------------------------------------------------------------------------
 

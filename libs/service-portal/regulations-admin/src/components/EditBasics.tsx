@@ -1,9 +1,10 @@
 import React, { ReactNode, useRef } from 'react'
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, DatePicker, Input, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { EditorInput } from '../components/EditorInput'
+import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { RegulationDraft } from '../types-api'
+import { HTMLText } from '@hugsmidjan/regulations-editor/types'
 
 type WrapProps = {
   legend?: string
@@ -31,27 +32,32 @@ export type EditBasicsProps = {
 }
 
 export const EditBasics = (props: EditBasicsProps) => {
-  const { formatMessage } = useIntl()
+  const t = useIntl().formatMessage
   const { draft } = props
   const textRef = useRef(() => draft.text)
 
   return (
     <>
       <Wrap>
-        <Input
-          label={formatMessage(msg.title)}
-          name="title"
-          value={draft.title}
-        />
+        <Input label={t(msg.title)} name="title" value={draft.title} />
       </Wrap>
 
       <Wrap>
         <EditorInput
-          label={formatMessage(msg.text)}
-          baseText={draft.text}
+          label={t(msg.text)}
+          baseText={'' as HTMLText}
+          initialText={draft.text}
           isImpact={false}
           draftId={draft.id}
           valueRef={textRef}
+        />
+      </Wrap>
+
+      <Wrap>
+        <DatePicker
+          label={t(msg.idealPublishDate)}
+          placeholderText={t(msg.idealPublishDate_soon)}
+          minDate={new Date()}
         />
       </Wrap>
     </>

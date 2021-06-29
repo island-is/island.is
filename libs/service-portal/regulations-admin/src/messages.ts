@@ -36,7 +36,7 @@ export const editorMsgs = defineMessages({
 
   appendix_legend: {
     id: 'ap.regulations-admin:draft-appendix-legend',
-    defaultMessage: 'Viðauki %{idx}',
+    defaultMessage: 'Viðauki {idx}',
   },
   appendix_title: {
     id: 'ap.regulations-admin:draft-labels-appendix-title',
@@ -46,17 +46,29 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-labels-appendix-title',
     defaultMessage: 'Texti viðauka',
   },
+  appendix_open: {
+    id: 'ap.regulations-admin:draft-btn-appendix-open',
+    defaultMessage: 'Sýna',
+  },
+  appendix_close: {
+    id: 'ap.regulations-admin:draft-btn-appendix-close',
+    defaultMessage: 'Loka',
+  },
   appendix_add: {
     id: 'ap.regulations-admin:draft-btn-appendix-add',
     defaultMessage: 'Bæta við viðauka',
   },
   appendix_remove: {
     id: 'ap.regulations-admin:draft-btn-appendix-remove',
-    defaultMessage: 'Eyða viðauka',
+    defaultMessage: 'Eyða viðauka {idx}',
+  },
+  appendix_remove_confirm: {
+    id: 'ap.regulations-admin:draft-appendix-remove-confirm',
+    defaultMessage: 'Eyða endanlega viðauka {idx}?',
   },
   appendix_shiftup: {
     id: 'ap.regulations-admin:draft-btn-appendix-shiftup',
-    defaultMessage: 'Færa viðauka framar',
+    defaultMessage: 'Færa viðauka framar {idx}',
   },
 
   comments: {
@@ -251,11 +263,11 @@ export const statusMsgs: Record<
 > = defineMessages({
   draft: {
     id: 'ap.regulations-admin:status-draft',
-    defaultMessage: 'Uppkast',
+    defaultMessage: 'Uppkast í vinnslu',
   },
   proposal: {
     id: 'ap.regulations-admin:status-proposal',
-    defaultMessage: 'Til yfirlestrar',
+    defaultMessage: 'Tilbúið í yfirlestur',
   },
   shipped: {
     id: 'ap.regulations-admin:status-shipped',
@@ -264,31 +276,27 @@ export const statusMsgs: Record<
 })
 
 export const buttonsMsgs = defineMessages({
-  buttonContinue: {
+  continue: {
     id: 'ap.regulations-admin:btn-continue',
     defaultMessage: 'Halda áfram', // Næsta skref
   },
-  buttonGoBack: {
+  goBack: {
     id: 'ap.regulations-admin:btn-back',
     defaultMessage: 'Til baka',
   },
-  buttonSaveDraft: {
-    id: 'ap.regulations-admin:btn-savedraft',
-    defaultMessage: 'Vista drög',
-  },
-  buttonSaveStatus: {
+  save: {
     id: 'ap.regulations-admin:btn-savestatus',
     defaultMessage: 'Vista stöðu',
   },
-  buttonPropose: {
+  propose: {
     id: 'ap.regulations-admin:btn-propose',
     defaultMessage: 'Senda í yfirlestur',
   },
-  buttonPrepShipping: {
+  prepShipping: {
     id: 'ap.regulations-admin:btn-prepshipping',
     defaultMessage: 'Hefja útgáfuferli',
   },
-  buttonPublish: {
+  publish: {
     id: 'ap.regulations-admin:btn-publish',
     defaultMessage: 'Senda til útgáfu í stjórnartíðindum',
   },
