@@ -257,10 +257,6 @@ const textColors: BorderedColors = (main, hover, disabled) => ({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 -1px 0 0 ${main}`,
   color: main,
-  ':disabled': {
-    boxShadow: `inset 0 -1px 0 0 ${disabled}`,
-    color: disabled,
-  },
   ':focus': {
     boxShadow: `inset 0 -1px 0 0 ${theme.color.dark400}`,
   },
@@ -270,6 +266,10 @@ const textColors: BorderedColors = (main, hover, disabled) => ({
     color: hover,
   },
   selectors: {
+    '&[aria-disabled="true"]': {
+      boxShadow: `inset 0 -1px 0 0 ${disabled}`,
+      color: disabled,
+    },
     '&:focus:active': {
       backgroundColor: theme.color.transparent,
       boxShadow: `inset 0 -3px 0 0 ${theme.color.mint400}`,

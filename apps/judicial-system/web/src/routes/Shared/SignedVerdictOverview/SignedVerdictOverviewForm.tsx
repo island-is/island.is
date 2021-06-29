@@ -27,12 +27,12 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
-  ReadableCaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   capitalize,
+  caseTypes,
   formatDate,
   getShortRestrictionByValue,
   TIME_FORMAT,
@@ -272,7 +272,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               ? [
                   {
                     title: 'Tegund kröfu',
-                    value: capitalize(ReadableCaseType[workingCase.type]),
+                    value: capitalize(caseTypes[workingCase.type]),
                   },
                 ]
               : []),
