@@ -26,6 +26,10 @@ export interface ServicePortalNavigationItem {
   heading?: MessageDescriptor
   // Optional divider to be displayed above the nav item in the sidebar
   divider?: boolean
+  /**
+   * Indicates if the user has access to the navigation item
+   */
+  enabled?: boolean
 }
 
 /**
@@ -62,6 +66,10 @@ export type ServicePortalRoute = {
    * Describes the path or paths used to route to this component
    */
   path: ServicePortalPath | ServicePortalPath[]
+  /**
+   * Indicates if the user has access to the route
+   */
+  enabled?: boolean
   /**
    * The render value of this component
    */

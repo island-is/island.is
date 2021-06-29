@@ -26,7 +26,7 @@ import { IsEndorsementListOwnerValidationPipe } from '../endorsementList/pipes/i
 import { BulkEndorsementDto } from './dto/bulkEndorsement.dto'
 import { Endorsement } from './models/endorsement.model'
 import { EndorsementService } from './endorsement.service'
-import { EndorsementScope } from '@island.is/auth/scopes'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 import type { User, Auth } from '@island.is/auth-nest-tools'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 
@@ -48,7 +48,7 @@ export class EndorsementController {
     type: [Endorsement],
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementScope.read)
+  @Scopes(EndorsementsScope.main)
   @Get()
   @Audit<Endorsement[]>({
     resources: (endorsement) => endorsement.map((e) => e.id),
@@ -74,7 +74,7 @@ export class EndorsementController {
     type: Endorsement,
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementScope.read)
+  @Scopes(EndorsementsScope.main)
   @Get('/exists')
   @Audit<Endorsement>({
     resources: (endorsement) => endorsement.id,
@@ -100,7 +100,7 @@ export class EndorsementController {
     type: Endorsement,
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementScope.write)
+  @Scopes(EndorsementsScope.main)
   @Post()
   @Audit<Endorsement>({
     resources: (endorsement) => endorsement.id,
@@ -131,11 +131,9 @@ export class EndorsementController {
   @ApiBody({
     type: BulkEndorsementDto,
   })
-  @Scopes(EndorsementScope.write)
+  @Scopes(EndorsementsScope.main)
   @Post('/bulk')
   @Audit<EndorsementBulkCreate>({
-    namespace: auditNamespace,
-    action: 'bulkCreate',
     resources: (response) => response.succeeded.map((e) => e.id),
     meta: (response) => ({ count: response.succeeded.length }),
   })
@@ -164,7 +162,7 @@ export class EndorsementController {
       'Uses the authenticated users national id to remove endorsement form a given list',
   })
   @ApiParam({ name: 'listId', type: String })
-  @Scopes(EndorsementScope.write)
+  @Scopes(EndorsementsScope.main)
   @Delete()
   @HttpCode(204)
   async delete(
@@ -176,7 +174,7 @@ export class EndorsementController {
     endorsementList: EndorsementList,
     @CurrentUser() user: User,
   ): Promise<undefined> {
-    // we pass audit manually since we need a request parameter
+    // we pass audit manually since we need to use the request parameter since we don't return the endorsement list
     this.auditService.audit({
       user,
       resources: endorsementList.id,
