@@ -1,23 +1,38 @@
-import { setup } from '../../../../../../test/setup'
+import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import request from 'supertest'
-import { INestApplication } from '@nestjs/common'
-import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
-
-let app: INestApplication
-beforeAll(async () => {
-  app = await setup({
-    override: (builder) => {
-      builder
-        .overrideProvider(IdsUserGuard)
-        .useValue(new MockAuthGuard({}))
-        .compile()
-    },
-  })
-})
+import { EndorsementsScope } from '@island.is/auth/scopes'
 
 describe('CreatePartyLetterRegistry', () => {
+  it('POST /party-letter-registry should fail and return 403 error if scope is missing', async () => {
+    // eslint-disable-next-line local-rules/disallow-kennitalas
+    const nationalId = '0101302209'
+    const app = await getAuthenticatedApp({
+      scope: [],
+      nationalId,
+    })
+    const requestData = {
+      partyLetter: 'V',
+      partyName: 'The awesome party',
+      owner: nationalId,
+      managers: [nationalId],
+    }
+    const response = await request(app.getHttpServer())
+      .post('/party-letter-registry')
+      .send(requestData)
+      .expect(403)
+
+    expect(response.body).toMatchObject({
+      ...errorExpectedStructure,
+      statusCode: 403,
+    })
+  })
   it('POST /party-letter-registry should return error when data is invalid', async () => {
+    const app = await getAuthenticatedApp({
+      scope: [EndorsementsScope.main],
+      // eslint-disable-next-line local-rules/disallow-kennitalas
+      nationalId: '0101302209',
+    })
     const requestData = {
       partyLetter: 'Z',
       partyName: 'The awesome party',
@@ -37,6 +52,10 @@ describe('CreatePartyLetterRegistry', () => {
   it('POST /party-letter-registry should fail to assign an existing letter', async () => {
     // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101305069'
+    const app = await getAuthenticatedApp({
+      scope: [EndorsementsScope.main],
+      nationalId,
+    })
     const requestData = {
       partyLetter: 'Y',
       partyName: 'The awesome party',
@@ -56,6 +75,10 @@ describe('CreatePartyLetterRegistry', () => {
   it('POST /party-letter-registry should create a new entry', async () => {
     // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101303019'
+    const app = await getAuthenticatedApp({
+      scope: [EndorsementsScope.main],
+      nationalId,
+    })
     const requestData = {
       partyLetter: 'V',
       partyName: 'The awesome party',

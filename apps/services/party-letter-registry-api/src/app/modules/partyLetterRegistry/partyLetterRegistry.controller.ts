@@ -60,6 +60,7 @@ export class PartyLetterRegistryController {
     resources: (voterRegistry) => voterRegistry.partyLetter,
     meta: (voterRegistry) => ({ owner: voterRegistry.owner }),
   })
+  @Scopes(EndorsementsScope.main)
   @Post()
   async create(@Body() input: CreateDto): Promise<PartyLetterRegistry> {
     return await this.partyLetterRegistryService.create(input)
