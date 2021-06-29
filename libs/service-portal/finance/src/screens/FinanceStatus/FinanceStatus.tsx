@@ -62,6 +62,36 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
     return amountFormat(chargeTypeTotal)
   }
 
+  const onClickHandler = () => {
+    // Create form elements
+    const form = document.createElement('form')
+    const documentIdInput = document.createElement('input')
+    const tokenInput = document.createElement('input')
+
+    form.appendChild(documentIdInput)
+    form.appendChild(tokenInput)
+
+    // Form values
+    form.method = 'post'
+    // TODO: Use correct url
+    form.action = `http://localhost:3377/download/v1/xlsx`
+    form.target = '_blank'
+
+    // Document Id values
+    documentIdInput.type = 'hidden'
+    documentIdInput.name = 'serviceId'
+    documentIdInput.value = 'GetFinanceStatus'
+
+    // National Id values
+    tokenInput.type = 'hidden'
+    tokenInput.name = '__accessToken'
+    tokenInput.value = userInfo.access_token
+
+    document.body.appendChild(form)
+    form.submit()
+    document.body.removeChild(form)
+  }
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
@@ -125,13 +155,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                   <Column width="content">
                     <DropdownExport
                       onGetCSV={() => exportGreidslustadaCSV(financeStatusData)}
-                      onGetExcel={() =>
-                        downloadSheet({
-                          headers: greidsluStadaHeaders,
-                          data: exportGreidslustadaXSLX(financeStatusData),
-                          token: userInfo.access_token,
-                        })
-                      }
+                      onGetExcel={() => onClickHandler()}
                     />
                   </Column>
                 </Columns>
