@@ -10,8 +10,50 @@ import {
 } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { assign } from 'xstate'
-import { API_MODULE_ACTIONS, States, Roles } from '../constants'
+import { ApiModuleActions, States, Roles } from '../constants'
+import { EndorsementListTags } from '../constants'
 
+const assignees = (constituency: EndorsementListTags) => {
+  switch (constituency) {
+    case 'partyApplicationReykjavikurkjordaemiSudur2021': {
+      return (
+        process.env.PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS?.split(',') ??
+        []
+      )
+    }
+    case 'partyApplicationReykjavikurkjordaemiNordur2021': {
+      return (
+        process.env.PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS?.split(',') ??
+        []
+      )
+    }
+    case 'partyApplicationSudvesturkjordaemi2021': {
+      return (
+        process.env.PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS?.split(',') ??
+        []
+      )
+    }
+    case 'partyApplicationNordvesturkjordaemi2021': {
+      return (
+        process.env.PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS?.split(',') ??
+        []
+      )
+    }
+    case 'partyApplicationNordausturkjordaemi2021': {
+      return (
+        process.env.PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS?.split(',') ?? []
+      )
+    }
+    case 'partyApplicationSudurkjordaemi2021': {
+      return (
+        process.env.PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS?.split(',') ?? []
+      )
+    }
+    default: {
+      return []
+    }
+  }
+}
 type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
@@ -65,7 +107,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.CreateEndorsementList,
+            apiModuleAction: ApiModuleActions.CreateEndorsementList,
           },
           roles: [
             {
@@ -107,7 +149,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.AssignSupremeCourt,
+            apiModuleAction: ApiModuleActions.AssignSupremeCourt,
           },
           roles: [
             {
@@ -151,7 +193,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.ApplicationRejected,
+            apiModuleAction: ApiModuleActions.ApplicationRejected,
           },
           roles: [
             {
@@ -202,7 +244,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.AssignSupremeCourt,
+            apiModuleAction: ApiModuleActions.AssignSupremeCourt,
           },
           roles: [
             {
@@ -247,7 +289,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.ApplicationApproved,
+            apiModuleAction: ApiModuleActions.ApplicationApproved,
           },
           roles: [
             {
@@ -279,8 +321,9 @@ const PartyApplicationTemplate: ApplicationTemplate<
           ...context,
           application: {
             ...context.application,
-            // todo: get list of supreme court national ids
-            assignees: ['0000000000'],
+            assignees: assignees(
+              context.application.answers.constituency as EndorsementListTags,
+            ),
           },
         }
       }),
@@ -297,8 +340,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    // todo map to supreme court natioanl ids
-    if (application.assignees.includes('0000000000')) {
+    if (application.assignees.includes(nationalId)) {
       return Roles.ASSIGNEE
     }
     // TODO: Applicant can recommend his own list
