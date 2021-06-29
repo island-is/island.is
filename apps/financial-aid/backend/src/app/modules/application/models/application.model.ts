@@ -165,4 +165,11 @@ export class ApplicationModel extends Model<ApplicationModel> {
   })
   @ApiProperty({ enum: ApplicationState })
   state: ApplicationState
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  @ApiProperty()
+  amount: number
 }

@@ -24,6 +24,7 @@ export const GetApplicationQuery = gql`
       state
       formComment
       studentCustom
+      amount
     }
   }
 `
@@ -33,6 +34,7 @@ export const UpdateApplicationMutation = gql`
       id
       modified
       state
+      amount
     }
   }
 `

@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsBoolean,
   IsEnum,
+  IsNumber,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -104,4 +105,9 @@ export class CreateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly state: ApplicationState
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty()
+  readonly amount: number
 }

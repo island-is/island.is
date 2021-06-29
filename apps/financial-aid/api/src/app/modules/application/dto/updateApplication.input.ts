@@ -16,4 +16,8 @@ export class UpdateApplicationInput implements UpdateApplication {
   @Allow()
   @Field(() => String)
   readonly state!: ApplicationState
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly amount?: number
 }

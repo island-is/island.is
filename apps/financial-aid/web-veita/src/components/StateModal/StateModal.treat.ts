@@ -1,5 +1,6 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import { borderColor } from 'libs/island-ui/core/src/lib/Box/useBoxStyles.treat'
 
 export const modalBase = style({
   height: '100%',
@@ -23,7 +24,6 @@ export const modal = style({
   width: '100%',
   maxWidth: '752px',
   boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
-  backgroundColor: 'white',
   borderRadius: '12px',
 })
 
@@ -48,4 +48,34 @@ export const statusOptions = style({
 
 export const activeState = style({
   color: theme.color.blue400,
+})
+
+export const container = style({
+  display: 'flex',
+  alignItems: 'flex-start',
+  flexShrink: 0,
+  overflow: 'hidden',
+  width: '200%',
+  transition: 'transform 250ms ease',
+  transform: ' translate3d(0px, 0px, 0px)',
+})
+
+export const showInput = style({
+  transform: ' translate3d(-50%, 0px, 0px)',
+})
+
+export const inputStyle = style({
+  width: '100%',
+  height: theme.spacing[10],
+  borderRadius: theme.spacing[1],
+  border: '1px',
+  borderStyle: 'solid',
+  borderColor: theme.color.blue200,
+  backgroundColor: theme.color.blue100,
+  fontWeight: theme.typography.light,
+  fontSize: theme.spacing[3],
+  padding: theme.spacing[3],
+  '::placeholder': {
+    color: theme.color.dark300,
+  },
 })

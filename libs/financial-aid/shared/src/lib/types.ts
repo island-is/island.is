@@ -44,6 +44,7 @@ export interface Application {
   studentCustom?: string
   formComment?: string
   state: ApplicationState
+  amount?: number
 }
 
 export interface CreateApplication {
@@ -64,11 +65,13 @@ export interface CreateApplication {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
-  state?: ApplicationState
+  state: ApplicationState
+  amount?: number
 }
 
 export interface UpdateApplication {
-  state?: ApplicationState
+  state: ApplicationState
+  amount?: number
 }
 
 export interface Municipality {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import {
   LoadingDots,
   Text,
@@ -11,7 +11,10 @@ import { useRouter } from 'next/router'
 import * as styles from './application.treat'
 
 import { useQuery } from '@apollo/client'
-import { GetApplicationQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import {
+  GetApplicationQuery,
+  GetMunicipalityQuery,
+} from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 import {
   Application,
@@ -22,6 +25,8 @@ import {
   insertAt,
   ApplicationState,
   getState,
+  Municipality,
+  aidCalculator,
 } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
@@ -47,6 +52,10 @@ interface ApplicantData {
   application: Application
 }
 
+interface MunicipalityData {
+  municipality: Municipality
+}
+
 const ApplicationProfile = () => {
   const router = useRouter()
 
@@ -63,7 +72,25 @@ const ApplicationProfile = () => {
     },
   )
 
+  const {
+    data: dataMunicipality,
+    loading: municipalityLoading,
+  } = useQuery<MunicipalityData>(GetMunicipalityQuery, {
+    variables: { input: { id: 'hfj' } },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
   const [application, setApplication] = useState<Application>()
+
+  const aidAmount = useMemo(() => {
+    if (application && dataMunicipality && application.homeCircumstances) {
+      return aidCalculator(
+        application.homeCircumstances,
+        dataMunicipality?.municipality.settings.aid,
+      )
+    }
+  }, [application, dataMunicipality])
 
   useEffect(() => {
     if (data?.application) {
@@ -91,7 +118,13 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Sótt um',
-        content: '198.900 kr.',
+        content: `${aidAmount?.toLocaleString('de-DE')} kr.`,
+      },
+      {
+        title: 'Veitt',
+        content: application.amount
+          ? `${application.amount?.toLocaleString('de-DE')} kr.`
+          : `Umsókn ekki samþykkt`,
       },
     ]
 
@@ -251,7 +284,7 @@ const ApplicationProfile = () => {
                   setModalVisible(!isModalVisible)
                 }}
                 preTextIconType="filled"
-                size="default"
+                size="small"
                 type="button"
                 variant="ghost"
               >

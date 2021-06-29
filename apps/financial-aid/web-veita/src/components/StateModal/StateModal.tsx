@@ -1,5 +1,5 @@
-import React, { useContext } from 'react'
-import { ModalBase, Text, Box } from '@island.is/island-ui/core'
+import React, { useContext, useState } from 'react'
+import { ModalBase, Text, Box, Button, Input } from '@island.is/island-ui/core'
 
 import * as styles from './StateModal.treat'
 import cn from 'classnames'
@@ -38,6 +38,10 @@ const StateModal: React.FC<Props> = (props: Props) => {
     ApplicationState.REJECTED,
   ]
 
+  const [showInput, setShowInput] = useState(false)
+
+  const [amountInput, setAmountInput] = useState<number>()
+
   const { statistics, setStatistics } = useContext(NavigationStatisticsContext)
 
   const [
@@ -48,6 +52,7 @@ const StateModal: React.FC<Props> = (props: Props) => {
   const saveStateApplication = async (
     application: Application,
     state: ApplicationState,
+    amount?: number,
   ) => {
     const prevState = application.state
 
@@ -57,11 +62,13 @@ const StateModal: React.FC<Props> = (props: Props) => {
           input: {
             id: application.id,
             state: state,
+            amount: amount,
           },
         },
       })
     }
-    onVisiblityChange(false)
+
+    onVisiblityChange(!isVisible)
     onStateChange(state)
 
     if (statistics && setStatistics) {
@@ -70,6 +77,12 @@ const StateModal: React.FC<Props> = (props: Props) => {
         [prevState]: statistics[prevState] - 1,
         [state]: statistics[state] + 1,
       }))
+    }
+  }
+
+  const closeModal = (): void => {
+    if (!showInput) {
+      onVisiblityChange(false)
     }
   }
 
@@ -84,29 +97,33 @@ const StateModal: React.FC<Props> = (props: Props) => {
       }}
       className={styles.modalBase}
     >
-      {({
-        closeModal,
-      }: {
-        closeModal: () => React.Dispatch<React.SetStateAction<boolean>>
-      }) => (
-        <Box onClick={closeModal} className={styles.modalContainer}>
+      <Box onClick={closeModal} className={styles.modalContainer}>
+        <Box
+          position="relative"
+          borderRadius="large"
+          overflow="hidden"
+          background="white"
+          className={styles.modal}
+        >
           <Box
-            position="relative"
-            background="white"
-            borderRadius="large"
-            className={styles.modal}
+            paddingLeft={4}
+            paddingY={2}
+            background="blue400"
+            className={styles.modalHeadline}
           >
-            <Box
-              paddingLeft={4}
-              paddingY={2}
-              background="blue400"
-              className={styles.modalHeadline}
-            >
-              <Text fontWeight="semiBold" color="white">
-                Stöðubreyting
-              </Text>
-            </Box>
-            <Box padding={4}>
+            <Text fontWeight="semiBold" color="white">
+              Stöðubreyting
+            </Text>
+          </Box>
+
+          <Box
+            display="flex"
+            className={cn({
+              [`${styles.container}`]: true,
+              [`${styles.showInput}`]: showInput,
+            })}
+          >
+            <Box display="block" width="full" padding={4}>
               {statusOptions.map((item, index) => {
                 return (
                   <button
@@ -117,7 +134,12 @@ const StateModal: React.FC<Props> = (props: Props) => {
                     })}
                     onClick={(e) => {
                       e.stopPropagation()
-                      saveStateApplication(application, item)
+
+                      if (item === ApplicationState.APPROVED) {
+                        setShowInput(true)
+                      } else {
+                        saveStateApplication(application, item)
+                      }
                     }}
                   >
                     {getState[item]}
@@ -125,9 +147,46 @@ const StateModal: React.FC<Props> = (props: Props) => {
                 )
               })}
             </Box>
+
+            <Box display="block" width="full" padding={4}>
+              <input
+                type="number"
+                value={amountInput}
+                onChange={(e) => {
+                  e.stopPropagation()
+                  setAmountInput(parseInt(e.target.value))
+                }}
+                className={styles.inputStyle}
+                placeholder="Skrifaðu upphæð aðstoðar"
+              />
+
+              <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
+                <Button
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setShowInput(false)
+                  }}
+                >
+                  Hætta við
+                </Button>
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    saveStateApplication(
+                      application,
+                      ApplicationState.APPROVED,
+                      amountInput,
+                    )
+                  }}
+                >
+                  Samþykkja
+                </Button>
+              </Box>
+            </Box>
           </Box>
         </Box>
-      )}
+      </Box>
     </ModalBase>
   )
 }
