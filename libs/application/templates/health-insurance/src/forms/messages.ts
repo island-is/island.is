@@ -525,4 +525,19 @@ export const m = defineMessages({
       'Unnið verður með persónugreinanleg gögn frá eftirfarandi stofnunum',
     description: 'Personal data from the following sources will be processed',
   },
+  prerequisitesFormTitle: {
+    id: 'hi.application:PrerequisitesFormTitle',
+    defaultMessage: 'Skilyrði',
+    description: 'Conditions',
+  },
+  externalDataSuccessDescription: {
+    id: 'hi.application:externalDataSuccessTitle',
+    defaultMessage: 'Öll gögn hafa verið sótt og er hægt að hefja umsókn',
+    description: 'All data has been fetched and the application can be started',
+  },
+  externalDataSuccessSubmitFieldTitle: {
+    id: 'hi.application:externalDataSuccessTitle',
+    defaultMessage: 'Hefja umsókn',
+    description: 'Start application',
+  },
 })
