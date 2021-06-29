@@ -8,7 +8,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 
-const KeyValueFormField: FC<{
+export const KeyValueFormField: FC<{
   field: KeyValueField
   application: Application
 }> = ({ field, application }) => {
@@ -17,9 +17,10 @@ const KeyValueFormField: FC<{
 
   return (
     <Box>
-      <Text variant="h4">
+      <Text variant="h4" as="h4">
         {formatText(field.label, application, formatMessage)}
       </Text>
+
       {Array.isArray(values) ? (
         (values as string[]).map((value) => <Text key={value}>{value}</Text>)
       ) : (
@@ -28,5 +29,3 @@ const KeyValueFormField: FC<{
     </Box>
   )
 }
-
-export default KeyValueFormField

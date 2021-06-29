@@ -1,5 +1,6 @@
 import React from 'react'
 import { withDesign } from 'storybook-addon-designs'
+
 import { withFigma } from '../../utils/withFigma'
 import { ActionCard } from './ActionCard'
 
@@ -17,6 +18,13 @@ export const Default = () => (
     cta={{ label: 'Click me' }}
   />
 )
+
+Default.args = {
+  design: {
+    type: 'figma',
+    url: 'https://www.figma.com/file/LKQ4FJ4bTnCSjedbRpk931/Sample-File',
+  },
+}
 
 export const Unavailable = () => (
   <ActionCard

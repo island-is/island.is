@@ -13,8 +13,8 @@ export default {
 }
 const Template = (args) => <DatePicker {...args} />
 
-export const Primary = Template.bind({})
-Primary.args = {
+export const Default = Template.bind({})
+Default.args = {
   label: 'Dagsetning',
   placeholderText: 'Veldu dagsetningu',
   locale: 'is',

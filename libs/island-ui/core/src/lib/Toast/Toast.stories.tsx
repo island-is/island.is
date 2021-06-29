@@ -39,4 +39,4 @@ const Template = (args) => (
   </div>
 )
 
-export const Primary = Template.bind({})
+export const Default = Template.bind({})

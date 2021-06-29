@@ -1,9 +1,9 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC, useEffect, useState } from 'react'
+
 import {
+  AsyncSelectField,
   FieldBaseProps,
   formatText,
-  SelectField,
-  buildFieldOptions,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -11,27 +11,50 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { getDefaultValue } from '../getDefaultValue'
+import { useApolloClient } from '@apollo/client/react'
+import { Option } from '@island.is/application/core'
+
+import { getDefaultValue } from '../../getDefaultValue'
 
 interface Props extends FieldBaseProps {
-  field: SelectField
+  field: AsyncSelectField
 }
-const SelectFormField: FC<Props> = ({ application, error, field }) => {
+
+export const AsyncSelectFormField: FC<Props> = ({
+  application,
+  error,
+  field,
+}) => {
   const {
     id,
     title,
     description,
-    options,
+    loadOptions,
+    loadingError,
     placeholder,
     disabled,
     onSelect,
     backgroundColor,
+    isSearchable,
   } = field
   const { formatMessage } = useLocale()
-  const finalOptions = useMemo(
-    () => buildFieldOptions(options, application, field),
-    [options, application],
-  )
+  const apolloClient = useApolloClient()
+  const [options, setOptions] = useState<Option[]>([])
+  const [hasLoadingError, setHasLoadingError] = useState<boolean>(false)
+
+  useEffect(() => {
+    async function load() {
+      try {
+        setHasLoadingError(false)
+        const loaded = await loadOptions({ application, apolloClient })
+        setOptions(loaded)
+      } catch {
+        setHasLoadingError(true)
+      }
+    }
+
+    load()
+  }, [loadOptions])
 
   return (
     <div>
@@ -47,10 +70,14 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
           label={formatText(title, application, formatMessage)}
           name={id}
           disabled={disabled}
-          error={error}
+          error={
+            error ||
+            (hasLoadingError && loadingError
+              ? formatText(loadingError, application, formatMessage)
+              : undefined)
+          }
           id={id}
-          backgroundColor={backgroundColor}
-          options={finalOptions.map(({ label, tooltip, ...o }) => ({
+          options={options.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: formatText(label, application, formatMessage),
             ...(tooltip && {
@@ -63,10 +90,10 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
               : undefined
           }
           onSelect={onSelect}
+          backgroundColor={backgroundColor}
+          isSearchable={isSearchable}
         />
       </Box>
     </div>
   )
 }
-
-export default SelectFormField

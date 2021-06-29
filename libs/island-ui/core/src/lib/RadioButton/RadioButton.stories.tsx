@@ -14,8 +14,8 @@ export default {
 
 const Template = (args) => <RadioButton {...args} />
 
-export const Primary = Template.bind({})
-Primary.args = { label: 'My label', large: false }
+export const Default = Template.bind({})
+Default.args = { label: 'My label', large: false }
 
 export const Large = Template.bind({})
 Large.args = { label: 'Large version', large: true }

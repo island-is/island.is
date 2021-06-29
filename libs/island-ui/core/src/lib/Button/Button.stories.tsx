@@ -19,22 +19,22 @@ export default {
 
 const Template = (args) => <Button {...args} />
 
-export const Primary = Template.bind({})
-Primary.args = { children: 'Primary Button' }
+export const Default = Template.bind({})
+Default.args = { children: 'Primary Button' }
 
-export const PrimarySmall = Template.bind({})
-PrimarySmall.args = { children: 'Primary Button Small', size: 'small' }
+export const DefaultSmall = Template.bind({})
+DefaultSmall.args = { children: 'Primary Button Small', size: 'small' }
 
-export const PrimaryLarge = Template.bind({})
-PrimaryLarge.args = { children: 'Primary Button Large', size: 'large' }
+export const DefaultLarge = Template.bind({})
+DefaultLarge.args = { children: 'Primary Button Large', size: 'large' }
 
-export const PrimaryDestructive = Template.bind({})
-PrimaryDestructive.args = {
+export const DefaultDestructive = Template.bind({})
+DefaultDestructive.args = {
   children: 'Primary Button Destructive',
   colorScheme: 'destructive',
 }
 
-export const PrimaryNegative = () => (
+export const DefaultNegative = () => (
   <Box background="blue400" padding={4}>
     <Button colorScheme="negative">Negative button</Button>
   </Box>

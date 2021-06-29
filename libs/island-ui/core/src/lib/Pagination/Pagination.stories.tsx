@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { number } from '@storybook/addon-knobs'
 import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
@@ -13,9 +12,8 @@ export default {
   parameters: withFigma('Pagination'),
 }
 
-export const Default = () => {
+export const Default = ({ totalPages }) => {
   const [page, setPage] = useState(10)
-  const totalPages = number('Total pages', 20)
 
   return (
     <Pagination
@@ -32,4 +30,8 @@ export const Default = () => {
       )}
     />
   )
+}
+
+Default.args = {
+  totalPages: 20,
 }
