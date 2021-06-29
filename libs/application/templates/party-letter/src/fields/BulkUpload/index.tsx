@@ -151,7 +151,7 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
               }
             />
           </Box>
-          
+
           {failedNatonalIds.length > 0 && (
             <Box marginY={5}>
               <AlertBanner

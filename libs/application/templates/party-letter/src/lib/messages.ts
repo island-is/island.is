@@ -161,7 +161,7 @@ export const m: MessageDir = {
       id: 'pa.application:uploadButton.warningDescription',
       defaultMessage: 'Ekki tókst að hlaða upp eftirfarandi kennitölur: ',
       description: 'Warning description',
-    }
+    },
   }),
   selectNationalId: defineMessages({
     title: {
