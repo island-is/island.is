@@ -229,14 +229,18 @@ export class DelegationsController {
   }
 
   @Scopes(AuthScope.readDelegations)
-  @Get('custom/from')
+  @Get('custom/from/:valid')
   @ApiOkResponse({ type: [DelegationDTO] })
   @Audit<DelegationDTO[]>({
     resources: (delegations) => delegations.map((delegation) => delegation?.id),
   })
   async findAllCustomFrom(
     @CurrentUser() user: User,
+    @Param('valid') isValid?: string,
   ): Promise<DelegationDTO[] | null> {
+    if (isValid === 'true') {
+      return this.delegationsService.findAllValidCustomFrom(user.nationalId)
+    }
     return await this.delegationsService.findAllCustomFrom(user.nationalId)
   }
 }
