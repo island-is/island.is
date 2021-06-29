@@ -3,7 +3,6 @@ import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHel
 import {
   FormFooter,
   PageLayout,
-  Modal,
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -21,9 +20,8 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import ConclusionDraft from './Components/ConclusionDraft'
-import { AnimatePresence } from 'framer-motion'
 import OverviewForm from './OverviewForm'
+import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal'
 
 export const JudgeOverview: React.FC = () => {
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
@@ -113,21 +111,12 @@ export const JudgeOverview: React.FC = () => {
               ])}
             />
           </FormContentContainer>
-          <AnimatePresence>
-            {isDraftingConclusion && (
-              <Modal
-                title="Skrifa drög að niðurstöðu"
-                text={
-                  <ConclusionDraft
-                    workingCase={workingCase}
-                    setWorkingCase={setWorkingCase}
-                  />
-                }
-                primaryButtonText="Loka glugga"
-                handlePrimaryButtonClick={() => setIsDraftingConclusion(false)}
-              />
-            )}
-          </AnimatePresence>
+          <DraftConclusionModal
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            isDraftingConclusion={isDraftingConclusion}
+            setIsDraftingConclusion={setIsDraftingConclusion}
+          />
         </>
       ) : null}
     </PageLayout>

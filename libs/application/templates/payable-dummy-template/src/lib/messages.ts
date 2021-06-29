@@ -11,6 +11,17 @@ export const m = defineMessages({
     defaultMessage: 'Institution reference',
     description: `Institution's name`,
   },
+  paymentPendingConfirmation: {
+    id: 'pay.application.pendingConfirmation',
+    defaultMessage: 'Beðið eftir staðfestingu frá greiðsluveitu',
+    description: 'Explanation to the user for why they are waiting',
+  },
+  forwardingToPayment: {
+    id: 'pay.application.forwardingToPayment',
+    defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
+    description:
+      'Message notifying the user what is happening when they are redirected',
+  },
   name: {
     id: 'pay.application:name',
     defaultMessage: 'Umsókn um greiðslu',
