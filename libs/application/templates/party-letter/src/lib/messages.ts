@@ -71,14 +71,9 @@ export const m: MessageDir = {
       defaultMessage: 'Afrita hlekk',
       description: 'Copy link button',
     },
-    nameCount: {
-      id: 'ple.application:endorsement.list.name.count',
-      defaultMessage: 'nafn á lista',
-      description: 'X name on list',
-    },
     namesCount: {
       id: 'ple.application:endorsement.list.names.count',
-      defaultMessage: 'nöfn á lista',
+      defaultMessage: 'meðmæli á lista',
       description: 'X names on list',
     },
     invalidEndorsements: {

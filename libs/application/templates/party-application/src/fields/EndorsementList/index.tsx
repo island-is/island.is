@@ -47,12 +47,6 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     constituencyMapper[application.answers.constituency as EndorsementListTags]
       .parliamentary_seats * 40
 
-  const namesCountString = formatMessage(
-    endorsements && endorsements.length > 1
-      ? m.endorsementList.namesCount
-      : m.endorsementList.nameCount,
-  )
-
   useEffect(() => {
     filter(searchTerm, showOnlyInvalidated)
   }, [endorsementsHook, searchTerm, showOnlyInvalidated])
@@ -117,7 +111,9 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             : 0}
         </Text>
         <Box marginLeft={1}>
-          <Text variant="default">{namesCountString}</Text>
+          <Text variant="default">
+            {formatMessage(m.endorsementList.namesCount)}
+          </Text>
         </Box>
       </Box>
       <Text variant="small" color="dark300">

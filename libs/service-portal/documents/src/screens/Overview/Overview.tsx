@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react'
+import { useQuery, gql } from '@apollo/client'
 import {
   Text,
   Box,
@@ -34,8 +35,10 @@ import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import AnimateHeight from 'react-animate-height'
+import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import * as styles from './Overview.treat'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
+import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 15
@@ -171,6 +174,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           id: 'sp.documents:found',
           defaultMessage: 'skjöl fundust',
         })
+
+  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
+  const organizations = orgData?.getOrganizations?.items || {}
 
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
@@ -395,7 +401,14 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 ?.slice(pagedDocuments.from, pagedDocuments.to)
                 .map((document, index) => (
                   <Box key={document.id} ref={index === 0 ? scrollToRef : null}>
-                    <DocumentLine documentLine={document} userInfo={userInfo} />
+                    <DocumentLine
+                      img={getOrganizationLogoUrl(
+                        document.senderName,
+                        organizations,
+                      )}
+                      documentLine={document}
+                      userInfo={userInfo}
+                    />
                   </Box>
                 ))}
             </Box>

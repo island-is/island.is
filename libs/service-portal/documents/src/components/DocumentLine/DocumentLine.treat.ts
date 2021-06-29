@@ -79,3 +79,9 @@ export const isLoadingContainer = style({
   animationTimingFunction: 'ease-out',
   animationDuration: '0.25s',
 })
+
+export const image = style({
+  width: 30,
+  height: 30,
+  marginRight: theme.spacing[2],
+})

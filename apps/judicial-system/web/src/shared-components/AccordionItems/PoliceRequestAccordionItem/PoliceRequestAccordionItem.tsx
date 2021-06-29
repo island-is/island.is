@@ -23,15 +23,17 @@ interface Props {
 const PoliceRequestAccordionItem: React.FC<Props> = ({
   workingCase,
 }: Props) => {
-  const isInvestigationCase =
-    workingCase.type !== CaseType.CUSTODY &&
-    workingCase.type !== CaseType.TRAVEL_BAN
+  const isRestrictionCase =
+    workingCase.type === CaseType.CUSTODY ||
+    workingCase.type === CaseType.TRAVEL_BAN
 
   return (
     <AccordionItem
       id="id_1"
-      label={`Krafa um ${
-        isInvestigationCase ? 'rannsóknarheimild' : caseTypes[workingCase.type]
+      label={`Krafa ${
+        isRestrictionCase
+          ? `um ${caseTypes[workingCase.type]}`
+          : `- ${capitalize(caseTypes[workingCase.type])}`
       }`}
       labelVariant="h3"
     >
@@ -77,8 +79,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         <Text>{workingCase.lawsBroken}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði sem krafan er byggð á" breakSpaces>
-        {workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.TRAVEL_BAN ? (
+        {isRestrictionCase ? (
           workingCase.custodyProvisions &&
           workingCase.custodyProvisions.map(
             (custodyProvision: CaseCustodyProvisions, index) => {
@@ -93,8 +94,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
           <Text>{workingCase.legalBasis}</Text>
         )}
       </AccordionListItem>
-      {(workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.TRAVEL_BAN) && (
+      {isRestrictionCase && (
         <>
           <Box marginBottom={1}>
             <Text variant="h5">{`Takmarkanir og tilhögun ${
@@ -131,6 +131,14 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       <AccordionListItem title="Lagarök" breakSpaces>
         <Text>{workingCase.legalArguments}</Text>
       </AccordionListItem>
+      {workingCase.requestProsecutorOnlySession && (
+        <AccordionListItem
+          title="Beiðni um dómþing að varnaraðila fjarstöddum"
+          breakSpaces
+        >
+          <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
+        </AccordionListItem>
+      )}
     </AccordionItem>
   )
 }

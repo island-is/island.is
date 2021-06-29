@@ -8,4 +8,5 @@ bootstrap({
   openApi,
   port: 4246,
   swaggerPath: '',
+  stripNonClassValidatorInputs: false,
 })
