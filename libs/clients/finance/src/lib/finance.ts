@@ -209,7 +209,6 @@ export class DownloadService extends RESTDataSource {
           excelData,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
           },
