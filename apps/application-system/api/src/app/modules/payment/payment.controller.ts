@@ -3,7 +3,6 @@ import {
   Controller,
   Param,
   Post,
-  UseInterceptors,
   UseGuards,
   Get,
   ParseUUIDPipe,
