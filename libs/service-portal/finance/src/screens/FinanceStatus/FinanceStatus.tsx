@@ -75,7 +75,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
     // Form values
     form.method = 'post'
     // TODO: Use correct url
-    form.action = `https://api.dev01.devland.is`
+    form.action = `https://api.dev01.devland.is/download/v1/xlsx`
     form.target = '_blank'
 
     // Document Id values
