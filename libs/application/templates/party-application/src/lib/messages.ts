@@ -374,6 +374,12 @@ export const m: MessageDir = {
         '*Pappírsmeðmæli skulu einnig sendast með bréfpósti til yfirkjörstjórnar.',
       description: 'Include paper signatures disclaimer part 2',
     },
+    includePapersDisclaimerPt3: {
+      id: 'pa.application:recommendations.includePapers.disclaimer3',
+      defaultMessage:
+        '*Kennitölur þurfa að vera ein í hverjum reit í dálk A í excel skjali, fyrsta kennitala skal vera sett í reit A1.',
+      description: 'Include paper signatures disclaimer part 3',
+    },
     noPaper: {
       id: 'pa.application:recommendations.paper.no',
       defaultMessage: 'Nei, ég er ekki með meðmælendur á pappír',

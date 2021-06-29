@@ -127,6 +127,12 @@ export const m: MessageDir = {
         '*Pappírsmeðmæli skulu einnig sendast með bréfpósti til yfirkjörstjórnar.',
       description: 'Include paper endorsements disclaimer part 2',
     },
+    includePapersDisclaimerPt3: {
+      id: 'ple.application:file.upload.disclaimer.pt3',
+      defaultMessage:
+        '*Kennitölur þurfa að vera ein í hverjum reit í dálk A í excel skjali, fyrsta kennitala skal vera sett í reit A1.',
+      description: 'Include paper signatures disclaimer part 3',
+    },
     fileUploadHeader: {
       id: 'ple.application:file.upload.header',
       defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
