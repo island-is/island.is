@@ -240,8 +240,8 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
           ...context,
           application: {
             ...context.application,
-            // todo: get list of ministry of justice national ids
-            assignees: ['0000000000'],
+            assignees:
+              process.env.PARTY_LETTER_ASSIGNED_ADMINS?.split(',') ?? [],
           },
         }
       }),
@@ -258,8 +258,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    // todo map to ministry of justice natioanl ids
-    if (application.assignees.includes('0000000000')) {
+    if (application.assignees.includes(nationalId)) {
       return Roles.ASSIGNEE
     }
     // TODO: Applicant can recommend his own list
