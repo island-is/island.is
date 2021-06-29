@@ -14,6 +14,13 @@ export enum Employment {
   OTHER = 'Other',
 }
 
+export enum ApplicationState {
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  REJECTED = 'Rejected',
+  APPROVED = 'Approved',
+}
+
 export interface Application {
   id: string
   created: string
@@ -33,6 +40,9 @@ export interface Application {
   interview?: boolean
   employmentCustom?: string
   homeCircumstancesCustom?: string
+  studentCustom?: string
+  formComment?: string
+  state?: ApplicationState
 }
 
 export interface CreateApplication {
@@ -51,6 +61,13 @@ export interface CreateApplication {
   interview?: boolean
   employmentCustom?: string
   homeCircumstancesCustom?: string
+  studentCustom?: string
+  formComment?: string
+  state?: ApplicationState
+}
+
+export interface UpdateApplication {
+  state?: ApplicationState
 }
 
 export interface Municipality {

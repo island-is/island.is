@@ -7,12 +7,14 @@ import { ExportAsCSV } from '@island.is/application/ui-components'
 import { SchemaFormValues } from '../../lib/dataSchema'
 import { csvFileName } from '../../constants'
 import { PartyLetterRegistry } from '@island.is/api/schema'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { Endorsement } from '../../types/schema'
 import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
+import sortBy from 'lodash/sortBy'
 
-const mapToCSVFile = (endorsements: Endorsement[]) => {
+const mapToCSVFile = (endorsements: Endorsement[], constituency: string) => {
   return endorsements.map((endorsement) => {
     return {
       Kennitala: formatKennitala(endorsement.endorser),
@@ -21,6 +23,9 @@ const mapToCSVFile = (endorsements: Endorsement[]) => {
       Heimilisfang: endorsement.meta.address.streetAddress ?? '',
       Póstnúmer: endorsement.meta.address.postalCode ?? '',
       Borg: endorsement.meta.address.city ?? '',
+      'Meðmæli í vafa':
+        constituency !== endorsement.meta.voterRegion ? 'X' : '',
+      'Meðmæli á pappír': endorsement.meta.bulkEndorsement ? 'X' : '',
     }
   })
 }
@@ -38,6 +43,8 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
     .data as PartyLetterRegistry
   const endorsementListId = (externalData?.createEndorsementList.data as any).id
   const { endorsements } = useEndorsements(endorsementListId, false)
+  const constituency =
+    constituencyMapper[answers.constituency as EndorsementListTags].region_name
 
   return (
     <Box>
@@ -85,7 +92,12 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Box marginTop={3} marginBottom={5}>
             {endorsements?.length && (
               <ExportAsCSV
-                data={mapToCSVFile(endorsements) as object[]}
+                data={
+                  mapToCSVFile(
+                    sortBy(endorsements, 'created'),
+                    constituency,
+                  ) as object[]
+                }
                 filename={csvFileName(
                   partyLetterRegistry?.partyLetter,
                   partyLetterRegistry?.partyName,
@@ -99,7 +111,7 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5">
             {formatMessage(m.supremeCourt.constituencyLabel)}
           </Text>
-          <Text>{answers.constituency}</Text>
+          <Text>{constituency}</Text>
         </Box>
       </Box>
     </Box>

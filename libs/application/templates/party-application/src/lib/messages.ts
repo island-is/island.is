@@ -151,14 +151,9 @@ export const m: MessageDir = {
       defaultMessage: 'Afrita tengil',
       description: 'Copy link title',
     },
-    nameCount: {
-      id: 'pa.application:endorsementList.name.count',
-      defaultMessage: 'nafn á lista (af 500)',
-      description: 'X name on list',
-    },
     namesCount: {
       id: 'pa.application:endorsementList.names.count',
-      defaultMessage: 'nöfn á lista (af 500)',
+      defaultMessage: 'meðmæli á lista',
       description: 'X names on list',
     },
     invalidSignatures: {
@@ -168,7 +163,7 @@ export const m: MessageDir = {
     },
     searchbar: {
       id: 'pa.application:endorsementList.search',
-      defaultMessage: 'Leitaðu hér',
+      defaultMessage: 'Leitaðu að nafni',
       description: 'Searchbar placeholder',
     },
     thDate: {
@@ -198,7 +193,8 @@ export const m: MessageDir = {
     },
     signatureInvalidTooltip: {
       id: 'pa.application:endorsementList.tooltip',
-      defaultMessage: 'Meðmæli í vafa',
+      defaultMessage:
+        'Meðmæli í vafa, yfirkjörstjórn þarf að yfirfara aldur, búsetu og kjördæmi',
       description: 'Invalid signature tooltip',
     },
     isClosedMessage: {
@@ -262,7 +258,7 @@ export const m: MessageDir = {
     },
     warningMessagePt2: {
       id: 'pa.application:endorsementListSubmission.warningMessagePt2',
-      defaultMessage: '. Afhakaðu í réttan fjölda til að skila lista.',
+      defaultMessage: '. Hakaðu í réttan fjölda til að skila lista.',
       description: 'Warning message',
     },
   }),
@@ -452,6 +448,24 @@ export const m: MessageDir = {
       id: 'pa.application:endorsement.disclaimer.party.name',
       defaultMessage: 'Stjórnmálasamtök',
       description: 'Label for party name',
+    },
+    alertMessageTitle: {
+      id: 'pa.application:endorsement.alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Alert message title',
+    },
+    alertDescriptionVoterRegistryNotFound: {
+      id: 'pa.application:endorsement.alert.descrtipion.voter.registry',
+      defaultMessage:
+        'Þú fannst ekki í kjörskrá ertu viss um að vilja halda áfram?',
+      description:
+        'Alert message if signaturee was not found in temp voter reg',
+    },
+    alertDescriptionWrongConstituency: {
+      id: 'pa.application:endorsement.alert.descrtipion.wrong.constituency',
+      defaultMessage:
+        'Þú ert ekki með skráða búsetu í þessu kjördæmi ertu viss um að vilja halda áfram?',
+      description: 'Alert message if signaturee is in the wrong constituency',
     },
   }),
   endorsementApproved: defineMessages({

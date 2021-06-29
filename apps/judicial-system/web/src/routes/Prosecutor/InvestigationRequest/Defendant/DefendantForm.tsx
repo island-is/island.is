@@ -6,12 +6,7 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  Case,
-  CaseType,
-  RCaseTypes,
-  ReadableCaseType,
-} from '@island.is/judicial-system/types'
+import { Case, CaseType, ICaseTypes } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   setAndSendToServer,
@@ -27,7 +22,7 @@ import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
@@ -97,7 +92,7 @@ const DefendantForm: React.FC<Props> = (props) => {
             <Box marginBottom={3}>
               <Select
                 name="petition-type"
-                options={RCaseTypes as ReactSelectOption[]}
+                options={ICaseTypes as ReactSelectOption[]}
                 label="Tegund kröfu"
                 placeholder="Veldu tegund kröfu"
                 onChange={(selectedOption: ValueType<ReactSelectOption>) =>
@@ -109,10 +104,14 @@ const DefendantForm: React.FC<Props> = (props) => {
                     updateCase,
                   )
                 }
-                defaultValue={{
-                  value: CaseType[workingCase.type],
-                  label: capitalize(ReadableCaseType[workingCase.type]),
-                }}
+                defaultValue={
+                  workingCase?.id
+                    ? {
+                        value: CaseType[workingCase.type],
+                        label: capitalize(caseTypes[workingCase.type]),
+                      }
+                    : undefined
+                }
                 formatGroupLabel={() => (
                   <div
                     style={{

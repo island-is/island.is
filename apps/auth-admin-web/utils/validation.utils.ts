@@ -4,6 +4,9 @@ class ValidationUtils {
 
   public static identifierPattern = /^[a-zA-Z0-9_.-]*$/
 
+  /** Grant type pattern. Lower case no numbers allowed. */
+  public static grantTypePattern = /^([a-z_.-]+[:]?)*[a-z]$/
+
   /** Pattern that enforeces @domain.is or @domain2-_2.is */
   public static domainPattern = /@{1}[a-z0-9_-]*[.]?[a-z]*$/
 
@@ -26,7 +29,7 @@ class ValidationUtils {
 
   /** Pattern that enforces input to @[domain.is] or @[domain.is][/[optionalPaths]/[path:optionalAction]]*
    */
-  public static apiScopePattern = /^@[a-z\.]*[/]([a-z][:/]?)*[a-z]+$/
+  public static apiScopePattern = /^@[a-z\.]*[/]([a-z-][:/]?)*[a-z-]+$/
 
   public static scopePattern = /^@([\w-])$/
 
@@ -135,6 +138,11 @@ class ValidationUtils {
 
   public static validateApiScope(input: string): boolean {
     const regex = new RegExp(ValidationUtils.apiScopePattern)
+    return regex.test(input)
+  }
+
+  public static validateGrantType(input: string): boolean {
+    const regex = new RegExp(ValidationUtils.grantTypePattern)
     return regex.test(input)
   }
 }

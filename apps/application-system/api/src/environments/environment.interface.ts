@@ -6,6 +6,7 @@ import { AuditOptions } from '@island.is/nest/audit'
 import { SmsServiceOptions } from '@island.is/nova-sms'
 
 import { ApplicationConfig } from '../app/modules/application/application.configuration'
+import { Config as PaymentConfig } from '../app/modules/payment/payment.module'
 
 export interface Environment {
   production: boolean

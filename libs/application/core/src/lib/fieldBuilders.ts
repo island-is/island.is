@@ -265,6 +265,7 @@ export function buildAsyncSelectField(data: {
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   defaultValue?: MaybeWithApplicationAndField<unknown>
   backgroundColor?: InputBackgroundColor
+  isSearchable?: boolean
 }): AsyncSelectField {
   const {
     condition,
@@ -279,7 +280,9 @@ export function buildAsyncSelectField(data: {
     width = 'full',
     onSelect,
     backgroundColor,
+    isSearchable,
   } = data
+
   return {
     children: undefined,
     defaultValue,
@@ -296,6 +299,7 @@ export function buildAsyncSelectField(data: {
     component: FieldComponents.ASYNC_SELECT,
     onSelect,
     backgroundColor,
+    isSearchable,
   }
 }
 

@@ -12,7 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.treat'
-import UserInfoLoadingOverlay from '../Loaders/UserInfoLoadingOverlay/UserInfoLoadingOverlay'
+import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import useRoutes from '../../hooks/useRoutes/useRoutes'
 import { useModules } from '../../hooks/useModules/useModules'
 import { getFooterProps } from './footerProps'
@@ -37,7 +37,7 @@ const Layout: FC = ({ children }) => {
 
   return (
     <>
-      <UserInfoLoadingOverlay />
+      <AuthOverlay />
       <ToastContainer useKeyframeStyles={false} />
       <Header />
       {/* // counter intuitive, the scroll blocks all scrolling aside from the component that is wrapped */}

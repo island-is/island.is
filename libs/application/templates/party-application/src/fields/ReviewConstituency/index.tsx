@@ -4,6 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { PartyLetterRegistryPartyLetter } from '../../dataProviders/partyLetterRegistry'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -43,7 +44,12 @@ const ReviewConstituency: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5">
           {formatMessage(m.overviewSection.constituency)}
         </Text>
-        <Text>{answers.constituency}</Text>
+        <Text>
+          {
+            constituencyMapper[answers.constituency as EndorsementListTags]
+              .region_name
+          }
+        </Text>
       </Box>
     </>
   )
