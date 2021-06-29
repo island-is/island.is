@@ -22,6 +22,9 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         steps {
           title
           slug
+          subtitle {
+            ...HtmlFields
+          }
           text {
             ...HtmlFields
           }

@@ -19,6 +19,7 @@ import {
   LatestNewsSectionSlider,
   OrganizationSlice,
   Section,
+  Stepper,
 } from '@island.is/web/components'
 import Head from 'next/head'
 import {
@@ -78,15 +79,6 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   const router = useRouter()
   useContentfulId(projectPage.id)
 
-  const [step, setStep] = useState('')
-
-  const currentStep = useMemo(
-    () =>
-      projectPage.stepper?.steps.find((x) => x.slug === step) ??
-      projectPage.stepper?.steps[0],
-    [step],
-  )
-
   const subpage = projectPage.projectSubpages.find((x) => {
     return x.slug === router.query.subSlug
   })
@@ -126,39 +118,7 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           </Text>
         )}
         {richText((subpage ?? projectPage).content as SliceType[])}
-        {projectPage.stepper && (
-          <Box style={{ minHeight: 400 }}>
-            <GridContainer>
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '5/12']}>
-                  <Text variant="h2">{currentStep.title}</Text>
-                  <GridContainer>
-                    <GridRow marginTop={8}>
-                      {JSON.parse(currentStep.options).map((x) => (
-                        <GridColumn span={['12/12', '12/12', '6/12']}>
-                          <Button
-                            key={`${currentStep.slug}-${x.key}`}
-                            fluid
-                            variant="ghost"
-                            onClick={() => setStep(x.nextStep)}
-                          >
-                            {x.label}
-                          </Button>
-                        </GridColumn>
-                      ))}
-                    </GridRow>
-                  </GridContainer>
-                </GridColumn>
-                <GridColumn
-                  span={['12/12', '12/12', '6/12']}
-                  offset={['0', '0', '1/12']}
-                >
-                  {richText(currentStep.text as SliceType[])}
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-          </Box>
-        )}
+        {projectPage.stepper && <Stepper stepper={projectPage.stepper} />}
         {(subpage ?? projectPage).slices.map((slice) => (
           <OrganizationSlice
             key={slice.id}
