@@ -15,6 +15,7 @@ import { read, utils } from 'xlsx'
 import { useMutation } from '@apollo/client'
 import FileUploadDisclaimer from '../FileUploadDisclaimer'
 import { Application } from '@island.is/application/core'
+import { format as formatKennitala } from 'kennitala'
 
 interface BulkUploadProps {
   application: Application
@@ -27,7 +28,11 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
   const [bulkUploading, setBulkUploading] = useState(false)
   const [bulkUploadDone, setBulkUploadDone] = useState(false)
   const [bulkUploadFailed, setBulkUploadFailed] = useState(false)
-  const [createBulkEndorsements] = useMutation(BulkEndorse)
+  const [createBulkEndorsements, { data = {} }] = useMutation(BulkEndorse)
+  const failedNatonalIds = data?.endorsementSystemBulkEndorseList?.failed
+    .map((x: any) => formatKennitala(x?.nationalId))
+    .join(', ')
+  const succeededNatonalIds = data?.endorsementSystemBulkEndorseList?.succeeded
 
   const onChange = (newFiles: File[]) => {
     const newUploadFiles = newFiles.map((f) => fileToObject(f))
@@ -37,23 +42,23 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
     })
   }
 
-  const onBulkUpload = async (array: string[]) => {
+  const onBulkUpload = async (nationalIds: string[]) => {
     setBulkUploadDone(false)
     setBulkUploadFailed(false)
     setBulkUploading(true)
-    const success = await createBulkEndorsements({
+    const response = await createBulkEndorsements({
       variables: {
         input: {
           listId: (application.externalData?.createEndorsementList?.data as any)
             .id,
-          nationalIds: array,
+          nationalIds,
         },
       },
     }).catch(() => {
       setBulkUploadFailed(true)
     })
 
-    if (success) {
+    if (response) {
       setBulkUploadDone(true)
       onSuccess()
     }
@@ -79,7 +84,7 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
         data.map((d: any) => {
           /**  Getting the value of the first column from the JSON object */
           const nationalId = d[Object.keys(d)[0]]
-          mapArray.push(nationalId.toString())
+          mapArray.push(nationalId.toString().replace(/[^0-9]/g, ''))
         })
         onBulkUpload(mapArray)
       } catch (e) {
@@ -107,10 +112,12 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
         <>
           {bulkUploadDone && (
             <Box marginY={5}>
-              <AlertBanner
-                title={formatMessage(m.collectEndorsements.uploadSuccess)}
-                variant="success"
-              />
+              {succeededNatonalIds?.length > 0 && (
+                <AlertBanner
+                  title={formatMessage(m.collectEndorsements.uploadSuccess)}
+                  variant="success"
+                />
+              )}
             </Box>
           )}
 
@@ -134,6 +141,21 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
               }
             />
           </Box>
+
+          {failedNatonalIds?.length > 0 && (
+            <Box marginY={5}>
+              <AlertBanner
+                title={formatMessage(m.collectEndorsements.attention)}
+                description={
+                  formatMessage(m.collectEndorsements.uploadWarningText) +
+                  failedNatonalIds
+                }
+                variant="warning"
+              >
+                {failedNatonalIds}
+              </AlertBanner>
+            </Box>
+          )}
         </>
       )}
 

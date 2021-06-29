@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
@@ -6,8 +7,16 @@ import {
   generateApplicationRejectedEmail,
   generateApplicationApprovedEmail,
 } from './emailGenerators'
-import { Constituencies } from '@island.is/application/templates/party-application'
-import { EndorsementListTagsEnum } from './gen/fetch'
+import { EndorsementListApi, EndorsementListTagsEnum } from './gen/fetch'
+import type { Logger } from '@island.is/logging'
+
+const CREATE_ENDORSEMENT_LIST_QUERY = `
+  mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
+    endorsementSystemCreateEndorsementList(input: $input) {
+      id
+    }
+  }
+`
 
 type ErrorResponse = {
   errors: {
@@ -30,85 +39,85 @@ interface PartyLetterData {
   partyLetter: string
 }
 
-const constituencyMapper: Record<Constituencies, EndorsementListTagsEnum> = {
-  [Constituencies.NORTH_EAST]:
-    EndorsementListTagsEnum.partyApplicationNordausturkjordaemi2021,
-  [Constituencies.NORTH_WEST]:
-    EndorsementListTagsEnum.partyApplicationNordvesturkjordaemi2021,
-  [Constituencies.RVK_NORTH]:
-    EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiNordur2021,
-  [Constituencies.RVK_SOUTH]:
-    EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiSudur2021,
-  [Constituencies.SOUTH]:
-    EndorsementListTagsEnum.partyApplicationSudurkjordaemi2021,
-  [Constituencies.SOUTH_WEST]:
-    EndorsementListTagsEnum.partyApplicationSudvesturkjordaemi2021,
+/**
+ * We proxy the auth header to the subsystem where it is resolved.
+ */
+interface FetchParams {
+  url: string
+  init: RequestInit
+}
+
+interface RequestContext {
+  init: RequestInit
+}
+
+interface Middleware {
+  pre?(context: RequestContext): Promise<FetchParams | void>
+}
+class ForwardAuthHeaderMiddleware implements Middleware {
+  constructor(private bearerToken: string) {}
+
+  async pre(context: RequestContext) {
+    context.init.headers = Object.assign({}, context.init.headers, {
+      authorization: this.bearerToken,
+    })
+  }
 }
 
 @Injectable()
 export class PartyApplicationService {
   constructor(
+    private endorsementListApi: EndorsementListApi,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
+
+  endorsementListApiWithAuth(token: string) {
+    return this.endorsementListApi.withMiddleware(
+      new ForwardAuthHeaderMiddleware(token),
+    )
+  }
 
   async assignSupremeCourt({
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
-    const CLOSE_ENDORSEMENT = `
-    mutation {
-      endorsementSystemCloseEndorsementList(input: {
-        listId: "${
-          (application.externalData?.createEndorsementList.data as any).id
-        }",
-      }) {
-        id
-        closedDate
-      }
-    }
-  `
-    const endorsementId: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CLOSE_ENDORSEMENT)
-      .then((response) => response.json())
+    const listId = (application.externalData?.createEndorsementList.data as any)
+      .id
 
-    if ('errors' in endorsementId) {
-      throw new Error('Failed to close endorsement list')
-    }
-
-    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      generateAssignSupremeCourtApplicationEmail,
-      application,
-    )
+    return this.endorsementListApiWithAuth(authorization)
+      .endorsementListControllerClose({ listId })
+      .then(async () => {
+        await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+          generateAssignSupremeCourtApplicationEmail,
+          application,
+        )
+      })
+      .catch(() => {
+        this.logger.error('Failed to close endorsement list', listId)
+        throw new Error('Failed to close endorsement list')
+      })
   }
 
   async applicationRejected({
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
-    const OPEN_ENDORSEMENT = `
-      mutation {
-        endorsementSystemOpenEndorsementList(input: {
-          listId: "${
-            (application.externalData?.createEndorsementList.data as any).id
-          }",
-        }) {
-          id
-          closedDate
-        }
-      }
-    `
-    const endorsementId: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, OPEN_ENDORSEMENT)
-      .then((response) => response.json())
+    const listId = (application.externalData?.createEndorsementList.data as any)
+      .id
 
-    if ('errors' in endorsementId) {
-      throw new Error('Failed to open endorsement list')
-    }
-
-    await this.sharedTemplateAPIService.sendEmail(
-      generateApplicationRejectedEmail,
-      application,
-    )
+    return this.endorsementListApiWithAuth(authorization)
+      .endorsementListControllerOpen({ listId })
+      .then(async () => {
+        await this.sharedTemplateAPIService.sendEmail(
+          generateApplicationRejectedEmail,
+          application,
+        )
+      })
+      .catch(() => {
+        this.logger.error('Failed to open endorsement list', listId)
+        throw new Error('Failed to open endorsement list')
+      })
   }
 
   async applicationApproved({ application }: TemplateApiModuleActionProps) {
@@ -122,16 +131,6 @@ export class PartyApplicationService {
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
-    const constituencyTag =
-      constituencyMapper[application.answers.constituency as Constituencies]
-    const CREATE_ENDORSEMENT_LIST_QUERY = `
-      mutation EndorsementSystemCreatePartyApplicationEndorsementList($input: CreateEndorsementListDto!) {
-        endorsementSystemCreateEndorsementList(input: $input) {
-          id
-        }
-      }
-    `
-
     const partyLetter = application.externalData.partyLetterRegistry
       ?.data as PartyLetterData
     const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
@@ -140,8 +139,29 @@ export class PartyApplicationService {
           title: partyLetter.partyName,
           description: partyLetter.partyLetter,
           endorsementMeta: ['fullName', 'address', 'signedTags'],
-          tags: [constituencyTag],
-          validationRules: [],
+          tags: [application.answers.constituency as EndorsementListTagsEnum],
+          validationRules: [
+            {
+              type: 'minAgeAtDate',
+              value: {
+                date: '2021-09-25T00:00:00Z',
+                age: 18,
+              },
+            },
+            {
+              type: 'uniqueWithinTags',
+              value: {
+                tags: [
+                  EndorsementListTagsEnum.partyApplicationNordausturkjordaemi2021,
+                  EndorsementListTagsEnum.partyApplicationNordvesturkjordaemi2021,
+                  EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiNordur2021,
+                  EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiSudur2021,
+                  EndorsementListTagsEnum.partyApplicationSudurkjordaemi2021,
+                  EndorsementListTagsEnum.partyApplicationSudvesturkjordaemi2021,
+                ],
+              },
+            },
+          ],
           meta: {
             // to be able to link back to this application
             applicationTypeId: application.typeId,

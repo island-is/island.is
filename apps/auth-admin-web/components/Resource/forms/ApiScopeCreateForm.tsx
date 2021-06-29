@@ -38,6 +38,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   const [nameLength, setNameLength] = useState(0)
   const [domains, setDomains] = useState<Domain[]>([])
   const [domainIsTouched, setDomainIsTouched] = useState<boolean>(false)
+  //#region hint-box
   const [
     apiScopeNameHintVisible,
     setApiScopeNameHintVisible,
@@ -46,6 +47,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   const [apiScopeNameIsValid, setApiScopeNameIsValid] = useState<
     boolean | null
   >(null)
+  //#endregion hint-box
 
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeCreateForm'),
@@ -80,12 +82,18 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
       return
     }
     setApiScopeNameHintVisible(true)
-    setApiScopeNameIsValid(ValidationUtils.validateApiScope(name))
-    apiScopeNameIsValid
+    const isValid =
+      name.length > 0 ? ValidationUtils.validateApiScope(name) : false
+    setApiScopeNameIsValid(isValid)
+    isValid
       ? setApiScopeHintMessage(localization.fields['name'].hintOkMessage)
       : setApiScopeHintMessage(localization.fields['name'].hintErrorMessage)
-    setNameLength(name?.length)
 
+    checkAvailability(name)
+  }
+
+  const checkAvailability = async (name: string) => {
+    setNameLength(name?.length)
     if (name.length === 0) {
       setAvailable(false)
       return
@@ -166,12 +174,17 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   <input
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateDescription,
+                      validate: isEditing
+                        ? () => {
+                            return true
+                          }
+                        : ValidationUtils.validateApiScope,
                     })}
                     id="apiScope.name"
                     name="apiScope.name"
                     type="text"
                     className="api-scope-form__input"
+                    title={localization.fields['name'].helpText}
                     defaultValue={props.apiScope.name}
                     readOnly={isEditing || !domainIsTouched}
                     onChange={(e) => onApiScopeNameChange(e.target.value)}

@@ -1,5 +1,4 @@
 import 'isomorphic-fetch'
-
 import { deleteCookie } from '@island.is/financial-aid-web/osk/src/utils/cookies'
 
 const { API_URL = '' } = process.env // eslint-disable-line @typescript-eslint/naming-convention

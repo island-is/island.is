@@ -22,9 +22,11 @@ import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import useInstitution from '@island.is/judicial-system-web/src/utils/hooks/useInstitution'
+import {
+  useCase,
+  useInstitution,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import HearingArrangementsForms from './HearingArrangementsForm'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 const HearingArrangements = () => {
@@ -85,7 +87,7 @@ const HearingArrangements = () => {
 
     const caseOpened =
       workingCase.state === CaseState.NEW
-        ? await transitionCase(workingCase, setWorkingCase, CaseTransition.OPEN)
+        ? await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
         : true
 
     if (caseOpened) {
@@ -97,9 +99,7 @@ const HearingArrangements = () => {
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
       ) {
-        router.push(
-          `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
-        )
+        router.push(`${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
       } else {
         setModalVisible(true)
       }
@@ -141,7 +141,7 @@ const HearingArrangements = () => {
               handleClose={() => setModalVisible(false)}
               handleSecondaryButtonClick={() =>
                 router.push(
-                  `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                  `${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                 )
               }
               handlePrimaryButtonClick={async () => {
@@ -152,7 +152,7 @@ const HearingArrangements = () => {
 
                 if (notificationSent) {
                   router.push(
-                    `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                    `${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                   )
                 }
               }}

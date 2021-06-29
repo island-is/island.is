@@ -237,7 +237,9 @@ const Category: Screen<CategoryProps> = ({
     const sortedArticles = articles.sort((a, b) =>
       a.importance > b.importance
         ? -1
-        : a.importance === b.importance && a.title.localeCompare(b.title),
+        : a.importance === b.importance
+        ? a.title.localeCompare(b.title)
+        : 1,
     )
 
     // If it's sorted alphabetically we need to be able to communicate that.
@@ -267,8 +269,9 @@ const Category: Screen<CategoryProps> = ({
       if (foundA && foundB) {
         return foundA.importance > foundB.importance
           ? -1
-          : foundA.importance === foundB.importance &&
-              foundA.title.localeCompare(foundB.title)
+          : foundA.importance === foundB.importance
+          ? foundA.title.localeCompare(foundB.title)
+          : 1
       }
 
       // Fall back to alphabet

@@ -5,6 +5,8 @@ import { Box, Text, Inline, Input, Tooltip } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SchemaFormValues } from '../../lib/dataSchema'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
+import { useEndorsements } from '../../hooks/fetch-endorsements'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -15,6 +17,25 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { externalData } = application
   const answers = application.answers as SchemaFormValues
+  const endorsementListId = (externalData?.createEndorsementList.data as any).id
+  const { endorsements: endorsementHook } = useEndorsements(
+    endorsementListId,
+    false,
+  )
+  const constituency =
+    constituencyMapper[answers.constituency as EndorsementListTags]
+
+  //find selected endorsements from the endorsement system and find how many of them are with region mismatch
+  const endorsementsWithWarning = () => {
+    const intersectingEndorsements = endorsementHook?.filter((e: any) => {
+      return answers.endorsements?.indexOf(e.id) !== -1
+    })
+
+    return intersectingEndorsements?.filter(
+      (e) =>
+        e.meta.voterRegion?.voterRegionNumber !== constituency.region_number,
+    ).length
+  }
 
   const { register } = useFormContext()
 
@@ -43,13 +64,13 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5">
           {formatMessage(m.overviewSection.constituency)}
         </Text>
-        <Text>{answers.constituency}</Text>
+        <Text>{constituency.region_name}</Text>
       </Box>
       <Box marginBottom={3}>
         <Text variant="h5">
           {formatMessage(m.overviewSection.signatureCount)}
         </Text>
-        <Text>{answers.endorsements ? answers.endorsements.length : 0}</Text>
+        <Text>{answers.endorsements?.length ?? 0}</Text>
       </Box>
       <Box marginBottom={3}>
         <Inline space={2}>
@@ -64,11 +85,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
             />
           </Box>
         </Inline>
-        <Text>
-          {answers.endorsementsWithWarning
-            ? answers.endorsementsWithWarning.length
-            : 0}
-        </Text>
+        <Text>{endorsementsWithWarning()}</Text>
       </Box>
       <Box marginBottom={3} width="half">
         <Text variant="h5" marginBottom={2}>

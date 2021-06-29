@@ -27,6 +27,12 @@
           "schemas/codegen"
         ]
       }
+    },
+    "docker-test": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": []
+      }
     }
   },
   "projects": {
@@ -103,10 +109,16 @@
     "api-domains-file-upload": {
       "tags": []
     },
+    "api-domains-finance": {
+      "tags": []
+    },
     "api-domains-health-insurance": {
       "tags": []
     },
     "api-domains-icelandic-names-registry": {
+      "tags": []
+    },
+    "api-domains-identity": {
       "tags": []
     },
     "api-domains-license-service": {
@@ -119,6 +131,9 @@
       "tags": []
     },
     "api-domains-party-letter-registry": {
+      "tags": []
+    },
+    "api-domains-payment": {
       "tags": []
     },
     "api-domains-regulations": {
@@ -173,6 +188,9 @@
     "application-templates-children-residence-change": {
       "tags": []
     },
+    "application-templates-complaints-to-althingi-ombudsman": {
+      "tags": []
+    },
     "application-templates-data-protection-complaint": {
       "tags": []
     },
@@ -219,6 +237,9 @@
       "tags": []
     },
     "application-templates-passport": {
+      "tags": []
+    },
+    "application-templates-payable-dummy-template": {
       "tags": []
     },
     "application-templates-public-debt-payment-plan": {
@@ -268,6 +289,12 @@
     "clients-documents": {
       "tags": []
     },
+    "clients-finance": {
+      "tags": []
+    },
+    "clients-middlewares": {
+      "tags": []
+    },
     "clients-mms": {
       "tags": []
     },
@@ -275,6 +302,9 @@
       "tags": []
     },
     "clients-national-registry-v2": {
+      "tags": []
+    },
+    "clients-payment": {
       "tags": []
     },
     "clients-regulations": {

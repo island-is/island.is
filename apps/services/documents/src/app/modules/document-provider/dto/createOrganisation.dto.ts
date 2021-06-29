@@ -14,7 +14,7 @@ export class CreateOrganisationDto {
   @ApiProperty()
   name!: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty()
   address?: string

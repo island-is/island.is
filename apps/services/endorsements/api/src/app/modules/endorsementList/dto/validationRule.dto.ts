@@ -11,5 +11,5 @@ export class ValidationRuleDto {
   @IsOptional()
   @IsObject()
   @IsEndorsementValidator()
-  value: object | null = null
+  value: Record<string, unknown> | null = null
 }

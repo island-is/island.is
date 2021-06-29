@@ -13,7 +13,6 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
-  getValueViaPath,
 } from '@island.is/application/core'
 
 import {
@@ -23,6 +22,7 @@ import {
   ParentalRelations,
   NO,
   MANUAL,
+  SPOUSE,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -31,7 +31,11 @@ import {
   hasEmployer,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
-import { getSelectedChild } from '../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getOtherParentId,
+  getSelectedChild,
+} from '../lib/parentalLeaveUtils'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -55,6 +59,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: parentalLeaveFormMessages.shared.name,
   institution: parentalLeaveFormMessages.shared.institution,
+  readyForProduction: true,
   translationNamespaces: [ApplicationConfigurations.ParentalLeave.translation],
   dataSchema,
   stateMachineConfig: {
@@ -97,6 +102,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        exit: 'setOtherParentIdIfSelectedSpouse',
         meta: {
           name: States.DRAFT,
           actionCard: {
@@ -645,17 +651,35 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      setOtherParentIdIfSelectedSpouse: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.otherParent === SPOUSE) {
+          // Specifically persist the national registry id of the spouse
+          // into answers.otherParentId since it is used when the other
+          // parent is applying for parental leave to see if there
+          // have already been any applications created by the primary parent
+          set(
+            application.answers,
+            'otherParentId',
+            getOtherParentId(application),
+          )
+        }
+
+        return context
+      }),
       assignToOtherParent: assign((context) => {
         const { application } = context
-        const { answers } = application
-        const otherParentId = getValueViaPath(answers, 'otherParentId')
+        const otherParentId = getOtherParentId(application)
 
         if (
           otherParentId !== undefined &&
           otherParentId !== '' &&
           needsOtherParentApproval(context)
         ) {
-          set(application, 'assignees', [answers.otherParentId])
+          set(application, 'assignees', [otherParentId])
         }
 
         return context
@@ -712,11 +736,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const days = selectedChild.transferredDays
 
-        if (days && days < 0) {
+        if (days !== undefined && days > 0) {
           set(answers, 'requestRights.isRequestingRights', YES)
-          set(answers, 'requestRights.requestDays', days)
+          set(answers, 'requestRights.requestDays', days.toString())
+        } else if (days !== undefined && days < 0) {
+          set(answers, 'giveRights.isGivingRights', YES)
+          set(answers, 'giveRights.giveDays', days.toString())
         } else {
           set(answers, 'requestRights.isRequestingRights', NO)
+          set(answers, 'giveRights.isGivingRights', NO)
         }
 
         return context

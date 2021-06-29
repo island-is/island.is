@@ -111,7 +111,11 @@ const DomainCreateForm: React.FC<Props> = (props: Props) => {
                     type="text"
                     ref={register({
                       required: true,
-                      validate: ValidationUtils.validateIdentifier,
+                      validate: isEditing
+                        ? () => {
+                            return true
+                          }
+                        : ValidationUtils.validateDomain,
                     })}
                     name="domain.name"
                     readOnly={isEditing}

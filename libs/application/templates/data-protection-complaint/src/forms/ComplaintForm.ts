@@ -48,6 +48,7 @@ export const ComplaintForm: Form = buildForm({
           title: externalData.general.pageTitle,
           id: 'approveExternalData',
           subTitle: externalData.general.subTitle,
+          description: externalData.general.description,
           checkboxLabel: externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
@@ -61,12 +62,6 @@ export const ComplaintForm: Form = buildForm({
               type: 'UserProfileProvider',
               title: externalData.labels.userProfileTitle,
               subTitle: externalData.labels.userProfileSubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'userProfileDescription',
-              type: 'UserProfileDescription',
-              title: '',
-              subTitle: externalData.general.description,
             }),
           ],
         }),

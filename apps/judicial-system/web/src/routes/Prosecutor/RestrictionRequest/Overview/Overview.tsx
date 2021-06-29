@@ -29,11 +29,8 @@ import {
   TIME_FORMAT,
   formatRequestedCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  SendNotificationMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
@@ -41,7 +38,7 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -51,30 +48,12 @@ export const Overview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { transitionCase } = useCase()
+  const { transitionCase, sendNotification, isSendingNotification } = useCase()
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const [
-    sendNotificationMutation,
-    { loading: isSendingNotification },
-  ] = useMutation(SendNotificationMutation)
-
-  const sendNotification = async (id: string) => {
-    const { data } = await sendNotificationMutation({
-      variables: {
-        input: {
-          caseId: id,
-          type: NotificationType.READY_FOR_COURT,
-        },
-      },
-    })
-
-    return data?.sendNotification?.notificationSent
-  }
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
@@ -87,13 +66,16 @@ export const Overview: React.FC = () => {
       const caseSubmitted = shouldSubmitCase
         ? await transitionCase(
             workingCase,
-            setWorkingCase,
             CaseTransition.SUBMIT,
+            setWorkingCase,
           )
         : workingCase.state !== CaseState.NEW
 
       const notificationSent = caseSubmitted
-        ? await sendNotification(workingCase.id)
+        ? await sendNotification(
+            workingCase.id,
+            NotificationType.READY_FOR_COURT,
+          )
         : false
 
       if (shouldSubmitCase) {
@@ -171,7 +153,7 @@ export const Overview: React.FC = () => {
                   {
                     title: 'Embætti',
                     value: `${
-                      workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                      workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
                     }`,
                   },
                   {
@@ -181,7 +163,7 @@ export const Overview: React.FC = () => {
                         workingCase.requestedCourtDate,
                         'PPPP',
                         true,
-                      ) || '',
+                      ) ?? '',
                     )} eftir kl. ${formatDate(
                       workingCase.requestedCourtDate,
                       TIME_FORMAT,
@@ -202,14 +184,14 @@ export const Overview: React.FC = () => {
                             workingCase.parentCase.validToDate,
                             'PPPP',
                             true,
-                          ) || '',
+                          ) ?? '',
                         )} kl. ${formatDate(
                           workingCase.parentCase.validToDate,
                           TIME_FORMAT,
                         )}`
                       : workingCase.arrestDate
                       ? `${capitalize(
-                          formatDate(workingCase.arrestDate, 'PPPP', true) ||
+                          formatDate(workingCase.arrestDate, 'PPPP', true) ??
                             '',
                         )} kl. ${formatDate(
                           workingCase.arrestDate,
@@ -222,7 +204,7 @@ export const Overview: React.FC = () => {
                 accusedNationalId={workingCase.accusedNationalId}
                 accusedAddress={workingCase.accusedAddress}
                 defender={{
-                  name: workingCase.defenderName || '',
+                  name: workingCase.defenderName ?? '',
                   email: workingCase.defenderEmail,
                   phoneNumber: workingCase.defenderPhoneNumber,
                 }}
@@ -361,7 +343,7 @@ export const Overview: React.FC = () => {
                   <Box marginY={3}>
                     <CaseFileList
                       caseId={workingCase.id}
-                      files={workingCase.files || []}
+                      files={workingCase.files ?? []}
                     />
                   </Box>
                 </AccordionItem>

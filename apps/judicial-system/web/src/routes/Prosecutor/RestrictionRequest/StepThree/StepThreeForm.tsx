@@ -18,7 +18,7 @@ import {
   setCheckboxAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import {
   custodyProvisions,
@@ -268,7 +268,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
           nextIsDisabled={
-            !validate(workingCase.lawsBroken || '', 'empty').isValid ||
+            !validate(workingCase.lawsBroken ?? '', 'empty').isValid ||
             !requestedValidToDateIsValid ||
             !workingCase.custodyProvisions ||
             workingCase.custodyProvisions?.length === 0

@@ -1,8 +1,11 @@
-import { mock } from 'jest-mock-extended'
+import { join } from 'path'
+import { Test } from '@nestjs/testing'
 
-import { Logger } from '@island.is/logging'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { EmailService } from './email.service'
+import { Message } from '../types'
+import { AdapterService } from '../tools/adapter.service'
+import { EmailService, EMAIL_OPTIONS } from './email.service'
 
 const testAccount = {
   smtp: {
@@ -13,49 +16,61 @@ const testAccount = {
   user: 'Test User',
   pass: 'Test Pass',
 }
-const testMessageId = 'Test Message Id'
-const mockSendMail = jest.fn(function () {
-  return {
-    messageId: testMessageId,
-  }
-})
 
-const mockCreateTransport = jest.fn(function (
+const testMessageId = 'Test Message Id'
+
+const mockSendMail = jest.fn(() => ({
+  messageId: testMessageId,
+}))
+
+const mockCreateTransport = jest.fn((
   account, // eslint-disable-line @typescript-eslint/no-unused-vars
-) {
-  return {
-    sendMail: mockSendMail,
-  }
-})
-jest.mock('nodemailer', () => {
-  return {
-    default: {
-      createTestAccount: function () {
-        return testAccount
-      },
-      createTransport: jest.fn(function (account) {
-        return mockCreateTransport(account)
-      }),
-      getTestMessageUrl: function () {
-        return 'Test Url'
-      },
-    },
-  }
-})
+) => ({
+  sendMail: mockSendMail,
+}))
+
+jest.mock('nodemailer', () => ({
+  createTestAccount: () => {
+    return testAccount
+  },
+  createTransport: jest.fn((account) => {
+    return mockCreateTransport(account)
+  }),
+  getTestMessageUrl: () => {
+    return 'Test Url'
+  },
+}))
 
 describe('EmailService', () => {
-  it('it should send email', async () => {
-    const emailService = new EmailService(
-      {
-        useTestAccount: true,
-      },
-      mock<Logger>(),
-    )
-    const testMessage = { to: 'Test To' }
+  let emailService: EmailService
 
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        EmailService,
+        {
+          provide: EMAIL_OPTIONS,
+          useValue: {
+            useTestAccount: true,
+          },
+        },
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: logger,
+        },
+        AdapterService,
+      ],
+    }).compile()
+
+    emailService = module.get(EmailService)
+  })
+
+  it('it should send email', async () => {
+    const testMessage = { to: 'Test To' }
     const messageId = await emailService.sendEmail(testMessage)
 
     expect(messageId).toBe(testMessageId)
+
     expect(mockCreateTransport).toHaveBeenCalledWith({
       host: testAccount.smtp.host,
       port: testAccount.smtp.port,
@@ -65,6 +80,74 @@ describe('EmailService', () => {
         pass: testAccount.pass,
       },
     })
+
     expect(mockSendMail).toHaveBeenCalledWith(testMessage)
+  })
+
+  it('should send an email with a design template', async () => {
+    const title = 'Email main heading'
+
+    const message = {
+      to: 'recipient@island.is',
+      template: {
+        title,
+        body: [
+          {
+            component: 'Image',
+            context: {
+              src: join(
+                __dirname,
+                '../../../application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/logo.jpg',
+              ),
+            },
+          },
+          {
+            component: 'Image',
+            context: {
+              src: join(
+                __dirname,
+                '../../../application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/child.jpg',
+              ),
+            },
+          },
+          {
+            component: 'Heading',
+            context: {
+              copy: title,
+            },
+          },
+          {
+            component: 'Copy',
+            context: {
+              copy: 'Hi ${user}',
+            },
+          },
+          {
+            component: 'Copy',
+            context: {
+              copy: 'Your application has been successfully approved.',
+            },
+          },
+          { component: 'Copy', context: { copy: 'Best regards,' } },
+          { component: 'Copy', context: { copy: 'Parental Leave Fund' } },
+        ],
+      },
+    } as Message
+
+    const messageId = await emailService.sendEmail(message)
+
+    expect(messageId).toBe(testMessageId)
+
+    expect(mockCreateTransport).toHaveBeenCalledWith({
+      host: testAccount.smtp.host,
+      port: testAccount.smtp.port,
+      secure: testAccount.smtp.secure,
+      auth: {
+        user: testAccount.user,
+        pass: testAccount.pass,
+      },
+    })
+
+    expect(mockSendMail).toHaveBeenCalledWith(message)
   })
 })

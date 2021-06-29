@@ -1,17 +1,20 @@
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Case, Institution } from '@island.is/judicial-system/types'
-import { Box, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   DateTime,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { requestCourtForm } from '@island.is/judicial-system-web/messages'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
+import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 
 interface Props {
   workingCase: Case
@@ -37,14 +40,15 @@ const StepTwoForm: React.FC<Props> = (props) => {
     setRequestedCourtDateIsValid,
   ] = useState<boolean>(workingCase.requestedCourtDate !== null)
 
-  const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
 
+  const { updateCase } = useCase()
   return (
     <>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Óskir um fyrirtöku
+            {formatMessage(requestCourtForm.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
@@ -65,7 +69,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Tími handtöku
+                {formatMessage(requestCourtForm.arrestDate.heading)}
               </Text>
             </Box>
             <DateTime
@@ -91,21 +95,8 @@ const StepTwoForm: React.FC<Props> = (props) => {
           </Box>
         )}
         <Box component="section" marginBottom={10}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              Ósk um fyrirtökudag og tíma{' '}
-              <Box data-testid="requested-court-date-tooltip" component="span">
-                <Tooltip text="Dómstóll hefur þennan tíma til hliðsjónar þegar fyrirtökutíma er úthlutað og mun leitast við að taka málið fyrir í tæka tíð en ekki fyrir þennan tíma." />
-              </Box>
-            </Text>
-          </Box>
-          <DateTime
-            name="reqCourtDate"
-            selectedDate={
-              workingCase.requestedCourtDate
-                ? new Date(workingCase.requestedCourtDate)
-                : undefined
-            }
+          <RequestCourtDate
+            workingCase={workingCase}
             onChange={(date: Date | undefined, valid: boolean) =>
               newSetAndSendDateToServer(
                 'requestedCourtDate',
@@ -117,18 +108,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
                 updateCase,
               )
             }
-            timeLabel="Ósk um tíma (kk:mm)"
-            locked={workingCase.courtDate !== null}
-            minDate={new Date()}
-            required
           />
-          {workingCase.courtDate && (
-            <Box marginTop={1}>
-              <Text variant="eyebrow">
-                Fyrirtökudegi og tíma hefur verið úthlutað
-              </Text>
-            </Box>
-          )}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

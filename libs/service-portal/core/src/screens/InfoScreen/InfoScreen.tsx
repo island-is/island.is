@@ -1,11 +1,12 @@
 import {
-  ArrowLink,
+  Link,
   Box,
   Bullet,
   BulletList,
   GridColumn,
   GridRow,
   Inline,
+  Icon,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
@@ -23,11 +24,12 @@ interface Props {
   }
   externalHref?: string
   externalLinkTitle?: MessageDescriptor
-  institutionTitle: MessageDescriptor
-  institutionSubtitle: MessageDescriptor
-  institutionDescription: MessageDescriptor
-  institutionHref: string
-  institutionLinkTitle: MessageDescriptor
+  institutionTitle?: MessageDescriptor
+  institutionSubtitle?: MessageDescriptor
+  institutionDescription?: MessageDescriptor
+  institutionHref?: string
+  institutionLinkTitle?: MessageDescriptor
+  inProgress?: boolean
   figure: string
 }
 
@@ -38,6 +40,7 @@ export const InfoScreen: FC<Props> = ({
   externalHref,
   externalLinkTitle,
   figure,
+  inProgress = true,
 }) => {
   const { formatMessage } = useLocale()
   const trackExternalLinkClick = () => {
@@ -54,12 +57,14 @@ export const InfoScreen: FC<Props> = ({
                   <Text variant="h1" as="h1">
                     {formatMessage(title)}
                   </Text>
-                  <Tag variant="blue" outlined>
-                    {formatMessage({
-                      id: 'service.portal:in-progress',
-                      defaultMessage: 'Í vinnslu',
-                    })}
-                  </Tag>
+                  {inProgress && (
+                    <Tag variant="blue">
+                      {formatMessage({
+                        id: 'service.portal:in-progress',
+                        defaultMessage: 'Í vinnslu',
+                      })}
+                    </Tag>
+                  )}
                 </Inline>
               </Box>
               <Box marginBottom={[3, 4, 6]}>
@@ -81,19 +86,27 @@ export const InfoScreen: FC<Props> = ({
               )}
               {externalHref && externalLinkTitle && (
                 <Box marginTop={[3, 4]}>
-                  <ArrowLink
+                  <Link
                     href={externalHref}
                     onClick={trackExternalLinkClick}
+                    color="blue400"
+                    underline="normal"
+                    underlineVisibility="always"
+                    newTab
                   >
-                    {formatMessage(externalLinkTitle)}
-                  </ArrowLink>
+                    {formatMessage(externalLinkTitle)}{' '}
+                    <Icon icon="open" type="outline" />
+                  </Link>
                 </Box>
               )}
             </Box>
           </GridColumn>
           <GridColumn span={['12/12', '5/12']} order={[1, 2]}>
             <Box marginBottom={[3, 0]}>
-              <img src={figure} alt={`skrautmynd fyrir ${title}`} />
+              <img
+                src={figure}
+                alt={`skrautmynd fyrir ${formatMessage(title)}`}
+              />
             </Box>
           </GridColumn>
         </GridRow>
