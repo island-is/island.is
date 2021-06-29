@@ -33,7 +33,6 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
     history,
   } = regulation
 
-  const untilDate = timelineDate || ''
   const today = new Date().toISOString().substr(0, 10) as ISODate
 
   const color: BallColor = repealedDate
@@ -54,9 +53,7 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
   )
 
   const getNextHistoryDate = () => {
-    const idx = (history || []).findIndex(
-      (item, i) => item.date === timelineDate,
-    )
+    const idx = (history || []).findIndex((item) => item.date === timelineDate)
     const nextItem = idx > -1 && history[idx + 1]
     return nextItem ? nextItem.date : today // fall back to `today`, because whatever, It should never happen...
   }
