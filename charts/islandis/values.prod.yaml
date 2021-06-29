@@ -136,6 +136,7 @@ application-system-api:
     DB_NAME: application_system_api
     DB_USER: application_system_api
     EMAIL_REGION: eu-west-1
+    ENDORSEMENTS_API_BASE_PATH: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_SERVICE_PRESIGN_BUCKET: island-is-prod-fs-presign-bucket
     FILE_STORAGE_UPLOAD_BUCKET: island-is-prod-upload-api
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
@@ -147,6 +148,8 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
     NOVA_USERNAME: IslandIs_User_Production
     PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL: s@kogk.is
+    PARTY_LETTER_REGISTRY_API_BASE_PATH: >-
+      http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local
     PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: postur@dmr.is
     REDIS_URL_NODE_01: >-
       clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379
@@ -272,6 +275,13 @@ application-system-form:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS
+    PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS
+    PARTY_LETTER_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_LETTER_ASSIGNED_ADMINS
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
