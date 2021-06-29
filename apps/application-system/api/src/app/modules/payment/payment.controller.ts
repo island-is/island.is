@@ -68,7 +68,9 @@ export class PaymentController {
     }
     const allCatalogs = await this.paymentAPI.getCatalogByPerformingOrg(
       '6509142520',
-    ).catch()
+    ).catch((error) => {
+      throw new BadRequestException('Failed to retrieve Catalogs, ' + error)
+    })
 
     const catalog = await this.paymentService
       .searchCorrectCatalog(
@@ -93,6 +95,7 @@ export class PaymentController {
         chargeItemCode: catalog.chargeItemCode,
         performingOrganiationID: catalog.performingOrgID,
         chargeType: catalog.chargeType,
+        amount: catalog.priceAmount
       } as any,
       expires_at: new Date(),
     }
