@@ -365,7 +365,7 @@ export const m: MessageDir = {
     includePapersDisclaimerPt1: {
       id: 'pa.application:recommendations.includePapers.disclaimer1',
       defaultMessage:
-        '*Fyrir meðmæli á pappír þarf að lista upp kennitölur meðmælenda í skjal og hlaða upp hér að neðan.',
+        '*Fyrir meðmæli á pappír þarf að lista upp kennitölur meðmælenda í Excel skjal og hlaða upp hér að neðan.',
       description: 'Include paper signatures disclaimer part 1',
     },
     includePapersDisclaimerPt2: {
@@ -377,7 +377,7 @@ export const m: MessageDir = {
     includePapersDisclaimerPt3: {
       id: 'pa.application:recommendations.includePapers.disclaimer3',
       defaultMessage:
-        '*Kennitölur þurfa að vera ein í hverjum reit í dálk A í excel skjali, fyrsta kennitala skal vera sett í reit A1.',
+        '*Skjalið skal innihalda eina kennitölu per reit. Allar kennitölur skulu vera í fyrsta dálk (dálk A), fyrsta kennitalan skal vera staðsett í fyrstu röð (röð 1).',
       description: 'Include paper signatures disclaimer part 3',
     },
     noPaper: {
