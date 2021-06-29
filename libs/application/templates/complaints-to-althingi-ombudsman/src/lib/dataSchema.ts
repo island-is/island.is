@@ -1,11 +1,18 @@
-// import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as z from 'zod'
-import { ComplaineeTypes, NO, OmbudsmanComplaintTypeEnum, YES } from '../shared'
+import {
+  ComplainedForTypes,
+  ComplaineeTypes,
+  NO,
+  OmbudsmanComplaintTypeEnum,
+  YES,
+} from '../shared'
 import { error } from './messages/error'
 
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, { params: error.required }),
-  /* information: z.object({
+  information: z.object({
     name: z.string().nonempty(),
     ssn: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
     address: z.string().nonempty(),
@@ -26,7 +33,13 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
         params: error.required,
       },
     ),
-  }), */
+  }),
+  complainedFor: z.object({
+    decision: z.enum([
+      ComplainedForTypes.MYSELF,
+      ComplainedForTypes.SOMEONEELSE,
+    ]),
+  }),
   complainee: z.object({
     type: z.enum([ComplaineeTypes.GOVERNMENT, ComplaineeTypes.OTHER]),
   }),
