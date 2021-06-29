@@ -15,8 +15,6 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Box component="section">
       <ReviewGroup>
-        <Text variant="h5">{formatMessage('label')}</Text>
-        <Text>{formatMessage('value')}</Text>
         <GridRow>
           <GridColumn span={'4/12'}>
             <Text variant="h5">
@@ -57,18 +55,20 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
           label="Kvartað fyrir"
           value={answers.complainedFor?.decision}
         />
+        {answers.complainedFor?.decision === ComplainedForTypes.SOMEONEELSE && (
+          <ValueLine
+            label="Tengsl við þann aðila"
+            value={answers.complainedForInformation?.connection}
+          />
+        )}
       </ReviewGroup>
-      {answers.complainedFor?.decision === ComplainedForTypes.SOMEONEELSE && (
-        <ReviewGroup>
-          <ValueLine label="Upplýsingar um þann aðila" value="TODO" />
-        </ReviewGroup>
-      )}
+
       <ReviewGroup>
         <GridRow>
           <GridColumn span={'4/12'}>
             <ValueLine
               label="Kvörtun beinist að"
-              value={answers.complaintDescription?.complaineeName}
+              value={answers.complaintDescription.complaineeName}
             />
           </GridColumn>
           <GridColumn span={'6/12'}>

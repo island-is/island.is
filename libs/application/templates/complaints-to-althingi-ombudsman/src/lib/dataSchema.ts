@@ -49,6 +49,16 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
       OmbudsmanComplaintTypeEnum.PROCEEDINGS,
     ]),
   }),
+  complainedForInformation: z.object({
+    name: z.string(),
+    ssn: z.string(),
+    address: z.string(),
+    postcode: z.string(),
+    city: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    connection: z.string(),
+  }),
   complaintDescription: z.object({
     decisionDate: z.string().optional(), // TODO: Validate this block
     complaineeName: z.string().refine((val) => (val ? val.length > 0 : false), {
