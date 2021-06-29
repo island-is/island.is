@@ -7,7 +7,7 @@ import { EndorsementList } from './endorsementList.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 
-interface createInput extends EndorsementListDto {
+interface CreateInput extends EndorsementListDto {
   owner: string
 }
 @Injectable()
@@ -70,7 +70,7 @@ export class EndorsementListService {
     return await endorsementList.update({ closedDate: null })
   }
 
-  async create(list: createInput) {
+  async create(list: CreateInput) {
     this.logger.info(`Creating endorsement list: ${list.title}`)
     return this.endorsementListModel.create(list)
   }
