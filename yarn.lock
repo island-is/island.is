@@ -2924,10 +2924,10 @@
   resolved "https://registry.yarnpkg.com/@hookform/error-message/-/error-message-0.0.5.tgz#606912b506513669980c440f383ff6c78a7aca3a"
   integrity sha512-es7eLLFA3SXNYAT8aUjvf7Gok1eMHK+9DMILtJA7ZEwYZlCCCPifhpoZmY+5SOopEtF7e+qxFOjX+MJnI3jOcg==
 
-"@hugsmidjan/regulations-editor@0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.1.4.tgz#a31312224db29c0a2ae2d07a64a1bad094b2d790"
-  integrity sha512-K3oJ1RU1ccQ/z8cKn+dzpwQgUYqjXTTUSRUKiT4DHhYyvnQGqlsq0jflp6Syb3Kpjrw6q1Cl2I+U8DlaQM5Zmg==
+"@hugsmidjan/regulations-editor@0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.1.5.tgz#9ff31df0c4ee8ddbaaf9f2f518399e631512c0d0"
+  integrity sha512-m84sP6H0aJhhruzejqZimCoOZJ3F9JGex2CGHCmfASr7NJXeY3MBsuEpi7m3EMupKVpEunFrqR43AZ2CT3z3lA==
   dependencies:
     "@tinymce/tinymce-react" "^3.8.4"
     cleanup-prettier "npm:prettier@2.2.0"
