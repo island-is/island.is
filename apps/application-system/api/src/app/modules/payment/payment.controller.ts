@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Param,
   Post,
@@ -29,7 +28,6 @@ import { AuditService } from '@island.is/nest/audit'
 import { CreatePaymentResponseDto } from './dto'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
-import type { Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 import { isUuid } from 'uuidv4'
@@ -88,48 +86,6 @@ export class PaymentController {
       id: payment.id,
       paymentUrl: chargeResult.paymentUrl,
     }
-  }
-
-  @Scopes(ApplicationScope.write)
-  @Post('applications/:application_id/payment/:id')
-  @ApiParam({
-    name: 'application_id',
-    type: String,
-    required: true,
-    description: 'The id of the application to update fulfilled status.',
-  })
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-    description: 'The id of the payment.',
-  })
-  async paymentApproved(
-    @Param('application_id') applicationId: string,
-    @Body() callback: Callback,
-    @Param('id') id: string,
-  ): Promise<void> {
-    if (!isUuid(applicationId) || !isUuid(id)) {
-      throw new BadRequestException(
-        `ApplicationId or paymentId is on wrong format.`,
-      )
-    }
-    if (callback.status !== 'paid') {
-      // TODO: no-op.. it would be nice eventually to update all statuses
-      return
-    }
-
-    await this.paymentModel.update(
-      {
-        fulfilled: true,
-      },
-      {
-        where: {
-          id,
-          application_id: applicationId,
-        },
-      },
-    )
   }
 
   @Scopes(ApplicationScope.read)
