@@ -174,14 +174,15 @@ export const serviceSetup = (services: {
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
       DOCUMENT_PROVIDER_ADMINS:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS',
+      FINANCE_PASS: '/k8s/service-portal/FINANCE_PASS',
+      FINANCE_USER: '/k8s/service-portal/FINANCE_USER',
+      XROAD_FINANCES_PATH: '/k8s/service-portal/XROAD_FINANCES_PATH',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
       PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
-      XROAD_BASE_URL: '/k8s/application-system-api/XROAD_BASE_PATH',
-      XROAD_PROVIDER_ID:
+      PAYMENT_XROAD_PROVIDER_ID:
         '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID',
-      XROAD_CLIENT_ID: '/k8s/application-system-api/XROAD_CLIENT_ID',
-      PAYMENT_USERNAME: '/k8s/application-system-api/PAYMENT_USER',
+      PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER',
       PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD',
     })
 

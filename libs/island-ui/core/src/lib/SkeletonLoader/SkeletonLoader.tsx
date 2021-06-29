@@ -1,8 +1,8 @@
 import React from 'react'
-import cn from 'classnames'
 import * as styles from './SkeletonLoader.treat'
 import { Stack, StackProps } from '../Stack/Stack'
-import { Theme } from '@island.is/island-ui/theme'
+import { Box } from '../Box/Box'
+import type { BoxProps } from '../Box/types'
 
 export interface SkeletonLoaderProps {
   /**
@@ -24,7 +24,11 @@ export interface SkeletonLoaderProps {
   /**
    * Define the border radius of the loader
    */
-  borderRadius?: keyof Theme['border']['radius']
+  borderRadius?: BoxProps['borderRadius']
+  /**
+   * Change the display style of the loader
+   */
+  display?: BoxProps['display']
 }
 /**
  * Animated content placeholder to manage user expectations
@@ -35,11 +39,18 @@ export const SkeletonLoader = ({
   repeat = 1,
   space = 0,
   borderRadius,
+  display = 'inlineBlock',
 }: SkeletonLoaderProps) => {
   if (repeat === 1) {
     return (
-      <span
-        className={cn(styles.loader, styles.borderRadius[borderRadius!])}
+      <Box
+        borderRadius={borderRadius}
+        display={display}
+        position="relative"
+        overflow="hidden"
+        width="full"
+        background="purple100"
+        className={styles.loader}
         style={{
           ...(height && { height }),
           ...(width && { width }),
@@ -50,9 +61,15 @@ export const SkeletonLoader = ({
   return (
     <Stack space={space}>
       {[...Array(repeat)].map((_key, index) => (
-        <span
+        <Box
           key={index}
-          className={cn(styles.loader, styles.borderRadius[borderRadius!])}
+          borderRadius={borderRadius}
+          display={display}
+          position="relative"
+          overflow="hidden"
+          width="full"
+          background="purple100"
+          className={styles.loader}
           style={{
             ...(height && { height }),
             ...(width && { width }),
