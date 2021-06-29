@@ -28,9 +28,10 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
   const [bulkUploading, setBulkUploading] = useState(false)
   const [bulkUploadDone, setBulkUploadDone] = useState(false)
   const [bulkUploadFailed, setBulkUploadFailed] = useState(false)
-  const [createBulkEndorsements] = useMutation(BulkEndorse)
-  const [failedNatonalIds, setFailedNatonalIds] = useState([])
-  const [succeededNatonalIds, setSucceededNatonalIds] = useState([])
+  const [createBulkEndorsements, {data = {}}] = useMutation(BulkEndorse)
+  const failedNatonalIds = data?.endorsementSystemBulkEndorseList?.failed.map((x: any) => formatKennitala(x?.nationalId))
+  .join(', ')
+  const succeededNatonalIds = data?.endorsementSystemBulkEndorseList?.succeeded
 
   const onChange = (newFiles: File[]) => {
     const newUploadFiles = newFiles.map((f) => fileToObject(f))
@@ -59,22 +60,6 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
     if (response) {
       setBulkUploadDone(true)
       onSuccess()
-
-      if (response?.data.endorsementSystemBulkEndorseList.failed.length) {
-        setFailedNatonalIds(
-          response?.data.endorsementSystemBulkEndorseList.failed
-            .map((x: any) => formatKennitala(x?.nationalId))
-            .join(', '),
-        )
-      }
-
-      if (response?.data.endorsementSystemBulkEndorseList.succeeded.length) {
-        setSucceededNatonalIds(
-          response?.data.endorsementSystemBulkEndorseList.succeeded
-            .map((x: any) => formatKennitala(x?.nationalId))
-            .join(', '),
-        )
-      }
     }
     setBulkUploading(false)
   }
@@ -126,7 +111,7 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
         <>
           {bulkUploadDone && (
             <Box marginY={5}>
-              {succeededNatonalIds.length > 0 && (
+              {succeededNatonalIds?.length > 0 && (
                 <AlertBanner
                   title={formatMessage(m.collectEndorsements.uploadSuccess)}
                   variant="success"
@@ -156,7 +141,7 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
             />
           </Box>
 
-          {failedNatonalIds.length > 0 && (
+          {failedNatonalIds?.length > 0 && (
             <Box marginY={5}>
               <AlertBanner
                 title={formatMessage(m.collectEndorsements.attention)}
