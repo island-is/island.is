@@ -171,5 +171,7 @@ module.exports = {
     '<rootDir>/libs/api/domains/license-service',
     '<rootDir>/libs/service-portal/licenses',
     '<rootDir>/libs/api/domains/identity',
+    '<rootDir>/libs/clients/payment-schedule',
+    '<rootDir>/libs/api/domains/payment-schedule',
   ],
 }
