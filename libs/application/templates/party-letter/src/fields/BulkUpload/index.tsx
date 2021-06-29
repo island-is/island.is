@@ -37,7 +37,7 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
     })
   }
 
-  const onBulkUpload = async (array: string[]) => {
+  const onBulkUpload = async (nationalIds: string[]) => {
     setBulkUploadDone(false)
     setBulkUploadFailed(false)
     setBulkUploading(true)
@@ -46,7 +46,7 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
         input: {
           listId: (application.externalData?.createEndorsementList.data as any)
             .id,
-          nationalIds: array,
+          nationalIds,
         },
       },
     }).catch(() => {
