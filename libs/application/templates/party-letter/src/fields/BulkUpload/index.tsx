@@ -15,6 +15,7 @@ import { read, utils } from 'xlsx'
 import { useMutation } from '@apollo/client'
 import FileUploadDisclaimer from '../FileUploadDisclaimer'
 import { Application } from '@island.is/application/core'
+import { format as formatKennitala } from 'kennitala'
 
 interface BulkUploadProps {
   application: Application
@@ -28,6 +29,8 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
   const [bulkUploadDone, setBulkUploadDone] = useState(false)
   const [bulkUploadFailed, setBulkUploadFailed] = useState(false)
   const [createBulkEndorsements] = useMutation(BulkEndorse)
+  const [failedNatonalIds, setFailedNatonalIds] = useState([])
+  const [succeededNatonalIds, setSucceededNatonalIds] = useState([])
 
   const onChange = (newFiles: File[]) => {
     const newUploadFiles = newFiles.map((f) => fileToObject(f))
@@ -41,7 +44,7 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
     setBulkUploadDone(false)
     setBulkUploadFailed(false)
     setBulkUploading(true)
-    const success = await createBulkEndorsements({
+    const response = await createBulkEndorsements({
       variables: {
         input: {
           listId: (application.externalData?.createEndorsementList.data as any)
@@ -53,9 +56,25 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
       setBulkUploadFailed(true)
     })
 
-    if (success) {
+    if (response) {
       setBulkUploadDone(true)
       onSuccess()
+
+      if (response?.data.endorsementSystemBulkEndorseList.failed.length) {
+        setFailedNatonalIds(
+          response?.data.endorsementSystemBulkEndorseList.failed
+            .map((x: any) => formatKennitala(x?.nationalId))
+            .join(', '),
+        )
+      }
+
+      if (response?.data.endorsementSystemBulkEndorseList.succeeded.length) {
+        setSucceededNatonalIds(
+          response?.data.endorsementSystemBulkEndorseList.succeeded
+            .map((x: any) => formatKennitala(x?.nationalId))
+            .join(', '),
+        )
+      }
     }
     setBulkUploading(false)
   }
@@ -107,10 +126,12 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
         <>
           {bulkUploadDone && (
             <Box marginY={5}>
-              <AlertBanner
-                title={formatMessage(m.fileUpload.uploadSuccess)}
-                variant="success"
-              />
+              {succeededNatonalIds.length > 0 && (
+                <AlertBanner
+                  title={formatMessage(m.fileUpload.uploadSuccess)}
+                  variant="success"
+                />
+              )}
             </Box>
           )}
 
@@ -130,6 +151,21 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
               }
             />
           </Box>
+          
+          {failedNatonalIds.length > 0 && (
+            <Box marginY={5}>
+              <AlertBanner
+                title={formatMessage(m.fileUpload.attention)}
+                description={
+                  formatMessage(m.fileUpload.uploadWarningText) +
+                  failedNatonalIds
+                }
+                variant="warning"
+              >
+                {failedNatonalIds}
+              </AlertBanner>
+            </Box>
+          )}
         </>
       )}
 

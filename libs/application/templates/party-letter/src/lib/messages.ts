@@ -152,6 +152,16 @@ export const m: MessageDir = {
       defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
       description: 'Upload failed text',
     },
+    attention: {
+      id: 'pa.application:uploadButton.attention',
+      defaultMessage: 'Athugið!',
+      description: 'Warning title',
+    },
+    uploadWarningText: {
+      id: 'pa.application:uploadButton.warningDescription',
+      defaultMessage: 'Ekki tókst að hlaða upp eftirfarandi kennitölur: ',
+      description: 'Warning description',
+    }
   }),
   selectNationalId: defineMessages({
     title: {
