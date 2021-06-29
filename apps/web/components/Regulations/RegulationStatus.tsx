@@ -38,6 +38,8 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
 
   const color: BallColor = repealedDate
     ? 'red'
+    : type === 'amending'
+    ? 'yellow'
     : !timelineDate || timelineDate === lastAmendDate
     ? 'green'
     : 'yellow'
