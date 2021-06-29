@@ -1,5 +1,6 @@
 import { DynamicModule } from '@nestjs/common'
 
+import { AdapterService } from '../tools/adapter.service'
 import {
   EmailService,
   EmailServiceOptions,
@@ -16,6 +17,7 @@ export class EmailModule {
           useFactory: () => options,
         },
         EmailService,
+        AdapterService,
       ],
       exports: [EmailService],
     }

@@ -8,11 +8,7 @@ import {
   InfoCard,
   PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  Case,
-  IntegratedCourts,
-  ReadableCaseType,
-} from '@island.is/judicial-system/types'
+import { Case, IntegratedCourts } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -20,6 +16,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   capitalize,
+  caseTypes,
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
@@ -30,6 +27,7 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal'
 
 interface Props {
   workingCase: Case
@@ -41,6 +39,7 @@ const OverviewForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState<string>('')
   const [createCaseSuccess, setCreateCaseSuccess] = useState<boolean>(false)
+  const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   const { user } = useContext(UserContext)
   const { updateCase, createCourtCase, isCreatingCourtCase } = useCase()
@@ -181,7 +180,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               },
               {
                 title: 'Tegund kröfu',
-                value: capitalize(ReadableCaseType[workingCase.type]),
+                value: capitalize(caseTypes[workingCase.type]),
               },
             ]}
             accusedName={workingCase.accusedName}
@@ -320,12 +319,28 @@ const OverviewForm: React.FC<Props> = (props) => {
           />
         </div>
         <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title="Opna PDF kröfu"
-            pdfType="request"
-          />
+          <Box marginBottom={3}>
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF kröfu"
+              pdfType="request"
+            />
+          </Box>
+          <Button
+            variant="ghost"
+            icon="pencil"
+            size="small"
+            onClick={() => setIsDraftingConclusion(true)}
+          >
+            Skrifa drög að niðurstöðu
+          </Button>
         </Box>
+        <DraftConclusionModal
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          isDraftingConclusion={isDraftingConclusion}
+          setIsDraftingConclusion={setIsDraftingConclusion}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

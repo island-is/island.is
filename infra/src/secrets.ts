@@ -1,6 +1,9 @@
 import AWS from 'aws-sdk'
 import yargs from 'yargs'
 import { OpsEnv } from './dsl/types/input-types'
+import { UberChart } from './dsl/uber-chart'
+import { Envs } from './environments'
+import { serializeService } from './dsl/map-to-values'
 import { charts, OpsEnvNames } from './uber-charts/all-charts'
 const { hideBin } = require('yargs/helpers')
 
@@ -30,8 +33,17 @@ yargs(hideBin(process.argv))
       console.log(
         Object.values(charts)
           .map((chart) => chart[p.env as OpsEnv])
-          .flatMap((s) => s)
-          .flatMap((s) => Object.values(s.serviceDef.secrets))
+          .flatMap((services) =>
+            services.map((s) =>
+              serializeService(s, new UberChart(Envs[p.env as OpsEnv])),
+            ),
+          )
+          .flatMap((s) => {
+            if (s.type === 'success') {
+              return Object.values(s.serviceDef.secrets!)
+            }
+            return [`serialize errors: ${s.errors.join(', ')}`]
+          })
           .join('\n'),
       )
     },

@@ -4,6 +4,8 @@ import {
   AuthScope,
   UserProfileScope,
   NationalRegistryScope,
+  EndorsementsScope,
+  DocumentsScope,
 } from '@island.is/auth/scopes'
 
 import { environment } from './environments'
@@ -32,7 +34,10 @@ if (userMocked) {
       AuthScope.readDelegations,
       AuthScope.writeDelegations,
       NationalRegistryScope.individuals,
+      DocumentsScope.main,
+      EndorsementsScope.main,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
+    userStorePrefix: 'sp.',
   })
 }

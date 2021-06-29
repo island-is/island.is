@@ -47,11 +47,18 @@ export const ExamplePaymentPendingField: FC<Props> = ({
       {error && { error }}
 
       {!paymentStatus.fulfilled && (
-        <Box>
+        <Box height="full">
           <Text variant="h2">Augnablik meðan beðið er eftir greiðslu</Text>
           <Text marginTop="gutter">Texti um hvað er að gerast</Text>
 
-          <Box backgroundPattern="dotted" height="full" width="half" />
+          <Box
+            backgroundPattern="dotted"
+            marginTop="gutter"
+            paddingTop="p5"
+            width="half"
+          >
+            &nbsp;
+          </Box>
         </Box>
       )}
     </>
