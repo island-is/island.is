@@ -2683,6 +2683,9 @@ export interface IStepFields {
   /** Slug */
   slug: string
 
+  /** Subtitle */
+  subtitle?: Document | undefined
+
   /** Text */
   text?: Document | undefined
 
