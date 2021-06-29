@@ -28,9 +28,10 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
   const [bulkUploading, setBulkUploading] = useState(false)
   const [bulkUploadDone, setBulkUploadDone] = useState(false)
   const [bulkUploadFailed, setBulkUploadFailed] = useState(false)
-  const [createBulkEndorsements, {data = {}}] = useMutation(BulkEndorse)
-  const failedNatonalIds = data?.endorsementSystemBulkEndorseList?.failed.map((x: any) => formatKennitala(x?.nationalId))
-  .join(', ')
+  const [createBulkEndorsements, { data = {} }] = useMutation(BulkEndorse)
+  const failedNatonalIds = data?.endorsementSystemBulkEndorseList?.failed
+    .map((x: any) => formatKennitala(x?.nationalId))
+    .join(', ')
   const succeededNatonalIds = data?.endorsementSystemBulkEndorseList?.succeeded
 
   const onChange = (newFiles: File[]) => {
