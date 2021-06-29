@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, SessionArrangements } from '@island.is/judicial-system/types'
 import {
   CaseData,
   JudgeSubsections,
@@ -36,14 +36,26 @@ const CourtRecord = () => {
         attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
       }
 
-      if (wc.prosecutor && wc.accusedName) {
-        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${wc.accusedName} varnaraðili`
-      }
+      if (wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION) {
+        if (wc.prosecutor) {
+          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
+        }
 
-      if (wc.defenderName) {
-        attendees += `\n${wc.defenderName} skipaður ${
-          wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-        } varnaraðila`
+        if (
+          wc.sessionArrangements === SessionArrangements.ALL_PRESENT &&
+          wc.accusedName
+        ) {
+          attendees += `${wc.accusedName} varnaraðili`
+        }
+
+        if (
+          wc.sessionArrangements === SessionArrangements.ALL_PRESENT &&
+          wc.defenderName
+        ) {
+          attendees += `\n${wc.defenderName} skipaður ${
+            wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+          } varnaraðila`
+        }
       }
 
       return attendees
