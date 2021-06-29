@@ -48,6 +48,27 @@ export class Delegation extends Model<Delegation> {
   })
   toName!: string
 
+  get validTo(): Date | null | undefined {
+    // 1. Find a value with null as validTo. Null means that delegation scope set valid not to a specific time period
+    const withNullValue = this.delegationScopes?.find((x) => x.validTo === null)
+    if (withNullValue) {
+      return null
+    }
+
+    // 2. Find items with value in the array
+    const arrDates = this.delegationScopes
+      ?.filter((x) => x.validTo !== null && x.validTo !== undefined)
+      .map((x) => x.validTo) as Array<Date>
+    if (arrDates) {
+      // Return the max value
+      return arrDates.reduce((a, b) => {
+        return a > b ? a : b
+      })
+    }
+
+    return undefined
+  }
+
   @CreatedAt
   readonly created!: Date
 
@@ -64,6 +85,7 @@ export class Delegation extends Model<Delegation> {
       fromNationalId: this.fromNationalId,
       toNationalId: this.toNationalId,
       toName: this.toName,
+      validTo: this.validTo,
       scopes: this.delegationScopes
         ? this.delegationScopes.map((scope) => scope.toDTO())
         : [],
