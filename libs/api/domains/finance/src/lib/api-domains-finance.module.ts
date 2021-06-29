@@ -3,6 +3,7 @@ import {
   FinanceService,
   FinanceServiceOptions,
   FINANCE_OPTIONS,
+  DownloadService,
 } from '@island.is/clients/finance'
 import { FinanceResolver } from './api-domains-finance.resolver'
 
@@ -18,6 +19,7 @@ export class FinanceModule {
           useValue: config,
         },
         FinanceService,
+        DownloadService,
       ],
     }
   }

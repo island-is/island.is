@@ -80,12 +80,6 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                   'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
               })}
             </Text>
-            <Text variant="intro">
-              {formatMessage({
-                id: 'sp.finance-status:intro-b',
-                defaultMessage: 'Upplýsingar í lista',
-              })}
-            </Text>
           </Column>
         </Columns>
         <Box marginTop={[3, 4, 4, 4, 5]}>

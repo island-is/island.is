@@ -18,12 +18,15 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { FinanceService } from '@island.is/clients/finance'
+import { FinanceService, DownloadService } from '@island.is/clients/finance'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class FinanceResolver {
-  constructor(private FinanceService: FinanceService) {}
+  constructor(
+    private FinanceService: FinanceService,
+    private DownloadService: DownloadService,
+  ) {}
 
   @Query(() => graphqlTypeJson)
   async getFinanceStatus(@CurrentUser() user: User) {
@@ -91,7 +94,7 @@ export class FinanceResolver {
 
   @Query(() => graphqlTypeJson)
   async getExcelDocument(@Args('input') input: ExcelSheetInput) {
-    return this.FinanceService.getExcelDocument(
+    return this.DownloadService.getExcelDocument(
       input.headers,
       input.data,
       input.token,
