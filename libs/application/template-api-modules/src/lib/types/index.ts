@@ -33,6 +33,13 @@ export interface BaseTemplateAPIModuleConfig {
   attachmentBucket: string
   presignBucket: string
   paymentOptions: PaymentServiceOptions
+  partyLetter: {
+    partyLetterRegistryApiBasePath: string
+    endorsementsApiBasePath: string
+  }
+  partyApplication: {
+    endorsementsApiBasePath: string
+  }
 }
 
 export interface TemplateApiModuleActionProps {
