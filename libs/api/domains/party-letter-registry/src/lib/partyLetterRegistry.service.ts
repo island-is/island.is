@@ -3,14 +3,13 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { PartyLetterRegistryApi } from '../../gen/fetch/apis'
-import { CreateDto } from '../../gen/fetch'
 import type { Logger } from '@island.is/logging'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class PartyLetterRegistryService {
   constructor(
-    private readonly _partyLetterRegistryApi: PartyLetterRegistryApi,
+    private readonly partyLetterRegistryApi: PartyLetterRegistryApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
   private async handleError(error: any): Promise<never> {
@@ -26,13 +25,7 @@ export class PartyLetterRegistryService {
   }
 
   partyLetterRegistryApiWithAuth(auth: Auth) {
-    return this._partyLetterRegistryApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  async partyLetterRegistryControllerCreate(input: CreateDto, auth: User) {
-    return await this.partyLetterRegistryApiWithAuth(auth)
-      .partyLetterRegistryControllerCreate({ createDto: input })
-      .catch(this.handleError.bind(this))
+    return this.partyLetterRegistryApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async partyLetterRegistryControllerFindByManager(auth: User) {

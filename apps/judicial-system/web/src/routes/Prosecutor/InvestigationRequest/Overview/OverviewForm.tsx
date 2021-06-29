@@ -1,5 +1,11 @@
 import React, { useContext } from 'react'
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
 import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import {
   CaseFileList,

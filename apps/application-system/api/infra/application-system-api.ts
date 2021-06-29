@@ -1,11 +1,12 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import { MissingSetting } from '../../../../infra/src/dsl/types/input-types'
 
 const postgresInfo = {
   passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
 }
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
+  servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
+  servicesPartyLetterRegistryApi: ServiceBuilder<'services-party-letter-registry-api'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace('application-system')
@@ -115,6 +116,12 @@ export const serviceSetup = (services: {
         staging: 's@kogk.is',
         prod: 'postur@dmr.is',
       },
+      ENDORSEMENTS_API_BASE_PATH: ref(
+        (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
+      ),
+      PARTY_LETTER_REGISTRY_API_BASE_PATH: ref(
+        (h) => `http://${h.svc(services.servicesPartyLetterRegistryApi)}`,
+      ),
     })
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

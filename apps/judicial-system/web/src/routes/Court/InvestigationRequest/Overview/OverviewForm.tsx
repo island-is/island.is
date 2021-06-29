@@ -27,6 +27,7 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal'
 
 interface Props {
   workingCase: Case
@@ -38,6 +39,7 @@ const OverviewForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState<string>('')
   const [createCaseSuccess, setCreateCaseSuccess] = useState<boolean>(false)
+  const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   const { user } = useContext(UserContext)
   const { updateCase, createCourtCase, isCreatingCourtCase } = useCase()
@@ -317,12 +319,28 @@ const OverviewForm: React.FC<Props> = (props) => {
           />
         </div>
         <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title="Opna PDF kröfu"
-            pdfType="request"
-          />
+          <Box marginBottom={3}>
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF kröfu"
+              pdfType="request"
+            />
+          </Box>
+          <Button
+            variant="ghost"
+            icon="pencil"
+            size="small"
+            onClick={() => setIsDraftingConclusion(true)}
+          >
+            Skrifa drög að niðurstöðu
+          </Button>
         </Box>
+        <DraftConclusionModal
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          isDraftingConclusion={isDraftingConclusion}
+          setIsDraftingConclusion={setIsDraftingConclusion}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

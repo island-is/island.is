@@ -29,13 +29,26 @@ const ConclusionDraft: React.FC<Props> = (props) => {
         <Decision
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          acceptedLabelText={`Krafa um ${
-            workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
-          } samþykkt`}
-          rejectedLabelText={`Kröfu um ${
-            workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
-          } hafnað`}
-          partiallyAcceptedLabelText="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
+          acceptedLabelText={`Krafa ${
+            workingCase.type === CaseType.CUSTODY
+              ? 'um gæsluvarðhald '
+              : workingCase.type === CaseType.TRAVEL_BAN
+              ? 'um farbann '
+              : ''
+          }samþykkt`}
+          rejectedLabelText={`Kröfu ${
+            workingCase.type === CaseType.CUSTODY
+              ? 'um gæsluvarðhald '
+              : workingCase.type === CaseType.TRAVEL_BAN
+              ? 'um farbann '
+              : ''
+          }hafnað`}
+          partiallyAcceptedLabelText={`${
+            workingCase.type === CaseType.CUSTODY ||
+            workingCase.type === CaseType.TRAVEL_BAN
+              ? 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann'
+              : 'Krafa tekin til greina að hluta'
+          }`}
         />
       </Box>
       <Box marginBottom={3}>
