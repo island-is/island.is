@@ -6,6 +6,7 @@ import React, { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { ComplaintsToAlthingiOmbudsman } from '../../lib/dataSchema'
 import { ComplainedForTypes } from '../../shared'
+import { complaintOverview, information } from '../../lib/messages'
 
 export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -17,36 +18,40 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
       <ReviewGroup>
         <GridRow>
           <GridColumn span={'4/12'}>
-            <Text variant="h5">
-              {formatMessage('Upplýsingar frá þjóðskrá')}
-            </Text>
-            <Text>{formatMessage(`${name}, ${ssn}, ${phone}, ${email}`)}</Text>
-          </GridColumn>
-          <GridColumn span={'6/12'}>
-            <Text variant="h5">{formatMessage('Heimilisfang')}</Text>
-            <Text>{formatMessage(address)}</Text>
+            <ValueLine
+              value={`${name}, ${ssn}, ${phone}, ${email}`}
+              label={complaintOverview.labels.nationalRegistry}
+            />
           </GridColumn>
         </GridRow>
       </ReviewGroup>
       <ReviewGroup>
         <GridRow>
           <GridColumn span={'4/12'}>
-            <Text variant="h5">{formatMessage('Nafn')}</Text>
-            <Text>{formatMessage(name)}</Text>
+            <ValueLine
+              value={name}
+              label={information.aboutTheComplainer.name}
+            />
           </GridColumn>
           <GridColumn span={'6/12'}>
-            <Text variant="h5">{formatMessage('Heimilisfang')}</Text>
-            <Text>{formatMessage('address')}</Text>
+            <ValueLine
+              value={address}
+              label={information.aboutTheComplainer.address}
+            />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn span={'4/12'}>
-            <Text variant="h5">{formatMessage('Sími')}</Text>
-            <Text>{formatMessage(phone)}</Text>
+            <ValueLine
+              value={phone}
+              label={information.aboutTheComplainer.phone}
+            />
           </GridColumn>
           <GridColumn span={'6/12'}>
-            <Text variant="h5">{formatMessage('Netfang')}</Text>
-            <Text>{formatMessage(email)}</Text>
+            <ValueLine
+              value={email}
+              label={information.aboutTheComplainer.email}
+            />
           </GridColumn>
         </GridRow>
       </ReviewGroup>
@@ -62,7 +67,6 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
           />
         )}
       </ReviewGroup>
-
       <ReviewGroup>
         <GridRow>
           <GridColumn span={'4/12'}>
@@ -82,7 +86,7 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
       <ReviewGroup>
         <ValueLine label="Lagt fyrir dómstóla" value="TODO?" />
       </ReviewGroup>
-      <ReviewGroup>
+      <ReviewGroup isLast>
         <Text variant="h5">Fylgiskjöl</Text>
       </ReviewGroup>
       {/* 

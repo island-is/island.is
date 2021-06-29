@@ -202,7 +202,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           id: 'complainedForInformation',
           title: complainedFor.information.title,
           condition: (formValue) => {
-            const radio = (formValue.complainedForDecision as FormValue)?.radio
+            const radio = (formValue.complainedFor as FormValue)?.decision
             return radio === ComplainedForTypes.SOMEONEELSE
           },
           children: [
