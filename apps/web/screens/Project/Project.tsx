@@ -91,10 +91,10 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           <>
             <Navigation
               baseId="pageNav"
-              items={projectPage.sidebarLinks?.map((x) => ({
-                title: x.text,
-                href: x.url,
-                active: router.asPath === x.url,
+              items={projectPage.sidebarLinks?.map(({ text, url }) => ({
+                title: text,
+                href: url,
+                active: router.asPath === url,
               }))}
               title="Efnisyfirlit"
               renderLink={(link, item) => {
