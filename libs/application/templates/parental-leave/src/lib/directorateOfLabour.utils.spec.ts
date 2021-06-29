@@ -41,13 +41,6 @@ describe('monthsToDays', () => {
 
     expect(daysToMonths(sum)).toBe(7.5)
   })
-
-  it('should return -1.5 months for the maximum period given to the other parent', () => {
-    // 'giveDays' is saved as a negative value for VMLST
-    const giveDays = -45
-
-    expect(daysToMonths(giveDays)).toBe(-1.5)
-  })
 })
 
 describe('calculateNumberOfDaysForOnePeriod', () => {
