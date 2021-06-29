@@ -49,7 +49,6 @@ export class PartyLetterRegistryController {
     return resource
   }
 
-  // TODO: Make sure this is only called server side
   @ApiCreatedResponse({
     description: 'Creates a new party letter entry',
     type: PartyLetterRegistry,

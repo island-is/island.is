@@ -6,14 +6,12 @@ import {
   EndorsementListApi,
   EndorsementControllerCreateRequest,
   EndorsementControllerDeleteRequest,
-  EndorsementListControllerCloseRequest,
   EndorsementListControllerCreateRequest,
   EndorsementListControllerFindOneRequest,
   EndorsementControllerBulkCreateRequest,
   EndorsementControllerFindAllRequest,
   EndorsementControllerFindByAuthRequest,
   EndorsementListControllerFindByTagsRequest,
-  EndorsementListControllerOpenRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'

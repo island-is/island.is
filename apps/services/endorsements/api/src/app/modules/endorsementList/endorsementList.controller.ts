@@ -100,6 +100,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
+  @Scopes(EndorsementsScope.actor)
   @Put(':listId/close')
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -121,6 +122,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
+  @Scopes(EndorsementsScope.actor)
   @Put(':listId/open')
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
