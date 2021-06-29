@@ -58,17 +58,14 @@ export class Delegation extends Model<Delegation> {
     // 2. Find items with value in the array
     const arrDates = this.delegationScopes
       ?.filter((x) => x.validTo !== null && x.validTo !== undefined)
-      .map((x) => x.validTo)
+      .map((x) => x.validTo) as Array<Date>
     if (arrDates) {
       // Return the max value
       return arrDates.reduce((a, b) => {
-        if (a !== null && a !== undefined && b !== null && b !== undefined) {
-          return a > b ? a : b
-        }
+        return a > b ? a : b
       })
     }
 
-    // Nothing found
     return undefined
   }
 
