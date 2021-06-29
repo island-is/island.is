@@ -1,6 +1,6 @@
-import { ServicePortalNavigationItem, m } from '@island.is/service-portal/core'
+import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
+import { m } from '../messages'
 import { ServicePortalPath } from './paths'
-import { defineMessage } from 'react-intl'
 
 export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
