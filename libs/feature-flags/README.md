@@ -16,13 +16,13 @@ work in progress.
 
 ### Application entrypoint
 
-```typescript
+```tsx
 import { FeatureFlagProvider } from '@island.is/feature-flags'
 ```
 
 then wrap your application using
 
-```typescript jsx
+```tsx
 return (
   <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
     <App />
@@ -36,29 +36,33 @@ Alternatively, you can pass in a `defaultUser` property to `FeatureFlagProvider`
 
 ### Feature flag consumer
 
-```typescript
-    import { useFeatureFlagClient } from '@island.is/feature-flags'
+```tsx
+import { useFeatureFlagClient } from '@island.is/feature-flags'
 
-    render() {
-        const featureFlagClient = useFeatureFlagClient()
-        const [showAwesome, setShowAwesome] = useState(false)
-        useEffect(() => {
-            const getData = async () => {
-                const featureEnabled = await featureFlagClient.getValue(
-                'isAwesomeFeatureEnabled',
-                false,
-                )
-                setShowAwesome(featureEnabled as boolean)
-            }
-            getData()
-        }, [])
-        return `You are ${showAwesome ? 'awesome' : 'not really that awesome'}.`
+render() {
+  const featureFlagClient = useFeatureFlagClient()
+  const [showAwesome, setShowAwesome] = useState(false)
+
+  useEffect(() => {
+    const getData = async () => {
+      const featureEnabled = await featureFlagClient.getValue(
+        'isAwesomeFeatureEnabled',
+        false,
+      )
+
+      setShowAwesome(featureEnabled as boolean)
     }
+
+    getData()
+  }, [])
+
+  return `You are ${showAwesome ? 'awesome' : 'not really that awesome'}.`
+}
 ```
 
 For the common use case of checking on a feature flag, there is `useFeatureFlag` hook:
 
-```typescript jsx
+```tsx
 import { useFeatureFlag } from '@island.is/feature-flags'
 
 const MyComponent = () => {
