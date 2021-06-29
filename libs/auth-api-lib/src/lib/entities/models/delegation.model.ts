@@ -49,7 +49,7 @@ export class Delegation extends Model<Delegation> {
   toName!: string
 
   get validTo(): Date | null | undefined {
-    // 1. Find a value with null as valid to. Means that delegation scope set valid and not to a specific time period
+    // 1. Find a value with null as validTo. Null means that delegation scope set valid not to a specific time period
     const withNullValue = this.delegationScopes?.find((x) => x.validTo === null)
     if (withNullValue) {
       return null
