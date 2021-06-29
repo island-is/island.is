@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript'
 import { DelegationScope } from './delegation-scope.model'
 import { DelegationDTO, DelegationProvider, DelegationType } from '../../..'
+import { ApicompanyregistrycompaniesKennitalarevenueAndExpenseGETResponseFromJSON } from 'libs/clients/rsk/v2/gen/fetch'
 
 @Table({
   tableName: 'delegation',
@@ -55,29 +56,19 @@ export class Delegation extends Model<Delegation> {
       return null
     }
 
-    // 2. Find the max value
-    try {
-      // Find items with value in the array
-      const arrDates = this.delegationScopes
-        ?.filter((x) => x.validTo !== null && x.validTo !== undefined)
-        .map((x) => x.validTo)
-      if (arrDates) {
-        // If it's one item return it
-        if (arrDates.length === 1) {
-          return arrDates[0]
+    // 2. Find items with value in the array
+    const arrDates = this.delegationScopes
+      ?.filter((x) => x.validTo !== null && x.validTo !== undefined)
+      .map((x) => x.validTo)
+    if (arrDates) {
+      // Return the max value
+      return arrDates.reduce((a, b) => {
+        if (a !== null && a !== undefined && b !== null && b !== undefined) {
+          return a > b ? a : b
         }
-
-        // Return the max value
-        return arrDates.reduce((a, b) => {
-          if (a !== null && a !== undefined && b !== null && b !== undefined) {
-            return a > b ? a : b
-          }
-        })
-      }
-    } catch {
-      // The array was empty. Nothing found
-      return undefined
+      })
     }
+
     // Nothing found
     return undefined
   }
