@@ -130,7 +130,7 @@ export const m: MessageDir = {
     includePapersDisclaimerPt3: {
       id: 'ple.application:file.upload.disclaimer.pt3',
       defaultMessage:
-        '*Skjalið skal innihalda eina kennitölu per reit. Allar kennitölur skulu vera í fyrsta dálk (dálk A), fyrsta kennitalan skal vera staðsett í fyrstu röð (röð 1).',
+        '*Skjalið skal innihalda eina kennitölu per reit. Allar kennitölur skulu vera í fyrsta dálk (dálk A), fyrsta kennitalan skal vera staðsett í reit A1.',
       description: 'Include paper signatures disclaimer part 3',
     },
     fileUploadHeader: {
