@@ -3,10 +3,10 @@ import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
-import { MessageDescriptor } from 'react-intl'
 import { ComplaintsToAlthingiOmbudsman } from '../../lib/dataSchema'
-import { ComplainedForTypes } from '../../shared'
 import { complaintOverview, information } from '../../lib/messages'
+import { ValueLine } from './ValueLine'
+import { ComplainedFor } from './ComplainedFor'
 
 export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -55,18 +55,10 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
           </GridColumn>
         </GridRow>
       </ReviewGroup>
-      <ReviewGroup>
-        <ValueLine
-          label="Kvartað fyrir"
-          value={answers.complainedFor?.decision}
-        />
-        {answers.complainedFor?.decision === ComplainedForTypes.SOMEONEELSE && (
-          <ValueLine
-            label="Tengsl við þann aðila"
-            value={answers.complainedForInformation?.connection}
-          />
-        )}
-      </ReviewGroup>
+      <ComplainedFor
+        complainedFor={answers.complainedFor.decision}
+        connection={answers.complainedForInformation?.connection ?? ''}
+      />
       <ReviewGroup>
         <GridRow>
           <GridColumn span={'4/12'}>
@@ -93,19 +85,5 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
         6. Staðfesting og rafræn undirritun
       */}
     </Box>
-  )
-}
-
-export const ValueLine: FC<{
-  label: string | MessageDescriptor
-  value: string | MessageDescriptor
-}> = ({ label, value }) => {
-  const { formatMessage } = useLocale()
-
-  return (
-    <>
-      <Text variant="h5">{formatMessage(label)}</Text>
-      <Text>{formatMessage(value)}</Text>
-    </>
   )
 }
