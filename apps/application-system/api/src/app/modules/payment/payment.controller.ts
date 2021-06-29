@@ -66,11 +66,11 @@ export class PaymentController {
     if (!isUuid(applicationId)) {
       throw new BadRequestException(`ApplicationId is on wrong format.`)
     }
-    const allCatalogs = await this.paymentAPI.getCatalogByPerformingOrg(
-      '6509142520',
-    ).catch((error) => {
-      throw new BadRequestException('Failed to retrieve Catalogs, ' + error)
-    })
+    const allCatalogs = await this.paymentAPI
+      .getCatalogByPerformingOrg('6509142520')
+      .catch((error) => {
+        throw new BadRequestException('Failed to retrieve Catalogs, ' + error)
+      })
 
     const catalog = await this.paymentService
       .searchCorrectCatalog(
@@ -95,7 +95,7 @@ export class PaymentController {
         chargeItemCode: catalog.chargeItemCode,
         performingOrganiationID: catalog.performingOrgID,
         chargeType: catalog.chargeType,
-        amount: catalog.priceAmount
+        amount: catalog.priceAmount,
       } as any,
       expires_at: new Date(),
     }

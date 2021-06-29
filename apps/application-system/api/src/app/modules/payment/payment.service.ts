@@ -96,7 +96,7 @@ export class PaymentService {
         paymentUrl: this.makePaymentUrl(result.user4),
       }
     } catch (exception) {
-      return Promise.reject('Failed to post charge to API. ' + exception )
+      return Promise.reject('Failed to post charge to API. ' + exception)
     }
   }
 

@@ -8,7 +8,6 @@ import { PaymentAPI } from '@island.is/clients/payment'
 import { CreateChargeInput } from '../dto/createChargeInput.dto'
 import { PaymentService } from '../payment.service'
 
-
 let app: INestApplication
 
 class MockPaymentApi {
@@ -42,7 +41,7 @@ class MockPaymentApi {
           chargeItemName: 'Ökuskírteini',
           priceAmount: 8000,
         },
-      ]
+      ],
     }
     return json
   }
@@ -78,7 +77,7 @@ describe('Application system payments API', () => {
     const response = await server
       .post('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment')
       .send({
-        chargeItemCode: 'AY110'
+        chargeItemCode: 'AY110',
       } as CreateChargeInput)
       .expect(201)
 
