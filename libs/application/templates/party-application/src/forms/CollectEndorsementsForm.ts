@@ -19,18 +19,7 @@ export const CollectEndorsementsForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
-    buildSection({
-      id: 'endorsementListSubmittion',
-      title: m.endorsementListSubmission.shortTitle,
 
-      children: [
-        buildCustomField({
-          id: 'selectEndorsementsList',
-          title: m.endorsementListSubmission.title,
-          component: 'EndorsementListSubmission',
-        }),
-      ],
-    }),
     buildSection({
       id: 'endorsementSection',
       title: m.endorsementList.title,
@@ -45,6 +34,18 @@ export const CollectEndorsementsForm: Form = buildForm({
               component: 'EndorsementList',
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'endorsementListSubmittion',
+      title: m.endorsementListSubmission.shortTitle,
+
+      children: [
+        buildCustomField({
+          id: 'selectEndorsementsList',
+          title: m.endorsementListSubmission.title,
+          component: 'EndorsementListSubmission',
         }),
       ],
     }),

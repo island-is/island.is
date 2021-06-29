@@ -55,6 +55,7 @@ export const EndorsementTable = ({
       ' ' +
       endorsement.meta.address.city
 
+
     return (
       <T.Row key={endorsement.id}>
         <T.Data

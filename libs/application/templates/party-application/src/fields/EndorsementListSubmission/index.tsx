@@ -36,12 +36,12 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
     constituency,
     endorsements: endorsmentAnswers,
   } = application.answers as SchemaFormValues
-  const endorsementListId = '12'
+  //const endorsementListId = '12'
   const { min: minEndorsements, max: maxEndorsements } = minAndMaxEndorsements(
     constituency as EndorsementListTags,
   )
   //const { endorsements } = useEndorsements(endorsementListId, false)
-  const endorsements = hardcodedList
+  const endorsements = sortBy(hardcodedList, 'created')
   const [endorsementsPage, setEndorsementsPage] = useState<
     Endorsement[] | undefined
   >()
@@ -73,7 +73,7 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
       }
       handlePagination(1, endorsements)
     }
-  }, [endorsements])
+  }, [])
 
   const showWarning =
     selectedEndorsements.length > maxEndorsements ||
@@ -86,6 +86,7 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
   }
   const shuffled = () => {
     const tempEndorsements = [...(endorsements ?? [])]
+    console.log('Shuffled:', shuffle(tempEndorsements))
     return shuffle(tempEndorsements)
   }
 
@@ -99,6 +100,7 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
   const randomize = () => {
     setSelecteRadio(SelectedRadio.RANDOM)
     const random = shuffled().slice(0, maxEndorsements)
+    console.log('er að randomize-a')
     setSelectedEndorsements([...random])
     updateApplicationWithEndorsements([...random])
   }
