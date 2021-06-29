@@ -37,7 +37,7 @@ const namespace = '@island.is/auth-public-api/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
-@Controller('public/delegations')
+@Controller('public/v1/delegations')
 @Audit({ namespace })
 export class DelegationsController {
   constructor(
@@ -90,6 +90,7 @@ export class DelegationsController {
     return this.delegationsService.findAllTo(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
+      environment.nationalRegistry.authMiddlewareOptions,
     )
   }
 
@@ -112,6 +113,7 @@ export class DelegationsController {
     return this.delegationsService.create(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
+      environment.nationalRegistry.authMiddlewareOptions,
       delegation,
     )
   }

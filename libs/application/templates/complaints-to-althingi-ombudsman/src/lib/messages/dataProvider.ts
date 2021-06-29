@@ -1,10 +1,20 @@
 import { defineMessages } from 'react-intl'
 
 export const dataProvider = defineMessages({
-  header: {
-    id: 'ctao.application:dataProvider.header',
+  dataProviderHeader: {
+    id: 'ctao.application:dataProvider.dataProviderHeader',
     defaultMessage: 'Gagnaöflun',
     description: 'Name of the header in data provider',
+  },
+  dataProviderSubTitle: {
+    id: 'ctao.application:dataProvider.dataProviderSubTitle',
+    defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt:',
+    description: 'Name of the subtitle in data provider',
+  },
+  dataProviderCheckboxLabel: {
+    id: 'ctao.application:dataProvider.dataProviderCheckboxLabel',
+    defaultMessage: 'Ég skil að ofangreindra gagna verður aflað',
+    description: 'Name of the checkbox in data provider',
   },
   nationalRegistryTitle: {
     id: 'ctao.application:dataProvider.nationalRegistryTitle',

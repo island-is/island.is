@@ -8,11 +8,7 @@ import {
   InfoCard,
   PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  Case,
-  IntegratedCourts,
-  ReadableCaseType,
-} from '@island.is/judicial-system/types'
+import { Case, IntegratedCourts } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -20,6 +16,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   capitalize,
+  caseTypes,
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
@@ -181,7 +178,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               },
               {
                 title: 'Tegund kröfu',
-                value: capitalize(ReadableCaseType[workingCase.type]),
+                value: capitalize(caseTypes[workingCase.type]),
               },
             ]}
             accusedName={workingCase.accusedName}
