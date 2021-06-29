@@ -24,7 +24,7 @@ export const Overview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const [modalVisible, setModalVisible] = useState(false)
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [modalText, setModalText] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
 
