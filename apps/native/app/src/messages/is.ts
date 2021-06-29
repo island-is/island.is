@@ -153,7 +153,7 @@ export const is = {
   'notificationDetail.screenTitle': 'Tilkynning',
 
   // applications screen
-  'applications.title': 'Umsóknir',
+  'applications.title': 'Umsóknir á Ísland.is',
   'applications.bottomTabText': 'Umsóknir',
 
   // cards

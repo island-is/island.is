@@ -9,8 +9,10 @@ export interface UIStore extends State {
   unselectedTab: number
   modalsOpen: number
   query: string
+  applicationQuery: string
   initializedApp: boolean
   setQuery(query: string): void
+  setApplicationQuery(query: string): void
 }
 
 export const uiStore = create<UIStore>((set, get) => ({
@@ -19,9 +21,13 @@ export const uiStore = create<UIStore>((set, get) => ({
   unselectedTab: 1,
   modalsOpen: 0,
   query: '',
+  applicationQuery: '',
   initializedApp: false,
   setQuery(query: string) {
     set({ query })
+  },
+  setApplicationQuery(applicationQuery: string) {
+    set({ applicationQuery })
   },
 }))
 

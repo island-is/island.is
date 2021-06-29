@@ -136,7 +136,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   return (
     <>
-      <BottomTabsIndicator index={1} total={3} />
+      <BottomTabsIndicator index={1} total={4} />
       <Animated.FlatList
         ref={flatListRef}
         testID={testIDs.SCREEN_HOME}

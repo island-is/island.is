@@ -313,7 +313,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <BottomTabsIndicator index={0} total={3} />
+      <BottomTabsIndicator index={0} total={4} />
       <Animated.FlatList
         ref={flatListRef}
         scrollEventThrottle={16}

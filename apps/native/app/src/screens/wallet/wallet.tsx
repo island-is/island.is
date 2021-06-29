@@ -268,7 +268,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   return (
     <>
-      <BottomTabsIndicator index={2} total={3} />
+      <BottomTabsIndicator index={2} total={4} />
       {licenseItems.length > 0 ? (
         <>
           {Platform.OS === 'ios' && (
