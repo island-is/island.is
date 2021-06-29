@@ -45,39 +45,36 @@ export class PaymentCatalogProvider extends BasicDataProvider {
 
     return this.useGraphqlGateway(query, {
       input: { performingOrganizationID: '6509142520' },
+    }).then(async (res: Response) => {
+      // TODO: needs refactoring
+      const response = await res.json()
+      if (response.errors) {
+        return Promise.reject(response.errors)
+      }
+
+      if (response.data.paymentCatalog !== '') {
+        const correctCatalog = searchCorrectCatalog(
+          CHARGE_ITEM_CODE,
+          JSON.stringify(response.data.paymentCatalog.items),
+        )
+
+        if (correctCatalog !== '') {
+          return Promise.resolve(correctCatalog)
+        } else {
+          return Promise.reject(response.data.paymentCatalog)
+        }
+      }
+
+      return Promise.resolve(response.data.paymentCatalog.items)
     })
-      .then(async (res: Response) => {
-        // TODO: needs refactoring
-        const response = await res.json()
-        if (response.errors) {
-          return this.handleError()
-        }
-
-        if (response.data.paymentCatalog !== '') {
-          const correctCatalog = searchCorrectCatalog(
-            CHARGE_ITEM_CODE,
-            JSON.stringify(response.data.paymentCatalog.items),
-          )
-
-          if (correctCatalog !== '') {
-            return Promise.resolve(correctCatalog)
-          }
-        }
-        return Promise.resolve(response.data.paymentCatalog.items)
-      })
-      .catch(() => {
-        return this.handleError()
-      })
   }
 
-  handleError() {
-    return Promise.resolve({})
-  }
-
-  onProvideError(result: string): FailedDataProviderResult {
+  onProvideError(
+    result: FailedDataProviderResult['data'],
+  ): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: result,
+      reason: 'Villa kom upp við að sækja upplýsingar frá Fjársýslunni',
       status: 'failure',
       data: result,
     }
