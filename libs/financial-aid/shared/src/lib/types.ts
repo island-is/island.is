@@ -97,11 +97,16 @@ export interface User {
   nationalId: string
   name: string
   phoneNumber: string
+  folder: string
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
 
-export interface PresignedPost {
+export interface GetSignedUrl {
+  fileName: string
+}
+
+export interface SignedUrl {
   url: string
 }
 

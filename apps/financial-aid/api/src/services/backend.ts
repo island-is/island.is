@@ -7,6 +7,8 @@ import {
   Municipality,
   UpdateApplication,
   CreateApplication,
+  GetSignedUrl,
+  SignedUrl,
 } from '@island.is/financial-aid/shared'
 
 import { environment } from '../environments'
@@ -42,6 +44,10 @@ class BackendAPI extends RESTDataSource {
     updateApplication: UpdateApplication,
   ): Promise<Application> {
     return this.put(`applications/${id}`, updateApplication)
+  }
+
+  getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
+    return this.post(`api/file/url`, getSignedUrl)
   }
 }
 

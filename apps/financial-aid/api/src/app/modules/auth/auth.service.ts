@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch'
 
 import { Injectable } from '@nestjs/common'
+import { uuid } from 'uuidv4'
 
 import { User } from '@island.is/financial-aid/shared'
 
@@ -29,11 +30,13 @@ export class AuthService {
         nationalId: '0000000000',
         name: 'Lárus Árnasson',
         phoneNumber: '9999999',
+        folder: uuid(),
       },
       '0000000001': {
         nationalId: '0000000001',
         name: 'Lára Margrétardóttir',
         phoneNumber: '9999999',
+        folder: uuid(),
       },
     }
 

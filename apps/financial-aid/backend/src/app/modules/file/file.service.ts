@@ -1,19 +1,13 @@
-import { uuid } from 'uuidv4'
-
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CloudFrontService } from './cloudFront.service'
-import { CreatePresignedPostDto } from './dto'
-import { PresignedPostModel } from './models'
+
+import { SignedUrlModel } from './models'
+
+import { environment } from '../../../environments'
 
 @Injectable()
 export class FileService {
@@ -23,11 +17,9 @@ export class FileService {
     private readonly logger: Logger,
   ) {}
 
-  createCasePresignedPost(
-    createPresignedPost: CreatePresignedPostDto,
-  ): PresignedPostModel {
-    return this.cloudFrontService.createPresignedPost(
-      createPresignedPost.fileName,
-    )
+  createSignedUrl(folder: string, fileName: string): SignedUrlModel {
+    const fileUrl = `${environment.files.fileBaseUrl}${folder}/${fileName}`
+
+    return this.cloudFrontService.createPresignedPost(fileUrl)
   }
 }

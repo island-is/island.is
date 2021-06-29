@@ -1,28 +1,28 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
 import type { User } from '@island.is/financial-aid/shared'
 
-import { CreatePresignedPostDto } from './dto'
-import { PresignedPostModel } from './models'
+import { GetSignedUrlDto } from './dto'
+import { SignedUrlModel } from './models'
 import { FileService } from './file.service'
 
 @UseGuards(JwtAuthGuard)
-@Controller('api/file/')
+@Controller('api/file')
 @ApiTags('files')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Post('file/url')
+  @Post('url')
   @ApiCreatedResponse({
-    type: PresignedPostModel,
-    description: 'Creates a new presigned post',
+    type: SignedUrlModel,
+    description: 'Creates a new signed url',
   })
-  createCasePresignedPost(
+  createSignedUrl(
     @CurrentHttpUser() user: User,
-    @Body() createPresignedPost: CreatePresignedPostDto,
-  ): PresignedPostModel {
-    return this.fileService.createCasePresignedPost(createPresignedPost)
+    @Body() getSignedUrl: GetSignedUrlDto,
+  ): SignedUrlModel {
+    return this.fileService.createSignedUrl(user.folder, getSignedUrl.fileName)
   }
 }

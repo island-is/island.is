@@ -9,5 +9,6 @@ export type {
   NavigationProps,
   User,
   KeyMapping,
-  PresignedPost,
+  GetSignedUrl,
+  SignedUrl,
 } from './lib/types'
