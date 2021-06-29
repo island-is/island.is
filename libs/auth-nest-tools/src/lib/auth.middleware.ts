@@ -28,6 +28,7 @@ export interface TokenExchangeOptions {
   clientId: string
   clientSecret: string
   scope: string
+  requestActorToken?: boolean
 }
 
 /**
@@ -94,6 +95,9 @@ export class AuthMiddleware implements Middleware {
         client_secret: options.clientSecret,
         subject_token: accessToken,
         subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+        requested_token_type: options.requestActorToken
+          ? 'islandis:oauth:token-type:actor-access-token'
+          : 'urn:ietf:params:oauth:token-type:access_token',
       }),
     })
 

@@ -1652,6 +1652,16 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/application-system/api",
                 "output": "./"
+              },
+              {
+                "glob": "*",
+                "input": "libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets",
+                "output": "./parental-leave-assets"
+              },
+              {
+                "glob": "*",
+                "input": "libs/email-service/src/tools/design",
+                "output": "./email-service-assets"
               }
             ],
             "webpackConfig": "apps/application-system/api/webpack.config.js",

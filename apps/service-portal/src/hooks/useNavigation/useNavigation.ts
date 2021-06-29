@@ -15,14 +15,15 @@ const filterNavigationTree = (
   routes: ServicePortalRoute[],
   userInfo: User,
 ): boolean => {
-  const included =
-    routes.find(
-      (route) =>
-        route.path === item.path ||
-        (Array.isArray(route.path) &&
-          item.path &&
-          route.path.includes(item.path)),
-    ) !== undefined || item.systemRoute === true
+  const routeItem = routes.find(
+    (route) =>
+      route.path === item.path ||
+      (Array.isArray(route.path) &&
+        item.path &&
+        route.path.includes(item.path)),
+  )
+
+  const included = routeItem !== undefined || item.systemRoute === true
 
   // Filters out any children that do not have a module route defined
   item.children = item.children?.filter((child) => {
@@ -34,6 +35,9 @@ const filterNavigationTree = (
   const onlyDescendantsIncluded =
     !included && Array.isArray(item.children) && item.children.length > 0
   if (onlyDescendantsIncluded) item.path = undefined
+
+  // Maps the enabled status to the nav item if provided
+  item.enabled = routeItem?.enabled
 
   return included || onlyDescendantsIncluded
 }
@@ -56,6 +60,7 @@ const useNavigation = () => {
     masterNav.filter((rootItem) =>
       filterNavigationTree(rootItem, routes, userInfo),
     )
+
     setActiveNavigation(masterNav)
   }, [routes, userInfo])
 

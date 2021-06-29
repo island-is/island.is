@@ -131,7 +131,7 @@ export const reportForm = {
       defaultValue: {
         id: 'judicial.system:form.reportForm.prosecutorOnly.input.defaultValue',
         defaultMessage:
-          'Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi fyrirtökuna eða málsmeðferðina?',
+          'Beðið er um að krafan verði tekin fyrir án þess að þeir sem hún beinist að verði kvaddir á dómþingið.',
         description: 'Report form case procecutor only: Default value',
       },
     }),
