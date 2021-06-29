@@ -45,13 +45,7 @@ export class AuthMiddleware implements Middleware {
   async pre(context: RequestContext) {
     let bearerToken = this.auth.authorization
 
-    if (
-      this.options.tokenExchangeOptions
-      // this.options.tokenExchangeOptions &&
-      // this.options.tokenExchangeOptions.scope
-      //   .split(' ')
-      //   .some((s) => !this.auth.scope.includes(s)) // TODO: Enable bypassing when @skra/individuals is not requested by client
-    ) {
+    if (this.options.tokenExchangeOptions) {
       const accessToken = await this.exchangeToken(
         bearerToken.replace('Bearer ', ''),
         context,
