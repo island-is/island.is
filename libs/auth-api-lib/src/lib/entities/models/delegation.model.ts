@@ -10,7 +10,6 @@ import {
 } from 'sequelize-typescript'
 import { DelegationScope } from './delegation-scope.model'
 import { DelegationDTO, DelegationProvider, DelegationType } from '../../..'
-import { ApicompanyregistrycompaniesKennitalarevenueAndExpenseGETResponseFromJSON } from 'libs/clients/rsk/v2/gen/fetch'
 
 @Table({
   tableName: 'delegation',
