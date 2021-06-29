@@ -131,6 +131,14 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       <AccordionListItem title="Lagarök" breakSpaces>
         <Text>{workingCase.legalArguments}</Text>
       </AccordionListItem>
+      {workingCase.requestProsecutorOnlySession && (
+        <AccordionListItem
+          title="Beiðni um dómþing að varnaraðila fjarstöddum"
+          breakSpaces
+        >
+          <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
+        </AccordionListItem>
+      )}
     </AccordionItem>
   )
 }
