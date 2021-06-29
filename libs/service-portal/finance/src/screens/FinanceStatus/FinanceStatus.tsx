@@ -15,6 +15,7 @@ import {
   AlertBanner,
   Hidden,
 } from '@island.is/island-ui/core'
+import { DownloadService } from '@island.is/clients/finance'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import {
@@ -74,7 +75,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
     // Form values
     form.method = 'post'
     // TODO: Use correct url
-    form.action = `http://localhost:3377/download/v1/xlsx`
+    form.action = `https://api.dev01.devland.is`
     form.target = '_blank'
 
     // Document Id values
