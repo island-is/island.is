@@ -10,6 +10,7 @@ import { client } from '../../graphql/client'
 import { testIDs } from '../../utils/test-ids'
 import { IArticleSearchResults } from '../../graphql/fragments/search.fragment'
 import { navigateTo } from '../../lib/deep-linking'
+import { openBrowser } from '../../lib/rn-island'
 
 const {
   useNavigationOptions,
@@ -52,7 +53,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   const renderApplicationItem = useCallback(
     ({ item }) => (
-      <TouchableOpacity key={item.id} onPress={() => Linking.openURL(`http://island.is/${item.slug}`)}>
+      <TouchableOpacity key={item.id} onPress={() => openBrowser(`http://island.is/${item.slug}`, componentId)}>
         <LinkCard>
           {item.title}
         </LinkCard>
