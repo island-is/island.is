@@ -25,7 +25,7 @@ describe('deleteEndorsement', () => {
   it(`DELETE /endorsement-list/:listId/endorsement should return 404 when supplied with a non existing list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.actor],
+      scope: [EndorsementsScope.main],
     })
     const response = await request(app.getHttpServer())
       .delete(
@@ -42,7 +42,7 @@ describe('deleteEndorsement', () => {
   it(`DELETE /endorsement-list/:listId/endorsement should fail when removing endorsement from closed list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.actor],
+      scope: [EndorsementsScope.main],
     })
     const response = await request(app.getHttpServer())
       .delete(
@@ -59,7 +59,7 @@ describe('deleteEndorsement', () => {
   it(`DELETE /endorsement-list/:listId/endorsement should remove endorsement`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.actor],
+      scope: [EndorsementsScope.main],
     })
     const response = await request(app.getHttpServer())
       .delete(

@@ -46,7 +46,7 @@ interface SetupAuthInput {
 }
 export const getAuthenticatedApp = ({
   nationalId,
-  scope = [EndorsementsScope.actor],
+  scope = [EndorsementsScope.main],
 }: SetupAuthInput): Promise<INestApplication> =>
   setup({
     override: (builder) => {

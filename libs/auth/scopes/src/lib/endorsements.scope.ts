@@ -1,3 +1,3 @@
 export enum EndorsementsScope {
-  actor = '@island.is/endorsements',
+  main = '@island.is/endorsements',
 }

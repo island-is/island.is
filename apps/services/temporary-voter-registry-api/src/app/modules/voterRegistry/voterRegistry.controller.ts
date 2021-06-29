@@ -24,7 +24,7 @@ export class VoterRegistryController {
   @Audit<VoterRegistry>({
     resources: (voterRegistry) => voterRegistry.id,
   })
-  @Scopes(EndorsementsScope.actor)
+  @Scopes(EndorsementsScope.main)
   @Get()
   async findByAuth(
     @CurrentUser() { nationalId }: User,

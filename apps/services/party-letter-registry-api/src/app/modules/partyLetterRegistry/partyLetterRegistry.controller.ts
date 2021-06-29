@@ -33,7 +33,7 @@ export class PartyLetterRegistryController {
   @Audit<PartyLetterRegistry>({
     resources: (voterRegistry) => voterRegistry.partyLetter,
   })
-  @Scopes(EndorsementsScope.actor)
+  @Scopes(EndorsementsScope.main)
   @Get('manager')
   async findAsManagerByAuth(
     @CurrentUser() user: User,

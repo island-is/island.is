@@ -14,7 +14,7 @@ export const openApi = new DocumentBuilder()
         authorizationUrl: `${environment.auth.issuer}/connect/authorize`,
         tokenUrl: `${environment.auth.issuer}/connect/token`,
         scopes: {
-          [`openid profile ${EndorsementsScope.actor}`]: 'Fetches OpenId, Profile and claim needed for authenticated calls',
+          [`openid profile ${EndorsementsScope.main}`]: 'Fetches OpenId, Profile and claim needed for authenticated calls',
         },
       },
     },
