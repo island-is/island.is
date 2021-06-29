@@ -1,12 +1,12 @@
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import request from 'supertest'
-import { PartyLetterRegistryScope } from '@island.is/auth/scopes'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 
 describe('FindByManagerPartyLetterRegistry', () => {
   it('GET /party-letter-registry/manager should return not found error when national owns no letters', async () => {
     const app = await getAuthenticatedApp({
-      scope: [PartyLetterRegistryScope.read],
+      scope: [EndorsementsScope.main],
       // eslint-disable-next-line local-rules/disallow-kennitalas
       nationalId: '0101302209',
     })
@@ -40,7 +40,7 @@ describe('FindByManagerPartyLetterRegistry', () => {
     // eslint-disable-next-line local-rules/disallow-kennitalas
     const nationalId = '0101305069'
     const app = await getAuthenticatedApp({
-      scope: [PartyLetterRegistryScope.read],
+      scope: [EndorsementsScope.main],
       nationalId,
     })
     const response = await request(app.getHttpServer())

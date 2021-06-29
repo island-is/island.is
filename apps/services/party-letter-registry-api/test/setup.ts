@@ -3,14 +3,14 @@ import { getConnectionToken } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
-import { PartyLetterRegistryScope } from '@island.is/auth/scopes'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 import type { INestApplication, Type } from '@nestjs/common'
 
 export let app: INestApplication
 let sequelize: Sequelize
 
 interface SetupAuthInput {
-  scope: PartyLetterRegistryScope[]
+  scope: EndorsementsScope[]
   nationalId?: string
 }
 
@@ -35,7 +35,7 @@ expect.extend({
   },
 })
 
-const setup = async (options?: Partial<TestServerOptions>) => {
+export const setup = async (options?: Partial<TestServerOptions>) => {
   app = await testServer({
     appModule: AppModule,
     ...options,

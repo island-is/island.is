@@ -69,6 +69,13 @@ const devConfig = {
       username: process.env.PAYMENT_USER,
       password: process.env.PAYMENT_PASSWORD,
     },
+    partyLetter: {
+      partyLetterRegistryApiBasePath: 'http://localhost:4251',
+      endorsementsApiBasePath: 'http://localhost:4246',
+    },
+    partyApplication: {
+      endorsementsApiBasePath: 'http://localhost:4246',
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -145,6 +152,14 @@ const prodConfig = {
       callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
       username: process.env.PAYMENT_USER,
       password: process.env.PAYMENT_PASSWORD,
+    },
+    partyLetter: {
+      partyLetterRegistryApiBasePath:
+        process.env.PARTY_LETTER_REGISTRY_API_BASE_PATH,
+      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
+    },
+    partyApplication: {
+      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
     },
   },
   application: {

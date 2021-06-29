@@ -3,7 +3,7 @@ import { getConnectionToken } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
-import { EndorsementScope } from '@island.is/auth/scopes'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 
 export let app: INestApplication
@@ -41,7 +41,7 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
 }
 
 interface SetupAuthInput {
-  scope: EndorsementScope[]
+  scope: EndorsementsScope[]
   nationalId?: string
 }
 export const getAuthenticatedApp = ({
