@@ -10,7 +10,7 @@ import type {
 } from '@island.is/clients/payment'
 import type { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
-import { isEqual } from 'lodash'
+import isEqual from 'lodash'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 
@@ -103,7 +103,7 @@ export class PaymentService {
     chargeItemCode: string,
     searchJSON: string,
   ): Promise<Item> {
-    if (chargeItemCode == '' || searchJSON == '') {
+    if (chargeItemCode === '' || searchJSON === '') {
       return Promise.reject(new Error('Bad search catalog parameters.')).catch(
         handleError,
       )
