@@ -4,7 +4,6 @@ import { Box, RadioButton, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useDebounce } from 'react-use'
 import {
   PaymentPlanExternalData,
   PublicDebtPaymentPlan,
@@ -56,12 +55,15 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
 
   const entry = `paymentPlans.${answerKey}`
   const currentAnswers = answers.paymentPlans[answerKey]
+
   const {
     debouncedAmount,
     debouncedMonths,
     setAmount,
     setMonths,
+    // eslint-disable-next-line react-hooks/rules-of-hooks
   } = useDebouncedSliderValues(currentAnswers)
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
     userInfo?.profile.nationalId,
     payment?.type,
