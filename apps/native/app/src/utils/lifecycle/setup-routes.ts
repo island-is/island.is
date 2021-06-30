@@ -43,10 +43,18 @@ export function setupRoutes() {
   })
 
 
-  addRoute('/applications', async () => {
-    Navigation.dismissAllModals()
+  addRoute('/applications', async (passProps: any) => {
+    selectTab(1)
 
-    selectTab(3)
+    await Navigation.dismissAllModals()
+    await Navigation.popToRoot(StackRegistry.HomeStack)
+    await Navigation.push(ComponentRegistry.HomeScreen, {
+      component: {
+        name: ComponentRegistry.ApplicationsScreen,
+        passProps,
+        options: ApplicationsScreen.options as Options,
+      },
+    })
   })
 
   addRoute('/notification/:id', (passProps: any) => {

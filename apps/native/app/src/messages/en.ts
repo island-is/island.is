@@ -157,6 +157,14 @@ export const en: TranslatedMessages = {
   // applications screen
   'applications.title': 'Applications',
   'applications.bottomTabText': 'Applications',
+  'applications.searchPlaceholder': 'Search...',
+  'applications.loadingText': 'Searching...',
+  'applications.resultText': 'results',
+  'applications.singleResultText': 'result',
+  'applications.noResultText': 'No results',
+  'applications.emptyListTitle': 'There are currently no links',
+  'applications.emptyListDescription':
+    'There are no links available at the moment',
 
   // cards
   'applicationStatusCard.openButtonLabel': 'Open application',

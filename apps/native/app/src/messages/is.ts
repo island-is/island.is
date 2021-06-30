@@ -155,6 +155,14 @@ export const is = {
   // applications screen
   'applications.title': 'Umsóknir á Ísland.is',
   'applications.bottomTabText': 'Umsóknir',
+  'applications.searchPlaceholder': 'Leita að skjölum...',
+  'applications.loadingText': 'Leita í skjölum...',
+  'applications.resultText': 'niðurstöður fundust',
+  'applications.singleResultText': 'niðurstaða fannst',
+  'applications.noResultText': 'Engar niðurstöður fundust',
+  'applications.emptyListTitle': 'Hér eru engir linkar sem stendur',
+  'applications.emptyListDescription':
+    'Að einhverjum ástæðum þá eru engir linka aðgengilegir eins og er',
 
   // cards
   'applicationStatusCard.openButtonLabel': 'Opna umsókn',

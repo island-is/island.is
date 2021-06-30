@@ -39,7 +39,6 @@ export const StackRegistry = {
   InboxStack: `${prefix}.stack.InboxStack`,
   HomeStack: `${prefix}.stack.HomeStack`,
   WalletStack: `${prefix}.stack.WalletStack`,
-  ApplicationsStack: `${prefix}.stack.ApplicationsStack`,
 };
 
 

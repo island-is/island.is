@@ -1,28 +1,34 @@
 import { useQuery } from '@apollo/client'
+import {
+  EmptyList, LinkCard, SearchHeader,
+  TopLine
+} from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { LinkCard, EmptyList, Heading, SearchHeader, TopLine } from '@island.is/island-ui-native'
-import { Text, View, Image, FlatList, TouchableOpacity, AppStateStatus, AppState, Platform, ActivityIndicator, Animated } from 'react-native'
-import { Navigation, NavigationFunctionComponent } from 'react-native-navigation'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { LIST_SEARCH_QUERY } from '../../graphql/queries/list-search.query'
-import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
-import { getRightButtons } from '../../utils/get-main-root'
-import KeyboardManager from 'react-native-keyboard-manager'
 import { useIntl } from 'react-intl'
-import { client } from '../../graphql/client'
-import { testIDs } from '../../utils/test-ids'
-import { IArticleSearchResults } from '../../graphql/fragments/search.fragment'
-import { openBrowser } from '../../lib/rn-island'
-import { useUiStore } from '../../stores/ui-store'
-import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
+import {
+  ActivityIndicator,
+  Animated, AppState, AppStateStatus, FlatList, Image, Platform, TouchableOpacity, View
+} from 'react-native'
+import KeyboardManager from 'react-native-keyboard-manager'
+import {
+  Navigation,
+  NavigationFunctionComponent
+} from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate,
+  useNavigationSearchBarUpdate
 } from 'react-native-navigation-hooks/dist'
-import { IApplication } from '../../graphql/fragments/application.fragment'
+import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { client } from '../../graphql/client'
+import { IArticleSearchResults } from '../../graphql/fragments/search.fragment'
+import { LIST_SEARCH_QUERY } from '../../graphql/queries/list-search.query'
+import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { openBrowser } from '../../lib/rn-island'
+import { useUiStore } from '../../stores/ui-store'
+import { testIDs } from '../../utils/test-ids'
 
-
-interface IndexedApplication extends IApplication {
+interface IndexedApplication extends IArticleSearchResults {
   fulltext: string
 }
 
@@ -39,13 +45,7 @@ const {
         placeholder: intl.formatMessage({ id: 'inbox.searchPlaceholder' }),
         tintColor: theme.color.blue400,
       },
-      rightButtons: initialized ? getRightButtons({ theme } as any) : [],
-    },
-    bottomTab: {
-      iconColor: theme.color.blue400,
-      text: initialized
-        ? intl.formatMessage({ id: 'applications.bottomTabText' })
-        : '',
+      rightButtons: [],
     },
   }),
   {
@@ -54,14 +54,7 @@ const {
         visible: true,
         hideTopBarOnFocus: true,
       },
-    },
-    bottomTab: {
-      testID: testIDs.SCREEN_APPLICATIONS,
-      iconInsets: {
-        bottom: -4,
-      },
-      icon: require('../../assets/icons/tabbar-applications.png'),
-      selectedIcon: require('../../assets/icons/tabbar-applications.png'),
+      rightButtons: [],
     },
   },
 )
@@ -80,15 +73,20 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const res = useQuery(LIST_SEARCH_QUERY, { client })
   const items = res?.data?.searchResults?.items || []
   const [indexedItems, setIndexedItems] = useState<IndexedApplication[]>([])
-  const [applicationItems, setApplicationItems] = useState<IApplication[]>(items || [])
+  const [applicationItems, setApplicationItems] = useState<IArticleSearchResults[]>(
+    items || [],
+  )
   const scrollY = useRef(new Animated.Value(0)).current
 
   const renderApplicationItem = useCallback(
     ({ item }) => (
-      <TouchableOpacity key={item.id} onPress={() => openBrowser(`http://island.is/${item.slug}`, componentId)}>
-        <LinkCard>
-          {item.title}
-        </LinkCard>
+      <TouchableOpacity
+        key={item.id}
+        onPress={() =>
+          openBrowser(`http://island.is/${item.slug}`, componentId)
+        }
+      >
+        <LinkCard>{item.title}</LinkCard>
       </TouchableOpacity>
     ),
     [],
@@ -141,7 +139,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   })
 
   useEffect(() => {
-    console.log('keyrir')
     if (Platform.OS === 'ios') {
       AppState.addEventListener('change', onAppStateBlur)
       return () => {
@@ -155,8 +152,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     if (res.data && !res.loading) {
       const items = res?.data?.searchResults?.items ?? []
 
-
-      const indexedItems = items.map((item: any) => {
+      const indexedItems = items.map((item: IArticleSearchResults) => {
         return {
           ...item,
           fulltext: `${item.title.toLocaleLowerCase()}`,
@@ -167,26 +163,25 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     }
   }, [res.data, res.loading])
 
-
-   // search query updates
-   useEffect(() => {
+  // search query updates
+  useEffect(() => {
     setSearchLoading(false)
     const q = ui.applicationQuery.toLocaleLowerCase().trim()
 
     if (q !== '') {
-      setApplicationItems(indexedItems.filter((item: any) => item.fulltext.includes(q)))
+      setApplicationItems(
+        indexedItems.filter((item: IndexedApplication) => item.fulltext.includes(q)),
+      )
     } else {
       setApplicationItems([...indexedItems])
     }
   }, [ui.applicationQuery, indexedItems])
 
   const keyExtractor = useCallback((item: IArticleSearchResults) => item.id, [])
-  console.log(applicationItems, 'applicationitems');
-
 
   const isSearch = ui.applicationQuery.length > 0
   const isLoading = res.loading
-  const isEmpty = (res?.data?.searchResults?.items ?? []).length === 0;
+  const isEmpty = (res?.data?.searchResults?.items ?? []).length === 0
 
   if (isLoading) {
     return <ActivityIndicator />
@@ -197,8 +192,10 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       <View style={{ flex: 1 }}>
         <BottomTabsIndicator index={3} total={4} />
         <EmptyList
-          title={intl.formatMessage({ id: 'inbox.emptyListTitle' })}
-          description={intl.formatMessage({ id: 'inbox.emptyListDescription' })}
+          title={intl.formatMessage({ id: 'applications.emptyListTitle' })}
+          description={intl.formatMessage({
+            id: 'applications.emptyListDescription',
+          })}
           image={<Image source={illustrationSrc} height={176} width={134} />}
         />
       </View>
@@ -227,13 +224,15 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         ListHeaderComponent={
           isSearch ? (
             <SearchHeader
-              loadingText={intl.formatMessage({ id: 'inbox.loadingText' })}
+              loadingText={intl.formatMessage({
+                id: 'applications.loadingText',
+              })}
               resultText={
                 applicationItems.length === 0
-                  ? intl.formatMessage({ id: 'inbox.noResultText' })
+                  ? intl.formatMessage({ id: 'applications.noResultText' })
                   : applicationItems.length === 1
-                  ? intl.formatMessage({ id: 'inbox.singleResultText' })
-                  : intl.formatMessage({ id: 'inbox.resultText' })
+                  ? intl.formatMessage({ id: 'applications.singleResultText' })
+                  : intl.formatMessage({ id: 'applications.resultText' })
               }
               count={applicationItems.length}
               loading={searchLoading}
