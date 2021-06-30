@@ -15,7 +15,7 @@ import BulkUpload from '../BulkUpload'
 import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
-import sortBy from 'lodash/sortBy'
+import orderBy from 'lodash/orderBy'
 import { paginate, calculateTotalPages } from '../components/utils'
 import { constituencyMapper, EndorsementListTags } from '../../constants'
 
@@ -89,7 +89,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     page: number,
     endorsements: Endorsement[] | undefined,
   ) => {
-    const sortEndorements = sortBy(endorsements, 'created').reverse()
+    const sortEndorements = orderBy(endorsements, 'created', 'desc')
     setPage(page)
     setTotalPages(calculateTotalPages(endorsements?.length))
     setFilteredEndorsements(sortEndorements)

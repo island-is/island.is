@@ -9,7 +9,7 @@ import { useEndorsements } from '../../hooks/useFetchEndorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import { Endorsement } from '../../types/schema'
 import BulkUpload from '../BulkUpload'
-import sortBy from 'lodash/sortBy'
+import orderBy from 'lodash/orderBy'
 import { paginate, totalPages as pages } from '../components/utils'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
@@ -32,7 +32,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
 
   useEffect(() => {
     refetch()
-    setEndorsements(sortBy(endorsementsHook, 'created').reverse())
+    setEndorsements(orderBy(endorsementsHook, 'created', 'desc'))
   }, [endorsementsHook, updateOnBulkImport])
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     page: number,
     endorsements: Endorsement[] | undefined,
   ) => {
-    const sortEndorements = sortBy(endorsements, 'created').reverse()
+    const sortEndorements = orderBy(endorsements, 'created', 'desc')
     setPage(page)
     setTotalPages(pages(endorsements?.length))
     setFilteredEndorsements(sortEndorements)
