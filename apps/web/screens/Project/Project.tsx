@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { ReactElement, useEffect, useMemo, useState } from 'react'
+import React, { ReactElement } from 'react'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -23,12 +23,9 @@ import {
 } from '@island.is/web/components'
 import Head from 'next/head'
 import {
-  Box,
-  Button,
   GridColumn,
   GridContainer,
   GridRow,
-  Inline,
   Navigation,
   Text,
 } from '@island.is/island-ui/core'
