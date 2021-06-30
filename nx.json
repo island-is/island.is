@@ -3,7 +3,8 @@
     "workspace.json": "*",
     "package.json": {
       "dependencies": "*",
-      "devDependencies": "*"
+      "devDependencies": "*",
+      "resolutions": "*"
     },
     "nx.json": "*",
     "tsconfig.base.json": "*"
