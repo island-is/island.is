@@ -16,10 +16,11 @@ import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import sortBy from 'lodash/sortBy'
-import { paginate, totalPages as pages } from '../components/utils'
+import { paginate, calculateTotalPages } from '../components/utils'
 import {
   constituencyMapper,
   EndorsementListTags,
+  hardcodedList
 } from '../../constants'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
@@ -35,10 +36,11 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const isClosedHook = useIsClosed(endorsementListId)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const { endorsements: endorsementsHook, refetch } = useEndorsements(
+/*  const { endorsements: endorsementsHook, refetch } = useEndorsements(
     endorsementListId,
     true,
-  )
+  )*/
+  const endorsementsHook = hardcodedList
   const minEndorsements =
     constituencyMapper[application.answers.constituency as EndorsementListTags]
       .parliamentary_seats * 30
@@ -93,7 +95,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   ) => {
     const sortEndorements = sortBy(endorsements, 'created')
     setPage(page)
-    setTotalPages(pages(endorsements?.length))
+    setTotalPages(calculateTotalPages(endorsements?.length))
     setFilteredEndorsements(sortEndorements)
     setEndorsements(paginate(sortEndorements, 10, page))
   }
@@ -177,7 +179,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             <BulkUpload
               application={application}
               onSuccess={() => {
-                refetch()
+               // refetch()
               }}
             />
           </Box>

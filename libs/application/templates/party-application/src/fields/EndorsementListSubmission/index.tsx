@@ -12,20 +12,32 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import isEqual from 'lodash/isEqual'
 import {
-  EndorsementListTags as ETag,
-  SelectedRadio as R,
+  EndorsementListTags,
+  SelectedRadio as Radio,
+  hardcodedList,
 } from '../../constants'
 import sortBy from 'lodash/sortBy'
 import shuffle from 'lodash/shuffle'
-import { Endorsement as E } from '../../types/schema'
+import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { SchemaFormValues } from '../../../src/lib/dataSchema'
 import { useFormContext } from 'react-hook-form'
 import {
   paginate,
-  totalPages as pages,
+  calculateTotalPages,
   minAndMaxEndorsements,
+  PAGE_SIZE,
 } from '../components/utils'
+
+const firstMaxEndorsements = (endorsementsHook: Endorsement[], max: number) => {
+  return endorsementsHook.slice(0, max)
+}
+const randomMaxEndorsements = (
+  endorsementsHook: Endorsement[],
+  max: number,
+) => {
+  return shuffle(endorsementsHook).slice(0, max)
+}
 
 const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
@@ -37,91 +49,83 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
 
-  const [endorsementsPage, setEndorsementsPage] = useState<E[] | undefined>()
-  const [selectedEndorsements, setSelectedEndorsements] = useState<E[]>([])
-  const [selectedRadio, setSelecteRadio] = useState<R>(R.AUTO)
-
+  const [paginatedEndorsements, setPaginatedEndorsements] = useState<
+    Endorsement[]
+  >([])
+  const [selectedEndorsements, setSelectedEndorsements] = useState<
+    Endorsement[]
+  >([])
+  const [selectedRadio, setSelecteRadio] = useState<Radio>(Radio.AUTO)
   const [showWarning, setShowWarning] = useState(false)
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(0)
 
-  const { min, max } = minAndMaxEndorsements(constituency as ETag)
-  const { endorsements } = useEndorsements(endorsementListId, false)
+  const { minEndorsements, maxEndorsements } = minAndMaxEndorsements(
+    constituency as EndorsementListTags,
+  )
+  //const { endorsements: endorsementsHook = [] } = useEndorsements(endorsementListId, false)
+  const endorsementsHook = sortBy(hardcodedList, 'created')
+  const totalPages = calculateTotalPages(endorsementsHook.length)
 
-  /* on intital render: decide which radio button should be checked */
   useEffect(() => {
-    if (endorsements) {
-      if (endorsmentAnswers && !!endorsmentAnswers?.length) {
-        const mapToEndorsement = endorsements?.filter((endorsement) => {
-          return endorsmentAnswers.indexOf(endorsement?.id) !== -1
+    if (endorsementsHook.length) {
+      if (endorsmentAnswers && !!endorsmentAnswers.length) {
+        const mapToEndorsement = endorsementsHook.filter((endorsement) => {
+          return endorsmentAnswers.indexOf(endorsement.id) !== -1
         })
-        handleSelectedEndorsements(mapToEndorsement)
+        updateSelectedEndorsements(mapToEndorsement)
       } else {
-        handleSelectedEndorsements(firstX())
+        updateSelectedEndorsements(
+          firstMaxEndorsements(endorsementsHook, maxEndorsements),
+        )
       }
-      handlePagination(1, endorsements)
+      handlePagination(1)
     }
-  })
+  }, [])
 
-  const handleSelectedEndorsements = (newEndorsements: E[]) => {
-    setSelectedEndorsements(newEndorsements)
-    toggleRadio(newEndorsements)
-    setShowWarning(newEndorsements.length > max || newEndorsements.length < min)
-    updateApplicationWithEndorsements(newEndorsements)
-  }
-
-  const firstX = () => {
-    const tempEndorsements = [...(endorsements ?? [])]
-    return tempEndorsements.slice(0, max)
-  }
-  const shuffled = () => {
-    const tempEndorsements = [...(shuffle(endorsements) ?? [])]
-    return tempEndorsements.slice(0, max)
-  }
-
-  const toggleRadio = (newEndorsements: E[]) => {
-    isEqual(newEndorsements, firstX())
-      ? setSelecteRadio(R.AUTO)
-      : setSelecteRadio(R.RANDOM)
-  }
-
-  const handleCheckboxChange = (endorsement: E) => {
-    if (selectedEndorsements?.some((e) => e.id === endorsement.id)) {
-      deselectEndorsement(endorsement)
-    } else {
-      const addToEndorsements = [
-        ...(selectedEndorsements ? selectedEndorsements : []),
-        endorsement,
-      ]
-      handleSelectedEndorsements(addToEndorsements)
-    }
-  }
-
-  const deselectEndorsement = (endorsement: E) => {
-    const removeFromSelected = selectedEndorsements?.filter(
-      (e) => e.id !== endorsement.id,
+  const updateSelectedEndorsements = (
+    updatedSlectedEndorsements: Endorsement[],
+  ) => {
+    isEqual(
+      updatedSlectedEndorsements,
+      firstMaxEndorsements(endorsementsHook, maxEndorsements),
     )
-    handleSelectedEndorsements([
-      ...(removeFromSelected ? removeFromSelected : []),
-    ])
+      ? setSelecteRadio(Radio.AUTO)
+      : setSelecteRadio(Radio.RANDOM)
+    setSelectedEndorsements(updatedSlectedEndorsements)
+    setShowWarning(
+      updatedSlectedEndorsements.length > maxEndorsements ||
+        updatedSlectedEndorsements.length < minEndorsements,
+    )
+    setValue(
+      'endorsements',
+      updatedSlectedEndorsements.map((e) => e.id),
+    )
   }
 
-  const updateApplicationWithEndorsements = async (newEndorsements: E[]) => {
-    const endorsementIds: string[] = newEndorsements.map((e) => e.id)
-    setValue('endorsements', endorsementIds)
+  const handleCheckboxChange = (endorsement: Endorsement) => {
+    const isSelected = selectedEndorsements.some((e) => e.id === endorsement.id)
+    if (isSelected) {
+      const removeFromSelected = selectedEndorsements.filter(
+        (e) => e.id !== endorsement.id,
+      )
+      updateSelectedEndorsements([
+        ...(removeFromSelected ? removeFromSelected : []),
+      ])
+    } else updateSelectedEndorsements([...selectedEndorsements, endorsement])
   }
 
-  const handlePagination = (page: number, endorsements: E[] | undefined) => {
-    const sortEndorements = sortBy(endorsements, 'created')
+  const handlePagination = (page: number) => {
+    const endorsementsSortedByDate = sortBy(endorsementsHook, 'created')
+    const endorsementPage =
+      paginate(endorsementsSortedByDate, PAGE_SIZE, page) ?? []
+    setPaginatedEndorsements(endorsementPage)
     setPage(page)
-    setTotalPages(pages(endorsements?.length))
-    setEndorsementsPage(paginate(sortEndorements, 10, page))
   }
 
   return (
     <Box marginBottom={8}>
       <Text>{formatMessage(m.endorsementListSubmission.description)}</Text>
-      {!!endorsements?.length && (
+      {!!endorsementsHook.length && (
         <Box>
           <Box
             marginTop={3}
@@ -134,33 +138,39 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
               id="autoSelect"
               label={
                 formatMessage(m.endorsementListSubmission.selectAuto) +
-                (endorsements.length < max ? endorsements.length : max)
+                (endorsementsHook.length < maxEndorsements
+                  ? endorsementsHook.length
+                  : maxEndorsements)
               }
-              checked={selectedRadio === R.AUTO}
+              checked={selectedRadio === Radio.AUTO}
               onChange={() => {
-                handleSelectedEndorsements(firstX())
+                updateSelectedEndorsements(
+                  firstMaxEndorsements(endorsementsHook, maxEndorsements),
+                )
               }}
             />
             <Box marginLeft={5}>
               <RadioButton
                 id="chooseManually"
                 label={formatMessage(m.endorsementListSubmission.selectRandom)}
-                checked={selectedRadio === R.RANDOM}
+                checked={selectedRadio === Radio.RANDOM}
                 onChange={() => {
-                  handleSelectedEndorsements(shuffled())
+                  updateSelectedEndorsements(
+                    randomMaxEndorsements(endorsementsHook, maxEndorsements),
+                  )
                 }}
               />
             </Box>
           </Box>
           <EndorsementTable
             application={application}
-            endorsements={sortBy(endorsementsPage, 'created')}
+            endorsements={paginatedEndorsements}
             selectedEndorsements={selectedEndorsements}
-            onTableSelect={(endorsement: E) =>
+            onTableSelect={(endorsement: Endorsement) =>
               handleCheckboxChange(endorsement)
             }
           />
-          {!!endorsements?.length && (
+          {!!endorsementsHook.length && (
             <Box marginY={3}>
               <Pagination
                 page={page}
@@ -169,7 +179,7 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
                   <Box
                     cursor="pointer"
                     className={className}
-                    onClick={() => handlePagination(page, endorsements)}
+                    onClick={() => handlePagination(page)}
                   >
                     {children}
                   </Box>
@@ -187,9 +197,11 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
               {formatMessage(m.endorsementListSubmission.chosenEndorsements)}
             </Text>
             <Text variant="h5">
-              {selectedEndorsements?.length +
+              {selectedEndorsements.length +
                 '/' +
-                (endorsements.length < max ? endorsements.length : max)}
+                (endorsementsHook.length < maxEndorsements
+                  ? endorsementsHook.length
+                  : maxEndorsements)}
             </Text>
           </Box>
           {showWarning && (
@@ -205,27 +217,29 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
             >
               <Icon type="alert" color="yellow600" width={26} />
               <Box marginLeft={3}>
-                {selectedEndorsements && selectedEndorsements.length > max && (
-                  <Text fontWeight="semiBold" variant="small">
-                    {formatMessage(
-                      m.endorsementListSubmission.warningMessageTitleHigh,
-                    )}
-                  </Text>
-                )}
-                {selectedEndorsements && selectedEndorsements.length < min && (
-                  <Text fontWeight="semiBold" variant="small">
-                    {formatMessage(
-                      m.endorsementListSubmission.warningMessageTitleLow,
-                    )}
-                  </Text>
-                )}
+                {selectedEndorsements &&
+                  selectedEndorsements.length > maxEndorsements && (
+                    <Text fontWeight="semiBold" variant="small">
+                      {formatMessage(
+                        m.endorsementListSubmission.warningMessageTitleHigh,
+                      )}
+                    </Text>
+                  )}
+                {selectedEndorsements &&
+                  selectedEndorsements.length < minEndorsements && (
+                    <Text fontWeight="semiBold" variant="small">
+                      {formatMessage(
+                        m.endorsementListSubmission.warningMessageTitleLow,
+                      )}
+                    </Text>
+                  )}
                 <Text variant="small">
                   {formatMessage(
                     m.endorsementListSubmission.warningMessagePt1,
                   ) +
-                    min +
+                    minEndorsements +
                     ' - ' +
-                    max +
+                    maxEndorsements +
                     formatMessage(
                       m.endorsementListSubmission.warningMessagePt2,
                     )}

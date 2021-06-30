@@ -17,7 +17,7 @@ export function paginate(
   }
 }
 
-export function totalPages(endorsementsLength: number | undefined) {
+export function calculateTotalPages(endorsementsLength: number | undefined) {
   if (endorsementsLength === undefined) return 0
   else {
     return Math.ceil(endorsementsLength / PAGE_SIZE)
@@ -25,11 +25,11 @@ export function totalPages(endorsementsLength: number | undefined) {
 }
 
 export function minAndMaxEndorsements(constituency: EndorsementListTags) {
-  const max = 5
+  const maxEndorsements = 5
   /*constituencyMapper[constituency as EndorsementListTags]
       .parliamentary_seats * 40*/
-  const min =
+  const minEndorsements =
     constituencyMapper[constituency as EndorsementListTags]
       .parliamentary_seats * 30
-  return { min, max }
+  return { minEndorsements, maxEndorsements }
 }

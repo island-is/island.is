@@ -81,8 +81,8 @@ const PartyApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/CollectEndorsementsForm').then((module) =>
-                  Promise.resolve(module.CollectEndorsementsForm),
+                import('../forms/ConstituencyForm').then((module) =>
+                  Promise.resolve(module.ConstituencyForm),
                 ),
               actions: [
                 {
