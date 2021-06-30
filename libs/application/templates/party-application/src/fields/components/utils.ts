@@ -25,9 +25,9 @@ export function calculateTotalPages(endorsementsLength: number | undefined) {
 }
 
 export function minAndMaxEndorsements(constituency: EndorsementListTags) {
-  const maxEndorsements = 5
-  /*constituencyMapper[constituency as EndorsementListTags]
-      .parliamentary_seats * 40*/
+  const maxEndorsements =
+    constituencyMapper[constituency as EndorsementListTags]
+      .parliamentary_seats * 40
   const minEndorsements =
     constituencyMapper[constituency as EndorsementListTags]
       .parliamentary_seats * 30
