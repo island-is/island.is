@@ -10,7 +10,7 @@ export class PaymentCallbackController {
     private paymentModel: typeof Payment,
   ) {}
 
-  @Post('application-payment/:application_id/:id')
+  @Post('applicationPayment/:application_id/:id')
   async paymentApproved(
     @Param('application_id', new ParseUUIDPipe()) applicationId: string,
     @Body() callback: Callback,
