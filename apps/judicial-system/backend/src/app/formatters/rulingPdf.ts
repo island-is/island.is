@@ -218,21 +218,6 @@ function constructRestrictionRulingPdf(
     })
     .text(' ')
 
-  if (existingCase.requestProsecutorOnlySession) {
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Beiðni um dómþing að varnaraðila fjarstöddum')
-      .font('Helvetica')
-      .fontSize(12)
-      .text(existingCase.prosecutorOnlySessionRequest, {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
-      .text(' ')
-  }
-
   doc
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -628,21 +613,6 @@ function constructInvestigationRulingPdf(
       paragraphGap: 0,
     })
     .text(' ')
-
-  if (existingCase.requestProsecutorOnlySession) {
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Beiðni um dómþing að varnaraðila fjarstöddum')
-      .font('Helvetica')
-      .fontSize(12)
-      .text(existingCase.prosecutorOnlySessionRequest, {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
-      .text(' ')
-  }
 
   doc
     .font('Helvetica-Bold')
