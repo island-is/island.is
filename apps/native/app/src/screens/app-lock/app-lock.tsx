@@ -242,7 +242,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
             onBackPress={onBackPress}
             onFaceIdPress={onFaceIdPress}
             back={code.length > 0}
-            biometricType={biometricType}
+            biometricType={useBiometrics ? biometricType ?? 'faceid' : undefined}
           />
           <View style={{ height: 64 }} />
         </Center>

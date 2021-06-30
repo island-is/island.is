@@ -5,6 +5,12 @@ export const is = {
   'login.loginButtonText': 'Skrá inn',
   'login.languageButtonText': 'English',
   'login.needHelpButtonText': 'Þarftu aðstoð?',
+  'login.outdatedBrowserTitle': 'Gamall vafri',
+  'login.outdatedBrowserMessage': 'Vafrinn þinn er of gamall, vinsamlegast uppfærið hann í gegnum Play Store',
+  'login.outdatedBrowserUpdateButton': 'Uppfæra',
+  'login.outdatedBrowserCancelButton': 'Hætta við',
+  'login.networkErrorTitle': 'Villa kom upp',
+  'login.networkErrorMessage': '\nEkki náðist samband við innskráningarþjónustu.\n\nVinsamlegast athugið netsamband á tækinu eða reynið aftur síðar.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
@@ -86,22 +92,22 @@ export const is = {
     MALE_MINOR {Drengur}
     FEMALE_MINOR {Stúlka}
     TRANSGENDER_MINOR {Kynsegin}
-    UNKNOWN {Óupplýst}
+    other {Óupplýst}
   }`,
   'user.natreg.maritalStatus': 'Hjúskaparstaða',
   'user.natreg.maritalStatusValue': `{
     maritalStatus,
     select,
-    MARRIED {{gender, select, FEMALE {Gift} MALE {Giftur}}}
-    UNMARRIED {{gender, select, FEMALE {Ógift} MALE {Ógiftur}}}
-    WIDOWED {{gender, select, FEMALE {Ekkja} MALE {Ekkill}}}
-    SEPARATED {{gender, select, FEMALE {Skilin að borði og sæng} MALE {Skilinn að borði og sæng}}}
-    DIVORCED {{gender, select, FEMALE {Fráskilin} MALE {Fráskilinn}}}
-    MARRIED_LIVING_SEPARATELY {{gender, select, FEMALE {Gift} MALE {Giftur}}}
-    MARRIED_TO_FOREIGN_LAW_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur}}}
-    UNKNOWN {Óupplýst}
-    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur}}}
-    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur}}}
+    MARRIED {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
+    UNMARRIED {{gender, select, FEMALE {Ógift} MALE {Ógiftur} other {Óupplýst}}}
+    WIDOWED {{gender, select, FEMALE {Ekkja} MALE {Ekkill} other {Óupplýst}}}
+    SEPARATED {{gender, select, FEMALE {Skilin að borði og sæng} MALE {Skilinn að borði og sæng} other {Óupplýst}}}
+    DIVORCED {{gender, select, FEMALE {Fráskilin} MALE {Fráskilinn} other {Óupplýst}}}
+    MARRIED_LIVING_SEPARATELY {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
+    MARRIED_TO_FOREIGN_LAW_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
+    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
+    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
+    other {Óupplýst}
   }`,
   'user.natreg.citizenship': 'Ríkisfang',
   'user.natreg.religion': 'Trú- eða lífsskoðunarfélag',
@@ -146,6 +152,13 @@ export const is = {
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
 
+  // license scanner
+  'licenseScanner.title': 'Ökuskírteina skanni',
+  'licenseScanner.helperMessage': 'Snúðu símanum að strikamerkinu',
+  'licenseScanner.awaitingPermission': 'Bið um leyfi til að nota myndavél',
+  'licenseScanner.noCameraAccess': 'Myndavél ekki aðgengileg',
+  'licenseScannerDetail.driverLicenseNumber': 'Númer ökuskírteinis',
+
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
 
@@ -174,7 +187,7 @@ export const is = {
     inReview {Í vinnslu}
     approved {Samþykkt}
     rejected {Hafnað}
-    unknown {Staða óþekkt}
+    other {Staða óþekkt}
   }`,
   'applicationStatusCard.noActiveApplications':
     'Þegar þú stofnar stafræna umsókn á Ísland.is birtist staða hennar hér.',

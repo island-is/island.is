@@ -7,6 +7,8 @@ import { StorybookScreen } from '../../screens/devtools/storybook'
 import { DocumentDetailScreen } from '../../screens/document-detail/document-detail'
 import { HomeScreen } from '../../screens/home/home'
 import { InboxScreen } from '../../screens/inbox/inbox'
+import { LicenseScanDetailScreen } from '../../screens/license-scanner/license-scan-detail'
+import { LicenseScannerScreen } from '../../screens/license-scanner/license-scanner'
 import { LoginScreen } from '../../screens/login/login'
 import { NotificationDetailScreen } from '../../screens/notification-detail/notification-detail'
 import { NotificationsScreen } from '../../screens/notifications/notifications'
@@ -44,6 +46,8 @@ export function registerAllComponents() {
   registerComponent(CR.NotificationsScreen, NotificationsScreen)
   registerComponent(CR.NotificationDetailScreen, NotificationDetailScreen)
   registerComponent(CR.WebViewScreen, WebViewScreen);
+  registerComponent(CR.LicenseScannerScreen, LicenseScannerScreen);
+  registerComponent(CR.LicenseScanDetailScreen, LicenseScanDetailScreen);
 
   // ui components
   if (Platform.OS === 'android') {

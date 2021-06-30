@@ -23,7 +23,7 @@ import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
-import { IGenericUserLicense } from '../../graphql/fragments/license.fragment'
+import { GenericUserLicenseStatus, IGenericUserLicense } from '../../graphql/fragments/license.fragment'
 import { ListGenericLicensesResponse, LIST_GENERIC_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
@@ -33,6 +33,7 @@ import { usePreferencesStore } from '../../stores/preferences-store'
 import { LicenseStatus, LicenseType } from '../../types/license-type'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
+import { ButtonRegistry } from '../../utils/component-registry'
 
 const {
   useNavigationOptions,
@@ -44,6 +45,12 @@ const {
         text: intl.formatMessage({ id: 'wallet.screenTitle' }),
       },
       rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+      leftButtons: [{
+        id: ButtonRegistry.ScanLicenseButton,
+        testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
+        icon: require('../../assets/icons/navbar-scan.png'),
+        color: theme.color.blue400
+      }],
     },
     bottomTab: {
       iconColor: theme.color.blue400,
@@ -53,7 +60,6 @@ const {
     },
   }),
   {
-    topBar: {},
     bottomTab: {
       testID: testIDs.TABBAR_TAB_WALLET,
       iconInsets: {
@@ -82,8 +88,8 @@ const WalletItem = React.memo(({ item }: { item: IGenericUserLicense }) => {
           nativeID={`license-${item.license.type}_source`}
           title={item.license.type}
           type={item.license.type as LicenseType}
-          date={item.fetch.updated}
-          status={item.license.status as LicenseStatus}
+          date={new Date(Number(item.fetch.updated))}
+          status={item.license.status === GenericUserLicenseStatus.HasLicense ? LicenseStatus.VALID : LicenseStatus.NOT_VALID}
           agencyLogo={agencyLogo}
         />
       </SafeAreaView>
@@ -91,113 +97,18 @@ const WalletItem = React.memo(({ item }: { item: IGenericUserLicense }) => {
   )
 })
 
-export function getMockLicenseItem(intl: IntlShape) {
-  const { userInfo } = authStore.getState()
-  const nationalId = userInfo?.nationalId || ''
-  const lastChar = nationalId.substr(-1)
-  const year =
-    (lastChar === '9' ? 1900 : 2000) + Number(nationalId.substr(4, 2))
-  const birthDate = new Date();
-  birthDate.setFullYear(year);
-  birthDate.setMonth(Number(nationalId.substr(2, 2)) - 1)
-  birthDate.setDate(Number(nationalId.substr(0, 2)));
-  const licenseStart = new Date(birthDate)
-  licenseStart.setFullYear(licenseStart.getFullYear() + 17)
-  const licenseEnd = new Date(licenseStart)
-  licenseEnd.setFullYear(licenseEnd.getFullYear() + 50)
-
-  return {
-    nationalId: userInfo?.nationalId,
-    license: {
-      type: 'DriversLicense',
-      provider: {
-        id: 'NationalPoliceCommissioner',
-      },
-      pkpass: true,
-      timeout: 1,
-      status: 'VALID',
-    },
-    pkpassUrl: '',
-    fetch: {
-      status: 'UPDATED',
-      updated: new Date().toJSON(),
-    },
-    payload: {
-      data: [
-        {
-          type: 'Value',
-          name: null,
-          label: '2. Eiginnafn 1. Kenninafn',
-          value: userInfo?.name,
-          fields: null,
-        },
-        {
-          type: 'Value',
-          name: null,
-          label: '3. Fæðingardagur og fæðingarstaður',
-          value: `${intl.formatDate(birthDate, { dateStyle: 'medium' })}, ${userInfo?.nat}`,
-          fields: null,
-        },
-        {
-          type: 'Group',
-          name: null,
-          label: null,
-          value: null,
-          fields: [
-            {
-              type: 'Value',
-              name: null,
-              label: '4a. Útgáfudagur',
-              value: licenseStart,
-              fields: null,
-            },
-            {
-              type: 'Value',
-              name: null,
-              label: '4b. Lokadagur',
-              value: licenseEnd,
-              fields: null,
-            },
-            {
-              type: 'Value',
-              name: null,
-              label: '5. Númer',
-              value: '00000000',
-              fields: null,
-            },
-          ],
-        },
-        {
-          type: 'Value',
-          name: null,
-          label: '4c. Nafn útgefanda',
-          value: 'Sýslumaðurinn á höfuðborgarsvæðinu',
-          fields: null,
-        },
-        {
-          type: 'Value',
-          name: null,
-          label: '4d. Kennitala',
-          value: `${nationalId.substr(0, 6)}-${nationalId.substr(-4)}`,
-          fields: null,
-        },
-      ],
-    },
-  }
-}
-
 export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
 
   const theme = useTheme()
   const { dismiss, dismissed } = usePreferencesStore()
-  const res = useQuery<ListGenericLicensesResponse>(LIST_GENERIC_LICENSES_QUERY, { client })
+  const res = useQuery<ListGenericLicensesResponse>(LIST_GENERIC_LICENSES_QUERY, { client, fetchPolicy: 'network-only' })
   const [licenseItems, setLicenseItems] = useState<any>([])
   const flatListRef = useRef<FlatList>(null)
   const alertVisible = !dismissed.includes('howToUseCertificates')
   const [loading, setLoading] = useState(true)
   const isSkeleton = res.loading && !res.data
-  const loadingTimeout = useRef<NodeJS.Timeout>()
+  const loadingTimeout = useRef<number>()
   const intl = useIntl()
 
   useActiveTabItemPress(2, () => {
@@ -209,10 +120,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useEffect(() => {
     if (!res.loading) {
-      if (res.error) {
-        // overwrite thing with mock user license
-        setLicenseItems([getMockLicenseItem(intl)])
-      } else {
+      if (!res.error) {
         setLicenseItems(res.data?.genericLicenses || [])
       }
       setLoading(false)

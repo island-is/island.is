@@ -11,10 +11,6 @@ target 'IslandApp' do
   use_unimodules!(
     modules_paths: ['../../node_modules'],
     exclude: [
-      'expo-image-loader',
-      'unimodules-barcode-scanner-interface',
-      'unimodules-camera-interface',
-      'unimodules-image-loader-interface',
       'unimodules-sensors-interface',
       'unimodules-face-detector-interface',
       'unimodules-task-manager-interface'

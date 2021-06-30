@@ -6,6 +6,12 @@ export const en: TranslatedMessages = {
   'login.loginButtonText': 'Login',
   'login.languageButtonText': 'Íslenska',
   'login.needHelpButtonText': 'Need help?',
+  'login.outdatedBrowserTitle': 'Outdated browser',
+  'login.outdatedBrowserMessage': 'You have an unsupported browser version, please update it through the Play Store.',
+  'login.outdatedBrowserUpdateButton': 'Update',
+  'login.outdatedBrowserCancelButton': 'Cancel',
+  'login.networkErrorTitle': 'Network error',
+  'login.networkErrorMessage': '\nCould not contact the login service.\n\nPlease check your device internet connection or try again later.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
@@ -88,7 +94,7 @@ export const en: TranslatedMessages = {
     MALE_MINOR {Boy}
     FEMALE_MINOR {Girl}
     TRANSGENDER_MINOR {Transgender}
-    UNKNOWN {Unknown}
+    other {Unknown}
   }`,
   'user.natreg.maritalStatus': 'Marital status',
   'user.natreg.maritalStatusValue': `{
@@ -101,9 +107,9 @@ export const en: TranslatedMessages = {
     DIVORCED {Divorced}
     MARRIED_LIVING_SEPARATELY {Married}
     MARRIED_TO_FOREIGN_LAW_PERSON {Married}
-    UNKNOWN {Unknown}
     FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
     ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
+    other {Unknown}
   }`,
   'user.natreg.citizenship': 'Citizenship',
   'user.natreg.religion': 'Religion',
@@ -144,6 +150,13 @@ export const en: TranslatedMessages = {
   // wallet pass
   'walletPass.screenTitle': 'Pass',
 
+  // license scanner
+  'licenseScanner.title': 'Scan driver license',
+  'licenseScanner.helperMessage': 'Point device at barcode',
+  'licenseScanner.awaitingPermission': 'Asking for camera permissions',
+  'licenseScanner.noCameraAccess': 'Camera not available',
+  'licenseScannerDetail.driverLicenseNumber': 'Driver license number',
+
   // notifications
   'notifications.screenTitle': 'Notifications',
 
@@ -176,7 +189,7 @@ export const en: TranslatedMessages = {
     inReview {In review}
     approved {Approved}
     rejected {Rejected}
-    unknown {Unknown status}
+    other {Unknown status}
   }`,
   'applicationStatusCard.noActiveApplications': 'No active applications',
 }

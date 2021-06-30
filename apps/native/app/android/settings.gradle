@@ -4,9 +4,6 @@ apply from: '../../node_modules/react-native-unimodules/gradle.groovy';
 includeUnimodulesProjects([
   modulesPaths: ['../../../node_modules'],
   exclude: [
-    'expo-image-loader',
-    'unimodules-barcode-scanner-interface',
-    'unimodules-camera-interface',
     'unimodules-sensors-interface',
     'unimodules-face-detector-interface',
     'unimodules-task-manager-interface'

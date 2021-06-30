@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components/native'
 import { font } from '../../utils/font'
 import { Skeleton } from '../skeleton/skeleton'
-import { FormattedDate } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 const Host = styled.View<{ compact?: boolean }>`
   ${(props: any) => (props.compact ? '' : 'flex: 1;')}
@@ -30,12 +30,15 @@ const Value = styled.Text<{ size?: 'large' | 'small' }>`
 
 interface FieldProps {
   label: string
-  value?: string | Date
+  value?: string
   loading?: boolean
   compact?: boolean
   size?: 'large' | 'small'
   style?: any
 }
+
+const isJSONDate = (str: string) =>
+  str && !!str.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
 
 export function Field({
   label,
@@ -45,19 +48,17 @@ export function Field({
   size = 'small',
   style,
 }: FieldProps) {
-  const isDate = value && value instanceof Date;
+  const intl = useIntl()
+  const val = String(value ?? '')
+    .split(' ')
+    .map((part) => (isJSONDate(part) ? intl.formatDate(part) : part))
+    .join(' ')
 
   return (
     <Host compact={compact} style={style}>
       <Content>
         <Label>{label}</Label>
-        {loading ? (
-          <Skeleton active />
-        ) : (
-          <Value size={size}>
-            {isDate ? <FormattedDate value={value} /> : value ?? ''}
-          </Value>
-        )}
+        {loading ? <Skeleton active /> : <Value size={size}>{val}</Value>}
       </Content>
     </Host>
   )

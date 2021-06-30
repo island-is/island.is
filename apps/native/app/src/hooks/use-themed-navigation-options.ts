@@ -4,7 +4,7 @@ import { DynamicColorIOS, Platform } from 'react-native'
 import { Options } from 'react-native-navigation'
 import { useNavigation } from 'react-native-navigation-hooks/dist'
 import { DefaultTheme, useTheme } from 'styled-components'
-import { createIntl, TypedIntlShape, useIntl } from '../lib/intl'
+import { createIntl, TypedIntlShape, useIntl } from 'react-intl'
 import { en } from '../messages/en'
 import { is } from '../messages/is'
 import { preferencesStore } from '../stores/preferences-store'
@@ -69,6 +69,8 @@ const defaultOptions = (
             ? theme.shade.foreground
             : DynamicColorIOS({ light: 'black', dark: 'white' }),
       },
+      animateRightButtons: false,
+      animateLeftButtons: false,
       noBorder: true,
     }
     if (Platform.OS === 'android') {

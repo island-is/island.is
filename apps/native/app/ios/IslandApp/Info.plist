@@ -98,5 +98,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Used for license scanning capabilities</string>
+	<key>NFCReaderUsageDescription</key>
+	<string>Used for license scanning capabilities</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Used for license scanning capabilities</string>
 </dict>
 </plist>

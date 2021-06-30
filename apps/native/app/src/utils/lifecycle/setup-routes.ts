@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import { Base64 } from 'js-base64'
-import { Navigation, Options } from 'react-native-navigation'
+import { Navigation, Options, OptionsModalPresentationStyle } from 'react-native-navigation'
 import { addRoute, addScheme } from '../../lib/deep-linking'
 import { ApplicationsScreen } from '../../screens/applications/applications'
 import { DocumentDetailScreen } from '../../screens/document-detail/document-detail'
@@ -98,6 +98,22 @@ export function setupRoutes() {
       },
     })
   })
+
+  addRoute('/license-scanner', async () => {
+    Navigation.showModal({
+      stack: {
+        id: StackRegistry.LicenseScannerStack,
+        options: {
+          modalPresentationStyle: OptionsModalPresentationStyle.fullScreen,
+        },
+        children: [{
+          component: {
+            name: ComponentRegistry.LicenseScannerScreen,
+          }
+        }],
+      }
+    });
+  });
 
   addRoute('/inbox/:docId', async ({ docId, title }: any) => {
     selectTab(0)

@@ -1,5 +1,5 @@
 import React from 'react'
-import { IntlProvider } from '../lib/intl'
+import { IntlProvider } from 'react-intl'
 import { en } from '../messages/en'
 import { is } from '../messages/is'
 import { usePreferencesStore } from '../stores/preferences-store'
@@ -11,7 +11,11 @@ export const I18nProvider = ({ children }: { children: React.ReactNode }) => {
     <IntlProvider
       locale={locale}
       messages={locale === 'is-IS' ? is : en}
-      onError={() => null}
+      onError={(err) => {
+        if (__DEV__) {
+          console.log(err);
+        }
+      }}
     >
       {children}
     </IntlProvider>

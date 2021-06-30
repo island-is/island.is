@@ -1,6 +1,7 @@
 package is.island.app;
 
 import is.island.app.generated.BasePackageList;
+import is.island.app.IslandPackage;
 
 // npm packages
 import com.rnappauth.RNAppAuthPackage;
@@ -55,6 +56,7 @@ public class MainApplication extends NavigationApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
+          packages.add(new IslandPackage());
           packages.add(new AsyncStoragePackage());
           packages.add(new CodePush(BuildConfig.CODEPUSH_DEPLOYMENT_KEY_ANDROID, MainApplication.this, BuildConfig.DEBUG));
           packages.add(new CookieManagerPackage());

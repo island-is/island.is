@@ -8,8 +8,10 @@ import React, { useEffect, useState } from 'react'
 import {
   Alert,
   Image,
+  Linking,
   NativeEventEmitter,
   NativeModules,
+  Platform,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -18,7 +20,7 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
-import { FormattedMessage, useIntl } from '../../lib/intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { openBrowser } from '../../lib/rn-island'
 import { useAuthStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
@@ -54,9 +56,22 @@ const LightButtonText = styled.Text`
   })}
 `
 
+function getChromeVersion(): Promise<number> {
+  return new Promise((resolve) => {
+    NativeModules.IslandModule.getAppVersion(
+      'com.android.chrome',
+      (version: string) => {
+        resolve(Number(version?.split('.')?.[0] || 0))
+      },
+    )
+  })
+}
+
 export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
   const authStore = useAuthStore()
   const intl = useIntl()
+
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
 
   const [authState, setAuthState] = useState<{
     nonce: string
@@ -81,6 +96,41 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
   }, [])
 
   const onLoginPress = async () => {
+    if (Platform.OS === 'android') {
+      const chromeVersion = await getChromeVersion()
+      console.log('valid', chromeVersion)
+      if (chromeVersion < 55) {
+        // Show dialog on how to update.
+        Alert.alert(
+          intl.formatMessage({ id: 'login.outdatedBrowserTitle' }),
+          intl.formatMessage({ id: 'login.outdatedBrowserMessage' }),
+          [
+            {
+              text: intl.formatMessage({
+                id: 'login.outdatedBrowserUpdateButton',
+              }),
+              style: 'default',
+              onPress() {
+                Linking.openURL('market://details?id=com.android.chrome')
+              },
+            },
+            {
+              style: 'cancel',
+              text: intl.formatMessage({
+                id: 'login.outdatedBrowserCancelButton',
+              }),
+            },
+          ],
+        )
+        return
+      }
+    }
+
+    if (isLoggingIn) {
+      return
+    }
+
+    setIsLoggingIn(true)
     try {
       const isAuth = await authStore.login()
       if (isAuth) {
@@ -92,13 +142,14 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
     } catch (err) {
       if (err.message.indexOf('Connection error') >= 0) {
         Alert.alert(
-          'Villa kom upp',
-          '\nEkki náðist samband við innskráningarþjónustu.\n\nVinsamlegast athugið netsamband á tækinu eða reynið aftur síðar.',
+          intl.formatMessage({ id: 'login.networkErrorTitle' }),
+          intl.formatMessage({ id: 'login.networkErrorMessage' }),
         )
       } else {
         console.warn(err)
       }
     }
+    setIsLoggingIn(false)
   }
 
   const onLanguagePress = () => {
