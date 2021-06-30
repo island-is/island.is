@@ -35,7 +35,8 @@ const devConfig = {
         issuer: 'https://identity-server.dev01.devland.is',
         clientId: '@island.is/clients/national-registry',
         clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
-        scope: '@skra.is/individuals api_resource.scope', // TODO: remove api_resource.scope
+        scope: 'openid @skra.is/individuals api_resource.scope', // TODO: remove api_resource.scope
+        requestActorToken: true,
       },
     },
   },
@@ -78,7 +79,7 @@ const prodConfig = {
         issuer: process.env.IDS_ISSUER,
         clientId: '@island.is/clients/national-registry',
         clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
-        scope: '@skra.is/individuals api_resource.scope', // TODO: remove api_resource.scope
+        scope: 'openid @skra.is/individuals api_resource.scope', // TODO: remove api_resource.scope
         requestActorToken: true,
       },
     },
