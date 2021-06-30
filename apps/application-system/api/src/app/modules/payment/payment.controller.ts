@@ -51,11 +51,11 @@ export class PaymentController {
     private paymentModel: typeof Payment,
   ) {}
   @Scopes(ApplicationScope.write)
-  @Post('applications/:application_id/payment')
+  @Post('applications/:applicationId/payment')
   @ApiCreatedResponse({ type: CreatePaymentResponseDto })
   async createCharge(
     @CurrentUser() user: User,
-    @Param('application_id', new ParseUUIDPipe()) applicationId: string,
+    @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
   ): Promise<CreatePaymentResponseDto> {
     if (!isUuid(applicationId)) {
       throw new BadRequestException(`ApplicationId is on wrong format.`)
@@ -89,16 +89,16 @@ export class PaymentController {
   }
 
   @Scopes(ApplicationScope.read)
-  @Get('applications/:application_id/payment-status')
+  @Get('applications/:applicationId/payment-status')
   @ApiOkResponse({ type: PaymentStatusResponseDto })
   @ApiParam({
-    name: 'application_id',
+    name: 'applicationId',
     type: String,
     required: true,
     description: 'The id of the application check if it is paid.',
   })
   async getPaymentStatus(
-    @Param('application_id') applicationId: string,
+    @Param('applicationId') applicationId: string,
   ): Promise<PaymentStatusResponseDto> {
     if (!isUuid(applicationId)) {
       throw new BadRequestException(`ApplicationId is on wrong format.`)
