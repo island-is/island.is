@@ -37,7 +37,6 @@ export const CollectEndorsementsForm: Form = buildForm({
     buildSection({
       id: 'endorsementListSubmittion',
       title: m.endorsementListSubmission.shortTitle,
-
       children: [
         buildCustomField({
           id: 'selectEndorsementsList',
@@ -46,6 +45,7 @@ export const CollectEndorsementsForm: Form = buildForm({
         }),
       ],
     }),
+
     buildSection({
       id: 'overviewSection',
       title: m.overviewSection.title,

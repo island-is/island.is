@@ -1,4 +1,4 @@
-import { EndorsementListTagsEnum } from './types/schema'
+import { EndorsementListTagsEnum, Endorsement } from './types/schema'
 
 export type EndorsementListTags = Exclude<
   EndorsementListTagsEnum,
@@ -72,4 +72,9 @@ export const csvFileName = (partyLetter: string, partyName: string): string => {
   const strippedPartyName = partyName.toString().replace(/\s/g, '')
   const strippedPartyLetter = partyLetter.toString().replace(/\s/g, '')
   return `Meðmælendalisti-${strippedPartyName}(${strippedPartyLetter}).csv`
+}
+
+export enum SelectedEndorsementsRadio {
+  AUTO,
+  RANDOM,
 }
