@@ -17,6 +17,7 @@ import {
 let id = 0
 
 const PRIMARY_PARENT_ID = '0101302129'
+const SECONDARY_PARENT_ID = '0101302239'
 
 const createApplicationWithChildren = (
   applicant: string,
@@ -98,6 +99,43 @@ describe('getChildrenAndExistingApplications', () => {
     )
 
     expect(expectedExistingApplications.length).toBe(1)
+    expect(result).toStrictEqual(expected)
+  })
+
+  it('should not include child for secondary parent if dob is already in an existing application', () => {
+    const children: ChildInformationWithoutRights[] = [
+      {
+        expectedDateOfBirth: '2020-10-10',
+        parentalRelation: ParentalRelations.secondary,
+        primaryParentNationalRegistryId: PRIMARY_PARENT_ID,
+      },
+    ]
+
+    const existingApplication = createApplicationWithChildren(
+      SECONDARY_PARENT_ID,
+      children,
+      0,
+    )
+
+    const applicationsWhereApplicant: Application[] = [existingApplication]
+    const applicationsWhereOtherParent: Application[] = [existingApplication]
+    const pregnancyStatus = undefined
+
+    const expectedExistingApplications = applicationsToExistingChildApplication(
+      applicationsWhereApplicant,
+    )
+
+    const expected: ChildrenWithoutRightsAndExistingApplications = {
+      children: [],
+      existingApplications: expectedExistingApplications,
+    }
+
+    const result = getChildrenAndExistingApplications(
+      applicationsWhereApplicant,
+      applicationsWhereOtherParent,
+      pregnancyStatus,
+    )
+
     expect(result).toStrictEqual(expected)
   })
 
