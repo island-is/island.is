@@ -1,11 +1,12 @@
 import React, { useContext } from 'react'
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import {
-  Case,
-  CaseState,
-  CaseType,
-  ReadableCaseType,
-} from '@island.is/judicial-system/types'
+  Accordion,
+  AccordionItem,
+  Box,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
+import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
   FormContentContainer,
@@ -15,6 +16,7 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   capitalize,
+  caseTypes,
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
@@ -73,7 +75,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               },
               {
                 title: 'Tegund kröfu',
-                value: capitalize(ReadableCaseType[workingCase.type]),
+                value: capitalize(caseTypes[workingCase.type]),
               },
             ]}
             accusedName={workingCase.accusedName}

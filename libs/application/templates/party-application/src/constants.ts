@@ -5,7 +5,7 @@ export type EndorsementListTags = Exclude<
   EndorsementListTagsEnum.PartyLetter2021
 >
 
-export enum API_MODULE_ACTIONS {
+export enum ApiModuleActions {
   CreateEndorsementList = 'createEndorsementList',
   AssignSupremeCourt = 'assignSupremeCourt',
   ApplicationRejected = 'applicationRejected',

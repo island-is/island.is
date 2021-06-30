@@ -2,11 +2,17 @@
 
 ## About
 
-This library defines email-service, which allows its users to send email using nodemailer.
+This library defines the emailService, which allows its users to send email using nodemailer.
 
-The service currently supports AWS SES and nodemailer's test account as transports, but can easily be extended to include other transports supported by nodemailer.
+The service currently supports the following transports:
 
-### NestJS Standalone - not recommended
+- AWS SES
+- Nodemailer's test account
+- NodemailerApp
+
+You can easily be extended to include other transports supported by nodemailer.
+
+## NestJS Standalone - not recommended
 
 Assuming `environment.emailOptions` implements `EmailServiceOptions`, add the module to your Module imports:
 
@@ -17,6 +23,138 @@ Assuming `environment.emailOptions` implements `EmailServiceOptions`, add the mo
   ],
 })
 ```
+
+## Test account
+
+To enable the test account, pass the following option when importing the EmailModule.
+
+```typescript
+@Module({
+  imports: [
+    EmailModule.register({
+      ...
+      useTestAccount: true,
+    }),
+  ],
+})
+```
+
+When using the `sendEmail` method, the email will use [Ethereal](https://ethereal.email/) and return a link where you will be able to preview the email on their website.
+
+## NodemailerApp
+
+You can use the [nodemailer app](https://nodemailer.com/app/) to preview the emails sent on your local environment. When using the `sendEmail` method, the emails sent will be visible in the UI.
+
+![NodemailerApp example](https://user-images.githubusercontent.com/937328/123276714-f310b800-d4f4-11eb-88ad-1299ae7f75f5.png)
+
+To use the app:
+
+- Install the NodemailerApp from the link above
+- Add the following environnement variable:
+
+```bash
+USE_NODEMAILER_APP=true
+```
+
+- You will need your module to be configured as follow:
+
+```typescript
+@Module({
+  imports: [
+    EmailModule.register({
+      ...
+      useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
+    }),
+  ],
+})
+```
+
+## Design template
+
+Instead of sending raw html, you are able to use a few components based on this [Figma design](https://www.figma.com/file/ine6cGn7cnrJJK43fzUZTF/Templates-%2F-h%C3%B6nnunarkerfi-fyrir-ums%C3%B3knir?node-id=1258%3A24214).
+
+The following components and their props are available:
+
+- Image
+
+```typescript
+{
+  component: 'Image',
+  context: {
+    src: 'image-path',
+    alt: 'Alt text',
+  },
+}
+```
+
+- Heading
+
+```typescript
+{
+  component: 'Heading',
+  context: {
+    copy: 'A mind-blowing heading',
+  },
+}
+```
+
+- Copy
+
+```typescript
+{
+  component: 'Copy',
+  context: {
+    copy: 'Some beautiful lorem ipsum',
+  },
+}
+```
+
+- Button
+
+```typescript
+{
+  component: 'Button',
+  context: {
+    copy: 'Button copy',
+    href: 'Button url',
+  },
+}
+```
+
+To use theses components, define a template object in your email message, instead of the html object:
+
+```typescript
+const message = {
+  to: 'recipient@gmail.com',
+  ...
+  template: {
+    title: 'Email title',
+    body: [
+      {
+        component: 'Image',
+        context: {
+          src: 'logo.jpg',
+          alt: 'Logo name',
+        },
+      },
+      {
+        component: 'Heading',
+        context: {
+          copy: 'Email heading',
+        },
+      },
+    ],
+  }
+}
+```
+
+{% hint style="info" %}
+[Email example](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assignEmployerEmail.ts) for the parental leave application.
+{% endhint %}
+
+### Under the hood
+
+It is based on [Foundation emails template](https://github.com/foundation/foundation-emails) and Handlebars to create each components. The foundation based styles has been minified and is coming from [here](https://github.com/jeremybarbet/foundation-emails/tree/master). Is has been minified and embed within `foundation.hbs` to avoid adding heavy CSS preprocessor/pipeline to handle everything. We are using [Juice](https://github.com/Automattic/juice) to inline the styles within the HTML, not because we like inline CSS, but because emails.
 
 ## Code owners and maintainers
 
