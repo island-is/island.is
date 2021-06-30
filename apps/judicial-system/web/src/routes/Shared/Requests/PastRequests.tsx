@@ -6,12 +6,15 @@ import {
   Case,
   CaseState,
   CaseType,
-  ReadableCaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import parseISO from 'date-fns/parseISO'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  caseTypes,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
 import { Table } from '@island.is/judicial-system-web/src/shared-components'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as styles from './Requests.treat'
@@ -82,7 +85,7 @@ const PastRequests: React.FC<Props> = (props) => {
           return (
             <>
               <Box component="span" display="block">
-                {capitalize(ReadableCaseType[row.row.original.type])}
+                {capitalize(caseTypes[row.row.original.type])}
               </Box>
               {row.row.original.parentCase && (
                 <Text as="span" variant="small">

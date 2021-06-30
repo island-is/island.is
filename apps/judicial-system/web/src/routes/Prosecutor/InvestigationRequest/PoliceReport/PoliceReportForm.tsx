@@ -55,7 +55,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
         workingCase,
       )
     }
-  }, [autofill, workingCase.requestProsecutorOnlySession])
+  }, [autofill, workingCase, defaultProsecutorOnlySessionRequest])
 
   return (
     <>
