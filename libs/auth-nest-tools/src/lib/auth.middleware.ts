@@ -1,5 +1,5 @@
 import { Auth } from './auth'
-
+import fetch from 'isomorphic-fetch'
 // These types are copied from our OpenAPI generated api clients.
 type FetchAPI = WindowOrWorkerGlobalScope['fetch']
 
