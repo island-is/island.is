@@ -89,7 +89,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     page: number,
     endorsements: Endorsement[] | undefined,
   ) => {
-    const sortEndorements = sortBy(endorsements, 'created')
+    const sortEndorements = sortBy(endorsements, 'created').reverse()
     setPage(page)
     setTotalPages(calculateTotalPages(endorsements?.length))
     setFilteredEndorsements(sortEndorements)

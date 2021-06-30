@@ -94,7 +94,7 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
               <ExportAsCSV
                 data={
                   mapToCSVFile(
-                    sortBy(endorsements, 'created'),
+                    sortBy(endorsements, 'created').reverse(),
                     constituency,
                   ) as object[]
                 }

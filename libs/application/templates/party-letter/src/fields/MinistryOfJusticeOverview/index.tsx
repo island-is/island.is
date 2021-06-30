@@ -77,7 +77,11 @@ const MinistryOfJusticeOverview = ({ application }: FieldBaseProps) => {
       <Box marginBottom={5}>
         {endorsements?.length && (
           <ExportAsCSV
-            data={mapToCSVFile(sortBy(endorsements, 'created')) as object[]}
+            data={
+              mapToCSVFile(
+                sortBy(endorsements, 'created').reverse(),
+              ) as object[]
+            }
             filename={csvFileName(answers.partyLetter, answers.partyName)}
             title={formatMessage(m.ministryOfJustice.csvButton)}
           />

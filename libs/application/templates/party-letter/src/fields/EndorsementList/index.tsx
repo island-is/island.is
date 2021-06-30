@@ -32,7 +32,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
 
   useEffect(() => {
     refetch()
-    setEndorsements(sortBy(endorsementsHook, 'created'))
+    setEndorsements(sortBy(endorsementsHook, 'created').reverse())
   }, [endorsementsHook, updateOnBulkImport])
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     page: number,
     endorsements: Endorsement[] | undefined,
   ) => {
-    const sortEndorements = sortBy(endorsements, 'created')
+    const sortEndorements = sortBy(endorsements, 'created').reverse()
     setPage(page)
     setTotalPages(pages(endorsements?.length))
     setFilteredEndorsements(sortEndorements)

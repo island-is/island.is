@@ -151,7 +151,10 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
   }
 
   const handlePagination = (page: number) => {
-    const endorsementsSortedByDate = sortBy(endorsementsHook, 'created')
+    const endorsementsSortedByDate = sortBy(
+      endorsementsHook,
+      'created',
+    ).reverse()
     const endorsementPage =
       paginate(endorsementsSortedByDate, PAGE_SIZE, page) ?? []
     setPaginatedEndorsements(endorsementPage)
