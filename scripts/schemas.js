@@ -40,7 +40,7 @@ const main = async () => {
 
     try {
       await exec(
-        `nx run-many --target=${target} --all --with-deps --parallel --maxParallel=6 ${
+        `nx run-many --target=${target} --all --with-deps --parallel --maxParallel=1 ${
           skipCache ? '--skip-nx-cache' : ''
         }`,
       )
