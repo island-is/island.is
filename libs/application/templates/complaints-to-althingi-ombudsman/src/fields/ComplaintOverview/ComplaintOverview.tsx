@@ -7,12 +7,12 @@ import { ComplaintsToAlthingiOmbudsman } from '../../lib/dataSchema'
 import { complaintOverview, information } from '../../lib/messages'
 import { ValueLine } from './ValueLine'
 import { ComplainedFor } from './ComplainedFor'
+import { Complainee } from './Complainee'
 
 export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const answers = (application as any).answers as ComplaintsToAlthingiOmbudsman
   const { name, ssn, phone, email, address } = answers.information
-  console.log('answers', answers)
 
   return (
     <Box component="section">
@@ -61,22 +61,10 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
         complainedFor={answers.complainedForInformation}
         connection={answers.complainedForInformation?.connection ?? ''}
       />
-      <ReviewGroup>
-        <GridRow>
-          <GridColumn span={'4/12'}>
-            <ValueLine
-              label="Kvörtun beinist að"
-              value={answers.complaintDescription.complaineeName}
-            />
-          </GridColumn>
-          <GridColumn span={'6/12'}>
-            <ValueLine
-              label={formatMessage('Nafn stjórnvalds')}
-              value="TODO?"
-            />
-          </GridColumn>
-        </GridRow>
-      </ReviewGroup>
+      <Complainee
+        name={answers.complaintDescription.complaineeName}
+        type={answers.complainee.type}
+      />
       <ReviewGroup>
         <ValueLine label="Lagt fyrir dómstóla" value="TODO?" />
       </ReviewGroup>

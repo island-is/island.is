@@ -457,7 +457,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       title: section.complaintOverview,
       children: [
         buildCustomField({
-          id: 'custom',
+          id: 'overview',
           title: 'Kvörtun og undirritun',
           component: 'ComplaintOverview',
         }),
