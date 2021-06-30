@@ -1,7 +1,7 @@
 import { MessageDescriptor } from 'react-intl'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
-import { Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 
 export const ValueLine: FC<{
   label: string | MessageDescriptor
@@ -10,9 +10,9 @@ export const ValueLine: FC<{
   const { formatMessage } = useLocale()
 
   return (
-    <>
+    <Box paddingY={1}>
       <Text variant="h5">{formatMessage(label)}</Text>
       <Text>{formatMessage(value)}</Text>
-    </>
+    </Box>
   )
 }

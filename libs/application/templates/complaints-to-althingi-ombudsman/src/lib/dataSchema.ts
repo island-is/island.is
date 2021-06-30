@@ -76,3 +76,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
 export type ComplaintsToAlthingiOmbudsman = z.TypeOf<
   typeof ComplaintsToAlthingiOmbudsmanSchema
 >
+
+export type ComplainedForInformation = z.TypeOf<
+  typeof ComplaintsToAlthingiOmbudsmanSchema.shape.complainedForInformation
+>

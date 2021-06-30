@@ -12,6 +12,7 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const answers = (application as any).answers as ComplaintsToAlthingiOmbudsman
   const { name, ssn, phone, email, address } = answers.information
+  console.log('answers', answers)
 
   return (
     <Box component="section">
@@ -56,7 +57,8 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
         </GridRow>
       </ReviewGroup>
       <ComplainedFor
-        complainedFor={answers.complainedFor.decision}
+        complainedForType={answers.complainedFor.decision}
+        complainedFor={answers.complainedForInformation}
         connection={answers.complainedForInformation?.connection ?? ''}
       />
       <ReviewGroup>
