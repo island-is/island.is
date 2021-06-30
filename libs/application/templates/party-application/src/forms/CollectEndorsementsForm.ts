@@ -1,11 +1,9 @@
 import {
   buildForm,
   buildMultiField,
-  buildCheckboxField,
   buildCustomField,
   buildSection,
   buildSubmitField,
-  buildFileUploadField,
   Form,
   FormModes,
   DefaultEvents,
