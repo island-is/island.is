@@ -1,4 +1,4 @@
-import { parseNationalRegistryDate } from './health-insurance.utils';
+import { parseNationalRegistryDate } from './health-insurance.utils'
 
 describe('parseNationalRegistryDate', () => {
   it('supports icelandic dates', () => {
@@ -7,7 +7,6 @@ describe('parseNationalRegistryDate', () => {
     const date2 = parseNationalRegistryDate('1.5.2021 00:00:00')
     const date3 = parseNationalRegistryDate('1.10.2021 00:00:00')
     const date4 = parseNationalRegistryDate('11.12.2021 00:00:00')
-
 
     // Assert
     expect(date1).toEqual(new Date('2021-05-29'))
