@@ -49,13 +49,12 @@ export class XlsxController {
       chunkSize: 2048,
     })
 
-    console.log('excelBuffer', excelBuffer)
     streamBuffer.put(excelBuffer, 'base64')
 
     res.header('Pragma: no-cache')
     res.header('Cache-Control: no-cache')
     res.header('Cache-Control: nmax-age=0')
-    res.header('Content-disposition', 'inline; filename=testfile1.xlsx')
+    res.header('Content-disposition', 'inline; filename=testfile0101x.xlsx')
 
     streamBuffer.pipe(res)
     streamBuffer.stop()

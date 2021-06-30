@@ -1,19 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsOptional, IsJWT, IsString } from 'class-validator'
+import { IsJWT, IsString } from 'class-validator'
 
 export class XlsxDto {
+  @IsString()
   @ApiProperty()
-  @IsOptional()
-  headers?: Array<string>
-
-  @ApiProperty()
-  @IsOptional()
-  data?: Array<Array<string | number>>
+  readonly serviceId!: string
 
   @IsJWT()
   @ApiProperty()
   readonly __accessToken!: string
-
-  @IsString()
-  serviceId?: string
 }
