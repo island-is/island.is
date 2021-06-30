@@ -18,7 +18,8 @@ import {
   StatisticsCardsSection,
   DataLinkSection,
   MixedChart,
-  SimplePieChart
+  SimplePieChart,
+  SimpleLineChart
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
@@ -198,7 +199,7 @@ const OpenDataPage: Screen = () => {
             </Box>
           </GridColumn>
           <GridColumn span='8/12'>
-            <MixedChart />
+            <SimpleLineChart />
           </GridColumn>
         </GridRow>
       </GridContainer>

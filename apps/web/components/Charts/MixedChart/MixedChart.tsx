@@ -72,11 +72,11 @@ const data = [
 ]
 
 const renderColorfulLegendText = (value: string, entry: any) => {
-  return <span style={{color: "#00003C"}}>{value}</span>
+  return <p style={{color: "#00003C"}}>{value}</p>
 }
 
 const renderLabel = (value: string) => {
-  return <span style={{color: "#00003C"}}>{value}</span>
+  return <p style={{color: "#00003C"}}>{value}</p>
 }
 
 
