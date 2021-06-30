@@ -111,6 +111,15 @@ describe('getChildrenAndExistingApplications', () => {
       },
     ]
 
+    const existingApplicationOfPrimaryParent = createApplicationWithChildren(
+      PRIMARY_PARENT_ID,
+      children,
+      0,
+      {
+        otherParentId: SECONDARY_PARENT_ID,
+      },
+    )
+
     const existingApplication = createApplicationWithChildren(
       SECONDARY_PARENT_ID,
       children,
@@ -118,7 +127,9 @@ describe('getChildrenAndExistingApplications', () => {
     )
 
     const applicationsWhereApplicant: Application[] = [existingApplication]
-    const applicationsWhereOtherParent: Application[] = [existingApplication]
+    const applicationsWhereOtherParent: Application[] = [
+      existingApplicationOfPrimaryParent,
+    ]
     const pregnancyStatus = undefined
 
     const expectedExistingApplications = applicationsToExistingChildApplication(
