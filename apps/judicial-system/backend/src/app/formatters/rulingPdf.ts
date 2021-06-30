@@ -308,7 +308,10 @@ function constructRestrictionRulingPdf(
     )
     .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
 
-  if (existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL) {
+  if (
+    existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL &&
+    existingCase.accusedAppealAnnouncement
+  ) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
@@ -328,7 +331,10 @@ function constructRestrictionRulingPdf(
       })
   }
 
-  if (existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+  if (
+    existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL &&
+    existingCase.prosecutorAppealAnnouncement
+  ) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
@@ -682,7 +688,10 @@ function constructInvestigationRulingPdf(
 
   doc.text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
 
-  if (existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL) {
+  if (
+    existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL &&
+    existingCase.accusedAppealAnnouncement
+  ) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
@@ -697,7 +706,10 @@ function constructInvestigationRulingPdf(
       })
   }
 
-  if (existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+  if (
+    existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL &&
+    existingCase.prosecutorAppealAnnouncement
+  ) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
