@@ -68,7 +68,7 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "main.js" ]
 
-FROM nginx:1.19.2-alpine as output-static
+FROM nginx:1.21.0-alpine as output-static
 
 ARG APP
 ARG APP_DIST_HOME
@@ -82,7 +82,9 @@ ENV APP=${APP}
 ENV BASEPATH=/
 
 RUN mkdir -p /etc/nginx/templates
-RUN apk add bash && \
+RUN apk update && \
+  apk upgrade && \
+  apk add bash && \
   curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /tmp/jq-linux64 && \
   chmod a+x /tmp/jq-linux64 && \
   mv /tmp/jq-linux64 /usr/bin/jq
