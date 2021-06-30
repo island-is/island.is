@@ -78,7 +78,9 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
           const workSheet = workbook.Sheets[sheet]
           /** Converts a worksheet object to an array of JSON objects */
           const jsonSheet = utils.sheet_to_json(workSheet, { header: ['kt'] })
-          data = data.concat(jsonSheet.map((x: any) => x.kt.toString().replace(/[^0-9]/g, '')))
+          data = data.concat(
+            jsonSheet.map((x: any) => x.kt.toString().replace(/[^0-9]/g, '')),
+          )
         }
         onBulkUpload(data)
       } catch (e) {
