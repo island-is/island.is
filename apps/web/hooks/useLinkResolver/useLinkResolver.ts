@@ -83,11 +83,11 @@ export const routesTemplate = {
   },
   projectsubpage: {
     is: '/v/[slug]/[subSlug]',
-    en: '',
+    en: '/en/p/[slug]/[subSlug]',
   },
   projectpage: {
     is: '/v/[slug]',
-    en: '',
+    en: '/en/p/[slug]',
   },
   lifeevents: {
     is: '/lifsvidburdir',
