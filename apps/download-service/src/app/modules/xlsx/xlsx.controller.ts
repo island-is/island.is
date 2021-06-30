@@ -1,6 +1,6 @@
 import { Controller, Post, Header, Res, Body } from '@nestjs/common'
 import { Response } from 'express'
-import { ApiOkResponse } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { XlsxDto } from './dto/xlsxDto'
 import * as XLSX from 'xlsx'
 import { ReadableStreamBuffer } from 'stream-buffers'
@@ -8,6 +8,7 @@ import { ReadableStreamBuffer } from 'stream-buffers'
 
 // @UseGuards(IdsUserGuard)
 @Controller('xlsx')
+@ApiTags('documents')
 export class XlsxController {
   @Post()
   @Header(
