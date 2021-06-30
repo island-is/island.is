@@ -75,19 +75,19 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
     // Form values
     form.method = 'post'
     // TODO: Use correct url
-    // form.action = `https://api.dev01.devland.is/download/v1/xlsx`
-    form.action = `http://localhost:3377/download/v1/xlsx`
+    form.action = `https://api.dev01.devland.is/download/v1/xlsx`
+    // form.action = `http://localhost:3377/download/v1/xlsx`
     // form.target = '_blank'
 
     // Document Id values
-    // documentIdInput.type = 'hidden'
-    // documentIdInput.name = 'serviceId'
-    // documentIdInput.value = 'GetFinanceStatus'
+    documentIdInput.type = 'hidden'
+    documentIdInput.name = 'serviceId'
+    documentIdInput.value = 'GetFinanceStatus'
 
     // National Id values
-    // tokenInput.type = 'hidden'
-    // tokenInput.name = '__accessToken'
-    // tokenInput.value = userInfo.access_token
+    tokenInput.type = 'hidden'
+    tokenInput.name = '__accessToken'
+    tokenInput.value = userInfo.access_token
 
     document.body.appendChild(form)
     form.submit()
