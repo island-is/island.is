@@ -13,7 +13,7 @@ export const PaymentOverview: ServicePortalModuleComponent = () => {
         defaultMessage: 'Greiðslur',
       })}
       intro={defineMessage({
-        id: 'sp.assets:intro',
+        id: 'sp.payments:intro',
         defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir
         fjármál á næstunni.`,
       })}
