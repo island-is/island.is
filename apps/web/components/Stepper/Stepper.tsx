@@ -38,9 +38,12 @@ export const Stepper = ({ stepper, startAgainLabel }: StepperProps) => {
             <Text variant="h2">{currentStep.title}</Text>
             {richText(currentStep.subtitle as SliceType[])}
             <GridContainer>
-              <GridRow marginTop={8}>
+              <GridRow marginTop={[4, 4, 8]}>
                 {(JSON.parse(currentStep.options) as Option[]).map((x) => (
-                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <GridColumn
+                    span={['12/12', '12/12', '6/12']}
+                    paddingBottom={[2, 2, 0]}
+                  >
                     <Button
                       key={`${currentStep.slug}-${x.key}`}
                       fluid
@@ -52,7 +55,10 @@ export const Stepper = ({ stepper, startAgainLabel }: StepperProps) => {
                   </GridColumn>
                 ))}
                 {currentStep.isAnswer && (
-                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <GridColumn
+                    span={['12/12', '12/12', '6/12']}
+                    paddingBottom={[2, 2, 0]}
+                  >
                     <Button
                       key={'start-again'}
                       fluid
