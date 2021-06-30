@@ -75,7 +75,12 @@ export const inputStyle = style({
   fontWeight: theme.typography.light,
   fontSize: theme.spacing[3],
   padding: theme.spacing[3],
-  '::placeholder': {
-    color: theme.color.dark300,
-  },
+  // ':empty::before': {
+  //   color: theme.color.dark300,
+  // },
+  // 'not(:empty)::after': {
+  //   content: "' kr.'",
+  //   marginLeft: theme.spacing[1],
+  //   display: 'inline-block',
+  // },
 })

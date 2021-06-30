@@ -137,3 +137,18 @@ input[type='number'] {
   background-color: #f2f7ff;
   color: #0061ff;
 }
+
+.amountInput[placeholder]:empty::before {
+  content: attr(placeholder);
+  color: #9999b1;
+}
+
+.amountInput[placeholder]:empty:focus::before {
+  content: '';
+}
+
+.amountInput:not(:empty)::after {
+  content: 'kr.';
+  display: inline-block;
+  margin-left: 8px;
+}

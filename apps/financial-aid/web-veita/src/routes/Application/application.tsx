@@ -122,9 +122,10 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Veitt',
-        content: application.amount
-          ? `${application.amount?.toLocaleString('de-DE')} kr.`
-          : `Umsókn ekki samþykkt`,
+        content:
+          application.state === ApplicationState.APPROVED
+            ? `${application.amount?.toLocaleString('de-DE')} kr.`
+            : `Umsókn ekki samþykkt`,
       },
     ]
 

@@ -42,6 +42,8 @@ const StateModal: React.FC<Props> = (props: Props) => {
 
   const [amountInput, setAmountInput] = useState<number>()
 
+  // console.log({ amountInput })
+
   const { statistics, setStatistics } = useContext(NavigationStatisticsContext)
 
   const [
@@ -149,17 +151,27 @@ const StateModal: React.FC<Props> = (props: Props) => {
             </Box>
 
             <Box display="block" width="full" padding={4}>
-              <input
+              {/* //TODO input */}
+              {/* <div
+                onInput={(e) => {
+                  setAmountInput(Number(e.currentTarget.textContent))
+                }}
+                className={`${styles.inputStyle} amountInput`}
+                placeholder="Skrifaðu upphæð aðstoðar"
+                contentEditable="true"
+                suppressContentEditableWarning={true}
+              >
+                <span>{amountInput}</span>
+              </div> */}
+              {/* <input
                 type="number"
+                placeholder="Skrifaðu upphæð aðstoðar"
+                className={`${styles.inputStyle}`}
                 value={amountInput}
                 onChange={(e) => {
-                  e.stopPropagation()
-                  setAmountInput(parseInt(e.target.value))
+                  setAmountInput(Number(e.target))
                 }}
-                className={styles.inputStyle}
-                placeholder="Skrifaðu upphæð aðstoðar"
-              />
-
+              /> */}
               <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
                 <Button
                   variant="ghost"
