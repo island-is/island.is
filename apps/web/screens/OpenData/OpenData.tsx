@@ -134,7 +134,7 @@ const OpenDataPage: Screen = () => {
 
   return (
     <Box id="main-content">
-      <Section aria-labelledby="openDataHeroTitle" background="blue100">
+      <Section aria-labelledby="openDataHeroTitle" background="blue100" paddingBottom={6}>
         <GridContainer>
           <GridRow>
             <GridColumn span="5/12">
@@ -181,7 +181,7 @@ const OpenDataPage: Screen = () => {
               </Box>
             </GridColumn>
             <GridColumn span="7/12">
-              <MixedChart/>
+              <SimpleLineChart />
             </GridColumn>
           </GridRow>
         </GridContainer>
@@ -199,7 +199,7 @@ const OpenDataPage: Screen = () => {
             </Box>
           </GridColumn>
           <GridColumn span='8/12'>
-            <SimpleLineChart />
+          <MixedChart/>
           </GridColumn>
         </GridRow>
       </GridContainer>

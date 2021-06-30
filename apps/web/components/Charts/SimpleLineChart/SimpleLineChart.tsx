@@ -30,7 +30,8 @@ const renderLegend = (props) => {
               height: "12px",
               border: "3px solid " + entry.color,
               borderRadius: "12px",
-              marginRight: "8px"}} />
+              marginRight: "8px",
+              marginLeft: "8px"}} />
               {dataKeysName[entry.value]}
           </li>
         ))

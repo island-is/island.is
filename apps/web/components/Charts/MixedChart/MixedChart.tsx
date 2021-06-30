@@ -71,8 +71,38 @@ const data = [
   }
 ]
 
+const dataKeysName = {
+  sott: "Umsóknir",
+  veitt: "Veittir styrkir",
+  amount: "Heildarupphæð styrkja"
+}
+
 const renderColorfulLegendText = (value: string, entry: any) => {
   return <p style={{color: "#00003C"}}>{value}</p>
+}
+
+const renderLegend = (props) => {
+  const { payload } = props
+  console.log(props)
+
+  return (
+    <ul style={{display: 'flex', justifyContent: 'flex-end'}}>
+      {
+        payload.map((entry, index) => (
+          <li style={{color: "#00003C", display: 'inline-flex', alignItems: "center"}} key={`item-${index}`}>
+            <div style={{
+              width: "12px",
+              height: "12px",
+              border: "3px solid " + entry.color,
+              borderRadius: "12px",
+              marginRight: "8px",
+              marginLeft: "32px"}} />
+              {dataKeysName[entry.value]}
+          </li>
+        ))
+      }
+    </ul>
+  )
 }
 
 const renderLabel = (value: string) => {
@@ -100,7 +130,7 @@ export const MixedChart = () => {
           <YAxis yAxisId="left" orientation="left" stroke="#00003C" />
           <YAxis yAxisId="right" hide />
           <Tooltip />
-          <Legend iconType='circle' align="right" formatter={renderColorfulLegendText}/>
+          <Legend iconType='circle' align="right" content={renderLegend}/>
           <Bar dataKey="sott" fill="#99C0FF" stackId='a' barSize={16} yAxisId="left"/> 
           <Bar dataKey="veitt" fill="#0061FF" radius={[20,20,0,0]} stackId='a' barSize={16} yAxisId="left"/>
           <Line dataKey="amount" stroke="#99F4EA" yAxisId="right" strokeWidth={3} dot={{ strokeWidth: 2 }}/>
