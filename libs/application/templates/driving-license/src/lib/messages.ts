@@ -181,7 +181,7 @@ export const m = defineMessages({
     defaultMessage:
       '2. Hefur þú skert sjónsvið til annarrar hliðar eða beggja?',
     description:
-      '2. Do you have limited eyesight to one side or both?',
+      '2. Do you have limited peripheral vision to one side or both?',
   },
   healthDeclaration3: {
     id: 'dl.application:healthDeclaration.3',
