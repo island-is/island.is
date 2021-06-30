@@ -243,7 +243,7 @@ export class DelegationsController {
   })
   async findAllCustomFrom(
     @CurrentUser() user: User,
-    @Query('isvalid') isValid: string,
+    @Query('isvalid') isValid?: string,
   ): Promise<DelegationDTO[] | null> {
     if (isValid && isValid === 'true') {
       return this.delegationsService.findAllValidCustomFrom(user.nationalId)
