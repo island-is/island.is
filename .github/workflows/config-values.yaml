@@ -6,6 +6,7 @@ on:
       - 'charts/**'
       - 'infra/**'
       - '**/infra/**'
+  workflow_dispatch: {}
 
 env:
   DEVOPS_DEBUG: ${{ secrets.DEVOPS_DEBUG }}
@@ -100,7 +101,9 @@ jobs:
           AWS_RETRY_MODE: standard
           AWS_MAX_ATTEMPTS: '6'
         run: aws ssm describe-parameters --query=Parameters[*].[Name] --output=text >> CLOUD_SECRETS
+        working-directory: infra
       - name: Compare secrets
+        working-directory: infra
         shell: /bin/bash {0}
         run: |
           missing=$(grep -vxFf CLOUD_SECRETS LOCAL_SECRETS)
