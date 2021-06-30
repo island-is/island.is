@@ -56,10 +56,10 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
             .includes(searchTerm.toLowerCase())) &&
         voterRegionMismatch(endorsement.meta.voterRegion),
     )
-    const sordedEndorsements = sortBy(fiteredEndorsements, 'created')
+    const sortedEndorsements = sortBy(fiteredEndorsements, 'created')
     return [
-      paginate(sordedEndorsements, 10, page) ?? [],
-      findTotalPages(sordedEndorsements?.length),
+      paginate(sortedEndorsements, 10, page) ?? [],
+      findTotalPages(sortedEndorsements?.length),
     ]
   }, [endorsementsHook, searchTerm, showOnlyInvalidated, page])
 
