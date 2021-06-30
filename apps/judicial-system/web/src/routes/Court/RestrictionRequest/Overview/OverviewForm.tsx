@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Case,
   CaseCustodyProvisions,
@@ -27,6 +28,7 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -54,6 +56,7 @@ const OverviewForm: React.FC<Props> = (props) => {
   } = props
   const { updateCase, isCreatingCourtCase } = useCase()
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
 
   return (
     <FormContentContainer>
@@ -151,7 +154,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               }`,
             },
             {
-              title: 'Ósk um fyrirtökudag og tíma',
+              title: formatMessage(requestCourtDate.heading),
               value: `${capitalize(
                 formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',
               )} eftir kl. ${formatDate(

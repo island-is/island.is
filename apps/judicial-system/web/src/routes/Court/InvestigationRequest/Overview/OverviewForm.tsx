@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -28,6 +29,7 @@ import {
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal'
+import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -43,6 +45,7 @@ const OverviewForm: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
   const { updateCase, createCourtCase, isCreatingCourtCase } = useCase()
+  const { formatMessage } = useIntl()
 
   const validations: FormSettings = {
     courtCaseNumber: {
@@ -165,7 +168,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                 }`,
               },
               {
-                title: 'Ósk um fyrirtökudag og tíma',
+                title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
                   formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
                     '',

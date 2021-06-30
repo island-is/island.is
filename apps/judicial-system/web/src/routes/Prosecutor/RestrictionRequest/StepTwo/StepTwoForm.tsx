@@ -41,8 +41,8 @@ const StepTwoForm: React.FC<Props> = (props) => {
   ] = useState<boolean>(workingCase.requestedCourtDate !== null)
 
   const { formatMessage } = useIntl()
-
   const { updateCase } = useCase()
+
   return (
     <>
       <FormContentContainer>
