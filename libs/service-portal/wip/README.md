@@ -1,4 +1,4 @@
-# service-portal-wip
+# Service Portal Wip
 
 This library was generated with [Nx](https://nx.dev).
 
