@@ -140,122 +140,118 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Box marginBottom={8}>
       <Text>{formatMessage(m.endorsementListSubmission.description)}</Text>
-        <Box>
-          <Box
-            marginTop={3}
-            marginBottom={3}
-            display="flex"
-            alignItems="center"
-            justifyContent="flexStart"
-          >
+      <Box>
+        <Box
+          marginTop={3}
+          marginBottom={3}
+          display="flex"
+          alignItems="center"
+          justifyContent="flexStart"
+        >
+          <RadioButton
+            id="autoSelect"
+            label={
+              formatMessage(m.endorsementListSubmission.selectAuto) +
+              (endorsementsHook && endorsementsHook.length < maxEndorsements
+                ? endorsementsHook.length
+                : maxEndorsements)
+            }
+            checked={autoSelect}
+            onChange={() => {
+              firstMaxEndorsements()
+            }}
+          />
+          <Box marginLeft={5}>
             <RadioButton
-              id="autoSelect"
-              label={
-                formatMessage(m.endorsementListSubmission.selectAuto) +
-                (endorsementsHook && endorsementsHook.length < maxEndorsements
-                  ? endorsementsHook.length
-                  : maxEndorsements)
-              }
-              checked={autoSelect}
+              id="chooseManually"
+              label={formatMessage(m.endorsementListSubmission.selectRandom)}
+              checked={chooseRandom}
               onChange={() => {
-                firstMaxEndorsements()
+                randomize()
               }}
             />
-            <Box marginLeft={5}>
-              <RadioButton
-                id="chooseManually"
-                label={formatMessage(m.endorsementListSubmission.selectRandom)}
-                checked={chooseRandom}
-                onChange={() => {
-                  randomize()
-                }}
-              />
-            </Box>
           </Box>
-          <EndorsementTable
-            application={application}
-            endorsements={sortBy(endorsementsPage, 'created')}
-            selectedEndorsements={selectedEndorsements}
-            onTableSelect={(endorsement) => handleCheckboxChange(endorsement)}
-          />
-          {!!endorsementsHook?.length && (
-            <Box marginY={3}>
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                renderLink={(page, className, children) => (
-                  <Box
-                    cursor="pointer"
-                    className={className}
-                    onClick={() => handlePagination(page, endorsementsHook)}
-                  >
-                    {children}
-                  </Box>
-                )}
-              />
-            </Box>
-          )}
+        </Box>
+        <EndorsementTable
+          application={application}
+          endorsements={sortBy(endorsementsPage, 'created')}
+          selectedEndorsements={selectedEndorsements}
+          onTableSelect={(endorsement) => handleCheckboxChange(endorsement)}
+        />
+        {!!endorsementsHook?.length && (
+          <Box marginY={3}>
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              renderLink={(page, className, children) => (
+                <Box
+                  cursor="pointer"
+                  className={className}
+                  onClick={() => handlePagination(page, endorsementsHook)}
+                >
+                  {children}
+                </Box>
+              )}
+            />
+          </Box>
+        )}
+        <Box
+          marginTop={3}
+          display="flex"
+          alignItems="center"
+          justifyContent="spaceBetween"
+        >
+          <Text fontWeight="semiBold" variant="small">
+            {formatMessage(m.endorsementListSubmission.chosenEndorsements)}
+          </Text>
+          <Text variant="h5">
+            {selectedEndorsements?.length +
+              '/' +
+              (endorsementsHook && endorsementsHook.length < maxEndorsements
+                ? endorsementsHook.length
+                : maxEndorsements)}
+          </Text>
+        </Box>
+        {showWarning && (
           <Box
-            marginTop={3}
+            marginTop={5}
+            background="yellow200"
             display="flex"
             alignItems="center"
-            justifyContent="spaceBetween"
+            padding={3}
+            borderRadius="large"
+            borderColor="yellow400"
+            borderWidth="standard"
           >
-            <Text fontWeight="semiBold" variant="small">
-              {formatMessage(m.endorsementListSubmission.chosenEndorsements)}
-            </Text>
-            <Text variant="h5">
-              {selectedEndorsements?.length +
-                '/' +
-                (endorsementsHook && endorsementsHook.length < maxEndorsements
-                  ? endorsementsHook.length
-                  : maxEndorsements)}
-            </Text>
-          </Box>
-          {showWarning && (
-            <Box
-              marginTop={5}
-              background="yellow200"
-              display="flex"
-              alignItems="center"
-              padding={3}
-              borderRadius="large"
-              borderColor="yellow400"
-              borderWidth="standard"
-            >
-              <Icon type="alert" color="yellow600" width={26} />
-              <Box marginLeft={3}>
-                {selectedEndorsements &&
-                  selectedEndorsements.length > maxEndorsements && (
-                    <Text fontWeight="semiBold" variant="small">
-                      {formatMessage(
-                        m.endorsementListSubmission.warningMessageTitleHigh,
-                      )}
-                    </Text>
-                  )}
-                {selectedEndorsements &&
-                  selectedEndorsements.length < minEndorsements && (
-                    <Text fontWeight="semiBold" variant="small">
-                      {formatMessage(
-                        m.endorsementListSubmission.warningMessageTitleLow,
-                      )}
-                    </Text>
-                  )}
-                <Text variant="small">
-                  {formatMessage(
-                    m.endorsementListSubmission.warningMessagePt1,
-                  ) +
-                    minEndorsements +
-                    ' - ' +
-                    maxEndorsements +
-                    formatMessage(
-                      m.endorsementListSubmission.warningMessagePt2,
+            <Icon type="alert" color="yellow600" width={26} />
+            <Box marginLeft={3}>
+              {selectedEndorsements &&
+                selectedEndorsements.length > maxEndorsements && (
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(
+                      m.endorsementListSubmission.warningMessageTitleHigh,
                     )}
-                </Text>
-              </Box>
+                  </Text>
+                )}
+              {selectedEndorsements &&
+                selectedEndorsements.length < minEndorsements && (
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(
+                      m.endorsementListSubmission.warningMessageTitleLow,
+                    )}
+                  </Text>
+                )}
+              <Text variant="small">
+                {formatMessage(m.endorsementListSubmission.warningMessagePt1) +
+                  minEndorsements +
+                  ' - ' +
+                  maxEndorsements +
+                  formatMessage(m.endorsementListSubmission.warningMessagePt2)}
+              </Text>
             </Box>
-          )}
-        </Box>
+          </Box>
+        )}
+      </Box>
     </Box>
   )
 }
