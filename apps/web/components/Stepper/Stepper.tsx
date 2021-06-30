@@ -34,15 +34,15 @@ export const Stepper = ({ stepper, startAgainLabel }: StepperProps) => {
     <Box className={style.container}>
       <GridContainer>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '5/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <Text variant="h2">{currentStep.title}</Text>
             {richText(currentStep.subtitle as SliceType[])}
             <GridContainer>
-              <GridRow marginTop={[4, 4, 8]}>
+              <GridRow marginTop={[4, 4, 4, 8]}>
                 {(JSON.parse(currentStep.options) as Option[]).map((x) => (
                   <GridColumn
                     span={['12/12', '12/12', '6/12']}
-                    paddingBottom={[2, 2, 0]}
+                    paddingBottom={[2, 2, 2, 0]}
                   >
                     <Button
                       key={`${currentStep.slug}-${x.key}`}
@@ -57,7 +57,7 @@ export const Stepper = ({ stepper, startAgainLabel }: StepperProps) => {
                 {currentStep.isAnswer && (
                   <GridColumn
                     span={['12/12', '12/12', '6/12']}
-                    paddingBottom={[2, 2, 0]}
+                    paddingBottom={[2, 2, 2, 0]}
                   >
                     <Button
                       key={'start-again'}
@@ -73,8 +73,8 @@ export const Stepper = ({ stepper, startAgainLabel }: StepperProps) => {
             </GridContainer>
           </GridColumn>
           <GridColumn
-            span={['12/12', '12/12', '6/12']}
-            offset={['0', '0', '1/12']}
+            span={['12/12', '12/12', '12/12', '6/12']}
+            offset={['0', '0', '0', '1/12']}
           >
             {richText(currentStep.text as SliceType[])}
           </GridColumn>
