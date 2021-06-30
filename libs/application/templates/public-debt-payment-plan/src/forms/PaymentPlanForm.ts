@@ -5,15 +5,24 @@ import {
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
+  buildTextField,
   CustomField,
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { paymentPlanIndexKeyMapper } from '../lib/dataSchema'
-import { application, section } from '../lib/messages'
+import { PaymentType, Prerequisites } from '../dataProviders/tempAPITypes'
+import {
+  PaymentPlanExternalData,
+  paymentPlanIndexKeyMapper,
+  PublicDebtPaymentPlan,
+} from '../lib/dataSchema'
+import { application, employer, info, section } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
+import { paymentPlan } from '../lib/messages/paymentPlan'
 import { prerequisitesFailed } from '../lib/paymentPlanUtils'
+import { NO, YES } from '../shared/constants'
 
 type PaymentPlanBuildIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
@@ -107,7 +116,7 @@ export const PaymentPlanForm: Form = buildForm({
         }),
       ],
     }),
-    /* buildSection({
+    buildSection({
       id: 'info',
       title: section.info,
       children: [
@@ -267,7 +276,7 @@ export const PaymentPlanForm: Form = buildForm({
         }),
         ...buildPaymentPlanSteps(),
       ],
-    }), */
+    }),
     buildSection({
       id: 'overview',
       title: section.overview,

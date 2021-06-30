@@ -1,127 +1,27 @@
-import { Label, ReviewGroup, Table } from '@island.is/application/ui-components'
+import { FieldBaseProps } from '@island.is/application/core'
+import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import React from 'react'
+import { PaymentPlanExternalData } from '../../lib/dataSchema'
+import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
+import { useMockPaymentPlan } from '../PaymentPlan/useMockPaymentPlan'
 
-export const Overview = () => {
+export const Overview = ({ application, field }: FieldBaseProps) => {
+  const externalData = application.externalData as PaymentPlanExternalData
+  // const payment = externalData.paymentPlanList?.data[1]
+  const paymentPlanList = (application.externalData as PaymentPlanExternalData)
+    .paymentPlanList
+  /* const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
+    '2811903429',
+    payment?.type,
+    14000,
+    11,
+  ) */
+
   const editAction = () => {
     console.log('this is edit action')
   }
 
-  const formatIsk = (value: number): string =>
-    value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-
-  const mockTable = [
-    {
-      date: '01.01.2021',
-      remaining: formatIsk(95000),
-      deposit: formatIsk(3750),
-      interestRates: formatIsk(0),
-      totalPayment: formatIsk(9076),
-    },
-    {
-      date: '01.02.2021',
-      remaining: formatIsk(95000),
-      deposit: formatIsk(3750),
-      interestRates: formatIsk(0),
-      totalPayment: formatIsk(9076),
-    },
-    {
-      date: '01.03.2021',
-      remaining: formatIsk(95000),
-      deposit: formatIsk(3750),
-      interestRates: formatIsk(0),
-      totalPayment: formatIsk(9076),
-    },
-    {
-      date: '01.04.2021',
-      remaining: formatIsk(95000),
-      deposit: formatIsk(3750),
-      interestRates: formatIsk(0),
-      totalPayment: formatIsk(9076),
-    },
-    {
-      date: '01.05.2021',
-      remaining: formatIsk(95000),
-      deposit: formatIsk(3750),
-      interestRates: formatIsk(0),
-      totalPayment: formatIsk(9076),
-    },
-    {
-      date: '01.06.2021',
-      remaining: formatIsk(95000),
-      deposit: formatIsk(3750),
-      interestRates: formatIsk(0),
-      totalPayment: formatIsk(9076),
-    },
-    {
-      date: '01.07.2021',
-      remaining: formatIsk(95000),
-      deposit: formatIsk(3750),
-      interestRates: formatIsk(0),
-      totalPayment: formatIsk(9076),
-    },
-    {
-      date: '01.08.2021',
-      remaining: formatIsk(95000),
-      deposit: formatIsk(3750),
-      interestRates: formatIsk(0),
-      totalPayment: formatIsk(9076),
-    },
-    {
-      date: '01.09.2021',
-      remaining: formatIsk(95000),
-      deposit: formatIsk(3750),
-      interestRates: formatIsk(0),
-      totalPayment: formatIsk(9076),
-    },
-    {
-      date: '01.10.2021',
-      remaining: formatIsk(95000),
-      deposit: formatIsk(3750),
-      interestRates: formatIsk(0),
-      totalPayment: formatIsk(9076),
-    },
-    {
-      date: '01.11.2021',
-      remaining: formatIsk(95000),
-      deposit: formatIsk(3750),
-      interestRates: formatIsk(0),
-      totalPayment: formatIsk(9076),
-    },
-    {
-      date: '01.12.2021',
-      remaining: formatIsk(95000),
-      deposit: formatIsk(3750),
-      interestRates: formatIsk(0),
-      totalPayment: formatIsk(9076),
-    },
-  ]
-  const data = React.useMemo(() => [...mockTable], [mockTable])
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Gjalddagi',
-        accessor: 'date',
-      } as const,
-      {
-        Header: 'Eftirstöðvar',
-        accessor: 'remaining',
-      } as const,
-      {
-        Header: 'Innborgun',
-        accessor: 'deposit',
-      } as const,
-      {
-        Header: 'Vextir',
-        accessor: 'interestRates',
-      } as const,
-      {
-        Header: 'Greiðsla alls',
-        accessor: 'totalPayment',
-      } as const,
-    ],
-    [],
-  )
   return (
     <>
       <ReviewGroup isEditable editAction={editAction}>
@@ -164,13 +64,30 @@ export const Overview = () => {
           </GridColumn>
         </GridRow>
       </ReviewGroup>
-      <ReviewGroup isEditable editAction={editAction}>
-        <Box paddingBottom={[2, 4]}>
-          <Label>Skattar og gjöld</Label>
-          <Text>Mánaðarlegar greiðslur</Text>
-        </Box>
-        <Table columns={columns} data={data} truncate />
-      </ReviewGroup>
+      {paymentPlanList?.data.map((payment, index) => {
+        const returnedPayment = externalData.paymentPlanList?.data[index]
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
+          '2811903429',
+          returnedPayment?.type,
+          14000,
+          11,
+        )
+        return (
+          <ReviewGroup isEditable editAction={editAction}>
+            <Box paddingBottom={[2, 4]}>
+              <Label>Skattar og gjöld</Label>
+              <Text>Mánaðarlegar greiðslur</Text>
+            </Box>
+            {(isLoading || paymentPlanResults) && (
+              <PaymentPlanTable
+                isLoading={isLoading}
+                data={paymentPlanResults}
+              />
+            )}
+          </ReviewGroup>
+        )
+      })}
     </>
   )
 }
