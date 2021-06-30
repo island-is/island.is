@@ -1,5 +1,5 @@
 import { Auth } from './auth'
-
+import { logger } from '@island.is/logging'
 // These types are copied from our OpenAPI generated api clients.
 type FetchAPI = WindowOrWorkerGlobalScope['fetch']
 
@@ -77,6 +77,12 @@ export class AuthMiddleware implements Middleware {
     }
 
     const options = this.options.tokenExchangeOptions
+
+    logger.info(options.issuer)
+    logger.info(options.clientId)
+    logger.info(options.clientSecret.length)
+    logger.info(options.scope)
+    logger.info(options.requestActorToken)
 
     const response = await fetch(`${options.issuer}/connect/token`, {
       method: 'POST',
