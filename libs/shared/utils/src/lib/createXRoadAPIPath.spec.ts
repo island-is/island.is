@@ -1,4 +1,4 @@
-import { createXRoadAPIPath, XRoadMemberClass } from './xroad'
+import { createXRoadAPIPath, XRoadMemberClass } from './createXRoadAPIPath'
 
 describe('createXRoadAPIPath', () => {
   it('should create urls as expected', () => {
