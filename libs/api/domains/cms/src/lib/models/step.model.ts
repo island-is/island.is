@@ -25,7 +25,7 @@ export class Step {
   isAnswer?: boolean
 
   @Field({ nullable: true })
-  options?: string | null
+  options?: string
 }
 
 export const mapStep = ({ sys, fields }: IStep): SystemMetadata<Step> => ({
@@ -38,5 +38,5 @@ export const mapStep = ({ sys, fields }: IStep): SystemMetadata<Step> => ({
     : [],
   text: fields.text ? mapDocument(fields.text, sys.id + ':text') : [],
   isAnswer: fields.isAnswer ?? false,
-  options: fields.options ? JSON.stringify(fields.options) : '[]',
+  options: fields.options ? JSON.stringify(fields.options) : '',
 })
