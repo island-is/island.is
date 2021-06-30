@@ -56,7 +56,7 @@ export class DelegationsController {
     scopes: string[],
     delegation: CreateDelegationDTO | UpdateDelegationDTO,
   ) {
-    if (delegation.scopes.length === 0) {
+    if (!delegation.scopes || delegation.scopes.length === 0) {
       return true
     }
 

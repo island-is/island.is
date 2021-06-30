@@ -29,7 +29,6 @@ import {
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './RulingStepTwo.treat'
 
 interface Props {
   workingCase: Case
@@ -401,7 +400,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             </BlueBox>
           </Box>
         </Box>
-        <Box className={styles.courtEndTimeContainer}>
+        <Box marginBottom={10}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               Þinghald

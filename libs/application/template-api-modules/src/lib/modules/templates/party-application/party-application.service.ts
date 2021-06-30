@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
@@ -6,25 +7,8 @@ import {
   generateApplicationRejectedEmail,
   generateApplicationApprovedEmail,
 } from './emailGenerators'
-import { EndorsementListTagsEnum } from './gen/fetch'
-
-const CLOSE_ENDORSEMENT = `
-  mutation EndorsementSystemCloseEndorsementList($input: FindEndorsementListInput!) {
-    endorsementSystemCloseEndorsementList(input: $input) {
-      id
-      closedDate
-    }
-  }
-`
-
-const OPEN_ENDORSEMENT = `
-  mutation EndorsementSystemOpenEndorsementList($input: FindEndorsementListInput!) {
-    endorsementSystemOpenEndorsementList(input: $input) {
-      id
-      closedDate
-    }
-  }
-`
+import { EndorsementListApi, EndorsementListTagsEnum } from './gen/fetch'
+import type { Logger } from '@island.is/logging'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
   mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
@@ -55,11 +39,44 @@ interface PartyLetterData {
   partyLetter: string
 }
 
+/**
+ * We proxy the auth header to the subsystem where it is resolved.
+ */
+interface FetchParams {
+  url: string
+  init: RequestInit
+}
+
+interface RequestContext {
+  init: RequestInit
+}
+
+interface Middleware {
+  pre?(context: RequestContext): Promise<FetchParams | void>
+}
+class ForwardAuthHeaderMiddleware implements Middleware {
+  constructor(private bearerToken: string) {}
+
+  async pre(context: RequestContext) {
+    context.init.headers = Object.assign({}, context.init.headers, {
+      authorization: this.bearerToken,
+    })
+  }
+}
+
 @Injectable()
 export class PartyApplicationService {
   constructor(
+    private endorsementListApi: EndorsementListApi,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
+
+  endorsementListApiWithAuth(token: string) {
+    return this.endorsementListApi.withMiddleware(
+      new ForwardAuthHeaderMiddleware(token),
+    )
+  }
 
   async assignSupremeCourt({
     application,
@@ -68,25 +85,17 @@ export class PartyApplicationService {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
 
-    return this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CLOSE_ENDORSEMENT, {
-        input: {
-          listId,
-        },
+    return this.endorsementListApiWithAuth(authorization)
+      .endorsementListControllerClose({ listId })
+      .then(async () => {
+        await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+          generateAssignSupremeCourtApplicationEmail,
+          application,
+        )
       })
-      .then((res) => {
-        return res.json()
-      })
-      .then(async (json) => {
-        if (json.errors) {
-          throw new Error('Failed to close endorsement list')
-        }
-        if (json.data) {
-          await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-            generateAssignSupremeCourtApplicationEmail,
-            application,
-          )
-        }
+      .catch(() => {
+        this.logger.error('Failed to close endorsement list', listId)
+        throw new Error('Failed to close endorsement list')
       })
   }
 
@@ -97,25 +106,17 @@ export class PartyApplicationService {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
 
-    return this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, OPEN_ENDORSEMENT, {
-        input: {
-          listId,
-        },
+    return this.endorsementListApiWithAuth(authorization)
+      .endorsementListControllerOpen({ listId })
+      .then(async () => {
+        await this.sharedTemplateAPIService.sendEmail(
+          generateApplicationRejectedEmail,
+          application,
+        )
       })
-      .then((res) => {
-        return res.json()
-      })
-      .then(async (json) => {
-        if (json.errors) {
-          throw new Error('Failed to open endorsement list')
-        }
-        if (json.data) {
-          await this.sharedTemplateAPIService.sendEmail(
-            generateApplicationRejectedEmail,
-            application,
-          )
-        }
+      .catch(() => {
+        this.logger.error('Failed to open endorsement list', listId)
+        throw new Error('Failed to open endorsement list')
       })
   }
 
