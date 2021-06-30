@@ -19,7 +19,8 @@ import {
   DataLinkSection,
   MixedChart,
   SimplePieChart,
-  SimpleLineChart
+  SimpleLineChart,
+  ChartsCard,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
@@ -134,7 +135,11 @@ const OpenDataPage: Screen = () => {
 
   return (
     <Box id="main-content">
-      <Section aria-labelledby="openDataHeroTitle" background="blue100" paddingBottom={6}>
+      <Section
+        aria-labelledby="openDataHeroTitle"
+        background="blue100"
+        paddingBottom={6}
+      >
         <GridContainer>
           <GridRow>
             <GridColumn span="5/12">
@@ -191,18 +196,20 @@ const OpenDataPage: Screen = () => {
         <StatisticsCardsSection title="Stafrænt Ísland" />
       </Section>
       <Section>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span='4/12'>
-            <Box style={{height: '646px'}}>
-            <SimplePieChart />
-            </Box>
-          </GridColumn>
-          <GridColumn span='8/12'>
-          <MixedChart/>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span="4/12">
+              <ChartsCard title="Rannís" description="Þjónustuaðili">
+                <SimplePieChart />
+              </ChartsCard>
+            </GridColumn>
+            <GridColumn span="8/12">
+              <ChartsCard title="Rannís" description="Þjónustuaðili">
+                <MixedChart />
+              </ChartsCard>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
       </Section>
       <Section
         paddingTop={[8, 8, 6]}
