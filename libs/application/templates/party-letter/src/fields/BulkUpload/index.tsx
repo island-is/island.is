@@ -77,16 +77,10 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
         for (const sheet in workbook.Sheets) {
           const workSheet = workbook.Sheets[sheet]
           /** Converts a worksheet object to an array of JSON objects */
-          const jsonSheet = utils.sheet_to_json(workSheet)
-          data = data.concat(jsonSheet)
+          const jsonSheet = utils.sheet_to_json(workSheet, { header: ['kt'] })
+          data = data.concat(jsonSheet.map((x: any) => x.kt.toString().replace(/[^0-9]/g, '')))
         }
-        const mapArray: string[] = []
-        data.map((d: any) => {
-          /**  Getting the value of the first column from the JSON object */
-          const nationalId = d[Object.keys(d)[0]]
-          mapArray.push(nationalId.toString().replace(/[^0-9]/g, ''))
-        })
-        onBulkUpload(mapArray)
+        onBulkUpload(data)
       } catch (e) {
         setBulkUploadFailed(true)
       }
