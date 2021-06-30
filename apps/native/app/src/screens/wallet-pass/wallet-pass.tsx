@@ -8,7 +8,7 @@ import {
   FieldRow,
   LicenceCard,
 } from '@island.is/island-ui-native'
-import { atob } from 'js-base64'
+import { btoa } from 'js-base64'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -138,8 +138,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 }> = ({ id, item, componentId }) => {
   useNavigationOptions(componentId)
   const theme = useTheme()
-  const intl = useIntl()
-
   const licenseRes = useQuery<GetLicenseResponse, GetGenericLicenseInput>(
     GET_GENERIC_LICENSE_QUERY,
     {
@@ -169,20 +167,25 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               },
             },
           })
-          .then(({ data }) => {
-            console.log({ data })
-            fetch(data.pkpassUrl)
-              .then((res) => res.text())
-              .then((res) => PassKit.addPass(atob(res), 'com.snjallveskid'))
-              .then(() => {
-                // done
-              })
-              .catch((err) => {
-                alert('Failed to add pass')
-              })
+          .then(async ({ data }) => {
+            try {
+              const res = await fetch(data.generatePkPass.pkpassUrl)
+              const blob = await res.blob()
+              const reader = new FileReader()
+              reader.readAsDataURL(blob)
+              reader.onloadend = () => {
+                const passData = reader.result?.toString()!
+                PassKit.addPass(passData.substr(41), 'com.snjallveskid')
+              }
+            } catch (err) {
+              alert('Failed to add pass')
+            }
+          })
+          .catch((err) => {
+            alert('Failed to fetch pass')
           })
       } else {
-        alert('You cannot use passes')
+        alert('You cannot add passes on this device');
       }
     })
   }

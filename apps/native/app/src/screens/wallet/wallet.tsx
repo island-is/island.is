@@ -102,7 +102,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const theme = useTheme()
   const { dismiss, dismissed } = usePreferencesStore()
-  const res = useQuery<ListGenericLicensesResponse>(LIST_GENERIC_LICENSES_QUERY, { client })
+  const res = useQuery<ListGenericLicensesResponse>(LIST_GENERIC_LICENSES_QUERY, { client, fetchPolicy: 'network-only' })
   const [licenseItems, setLicenseItems] = useState<any>([])
   const flatListRef = useRef<FlatList>(null)
   const alertVisible = !dismissed.includes('howToUseCertificates')

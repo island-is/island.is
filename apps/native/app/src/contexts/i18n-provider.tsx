@@ -11,7 +11,11 @@ export const I18nProvider = ({ children }: { children: React.ReactNode }) => {
     <IntlProvider
       locale={locale}
       messages={locale === 'is-IS' ? is : en}
-      onError={() => null}
+      onError={(err) => {
+        if (__DEV__) {
+          console.log(err);
+        }
+      }}
     >
       {children}
     </IntlProvider>

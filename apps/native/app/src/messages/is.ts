@@ -92,22 +92,22 @@ export const is = {
     MALE_MINOR {Drengur}
     FEMALE_MINOR {Stúlka}
     TRANSGENDER_MINOR {Kynsegin}
-    UNKNOWN {Óupplýst}
+    other {Óupplýst}
   }`,
   'user.natreg.maritalStatus': 'Hjúskaparstaða',
   'user.natreg.maritalStatusValue': `{
     maritalStatus,
     select,
-    MARRIED {{gender, select, FEMALE {Gift} MALE {Giftur}}}
-    UNMARRIED {{gender, select, FEMALE {Ógift} MALE {Ógiftur}}}
-    WIDOWED {{gender, select, FEMALE {Ekkja} MALE {Ekkill}}}
-    SEPARATED {{gender, select, FEMALE {Skilin að borði og sæng} MALE {Skilinn að borði og sæng}}}
-    DIVORCED {{gender, select, FEMALE {Fráskilin} MALE {Fráskilinn}}}
-    MARRIED_LIVING_SEPARATELY {{gender, select, FEMALE {Gift} MALE {Giftur}}}
-    MARRIED_TO_FOREIGN_LAW_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur}}}
-    UNKNOWN {Óupplýst}
-    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur}}}
-    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur}}}
+    MARRIED {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
+    UNMARRIED {{gender, select, FEMALE {Ógift} MALE {Ógiftur} other {Óupplýst}}}
+    WIDOWED {{gender, select, FEMALE {Ekkja} MALE {Ekkill} other {Óupplýst}}}
+    SEPARATED {{gender, select, FEMALE {Skilin að borði og sæng} MALE {Skilinn að borði og sæng} other {Óupplýst}}}
+    DIVORCED {{gender, select, FEMALE {Fráskilin} MALE {Fráskilinn} other {Óupplýst}}}
+    MARRIED_LIVING_SEPARATELY {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
+    MARRIED_TO_FOREIGN_LAW_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
+    FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
+    ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {{gender, select, FEMALE {Gift} MALE {Giftur} other {Óupplýst}}}
+    other {Óupplýst}
   }`,
   'user.natreg.citizenship': 'Ríkisfang',
   'user.natreg.religion': 'Trú- eða lífsskoðunarfélag',
@@ -175,7 +175,7 @@ export const is = {
     inReview {Í vinnslu}
     approved {Samþykkt}
     rejected {Hafnað}
-    unknown {Staða óþekkt}
+    other {Staða óþekkt}
   }`,
   'applicationStatusCard.noActiveApplications':
     'Þegar þú stofnar stafræna umsókn á Ísland.is birtist staða hennar hér.',

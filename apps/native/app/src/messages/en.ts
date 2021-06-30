@@ -94,7 +94,7 @@ export const en: TranslatedMessages = {
     MALE_MINOR {Boy}
     FEMALE_MINOR {Girl}
     TRANSGENDER_MINOR {Transgender}
-    UNKNOWN {Unknown}
+    other {Unknown}
   }`,
   'user.natreg.maritalStatus': 'Marital status',
   'user.natreg.maritalStatusValue': `{
@@ -107,9 +107,9 @@ export const en: TranslatedMessages = {
     DIVORCED {Divorced}
     MARRIED_LIVING_SEPARATELY {Married}
     MARRIED_TO_FOREIGN_LAW_PERSON {Married}
-    UNKNOWN {Unknown}
     FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
     ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON {Married}
+    other {Unknown}
   }`,
   'user.natreg.citizenship': 'Citizenship',
   'user.natreg.religion': 'Religion',
@@ -177,7 +177,7 @@ export const en: TranslatedMessages = {
     inReview {In review}
     approved {Approved}
     rejected {Rejected}
-    unknown {Unknown status}
+    other {Unknown status}
   }`,
   'applicationStatusCard.noActiveApplications': 'No active applications',
 }
