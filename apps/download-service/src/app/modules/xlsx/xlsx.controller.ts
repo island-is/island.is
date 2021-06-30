@@ -1,12 +1,13 @@
 import { Controller, Post, Header, Res, Body, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
-import { ApiOkResponse } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { XlsxDto } from './dto/xlsxDto'
 import * as XLSX from 'xlsx'
 import { ReadableStreamBuffer } from 'stream-buffers'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+// import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(IdsUserGuard)
+// @UseGuards(IdsUserGuard)
+@ApiTags('xlsx')
 @Controller('xlsx')
 export class XlsxController {
   @Post()
