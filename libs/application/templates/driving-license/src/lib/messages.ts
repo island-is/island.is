@@ -179,54 +179,61 @@ export const m = defineMessages({
   healthDeclaration2: {
     id: 'dl.application:healthDeclaration.2',
     defaultMessage:
-      '2. Hefur þú verið flogaveik(ur) eða orðið fyrir alvarlegri truflun á meðvitund og stjórn hreyfinga?',
+      '2. Hefur þú skert sjónsvið til annarrar hliðar eða beggja?',
     description:
-      '2. Have you had epilepsy or a severe disturbance of consciousness and control of movement?',
+      '2. Do you have limited eyesight to one side or both?',
   },
   healthDeclaration3: {
     id: 'dl.application:healthDeclaration.3',
     defaultMessage:
-      '3. Hefur þú nú eða hefur þú haft alvarlegan hjartasjúkdóm?',
+      '3. Hefur þú verið flogaveik(ur) eða orðið fyrir alvarlegri truflun á meðvitund og stjórn hreyfinga?',
     description:
-      '3. Do you now have or have you had a serious heart condition?',
+      '3. Have you had epilepsy or a severe disturbance of consciousness and control of movement?',
   },
   healthDeclaration4: {
     id: 'dl.application:healthDeclaration.4',
-    defaultMessage: '4. Hefur þú nú eða hefur þú haft alvarlegan geðsjúkdóm?',
-    description: '4. Do you now have or have you had a serious mental illness?',
+    defaultMessage:
+      '4. Hefur þú nú eða hefur þú haft alvarlegan hjartasjúkdóm?',
+    description:
+      '4. Do you now have or have you had a serious heart condition?',
   },
   healthDeclaration5: {
     id: 'dl.application:healthDeclaration.5',
-    defaultMessage:
-      '5. Notar þú að staðaldri læknislyf eða lyfjablöndur sem geta haft áhrif á meðvitund?',
-    description:
-      '5. Do you always use medicines or combinations of medicines that may affect your consciousness?',
+    defaultMessage: '5. Hefur þú nú eða hefur þú haft alvarlegan geðsjúkdóm?',
+    description: '5. Do you now have or have you had a serious mental illness?',
   },
   healthDeclaration6: {
     id: 'dl.application:healthDeclaration.6',
     defaultMessage:
-      '6. Ert þú háð(ur) áfengi, ávana- og/eða fíkniefnum eða misnotar þú geðræn lyf sem verkað gætu á meðvitund?',
+      '6. Notar þú að staðaldri læknislyf eða lyfjablöndur sem geta haft áhrif á meðvitund?',
     description:
-      '6. Are you addicted to alcohol, drugs and/or drugs or are you abusing psychotropic drugs that could affect your consciousness?',
+      '6. Do you always use medicines or combinations of medicines that may affect your consciousness?',
   },
   healthDeclaration7: {
     id: 'dl.application:healthDeclaration.7',
-    defaultMessage: '7. Notar þú insúlín og/eða töflur við sykursýki?',
-    description: '7. Do you use insulin and/or tablets for diabetes?',
+    defaultMessage:
+      '7. Ert þú háð(ur) áfengi, ávana- og/eða fíkniefnum eða misnotar þú geðræn lyf sem verkað gætu á meðvitund?',
+    description:
+      '7. Are you addicted to alcohol, drugs and/or drugs or are you abusing psychotropic drugs that could affect your consciousness?',
   },
   healthDeclaration8: {
     id: 'dl.application:healthDeclaration.8',
-    defaultMessage:
-      '8. Hefur þú nú eða hefur þú haft hömlur í hreyfikerfi líkamans?',
-    description:
-      "8. Do you now have or have you had restrictions on your body's motor system?",
+    defaultMessage: '8. Notar þú insúlín og/eða töflur við sykursýki?',
+    description: '8. Do you use insulin and/or tablets for diabetes?',
   },
   healthDeclaration9: {
     id: 'dl.application:healthDeclaration.9',
     defaultMessage:
-      '9. Átt þú við einhvern annan sjúkdóm að stríða sem þú telur að geti haft áhrif á öryggi þitt í akstri í framtíðinni?',
+      '9. Hefur þú nú eða hefur þú haft hömlur í hreyfikerfi líkamans?',
     description:
-      '9. Do you have any other illnesses that you think may affect your driving safety in the future?',
+      "9. Do you now have or have you had restrictions on your body's motor system?",
+  },
+  healthDeclaration10: {
+    id: 'dl.application:healthDeclaration.10',
+    defaultMessage:
+      '10. Átt þú við einhvern annan sjúkdóm að stríða sem þú telur að geti haft áhrif á öryggi þitt í akstri í framtíðinni?',
+    description:
+      '10. Do you have any other illnesses that you think may affect your driving safety in the future?',
   },
   overviewSectionTitle: {
     id: 'dl.application:overviewSection.title',

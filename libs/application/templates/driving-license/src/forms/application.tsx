@@ -112,7 +112,7 @@ export const application: Form = buildForm({
               title: 'Afhending',
               titleVariant: 'h4',
               description:
-                'Veldu það embætti sýslumanns sem þú vilt skila inn bráðabirgðaskírteini og fá afhennt nýtt fullnaðarskírteini',
+                'Veldu það embætti sýslumanns sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
             }),
             buildSelectField({
               id: 'juristiction',
