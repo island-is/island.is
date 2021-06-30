@@ -50,7 +50,7 @@ export class EndorsementSystemResolver {
     )
   }
 
-  @Mutation(() => [Endorsement])
+  @Mutation(() => EndorsementBulkCreate)
   async endorsementSystemBulkEndorseList(
     @Args('input') { listId, nationalIds }: BulkEndorseListInput,
     @CurrentUser() user: User,
