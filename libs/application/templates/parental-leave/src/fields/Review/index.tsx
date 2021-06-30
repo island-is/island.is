@@ -76,8 +76,8 @@ const Review: FC<ReviewScreenProps> = ({
       privatePensionFundPercentage,
       isSelfEmployed,
       bank,
-      personalAllowance,
-      personalAllowanceFromSpouse,
+      usePersonalAllowance,
+      usePersonalAllowanceFromSpouse,
       personalUseAsMuchAsPossible,
       personalUsage,
       spouseUseAsMuchAsPossible,
@@ -437,7 +437,7 @@ const Review: FC<ReviewScreenProps> = ({
               <RadioController
                 id="usePersonalAllowance"
                 name="usePersonalAllowance"
-                defaultValue={personalAllowance}
+                defaultValue={usePersonalAllowance}
                 split="1/2"
                 options={[
                   {
@@ -456,12 +456,12 @@ const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => ({
                     ...prev,
-                    personalAllowance: s as Boolean,
+                    usePersonalAllowance: s as Boolean,
                   }))
                 }}
               />
 
-              {personalAllowance === YES && (
+              {usePersonalAllowance === YES && (
                 <>
                   <Label marginTop={2} marginBottom={2}>
                     {formatMessage(
@@ -532,37 +532,41 @@ const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.personalAllowance.title,
                 )}
-                value={personalAllowance}
+                value={usePersonalAllowance}
               />
             </GridColumn>
 
-            {personalAllowance === YES && personalUseAsMuchAsPossible === YES && (
-              <GridColumn
-                paddingTop={[2, 2, 2, 0]}
-                span={['12/12', '12/12', '12/12', '5/12']}
-              >
-                <RadioValue
-                  label={formatMessage(
-                    parentalLeaveFormMessages.reviewScreen.usePersonalAllowance,
-                  )}
-                  value={personalUseAsMuchAsPossible}
-                />
-              </GridColumn>
-            )}
+            {usePersonalAllowance === YES &&
+              personalUseAsMuchAsPossible === YES && (
+                <GridColumn
+                  paddingTop={[2, 2, 2, 0]}
+                  span={['12/12', '12/12', '12/12', '5/12']}
+                >
+                  <RadioValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.reviewScreen
+                        .usePersonalAllowance,
+                    )}
+                    value={personalUseAsMuchAsPossible}
+                  />
+                </GridColumn>
+              )}
 
-            {personalAllowance === YES && personalUseAsMuchAsPossible === NO && (
-              <GridColumn
-                paddingTop={[2, 2, 2, 0]}
-                span={['12/12', '12/12', '12/12', '5/12']}
-              >
-                <DataValue
-                  label={formatMessage(
-                    parentalLeaveFormMessages.personalAllowance.allowanceUsage,
-                  )}
-                  value={`${personalUsage ?? 0}%`}
-                />
-              </GridColumn>
-            )}
+            {usePersonalAllowance === YES &&
+              personalUseAsMuchAsPossible === NO && (
+                <GridColumn
+                  paddingTop={[2, 2, 2, 0]}
+                  span={['12/12', '12/12', '12/12', '5/12']}
+                >
+                  <DataValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.personalAllowance
+                        .allowanceUsage,
+                    )}
+                    value={`${personalUsage ?? 0}%`}
+                  />
+                </GridColumn>
+              )}
           </GridRow>
         </ReviewGroup>
       )}
@@ -581,7 +585,7 @@ const Review: FC<ReviewScreenProps> = ({
               <RadioController
                 id="usePersonalAllowanceFromSpouse"
                 name="usePersonalAllowanceFromSpouse"
-                defaultValue={personalAllowanceFromSpouse}
+                defaultValue={usePersonalAllowanceFromSpouse}
                 split="1/2"
                 options={[
                   {
@@ -600,12 +604,12 @@ const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => ({
                     ...prev,
-                    personalAllowanceFromSpouse: s as Boolean,
+                    usePersonalAllowanceFromSpouse: s as Boolean,
                   }))
                 }}
               />
 
-              {personalAllowanceFromSpouse === YES && (
+              {usePersonalAllowanceFromSpouse === YES && (
                 <>
                   <Label marginTop={2} marginBottom={2}>
                     {formatMessage(
@@ -676,11 +680,11 @@ const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.personalAllowance.spouseTitle,
                 )}
-                value={personalAllowanceFromSpouse}
+                value={usePersonalAllowanceFromSpouse}
               />
             </GridColumn>
 
-            {personalAllowanceFromSpouse === YES &&
+            {usePersonalAllowanceFromSpouse === YES &&
               spouseUseAsMuchAsPossible === YES && (
                 <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                   <RadioValue
@@ -693,7 +697,7 @@ const Review: FC<ReviewScreenProps> = ({
                 </GridColumn>
               )}
 
-            {personalAllowanceFromSpouse === YES &&
+            {usePersonalAllowanceFromSpouse === YES &&
               spouseUseAsMuchAsPossible === NO && (
                 <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                   <DataValue

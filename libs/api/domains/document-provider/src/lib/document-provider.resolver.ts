@@ -31,11 +31,17 @@ import {
 } from './dto'
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
 import { AdminGuard } from './utils/admin.guard'
+import { AuditService } from '@island.is/nest/audit'
+
+const namespace = '@island.is/api/document-provider'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class DocumentProviderResolver {
-  constructor(private documentProviderService: DocumentProviderService) {}
+  constructor(
+    private documentProviderService: DocumentProviderService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @UseGuards(AdminGuard)
   @Query(() => [Organisation])
@@ -196,10 +202,18 @@ export class DocumentProviderResolver {
       `createTestProvider: user: ${user.nationalId}, organisation: ${input.nationalId}, clientName: ${input.clientName}`,
     )
 
-    return this.documentProviderService.createProviderOnTest(
-      input.nationalId,
-      input.clientName,
-      user,
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'createTestProvider',
+        resources: input.nationalId,
+      },
+      this.documentProviderService.createProviderOnTest(
+        input.nationalId,
+        input.clientName,
+        user,
+      ),
     )
   }
 
@@ -212,10 +226,19 @@ export class DocumentProviderResolver {
       `updateTestEndpoint: user: ${user.nationalId}, organisation: ${input.nationalId}, endpoint: ${input.endpoint}`,
     )
 
-    return this.documentProviderService.updateEndpointOnTest(
-      input.endpoint,
-      input.providerId,
-      input.xroad || false,
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'updateTestEndpoint',
+        resources: input.nationalId,
+        meta: { fields: Object.keys(input) },
+      },
+      this.documentProviderService.updateEndpointOnTest(
+        input.endpoint,
+        input.providerId,
+        input.xroad || false,
+      ),
     )
   }
 
@@ -228,10 +251,18 @@ export class DocumentProviderResolver {
       `runEndpointTests: user: ${user.nationalId}, organisation: ${input.nationalId}, recipient: ${input.recipient}, documentId: ${input.recipient}, providerId: ${input.providerId}`,
     )
 
-    return this.documentProviderService.runEndpointTests(
-      input.recipient,
-      input.documentId,
-      input.providerId,
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'runEndpointTests',
+        resources: input.nationalId,
+      },
+      this.documentProviderService.runEndpointTests(
+        input.recipient,
+        input.documentId,
+        input.providerId,
+      ),
     )
   }
 
@@ -244,10 +275,18 @@ export class DocumentProviderResolver {
       `createTestProvider: user: ${user.nationalId}, organisation: ${input.nationalId}, clientName: ${input.clientName}`,
     )
 
-    return this.documentProviderService.createProvider(
-      input.nationalId,
-      input.clientName,
-      user,
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'createProvider',
+        resources: input.nationalId,
+      },
+      this.documentProviderService.createProvider(
+        input.nationalId,
+        input.clientName,
+        user,
+      ),
     )
   }
 
@@ -260,11 +299,20 @@ export class DocumentProviderResolver {
       `updateTestEndpoint: user: ${user.nationalId}, organisation: ${input.nationalId}, endpoint: ${input.endpoint}`,
     )
 
-    return this.documentProviderService.updateEndpoint(
-      input.endpoint,
-      input.providerId,
-      input.xroad || false,
-      user,
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'updateEndpoint',
+        resources: input.nationalId,
+        meta: { fields: Object.keys(input) },
+      },
+      this.documentProviderService.updateEndpoint(
+        input.endpoint,
+        input.providerId,
+        input.xroad || false,
+        user,
+      ),
     )
   }
 
@@ -272,8 +320,10 @@ export class DocumentProviderResolver {
   @Query(() => ProviderStatistics)
   async getStatisticsTotal(
     @Args('input', { nullable: true }) input: StatisticsInput,
+    @CurrentUser() user: User,
   ): Promise<ProviderStatistics> {
     return this.documentProviderService.getStatisticsTotal(
+      user,
       input?.organisationId,
       input?.fromDate,
       input?.toDate,

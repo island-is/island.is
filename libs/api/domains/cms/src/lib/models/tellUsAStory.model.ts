@@ -15,7 +15,7 @@ export class TellUsAStory {
   @Field(() => Html, { nullable: true })
   introDescription!: Html
 
-  @Field({ nullable: true })
+  @Field(() => Image, { nullable: true })
   introImage?: Image | null
 
   @Field()

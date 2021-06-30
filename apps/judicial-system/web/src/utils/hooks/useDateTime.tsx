@@ -17,14 +17,14 @@ const useDateTime = ({ date, time }: Parameters) => {
   }>()
 
   useEffect(() => {
-    const dateHasValue = validate(date || '', 'empty')
+    const dateHasValue = validate(date ?? '', 'empty')
 
     setIsValidDate(dateHasValue)
   }, [date])
 
   useEffect(() => {
-    const timeHasValue = validate(time || '', 'empty')
-    const timeIsFormattedCorrectly = validate(time || '', 'time-format')
+    const timeHasValue = validate(time ?? '', 'empty')
+    const timeIsFormattedCorrectly = validate(time ?? '', 'time-format')
 
     setIsValidTime(timeHasValue && timeIsFormattedCorrectly)
   }, [time])

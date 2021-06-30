@@ -1,9 +1,15 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { RskApi } from '@island.is/clients/rsk/v2'
+import uniqBy from 'lodash/uniqBy'
 import type { CompaniesResponse } from '@island.is/clients/rsk/v2'
 import { uuid } from 'uuidv4'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
@@ -11,9 +17,16 @@ import type {
   EinstaklingarGetForsjaRequest,
   EinstaklingarGetEinstaklingurRequest,
 } from '@island.is/clients/national-registry-v2'
-import { DelegationScope } from '@island.is/auth-api-lib'
-import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import type { Auth } from '@island.is/auth-nest-tools'
+import {
+  DelegationScope,
+  ApiScope,
+  IdentityResource,
+} from '@island.is/auth-api-lib'
+import type { Auth, User } from '@island.is/auth-nest-tools'
+import {
+  AuthMiddleware,
+  AuthMiddlewareOptions,
+} from '@island.is/auth-nest-tools'
 
 import {
   DelegationDTO,
@@ -40,13 +53,28 @@ export class DelegationsService {
     private logger: Logger,
   ) {}
 
+  async findAllTo(
+    user: User,
+    xRoadClient: string,
+    authMiddlewareOptions: AuthMiddlewareOptions,
+  ): Promise<DelegationDTO[]> {
+    const [wards, companies, custom] = await Promise.all([
+      this.findAllWardsTo(user, xRoadClient, authMiddlewareOptions),
+      this.findAllCompaniesTo(user.nationalId),
+      this.findAllValidCustomTo(user.nationalId),
+    ])
+
+    return uniqBy([...wards, ...companies, ...custom], 'fromNationalId')
+  }
+
   async findAllWardsTo(
     auth: Auth,
     xRoadClient: string,
+    authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO[]> {
     try {
       const response = await this.personApi
-        .withMiddleware(new AuthMiddleware(auth, false))
+        .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
         .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
           id: auth.nationalId,
           xRoadClient: xRoadClient,
@@ -58,7 +86,11 @@ export class DelegationsService {
 
       const resultPromises = distinct.map(async (nationalId) =>
         this.personApi
-          .withMiddleware(new AuthMiddleware(auth, false))
+          .withMiddleware(
+            new AuthMiddleware(auth, {
+              forwardUserInfo: authMiddlewareOptions.forwardUserInfo,
+            }),
+          )
           .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
             id: nationalId,
             xRoadClient: xRoadClient,
@@ -78,11 +110,7 @@ export class DelegationsService {
           },
       )
     } catch (error) {
-      this.logger.error(
-        `Error in findAllWardsTo. Status: ${error?.status} (${
-          error?.statusText
-        })\n${JSON.stringify(error?.headers)}`,
-      )
+      this.logger.error('Error in findAllWardsTo', error)
     }
 
     return []
@@ -113,11 +141,7 @@ export class DelegationsService {
         }
       }
     } catch (error) {
-      this.logger.error(
-        `Error in findAllCompaniesTo. Status: ${error?.status} (${
-          error?.statusText
-        })\n${JSON.stringify(error?.headers)}`,
-      )
+      this.logger.error('Error in findAllCompaniesTo', error)
     }
 
     return []
@@ -143,25 +167,48 @@ export class DelegationsService {
       ],
     })
 
-    return result.map((d) => d.toDTO())
+    const filtered = result.filter(
+      (x) => x.delegationScopes !== null && x.delegationScopes!.length > 0,
+    )
+
+    return filtered.map((d) => d.toDTO())
   }
 
   async create(
-    nationalId: string,
+    user: Auth,
+    xRoadClient: string,
+    authMiddlewareOptions: AuthMiddlewareOptions,
     delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
+    const person = await this.personApi
+      .withMiddleware(
+        new AuthMiddleware(user, {
+          forwardUserInfo: authMiddlewareOptions.forwardUserInfo,
+        }),
+      )
+      .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
+        id: user.nationalId,
+        xRoadClient: xRoadClient,
+      })
+    if (!person || !user.nationalId) {
+      throw new BadRequestException(
+        `A person with nationalId<${user.nationalId}> could not be found`,
+      )
+    }
+
     this.logger.debug('Creating a new delegation')
     const id = uuid()
     await this.delegationModel.create({
       id: id,
-      fromNationalId: nationalId,
+      fromNationalId: user.nationalId,
       toNationalId: delegation.toNationalId,
-      fromDisplayName: delegation.fromName,
+      fromDisplayName: person.fulltNafn || person.nafn,
+      toName: delegation.toName,
     })
     if (delegation.scopes && delegation.scopes.length > 0) {
       this.delegationScopeService.createMany(id, delegation.scopes)
     }
-    return this.findOne(nationalId, id)
+    return this.findOne(user.nationalId, id)
   }
 
   async update(
@@ -179,10 +226,10 @@ export class DelegationsService {
       throw new UnauthorizedException()
     }
 
-    if (input.fromName) {
+    if (input.toName) {
       await this.delegationModel.update(
-        { fromDisplayName: input.fromName },
-        { where: { id: delegation.id, fromNationalId: fromNationalId } },
+        { toName: input.toName },
+        { where: { id: delegation.id } },
       )
     }
 
@@ -244,7 +291,9 @@ export class DelegationsService {
       where: {
         fromNationalId: nationalId,
       },
-      include: [DelegationScope],
+      include: [
+        { model: DelegationScope, include: [ApiScope, IdentityResource] },
+      ],
     })
     return delegations.map((delegation) => delegation.toDTO())
   }

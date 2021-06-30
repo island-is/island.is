@@ -76,6 +76,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Vinsamlegast staðfestu hitt foreldrið (ef það á við)',
       description: 'Please confirm the other parent (if any)',
     },
+    otherParentSubTitle: {
+      id: 'pl.application:otherParent.sub.title',
+      defaultMessage: 'Annað foreldri',
+      description: 'Sub title for the other parent question',
+    },
     otherParentName: {
       id: 'pl.application:otherParent.name',
       defaultMessage: 'Nafn hins foreldrisins',
@@ -1289,20 +1294,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: `The other parent will need to approve your request to use their shared month
         (if you did so). Then, your employer will approve your parental leave dates.
         And finally Vinnumálastofnun will review your application.`,
-    },
-    step1: {
-      id: 'pl.application:finalscreen.step1',
-      defaultMessage:
-        'Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess.',
-      description:
-        'The other parent must approve your application if you requested the transfer of part of their rights to you, or the use of their personal allowance.',
-    },
-    step2: {
-      id: 'pl.application:finalscreen.step2',
-      defaultMessage:
-        'Síðan þarf vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs.',
-      description:
-        'Then your employer has to approve your maternity leave arrangements.',
     },
     step3: {
       id: 'pl.application:finalscreen.step3',

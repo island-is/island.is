@@ -36,6 +36,40 @@ describe('transformCase', () => {
       expect(res.sendRequestToDefender).toBe(true)
     })
   })
+  describe('defenderIsSpokesperson', () => {
+    it('should set undefined to false', () => {
+      // Arrange
+      const theCase = {} as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.defenderIsSpokesperson).toBe(false)
+    })
+
+    it('should leave false unchanged', () => {
+      // Arrange
+      const theCase = { defenderIsSpokesperson: false } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.defenderIsSpokesperson).toBe(false)
+    })
+
+    it('should leave true unchanged', () => {
+      // Arrange
+      const theCase = { defenderIsSpokesperson: true } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.defenderIsSpokesperson).toBe(true)
+    })
+  })
 
   describe('requestProsecutorOnlySession', () => {
     it('should set undefined to false', () => {
@@ -69,6 +103,41 @@ describe('transformCase', () => {
 
       // Assert
       expect(res.requestProsecutorOnlySession).toBe(true)
+    })
+  })
+
+  describe('isAccusedAbsent', () => {
+    it('should set undefined to false', () => {
+      // Arrange
+      const theCase = {} as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAccusedAbsent).toBe(false)
+    })
+
+    it('should leave false unchanged', () => {
+      // Arrange
+      const theCase = { isAccusedAbsent: false } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAccusedAbsent).toBe(false)
+    })
+
+    it('should leave true unchanged', () => {
+      // Arrange
+      const theCase = { isAccusedAbsent: true } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.isAccusedAbsent).toBe(true)
     })
   })
 

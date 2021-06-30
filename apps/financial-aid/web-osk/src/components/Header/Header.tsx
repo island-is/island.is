@@ -12,10 +12,13 @@ import Link from 'next/link'
 import * as styles from './Header.treat'
 import { api } from '@island.is/financial-aid-web/osk/src/services'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
 const Header: React.FC = () => {
   const router = useRouter()
   const { isAuthenticated, setUser, user } = useContext(UserContext)
+
+  const logOut = useLogOut()
 
   return (
     <GridContainer>
@@ -60,14 +63,13 @@ const Header: React.FC = () => {
           </Box>
         </Box>
 
-        <Box className={styles.userButton}>
+        <Box>
           {isAuthenticated && (
             <Button
               icon="chevronDown"
               iconType="filled"
               onClick={() => {
-                api.logOut()
-                setUser && setUser(undefined)
+                logOut()
               }}
               data-testid="logout-button"
               preTextIconType="filled"

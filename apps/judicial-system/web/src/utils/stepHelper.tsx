@@ -9,7 +9,6 @@ import {
   formatAccusedByGender,
   formatDate,
   formatNationalId,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import {
   Case,
@@ -26,28 +25,35 @@ import addDays from 'date-fns/addDays'
 
 export const getAppealDecisionText = (
   role: AppealDecisionRole,
-  appealDecition?: CaseAppealDecision,
+  appealDecision?: CaseAppealDecision,
   accusedGender?: CaseGender,
+  caseType?: CaseType,
 ) => {
-  switch (appealDecition) {
+  switch (appealDecision) {
     case CaseAppealDecision.APPEAL: {
       return `${
         role === AppealDecisionRole.ACCUSED
-          ? capitalize(formatAccusedByGender(accusedGender || CaseGender.OTHER))
+          ? caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+            ? capitalize(formatAccusedByGender(accusedGender))
+            : 'Varnaraðili'
           : 'Sækjandi'
       } kærir úrskurðinn`
     }
     case CaseAppealDecision.ACCEPT: {
       return `${
         role === AppealDecisionRole.ACCUSED
-          ? capitalize(formatAccusedByGender(accusedGender || CaseGender.OTHER))
+          ? caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+            ? capitalize(formatAccusedByGender(accusedGender))
+            : 'Varnaraðili'
           : 'Sækjandi'
       } unir úrskurðinum`
     }
     case CaseAppealDecision.POSTPONE: {
       return `${
         role === AppealDecisionRole.ACCUSED
-          ? capitalize(formatAccusedByGender(accusedGender || CaseGender.OTHER))
+          ? caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+            ? capitalize(formatAccusedByGender(accusedGender))
+            : 'Varnaraðili'
           : 'Sækjandi'
       } tekur sér lögboðinn frest`
     }
@@ -71,9 +77,7 @@ export const getConclusion = (wc: Case, isLarge?: boolean) => {
 }
 
 const getRejectingConclusion = (wc: Case, large?: boolean) => {
-  const genderFormattedAccusedName = formatAccusedByGender(
-    wc.accusedGender || CaseGender.OTHER,
-  )
+  const genderFormattedAccusedName = formatAccusedByGender(wc.accusedGender)
 
   const accusedNameAndNationalId = `${wc.accusedName}, kt. ${formatNationalId(
     wc.accusedNationalId,
@@ -104,7 +108,7 @@ const getRejectingConclusion = (wc: Case, large?: boolean) => {
 
 const getAcceptingConclusion = (wc: Case, large?: boolean) => {
   const genderFormattedAccusedName = capitalize(
-    formatAccusedByGender(wc.accusedGender || CaseGender.OTHER),
+    formatAccusedByGender(wc.accusedGender),
   )
 
   const accusedNameAndNationalId = `${wc.accusedName} kt. ${formatNationalId(
@@ -120,7 +124,10 @@ const getAcceptingConclusion = (wc: Case, large?: boolean) => {
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}`
 
-  const formattedIsolationToDateAndTime = `${formatDate(wc.isolationTo, 'PPPPp')
+  const formattedIsolationToDateAndTime = `${formatDate(
+    wc.isolationToDate,
+    'PPPPp',
+  )
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}`
 
@@ -130,8 +137,8 @@ const getAcceptingConclusion = (wc: Case, large?: boolean) => {
 
   const isolationIsSameAsValidToDate =
     wc.validToDate &&
-    wc.isolationTo &&
-    compareAsc(parseISO(wc.validToDate), parseISO(wc.isolationTo)) === 0
+    wc.isolationToDate &&
+    compareAsc(parseISO(wc.validToDate), parseISO(wc.isolationToDate)) === 0
 
   return (
     <Text variant={large ? 'intro' : 'default'}>
@@ -200,7 +207,7 @@ const getAcceptingAlternativeTravelBanConclusion = (
   large?: boolean,
 ): JSX.Element => {
   const genderFormattedAccusedName = capitalize(
-    formatAccusedByGender(wc.accusedGender || CaseGender.OTHER),
+    formatAccusedByGender(wc.accusedGender),
   )
 
   const accusedNameAndNationalId = `${wc.accusedName} kt. ${formatNationalId(

@@ -1966,6 +1966,9 @@ export interface IOrganizationSubpageFields {
   /** Slug */
   slug: string
 
+  /** Intro */
+  intro?: string | undefined
+
   /** Description */
   description?: Document | undefined
 
@@ -2335,6 +2338,98 @@ export interface IProcessEntry extends Entry<IProcessEntryFields> {
     contentType: {
       sys: {
         id: 'processEntry'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IProjectPageFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Slug */
+  slug?: string | undefined
+
+  /** Theme */
+  theme: 'default'
+
+  /** Sidebar */
+  sidebar: boolean
+
+  /** Sidebar Links */
+  sidebarLinks?: ILink[] | undefined
+
+  /** Subtitle */
+  subtitle?: string | undefined
+
+  /** Intro */
+  intro?: string | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Slices */
+  slices?:
+    | (
+        | IAccordionSlice
+        | IMailingListSignup
+        | IFeaturedArticles
+        | ISectionHeading
+        | ILatestNewsSlice
+        | IOneColumnText
+      )[]
+    | undefined
+
+  /** News Tag */
+  newsTag?: IGenericTag | undefined
+
+  /** Project Subpages */
+  projectSubpages?: IProjectSubpage[] | undefined
+}
+
+export interface IProjectPage extends Entry<IProjectPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'projectPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IProjectSubpageFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Slices */
+  slices?: (IAccordionSlice | IOneColumnText | ITwoColumnText)[] | undefined
+}
+
+export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'projectSubpage'
         linkType: 'ContentType'
         type: 'Link'
       }

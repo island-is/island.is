@@ -37,6 +37,7 @@ function constructRestrictionRequestPdf(
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
   doc
     .font('Helvetica-Bold')
     .fontSize(26)
@@ -54,7 +55,7 @@ function constructRestrictionRequestPdf(
     })
     .fontSize(16)
     .text(
-      `Embætti: ${existingCase.prosecutor?.institution?.name || 'Ekki skráð'}`,
+      `Embætti: ${existingCase.prosecutor?.institution?.name ?? 'Ekki skráð'}`,
       {
         align: 'center',
       },
@@ -160,33 +161,17 @@ function constructRestrictionRequestPdf(
       paragraphGap: 0,
     })
     .text(' ')
-
-  if (existingCase.requestProsecutorOnlySession) {
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Beiðni um dómþing að varnaraðila fjarstöddum')
-      .font('Helvetica')
-      .fontSize(12)
-      .text(existingCase.prosecutorOnlySessionRequest, {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
-      .text(' ')
-  }
-
-  doc
     .font('Helvetica-Bold')
     .text(
-      `${existingCase.prosecutor?.name || ''} ${
-        existingCase.prosecutor?.title || ''
+      `${existingCase.prosecutor?.name ?? ''} ${
+        existingCase.prosecutor?.title ?? ''
       }`,
     )
 
   setPageNumbers(doc)
 
   doc.end()
+
   return stream
 }
 
@@ -209,6 +194,7 @@ function constructInvestigationRequestPdf(
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
   doc
     .font('Helvetica-Bold')
     .fontSize(26)
@@ -221,7 +207,7 @@ function constructInvestigationRequestPdf(
     })
     .fontSize(16)
     .text(
-      `Embætti: ${existingCase.prosecutor?.institution?.name || 'Ekki skráð'}`,
+      `Embætti: ${existingCase.prosecutor?.institution?.name ?? 'Ekki skráð'}`,
       {
         align: 'center',
       },
@@ -317,16 +303,34 @@ function constructInvestigationRequestPdf(
       paragraphGap: 0,
     })
     .text(' ')
+
+  if (existingCase.requestProsecutorOnlySession) {
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(14)
+      .lineGap(8)
+      .text('Beiðni um dómþing að varnaraðila fjarstöddum')
+      .font('Helvetica')
+      .fontSize(12)
+      .text(existingCase.prosecutorOnlySessionRequest ?? '', {
+        lineGap: 6,
+        paragraphGap: 0,
+      })
+      .text(' ')
+  }
+
+  doc
     .font('Helvetica-Bold')
     .text(
-      `${existingCase.prosecutor?.name || ''} ${
-        existingCase.prosecutor?.title || ''
+      `${existingCase.prosecutor?.name ?? ''} ${
+        existingCase.prosecutor?.title ?? ''
       }`,
     )
 
   setPageNumbers(doc)
 
   doc.end()
+
   return stream
 }
 

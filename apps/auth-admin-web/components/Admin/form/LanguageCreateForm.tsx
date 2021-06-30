@@ -87,7 +87,11 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                       required: true,
                       maxLength: 2,
                       minLength: 2,
-                      validate: ValidationUtils.validateIdentifier,
+                      validate: isEditing
+                        ? () => {
+                            return true
+                          }
+                        : ValidationUtils.validateIdentifier,
                     })}
                     defaultValue={language.isoKey}
                     className="language-create-form__input"

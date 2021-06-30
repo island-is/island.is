@@ -4,12 +4,7 @@ import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 
 import * as styles from './Requests.treat'
 import { mapCaseStateToTagVariant } from './utils'
-import {
-  AllCaseTypes,
-  Case,
-  CaseState,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
@@ -19,6 +14,7 @@ import {
   SortConfig,
 } from '@island.is/judicial-system-web/src/types'
 import localeIS from 'date-fns/locale/is'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 
 interface Props {
   cases: Case[]
@@ -39,17 +35,17 @@ const ActiveRequests: React.FC<Props> = (props) => {
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
   useMemo(() => {
-    const sortedCases = cases || []
+    const sortedCases = cases ?? []
 
     if (sortConfig) {
       sortedCases.sort((a: Case, b: Case) => {
         // Credit: https://stackoverflow.com/a/51169
         return sortConfig.direction === 'ascending'
           ? ('' + a[sortConfig.key]).localeCompare(
-              b[sortConfig.key]?.toString() || '',
+              b[sortConfig.key]?.toString() ?? '',
             )
           : ('' + b[sortConfig.key]).localeCompare(
-              a[sortConfig.key]?.toString() || '',
+              a[sortConfig.key]?.toString() ?? '',
             )
       })
     }
@@ -190,10 +186,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
             </td>
             <td className={styles.td}>
               <Box component="span" display="flex" flexDirection="column">
-                <Text as="span">
-                  {AllCaseTypes.find((caseType) => caseType.value === c.type)
-                    ?.label ?? 'Óþekkt'}
-                </Text>
+                <Text as="span">{capitalize(caseTypes[c.type])}</Text>
                 {c.parentCase && (
                   <Text as="span" variant="small" color="dark400">
                     Framlenging

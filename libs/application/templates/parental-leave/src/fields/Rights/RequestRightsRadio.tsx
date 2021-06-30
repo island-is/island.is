@@ -52,9 +52,9 @@ const RequestRightsRadio = ({
       />
 
       <input
+        ref={register}
         type="hidden"
         value={radio === YES ? maxDaysToGiveOrReceive : 0}
-        ref={register({ required: true })}
         name={`${field.id}.requestDays`}
       />
     </>

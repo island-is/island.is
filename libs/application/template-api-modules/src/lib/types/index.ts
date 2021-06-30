@@ -1,7 +1,7 @@
-import { SendMailOptions } from 'nodemailer'
-
 import { Application } from '@island.is/application/core'
 import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/driving-license'
+import { PaymentServiceOptions } from '@island.is/clients/payment'
+import { Message } from '@island.is/email-service'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -9,6 +9,7 @@ export interface BaseTemplateAPIModuleConfig {
   clientLocationOrigin: string
   emailOptions: {
     useTestAccount: boolean
+    useNodemailerApp?: boolean
     options?: {
       region: string
     }
@@ -31,6 +32,14 @@ export interface BaseTemplateAPIModuleConfig {
   drivingLicense: DrivingLicenseApiConfig
   attachmentBucket: string
   presignBucket: string
+  paymentOptions: PaymentServiceOptions
+  partyLetter: {
+    partyLetterRegistryApiBasePath: string
+    endorsementsApiBasePath: string
+  }
+  partyApplication: {
+    endorsementsApiBasePath: string
+  }
 }
 
 export interface TemplateApiModuleActionProps {
@@ -42,7 +51,7 @@ export interface EmailTemplateGeneratorProps {
   application: Application
   options: {
     clientLocationOrigin: string
-    locale: string // TODO union / enum
+    locale: string
     email: { sender: string; address: string }
   }
 }
@@ -50,14 +59,14 @@ export interface EmailTemplateGeneratorProps {
 export type AssignmentEmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,
   assignLink: string,
-) => SendMailOptions
+) => Message
 
 export type EmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,
-) => SendMailOptions
+) => Message
 
 export type AttachmentEmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,
   fileContent: string,
   email: string,
-) => SendMailOptions
+) => Message

@@ -49,9 +49,9 @@ const GiveRightsRadio = ({ field, application }: GiveRightsRadioProps) => {
       />
 
       <input
+        ref={register}
         type="hidden"
         value={radio === YES ? maxDaysToGiveOrReceive : 0}
-        ref={register({ required: true })}
         name={`${field.id}.giveDays`}
       />
     </>

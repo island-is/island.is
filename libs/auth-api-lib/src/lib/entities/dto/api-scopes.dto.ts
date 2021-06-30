@@ -95,5 +95,5 @@ export class ApiScopesDTO {
   @ApiProperty({
     example: false,
   })
-  readonly isAccessControlled!: boolean
+  readonly isAccessControlled?: boolean
 }

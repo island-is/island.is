@@ -1,4 +1,11 @@
-import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import {
+  capitalize,
+  formatAccusedByGender,
+} from '@island.is/judicial-system/formatters'
+import {
+  CaseCustodyRestrictions,
+  CaseGender,
+} from '@island.is/judicial-system/types'
 
 export const restrictions = [
   {
@@ -31,11 +38,17 @@ export const judgeRestrictions = restrictions.filter(
   (provision) => provision.id !== CaseCustodyRestrictions.ISOLATION,
 )
 
-export const isolation = restrictions
-  .filter((provision) => provision.id === CaseCustodyRestrictions.ISOLATION)
-  .map((provision) => {
-    return { ...provision, title: 'Kærði skal sæta einangrun' }
-  })
+export const isolation = (accusedGender?: CaseGender) =>
+  restrictions
+    .filter((provision) => provision.id === CaseCustodyRestrictions.ISOLATION)
+    .map((provision) => {
+      return {
+        ...provision,
+        title: `${capitalize(
+          formatAccusedByGender(accusedGender),
+        )} skal sæta einangrun`,
+      }
+    })
 
 export const alternativeTravelBanRestrictions = [
   {

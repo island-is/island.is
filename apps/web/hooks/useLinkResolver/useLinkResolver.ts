@@ -81,6 +81,14 @@ export const routesTemplate = {
     is: '/s',
     en: '/en/o',
   },
+  projectsubpage: {
+    is: '/v/[slug]/[subSlug]',
+    en: '',
+  },
+  projectpage: {
+    is: '/v/[slug]',
+    en: '',
+  },
   lifeevents: {
     is: '/lifsvidburdir',
     en: '/en/life-events',
@@ -116,6 +124,10 @@ export const routesTemplate = {
   regulationshome: {
     is: '/reglugerdir',
     en: '',
+  },
+  login: {
+    is: '/innskraning',
+    en: '/en/login',
   },
   webservicedetailpage: {
     is: '/throun/vefthjonustur/[slug]',

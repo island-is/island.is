@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
 import { Case, CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -6,7 +7,6 @@ import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
   PageLayout,
-  BlueBox,
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -21,19 +21,22 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { reportForm } from '@island.is/judicial-system-web/messages'
 import { useRouter } from 'next/router'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatProsecutorDemands } from '@island.is/judicial-system/formatters'
 
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
+  const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
   const [
     legalArgumentsErrorMessage,
     setLegalArgumentsErrorMessage,
   ] = useState<string>('')
 
+  const { formatMessage } = useIntl()
   const router = useRouter()
   const id = router.query.id
 
@@ -61,7 +64,7 @@ export const StepFour: React.FC = () => {
           theCase.requestedValidToDate,
           theCase.requestedCustodyRestrictions?.includes(
             CaseCustodyRestrictions.ISOLATION,
-          ) || false,
+          ) ?? false,
           theCase.parentCase !== undefined,
           theCase.parentCase?.decision,
         ),
@@ -75,11 +78,15 @@ export const StepFour: React.FC = () => {
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
       {
-        value: workingCase?.caseFacts || '',
+        value: workingCase?.demands ?? '',
         validations: ['empty'],
       },
       {
-        value: workingCase?.legalArguments || '',
+        value: workingCase?.caseFacts ?? '',
+        validations: ['empty'],
+      },
+      {
+        value: workingCase?.legalArguments ?? '',
         validations: ['empty'],
       },
     ]
@@ -107,53 +114,61 @@ export const StepFour: React.FC = () => {
           <FormContentContainer>
             <Box marginBottom={10}>
               <Text as="h1" variant="h1">
-                Greinargerð
+                {formatMessage(reportForm.heading)}
               </Text>
             </Box>
             <Box component="section" marginBottom={7}>
               <Box marginBottom={4}>
                 <Text as="h3" variant="h3">
-                  Dómkröfutexti{' '}
-                  <Tooltip text="Hér er hægt að bæta texta við dómkröfur, t.d. ef óskað er eftir öðrum úrræðum til vara." />
+                  {formatMessage(reportForm.courtClaim.heading)}{' '}
+                  <Tooltip
+                    text={formatMessage(reportForm.courtClaim.tooltip)}
+                  />
                 </Text>
               </Box>
               <Box marginBottom={3}>
                 <Input
                   name="demands"
-                  label="Dómkröfur"
-                  placeholder="Hér er hægt að bæta texta við dómkröfurnar eftir þörfum..."
+                  label={formatMessage(reportForm.courtClaim.label)}
+                  placeholder={formatMessage(reportForm.courtClaim.placeholder)}
                   defaultValue={workingCase?.demands}
+                  errorMessage={demandsErrorMessage}
+                  hasError={demandsErrorMessage !== ''}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'demands',
                       event,
-                      [],
+                      ['empty'],
                       workingCase,
                       setWorkingCase,
+                      demandsErrorMessage,
+                      setDemandsErrorMessage,
                     )
                   }
                   onBlur={(event) =>
                     validateAndSendToServer(
                       'demands',
                       event.target.value,
-                      [],
+                      ['empty'],
                       workingCase,
                       updateCase,
+                      setDemandsErrorMessage,
                     )
                   }
                   rows={7}
                   textarea
+                  required
                 />
               </Box>
             </Box>
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Greinargerð um málsatvik{' '}
+                  {formatMessage(reportForm.facts.heading)}{' '}
                   <Tooltip
                     placement="right"
                     as="span"
-                    text="Málsatvik, hvernig meðferð þessa máls hófst, skal skrá hér ásamt framburðum vitna og sakborninga ef til eru. Einnig er gott að taka fram stöðu rannsóknar og næstu skref."
+                    text={formatMessage(reportForm.facts.tooltip)}
                   />
                 </Text>
               </Box>
@@ -161,8 +176,8 @@ export const StepFour: React.FC = () => {
                 <Input
                   data-testid="caseFacts"
                   name="caseFacts"
-                  label="Málsatvik"
-                  placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+                  label={formatMessage(reportForm.facts.label)}
+                  placeholder={formatMessage(reportForm.facts.placeholder)}
                   errorMessage={caseFactsErrorMessage}
                   hasError={caseFactsErrorMessage !== ''}
                   defaultValue={workingCase?.caseFacts}
@@ -196,11 +211,11 @@ export const StepFour: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Greinargerð um lagarök{' '}
+                  {formatMessage(reportForm.legalArguments.heading)}{' '}
                   <Tooltip
                     placement="right"
                     as="span"
-                    text="Lagarök og lagaákvæði sem eiga við brotið og kröfuna skal taka fram hér."
+                    text={formatMessage(reportForm.legalArguments.tooltip)}
                   />
                 </Text>
               </Box>
@@ -208,8 +223,10 @@ export const StepFour: React.FC = () => {
                 <Input
                   data-testid="legalArguments"
                   name="legalArguments"
-                  label="Lagarök"
-                  placeholder="Hver eru lagarökin fyrir kröfu um gæsluvarðhald?"
+                  label={formatMessage(reportForm.legalArguments.label)}
+                  placeholder={formatMessage(
+                    reportForm.legalArguments.placeholder,
+                  )}
                   defaultValue={workingCase?.legalArguments}
                   errorMessage={legalArgumentsErrorMessage}
                   hasError={legalArgumentsErrorMessage !== ''}
@@ -242,19 +259,23 @@ export const StepFour: React.FC = () => {
               <Box component="section" marginBottom={7}>
                 <Box marginBottom={2}>
                   <Text as="h3" variant="h3">
-                    Athugasemdir vegna málsmeðferðar{' '}
+                    {formatMessage(reportForm.proceduralComments.heading)}{' '}
                     <Tooltip
                       placement="right"
                       as="span"
-                      text="Hér er hægt að skrá athugasemdir til dómara og dómritara um hagnýt atriði sem tengjast fyrirtökunni eða málsmeðferðinni, og eru ekki hluti af sjálfri kröfunni."
+                      text={formatMessage(
+                        reportForm.proceduralComments.tooltip,
+                      )}
                     />
                   </Text>
                 </Box>
                 <Box marginBottom={3}>
                   <Input
                     name="comments"
-                    label="Athugasemdir"
-                    placeholder="Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi fyrirtökuna eða málsmeðferðina?"
+                    label={formatMessage(reportForm.proceduralComments.label)}
+                    placeholder={formatMessage(
+                      reportForm.proceduralComments.placeholder,
+                    )}
                     defaultValue={workingCase?.comments}
                     onChange={(event) =>
                       removeTabsValidateAndSet(

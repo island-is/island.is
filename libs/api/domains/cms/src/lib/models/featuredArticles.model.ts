@@ -15,7 +15,7 @@ export class FeaturedArticles {
   @Field()
   title!: string
 
-  @Field({ nullable: true })
+  @Field(() => Image, { nullable: true })
   image?: Image | null
 
   @Field(() => [Article])

@@ -4,6 +4,7 @@ import {
   Case,
   CaseAppealDecision,
   CaseDecision,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import {
   getConclusion,
@@ -12,8 +13,10 @@ import {
 import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
+  formatAccusedByGender,
   formatAlternativeTravelBanRestrictions,
   formatCustodyRestrictions,
+  NounCases,
 } from '@island.is/judicial-system/formatters'
 import * as style from './RulingAccordionItem.treat'
 
@@ -52,10 +55,12 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </Text>
         </Box>
         <Box marginBottom={3}>
-          {getConclusion(workingCase)}
-          {workingCase.additionToConclusion && (
+          {(workingCase.type === CaseType.CUSTODY ||
+            workingCase.type === CaseType.TRAVEL_BAN) &&
+            getConclusion(workingCase)}
+          {workingCase.conclusion && (
             <Box marginTop={1}>
-              <Text>{workingCase.additionToConclusion}</Text>
+              <Text>{workingCase.conclusion}</Text>
             </Box>
           )}
         </Box>
@@ -103,7 +108,10 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
               <Box marginBottom={2}>
                 <Text variant="eyebrow" color="blue400">
-                  Yfirlýsing um kæru kærða
+                  {`Yfirlýsing um kæru ${formatAccusedByGender(
+                    workingCase.accusedGender,
+                    NounCases.GENITIVE,
+                  )}`}
                 </Text>
                 <Text>{workingCase.accusedAppealAnnouncement}</Text>
               </Box>
@@ -120,27 +128,31 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             )}
         </Box>
       )}
-      {workingCase.decision === CaseDecision.ACCEPTING && (
-        <Box>
-          <Box marginBottom={1}>
-            <Text as="h3" variant="h3">
-              Tilhögun gæsluvarðhalds
-            </Text>
-          </Box>
-          <Box marginBottom={2}>
+      {(workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.TRAVEL_BAN) &&
+        workingCase.decision === CaseDecision.ACCEPTING && (
+          <Box>
+            <Box marginBottom={1}>
+              <Text as="h3" variant="h3">
+                Tilhögun gæsluvarðhalds
+              </Text>
+            </Box>
+            <Box marginBottom={2}>
+              <Text>
+                {formatCustodyRestrictions(
+                  workingCase.accusedGender,
+                  workingCase.custodyRestrictions,
+                  workingCase.validToDate,
+                  workingCase.isolationToDate,
+                )}
+              </Text>
+            </Box>
             <Text>
-              {formatCustodyRestrictions(
-                workingCase.accusedGender,
-                workingCase.custodyRestrictions,
-              )}
+              Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
+              bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
             </Text>
           </Box>
-          <Text>
-            Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
-            atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
-          </Text>
-        </Box>
-      )}
+        )}
       {workingCase.decision ===
         CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && (
         <Box>

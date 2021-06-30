@@ -5,6 +5,19 @@ import {
   Delegation,
   DelegationScopeService,
   DelegationScope,
+  IdentityResource,
+  IdentityResourceUserClaim,
+  ApiScope,
+  ApiScopeUserClaim,
+  ApiResource,
+  ApiResourceUserClaim,
+  ApiResourceScope,
+  ApiResourceSecret,
+  ApiScopeUserAccess,
+  ApiScopeUser,
+  ApiScopeGroup,
+  Domain,
+  ResourcesService,
 } from '@island.is/auth-api-lib'
 import { DelegationsController } from './delegations.controller'
 import { RskModule } from '@island.is/clients/rsk/v2'
@@ -14,11 +27,28 @@ import { NationalRegistryConfig } from './national-registry.config'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Delegation, DelegationScope]),
+    SequelizeModule.forFeature([
+      Delegation,
+      DelegationScope,
+      ApiScope,
+      IdentityResource,
+      IdentityResource,
+      IdentityResourceUserClaim,
+      ApiScope,
+      ApiScopeUserClaim,
+      ApiResource,
+      ApiResourceUserClaim,
+      ApiResourceScope,
+      ApiResourceSecret,
+      ApiScopeUserAccess,
+      ApiScopeUser,
+      ApiScopeGroup,
+      Domain,
+    ]),
     RskModule.register(RskConfig),
     NationalRegistryModule.register(NationalRegistryConfig),
   ],
   controllers: [DelegationsController],
-  providers: [DelegationsService, DelegationScopeService],
+  providers: [DelegationsService, DelegationScopeService, ResourcesService],
 })
 export class DelegationsModule {}

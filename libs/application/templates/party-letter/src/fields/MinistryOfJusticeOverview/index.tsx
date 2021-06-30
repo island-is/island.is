@@ -10,12 +10,13 @@ import { useEndorsements } from '../../hooks/useFetchEndorsements'
 import { Endorsement } from '../../types/schema'
 import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
+import sortBy from 'lodash/sortBy'
 
 const mapToCSVFile = (endorsements: Endorsement[]) => {
   return endorsements.map((endorsement) => {
     return {
       Kennitala: formatKennitala(endorsement.endorser),
-      Dagssetning: format(new Date(endorsement.created), 'dd.MM.yyyy'),
+      Dagsetning: format(new Date(endorsement.created), 'dd.MM.yyyy'),
       Nafn: endorsement.meta.fullName ?? '',
       Heimilisfang: endorsement.meta.address.streetAddress ?? '',
       Póstnúmer: endorsement.meta.address.postalCode ?? '',
@@ -76,7 +77,7 @@ const MinistryOfJusticeOverview = ({ application }: FieldBaseProps) => {
       <Box marginBottom={5}>
         {endorsements?.length && (
           <ExportAsCSV
-            data={mapToCSVFile(endorsements) as object[]}
+            data={mapToCSVFile(sortBy(endorsements, 'created')) as object[]}
             filename={csvFileName(answers.partyLetter, answers.partyName)}
             title={formatMessage(m.ministryOfJustice.csvButton)}
           />

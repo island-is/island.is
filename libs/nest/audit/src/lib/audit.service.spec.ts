@@ -19,15 +19,11 @@ jest.mock('@island.is/logging', () => {
 const auditLog = mock<Logger>()
 jest.mock('winston', () => {
   return {
-    default: {
-      createLogger: () => auditLog,
-    },
+    createLogger: () => auditLog,
   }
 })
 jest.mock('winston-cloudwatch', () => {
-  return {
-    default: class WinstonCloudWatch {},
-  }
+  return class WinstonCloudWatch {}
 })
 
 const defaultNamespace = '@test.is'

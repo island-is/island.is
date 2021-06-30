@@ -1,6 +1,12 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Text, Box, Button, Input } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  Button,
+  Input,
+  AlertBanner,
+} from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
@@ -9,37 +15,30 @@ import {
 } from '@island.is/shared/form-fields'
 import { useMutation, useQuery } from '@apollo/client'
 import EndorsementApproved from '../EndorsementApproved'
-import { GetFullName, GetEndorsements } from '../../graphql/queries'
+import { GetFullName } from '../../graphql/queries'
 import { EndorseList } from '../../graphql/mutations'
-import { SchemaFormValues } from '../../lib/dataSchema'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
+import { useVoterRegion } from '../../hooks/temporaryVoterRegistry'
+import { useHasEndorsed } from '../../hooks/useHasEndorsed'
+import { EndorsementListTags } from '../../constants'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const endorsementListId = (application.externalData?.createEndorsementList
     .data as any).id
+  const { partyLetter, partyName } = application.externalData
+    .partyLetterRegistry?.data as any
+
   const { formatMessage } = useLocale()
   const [agreed, setAgreed] = useState(false)
-  const [hasEndorsed, setHasEndorsed] = useState(false)
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
-  const answers = application.answers as SchemaFormValues
+  const { hasEndorsed, loading, refetch } = useHasEndorsed()
 
-  const partyLetter = answers.partyLetter
-  const partyName = answers.partyName
   const constituency = application.answers.constituency
   const { data: userData } = useQuery(GetFullName)
   const isClosed = useIsClosed(endorsementListId)
-
-  const { loading, error } = useQuery(GetEndorsements, {
-    onCompleted: async ({ endorsementSystemUserEndorsements }) => {
-      if (!loading && endorsementSystemUserEndorsements) {
-        const hasEndorsements =
-          !error && !loading && endorsementSystemUserEndorsements?.length
-            ? endorsementSystemUserEndorsements.length > 0
-            : false
-        setHasEndorsed(hasEndorsements)
-      }
-    },
-  })
+  const { isInVoterRegistry, isInConstituency } = useVoterRegion(
+    application.answers.constituency as EndorsementListTags,
+  )
 
   const onEndorse = async () => {
     const success = await createEndorsement({
@@ -51,12 +50,20 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
       },
     })
     if (success) {
-      setHasEndorsed(true)
+      refetch()
     }
   }
 
+  const alertBannerDescription = !isInVoterRegistry
+    ? formatMessage(
+        m.endorsementDisclaimer.alertDescriptionVoterRegistryNotFound,
+      )
+    : !isInConstituency
+    ? formatMessage(m.endorsementDisclaimer.alertDescriptionWrongConstituency)
+    : undefined
+
   return (
-    <>
+    <Box>
       {!loading && !hasEndorsed ? (
         <EndorsementApproved />
       ) : (
@@ -73,6 +80,15 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               )} `}
             </Text>
           </Box>
+          {alertBannerDescription && (
+            <Box marginY={5}>
+              <AlertBanner
+                title={formatMessage(m.endorsementDisclaimer.alertMessageTitle)}
+                description={alertBannerDescription}
+                variant="warning"
+              />
+            </Box>
+          )}
 
           <Box width="half" marginBottom={4}>
             <Input
@@ -80,7 +96,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               label={formatMessage(m.collectEndorsements.nameInput)}
               name={formatMessage(m.collectEndorsements.nameInput)}
               value={userData?.nationalRegistryUser?.fullName}
-              defaultValue={''}
+              defaultValue={userData?.nationalRegistryUser?.fullName}
               backgroundColor="blue"
             />
           </Box>
@@ -148,7 +164,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
           </Box>
         </Box>
       )}
-    </>
+    </Box>
   )
 }
 

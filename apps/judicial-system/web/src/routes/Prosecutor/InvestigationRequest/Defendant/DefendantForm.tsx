@@ -1,18 +1,18 @@
 import React, { useState } from 'react'
 import { ValueType } from 'react-select/src/types'
-import { Box, Input, Option, Select, Text } from '@island.is/island-ui/core'
+import { Box, Input, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, RCaseTypes } from '@island.is/judicial-system/types'
+import { Case, CaseType, ICaseTypes } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   FormSettings,
@@ -22,6 +22,7 @@ import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
@@ -91,7 +92,7 @@ const DefendantForm: React.FC<Props> = (props) => {
             <Box marginBottom={3}>
               <Select
                 name="petition-type"
-                options={RCaseTypes as ReactSelectOption[]}
+                options={ICaseTypes as ReactSelectOption[]}
                 label="Tegund kröfu"
                 placeholder="Veldu tegund kröfu"
                 onChange={(selectedOption: ValueType<ReactSelectOption>) =>
@@ -104,12 +105,12 @@ const DefendantForm: React.FC<Props> = (props) => {
                   )
                 }
                 defaultValue={
-                  [
-                    ...RCaseTypes.slice(0, 5),
-                    ...(RCaseTypes[5].options || []),
-                  ].find(
-                    (caseType) => caseType.value === workingCase.type,
-                  ) as Option
+                  workingCase?.id
+                    ? {
+                        value: CaseType[workingCase.type],
+                        label: capitalize(caseTypes[workingCase.type]),
+                      }
+                    : undefined
                 }
                 formatGroupLabel={() => (
                   <div

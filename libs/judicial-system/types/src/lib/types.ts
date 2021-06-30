@@ -1,5 +1,3 @@
-import { OptionsType, GroupedOptionsType } from 'react-select'
-
 export enum Feature {
   NONE = 'NONE', // must be at least one
   R_CASES = 'R_CASES',
@@ -19,8 +17,8 @@ export interface Institution {
 }
 
 export const IntegratedCourts = [
-  'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',
-  'c9a51c9a-c0e3-4c1f-a9a2-828a3af05d1d',
+  'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf', // Héraðsdómur Reykjavíkur
+  'c9a51c9a-c0e3-4c1f-a9a2-828a3af05d1d', // Héraðsdómur Reykjaness
 ]
 
 export enum UserRole {
@@ -81,7 +79,7 @@ export enum CaseType {
   OTHER = 'OTHER',
 }
 
-export const RCaseTypes = [
+export const ICaseTypes = [
   {
     label: 'Húsleit',
     value: CaseType.SEARCH_WARRANT,
@@ -133,23 +131,6 @@ export const RCaseTypes = [
   },
 ]
 
-const CustodyAndTravelBanTypes = [
-  {
-    label: 'Gæsluvarðhald',
-    value: CaseType.CUSTODY,
-  },
-  {
-    label: 'Farbann',
-    value: CaseType.TRAVEL_BAN,
-  },
-]
-
-export const AllCaseTypes = [
-  ...RCaseTypes.slice(0, 5),
-  ...(RCaseTypes[5].options || []),
-  ...CustodyAndTravelBanTypes,
-]
-
 export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
@@ -195,6 +176,7 @@ export enum CaseAppealDecision {
   APPEAL = 'APPEAL',
   ACCEPT = 'ACCEPT',
   POSTPONE = 'POSTPONE',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
 export enum CaseGender {
@@ -207,11 +189,19 @@ export enum CaseDecision {
   ACCEPTING = 'ACCEPTING',
   REJECTING = 'REJECTING',
   ACCEPTING_ALTERNATIVE_TRAVEL_BAN = 'ACCEPTING_ALTERNATIVE_TRAVEL_BAN',
+  ACCEPTING_PARTIALLY = 'ACCEPTING_PARTIALLY',
 }
 
 export enum AccusedPleaDecision {
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
+}
+
+export enum SessionArrangements {
+  ALL_PRESENT = 'ALL_PRESENT',
+  PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
+  REMOTE_SESSION = 'REMOTE_SESSION',
 }
 
 export type Gender = 'karl' | 'kona' | 'annað'
@@ -232,6 +222,7 @@ export interface Case {
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
+  defenderIsSpokesperson?: boolean
   court?: Institution
   leadInvestigator?: string
   arrestDate?: string
@@ -252,6 +243,7 @@ export interface Case {
   prosecutor?: User
   sharedWithProsecutorsOffice?: Institution
   courtCaseNumber?: string
+  sessionArrangements?: SessionArrangements
   courtDate?: string
   courtRoom?: string
   courtStartDate?: string
@@ -259,7 +251,7 @@ export interface Case {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  additionToConclusion?: string
+  isAccusedAbsent?: boolean
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
@@ -271,7 +263,8 @@ export interface Case {
   isValidToDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
-  isolationTo?: string
+  isolationToDate?: string
+  conclusion?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
@@ -334,6 +327,7 @@ export interface UpdateCase {
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
+  defenderIsSpokesperson?: boolean
   courtId?: string
   leadInvestigator?: string
   arrestDate?: string
@@ -354,6 +348,7 @@ export interface UpdateCase {
   prosecutorId?: string
   sharedWithProsecutorsOfficeId?: string
   courtCaseNumber?: string
+  sessionArrangements?: SessionArrangements
   courtDate?: string
   courtRoom?: string
   courtStartDate?: string
@@ -361,7 +356,7 @@ export interface UpdateCase {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  additionToConclusion?: string
+  isAccusedAbsent?: boolean
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
@@ -372,7 +367,8 @@ export interface UpdateCase {
   validToDate?: string
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
-  isolationTo?: string
+  isolationToDate?: string
+  conclusion?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision

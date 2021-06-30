@@ -21,6 +21,7 @@ import {
   CaseDecision,
   CaseType,
   AccusedPleaDecision,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 import { Institution } from '../../institution'
@@ -179,6 +180,17 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   sendRequestToDefender: boolean
+
+  /**********
+   * Indicates whether the accused was assigned a spokesperson rather than a defender -
+   * optional
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defenderIsSpokesperson: boolean
 
   /**********
    * The surrogate key of the court assigned to the case
@@ -414,6 +426,17 @@ export class Case extends Model<Case> {
   courtCaseNumber: string
 
   /**********
+   * The session arrangements - example: ALL_PRESENT
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(SessionArrangements),
+  })
+  @ApiProperty({ enum: SessionArrangements })
+  sessionArrangements: SessionArrangements
+
+  /**********
    * The scheduled date and time of the case's court session
    **********/
   @Column({
@@ -484,14 +507,14 @@ export class Case extends Model<Case> {
   courtDocuments: string[]
 
   /**********
-   * The judge's additions to the auto generated text of the case's conclusion - optional
+   * Indicates whether the accused was present during the court session - optional
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiProperty()
-  additionToConclusion: string
+  isAccusedAbsent: boolean
 
   /**********
    * The accused's plea decision - example: REJECT
@@ -611,7 +634,18 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  isolationTo: Date
+  isolationToDate: Date
+
+  /**********
+   * The case conclusion - optional for custody and travel ban cases as the core conclusions
+   * are auto generated
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  conclusion: string
 
   /**********
    * The accused's appeal decision - example: APPEAL

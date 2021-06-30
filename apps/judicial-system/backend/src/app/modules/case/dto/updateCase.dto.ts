@@ -16,6 +16,7 @@ import {
   CaseDecision,
   AccusedPleaDecision,
   CaseType,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -73,6 +74,11 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional()
   readonly sendRequestToDefender?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly defenderIsSpokesperson?: boolean
 
   @IsOptional()
   @IsString()
@@ -175,6 +181,11 @@ export class UpdateCaseDto {
   readonly courtCaseNumber?: string
 
   @IsOptional()
+  @IsEnum(SessionArrangements)
+  @ApiPropertyOptional({ enum: SessionArrangements })
+  readonly sessionArrangements?: SessionArrangements
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly courtDate?: Date
@@ -210,9 +221,9 @@ export class UpdateCaseDto {
   readonly courtDocuments?: string
 
   @IsOptional()
-  @IsString()
+  @IsBoolean()
   @ApiPropertyOptional()
-  readonly additionToConclusion?: string
+  readonly isAccusedAbsent?: boolean
 
   @IsOptional()
   @IsEnum(AccusedPleaDecision)
@@ -267,7 +278,12 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly isolationTo?: Date
+  readonly isolationToDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly conclusion?: string
 
   @IsOptional()
   @IsEnum(CaseAppealDecision)

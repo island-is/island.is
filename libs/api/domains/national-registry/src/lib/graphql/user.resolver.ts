@@ -8,6 +8,7 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
 
 import { NationalRegistryUser, Citizenship } from './models'
 import { NationalRegistryService } from '../nationalRegistry.service'
@@ -15,6 +16,7 @@ import { User } from '../types'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => NationalRegistryUser)
+@Audit({ namespace: '@island.is/api/national-registry' })
 export class UserResolver {
   constructor(
     private readonly nationalRegistryService: NationalRegistryService,
@@ -24,21 +26,22 @@ export class UserResolver {
     name: 'nationalRegistryUser',
     nullable: true,
   })
+  @Audit()
   user(@CurrentUser() user: AuthUser): Promise<User> {
     return this.nationalRegistryService.getUser(user.nationalId)
   }
 
-  @ResolveField('citizenship', () => Citizenship)
+  @ResolveField('citizenship', () => Citizenship, { nullable: true })
   resolveCitizenship(@Parent() user: User): Citizenship {
     return user.citizenship
   }
 
-  @ResolveField('legalResidence', () => String)
+  @ResolveField('legalResidence', () => String, { nullable: true })
   resolveLegalResidence(@Parent() { address }: User): string {
     return `${address.streetAddress}, ${address.postalCode} ${address.city}`
   }
 
-  @ResolveField('birthPlace', () => String)
+  @ResolveField('birthPlace', () => String, { nullable: true })
   resolveBirthPlace(@Parent() { birthPlace }: User): string {
     return birthPlace.city
   }
