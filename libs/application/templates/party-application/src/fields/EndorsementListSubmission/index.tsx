@@ -140,7 +140,6 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Box marginBottom={8}>
       <Text>{formatMessage(m.endorsementListSubmission.description)}</Text>
-      {endorsementsHook && endorsementsHook.length > 0 && (
         <Box>
           <Box
             marginTop={3}
@@ -153,7 +152,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
               id="autoSelect"
               label={
                 formatMessage(m.endorsementListSubmission.selectAuto) +
-                (endorsementsHook.length < maxEndorsements
+                (endorsementsHook && endorsementsHook.length < maxEndorsements
                   ? endorsementsHook.length
                   : maxEndorsements)
               }
@@ -208,7 +207,7 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
             <Text variant="h5">
               {selectedEndorsements?.length +
                 '/' +
-                (endorsementsHook.length < maxEndorsements
+                (endorsementsHook && endorsementsHook.length < maxEndorsements
                   ? endorsementsHook.length
                   : maxEndorsements)}
             </Text>
@@ -257,7 +256,6 @@ const EndorsementListSubmission: FC<FieldBaseProps> = ({ application }) => {
             </Box>
           )}
         </Box>
-      )}
     </Box>
   )
 }
