@@ -86,7 +86,11 @@ export class DelegationsService {
 
       const resultPromises = distinct.map(async (nationalId) =>
         this.personApi
-          .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
+          .withMiddleware(
+            new AuthMiddleware(auth, {
+              forwardUserInfo: authMiddlewareOptions.forwardUserInfo,
+            }),
+          )
           .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
             id: nationalId,
             xRoadClient: xRoadClient,
@@ -177,7 +181,11 @@ export class DelegationsService {
     delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
     const person = await this.personApi
-      .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
+      .withMiddleware(
+        new AuthMiddleware(user, {
+          forwardUserInfo: authMiddlewareOptions.forwardUserInfo,
+        }),
+      )
       .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
         id: user.nationalId,
         xRoadClient: xRoadClient,
