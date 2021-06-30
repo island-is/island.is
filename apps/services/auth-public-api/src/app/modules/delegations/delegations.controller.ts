@@ -236,14 +236,14 @@ export class DelegationsController {
 
   @Scopes(AuthScope.readDelegations)
   @Get('custom/from')
-  @ApiQuery({ name: 'is-valid', required: false })
+  @ApiQuery({ name: 'isvalid', required: false })
   @ApiOkResponse({ type: [DelegationDTO] })
   @Audit<DelegationDTO[]>({
     resources: (delegations) => delegations.map((delegation) => delegation?.id),
   })
   async findAllCustomFrom(
     @CurrentUser() user: User,
-    @Query('is-valid') isValid: string,
+    @Query('isvalid') isValid: string,
   ): Promise<DelegationDTO[] | null> {
     if (isValid && isValid === 'true') {
       return this.delegationsService.findAllValidCustomFrom(user.nationalId)
