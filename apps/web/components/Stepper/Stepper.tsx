@@ -9,12 +9,20 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
+import * as style from './Stepper.treat'
+
+interface Option {
+  key: string
+  label: string
+  nextStep: string
+}
 
 interface StepperProps {
   stepper: Query['getProjectPage']['stepper']
+  startAgainLabel: string
 }
 
-export const Stepper = ({ stepper }: StepperProps) => {
+export const Stepper = ({ stepper, startAgainLabel }: StepperProps) => {
   const [step, setStep] = useState('')
 
   const currentStep = useMemo(
@@ -22,18 +30,8 @@ export const Stepper = ({ stepper }: StepperProps) => {
     [step],
   )
 
-  const steps = stepper?.steps.map((x) => x.slug)
-
-  stepper?.steps.forEach((x) => {
-    JSON.parse(x.options).forEach((y) => {
-      if (!steps.includes(y.nextStep)) {
-        console.log(x.slug, y.key)
-      }
-    })
-  })
-
   return (
-    <Box style={{ minHeight: 400 }}>
+    <Box className={style.container}>
       <GridContainer>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '5/12']}>
@@ -41,7 +39,7 @@ export const Stepper = ({ stepper }: StepperProps) => {
             {richText(currentStep.subtitle as SliceType[])}
             <GridContainer>
               <GridRow marginTop={8}>
-                {JSON.parse(currentStep.options).map((x) => (
+                {(JSON.parse(currentStep.options) as Option[]).map((x) => (
                   <GridColumn span={['12/12', '12/12', '6/12']}>
                     <Button
                       key={`${currentStep.slug}-${x.key}`}
@@ -61,7 +59,7 @@ export const Stepper = ({ stepper }: StepperProps) => {
                       variant="ghost"
                       onClick={() => setStep('')}
                     >
-                      Start again
+                      {startAgainLabel}
                     </Button>
                   </GridColumn>
                 )}
