@@ -80,6 +80,7 @@ export class AuthMiddleware implements Middleware {
 
     logger.info(options.issuer)
     logger.info(options.clientId)
+    logger.info(options.clientSecret.length)
     logger.info(options.scope)
     logger.info(options.requestActorToken)
 
