@@ -21,7 +21,8 @@ import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const endorsementListId = '123'
+  const endorsementListId = (application.externalData?.createEndorsementList
+    .data as any).id
   const [searchTerm, setSearchTerm] = useState('')
 
   const [endorsements, setEndorsements] = useState<Endorsement[] | undefined>()
