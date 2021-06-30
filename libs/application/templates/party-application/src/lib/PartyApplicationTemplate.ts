@@ -69,6 +69,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
   type: ApplicationTypes.PARTY_APPLICATION,
   name: 'Framboð',
   dataSchema,
+  readyForProduction: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
