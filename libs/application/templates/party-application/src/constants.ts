@@ -74,12 +74,10 @@ export const csvFileName = (partyLetter: string, partyName: string): string => {
   return `Meðmælendalisti-${strippedPartyName}(${strippedPartyLetter}).csv`
 }
 
-export enum SelectedRadio {
+export enum SelectedEndorsementsRadio {
   AUTO,
   RANDOM,
 }
-
-
 
 export const hardcodedList: Endorsement[] = [
   {

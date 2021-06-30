@@ -1,11 +1,9 @@
 import {
   buildForm,
   buildMultiField,
-  buildCheckboxField,
   buildCustomField,
   buildSection,
   buildSubmitField,
-  buildFileUploadField,
   Form,
   FormModes,
   DefaultEvents,
@@ -19,7 +17,6 @@ export const CollectEndorsementsForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
-
     buildSection({
       id: 'endorsementSection',
       title: m.endorsementList.title,
@@ -40,7 +37,6 @@ export const CollectEndorsementsForm: Form = buildForm({
     buildSection({
       id: 'endorsementListSubmittion',
       title: m.endorsementListSubmission.shortTitle,
-
       children: [
         buildCustomField({
           id: 'selectEndorsementsList',

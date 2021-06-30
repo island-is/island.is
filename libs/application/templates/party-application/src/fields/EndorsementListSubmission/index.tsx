@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { useFormContext } from 'react-hook-form'
+import isEqual from 'lodash/isEqual'
+import sortBy from 'lodash/sortBy'
+import shuffle from 'lodash/shuffle'
+import { useMutation } from '@apollo/client'
+import { useLocale } from '@island.is/localization'
 import {
   Box,
   Text,
@@ -7,27 +12,23 @@ import {
   IconDeprecated as Icon,
   Pagination,
 } from '@island.is/island-ui/core'
-import { EndorsementTable } from '../components/EndorsementTable'
+import { FieldBaseProps } from '@island.is/application/core'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { SchemaFormValues } from '../../../src/lib/dataSchema'
 import { m } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
-import isEqual from 'lodash/isEqual'
-import {
-  EndorsementListTags,
-  SelectedRadio as Radio,
-  hardcodedList,
-} from '../../constants'
-import sortBy from 'lodash/sortBy'
-import shuffle from 'lodash/shuffle'
 import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
-import { SchemaFormValues } from '../../../src/lib/dataSchema'
-import { useFormContext } from 'react-hook-form'
+import {
+  EndorsementListTags,
+  SelectedEndorsementsRadio as Radio,
+} from '../../constants'
 import {
   paginate,
   calculateTotalPages,
   minAndMaxEndorsements,
   PAGE_SIZE,
 } from '../components/utils'
+import { EndorsementTable } from '../components/EndorsementTable'
 
 const firstMaxEndorsements = (endorsementsHook: Endorsement[], max: number) => {
   return endorsementsHook.slice(0, max)
@@ -40,7 +41,7 @@ const randomMaxEndorsements = (
 }
 
 const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
-  const { formatMessage } = useLocale()
+  const { lang: locale, formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const {
     constituency,
@@ -57,14 +58,18 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
   >([])
   const [selectedRadio, setSelecteRadio] = useState<Radio>(Radio.AUTO)
   const [showWarning, setShowWarning] = useState(false)
-  const [page, setPage] = useState(1)
+  const [selectedPageNumber, setSelectedPageNumber] = useState(1)
 
   const { minEndorsements, maxEndorsements } = minAndMaxEndorsements(
     constituency as EndorsementListTags,
   )
-  //const { endorsements: endorsementsHook = [] } = useEndorsements(endorsementListId, false)
-  const endorsementsHook = sortBy(hardcodedList, 'created')
+  const { endorsements: endorsementsHook = [] } = useEndorsements(
+    endorsementListId,
+    false,
+  )
   const totalPages = calculateTotalPages(endorsementsHook.length)
+
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   useEffect(() => {
     if (endorsementsHook.length) {
@@ -82,7 +87,7 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
     }
   }, [])
 
-  const updateSelectedEndorsements = (
+  const updateSelectedEndorsements = async (
     updatedSlectedEndorsements: Endorsement[],
   ) => {
     isEqual(
@@ -96,10 +101,23 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
       updatedSlectedEndorsements.length > maxEndorsements ||
         updatedSlectedEndorsements.length < minEndorsements,
     )
-    setValue(
-      'endorsements',
-      updatedSlectedEndorsements.map((e) => e.id),
+    const updatedEndorsementsAnswers = updatedSlectedEndorsements.map(
+      (e) => e.id,
     )
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...application.answers,
+            endorsements: updatedEndorsementsAnswers,
+          },
+        },
+        locale,
+      },
+    }).then((_) => {
+      setValue('endorsements', updatedEndorsementsAnswers)
+    })
   }
 
   const handleCheckboxChange = (endorsement: Endorsement) => {
@@ -119,7 +137,7 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
     const endorsementPage =
       paginate(endorsementsSortedByDate, PAGE_SIZE, page) ?? []
     setPaginatedEndorsements(endorsementPage)
-    setPage(page)
+    setSelectedPageNumber(page)
   }
 
   return (
@@ -173,7 +191,7 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
           {!!endorsementsHook.length && (
             <Box marginY={3}>
               <Pagination
-                page={page}
+                page={selectedPageNumber}
                 totalPages={totalPages}
                 renderLink={(page, className, children) => (
                   <Box
