@@ -172,16 +172,16 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'complainedFor',
+      id: 'section.complainedFor',
       title: section.complainedFor,
       children: [
         buildMultiField({
-          id: 'complainedForDecision',
+          id: 'complainedFor',
           title: complainedFor.decision.title,
           description: complainedFor.decision.description,
           children: [
             buildRadioField({
-              id: 'complainedForDecision.radio',
+              id: 'complainedFor.decision',
               title: '',
               options: [
                 {
@@ -202,12 +202,11 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           id: 'complainedForInformation',
           title: complainedFor.information.title,
           condition: (formValue) => {
-            const radio = (formValue.complainedForDecision as FormValue)?.radio
+            const radio = (formValue.complainedFor as FormValue)?.decision
             return radio === ComplainedForTypes.SOMEONEELSE
           },
           children: [
-            // TODO: Add required fields to data schema.
-            // First find out what is suppose to be required
+            // TODO: find out what is suppose to be required
             buildTextField({
               id: 'complainedForInformation.name',
               title: information.aboutTheComplainer.name,
@@ -272,7 +271,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               },
             ),
             buildTextField({
-              id: 'complainedForInformation.textarea',
+              id: 'complainedForInformation.connection',
               title: complainedFor.information.textareaTitle,
               placeholder: complainedFor.information.textareaPlaceholder,
               backgroundColor: 'blue',
@@ -450,6 +449,17 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           uploadDescription: attachments.uploadDescription,
           uploadHeader: attachments.uploadHeader,
           uploadButtonLabel: attachments.uploadButtonLabel,
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'section.overview',
+      title: section.complaintOverview,
+      children: [
+        buildCustomField({
+          id: 'overview',
+          title: 'Kvörtun og undirritun',
+          component: 'ComplaintOverview',
         }),
       ],
     }),
