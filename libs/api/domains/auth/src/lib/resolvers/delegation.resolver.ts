@@ -8,6 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import * as kennitala from 'kennitala'
 
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Identity, IdentityService } from '@island.is/api/domains/identity'
@@ -115,11 +116,27 @@ export class DelegationResolver {
 
   @ResolveField('to', () => Identity)
   resolveTo(@Parent() delegation: DelegationDTO): Promise<Identity | null> {
+    if (kennitala.isCompany(delegation.toNationalId)) {
+      // XXX: temp until rsk gets implemented
+      return Promise.resolve({
+        nationalId: delegation.toNationalId,
+        name: delegation.toName,
+        type: 'company',
+      } as Identity)
+    }
     return this.identityService.getIdentity(delegation.toNationalId)
   }
 
   @ResolveField('from', () => Identity)
   resolveFrom(@Parent() delegation: DelegationDTO): Promise<Identity | null> {
+    if (kennitala.isCompany(delegation.fromNationalId)) {
+      // XXX: temp until rsk gets implemented
+      return Promise.resolve({
+        nationalId: delegation.fromNationalId,
+        name: delegation.fromName,
+        type: 'company',
+      } as Identity)
+    }
     return this.identityService.getIdentity(delegation.fromNationalId)
   }
 }
