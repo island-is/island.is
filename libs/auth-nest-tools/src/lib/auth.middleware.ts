@@ -1,5 +1,5 @@
 import { Auth } from './auth'
-
+import fetch from 'isomorphic-fetch'
 // These types are copied from our OpenAPI generated api clients.
 type FetchAPI = WindowOrWorkerGlobalScope['fetch']
 
@@ -45,12 +45,7 @@ export class AuthMiddleware implements Middleware {
   async pre(context: RequestContext) {
     let bearerToken = this.auth.authorization
 
-    if (
-      this.options.tokenExchangeOptions &&
-      this.options.tokenExchangeOptions.scope
-        .split(' ')
-        .some((s) => !this.auth.scope.includes(s))
-    ) {
+    if (this.options.tokenExchangeOptions) {
       const accessToken = await this.exchangeToken(
         bearerToken.replace('Bearer ', ''),
         context,

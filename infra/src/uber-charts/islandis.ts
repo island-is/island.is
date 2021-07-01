@@ -82,6 +82,9 @@ export const Services: EnvironmentServices = {
     xroadCollector,
     downloadService,
     nameRegistryBackend,
+    endorsement,
+    partyLetterRegistry,
+    temporaryVoterRegistry,
   ],
   staging: [
     appSystemApi,
@@ -99,6 +102,9 @@ export const Services: EnvironmentServices = {
     xroadCollector,
     downloadService,
     nameRegistryBackend,
+    endorsement,
+    partyLetterRegistry,
+    temporaryVoterRegistry,
   ],
   dev: [
     appSystemApi,

@@ -469,7 +469,7 @@ jobs:
 
   failure-notification:
     runs-on: ubuntu-20.04
-    if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != "feature-deploy"
+    if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
       - prepare
