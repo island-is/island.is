@@ -1,7 +1,6 @@
 import { Query, Resolver, Args } from '@nestjs/graphql'
 import { GetFinancialOverviewInput } from './dto/getOverview.input'
 import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
-import { ExcelSheetInput } from './dto/getExcelSheet.input'
 import { GetDocumentsListInput } from './dto/getDocumentsList.input'
 import { GetFinanceDocumentInput } from './dto/getFinanceDocument.input'
 import { UseGuards } from '@nestjs/common'
@@ -18,15 +17,12 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { FinanceService, DownloadService } from '@island.is/clients/finance'
+import { FinanceService } from '@island.is/clients/finance'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class FinanceResolver {
-  constructor(
-    private FinanceService: FinanceService,
-    private DownloadService: DownloadService,
-  ) {}
+  constructor(private FinanceService: FinanceService) {}
 
   @Query(() => graphqlTypeJson)
   async getFinanceStatus(@CurrentUser() user: User) {
@@ -90,14 +86,5 @@ export class FinanceResolver {
   @Query(() => CustomerTapsControlModel, { nullable: true })
   async getCustomerTapControl(@CurrentUser() user: User) {
     return this.FinanceService.getCustomerTapControl(user.nationalId)
-  }
-
-  @Query(() => graphqlTypeJson)
-  async getExcelDocument(@Args('input') input: ExcelSheetInput) {
-    return this.DownloadService.getExcelDocument(
-      input.headers,
-      input.data,
-      input.token,
-    )
   }
 }

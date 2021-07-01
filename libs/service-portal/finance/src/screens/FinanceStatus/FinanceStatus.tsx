@@ -15,7 +15,6 @@ import {
   AlertBanner,
   Hidden,
 } from '@island.is/island-ui/core'
-import { DownloadService } from '@island.is/clients/finance'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import {
@@ -24,14 +23,9 @@ import {
 } from './FinanceStatusData.types'
 import { ExpandHeader, ExpandRow } from '../../components/ExpandableTable'
 import amountFormat from '../../utils/amountFormat'
-import { greidsluStadaHeaders } from '../../utils/dataHeaders'
-import {
-  exportGreidslustadaCSV,
-  exportGreidslustadaXSLX,
-} from '../../utils/filesGreidslustada'
+import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
-import { downloadXlsxDocument } from '@island.is/service-portal/graphql'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -42,7 +36,6 @@ const GetFinanceStatusQuery = gql`
 const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
-  const { downloadSheet } = downloadXlsxDocument()
 
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
@@ -61,37 +54,6 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
         ? allChargeTypes.reduce((a, b) => a + b.totals, 0)
         : 0
     return amountFormat(chargeTypeTotal)
-  }
-
-  const onClickHandler = () => {
-    // Create form elements
-    const form = document.createElement('form')
-    const documentIdInput = document.createElement('input')
-    const tokenInput = document.createElement('input')
-
-    form.appendChild(documentIdInput)
-    form.appendChild(tokenInput)
-
-    // Form values
-    form.method = 'post'
-    // TODO: Use correct url
-    form.action = `https://api.dev01.devland.is/download/v1/xlsx/generate`
-    // form.action = `http://localhost:3377/download/v1/xlsx`
-    form.target = '_blank'
-
-    // Document Id values
-    documentIdInput.type = 'hidden'
-    documentIdInput.name = 'serviceId'
-    documentIdInput.value = 'GetFinanceStatus'
-
-    // National Id values
-    tokenInput.type = 'hidden'
-    tokenInput.name = '__accessToken'
-    tokenInput.value = userInfo.access_token
-
-    document.body.appendChild(form)
-    form.submit()
-    document.body.removeChild(form)
   }
 
   return (
@@ -156,8 +118,18 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                   </Column>
                   <Column width="content">
                     <DropdownExport
-                      onGetCSV={() => exportGreidslustadaCSV(financeStatusData)}
-                      onGetExcel={() => onClickHandler()}
+                      onGetCSV={() =>
+                        exportGreidslustadaFile(financeStatusData, 'csv')
+                      }
+                      onGetExcel={() =>
+                        exportGreidslustadaFile(financeStatusData, 'xlsx')
+                      }
+                      // onGetExcel={() =>
+                      //   downloadSheet({
+                      //     headers: greidsluStadaHeaders,
+                      //     data: exportGreidslustadaXSLX(financeStatusData),
+                      //   })
+                      // }
                     />
                   </Column>
                 </Columns>
