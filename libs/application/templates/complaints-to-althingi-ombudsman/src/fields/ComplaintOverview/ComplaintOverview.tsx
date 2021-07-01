@@ -14,7 +14,7 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const { name, ssn, phone, email, address } = answers.information
 
   return (
-    <Box component="section">
+    <Box component="section" paddingTop={6}>
       <ReviewGroup>
         <GridRow>
           <GridColumn span={'4/12'}>
