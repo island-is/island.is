@@ -32,7 +32,6 @@ type PaymentModeState = null | 'amount' | 'months'
 // An array might not work for this schema
 // Might need to define specific fields for each one
 export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
-  console.log('Field: ', field)
   const { formatMessage } = useLocale()
   const [paymentMode, setPaymentMode] = useState<PaymentModeState>(null)
   const { register } = useFormContext()
@@ -41,7 +40,6 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const answers = application.answers as PublicDebtPaymentPlan
   const index = field.defaultValue as number
   // Assign a payment to this screen by using the index of the step
-  console.log('External data: ', externalData)
   const payment = externalData.paymentPlanList?.data[index]
   // Locate the entry of the payment plan in answers.
   const entryKey = getPaymentPlanKeyById(
@@ -60,8 +58,6 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     // TODO: Better UX and error logging for this
     return <div>No more available entries in schema</div>
   }
-  console.log('Answer key: ', answerKey)
-  console.log('Answers', answers)
   const entry = `paymentPlans.${answerKey}`
   const currentAnswers = answers.paymentPlans[answerKey]
 

@@ -6,22 +6,18 @@ import { PaymentPlanExternalData } from '../../lib/dataSchema'
 import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 import { useMockPaymentPlan } from '../PaymentPlan/useMockPaymentPlan'
 
-export const Overview = ({ application, field }: FieldBaseProps) => {
+export const Overview = ({ application }: FieldBaseProps) => {
   const externalData = application.externalData as PaymentPlanExternalData
-  // const payment = externalData.paymentPlanList?.data[1]
   const paymentPlanList = (application.externalData as PaymentPlanExternalData)
     .paymentPlanList
-  /* const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
-    '2811903429',
-    payment?.type,
-    14000,
-    11,
-  ) */
 
   const editAction = () => {
+    // TODO: Write better function. What will happen on edit?
     console.log('this is edit action')
   }
 
+  // TODO: Add text to messages.
+  // TODO: Add edit functionality.
   return (
     <>
       <ReviewGroup isEditable editAction={editAction}>
@@ -66,6 +62,7 @@ export const Overview = ({ application, field }: FieldBaseProps) => {
       </ReviewGroup>
       {paymentPlanList?.data.map((payment, index) => {
         const returnedPayment = externalData.paymentPlanList?.data[index]
+        // TODO: Perhaps there is a better way to do this? Look into later.
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
           '2811903429',
