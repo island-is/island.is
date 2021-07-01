@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 // Draft of the required database types
 import { HTMLText, ISODate, PlainText, RegName } from '@island.is/regulations'
 import { DraftingStatus, Kennitala, RegulationType } from './types'
@@ -14,7 +15,7 @@ export type DB_RegulationDraft = (
       name?: undefined
     }
   | {
-      draftingStatus: 'shipped' & DraftingStatus
+      draftingStatus: Extract<DraftingStatus, 'shipped'>
       /** Name (publication id) provided by Stjórnartíðindi's systems as part of shipping/publishing the Regulation */
       name: RegName
     }
@@ -146,6 +147,7 @@ export type DBx_LawChapter = {
 // ===========================================================================
 
 declare const _RegulationId__Brand: unique symbol
+/** Id of a Regulation entry in the Reglugerðagrunnur */
 export type RegulationId = number & { [_RegulationId__Brand]: true }
 
 type RegulationMigrationStatus =
