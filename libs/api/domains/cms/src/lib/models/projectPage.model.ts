@@ -9,6 +9,7 @@ import {
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { Link, mapLink } from './link.model'
 import { mapProjectSubpage, ProjectSubpage } from './projectSubpage.model'
+import { mapStepper, Stepper } from './stepper.model'
 
 @ObjectType()
 export class ProjectPage {
@@ -39,6 +40,9 @@ export class ProjectPage {
   @Field(() => [SliceUnion], { nullable: true })
   content?: Array<typeof SliceUnion>
 
+  @Field(() => Stepper, { nullable: true })
+  stepper!: Stepper | null
+
   @Field(() => [SliceUnion])
   slices!: Array<typeof SliceUnion | null>
 
@@ -61,6 +65,7 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
+  stepper: fields.stepper ? mapStepper(fields.stepper) : null,
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
   newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
   projectSubpages: (fields.projectSubpages ?? []).map(mapProjectSubpage),
