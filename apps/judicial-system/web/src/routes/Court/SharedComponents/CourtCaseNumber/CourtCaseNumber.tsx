@@ -1,4 +1,5 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Case, IntegratedCourts } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
@@ -7,6 +8,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { courtCaseNumber } from '@island.is/judicial-system-web/messages'
 import * as styles from './CourtCaseNumber.treat'
 
 interface Props {
@@ -30,20 +32,17 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
     handleCreateCourtCase,
   } = props
   const { updateCase, isCreatingCourtCase } = useCase()
+  const { formatMessage } = useIntl()
 
   return (
     <>
       <Box marginBottom={2}>
         <Text as="h2" variant="h3">
-          Málsnúmer héraðsdóms
+          {formatMessage(courtCaseNumber.title)}
         </Text>
       </Box>
       <Box marginBottom={2}>
-        <Text>
-          Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer sem
-          er þegar til í Auði. Athugið að gögn verða sjálfkrafa vistuð á það
-          málsnúmer sem slegið er inn.
-        </Text>
+        <Text>{formatMessage(courtCaseNumber.explanation)}</Text>
       </Box>
       <BlueBox>
         <div className={styles.createCourtCaseContainer}>
