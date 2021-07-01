@@ -74,53 +74,11 @@ describe('Application system payments API', () => {
 
   // Getting the payment status
   it(`GET /application/96b5237b-6896-4154-898d-d8feb01d3dcd/payment-status should get payment fulfilled status`, async () => {
-    const response = await server
+    await server
       .get('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment-status')
       .send({
         applicationId: '96b5237b-6896-4154-898d-d8feb01d3dcd',
       })
       .expect(200)
-    expect(true).toBeTruthy()
   })
-
-  // Sets the payment status to paid.
-  it(`POST /application/32eee126-6b7f-4fca-b9a0-a3618b3e42bf/payment/6b11dc9f-a694-440e-b3dd-7163b5f34815 should update payment fulfilled`, async () => {
-    const response = await server
-      .post(
-        '/applications/32eee126-6b7f-4fca-b9a0-a3618b3e42bf/payment/6b11dc9f-a694-440e-b3dd-7163b5f34815',
-      )
-      .send({
-        applicationId: '32eee126-6b7f-4fca-b9a0-a3618b3e42bf',
-        id: '6b11dc9f-a694-440e-b3dd-7163b5f34815',
-        callback: {
-          receptionID: '1234567890',
-          chargeItemSubject: 'Very nice subject',
-          status: 'paid',
-        },
-      })
-      .expect(201)
-    expect(null).toBeFalsy()
-  })
-
-  // Fails to set the payment status to paid.
-  it(`POST /application/32eee126-6b7f-4fca-b9a0-a3618b3e42bf/payment/failed-request should update payment fulfilled`, async () => {
-    const response = await server
-      .post(
-        '/applications/32eee126-6b7f-4fca-b9a0-a3618b3e42bf/payment/failed-request',
-      )
-      .send({
-        applicationId: '32eee126-6b7f-4fca-b9a0-a3618b3e42bf',
-        id: '6b11dc9f-a694-440e-b3dd-7163b5f34815',
-        callback: {
-          receptionID: '1234567890',
-          chargeItemSubject: 'nice subject.. not',
-          status: 'paid',
-        },
-      })
-      .expect(400)
-    expect(null).toBeFalsy()
-  })
-
-  // TODO: Validate that an application that is in a state that should be pruned
-  // is not listed when (mocked) Date.now > application.pruneAt
 })
