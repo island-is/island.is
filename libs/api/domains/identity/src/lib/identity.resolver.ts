@@ -1,6 +1,5 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
-import * as kennitala from 'kennitala'
 
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import {
@@ -11,31 +10,22 @@ import type { User } from '@island.is/auth-nest-tools'
 
 import { IdentityType } from './identity.type'
 import { IdentityInput } from './identity.input'
+import { IdentityService } from './identity.service'
 import { Identity, IdentityPerson, IdentityCompany } from './models'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => IdentityPerson)
 @Resolver(() => IdentityCompany)
 export class IdentityResolver {
-  constructor(private nationalRegistryService: NationalRegistryService) {}
+  constructor(private identityService: IdentityService) {}
 
   @Query(() => Identity, { name: 'identity', nullable: true })
-  async getIdentity(
+  getIdentity(
     @CurrentUser() user: User,
     @Args('input', { nullable: true }) input: IdentityInput,
   ): Promise<Identity | null> {
     const nationalId = input?.nationalId || user.nationalId
-
-    if (kennitala.isCompany(nationalId)) {
-      // TODO: not supported for now
-      return null
-    }
-
-    const person = await this.nationalRegistryService.getUser(nationalId)
-    return {
-      ...person,
-      type: IdentityType.Person,
-    } as Identity
+    return this.identityService.getIdentity(nationalId)
   }
 
   @ResolveField('name', () => String)
