@@ -1,12 +1,10 @@
 import * as s from './ButtonBar.treat'
 
-import { Box, Button, Divider } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { buttonsMsgs as msg } from '../messages'
-import { UserRole } from '../types'
 import { StepNav } from '../state/useDraftingState'
-import { RegulationDraft } from '../types-api'
 
 export type ButtonBarProps = {
   stepNav: StepNav
@@ -27,7 +25,12 @@ export const ButtonBar = (props: ButtonBarProps) => {
     <Box className={s.wrapper} marginTop={[4, 4, 6]} paddingTop={3}>
       {goForward && (
         <Box className={s.forward}>
-          <Button onClick={goForward} icon="arrowForward" size="small">
+          <Button
+            onClick={goForward}
+            icon="arrowForward"
+            iconType="outline"
+            size="small"
+          >
             {t(stepNav.next === 'review' ? msg.prepShipping : msg.continue)}
           </Button>
         </Box>
@@ -38,6 +41,7 @@ export const ButtonBar = (props: ButtonBarProps) => {
           <Button
             onClick={goBack}
             preTextIcon="arrowBack"
+            preTextIconType="outline"
             colorScheme="light"
             size="small"
           >
@@ -47,14 +51,23 @@ export const ButtonBar = (props: ButtonBarProps) => {
       )}
 
       <Box className={s.save}>
-        <Button onClick={saveStatus} icon={undefined} colorScheme="light">
+        <Button
+          onClick={saveStatus}
+          preTextIcon="save"
+          preTextIconType="outline"
+          colorScheme="light"
+        >
           {t(msg.save)}
         </Button>
       </Box>
 
       {propose && (
         <Box className={s.propose}>
-          <Button data-name="propose" onClick={propose}>
+          <Button
+            onClick={propose}
+            preTextIcon="share"
+            preTextIconType="outline"
+          >
             {t(msg.propose)}
           </Button>
         </Box>
