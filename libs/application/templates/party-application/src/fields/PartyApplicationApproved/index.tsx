@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { Approved } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 
-const PartyApplicationApproved: FC<FieldBaseProps> = ({ application }) => {
+const PartyApplicationApproved: FC<FieldBaseProps> = () => {
   const { formatMessage } = useLocale()
 
   return (
