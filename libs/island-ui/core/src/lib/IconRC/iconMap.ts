@@ -59,6 +59,9 @@ export type Icon =
   | 'warning'
   | 'reload'
   | 'remove'
+  | 'save'
+  | 'bookmark'
+  | 'share'
 
 export default {
   filled: {
@@ -121,6 +124,9 @@ export default {
     reload: 'Reload',
     remove: 'Remove',
     time: 'Time',
+    save: 'Save',
+    bookmark: 'Bookmark',
+    share: 'Share',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -182,5 +188,8 @@ export default {
     reload: 'ReloadOutline',
     remove: 'Remove',
     time: 'TimeOutline',
+    save: 'SaveOutline',
+    bookmark: 'BookmarkOutline',
+    share: 'ShareOutline',
   },
 }
