@@ -12,6 +12,8 @@ import type { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
+import { Application as ApplicationModel } from '../application/application.model'
+
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -67,7 +69,7 @@ export class PaymentService {
       this.paymentConfig.callbackAdditionUrl +
       payment.id
     try {
-      const parsedDefinition = JSON.parse(JSON.stringify(payment.definition))
+      const parsedDefinition = JSON.parse(payment.definition as string)
       const charge: Charge = {
         // TODO: this needs to be unique, but can only handle 22 or 23 chars
         // should probably be an id or token from the DB charge once implemented
@@ -109,6 +111,9 @@ export class PaymentService {
         handleError,
       )
     }
+    // TEMP !!! This is only while payment dummy is being used/tested. Should be deleted later.
+    if(chargeItemCode === 'AYXXX') {chargeItemCode = 'AY110'}
+
     const resultCatalog = JSON.parse(searchJSON)
     for (const item in resultCatalog) {
       if (resultCatalog[item].chargeItemCode === chargeItemCode) {
@@ -118,5 +123,21 @@ export class PaymentService {
     return Promise.reject(
       new Error('No catalog found with ' + chargeItemCode),
     ).catch(handleError)
+  }
+
+  async findApplicationById(applicationId: string, nationalId: string, applicationType: string): Promise<ApplicationModel> {
+    const application = await ApplicationModel.findAll({
+      raw: true,
+      where: {
+        id: applicationId,
+        typeId: applicationType,
+        [Op.or]: [
+          { applicant: nationalId },
+          { assignees: { [Op.contains]: [nationalId] } },
+        ],
+      }
+    })
+    if(!application) { Promise.reject('Failed to find application').catch()}
+    return application[0] as ApplicationModel
   }
 }

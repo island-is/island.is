@@ -35,6 +35,8 @@ import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 import { isUuid } from 'uuidv4'
 import { CreateChargeInput } from './dto/createChargeInput.dto'
 import { PaymentAPI } from '@island.is/clients/payment'
+import { FindItemType } from './utils/findItemType'
+
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -54,6 +56,7 @@ export class PaymentController {
     private readonly paymentAPI: PaymentAPI,
     @InjectModel(Payment)
     private paymentModel: typeof Payment,
+    //private applicationModel: typeof ApplicationModel,
   ) {}
   @Scopes(ApplicationScope.write)
   @Post('applications/:application_id/payment')
@@ -66,12 +69,24 @@ export class PaymentController {
     if (!isUuid(applicationId)) {
       throw new BadRequestException(`ApplicationId is on wrong format.`)
     }
-    const allCatalogs = await this.paymentAPI
-      .getCatalogByPerformingOrg('6509142520')
-      .catch((error) => {
-        throw new BadRequestException('Failed to retrieve Catalogs, ' + error)
-      })
+    const DISTRICT_COMMISSIONER_OF_REYKJAVIK = '6509142520'
+    const inputApplicationType = FindItemType(payload.chargeItemCode)
 
+    // Could use map/switch function/statement here to compare applications typeids - chargeItemCOde.
+    const thisApplication = await this.paymentService.findApplicationById(applicationId, user.nationalId, inputApplicationType).catch((error) => {
+      throw new BadRequestException(
+        `Unable to find application with the ID ${applicationId} ` + error,
+      )
+    })
+
+    if(thisApplication.typeId.toString() !== inputApplicationType) {
+      throw new BadRequestException(new Error('Mismatch between create charge input and application payment.'))
+    }
+    
+    // Could always use getCatalog, slice is a cheaper operation than getting all catalogs, always.
+    const allCatalogs = payload.chargeItemCode.slice(0,2) === 'AY' ? await this.paymentAPI.getCatalogByPerformingOrg(DISTRICT_COMMISSIONER_OF_REYKJAVIK) : await this.paymentAPI.getCatalog()
+
+    // Sort through all catalogs to find the correct one.
     const catalog = await this.paymentService
       .searchCorrectCatalog(
         payload.chargeItemCode,

@@ -9,6 +9,7 @@ import { PaymentService } from './payment.service'
 import { environment } from '../../../environments'
 import { PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
 import { PaymentServiceOptions } from '@island.is/clients/payment'
+import { Application } from '../application/application.model'
 
 export interface Config {
   clientConfig: PaymentServiceOptions
@@ -35,6 +36,7 @@ export class PaymentModule {
       imports: [
         AuditModule.forRoot(environment.audit),
         SequelizeModule.forFeature([Payment]),
+        SequelizeModule.forFeature([Application]),
         TranslationsModule,
       ],
       controllers: [PaymentController],

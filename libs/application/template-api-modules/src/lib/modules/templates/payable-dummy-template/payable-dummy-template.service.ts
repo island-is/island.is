@@ -16,7 +16,7 @@ export class PayableDummyTemplateService {
     const result = await this.sharedTemplateAPIService.createCharge(
       authorization,
       id,
-      'AY110',
+      'AYXXX',
     )
 
     return result
