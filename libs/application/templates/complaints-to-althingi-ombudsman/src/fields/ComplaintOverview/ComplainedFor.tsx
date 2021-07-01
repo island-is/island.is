@@ -11,7 +11,7 @@ import { ValueLine } from './ValueLine'
 
 type Props = {
   complainedForType: ComplainedForTypes
-  complainedFor: ComplaintsToAlthingiOmbudsman['complainedFor']
+  complainedFor: ComplaintsToAlthingiOmbudsman['complainedForInformation']
   connection: string
 }
 
