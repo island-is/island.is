@@ -24,7 +24,7 @@ export interface Charge extends BaseCharge {
   immediateProcess: boolean
   systemID: string
   payInfo?: PayInfo
-  returnUrl: string
+  returnURL: string
 }
 
 export interface ChargeResponse {

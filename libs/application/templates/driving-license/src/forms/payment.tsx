@@ -29,9 +29,9 @@ export const payment: Form = buildForm({
               throw new Error()
             }
 
-            const returnUrl = window.document.location.href
-            const redirectUrl = `${paymentUrl}&returnUrl=${encodeURIComponent(
-              returnUrl,
+            const returnURL = window.document.location.href
+            const redirectUrl = `${paymentUrl}&returnURL=${encodeURIComponent(
+              returnURL,
             )}`
             window.document.location.href = redirectUrl
 
