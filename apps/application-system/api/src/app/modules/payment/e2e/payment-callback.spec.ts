@@ -1,4 +1,3 @@
-
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
@@ -11,14 +10,12 @@ let server: request.SuperTest<request.Test>
 beforeAll(async () => {
   app = await setup({
     override: (builder) => {
-      builder
-        .compile()
+      builder.compile()
     },
   })
 
   server = request(app.getHttpServer())
 })
-
 
 describe('Application system payments callback API', () => {
   // Sets the payment status to paid.
