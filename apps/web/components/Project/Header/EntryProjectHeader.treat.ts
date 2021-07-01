@@ -2,10 +2,14 @@ import { style } from 'treat'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
-  height: 410,
   ...themeUtils.responsiveStyle({
     xs: {
       background: '#5378A3',
+      minHeight: 410,
+      height: 'max-content',
+    },
+    sm: {
+      height: 410,
     },
     lg: {
       background: `linear-gradient(90deg, rgba(83, 120, 163, 1) 0%, rgba(83, 120, 163, 1) 45%, rgba(83, 120, 163, 0) 70%),
@@ -23,7 +27,16 @@ export const headerBg = style({
 })
 
 export const textBox = style({
-  height: 410,
+  minHeight: 410,
+  ...themeUtils.responsiveStyle({
+    xs: {
+      marginBottom: 32,
+    },
+    md: {
+      marginBottom: 0,
+    },
+  }),
+  height: 'fit-content',
   background:
     'linear-gradient(90deg, rgba(83, 120, 163, 0.1) 0%, rgba(83, 120, 163, 0.6) 15%, rgba(83, 120, 163, 0.3) 90%, rgba(83, 120, 163, 0.1) 100%)',
 })
