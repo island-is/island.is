@@ -14,12 +14,12 @@ export const financeModule: ServicePortalModule = {
   widgets: () => [],
   routes: async () => {
     const routes: ServicePortalRoute[] = [
-      {
-        name: 'Fjármál',
-        path: ServicePortalPath.FinanceRoot,
-        render: () =>
-          lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
-      },
+      // {
+      //   name: 'Fjármál',
+      //   path: ServicePortalPath.FinanceRoot,
+      //   render: () =>
+      //     lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
+      // },
       {
         name: defineMessage({
           id: 'service.portal:finance-status',
