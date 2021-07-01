@@ -86,16 +86,24 @@ const dataKeysName = {
   amount: 'Heildarupphæð styrkja',
 }
 
-const renderColorfulLegendText = (value: string, entry: any) => {
-  return <p style={{ color: '#00003C' }}>{value}</p>
+const CustomizedAxisTick = (props) => {
+  const { x, y, className, payload } = props
+  const xAxis = className.includes("xAxis")
+  console.log(xAxis)
+  return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={xAxis ? 16 : -17} y={xAxis ? 20 : -10} dy={16} textAnchor="end" fill="#00003C">
+          {payload.value} {xAxis}
+        </text>
+      </g>
+  )
 }
 
 const renderLegend = (props) => {
   const { payload } = props
-  console.log(props)
 
   return (
-    <ul style={{ display: 'flex', justifyContent: 'flex-end' }}>
+    <ul style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '20px' }}>
       {payload.map((entry, index) => (
         <li
           style={{
@@ -144,8 +152,14 @@ export const MixedChart = () => {
         }}
       >
         <CartesianGrid strokeDasharray="1" vertical={false} color="#CCDFFF" />
-        <XAxis dataKey="fund_year" stroke="#00003C" />
-        <YAxis yAxisId="left" orientation="left" stroke="#00003C" />
+        <XAxis
+          dataKey="fund_year"
+          stroke="#CCDFFF"
+          tick={<CustomizedAxisTick />}
+          padding={{ left: 30 }}
+          tickLine={false}
+        />
+        <YAxis yAxisId="left" stroke="#CCDFFF" tick={<CustomizedAxisTick />} tickLine={false}/>
         <YAxis yAxisId="right" hide />
         <Tooltip />
         <Legend iconType="circle" align="right" content={renderLegend} />
@@ -169,7 +183,7 @@ export const MixedChart = () => {
           stroke="#99F4EA"
           yAxisId="right"
           strokeWidth={3}
-          dot={{ strokeWidth: 2 }}
+          dot={{ r: 6, strokeWidth: 3 }}
         />
       </ComposedChart>
     </ResponsiveContainer>

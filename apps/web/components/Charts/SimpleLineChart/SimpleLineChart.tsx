@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
   Line,
 } from 'recharts'
+import { Text } from '@island.is/island-ui/core'
 
 const dataKeys = ['dk', 'eu', 'fi', 'ir', 'is', 'no', 'sv']
 const dataKeysName = {
@@ -22,16 +23,24 @@ const dataKeysName = {
   sv: 'Svíþjóð',
 }
 
-const renderColorfulLegendText = (value: string, entry: any) => {
-  return <p style={{ color: '#00003C' }}>{value}</p>
+const CustomizedAxisTick = (props) => {
+  const { x, y, className, payload } = props
+  const xAxis = className.includes("xAxis")
+  console.log(xAxis)
+  return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={xAxis ? 16 : -17} y={xAxis ? 20 : -10} dy={16} textAnchor="end" fill="#00003C">
+          {payload.value} {xAxis}
+        </text>
+      </g>
+  )
 }
 
 const renderLegend = (props) => {
   const { payload } = props
-  console.log(payload)
 
   return (
-    <ul style={{ justifyContent: 'space-between', display: 'flex' }}>
+    <ul style={{ justifyContent: 'space-between', display: 'flex', paddingTop: '37px' }}>
       {payload.map((entry, index) => (
         <li
           style={{
@@ -47,7 +56,7 @@ const renderLegend = (props) => {
               height: '12px',
               border: '3px solid ' + entry.color,
               borderRadius: '12px',
-              marginRight: '8px',
+              marginRight: '2px',
               marginLeft: '8px',
             }}
           />
@@ -97,8 +106,14 @@ export const SimpleLineChart = () => {
         }}
       >
         <CartesianGrid strokeDasharray="1" vertical={false} stroke="#CCDFFF" />
-        <XAxis dataKey="year" axisLine={false} padding={{ left: 30 }} />
-        <YAxis axisLine={false} />
+        <XAxis
+          dataKey="year"
+          stroke="#CCDFFF"
+          tick={<CustomizedAxisTick />}
+          padding={{ left: 30 }}
+          tickLine={false}
+        />
+        <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} tickLine={false}/>
         <Tooltip />
         <Legend iconType="circle" content={renderLegend} />
         {dataKeys.map((datakey, index) => (
