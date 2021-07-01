@@ -1,9 +1,7 @@
 import {
-  Body,
   Controller,
   Param,
   Post,
-  UseInterceptors,
   UseGuards,
   Get,
   ParseUUIDPipe,
@@ -30,7 +28,6 @@ import { AuditService } from '@island.is/nest/audit'
 import { CreatePaymentResponseDto } from './dto'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
-import type { Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 import { isUuid } from 'uuidv4'
@@ -54,11 +51,11 @@ export class PaymentController {
     private paymentModel: typeof Payment,
   ) {}
   @Scopes(ApplicationScope.write)
-  @Post('applications/:application_id/payment')
+  @Post('applications/:applicationId/payment')
   @ApiCreatedResponse({ type: CreatePaymentResponseDto })
   async createCharge(
     @CurrentUser() user: User,
-    @Param('application_id', new ParseUUIDPipe()) applicationId: string,
+    @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
   ): Promise<CreatePaymentResponseDto> {
     if (!isUuid(applicationId)) {
       throw new BadRequestException(`ApplicationId is on wrong format.`)
@@ -91,59 +88,17 @@ export class PaymentController {
     }
   }
 
-  @Scopes(ApplicationScope.write)
-  @Post('applications/:application_id/payment/:id')
-  @ApiParam({
-    name: 'application_id',
-    type: String,
-    required: true,
-    description: 'The id of the application to update fulfilled status.',
-  })
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-    description: 'The id of the payment.',
-  })
-  async paymentApproved(
-    @Param('application_id') applicationId: string,
-    @Body() callback: Callback,
-    @Param('id') id: string,
-  ): Promise<void> {
-    if (!isUuid(applicationId) || !isUuid(id)) {
-      throw new BadRequestException(
-        `ApplicationId or paymentId is on wrong format.`,
-      )
-    }
-    if (callback.status !== 'paid') {
-      // TODO: no-op.. it would be nice eventually to update all statuses
-      return
-    }
-
-    await this.paymentModel.update(
-      {
-        fulfilled: true,
-      },
-      {
-        where: {
-          id,
-          application_id: applicationId,
-        },
-      },
-    )
-  }
-
   @Scopes(ApplicationScope.read)
-  @Get('applications/:application_id/payment-status')
+  @Get('applications/:applicationId/payment-status')
   @ApiOkResponse({ type: PaymentStatusResponseDto })
   @ApiParam({
-    name: 'application_id',
+    name: 'applicationId',
     type: String,
     required: true,
     description: 'The id of the application check if it is paid.',
   })
   async getPaymentStatus(
-    @Param('application_id') applicationId: string,
+    @Param('applicationId') applicationId: string,
   ): Promise<PaymentStatusResponseDto> {
     if (!isUuid(applicationId)) {
       throw new BadRequestException(`ApplicationId is on wrong format.`)
