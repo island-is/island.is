@@ -80,7 +80,7 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                   tabIndex={-1}
                   className={styles.btnLink}
                   onClick={() => webLoginButtonSelect('New')}
-                  href="/minarsidur"
+                  href="/minarsidur/postholf"
                 >
                   <Button as="span">
                     {n('nyjuSidurLink', 'Fara á nýju mínar síður')}
