@@ -77,7 +77,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
     // TODO: Use correct url
     form.action = `https://api.dev01.devland.is/download/v1/xlsx`
     // form.action = `http://localhost:3377/download/v1/xlsx`
-    // form.target = '_blank'
+    form.target = '_blank'
 
     // Document Id values
     documentIdInput.type = 'hidden'
@@ -179,7 +179,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                             chargeType={chargeType}
                             organization={org}
                             key={`${org.id}-${chargeType.id}`}
-                            token={userInfo.access_token}
+                            // token={userInfo.access_token}
                           />
                         )),
                     )}

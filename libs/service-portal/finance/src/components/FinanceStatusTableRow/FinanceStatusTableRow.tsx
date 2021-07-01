@@ -19,7 +19,7 @@ const GetFinanceStatusDetailsQuery = gql`
 interface Props {
   organization: FinanceStatusOrganizationType
   chargeType: FinanceStatusOrganizationChargeType
-  token: string
+  token?: string
 }
 
 const FinanceStatusTableRow: FC<Props> = ({
@@ -58,7 +58,7 @@ const FinanceStatusTableRow: FC<Props> = ({
         <FinanceStatusDetailTable
           organization={organization}
           financeStatusDetails={financeStatusDetails}
-          token={token}
+          // token={token}
         />
       ) : null}
     </ExpandRow>

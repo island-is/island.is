@@ -4,11 +4,9 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { XlsxDto } from './dto/xlsxDto'
 import * as XLSX from 'xlsx'
 import { ReadableStreamBuffer } from 'stream-buffers'
-// import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
-// @UseGuards(IdsUserGuard)
 @Controller('xlsx')
-@ApiTags('documents')
+// @ApiTags('documents')
 export class XlsxController {
   @Post()
   @Header(

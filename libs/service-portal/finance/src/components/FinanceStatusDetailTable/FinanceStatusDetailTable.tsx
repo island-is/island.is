@@ -19,7 +19,7 @@ import * as styles from './FinanceStatusDetailTable.treat'
 interface Props {
   organization: FinanceStatusOrganizationType
   financeStatusDetails: FinanceStatusDetailsType
-  token: string
+  token?: string
 }
 
 const FinanceStatusDetailTable: FC<Props> = ({
