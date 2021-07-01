@@ -9,7 +9,8 @@ import {
   Text,
   Link,
   Button,
-  GridColumns,
+  Inline,
+  Logo,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
@@ -21,6 +22,7 @@ import {
   SimplePieChart,
   SimpleLineChart,
   ChartsCard,
+  SectionTitle
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
@@ -198,13 +200,28 @@ const OpenDataPage: Screen = () => {
       <Section>
         <GridContainer>
           <GridRow>
+            <GridColumn span="12/12">
+              {/* <Box paddingBottom={4}>
+                <Inline space={2}>
+                  <Logo width={24} iconOnly />
+                  <Text variant="h3">Stofnanir</Text>
+                </Inline>
+              </Box> */}
+              <SectionTitle title="Stofnanir" icon="business"/>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
             <GridColumn span="4/12">
               <ChartsCard title="Rannís" description="Þjónustuaðili">
                 <SimplePieChart />
               </ChartsCard>
             </GridColumn>
             <GridColumn span="8/12">
-              <ChartsCard title="Rannís" description="Þjónustuaðili" subTitle="Fjöldi sóttra og veittra styrkja seinustu tíu árin og heildarupphæð úthlutuna">
+              <ChartsCard
+                title="Rannís"
+                description="Þjónustuaðili"
+                subTitle="Fjöldi sóttra og veittra styrkja seinustu tíu árin og heildarupphæð úthlutuna"
+              >
                 <MixedChart />
               </ChartsCard>
             </GridColumn>
