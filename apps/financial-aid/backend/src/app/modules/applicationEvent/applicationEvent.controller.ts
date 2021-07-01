@@ -1,0 +1,50 @@
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  Param,
+  Put,
+  NotFoundException,
+} from '@nestjs/common'
+
+import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
+
+import { ApplicationEventService } from './applicationEvent.service'
+import { ApplicationEventModel } from './models'
+
+import { CreateApplicationEventDto } from './dto'
+
+import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
+
+@UseGuards(JwtAuthGuard)
+@Controller('api')
+@ApiTags('applicationEvents')
+export class ApplicationEventController {
+  constructor(
+    private readonly applicationEventService: ApplicationEventService,
+  ) {}
+
+  @Get('applicationEvents')
+  @ApiOkResponse({
+    type: ApplicationEventModel,
+    isArray: true,
+    description: 'Gets all existing application events',
+  })
+  getAll(): Promise<ApplicationEventModel[]> {
+    return this.applicationEventService.getAll()
+  }
+
+  @Post('applicationEvent')
+  @ApiCreatedResponse({
+    type: ApplicationEventModel,
+    description: 'Creates a new application event',
+  })
+  create(
+    @Body() applicationEvent: CreateApplicationEventDto,
+  ): Promise<ApplicationEventModel> {
+    console.log('ferdu hingad?', applicationEvent)
+    return this.applicationEventService.create(applicationEvent)
+  }
+}

@@ -74,6 +74,20 @@ export interface UpdateApplication {
   amount?: number
 }
 
+export interface CreateApplicationEvent {
+  applicationId: string
+  state: ApplicationState
+  comment?: string
+}
+
+export interface ApplicationEvent {
+  id: string
+  created: string
+  applicationId: string
+  comment?: string
+  state: ApplicationState
+}
+
 export interface Municipality {
   id: string
   // created: string
