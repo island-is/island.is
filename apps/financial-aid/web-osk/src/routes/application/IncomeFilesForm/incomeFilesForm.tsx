@@ -32,6 +32,31 @@ const IncomeFilesForm = () => {
     }
   }
 
+  const onChange = (files: File[]) => {
+    console.log(files)
+
+    files.forEach((file) => {
+      uploadToCloudFront(file)
+    })
+  }
+
+  const uploadToCloudFront = (file: File) => {
+    const request = new XMLHttpRequest()
+    request.withCredentials = true
+    request.responseType = 'json'
+
+    request.open(
+      'PUT',
+      'https://fjarhagsadstod.dev.sveitarfelog.net/files/js-test.jpg?Expires=1625067466&Key-Pair-Id=K2DUN2ISOH197V&Signature=gzPhzi1T6sZT9oBBXLdCy~aBDBfjuN~eWl7q4uwIrg7dmMFErF4iNH1F8p2ZV69vobt2tz-29cUrujToReUogoy~~9r-ptSEbYoqzFQO~ZuDOdE7Zl8M~fmrj9z~Nnfu0pR7SFKbfxyi-WPW18wSJDIzqfnw0gD5ssUjQC092JxA-CUWzVss1KI06b3ueLrV7NNH0I~zZeeU9b631aonlQOLe~F5SPVeMw4OlUcUUn4o5blhR9A4dENmlD3yWCZmuCiIcobpgn2cJiT9ras~IO-UR~9A-T-xE486DT4tg~rQookil6TqKvT82tVg2bjjQLKce9U8An84ljB7~q9aZg__',
+    )
+
+    const formData = new FormData()
+
+    formData.append('file', file)
+
+    request.send(formData)
+  }
+
   return (
     <FormLayout
       activeSection={navigation?.activeSectionIndex}
@@ -55,7 +80,7 @@ const IncomeFilesForm = () => {
               header="Dragðu gögn hingað"
               description="Tekið er við öllum hefðbundnum skráargerðum"
               buttonLabel="Bættu við gögnum"
-              onChange={() => {}}
+              onChange={onChange}
               onRemove={() => {}}
               // errorMessage={state.length > 0 ? error : undefined}
             />
