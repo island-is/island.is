@@ -7,18 +7,13 @@ import {
   complaintOverview,
 } from '../../lib/messages'
 import { ComplainedForTypes } from '../../shared'
+import { mapComplainedForToMessage } from '../../utils'
 import { ValueLine } from './ValueLine'
 
 type Props = {
   complainedForType: ComplainedForTypes
   complainedFor: ComplaintsToAlthingiOmbudsman['complainedForInformation']
   connection: string
-}
-
-const mapComplainedForToMessage = {
-  [ComplainedForTypes.MYSELF]: complainedForMessages.decision.myselfLabel,
-  [ComplainedForTypes.SOMEONEELSE]:
-    complainedForMessages.decision.someoneelseLabel,
 }
 
 export const ComplainedFor: FC<Props> = ({
