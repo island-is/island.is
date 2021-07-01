@@ -1,5 +1,11 @@
 import { Answer } from '@island.is/application/core'
-import { ComplaineeTypes, OmbudsmanComplaintTypeEnum } from './shared/constants'
+import { courtAction } from './lib/messages'
+import {
+  ComplaineeTypes,
+  NO,
+  OmbudsmanComplaintTypeEnum,
+  YES,
+} from './shared/constants'
 
 export const isGovernmentComplainee = (answers: Answer) => {
   return (
@@ -19,4 +25,9 @@ export const getDateAYearBack = () => {
   const aYearAgo = d.getFullYear() - 1
   d.setFullYear(aYearAgo)
   return d
+}
+
+export const yesNoMessageMapper = {
+  [YES]: courtAction.yes,
+  [NO]: courtAction.no,
 }

@@ -27,5 +27,10 @@ export const complaintOverview = {
       defaultMessage: 'Nafn stjórnvalds',
       description: 'Label for complainee name',
     },
+    courtAction: {
+      id: 'ctao.application:overview.label.courtAction',
+      defaultMessage: 'Lagt fyrir dómstóla',
+      description: 'Label for the court action answer',
+    },
   }),
 }

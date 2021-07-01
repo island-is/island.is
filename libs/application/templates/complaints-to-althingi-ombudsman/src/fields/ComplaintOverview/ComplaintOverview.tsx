@@ -1,16 +1,15 @@
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
-import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { ComplaintsToAlthingiOmbudsman } from '../../lib/dataSchema'
 import { complaintOverview, information } from '../../lib/messages'
 import { ValueLine } from './ValueLine'
 import { ComplainedFor } from './ComplainedFor'
 import { Complainee } from './Complainee'
+import { yesNoMessageMapper } from '../../utils'
 
 export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
-  const { formatMessage } = useLocale()
   const answers = (application as any).answers as ComplaintsToAlthingiOmbudsman
   const { name, ssn, phone, email, address } = answers.information
 
@@ -66,7 +65,10 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
         type={answers.complainee.type}
       />
       <ReviewGroup>
-        <ValueLine label="Lagt fyrir dómstóla" value="TODO?" />
+        <ValueLine
+          label={complaintOverview.labels.courtAction}
+          value={yesNoMessageMapper[answers.courtActionAnswer]}
+        />
       </ReviewGroup>
       <ReviewGroup isLast>
         <Text variant="h5">Fylgiskjöl</Text>

@@ -1,7 +1,7 @@
 import { ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import { ComplainedForInformation } from '../../lib/dataSchema'
+import { ComplaintsToAlthingiOmbudsman } from '../../lib/dataSchema'
 import {
   complainedFor as complainedForMessages,
   complaintOverview,
@@ -11,7 +11,7 @@ import { ValueLine } from './ValueLine'
 
 type Props = {
   complainedForType: ComplainedForTypes
-  complainedFor: ComplainedForInformation
+  complainedFor: ComplaintsToAlthingiOmbudsman['complainedFor']
   connection: string
 }
 
