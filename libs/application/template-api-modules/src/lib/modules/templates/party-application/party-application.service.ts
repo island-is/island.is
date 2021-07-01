@@ -1,14 +1,21 @@
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import { TemplateApiModuleActionProps } from '../../../types'
+import {
+  BaseTemplateAPIModuleConfig,
+  TemplateApiModuleActionProps,
+} from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
   generateAssignSupremeCourtApplicationEmail,
   generateApplicationRejectedEmail,
   generateApplicationApprovedEmail,
+  GenerateAssignSupremeCourtApplicationEmailOptions,
 } from './emailGenerators'
 import { EndorsementListApi, EndorsementListTagsEnum } from './gen/fetch'
 import type { Logger } from '@island.is/logging'
+
+export const PARTY_APPLICATION_SERVICE_OPTIONS =
+  'PARTY_APPLICATION_SERVICE_OPTIONS'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
   mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
@@ -33,6 +40,10 @@ type EndorsementListResponse =
       }
     }
   | ErrorResponse
+
+export type PartyApplicationServiceOptions = {
+  adminEmails: GenerateAssignSupremeCourtApplicationEmailOptions
+}
 
 interface PartyLetterData {
   partyName: string
@@ -70,6 +81,8 @@ export class PartyApplicationService {
     private endorsementListApi: EndorsementListApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    @Inject(PARTY_APPLICATION_SERVICE_OPTIONS)
+    private options: PartyApplicationServiceOptions,
   ) {}
 
   endorsementListApiWithAuth(token: string) {
@@ -89,7 +102,7 @@ export class PartyApplicationService {
       .endorsementListControllerClose({ listId })
       .then(async () => {
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-          generateAssignSupremeCourtApplicationEmail,
+          generateAssignSupremeCourtApplicationEmail(this.options.adminEmails),
           application,
         )
       })
