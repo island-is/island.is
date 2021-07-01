@@ -1,6 +1,6 @@
 import { Controller, Post, Header, Res, Body } from '@nestjs/common'
 import { Response } from 'express'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse } from '@nestjs/swagger'
 import { XlsxDto } from './dto/xlsxDto'
 import * as XLSX from 'xlsx'
 import { ReadableStreamBuffer } from 'stream-buffers'
@@ -8,7 +8,7 @@ import { ReadableStreamBuffer } from 'stream-buffers'
 @Controller('xlsx')
 // @ApiTags('documents')
 export class XlsxController {
-  @Post()
+  @Post('/generate')
   @Header(
     'Content-Type',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

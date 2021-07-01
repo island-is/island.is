@@ -4,9 +4,9 @@ import { IsJWT, IsString } from 'class-validator'
 export class XlsxDto {
   @IsString()
   @ApiProperty()
-  readonly serviceId?: string
+  readonly serviceId!: string
 
   @IsJWT()
   @ApiProperty()
-  readonly __accessToken?: string
+  readonly __accessToken!: string
 }
