@@ -14,7 +14,6 @@ import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Application as ApplicationModel } from '../application/application.model'
 
-
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
 
@@ -112,7 +111,9 @@ export class PaymentService {
       )
     }
     // TEMP !!! This is only while payment dummy is being used/tested. Should be deleted later.
-    if(chargeItemCode === 'AYXXX') {chargeItemCode = 'AY110'}
+    if (chargeItemCode === 'AYXXX') {
+      chargeItemCode = 'AY110'
+    }
 
     const resultCatalog = JSON.parse(searchJSON)
     for (const item in resultCatalog) {
@@ -125,7 +126,11 @@ export class PaymentService {
     ).catch(handleError)
   }
 
-  async findApplicationById(applicationId: string, nationalId: string, applicationType: string): Promise<ApplicationModel> {
+  async findApplicationById(
+    applicationId: string,
+    nationalId: string,
+    applicationType: string,
+  ): Promise<ApplicationModel> {
     const application = await ApplicationModel.findAll({
       raw: true,
       where: {
@@ -135,9 +140,11 @@ export class PaymentService {
           { applicant: nationalId },
           { assignees: { [Op.contains]: [nationalId] } },
         ],
-      }
+      },
     })
-    if(!application) { Promise.reject('Failed to find application').catch()}
+    if (!application) {
+      Promise.reject('Failed to find application').catch()
+    }
     return application[0] as ApplicationModel
   }
 }

@@ -1,8 +1,6 @@
 //import { DrivingLicenseType } from '../types/schema'
 
-export const FindItemType = (
-  itemCode: string,
-) => {
+export const FindItemType = (itemCode: string) => {
   let typeId = itemCode
   // AYXXX PayableDummyTemplate should be deleted when Dummy testing has finished.
   switch (typeId) {
