@@ -136,7 +136,7 @@ const OpenDataPage: Screen = () => {
     '[Undanfarin misseri hafa ...] Í þessu samhengi teljast til opinberra gagna öll gögn sem safnað hefur verið saman, vistuð með skipulegum eða kerfisbundnum hætti af opinberum aðilum og eru eða geta verið birt og varðveitt með rafrænum hætti. Hér eru tenglar á helstu vefi sem tengjast opnum gögnum á Íslandi.'
 
   return (
-    <Box id="main-content">
+    <Box id="main-content" style={{ overflow: 'hidden' }}>
       <Section
         aria-labelledby="openDataHeroTitle"
         background="blue100"
