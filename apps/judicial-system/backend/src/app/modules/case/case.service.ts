@@ -315,7 +315,10 @@ export class CaseService {
     this.logger.debug(
       `Getting the request for case ${existingCase.id} as a pdf document`,
     )
-    const intl = await this.intlService.useIntl(['judicial.system.test'], 'is')
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
     return getRequestPdfAsString(existingCase, intl.formatMessage)
   }
 
