@@ -74,9 +74,13 @@ const AuthDelegationQuery = gql`
     authDelegation(input: $input) {
       id
       type
-      toName
-      toNationalId
-      fromNationalId
+      to {
+        nationalId
+        name
+      }
+      from {
+        nationalId
+      }
       ... on AuthCustomDelegation {
         scopes {
           id
@@ -93,7 +97,9 @@ const UpdateAuthDelegationMutation = gql`
   mutation UpdateAuthDelegationMutation($input: UpdateAuthDelegationInput!) {
     updateAuthDelegation(input: $input) {
       id
-      fromNationalId
+      from {
+        nationalId
+      }
       ... on AuthCustomDelegation {
         scopes {
           id
@@ -201,7 +207,7 @@ function Access() {
   return (
     <Box>
       <IntroHeader
-        title={authDelegation?.toName || ''}
+        title={authDelegation?.to.name || ''}
         intro={defineMessage({
           id: 'service.portal.settings.accessControl:access-intro',
           defaultMessage:
