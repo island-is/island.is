@@ -7,27 +7,27 @@ export const m = defineMessages({
     defaultMessage: 'Skjalaveita',
   },
   documentProviders: {
-    id: 'sp.document-provider:document-provider-document-providers',
+    id: 'sp.document-provider:document-providers',
     defaultMessage: 'Skjalaveitur',
   },
   documentProviderSingle: {
-    id: 'sp.document-provider:document-provider-document-provider-single',
+    id: 'sp.document-provider:document-provider-single',
     defaultMessage: 'Skjalaveitandi',
   },
   MyCategories: {
-    id: 'sp.document-provider:document-provider-my-categories',
+    id: 'sp.document-provider:my-categories',
     defaultMessage: 'Mínir flokkar',
   },
   Settings: {
-    id: 'sp.document-provider:document-provider-settings',
+    id: 'sp.document-provider:settings',
     defaultMessage: 'Stillingar',
   },
   TechnicalInformation: {
-    id: 'sp.document-provider:document-provider-technical-information',
+    id: 'sp.document-provider:technical-information',
     defaultMessage: 'Tæknileg útfærsla',
   },
   Statistics: {
-    id: 'sp.document-provider:document-provider-statistics',
+    id: 'sp.document-provider:statistics',
     defaultMessage: 'Tölfræði',
   },
 
@@ -42,48 +42,43 @@ export const m = defineMessages({
     defaultMessage: 'Á þessari síðu getur þú skoðað tölfræði yfir send skjöl.',
   },
   DashBoardStatisticsFileName: {
-    id: 'sp.document-provider:document-provider-dashboard-statistics-file-name',
+    id: 'sp.document-provider:dashboard-statistics-file-name',
     defaultMessage: 'Leitaðu eftir skjalaheiti',
   },
   DashBoardStatisticsCategory: {
-    id: 'sp.document-provider:document-provider-dashboard-statistics-category',
+    id: 'sp.document-provider:dashboard-statistics-category',
     defaultMessage: 'Flokkur',
   },
   DashBoardStatisticsCategoryPlaceHolder: {
-    id:
-      'sp.document-provider:document-provider-dashboard-statistics-category-placeholder',
+    id: 'sp.document-provider:dashboard-statistics-category-placeholder',
     defaultMessage: 'Veldu flokk',
   },
   DashBoardStatisticsType: {
-    id: 'sp.document-provider:document-provider-dashboard-statistics-type',
+    id: 'sp.document-provider:dashboard-statistics-type',
     defaultMessage: 'Tegund',
   },
   DashBoardStatisticsTypePlaceHolder: {
-    id:
-      'sp.document-provider:document-provider-dashboard-statistics-type-placeholder',
+    id: 'sp.document-provider:dashboard-statistics-type-placeholder',
     defaultMessage: 'Veldu tegund',
   },
   DashBoardStatisticsDateFrom: {
-    id: 'sp.document-provider:document-provider-dashboard-statistics-date-from',
+    id: 'sp.document-provider:dashboard-statistics-date-from',
     defaultMessage: 'Dagsetning frá',
   },
   DashBoardStatisticsDateFromPlaceHolder: {
-    id:
-      'sp.document-provider:document-provider-dashboard-statistics-date-from-placeholder',
+    id: 'sp.document-provider:dashboard-statistics-date-from-placeholder',
     defaultMessage: 'Veldu dagsetningu',
   },
   DashBoardStatisticsDateTo: {
-    id: 'sp.document-provider:document-provider-dashboard-statistics-date-to',
+    id: 'sp.document-provider:dashboard-statistics-date-to',
     defaultMessage: 'Dagsetning til',
   },
   DashBoardStatisticsDateToPlaceHolder: {
-    id:
-      'sp.document-provider:document-provider-dashboard-statistics-date-to-placeholder',
+    id: 'sp.document-provider:dashboard-statistics-date-to-placeholder',
     defaultMessage: 'Veldu dagsetningu',
   },
   DashBoardStatisticsSearchButton: {
-    id:
-      'sp.document-provider:document-provider-dashboard-statistics-search-button',
+    id: 'sp.document-provider:dashboard-statistics-search-button',
     defaultMessage: 'Skoða tölfræði',
   },
 
