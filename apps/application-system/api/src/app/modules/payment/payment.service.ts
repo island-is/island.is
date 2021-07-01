@@ -64,7 +64,7 @@ export class PaymentService {
         },
       ],
       immediateProcess: true,
-      returnURL: callbackUrl,
+      returnUrl: callbackUrl,
     }
 
     const result = await this.paymentApi.createCharge(charge)
