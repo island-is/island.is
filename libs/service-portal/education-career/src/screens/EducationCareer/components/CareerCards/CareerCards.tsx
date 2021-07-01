@@ -11,7 +11,6 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import * as styles from './CareerCards.treat'
-import { defineMessage } from 'react-intl'
 import { useLocale } from '@island.is/localization'
 
 const EducationExamFamilyOverviewsQuery = gql`

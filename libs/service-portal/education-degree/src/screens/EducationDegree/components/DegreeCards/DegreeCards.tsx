@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { defineMessage } from 'react-intl'
 import { Box, Button } from '@island.is/island-ui/core'
 import { EducationCard, EmptyState, m } from '@island.is/service-portal/core'
 

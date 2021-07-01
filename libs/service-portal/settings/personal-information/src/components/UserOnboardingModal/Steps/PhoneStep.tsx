@@ -7,7 +7,6 @@ import {
   PhoneFormInternalStep,
 } from '../../Forms/PhoneForm/PhoneForm'
 import { PhoneFormData } from '../../Forms/PhoneForm/Steps/FormStep'
-import { defineMessage } from 'react-intl'
 
 interface Props {
   tel: string

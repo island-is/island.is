@@ -4,7 +4,6 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
 
 export const familyModule: ServicePortalModule = {
   name: 'Fjölskyldan',

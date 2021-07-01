@@ -7,7 +7,6 @@ import {
 } from '@island.is/service-portal/core'
 // import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
 // import * as Sentry from '@sentry/react'
-import { defineMessage } from 'react-intl'
 import { lazy } from 'react'
 
 export const financeModule: ServicePortalModule = {
