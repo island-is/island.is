@@ -14,8 +14,6 @@ import {
   Tag,
   Hidden,
 } from '@island.is/island-ui/core'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 import SvgLogin from '../../components/Login/svgLogin'
 import { LoginPageTexts } from '../../components/Login/LoginTexts.types'
 import { Screen } from '@island.is/web/types'
@@ -47,9 +45,6 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
     'Starfsleyfi kennara',
     'Samræmd könnunarpróf',
   ])
-
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
 
   const newListItemsArray = Array.isArray(newListItems) ? newListItems : []
   const oldListItemsArray = Array.isArray(oldListItems) ? oldListItems : []
@@ -83,7 +78,7 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                 <a
                   tabIndex={-1}
                   className={styles.btnLink}
-                  href={`/minarsidur${isMobile ? '/postholf' : ''}`}
+                  href="/minarsidur/postholf"
                 >
                   <Button as="span">
                     {n('nyjuSidurLink', 'Fara á nýju mínar síður')}
