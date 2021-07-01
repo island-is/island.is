@@ -211,10 +211,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Fjármál
       {
-        name: defineMessage({
-          id: 'service.portal:finance',
-          defaultMessage: 'Fjármál',
-        }),
+        name: m.finance,
         path: ServicePortalPath.FinanceRoot,
         systemRoute: true,
         icon: {
