@@ -33,7 +33,7 @@ const GetFinanceStatusQuery = gql`
   }
 `
 
-const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
+const FinanceStatus: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
 
@@ -124,12 +124,6 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                       onGetExcel={() =>
                         exportGreidslustadaFile(financeStatusData, 'xlsx')
                       }
-                      // onGetExcel={() =>
-                      //   downloadSheet({
-                      //     headers: greidsluStadaHeaders,
-                      //     data: exportGreidslustadaXSLX(financeStatusData),
-                      //   })
-                      // }
                     />
                   </Column>
                 </Columns>
@@ -151,7 +145,6 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                             chargeType={chargeType}
                             organization={org}
                             key={`${org.id}-${chargeType.id}`}
-                            // token={userInfo.access_token}
                           />
                         )),
                     )}

@@ -14,13 +14,11 @@ import * as styles from './FinanceStatusDetailTable.treat'
 interface Props {
   organization: FinanceStatusOrganizationType
   financeStatusDetails: FinanceStatusDetailsType
-  token?: string
 }
 
 const FinanceStatusDetailTable: FC<Props> = ({
   organization,
   financeStatusDetails,
-  token,
 }) => {
   const { formatMessage } = useLocale()
   return (

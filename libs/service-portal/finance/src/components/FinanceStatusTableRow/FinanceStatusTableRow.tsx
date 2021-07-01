@@ -8,7 +8,6 @@ import {
 import FinanceStatusDetailTable from '../../components/FinanceStatusDetailTable/FinanceStatusDetailTable'
 import { ExpandRow } from '../../components/ExpandableTable'
 import amountFormat from '../../utils/amountFormat'
-import { defaultProps } from 'react-select/src/Select'
 
 const GetFinanceStatusDetailsQuery = gql`
   query GetFinanceStatusDetailsQuery($input: GetFinancialOverviewInput!) {
@@ -19,14 +18,9 @@ const GetFinanceStatusDetailsQuery = gql`
 interface Props {
   organization: FinanceStatusOrganizationType
   chargeType: FinanceStatusOrganizationChargeType
-  token?: string
 }
 
-const FinanceStatusTableRow: FC<Props> = ({
-  organization,
-  chargeType,
-  token,
-}) => {
+const FinanceStatusTableRow: FC<Props> = ({ organization, chargeType }) => {
   const [getDetailsQuery, { loading, error, ...detailsQuery }] = useLazyQuery(
     GetFinanceStatusDetailsQuery,
   )
@@ -58,7 +52,6 @@ const FinanceStatusTableRow: FC<Props> = ({
         <FinanceStatusDetailTable
           organization={organization}
           financeStatusDetails={financeStatusDetails}
-          // token={token}
         />
       ) : null}
     </ExpandRow>
