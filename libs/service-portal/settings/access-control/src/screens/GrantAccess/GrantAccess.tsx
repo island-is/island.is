@@ -24,19 +24,19 @@ const CreateAuthDelegationMutation = gql`
   mutation CreateAuthDelegationMutation($input: CreateAuthDelegationInput!) {
     createAuthDelegation(input: $input) {
       id
-      toName
-      toNationalId
+      to {
+        nationalId
+      }
     }
   }
 `
 
-const AuthDelegationQuery = gql`
-  query AuthDelegationQuery($input: AuthDelegationInput!) {
-    authDelegation(input: $input) {
-      id
+const IdentityQuery = gql`
+  query IdentityQuery($input: IdentityInput!) {
+    identity(input: $input) {
+      nationalId
       type
-      toNationalId
-      toName
+      name
     }
   }
 `
@@ -49,8 +49,8 @@ function GrantAccess() {
       refetchQueries: [{ query: AuthDelegationsQuery }],
     },
   )
-  const [getDelegation, { data }] = useLazyQuery<Query>(AuthDelegationQuery)
-  const { authDelegation } = data || {}
+  const [getIdentity, { data }] = useLazyQuery<Query>(IdentityQuery)
+  const { identity } = data || {}
   const { formatMessage } = useLocale()
   const history = useHistory()
 
@@ -59,15 +59,20 @@ function GrantAccess() {
   ) => {
     const value = e.target.value
     if (value.length === 10 && kennitala.isValid(value)) {
-      getDelegation({ variables: { input: { toNationalId: value } } })
+      getIdentity({ variables: { input: { nationalId: value } } })
+      if (identity?.nationalId === value) {
+        setValue('name', identity.name)
+      }
+    } else {
+      setValue('name', '')
     }
   }
 
   useEffect(() => {
-    if (authDelegation) {
-      setValue('name', authDelegation.toName)
+    if (identity) {
+      setValue('name', identity.name)
     }
-  }, [authDelegation, setValue])
+  }, [identity, setValue])
 
   const onSubmit = handleSubmit(async ({ toNationalId, name }) => {
     try {
@@ -76,7 +81,7 @@ function GrantAccess() {
       })
       if (data) {
         history.push(
-          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.toNationalId}`,
+          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.to.nationalId}`,
         )
       }
     } catch (error) {
@@ -143,6 +148,7 @@ function GrantAccess() {
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
+                  type="number"
                   label={formatMessage({
                     id: 'global:nationalId',
                     defaultMessage: 'Kennitala',
