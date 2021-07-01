@@ -1,20 +1,35 @@
+import { dynamicColor, LicenceCard } from '@island.is/island-ui-native'
 import React from 'react'
-import { View, Text } from 'react-native'
+import { useIntl } from 'react-intl'
+import { Text, View } from 'react-native'
 import {
   Navigation,
-  NavigationFunctionComponent,
+  NavigationFunctionComponent
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
-import { StackRegistry } from '../../utils/component-registry'
-import { LicenceCard } from '@island.is/island-ui-native'
-import { LicenseStatus, LicenseType } from '../../types/license-type'
+import styled from 'styled-components/native'
 import rskLogo from '../../assets/temp/agency-logo.png'
-import { useIntl } from 'react-intl'
+import { LicenseStatus, LicenseType } from '../../types/license-type'
+import { StackRegistry } from '../../utils/component-registry'
+
+const DetailText = styled.Text`
+  margin-top: 32px;
+  font-size: 16px;
+  text-align: center;
+  color: ${dynamicColor('foreground')};
+`
+
+const LicenseNumber = styled.Text`
+  margin-top: 8px;
+  font-size: 32px;
+  text-align: center;
+  color: ${dynamicColor('foreground')};
+`
 
 export const LicenseScanDetailScreen: NavigationFunctionComponent<{
   data: string
 }> = ({ componentId, data }) => {
-  const intl = useIntl();
+  const intl = useIntl()
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === 'LICENSE_SCANNER_DONE') {
       Navigation.dismissModal(StackRegistry.LicenseScannerStack)
@@ -31,28 +46,18 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<{
     <View style={{ flex: 1, padding: 16 }}>
       <LicenceCard
         title=""
-        status={driverLicenseNumber ? LicenseStatus.VALID : LicenseStatus.NOT_VALID}
+        status={
+          driverLicenseNumber ? LicenseStatus.VALID : LicenseStatus.NOT_VALID
+        }
         type={LicenseType.DRIVERS_LICENSE}
         agencyLogo={rskLogo}
       />
-      <Text
-        style={{
-          marginTop: 32,
-          fontSize: 16,
-          textAlign: 'center',
-        }}
-      >
+      <DetailText>
         {intl.formatMessage({ id: 'licenseScannerDetail.driverLicenseNumber' })}
-      </Text>
-      <Text
-        style={{
-          marginTop: 8,
-          fontSize: 32,
-          textAlign: 'center',
-        }}
-      >
+        </DetailText>
+      <LicenseNumber>
         {driverLicenseNumber ?? 'N/A'}
-      </Text>
+      </LicenseNumber>
     </View>
   )
 }
