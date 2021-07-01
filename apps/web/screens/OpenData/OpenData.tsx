@@ -144,7 +144,7 @@ const OpenDataPage: Screen = () => {
       >
         <GridContainer>
           <GridRow>
-            <GridColumn span="5/12">
+            <GridColumn span={["12/12", "5/12", "5/12"]} paddingBottom={2}>
               <Box marginBottom={3}>
                 <Breadcrumbs
                   items={[
@@ -187,7 +187,7 @@ const OpenDataPage: Screen = () => {
                 </Link>
               </Box>
             </GridColumn>
-            <GridColumn span="7/12">
+            <GridColumn span={["12/12", "7/12", "7/12"]}>
               <SimpleLineChart />
             </GridColumn>
           </GridRow>
@@ -201,22 +201,16 @@ const OpenDataPage: Screen = () => {
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12">
-              {/* <Box paddingBottom={4}>
-                <Inline space={2}>
-                  <Logo width={24} iconOnly />
-                  <Text variant="h3">Stofnanir</Text>
-                </Inline>
-              </Box> */}
               <SectionTitle title="Stofnanir" icon="business"/>
             </GridColumn>
           </GridRow>
           <GridRow>
-            <GridColumn span="4/12">
+            <GridColumn span={["12/12", "4/12","4/12"]}>
               <ChartsCard title="Rannís" description="Þjónustuaðili">
                 <SimplePieChart />
               </ChartsCard>
             </GridColumn>
-            <GridColumn span="8/12">
+            <GridColumn span={["12/12", "8/12","8/12"]}>
               <ChartsCard
                 title="Rannís"
                 description="Þjónustuaðili"

@@ -65,7 +65,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({
         </Box>
       </Box>
       {subTitle && 
-        <Box paddingLeft={15} paddingTop={4} style={{ width: '100%', height: '100px' }}>
+        <Box paddingLeft={[2, 15, 15]} padding={[2, 4, 4]} style={{ width: '100%', height: '100px' }}>
           <Text variant="h4">{subTitle}</Text>
         </Box>
       }
