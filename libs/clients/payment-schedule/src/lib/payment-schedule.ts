@@ -3,9 +3,14 @@ import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import { Base64 } from 'js-base64'
 import {
+  Conditions,
   ConditionsResponse,
+  DebtSchedules,
+  DebtSchedulesResponse,
+  Employer,
   PaymentScheduleServiceOptions,
   PAYMENT_SCHEDULE_OPTIONS,
+  WageDeductionResponse,
 } from './payment-schedule.type'
 
 export class PaymentScheduleAPI extends RESTDataSource {
@@ -30,11 +35,26 @@ export class PaymentScheduleAPI extends RESTDataSource {
     )
   }
 
-  async getConditions(nationalId: string): Promise<ConditionsResponse> {
+  async getConditions(nationalId: string): Promise<Conditions> {
     const response = await this.get<ConditionsResponse>(
       `conditions/${nationalId}`,
     )
+
+    return response.conditions
+  }
+
+  async getDebts(nationalId: string): Promise<DebtSchedules[]> {
+    const response = await this.get<DebtSchedulesResponse>(
+      `debtsandschedules/${nationalId}`,
+    )
     console.log(response)
-    return response
+    return response.deptAndSchedules
+  }
+
+  async getCurrentEmployer(nationalId: string): Promise<Employer> {
+    const response = await this.get<WageDeductionResponse>(
+      `wagesdeduction/${nationalId}`,
+    )
+    return response.wagesDeduction
   }
 }

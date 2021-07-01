@@ -52,7 +52,7 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
       {/* TODO: Handle null values? */}
       <InfoBox
         title={`${
-          externalData.paymentPlanPrerequisites?.data.minimumPayment.toLocaleString(
+          externalData.paymentPlanPrerequisites?.data.minPayment.toLocaleString(
             'is-IS',
           ) || 0
         } kr.`}

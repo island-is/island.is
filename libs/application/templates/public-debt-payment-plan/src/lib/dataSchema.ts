@@ -1,10 +1,12 @@
 import { SuccessfulDataProviderResult } from '@island.is/application/core'
 import * as z from 'zod'
-import { Payment, Prerequisites } from '../dataProviders/tempAPITypes'
+import { Payment } from '../dataProviders/tempAPITypes'
+
+import { PaymentScheduleConditions } from '@island.is/api/schema'
 import { NO, YES } from '../shared/constants'
 
 interface PrerequisitesResult extends SuccessfulDataProviderResult {
-  data: Prerequisites
+  data: PaymentScheduleConditions
 }
 
 interface UserProfileResult extends SuccessfulDataProviderResult {

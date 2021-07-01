@@ -1,20 +1,20 @@
 import { ExternalData } from '@island.is/application/core'
-import { Prerequisites } from '../dataProviders/tempAPITypes'
+import { PaymentScheduleConditions } from '@island.is/api/schema'
 
 export const prerequisitesFailed = (data: ExternalData) => {
   const prerequisites = data.paymentPlanPrerequisites?.data as
-    | Prerequisites
+    | PaymentScheduleConditions
     | undefined
 
   if (!prerequisites) return true
 
   return (
-    !prerequisites.maxDebtOk ||
-    !prerequisites.taxReturnsOk ||
-    !prerequisites.vatOk ||
-    !prerequisites.citOk ||
-    !prerequisites.accommodationTaxOk ||
-    !prerequisites.withholdingTaxOk ||
-    !prerequisites.wageReturnsOk
+    !prerequisites.maxDebt ||
+    !prerequisites.taxReturns ||
+    !prerequisites.vatReturns ||
+    !prerequisites.citReturns ||
+    !prerequisites.accommodationTaxReturns ||
+    !prerequisites.withholdingTaxReturns ||
+    !prerequisites.wageReturns
   )
 }

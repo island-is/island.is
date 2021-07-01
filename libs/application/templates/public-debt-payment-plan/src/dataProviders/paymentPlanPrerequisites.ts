@@ -3,42 +3,56 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { Prerequisites } from './tempAPITypes'
+import { PaymentScheduleConditions } from '@island.is/api/schema'
 
-const createPrerequisitesResponse = (): Prerequisites => {
-  return {
-    maxDebt: 2000000,
-    totalDebt: 500000,
-    disposableIncome: 300000,
-    alimony: 0,
-    minimumPayment: 30000,
-    maxDebtOk: true,
-    maxDebtText: 'Max debt was not OK :(',
-    taxesOk: true,
-    taxesText: 'Taxes was not OK :(',
-    taxReturnsOk: true,
-    taxReturnsText: 'Tax returns was not OK :(',
-    vatOk: true,
-    vatText: 'VAT was not OK :(',
-    citOk: true,
-    citText: 'CIT was not OK :(',
-    accommodationTaxOk: true,
-    accommodationTaxText: 'Accommodation tax was not OK :(',
-    withholdingTaxOk: true,
-    withholdingTaxText: 'Witholding tax was not OK :(',
-    wageReturnsOk: true,
-    wageReturnsText: 'Wage returns was not OK :(',
+export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
+  type = 'PaymentPlanPrerequisitesProvider'
+  provide(): Promise<PaymentScheduleConditions> {
+    const query = `
+    query PaymentScheduleConditions {
+        paymentScheduleConditions {
+          nationalId
+          maxDebtAmount
+          maxDebtAmount
+          totalDebtAmount
+          minPayment
+          maxPayment
+          collectionActions
+          doNotOwe
+          maxDebt
+          oweTaxes
+          disposableIncome
+          taxReturns
+          vatReturns
+          citReturns
+          accommodationTaxReturns
+          withholdingTaxReturns
+          wageReturns
+          alimony
+      }
+    }
+  `
+
+    return this.useGraphqlGateway(query).then(async (res: Response) => {
+      if (!res.ok) {
+        console.error('failed http request', { res })
+        return Promise.reject({ reason: 'Náði ekki sambandi við vefþjónustu' })
+      }
+
+      const response = await res.json()
+
+      if (response.errors) {
+        console.error('response errors', { response })
+        return Promise.reject({ reason: 'Ekki tókst að sækja gögn' })
+      }
+
+      return Promise.resolve(response)
+    })
   }
-}
 
-// TODO: connect to API
-export class PaymentPlanPrerequisites extends BasicDataProvider {
-  type = 'PaymentPlanPrerequisites'
-  provide(): Promise<Prerequisites> {
-    return Promise.resolve(createPrerequisitesResponse())
-  }
-
-  onProvideSuccess(prerequisites: Prerequisites): SuccessfulDataProviderResult {
+  onProvideSuccess(
+    prerequisites: PaymentScheduleConditions,
+  ): SuccessfulDataProviderResult {
     return {
       date: new Date(),
       data: prerequisites,

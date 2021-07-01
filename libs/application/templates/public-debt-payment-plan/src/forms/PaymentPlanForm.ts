@@ -10,10 +10,10 @@ import {
   buildMultiField,
   buildTextField,
   buildRadioField,
-  buildRepeater,
   CustomField,
 } from '@island.is/application/core'
-import { Prerequisites } from '../dataProviders/tempAPITypes'
+
+import { PaymentScheduleConditions } from '@island.is/api/schema'
 import {
   PaymentPlanExternalData,
   paymentPlanIndexKeyMapper,
@@ -94,7 +94,7 @@ export const PaymentPlanForm: Form = buildForm({
             buildDataProviderItem({
               id: 'paymentPlanPrerequisites',
               title: externalData.labels.paymentPlanTitle,
-              type: 'PaymentPlanPrerequisites',
+              type: 'PaymentPlanPrerequisitesProvider',
               subTitle: externalData.labels.paymentPlanSubtitle,
             }),
             buildDataProviderItem({
@@ -216,9 +216,9 @@ export const PaymentPlanForm: Form = buildForm({
       title: section.employer,
       condition: (_formValue, externalData) => {
         const prerequisites = externalData.paymentPlanPrerequisites?.data as
-          | Prerequisites
+          | PaymentScheduleConditions
           | undefined
-        return prerequisites?.taxesOk || false
+        return prerequisites?.taxReturns || false
       },
       children: [
         buildMultiField({
