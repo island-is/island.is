@@ -26,7 +26,6 @@ const dataKeysName = {
 const CustomizedAxisTick = (props) => {
   const { x, y, className, payload } = props
   const xAxis = className.includes("xAxis")
-  console.log(xAxis)
   return (
       <g transform={`translate(${x},${y})`}>
         <text x={xAxis ? 16 : -17} y={xAxis ? 20 : -10} dy={16} textAnchor="end" fill="#00003C">
@@ -113,7 +112,7 @@ export const SimpleLineChart = () => {
           padding={{ left: 30 }}
           tickLine={false}
         />
-        <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} tickLine={false}/>
+        <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />}/>
         <Tooltip />
         <Legend iconType="circle" content={renderLegend} />
         {dataKeys.map((datakey, index) => (

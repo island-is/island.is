@@ -94,14 +94,14 @@ const renderCustomizedLabel = ({
 export const SimplePieChart = () => {
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <PieChart width={400} height={400}>
+      <PieChart width={10} height={10}>
         <Pie
           dataKey="count"
           isAnimationActive={true}
           data={data}
           cx="50%"
           cy="50%"
-          outerRadius={80}
+          outerRadius={136}
           fill="#8884d8"
           label={renderCustomizedLabel}
           labelLine={false}

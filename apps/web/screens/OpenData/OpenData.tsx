@@ -204,7 +204,7 @@ const OpenDataPage: Screen = () => {
               </ChartsCard>
             </GridColumn>
             <GridColumn span="8/12">
-              <ChartsCard title="Rannís" description="Þjónustuaðili">
+              <ChartsCard title="Rannís" description="Þjónustuaðili" subTitle="Fjöldi sóttra og veittra styrkja seinustu tíu árin og heildarupphæð úthlutuna">
                 <MixedChart />
               </ChartsCard>
             </GridColumn>

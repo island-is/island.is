@@ -11,7 +11,6 @@ export const card = style({
   textDecoration: 'none',
   position: 'relative',
   ':hover': {
-    borderColor: theme.color.purple400,
     textDecoration: 'none',
   },
 })

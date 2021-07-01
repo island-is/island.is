@@ -89,7 +89,6 @@ const dataKeysName = {
 const CustomizedAxisTick = (props) => {
   const { x, y, className, payload } = props
   const xAxis = className.includes("xAxis")
-  console.log(xAxis)
   return (
       <g transform={`translate(${x},${y})`}>
         <text x={xAxis ? 16 : -17} y={xAxis ? 20 : -10} dy={16} textAnchor="end" fill="#00003C">
@@ -103,7 +102,7 @@ const renderLegend = (props) => {
   const { payload } = props
 
   return (
-    <ul style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '20px' }}>
+    <ul style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '37px' }}>
       {payload.map((entry, index) => (
         <li
           style={{
@@ -159,7 +158,7 @@ export const MixedChart = () => {
           padding={{ left: 30 }}
           tickLine={false}
         />
-        <YAxis yAxisId="left" stroke="#CCDFFF" tick={<CustomizedAxisTick />} tickLine={false}/>
+        <YAxis yAxisId="left" stroke="#CCDFFF" tick={<CustomizedAxisTick />}/>
         <YAxis yAxisId="right" hide />
         <Tooltip />
         <Legend iconType="circle" align="right" content={renderLegend} />
