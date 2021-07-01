@@ -87,11 +87,7 @@ export class DelegationsService {
 
       const resultPromises = distinct.map(async (nationalId) =>
         this.personApi
-          .withMiddleware(
-            new AuthMiddleware(auth, {
-              forwardUserInfo: authMiddlewareOptions.forwardUserInfo,
-            }),
-          )
+          .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
           .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
             id: nationalId,
             xRoadClient: xRoadClient,
