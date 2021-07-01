@@ -308,7 +308,7 @@ function Access() {
             </Inline>
           </Box>
 
-          <T.Table>
+          <T.Table className={styles.table}>
             <T.Head>
               <T.Row>
                 <T.HeadData>

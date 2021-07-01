@@ -19,11 +19,13 @@ type DataField = {
 type Table = {
   children?: ReactNode
   box?: Omit<UseBoxStylesProps, 'component'>
+  className?: string
 }
 
 export const Table = ({
   children,
   box,
+  className,
   ...props
 }: Table & Omit<AllHTMLAttributes<HTMLTableElement>, 'className'>) => {
   return (
@@ -38,6 +40,7 @@ export const Table = ({
             width: 'full',
           }),
           styles.table,
+          className,
         )}
         {...props}
       >

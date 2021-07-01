@@ -28,3 +28,8 @@ export const closeButton = style({
   right: theme.spacing['1'],
   zIndex: 2,
 })
+
+export const table = style({
+  marginBottom: '200px',
+  overflow: 'unset',
+})
