@@ -136,6 +136,8 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           <Stepper
             stepper={projectPage.stepper}
             startAgainLabel={n('stepperStartAgain', 'Byrja upp á nýtt')}
+            answerLabel={n('stepperAnswer', 'Niðurstaða byggð á þínum svörum')}
+            backLabel={n('stepperBack', 'Til baka')}
           />
         )}
         {(subpage ?? projectPage).slices.map((slice) => (
