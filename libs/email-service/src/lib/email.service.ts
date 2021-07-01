@@ -89,7 +89,7 @@ export class EmailService {
         } = await this.adapterService.buildCustomTemplate(message.template)
 
         message.html = html
-        message.attachments = attachments
+        message.attachments = (message.attachments ?? []).concat(attachments)
       }
 
       const info = await transporter.sendMail(message)
