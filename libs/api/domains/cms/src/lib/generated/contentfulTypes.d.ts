@@ -2370,6 +2370,9 @@ export interface IProjectPageFields {
   /** Content */
   content?: Document | undefined
 
+  /** Stepper */
+  stepper?: IStepper | undefined
+
   /** Slices */
   slices?:
     | (
@@ -2666,6 +2669,72 @@ export interface IStatistics extends Entry<IStatisticsFields> {
     contentType: {
       sys: {
         id: 'statistics'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IStepFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Subtitle */
+  subtitle?: Document | undefined
+
+  /** Text */
+  text?: Document | undefined
+
+  /** Is Answer */
+  isAnswer?: boolean | undefined
+
+  /** Options */
+  options?: Record<string, any> | undefined
+}
+
+/** Step for stepper */
+
+export interface IStep extends Entry<IStepFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'step'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IStepperFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Steps */
+  steps?: IStep[] | undefined
+}
+
+/** Used for asking users questions and returning an answer. */
+
+export interface IStepper extends Entry<IStepperFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'stepper'
         linkType: 'ContentType'
         type: 'Link'
       }
