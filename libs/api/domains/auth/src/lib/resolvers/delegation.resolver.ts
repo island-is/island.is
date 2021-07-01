@@ -10,6 +10,7 @@ import {
 import { UseGuards } from '@nestjs/common'
 
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import { Identity, IdentityService } from '@island.is/api/domains/identity'
 import type { User } from '@island.is/auth-nest-tools'
 import type { DelegationDTO } from '@island.is/clients/auth-public-api'
 
@@ -38,7 +39,10 @@ const ignore404 = (e: Response) => {
 @Resolver(() => LegalGuardianDelegation)
 @Resolver(() => ProcuringHolderDelegation)
 export class DelegationResolver {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private identityService: IdentityService,
+  ) {}
 
   @Query(() => [Delegation], { name: 'authActorDelegations' })
   getActorDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
@@ -107,5 +111,15 @@ export class DelegationResolver {
   @ResolveField('id', () => ID)
   resolveId(@Parent() delegation: DelegationDTO): string {
     return `${delegation.fromNationalId}-${delegation.toNationalId}`
+  }
+
+  @ResolveField('to', () => Identity)
+  resolveTo(@Parent() delegation: DelegationDTO): Promise<Identity | null> {
+    return this.identityService.getIdentity(delegation.toNationalId)
+  }
+
+  @ResolveField('from', () => Identity)
+  resolveFrom(@Parent() delegation: DelegationDTO): Promise<Identity | null> {
+    return this.identityService.getIdentity(delegation.fromNationalId)
   }
 }
