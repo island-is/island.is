@@ -11,9 +11,7 @@ import { Identity } from './models'
 
 @Injectable()
 export class IdentityService {
-  constructor(
-    private nationalRegistryService: NationalRegistryService,
-  ) {}
+  constructor(private nationalRegistryService: NationalRegistryService) {}
 
   async getIdentity(nationalId: string): Promise<Identity | null> {
     if (kennitala.isCompany(nationalId)) {
