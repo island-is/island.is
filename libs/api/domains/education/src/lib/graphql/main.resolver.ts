@@ -87,7 +87,7 @@ export class MainResolver {
   ): Promise<ExamResult> {
     const family = await this.educationService.getFamily(user.nationalId)
     const familyMember = family.find(
-      (familyMember) => familyMember.Kennitala === nationalId,
+      (familyMember) => familyMember.nationalId === nationalId,
     )
     if (!familyMember) {
       throw new ApolloError('The requested nationalId is not a part of family')

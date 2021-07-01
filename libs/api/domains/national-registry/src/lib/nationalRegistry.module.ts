@@ -1,18 +1,18 @@
-import { DynamicModule } from '@nestjs/common'
+import { DynamicModule, Module } from '@nestjs/common'
 
-import { FamilyMemberResolver, UserResolver } from './graphql'
-import { NationalRegistryService } from './nationalRegistry.service'
+import { Register } from '@island.is/infra-nest-server'
 import {
   NationalRegistryApi,
   NationalRegistryConfig,
 } from '@island.is/clients/national-registry-v1'
+import { FamilyMemberResolver, UserResolver } from './graphql'
+import { NationalRegistryService } from './nationalRegistry.service'
 
-export interface Config {
-  nationalRegistry: NationalRegistryConfig
-}
+export type Config = NationalRegistryConfig
 
+@Module({})
 export class NationalRegistryModule {
-  static register(config: Config): DynamicModule {
+  static register({config}: Register<Config, []>): DynamicModule {
     return {
       module: NationalRegistryModule,
       providers: [
@@ -22,7 +22,7 @@ export class NationalRegistryModule {
         {
           provide: NationalRegistryApi,
           useFactory: async () =>
-            NationalRegistryApi.instanciateClass(config.nationalRegistry),
+            NationalRegistryApi.instanciateClass(config!),
         },
       ],
       exports: [NationalRegistryService],

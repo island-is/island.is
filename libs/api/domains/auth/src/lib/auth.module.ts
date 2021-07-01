@@ -1,5 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common'
 
+import { Register } from '@island.is/infra-nest-server'
 import {
   AuthPublicApiClientModule,
   AuthPublicApiClientModuleConfig,
@@ -18,7 +19,6 @@ import { AuthService } from './auth.service'
 
 export type Config = {
   authPublicApi: AuthPublicApiClientModuleConfig
-  identity: IdentityConfig
 }
 
 @Module({
@@ -30,12 +30,12 @@ export type Config = {
   ],
 })
 export class AuthModule {
-  static register(config: Config): DynamicModule {
+  static register({config, modules}: Register<Config, [typeof IdentityModule]>): DynamicModule {
     return {
       module: AuthModule,
       imports: [
-        AuthPublicApiClientModule.register(config.authPublicApi),
-        IdentityModule.register(config.identity),
+        AuthPublicApiClientModule.register(config!.authPublicApi),
+        ...modules!,
       ],
     }
   }

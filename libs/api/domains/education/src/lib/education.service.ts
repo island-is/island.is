@@ -12,10 +12,7 @@ import {
   BaseGrade,
   GradeResult,
 } from '@island.is/clients/mms'
-import {
-  NationalRegistryApi,
-  ISLFjolskyldan,
-} from '@island.is/clients/national-registry-v1'
+import { NationalRegistryService, FamilyMember } from '@island.is/api/domains/national-registry'
 
 import type { Config } from './education.module'
 import {
@@ -35,7 +32,7 @@ export class EducationService {
     private readonly s3Service: S3Service,
     @Inject('CONFIG')
     private readonly config: Config,
-    private readonly nationalRegistryApi: NationalRegistryApi,
+    private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
   async getLicenses(
@@ -67,12 +64,12 @@ export class EducationService {
   }
 
   async getFamily(nationalId: string) {
-    const family = await this.nationalRegistryApi.getMyFamily(nationalId)
+    const family = await this.nationalRegistryService.getFamily(nationalId)
     return family.filter(
       (familyMember) =>
-        nationalId === familyMember.Kennitala ||
-        (!['1', '2', '7'].includes(familyMember.Kyn) &&
-          kennitala.info(familyMember.Kennitala).age < ADULT_AGE_LIMIT),
+        nationalId === familyMember.nationalId ||
+        (!['1', '2', '7'].includes(familyMember.gender) &&
+          kennitala.info(familyMember.nationalId).age < ADULT_AGE_LIMIT),
     )
   }
 
@@ -83,7 +80,7 @@ export class EducationService {
     const examFamilyOverviews = await Promise.all(
       family.map(async (familyMember) => {
         const studentAssessment = await this.mmsApi.getStudentAssessment(
-          familyMember.Kennitala,
+          familyMember.nationalId,
         )
         if (
           studentAssessment.einkunnir &&
@@ -101,9 +98,9 @@ export class EducationService {
         ).filter(Boolean) as string[]
 
         return {
-          nationalId: familyMember.Kennitala,
-          name: familyMember.Nafn,
-          isChild: nationalId !== familyMember.Kennitala,
+          nationalId: familyMember.nationalId,
+          name: familyMember.fullName,
+          isChild: nationalId !== familyMember.nationalId,
           organizationType: 'Menntamálastofnun',
           organizationName: 'Samræmd Könnunarpróf',
           yearInterval: getYearInterval(examDates),
@@ -149,13 +146,13 @@ export class EducationService {
     }
   }
 
-  async getExamResult(familyMember: ISLFjolskyldan): Promise<ExamResult> {
+  async getExamResult(familyMember: FamilyMember): Promise<ExamResult> {
     const studentAssessment = await this.mmsApi.getStudentAssessment(
-      familyMember.Kennitala,
+      familyMember.nationalId,
     )
     return {
-      id: `EducationExamResult${familyMember.Kennitala}`,
-      fullName: familyMember.Nafn,
+      id: `EducationExamResult${familyMember.fullName}`,
+      fullName: familyMember.fullName,
       grades: studentAssessment.einkunnir.map((einkunn) => ({
         studentYear: einkunn.bekkur,
         icelandicGrade:
