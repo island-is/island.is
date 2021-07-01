@@ -168,6 +168,6 @@ module.exports = {
     '<rootDir>/libs/api/domains/license-service',
     '<rootDir>/libs/service-portal/licenses',
     '<rootDir>/libs/api/domains/identity',
-    '<rootDir>/libs/shared/utils',
+    '<rootDir>/libs/service-portal/wip',
   ],
 }

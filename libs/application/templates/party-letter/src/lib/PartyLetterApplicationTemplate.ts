@@ -27,6 +27,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
   type: ApplicationTypes.PARTY_LETTER,
   name: 'Listabókstafur',
   dataSchema: PartyLetterSchema,
+  readyForProduction: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
