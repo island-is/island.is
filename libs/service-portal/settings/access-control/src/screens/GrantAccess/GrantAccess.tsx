@@ -167,19 +167,10 @@ function GrantAccess() {
               control={control}
               name="name"
               defaultValue=""
-              rules={{
-                required: {
-                  value: true,
-                  message: formatMessage({
-                    id:
-                      'service.portal.settings.accessControl:grant-required-name',
-                    defaultMessage: 'Skylda er að fylla út aðgangshafa',
-                  }),
-                },
-              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
+                  readOnly={true}
                   label={formatMessage({
                     id:
                       'service.portal.settings.accessControl:grant-label-user',
