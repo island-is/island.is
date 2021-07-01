@@ -23,6 +23,10 @@ export class AuthService {
     return await res.json()
   }
 
+  async findAddress(nationalId: string) {
+    // get user address through xroad and registers iceland api
+  }
+
   fakeUser(nationalId: string) {
     const fakeUsers: { [key: string]: User } = {
       '0000000000': {
