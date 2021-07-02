@@ -47,6 +47,38 @@ class MockPaymentApi {
   }
 }
 
+class MockPaymentService {
+  async findApplicationById() {
+    return {
+      typeId: 'DrivingLicense'
+    }
+  }
+
+  async searchCorrectCatalog() {
+    return {  
+      performingOrgID: '6509142520',
+      chargeType: 'AY1',
+      chargeItemCode: 'AY110',
+      chargeItemName: 'Ökuskírteini',
+      priceAmount: 8000,
+    }
+  }
+
+  async createCharge() {
+    return {
+      user4: 'amazing-user4-code-for-url',
+      receptionID: '96b5333b-6666-9999-1111-e8feb01d3dcd',
+      paymentUrl: 'www.nice-url.island.is'
+    }
+  }
+
+  async findPaymentByApplicationId() {
+    return {
+      fulfilled: true
+    }
+  }
+}
+
 const nationalId = '1234564321'
 let server: request.SuperTest<request.Test>
 
@@ -63,6 +95,8 @@ beforeAll(async () => {
             scope: [ApplicationScope.read, ApplicationScope.write],
           }),
         )
+        .overrideProvider(PaymentService)
+        .useClass(MockPaymentService)
         .compile()
     },
   })
