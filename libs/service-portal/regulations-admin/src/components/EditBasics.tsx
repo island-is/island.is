@@ -5,6 +5,7 @@ import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { RegulationDraft } from '../types-api'
 import { HTMLText } from '@hugsmidjan/regulations-editor/types'
+import { RegDraftForm } from '../state/useDraftingState'
 
 type WrapProps = {
   legend?: string
@@ -28,25 +29,25 @@ const Wrap = (props: WrapProps) => (
 )
 
 export type EditBasicsProps = {
-  draft: RegulationDraft
+  draft: RegDraftForm
 }
 
 export const EditBasics = (props: EditBasicsProps) => {
   const t = useIntl().formatMessage
   const { draft } = props
-  const textRef = useRef(() => draft.text)
+  const textRef = useRef(() => draft.text.value)
 
   return (
     <>
       <Wrap>
-        <Input label={t(msg.title)} name="title" value={draft.title} />
+        <Input label={t(msg.title)} name="title" value={draft.title.value} />
       </Wrap>
 
       <Wrap>
         <EditorInput
           label={t(msg.text)}
           baseText={'' as HTMLText}
-          initialText={draft.text}
+          initialText={draft.text.value}
           isImpact={false}
           draftId={draft.id}
           valueRef={textRef}

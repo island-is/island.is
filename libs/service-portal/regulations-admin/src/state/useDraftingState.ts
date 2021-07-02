@@ -1,14 +1,23 @@
 import { useQuery } from '@apollo/client'
-import { HTMLText } from '@hugsmidjan/regulations-editor/types'
+import { HTMLText, PlainText, RegName } from '@island.is/regulations'
 import { Query } from '@island.is/api/schema'
 import { AuthContextType, useAuth } from '@island.is/auth/react'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { Reducer, useEffect, useReducer, useState } from 'react'
-import { produce, current, setAutoFreeze } from 'immer'
+import { Reducer, useEffect, useReducer } from 'react'
+import { produce, setAutoFreeze } from 'immer'
 import { useHistory, generatePath } from 'react-router-dom'
-import { Step } from '../types'
-import { RegulationDraft, DraftRegulationCancel } from '../types-api'
-import { RegulationDraftId } from '../types-database'
+import { DraftingStatus, RegulationType, Step } from '../types'
+import {
+  RegulationDraft,
+  DraftRegulationCancel,
+  DraftRegulationChange,
+} from '../types-api'
+import {
+  AuthorId,
+  LawChapterId,
+  MinistryId,
+  RegulationDraftId,
+} from '../types-database'
 import { mockDraftRegulations, useMockQuery, mockSave } from '../_mockData'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
 
@@ -38,38 +47,126 @@ export const steps: Record<Step, StepNav> = {
 
 // ---------------------------------------------------------------------------
 
-type Validation = {
+type DraftFieldExtras = {
+  min: Date
+  max: Date
+}
+
+type DraftField<Type, Extras extends keyof DraftFieldExtras = never> = {
+  value: Type
   dirty?: boolean
   error?: string
-}
-type DraftValidation = Record<
-  Exclude<
-    keyof RegulationDraft,
-    'draftingStatus' | 'draftingNotes' | 'id' | 'authors' | 'name'
-  >,
-  Validation
->
+} & Pick<DraftFieldExtras, Extras>
 
-type DraftingState = {
+// TODO: Figure out how the Editor components lazy valueRef.current() getter fits into this
+type HtmlDraftField = DraftField<HTMLText>
+
+type BodyDraftFields = {
+  title: DraftField<PlainText>
+  text: HtmlDraftField
+  appendixes: ReadonlyArray<{
+    title: DraftField<PlainText>
+    text: HtmlDraftField
+  }>
+  comments: HtmlDraftField
+}
+
+type ChangeDraftFields = Readonly<
+  // always prefilled on "create" - non-editable
+  Pick<DraftRegulationChange, 'id' | 'type' | 'name'>
+> & { date: DraftField<Date> } & BodyDraftFields
+
+type CancelDraftFields = Readonly<
+  // always prefilled on "create" - non-editable
+  Pick<DraftRegulationCancel, 'id' | 'type' | 'name'>
+> & { date: DraftField<Date> }
+
+export type RegDraftForm = BodyDraftFields & {
+  idealPublishDate: DraftField<Date | undefined>
+  signatureDate: DraftField<Date | undefined>
+  effectiveDate: DraftField<Date | undefined>
+  lawChapters: DraftField<ReadonlyArray<LawChapterId>>
+  ministry: DraftField<MinistryId | undefined>
+  type: DraftField<RegulationType | undefined>
+
+  impacts: ReadonlyArray<ChangeDraftFields | CancelDraftFields>
+
+  readonly draftingStatus: DraftingStatus // non-editable except via saveStatus or propose actions
+  draftingNotes: HtmlDraftField
+  authors: DraftField<ReadonlyArray<AuthorId>>
+
+  id: RegulationDraft['id']
+}
+
+export type DraftingState = {
   isEditor: boolean
   stepName: Step
   savingStatus?: boolean
   loading?: boolean
   error?: Error
-} & (
-  | {
-      draft?: RegulationDraft
-      impacts?: Array<DraftRegulationCancel>
-      valid?: DraftValidation
-    }
-  | {
-      draft?: undefined
-      impacts?: undefined
-      valid?: undefined
-    }
-)
+  draft?: RegDraftForm
+}
 
 // ---------------------------------------------------------------------------
+
+const makeDraftForm = (
+  draft: RegulationDraft,
+  dirty?: boolean,
+): RegDraftForm => {
+  const f = <T>(value: T): DraftField<T> => ({ value, dirty })
+  const fHtml = (value: HTMLText): HtmlDraftField => ({ value, dirty })
+
+  const form: RegDraftForm = {
+    id: draft.id,
+    title: f(draft.title),
+    text: fHtml(draft.text),
+    appendixes: draft.appendixes.map((appendix) => ({
+      title: f(appendix.title),
+      text: fHtml(appendix.text),
+    })),
+    comments: fHtml(draft.comments),
+
+    idealPublishDate: f(
+      draft.idealPublishDate && new Date(draft.idealPublishDate),
+    ),
+    signatureDate: f(draft.signatureDate && new Date(draft.signatureDate)),
+    effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
+
+    lawChapters: f(draft.lawChapters.map((chapter) => chapter.id)),
+    ministry: f(draft.ministry?.id),
+    type: f(draft.type),
+
+    impacts: draft.impacts.map((impact) =>
+      impact.type === 'amend'
+        ? {
+            id: impact.id,
+            type: impact.type,
+            name: impact.name,
+            date: f(new Date(impact.date)),
+            ...{
+              title: f(impact.title),
+              text: fHtml(impact.text),
+              appendixes: impact.appendixes.map((appendix) => ({
+                title: f(appendix.title),
+                text: fHtml(appendix.text),
+              })),
+              comments: fHtml(impact.comments),
+            },
+          }
+        : {
+            id: impact.id,
+            type: impact.type,
+            name: impact.name,
+            date: f(new Date(impact.date)),
+          },
+    ),
+
+    draftingNotes: fHtml(draft.draftingNotes),
+    draftingStatus: draft.draftingStatus,
+    authors: f(draft.authors.map((author) => author.authorId)),
+  }
+  return form
+}
 
 const getEmptyDraft = (): RegulationDraft => ({
   id: 0,
@@ -82,38 +179,31 @@ const getEmptyDraft = (): RegulationDraft => ({
   comments: '' as HTMLText,
   ministry: undefined,
   lawChapters: [],
-})
-
-const getEmptyValidation = (): DraftValidation => ({
-  title: {},
-  text: {},
-  appendixes: {},
-  comments: {},
-  idealPublishDate: {},
-  signatureDate: {},
-  effectiveDate: {},
-  type: {},
-  lawChapters: {},
-  ministry: {},
+  impacts: [],
 })
 
 // ---------------------------------------------------------------------------
 
-const validate = (state: DraftingState): DraftValidation => {
-  // TODO:
-  return getEmptyValidation()
-}
+// const validate = (state: DraftingState) => {
+//   return
+// }
 
-const validateSingle = <Field extends keyof RegulationDraft>(
-  state: DraftingState,
-  name: Field,
-  value: RegulationDraft[Field],
-): DraftValidation => {
-  // TODO:
-  return getEmptyValidation()
-}
+// const validateSingle = <Field extends keyof RegulationDraft>(
+//   state: DraftingState,
+//   name: Field,
+//   value: RegulationDraft[Field],
+// ) => {
+//   return
+// }
 
 // ---------------------------------------------------------------------------
+
+// type NameValuePair<O extends Record<string, any>> = {
+//   [Key in keyof O]: {
+//     name: Key
+//     value: O[Key]
+//   }
+// }[keyof O]
 
 type Action =
   | { type: 'CHANGE_STEP'; stepName: Step }
@@ -122,7 +212,7 @@ type Action =
   | { type: 'LOADING_DRAFT_ERROR'; error: Error }
   | { type: 'SAVING_STATUS' }
   | { type: 'SAVING_STATUS_DONE'; error?: Error }
-  | { type: 'UPDATE_PROP'; name: keyof RegulationDraft; value: any } // FIXME
+  // | ({ type: 'UPDATE_PROP' } & NameValuePair<Reg>)
   | { type: 'SHIP' }
 
 type ActionName = Action['type']
@@ -150,14 +240,12 @@ const actionHandlers: {
   },
   LOADING_DRAFT_SUCCESS: (state, { draft }) => {
     state.loading = false
-    state.draft = draft
-    state.valid = validate(state)
+    state.draft = makeDraftForm(draft)
   },
   LOADING_DRAFT_ERROR: (state, { error }) => {
     state.loading = false
     state.error = error
     state.draft = undefined
-    state.valid = undefined
   },
 
   SAVING_STATUS: (state) => {
@@ -168,25 +256,18 @@ const actionHandlers: {
     state.savingStatus = false
   },
 
-  UPDATE_PROP: (state, { name, value }) => {
-    if (!state.draft) {
-      return
-    }
-    // @ts-expect-error  (FIXME:)
-    state.draft[name] = value
-    state.valid = validateSingle(state, name, value)
-  },
+  // UPDATE_PROP: (state, { name, value }) => {
+  //   if (!state.draft) {
+  //     return
+  //   }
+  //   state.draft[name].value = value
+  // },
 
   SHIP: (state) => {
     if (!state.isEditor) {
-      return {
-        ...state,
-        error: new Error('Must be an editor'),
-      }
-    }
-    return {
-      ...state,
-      loading: true,
+      state.error = new Error('Must be an editor')
+    } else {
+      state.loading = true
     }
   },
 }
@@ -221,9 +302,7 @@ const getInitialState = (args: {
       isEditor,
       stepName,
       loading: false,
-      draft: getEmptyDraft(),
-      valid: getEmptyValidation(),
-      impacts: [],
+      draft: makeDraftForm(getEmptyDraft()),
     }
   }
   return {
@@ -281,6 +360,10 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   const stepNav = steps[stepName]
 
   const actions = {
+    // updateProp: (name: keyof ) => {
+
+    // }
+
     goBack:
       draft && stepNav.prev
         ? () => {

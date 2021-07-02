@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom'
 
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { RegulationDraft } from '../types-api'
 import { RegulationDraftId } from '../types-database'
 import { EditBasics } from '../components/EditBasics'
 import { EditMeta } from '../components/EditMeta'
@@ -14,6 +13,7 @@ import {
   useDraftingState,
   DraftIdFromParam,
   steps,
+  RegDraftForm,
 } from '../state/useDraftingState'
 import { MessageDescriptor } from 'react-intl'
 // import { gql, useQuery } from '@apollo/client'
@@ -31,7 +31,7 @@ import { MessageDescriptor } from 'react-intl'
 // `
 
 export type StepComponent = (props: {
-  draft: RegulationDraft
+  draft: RegDraftForm
   new?: boolean
 }) => ReturnType<FC>
 
@@ -93,7 +93,7 @@ const Edit = () => {
   const stepName = assertStep(params.step)
 
   const { state, stepNav, actions } = useDraftingState(id, stepName)
-  const { loading, error, savingStatus, draft, valid, impacts } = state
+  const { loading, error, savingStatus, draft } = state
 
   const step = stepData[stepName]
 

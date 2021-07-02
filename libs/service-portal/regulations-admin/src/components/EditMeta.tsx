@@ -1,9 +1,7 @@
 import React, { ReactNode, useRef } from 'react'
-import { Box, DatePicker, Input, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { EditorInput } from './EditorInput'
-import { editorMsgs as msg } from '../messages'
-import { RegulationDraft } from '../types-api'
+import { RegDraftForm } from '../state/useDraftingState'
 
 type WrapProps = {
   legend?: string
@@ -27,7 +25,7 @@ const Wrap = (props: WrapProps) => (
 )
 
 export type EditMetaProps = {
-  draft: RegulationDraft
+  draft: RegDraftForm
 }
 
 export const EditMeta = (props: EditMetaProps) => {
@@ -35,9 +33,5 @@ export const EditMeta = (props: EditMetaProps) => {
   const { draft } = props
   const textRef = useRef(() => draft.text)
 
-  return (
-    <>
-      <p>Meta step</p>
-    </>
-  )
+  return <p>Meta step</p>
 }
