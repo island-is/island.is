@@ -365,7 +365,7 @@ export const m: MessageDir = {
     includePapersDisclaimerPt1: {
       id: 'pa.application:recommendations.includePapers.disclaimer1',
       defaultMessage:
-        '*Fyrir meðmæli á pappír þarf að lista upp kennitölur meðmælenda í skjal og hlaða upp hér að neðan.',
+        '*Fyrir meðmæli á pappír þarf að lista upp kennitölur meðmælenda í Excel skjal og hlaða upp hér að neðan.',
       description: 'Include paper signatures disclaimer part 1',
     },
     includePapersDisclaimerPt2: {
@@ -373,6 +373,12 @@ export const m: MessageDir = {
       defaultMessage:
         '*Pappírsmeðmæli skulu einnig sendast með bréfpósti til yfirkjörstjórnar.',
       description: 'Include paper signatures disclaimer part 2',
+    },
+    includePapersDisclaimerPt3: {
+      id: 'pa.application:recommendations.includePapers.disclaimer3',
+      defaultMessage:
+        '*Skjalið skal innihalda eina kennitölu per reit. Allar kennitölur skulu vera í fyrsta dálk (dálk A), fyrsta kennitalan skal vera staðsett í reit A1.',
+      description: 'Include paper signatures disclaimer part 3',
     },
     noPaper: {
       id: 'pa.application:recommendations.paper.no',
@@ -408,6 +414,16 @@ export const m: MessageDir = {
       id: 'pa.application:uploadButton.uploadSuccess',
       defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
       description: 'Upload failed text',
+    },
+    attention: {
+      id: 'pa.application:uploadButton.attention',
+      defaultMessage: 'Athugið!',
+      description: 'Warning title',
+    },
+    uploadWarningText: {
+      id: 'pa.application:uploadButton.warningDescription',
+      defaultMessage: 'Ekki tókst að hlaða upp eftirfarandi kennitölur: ',
+      description: 'Warning description',
     },
   }),
   endorsementDisclaimer: defineMessages({

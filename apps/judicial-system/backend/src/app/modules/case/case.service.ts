@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
+import { IntlService } from '@island.is/api/domains/translations'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -45,6 +46,7 @@ export class CaseService {
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private intlService: IntlService,
   ) {}
 
   private async uploadSignedRulingPdfToCourt(
@@ -309,12 +311,15 @@ export class CaseService {
     return getRulingPdfAsString(existingCase)
   }
 
-  getRequestPdf(existingCase: Case): Promise<string> {
+  async getRequestPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the request for case ${existingCase.id} as a pdf document`,
     )
-
-    return getRequestPdfAsString(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+    return getRequestPdfAsString(existingCase, intl.formatMessage)
   }
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {

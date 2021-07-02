@@ -1,6 +1,7 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
+import { LocaleProvider } from '@island.is/localization'
 import userEvent from '@testing-library/user-event'
 
 import {
@@ -48,7 +49,9 @@ describe('/domari-krafa/urskurdarord', () => {
         addTypename={false}
       >
         <UserProvider>
-          <RulingStepTwo />
+          <LocaleProvider locale="is" messages={{}}>
+            <RulingStepTwo />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -97,7 +100,9 @@ describe('/domari-krafa/urskurdarord', () => {
         addTypename={false}
       >
         <UserProvider>
-          <RulingStepTwo />
+          <LocaleProvider locale="is" messages={{}}>
+            <RulingStepTwo />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -138,7 +143,9 @@ describe('/domari-krafa/urskurdarord', () => {
         addTypename={false}
       >
         <UserProvider>
-          <RulingStepTwo />
+          <LocaleProvider locale="is" messages={{}}>
+            <RulingStepTwo />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -193,7 +200,9 @@ describe('/domari-krafa/urskurdarord', () => {
         addTypename={false}
       >
         <UserProvider>
-          <RulingStepTwo />
+          <LocaleProvider locale="is" messages={{}}>
+            <RulingStepTwo />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -236,7 +245,9 @@ describe('/domari-krafa/urskurdarord', () => {
         addTypename={false}
       >
         <UserProvider>
-          <RulingStepTwo />
+          <LocaleProvider locale="is" messages={{}}>
+            <RulingStepTwo />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -263,7 +274,9 @@ describe('/domari-krafa/urskurdarord', () => {
         addTypename={false}
       >
         <UserProvider>
-          <RulingStepTwo />
+          <LocaleProvider locale="is" messages={{}}>
+            <RulingStepTwo />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -292,7 +305,9 @@ describe('/domari-krafa/urskurdarord', () => {
         addTypename={false}
       >
         <UserProvider>
-          <RulingStepTwo />
+          <LocaleProvider locale="is" messages={{}}>
+            <RulingStepTwo />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
