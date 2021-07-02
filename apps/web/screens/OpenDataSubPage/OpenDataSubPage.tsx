@@ -10,14 +10,14 @@ import {
   Link,
   Button,
   Inline,
-  Logo,
+  Icon,
   GridColumns,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
 import {
   Section,
-  StatisticsCardsSection,
+  StatisticsCard,
   DataLinkSection,
   MixedChart,
   SimplePieChart,
@@ -31,34 +31,30 @@ import { useLinkResolver } from '../../hooks/useLinkResolver'
 const OpenDataSubPage: Screen = () => {
   const { linkResolver } = useLinkResolver()
 
-  const image = {
-    title: 'company',
-    url:
-      '//images.ctfassets.net/8k0h54kbe6bj/3CpwPzdLqnw65iAv9lPFUJ/bb52802cd0e409cc03f6f0903423894a/company-life-event.svg',
-  }
-
-  const dataLinkDescription =
-    '[Undanfarin misseri hafa ...] Í þessu samhengi teljast til opinberra gagna öll gögn sem safnað hefur verið saman, vistuð með skipulegum eða kerfisbundnum hætti af opinberum aðilum og eru eða geta verið birt og varðveitt með rafrænum hætti. Hér eru tenglar á helstu vefi sem tengjast opnum gögnum á Íslandi.'
-
   return (
     <Box id="main-content" style={{ overflow: 'hidden' }}>
       <GridContainer>
         <GridRow>
           <GridColumn span="3/12">
-          <Box display={'flex'} justifyContent="flexStart" marginBottom={3}>
-                <Link href="/opin-gogn" skipTab>
-                  <Button
-                    preTextIcon="arrowBack"
-                    preTextIconType="filled"
-                    variant="text"
-                    size="small"
-                    as="span"
-                  >
-                    Til baka
-                  </Button>
-                </Link>
-              </Box>
-            <Box padding={[2, 2, 4]} background='purple100' borderRadius="large" marginBottom={3}>
+            <Box display={'flex'} justifyContent="flexStart" marginBottom={3}>
+              <Link href="/opin-gogn" skipTab>
+                <Button
+                  preTextIcon="arrowBack"
+                  preTextIconType="filled"
+                  variant="text"
+                  size="small"
+                  as="span"
+                >
+                  Til baka
+                </Button>
+              </Link>
+            </Box>
+            <Box
+              padding={[2, 2, 4]}
+              background="purple100"
+              borderRadius="large"
+              marginBottom={3}
+            >
               <Text variant="eyebrow" color="purple600">
                 Þjónustuaðili
               </Text>
@@ -70,21 +66,22 @@ const OpenDataSubPage: Screen = () => {
                 </Box>
               </Box>
             </Box>
-            <Box padding={[2, 2, 4]} background='blueberry100' borderRadius="large">
+            <Box
+              padding={[2, 2, 4]}
+              background="blueberry100"
+              borderRadius="large"
+            >
               <Text variant="eyebrow" color="blueberry600">
                 Tengt efni
               </Text>
               <Box display="flex" alignItems="center">
                 <Box display="inlineFlex" flexGrow={1}>
-                  <Text color="blueberry600">
-                    Tæknisjóður
-                  </Text>
+                  <Text color="blueberry600">Tæknisjóður</Text>
                 </Box>
               </Box>
             </Box>
           </GridColumn>
           <GridColumn span="8/12" offset="1/12">
-          
             <Box marginBottom={3}>
               <Breadcrumbs
                 items={[
@@ -94,11 +91,11 @@ const OpenDataSubPage: Screen = () => {
                   },
                   {
                     title: 'Gagnatorg',
-                    href: '/opin-gogn'
+                    href: '/opin-gogn',
                   },
                   {
-                      title: 'Rannís'
-                  }
+                    title: 'Rannís',
+                  },
                 ]}
                 renderLink={(link) => {
                   return (
@@ -109,6 +106,57 @@ const OpenDataSubPage: Screen = () => {
                 }}
               />
             </Box>
+            <Box marginBottom={8}>
+              <Text variant="h1">Mælaborð</Text>
+            </Box>
+            <Box
+              background="roseTinted100"
+              padding={[2, 2, 4]}
+              borderRadius="large"
+              marginBottom={3}
+            >
+              <Inline space={2}>
+                <Icon
+                  color="purple400"
+                  icon="cellular"
+                  size="small"
+                  type="outline"
+                />
+                <Text variant="eyebrow">Sjóðir Rannís</Text>
+              </Inline>
+            </Box>
+            <Box marginBottom={3}>
+              <GridRow>
+                <GridColumn span="6/12">
+                  <StatisticsCard
+                    title="Samningar/umsóknir 2020-21"
+                    description="127/745"
+                  />
+                </GridColumn>
+                <GridColumn span="6/12">
+                  <StatisticsCard
+                    title="Heildarupphæð styrkja 2020-21"
+                    description="19.536 m.kr"
+                  />
+                </GridColumn>
+              </GridRow>
+            </Box>
+            <GridRow>
+              <GridColumn span={['12/12', '4/12', '4/12']}>
+                <ChartsCard title="Rannís" description="Þjónustuaðili">
+                  <SimplePieChart />
+                </ChartsCard>
+              </GridColumn>
+              <GridColumn span={['12/12', '8/12', '8/12']}>
+                <ChartsCard
+                  title="Rannís"
+                  description="Þjónustuaðili"
+                  subTitle="Fjöldi sóttra og veittra styrkja seinustu tíu árin og heildarupphæð úthlutuna"
+                >
+                  <MixedChart />
+                </ChartsCard>
+              </GridColumn>
+            </GridRow>
           </GridColumn>
         </GridRow>
       </GridContainer>
