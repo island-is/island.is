@@ -96,6 +96,12 @@ export const PaymentPlanForm: Form = buildForm({
               subTitle: externalData.labels.paymentEmployerSubtitle,
             }),
             buildDataProviderItem({
+              id: 'paymentScheduleDebts',
+              title: externalData.labels.paymentDebtsTitle,
+              type: 'PaymentScheduleDebtsProvider',
+              subTitle: externalData.labels.paymentDebtsSubtitle,
+            }),
+            buildDataProviderItem({
               id: 'paymentPlanList',
               title: 'Payment plan list',
               type: 'PaymentPlanList',

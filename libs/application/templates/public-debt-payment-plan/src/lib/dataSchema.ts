@@ -1,5 +1,6 @@
 import {
   PaymentScheduleConditions,
+  PaymentScheduleDebts,
   PaymentScheduleEmployer,
 } from '@island.is/api/schema'
 import { SuccessfulDataProviderResult } from '@island.is/application/core'
@@ -13,6 +14,10 @@ interface PrerequisitesResult extends SuccessfulDataProviderResult {
 
 interface EmployerResult extends SuccessfulDataProviderResult {
   data: PaymentScheduleEmployer
+}
+
+interface DebtsResult extends SuccessfulDataProviderResult {
+  data: PaymentScheduleDebts[]
 }
 
 interface UserProfileResult extends SuccessfulDataProviderResult {
@@ -52,6 +57,7 @@ export type PaymentPlanExternalData = {
   userProfile?: UserProfileResult
   paymentPlanList?: PaymentPlanListResult
   paymentScheduleEmployer?: EmployerResult
+  paymentScheduleDebts?: DebtsResult
 }
 
 const paymentPlanSchema = z

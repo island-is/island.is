@@ -1,19 +1,20 @@
-import React from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { paymentPlan } from '../../lib/messages/paymentPlan'
+import React from 'react'
 import {
   PaymentPlanExternalData,
   PublicDebtPaymentPlan,
 } from '../../lib/dataSchema'
-import { PaymentPlanCard } from './PaymentPlanCard/PaymentPlanCard'
+import { paymentPlan } from '../../lib/messages/paymentPlan'
 import { getPaymentPlanIds, getPaymentPlanKeyById } from '../../shared/utils'
+import { PaymentPlanCard } from './PaymentPlanCard/PaymentPlanCard'
 
 export const PaymentPlanList = ({
   application,
   goToScreen,
 }: FieldBaseProps) => {
+  console.log(application)
   const { formatMessage } = useLocale()
   const paymentPlanList = (application.externalData as PaymentPlanExternalData)
     .paymentPlanList
