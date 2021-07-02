@@ -14,7 +14,6 @@ import {
   Tag,
   Hidden,
 } from '@island.is/island-ui/core'
-import * as styles from './Login.treat'
 import SvgLogin from '../../components/Login/svgLogin'
 import { LoginPageTexts } from '../../components/Login/LoginTexts.types'
 import { Screen } from '@island.is/web/types'
@@ -22,6 +21,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
 import { GET_NAMESPACE_QUERY } from '../queries'
+import * as styles from './Login.treat'
 
 interface LoginProps {
   namespace: LoginPageTexts
@@ -75,7 +75,11 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                 )}
               </Text>
               <div>
-                <a tabIndex={-1} className={styles.btnLink} href="/minarsidur">
+                <a
+                  tabIndex={-1}
+                  className={styles.btnLink}
+                  href="/minarsidur/postholf"
+                >
                   <Button as="span">
                     {n('nyjuSidurLink', 'Fara á nýju mínar síður')}
                   </Button>

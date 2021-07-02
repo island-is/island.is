@@ -7,6 +7,11 @@ export const application = defineMessages({
     defaultMessage: 'Kvörtun til Persónuverndar',
     description: 'Name of the Data Protection Authority Complaint application',
   },
+  institutionName: {
+    id: 'dpac.application:application.institutionName',
+    defaultMessage: 'Persónuvernd',
+    description: 'Name of the Data Protection Authority',
+  },
 })
 
 // All sections in the application

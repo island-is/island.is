@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="color-scheme" content="only">
+    <title>{{{title}}}</title>
+  </head>
+
+  {{> foundation}}
+  {{> styles}}
+  {{> fonts}}
+
+  <body>
+    <table class="body">
+      <tr>
+        <td class="center" align="center" valign="top">
+          <center>
+            <div align="center" class="float-center">
+              <table align="center" class="container">
+                <tbody>
+                  <tr>
+                    <td>
+                      {{#> section}}
+                        {{> spacer}}
+                        {{{body}}}
+                      {{/section}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </center>
+        </td>
+      </tr>
+    </table>
+
+    <div style="display:none; white-space:nowrap; font:15px courier; line-height:0;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+  </body>
+</html>

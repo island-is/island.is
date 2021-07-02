@@ -11,8 +11,8 @@ import {
   buildSubmitField,
   DefaultEvents,
   buildRadioField,
-  Comparators,
 } from '@island.is/application/core'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import { selectDurationInputs } from '../fields/Duration'
@@ -20,6 +20,7 @@ import { confirmContractIds } from '../fields/Overview'
 import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 import { ExternalData } from '@island.is/application/templates/family-matters-core/types'
+import { Answers } from '../types'
 import { hasChildren } from '../lib/utils'
 
 const soleCustodyField = () => {
@@ -46,6 +47,15 @@ const noChildrenFoundField = () => {
   })
 }
 
+const shouldUseMocks = (answers: Answers): boolean => {
+  if (answers.useMocks && answers.useMocks === 'yes') {
+    return true
+  }
+  return false
+}
+
+const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
+
 export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
   title: m.application.name,
@@ -55,6 +65,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
     buildSection({
       id: 'mockData',
       title: 'Mock data',
+      condition: () => shouldRenderMockDataSubSection,
       children: [
         buildSubSection({
           id: 'useMocks',
@@ -79,7 +90,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         buildSubSection({
           id: 'applicantMock',
           title: 'Umsækjandi',
-          condition: (answers) => answers.useMocks === 'yes',
+          condition: (answers) =>
+            shouldUseMocks((answers as unknown) as Answers),
           children: [
             buildCustomField({
               id: 'mockData.applicant',
@@ -91,7 +103,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         buildSubSection({
           id: 'parentMock',
           title: 'Foreldrar',
-          condition: (answers) => answers.useMocks === 'yes',
+          condition: (answers) =>
+            shouldUseMocks((answers as unknown) as Answers),
           children: [
             buildCustomField({
               id: 'mockData.parents',
@@ -103,7 +116,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         buildSubSection({
           id: 'childrenMock',
           title: 'Börn',
-          condition: (answers) => answers.useMocks === 'yes',
+          condition: (answers) =>
+            shouldUseMocks((answers as unknown) as Answers),
           children: [
             buildCustomField({
               id: 'mockData.children',
@@ -121,11 +135,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         buildSubSection({
           id: 'externalData',
           title: m.externalData.general.sectionTitle,
-          condition: {
-            questionId: 'useMocks',
-            value: 'no',
-            comparator: Comparators.EQUALS,
-          },
+          condition: (answers) =>
+            !shouldUseMocks((answers as unknown) as Answers),
           children: [
             buildExternalDataProvider({
               title: m.externalData.general.pageTitle,
@@ -161,11 +172,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         buildSubSection({
           id: 'externalData',
           title: m.externalData.general.sectionTitle,
-          condition: {
-            questionId: 'useMocks',
-            value: 'yes',
-            comparator: Comparators.EQUALS,
-          },
+          condition: (answers) =>
+            shouldUseMocks((answers as unknown) as Answers),
           children: [
             buildExternalDataProvider({
               title: m.externalData.general.pageTitle,

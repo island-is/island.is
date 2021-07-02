@@ -1,5 +1,4 @@
-import type { User } from '@island.is/auth-nest-tools'
-import { CurrentUser } from '@island.is/auth-nest-tools'
+import { CurrentAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -26,11 +25,15 @@ import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementLis
 import { IsEndorsementListOwnerValidationPipe } from '../endorsementList/pipes/isEndorsementListOwnerValidation.pipe'
 import { BulkEndorsementDto } from './dto/bulkEndorsement.dto'
 import { Endorsement } from './models/endorsement.model'
-import { EndorsementService, NationalIdError } from './endorsement.service'
+import { EndorsementService } from './endorsement.service'
+import { EndorsementsScope } from '@island.is/auth/scopes'
+import type { User, Auth } from '@island.is/auth-nest-tools'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
-
+@Audit({
+  namespace: auditNamespace,
+})
 @ApiTags('endorsement')
 @ApiOAuth2([])
 @Controller('endorsement-list/:listId/endorsement')
@@ -45,10 +48,9 @@ export class EndorsementController {
     type: [Endorsement],
   })
   @ApiParam({ name: 'listId', type: String })
+  @Scopes(EndorsementsScope.main)
   @Get()
   @Audit<Endorsement[]>({
-    namespace: auditNamespace,
-    action: 'findAll',
     resources: (endorsement) => endorsement.map((e) => e.id),
     meta: (endorsement) => ({ count: endorsement.length }),
   })
@@ -57,6 +59,7 @@ export class EndorsementController {
       'listId',
       new ParseUUIDPipe({ version: '4' }),
       EndorsementListByIdPipe,
+      IsEndorsementListOwnerValidationPipe,
     )
     endorsementList: EndorsementList,
   ): Promise<Endorsement[]> {
@@ -71,13 +74,12 @@ export class EndorsementController {
     type: Endorsement,
   })
   @ApiParam({ name: 'listId', type: String })
+  @Scopes(EndorsementsScope.main)
   @Get('/exists')
   @Audit<Endorsement>({
-    namespace: auditNamespace,
-    action: 'findByUser',
     resources: (endorsement) => endorsement.id,
   })
-  async findByUser(
+  async findByAuth(
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -98,10 +100,9 @@ export class EndorsementController {
     type: Endorsement,
   })
   @ApiParam({ name: 'listId', type: String })
+  @Scopes(EndorsementsScope.main)
   @Post()
   @Audit<Endorsement>({
-    namespace: auditNamespace,
-    action: 'create',
     resources: (endorsement) => endorsement.id,
   })
   async create(
@@ -113,10 +114,13 @@ export class EndorsementController {
     endorsementList: EndorsementList,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
-    return await this.endorsementService.createEndorsementOnList({
-      nationalId: user.nationalId,
-      endorsementList,
-    })
+    return await this.endorsementService.createEndorsementOnList(
+      {
+        nationalId: user.nationalId,
+        endorsementList,
+      },
+      user,
+    )
   }
 
   @ApiCreatedResponse({
@@ -127,10 +131,9 @@ export class EndorsementController {
   @ApiBody({
     type: BulkEndorsementDto,
   })
+  @Scopes(EndorsementsScope.main)
   @Post('/bulk')
   @Audit<EndorsementBulkCreate>({
-    namespace: auditNamespace,
-    action: 'bulkCreate',
     resources: (response) => response.succeeded.map((e) => e.id),
     meta: (response) => ({ count: response.succeeded.length }),
   })
@@ -143,11 +146,15 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @Body() { nationalIds }: BulkEndorsementDto,
+    @CurrentAuth() auth: Auth,
   ): Promise<EndorsementBulkCreate> {
-    return await this.endorsementService.bulkCreateEndorsementOnList({
-      nationalIds,
-      endorsementList,
-    })
+    return await this.endorsementService.bulkCreateEndorsementOnList(
+      {
+        nationalIds,
+        endorsementList,
+      },
+      auth,
+    )
   }
 
   @ApiNoContentResponse({
@@ -155,6 +162,7 @@ export class EndorsementController {
       'Uses the authenticated users national id to remove endorsement form a given list',
   })
   @ApiParam({ name: 'listId', type: String })
+  @Scopes(EndorsementsScope.main)
   @Delete()
   @HttpCode(204)
   async delete(
@@ -166,12 +174,12 @@ export class EndorsementController {
     endorsementList: EndorsementList,
     @CurrentUser() user: User,
   ): Promise<undefined> {
-    // we pass audit manually since we need a request parameter
+    // we pass audit manually since we need to use the request parameter since we don't return the endorsement list
     this.auditService.audit({
       user,
+      resources: endorsementList.id,
       namespace: auditNamespace,
       action: 'delete',
-      resources: endorsementList.id,
     })
 
     await this.endorsementService.deleteFromListByNationalId({

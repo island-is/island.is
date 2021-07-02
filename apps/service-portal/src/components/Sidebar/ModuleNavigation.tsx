@@ -43,6 +43,7 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
   }
 
   const navChildren = nav?.children?.filter((child) => !child.navHide)
+
   return (
     <Box>
       {nav.heading && (
@@ -64,6 +65,7 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
         path={nav.path}
         icon={nav.icon}
         active={isModuleActive}
+        enabled={nav.enabled}
         external={nav.external}
         onClick={() => {
           handleRootItemClick(nav.external)

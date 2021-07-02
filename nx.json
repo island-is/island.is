@@ -3,7 +3,8 @@
     "workspace.json": "*",
     "package.json": {
       "dependencies": "*",
-      "devDependencies": "*"
+      "devDependencies": "*",
+      "resolutions": "*"
     },
     "nx.json": "*",
     "tsconfig.base.json": "*"
@@ -107,6 +108,9 @@
       "tags": []
     },
     "api-domains-file-upload": {
+      "tags": []
+    },
+    "api-domains-finance": {
       "tags": []
     },
     "api-domains-health-insurance": {
@@ -284,6 +288,9 @@
       "tags": []
     },
     "clients-documents": {
+      "tags": []
+    },
+    "clients-finance": {
       "tags": []
     },
     "clients-middlewares": {
@@ -577,6 +584,9 @@
     "service-portal-settings-personal-information": {
       "tags": []
     },
+    "service-portal-wip": {
+      "tags": []
+    },
     "services-auth-admin-api": {
       "tags": []
     },
@@ -625,6 +635,9 @@
     "shared-types": {
       "tags": []
     },
+    "shared-utils": {
+      "tags": []
+    },
     "skilavottord-consts": {
       "tags": []
     },
@@ -642,15 +655,6 @@
       "tags": []
     },
     "system-e2e": {
-      "tags": []
-    },
-    "utils-api": {
-      "tags": []
-    },
-    "utils-environment": {
-      "tags": []
-    },
-    "utils-shared": {
       "tags": []
     },
     "web": {

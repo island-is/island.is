@@ -1,3 +1,4 @@
+import { join } from 'path'
 import get from 'lodash/get'
 
 import {
@@ -19,6 +20,7 @@ import {
   getApplicationExternalData,
   getOtherParentId,
 } from '@island.is/application/templates/parental-leave'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
 
@@ -249,4 +251,15 @@ export const transformApplicationToParentalLeaveDTO = (
     rightsCode: getRightsCode(application),
     attachments,
   }
+}
+
+export const pathToAsset = (file: string) => {
+  if (isRunningOnEnvironment('local')) {
+    return join(
+      __dirname,
+      `../../../../libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/${file}`,
+    )
+  }
+
+  return join(__dirname, `./parental-leave-assets/${file}`)
 }

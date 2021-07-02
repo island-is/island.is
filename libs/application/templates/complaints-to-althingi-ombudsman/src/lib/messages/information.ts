@@ -11,7 +11,7 @@ export const information = {
   aboutTheComplainer: defineMessages({
     name: {
       id: 'ctao.application:information.aboutTheComplainer.name',
-      defaultMessage: 'Nafn',
+      defaultMessage: 'Fullt nafn',
       description: 'Complainers name',
     },
     ssn: {
@@ -21,7 +21,7 @@ export const information = {
     },
     address: {
       id: 'ctao.application:information.aboutTheComplainer.address',
-      defaultMessage: 'Heimili',
+      defaultMessage: 'Lögheimili',
       description: 'Complainers home address',
     },
     postcode: {
@@ -41,7 +41,7 @@ export const information = {
     },
     phone: {
       id: 'ctao.application:information.aboutTheComplainer.phone',
-      defaultMessage: 'Sími',
+      defaultMessage: 'Símanúmer',
       description: 'Complainers phone number',
     },
   }),
