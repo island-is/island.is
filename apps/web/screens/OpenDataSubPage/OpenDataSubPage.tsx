@@ -21,7 +21,7 @@ import {
   DataLinkSection,
   MixedChart,
   SimplePieChart,
-  SimpleLineChart,
+  SimpleBarChart,
   ChartsCard,
   SectionTitle,
 } from '@island.is/web/components'
@@ -174,6 +174,24 @@ const OpenDataSubPage: Screen = () => {
                     blue
                   >
                     <SimplePieChart dataset="veitt" />
+                  </ChartsCard>
+                </GridColumn>
+              </GridRow>
+            </Box>
+            <Box marginBottom={3}>
+              <GridRow>
+                <GridColumn span={'12/12'}>
+                  <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
+                    <SimpleBarChart dataset="umsokn" />
+                  </ChartsCard>
+                </GridColumn>
+              </GridRow>
+            </Box>
+            <Box marginBottom={3}>
+              <GridRow>
+                <GridColumn span={'12/12'}>
+                  <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
+                    <SimpleBarChart dataset="veitt" />
                   </ChartsCard>
                 </GridColumn>
               </GridRow>
