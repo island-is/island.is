@@ -41,7 +41,7 @@ type EndorsementListResponse =
     }
   | ErrorResponse
 
-export type PartyApplicationServiceOptions = {
+export interface PartyApplicationServiceOptions {
   adminEmails: GenerateAssignSupremeCourtApplicationEmailOptions
 }
 
