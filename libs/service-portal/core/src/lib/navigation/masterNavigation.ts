@@ -198,6 +198,28 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      // Stillingar
+      {
+        name: defineMessage({
+          id: 'service.portal:regulations-admin',
+          defaultMessage: 'Reglugerðir - Admin',
+        }),
+        path: ServicePortalPath.RegulationsAdminRoot,
+        icon: {
+          type: 'outline',
+          icon: 'settings',
+        },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:regulations-ministries',
+              defaultMessage: 'Ráðuneyti',
+            }),
+            path: ServicePortalPath.RegulationsAdminMinistries,
+          },
+        ],
+      },
+
       // Fjarmal
       {
         name: defineMessage({

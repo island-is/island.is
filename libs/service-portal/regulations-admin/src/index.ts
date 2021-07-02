@@ -28,5 +28,14 @@ export const regulationsAdminModule: ServicePortalModule = {
       path: ServicePortalPath.RegulationsAdminEdit,
       render: () => lazy(() => import('./screens/Edit')),
     },
+    {
+      name: 'Ráðuneyti',
+      // name: defineMessage({
+      //   id: 'service.portal:regulations-admin-edit',
+      //   defaultMessage: 'Reglugerðir — skráning',
+      // }),
+      path: ServicePortalPath.RegulationsAdminMinistries,
+      render: () => lazy(() => import('./screens/Ministries')),
+    },
   ],
 }

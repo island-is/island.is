@@ -10,6 +10,7 @@ import {
   RegulationList,
 } from './types-api'
 import {
+  DBx_Ministry,
   DraftAuthorId,
   RegulationDraftId,
   MinistryId,
@@ -81,6 +82,23 @@ export const mockDraftlist: ReadonlyArray<DraftSummary> = [
     title: 'Reglugerð um lorem ipsum dolor sit',
     draftingStatus: 'draft',
     idealPublishDate: undefined,
+  },
+]
+
+// ---------------------------------------------------------------------------
+
+export const mockMinistrylist: ReadonlyArray<DBx_Ministry> = [
+  {
+    id: 1234 as MinistryId,
+    name: 'Forsætisráðuneyti',
+    slug: 'fsr',
+    current: true,
+  },
+  {
+    id: 4321 as MinistryId,
+    name: 'Samgöngu- og sveitarstjórnarráðuneyti',
+    slug: 'ssvrn',
+    current: false,
   },
 ]
 

@@ -257,6 +257,21 @@ export const homeMessages = defineMessages({
   },
 })
 
+export const ministryMessages = defineMessages({
+  title: {
+    id: 'ap.regulations-admin:ministry-title',
+    defaultMessage: 'Skráning ráðuneyta',
+  },
+  intro: {
+    id: 'ap.regulations-admin:ministry-intro',
+    defaultMessage: 'Ritstjórn ráðuneyta er góð skemmtun.',
+  },
+  cta: {
+    id: 'ap.regulations-admin:ministry-cta',
+    defaultMessage: 'Breyta',
+  },
+})
+
 export const statusMsgs: Record<
   DraftingStatus,
   MessageDescriptor
