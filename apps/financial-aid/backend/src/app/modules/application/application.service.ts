@@ -3,14 +3,18 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { ApplicationModel } from './models'
 
+import { ApplicationEventModel } from '../applicationEvent/models'
+
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import { User, Application } from '@island.is/financial-aid/shared'
+import { ApplicationEventService } from '../applicationEvent'
 
 @Injectable()
 export class ApplicationService {
   constructor(
     @InjectModel(ApplicationModel)
     private readonly applicationModel: typeof ApplicationModel,
+    private readonly applicationEventService: ApplicationEventService, // private readonly applicationEventService: typeof ApplicationEventService, // private readonly applicationEventModel: typeof ApplicationEventModel,
   ) {}
 
   getAll(): Promise<ApplicationModel[]> {
@@ -23,12 +27,21 @@ export class ApplicationService {
     })
   }
 
-  create(
+  async create(
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    // this.logger.debug('Creating a new case')
-    return this.applicationModel.create(application)
+    //Creates application
+    const applModal = await this.applicationModel.create(application)
+
+    //Create applicationEvent
+    const eventModel = await this.applicationEventService.create({
+      applicationId: applModal.id,
+      state: applModal.state,
+      comment: null,
+    })
+
+    return applModal
   }
 
   async update(

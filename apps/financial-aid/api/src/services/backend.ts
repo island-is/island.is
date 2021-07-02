@@ -48,7 +48,7 @@ class BackendAPI extends RESTDataSource {
   }
 
   getApplicationEvents(): Promise<ApplicationEvent[]> {
-    return this.get('application events')
+    return this.get('applicationEvents')
   }
 
   createApplicationEvent(

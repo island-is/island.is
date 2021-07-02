@@ -44,7 +44,7 @@ export class ApplicationEventController {
   create(
     @Body() applicationEvent: CreateApplicationEventDto,
   ): Promise<ApplicationEventModel> {
-    console.log('ferdu hingad?', applicationEvent)
+    console.log('ferdu hingad?')
     return this.applicationEventService.create(applicationEvent)
   }
 }
