@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Local setup of development database
 
 All powershell commands are run from /auth/libs/auth-api-lib.
