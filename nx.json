@@ -641,6 +641,9 @@
     "shared-types": {
       "tags": []
     },
+    "shared-utils": {
+      "tags": []
+    },
     "skilavottord-consts": {
       "tags": []
     },
@@ -658,15 +661,6 @@
       "tags": []
     },
     "system-e2e": {
-      "tags": []
-    },
-    "utils-api": {
-      "tags": []
-    },
-    "utils-environment": {
-      "tags": []
-    },
-    "utils-shared": {
       "tags": []
     },
     "web": {
