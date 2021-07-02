@@ -42,8 +42,8 @@ export const UserDelegations = ({ onSwitch }: UserDelegationsProps) => {
 
   let delegations: Delegation[] = data.authActorDelegations.map(
     (delegation) => ({
-      nationalId: delegation.fromNationalId,
-      name: delegation.fromName,
+      nationalId: delegation.from.nationalId,
+      name: delegation.from.name,
     }),
   )
 

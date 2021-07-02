@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { gql, useMutation, useLazyQuery } from '@apollo/client'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, ValidationRules } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
@@ -14,6 +14,7 @@ import {
   GridColumn,
   toast,
 } from '@island.is/island-ui/core'
+import { InputController } from '@island.is/shared/form-fields'
 import { Mutation, Query } from '@island.is/api/schema'
 import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
@@ -24,50 +25,57 @@ const CreateAuthDelegationMutation = gql`
   mutation CreateAuthDelegationMutation($input: CreateAuthDelegationInput!) {
     createAuthDelegation(input: $input) {
       id
-      toName
-      toNationalId
+      to {
+        nationalId
+      }
     }
   }
 `
 
-const AuthDelegationQuery = gql`
-  query AuthDelegationQuery($input: AuthDelegationInput!) {
-    authDelegation(input: $input) {
-      id
+const IdentityQuery = gql`
+  query IdentityQuery($input: IdentityInput!) {
+    identity(input: $input) {
+      nationalId
       type
-      toNationalId
-      toName
+      name
     }
   }
 `
 
 function GrantAccess() {
-  const { handleSubmit, control, errors, setValue } = useForm()
+  const { handleSubmit, control, errors, setValue, watch } = useForm()
   const [createAuthDelegation, { loading }] = useMutation<Mutation>(
     CreateAuthDelegationMutation,
     {
       refetchQueries: [{ query: AuthDelegationsQuery }],
     },
   )
-  const [getDelegation, { data }] = useLazyQuery<Query>(AuthDelegationQuery)
-  const { authDelegation } = data || {}
+  const [getIdentity, { data }] = useLazyQuery<Query>(IdentityQuery)
+  const { identity } = data || {}
   const { formatMessage } = useLocale()
   const history = useHistory()
+  const watchToNationalId = watch('toNationalId')
 
   const requestDelegation = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const value = e.target.value
+    const value = e.target.value.replace('-', '').trim()
     if (value.length === 10 && kennitala.isValid(value)) {
-      getDelegation({ variables: { input: { toNationalId: value } } })
+      if (kennitala.isCompany(value)) {
+        setValue('name', value)
+      } else {
+        getIdentity({ variables: { input: { nationalId: value } } })
+      }
+    } else {
+      setValue('name', '')
     }
   }
 
   useEffect(() => {
-    if (authDelegation) {
-      setValue('name', authDelegation.toName)
+    if (identity && identity.nationalId === watchToNationalId) {
+      setValue('name', identity.name)
     }
-  }, [authDelegation, setValue])
+  }, [identity, setValue, watchToNationalId])
 
   const onSubmit = handleSubmit(async ({ toNationalId, name }) => {
     try {
@@ -76,7 +84,7 @@ function GrantAccess() {
       })
       if (data) {
         history.push(
-          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.toNationalId}`,
+          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.to.nationalId}`,
         )
       }
     } catch (error) {
@@ -115,51 +123,46 @@ function GrantAccess() {
             </Text>
           </GridColumn>
           <GridColumn paddingBottom={2} span={['12/12', '12/12', '6/12']}>
-            <Controller
+            <InputController
               control={control}
-              name="toNationalId"
+              id="toNationalId"
               defaultValue=""
-              rules={{
-                required: {
-                  value: true,
-                  message: formatMessage({
-                    id:
-                      'service.portal.settings.accessControl:grant-required-ssn',
-                    defaultMessage: 'Skylda er að fylla út kennitölu',
-                  }),
-                },
-                validate: {
-                  value: (value) => {
-                    if (!kennitala.isValid(value)) {
-                      return formatMessage({
-                        id:
-                          'service.portal.settings.accessControl:grant-invalid-ssn',
-                        defaultMessage: 'Kennitalan er ekki gild kennitala',
-                      })
-                    }
+              rules={
+                {
+                  required: {
+                    value: true,
+                    message: formatMessage({
+                      id:
+                        'service.portal.settings.accessControl:grant-required-ssn',
+                      defaultMessage: 'Skylda er að fylla út kennitölu',
+                    }),
                   },
-                },
+                  validate: {
+                    value: (value: number) => {
+                      if (!kennitala.isValid(value)) {
+                        return formatMessage({
+                          id:
+                            'service.portal.settings.accessControl:grant-invalid-ssn',
+                          defaultMessage: 'Kennitalan er ekki gild kennitala',
+                        })
+                      }
+                    },
+                  },
+                } as ValidationRules
+              }
+              type="tel"
+              format="######-####"
+              label={formatMessage({
+                id: 'global:nationalId',
+                defaultMessage: 'Kennitala',
+              })}
+              placeholder={formatMessage({
+                id: 'global:nationalId',
+                defaultMessage: 'Kennitala',
+              })}
+              onChange={(value) => {
+                requestDelegation(value)
               }}
-              render={({ onChange, value, name }) => (
-                <Input
-                  name={name}
-                  label={formatMessage({
-                    id: 'global:nationalId',
-                    defaultMessage: 'Kennitala',
-                  })}
-                  placeholder={formatMessage({
-                    id: 'global:nationalId',
-                    defaultMessage: 'Kennitala',
-                  })}
-                  value={value}
-                  hasError={errors.toNationalId}
-                  errorMessage={errors.toNationalId?.message}
-                  onChange={(value) => {
-                    onChange(value)
-                    requestDelegation(value)
-                  }}
-                />
-              )}
             />
           </GridColumn>
           <GridColumn paddingBottom={2} span={['12/12', '12/12', '6/12']}>
@@ -167,19 +170,10 @@ function GrantAccess() {
               control={control}
               name="name"
               defaultValue=""
-              rules={{
-                required: {
-                  value: true,
-                  message: formatMessage({
-                    id:
-                      'service.portal.settings.accessControl:grant-required-name',
-                    defaultMessage: 'Skylda er að fylla út aðgangshafa',
-                  }),
-                },
-              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
+                  readOnly={true}
                   label={formatMessage({
                     id:
                       'service.portal.settings.accessControl:grant-label-user',
