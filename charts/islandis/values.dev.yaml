@@ -730,6 +730,7 @@ service-portal-api:
     DB_NAME: service_portal_api
     DB_USER: service_portal_api
     EMAIL_REGION: eu-west-1
+    NODE_OPTIONS: '--max-old-space-size=480'
     SERVICE_PORTAL_BASE_URL: https://beta.dev01.devland.is/minarsidur
   grantNamespaces:
     - nginx-ingress-external

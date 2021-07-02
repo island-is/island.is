@@ -12,6 +12,7 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
         prod: 'https://island.is/minarsidur',
       },
       EMAIL_REGION: 'eu-west-1',
+      NODE_OPTIONS: '--max-old-space-size=480',
     })
     .secrets({
       SENTRY_DSN: '/k8s/service-portal/SENTRY_DSN',
