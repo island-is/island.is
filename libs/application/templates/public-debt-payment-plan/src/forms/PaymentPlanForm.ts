@@ -1,25 +1,24 @@
+import { PaymentScheduleConditions } from '@island.is/api/schema'
 import {
+  buildCustomField,
+  buildDataProviderItem,
+  buildDescriptionField,
+  buildExternalDataProvider,
   buildForm,
+  buildMultiField,
+  buildRadioField,
   buildSection,
+  buildTextField,
+  CustomField,
   Form,
   FormModes,
-  buildDescriptionField,
-  buildDataProviderItem,
-  buildExternalDataProvider,
-  buildCustomField,
-  buildMultiField,
-  buildTextField,
-  buildRadioField,
-  CustomField,
 } from '@island.is/application/core'
-
-import { PaymentScheduleConditions } from '@island.is/api/schema'
 import {
   PaymentPlanExternalData,
   paymentPlanIndexKeyMapper,
   PublicDebtPaymentPlan,
 } from '../lib/dataSchema'
-import { section, application, employer } from '../lib/messages'
+import { application, employer, section } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
 import { info } from '../lib/messages/info'
 import { paymentPlan } from '../lib/messages/paymentPlan'

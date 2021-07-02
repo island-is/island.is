@@ -1,5 +1,5 @@
-import { ExternalData } from '@island.is/application/core'
 import { PaymentScheduleConditions } from '@island.is/api/schema'
+import { ExternalData } from '@island.is/application/core'
 
 export const prerequisitesFailed = (data: ExternalData) => {
   const prerequisites = data.paymentPlanPrerequisites?.data as

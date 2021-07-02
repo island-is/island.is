@@ -1,10 +1,9 @@
 import { Inject } from '@nestjs/common'
-import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
+import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { Base64 } from 'js-base64'
 import {
   Conditions,
-  ConditionsResponse,
   DebtSchedules,
   DebtSchedulesResponse,
   Employer,
@@ -36,18 +35,14 @@ export class PaymentScheduleAPI extends RESTDataSource {
   }
 
   async getConditions(nationalId: string): Promise<Conditions> {
-    const response = await this.get<ConditionsResponse>(
-      `conditions/${nationalId}`,
-    )
-
-    return response.conditions
+    const response = await this.get<Conditions>(`conditions/${nationalId}`)
+    return response
   }
 
   async getDebts(nationalId: string): Promise<DebtSchedules[]> {
     const response = await this.get<DebtSchedulesResponse>(
       `debtsandschedules/${nationalId}`,
     )
-    console.log(response)
     return response.deptAndSchedules
   }
 

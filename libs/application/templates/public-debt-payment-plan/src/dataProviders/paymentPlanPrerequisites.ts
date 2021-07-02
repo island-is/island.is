@@ -1,9 +1,9 @@
+import { PaymentScheduleConditions } from '@island.is/api/schema'
 import {
   BasicDataProvider,
-  SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { PaymentScheduleConditions } from '@island.is/api/schema'
 
 export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
   type = 'PaymentPlanPrerequisitesProvider'
@@ -46,7 +46,14 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
         return Promise.reject({ reason: 'Ekki tókst að sækja gögn' })
       }
 
-      return Promise.resolve(response)
+      const responseObj = response.data.paymentScheduleConditions
+
+      if (!responseObj) {
+        console.error('response errors', { responseObj })
+        return Promise.reject({ reason: 'Ekki tókst að sækja gögn' })
+      }
+
+      return Promise.resolve(responseObj)
     })
   }
 

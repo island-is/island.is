@@ -1,17 +1,9 @@
-import { Query, Resolver } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
 import { PaymentScheduleAPI } from '@island.is/clients/payment-schedule'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
-import type { User } from '@island.is/auth-nest-tools'
+import { Query, Resolver } from '@nestjs/graphql'
 import { PaymentScheduleConditions, PaymentScheduleDebts } from './models'
 import { PaymentScheduleEmployer } from './models/employer.model'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+// @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class PaymentScheduleResolver {
   constructor(private paymentScheduleClientApi: PaymentScheduleAPI) {}
@@ -20,30 +12,28 @@ export class PaymentScheduleResolver {
     name: 'paymentScheduleConditions',
     nullable: true,
   })
-  @Audit()
-  async conditions(
-    @CurrentUser() user: User,
-  ): Promise<PaymentScheduleConditions> {
-    return await this.paymentScheduleClientApi.getConditions(user.nationalId)
+  // @Audit()
+  async conditions(): Promise<PaymentScheduleConditions> {
+    return await this.paymentScheduleClientApi.getConditions('2704685439')
   }
 
   @Query(() => [PaymentScheduleDebts], {
     name: 'paymentScheduleDebts',
     nullable: true,
   })
-  @Audit()
-  async debts(@CurrentUser() user: User): Promise<PaymentScheduleDebts[]> {
-    return await this.paymentScheduleClientApi.getDebts(user.nationalId)
+  // @Audit()
+  async debts(): Promise<PaymentScheduleDebts[]> {
+    return await this.paymentScheduleClientApi.getDebts('2704685439')
   }
 
   @Query(() => PaymentScheduleEmployer, {
     name: 'paymentScheduleEmployer',
     nullable: true,
   })
-  @Audit()
-  async employer(@CurrentUser() user: User): Promise<PaymentScheduleEmployer> {
+  // @Audit()
+  async employer(): Promise<PaymentScheduleEmployer> {
     const employerResponse = await this.paymentScheduleClientApi.getCurrentEmployer(
-      user.nationalId,
+      '2704685439',
     )
     return {
       name: employerResponse.employerName,

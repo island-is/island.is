@@ -1,18 +1,11 @@
-import { FieldBaseProps } from '@island.is/application/core'
-import React from 'react'
-import {
-  Button,
-  Box,
-  ModalBase,
-  Text,
-  Stack,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
-import * as styles from './PrerequisitesErrorModal.treat'
 import { PaymentScheduleConditions } from '@island.is/api/schema'
+import { FieldBaseProps } from '@island.is/application/core'
+import { Box, ModalBase, Text } from '@island.is/island-ui/core'
+import React from 'react'
+import * as styles from './PrerequisitesErrorModal.treat'
 
 export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
+  console.log('application: ', application)
   const prerequisites = application.externalData.paymentPlanPrerequisites
     .data as PaymentScheduleConditions
 
