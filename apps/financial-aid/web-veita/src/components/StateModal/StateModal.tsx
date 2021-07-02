@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react'
-import { ModalBase, Text, Box, Button, Input } from '@island.is/island-ui/core'
+import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
 
 import * as styles from './StateModal.treat'
 import cn from 'classnames'
 
 import { useMutation } from '@apollo/client'
+
+import { NumberInput } from '@island.is/financial-aid-web/veita/src/components'
 
 import { UpdateApplicationMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
@@ -40,9 +42,8 @@ const StateModal: React.FC<Props> = (props: Props) => {
 
   const [showInput, setShowInput] = useState(false)
 
-  const [amountInput, setAmountInput] = useState<number>()
-
-  // console.log({ amountInput })
+  const maximumInputLength = 6
+  const [amount, setAmount] = useState<number>(0)
 
   const { statistics, setStatistics } = useContext(NavigationStatisticsContext)
 
@@ -151,27 +152,12 @@ const StateModal: React.FC<Props> = (props: Props) => {
             </Box>
 
             <Box display="block" width="full" padding={4}>
-              {/* //TODO input */}
-              {/* <div
-                onInput={(e) => {
-                  setAmountInput(Number(e.currentTarget.textContent))
-                }}
-                className={`${styles.inputStyle} amountInput`}
-                placeholder="Skrifaðu upphæð aðstoðar"
-                contentEditable="true"
-                suppressContentEditableWarning={true}
-              >
-                <span>{amountInput}</span>
-              </div> */}
-              {/* <input
-                type="number"
-                placeholder="Skrifaðu upphæð aðstoðar"
-                className={`${styles.inputStyle}`}
-                value={amountInput}
-                onChange={(e) => {
-                  setAmountInput(Number(e.target))
-                }}
-              /> */}
+              <NumberInput
+                placeholder="Skrifaðu upphæð útborgunar"
+                onUpdate={setAmount}
+                maximumInputLength={maximumInputLength}
+              />
+
               <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
                 <Button
                   variant="ghost"
@@ -188,7 +174,7 @@ const StateModal: React.FC<Props> = (props: Props) => {
                     saveStateApplication(
                       application,
                       ApplicationState.APPROVED,
-                      amountInput,
+                      amount,
                     )
                   }}
                 >
