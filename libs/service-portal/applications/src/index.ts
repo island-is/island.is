@@ -15,7 +15,7 @@ export const applicationsModule: ServicePortalModule = {
     {
       name: m.heading,
       path: ServicePortalPath.ApplicationRoot,
-      enabled: userInfo?.scopes?.includes(ApplicationScope.read),
+      enabled: userInfo.scopes.includes(ApplicationScope.read),
       render: () =>
         lazy(() => import('./screens/ApplicationList/ApplicationList')),
     },
