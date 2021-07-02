@@ -20,7 +20,7 @@ import {
   getApplicationExternalData,
   getOtherParentId,
 } from '@island.is/application/templates/parental-leave'
-import { isRunningOnEnvironment } from '@island.is/utils/shared'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
 

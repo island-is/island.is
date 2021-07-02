@@ -386,6 +386,7 @@ endorsement-system-api:
       http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local
   grantNamespaces:
     - islandis
+    - application-system
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -541,6 +542,7 @@ party-letter-registry-api:
     DB_USER: services_party_letter_registry_api
   grantNamespaces:
     - islandis
+    - application-system
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
