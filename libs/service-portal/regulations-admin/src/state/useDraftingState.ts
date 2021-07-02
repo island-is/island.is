@@ -10,6 +10,7 @@ import { Step } from '../types'
 import { RegulationDraft, DraftRegulationCancel } from '../types-api'
 import { RegulationDraftId } from '../types-database'
 import { mockDraftRegulations, useMockQuery, mockSave } from '../_mockData'
+import { RegulationsAdminScope } from '@island.is/auth/scopes'
 
 export type DraftIdFromParam = 'new' | RegulationDraftId
 
@@ -236,10 +237,7 @@ const getInitialState = (args: {
 
 export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   const history = useHistory()
-  const isEditor = (useAuth().userInfo as Exclude<
-    AuthContextType['userInfo'],
-    null
-  >).profile.name.startsWith('Már ')
+  const isEditor = useAuth().userInfo?.scopes?.includes(RegulationsAdminScope.manage) || false;
 
   const isNew = draftId === 'new'
   if (stepName === 'review' && !isEditor) {
