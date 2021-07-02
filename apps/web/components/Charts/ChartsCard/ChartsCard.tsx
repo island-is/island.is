@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import {
@@ -10,7 +10,7 @@ import {
   Text,
   Hyphen,
 } from '@island.is/island-ui/core'
-import { Section } from '@island.is/web/components'
+import { ColorSchemeContext } from '@island.is/web/context'
 
 import * as styles from './ChartsCard.treat'
 
@@ -18,14 +18,18 @@ export interface ChartsCardsProps {
   title: string
   subTitle?: string
   description: string
+  blue?: boolean
 }
 
 export const ChartsCard: React.FC<ChartsCardsProps> = ({
   title,
   subTitle,
   description,
+  blue,
   children,
 }) => {
+  const { colorScheme } = useContext(ColorSchemeContext)
+  console.log(colorScheme)
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 360
@@ -47,7 +51,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({
           borderTopLeftRadius: '8px',
           borderTopRightRadius: '8px',
         }}
-        background="purple100"
+        background={blue ? 'blue100' : 'purple100'}
       >
         <Box padding={[2, 2, 4]}>
           {description && (

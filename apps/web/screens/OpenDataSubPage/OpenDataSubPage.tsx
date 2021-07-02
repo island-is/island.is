@@ -91,7 +91,7 @@ const OpenDataSubPage: Screen = () => {
                   },
                   {
                     title: 'Gagnatorg',
-                    href: '/opin-gogn',
+                    href: 'opin-gogn',
                   },
                   {
                     title: 'Rannís',
@@ -143,7 +143,7 @@ const OpenDataSubPage: Screen = () => {
             </Box>
             <GridRow>
               <GridColumn span={['12/12', '4/12', '4/12']}>
-                <ChartsCard title="Rannís" description="Þjónustuaðili">
+                <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
                   <SimplePieChart />
                 </ChartsCard>
               </GridColumn>
@@ -152,6 +152,7 @@ const OpenDataSubPage: Screen = () => {
                   title="Rannís"
                   description="Þjónustuaðili"
                   subTitle="Fjöldi sóttra og veittra styrkja seinustu tíu árin og heildarupphæð úthlutuna"
+                  blue
                 >
                   <MixedChart />
                 </ChartsCard>
