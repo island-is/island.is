@@ -7251,6 +7251,11 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/services/party-letter-registry-api",
                 "output": "./"
+              },
+              {
+                "glob": "party-letter-registry.js",
+                "input": "apps/services/party-letter-registry-api/seeders",
+                "output": "./seeders"
               }
             ]
           },
@@ -7443,6 +7448,11 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/services/temporary-voter-registry-api",
                 "output": "./"
+              },
+              {
+                "glob": "voter-registry.js",
+                "input": "apps/services/temporary-voter-registry-api/seeders",
+                "output": "./seeders"
               }
             ]
           },
