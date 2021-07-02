@@ -1,7 +1,10 @@
 import { DynamicModule } from '@nestjs/common'
 
 import { VMSTModule } from '@island.is/clients/vmst'
-import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
+import {
+  createXRoadAPIPath,
+  XRoadMemberClass,
+} from '@island.is/shared/utils/server'
 
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { SharedTemplateAPIModule } from '../../shared'

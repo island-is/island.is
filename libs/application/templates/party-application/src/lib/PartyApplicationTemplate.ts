@@ -13,7 +13,7 @@ import { assign } from 'xstate'
 import { ApiModuleActions, States, Roles } from '../constants'
 import { EndorsementListTags } from '../constants'
 
-const assignees = (constituency: EndorsementListTags) => {
+const getConstituencyAdmins = (constituency: EndorsementListTags) => {
   switch (constituency) {
     case 'partyApplicationReykjavikurkjordaemiSudur2021': {
       return (
@@ -322,7 +322,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
           ...context,
           application: {
             ...context.application,
-            assignees: assignees(
+            assignees: getConstituencyAdmins(
               context.application.answers.constituency as EndorsementListTags,
             ),
           },
@@ -343,9 +343,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     if (application.assignees.includes(nationalId)) {
       return Roles.ASSIGNEE
-    }
-    // TODO: Applicant can recommend his own list
-    else if (application.applicant === nationalId) {
+    } else if (application.applicant === nationalId) {
       return Roles.APPLICANT
     } else if (application.state === States.COLLECT_ENDORSEMENTS) {
       // TODO: Maybe display collection as closed in final state for signaturee
