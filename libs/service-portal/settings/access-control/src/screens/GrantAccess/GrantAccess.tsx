@@ -43,7 +43,7 @@ const IdentityQuery = gql`
 `
 
 function GrantAccess() {
-  const { handleSubmit, control, errors, setValue } = useForm()
+  const { handleSubmit, control, errors, setValue, watch } = useForm()
   const [createAuthDelegation, { loading }] = useMutation<Mutation>(
     CreateAuthDelegationMutation,
     {
@@ -54,6 +54,7 @@ function GrantAccess() {
   const { identity } = data || {}
   const { formatMessage } = useLocale()
   const history = useHistory()
+  const watchToNationalId = watch('toNationalId')
 
   const requestDelegation = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -70,10 +71,10 @@ function GrantAccess() {
   }
 
   useEffect(() => {
-    if (identity) {
+    if (identity && identity.nationalId === watchToNationalId) {
       setValue('name', identity.name)
     }
-  }, [identity, setValue])
+  }, [identity, setValue, watchToNationalId])
 
   const onSubmit = handleSubmit(async ({ toNationalId, name }) => {
     try {
