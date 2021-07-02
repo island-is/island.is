@@ -24,7 +24,10 @@
     "atob",
     "logform",
     "pg-native",
-    "form-data"
+    "form-data",
+    "yargs",
+    "xlsx",
+    "kennitala"
   ],
   "keepNames": true
 }
