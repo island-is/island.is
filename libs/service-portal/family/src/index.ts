@@ -37,11 +37,6 @@ export const familyModule: ServicePortalModule = {
       path: ServicePortalPath.FamilyMember,
       render: () => lazy(() => import('./screens/FamilyMember/FamilyMember')),
     },
-    {
-      name: 'Stillingar',
-      path: ServicePortalPath.SettingsRoot,
-      render: () => lazy(() => import('./screens/SettingsWIP/SettingsWIP')),
-    },
   ],
 }
 

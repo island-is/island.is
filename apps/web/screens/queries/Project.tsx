@@ -18,6 +18,20 @@ export const GET_PROJECT_PAGE_QUERY = gql`
       content {
         ...AllSlices
       }
+      stepper {
+        steps {
+          title
+          slug
+          subtitle {
+            ...HtmlFields
+          }
+          text {
+            ...HtmlFields
+          }
+          isAnswer
+          options
+        }
+      }
       slices {
         ...AllSlices
       }
