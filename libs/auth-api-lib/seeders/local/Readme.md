@@ -10,12 +10,6 @@ All powershell commands are run from /auth/libs/auth-api-lib.
 npx sequelize db:migrate:undo:all
 ```
 
-Then delete all entries for seeds that have been run:
-
-```SQL
-delete * from SequelizeData
-```
-
 ## 2. Migrate table definitions
 
 ```Powershell
