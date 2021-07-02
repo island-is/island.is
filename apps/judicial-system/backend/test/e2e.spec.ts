@@ -116,15 +116,20 @@ beforeAll(async () => {
 
 const minimalCaseData = {
   policeCaseNumber: 'Case Number',
-  accusedNationalId: '0101010000',
+  accused: [
+    {
+      nationalId: '0101010000',
+      name: 'Accused Name',
+      address: 'Accused Address',
+      gender: CaseGender.OTHER,
+    },
+  ],
 }
 
 function remainingCreateCaseData() {
   return {
     description: 'Descriptioni',
-    accusedName: 'Accused Name',
-    accusedAddress: 'Accused Address',
-    accusedGender: CaseGender.OTHER,
+    genderList: CaseGender.OTHER,
     defenderName: 'Defender Name',
     defenderEmail: 'Defender Email',
     defenderPhoneNumber: '555-5555',
@@ -326,10 +331,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.decision ?? null).toBe(caseTwo.decision ?? null)
   expect(caseOne.state).toBe(caseTwo.state)
   expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
-  expect(caseOne.accusedNationalId).toBe(caseTwo.accusedNationalId)
-  expect(caseOne.accusedName ?? null).toBe(caseTwo.accusedName ?? null)
-  expect(caseOne.accusedAddress ?? null).toBe(caseTwo.accusedAddress ?? null)
-  expect(caseOne.accusedGender ?? null).toBe(caseTwo.accusedGender ?? null)
+  expect(caseOne.accused ?? null).toStrictEqual(caseTwo.accused ?? null)
   expect(caseOne.defenderName ?? null).toBe(caseTwo.defenderName ?? null)
   expect(caseOne.defenderEmail ?? null).toBe(caseTwo.defenderEmail ?? null)
   expect(caseOne.defenderPhoneNumber ?? null).toBe(
@@ -986,10 +988,7 @@ describe('Case', () => {
           type: dbCase.type,
           state: CaseState.NEW,
           policeCaseNumber: dbCase.policeCaseNumber,
-          accusedNationalId: dbCase.accusedNationalId,
-          accusedName: dbCase.accusedName,
-          accusedAddress: dbCase.accusedAddress,
-          accusedGender: dbCase.accusedGender,
+          accused: dbCase.accused,
           courtId: dbCase.courtId,
           lawsBroken: dbCase.lawsBroken,
           custodyProvisions: dbCase.custodyProvisions,
@@ -1020,7 +1019,7 @@ describe('Notification', () => {
     await Case.create({
       type: CaseType.CUSTODY,
       policeCaseNumber: 'Case Number',
-      accusedNationalId: '0101010000',
+      accused: [{ nationalId: '0101010000' }],
     })
       .then((value) => {
         dbCase = value
@@ -1074,7 +1073,7 @@ describe('Notification', () => {
     await Case.create({
       type: CaseType.CUSTODY,
       policeCaseNumber: 'Case Number',
-      accusedNationalId: '0101010000',
+      accused: [{ nationalId: '0101010000' }],
     })
       .then((value) => {
         dbCase = value

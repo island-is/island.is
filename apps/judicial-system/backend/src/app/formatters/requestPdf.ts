@@ -69,10 +69,10 @@ function constructRestrictionRequestPdf(
     .font('Helvetica')
     .fontSize(12)
     .lineGap(4)
-    .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
-    .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
-    .text(`Lögheimili: ${existingCase.accusedAddress}`)
+    .text(`Kennitala: ${formatNationalId(existingCase.accused[0].nationalId)}`)
+    .text(`Fullt nafn: ${existingCase.accused[0].name}`)
+    .text(`Kyn: ${formatGender(existingCase.accused[0].gender)}`)
+    .text(`Lögheimili: ${existingCase.accused[0].address}`)
     .text(
       `Verjandi sakbornings: ${
         existingCase.defenderName
@@ -221,10 +221,10 @@ function constructInvestigationRequestPdf(
     .font('Helvetica')
     .fontSize(12)
     .lineGap(4)
-    .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
-    .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
-    .text(`Lögheimili: ${existingCase.accusedAddress}`)
+    .text(`Kennitala: ${formatNationalId(existingCase.accused[0].nationalId)}`)
+    .text(`Fullt nafn: ${existingCase.accused[0].name}`)
+    .text(`Kyn: ${formatGender(existingCase.accused[0].gender)}`)
+    .text(`Lögheimili: ${existingCase.accused[0].address}`)
     .text(
       `Verjandi sakbornings: ${
         existingCase.defenderName

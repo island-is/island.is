@@ -15,6 +15,7 @@ import {
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import {
+  CaseGender,
   CaseType,
   IntegratedCourts,
   SessionArrangements,
@@ -33,7 +34,7 @@ import { User } from '../user'
 import { CourtService } from '../court'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
-import { Case, SignatureConfirmationResponse } from './models'
+import { Accused, Case, SignatureConfirmationResponse } from './models'
 
 @Injectable()
 export class CaseService {
@@ -188,10 +189,38 @@ export class CaseService {
     await Promise.all(promises)
   }
 
-  private findById(id: string): Promise<Case> {
+  private mapAccusedToLists(
+    accusedList: Accused[],
+  ): {
+    accusedNationalIdList: string[]
+    accusedNameList: string[]
+    accusedAddressList: string[]
+    accusedGenderList: CaseGender[]
+  } {
+    const accusedNationalIdList: string[] = []
+    const accusedNameList: string[] = []
+    const accusedAddressList: string[] = []
+    const accusedGenderList: CaseGender[] = []
+
+    accusedList.forEach((accused) => {
+      accusedNationalIdList.push(accused.nationalId)
+      accusedNameList.push(accused.name)
+      accusedAddressList.push(accused.address)
+      accusedGenderList.push(accused.gender)
+    })
+
+    return {
+      accusedNationalIdList,
+      accusedNameList,
+      accusedAddressList,
+      accusedGenderList,
+    }
+  }
+
+  private async findById(id: string): Promise<Case> {
     this.logger.debug(`Finding case ${id}`)
 
-    return this.caseModel.findOne({
+    const existingCase = await this.caseModel.findOne({
       where: { id },
       include: [
         {
@@ -218,12 +247,14 @@ export class CaseService {
         { model: Case, as: 'childCase' },
       ],
     })
+
+    return existingCase
   }
 
-  getAll(user: TUser): Promise<Case[]> {
+  async getAll(user: TUser): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
-    return this.caseModel.findAll({
+    const existingCases = await this.caseModel.findAll({
       order: [['created', 'DESC']],
       where: getCasesQueryFilter(user),
       include: [
@@ -251,6 +282,8 @@ export class CaseService {
         { model: Case, as: 'childCase' },
       ],
     })
+
+    return existingCases
   }
 
   async findByIdAndUser(
@@ -280,6 +313,7 @@ export class CaseService {
 
     return this.caseModel.create({
       ...caseToCreate,
+      ...this.mapAccusedToLists(caseToCreate.accused),
       prosecutorId: user?.id,
     })
   }
@@ -290,8 +324,15 @@ export class CaseService {
   ): Promise<{ numberOfAffectedRows: number; updatedCase: Case }> {
     this.logger.debug(`Updating case ${id}`)
 
+    const dbUpdate = update.accused
+      ? {
+          ...update,
+          ...this.mapAccusedToLists(update.accused),
+        }
+      : update
+
     const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
-      update,
+      dbUpdate,
       {
         where: { id },
         returning: true,
@@ -376,9 +417,9 @@ export class CaseService {
     }
 
     // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
-    await this.update(existingCase.id, {
+    await this.update(existingCase.id, ({
       rulingDate: new Date(),
-    } as UpdateCaseDto)
+    } as unknown) as UpdateCaseDto)
 
     return {
       documentSigned: true,
@@ -391,10 +432,10 @@ export class CaseService {
     return this.caseModel.create({
       type: existingCase.type,
       policeCaseNumber: existingCase.policeCaseNumber,
-      accusedNationalId: existingCase.accusedNationalId,
-      accusedName: existingCase.accusedName,
-      accusedAddress: existingCase.accusedAddress,
-      accusedGender: existingCase.accusedGender,
+      accusedNationalIdList: existingCase.accusedNationalIdList,
+      accusedNameList: existingCase.accusedNameList,
+      accusedAddressList: existingCase.accusedAddressList,
+      accusedGenderList: existingCase.accusedGenderList,
       courtId: existingCase.courtId,
       lawsBroken: existingCase.lawsBroken,
       custodyProvisions: existingCase.custodyProvisions,

@@ -7,7 +7,6 @@ import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
   CaseState,
   CaseType,
   SessionArrangements,
@@ -17,6 +16,7 @@ import { Institution } from '../../institution'
 import { User } from '../../user'
 import { CaseFile } from '../../file'
 import { Notification } from './notification.model'
+import { Accused } from './accused.model'
 
 @ObjectType()
 export class Case implements TCase {
@@ -41,17 +41,8 @@ export class Case implements TCase {
   @Field()
   readonly policeCaseNumber!: string
 
-  @Field()
-  readonly accusedNationalId!: string
-
-  @Field({ nullable: true })
-  readonly accusedName?: string
-
-  @Field({ nullable: true })
-  readonly accusedAddress?: string
-
-  @Field(() => String, { nullable: true })
-  readonly accusedGender?: CaseGender
+  @Field(() => [Accused], { nullable: false })
+  readonly accused!: Accused[]
 
   @Field({ nullable: true })
   readonly defenderName?: string

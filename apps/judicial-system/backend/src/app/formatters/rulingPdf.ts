@@ -123,7 +123,7 @@ function constructRestrictionRulingPdf(
       .lineGap(8)
       .text(
         `Réttindi ${formatAccusedByGender(
-          existingCase.accusedGender,
+          existingCase.accused[0].gender,
           NounCases.GENITIVE,
         )}`,
       )
@@ -145,7 +145,7 @@ function constructRestrictionRulingPdf(
     .lineGap(8)
     .text(
       `Afstaða ${formatAccusedByGender(
-        existingCase.accusedGender,
+        existingCase.accused[0].gender,
         NounCases.GENITIVE,
       )}`,
     )
@@ -155,11 +155,11 @@ function constructRestrictionRulingPdf(
       `${
         existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
           ? `${capitalize(
-              formatAccusedByGender(existingCase.accusedGender),
+              formatAccusedByGender(existingCase.accused[0].gender),
             )} samþykkir kröfuna. `
           : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
           ? `${capitalize(
-              formatAccusedByGender(existingCase.accusedGender),
+              formatAccusedByGender(existingCase.accused[0].gender),
             )} hafnar kröfunni. `
           : ''
       }${existingCase.accusedPleaAnnouncement ?? ''}`,
@@ -240,9 +240,9 @@ function constructRestrictionRulingPdf(
     .text(
       formatConclusion(
         existingCase.type,
-        existingCase.accusedNationalId,
-        existingCase.accusedName,
-        existingCase.accusedGender,
+        existingCase.accused[0].nationalId,
+        existingCase.accused[0].name,
+        existingCase.accused[0].gender,
         existingCase.decision,
         existingCase.validToDate,
         existingCase.type === CaseType.CUSTODY &&
@@ -303,7 +303,7 @@ function constructRestrictionRulingPdf(
     .text(
       formatAppeal(
         existingCase.accusedAppealDecision,
-        capitalize(formatAccusedByGender(existingCase.accusedGender)),
+        capitalize(formatAccusedByGender(existingCase.accused[0].gender)),
       ),
     )
     .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
@@ -319,7 +319,7 @@ function constructRestrictionRulingPdf(
       .lineGap(8)
       .text(
         `Yfirlýsing um kæru ${formatAccusedByGender(
-          existingCase.accusedGender,
+          existingCase.accused[0].gender,
           NounCases.GENITIVE,
         )}`,
       )
@@ -363,7 +363,7 @@ function constructRestrictionRulingPdf(
       .fontSize(12)
       .text(
         formatCustodyRestrictions(
-          existingCase.accusedGender,
+          existingCase.accused[0].gender,
           existingCase.custodyRestrictions,
           existingCase.validToDate,
           existingCase.isolationToDate,
@@ -400,7 +400,7 @@ function constructRestrictionRulingPdf(
       .fontSize(12)
       .text(
         formatAlternativeTravelBanRestrictions(
-          existingCase.accusedGender,
+          existingCase.accused[0].gender,
           existingCase.custodyRestrictions,
           existingCase.otherRestrictions,
         ),

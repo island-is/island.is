@@ -62,10 +62,7 @@ const prosecutorUpdateRule = {
     'type',
     'description',
     'policeCaseNumber',
-    'accusedNationalId',
-    'accusedName',
-    'accusedAddress',
-    'accusedGender',
+    'accused',
     'defenderName',
     'defenderEmail',
     'defenderPhoneNumber',
@@ -314,7 +311,7 @@ export class CaseController {
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
-      update as UpdateCaseDto,
+      (update as unknown) as UpdateCaseDto,
     )
 
     if (numberOfAffectedRows === 0) {
@@ -342,13 +339,11 @@ export class CaseController {
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  async getById(
+  getById(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<Case> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
-
-    return existingCase
+    return this.caseService.findByIdAndUser(id, user, false)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

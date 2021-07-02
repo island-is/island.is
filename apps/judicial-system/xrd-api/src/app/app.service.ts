@@ -29,7 +29,18 @@ export class AppService {
         'Content-Type': 'application/json',
         authorization: `Bearer ${environment.auth.secretToken}`,
       },
-      body: JSON.stringify(caseToCreate),
+      body: JSON.stringify({
+        type: caseToCreate.type,
+        policeCaseNumber: caseToCreate.policeCaseNumber,
+        accused: [
+          {
+            nationalId: caseToCreate.accusedNationalId,
+            name: caseToCreate.accusedName,
+            address: caseToCreate.accusedAddress,
+            gender: caseToCreate.accusedGender,
+          },
+        ],
+      }),
     })
 
     if (!res.ok) {

@@ -26,6 +26,7 @@ import {
 
 import { Institution } from '../../institution'
 import { User } from '../../user'
+import { Accused } from './accused.model'
 
 @Table({
   tableName: 'case',
@@ -66,6 +67,7 @@ export class Case extends Model<Case> {
     allowNull: false,
     values: Object.values(CaseType),
   })
+  @ApiProperty({ enum: CaseType })
   type: CaseType
 
   /**********
@@ -101,44 +103,67 @@ export class Case extends Model<Case> {
   policeCaseNumber: string
 
   /**********
-   * The national id of the accused
+   * A list of the accused generated from the lists of national ids, names,
+   * addresses and genders of the accused.
    **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  accusedNationalId: string
+  @Column({ type: DataType.VIRTUAL })
+  @ApiProperty({ type: Accused, isArray: true })
+  get accused(): Accused[] {
+    const accused: Accused[] = []
+
+    // Assume all the lists have equal length
+    for (let i = 0; i < this.accusedNationalIdList.length; i++) {
+      accused.push({
+        nationalId: this.accusedNationalIdList[i],
+        name: this.accusedNameList[i],
+        address: this.accusedAddressList[i],
+        gender: this.accusedGenderList[i],
+      })
+    }
+
+    return accused
+  }
 
   /**********
-   * The name of the accused
+   * The national ids of the accused
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: true,
   })
   @ApiProperty()
-  accusedName: string
+  accusedNationalIdList: string[]
 
   /**********
-   * The address of the accused
+   * The names of the accused
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: true,
   })
   @ApiProperty()
-  accusedAddress: string
+  accusedNameList: string[]
 
   /**********
-   * The gender of the accused
+   * The addresses of the accused
    **********/
   @Column({
-    type: DataType.ENUM,
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: true,
+  })
+  @ApiProperty()
+  accusedAddressList: string[]
+
+  /**********
+   * The genders of the accused
+   **********/
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
     allowNull: true,
     values: Object.values(CaseGender),
   })
-  accusedGender: CaseGender
+  @ApiProperty({ enum: CaseGender, isArray: true })
+  accusedGenderList: CaseGender[]
 
   /**********
    * The name of the accused's defender - optional

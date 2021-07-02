@@ -54,10 +54,10 @@ export async function getCustodyNoticePdfAsString(
     .lineGap(8)
     .text('Sakborningur')
     .fontSize(12)
-    .text(existingCase.accusedName)
+    .text(existingCase.accused[0].name)
     .font('Helvetica')
-    .text(`kt. ${formatNationalId(existingCase.accusedNationalId)}`)
-    .text(existingCase.accusedAddress)
+    .text(`kt. ${formatNationalId(existingCase.accused[0].nationalId)}`)
+    .text(existingCase.accused[0].address)
     .text(' ')
     .text(' ')
     .font('Helvetica-Bold')
@@ -128,7 +128,7 @@ export async function getCustodyNoticePdfAsString(
     .fontSize(12)
     .text(
       formatCustodyRestrictions(
-        existingCase.accusedGender,
+        existingCase.accused[0].gender,
         existingCase.custodyRestrictions,
         existingCase.validToDate,
         existingCase.isolationToDate,

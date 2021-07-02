@@ -346,8 +346,8 @@ export class NotificationService {
       existingCase.prosecutor?.institution?.name,
       existingCase.court?.name,
       existingCase.courtDate,
-      existingCase.accusedName,
-      existingCase.accusedGender,
+      existingCase.accused[0].name,
+      existingCase.accused[0].gender,
       existingCase.requestedValidToDate,
       existingCase.requestedCustodyRestrictions?.includes(
         CaseCustodyRestrictions.ISOLATION,
@@ -460,9 +460,9 @@ export class NotificationService {
   ): Promise<Recipient[]> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
     const html = formatPrisonRulingEmailNotification(
-      existingCase.accusedNationalId,
-      existingCase.accusedName,
-      existingCase.accusedGender,
+      existingCase.accused[0].nationalId,
+      existingCase.accused[0].name,
+      existingCase.accused[0].gender,
       existingCase.court?.name,
       existingCase.prosecutor?.name,
       existingCase.courtEndTime,
@@ -559,7 +559,7 @@ export class NotificationService {
       existingCase.prosecutor?.institution?.name,
       existingCase.court?.name,
       existingCase.courtDate,
-      existingCase.accusedName,
+      existingCase.accused[0].name,
       existingCase.defenderName,
       existingCase.parentCase &&
         existingCase.parentCase?.decision === CaseDecision.ACCEPTING,
@@ -587,8 +587,8 @@ export class NotificationService {
     } afturkölluð`
     const html = formatDefenderRevokedEmailNotification(
       existingCase.type,
-      existingCase.accusedNationalId,
-      existingCase.accusedName,
+      existingCase.accused[0].nationalId,
+      existingCase.accused[0].name,
       existingCase.court?.name,
       existingCase.courtDate,
     )

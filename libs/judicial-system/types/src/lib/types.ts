@@ -63,6 +63,19 @@ export interface UpdateUser {
   active?: boolean
 }
 
+export enum CaseGender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  OTHER = 'OTHER',
+}
+
+export interface Accused {
+  nationalId: string
+  name?: string
+  address?: string
+  gender?: CaseGender
+}
+
 export enum CaseType {
   CUSTODY = 'CUSTODY',
   TRAVEL_BAN = 'TRAVEL_BAN',
@@ -179,12 +192,6 @@ export enum CaseAppealDecision {
   NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
-export enum CaseGender {
-  MALE = 'MALE',
-  FEMALE = 'FEMALE',
-  OTHER = 'OTHER',
-}
-
 export enum CaseDecision {
   ACCEPTING = 'ACCEPTING',
   REJECTING = 'REJECTING',
@@ -214,10 +221,7 @@ export interface Case {
   description?: string
   state: CaseState
   policeCaseNumber: string
-  accusedNationalId: string
-  accusedName?: string
-  accusedAddress?: string
-  accusedGender?: CaseGender
+  accused: Accused[]
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
@@ -299,14 +303,14 @@ export interface Notification {
   recipients?: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface AccusedInput extends Accused {}
+
 export interface CreateCase {
   type: CaseType
   description?: string
   policeCaseNumber: string
-  accusedNationalId: string
-  accusedName?: string
-  accusedAddress?: string
-  accusedGender?: CaseGender
+  accused: AccusedInput[]
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
@@ -319,10 +323,7 @@ export interface UpdateCase {
   type?: string
   description?: string
   policeCaseNumber?: string
-  accusedNationalId?: string
-  accusedName?: string
-  accusedAddress?: string
-  accusedGender?: CaseGender
+  accused?: AccusedInput[]
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string

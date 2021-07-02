@@ -1,8 +1,16 @@
-import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator'
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsArray,
+} from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseGender, CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
+
+import { Accused } from '../models'
 
 export class CreateCaseDto {
   @IsOptional()
@@ -21,24 +29,9 @@ export class CreateCaseDto {
   readonly policeCaseNumber: string
 
   @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  readonly accusedNationalId: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedName?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedAddress?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ enum: CaseGender })
-  readonly accusedGender?: CaseGender
+  @IsArray()
+  @ApiProperty({ type: Accused, isArray: true })
+  readonly accused: Accused[]
 
   @IsOptional()
   @IsString()

@@ -7,12 +7,13 @@ import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
   AccusedPleaDecision,
   UpdateCase,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+
+import { AccusedInput } from './accused.input'
 
 @InputType()
 export class UpdateCaseInput implements UpdateCase {
@@ -33,20 +34,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly policeCaseNumber?: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly accusedNationalId?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedName?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedAddress?: string
-
-  @Allow()
-  @Field(() => String, { nullable: true })
-  readonly accusedGender?: CaseGender
+  @Field(() => [AccusedInput], { nullable: true })
+  readonly accused?: AccusedInput[]
 
   @Allow()
   @Field({ nullable: true })

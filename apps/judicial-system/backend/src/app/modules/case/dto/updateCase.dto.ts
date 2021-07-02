@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsUUID,
   IsBoolean,
+  IsArray,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -12,12 +13,12 @@ import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
-  CaseGender,
   CaseDecision,
   AccusedPleaDecision,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+import { Accused } from '../models'
 
 export class UpdateCaseDto {
   @IsOptional()
@@ -36,24 +37,9 @@ export class UpdateCaseDto {
   readonly policeCaseNumber?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedNationalId?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedName?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedAddress?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ enum: CaseGender })
-  readonly accusedGender?: CaseGender
+  @IsArray()
+  @ApiPropertyOptional({ type: Accused, isArray: true })
+  readonly accused?: Accused[]
 
   @IsOptional()
   @IsString()
