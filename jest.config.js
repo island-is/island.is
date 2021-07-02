@@ -173,5 +173,6 @@ module.exports = {
     '<rootDir>/libs/api/domains/identity',
     '<rootDir>/libs/clients/payment-schedule',
     '<rootDir>/libs/api/domains/payment-schedule',
+    '<rootDir>/libs/service-portal/wip',
   ],
 }
