@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
+import { LocaleProvider } from '@island.is/localization'
 
 import {
   CaseCustodyRestrictions,
@@ -58,7 +59,9 @@ describe('/domari-krafa/urskurdur', () => {
         addTypename={false}
       >
         <UserProvider>
-          <RulingStepOne />
+          <LocaleProvider locale="is" messages={{}}>
+            <RulingStepOne />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -135,7 +138,9 @@ describe('/domari-krafa/urskurdur', () => {
         addTypename={false}
       >
         <UserProvider>
-          <RulingStepOne />
+          <LocaleProvider locale="is" messages={{}}>
+            <RulingStepOne />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -179,7 +184,9 @@ describe('/domari-krafa/urskurdur', () => {
         addTypename={false}
       >
         <UserProvider>
-          <RulingStepOne />
+          <LocaleProvider locale="is" messages={{}}>
+            <RulingStepOne />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -230,7 +237,9 @@ describe('/domari-krafa/urskurdur', () => {
         addTypename={false}
       >
         <UserProvider>
-          <RulingStepOne />
+          <LocaleProvider locale="is" messages={{}}>
+            <RulingStepOne />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
