@@ -61,9 +61,10 @@ function GrantAccess() {
   ) => {
     const value = e.target.value.replace('-', '').trim()
     if (value.length === 10 && kennitala.isValid(value)) {
-      getIdentity({ variables: { input: { nationalId: value } } })
-      if (identity?.nationalId === value) {
-        setValue('name', identity.name)
+      if (kennitala.isCompany(value)) {
+        setValue('name', value)
+      } else {
+        getIdentity({ variables: { input: { nationalId: value } } })
       }
     } else {
       setValue('name', '')
