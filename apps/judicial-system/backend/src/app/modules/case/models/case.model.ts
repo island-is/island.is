@@ -112,7 +112,7 @@ export class Case extends Model<Case> {
     const accused: Accused[] = []
 
     // Assume all the lists have equal length
-    for (let i = 0; i < this.accusedNationalIdList.length; i++) {
+    for (let i = 0; i < this.accusedNationalIdList?.length; i++) {
       accused.push({
         nationalId: this.accusedNationalIdList[i],
         name: this.accusedNameList[i],

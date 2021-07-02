@@ -126,10 +126,34 @@ const minimalCaseData = {
   ],
 }
 
+function forDb(aCase: CCase) {
+  return {
+    ...aCase,
+    ...aCase.accused.reduce(
+      (acc, a) => ({
+        accusedNationalIdList: acc.accusedNationalIdList.concat([a.nationalId]),
+        accusedNameList: acc.accusedNameList.concat([a.name]),
+        accusedAddressList: acc.accusedAddressList.concat([a.address]),
+        accusedGenderList: acc.accusedGenderList.concat([a.gender]),
+      }),
+      {
+        accusedNationalIdList: [],
+        accusedNameList: [],
+        accusedAddressList: [],
+        accusedGenderList: [],
+      } as {
+        accusedNationalIdList: string[]
+        accusedNameList: string[]
+        accusedAddressList: string[]
+        accusedGenderList: CaseGender[]
+      },
+    ),
+  }
+}
+
 function remainingCreateCaseData() {
   return {
     description: 'Descriptioni',
-    genderList: CaseGender.OTHER,
     defenderName: 'Defender Name',
     defenderEmail: 'Defender Email',
     defenderPhoneNumber: '555-5555',
@@ -691,7 +715,7 @@ describe('Case', () => {
     let dbCase: CCase
     let apiCase: CCase
 
-    await Case.create(getCaseData())
+    await Case.create(forDb(getCaseData()))
       .then((value) => {
         dbCase = caseToCCase(value)
 
@@ -730,10 +754,12 @@ describe('Case', () => {
     let dbCase: CCase
     let apiCase: CCase
 
-    await Case.create({
-      ...getCaseData(),
-      state: CaseState.DRAFT,
-    })
+    await Case.create(
+      forDb({
+        ...getCaseData(),
+        state: CaseState.DRAFT,
+      }),
+    )
       .then((value) => {
         dbCase = caseToCCase(value)
 
@@ -768,10 +794,12 @@ describe('Case', () => {
     let dbCase: CCase
     let apiCase: CCase
 
-    await Case.create({
-      ...getCaseData(true, true, true, true),
-      state: CaseState.RECEIVED,
-    })
+    await Case.create(
+      forDb({
+        ...getCaseData(true, true, true, true),
+        state: CaseState.RECEIVED,
+      }),
+    )
       .then((value) => {
         dbCase = caseToCCase(value)
 
@@ -838,8 +866,8 @@ describe('Case', () => {
   })
 
   it('Get /api/cases should get all cases', async () => {
-    await Case.create(getCaseData())
-      .then(() => Case.create(getCaseData()))
+    await Case.create(forDb(getCaseData()))
+      .then(() => Case.create(forDb(getCaseData())))
       .then(() =>
         request(app.getHttpServer())
           .get(`/api/cases`)
@@ -856,7 +884,7 @@ describe('Case', () => {
   it('GET /api/case/:id should get a case by id', async () => {
     let dbCase: CCase
 
-    await Case.create(getCaseData(true, true, true, true))
+    await Case.create(forDb(getCaseData(true, true, true, true)))
       .then((value) => {
         dbCase = caseToCCase(value)
 
@@ -880,10 +908,12 @@ describe('Case', () => {
   })
 
   it('POST /api/case/:id/signature should request a signature for a case', async () => {
-    await Case.create({
-      ...getCaseData(true, true, true, true),
-      state: CaseState.REJECTED,
-    })
+    await Case.create(
+      forDb({
+        ...getCaseData(true, true, true, true),
+        state: CaseState.REJECTED,
+      }),
+    )
       .then(async (value) =>
         request(app.getHttpServer())
           .post(`/api/case/${value.id}/signature`)
@@ -900,10 +930,12 @@ describe('Case', () => {
   it('GET /api/case/:id/signature should confirm a signature for a case', async () => {
     let dbCase: CCase
 
-    await Case.create({
-      ...getCaseData(true, true, true, true),
-      state: CaseState.ACCEPTED,
-    })
+    await Case.create(
+      forDb({
+        ...getCaseData(true, true, true, true),
+        state: CaseState.ACCEPTED,
+      }),
+    )
       .then((value) => {
         dbCase = caseToCCase(value)
 
@@ -967,7 +999,7 @@ describe('Case', () => {
   it('POST /api/case/:id/extend should extend case', async () => {
     let dbCase: CCase
 
-    await Case.create(getCaseData(true, true, true, true))
+    await Case.create(forDb(getCaseData(true, true, true, true)))
       .then((value) => {
         dbCase = caseToCCase(value)
 
@@ -1016,11 +1048,13 @@ describe('Notification', () => {
     let dbCase: Case
     let apiSendNotificationResponse: SendNotificationResponse
 
-    await Case.create({
-      type: CaseType.CUSTODY,
-      policeCaseNumber: 'Case Number',
-      accused: [{ nationalId: '0101010000' }],
-    })
+    await Case.create(
+      forDb({
+        type: CaseType.CUSTODY,
+        policeCaseNumber: 'Case Number',
+        accused: [{ nationalId: '0101010000' }],
+      } as CCase),
+    )
       .then((value) => {
         dbCase = value
 
@@ -1070,11 +1104,13 @@ describe('Notification', () => {
     let dbCase: Case
     let dbNotification: Notification
 
-    await Case.create({
-      type: CaseType.CUSTODY,
-      policeCaseNumber: 'Case Number',
-      accused: [{ nationalId: '0101010000' }],
-    })
+    await Case.create(
+      forDb({
+        type: CaseType.CUSTODY,
+        policeCaseNumber: 'Case Number',
+        accused: [{ nationalId: '0101010000' }],
+      } as CCase),
+    )
       .then((value) => {
         dbCase = value
 
