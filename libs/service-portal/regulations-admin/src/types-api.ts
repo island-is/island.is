@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
-  DB_DraftAuthor,
   DB_RegulationDraft,
   DBx_Ministry,
   RegulationDraftId,
@@ -7,15 +7,32 @@ import {
   DBx_Regulation,
   DB_DraftRegulationCancel,
   DB_DraftRegulationChange,
+  AuthorId,
 } from './types-database'
 import { DraftingStatus } from './types'
 import { Regulation } from '@island.is/regulations/web'
 import { RegName } from '@hugsmidjan/regulations-editor/types'
 
+declare const _EmailAddress__Brand: unique symbol
+/** Normal email address. Not to be confused with random un-parsed strings. */
+export type EmailAddress = { [_EmailAddress__Brand]: true }
+
+export type Author = {
+  authorId: AuthorId
+  name: string
+  email: EmailAddress
+  // TODO: Add to this minimal list of fields... "org??"
+}
+
+// ---------------------------------------------------------------------------
+
 export type DraftSummary = Pick<
   DB_RegulationDraft,
   'id' | 'title' | 'idealPublishDate'
-> & { draftingStatus: Exclude<DraftingStatus, 'shipped'> }
+> & {
+  draftingStatus: Exclude<DraftingStatus, 'shipped'>
+  authors: ReadonlyArray<Author>
+}
 
 export type ShippedSummary = Required<
   Pick<DB_RegulationDraft, 'id' | 'title' | 'name' | 'idealPublishDate'>
@@ -26,7 +43,7 @@ export type ShippedSummary = Required<
 export type RegulationDraft = {
   /** 0 (zero) signifies a new regulation draft */
   id: RegulationDraftId | 0
-  authors: ReadonlyArray<Omit<DB_DraftAuthor, 'draftId'>>
+  authors: ReadonlyArray<Author>
   lawChapters: ReadonlyArray<DBx_LawChapter>
   ministry?: DBx_Ministry
   impacts: ReadonlyArray<DraftRegulationCancel | DraftRegulationChange>

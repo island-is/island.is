@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // Draft of the required database types
 import { HTMLText, ISODate, PlainText, RegName } from '@island.is/regulations'
-import { DraftingStatus, Kennitala, RegulationType } from './types'
+import { DraftingStatus, RegulationType } from './types'
 
 // ===========================================================================
 
@@ -63,12 +63,16 @@ export type DB_RegulationDraft = (
 declare const _DraftAuthorId__Brand: unique symbol
 export type DraftAuthorId = number & { [_DraftAuthorId__Brand]: true }
 
+declare const _AuthorId__Brand: unique symbol
+export type AuthorId = number & { [_AuthorId__Brand]: true }
+
+/** Table that maps the N-to-N relationships between authors and drafts. */
 export type DB_DraftAuthor = {
   /** Primary key */
   id: DraftAuthorId
   draftId: RegulationDraftId
-  /** the kennitala of the author/contact that authored this RegulationDraft (including "editors") */
-  authorKt?: Kennitala
+  /** the ID (??) of the author/contact that took part in authoring this RegulationDraft (including "editors") */
+  authorId?: AuthorId
 }
 
 // ===========================================================================
