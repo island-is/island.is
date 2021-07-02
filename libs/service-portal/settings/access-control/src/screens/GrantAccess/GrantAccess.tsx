@@ -12,6 +12,7 @@ import {
   Text,
   GridRow,
   GridColumn,
+  toast,
 } from '@island.is/island-ui/core'
 import { Mutation, Query } from '@island.is/api/schema'
 import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
@@ -69,12 +70,22 @@ function GrantAccess() {
   }, [authDelegation, setValue])
 
   const onSubmit = handleSubmit(async ({ toNationalId, name }) => {
-    const { data, errors } = await createAuthDelegation({
-      variables: { input: { name, toNationalId } },
-    })
-    if (data && !errors) {
-      history.push(
-        `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.toNationalId}`,
+    try {
+      const { data } = await createAuthDelegation({
+        variables: { input: { name, toNationalId } },
+      })
+      if (data) {
+        history.push(
+          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.toNationalId}`,
+        )
+      }
+    } catch (error) {
+      toast.error(
+        formatMessage({
+          id: 'service.portal.settings.accessControl:grant-create-error',
+          defaultMessage:
+            'Eitthvað fór úrskeiðis!\nEkki tókst að búa til aðgang fyrir þennan notanda.',
+        }),
       )
     }
   })
