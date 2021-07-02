@@ -26,6 +26,7 @@ const devConfig = {
     clientLocationOrigin: 'http://localhost:4242/umsoknir',
     emailOptions: {
       useTestAccount: true,
+      useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
     },
     email: {
       sender: 'Devland.is',
@@ -68,6 +69,23 @@ const devConfig = {
       username: process.env.PAYMENT_USER,
       password: process.env.PAYMENT_PASSWORD,
     },
+    partyLetter: {
+      partyLetterRegistryApiBasePath: 'http://localhost:4251',
+      endorsementsApiBasePath: 'http://localhost:4246',
+    },
+    partyApplication: {
+      endorsementsApiBasePath: 'http://localhost:4246',
+      options: {
+        adminEmails: {
+          partyApplicationRvkSouth: 's@kogk.is',
+          partyApplicationRvkNorth: 's@kogk.is',
+          partyApplicationSouthWest: 's@kogk.is',
+          partyApplicationNorthWest: 's@kogk.is',
+          partyApplicationNorth: 's@kogk.is',
+          partyApplicationSouth: 's@kogk.is',
+        },
+      },
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -106,6 +124,7 @@ const prodConfig = {
     clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN,
     emailOptions: {
       useTestAccount: false,
+      useNodemailerApp: false,
       options: {
         region: process.env.EMAIL_REGION,
       },
@@ -143,6 +162,30 @@ const prodConfig = {
       callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
       username: process.env.PAYMENT_USER,
       password: process.env.PAYMENT_PASSWORD,
+    },
+    partyLetter: {
+      partyLetterRegistryApiBasePath:
+        process.env.PARTY_LETTER_REGISTRY_API_BASE_PATH,
+      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
+    },
+    partyApplication: {
+      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
+      options: {
+        adminEmails: {
+          partyApplicationRvkSouth:
+            process.env.PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL,
+          partyApplicationRvkNorth:
+            process.env.PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL,
+          partyApplicationSouthWest:
+            process.env.PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL,
+          partyApplicationNorthWest:
+            process.env.PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL,
+          partyApplicationNorth:
+            process.env.PARTY_APPLICATION_NORTH_ADMIN_EMAIL,
+          partyApplicationSouth:
+            process.env.PARTY_APPLICATION_SOUTH_ADMIN_EMAIL,
+        },
+      },
     },
   },
   application: {

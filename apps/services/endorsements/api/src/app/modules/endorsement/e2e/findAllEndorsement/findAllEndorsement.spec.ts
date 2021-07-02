@@ -1,26 +1,31 @@
-import { INestApplication } from '@nestjs/common'
 import request from 'supertest'
-import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
-import { setup } from '../../../../../../test/setup'
+import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { Endorsement } from '../../models/endorsement.model'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { authNationalId } from './seed'
-
-let app: INestApplication
-
-beforeAll(async () => {
-  app = await setup({
-    override: (builder) => {
-      builder
-        .overrideProvider(IdsUserGuard)
-        .useValue(new MockAuthGuard({ nationalId: authNationalId }))
-        .compile()
-    },
-  })
-})
+import { EndorsementsScope } from '@island.is/auth/scopes'
 
 describe('findAllEndorsement', () => {
+  it(`GET /endorsement-list/:listId/endorsement should fail and return 403 error if scope is missing`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [],
+    })
+    const response: { body: Endorsement[] } = await request(app.getHttpServer())
+      .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c8/endorsement')
+      .send()
+      .expect(403)
+
+    expect(response.body).toMatchObject({
+      ...errorExpectedStructure,
+      statusCode: 403,
+    })
+  })
   it(`GET /endorsement-list/:listId/endorsement should return 404 and error if list does not exist`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
     const response = await request(app.getHttpServer())
       .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777/endorsement')
       .send()
@@ -32,6 +37,10 @@ describe('findAllEndorsement', () => {
     })
   })
   it(`GET /endorsement-list/:listId/endorsement should return 200 and a list of endorsements`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
     const response: { body: Endorsement[] } = await request(app.getHttpServer())
       .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c8/endorsement')
       .send()

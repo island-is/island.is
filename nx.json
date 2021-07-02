@@ -3,7 +3,8 @@
     "workspace.json": "*",
     "package.json": {
       "dependencies": "*",
-      "devDependencies": "*"
+      "devDependencies": "*",
+      "resolutions": "*"
     },
     "nx.json": "*",
     "tsconfig.base.json": "*"
@@ -107,6 +108,9 @@
       "tags": []
     },
     "api-domains-file-upload": {
+      "tags": []
+    },
+    "api-domains-finance": {
       "tags": []
     },
     "api-domains-health-insurance": {
@@ -284,6 +288,9 @@
       "tags": []
     },
     "clients-documents": {
+      "tags": []
+    },
+    "clients-finance": {
       "tags": []
     },
     "clients-middlewares": {
@@ -575,6 +582,9 @@
       "tags": []
     },
     "service-portal-settings-personal-information": {
+      "tags": []
+    },
+    "service-portal-wip": {
       "tags": []
     },
     "services-auth-admin-api": {
