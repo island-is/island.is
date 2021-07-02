@@ -27,7 +27,10 @@
     "form-data",
     "yargs",
     "xlsx",
-    "kennitala"
+    "kennitala",
+    "sequelize",
+    "p-try",
+    "camelcase"
   ],
   "keepNames": true
 }
