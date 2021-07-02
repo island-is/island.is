@@ -117,6 +117,7 @@ export const SimpleLineChart = () => {
         <Legend iconType="circle" content={renderLegend} />
         {dataKeys.map((datakey, index) => (
           <Line
+            key={index}
             dataKey={datakey}
             stroke={COLORS[index % COLORS.length]}
             strokeWidth={3}

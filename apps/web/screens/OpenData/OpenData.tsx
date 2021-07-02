@@ -1,6 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import {
+  GET_OPEN_DATA_PAGE_QUERY
+} from '../queries'
+import {
+  GetGroupedMenuQuery,
+  GetOpenDataPageQuery,
+  QueryGetOpenDataPageArgs
+} from '@island.is/web/graphql/schema'
+import {
   GridContainer,
   Box,
   GridRow,
@@ -26,10 +34,15 @@ import {
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
-import { useFullscreen } from 'react-use'
+import { Locale } from '@island.is/shared/types'
 
-const OpenDataPage: Screen = () => {
+interface OpenDataProps {
+  page: GetOpenDataPageQuery['getOpenDataPage']
+}
+
+const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
   const { linkResolver } = useLinkResolver()
+  const { pageTitle } = page
 
   // Hard coded values for the data links cards section, will be removed once connected to contentful
   const cards = [
@@ -166,8 +179,7 @@ const OpenDataPage: Screen = () => {
                 />
               </Box>
               <Text variant="h1" as="h1" paddingBottom={4}>
-                Aukið traust og gagnsæi <br />
-                með opnum gögnum
+                {pageTitle}
               </Text>
               <Text paddingBottom={4}>
                 [Elevator pitch fyrir opin gögn og að markmiðið sé að hvetja til
@@ -237,6 +249,27 @@ const OpenDataPage: Screen = () => {
       </Section>
     </Box>
   )
+}
+
+OpenDataPage.getInitialProps = async ({ apolloClient, locale}) => {
+  const [
+    {
+      data: { getOpenDataPage: page},
+    }
+  ] = await Promise.all([
+    apolloClient.query<GetOpenDataPageQuery, QueryGetOpenDataPageArgs>({
+      query: GET_OPEN_DATA_PAGE_QUERY,
+      variables: {
+        input: {
+          lang: locale
+        }
+      }
+    })
+  ])
+
+  return {
+    page
+  }
 }
 
 export default withMainLayout(OpenDataPage)

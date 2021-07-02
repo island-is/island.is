@@ -1797,6 +1797,28 @@ export interface IOneColumnText extends Entry<IOneColumnTextFields> {
   }
 }
 
+export interface IOpenDataPageFields {
+  /** Page title */
+  pageTitle: string
+}
+
+export interface IOpenDataPage extends Entry<IOpenDataPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'openDataPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IOrganizationFields {
   /** Title */
   title: string
