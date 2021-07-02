@@ -221,7 +221,7 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => ProjectPage)
+  @Query(() => ProjectPage, { nullable: true })
   getProjectPage(
     @Args('input') input: GetProjectPageInput,
   ): Promise<ProjectPage | null> {

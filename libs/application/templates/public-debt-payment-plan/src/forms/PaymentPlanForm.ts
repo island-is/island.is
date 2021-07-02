@@ -1,16 +1,16 @@
 import {
+  buildCustomField,
+  buildDataProviderItem,
+  buildDescriptionField,
+  buildExternalDataProvider,
   buildForm,
+  buildMultiField,
+  buildRadioField,
   buildSection,
+  buildTextField,
+  CustomField,
   Form,
   FormModes,
-  buildDescriptionField,
-  buildDataProviderItem,
-  buildExternalDataProvider,
-  buildCustomField,
-  buildMultiField,
-  buildTextField,
-  buildRadioField,
-  CustomField,
 } from '@island.is/application/core'
 import { PaymentType, Prerequisites } from '../dataProviders/tempAPITypes'
 import {
@@ -18,9 +18,8 @@ import {
   paymentPlanIndexKeyMapper,
   PublicDebtPaymentPlan,
 } from '../lib/dataSchema'
-import { section, application, employer } from '../lib/messages'
+import { application, employer, info, section } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
-import { info } from '../lib/messages/info'
 import { paymentPlan } from '../lib/messages/paymentPlan'
 import { prerequisitesFailed } from '../lib/paymentPlanUtils'
 import { NO, YES } from '../shared/constants'
@@ -282,10 +281,18 @@ export const PaymentPlanForm: Form = buildForm({
       id: 'overview',
       title: section.overview,
       children: [
-        buildDescriptionField({
-          id: 'mockDescriptionField5',
-          title: application.name,
-          description: 'Umsókn',
+        buildMultiField({
+          id: 'overviewMultiField',
+          title: 'Yfirlit og undirritun',
+          description:
+            'Á þessari síðu má sjá heildaryfirlit yfir umsókn vegna greiðsludreifingar skulda, gott að er að skoða þetta vel áður en farið er í rafræna undirritun. ',
+          children: [
+            buildCustomField({
+              id: 'overviewScreen',
+              title: '',
+              component: 'Overview',
+            }),
+          ],
         }),
       ],
     }),

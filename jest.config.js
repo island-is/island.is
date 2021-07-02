@@ -151,9 +151,6 @@ module.exports = {
     '<rootDir>/libs/shared/types',
     '<rootDir>/libs/skilavottord/consts',
     '<rootDir>/libs/skilavottord/types',
-    '<rootDir>/libs/utils/api',
-    '<rootDir>/libs/utils/environment',
-    '<rootDir>/libs/utils/shared',
     '<rootDir>/libs/vmst-client',
     '<rootDir>/libs/clients/mms',
     '<rootDir>/libs/clients/zendesk',
@@ -171,5 +168,6 @@ module.exports = {
     '<rootDir>/libs/api/domains/license-service',
     '<rootDir>/libs/service-portal/licenses',
     '<rootDir>/libs/api/domains/identity',
+    '<rootDir>/libs/service-portal/wip',
   ],
 }
