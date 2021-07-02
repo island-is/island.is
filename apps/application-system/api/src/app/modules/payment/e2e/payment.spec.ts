@@ -50,12 +50,12 @@ class MockPaymentApi {
 class MockPaymentService {
   async findApplicationById() {
     return {
-      typeId: 'DrivingLicense'
+      typeId: 'DrivingLicense',
     }
   }
 
   async searchCorrectCatalog() {
-    return {  
+    return {
       performingOrgID: '6509142520',
       chargeType: 'AY1',
       chargeItemCode: 'AY110',
@@ -68,13 +68,13 @@ class MockPaymentService {
     return {
       user4: 'amazing-user4-code-for-url',
       receptionID: '96b5333b-6666-9999-1111-e8feb01d3dcd',
-      paymentUrl: 'www.nice-url.island.is'
+      paymentUrl: 'www.nice-url.island.is',
     }
   }
 
   async findPaymentByApplicationId() {
     return {
-      fulfilled: true
+      fulfilled: true,
     }
   }
 }

@@ -54,8 +54,7 @@ export class PaymentController {
     private readonly paymentAPI: PaymentAPI,
     @InjectModel(Payment)
     private paymentModel: typeof Payment,
-  ) //private applicationModel: typeof ApplicationModel,
-  {}
+  ) {}
   @Scopes(ApplicationScope.write)
   @Post('applications/:applicationId/payment')
   @ApiCreatedResponse({ type: CreatePaymentResponseDto })
