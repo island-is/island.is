@@ -24,7 +24,8 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
   DataProtectionComplaintEvent
 > = {
   type: ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT,
-  name: application.name.defaultMessage,
+  name: application.name,
+  institution: application.institutionName,
   dataSchema: DataProtectionComplaintSchema,
   stateMachineConfig: {
     initial: 'draft',

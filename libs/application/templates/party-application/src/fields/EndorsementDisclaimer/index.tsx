@@ -63,8 +63,8 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
     : undefined
 
   return (
-    <>
-      {!loading && !hasEndorsed ? (
+    <Box>
+      {!loading && hasEndorsed ? (
         <EndorsementApproved />
       ) : (
         <Box>
@@ -164,7 +164,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
           </Box>
         </Box>
       )}
-    </>
+    </Box>
   )
 }
 

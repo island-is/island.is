@@ -7,7 +7,7 @@ import {
   getValueViaPath,
   StaticText,
 } from '@island.is/application/core'
-import { isRunningOnEnvironment } from '@island.is/utils/shared'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import type {
   ChildInformation,

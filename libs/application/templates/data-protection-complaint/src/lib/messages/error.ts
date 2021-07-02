@@ -4,25 +4,29 @@ import { defineMessages } from 'react-intl'
 export const error = defineMessages({
   inCourtProceedings: {
     id: 'dpac.application:error.inCourtProceedings',
-    defaultMessage: 'In court proceedings error message',
+    defaultMessage:
+      'Persónuvernd getur ekki fjallað um mál sem eru til meðferðar hjá dómstólum eða öðrum stjórnvöldum',
     description:
       'Error message when inCourtProceedings has been answered as yes',
   },
   concernsMediaCoverage: {
     id: 'dpac.application:error.concernsMediaCoverage',
-    defaultMessage: 'concernsMediaCoverage message',
+    defaultMessage:
+      'Persónuvernd getur ekki tekið til úrlausnar kvartanir yfir umfjöllun í fjölmiðlum.',
     description:
       'Error message when concernsMediaCoverage has been answered as yes',
   },
   concernsBanMarking: {
     id: 'dpac.application:error.concernsBanMarking',
-    defaultMessage: 'concernsBanMarking message',
+    defaultMessage:
+      'Persónuvernd getur ekki fjallað um kvartanir yfir því að x-merking í símaskrá eða bannmerking í þjóðskrá hafi ekki verið virt.',
     description:
       'Error message when concernsBanMarking has been answered as yes',
   },
   concernsLibel: {
     id: 'dpac.application:error.concernsLibel',
-    defaultMessage: 'concernsLibel message',
+    defaultMessage:
+      'Persónuvernd getur ekki fjallað um meiðyrði eða ærumeiðingar',
     description: 'Error message when concernsLibel has been answered as yes',
   },
   concernsPersonalLettersOrSocialMedia: {

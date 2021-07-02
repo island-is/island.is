@@ -197,8 +197,66 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'business',
         },
       },
+
+      // Fjarmal
+      {
+        name: defineMessage({
+          id: 'service.portal:finance',
+          defaultMessage: 'Fjármál',
+        }),
+        path: ServicePortalPath.FinanceStatus,
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:finance-status',
+              defaultMessage: 'Staða',
+            }),
+            path: ServicePortalPath.FinanceStatus,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:finance-transactions',
+              defaultMessage: 'Hreyfingar',
+            }),
+            path: ServicePortalPath.FinanceTransactions,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:finance-bills',
+              defaultMessage: 'Greiðsluseðlar og Greiðslukvittanir',
+            }),
+            path: ServicePortalPath.FinanceBills,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:finance-employee-claims',
+              defaultMessage: 'Laungreiðendakröfur',
+            }),
+            path: ServicePortalPath.FinanceEmployeeClaims,
+          },
+        ],
+        icon: {
+          type: 'outline',
+          icon: 'cellular',
+        },
+      },
+
+      // Ökutæki
+      {
+        name: defineMessage({
+          id: 'service.portal:vehicles',
+          defaultMessage: 'Ökutæki',
+        }),
+        path: ServicePortalPath.AssetsVehicles,
+        systemRoute: true,
+        icon: {
+          type: 'outline',
+          icon: 'car',
+        },
+      },
     ],
   },
+
   {
     name: defineMessage({
       id: 'service.portal:actions',
@@ -224,17 +282,17 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
-      // Ökutæki
+      // Fjármál
       {
         name: defineMessage({
-          id: 'service.portal:vehicles',
-          defaultMessage: 'Ökutæki',
+          id: 'service.portal:finance',
+          defaultMessage: 'Fjármál',
         }),
-        path: ServicePortalPath.AssetsVehicles,
+        path: ServicePortalPath.FinanceRoot,
         systemRoute: true,
         icon: {
           type: 'outline',
-          icon: 'car',
+          icon: 'cellular',
         },
       },
 
@@ -250,6 +308,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'settings',
         },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:accessControl',
+              defaultMessage: 'Aðgangsstýring',
+            }),
+            path: ServicePortalPath.SettingsAccessControl,
+          },
+        ],
       },
 
       // Mín réttindi

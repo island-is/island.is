@@ -17,6 +17,7 @@ import { EndorsementMetadata } from '../endorsementMetadata/endorsementMetadata.
 import { Op, UniqueConstraintError } from 'sequelize'
 import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
 import { EndorsementTag } from '../endorsementList/constants'
+import type { Auth, User } from '@island.is/auth-nest-tools'
 
 interface FindEndorsementInput {
   listId: string
@@ -74,10 +75,10 @@ export class EndorsementService {
     private readonly validatorService: EndorsementValidatorService,
   ) {}
 
-  private getEndorsementMetadataForNationalId = async ({
-    nationalId,
-    endorsementList,
-  }: GetEndorsementMetadataForNationalIdInput) => {
+  private getEndorsementMetadataForNationalId = async (
+    { nationalId, endorsementList }: GetEndorsementMetadataForNationalIdInput,
+    auth: Auth,
+  ) => {
     // find all requested validation types
     const requestedValidationRules = endorsementList.validationRules.map(
       (validation) => validation.type,
@@ -87,13 +88,16 @@ export class EndorsementService {
       requestedValidationRules,
     )
     // get all metadata required for this endorsement
-    return this.metadataService.getMetadata({
-      fields: [
-        ...endorsementList.endorsementMeta,
-        ...metadataFieldsRequiredByValidation,
-      ],
-      nationalId,
-    })
+    return this.metadataService.getMetadata(
+      {
+        fields: [
+          ...endorsementList.endorsementMeta,
+          ...metadataFieldsRequiredByValidation,
+        ],
+        nationalId,
+      },
+      auth,
+    )
   }
 
   private validateEndorsement = ({
@@ -125,15 +129,18 @@ export class EndorsementService {
     return true
   }
 
-  private processEndorsement = async ({
-    nationalId,
-    endorsementList,
-  }: ProcessEndorsementInput) => {
+  private processEndorsement = async (
+    { nationalId, endorsementList }: ProcessEndorsementInput,
+    auth: Auth,
+  ) => {
     // get metadata for this national id
-    const metadata = await this.getEndorsementMetadataForNationalId({
-      nationalId,
-      endorsementList,
-    })
+    const metadata = await this.getEndorsementMetadataForNationalId(
+      {
+        nationalId,
+        endorsementList,
+      },
+      auth,
+    )
 
     // run all validations for this national id
     await this.validateEndorsement({
@@ -202,10 +209,11 @@ export class EndorsementService {
     })
   }
 
-  async createEndorsementOnList({
-    endorsementList,
-    nationalId,
-  }: EndorsementInput) {
+  // FIXME: Find a way to combine with create bulk endorsements
+  async createEndorsementOnList(
+    { endorsementList, nationalId }: EndorsementInput,
+    auth: User,
+  ) {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // we don't allow endorsements on closed lists
@@ -213,10 +221,13 @@ export class EndorsementService {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
 
-    const endorsement = await this.processEndorsement({
-      nationalId,
-      endorsementList,
-    })
+    const endorsement = await this.processEndorsement(
+      {
+        nationalId: auth.nationalId,
+        endorsementList,
+      },
+      auth,
+    )
 
     return this.endorsementModel.create(endorsement).catch((error) => {
       // map meaningful sequelize errors to custom errors, else return error
@@ -233,10 +244,11 @@ export class EndorsementService {
     })
   }
 
-  async bulkCreateEndorsementOnList({
-    nationalIds,
-    endorsementList,
-  }: EndorsementListsInput) {
+  // FIXME: Find a way to combine with create single endorsement
+  async bulkCreateEndorsementOnList(
+    { nationalIds, endorsementList }: EndorsementListsInput,
+    auth: Auth,
+  ) {
     this.logger.debug('Creating resource with nationalIds:', nationalIds)
 
     // we don't allow endorsements on closed lists
@@ -249,10 +261,13 @@ export class EndorsementService {
     // create an endorsement document for each national id
     const endorsements = await Promise.all(
       nationalIds.map(async (nationalId) => {
-        const endorsement = await this.processEndorsement({
-          nationalId,
-          endorsementList,
-        }).catch((error: Error) => {
+        const endorsement = await this.processEndorsement(
+          {
+            nationalId,
+            endorsementList,
+          },
+          auth,
+        ).catch((error: Error) => {
           // we swallow the error here and return undefined
           failedNationalIds.push({
             nationalId,

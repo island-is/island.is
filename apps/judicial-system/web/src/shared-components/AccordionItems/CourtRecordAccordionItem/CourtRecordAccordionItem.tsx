@@ -22,6 +22,10 @@ interface Props {
 }
 
 const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
+  const isRestrictionCase =
+    workingCase.type === CaseType.CUSTODY ||
+    workingCase.type === CaseType.TRAVEL_BAN
+
   return (
     <AccordionItem id="id_2" label="Þingbók" labelVariant="h3">
       <Box marginBottom={2}>
@@ -59,8 +63,10 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <Text>{workingCase.courtAttendees}</Text>
       </AccordionListItem>
       <AccordionListItem title="Dómskjöl">
-        <Text>{`Krafa um ${
-          caseTypes[workingCase.type]
+        <Text>{`Krafa ${
+          isRestrictionCase
+            ? `um ${caseTypes[workingCase.type]}`
+            : `- ${capitalize(caseTypes[workingCase.type])}`
         } þingmerkt nr. 1.`}</Text>
         <Text>
           Rannsóknargögn málsins liggja frammi.
@@ -81,24 +87,26 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </AccordionListItem>
-      <AccordionListItem
-        title={`Réttindi ${
-          workingCase.type === CaseType.CUSTODY ||
-          workingCase.type === CaseType.TRAVEL_BAN
-            ? formatAccusedByGender(
-                workingCase.accusedGender,
-                NounCases.GENITIVE,
-              )
-            : 'varnaraðila'
-        }`}
-      >
-        <Text>
-          Sakborning er bent á að honum sé óskylt að svara spurningum er varða
-          brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr.
-          88/2008. Sakborning er enn fremur áminntur um sannsögli kjósi hann að
-          tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.
-        </Text>
-      </AccordionListItem>
+      {!workingCase.isAccusedAbsent && (
+        <AccordionListItem
+          title={`Réttindi ${
+            workingCase.type === CaseType.CUSTODY ||
+            workingCase.type === CaseType.TRAVEL_BAN
+              ? formatAccusedByGender(
+                  workingCase.accusedGender,
+                  NounCases.GENITIVE,
+                )
+              : 'varnaraðila'
+          }`}
+        >
+          <Text>
+            Sakborning er bent á að honum sé óskylt að svara spurningum er varða
+            brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr.
+            88/2008. Sakborning er enn fremur áminntur um sannsögli kjósi hann
+            að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.
+          </Text>
+        </AccordionListItem>
+      )}
       {workingCase.accusedAppealDecision !==
         CaseAppealDecision.NOT_APPLICABLE && (
         <AccordionListItem
@@ -130,7 +138,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                       : 'varnaraðili',
                   )} samþykkir kröfuna. `
                 : ''
-            }${workingCase.accusedPleaAnnouncement}`}
+            }${workingCase.accusedPleaAnnouncement ?? ''}`}
           </Text>
         </AccordionListItem>
       )}

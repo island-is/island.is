@@ -56,7 +56,7 @@ export class DelegationsController {
     scopes: string[],
     delegation: CreateDelegationDTO | UpdateDelegationDTO,
   ) {
-    if (delegation.scopes.length === 0) {
+    if (!delegation.scopes || delegation.scopes.length === 0) {
       return true
     }
 
@@ -90,6 +90,7 @@ export class DelegationsController {
     return this.delegationsService.findAllTo(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
+      environment.nationalRegistry.authMiddlewareOptions,
     )
   }
 
@@ -112,6 +113,7 @@ export class DelegationsController {
     return this.delegationsService.create(
       user,
       environment.nationalRegistry.xroad.clientId ?? '',
+      environment.nationalRegistry.authMiddlewareOptions,
       delegation,
     )
   }

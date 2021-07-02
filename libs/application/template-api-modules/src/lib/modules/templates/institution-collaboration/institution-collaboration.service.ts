@@ -58,20 +58,23 @@ export class InstitutionCollaborationService {
       application.answers,
       'attachments',
     ) as Array<{ key: string; name: string }>
-    const hasattachments = attachments && attachments?.length > 0
-    if (!hasattachments) {
+    const hasAttachments = attachments && attachments?.length > 0
+
+    if (!hasAttachments) {
       return []
     }
 
-    return Promise.all(
+    return await Promise.all(
       attachments.map(async ({ key, name }) => {
         const url = (application.attachments as {
           [key: string]: string
         })[key]
+
         const signedUrl = await this.fileStorageService.generateSignedUrl(
           url,
-          key,
+          `${application.id}/${key}`,
         )
+
         return { name, url: signedUrl }
       }),
     )

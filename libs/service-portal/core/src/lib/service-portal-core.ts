@@ -26,6 +26,10 @@ export interface ServicePortalNavigationItem {
   heading?: MessageDescriptor
   // Optional divider to be displayed above the nav item in the sidebar
   divider?: boolean
+  /**
+   * Indicates if the user has access to the navigation item
+   */
+  enabled?: boolean
 }
 
 /**
@@ -62,6 +66,10 @@ export type ServicePortalRoute = {
    * Describes the path or paths used to route to this component
    */
   path: ServicePortalPath | ServicePortalPath[]
+  /**
+   * Indicates if the user has access to the route
+   */
+  enabled?: boolean
   /**
    * The render value of this component
    */
@@ -117,7 +125,9 @@ export interface ServicePortalModule {
    * The service portal shell will define these as routes
    * within itself and use the provided render function to render out the component
    */
-  routes: (props: ServicePortalModuleProps) => ServicePortalRoute[]
+  routes: (
+    props: ServicePortalModuleProps,
+  ) => Promise<ServicePortalRoute[]> | ServicePortalRoute[]
   /**
    * Global components will always be rendered by default
    * These are usually utility components that prompt the user about certain

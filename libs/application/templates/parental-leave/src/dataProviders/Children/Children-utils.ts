@@ -163,11 +163,16 @@ export const getChildrenAndExistingApplications = (
 
   for (const child of childrenWhereOtherParent) {
     const isAlreadyInList = children.some(
-      (currentChild) =>
-        currentChild.expectedDateOfBirth === child.expectedDateOfBirth,
+      ({ expectedDateOfBirth }) =>
+        expectedDateOfBirth === child.expectedDateOfBirth,
     )
 
-    if (!isAlreadyInList) {
+    const hasAlreadyAppliedForChild = existingApplications.some(
+      ({ expectedDateOfBirth }) =>
+        expectedDateOfBirth === child.expectedDateOfBirth,
+    )
+
+    if (!isAlreadyInList && !hasAlreadyAppliedForChild) {
       children.push(child)
     }
   }
