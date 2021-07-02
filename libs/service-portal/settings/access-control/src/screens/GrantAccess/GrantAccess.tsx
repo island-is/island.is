@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { gql, useMutation, useLazyQuery } from '@apollo/client'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, ValidationRules } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
@@ -14,6 +14,7 @@ import {
   GridColumn,
   toast,
 } from '@island.is/island-ui/core'
+import { InputController } from '@island.is/shared/form-fields'
 import { Mutation, Query } from '@island.is/api/schema'
 import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
@@ -57,7 +58,7 @@ function GrantAccess() {
   const requestDelegation = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const value = e.target.value
+    const value = e.target.value.replace('-', '').trim()
     if (value.length === 10 && kennitala.isValid(value)) {
       getIdentity({ variables: { input: { nationalId: value } } })
       if (identity?.nationalId === value) {
@@ -120,52 +121,46 @@ function GrantAccess() {
             </Text>
           </GridColumn>
           <GridColumn paddingBottom={2} span={['12/12', '12/12', '6/12']}>
-            <Controller
+            <InputController
               control={control}
-              name="toNationalId"
+              id="toNationalId"
               defaultValue=""
-              rules={{
-                required: {
-                  value: true,
-                  message: formatMessage({
-                    id:
-                      'service.portal.settings.accessControl:grant-required-ssn',
-                    defaultMessage: 'Skylda er að fylla út kennitölu',
-                  }),
-                },
-                validate: {
-                  value: (value) => {
-                    if (!kennitala.isValid(value)) {
-                      return formatMessage({
-                        id:
-                          'service.portal.settings.accessControl:grant-invalid-ssn',
-                        defaultMessage: 'Kennitalan er ekki gild kennitala',
-                      })
-                    }
+              rules={
+                {
+                  required: {
+                    value: true,
+                    message: formatMessage({
+                      id:
+                        'service.portal.settings.accessControl:grant-required-ssn',
+                      defaultMessage: 'Skylda er að fylla út kennitölu',
+                    }),
                   },
-                },
+                  validate: {
+                    value: (value: number) => {
+                      if (!kennitala.isValid(value)) {
+                        return formatMessage({
+                          id:
+                            'service.portal.settings.accessControl:grant-invalid-ssn',
+                          defaultMessage: 'Kennitalan er ekki gild kennitala',
+                        })
+                      }
+                    },
+                  },
+                } as ValidationRules
+              }
+              type="tel"
+              format="######-####"
+              label={formatMessage({
+                id: 'global:nationalId',
+                defaultMessage: 'Kennitala',
+              })}
+              placeholder={formatMessage({
+                id: 'global:nationalId',
+                defaultMessage: 'Kennitala',
+              })}
+              onChange={(value) => {
+                requestDelegation(value)
               }}
-              render={({ onChange, value, name }) => (
-                <Input
-                  name={name}
-                  type="number"
-                  label={formatMessage({
-                    id: 'global:nationalId',
-                    defaultMessage: 'Kennitala',
-                  })}
-                  placeholder={formatMessage({
-                    id: 'global:nationalId',
-                    defaultMessage: 'Kennitala',
-                  })}
-                  value={value}
-                  hasError={errors.toNationalId}
-                  errorMessage={errors.toNationalId?.message}
-                  onChange={(value) => {
-                    onChange(value)
-                    requestDelegation(value)
-                  }}
-                />
-              )}
             />
           </GridColumn>
           <GridColumn paddingBottom={2} span={['12/12', '12/12', '6/12']}>
