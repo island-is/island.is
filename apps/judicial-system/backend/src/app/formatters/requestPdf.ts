@@ -15,7 +15,7 @@ import { Case } from '../modules/case/models'
 import { formatCustodyProvisions } from './formatters'
 import { setPageNumbers } from './pdfHelpers'
 import { writeFile } from './writeFile'
-import { FormatMessage } from '@island.is/application/core'
+import { FormatMessage } from '@island.is/api/domains/translations'
 import { restrictionRequest as m } from '../messages/requestPdf'
 
 function constructRestrictionRequestPdf(
