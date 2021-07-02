@@ -15,7 +15,7 @@ export class IdentityService {
 
   async getIdentity(nationalId: string): Promise<Identity | null> {
     if (kennitala.isCompany(nationalId)) {
-      return Promise.resolve(null)
+      return null
     }
 
     const person = await this.nationalRegistryService.getUser(nationalId)
