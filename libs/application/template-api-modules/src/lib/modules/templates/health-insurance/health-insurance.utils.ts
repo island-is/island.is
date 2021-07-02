@@ -1,4 +1,6 @@
 import get from 'lodash/get'
+import parse from 'date-fns/parse'
+import parseISO from 'date-fns/parseISO'
 import { logger } from '@island.is/logging'
 
 import { Application } from '@island.is/application/core'
@@ -21,6 +23,27 @@ const extractAnswerFromJson = (object: unknown, key: string) => {
     return null
   }
   return JSON.parse(value)
+}
+
+export const parseNationalRegistryDate = (dateString: string | null) => {
+  if (typeof dateString !== 'string') {
+    return undefined
+  }
+
+  // Icelandic format
+  let parsedDate = parse(dateString, 'd.M.yyyy HH:mm:ss', new Date())
+  if (!isNaN(parsedDate.getTime())) {
+    return parsedDate
+  }
+
+  // ISO format (in the future hopefully)
+  parsedDate = parseISO(dateString)
+  if (!isNaN(parsedDate.getTime())) {
+    return parsedDate
+  }
+
+  // Others
+  return undefined
 }
 
 export const transformApplicationToHealthInsuranceDTO = (
@@ -57,17 +80,6 @@ export const transformApplicationToHealthInsuranceDTO = (
       throw new Error(
         `Student's application must have confirmation of student document`,
       )
-    }
-
-    // Extract national registry date
-    // It could be null
-    let registryDate: string | null = extractAnswer(
-      application.externalData,
-      'nationalRegistry.data.address.lastUpdated',
-    )
-    if (registryDate) {
-      const pattern = /(\d{2})\.(\d{2})\.(\d{4})/
-      registryDate = registryDate.split(' ')[0].replace(pattern, '$3-$2-$1')
     }
 
     // There is 2 fields to add information in frontend
@@ -109,10 +121,12 @@ export const transformApplicationToHealthInsuranceDTO = (
       phoneNumber:
         extractAnswer(application.answers, 'applicant.phoneNumber') ?? '',
       // Registry date could be empty
-      residenceDateFromNationalRegistry:
-        registryDate && !isNaN(Date.parse(registryDate))
-          ? new Date(registryDate)
-          : undefined,
+      residenceDateFromNationalRegistry: parseNationalRegistryDate(
+        extractAnswer(
+          application.externalData,
+          'nationalRegistry.data.address.lastUpdated',
+        ),
+      ),
       // Could not get this yet, so sent in empty
       residenceDateUserThink: undefined,
       userStatus: userStatus,

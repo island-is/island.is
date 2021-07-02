@@ -190,7 +190,6 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.email,
               width: 'half',
               variant: 'email',
-              disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData.userProfile?.data as {
                   email?: string
@@ -201,18 +200,12 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.phoneNumber,
               width: 'half',
               variant: 'tel',
-              disabled: true,
               format: '###-####',
               placeholder: '000-0000',
               defaultValue: (application: Application) =>
                 (application.externalData.userProfile?.data as {
                   mobilePhoneNumber?: string
                 })?.mobilePhoneNumber,
-            }),
-            buildDescriptionField({
-              id: 'editDigitalIslandData',
-              title: '',
-              description: m.editDigitalIslandData,
             }),
           ],
         }),
