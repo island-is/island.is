@@ -1,9 +1,6 @@
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  BaseTemplateAPIModuleConfig,
-  TemplateApiModuleActionProps,
-} from '../../../types'
+import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
   generateAssignSupremeCourtApplicationEmail,
@@ -25,7 +22,7 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
   }
 `
 
-type ErrorResponse = {
+interface ErrorResponse {
   errors: {
     message: string
   }
