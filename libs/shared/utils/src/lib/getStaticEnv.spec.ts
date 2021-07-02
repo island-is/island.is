@@ -1,4 +1,4 @@
-import { getStaticEnv, ENV_PREFIX } from './staticEnvironment'
+import { getStaticEnv, ENV_PREFIX } from './getStaticEnv'
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace

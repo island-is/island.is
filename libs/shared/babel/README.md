@@ -1,6 +1,4 @@
-<!-- gitbook-ignore -->
-
-# babel
+# Babel
 
 Shared babel presets.
 
@@ -21,7 +19,3 @@ For DX, and isolation, it's ideal to import everything from index.ts. However, f
 [![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVEJcbnN1YmdyYXBoIGNodW5rIGFcblBhZ2VBXG5QYWdlQSAtLT4gU2VjdGlvbkFcbmVuZFxuc3ViZ3JhcGggY2h1bmsgYlxuUGFnZUJcblBhZ2VCIC0tPiBTZWN0aW9uQlxuZW5kXG4iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggVEJcbnN1YmdyYXBoIGNodW5rIGFcblBhZ2VBXG5QYWdlQSAtLT4gU2VjdGlvbkFcbmVuZFxuc3ViZ3JhcGggY2h1bmsgYlxuUGFnZUJcblBhZ2VCIC0tPiBTZWN0aW9uQlxuZW5kXG4iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)
 
 So we configure babel-plugin-transform-imports to change import statements and use `exportFinder` to recursively find the actual module that defines each export.
-
-## Running unit tests
-
-Run `ng test cache` to execute the unit tests via [Jest](https://jestjs.io).

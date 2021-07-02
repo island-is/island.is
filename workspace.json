@@ -7855,6 +7855,27 @@
         }
       }
     },
+    "shared-utils": {
+      "root": "libs/shared/utils",
+      "sourceRoot": "libs/shared/utils/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/utils/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/utils"],
+          "options": {
+            "jestConfig": "libs/shared/utils/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "skilavottord-consts": {
       "root": "libs/skilavottord/consts",
       "sourceRoot": "libs/skilavottord/consts/src",
@@ -8153,81 +8174,6 @@
           }
         },
         "docker-cypress": {}
-      }
-    },
-    "utils-api": {
-      "root": "libs/utils/api",
-      "sourceRoot": "libs/utils/api/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/utils/api/tsconfig.lib.json",
-              "libs/utils/api/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/utils/api/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/utils/api/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/utils/api"]
-        }
-      }
-    },
-    "utils-environment": {
-      "root": "libs/utils/environment",
-      "sourceRoot": "libs/utils/environment/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/utils/environment/tsconfig.lib.json",
-              "libs/utils/environment/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/utils/environment/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/utils/environment/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/utils/environment"]
-        }
-      }
-    },
-    "utils-shared": {
-      "root": "libs/utils/shared",
-      "sourceRoot": "libs/utils/shared/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/utils/shared/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/utils/shared"],
-          "options": {
-            "jestConfig": "libs/utils/shared/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
       }
     },
     "web": {
