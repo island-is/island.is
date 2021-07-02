@@ -1,7 +1,10 @@
 import { DynamicModule } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
-import { PartyApplicationService } from './party-application.service'
+import {
+  PartyApplicationService,
+  PARTY_APPLICATION_SERVICE_OPTIONS,
+} from './party-application.service'
 import {
   Configuration as endorsementConfig,
   EndorsementListApi,
@@ -23,6 +26,10 @@ export class PartyApplicationModule {
                 basePath: config.partyApplication.endorsementsApiBasePath,
               }),
             ),
+        },
+        {
+          provide: PARTY_APPLICATION_SERVICE_OPTIONS,
+          useFactory: () => config.partyApplication.options,
         },
       ],
       exports: [PartyApplicationService],

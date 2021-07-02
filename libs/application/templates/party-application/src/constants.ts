@@ -1,8 +1,13 @@
 import { EndorsementListTagsEnum } from './types/schema'
 
-export type EndorsementListTags = Exclude<
+export type EndorsementListTags = Extract<
   EndorsementListTagsEnum,
-  EndorsementListTagsEnum.PartyLetter2021
+  | EndorsementListTagsEnum.PartyApplicationNordausturkjordaemi2021
+  | EndorsementListTagsEnum.PartyApplicationNordvesturkjordaemi2021
+  | EndorsementListTagsEnum.PartyApplicationReykjavikurkjordaemiNordur2021
+  | EndorsementListTagsEnum.PartyApplicationReykjavikurkjordaemiSudur2021
+  | EndorsementListTagsEnum.PartyApplicationSudurkjordaemi2021
+  | EndorsementListTagsEnum.PartyApplicationSudvesturkjordaemi2021
 >
 
 export enum ApiModuleActions {
@@ -72,4 +77,9 @@ export const csvFileName = (partyLetter: string, partyName: string): string => {
   const strippedPartyName = partyName.toString().replace(/\s/g, '')
   const strippedPartyLetter = partyLetter.toString().replace(/\s/g, '')
   return `Meðmælendalisti-${strippedPartyName}(${strippedPartyLetter}).csv`
+}
+
+export enum SelectedEndorsementsRadio {
+  AUTO,
+  RANDOM,
 }
