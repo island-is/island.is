@@ -81,11 +81,6 @@ export class DelegationResolver {
       .catch(ignore404)
     if (!delegation) {
       delegation = await this.authService.createDelegation(user, input)
-    } else if (delegation.toName !== input.name) {
-      return this.authService.updateDelegation(
-        user,
-        input as UpdateDelegationInput,
-      )
     }
 
     return delegation
