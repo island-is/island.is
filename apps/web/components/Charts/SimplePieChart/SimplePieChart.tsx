@@ -2,60 +2,79 @@ import React from 'react'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts'
 import * as styles from './SimplePieChart.treat'
 import cn from 'classnames'
-import { Payload } from 'recharts/types/component/DefaultTooltipContent'
 
-const data = [
+const categories = [
   {
     name: 'Menning, hönnun og afþreying',
-    tala: 21,
+    count: 21,
   },
   {
     name: 'Almenn matvælatækni',
-    tala: 18,
+    count: 18,
   },
   {
     name:
       'Almenn verslun og þjónusta (þ.m.t. fjármálaþjónusta og öryggisþjónusta)',
-    tala: 15,
+    count: 15,
   },
   {
     name: 'Heilbrigðis- og velferðarþjónusta',
-    tala: 15,
+    count: 15,
   },
   {
     name: 'Fræðslu- og menntatengd þjónusta',
-    tala: 13,
+    count: 13,
   },
   {
     name: 'Fjarskiptaþjónusta og samgöngur',
-    tala: 12,
+    count: 12,
   },
   {
     name: 'Vinnsla lífrænna og ólífrænna efna (önnur en efnaframleiðsla)',
-    tala: 10,
+    count: 10,
   },
   {
     name: 'Bygginga- og mannvirkjagerð (þ.m.t. viðhald)',
-    tala: 10,
+    count: 10,
   },
   {
     name: 'Hagnýting auðlinda lífríkis á landi (Landbúnaður skógrækt)',
-    tala: 9,
+    count: 9,
   },
   {
     name: 'Umhverfis- og skipulagsmál (þ.m.t. vatnsveitur og úrgangur)',
-    tala: 9,
+    count: 9,
   },
   {
     name: 'Ferðaþjónusta',
-    tala: 7,
+    count: 7,
   },
   {
     name: 'Annað',
-    tala: 5,
+    count: 5,
   },
 ]
 
+const veitt = [
+  { name: "HB", count: 655 },
+  { name: null, count: 66 },
+  { name: "RN", count: 18 },
+  { name: "SL", count: 17 },
+  { name: "VF", count: 10 },
+  { name: "AL", count: 7 },
+  { name: "VL", count: 6 },
+  { name: "NV", count: 3 }
+]
+const umsokn = [
+  { name: "HB", count: 3669 },
+  { name: null, count: 442 },
+  { name: "RN", count: 128 },
+  { name: "SL", count: 115 },
+  { name: "VL", count: 67 },
+  { name: "VF", count: 47 },
+  { name: "AL", count: 35 },
+  { name: "NV", count: 29 }
+]
 const COLORS = [
   '#99C0FF',
   '#D799C7',
@@ -83,8 +102,24 @@ const CustomTooltip = (props:  CustomTooltipProps) => {
   return null
 }
 
-export const SimplePieChart = () => {
-  const datakey = 'tala'
+interface SimplePieChartProps {
+  dataset?: string,
+}
+
+export const SimplePieChart = ({dataset}: SimplePieChartProps) => {
+  const datakey="count"
+  let data = categories
+  switch(dataset) {
+    case "umsokn":
+      data = umsokn
+      break
+    case "veitt":
+      data = veitt
+      break
+    default:
+      data = categories
+      break 
+  }
   const sum = data.reduce((sum, item) => sum+item[datakey], 0)
   return (
     <ResponsiveContainer width="100%" height="100%">

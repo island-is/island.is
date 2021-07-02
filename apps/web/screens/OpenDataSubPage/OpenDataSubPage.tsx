@@ -141,23 +141,43 @@ const OpenDataSubPage: Screen = () => {
                 </GridColumn>
               </GridRow>
             </Box>
-            <GridRow>
-              <GridColumn span={['12/12', '4/12', '4/12']}>
-                <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
-                  <SimplePieChart />
-                </ChartsCard>
-              </GridColumn>
-              <GridColumn span={['12/12', '8/12', '8/12']}>
-                <ChartsCard
-                  title="Rannís"
-                  description="Þjónustuaðili"
-                  subTitle="Fjöldi sóttra og veittra styrkja seinustu tíu árin og heildarupphæð úthlutuna"
-                  blue
-                >
-                  <MixedChart />
-                </ChartsCard>
-              </GridColumn>
-            </GridRow>
+            <Box marginBottom={3}>
+              <GridRow>
+                <GridColumn span={['12/12', '4/12', '4/12']}>
+                  <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
+                    <SimplePieChart />
+                  </ChartsCard>
+                </GridColumn>
+                <GridColumn span={['12/12', '8/12', '8/12']}>
+                  <ChartsCard
+                    title="Rannís"
+                    description="Þjónustuaðili"
+                    subTitle="Fjöldi sóttra og veittra styrkja seinustu tíu árin og heildarupphæð úthlutuna"
+                    blue
+                  >
+                    <MixedChart />
+                  </ChartsCard>
+                </GridColumn>
+              </GridRow>
+            </Box>
+            <Box marginBottom={3}>
+              <GridRow>
+                <GridColumn span={['12/12', '6/12', '6/12']}>
+                  <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
+                    <SimplePieChart dataset="umsokn" />
+                  </ChartsCard>
+                </GridColumn>
+                <GridColumn span={['12/12', '6/12', '6/12']}>
+                  <ChartsCard
+                    title="Rannís"
+                    description="Þjónustuaðili"
+                    blue
+                  >
+                    <SimplePieChart dataset="veitt" />
+                  </ChartsCard>
+                </GridColumn>
+              </GridRow>
+            </Box>
           </GridColumn>
         </GridRow>
       </GridContainer>
