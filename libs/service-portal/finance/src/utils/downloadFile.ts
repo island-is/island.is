@@ -24,17 +24,16 @@ export const downloadFile = async (
   if (type === 'csv') {
     const csvData = [header, ...data]
     const filename = `${name}, ${new Date().toISOString().split('T')[0]}.csv`
-    console.log('csvData', csvData)
     CSVStringify(csvData, (err, output) => {
       getFile(filename, output)
     })
   } else {
-    const dats = [header, ...data]
+    const sheetData = [header, ...data]
     const dateString = new Date().toISOString().split('T')[0]
     const fileName = `${name} - ${dateString}`
-    const sheetName = name.substring(0, 31)
+    const sheetName = name.substring(0, 31) // Max length for a sheet name.
 
-    const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(dats)
+    const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
     const workbook: XLSX.WorkBook = {
       Sheets: { [sheetName]: worksheet },
       SheetNames: [sheetName],
