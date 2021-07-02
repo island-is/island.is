@@ -96,5 +96,5 @@ export enum ServicePortalPath {
 
   RegulationsAdminRoot = '/reglugerdir-admin',
   RegulationsAdminEdit = '/reglugerdir-admin/edit/:id(new|\\d+)/:step?',
-  RegulationsAdminMinistries = '/reglugerdir-admin/ministries',
+  RegulationsAdminMinistries = '/reglugerdir-admin/raduneyti',
 }
