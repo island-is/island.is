@@ -52,11 +52,17 @@ export type RegulationDraft = {
 
 // ---------------------------------------------------------------------------
 
-export type DraftRegulationCancel = DB_DraftRegulationCancel
+export type DraftRegulationCancel = {
+  type: 'repeal'
+  name: RegName | 'self'
+} & Pick<DB_DraftRegulationCancel, 'id' | 'date'>
 
 // ---------------------------------------------------------------------------
 
-export type DraftRegulationChange = Omit<DB_DraftRegulationChange, 'text'> &
+export type DraftRegulationChange = {
+  type: 'amend'
+  name: RegName | 'self'
+} & Pick<DB_DraftRegulationChange, 'id' | 'date' | 'title'> &
   Pick<Regulation, 'text' | 'appendixes' | 'comments'>
 
 // ---------------------------------------------------------------------------
