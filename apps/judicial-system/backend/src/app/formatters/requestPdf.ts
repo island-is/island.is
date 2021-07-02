@@ -312,7 +312,7 @@ function constructInvestigationRequestPdf(
       .text('Beiðni um dómþing að varnaraðila fjarstöddum')
       .font('Helvetica')
       .fontSize(12)
-      .text(existingCase.prosecutorOnlySessionRequest, {
+      .text(existingCase.prosecutorOnlySessionRequest ?? '', {
         lineGap: 6,
         paragraphGap: 0,
       })

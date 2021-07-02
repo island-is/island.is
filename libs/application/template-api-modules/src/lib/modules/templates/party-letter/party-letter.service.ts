@@ -8,24 +8,8 @@ import {
   generateApplicationRejectedEmail,
   generateApplicationApprovedEmail,
 } from './emailGenerators'
-
-const CLOSE_ENDORSEMENT = `
-  mutation EndorsementSystemCloseEndorsementList($input: FindEndorsementListInput!) {
-    endorsementSystemCloseEndorsementList(input: $input) {
-      id
-      closedDate
-    }
-  }
-`
-
-const OPEN_ENDORSEMENT = `
-  mutation EndorsementSystemOpenEndorsementList($input: FindEndorsementListInput!) {
-    endorsementSystemOpenEndorsementList(input: $input) {
-      id
-      closedDate
-    }
-  }
-`
+import { PartyLetterRegistryApi } from './gen/fetch/party-letter'
+import { EndorsementListApi } from './gen/fetch/endorsements'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
   mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
@@ -34,6 +18,31 @@ const CREATE_ENDORSEMENT_LIST_QUERY = `
     }
   }
 `
+
+/**
+ * We proxy the auth header to the subsystem where it is resolved.
+ */
+interface FetchParams {
+  url: string
+  init: RequestInit
+}
+
+interface RequestContext {
+  init: RequestInit
+}
+
+interface Middleware {
+  pre?(context: RequestContext): Promise<FetchParams | void>
+}
+class ForwardAuthHeaderMiddleware implements Middleware {
+  constructor(private bearerToken: string) {}
+
+  async pre(context: RequestContext) {
+    context.init.headers = Object.assign({}, context.init.headers, {
+      authorization: this.bearerToken,
+    })
+  }
+}
 
 type ErrorResponse = {
   errors: {
@@ -49,23 +58,26 @@ type EndorsementListResponse =
       }
     }
   | ErrorResponse
-
-type CreatePartyLetterResponse =
-  | {
-      data: {
-        partyLetterRegistryCreate: {
-          partyLetter: string
-          partyName: string
-        }
-      }
-    }
-  | ErrorResponse
 @Injectable()
 export class PartyLetterService {
   constructor(
+    private partyLetterRegistryApi: PartyLetterRegistryApi,
+    private endorsementListApi: EndorsementListApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
+
+  partyLetterRegistryApiWithAuth(token: string) {
+    return this.partyLetterRegistryApi.withMiddleware(
+      new ForwardAuthHeaderMiddleware(token),
+    )
+  }
+
+  endorsementListApiWithAuth(token: string) {
+    return this.endorsementListApi.withMiddleware(
+      new ForwardAuthHeaderMiddleware(token),
+    )
+  }
 
   async assignMinistryOfJustice({
     application,
@@ -74,26 +86,17 @@ export class PartyLetterService {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
 
-    return this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CLOSE_ENDORSEMENT, {
-        input: {
-          listId,
-        },
+    return this.endorsementListApiWithAuth(authorization)
+      .endorsementListControllerClose({ listId })
+      .then(async () => {
+        await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+          generateAssignMinistryOfJusticeApplicationEmail,
+          application,
+        )
       })
-      .then((res) => {
-        return res.json()
-      })
-      .then(async (json) => {
-        if (json.errors) {
-          this.logger.error('Failed to close endorsement list', listId)
-          throw new Error('Failed to close endorsement list')
-        }
-        if (json.data) {
-          await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-            generateAssignMinistryOfJusticeApplicationEmail,
-            application,
-          )
-        }
+      .catch(() => {
+        this.logger.error('Failed to close endorsement list', listId)
+        throw new Error('Failed to close endorsement list')
       })
   }
 
@@ -104,26 +107,18 @@ export class PartyLetterService {
     const listId = (application.externalData?.createEndorsementList.data as any)
       .id
 
-    return this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, OPEN_ENDORSEMENT, {
-        input: {
-          listId,
-        },
+    return this.endorsementListApiWithAuth(authorization)
+      .endorsementListControllerOpen({ listId })
+      .then(async () => {
+        // if we succeed in creating the party letter let the applicant know
+        await this.sharedTemplateAPIService.sendEmail(
+          generateApplicationRejectedEmail,
+          application,
+        )
       })
-      .then((res) => {
-        return res.json()
-      })
-      .then(async (json) => {
-        if (json.errors) {
-          this.logger.error('Failed to open endorsement list', listId)
-          throw new Error('Failed to open endorsement list')
-        }
-        if (json.data) {
-          await this.sharedTemplateAPIService.sendEmail(
-            generateApplicationRejectedEmail,
-            application,
-          )
-        }
+      .catch(() => {
+        this.logger.error('Failed to open endorsement list', listId)
+        throw new Error('Failed to open endorsement list')
       })
   }
 
@@ -163,7 +158,7 @@ export class PartyLetterService {
       .then((response) => response.json())
 
     if ('errors' in endorsementList) {
-      this.logger.error('Failed to open endorsement list', endorsementList)
+      this.logger.error('Failed to create endorsement list', endorsementList)
       throw new Error('Failed to create endorsement list')
     }
 
@@ -177,28 +172,15 @@ export class PartyLetterService {
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
-    const CREATE_PARTY_LETTER_QUERY = `
-    mutation {
-      partyLetterRegistryCreate(input: {
-        partyLetter: "${application.answers.partyLetter}",
-        partyName: "${application.answers.partyName}",
-        managers: []
-      }) {
-        partyName
-        partyLetter
-      }
-    }
-    `
-
-    const partyLetter: CreatePartyLetterResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(authorization, CREATE_PARTY_LETTER_QUERY)
-      .then((response) => response.json())
-
-    if ('errors' in partyLetter) {
-      this.logger.error('Failed to register party letter', partyLetter)
-      throw new Error('Failed to register party letter')
-    }
-
-    return partyLetter
+    return await this.partyLetterRegistryApiWithAuth(
+      authorization,
+    ).partyLetterRegistryControllerCreate({
+      createDto: {
+        partyLetter: application.answers.partyLetter as string,
+        partyName: application.answers.partyName as string,
+        managers: [],
+        owner: application.applicant,
+      },
+    })
   }
 }

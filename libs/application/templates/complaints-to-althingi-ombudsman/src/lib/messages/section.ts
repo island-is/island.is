@@ -71,4 +71,9 @@ export const section = defineMessages({
     defaultMessage: 'Lagt fyrir dómstóla',
     description: 'Definition of court action',
   },
+  complaintOverview: {
+    id: `ctao.application:section.complaintOverview`,
+    defaultMessage: 'Yfirlit',
+    description: 'Definition of complaint overview',
+  },
 })

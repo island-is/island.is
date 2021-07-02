@@ -208,15 +208,14 @@
   - [Service Portal Licenses](libs/service-portal/licenses/README.md)
   - [Service Portal Settings](libs/service-portal/settings/README.md)
     - [Service Portal Settings Access Control](libs/service-portal/settings/access-control/README.md)
+  - [Service Portal Wip](libs/service-portal/wip/README.md)
 - [Shared](libs/shared/README.md)
-  - [Shared Constants](libs/shared/constants/README.md)
-  - [Shared Form Fields](libs/shared/form-fields/README.md)
-  - [Shared Mocking](libs/shared/mocking/README.md)
-  - [Shared Types](libs/shared/types/README.md)
-- [Utils](libs/utils/README.md)
-  - [API Utils](libs/utils/api/README.md)
-  - [Utils Environment](libs/utils/environment/README.md)
-  - [Utils Shared](libs/utils/shared/README.md)
+  - [Babel](libs/shared/babel/README.md)
+  - [Constants](libs/shared/constants/README.md)
+  - [Form Fields](libs/shared/form-fields/README.md)
+  - [Mocking](libs/shared/mocking/README.md)
+  - [Types](libs/shared/types/README.md)
+  - [Utils](libs/shared/utils/README.md)
 
 ## Misc
 
