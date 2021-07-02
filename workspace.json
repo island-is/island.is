@@ -5249,7 +5249,13 @@
             "cwd": "apps/judicial-system/backend"
           }
         },
-        "docker-express": {}
+        "docker-express": {},
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/backend/src/app/messages/**/*.ts'"
+          }
+        }
       }
     },
     "judicial-system-consts": {

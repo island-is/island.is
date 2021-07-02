@@ -35,6 +35,6 @@ export const serviceSetup = (services: {
       SOFFIA_USER: settings.SOFFIA_USER,
       SOFFIA_PASS: settings.SOFFIA_PASS,
     })
-    .grantNamespaces('islandis')
+    .grantNamespaces('islandis', 'application-system')
     .liveness('/liveness')
     .readiness('/liveness')
