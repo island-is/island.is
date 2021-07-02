@@ -4,7 +4,6 @@ import {
   GET_OPEN_DATA_PAGE_QUERY
 } from '../queries'
 import {
-  GetGroupedMenuQuery,
   GetOpenDataPageQuery,
   QueryGetOpenDataPageArgs
 } from '@island.is/web/graphql/schema'
