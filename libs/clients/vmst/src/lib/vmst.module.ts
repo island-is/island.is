@@ -2,7 +2,7 @@ import { DynamicModule } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
 
 import { logger } from '@island.is/logging'
-import { isRunningOnEnvironment } from '@island.is/utils/shared'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import {
   Configuration,
