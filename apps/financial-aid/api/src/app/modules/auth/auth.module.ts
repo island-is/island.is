@@ -12,7 +12,7 @@ const { audience: audienceUrl } = environment.auth
     AuthService,
     {
       provide: 'IslandisLogin',
-      useFactory: () => new (require('islandis-login'))({ audienceUrl }),
+      useFactory: () => new (require('@island.is/login'))({ audienceUrl }),
     },
   ],
   exports: [AuthService],
