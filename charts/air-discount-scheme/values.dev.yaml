@@ -5,6 +5,7 @@ air-discount-scheme-api:
     BACKEND_URL: http://web-air-discount-scheme-backend
     CONTENTFUL_HOST: preview.contentful.com
     ELASTIC_NODE: https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com
+    NODE_OPTIONS: '--max-old-space-size=480'
     SAML_ENTRY_POINT: https://innskraning.island.is/?id=ads.dev
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -37,6 +38,13 @@ air-discount-scheme-api:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: 400m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
   secrets:
     ADMINS: /k8s/air-discount-scheme/api/ADMINS
     AUTH_JWT_SECRET: /k8s/air-discount-scheme/api/AUTH_JWT_SECRET
