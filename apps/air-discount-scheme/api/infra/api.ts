@@ -31,6 +31,7 @@ export const serviceSetup = (services: {
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
+      NODE_OPTIONS: '--max-old-space-size=480',
     })
     .secrets({
       SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN',
@@ -58,6 +59,10 @@ export const serviceSetup = (services: {
         paths: ['/api'],
         public: true,
       },
+    })
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '256Mi' },
     })
     .readiness('/liveness')
     .liveness('/liveness')
