@@ -59,11 +59,18 @@ export class ApplicationController {
   async update(
     @Param('id') id: string,
     @Body() applicationToUpdate: UpdateApplicationDto,
+    // @Body() comment?: string,
   ): Promise<ApplicationModel> {
+    console.log(applicationToUpdate)
+
     const {
       numberOfAffectedRows,
       updatedApplication,
-    } = await this.applicationService.update(id, applicationToUpdate)
+    } = await this.applicationService.update(
+      id,
+      applicationToUpdate,
+      'Comment shoulda bea here ',
+    )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
