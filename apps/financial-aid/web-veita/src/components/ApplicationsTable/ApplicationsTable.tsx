@@ -8,8 +8,9 @@ import cn from 'classnames'
 
 interface PageProps {
   applications: TableBodyProps[]
-  headers: string[]
+  headers: TableHeadersProps[]
   className?: string
+  setSortBy: (filter: any) => void
   [key: string]: any
 }
 
@@ -18,10 +19,16 @@ interface TableBodyProps {
   link: string
 }
 
+interface TableHeadersProps {
+  filterBy: 'modified' | 'state' | undefined
+  title: string
+}
+
 const ApplicationsTable: React.FC<PageProps> = ({
   applications,
   headers,
   className,
+  setSortBy,
   key,
 }) => {
   if (applications && applications.length > 0) {
@@ -38,6 +45,25 @@ const ApplicationsTable: React.FC<PageProps> = ({
             {headers && (
               <>
                 {headers.map((item, index) => {
+                  if (item.filterBy) {
+                    return (
+                      <th key={'headers-' + index}>
+                        <button
+                          onClick={() => {
+                            setSortBy(item.filterBy)
+                          }}
+                          className={cn({
+                            [`${styles.tablePadding}`]: true,
+                            [`${styles.firstChildPadding}`]: index === 0,
+                          })}
+                        >
+                          <Text color="dark300" fontWeight="semiBold">
+                            {item.title}
+                          </Text>
+                        </button>
+                      </th>
+                    )
+                  }
                   return (
                     <th
                       key={'headers-' + index}
@@ -47,7 +73,7 @@ const ApplicationsTable: React.FC<PageProps> = ({
                       })}
                     >
                       <Text color="dark300" fontWeight="semiBold">
-                        {item}
+                        {item.title}
                       </Text>
                     </th>
                   )

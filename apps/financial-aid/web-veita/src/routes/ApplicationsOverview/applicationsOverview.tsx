@@ -52,6 +52,8 @@ export const ApplicationsOverview = () => {
     (i) => i.link === router.pathname,
   )
 
+  const [sortBy, setSortBy] = useState<'modified' | 'state'>('modified')
+
   if (currentNavigationItem) {
     return (
       <AdminLayout>
@@ -66,7 +68,13 @@ export const ApplicationsOverview = () => {
             className={`contentUp delay-50`}
             key={router.pathname}
             headers={currentNavigationItem.headers}
+            setSortBy={(filter) => {
+              setSortBy(filter)
+            }}
             applications={data.applications
+              .sort((a, b) =>
+                a[sortBy] > b[sortBy] ? -1 : a[sortBy] < b[sortBy] ? 1 : 0,
+              )
               .filter((item) =>
                 currentNavigationItem?.applicationState.includes(item?.state),
               )
