@@ -11,9 +11,8 @@ import {
   buildSubmitField,
   DefaultEvents,
   buildRadioField,
-  Comparators,
 } from '@island.is/application/core'
-import { isRunningOnEnvironment } from '@island.is/utils/shared'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import { selectDurationInputs } from '../fields/Duration'

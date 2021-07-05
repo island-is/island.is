@@ -18,6 +18,7 @@ interface Props {
     plural: string
   }
   descriptor: JSX.Element
+  onChange?: (value: number) => void
 }
 
 export const PlanSlider = ({
@@ -29,6 +30,7 @@ export const PlanSlider = ({
   heading,
   label,
   descriptor,
+  onChange: onChangeCb,
 }: Props) => {
   const { formatMessage } = useLocale()
   const { clearErrors } = useFormContext()
@@ -70,6 +72,7 @@ export const PlanSlider = ({
                 clearErrors(id)
                 onChange(newValue * multiplier)
                 setStateValue(newValue * multiplier)
+                if (onChangeCb) onChangeCb(newValue * multiplier)
               }}
             />
           )}
