@@ -70,10 +70,7 @@ export class FundingGovernmentProjectsService {
           [key: string]: string
         })[key]
 
-        const signedUrl = await this.fileStorageService.generateSignedUrl(
-          url,
-          `${application.id}/${key}`,
-        )
+        const signedUrl = await this.fileStorageService.generateSignedUrl(url)
 
         return { name, url: signedUrl }
       }),

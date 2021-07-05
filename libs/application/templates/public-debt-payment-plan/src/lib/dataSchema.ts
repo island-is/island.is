@@ -97,6 +97,10 @@ export const paymentPlanEntryKeys = [
   'four',
   'five',
   'six',
+  'seven',
+  'eight',
+  'nine',
+  'ten',
 ]
 
 export type PublicDebtPaymentPlan = z.TypeOf<typeof PublicDebtPaymentPlanSchema>

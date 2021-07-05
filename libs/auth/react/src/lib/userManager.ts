@@ -1,5 +1,7 @@
 import { User, UserManager } from 'oidc-client'
+
 import { AuthSettings, mergeAuthSettings } from './AuthSettings'
+import { toStringScope } from './utils/toStringScope'
 
 let authSettings: AuthSettings | null = null
 let userManager: UserManager | null = null
@@ -20,7 +22,12 @@ export const getAuthSettings = (): AuthSettings => {
 
 export const configure = (settings: AuthSettings) => {
   authSettings = mergeAuthSettings(settings)
-  userManager = new UserManager(authSettings)
+
+  userManager = new UserManager({
+    ...authSettings,
+    scope: toStringScope(settings.scope),
+  })
+
   return userManager
 }
 
@@ -32,6 +39,7 @@ export const configureMock = (user?: MockUser) => {
   authSettings = mergeAuthSettings({
     client_id: 'test-client',
   })
+
   const userInfo: MockUser = {
     profile: { name: 'Mock', locale: 'is', nationalId: '0000000000' },
     expired: false,

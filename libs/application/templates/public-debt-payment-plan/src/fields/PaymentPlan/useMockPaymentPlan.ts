@@ -7,6 +7,9 @@ const sleep = (ms: number) => {
   })
 }
 
+const formatIsk = (value: number): string =>
+  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+
 const PLAN_AMOUNT = 200000
 
 export type MockPaymentPlan = {
@@ -14,8 +17,10 @@ export type MockPaymentPlan = {
   type: PaymentType
   schedule: {
     dueDate: string
-    payment: number
-    remaining: number
+    payment: string
+    remaining: string
+    interestRates: string
+    totalPayment: string
   }[]
 }
 
@@ -29,20 +34,24 @@ const getMockData = (amount?: number, months?: number): MockPaymentPlan => ({
 
         return {
           dueDate: `01.${1 + index}.2021`,
+          remaining: remaining < 0 ? formatIsk(0) : formatIsk(remaining),
           payment:
             prevRemaining < amount && prevRemaining > 0
-              ? prevRemaining
-              : amount,
-          remaining: remaining < 0 ? 0 : remaining,
+              ? formatIsk(prevRemaining)
+              : formatIsk(amount),
+          interestRates: formatIsk(0),
+          totalPayment: formatIsk(9076),
         }
       })
     : months
     ? [...Array(months)].map((_key, index) => ({
         dueDate: `01.${1 + index}.2021`,
-        payment: Math.round(PLAN_AMOUNT / months),
-        remaining: Math.round(
-          PLAN_AMOUNT - (PLAN_AMOUNT / months) * (index + 1),
+        remaining: formatIsk(
+          Math.round(PLAN_AMOUNT - (PLAN_AMOUNT / months) * (index + 1)),
         ),
+        payment: formatIsk(Math.round(PLAN_AMOUNT / months)),
+        interestRates: formatIsk(0),
+        totalPayment: formatIsk(9076),
       }))
     : [],
 })

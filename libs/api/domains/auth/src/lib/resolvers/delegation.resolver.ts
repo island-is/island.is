@@ -8,8 +8,10 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import * as kennitala from 'kennitala'
 
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import { Identity, IdentityService } from '@island.is/api/domains/identity'
 import type { User } from '@island.is/auth-nest-tools'
 import type { DelegationDTO } from '@island.is/clients/auth-public-api'
 
@@ -38,7 +40,10 @@ const ignore404 = (e: Response) => {
 @Resolver(() => LegalGuardianDelegation)
 @Resolver(() => ProcuringHolderDelegation)
 export class DelegationResolver {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private identityService: IdentityService,
+  ) {}
 
   @Query(() => [Delegation], { name: 'authActorDelegations' })
   getActorDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
@@ -76,11 +81,6 @@ export class DelegationResolver {
       .catch(ignore404)
     if (!delegation) {
       delegation = await this.authService.createDelegation(user, input)
-    } else if (delegation.toName !== input.name) {
-      return this.authService.updateDelegation(
-        user,
-        input as UpdateDelegationInput,
-      )
     }
 
     return delegation
@@ -107,5 +107,31 @@ export class DelegationResolver {
   @ResolveField('id', () => ID)
   resolveId(@Parent() delegation: DelegationDTO): string {
     return `${delegation.fromNationalId}-${delegation.toNationalId}`
+  }
+
+  @ResolveField('to', () => Identity)
+  resolveTo(@Parent() delegation: DelegationDTO): Promise<Identity | null> {
+    if (kennitala.isCompany(delegation.toNationalId)) {
+      // XXX: temp until rsk gets implemented
+      return Promise.resolve({
+        nationalId: delegation.toNationalId,
+        name: delegation.toName,
+        type: 'company',
+      } as Identity)
+    }
+    return this.identityService.getIdentity(delegation.toNationalId)
+  }
+
+  @ResolveField('from', () => Identity)
+  resolveFrom(@Parent() delegation: DelegationDTO): Promise<Identity | null> {
+    if (kennitala.isCompany(delegation.fromNationalId)) {
+      // XXX: temp until rsk gets implemented
+      return Promise.resolve({
+        nationalId: delegation.fromNationalId,
+        name: delegation.fromName,
+        type: 'company',
+      } as Identity)
+    }
+    return this.identityService.getIdentity(delegation.fromNationalId)
   }
 }

@@ -1,4 +1,4 @@
-import { getStaticEnv } from '@island.is/utils/environment'
+import { getStaticEnv } from '@island.is/shared/utils'
 
 const devConfig = {
   production: false,
