@@ -66,14 +66,6 @@ const findValueOption = (
   )
 }
 
-const isLegacyMinistry = (
-  ministries: ReadonlyArray<RegulationMinistry>,
-  slug: string,
-) => {
-  const ministry = ministries.find((m) => m.slug === slug)
-  return !!(ministry && !ministry.current)
-}
-
 const yearToOption = (year: number | string): Option => {
   const value = String(year)
   return {
