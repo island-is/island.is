@@ -1,9 +1,15 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { ChargeType } from '@island.is/clients/payment-schedule'
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+
+registerEnumType(ChargeType, {
+  name: 'PaymentScheduleChargeType',
+  description: 'Possible types of charges',
+})
 
 @ObjectType()
-export class PaymentScheduleChargeType {
-  @Field(() => ID)
-  id!: string
+export class PaymentScheduleCharge {
+  @Field((_) => ChargeType)
+  id!: ChargeType
 
   @Field(() => String)
   name!: string

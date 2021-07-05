@@ -3,14 +3,16 @@ import { DataSourceConfig } from 'apollo-datasource'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { Base64 } from 'js-base64'
 import {
+  PaymentScheduleServiceOptions,
+  PAYMENT_SCHEDULE_OPTIONS,
+} from './payment-schedule.type'
+import {
   Conditions,
   DebtSchedules,
   DebtSchedulesResponse,
   Employer,
-  PaymentScheduleServiceOptions,
-  PAYMENT_SCHEDULE_OPTIONS,
   WageDeductionResponse,
-} from './payment-schedule.type'
+} from './types'
 
 export class PaymentScheduleAPI extends RESTDataSource {
   constructor(
@@ -43,6 +45,9 @@ export class PaymentScheduleAPI extends RESTDataSource {
     const response = await this.get<DebtSchedulesResponse>(
       `debtsandschedules/${nationalId}`,
     )
+
+    response.deptAndSchedules.map((x) => console.log(x.chargetypes))
+    console.log(response)
     return response.deptAndSchedules
   }
 
