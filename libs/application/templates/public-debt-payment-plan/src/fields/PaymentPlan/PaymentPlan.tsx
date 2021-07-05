@@ -1,6 +1,12 @@
 import { FieldBaseProps } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
-import { Box, RadioButton, Stack, Text } from '@island.is/island-ui/core'
+import {
+  AccordionItem,
+  Box,
+  RadioButton,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -52,7 +58,6 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     // TODO: Better UX and error logging for this
     return <div>No more available entries in schema</div>
   }
-
   const entry = `paymentPlans.${answerKey}`
   const currentAnswers = answers.paymentPlans[answerKey]
 
@@ -180,7 +185,18 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
         />
       )}
       {(isLoading || paymentPlanResults) && (
-        <PaymentPlanTable isLoading={isLoading} data={paymentPlanResults} />
+        <Box marginTop={5}>
+          <AccordionItem
+            id="payment-plan-table"
+            label="Greiðsluáætlun skuldar"
+            visibleContent={
+              <Text>Hér er hægt að sjá heildargreiðsluáætlun skuldar</Text>
+            }
+            startExpanded
+          >
+            <PaymentPlanTable isLoading={isLoading} data={paymentPlanResults} />
+          </AccordionItem>
+        </Box>
       )}
     </div>
   )

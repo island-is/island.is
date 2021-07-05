@@ -1,4 +1,4 @@
-import { XRoadMemberClass } from '@island.is/utils/api'
+import { XRoadMemberClass } from '@island.is/shared/utils/server'
 
 const devConfig = {
   production: false,

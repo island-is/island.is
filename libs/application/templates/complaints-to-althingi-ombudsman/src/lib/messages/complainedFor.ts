@@ -70,4 +70,41 @@ export const complainedFor = {
         'Placeholder text for textarea in complained for information',
     },
   }),
+  labels: defineMessages({
+    name: {
+      id: 'ctao.application:complainedFor.name',
+      defaultMessage: 'Nafn',
+      description: 'Complained for name',
+    },
+    ssn: {
+      id: 'ctao.application:complainedFor.ssn',
+      defaultMessage: 'Kennitala',
+      description: 'Complained for SSN',
+    },
+    address: {
+      id: 'ctao.application:complainedFor.address',
+      defaultMessage: 'Lögheimili',
+      description: 'Complained for home address',
+    },
+    postcode: {
+      id: 'ctao.application:complainedFor.postcode',
+      defaultMessage: 'Póstnúmer',
+      description: 'Complained for postcode',
+    },
+    city: {
+      id: 'ctao.application:complainedFor.city',
+      defaultMessage: 'Staður',
+      description: 'Complained for City',
+    },
+    email: {
+      id: 'ctao.application:complainedFor.email',
+      defaultMessage: 'Netfang',
+      description: 'Complained for email ',
+    },
+    phone: {
+      id: 'ctao.application:complainedFor.phone',
+      defaultMessage: 'Símanúmer',
+      description: 'Complained for phone number',
+    },
+  }),
 }
