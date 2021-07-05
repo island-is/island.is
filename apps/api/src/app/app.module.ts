@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
+
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
@@ -68,7 +69,17 @@ const autoSchemaFile = environment.production
         }),
       ],
     }),
-    AuthDomainModule.register(environment.authPublicApi),
+    AuthDomainModule.register({
+      identity: {
+        nationalRegistry: {
+          baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+          user: environment.nationalRegistry.user,
+          password: environment.nationalRegistry.password,
+          host: environment.nationalRegistry.host,
+        },
+      },
+      authPublicApi: environment.authPublicApi,
+    }),
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     CmsModule,
