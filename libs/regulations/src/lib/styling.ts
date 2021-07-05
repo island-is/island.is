@@ -34,7 +34,7 @@ export const diffStyling = (wrapper: string) => {
 
 // ---------------------------------------------------------------------------
 
-export const regulationEditingStyling = (wrapper: string) => {
+export const regulationContentStyling = (wrapper: string) => {
   const global = makeGlobal(wrapper)
 
   global('', {
