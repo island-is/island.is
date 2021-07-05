@@ -16,20 +16,22 @@ export class PaymentCallbackController {
     @Body() callback: Callback,
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<void> {
-    if (callback.status !== 'paid') {
+    const parsedCallback = await JSON.parse(JSON.stringify(callback))
+    if (parsedCallback.callback.status !== 'paid') {
       // TODO: no-op.. it would be nice eventually to update all statuses
       return
     }
-
     await this.paymentModel.update(
       {
         fulfilled: true,
+        reference_id: parsedCallback.callback.receptionID
       },
       {
         where: {
           id,
           application_id: applicationId,
         },
+        returning: true,
       },
     )
   }
