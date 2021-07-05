@@ -112,7 +112,13 @@ export class PaymentController {
       application_id: applicationId,
       fulfilled: false,
       amount: catalog.priceAmount,
-      definition: `{"chargeItemName":"${catalog.chargeItemName}","chargeItemCode":"${catalog.chargeItemCode}","performingOrganiationID":"${catalog.performingOrgID}","chargeType":"${catalog.chargeType}","amount":"${catalog.priceAmount}"}`,
+      definition: {
+        chargeItemName: catalog.chargeItemName,
+        chargeItemCode: catalog.chargeItemCode,
+        performingOrganiationID: catalog.performingOrgID,
+        chargeType: catalog.chargeType,
+        amount: catalog.priceAmount,
+      },
       expires_at: new Date(),
     }
 
