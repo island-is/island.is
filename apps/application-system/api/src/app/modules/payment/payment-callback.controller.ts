@@ -24,7 +24,7 @@ export class PaymentCallbackController {
     await this.paymentModel.update(
       {
         fulfilled: true,
-        reference_id: parsedCallback.callback.receptionID
+        reference_id: parsedCallback.callback.receptionID,
       },
       {
         where: {
