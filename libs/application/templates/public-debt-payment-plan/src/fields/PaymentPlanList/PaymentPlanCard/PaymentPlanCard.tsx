@@ -60,7 +60,7 @@ export const PaymentPlanCard = ({
           {payment.organization}
         </Text>
         <Tag variant="purple" disabled>
-          {formatMessage(payment.type)}
+          {formatMessage(payment.explanation)}
         </Tag>
       </Box>
       <Text variant="h3">
@@ -76,12 +76,13 @@ export const PaymentPlanCard = ({
         <b>{` ${payment.totalAmount.toLocaleString('is-IS')} kr.`}</b>
       </Text>
       <AnimateHeight duration={400} height={isExpanded ? 'auto' : 0}>
-        <Box paddingY={2}>
+        <Box marginY={2}>
           {payment.chargetypes.map((chargeType, index) => (
             <Box
               key={index}
               paddingY={2}
               paddingX={3}
+              marginTop={2}
               background="blue100"
               borderRadius="large"
             >

@@ -16,8 +16,8 @@ export const PaymentPlanList = ({
 }: FieldBaseProps) => {
   console.log(application)
   const { formatMessage } = useLocale()
-  const paymentPlanList = (application.externalData as PaymentPlanExternalData)
-    .paymentPlanList
+  const paymentScheduleDebts = (application.externalData as PaymentPlanExternalData)
+    .paymentScheduleDebts
   const answers = application.answers as PublicDebtPaymentPlan
 
   const handleEditPaymentPlan = (id: string) => {
@@ -31,9 +31,9 @@ export const PaymentPlanList = ({
       <Text marginBottom={3}>
         {formatMessage(paymentPlan.general.pageDescription)}
       </Text>
-      {paymentPlanList?.data.map((payment, index) => {
+      {paymentScheduleDebts?.data.map((payment, index) => {
         const isAnswered = getPaymentPlanIds(answers.paymentPlans).some(
-          (id) => id === payment.id,
+          (id) => id === payment.type,
         )
 
         return (

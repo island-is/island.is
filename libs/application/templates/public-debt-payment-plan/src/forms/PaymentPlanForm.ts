@@ -37,7 +37,9 @@ const buildPaymentPlanStep = (index: PaymentPlanBuildIndex): CustomField =>
     component: 'PaymentPlan',
     defaultValue: index,
     condition: (_formValue, externalData) => {
-      return index < ((externalData.paymentPlanList?.data as any)?.length || 0)
+      return (
+        index < ((externalData.paymentScheduleDebts?.data as any)?.length || 0)
+      )
     },
   })
 

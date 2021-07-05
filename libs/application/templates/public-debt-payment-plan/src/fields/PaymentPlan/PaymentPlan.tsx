@@ -1,12 +1,6 @@
 import { FieldBaseProps } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
-import {
-  AccordionItem,
-  Box,
-  RadioButton,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, RadioButton, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -20,12 +14,10 @@ import {
   getEmptyPaymentPlanEntryKey,
   getPaymentPlanKeyById,
 } from '../../shared/utils'
-import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 import { PlanSlider } from '../components/PlanSlider/PlanSlider'
 import { PaymentPlanCard } from '../PaymentPlanList/PaymentPlanCard/PaymentPlanCard'
 import * as styles from './PaymentPlan.treat'
 import { useDebouncedSliderValues } from './useDebouncedSliderValues'
-import { useMockPaymentPlan } from './useMockPaymentPlan'
 
 type PaymentModeState = null | 'amount' | 'months'
 
@@ -40,17 +32,20 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const answers = application.answers as PublicDebtPaymentPlan
   const index = field.defaultValue as number
   // Assign a payment to this screen by using the index of the step
-  const payment = externalData.paymentPlanList?.data[index]
+  const payment = externalData.paymentScheduleDebts?.data[index]
   // Locate the entry of the payment plan in answers.
   const entryKey = getPaymentPlanKeyById(
     answers.paymentPlans,
-    payment?.id || '',
+    payment?.type || '',
   )
   // If no entry is found, find an empty entry to assign to this payment
   const answerKey = (entryKey ||
     getEmptyPaymentPlanEntryKey(
       answers.paymentPlans,
     )) as keyof typeof answers.paymentPlans
+
+  console.log('Answer key: ', answerKey)
+  console.log('Answers: ', answers)
 
   if (!answerKey) {
     // There is no entry available for this plan
@@ -59,7 +54,9 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     return <div>No more available entries in schema</div>
   }
   const entry = `paymentPlans.${answerKey}`
-  const currentAnswers = answers.paymentPlans[answerKey]
+  const currentAnswers = answers.paymentPlans
+    ? answers.paymentPlans[answerKey]
+    : undefined
 
   const {
     debouncedAmount,
@@ -69,12 +66,12 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
   } = useDebouncedSliderValues(currentAnswers)
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
+  /* const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
     userInfo?.profile.nationalId,
     payment?.type,
     debouncedAmount,
     debouncedMonths,
-  )
+  ) */
 
   const handleSelectPaymentMode = (mode: PaymentModeState) => {
     setPaymentMode(mode)
@@ -99,7 +96,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     <div>
       <input
         type="hidden"
-        value={payment.id}
+        value={payment.type}
         ref={register({ required: true })}
         name={`${entry}.id`}
       />
@@ -184,7 +181,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
           }
         />
       )}
-      {(isLoading || paymentPlanResults) && (
+      {/* (isLoading || paymentPlanResults) && (
         <Box marginTop={5}>
           <AccordionItem
             id="payment-plan-table"
@@ -197,7 +194,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
             <PaymentPlanTable isLoading={isLoading} data={paymentPlanResults} />
           </AccordionItem>
         </Box>
-      )}
+          ) */}
     </div>
   )
 }
