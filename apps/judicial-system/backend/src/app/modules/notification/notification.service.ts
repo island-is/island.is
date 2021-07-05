@@ -234,7 +234,11 @@ export class NotificationService {
   private async sendReadyForCourtEmailNotificationToProsecutor(
     existingCase: Case,
   ): Promise<Recipient> {
-    const pdf = await getRequestPdfAsString(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+    const pdf = await getRequestPdfAsString(existingCase, intl.formatMessage)
 
     const subject = `Krafa í máli ${existingCase.policeCaseNumber}`
     const html = 'Sjá viðhengi'
@@ -390,7 +394,11 @@ export class NotificationService {
     let attachments: Attachment[]
 
     if (existingCase.sendRequestToDefender) {
-      const pdf = await getRequestPdfAsString(existingCase)
+      const intl = await this.intlService.useIntl(
+        ['judicial.system.backend'],
+        'is',
+      )
+      const pdf = await getRequestPdfAsString(existingCase, intl.formatMessage)
 
       attachments = [
         {
