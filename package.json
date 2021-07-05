@@ -389,6 +389,7 @@
     "prettier": "2.2.1",
     "quicktype": "15.0.258",
     "sequelize-cli": "5.5.1",
+    "sort-paths": "1.1.1",
     "storybook-addon-designs": "5.4.2",
     "ts-dedent": "2.0.0",
     "ts-jest": "26.4.0",
