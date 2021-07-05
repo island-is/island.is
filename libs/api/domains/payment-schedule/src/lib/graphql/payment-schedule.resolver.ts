@@ -40,7 +40,7 @@ export class PaymentScheduleResolver {
     name: 'paymentScheduleEmployer',
     nullable: true,
   })
-  // @Audit()
+  @Audit()
   async employer(@CurrentUser() user: User): Promise<PaymentScheduleEmployer> {
     const employerResponse = await this.paymentScheduleClientApi.getCurrentEmployer(
       user.nationalId,
