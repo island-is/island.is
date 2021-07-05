@@ -6,7 +6,7 @@ import type {
   BoxProps,
 } from '@island.is/island-ui/core/types'
 
-import { Application } from '../types/Application'
+import { Answer, Application } from '../types/Application'
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
@@ -174,6 +174,7 @@ export function buildRadioField(data: {
   width?: FieldWidth
   defaultValue?: MaybeWithApplicationAndField<unknown>
   backgroundColor?: InputBackgroundColor
+  space?: BoxProps['paddingTop']
 }): RadioField {
   const {
     condition,
@@ -186,7 +187,9 @@ export function buildRadioField(data: {
     disabled = false,
     width = 'full',
     backgroundColor,
+    space,
   } = data
+
   return {
     children: undefined,
     defaultValue,
@@ -199,6 +202,7 @@ export function buildRadioField(data: {
     description,
     options,
     backgroundColor,
+    space,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
@@ -261,6 +265,7 @@ export function buildAsyncSelectField(data: {
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   defaultValue?: MaybeWithApplicationAndField<unknown>
   backgroundColor?: InputBackgroundColor
+  isSearchable?: boolean
 }): AsyncSelectField {
   const {
     condition,
@@ -275,7 +280,9 @@ export function buildAsyncSelectField(data: {
     width = 'full',
     onSelect,
     backgroundColor,
+    isSearchable,
   } = data
+
   return {
     children: undefined,
     defaultValue,
@@ -292,6 +299,7 @@ export function buildAsyncSelectField(data: {
     component: FieldComponents.ASYNC_SELECT,
     onSelect,
     backgroundColor,
+    isSearchable,
   }
 }
 

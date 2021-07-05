@@ -27,7 +27,7 @@ describe('/domur/krafa/:id', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it('should display the correct police demands, laws broken, custody provisions, and custody restriction', () => {
+  it('should display the correct demands, laws broken, custody provisions, and custody restriction', () => {
     cy.contains(
       'Þess er krafist að Batman Robinsson, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     )

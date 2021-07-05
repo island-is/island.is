@@ -346,6 +346,51 @@ export class ResourcesService {
     })
   }
 
+  /** Filters out scopes that don't have delegation grant and are access controlled */
+  async findAllowedDelegationApiScopeListForUser(scopes: string[]) {
+    this.logger.debug(`Finding allowed api scopes for scopes ${scopes}`)
+    return this.apiScopeModel.findAll({
+      where: {
+        name: {
+          [Op.in]: scopes,
+        },
+        allowExplicitDelegationGrant: true,
+      },
+      include: [ApiScopeGroup],
+    })
+  }
+
+  /** Filters out Identity Resources that don't have delegation grant and are access controlled */
+  async findAllowedDelegationIdentityResourceListForUser(
+    identityResources: string[],
+  ) {
+    this.logger.debug(
+      `Finding allowed Identity Resources for identity resources: ${identityResources}`,
+    )
+    return this.identityResourceModel.findAll({
+      where: {
+        name: {
+          [Op.in]: identityResources,
+        },
+        allowExplicitDelegationGrant: true,
+        alsoForDelegatedUser: false,
+      },
+    })
+  }
+
+  /** Gets Api scopes with Explicit Delegation Grant */
+  async findIdentityResourcesWithExplicitDelegationGrant(): Promise<
+    IdentityResource[]
+  > {
+    this.logger.debug(
+      `Finding identity resources with Explicit Delegation Grant`,
+    )
+
+    return this.identityResourceModel.findAll({
+      where: { allowExplicitDelegationGrant: true },
+    })
+  }
+
   /** Gets api resources by api resource names  */
   async findApiResourcesByNameAsync(
     apiResourceNames: string[],
@@ -834,19 +879,20 @@ export class ResourcesService {
     count: number | null = null,
   ): Promise<Domain[] | PagedRowsDto<Domain>> {
     if (page && count) {
-      page--
-      const offset = page * count
-      if (!searchString || searchString.length === 0) {
-        searchString = '%'
+      if (page > 0 && count > 0) {
+        page!--
+        const offset = page! * count!
+        if (!searchString || searchString.length === 0) {
+          searchString = '%'
+        }
+        return this.domainModel.findAndCountAll({
+          limit: count,
+          offset: offset,
+          where: { name: { [Op.iLike]: `%${searchString}%` } },
+          order: [['name', 'asc']],
+          include: [ApiScopeGroup],
+        })
       }
-
-      return this.domainModel.findAndCountAll({
-        limit: count,
-        offset: offset,
-        where: { name: { [Op.iLike]: `%${searchString}%` } },
-        order: [['name', 'asc']],
-        include: [ApiScopeGroup],
-      })
     }
     return this.domainModel.findAll({ order: [['name', 'asc']] })
   }

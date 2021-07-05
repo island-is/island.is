@@ -15,6 +15,7 @@ import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { ParentalRelations } from '../../constants'
 
 const ChildSelector: FC<FieldBaseProps> = ({
   application,
@@ -29,7 +30,11 @@ const ChildSelector: FC<FieldBaseProps> = ({
     'externalData.children.data',
     [],
   ) as {
-    children: { expectedDateOfBirth: string }[]
+    children: {
+      expectedDateOfBirth: string
+      primaryParentNationalRegistryId?: string
+      parentalRelation: ParentalRelations
+    }[]
     existingApplications: {
       applicationId: string
       expectedDateOfBirth: string
@@ -55,27 +60,37 @@ const ChildSelector: FC<FieldBaseProps> = ({
   return (
     <Box>
       {children.length > 0 && (
-        <>
-          <FieldDescription
-            description={formatMessage(
-              parentalLeaveFormMessages.selectChild.title,
-            )}
-          />
+        <Box marginY={3}>
+          <RadioController
+            id="selectedChild"
+            disabled={false}
+            name="selectedChild"
+            largeButtons={true}
+            defaultValue={selectedChild}
+            options={children.map((child, index) => {
+              const subLabel =
+                child.parentalRelation === ParentalRelations.secondary
+                  ? formatMessage(
+                      parentalLeaveFormMessages.selectChild.secondaryParent,
+                      {
+                        nationalId: child.primaryParentNationalRegistryId ?? '',
+                      },
+                    )
+                  : formatMessage(
+                      parentalLeaveFormMessages.selectChild.primaryParent,
+                    )
 
-          <Box marginY={3}>
-            <RadioController
-              id="selectedChild"
-              disabled={false}
-              name="selectedChild"
-              largeButtons={true}
-              defaultValue={selectedChild}
-              options={children.map((child, index) => ({
+              return {
                 value: `${index}`,
-                label: child.expectedDateOfBirth,
-              }))}
-            />
-          </Box>
-        </>
+                label: formatMessage(
+                  parentalLeaveFormMessages.selectChild.baby,
+                  { dateOfBirth: child.expectedDateOfBirth },
+                ),
+                subLabel,
+              }
+            })}
+          />
+        </Box>
       )}
 
       {existingApplications.length > 0 && (
@@ -97,7 +112,9 @@ const ChildSelector: FC<FieldBaseProps> = ({
                   colorScheme="light"
                   size="small"
                 >
-                  {expectedDateOfBirth}
+                  {formatMessage(parentalLeaveFormMessages.selectChild.baby, {
+                    dateOfBirth: expectedDateOfBirth,
+                  })}
                 </Button>
               ),
             )}

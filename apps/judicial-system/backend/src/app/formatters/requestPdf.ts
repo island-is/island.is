@@ -1,15 +1,13 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
+import { CaseType } from '@island.is/judicial-system/types'
 import {
-  CaseCustodyRestrictions,
-  CaseType,
-} from '@island.is/judicial-system/types'
-import {
+  caseTypes,
   formatRequestedCustodyRestrictions,
   formatGender,
   formatNationalId,
-  formatProsecutorDemands,
+  capitalize,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -17,8 +15,13 @@ import { Case } from '../modules/case/models'
 import { formatCustodyProvisions } from './formatters'
 import { setPageNumbers } from './pdfHelpers'
 import { writeFile } from './writeFile'
+import { FormatMessage } from '@island.is/api/domains/translations'
+import { restrictionRequest as m } from '../messages/requestPdf'
 
-function constructRequestPdf(existingCase: Case) {
+function constructRestrictionRequestPdf(
+  existingCase: Case,
+  formatMessage?: FormatMessage,
+): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -30,92 +33,83 @@ function constructRequestPdf(existingCase: Case) {
     bufferPages: true,
   })
 
+  const title = formatMessage(m.heading, {
+    caseType:
+      existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann',
+  })
+
   if (doc.info) {
-    doc.info['Title'] = `Krafa um ${
-      existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
-    }`
+    doc.info['Title'] = title
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
   doc
     .font('Helvetica-Bold')
     .fontSize(26)
     .lineGap(8)
-    .text(
-      `Krafa um ${
-        existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
-      }`,
-      { align: 'center' },
-    )
+    .text(title, { align: 'center' })
     .font('Helvetica')
     .fontSize(18)
-    .text(`LÖKE málsnúmer: ${existingCase.policeCaseNumber}`, {
-      align: 'center',
-    })
+    .text(
+      formatMessage(m.caseNumber, {
+        caseNumber: existingCase.policeCaseNumber,
+      }),
+      {
+        align: 'center',
+      },
+    )
     .fontSize(16)
     .text(
-      `Embætti: ${existingCase.prosecutor?.institution?.name || 'Ekki skráð'}`,
+      formatMessage(m.district, {
+        district:
+          existingCase.prosecutor?.institution?.name ??
+          formatMessage(m.noDistrict),
+      }),
       {
         align: 'center',
       },
     )
     .lineGap(40)
-    .text(`Dómstóll: ${existingCase.court?.name}`, { align: 'center' })
+    .text(formatMessage(m.court, { court: existingCase.court?.name }), {
+      align: 'center',
+    })
     .font('Helvetica-Bold')
     .fontSize(18)
     .lineGap(8)
-    .text('Grunnupplýsingar')
+    .text(formatMessage(m.baseInfo.heading))
     .font('Helvetica')
     .fontSize(12)
     .lineGap(4)
-    .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
-    .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
-    .text(`Lögheimili: ${existingCase.accusedAddress}`)
     .text(
-      `Verjandi sakbornings: ${
-        existingCase.defenderName
-          ? existingCase.defenderName
-          : 'Hefur ekki verið skráður'
-      }`,
+      `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
+        existingCase.accusedNationalId,
+      )}`,
+    )
+    .text(`${formatMessage(m.baseInfo.fullName)} ${existingCase.accusedName}`)
+    .text(
+      `${formatMessage(m.baseInfo.gender)} ${formatGender(
+        existingCase.accusedGender,
+      )}`,
+    )
+    .text(`${formatMessage(m.baseInfo.address)} ${existingCase.accusedAddress}`)
+    .text(
+      formatMessage(m.baseInfo.defender, {
+        defenderName:
+          existingCase.defenderName ?? formatMessage(m.baseInfo.noDefender),
+      }),
     )
     .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(14)
-    .lineGap(8)
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
     .text('Dómkröfur')
     .font('Helvetica')
     .fontSize(12)
-    .text(
-      formatProsecutorDemands(
-        existingCase.type,
-        existingCase.accusedNationalId,
-        existingCase.accusedName,
-        existingCase.court?.name,
-        existingCase.requestedCustodyEndDate,
-        existingCase.requestedCustodyRestrictions?.includes(
-          CaseCustodyRestrictions.ISOLATION,
-        ),
-        existingCase.parentCase !== null,
-        existingCase.parentCase?.decision,
-      ),
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
-
-  if (existingCase.otherDemands) {
-    doc.text(' ').text(existingCase.otherDemands, {
+    .text(existingCase.demands, {
       lineGap: 6,
       paragraphGap: 0,
     })
-  }
-
-  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -165,6 +159,148 @@ function constructRequestPdf(existingCase: Case) {
     .font('Helvetica-Bold')
     .fontSize(18)
     .lineGap(8)
+    .text(formatMessage(m.factsAndArguments.heading))
+    .fontSize(14)
+    .text(formatMessage(m.factsAndArguments.facts))
+    .font('Helvetica')
+    .fontSize(12)
+    .text(existingCase.caseFacts, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(14)
+    .lineGap(8)
+    .text(formatMessage(m.factsAndArguments.arguments))
+    .font('Helvetica')
+    .fontSize(12)
+    .text(existingCase.legalArguments, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .text(
+      `${existingCase.prosecutor?.name ?? ''} ${
+        existingCase.prosecutor?.title ?? ''
+      }`,
+    )
+
+  setPageNumbers(doc)
+
+  doc.end()
+
+  return stream
+}
+
+function constructInvestigationRequestPdf(
+  existingCase: Case,
+): streamBuffers.WritableStreamBuffer {
+  const doc = new PDFDocument({
+    size: 'A4',
+    margins: {
+      top: 40,
+      bottom: 60,
+      left: 50,
+      right: 50,
+    },
+    bufferPages: true,
+  })
+
+  if (doc.info) {
+    doc.info['Title'] = 'Krafa um rannsóknarheimild'
+  }
+
+  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
+  doc
+    .font('Helvetica-Bold')
+    .fontSize(26)
+    .lineGap(8)
+    .text('Krafa um rannsóknarheimild', { align: 'center' })
+    .font('Helvetica')
+    .fontSize(18)
+    .text(`LÖKE málsnúmer: ${existingCase.policeCaseNumber}`, {
+      align: 'center',
+    })
+    .fontSize(16)
+    .text(
+      `Embætti: ${existingCase.prosecutor?.institution?.name ?? 'Ekki skráð'}`,
+      {
+        align: 'center',
+      },
+    )
+    .lineGap(40)
+    .text(`Dómstóll: ${existingCase.court?.name}`, { align: 'center' })
+    .font('Helvetica-Bold')
+    .fontSize(18)
+    .lineGap(8)
+    .text('Grunnupplýsingar')
+    .font('Helvetica')
+    .fontSize(12)
+    .lineGap(4)
+    .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
+    .text(`Fullt nafn: ${existingCase.accusedName}`)
+    .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
+    .text(`Lögheimili: ${existingCase.accusedAddress}`)
+    .text(
+      `Verjandi sakbornings: ${
+        existingCase.defenderName
+          ? existingCase.defenderName
+          : 'Hefur ekki verið skráður'
+      }`,
+    )
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(14)
+    .lineGap(8)
+    .text('Efni kröfu')
+    .font('Helvetica')
+    .fontSize(12)
+    .lineGap(4)
+    .text(capitalize(caseTypes[existingCase.type]))
+    .text(existingCase.description, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(14)
+    .lineGap(8)
+    .text('Dómkröfur')
+    .font('Helvetica')
+    .fontSize(12)
+    .text(existingCase.demands, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(14)
+    .lineGap(8)
+    .text('Lagaákvæði sem brot varða við')
+    .font('Helvetica')
+    .fontSize(12)
+    .text(existingCase.lawsBroken, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(14)
+    .lineGap(8)
+    .text('Lagaákvæði sem krafan er byggð á')
+    .font('Helvetica')
+    .fontSize(12)
+    .text(existingCase.legalBasis, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(18)
+    .lineGap(8)
     .text('Greinargerð um málsatvik og lagarök')
     .fontSize(14)
     .text('Málsatvik')
@@ -186,23 +322,52 @@ function constructRequestPdf(existingCase: Case) {
       paragraphGap: 0,
     })
     .text(' ')
+
+  if (existingCase.requestProsecutorOnlySession) {
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(14)
+      .lineGap(8)
+      .text('Beiðni um dómþing að varnaraðila fjarstöddum')
+      .font('Helvetica')
+      .fontSize(12)
+      .text(existingCase.prosecutorOnlySessionRequest ?? '', {
+        lineGap: 6,
+        paragraphGap: 0,
+      })
+      .text(' ')
+  }
+
+  doc
     .font('Helvetica-Bold')
     .text(
-      `${existingCase.prosecutor?.name || ''} ${
-        existingCase.prosecutor?.title || ''
+      `${existingCase.prosecutor?.name ?? ''} ${
+        existingCase.prosecutor?.title ?? ''
       }`,
     )
 
   setPageNumbers(doc)
 
   doc.end()
+
   return stream
+}
+
+function constructRequestPdf(
+  existingCase: Case,
+  formatMessage?: FormatMessage,
+): streamBuffers.WritableStreamBuffer {
+  return existingCase.type === CaseType.CUSTODY ||
+    existingCase.type === CaseType.TRAVEL_BAN
+    ? constructRestrictionRequestPdf(existingCase, formatMessage)
+    : constructInvestigationRequestPdf(existingCase)
 }
 
 export async function getRequestPdfAsString(
   existingCase: Case,
+  formatMessage?: FormatMessage,
 ): Promise<string> {
-  const stream = constructRequestPdf(existingCase)
+  const stream = constructRequestPdf(existingCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {

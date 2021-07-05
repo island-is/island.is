@@ -10,6 +10,8 @@ import {
   CaseGender,
   AccusedPleaDecision,
   UpdateCase,
+  CaseType,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -17,6 +19,14 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field()
   readonly id!: string
+
+  @Allow()
+  @Field(() => String, { nullable: true })
+  readonly type?: CaseType
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly description?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -56,6 +66,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly defenderIsSpokesperson?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
   readonly courtId?: string
 
   @Allow()
@@ -72,15 +86,19 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly requestedCustodyEndDate?: string
+  readonly requestedValidToDate?: string
 
   @Allow()
   @Field({ nullable: true })
-  readonly otherDemands?: string
+  readonly demands?: string
 
   @Allow()
   @Field({ nullable: true })
   readonly lawsBroken?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly legalBasis?: string
 
   @Allow()
   @Field(() => [String], { nullable: true })
@@ -104,6 +122,14 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly requestProsecutorOnlySession?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly prosecutorOnlySessionRequest?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly comments?: string
 
   @Allow()
@@ -121,6 +147,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly courtCaseNumber?: string
+
+  @Allow()
+  @Field(() => String, { nullable: true })
+  readonly sessionArrangements?: SessionArrangements
 
   @Allow()
   @Field({ nullable: true })
@@ -144,7 +174,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly policeDemands?: string
+  readonly prosecutorDemands?: string
 
   @Allow()
   @Field(() => [String], { nullable: true })
@@ -152,7 +182,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly additionToConclusion?: string
+  readonly isAccusedAbsent?: boolean
 
   @Allow()
   @Field(() => String, { nullable: true })
@@ -184,7 +214,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly custodyEndDate?: string
+  readonly validToDate?: string
 
   @Allow()
   @Field(() => [String], { nullable: true })
@@ -196,7 +226,11 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly isolationTo?: string
+  readonly isolationToDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly conclusion?: string
 
   @Allow()
   @Field(() => String, { nullable: true })

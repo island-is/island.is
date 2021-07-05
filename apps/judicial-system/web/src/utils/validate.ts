@@ -7,6 +7,7 @@ export type Validation =
   | 'national-id'
   | 'email-format'
   | 'phonenumber'
+  | 'date-format'
 
 export const validate = (value: string, validation: Validation) => {
   if (!value && validation === 'empty') {
@@ -43,7 +44,7 @@ export const getRegexByValidation = (validation: Validation) => {
         regex: new RegExp(
           /^(0[0-9]|1[0-9]|2[0-9]|3[0-1])(0[0-9]|1[0-2])(\d{2})(-?(\d{3}){1}(0|9){1})?$/g,
         ),
-        errorMessage: 'Dæmi: 012345-6789',
+        errorMessage: 'Dæmi: 000000-0000',
       }
     case 'email-format':
       return {
@@ -55,5 +56,11 @@ export const getRegexByValidation = (validation: Validation) => {
         regex: new RegExp(/^$|^(\d{3})(-?(\d{4}))$/g),
         errorMessage: 'Dæmi: 555-5555',
       }
+    case 'date-format': {
+      return {
+        regex: new RegExp(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/g),
+        errorMessage: '',
+      }
+    }
   }
 }

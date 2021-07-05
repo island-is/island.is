@@ -1,5 +1,6 @@
 import { NationalRegistryModuleConfig } from '@island.is/clients/national-registry-v2'
-import { createXRoadAPIPath } from '@island.is/utils/api'
+import { createXRoadAPIPath } from '@island.is/shared/utils/server'
+
 import { environment } from '../../../environments'
 
 export const NationalRegistryConfig: NationalRegistryModuleConfig = {

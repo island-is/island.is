@@ -39,9 +39,10 @@ const ProsecutorAppealDatePicker: React.FC<Props> = (props) => {
       <div className={styles.appealInnerWrapper}>
         <DateTime
           name="prosecutorAppealDate"
-          maxDate={new Date()}
-          onChange={(date) => setAppealDate(date)}
           size="sm"
+          datepickerPlaceholder="Hvenær var kært?"
+          onChange={(date) => setAppealDate(date)}
+          maxDate={new Date()}
           blueBox={false}
         />
         <Box className={styles.appealButton}>

@@ -8,7 +8,7 @@ on:
 jobs:
   cleanup:
     name: Clean up feature deployment
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     steps:
       - name: Get git branch
         run: |
@@ -34,7 +34,7 @@ jobs:
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
             "parameters": {
-              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:].-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
+              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
             }
           }
           BODY

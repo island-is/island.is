@@ -1,21 +1,34 @@
-import { Injectable } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
   generateAssignSupremeCourtApplicationEmail,
   generateApplicationRejectedEmail,
   generateApplicationApprovedEmail,
+  GenerateAssignSupremeCourtApplicationEmailOptions,
 } from './emailGenerators'
-import { Constituencies } from '@island.is/application/templates/party-application'
-import { EndorsementListTagsEnum } from './gen/fetch'
+import { EndorsementListApi, EndorsementListTagsEnum } from './gen/fetch'
+import type { Logger } from '@island.is/logging'
 
-type ErrorResponse = {
+export const PARTY_APPLICATION_SERVICE_OPTIONS =
+  'PARTY_APPLICATION_SERVICE_OPTIONS'
+
+const CREATE_ENDORSEMENT_LIST_QUERY = `
+  mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
+    endorsementSystemCreateEndorsementList(input: $input) {
+      id
+    }
+  }
+`
+
+interface ErrorResponse {
   errors: {
     message: string
   }
 }
 
-type CreateEndorsementListResponse =
+type EndorsementListResponse =
   | {
       data: {
         endorsementSystemCreateEndorsementList: {
@@ -25,44 +38,96 @@ type CreateEndorsementListResponse =
     }
   | ErrorResponse
 
+export interface PartyApplicationServiceOptions {
+  adminEmails: GenerateAssignSupremeCourtApplicationEmailOptions
+}
+
 interface PartyLetterData {
   partyName: string
   partyLetter: string
 }
 
-const constituencyMapper: Record<Constituencies, EndorsementListTagsEnum> = {
-  [Constituencies.NORTH_EAST]:
-    EndorsementListTagsEnum.partyApplicationNordausturkjordaemi2021,
-  [Constituencies.NORTH_WEST]:
-    EndorsementListTagsEnum.partyApplicationNordvesturkjordaemi2021,
-  [Constituencies.RVK_NORTH]:
-    EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiNordur2021,
-  [Constituencies.RVK_SOUTH]:
-    EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiSudur2021,
-  [Constituencies.SOUTH]:
-    EndorsementListTagsEnum.partyApplicationSudurkjordaemi2021,
-  [Constituencies.SOUTH_WEST]:
-    EndorsementListTagsEnum.partyApplicationSudvesturkjordaemi2021,
+/**
+ * We proxy the auth header to the subsystem where it is resolved.
+ */
+interface FetchParams {
+  url: string
+  init: RequestInit
+}
+
+interface RequestContext {
+  init: RequestInit
+}
+
+interface Middleware {
+  pre?(context: RequestContext): Promise<FetchParams | void>
+}
+class ForwardAuthHeaderMiddleware implements Middleware {
+  constructor(private bearerToken: string) {}
+
+  async pre(context: RequestContext) {
+    context.init.headers = Object.assign({}, context.init.headers, {
+      authorization: this.bearerToken,
+    })
+  }
 }
 
 @Injectable()
 export class PartyApplicationService {
   constructor(
+    private endorsementListApi: EndorsementListApi,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    @Inject(PARTY_APPLICATION_SERVICE_OPTIONS)
+    private options: PartyApplicationServiceOptions,
   ) {}
 
-  async assignSupremeCourt({ application }: TemplateApiModuleActionProps) {
-    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      generateAssignSupremeCourtApplicationEmail,
-      application,
+  endorsementListApiWithAuth(token: string) {
+    return this.endorsementListApi.withMiddleware(
+      new ForwardAuthHeaderMiddleware(token),
     )
   }
 
-  async applicationRejected({ application }: TemplateApiModuleActionProps) {
-    await this.sharedTemplateAPIService.sendEmail(
-      generateApplicationRejectedEmail,
-      application,
-    )
+  async assignSupremeCourt({
+    application,
+    authorization,
+  }: TemplateApiModuleActionProps) {
+    const listId = (application.externalData?.createEndorsementList.data as any)
+      .id
+
+    return this.endorsementListApiWithAuth(authorization)
+      .endorsementListControllerClose({ listId })
+      .then(async () => {
+        await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+          generateAssignSupremeCourtApplicationEmail(this.options.adminEmails),
+          application,
+        )
+      })
+      .catch(() => {
+        this.logger.error('Failed to close endorsement list', listId)
+        throw new Error('Failed to close endorsement list')
+      })
+  }
+
+  async applicationRejected({
+    application,
+    authorization,
+  }: TemplateApiModuleActionProps) {
+    const listId = (application.externalData?.createEndorsementList.data as any)
+      .id
+
+    return this.endorsementListApiWithAuth(authorization)
+      .endorsementListControllerOpen({ listId })
+      .then(async () => {
+        await this.sharedTemplateAPIService.sendEmail(
+          generateApplicationRejectedEmail,
+          application,
+        )
+      })
+      .catch(() => {
+        this.logger.error('Failed to open endorsement list', listId)
+        throw new Error('Failed to open endorsement list')
+      })
   }
 
   async applicationApproved({ application }: TemplateApiModuleActionProps) {
@@ -76,26 +141,42 @@ export class PartyApplicationService {
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
-    const constituencyTag =
-      constituencyMapper[application.answers.constituency as Constituencies]
-    const CREATE_ENDORSEMENT_LIST_QUERY = `
-      mutation EndorsementSystemCreateEndorsementList($input: CreateEndorsementListDto!) {
-        endorsementSystemCreateEndorsementList(input: $input) {
-          id
-        }
-      }
-    `
-
     const partyLetter = application.externalData.partyLetterRegistry
       ?.data as PartyLetterData
-    const endorsementList: CreateEndorsementListResponse = await this.sharedTemplateAPIService
+    const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery(authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
         input: {
           title: partyLetter.partyName,
           description: partyLetter.partyLetter,
           endorsementMeta: ['fullName', 'address', 'signedTags'],
-          tags: [constituencyTag],
-          validationRules: [],
+          tags: [application.answers.constituency as EndorsementListTagsEnum],
+          validationRules: [
+            {
+              type: 'minAgeAtDate',
+              value: {
+                date: '2021-09-25T00:00:00Z',
+                age: 18,
+              },
+            },
+            {
+              type: 'uniqueWithinTags',
+              value: {
+                tags: [
+                  EndorsementListTagsEnum.partyApplicationNordausturkjordaemi2021,
+                  EndorsementListTagsEnum.partyApplicationNordvesturkjordaemi2021,
+                  EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiNordur2021,
+                  EndorsementListTagsEnum.partyApplicationReykjavikurkjordaemiSudur2021,
+                  EndorsementListTagsEnum.partyApplicationSudurkjordaemi2021,
+                  EndorsementListTagsEnum.partyApplicationSudvesturkjordaemi2021,
+                ],
+              },
+            },
+          ],
+          meta: {
+            // to be able to link back to this application
+            applicationTypeId: application.typeId,
+            applicationId: application.id,
+          },
         },
       })
       .then((response) => response.json())

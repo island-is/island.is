@@ -54,32 +54,40 @@ export const routesTemplate = {
     en: '/en/news',
   },
   organizationservices: {
-    is: '/stofnanir/[slug]/thjonusta',
-    en: '/en/organizations/[slug]/services',
+    is: '/s/[slug]/thjonusta',
+    en: '/en/o/[slug]/services',
   },
   auctions: {
-    is: '/stofnanir/syslumenn/uppbod',
+    is: '/s/syslumenn/uppbod',
     en: '',
   },
   apicataloguedetailpage: {
-    is: '/stofnanir/stafraent-island/vefthjonustur/[slug]',
+    is: '/s/stafraent-island/vefthjonustur/[slug]',
     en: '',
   },
   apicataloguepage: {
-    is: '/stofnanir/stafraent-island/vefthjonustur',
+    is: '/s/stafraent-island/vefthjonustur',
     en: '',
   },
   organizationsubpage: {
-    is: '/stofnanir/[slug]/[subSlug]',
-    en: '/en/organizations/[slug]/[subSlug]',
+    is: '/s/[slug]/[subSlug]',
+    en: '/en/o/[slug]/[subSlug]',
   },
   organizationpage: {
-    is: '/stofnanir/[slug]',
-    en: '/en/organizations/[slug]',
+    is: '/s/[slug]',
+    en: '/en/o/[slug]',
   },
   organizations: {
-    is: '/stofnanir',
-    en: '/en/organizations',
+    is: '/s',
+    en: '/en/o',
+  },
+  projectsubpage: {
+    is: '/v/[slug]/[subSlug]',
+    en: '/en/p/[slug]/[subSlug]',
+  },
+  projectpage: {
+    is: '/v/[slug]',
+    en: '/en/p/[slug]',
   },
   lifeevents: {
     is: '/lifsvidburdir',
@@ -90,15 +98,15 @@ export const routesTemplate = {
     en: '/en/life-events/[slug]',
   },
   organizationnews: {
-    is: '/stofnanir/[organization]/frett/[slug]',
-    en: '/en/organizations/[organization]/news/[slug]',
+    is: '/s/[organization]/frett/[slug]',
+    en: '/en/o/[organization]/news/[slug]',
   },
   organizationnewsoverview: {
-    is: '/stofnanir/[organization]/frett',
-    en: '/en/organizations/[organization]/news',
+    is: '/s/[organization]/frett',
+    en: '/en/o/[organization]/news',
   },
   auction: {
-    is: '/stofnanir/syslumenn/uppbod/[id]',
+    is: '/s/syslumenn/uppbod/[id]',
     en: '',
   },
   adgerdirpage: {
@@ -116,6 +124,10 @@ export const routesTemplate = {
   regulationshome: {
     is: '/reglugerdir',
     en: '',
+  },
+  login: {
+    is: '/innskraning',
+    en: '/en/login',
   },
   webservicedetailpage: {
     is: '/throun/vefthjonustur/[slug]',

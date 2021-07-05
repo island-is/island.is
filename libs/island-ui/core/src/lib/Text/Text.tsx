@@ -14,6 +14,7 @@ import {
   lineHeight as lineHeightStyles,
   TextVariants,
   truncate as truncateStyle,
+  strikethrough as strikethroughStyle,
 } from './Text.treat'
 
 type TextElements =
@@ -44,11 +45,17 @@ export interface TextProps {
   fontWeight?: keyof typeof fontWeightStyles
   lineHeight?: keyof typeof lineHeightStyles
   title?: string
+  strikethrough?: boolean
 }
 
 type GetTextStylesProps = Pick<
   TextProps,
-  'variant' | 'color' | 'truncate' | 'fontWeight' | 'lineHeight'
+  | 'variant'
+  | 'color'
+  | 'truncate'
+  | 'fontWeight'
+  | 'lineHeight'
+  | 'strikethrough'
 >
 
 export const getTextStyles = ({
@@ -57,6 +64,7 @@ export const getTextStyles = ({
   fontWeight,
   lineHeight,
   variant = 'default',
+  strikethrough,
 }: GetTextStylesProps) =>
   cn(base, {
     [variantStyles[variant!]]: variant,
@@ -66,6 +74,7 @@ export const getTextStyles = ({
     [defaultFontWeights[variant!]]: variant && !fontWeight,
     [defaultLineHeights[variant!]]: variant && !lineHeight,
     [truncateStyle]: truncate,
+    [strikethroughStyle]: strikethrough,
   })
 
 export const Text = forwardRef<HTMLElement, TextProps>(
@@ -86,6 +95,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
       variant = 'default',
       title,
       as = 'p',
+      strikethrough,
     },
     ref,
   ) => {
@@ -106,6 +116,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
           fontWeight,
           lineHeight,
           variant,
+          strikethrough,
         })}
         ref={ref}
         title={title}

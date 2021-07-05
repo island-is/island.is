@@ -11,6 +11,7 @@ import {
 interface Props {
   name: string
   datepickerLabel?: string
+  datepickerPlaceholder?: string
   timeLabel?: string
   minDate?: Date
   maxDate?: Date
@@ -28,6 +29,7 @@ const DateTime: React.FC<Props> = (props) => {
   const {
     name,
     datepickerLabel = 'Veldu dagsetningu',
+    datepickerPlaceholder = 'Veldu dagsetningu',
     minDate,
     maxDate,
     selectedDate,
@@ -60,7 +62,7 @@ const DateTime: React.FC<Props> = (props) => {
     const validations: Validation[] = ['empty', 'time-format']
 
     const timeError = validations.find(
-      (v) => validate(time || '', v).isValid === false,
+      (v) => validate(time ?? '', v).isValid === false,
     )
 
     return (
@@ -145,7 +147,7 @@ const DateTime: React.FC<Props> = (props) => {
         <DatePicker
           id={name}
           label={datepickerLabel}
-          placeholderText="Veldu dagsetningu"
+          placeholderText={datepickerPlaceholder}
           locale="is"
           errorMessage={datepickerErrorMessage}
           hasError={datepickerErrorMessage !== undefined}

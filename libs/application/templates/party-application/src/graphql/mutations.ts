@@ -14,3 +14,23 @@ export const EndorseList = gql`
     }
   }
 `
+export const BulkEndorse = gql`
+  mutation endorsementSystemBulkEndorseList($input: BulkEndorseListInput!) {
+    endorsementSystemBulkEndorseList(input: $input) {
+      succeeded {
+        id
+        endorser
+        endorsementListId
+        meta {
+          fullName
+        }
+        created
+        modified
+      }
+      failed {
+        nationalId
+        message
+      }
+    }
+  }
+`

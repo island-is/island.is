@@ -4,7 +4,6 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { SigningServiceOptions } from '@island.is/dokobit-signing'
 import { AuditOptions } from '@island.is/nest/audit'
 import { SmsServiceOptions } from '@island.is/nova-sms'
-
 import { ApplicationConfig } from '../app/modules/application/application.configuration'
 
 export interface Environment {

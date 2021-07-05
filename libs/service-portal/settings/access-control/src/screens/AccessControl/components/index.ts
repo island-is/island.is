@@ -1,1 +1,1 @@
-export { Accesses } from './Accesses'
+export { Accesses, AuthDelegationsQuery } from './Accesses'

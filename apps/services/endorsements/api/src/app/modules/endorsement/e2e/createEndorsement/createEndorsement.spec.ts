@@ -1,27 +1,36 @@
-import { INestApplication } from '@nestjs/common'
-import * as request from 'supertest'
-import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
-import { setup } from '../../../../../../test/setup'
+import { EndorsementsScope } from '@island.is/auth/scopes'
+import request from 'supertest'
 import {
   errorExpectedStructure,
   metaDataResponse,
 } from '../../../../../../test/testHelpers'
+import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { authNationalId } from './seed'
-let app: INestApplication
-
-beforeAll(async () => {
-  app = await setup({
-    override: (builder) => {
-      builder
-        .overrideProvider(IdsUserGuard)
-        .useValue(new MockAuthGuard({ nationalId: authNationalId }))
-        .compile()
-    },
-  })
-})
 
 describe('createEndorsement', () => {
+  it(`POST /endorsement-list/:listId/endorsement should fail and return 403 error if scope is missing`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [],
+    })
+
+    const response = await request(app.getHttpServer())
+      .post(
+        `/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba011/endorsement`,
+      )
+      .send()
+      .expect(403)
+
+    expect(response.body).toMatchObject({
+      ...errorExpectedStructure,
+      statusCode: 403,
+    })
+  })
   it(`POST /endorsement-list/:listId/endorsement should return 404 when supplied with a non existing list`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
     const response = await request(app.getHttpServer())
       .post(
         '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777/endorsement',
@@ -35,6 +44,10 @@ describe('createEndorsement', () => {
     })
   })
   it(`POST /endorsement-list/:listId/endorsement should fail to create endorsement on a closed list`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
     const response = await request(app.getHttpServer())
       .post(
         '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c4/endorsement',
@@ -48,6 +61,10 @@ describe('createEndorsement', () => {
     })
   })
   it(`POST /endorsement-list/:listId/endorsement should fail to create endorsement when conflicts within tags`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
     const response = await request(app.getHttpServer())
       .post(
         `/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c5/endorsement`,
@@ -61,6 +78,10 @@ describe('createEndorsement', () => {
     })
   })
   it(`POST /endorsement-list/:listId/endorsement should create a new endorsement and populate metadata`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
     const listId = '9c0b4106-4213-43be-a6b2-ff324f4ba011'
     const response = await request(app.getHttpServer())
       .post(`/endorsement-list/${listId}/endorsement`)

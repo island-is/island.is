@@ -34,7 +34,7 @@ export function buildForm(data: {
 export function buildMultiField(data: {
   id?: string
   condition?: Condition
-  title: MessageDescriptor | string
+  title: FormText
   description?: FormText
   space?: BoxProps['paddingTop']
   children: Field[]
@@ -93,6 +93,7 @@ export function buildDataProviderItem(data: {
   title: MessageDescriptor | string
   subTitle?: MessageDescriptor | string
   source?: string
+  parameters?: any
 }): DataProviderItem {
   return data
 }

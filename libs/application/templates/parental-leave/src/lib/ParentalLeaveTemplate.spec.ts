@@ -8,7 +8,7 @@ import {
   ApplicationStatus,
 } from '@island.is/application/core'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
-import { States as ApplicationStates } from '../constants'
+import { SPOUSE, States as ApplicationStates, YES } from '../constants'
 
 function buildApplication(data: {
   answers?: FormValue
@@ -27,7 +27,6 @@ function buildApplication(data: {
     attachments: {},
     answers,
     state,
-    status: 'inprogress' as Application['status'],
     externalData,
     status: ApplicationStatus.IN_PROGRESS,
   }
@@ -157,6 +156,45 @@ describe('Parental Leave Application Template', () => {
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe('vinnumalastofnunApproval')
       expect(finalApplication.assignees).toEqual([])
+    })
+
+    describe('other parent', () => {
+      describe('when spouse is selected', () => {
+        it('should assign their national registry id from external data to answers.otherParentId when transitioning from draft', () => {
+          const otherParentId = '1234567890'
+          const helper = new ApplicationTemplateHelper(
+            buildApplication({
+              externalData: {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                family: {
+                  data: [
+                    {
+                      nationalId: otherParentId,
+                      fullName: 'Tester Testerson',
+                      familyRelation: SPOUSE,
+                    },
+                  ],
+                },
+              },
+              answers: {
+                otherParent: SPOUSE,
+                employer: {
+                  email: 'selfemployed@test.test',
+                  isSelfEmployed: YES,
+                },
+              },
+            }),
+            ParentalLeaveTemplate,
+          )
+          const [hasChanged, newState, newApplication] = helper.changeState({
+            type: DefaultEvents.SUBMIT,
+          })
+          expect(hasChanged).toBe(true)
+          expect(newState).toBe('vinnumalastofnunApproval')
+          expect(newApplication.answers.otherParentId).toEqual(otherParentId)
+        })
+      })
     })
   })
 

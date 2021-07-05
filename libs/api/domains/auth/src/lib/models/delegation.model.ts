@@ -5,10 +5,14 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql'
+
 import {
   DelegationProvider,
   DelegationType,
 } from '@island.is/clients/auth-public-api'
+import { Identity } from '@island.is/api/domains/identity'
+
+import { DelegationScope } from './delegationScope.model'
 
 registerEnumType(DelegationProvider, { name: 'AuthDelegationProvider' })
 registerEnumType(DelegationType, { name: 'AuthDelegationType' })
@@ -26,29 +30,20 @@ registerEnumType(DelegationType, { name: 'AuthDelegationType' })
   },
 })
 export abstract class Delegation {
-  @Field()
-  toNationalId!: string
+  @Field(() => ID)
+  id?: string
 
-  @Field()
-  fromNationalId!: string
+  @Field(() => Identity)
+  from!: Identity
 
-  @Field()
-  fromName!: string
+  @Field(() => Identity)
+  to!: Identity
 
-  @Field((type) => DelegationType)
+  @Field(() => DelegationType)
   type!: DelegationType
 
-  @Field((type) => DelegationProvider)
+  @Field(() => DelegationProvider)
   provider!: DelegationProvider
-}
-
-@ObjectType('AuthDelegationScope')
-export class DelegationScope {
-  @Field()
-  scopeName!: string
-
-  @Field((type) => Date, { nullable: true })
-  validTo?: Date
 }
 
 @ObjectType('AuthLegalGuardianDelegation', {
@@ -65,9 +60,9 @@ export class ProcuringHolderDelegation extends Delegation {}
   implements: Delegation,
 })
 export class CustomDelegation extends Delegation {
-  @Field((type) => ID)
-  id!: string
+  @Field(() => Date, { nullable: true })
+  validTo?: Date
 
-  @Field((type) => [DelegationScope])
+  @Field(() => [DelegationScope])
   scopes!: DelegationScope[]
 }

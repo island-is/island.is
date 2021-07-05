@@ -1,5 +1,12 @@
 import React from 'react'
-import { AccordionCard, ActionCard, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionCard,
+  AccordionItem,
+  ActionCard,
+  Box,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   AccordionSlice as AccordionSliceSchema,
   Html,
@@ -23,9 +30,9 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
         <Text variant="h2" as="h2" marginBottom={2}>
           {slice.title}
         </Text>
-        {slice.accordionItems.map((item) => (
-          <Box paddingY={1}>
-            {slice.type === 'accordion' && (
+        {slice.type === 'accordion' &&
+          slice.accordionItems.map((item) => (
+            <Box paddingY={1}>
               <AccordionCard
                 id={item.id}
                 label={item.title}
@@ -35,24 +42,41 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
                   {richText(item.content as SliceType[])}
                 </Box>
               </AccordionCard>
-            )}
-            {slice.type === 'CTA' && (
-              <Box>
-                <ActionCard
-                  heading={item.title}
-                  text={
-                    (item.content[0] as Html)?.document?.content[0]?.content[0]
-                      ?.value
-                  }
-                  cta={{
-                    label: item.link?.text ?? 'Default',
-                    icon: 'arrowForward',
-                  }}
-                />
-              </Box>
-            )}
+            </Box>
+          ))}
+        {slice.type === 'accordion_minimal' && (
+          <Box paddingTop={4}>
+            <Accordion>
+              {slice.accordionItems.map((item) => (
+                <AccordionItem
+                  id={item.id}
+                  label={item.title}
+                  startExpanded={slice.accordionItems.length === 1}
+                >
+                  <Text>{richText(item.content as SliceType[])}</Text>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </Box>
-        ))}
+        )}
+        {slice.type === 'CTA' &&
+          slice.accordionItems.map((item) => (
+            <Box>
+              <ActionCard
+                heading={item.title}
+                text={
+                  (item.content[0] as Html)?.document?.content[0]?.content[0]
+                    ?.value
+                }
+                cta={{
+                  label: item.link?.text ?? 'Default',
+                  icon: 'arrowForward',
+                  onClick: () =>
+                    !!item.link && window.open(item.link?.url, '_blank'),
+                }}
+              />
+            </Box>
+          ))}
       </Box>
     </section>
   )

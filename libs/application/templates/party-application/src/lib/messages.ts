@@ -151,14 +151,9 @@ export const m: MessageDir = {
       defaultMessage: 'Afrita tengil',
       description: 'Copy link title',
     },
-    nameCount: {
-      id: 'pa.application:endorsementList.name.count',
-      defaultMessage: 'nafn á lista (af 500)',
-      description: 'X name on list',
-    },
     namesCount: {
       id: 'pa.application:endorsementList.names.count',
-      defaultMessage: 'nöfn á lista (af 500)',
+      defaultMessage: 'meðmæli á lista',
       description: 'X names on list',
     },
     invalidSignatures: {
@@ -168,7 +163,7 @@ export const m: MessageDir = {
     },
     searchbar: {
       id: 'pa.application:endorsementList.search',
-      defaultMessage: 'Leitaðu hér',
+      defaultMessage: 'Leitaðu að nafni',
       description: 'Searchbar placeholder',
     },
     thDate: {
@@ -195,6 +190,17 @@ export const m: MessageDir = {
       id: 'pa.application:endorsementList.invalid',
       defaultMessage: 'Sjá einungis meðmæli í vafa',
       description: 'Invalid signatures message',
+    },
+    signatureInvalidTooltip: {
+      id: 'pa.application:endorsementList.tooltip',
+      defaultMessage:
+        'Meðmæli í vafa, yfirkjörstjórn þarf að yfirfara aldur, búsetu og kjördæmi',
+      description: 'Invalid signature tooltip',
+    },
+    isClosedMessage: {
+      id: 'pa.application:endorsement.form.isClosed.message',
+      defaultMessage: 'Meðmælendalista hefur verið lokað',
+      description: 'Error message if endorsement list has been closed',
     },
   }),
   endorsementListSubmission: defineMessages({
@@ -252,7 +258,7 @@ export const m: MessageDir = {
     },
     warningMessagePt2: {
       id: 'pa.application:endorsementListSubmission.warningMessagePt2',
-      defaultMessage: '. Afhakaðu í réttan fjölda til að skila lista.',
+      defaultMessage: '. Hakaðu í réttan fjölda til að skila lista.',
       description: 'Warning message',
     },
   }),
@@ -359,7 +365,7 @@ export const m: MessageDir = {
     includePapersDisclaimerPt1: {
       id: 'pa.application:recommendations.includePapers.disclaimer1',
       defaultMessage:
-        '*Fyrir meðmæli á pappír þarf að lista upp kennitölur meðmælenda í skjal og hlaða upp hér að neðan.',
+        '*Fyrir meðmæli á pappír þarf að lista upp kennitölur meðmælenda í Excel skjal og hlaða upp hér að neðan.',
       description: 'Include paper signatures disclaimer part 1',
     },
     includePapersDisclaimerPt2: {
@@ -367,6 +373,12 @@ export const m: MessageDir = {
       defaultMessage:
         '*Pappírsmeðmæli skulu einnig sendast með bréfpósti til yfirkjörstjórnar.',
       description: 'Include paper signatures disclaimer part 2',
+    },
+    includePapersDisclaimerPt3: {
+      id: 'pa.application:recommendations.includePapers.disclaimer3',
+      defaultMessage:
+        '*Skjalið skal innihalda eina kennitölu per reit. Allar kennitölur skulu vera í fyrsta dálk (dálk A), fyrsta kennitalan skal vera staðsett í reit A1.',
+      description: 'Include paper signatures disclaimer part 3',
     },
     noPaper: {
       id: 'pa.application:recommendations.paper.no',
@@ -392,6 +404,26 @@ export const m: MessageDir = {
       id: 'pa.application:recommendations.fileupload.label',
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Label for file upload',
+    },
+    uploadSuccess: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Pappírsmeðmælum hefur verið hlaðið upp!',
+      description: 'Upload succeeded text',
+    },
+    uploadFail: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
+      description: 'Upload failed text',
+    },
+    attention: {
+      id: 'pa.application:uploadButton.attention',
+      defaultMessage: 'Athugið!',
+      description: 'Warning title',
+    },
+    uploadWarningText: {
+      id: 'pa.application:uploadButton.warningDescription',
+      defaultMessage: 'Ekki tókst að hlaða upp eftirfarandi kennitölur: ',
+      description: 'Warning description',
     },
   }),
   endorsementDisclaimer: defineMessages({
@@ -432,6 +464,24 @@ export const m: MessageDir = {
       id: 'pa.application:endorsement.disclaimer.party.name',
       defaultMessage: 'Stjórnmálasamtök',
       description: 'Label for party name',
+    },
+    alertMessageTitle: {
+      id: 'pa.application:endorsement.alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Alert message title',
+    },
+    alertDescriptionVoterRegistryNotFound: {
+      id: 'pa.application:endorsement.alert.descrtipion.voter.registry',
+      defaultMessage:
+        'Þú fannst ekki í kjörskrá ertu viss um að vilja halda áfram?',
+      description:
+        'Alert message if signaturee was not found in temp voter reg',
+    },
+    alertDescriptionWrongConstituency: {
+      id: 'pa.application:endorsement.alert.descrtipion.wrong.constituency',
+      defaultMessage:
+        'Þú ert ekki með skráða búsetu í þessu kjördæmi ertu viss um að vilja halda áfram?',
+      description: 'Alert message if signaturee is in the wrong constituency',
     },
   }),
   endorsementApproved: defineMessages({

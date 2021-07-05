@@ -185,7 +185,10 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
                     let checked = activeScopes.some((x) => x === scope.name)
 
                     return (
-                      <div className="api-scope-user-create-form__container__checkbox__field">
+                      <div
+                        className="api-scope-user-create-form__container__checkbox__field"
+                        key={scope.name}
+                      >
                         <label
                           className="api-scope-user-create-form__label"
                           htmlFor={scope.name}

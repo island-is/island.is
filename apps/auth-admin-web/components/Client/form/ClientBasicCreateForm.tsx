@@ -9,6 +9,7 @@ import { TimeUtils } from './../../../utils/time.utils'
 import ValidationUtils from './../../../utils/validation.utils'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { FormControl } from '../../../entities/common/Localization'
+import HintBox from '../../common/HintBox'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: Client) => void
@@ -21,7 +22,13 @@ interface FormOutput {
 }
 
 const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+    clearErrors,
+  } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [available, setAvailable] = useState<boolean>(false)
   const [clientIdLength, setClientIdLength] = useState<number>(0)
@@ -35,6 +42,10 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ClientCreateForm'),
   )
+  const [clientIdHintVisible, setClientIdHintVisible] = useState<boolean>(false)
+  const [clientIdIsValid, setClientIdIsValid] = useState<boolean | null>(null)
+  const [clientIdHintMessage, setClientIdHintMessage] = useState<string>('')
+  const [baseUrlRequired, setBaseUrlRequired] = useState<boolean>(true)
 
   useEffect(() => {
     if (props.client && props.client.clientId) {
@@ -46,6 +57,23 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
       setClientTypeInfo(getClientTypeHTML(''))
     }
   }, [props.client])
+
+  const onClientIdChange = async (name: string) => {
+    if (isEditing) {
+      return
+    }
+    setClientIdHintVisible(true)
+
+    const isValid =
+      name.length > 0 ? ValidationUtils.validateClientId(name) : false
+
+    setClientIdIsValid(isValid)
+    isValid
+      ? setClientIdHintMessage(localization.fields['clientId'].hintOkMessage)
+      : setClientIdHintMessage(localization.fields['clientId'].hintErrorMessage)
+
+    checkAvailability(name)
+  }
 
   const create = async (data: ClientDTO): Promise<Client | null> => {
     const response = await ClientService.create(data)
@@ -135,6 +163,18 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
       setClientTypeSelected(false)
+    }
+    if (clientType === 'machine') {
+      manageBaseUrlValidation(false)
+    } else {
+      manageBaseUrlValidation(true)
+    }
+  }
+
+  const manageBaseUrlValidation = (shouldValidate: boolean) => {
+    setBaseUrlRequired(shouldValidate)
+    if (!shouldValidate) {
+      clearErrors('baseUrl')
     }
   }
 
@@ -317,14 +357,20 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.clientId"
                       ref={register({
                         required: true,
-                        validate: ValidationUtils.validateIdentifier,
+                        validate: isEditing
+                          ? () => {
+                              return true
+                            }
+                          : ValidationUtils.validateClientId,
                       })}
                       defaultValue={client.clientId}
                       className="client-basic__input"
                       placeholder={localization.fields['clientId'].placeholder}
-                      onChange={(e) => checkAvailability(e.target.value)}
+                      onChange={(e) => onClientIdChange(e.target.value)}
                       title={localization.fields['clientId'].helpText}
                       readOnly={isEditing}
+                      onBlur={() => setClientIdHintVisible(false)}
+                      onFocus={(e) => onClientIdChange(e.target.value)}
                     />
                     <div
                       className={`client-basic__container__field__available ${
@@ -335,6 +381,14 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         ? localization.fields['clientId'].available
                         : localization.fields['clientId'].unAvailable}
                     </div>
+                    <HintBox
+                      helpText={clientIdHintMessage}
+                      pattern={localization.fields['clientId'].pattern}
+                      patternText={localization.fields['clientId'].patternText}
+                      setVisible={clientIdHintVisible}
+                      onVisibleChange={(e) => setClientIdHintVisible(e)}
+                      isValid={clientIdIsValid}
+                    />
                     <HelpBox
                       helpText={localization.fields['clientId'].helpText}
                     />
@@ -355,7 +409,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         name="baseUrl"
                         type="text"
                         ref={register({
-                          required: true,
+                          required: baseUrlRequired,
                           validate: ValidationUtils.validateBaseUrl,
                         })}
                         defaultValue={client.clientUri ?? ''}

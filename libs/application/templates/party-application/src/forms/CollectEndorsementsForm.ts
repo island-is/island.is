@@ -1,11 +1,9 @@
 import {
   buildForm,
   buildMultiField,
-  buildCheckboxField,
   buildCustomField,
   buildSection,
   buildSubmitField,
-  buildFileUploadField,
   Form,
   FormModes,
   DefaultEvents,
@@ -32,34 +30,6 @@ export const CollectEndorsementsForm: Form = buildForm({
               title: m.endorsementList.title,
               component: 'EndorsementList',
             }),
-            buildCheckboxField({
-              id: 'includePapers',
-              title: '',
-              strong: true,
-              options: [
-                {
-                  value: 'yes',
-                  label: m.collectEndorsements.includePapers,
-                },
-              ],
-              defaultValue: '',
-            }),
-            buildCustomField({
-              id: 'fileUploadDisclaimer',
-              title: m.collectEndorsements.title,
-              component: 'FileUploadDisclaimer',
-            }),
-            buildFileUploadField({
-              condition: (answer) => answer.includePapers !== undefined,
-              id: 'documents',
-              title: '',
-              introduction: '',
-              maxSize: 10000000,
-              uploadAccept: '.xlsx',
-              uploadHeader: m.collectEndorsements.fileUploadHeader,
-              uploadDescription: m.collectEndorsements.uploadDescription,
-              uploadButtonLabel: m.collectEndorsements.uploadButtonLabel,
-            }),
           ],
         }),
       ],
@@ -67,7 +37,6 @@ export const CollectEndorsementsForm: Form = buildForm({
     buildSection({
       id: 'endorsementListSubmittion',
       title: m.endorsementListSubmission.shortTitle,
-
       children: [
         buildCustomField({
           id: 'selectEndorsementsList',
@@ -76,6 +45,7 @@ export const CollectEndorsementsForm: Form = buildForm({
         }),
       ],
     }),
+
     buildSection({
       id: 'overviewSection',
       title: m.overviewSection.title,

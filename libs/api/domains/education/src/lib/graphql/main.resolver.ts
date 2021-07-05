@@ -8,31 +8,45 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
+import { AuditService } from '@island.is/nest/audit'
 
 import { EducationService } from '../education.service'
 import {
-  License,
-  SignedLicense,
+  EducationLicense,
+  EducationSignedLicense,
   FetchEducationSignedLicenseUrlInput,
 } from './license'
 import { ExamFamilyOverview, ExamResult } from './grade'
 
+const namespace = '@island.is/api/education'
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class MainResolver {
-  constructor(private readonly educationService: EducationService) {}
+  constructor(
+    private readonly educationService: EducationService,
+    private readonly auditService: AuditService,
+  ) {}
 
-  @Query(() => [License])
-  educationLicense(@CurrentUser() user: User): Promise<License[]> {
-    return this.educationService.getLicenses(user.nationalId)
+  @Query(() => [EducationLicense])
+  educationLicense(@CurrentUser() user: User): Promise<EducationLicense[]> {
+    return this.auditService.auditPromise<EducationLicense[]>(
+      {
+        user,
+        namespace,
+        action: 'educationLicense',
+        resources: (licenses) => licenses.map((license) => license.id),
+      },
+      this.educationService.getLicenses(user.nationalId),
+    )
   }
 
-  @Mutation(() => SignedLicense, { nullable: true })
+  @Mutation(() => EducationSignedLicense, { nullable: true })
   async fetchEducationSignedLicenseUrl(
     @CurrentUser() user: User,
     @Args('input', { type: () => FetchEducationSignedLicenseUrlInput })
     input: FetchEducationSignedLicenseUrlInput,
-  ): Promise<SignedLicense> {
+  ): Promise<EducationSignedLicense> {
     const url = await this.educationService.downloadPdfLicense(
       user.nationalId,
       input.licenseId,
@@ -40,6 +54,14 @@ export class MainResolver {
     if (url === null) {
       throw new ApolloError('Could not create a download link')
     }
+
+    this.auditService.audit({
+      user,
+      namespace,
+      action: 'fetchEducationSignedicenseUrl',
+      resources: input.licenseId,
+    })
+
     return { url }
   }
 
@@ -47,7 +69,15 @@ export class MainResolver {
   educationExamFamilyOverviews(
     @CurrentUser() user: User,
   ): Promise<ExamFamilyOverview[]> {
-    return this.educationService.getExamFamilyOverviews(user.nationalId)
+    return this.auditService.auditPromise<ExamFamilyOverview[]>(
+      {
+        user,
+        namespace,
+        action: 'educationExamFamilyOverviews',
+        resources: (results) => results.map((result) => result.nationalId),
+      },
+      this.educationService.getExamFamilyOverviews(user.nationalId),
+    )
   }
 
   @Query(() => ExamResult)
@@ -62,6 +92,14 @@ export class MainResolver {
     if (!familyMember) {
       throw new ApolloError('The requested nationalId is not a part of family')
     }
-    return this.educationService.getExamResult(familyMember)
+    return this.auditService.auditPromise(
+      {
+        user,
+        namespace,
+        action: 'educationExamResult',
+        resources: nationalId,
+      },
+      this.educationService.getExamResult(familyMember),
+    )
   }
 }

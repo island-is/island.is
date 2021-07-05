@@ -85,7 +85,7 @@ export async function generateResidenceChangePdf(application: CRCApplication) {
     ),
   )
 
-  addSubheader('Núverandi lögheimilisforeldri', doc)
+  addSubheader('Núverandi lögheimilisforeldri skv. Þjóðskrá Íslands', doc)
   addValue(
     `${currentParent.parentName}, ${formatSsn(currentParent.nationalId)}`,
     doc,

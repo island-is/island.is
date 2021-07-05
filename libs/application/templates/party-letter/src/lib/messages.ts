@@ -71,14 +71,9 @@ export const m: MessageDir = {
       defaultMessage: 'Afrita hlekk',
       description: 'Copy link button',
     },
-    nameCount: {
-      id: 'ple.application:endorsement.list.name.count',
-      defaultMessage: '{endorsementCount} nafn á lista af 300',
-      description: 'X name on list',
-    },
     namesCount: {
       id: 'ple.application:endorsement.list.names.count',
-      defaultMessage: '{endorsementCount} nöfn á lista af 300',
+      defaultMessage: 'meðmæli á lista',
       description: 'X names on list',
     },
     invalidEndorsements: {
@@ -88,7 +83,7 @@ export const m: MessageDir = {
     },
     searchbar: {
       id: 'ple.application:endorsement.list.search',
-      defaultMessage: 'Leitaðu hér',
+      defaultMessage: 'Leitaðu að nafni',
       description: 'Searchbar placeholder',
     },
   }),
@@ -123,7 +118,7 @@ export const m: MessageDir = {
     includePapersDisclaimerPt1: {
       id: 'ple.application:file.upload.disclaimer.pt1',
       defaultMessage:
-        '*Fyrir meðmæli á pappír þarf að lista upp kennitölur meðmælenda í skjal og hlaða upp hér að neðan.',
+        '*Fyrir meðmæli á pappír þarf að lista upp kennitölur meðmælenda í Excel skjal og hlaða upp hér að neðan.',
       description: 'Include paper endorsements disclaimer part 1',
     },
     includePapersDisclaimerPt2: {
@@ -131,6 +126,12 @@ export const m: MessageDir = {
       defaultMessage:
         '*Pappírsmeðmæli skulu einnig sendast með bréfpósti til yfirkjörstjórnar.',
       description: 'Include paper endorsements disclaimer part 2',
+    },
+    includePapersDisclaimerPt3: {
+      id: 'ple.application:file.upload.disclaimer.pt3',
+      defaultMessage:
+        '*Skjalið skal innihalda eina kennitölu per reit. Allar kennitölur skulu vera í fyrsta dálk (dálk A), fyrsta kennitalan skal vera staðsett í reit A1.',
+      description: 'Include paper signatures disclaimer part 3',
     },
     fileUploadHeader: {
       id: 'ple.application:file.upload.header',
@@ -146,6 +147,26 @@ export const m: MessageDir = {
       id: 'ple.application:file.upload.label',
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Label for file upload',
+    },
+    uploadSuccess: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Pappírsmeðmælum hefur verið hlaðið upp!',
+      description: 'Upload succeeded text',
+    },
+    uploadFail: {
+      id: 'pa.application:uploadButton.uploadSuccess',
+      defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
+      description: 'Upload failed text',
+    },
+    attention: {
+      id: 'pa.application:uploadButton.attention',
+      defaultMessage: 'Athugið!',
+      description: 'Warning title',
+    },
+    uploadWarningText: {
+      id: 'pa.application:uploadButton.warningDescription',
+      defaultMessage: 'Ekki tókst að hlaða upp eftirfarandi kennitölur: ',
+      description: 'Warning description',
     },
   }),
   selectNationalId: defineMessages({
@@ -338,6 +359,11 @@ export const m: MessageDir = {
       id: 'ple.application:endorsement.form.agree.label',
       defaultMessage: 'Ég hef kynnt mér framangreint',
       description: 'Label for terms and conditions',
+    },
+    isClosedMessage: {
+      id: 'ple.application:endorsement.form.isClosed.message',
+      defaultMessage: 'Meðmælendalista hefur verið lokað',
+      description: 'Error message if endorsement list has been closed',
     },
     submitButton: {
       id: 'ple.application:endorsement.form.submit.button',

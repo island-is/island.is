@@ -10,6 +10,7 @@ import { CourtModule } from '../court'
 import { Case } from './models'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
+import { TranslationsModule } from '@island.is/api/domains/translations'
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CaseService } from './case.service'
     UserModule,
     CourtModule,
     SequelizeModule.forFeature([Case]),
+    TranslationsModule,
   ],
   providers: [CaseService],
   controllers: [CaseController],

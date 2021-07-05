@@ -69,6 +69,17 @@ export const laws = {
 export const caseTypes = {
   CUSTODY: 'gæsluvarðhald',
   TRAVEL_BAN: 'farbann',
+  SEARCH_WARRANT: 'húsleit',
+  BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
+  PHONE_TAPPING: 'símhlustun',
+  TELECOMMUNICATIONS: 'upplýsingar um fjarskiptasamskipti',
+  TRACKING_EQUIPMENT: 'eftirfararbúnaður',
+  PSYCHIATRIC_EXAMINATION: 'geðrannsókn',
+  SOUND_RECORDING_EQUIPMENT: 'hljóðupptökubúnaði komið fyrir',
+  AUTOPSY: 'krufning',
+  BODY_SEARCH: 'leit og líkamsrannsókn',
+  INTERNET_USAGE: 'upplýsingar um vefnotkun',
+  OTHER: 'annað',
 }
 
 const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
@@ -115,15 +126,20 @@ export enum NounCases {
 export function formatAccusedByGender(
   accusedGender?: CaseGender,
   nounCase: NounCases = NounCases.NOMINATIVE,
+  isInvestigationCase?: boolean,
 ) {
-  switch (accusedGender) {
-    case CaseGender.MALE:
-      return nounCase === NounCases.NOMINATIVE ? 'kærði' : 'kærða'
-    case CaseGender.FEMALE:
-      return nounCase === NounCases.NOMINATIVE ? 'kærða' : 'kærðu'
-    case CaseGender.OTHER:
-    default:
-      return 'kærða'
+  if (isInvestigationCase) {
+    return nounCase === NounCases.NOMINATIVE ? 'varnaraðili' : 'varnaraðila'
+  } else {
+    switch (accusedGender) {
+      case CaseGender.MALE:
+        return nounCase === NounCases.NOMINATIVE ? 'kærði' : 'kærða'
+      case CaseGender.FEMALE:
+        return nounCase === NounCases.NOMINATIVE ? 'kærða' : 'kærðu'
+      case CaseGender.OTHER:
+      default:
+        return 'kærða'
+    }
   }
 }
 
@@ -132,6 +148,8 @@ export function formatAccusedByGender(
 export function formatCustodyRestrictions(
   accusedGender?: CaseGender,
   custodyRestrictions?: CaseCustodyRestrictions[],
+  validToDate?: Date | string | undefined,
+  isolationToDate?: Date | string | undefined,
 ): string {
   const relevantCustodyRestrictions = custodyRestrictions?.filter(
     (restriction) =>
@@ -149,12 +167,30 @@ export function formatCustodyRestrictions(
     return 'Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.'
   }
 
+  const formattedValidToDateAndTime = `${formatDate(validToDate, 'PPPPp')
+    ?.replace('dagur,', 'dagsins')
+    ?.replace(' kl.', ', kl.')}`
+
+  const formattedIsolationToDateAndTime = `${formatDate(
+    isolationToDate,
+    'PPPPp',
+  )
+    ?.replace('dagur,', 'dagsins')
+    ?.replace(' kl.', ', kl.')}`
+
+  const isolationIsSameAsValidToDate =
+    validToDate &&
+    isolationToDate &&
+    formattedIsolationToDateAndTime === formattedValidToDateAndTime
+
   let res = 'Sækjandi tekur fram að '
 
   if (relevantCustodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION)) {
-    res += `${formatAccusedByGender(
-      accusedGender,
-    )} skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur`
+    res += `${formatAccusedByGender(accusedGender)} skuli sæta einangrun ${
+      isolationIsSameAsValidToDate
+        ? 'á meðan á gæsluvarðhaldinu stendur'
+        : `ekki lengur en til ${formattedIsolationToDateAndTime}`
+    }`
 
     if (relevantCustodyRestrictions.length === 1) {
       return res + '.'
@@ -291,7 +327,7 @@ export function formatProsecutorDemands(
   accusedNationalId: string,
   accusedName: string,
   court: string,
-  requestedCustodyEndDate: Date | string,
+  requestedValidToDate: Date | string,
   isolation: boolean,
   isExtension: boolean,
   previousDecision?: CaseDecision,
@@ -307,7 +343,7 @@ export function formatProsecutorDemands(
   } með úrskurði ${court?.replace(
     'Héraðsdómur',
     'Héraðsdóms',
-  )}, til ${formatDate(requestedCustodyEndDate, 'PPPPp')
+  )}, til ${formatDate(requestedValidToDate, 'PPPPp')
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}${
     type === CaseType.CUSTODY && isolation

@@ -783,7 +783,7 @@
           "label": "Name",
           "placeholder": "@island.is",
           "helpText": "The identifier of this domain",
-          "errorMessage": "The domain is required and can not include invalid characters"
+          "errorMessage": "The domain is required and should be follow the {@domain.is} pattern"
         },
         "description": {
           "label": "Description",
@@ -896,8 +896,12 @@
         "name": {
           "label": "Name",
           "placeholder": "grant-example",
-          "helpText": "The unique name of the Grant Type",
-          "errorMessage": "Name is required and needs to be in the right format"
+          "helpText": "The unique name of the Grant Type. Follow this pattern: grant-type{:optional-paths}",
+          "errorMessage": "Name is required and needs to be in the right format. Follow this pattern: grant-type{:optional-paths}",
+          "pattern": "grant-type{:optional-paths}",
+          "patternText": "Follow this pattern:",
+          "hintOkMessage": "The Grant Type is in a correct format",
+          "hintErrorMessage": "The format of the Grant Type is incorrect"
         },
         "description": {
           "label": "Description",
@@ -1095,10 +1099,14 @@
         "name": {
           "label": "Name",
           "placeholder": "Unique identifier",
-          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request.",
-          "errorMessage": "Name is required and needs to be in the right format",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request. Use pattern {@domain.is/path/optional-path}. Lower case and preferably no numerical characters",
+          "errorMessage": "Name is required and needs to be in the right format. Use lower case characters in the format described here: {@domain.is/path/optional-path}",
           "available": "Available",
-          "unAvailable": "Unavailable"
+          "unAvailable": "Unavailable",
+          "pattern": "@{domain}{/optional-path}{/optional-path}",
+          "patternText": "Follow this pattern:",
+          "hintOkMessage": "The Identity Resource Name is in a correct format",
+          "hintErrorMessage": "The format of the Identity Resource Name is incorrect"
         },
         "displayName": {
           "label": "Display Name",
@@ -1423,13 +1431,20 @@
         }
       },
       "fields": {
+        "domain": {
+          "selectAnItem": "Select a Domain"
+        },
         "name": {
           "label": "Name",
           "placeholder": "Unique identifier",
-          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request.",
-          "errorMessage": "Name is required and needs to be in the right format",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request. Follow this pattern: @{domain}[/{group}]/{resource}[:{action}]. Use lower case and no numeric characters",
+          "errorMessage": "Name is required and needs to be in the right format. Use lower case and no numeric characters",
           "available": "Available",
-          "unAvailable": "Unavailable"
+          "unAvailable": "Unavailable",
+          "hintOkMessage": "The api scope name is in a correct format",
+          "hintErrorMessage": "The format of api scope name is incorrect",
+          "pattern": "@{domain}[/{group}]/{resource}[:{action}]",
+          "patternText": "Follow this pattern:"
         },
         "displayName": {
           "label": "Display Name",
@@ -1540,10 +1555,14 @@
         "name": {
           "label": "Name",
           "placeholder": "Unique identifier",
-          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request.",
-          "errorMessage": "Name is required and needs to be in the right format",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request. Use pattern {@domain.is/path/optional-path2}. Lower case and preferably no numeric characters.",
+          "errorMessage": "Name is required and needs to be in the right format. Use lower case characters in the pattern described",
           "available": "Available",
-          "unAvailable": "Unavailable"
+          "unAvailable": "Unavailable",
+          "pattern": "@{domain}{/optional-path}{/optional-path}",
+          "patternText": "Follow this pattern:",
+          "hintOkMessage": "The Api Resource Name is in a correct format",
+          "hintErrorMessage": "The format of the Api Resource Name is incorrect"
         },
         "displayName": {
           "label": "Display Name",
@@ -1650,10 +1669,14 @@
         "clientId": {
           "label": "Client Id",
           "placeholder": "example-client",
-          "helpText": "The unique identifier for this application. No spaces or special characters.",
-          "errorMessage": "The unique identifier for this application. No spaces or special characters.",
+          "helpText": "The unique identifier for this application. No spaces or special characters. Use lower case characters in the pattern described here: @{domain}{/optional-path}{/optional-path}",
+          "errorMessage": "The unique identifier for this application is not in the correct format. Use lower case, preferably no numeric characters. @{domain}{/optional-path}{/optional-path}",
           "available": "Available",
-          "unAvailable": "Unavailable"
+          "unAvailable": "Unavailable",
+          "pattern": "@{domain}{/optional-path}{/optional-path}",
+          "patternText": "Follow this pattern:",
+          "hintOkMessage": "The Client Id is in a correct format",
+          "hintErrorMessage": "The format of the Client Id is incorrect"
         },
         "clientName": {
           "label": "Display Name",
@@ -2059,7 +2082,7 @@
       },
       "sections": {
         "active": {
-          "title": "Active callback URLs"
+          "title": "Active callback URIs"
         }
       },
       "noActiveConnections": {

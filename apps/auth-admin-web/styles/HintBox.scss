@@ -1,0 +1,42 @@
+.hintbox {
+  position: absolute;
+  top: 10px;
+  right: 110px;
+  border-width: 3px;
+  z-index: 1;
+
+  &__content {
+    background: $color-body-bg;
+    border: 1px solid $color-border;
+    width: 320px;
+    font-size: 0.8rem;
+    z-index: 2;
+    border-radius: 8px;
+    padding: 12px 24px 12px 16px;
+  }
+
+  &__help-text {
+    margin-top: 0px;
+    font-weight: $weight-semi-bold;
+  }
+
+  &__pattern-text {
+    margin-top: 5px;
+    font-weight: $weight-semi-bold;
+    display: block;
+  }
+
+  &__pattern {
+    margin-top: 5px;
+  }
+
+  .invalid {
+    font-weight: $weight-semi-bold;
+    color: $color-error;
+  }
+
+  .valid {
+    font-weight: $weight-semi-bold;
+    color: $color-ok;
+  }
+}

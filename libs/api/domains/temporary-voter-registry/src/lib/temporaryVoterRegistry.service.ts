@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import {
-  TemporaryVoterRegistryApi,
-  VoterRegistryControllerFindOneRequest,
-} from '../../gen/fetch/apis'
+import { TemporaryVoterRegistryApi } from '../../gen/fetch/apis'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import type { Logger } from '@island.is/logging'
+import type { Auth, User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class TemporaryVoterRegistryService {
@@ -26,11 +25,15 @@ export class TemporaryVoterRegistryService {
     throw new ApolloError('Failed to resolve request', error.status)
   }
 
-  async temporaryVoterRegistryControllerFindOne(
-    input: VoterRegistryControllerFindOneRequest,
-  ) {
-    return await this.temporaryVoterRegistryApi
-      .voterRegistryControllerFindOne(input)
-      .catch(this.handleError)
+  private temporaryVoterRegistryApiWithAuth(auth: Auth) {
+    return this.temporaryVoterRegistryApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
+  }
+
+  async temporaryVoterRegistryControllerFindByAuth(auth: User) {
+    return await this.temporaryVoterRegistryApiWithAuth(auth)
+      .voterRegistryControllerFindByAuth()
+      .catch(this.handleError.bind(this))
   }
 }

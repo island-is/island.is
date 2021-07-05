@@ -3,25 +3,39 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Bullet, BulletList } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import {
+  otherParentApprovalDescription,
+  requiresOtherParentApproval,
+} from '../../lib/parentalLeaveUtils'
+import { NO } from '../../constants'
 
-const ConclusionSectionImage: FC<FieldBaseProps> = () => {
+const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
+  const { isSelfEmployed } = useApplicationAnswers(application)
+
+  const steps = [formatMessage(parentalLeaveFormMessages.finalScreen.step3)]
+
+  if (isSelfEmployed === NO) {
+    steps.unshift(
+      formatMessage(parentalLeaveFormMessages.reviewScreen.employerDesc),
+    )
+  }
+
+  if (requiresOtherParentApproval(application.answers)) {
+    steps.unshift(
+      otherParentApprovalDescription(application.answers, formatMessage),
+    )
+  }
 
   return (
     <Box>
-      <Box>
-        <BulletList type="ul">
-          <Bullet>
-            {formatMessage(parentalLeaveFormMessages.finalScreen.step1)}
-          </Bullet>
-          <Bullet>
-            {formatMessage(parentalLeaveFormMessages.finalScreen.step2)}
-          </Bullet>
-          <Bullet>
-            {formatMessage(parentalLeaveFormMessages.finalScreen.step3)}
-          </Bullet>
-        </BulletList>
-      </Box>
+      <BulletList type="ul">
+        {steps.map((step, index) => {
+          return <Bullet key={index}>{step}</Bullet>
+        })}
+      </BulletList>
+
       <Box
         display="flex"
         flexDirection="column"

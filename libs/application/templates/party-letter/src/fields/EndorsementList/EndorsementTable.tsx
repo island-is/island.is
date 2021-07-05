@@ -1,11 +1,11 @@
 import React, { FC } from 'react'
 import { Application } from '@island.is/application/core'
-import { Endorsement } from '../../lib/dataSchema'
-import { Box, Table as T, Tooltip } from '@island.is/island-ui/core'
+import { Table as T, Icon } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
+import { Endorsement } from '../../types/schema'
 
 const formatDate = (date: string) => {
   try {
@@ -22,40 +22,60 @@ interface EndorsementTableProps {
 
 const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
   const { formatMessage } = useLocale()
+  const withBulkImport = endorsements?.some((x) => x.meta.bulkEndorsement)
   const renderRow = (endorsement: Endorsement) => {
+    const fullAddress =
+      endorsement.meta.address.streetAddress +
+      ', ' +
+      endorsement.meta.address.postalCode +
+      ' ' +
+      endorsement.meta.address.city
+    const rowBackground = endorsement.meta.bulkEndorsement
+      ? 'roseTinted100'
+      : 'white'
     return (
       <T.Row key={endorsement.id}>
-        <T.Data key={endorsement.id + endorsement.date}>
-          {formatDate(endorsement.date)}
-        </T.Data>
-        <T.Data key={endorsement.id + endorsement.name}>
-          {endorsement.name}
-        </T.Data>
-        <T.Data key={endorsement.id + endorsement.nationalId}>
-          {formatKennitala(endorsement.nationalId)}
+        <T.Data
+          box={{
+            background: rowBackground,
+          }}
+        >
+          {formatDate(endorsement.created)}
         </T.Data>
         <T.Data
-          key={endorsement.id}
           box={{
-            background: endorsement.hasWarning ? 'yellow200' : 'white',
+            background: rowBackground,
+          }}
+        >
+          {endorsement.meta.fullName}
+        </T.Data>
+        <T.Data
+          box={{
+            background: rowBackground,
+          }}
+        >
+          {formatKennitala(endorsement.endorser)}
+        </T.Data>
+        <T.Data
+          box={{
+            background: rowBackground,
             textAlign: 'right',
           }}
         >
-          {endorsement.hasWarning ? (
-            <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              {endorsement.address}
-              <Box marginLeft={2}>
-                <Tooltip
-                  color="blue400"
-                  iconSize="medium"
-                  text={formatMessage(m.validationMessages.signatureInvalid)}
-                />
-              </Box>
-            </Box>
-          ) : (
-            endorsement.address
-          )}
+          {fullAddress}
         </T.Data>
+        {withBulkImport && (
+          <T.Data
+            box={{
+              background: rowBackground,
+              textAlign: 'right',
+            }}
+          >
+            {endorsement.meta.bulkEndorsement && (
+              <Icon icon="attach" color="blue400" />
+            )}
+          </T.Data>
+        )}
       </T.Row>
     )
   }
@@ -72,11 +92,11 @@ const EndorsementTable: FC<EndorsementTableProps> = ({ endorsements }) => {
           <T.HeadData box={{ textAlign: 'right' }}>
             {formatMessage(m.endorsementTable.thAddress)}
           </T.HeadData>
+          {withBulkImport && <T.HeadData></T.HeadData>}
         </T.Row>
       </T.Head>
       <T.Body>
-        {endorsements &&
-          endorsements.length &&
+        {!!endorsements?.length &&
           endorsements.map((endorsements) => renderRow(endorsements))}
       </T.Body>
     </T.Table>

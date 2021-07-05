@@ -15,7 +15,7 @@ export const generateApplicationRejectedEmail: EmailTemplateGenerator = (
   const applicantEmail = get(application.answers, 'email')
   const applicationSlug = getSlugFromType(application.typeId) as string
   const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
-
+  const hasComment = application.answers.reasonForReject.toString()?.length
   const subject = 'Umsókn um listabókstaf uppfyllir ekki skilyrði'
   const body = dedent(`
         Umsókn um listabókstaf  <strong>uppfyllir ekki skilyrði</strong>. 
@@ -24,7 +24,7 @@ export const generateApplicationRejectedEmail: EmailTemplateGenerator = (
         <b>Stjórnmálasamtök: </b>${application.answers.partyName}
 
         <b>Athugasemd frá Dómsmálaráðuneytinu: </b>${
-          application.answers.reasonForReject ?? 'Engin athugasemd'
+          hasComment ? application.answers.reasonForReject : 'Engin athugasemd'
         }
 
         Þú getur <a href="${applicationLink}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.

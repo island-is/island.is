@@ -9,18 +9,19 @@ interface Props {
   accusedNationalId?: string
   accusedAddress?: string
   defender?: { name: string; email?: string; phoneNumber?: string }
+  isRCase?: boolean
 }
 
 const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
   return (
     <Box className={styles.infoCardContainer} data-testid="infoCard">
-      <Text variant="h4">Sakborningur</Text>
+      <Text variant="h4">{props.isRCase ? 'Varnaraðili' : 'Sakborningur'}</Text>
       <Box className={styles.infoCardTitleContainer}>
         <Box marginBottom={4}>
           <Text fontWeight="semiBold">
             {props.accusedName}
             <Text as="span">{`, `}</Text>
-            {`kt. ${formatNationalId(props.accusedNationalId || '')}`}
+            {`kt. ${formatNationalId(props.accusedNationalId ?? '')}`}
             <Text as="span">{`, ${props.accusedAddress}`}</Text>
           </Text>
         </Box>

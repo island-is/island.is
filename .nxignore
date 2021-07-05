@@ -1,5 +1,6 @@
-# helm
-/helm
+# helm related files
+apps/**/infra/*
+libs/**/infra/*
 
 # gjafakort
 apps/gjafakort/bin
@@ -15,6 +16,10 @@ apps/air-discount-scheme/Makefile
 # judicial-system
 apps/judicial-system/codegen.yml
 apps/judicial-system/api.graphql
+
+# financial-aid
+apps/financial-aid/codegen.yml
+apps/financial-aid/api.graphql
 
 # Readmes
 apps/air-discount-scheme/README.md
@@ -33,7 +38,6 @@ libs/nest/README.md
 libs/service-portal/README.md
 libs/service-portal/settings/README.md
 libs/shared/README.md
-libs/utils/README.md
 libs/clients/README.md
 libs/application/templates/family-matters/README.md
 libs/auth/README.md

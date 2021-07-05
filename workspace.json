@@ -17,8 +17,8 @@
     },
     "@nrwl/react": {
       "application": {
-        "style": "scss",
         "linter": "eslint",
+        "style": "scss",
         "pascalCaseFiles": true,
         "babel": true
       },
@@ -1038,6 +1038,27 @@
         }
       }
     },
+    "api-domains-finance": {
+      "root": "libs/api/domains/finance",
+      "sourceRoot": "libs/api/domains/finance/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/finance/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/finance"],
+          "options": {
+            "jestConfig": "libs/api/domains/finance/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-health-insurance": {
       "root": "libs/api/domains/health-insurance",
       "sourceRoot": "libs/api/domains/health-insurance/src",
@@ -1096,6 +1117,48 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/icelandic-names-registry"]
+        }
+      }
+    },
+    "api-domains-identity": {
+      "root": "libs/api/domains/identity",
+      "sourceRoot": "libs/api/domains/identity/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/identity/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/identity"],
+          "options": {
+            "jestConfig": "libs/api/domains/identity/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-domains-license-service": {
+      "root": "libs/api/domains/license-service",
+      "sourceRoot": "libs/api/domains/license-service/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/license-service/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/license-service"],
+          "options": {
+            "jestConfig": "libs/api/domains/license-service/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },
@@ -1193,6 +1256,33 @@
             "outputPath": "libs/api/domains/party-letter-registry/gen/fetch",
             "command": "yarn openapi-generator -o libs/api/domains/party-letter-registry/gen/fetch -i apps/services/party-letter-registry-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
+        }
+      }
+    },
+    "api-domains-payment": {
+      "root": "libs/api/domains/payment",
+      "sourceRoot": "libs/api/domains/payment/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/payment/tsconfig.lib.json",
+              "libs/api/domains/payment/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api/domains/payment/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/payment/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/payment"]
         }
       }
     },
@@ -1562,6 +1652,16 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/application-system/api",
                 "output": "./"
+              },
+              {
+                "glob": "*",
+                "input": "libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets",
+                "output": "./parental-leave-assets"
+              },
+              {
+                "glob": "*",
+                "input": "libs/email-service/src/tools/design",
+                "output": "./email-service-assets"
               }
             ],
             "webpackConfig": "apps/application-system/api/webpack.config.js",
@@ -1852,6 +1952,28 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-complaints-to-althingi-ombudsman": {
+      "root": "libs/application/templates/complaints-to-althingi-ombudsman",
+      "sourceRoot": "libs/application/templates/complaints-to-althingi-ombudsman/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/complaints-to-althingi-ombudsman/tsconfig.lib.json",
+              "libs/application/templates/complaints-to-althingi-ombudsman/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/complaints-to-althingi-ombudsman/**/*"
+            ]
           }
         }
       }
@@ -2343,9 +2465,7 @@
         "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "libs/application/template-api-modules/src/lib/modules/templates/party-application/gen/fetch",
-            "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-application/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original",
-            "parallel": false
+            "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-application/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
       }
@@ -2389,6 +2509,27 @@
           "options": {
             "command": "graphql-codegen --config libs/application/templates/party-letter/codegen.yml"
           }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run services-endorsements-api:schemas/external-openapi-generator",
+              "nx run services-endorsements-api:schemas/build-openapi",
+              "nx run services-party-letter-registry-api:schemas/build-openapi",
+              "nx run application-templates-party-letter:schemas/openapi-generator"
+            ],
+            "parallel": false
+          }
+        },
+        "schemas/openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-letter/gen/fetch/party-letter -i apps/services/party-letter-registry-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original",
+              "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-letter/gen/fetch/endorsements -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+            ]
+          }
         }
       }
     },
@@ -2424,6 +2565,44 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/passport/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-payable-dummy-template": {
+      "root": "libs/application/templates/payable-dummy-template",
+      "sourceRoot": "libs/application/templates/payable-dummy-template/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/payable-dummy-template/tsconfig.lib.json",
+              "libs/application/templates/payable-dummy-template/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/payable-dummy-template/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/payable-dummy-template/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": [
+            "coverage/libs/application/templates/payable-dummy-template"
+          ]
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/payable-dummy-template/src/lib/messages.ts"
           }
         }
       }
@@ -2907,6 +3086,48 @@
         }
       }
     },
+    "clients-finance": {
+      "root": "libs/clients/finance",
+      "sourceRoot": "libs/clients/finance/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/finance/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/finance"],
+          "options": {
+            "jestConfig": "libs/clients/finance/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-middlewares": {
+      "root": "libs/clients/middlewares",
+      "sourceRoot": "libs/clients/middlewares/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/middlewares/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/middlewares"],
+          "options": {
+            "jestConfig": "libs/clients/middlewares/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "clients-mms": {
       "root": "libs/clients/mms",
       "sourceRoot": "libs/clients/mms/src",
@@ -2973,6 +3194,33 @@
           "options": {
             "command": "yarn openapi-generator -o libs/clients/national-registry/v2/gen/fetch -i libs/clients/national-registry/v2/src/clientConfig.yaml"
           }
+        }
+      }
+    },
+    "clients-payment": {
+      "root": "libs/clients/payment",
+      "sourceRoot": "libs/clients/payment/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/payment/tsconfig.lib.json",
+              "libs/clients/payment/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/clients/payment/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/payment/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/payment"]
         }
       }
     },
@@ -3478,6 +3726,413 @@
           },
           "outputs": ["coverage/libs/file-storage"]
         }
+      }
+    },
+    "financial-aid-api": {
+      "root": "apps/financial-aid/api",
+      "sourceRoot": "apps/financial-aid/api/src",
+      "projectType": "application",
+      "prefix": "financial-aid-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/api",
+            "main": "apps/financial-aid/api/src/main.ts",
+            "tsConfig": "apps/financial-aid/api/tsconfig.app.json",
+            "assets": [],
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "financial-aid-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/financial-aid/api/tsconfig.app.json",
+              "apps/financial-aid/api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/financial-aid/api/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/financial-aid/api/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/financial-aid/api"]
+        },
+        "schemas/build-graphql-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P apps/financial-aid/api/tsconfig.json scripts/build-graphql-schema.ts apps/financial-aid/api/src/app/app.module"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config apps/financial-aid/codegen.yml"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "financial-aid-auth": {
+      "root": "libs/financial-aid/auth",
+      "sourceRoot": "libs/financial-aid/auth/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/financial-aid/auth/tsconfig.lib.json",
+              "libs/financial-aid/auth/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/financial-aid/auth/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/financial-aid/auth/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/financial-aid/auth"]
+        }
+      }
+    },
+    "financial-aid-backend": {
+      "root": "apps/financial-aid/backend",
+      "sourceRoot": "apps/financial-aid/backend/src",
+      "projectType": "application",
+      "prefix": "financial-aid-backend",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/backend",
+            "main": "apps/financial-aid/backend/src/main.ts",
+            "tsConfig": "apps/financial-aid/backend/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "*",
+                "input": "apps/financial-aid/backend/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/financial-aid/backend",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/financial-aid/backend",
+                "output": "./"
+              }
+            ],
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "financial-aid-backend:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/financial-aid/backend/tsconfig.app.json",
+              "apps/financial-aid/backend/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/financial-aid/backend/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/financial-aid/backend/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/financial-aid/backend"]
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "cwd": "apps/financial-aid/backend"
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/financial-aid/backend/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/financial-aid/backend/tsconfig.app.json apps/financial-aid/backend/src/buildOpenApi.ts"
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+            "cwd": "apps/financial-aid/backend"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "cwd": "apps/financial-aid/backend"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "financial-aid-shared": {
+      "root": "libs/financial-aid/shared",
+      "sourceRoot": "libs/financial-aid/shared/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/financial-aid/shared/tsconfig.lib.json",
+              "libs/financial-aid/shared/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/financial-aid/shared/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/financial-aid/shared/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/financial-aid/shared"]
+        }
+      }
+    },
+    "financial-aid-web-osk": {
+      "root": "apps/financial-aid/web-osk",
+      "sourceRoot": "apps/financial-aid/web-osk",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/web-osk",
+            "commands": [
+              "yarn nx build-next financial-aid-web-osk",
+              "yarn nx build-server financial-aid-web-osk"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "args": "--prod"
+            }
+          }
+        },
+        "build-next": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/financial-aid/web-osk",
+            "outputPath": "dist/apps/financial-aid/web-osk"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/financial-aid/web-osk/src/environments/environment.ts",
+                  "with": "apps/financial-aid/web-osk/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "build-server": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/web-osk",
+            "main": "apps/financial-aid/web-osk/server.ts",
+            "tsConfig": "apps/financial-aid/web-osk/tsconfig.json",
+            "maxWorkers": 2,
+            "assets": ["apps/financial-aid/web-osk/next-modules"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "financial-aid-web-osk:build-server"
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "financial-aid-web-osk:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/financial-aid/web-osk/tsconfig.json",
+              "apps/financial-aid/web-osk/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/financial-aid/web-osk/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/financial-aid/web-osk/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/financial-aid/web-osk"]
+        },
+        "docker-next": {}
+      }
+    },
+    "financial-aid-web-veita": {
+      "root": "apps/financial-aid/web-veita",
+      "sourceRoot": "apps/financial-aid/web-veita",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/web-veita",
+            "commands": [
+              "yarn nx build-next financial-aid-web-veita",
+              "yarn nx build-server financial-aid-web-veita"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "args": "--prod"
+            }
+          }
+        },
+        "build-next": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/financial-aid/web-veita",
+            "outputPath": "dist/apps/financial-aid/web-veita"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/financial-aid/web-veita/src/environments/environment.ts",
+                  "with": "apps/financial-aid/web-veita/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "build-server": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/financial-aid/web-veita",
+            "main": "apps/financial-aid/web-veita/server.ts",
+            "tsConfig": "apps/financial-aid/web-veita/tsconfig.json",
+            "maxWorkers": 2,
+            "assets": ["apps/financial-aid/web-veita/next-modules"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "financial-aid-web-veita:build-server"
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "financial-aid-web-veita:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/financial-aid/web-veita/tsconfig.json",
+              "apps/financial-aid/web-veita/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/financial-aid/web-veita/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/financial-aid/web-veita/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/apps/financial-aid/web-veita"]
+        },
+        "docker-next": {}
       }
     },
     "gjafakort-api": {
@@ -4594,7 +5249,13 @@
             "cwd": "apps/judicial-system/backend"
           }
         },
-        "docker-express": {}
+        "docker-express": {},
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/backend/src/app/messages/**/*.ts'"
+          }
+        }
       }
     },
     "judicial-system-consts": {
@@ -4804,7 +5465,13 @@
           },
           "outputs": ["coverage/apps/judicial-system/web"]
         },
-        "docker-next": {}
+        "docker-next": {},
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/web/messages/**/*.{js,ts,tsx}'"
+          }
+        }
       }
     },
     "judicial-system-web-e2e": {
@@ -6058,6 +6725,29 @@
         }
       }
     },
+    "service-portal-licenses": {
+      "root": "libs/service-portal/licenses",
+      "sourceRoot": "libs/service-portal/licenses/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/licenses/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/licenses"],
+          "options": {
+            "jestConfig": "libs/service-portal/licenses/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "service-portal-settings-access-control": {
       "root": "libs/service-portal/settings/access-control",
       "sourceRoot": "libs/service-portal/settings/access-control/src",
@@ -6115,6 +6805,27 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/settings/personal-information/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "service-portal-wip": {
+      "root": "libs/service-portal/wip",
+      "sourceRoot": "libs/service-portal/wip/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/service-portal/wip/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/wip"],
+          "options": {
+            "jestConfig": "libs/service-portal/wip/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
@@ -6477,23 +7188,6 @@
             }
           }
         },
-        "nrwl-node-build": {
-          "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/apps/services/endorsements/api-nrwl-node",
-            "main": "apps/services/endorsements/api/src/main.ts",
-            "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
-            "webpackConfig": "apps/services/endorsements/api/webpack.config.js"
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false
-            }
-          }
-        },
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
@@ -6583,13 +7277,34 @@
       "prefix": "services-party-letter-registry-api",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/party-letter-registry-api",
             "main": "apps/services/party-letter-registry-api/src/main.ts",
             "tsConfig": "apps/services/party-letter-registry-api/tsconfig.app.json",
-            "webpackConfig": "apps/services/party-letter-registry-api/webpack.config.js"
+            "assets": [
+              {
+                "glob": "*",
+                "input": "apps/services/party-letter-registry-api/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/services/party-letter-registry-api",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/services/party-letter-registry-api",
+                "output": "./"
+              },
+              {
+                "glob": "party-letter-registry.js",
+                "input": "apps/services/party-letter-registry-api/seeders",
+                "output": "./seeders"
+              }
+            ]
           },
           "configurations": {
             "production": {
@@ -6759,13 +7474,34 @@
       "prefix": "services-temporary-voter-registry-api",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/temporary-voter-registry-api",
             "main": "apps/services/temporary-voter-registry-api/src/main.ts",
             "tsConfig": "apps/services/temporary-voter-registry-api/tsconfig.app.json",
-            "webpackConfig": "apps/services/temporary-voter-registry-api/webpack.config.js"
+            "assets": [
+              {
+                "glob": "*",
+                "input": "apps/services/temporary-voter-registry-api/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/services/temporary-voter-registry-api",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/services/temporary-voter-registry-api",
+                "output": "./"
+              },
+              {
+                "glob": "voter-registry.js",
+                "input": "apps/services/temporary-voter-registry-api/seeders",
+                "output": "./seeders"
+              }
+            ]
           },
           "configurations": {
             "production": {
@@ -7156,6 +7892,27 @@
         }
       }
     },
+    "shared-utils": {
+      "root": "libs/shared/utils",
+      "sourceRoot": "libs/shared/utils/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/utils/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/utils"],
+          "options": {
+            "jestConfig": "libs/shared/utils/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "skilavottord-consts": {
       "root": "libs/skilavottord/consts",
       "sourceRoot": "libs/skilavottord/consts/src",
@@ -7456,81 +8213,6 @@
         "docker-cypress": {}
       }
     },
-    "utils-api": {
-      "root": "libs/utils/api",
-      "sourceRoot": "libs/utils/api/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/utils/api/tsconfig.lib.json",
-              "libs/utils/api/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/utils/api/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/utils/api/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/utils/api"]
-        }
-      }
-    },
-    "utils-environment": {
-      "root": "libs/utils/environment",
-      "sourceRoot": "libs/utils/environment/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/utils/environment/tsconfig.lib.json",
-              "libs/utils/environment/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/utils/environment/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/utils/environment/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/utils/environment"]
-        }
-      }
-    },
-    "utils-shared": {
-      "root": "libs/utils/shared",
-      "sourceRoot": "libs/utils/shared/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/utils/shared/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/utils/shared"],
-          "options": {
-            "jestConfig": "libs/utils/shared/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "web": {
       "root": "apps/web",
       "sourceRoot": "apps/web",
@@ -7637,7 +8319,7 @@
             }
           }
         },
-        "e2e-ci": {
+        "e2e-ci-disabled": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn e2e-ci -n web-e2e -d dist/apps/web -c"
