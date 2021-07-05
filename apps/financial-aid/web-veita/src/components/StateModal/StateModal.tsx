@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useMemo } from 'react'
 import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
 
 import * as styles from './StateModal.treat'
@@ -6,7 +6,7 @@ import cn from 'classnames'
 
 import { useMutation } from '@apollo/client'
 
-import { NumberInput } from '@island.is/financial-aid-web/veita/src/components'
+import { InputModal } from '@island.is/financial-aid-web/veita/src/components'
 
 import { UpdateApplicationMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
@@ -29,9 +29,17 @@ interface SaveData {
   application: Application
 }
 
-const StateModal: React.FC<Props> = (props: Props) => {
-  const { isVisible, onVisiblityChange, onStateChange, application } = props
+interface InputType {
+  show: boolean
+  type: ApplicationState | undefined
+}
 
+const StateModal: React.FC<Props> = ({
+  isVisible,
+  onVisiblityChange,
+  onStateChange,
+  application,
+}) => {
   const statusOptions = [
     ApplicationState.NEW,
     ApplicationState.INPROGRESS,
@@ -40,10 +48,10 @@ const StateModal: React.FC<Props> = (props: Props) => {
     ApplicationState.REJECTED,
   ]
 
-  const [showInput, setShowInput] = useState(false)
-
-  const maximumInputLength = 6
-  const [amount, setAmount] = useState<number>(0)
+  const [inputType, setInputType] = useState<InputType>({
+    show: false,
+    type: undefined,
+  })
 
   const { statistics, setStatistics } = useContext(NavigationStatisticsContext)
 
@@ -56,6 +64,7 @@ const StateModal: React.FC<Props> = (props: Props) => {
     application: Application,
     state: ApplicationState,
     amount?: number,
+    comment?: string,
   ) => {
     const prevState = application.state
 
@@ -66,7 +75,7 @@ const StateModal: React.FC<Props> = (props: Props) => {
             id: application.id,
             state: state,
             amount: amount,
-            comment: 'Testítest',
+            comment: comment,
           },
         },
       })
@@ -85,7 +94,7 @@ const StateModal: React.FC<Props> = (props: Props) => {
   }
 
   const closeModal = (): void => {
-    if (!showInput) {
+    if (!inputType.show) {
       onVisiblityChange(false)
     }
   }
@@ -124,7 +133,7 @@ const StateModal: React.FC<Props> = (props: Props) => {
             display="flex"
             className={cn({
               [`${styles.container}`]: true,
-              [`${styles.showInput}`]: showInput,
+              [`${styles.showInput}`]: inputType.show,
             })}
           >
             <Box display="block" width="full" padding={4}>
@@ -139,8 +148,14 @@ const StateModal: React.FC<Props> = (props: Props) => {
                     onClick={(e) => {
                       e.stopPropagation()
 
-                      if (item === ApplicationState.APPROVED) {
-                        setShowInput(true)
+                      if (
+                        item === ApplicationState.APPROVED ||
+                        item === ApplicationState.REJECTED
+                      ) {
+                        setInputType({
+                          show: !inputType.show,
+                          type: item,
+                        })
                       } else {
                         saveStateApplication(application, item)
                       }
@@ -152,37 +167,27 @@ const StateModal: React.FC<Props> = (props: Props) => {
               })}
             </Box>
 
-            <Box display="block" width="full" padding={4}>
-              <NumberInput
-                placeholder="Skrifaðu upphæð útborgunar"
-                onUpdate={setAmount}
-                maximumInputLength={maximumInputLength}
-              />
-
-              <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
-                <Button
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setShowInput(false)
-                  }}
-                >
-                  Hætta við
-                </Button>
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    saveStateApplication(
-                      application,
-                      ApplicationState.APPROVED,
-                      amount,
-                    )
-                  }}
-                >
-                  Samþykkja
-                </Button>
-              </Box>
-            </Box>
+            <InputModal
+              onShowInputChange={(e) => {
+                e.stopPropagation()
+                setInputType({
+                  ...inputType,
+                  show: false,
+                })
+              }}
+              type={inputType.type}
+              onSaveState={(e, amount, comment) => {
+                e.stopPropagation()
+                if (inputType.type) {
+                  saveStateApplication(
+                    application,
+                    inputType.type,
+                    amount,
+                    comment,
+                  )
+                }
+              }}
+            />
           </Box>
         </Box>
       </Box>
