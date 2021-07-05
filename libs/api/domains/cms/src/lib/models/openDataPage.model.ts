@@ -10,6 +10,9 @@ export class OpenDataPage {
 
   @Field()
   pageTitle!: string
+
+  @Field()
+  pageDescription!: string
 }
 
 export const mapOpenDataPage = ({
@@ -19,4 +22,5 @@ export const mapOpenDataPage = ({
   typename: 'OpenDataPage',
   id: sys.id,
   pageTitle: fields.pageTitle ?? '',
+  pageDescription: fields.pageDescription ?? '',
 })

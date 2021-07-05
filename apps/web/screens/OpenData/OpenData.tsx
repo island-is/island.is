@@ -41,7 +41,9 @@ interface OpenDataProps {
 
 const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
   const { linkResolver } = useLinkResolver()
-  const { pageTitle } = page
+  console.log(page)
+  const { pageTitle, pageDescription } = page
+  
 
   // Hard coded values for the data links cards section, will be removed once connected to contentful
   const cards = [
@@ -181,9 +183,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
                 {pageTitle}
               </Text>
               <Text paddingBottom={4}>
-                [Elevator pitch fyrir opin gögn og að markmiðið sé að hvetja til
-                nýtingar á gögnunum í þágu nýsköpunar, atvinnulífs og rannsókna.
-                Hér er hægt að skoða og vinna með gögn frá Rannís ...]
+                {pageDescription}
               </Text>
               <Box display={'flex'} justifyContent="flexStart" marginTop={3}>
                 <Link {...linkResolver('lifeevents')} skipTab>

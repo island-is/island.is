@@ -1800,6 +1800,9 @@ export interface IOneColumnText extends Entry<IOneColumnTextFields> {
 export interface IOpenDataPageFields {
   /** Page title */
   pageTitle: string
+
+  /** Page Description */
+  pageDescription?: string | undefined
 }
 
 export interface IOpenDataPage extends Entry<IOpenDataPageFields> {
