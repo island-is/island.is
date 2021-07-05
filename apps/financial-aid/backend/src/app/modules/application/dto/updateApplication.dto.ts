@@ -16,7 +16,7 @@ export class UpdateApplicationDto {
   readonly amount: number
 
   @IsOptional()
-  @IsNumber()
+  @IsString()
   @ApiProperty()
   readonly comment: string
 }

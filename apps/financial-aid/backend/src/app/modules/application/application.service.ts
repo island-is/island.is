@@ -47,7 +47,6 @@ export class ApplicationService {
   async update(
     id: string,
     update: UpdateApplicationDto,
-    comment?: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedApplication: ApplicationModel
@@ -64,7 +63,7 @@ export class ApplicationService {
     const eventModel = await this.applicationEventService.create({
       applicationId: id,
       state: update.state,
-      comment: comment,
+      comment: update.comment,
     })
 
     return { numberOfAffectedRows, updatedApplication }
