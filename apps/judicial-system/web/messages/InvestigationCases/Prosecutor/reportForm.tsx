@@ -8,34 +8,6 @@ export const icReportForm = {
     description:
       'Notaður sem titill á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
-  courtClaim: defineMessages({
-    heading: {
-      id: 'judicial.system:investigation_cases.report_form.demand.heading',
-      defaultMessage: 'Dómkröfutexti',
-      description:
-        'Notaður sem titill fyrir "dómkröfutexti" hlutann á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-    },
-    tooltip: {
-      id: 'judicial.system:investigation_cases.report_form.demand.tooltip',
-      defaultMessage:
-        'Hér er hægt að bæta texta við dómkröfur, t.d. ef óskað er eftir öðrum úrræðum til vara.',
-      description:
-        'Notaður sem upplýsingatexti í upplýsingasvæði við "dómkröfutexti" titlinn á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-    },
-    label: {
-      id: 'judicial.system:investigation_cases.report_form.demand.label',
-      defaultMessage: 'Dómkröfur',
-      description:
-        'Notaður sem titill í textaboxi fyrir "dómkröfur" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-    },
-    placeholder: {
-      id: 'judicial.system:investigation_cases.report_form.demand.placeholder',
-      defaultMessage:
-        'Hér er hægt að bæta texta við dómkröfurnar eftir þörfum...',
-      description:
-        'Notaður sem skýritexti í textaboxi fyrir "dómkröfur" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-    },
-  }),
   caseFacts: defineMessages({
     heading: {
       id: 'judicial.system:investigation_cases.report_form.case_facts.heading',

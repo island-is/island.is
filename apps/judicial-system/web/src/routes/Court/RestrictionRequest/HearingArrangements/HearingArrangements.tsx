@@ -49,8 +49,8 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
-import { setCourtOfficials } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
 
 export const HearingArrangements: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -221,7 +221,9 @@ export const HearingArrangements: React.FC = () => {
                 <Text as="h3" variant="h3">
                   Dómari{' '}
                   <Tooltip
-                    text={formatMessage(setCourtOfficials.judge.tooltip)}
+                    text={formatMessage(
+                      rcHearingArrangements.sections.setJudge.tooltip,
+                    )}
                   />
                 </Text>
               </Box>
@@ -244,7 +246,9 @@ export const HearingArrangements: React.FC = () => {
                 <Text as="h3" variant="h3">
                   Dómritari{' '}
                   <Tooltip
-                    text={formatMessage(setCourtOfficials.registrar.tooltip)}
+                    text={formatMessage(
+                      rcHearingArrangements.sections.setRegistrar.tooltip,
+                    )}
                   />
                 </Text>
               </Box>

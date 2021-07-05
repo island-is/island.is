@@ -69,7 +69,9 @@ const StepTwoForm: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                {formatMessage(requestedHearingArrangements.arrestDate.heading)}
+                {formatMessage(
+                  requestedHearingArrangements.sections.arrestDate.heading,
+                )}
               </Text>
             </Box>
             <DateTime

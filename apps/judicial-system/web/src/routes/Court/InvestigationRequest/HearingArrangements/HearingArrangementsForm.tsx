@@ -42,10 +42,7 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import {
-  courtCaseNumber,
-  setCourtOfficials,
-} from '@island.is/judicial-system-web/messages'
+import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './HearingArrangements.treat'
 
@@ -168,7 +165,11 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Dómari{' '}
-              <Tooltip text={formatMessage(setCourtOfficials.judge.tooltip)} />
+              <Tooltip
+                text={formatMessage(
+                  icHearingArrangements.sections.setJudge.tooltip,
+                )}
+              />
             </Text>
           </Box>
           <Select
@@ -188,7 +189,9 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             <Text as="h3" variant="h3">
               Dómritari{' '}
               <Tooltip
-                text={formatMessage(setCourtOfficials.registrar.tooltip)}
+                text={formatMessage(
+                  icHearingArrangements.sections.setRegistrar.tooltip,
+                )}
               />
             </Text>
           </Box>

@@ -120,18 +120,18 @@ export const StepFour: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={4}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(rcReportForm.courtClaim.heading)}{' '}
+                  {formatMessage(rcReportForm.sections.demands.heading)}{' '}
                   <Tooltip
-                    text={formatMessage(rcReportForm.courtClaim.tooltip)}
+                    text={formatMessage(rcReportForm.sections.demands.tooltip)}
                   />
                 </Text>
               </Box>
               <Box marginBottom={3}>
                 <Input
                   name="demands"
-                  label={formatMessage(rcReportForm.courtClaim.label)}
+                  label={formatMessage(rcReportForm.sections.demands.label)}
                   placeholder={formatMessage(
-                    rcReportForm.courtClaim.placeholder,
+                    rcReportForm.sections.demands.placeholder,
                   )}
                   defaultValue={workingCase?.demands}
                   errorMessage={demandsErrorMessage}
@@ -166,11 +166,13 @@ export const StepFour: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(rcReportForm.caseFacts.heading)}{' '}
+                  {formatMessage(rcReportForm.sections.caseFacts.heading)}{' '}
                   <Tooltip
                     placement="right"
                     as="span"
-                    text={formatMessage(rcReportForm.caseFacts.tooltip)}
+                    text={formatMessage(
+                      rcReportForm.sections.caseFacts.tooltip,
+                    )}
                   />
                 </Text>
               </Box>
@@ -178,9 +180,9 @@ export const StepFour: React.FC = () => {
                 <Input
                   data-testid="caseFacts"
                   name="caseFacts"
-                  label={formatMessage(rcReportForm.caseFacts.label)}
+                  label={formatMessage(rcReportForm.sections.caseFacts.label)}
                   placeholder={formatMessage(
-                    rcReportForm.caseFacts.placeholder,
+                    rcReportForm.sections.caseFacts.placeholder,
                   )}
                   errorMessage={caseFactsErrorMessage}
                   hasError={caseFactsErrorMessage !== ''}
@@ -215,11 +217,13 @@ export const StepFour: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(rcReportForm.legalArguments.heading)}{' '}
+                  {formatMessage(rcReportForm.sections.legalArguments.heading)}{' '}
                   <Tooltip
                     placement="right"
                     as="span"
-                    text={formatMessage(rcReportForm.legalArguments.tooltip)}
+                    text={formatMessage(
+                      rcReportForm.sections.legalArguments.tooltip,
+                    )}
                   />
                 </Text>
               </Box>
@@ -227,9 +231,11 @@ export const StepFour: React.FC = () => {
                 <Input
                   data-testid="legalArguments"
                   name="legalArguments"
-                  label={formatMessage(rcReportForm.legalArguments.label)}
+                  label={formatMessage(
+                    rcReportForm.sections.legalArguments.label,
+                  )}
                   placeholder={formatMessage(
-                    rcReportForm.legalArguments.placeholder,
+                    rcReportForm.sections.legalArguments.placeholder,
                   )}
                   defaultValue={workingCase?.legalArguments}
                   errorMessage={legalArgumentsErrorMessage}
@@ -263,20 +269,22 @@ export const StepFour: React.FC = () => {
               <Box component="section" marginBottom={7}>
                 <Box marginBottom={2}>
                   <Text as="h3" variant="h3">
-                    {formatMessage(rcReportForm.comments.heading)}{' '}
+                    {formatMessage(rcReportForm.sections.comments.heading)}{' '}
                     <Tooltip
                       placement="right"
                       as="span"
-                      text={formatMessage(rcReportForm.comments.tooltip)}
+                      text={formatMessage(
+                        rcReportForm.sections.comments.tooltip,
+                      )}
                     />
                   </Text>
                 </Box>
                 <Box marginBottom={3}>
                   <Input
                     name="comments"
-                    label={formatMessage(rcReportForm.comments.label)}
+                    label={formatMessage(rcReportForm.sections.comments.label)}
                     placeholder={formatMessage(
-                      rcReportForm.comments.placeholder,
+                      rcReportForm.sections.comments.placeholder,
                     )}
                     defaultValue={workingCase?.comments}
                     onChange={(event) =>
