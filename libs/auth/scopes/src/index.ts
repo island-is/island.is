@@ -6,4 +6,3 @@ export * from './lib/userProfile.scope'
 export * from './lib/nationalRegistry.scope'
 export * from './lib/endorsements.scope'
 export * from './lib/regulationsAdmin.scope'
-

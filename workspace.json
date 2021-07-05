@@ -6725,6 +6725,29 @@
         }
       }
     },
+    "service-portal-licenses": {
+      "root": "libs/service-portal/licenses",
+      "sourceRoot": "libs/service-portal/licenses/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/licenses/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/licenses"],
+          "options": {
+            "jestConfig": "libs/service-portal/licenses/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "service-portal-regulations-admin": {
       "root": "libs/service-portal/regulations-admin",
       "sourceRoot": "libs/service-portal/regulations-admin/src",
@@ -6750,29 +6773,6 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/regulations-admin/src/**/*.{js,ts,tsx}'"
-          }
-        }
-      }
-    },
-    "service-portal-licenses": {
-      "root": "libs/service-portal/licenses",
-      "sourceRoot": "libs/service-portal/licenses/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/service-portal/licenses/**/*.{ts,tsx,js,jsx}"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/service-portal/licenses"],
-          "options": {
-            "jestConfig": "libs/service-portal/licenses/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }

@@ -316,7 +316,8 @@ const getInitialState = (args: {
 
 export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   const history = useHistory()
-  const isEditor = useAuth().userInfo?.scopes?.includes(RegulationsAdminScope.manage) || false;
+  const isEditor =
+    useAuth().userInfo?.scopes?.includes(RegulationsAdminScope.manage) || false
 
   const isNew = draftId === 'new'
   if (stepName === 'review' && !isEditor) {

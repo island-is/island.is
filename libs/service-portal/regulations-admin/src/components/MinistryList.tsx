@@ -9,7 +9,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import {  mockMinistrylist, useMockQuery } from '../_mockData'
+import { mockMinistrylist, useMockQuery } from '../_mockData'
 import { ministryMessages as msg } from '../messages'
 import { ISODate } from '@island.is/regulations'
 import { workingDaysUntil, useLocale } from '../utils'
@@ -28,7 +28,9 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 export const MinistryList = () => {
   const { formatMessage, formatDateFns } = useLocale()
   const history = useHistory()
-  const { data, loading } = useMockQuery({ regulationMinistries: mockMinistrylist }) // useQuery<Query>(RegulationMinistryListQuery)
+  const { data, loading } = useMockQuery({
+    regulationMinistries: mockMinistrylist,
+  }) // useQuery<Query>(RegulationMinistryListQuery)
 
   if (loading) {
     return (
