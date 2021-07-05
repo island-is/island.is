@@ -69,8 +69,8 @@ export class Payment extends Model<Application> {
   user4?: string
 
   @Column({
-    type: DataType.JSONB,
-    defaultValue: {},
+    type: DataType.STRING,
+    defaultValue: '',
   })
   @ApiPropertyOptional()
   definition?: string

@@ -13,6 +13,7 @@ import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Application as ApplicationModel } from '../application/application.model'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -46,8 +47,6 @@ export class PaymentService {
         where: {
           application_id: { [Op.eq]: applicationId },
         },
-        limit: 1,
-        order: [['modified', 'DESC']],
       })
       .catch(handleError)
   }
@@ -111,7 +110,7 @@ export class PaymentService {
       )
     }
     // TEMP !!! This is only while payment dummy is being used/tested. Should be deleted later.
-    if (chargeItemCode === 'AYXXX') {
+    if (!isRunningOnEnvironment('production') && chargeItemCode === 'AYXXX') {
       chargeItemCode = 'AY110'
     }
 

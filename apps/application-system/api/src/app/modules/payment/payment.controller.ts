@@ -34,7 +34,7 @@ import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 import { isUuid } from 'uuidv4'
 import { CreateChargeInput } from './dto/createChargeInput.dto'
 import { PaymentAPI } from '@island.is/clients/payment'
-import { FindItemType } from './utils/findItemType'
+import { findItemType } from './utils/findItemType'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -67,7 +67,7 @@ export class PaymentController {
       throw new BadRequestException(`ApplicationId is on wrong format.`)
     }
     const DISTRICT_COMMISSIONER_OF_REYKJAVIK = '6509142520'
-    const inputApplicationType = FindItemType(payload.chargeItemCode)
+    const inputApplicationType = findItemType(payload.chargeItemCode)
 
     // Finding application to confirm correct catalog & price
     const thisApplication = await this.paymentService
@@ -112,13 +112,7 @@ export class PaymentController {
       application_id: applicationId,
       fulfilled: false,
       amount: catalog.priceAmount,
-      definition: {
-        chargeItemName: catalog.chargeItemName,
-        chargeItemCode: catalog.chargeItemCode,
-        performingOrganiationID: catalog.performingOrgID,
-        chargeType: catalog.chargeType,
-        amount: catalog.priceAmount,
-      } as any,
+      definition: `{"chargeItemName":"${catalog.chargeItemName}","chargeItemCode":"${catalog.chargeItemCode}","performingOrganiationID":"${catalog.performingOrgID}","chargeType":"${catalog.chargeType}","amount":"${catalog.priceAmount}"}`,
       expires_at: new Date(),
     }
 
