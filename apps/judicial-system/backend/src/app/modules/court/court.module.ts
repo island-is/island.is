@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common'
 
-import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
+import {
+  createXRoadAPIPath,
+  XRoadMemberClass,
+} from '@island.is/shared/utils/server'
 import { CourtClientModule } from '@island.is/judicial-system/court-client'
 
 import { environment } from '../../../environments'

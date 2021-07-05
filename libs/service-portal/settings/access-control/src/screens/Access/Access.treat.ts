@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { style, globalStyle } from 'treat'
 
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
@@ -27,4 +27,10 @@ export const closeButton = style({
   top: theme.spacing['1'],
   right: theme.spacing['1'],
   zIndex: 2,
+})
+
+export const tempTableDatePickerFix = style({})
+
+globalStyle(`${tempTableDatePickerFix} > div > table`, {
+  marginBottom: '200px',
 })

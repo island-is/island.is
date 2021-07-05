@@ -5,6 +5,7 @@ import { AuditModule } from '@island.is/nest/audit'
 
 import { Payment } from './payment.model'
 import { PaymentController } from './payment.controller'
+import { PaymentCallbackController } from './payment-callback.controller'
 import { PaymentService } from './payment.service'
 import { environment } from '../../../environments'
 import { PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
@@ -37,7 +38,7 @@ export class PaymentModule {
         SequelizeModule.forFeature([Payment]),
         TranslationsModule,
       ],
-      controllers: [PaymentController],
+      controllers: [PaymentController, PaymentCallbackController],
       exports: [PaymentService],
     }
   }
