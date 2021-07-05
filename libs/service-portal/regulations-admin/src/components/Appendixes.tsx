@@ -29,6 +29,7 @@ const Appendix = (props: AppendixProps) => {
   const isRemovable = appendix.key.startsWith(NEW_PREFIX)
 
   const removeAppendix = (idx: number) => {
+    // eslint-disable-next-line no-restricted-globals
     if (!confirm(t(msg.appendix_remove_confirm, { idx: idx + 1 }))) {
       return
     }
