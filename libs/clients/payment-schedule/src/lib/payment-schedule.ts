@@ -13,6 +13,11 @@ import {
   Employer,
   WageDeductionResponse,
 } from './types'
+import {
+  DistributionInitialPosition,
+  DistributionInitialPositionRequest,
+  DistributionInitialPositionResponse,
+} from './types/distribution-initial.type'
 
 export class PaymentScheduleAPI extends RESTDataSource {
   constructor(
@@ -56,5 +61,15 @@ export class PaymentScheduleAPI extends RESTDataSource {
       `wagesdeduction/${nationalId}`,
     )
     return response.wagesDeduction
+  }
+
+  async getInitalSchedule(
+    request: DistributionInitialPositionRequest,
+  ): Promise<DistributionInitialPosition> {
+    const { nationalId, totalAmount, disposableIncome, type } = request
+    const response = await this.get<DistributionInitialPositionResponse>(
+      `distributionInitialPosition/${nationalId}/${type}?totalAmount=${totalAmount}&disposableIncome=${disposableIncome}`,
+    )
+    return response.DistributionInitialPosition
   }
 }
