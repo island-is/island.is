@@ -1,22 +1,21 @@
 import React, { useContext, useState, useMemo } from 'react'
-import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
+import { ModalBase, Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './StateModal.treat'
 import cn from 'classnames'
 
 import { useMutation } from '@apollo/client'
 
-import { InputModal } from '@island.is/financial-aid-web/veita/src/components'
+import {
+  InputModal,
+  OptionsModal,
+} from '@island.is/financial-aid-web/veita/src/components'
 
 import { UpdateApplicationMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 import { NavigationStatisticsContext } from '@island.is/financial-aid-web/veita/src/components/NavigationStatisticsProvider/NavigationStatisticsProvider'
 
-import {
-  getState,
-  Application,
-  ApplicationState,
-} from '@island.is/financial-aid/shared'
+import { Application, ApplicationState } from '@island.is/financial-aid/shared'
 
 interface Props {
   isVisible: boolean
@@ -40,14 +39,6 @@ const StateModal: React.FC<Props> = ({
   onStateChange,
   application,
 }) => {
-  const statusOptions = [
-    ApplicationState.NEW,
-    ApplicationState.INPROGRESS,
-    ApplicationState.DATANEEDED,
-    ApplicationState.APPROVED,
-    ApplicationState.REJECTED,
-  ]
-
   const [inputType, setInputType] = useState<InputType>({
     show: false,
     type: undefined,
@@ -136,36 +127,23 @@ const StateModal: React.FC<Props> = ({
               [`${styles.showInput}`]: inputType.show,
             })}
           >
-            <Box display="block" width="full" padding={4}>
-              {statusOptions.map((item, index) => {
-                return (
-                  <button
-                    key={'statusoptions-' + index}
-                    className={cn({
-                      [`${styles.statusOptions}`]: true,
-                      [`${styles.activeState}`]: item === application.state,
-                    })}
-                    onClick={(e) => {
-                      e.stopPropagation()
-
-                      if (
-                        item === ApplicationState.APPROVED ||
-                        item === ApplicationState.REJECTED
-                      ) {
-                        setInputType({
-                          show: !inputType.show,
-                          type: item,
-                        })
-                      } else {
-                        saveStateApplication(application, item)
-                      }
-                    }}
-                  >
-                    {getState[item]}
-                  </button>
-                )
-              })}
-            </Box>
+            <OptionsModal
+              state={application.state}
+              onClick={(e, stateOption) => {
+                e.stopPropagation()
+                if (
+                  stateOption === ApplicationState.APPROVED ||
+                  stateOption === ApplicationState.REJECTED
+                ) {
+                  setInputType({
+                    show: !inputType.show,
+                    type: stateOption,
+                  })
+                } else {
+                  saveStateApplication(application, stateOption)
+                }
+              }}
+            />
 
             <InputModal
               onShowInputChange={(e) => {
