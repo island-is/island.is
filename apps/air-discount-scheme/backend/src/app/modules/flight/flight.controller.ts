@@ -25,7 +25,6 @@ import {
   ApiResponse,
 } from '@nestjs/swagger'
 
-import IslandisLogin, { VerifyResult } from 'islandis-login'
 import { Flight, FlightLeg } from './flight.model'
 import {
   AKUREYRI_FLIGHT_CODES,
