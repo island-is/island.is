@@ -20,7 +20,7 @@ interface TableBodyProps {
 }
 
 interface TableHeadersProps {
-  filterBy: 'modified' | 'state' | undefined
+  filterBy?: string | undefined
   title: string
 }
 
