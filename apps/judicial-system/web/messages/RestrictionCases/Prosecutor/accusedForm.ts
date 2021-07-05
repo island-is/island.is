@@ -40,13 +40,15 @@ export const accused = {
       }),
       name: defineMessages({
         label: {
-          id: 'judicial.system:component.defender.name.label',
+          id:
+            'judicial.system:restriction_cases.accused.defender_info.name.label',
           defaultMessage: 'Nafn verjanda',
           description:
             'Notaður sem titill í "nafn verjanda" textaboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
         placeholder: {
-          id: 'judicial.system:component.defender.name.placeholder',
+          id:
+            'judicial.system:restriction_cases.accused.defender_info.name.placeholder',
           defaultMessage: 'Fullt nafn',
           description:
             'Notaður sem skýritexti í "nafn verjanda" textaboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
@@ -54,13 +56,15 @@ export const accused = {
       }),
       email: defineMessages({
         label: {
-          id: 'judicial.system:component.defender.email.label',
+          id:
+            'judicial.system:restriction_cases.accused.defender_info.email.label',
           defaultMessage: 'Netfang verjanda',
           description:
             'Notaður sem titill í "netfang verjanda" textaboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
         placeholder: {
-          id: 'judicial.system:component.defender.email.placeholder',
+          id:
+            'judicial.system:restriction_cases.accused.defender_info.email.placeholder',
           defaultMessage: 'Netfang',
           description:
             'Notaður sem skýritexti í "nafn verjanda" textaboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
@@ -68,13 +72,15 @@ export const accused = {
       }),
       phoneNumber: defineMessages({
         label: {
-          id: 'judicial.system:component.defender.phoneNumber.label',
+          id:
+            'judicial.system:restriction_cases.accused.defender_info.phoneNumber.label',
           defaultMessage: 'Símanúmer verjanda',
           description:
             'Notaður sem titill í "símanúmer verjanda" textaboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
         placeholder: {
-          id: 'judicial.system:component.defender.phoneNumber.placeholder',
+          id:
+            'judicial.system:restriction_cases.accused.defender_info.phone_number.placeholder',
           defaultMessage: 'Símanúmer',
           description:
             'Notaður sem skýritexti í "símanúmer verjanda" textaboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
@@ -82,14 +88,16 @@ export const accused = {
       }),
       sendRequest: defineMessages({
         label: {
-          id: 'judicial.system:component.defender.sendRequest.label',
+          id:
+            'judicial.system:component.accused.defender_info.send_request.label',
           defaultMessage:
             'Senda kröfu sjálfvirkt í tölvupósti til verjanda við úthlutun fyrirtökutíma',
           description:
             'Notaður sem texti í "senda kröfu sjálfvirkt..." gátreit á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
         tooltip: {
-          id: 'judicial.system:component.defender.sendRequest.tooltip',
+          id:
+            'judicial.system:component.accused.defender_info.send_request.tooltip',
           defaultMessage:
             'Ef hakað er hér þá fær verjandi {caseType} senda þegar fyrirtökutíma hefur verið úthlutað',
           description:

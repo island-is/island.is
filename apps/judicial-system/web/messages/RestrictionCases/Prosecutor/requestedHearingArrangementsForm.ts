@@ -10,9 +10,11 @@ export const requestedHearingArrangements = {
   }),
   arrestDate: defineMessages({
     heading: {
-      id: 'judicial.system:form.requestCourt.arrestDate.heading',
+      id:
+        'judicial.system:restriction_cases.requested_hearing_arrangements.arrest_date.heading',
       defaultMessage: 'Tími handtöku',
-      description: 'Request court form arrest date: Heading',
+      description:
+        'Notaður sem titill fyrir "tími handtöku" hlutann á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
     },
   }),
 }

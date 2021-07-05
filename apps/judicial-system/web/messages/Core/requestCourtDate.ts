@@ -1,28 +1,31 @@
 import { defineMessage } from 'react-intl'
 
-// Strings for select court component
 export const requestCourtDate = {
   heading: defineMessage({
-    id: 'judicial.system:component.requestCourtDate.heading',
+    id: 'judicial.system.core:requested_court_date.heading',
     defaultMessage: 'Ósk um fyrirtökudag og tíma',
-    description: 'Request court date component: Heading',
+    description:
+      'Notaður sem titill fyrir "ósk um fyrirtökudag og tíma" hlutann á sakbornings skrefi í gæsluvarðhalds-, farbannsmálum og í rannsóknarheimildum.',
   }),
   tooltip: defineMessage({
-    id: 'judicial.system:component.requestCourtDate.tooltip',
+    id: 'judicial.system.core:requested_court_date.tooltip',
     defaultMessage:
       'Dómstóll hefur þennan tíma til hliðsjónar þegar fyrirtökutíma er úthlutað og mun leitast við að taka málið fyrir í tæka tíð en ekki fyrir þennan tíma.',
-    description: 'Request court date component: Tooltip',
+    description:
+      'Notaður sem upplýsingatexti í upplýsingasvæði við "ósk um fyrirtökudag og tíma" fyrirsögnina á sakbornings skrefi í gæsluvarðhalds-, farbannsmálum og í rannsóknarheimildum.',
   }),
   dateInput: defineMessage({
     timeLabel: {
-      id: 'judicial.system:component.requestCourtDate.select.timeLabel',
+      id: 'judicial.system.core:requested_court_date.date_input.time_label',
       defaultMessage: 'Ósk um tíma (kk:mm)',
-      description: 'Request court date component date input: Time Label',
+      description:
+        'Notaður sem titill í textaboxi fyrir "Ósk um tíma" á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
     },
   }),
   courtDate: defineMessage({
-    id: 'judicial.system:component.requestCourtDate.courtDate',
+    id: 'judicial.system.core:requested_court_date.court_date',
     defaultMessage: 'Fyrirtökudegi og tíma hefur verið úthlutað',
-    description: 'Request court date component set court date: Text',
+    description:
+      'Skýritexti sem útskýrir fyrir saksóknurum að búið sé að útluta fyrirtökudegi og tíma af dómara.',
   }),
 }
