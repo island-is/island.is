@@ -134,6 +134,8 @@ export const SimplePieChart = ({dataset}: SimplePieChartProps) => {
           fill="#8884d8"
           label={false}
           labelLine={false}
+          startAngle={90}
+          endAngle={-270}
         >
           {data.map((entry, index) => (
             <Cell key={index} fill={COLORS[index % COLORS.length]} />

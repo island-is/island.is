@@ -134,7 +134,7 @@ const renderLegend = (props) => {
   const { payload } = props
 
   return (
-    <ul style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '37px' }}>
+    <ul style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '37px'}}>
       {payload.map((entry, index) => (
         <li
           style={{
@@ -154,7 +154,7 @@ const renderLegend = (props) => {
               marginLeft: '32px',
             }}
           />
-          {dataKeysName[entry.value]}
+          {entry.value}
         </li>
       ))}
     </ul>

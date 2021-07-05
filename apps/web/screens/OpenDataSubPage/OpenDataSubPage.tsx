@@ -187,15 +187,6 @@ const OpenDataSubPage: Screen = () => {
                 </GridColumn>
               </GridRow>
             </Box>
-            <Box marginBottom={3}>
-              <GridRow>
-                <GridColumn span={'12/12'}>
-                  <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
-                    <SimpleBarChart dataset="veitt" />
-                  </ChartsCard>
-                </GridColumn>
-              </GridRow>
-            </Box>
           </GridColumn>
         </GridRow>
       </GridContainer>
