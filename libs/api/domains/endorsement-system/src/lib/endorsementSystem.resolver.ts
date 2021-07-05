@@ -50,7 +50,7 @@ export class EndorsementSystemResolver {
     )
   }
 
-  @Mutation(() => [Endorsement])
+  @Mutation(() => EndorsementBulkCreate)
   async endorsementSystemBulkEndorseList(
     @Args('input') { listId, nationalIds }: BulkEndorseListInput,
     @CurrentUser() user: User,
@@ -103,28 +103,6 @@ export class EndorsementSystemResolver {
     @CurrentUser() user: User,
   ): Promise<Endorsement[]> {
     return await this.endorsementSystemService.endorsementListControllerFindEndorsements(
-      user,
-    )
-  }
-
-  @Mutation(() => EndorsementList)
-  async endorsementSystemCloseEndorsementList(
-    @Args('input') input: FindEndorsementListInput,
-    @CurrentUser() user: User,
-  ): Promise<EndorsementList> {
-    return await this.endorsementSystemService.endorsementListControllerClose(
-      input,
-      user,
-    )
-  }
-
-  @Mutation(() => EndorsementList)
-  async endorsementSystemOpenEndorsementList(
-    @Args('input') input: FindEndorsementListInput,
-    @CurrentUser() user: User,
-  ): Promise<EndorsementList> {
-    return await this.endorsementSystemService.endorsementListControllerOpen(
-      input,
       user,
     )
   }

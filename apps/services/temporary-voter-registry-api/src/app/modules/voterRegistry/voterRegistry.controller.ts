@@ -2,7 +2,7 @@ import { CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { Controller, Get, Query } from '@nestjs/common'
 import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
-import { TemporaryVoterRegistryScope } from '@island.is/auth/scopes'
+import { EndorsementsScope } from '@island.is/auth/scopes'
 import { VoterRegistry } from './voterRegistry.model'
 import { VoterRegistryService } from './voterRegistry.service'
 import { environment } from '../../../environments'
@@ -24,7 +24,7 @@ export class VoterRegistryController {
   @Audit<VoterRegistry>({
     resources: (voterRegistry) => voterRegistry.id,
   })
-  @Scopes(TemporaryVoterRegistryScope.read)
+  @Scopes(EndorsementsScope.main)
   @Get()
   async findByAuth(
     @CurrentUser() { nationalId }: User,
@@ -32,7 +32,6 @@ export class VoterRegistryController {
     return await this.voterRegistryService.findByNationalId(nationalId)
   }
 
-  // TODO: This should get a system scope, or we should allow systems to get the read scope
   @ApiOkResponse({
     description: 'Finds voter registry entry given user authentication',
     type: VoterRegistry,

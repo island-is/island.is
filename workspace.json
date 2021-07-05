@@ -2465,9 +2465,7 @@
         "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "libs/application/template-api-modules/src/lib/modules/templates/party-application/gen/fetch",
-            "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-application/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original",
-            "parallel": false
+            "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-application/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
       }
@@ -2510,6 +2508,27 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config libs/application/templates/party-letter/codegen.yml"
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run services-endorsements-api:schemas/external-openapi-generator",
+              "nx run services-endorsements-api:schemas/build-openapi",
+              "nx run services-party-letter-registry-api:schemas/build-openapi",
+              "nx run application-templates-party-letter:schemas/openapi-generator"
+            ],
+            "parallel": false
+          }
+        },
+        "schemas/openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-letter/gen/fetch/party-letter -i apps/services/party-letter-registry-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original",
+              "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/party-letter/gen/fetch/endorsements -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+            ]
           }
         }
       }
@@ -5230,7 +5249,13 @@
             "cwd": "apps/judicial-system/backend"
           }
         },
-        "docker-express": {}
+        "docker-express": {},
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/backend/src/app/messages/**/*.ts'"
+          }
+        }
       }
     },
     "judicial-system-consts": {
@@ -6813,6 +6838,27 @@
         }
       }
     },
+    "service-portal-wip": {
+      "root": "libs/service-portal/wip",
+      "sourceRoot": "libs/service-portal/wip/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/service-portal/wip/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/wip"],
+          "options": {
+            "jestConfig": "libs/service-portal/wip/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "services-auth-admin-api": {
       "root": "apps/services/auth-admin-api",
       "sourceRoot": "apps/services/auth-admin-api/src",
@@ -7281,6 +7327,11 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/services/party-letter-registry-api",
                 "output": "./"
+              },
+              {
+                "glob": "party-letter-registry.js",
+                "input": "apps/services/party-letter-registry-api/seeders",
+                "output": "./seeders"
               }
             ]
           },
@@ -7473,6 +7524,11 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/services/temporary-voter-registry-api",
                 "output": "./"
+              },
+              {
+                "glob": "voter-registry.js",
+                "input": "apps/services/temporary-voter-registry-api/seeders",
+                "output": "./seeders"
               }
             ]
           },
@@ -7865,6 +7921,27 @@
         }
       }
     },
+    "shared-utils": {
+      "root": "libs/shared/utils",
+      "sourceRoot": "libs/shared/utils/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/utils/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/utils"],
+          "options": {
+            "jestConfig": "libs/shared/utils/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "skilavottord-consts": {
       "root": "libs/skilavottord/consts",
       "sourceRoot": "libs/skilavottord/consts/src",
@@ -8163,81 +8240,6 @@
           }
         },
         "docker-cypress": {}
-      }
-    },
-    "utils-api": {
-      "root": "libs/utils/api",
-      "sourceRoot": "libs/utils/api/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/utils/api/tsconfig.lib.json",
-              "libs/utils/api/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/utils/api/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/utils/api/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/utils/api"]
-        }
-      }
-    },
-    "utils-environment": {
-      "root": "libs/utils/environment",
-      "sourceRoot": "libs/utils/environment/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/utils/environment/tsconfig.lib.json",
-              "libs/utils/environment/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/utils/environment/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/utils/environment/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/utils/environment"]
-        }
-      }
-    },
-    "utils-shared": {
-      "root": "libs/utils/shared",
-      "sourceRoot": "libs/utils/shared/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/utils/shared/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/utils/shared"],
-          "options": {
-            "jestConfig": "libs/utils/shared/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
       }
     },
     "web": {

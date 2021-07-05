@@ -8,15 +8,15 @@ import {
   Pagination,
 } from '@island.is/island-ui/core'
 import { CopyLink } from '@island.is/application/ui-components'
-import EndorsementTable from '../EndorsementTable'
+import { EndorsementTable } from '../components/EndorsementTable'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import BulkUpload from '../BulkUpload'
 import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
-import sortBy from 'lodash/sortBy'
-import { paginate, totalPages as pages } from '../components/utils'
+import orderBy from 'lodash/orderBy'
+import { paginate, calculateTotalPages } from '../components/utils'
 import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
@@ -37,7 +37,6 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     endorsementListId,
     true,
   )
-
   const minEndorsements =
     constituencyMapper[application.answers.constituency as EndorsementListTags]
       .parliamentary_seats * 30
@@ -90,9 +89,9 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     page: number,
     endorsements: Endorsement[] | undefined,
   ) => {
-    const sortEndorements = sortBy(endorsements, 'created')
+    const sortEndorements = orderBy(endorsements, 'created', 'desc')
     setPage(page)
-    setTotalPages(pages(endorsements?.length))
+    setTotalPages(calculateTotalPages(endorsements?.length))
     setFilteredEndorsements(sortEndorements)
     setEndorsements(paginate(sortEndorements, 10, page))
   }

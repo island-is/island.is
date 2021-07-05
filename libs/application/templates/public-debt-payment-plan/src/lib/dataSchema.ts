@@ -70,6 +70,10 @@ export const PublicDebtPaymentPlanSchema = z.object({
     four: paymentPlanSchema,
     five: paymentPlanSchema,
     six: paymentPlanSchema,
+    seven: paymentPlanSchema,
+    eight: paymentPlanSchema,
+    nine: paymentPlanSchema,
+    ten: paymentPlanSchema,
   }),
 })
 
@@ -80,6 +84,10 @@ export const paymentPlanIndexKeyMapper = {
   3: 'four',
   4: 'five',
   5: 'six',
+  6: 'seven',
+  7: 'eight',
+  8: 'nine',
+  9: 'ten',
 }
 
 export const paymentPlanEntryKeys = [
@@ -89,6 +97,10 @@ export const paymentPlanEntryKeys = [
   'four',
   'five',
   'six',
+  'seven',
+  'eight',
+  'nine',
+  'ten',
 ]
 
 export type PublicDebtPaymentPlan = z.TypeOf<typeof PublicDebtPaymentPlanSchema>
