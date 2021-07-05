@@ -11,7 +11,7 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { requestedHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
@@ -48,7 +48,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(requestedHearingArrangements.heading)}
+            {formatMessage(rcRequestedHearingArrangements.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
@@ -70,7 +70,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
                 {formatMessage(
-                  requestedHearingArrangements.sections.arrestDate.heading,
+                  rcRequestedHearingArrangements.sections.arrestDate.heading,
                 )}
               </Text>
             </Box>
