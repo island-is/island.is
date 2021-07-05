@@ -3,7 +3,8 @@
     "workspace.json": "*",
     "package.json": {
       "dependencies": "*",
-      "devDependencies": "*"
+      "devDependencies": "*",
+      "resolutions": "*"
     },
     "nx.json": "*",
     "tsconfig.base.json": "*"
@@ -586,6 +587,9 @@
     "service-portal-settings-personal-information": {
       "tags": []
     },
+    "service-portal-wip": {
+      "tags": []
+    },
     "services-auth-admin-api": {
       "tags": []
     },
@@ -634,6 +638,9 @@
     "shared-types": {
       "tags": []
     },
+    "shared-utils": {
+      "tags": []
+    },
     "skilavottord-consts": {
       "tags": []
     },
@@ -651,15 +658,6 @@
       "tags": []
     },
     "system-e2e": {
-      "tags": []
-    },
-    "utils-api": {
-      "tags": []
-    },
-    "utils-environment": {
-      "tags": []
-    },
-    "utils-shared": {
       "tags": []
     },
     "web": {

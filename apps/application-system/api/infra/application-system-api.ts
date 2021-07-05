@@ -154,6 +154,34 @@ export const serviceSetup = (services: {
       PAYMENT_ADDITION_CALLBACK_URL:
         '/k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL',
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
+
+      PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS',
+      PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS',
+      PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS',
+      PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS',
+      PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS',
+      PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS',
+      PARTY_LETTER_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS',
+
+      PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL:
+        '/k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL',
+      PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL:
+        '/k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL',
+      PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL:
+        '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL',
+      PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL:
+        '/k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL',
+      PARTY_APPLICATION_NORTH_ADMIN_EMAIL:
+        '/k8s/application-system/api/PARTY_APPLICATION_NORTH_ADMIN_EMAIL',
+      PARTY_APPLICATION_SOUTH_ADMIN_EMAIL:
+        '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_ADMIN_EMAIL',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
