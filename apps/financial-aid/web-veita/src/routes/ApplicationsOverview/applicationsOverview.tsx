@@ -37,6 +37,11 @@ export interface NavigationElement {
   headers: string[]
 }
 
+interface sortByProps {
+  name: 'modified' | 'state'
+  fowards: boolean
+}
+
 export const ApplicationsOverview = () => {
   const router = useRouter()
 

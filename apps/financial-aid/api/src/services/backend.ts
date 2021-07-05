@@ -43,12 +43,17 @@ class BackendAPI extends RESTDataSource {
   updateApplication(
     id: string,
     updateApplication: UpdateApplication,
+    comment?: string,
   ): Promise<Application> {
     return this.put(`applications/${id}`, updateApplication)
   }
 
   getApplicationEvents(): Promise<ApplicationEvent[]> {
     return this.get('applicationEvents')
+  }
+
+  getApplicationEvent(id: string): Promise<ApplicationEvent> {
+    return this.get(`applicationEvents/${id}`)
   }
 
   createApplicationEvent(

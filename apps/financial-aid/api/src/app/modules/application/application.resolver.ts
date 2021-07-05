@@ -60,10 +60,10 @@ export class ApplicationResolver {
     input: UpdateApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Application> {
-    const { id, ...updateApplication } = input
+    const { id, comment, ...updateApplication } = input
 
     this.logger.debug(`updating application ${id}`)
 
-    return backendApi.updateApplication(id, updateApplication)
+    return backendApi.updateApplication(id, updateApplication, comment)
   }
 }

@@ -45,6 +45,7 @@ export interface Application {
   formComment?: string
   state: ApplicationState
   amount?: number
+  comment?: string
 }
 
 export interface CreateApplication {
@@ -72,6 +73,7 @@ export interface CreateApplication {
 export interface UpdateApplication {
   state: ApplicationState
   amount?: number
+  comment?: string
 }
 
 export interface CreateApplicationEvent {

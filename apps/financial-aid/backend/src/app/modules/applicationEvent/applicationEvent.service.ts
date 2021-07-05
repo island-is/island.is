@@ -16,6 +16,12 @@ export class ApplicationEventService {
     return this.applicationEventModel.findAll()
   }
 
+  findById(id: string): Promise<ApplicationEventModel | null> {
+    return this.applicationEventModel.findOne({
+      where: { id },
+    })
+  }
+
   create(
     applicationEvent: CreateApplicationEventDto,
   ): Promise<ApplicationEventModel> {

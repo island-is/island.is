@@ -36,6 +36,21 @@ export class ApplicationEventController {
     return this.applicationEventService.getAll()
   }
 
+  @Get('applicationEvents/:id')
+  @ApiOkResponse({
+    type: ApplicationEventModel,
+    description: 'Gets application event/s',
+  })
+  async getById(@Param('id') id: string) {
+    const applicationEvent = await this.applicationEventService.findById(id)
+
+    if (!applicationEvent) {
+      throw new NotFoundException(`application ${id} not found`)
+    }
+
+    return applicationEvent
+  }
+
   @Post('applicationEvent')
   @ApiCreatedResponse({
     type: ApplicationEventModel,

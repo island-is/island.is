@@ -66,6 +66,7 @@ const StateModal: React.FC<Props> = (props: Props) => {
             id: application.id,
             state: state,
             amount: amount,
+            comment: 'Testítest',
           },
         },
       })
