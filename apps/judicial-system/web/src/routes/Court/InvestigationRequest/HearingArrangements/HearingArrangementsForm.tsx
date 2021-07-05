@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
+import { useIntl } from 'react-intl'
 
 import {
   AlertMessage,
@@ -41,6 +42,10 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import {
+  courtCaseNumber,
+  setCourtOfficials,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './HearingArrangements.treat'
 
@@ -65,6 +70,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
   const [courtDateIsValid, setCourtDateIsValid] = useState(true)
   const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
 
   const validations: FormSettings = {
     judge: {
@@ -162,7 +168,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Dómari{' '}
-              <Tooltip text="Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð." />
+              <Tooltip text={formatMessage(setCourtOfficials.judge.tooltip)} />
             </Text>
           </Box>
           <Select
@@ -181,7 +187,9 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Dómritari{' '}
-              <Tooltip text="Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti." />
+              <Tooltip
+                text={formatMessage(setCourtOfficials.registrar.tooltip)}
+              />
             </Text>
           </Box>
           <Select

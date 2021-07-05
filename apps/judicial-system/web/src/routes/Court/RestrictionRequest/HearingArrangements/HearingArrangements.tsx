@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
+import { useIntl } from 'react-intl'
 
 import {
   AlertMessage,
@@ -48,6 +49,7 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
+import { setCourtOfficials } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const HearingArrangements: React.FC = () => {
@@ -66,6 +68,7 @@ export const HearingArrangements: React.FC = () => {
   const id = router.query.id
 
   const { updateCase, sendNotification, isSendingNotification } = useCase()
+  const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -217,7 +220,9 @@ export const HearingArrangements: React.FC = () => {
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
                   Dómari{' '}
-                  <Tooltip text="Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð." />
+                  <Tooltip
+                    text={formatMessage(setCourtOfficials.judge.tooltip)}
+                  />
                 </Text>
               </Box>
               <Select
@@ -238,7 +243,9 @@ export const HearingArrangements: React.FC = () => {
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
                   Dómritari{' '}
-                  <Tooltip text="Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti." />
+                  <Tooltip
+                    text={formatMessage(setCourtOfficials.registrar.tooltip)}
+                  />
                 </Text>
               </Box>
               <Select

@@ -1,11 +1,12 @@
 import { defineMessage, defineMessages } from 'react-intl'
 
-// Strings for request court form
-export const requestCourtForm = {
+export const requestedHearingArrangements = {
   heading: defineMessage({
-    id: 'judicial.system:form.requestCourt.heading',
+    id:
+      'judicial.system.restriction_cases:requested_hearing_arrangements.heading',
     defaultMessage: 'Óskir um fyrirtöku',
-    description: 'Request court form: Heading',
+    description:
+      'Notaður sem titill á óskir um fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   arrestDate: defineMessages({
     heading: {
