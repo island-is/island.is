@@ -34,19 +34,33 @@ export const diffStyling = (wrapper: string) => {
 
 // ---------------------------------------------------------------------------
 
-export const regulationEditingStyling = (wrapper: string) => {
+export const regulationContentStyling = (wrapper: string) => {
   const global = makeGlobal(wrapper)
 
   global('', {
-    lineHeight: 28 / 18 + 'em',
+    lineHeight: typography.baseLineHeight + 'rem',
   })
 
   global('p,ul,ol,table,blockquote', {
-    marginBottom: typography.baseLineHeight + 'em',
+    marginBottom: typography.baseLineHeight + 'rem',
   })
   global('li', {
-    marginBottom: '1em',
+    marginBottom: '1rem',
   })
+  global(
+    `
+    li,
+    li > p,
+    li > ul,
+    li > ol,
+    li > table,
+    li > blockquote,
+    li > pre
+    `,
+    {
+      marginBottom: '1rem',
+    },
+  )
   global('ul,ol,blockquote', {
     marginLeft: '3em',
   })
@@ -58,6 +72,20 @@ export const regulationEditingStyling = (wrapper: string) => {
   })
   global('ul[type="square"]', {
     listStyle: 'square',
+  })
+
+  global('strong, b', {
+    fontWeight: typography.semiBold,
+  })
+  global('em, i', {
+    fontStyle: 'italic',
+  })
+
+  global('img', {
+    display: 'inline',
+    maxWidth: '100%',
+    width: 'auto',
+    height: 'auto',
   })
 
   global(
@@ -191,4 +219,6 @@ export const regulationEditingStyling = (wrapper: string) => {
     display: 'block',
     fontStyle: 'italic',
   })
+
+  return global
 }

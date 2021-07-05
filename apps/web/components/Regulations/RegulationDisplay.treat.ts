@@ -1,6 +1,6 @@
 import { style, globalStyle } from 'treat'
 import {
-  regulationEditingStyling,
+  regulationContentStyling,
   diffStyling,
 } from '@island.is/regulations/styling'
 import { theme, spacing } from '@island.is/island-ui/theme'
@@ -82,5 +82,5 @@ export const upcomingWarning = style({
 
 export const bodyText = style({})
 
-regulationEditingStyling(bodyText)
+regulationContentStyling(bodyText)
 diffStyling(bodyText)
