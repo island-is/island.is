@@ -203,7 +203,6 @@ export const application: Form = buildForm({
                   id: 'attachments',
                   title: '',
                   introduction: '',
-
                   maxSize: FILE_SIZE_LIMIT,
                   uploadHeader: m.project.attachmentsUploadHeader,
                   uploadDescription: m.project.attachmentsUploadDescription,

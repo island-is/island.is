@@ -34,7 +34,6 @@ export const Table = ({
         className={cn(
           useBoxStyles({
             component: 'table',
-            overflow: 'hidden',
             width: 'full',
           }),
           styles.table,

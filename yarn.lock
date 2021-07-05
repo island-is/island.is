@@ -2958,6 +2958,16 @@
     rxjs "^6.6.7"
     rxjs-for-await "^0.0.2"
 
+"@island.is/login@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@island.is/login/-/login-1.2.1.tgz#b9f720d07134d185a363b7c5485166374fc002f1"
+  integrity sha512-FtV/uH9J06gGZ9hO4dwIkO9GIHQ3Wp2ISgi7H6E30TLr6ag2RbsFsC0u5wNHwH5Rx4HcHZdarfTDQZKX3tIdjA==
+  dependencies:
+    "@fidm/x509" "^1.2.1"
+    xml-crypto "^2.0.0"
+    xml2js "^0.4.23"
+    xmldom "^0.3.0"
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
@@ -16553,16 +16563,6 @@ isexe@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
-
-islandis-login@1.1.6:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/islandis-login/-/islandis-login-1.1.6.tgz#d32fd40fc0f4db65c1224ca53fc6a2b2fe239b4c"
-  integrity sha512-jtoIUHUsXY28uceyyGreoV/TTIFe6nU7/6V9eNyYndkzzHhOUxR2GSDDQ37aK0ryJq+7eM7JSUt3Oqqmx1AUrw==
-  dependencies:
-    "@fidm/x509" "^1.2.1"
-    xml-crypto "^2.0.0"
-    xml2js "^0.4.23"
-    xmldom "^0.3.0"
 
 isobject@^2.0.0:
   version "2.1.0"

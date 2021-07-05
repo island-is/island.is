@@ -54,6 +54,7 @@ module.exports = {
     '<rootDir>/libs/message-queue',
     '<rootDir>/libs/nova-sms',
     '<rootDir>/libs/plausible',
+    '<rootDir>/libs/vmst-client',
     '<rootDir>/libs/air-discount-scheme/consts',
     '<rootDir>/libs/air-discount-scheme/types',
     '<rootDir>/libs/api-catalogue/consts',
@@ -168,8 +169,5 @@ module.exports = {
     '<rootDir>/libs/shared/types',
     '<rootDir>/libs/skilavottord/consts',
     '<rootDir>/libs/skilavottord/types',
-    '<rootDir>/libs/utils/api',
-    '<rootDir>/libs/utils/environment',
-    '<rootDir>/libs/utils/shared',
   ],
 }
