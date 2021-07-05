@@ -8,6 +8,8 @@ import {
   RegulationDraft,
   RegulationOption,
   RegulationList,
+  EmailAddress,
+  Author,
 } from './types-api'
 import {
   DBx_Ministry,
@@ -15,6 +17,7 @@ import {
   RegulationDraftId,
   MinistryId,
   RegulationId,
+  AuthorId,
 } from './types-database'
 // import { } from './utils'
 
@@ -45,6 +48,21 @@ export const useMockQuery = <T>(data: T, skip?: boolean) => {
 
 // ---------------------------------------------------------------------------
 
+export const mockAuthors: ReadonlyArray<Author> = [
+  {
+    authorId: 1 as AuthorId,
+    name: 'Már Örlygsson',
+    email: 'mar@hugsmidjan.is' as EmailAddress,
+  },
+  {
+    authorId: 2 as AuthorId,
+    name: 'Valur Sverrisson',
+    email: 'valur@hugsmidjan.is' as EmailAddress,
+  },
+]
+
+// ---------------------------------------------------------------------------
+
 export const mockSave = (draft: RegulationDraft) =>
   new Promise((resolve, reject) => {
     setTimeout(resolve, 800)
@@ -64,24 +82,28 @@ export const mockDraftlist: ReadonlyArray<DraftSummary> = [
       'Reglugerð um breytingar á Reglugerð nr 123/2001 um Lorem ipsum dolor sit',
     draftingStatus: 'draft',
     idealPublishDate: dateFromNow(0),
+    authors: mockAuthors.slice(0, 1),
   },
   {
     id: 345 as RegulationDraftId,
     title: 'Reglugerð um amet dolore ipsum',
     draftingStatus: 'proposal',
     idealPublishDate: dateFromNow(3),
+    authors: mockAuthors.slice(1, 2),
   },
   {
     id: 123 as RegulationDraftId,
     title: 'Reglugerð um ritstjórn reglugerða',
     draftingStatus: 'proposal',
     idealPublishDate: undefined,
+    authors: mockAuthors.slice(0, 2),
   },
   {
     id: 456 as RegulationDraftId,
     title: 'Reglugerð um lorem ipsum dolor sit',
     draftingStatus: 'draft',
     idealPublishDate: undefined,
+    authors: mockAuthors.slice(0, 1),
   },
 ]
 
@@ -115,15 +137,6 @@ export const mockShippedList: ReadonlyArray<ShippedSummary> = [
 
 // ---------------------------------------------------------------------------
 
-export const mockAuthors: ReadonlyArray<RegulationDraft['authors'][0]> = [
-  {
-    id: 7 as DraftAuthorId,
-    authorKt: '1012755239' as Kennitala,
-  },
-]
-
-// ---------------------------------------------------------------------------
-
 export const mockMinistries: ReadonlyArray<RegulationDraft['ministry']> = [
   {
     id: 9876 as MinistryId,
@@ -139,7 +152,7 @@ export const mockDraftRegulations: Record<
   number,
   RegulationDraft | undefined
 > = {
-  123: {
+  '123': {
     id: 123 as RegulationDraftId,
     draftingStatus: 'proposal',
     draftingNotes: '<p>Fór í banka.</p>' as HTMLText,
@@ -155,6 +168,7 @@ export const mockDraftRegulations: Record<
     comments: '' as HTMLText,
     ministry: mockMinistries[0],
     lawChapters: [],
+    impacts: [],
   },
 }
 
@@ -171,9 +185,11 @@ export const mockRegulationOptions: RegulationList = [
     id: 6543 as RegulationId,
     name: '0245/2021' as RegName,
     title: 'Reglugerð um (1.) breytingu á reglugerð nr. 101/2021.',
+    cancelled: true,
     migrated: true,
   },
   {
+    id: 17543 as RegulationId,
     name: '0001/1975' as RegName,
     title: 'Reglugerð um eitthvað gamalt og gott.',
     migrated: false,

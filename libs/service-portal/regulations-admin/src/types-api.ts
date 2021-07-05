@@ -15,7 +15,7 @@ import { RegName } from '@hugsmidjan/regulations-editor/types'
 
 declare const _EmailAddress__Brand: unique symbol
 /** Normal email address. Not to be confused with random un-parsed strings. */
-export type EmailAddress = { [_EmailAddress__Brand]: true }
+export type EmailAddress = string & { [_EmailAddress__Brand]: true }
 
 export type Author = {
   authorId: AuthorId
