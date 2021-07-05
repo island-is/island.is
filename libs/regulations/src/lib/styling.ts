@@ -191,4 +191,6 @@ export const regulationContentStyling = (wrapper: string) => {
     display: 'block',
     fontStyle: 'italic',
   })
+
+  return global
 }
