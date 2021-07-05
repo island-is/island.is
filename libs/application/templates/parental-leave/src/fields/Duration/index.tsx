@@ -30,6 +30,8 @@ import { useGetOrRequestEndDates } from '../../hooks/useGetOrRequestEndDates'
 
 const df = 'yyyy-MM-dd'
 
+const DEFAULT_PERIOD_LENGTH = 1
+
 const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const { register, clearErrors } = useFormContext()
@@ -46,13 +48,22 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   const currentEndDateAnswer = getValueViaPath(
     answers,
     id,
-    formatISO(addMonths(parseISO(currentStartDateAnswer), 1)),
+    formatISO(
+      addMonths(parseISO(currentStartDateAnswer), DEFAULT_PERIOD_LENGTH),
+    ),
   ) as string
 
   const startDate = parseISO(currentStartDateAnswer)
   const endDate = parseISO(currentEndDateAnswer)
 
-  const monthsToUse = differenceInMonths(endDate, startDate)
+  // Use the duration already persisted if available
+  const currentDuration = getValueViaPath(
+    answers,
+    `periods[${currentIndex}].duration`,
+    DEFAULT_PERIOD_LENGTH,
+  ) as number
+
+  const monthsToUse = currentDuration
   const [chosenEndDate, setChosenEndDate] = useState<string>(
     currentEndDateAnswer,
   )
