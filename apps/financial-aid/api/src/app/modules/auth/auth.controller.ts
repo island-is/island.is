@@ -1,4 +1,4 @@
-import IslandisLogin, { VerifyUser } from 'islandis-login'
+import IslandisLogin, { VerifyUser } from '@island.is/login'
 import { Entropy } from 'entropy-string'
 import { uuid } from 'uuidv4'
 import { CookieOptions, Request, Response } from 'express'
