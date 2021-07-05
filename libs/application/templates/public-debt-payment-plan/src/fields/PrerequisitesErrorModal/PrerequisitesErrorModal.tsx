@@ -5,7 +5,6 @@ import React from 'react'
 import * as styles from './PrerequisitesErrorModal.treat'
 
 export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
-  console.log('application: ', application)
   const prerequisites = application.externalData.paymentPlanPrerequisites
     .data as PaymentScheduleConditions
 

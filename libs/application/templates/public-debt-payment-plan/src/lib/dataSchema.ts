@@ -1,12 +1,23 @@
+import {
+  PaymentScheduleConditions,
+  PaymentScheduleDebts,
+  PaymentScheduleEmployer,
+} from '@island.is/api/schema'
 import { SuccessfulDataProviderResult } from '@island.is/application/core'
 import * as z from 'zod'
 import { Payment } from '../dataProviders/tempAPITypes'
-
-import { PaymentScheduleConditions } from '@island.is/api/schema'
 import { NO, YES } from '../shared/constants'
 
 interface PrerequisitesResult extends SuccessfulDataProviderResult {
   data: PaymentScheduleConditions
+}
+
+interface EmployerResult extends SuccessfulDataProviderResult {
+  data: PaymentScheduleEmployer
+}
+
+interface DebtsResult extends SuccessfulDataProviderResult {
+  data: PaymentScheduleDebts[]
 }
 
 interface UserProfileResult extends SuccessfulDataProviderResult {
@@ -45,6 +56,8 @@ export type PaymentPlanExternalData = {
   nationalRegistry?: NatRegResult
   userProfile?: UserProfileResult
   paymentPlanList?: PaymentPlanListResult
+  paymentScheduleEmployer?: EmployerResult
+  paymentScheduleDebts?: DebtsResult
 }
 
 const paymentPlanSchema = z
@@ -72,6 +85,10 @@ export const PublicDebtPaymentPlanSchema = z.object({
     four: paymentPlanSchema,
     five: paymentPlanSchema,
     six: paymentPlanSchema,
+    seven: paymentPlanSchema,
+    eight: paymentPlanSchema,
+    nine: paymentPlanSchema,
+    ten: paymentPlanSchema,
   }),
 })
 
@@ -82,6 +99,10 @@ export const paymentPlanIndexKeyMapper = {
   3: 'four',
   4: 'five',
   5: 'six',
+  6: 'seven',
+  7: 'eight',
+  8: 'nine',
+  9: 'ten',
 }
 
 export const paymentPlanEntryKeys = [
@@ -91,6 +112,10 @@ export const paymentPlanEntryKeys = [
   'four',
   'five',
   'six',
+  'seven',
+  'eight',
+  'nine',
+  'ten',
 ]
 
 export type PublicDebtPaymentPlan = z.TypeOf<typeof PublicDebtPaymentPlanSchema>

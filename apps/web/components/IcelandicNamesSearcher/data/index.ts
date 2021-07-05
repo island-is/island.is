@@ -2,6 +2,7 @@ export const alphabet = [
   'a',
   'á',
   'b',
+  'c',
   'd',
   'ð',
   'e',
