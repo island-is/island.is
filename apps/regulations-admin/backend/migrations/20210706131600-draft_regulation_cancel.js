@@ -4,7 +4,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'resource',
+        'draft_regulation_cancel',
         {
           id: {
             type: Sequelize.UUID,
@@ -12,23 +12,20 @@ module.exports = {
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
           },
-          national_id: {
-            type: Sequelize.VARCHAR,
-            allowNull: false,
-            unique: true,
-          },
-          created: {
-            type: 'TIMESTAMP WITH TIME ZONE',
-            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+          changingId: {
+            type: Sequelize.UUID,
+            references: {
+              model: 'draft_regulation',
+              key: 'id',
+            },
             allowNull: false,
           },
-          modified: {
-            type: 'TIMESTAMP WITH TIME ZONE',
-            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-            allowNull: false,
-          },
-          description: {
+          regulationId: {
             type: Sequelize.STRING,
+            allowNull: false,
+          },
+          date: {
+            type: Sequelize.DATEONLY,
             allowNull: false,
           },
         },
@@ -39,7 +36,7 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('resource', { transaction: t }),
+      queryInterface.dropTable('draft_regulation_cancel', { transaction: t }),
     )
   },
 }
