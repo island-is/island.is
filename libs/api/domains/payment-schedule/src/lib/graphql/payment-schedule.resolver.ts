@@ -1,11 +1,11 @@
 import {
+  CurrentUser,
   IdsUserGuard,
   ScopesGuard,
-  CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
 import { PaymentScheduleAPI } from '@island.is/clients/payment-schedule'
+import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
 import { PaymentScheduleConditions, PaymentScheduleDebts } from './models'
