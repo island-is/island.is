@@ -364,8 +364,9 @@ export async function getRequestPdfAsString(
 
 export async function getRequestPdfAsBuffer(
   existingCase: Case,
+  formatMessage: FormatMessage,
 ): Promise<Buffer> {
-  const stream = constructRequestPdf(existingCase)
+  const stream = constructRequestPdf(existingCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<Buffer>(function (resolve) {
