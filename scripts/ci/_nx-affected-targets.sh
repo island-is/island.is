@@ -13,10 +13,10 @@ AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be af
 BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
 if [[ -n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]]
 then
-  AFFECTED_FLAGS=" --all "
+  AFFECTED_FLAGS=(--all)
 else
-  AFFECTED_FLAGS=" --head=$HEAD --base=$BASE "
+  AFFECTED_FLAGS=(--head="$HEAD" --base="$BASE")
 fi
 
 npx \
-  nx print-affected --target="$1" --select=tasks.target.project "$AFFECTED_FLAGS"
+  nx print-affected --target="$1" --select=tasks.target.project "${AFFECTED_FLAGS[@]}"
