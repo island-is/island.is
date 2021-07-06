@@ -95,10 +95,7 @@ export class PaymentController {
 
     // Sort through all catalogs to find the correct one.
     const catalog = await this.paymentService
-      .searchCorrectCatalog(
-        payload.chargeItemCode,
-        JSON.stringify(allCatalogs.item),
-      )
+      .searchCorrectCatalog(payload.chargeItemCode, allCatalogs.item)
       .catch((error) => {
         throw new BadRequestException(
           'Catalog request failed or bad input ' + error,
