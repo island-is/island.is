@@ -24,6 +24,7 @@ import {
 import {
   getOtherParentOptions,
   getSelectedChild,
+  requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
@@ -68,6 +69,7 @@ const Review: FC<ReviewScreenProps> = ({
     {
       otherParent,
       otherParentName,
+      otherParentEmail,
       otherParentId,
       pensionFund,
       union,
@@ -100,6 +102,10 @@ const Review: FC<ReviewScreenProps> = ({
     () =>
       buildFieldOptions(getOtherParentOptions(application), application, field),
     [application],
+  )
+
+  const otherParentWillApprove = requiresOtherParentApproval(
+    application.answers,
   )
 
   return (
@@ -150,6 +156,23 @@ const Review: FC<ReviewScreenProps> = ({
                         }))
                       }
                     />
+                    {otherParentWillApprove && (
+                      <InputController
+                        id="otherParentEmail"
+                        name="otherParentEmail"
+                        defaultValue={otherParentEmail}
+                        label={formatMessage(
+                          parentalLeaveFormMessages.shared
+                            .otherParentEmailSubSection,
+                        )}
+                        onChange={(e) =>
+                          setStateful((prev) => ({
+                            ...prev,
+                            otherParentEmail: e.target.value,
+                          }))
+                        }
+                      />
+                    )}
                   </GridColumn>
 
                   <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
@@ -195,6 +218,15 @@ const Review: FC<ReviewScreenProps> = ({
                   )}
                   value={otherParentName}
                 />
+                {otherParentWillApprove && (
+                  <DataValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.shared
+                        .otherParentEmailSubSection,
+                    )}
+                    value={otherParentEmail}
+                  />
+                )}
               </GridColumn>
 
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
