@@ -7,6 +7,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
 import { ChargeResult } from '@island.is/api/domains/payment'
+import { Item } from '@island.is/clients/payment'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -31,9 +32,7 @@ export class DrivingLicenseSubmissionService {
     application: { id, externalData },
     authorization,
   }: TemplateApiModuleActionProps) {
-    const parsedPaymentData = JSON.parse(
-      JSON.stringify(externalData.payment.data),
-    )
+    const parsedPaymentData = externalData.payment.data as Item
     return this.sharedTemplateAPIService.createCharge(
       authorization,
       id,
