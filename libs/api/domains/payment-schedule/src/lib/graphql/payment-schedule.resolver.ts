@@ -8,10 +8,14 @@ import { Audit } from '@island.is/nest/audit'
 import { PaymentScheduleAPI } from '@island.is/clients/payment-schedule'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { PaymentScheduleConditions, PaymentScheduleDebts } from './models'
-import { PaymentScheduleEmployer } from './models/employer.model'
-import { GetInitialScheduleInput } from './dto/getInitialScheduleInput'
-import { PaymentScheduleInitialSchedule } from './models/InitialSchedule.model'
+import {
+  PaymentScheduleConditions,
+  PaymentScheduleDebts,
+  PaymentScheduleDistribution,
+  PaymentScheduleEmployer,
+  PaymentScheduleInitialSchedule,
+} from './models'
+import { GetInitialScheduleInput, GetScheduleDistributionInput } from './dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -64,6 +68,22 @@ export class PaymentScheduleResolver {
     input: GetInitialScheduleInput,
   ): Promise<PaymentScheduleInitialSchedule> {
     return await this.paymentScheduleClientApi.getInitalSchedule({
+      nationalId: user.nationalId,
+      ...input,
+    })
+  }
+
+  @Query(() => PaymentScheduleDistribution, {
+    name: 'paymentScheduleDistribution',
+    nullable: true,
+  })
+  @Audit()
+  async distribution(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => GetScheduleDistributionInput })
+    input: GetScheduleDistributionInput,
+  ): Promise<PaymentScheduleDistribution> {
+    return await this.paymentScheduleClientApi.getPaymentDistribtion({
       nationalId: user.nationalId,
       ...input,
     })
