@@ -224,6 +224,8 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@1.1.0
 
   formatting:
     needs:
