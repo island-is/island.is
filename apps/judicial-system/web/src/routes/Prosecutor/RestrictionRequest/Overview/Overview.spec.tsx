@@ -8,6 +8,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import Overview from './Overview'
+import { LocaleProvider } from '@island.is/localization'
 
 describe('/stofna-krofu/yfirlit', () => {
   test('should display the approprieate custody provisions', async () => {
@@ -23,7 +24,9 @@ describe('/stofna-krofu/yfirlit', () => {
         addTypename={false}
       >
         <UserProvider>
-          <Overview />
+          <LocaleProvider locale="is" messages={{}}>
+            <Overview />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -47,7 +50,9 @@ describe('/stofna-krofu/yfirlit', () => {
         addTypename={false}
       >
         <UserProvider>
-          <Overview />
+          <LocaleProvider locale="is" messages={{}}>
+            <Overview />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )

@@ -154,7 +154,6 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
     NOVA_USERNAME: IslandIs_User_Production
-    PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL: s@kogk.is
     PARTY_LETTER_REGISTRY_API_BASE_PATH: >-
       http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local
     PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: postur@dmr.is
