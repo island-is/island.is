@@ -41,8 +41,14 @@ export class OpenDataPage {
   @Field(() => LinkCardSlice)
   externalLinkCardSelection?: LinkCardSlice | null
 
-  @Field(() => SectionWithImage)
-  externalLinkSection?: SectionWithImage | null
+ @Field()
+  externalLinkSectionTitle?: string | undefined
+
+ @Field()
+  externalLinkSectionDescription?: string | undefined
+
+ @Field(() => Image, {nullable: true})
+  externalLinkSectionImage?: Image | null
 }
 
 export const mapOpenDataPage = ({
@@ -60,6 +66,7 @@ export const mapOpenDataPage = ({
   chartSectionTitle: fields.chartSectionTitle ?? '',
   externalLinkCardSelection: fields.externalLinkCardSelection ? mapLinkCardSlice(fields.externalLinkCardSelection ) : null,
   graphCards: (fields.graphCards ?? []).map(mapGraphCard),
-  externalLinkSection: fields.externalLinkSection ? mapSectionWithImage(fields.externalLinkSection ) : null,
-  
+  externalLinkSectionTitle: fields.  externalLinkSectionTitle ?? '',
+  externalLinkSectionDescription: fields.externalLinkSectionDescription ?? '',
+  externalLinkSectionImage: fields.externalLinkSectionImage ? mapImage(fields.externalLinkSectionImage) : null,
 })

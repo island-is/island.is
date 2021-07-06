@@ -17,7 +17,6 @@ export const GET_OPEN_DATA_PAGE_QUERY = gql`
         statistic
       }
       chartSectionTitle
-      externalLinkSection {...}
       externalLinkCardSelection {
         id
         title
@@ -37,6 +36,16 @@ export const GET_OPEN_DATA_PAGE_QUERY = gql`
           type
           data
         }
+      }
+      externalLinkSectionTitle
+      externalLinkSectionDescription
+      externalLinkSectionImage {
+        id
+        url
+        title
+        contentType
+        width
+        height
       }
     }
   }

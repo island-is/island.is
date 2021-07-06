@@ -1887,8 +1887,14 @@ export interface IOpenDataPageFields {
   /** External Link Card Selection */
   externalLinkCardSelection?: ICardSection | undefined
 
-  /** External Link Section */
-  externalLinkSection?: ISectionWithImage | undefined
+  /** External Link Section Title */
+  externalLinkSectionTitle?: string | undefined
+
+  /** External Link Section Description */
+  externalLinkSectionDescription?: string | undefined
+
+  /** External Link Section Image */
+  externalLinkSectionImage?: Asset | undefined
 }
 
 /** Landing page for Open Data Page, where public data is made available. */
