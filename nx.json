@@ -584,6 +584,9 @@
     "service-portal-settings-personal-information": {
       "tags": []
     },
+    "service-portal-wip": {
+      "tags": []
+    },
     "services-auth-admin-api": {
       "tags": []
     },
