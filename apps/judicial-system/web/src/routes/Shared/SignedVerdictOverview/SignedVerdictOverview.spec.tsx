@@ -13,6 +13,7 @@ import {
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { SignedVerdictOverview } from './SignedVerdictOverview'
+import { LocaleProvider } from '@island.is/localization'
 
 describe('Signed Verdict Overview route', () => {
   describe('Rejected case', () => {
@@ -32,7 +33,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -58,7 +61,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -84,7 +89,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -112,7 +119,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -148,7 +157,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -175,7 +186,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -206,7 +219,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -232,7 +247,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -260,7 +277,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -286,7 +305,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -316,7 +337,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -342,7 +365,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -370,7 +395,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -397,7 +424,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -428,7 +457,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -454,7 +485,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -482,7 +515,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -512,7 +547,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -539,7 +576,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -570,7 +609,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -598,7 +639,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -628,7 +671,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -655,7 +700,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -686,7 +733,9 @@ describe('Signed Verdict Overview route', () => {
           addTypename={false}
         >
           <UserProvider authenticated={true}>
-            <SignedVerdictOverview />
+            <LocaleProvider locale="is" messages={{}}>
+              <SignedVerdictOverview />
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
