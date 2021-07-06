@@ -9,7 +9,7 @@ import {
   RecordObject,
   Field,
 } from '@island.is/application/core'
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import {
   InputController,
   RadioController,
@@ -156,8 +156,7 @@ const Review: FC<ReviewScreenProps> = ({
                     }
                   />
                   {otherParentWillApprove && (
-                    <>
-                      <br />
+                    <Box paddingTop={2}>
                       <InputController
                         id="otherParentEmail"
                         name="otherParentEmail"
@@ -173,7 +172,7 @@ const Review: FC<ReviewScreenProps> = ({
                           }))
                         }
                       />
-                    </>
+                    </Box>
                   )}
                 </GridColumn>
 
