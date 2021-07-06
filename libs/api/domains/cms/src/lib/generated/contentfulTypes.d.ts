@@ -467,7 +467,7 @@ export interface ICardSectionFields {
   title?: string | undefined
 
   /** Cards */
-  cards: (ICard | IStatisticsCard)[]
+  cards: ICard[]
 }
 
 /** List of link cards */
@@ -1860,35 +1860,35 @@ export interface IOneColumnText extends Entry<IOneColumnTextFields> {
 }
 
 export interface IOpenDataPageFields {
-   /** Page title */
-   pageTitle: string
+  /** Page title */
+  pageTitle: string
 
-   /** Page Description */
-   pageDescription?: string | undefined
- 
-   /** Page Header Graph */
-   pageHeaderGraph?: IGraph | undefined
- 
-   /** Link */
-   link?: string | undefined
- 
-   /** Link Title */
-   linkTitle?: string | undefined
- 
-   /** Statistic Section */
-   statisticSection?: ICardSection | undefined
- 
-   /** Chart Section Title */
-   chartSectionTitle?: string | undefined
- 
-   /** Graph Cards */
-   graphCards?: IGraphCard[] | undefined
- 
-   /** External Link Card Selection */
-   externalLinkCardSelection?: ICardSection | undefined
- 
-   /** External Link Section */
-   externalLinkSection?: ISectionWithImage | undefined
+  /** Page Description */
+  pageDescription?: string | undefined
+
+  /** Page Header Graph */
+  pageHeaderGraph?: IGraph | undefined
+
+  /** Link */
+  link?: string | undefined
+
+  /** Link Title */
+  linkTitle?: string | undefined
+
+  /** Statistics Cards Section */
+  statisticsCardsSection?: IStatisticsCard[] | undefined
+
+  /** Chart Section Title */
+  chartSectionTitle?: string | undefined
+
+  /** Graph Cards */
+  graphCards?: IGraphCard[] | undefined
+
+  /** External Link Card Selection */
+  externalLinkCardSelection?: ICardSection | undefined
+
+  /** External Link Section */
+  externalLinkSection?: ISectionWithImage | undefined
 }
 
 /** Landing page for Open Data Page, where public data is made available. */

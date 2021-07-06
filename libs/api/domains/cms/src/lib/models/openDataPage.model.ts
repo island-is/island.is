@@ -7,6 +7,7 @@ import { SectionWithImage, mapSectionWithImage } from './SectionWithImage.model'
 import { LinkCardSlice, mapLinkCardSlice } from './linkCardSlice.model'
 import { Graph, mapGraph } from './graph.model'
 import { GraphCard, mapGraphCard } from './graphCard.model'
+import { StatisticsCard, mapStatisticsCard } from './statisticsCard.model'
 
 @ObjectType()
 export class OpenDataPage {
@@ -28,8 +29,8 @@ export class OpenDataPage {
   @Field()
   linkTitle?: string
 
-  @Field(() => LinkCardSlice)
-  statisticSection?: LinkCardSlice | null
+  @Field(() => [StatisticsCard])
+  statisticsCardsSection?: Array<StatisticsCard>
 
   @Field()
   chartSectionTitle?: string
@@ -40,8 +41,8 @@ export class OpenDataPage {
   @Field(() => LinkCardSlice)
   externalLinkCardSelection?: LinkCardSlice | null
 
-//   @Field()
-//   externalLinkSection?: SectionWithImage
+  @Field(() => SectionWithImage)
+  externalLinkSection?: SectionWithImage | null
 }
 
 export const mapOpenDataPage = ({
@@ -55,9 +56,10 @@ export const mapOpenDataPage = ({
   pageHeaderGraph: fields.pageHeaderGraph ? mapGraph(fields.pageHeaderGraph) : null,
   link: fields.link ?? '',
   linkTitle: fields.linkTitle ?? '',
-  statisticSection: fields.statisticSection ? mapLinkCardSlice(fields.statisticSection ) : null,
+  statisticsCardsSection: (fields.statisticsCardsSection ?? []).map(mapStatisticsCard),
   chartSectionTitle: fields.chartSectionTitle ?? '',
   externalLinkCardSelection: fields.externalLinkCardSelection ? mapLinkCardSlice(fields.externalLinkCardSelection ) : null,
-  graphCards: (fields.graphCards ?? []).map(mapGraphCard)
+  graphCards: (fields.graphCards ?? []).map(mapGraphCard),
+  externalLinkSection: fields.externalLinkSection ? mapSectionWithImage(fields.externalLinkSection ) : null,
   
 })
