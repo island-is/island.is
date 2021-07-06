@@ -3,18 +3,21 @@ import { defineMessages } from 'react-intl'
 // Strings for the lokeCaseNumber component
 export const policeCaseNumber = defineMessages({
   heading: {
-    id: 'judicial.system:component.policeCaseNumber.heading',
+    id: 'judicial.system.core:police_case_number.heading',
     defaultMessage: 'Málsnúmer lögreglu',
-    description: 'Accused form. Police casenumber: Heading',
+    description:
+      'Notaður sem titill fyrir "málsnúmer lögreglu" hlutann á sakbornings skrefi í öllum málstegundum.',
   },
   label: {
-    id: 'judicial.system:component.policeCaseNumber.label',
+    id: 'judicial.system.core:police_case_number.label',
     defaultMessage: 'Slá inn LÖKE málsnúmer',
-    description: 'Accused form. Police casenumber: Label',
+    description:
+      'Notaður sem titill í "LÖKE málsnúmer" textaboxi á sakbornings skrefi í öllum málstegundum.',
   },
   placeholder: {
-    id: 'judicial.system:component.policeCaseNumber.placeholder',
-    defaultMessage: '007-2020-X',
-    description: 'Accused form. Police casenumber: Placeholder',
+    id: 'judicial.system.core:police_case_number.placeholder',
+    defaultMessage: '007-2021-X',
+    description:
+      'Notaður sem skýritexti í "LÖKE málsnúmer" textaboxi á sakbornings skrefi í öllum málstegundum.',
   },
 })
