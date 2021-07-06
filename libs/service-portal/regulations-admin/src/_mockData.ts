@@ -158,7 +158,17 @@ export const mockDraftRegulations: Record<
     draftingNotes: '<p>Fór í banka.</p>' as HTMLText,
     authors: mockAuthors,
     title: 'Reglugerð um ristjórn reglugerða',
-    text: '<p>Lorem ipsum dolir sit....</p>' as HTMLText,
+    text: `
+      <p>Lorem ipsum dolor <strong>sit</strong> H<sub>2</sub>O. E = mc<sup>2</sup>
+      consectetur adipiscing elit, sed do eiusmod tempor incididunt
+      consectetur adipiscing elit, sed do eiusmod tempor incididunt
+      consectetur adipiscing elit, sed do eiusmod tempor incididunt
+      ....</p>
+      <ul>
+        <li>List item 1</li>
+        <li>List item 2</li>
+      </ul>
+    ` as HTMLText,
     appendixes: [
       {
         title: 'Viðauki I',
