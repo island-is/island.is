@@ -152,7 +152,7 @@ The following services will run on the associated ports: `db:5432`, `es:9200`, `
 To be able to access environment variables in purely static projects, you need to do the following:
 
 1. In the index.html file, add `<!-- environment placeholder -->`.
-2. Use the `getStaticEnv` function from the `@island.is/utils/environment`
+2. Use the `getStaticEnv` function from the `@island.is/shared/utils`
    library to fetch your environment variables.
 3. Prefix your environment variables with `SI_PUBLIC_`, for example
    `SI_PUBLIC_MY_VARIABLE`.

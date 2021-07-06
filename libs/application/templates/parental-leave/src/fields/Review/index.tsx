@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+
 import React, { FC, useMemo } from 'react'
 
 import {
@@ -38,6 +40,7 @@ import { useUnion as useUnionOptions } from '../../hooks/useUnion'
 import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../hooks/usePrivatePensionFund'
 import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
 import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
+import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
 
@@ -95,9 +98,6 @@ const Review: FC<ReviewScreenProps> = ({
   const isPrimaryParent =
     selectedChild?.parentalRelation === ParentalRelations.primary
 
-  const getSelectOptionLabel = (options: selectOption[], id: string) =>
-    options.find((option) => option.value === id)?.label
-
   const otherParentOptions = useMemo(
     () =>
       buildFieldOptions(getOtherParentOptions(application), application, field),
@@ -139,62 +139,60 @@ const Review: FC<ReviewScreenProps> = ({
             />
 
             {otherParent === MANUAL && (
-              <>
-                <GridRow>
-                  <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-                    <InputController
-                      id="otherParentName"
-                      name="otherParentName"
-                      defaultValue={otherParentName}
-                      label={formatMessage(
-                        parentalLeaveFormMessages.shared.otherParentName,
-                      )}
-                      onChange={(e) =>
-                        setStateful((prev) => ({
-                          ...prev,
-                          otherParentName: e.target.value,
-                        }))
-                      }
-                    />
-                    {otherParentWillApprove && (
-                      <InputController
-                        id="otherParentEmail"
-                        name="otherParentEmail"
-                        defaultValue={otherParentEmail}
-                        label={formatMessage(
-                          parentalLeaveFormMessages.shared
-                            .otherParentEmailSubSection,
-                        )}
-                        onChange={(e) =>
-                          setStateful((prev) => ({
-                            ...prev,
-                            otherParentEmail: e.target.value,
-                          }))
-                        }
-                      />
+              <GridRow>
+                <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                  <InputController
+                    id="otherParentName"
+                    name="otherParentName"
+                    defaultValue={otherParentName}
+                    label={formatMessage(
+                      parentalLeaveFormMessages.shared.otherParentName,
                     )}
-                  </GridColumn>
-
-                  <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                    onChange={(e) =>
+                      setStateful((prev) => ({
+                        ...prev,
+                        otherParentName: e.target.value,
+                      }))
+                    }
+                  />
+                  {otherParentWillApprove && (
                     <InputController
-                      id="otherParentId"
-                      name="otherParentId"
-                      defaultValue={otherParentId}
-                      format="######-####"
-                      placeholder="000000-0000"
+                      id="otherParentEmail"
+                      name="otherParentEmail"
+                      defaultValue={otherParentEmail}
                       label={formatMessage(
-                        parentalLeaveFormMessages.shared.otherParentID,
+                        parentalLeaveFormMessages.shared
+                          .otherParentEmailSubSection,
                       )}
                       onChange={(e) =>
                         setStateful((prev) => ({
                           ...prev,
-                          otherParentId: e.target.value?.replace('-', ''),
+                          otherParentEmail: e.target.value,
                         }))
                       }
                     />
-                  </GridColumn>
-                </GridRow>
-              </>
+                  )}
+                </GridColumn>
+
+                <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                  <InputController
+                    id="otherParentId"
+                    name="otherParentId"
+                    defaultValue={otherParentId}
+                    format="######-####"
+                    placeholder="000000-0000"
+                    label={formatMessage(
+                      parentalLeaveFormMessages.shared.otherParentID,
+                    )}
+                    onChange={(e) =>
+                      setStateful((prev) => ({
+                        ...prev,
+                        otherParentId: e.target.value?.replace('-', ''),
+                      }))
+                    }
+                  />
+                </GridColumn>
+              </GridRow>
             )}
           </>
         }
@@ -209,36 +207,33 @@ const Review: FC<ReviewScreenProps> = ({
         )}
 
         {otherParent === MANUAL && (
-          <>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <DataValue
-                  label={formatMessage(
-                    parentalLeaveFormMessages.shared.otherParentName,
-                  )}
-                  value={otherParentName}
-                />
-                {otherParentWillApprove && (
-                  <DataValue
-                    label={formatMessage(
-                      parentalLeaveFormMessages.shared
-                        .otherParentEmailSubSection,
-                    )}
-                    value={otherParentEmail}
-                  />
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.otherParentName,
                 )}
-              </GridColumn>
-
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                value={otherParentName}
+              />
+              {otherParentWillApprove && (
                 <DataValue
                   label={formatMessage(
-                    parentalLeaveFormMessages.shared.otherParentID,
+                    parentalLeaveFormMessages.shared.otherParentEmailSubSection,
                   )}
-                  value={otherParentId}
+                  value={otherParentEmail}
                 />
-              </GridColumn>
-            </GridRow>
-          </>
+              )}
+            </GridColumn>
+
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.otherParentID,
+                )}
+                value={otherParentId}
+              />
+            </GridColumn>
+          </GridRow>
         )}
       </ReviewGroup>
 
