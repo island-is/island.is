@@ -20,6 +20,7 @@ import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
+import { webLoginButtonSelect } from '@island.is/plausible'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import * as styles from './Login.treat'
 
@@ -79,6 +80,7 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                   tabIndex={-1}
                   className={styles.btnLink}
                   href="/minarsidur/postholf"
+                  onClick={() => webLoginButtonSelect('New')}
                 >
                   <Button as="span">
                     {n('nyjuSidurLink', 'Fara á nýju mínar síður')}
@@ -89,6 +91,7 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                   color="blue400"
                   underline="normal"
                   underlineVisibility="always"
+                  onClick={() => webLoginButtonSelect('Old')}
                   newTab
                   className={styles.link}
                 >
