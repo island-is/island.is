@@ -14,6 +14,8 @@ import {
   RemarkType,
   RequirementKey,
   ApplicationEligibility,
+  DrivingLicenseCategory,
+  NeedsHealhCertificate,
 } from './drivingLicense.type'
 import {
   AkstursmatDto,
@@ -26,9 +28,9 @@ import {
 } from '@island.is/clients/driving-license'
 import {
   DRIVING_ASSESSMENT_MAX_AGE,
+  DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE,
   LICENSE_RESPONSE_API_VERSION,
 } from './util/constants'
-import { isNumber } from 'class-validator'
 
 @Injectable()
 export class DrivingLicenseService {
@@ -269,12 +271,12 @@ export class DrivingLicenseService {
   ): Promise<NewDrivingLicenseResult> {
     const response: unknown = await this.drivingLicenseApi.apiOkuskirteiniApplicationsNewCategoryPost(
       {
-        category: 'B',
+        category: DrivingLicenseCategory.B,
         postNewFinalLicense: {
           authorityNumber: input.juristictionId,
           needsToPresentHealthCertificate: input.needsToPresentHealthCertificate
-            ? 1
-            : 0,
+            ? NeedsHealhCertificate.TRUE
+            : NeedsHealhCertificate.FALSE,
           personIdNumber: nationalId,
         },
       },
@@ -282,7 +284,9 @@ export class DrivingLicenseService {
 
     // Service returns string on error, number on successful/not successful
     const responseIsString = typeof response === 'string'
-    const success = !responseIsString || response !== 1
+    const success =
+      !responseIsString ||
+      response !== DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE
     const errorMessage = responseIsString
       ? (response as string)
       : 'Result not 1 when creating license'

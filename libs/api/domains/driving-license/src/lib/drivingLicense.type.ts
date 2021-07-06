@@ -88,3 +88,12 @@ export interface ApplicationEligibility {
   isEligible: boolean
   requirements: ApplicationEligibilityRequirement[]
 }
+
+export enum DrivingLicenseCategory {
+  B = 'B',
+}
+
+export enum NeedsHealhCertificate {
+  TRUE = 1,
+  FALSE = 0,
+}

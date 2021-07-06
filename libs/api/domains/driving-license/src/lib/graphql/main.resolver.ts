@@ -107,11 +107,11 @@ export class MainResolver {
   }
 
   @Query(() => ApplicationEligibility)
-  async drivingLicenseApplicationEligibility(
+  drivingLicenseApplicationEligibility(
     @CurrentUser() user: User,
     @Args('type') type: string,
   ) {
-    return await this.drivingLicenseService.getApplicationEligibility(
+    return this.drivingLicenseService.getApplicationEligibility(
       user.nationalId,
       type,
     )
