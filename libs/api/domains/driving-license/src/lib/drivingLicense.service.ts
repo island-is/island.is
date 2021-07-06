@@ -24,7 +24,11 @@ import {
   TegundAthugasemdaDto,
   TegundRettindaDto,
 } from '@island.is/clients/driving-license'
-import { DRIVING_ASSESSMENT_MAX_AGE } from './util/constants'
+import {
+  DRIVING_ASSESSMENT_MAX_AGE,
+  LICENSE_RESPONSE_API_VERSION,
+} from './util/constants'
+import { isNumber } from 'class-validator'
 
 @Injectable()
 export class DrivingLicenseService {
@@ -35,7 +39,7 @@ export class DrivingLicenseService {
       kennitala: nationalId,
       // apiVersion header indicates that this method will return a single license, rather
       // than an array
-      apiVersion: '2.0',
+      apiVersion: LICENSE_RESPONSE_API_VERSION,
     })
 
     if (!drivingLicense) {
