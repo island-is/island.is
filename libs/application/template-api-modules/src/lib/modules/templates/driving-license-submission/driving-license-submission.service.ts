@@ -4,10 +4,8 @@ import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
-import { ChargeResult } from '@island.is/api/domains/payment'
-import { Item } from '@island.is/clients/payment'
+import type { Item } from '@island.is/clients/payment'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')

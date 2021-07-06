@@ -104,9 +104,9 @@ export class PaymentService {
 
   async searchCorrectCatalog(
     chargeItemCode: string,
-    searchJSON: Item[],
+    search: Item[],
   ): Promise<Item> {
-    if (chargeItemCode === '' || searchJSON === []) {
+    if (chargeItemCode === '' || search === []) {
       return Promise.reject(new Error('Bad search catalog parameters.')).catch(
         handleError,
       )
@@ -116,10 +116,9 @@ export class PaymentService {
       chargeItemCode = 'AY110'
     }
 
-    //const resultCatalog = JSON.parse(searchJSON)
-    for (const item in searchJSON) {
-      if (searchJSON[item].chargeItemCode === chargeItemCode) {
-        return Promise.resolve(searchJSON[item])
+    for (const item in search) {
+      if (search[item].chargeItemCode === chargeItemCode) {
+        return Promise.resolve(search[item])
       }
     }
     return Promise.reject(
