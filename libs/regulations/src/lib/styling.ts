@@ -81,6 +81,18 @@ export const regulationContentStyling = (wrapper: string) => {
     fontStyle: 'italic',
   })
 
+  global('sub, sup', {
+    verticalAlign: 'baseline',
+    fontSize: 14 / 18 + 'em',
+    position: 'relative',
+    lineHeight: 0,
+    top: '-0.333em',
+  })
+  global('sub', {
+    top: 'auto',
+    bottom: '-0.333em',
+  })
+
   global('img', {
     display: 'inline',
     maxWidth: '100%',
@@ -106,25 +118,14 @@ export const regulationContentStyling = (wrapper: string) => {
     borderSpacing: 0,
   })
 
-  global('th,td', {
+  global('th, td', {
     padding: '0.25em 0.5em',
     minWidth: '1.5em',
     textAlign: 'left',
     verticalAlign: 'top',
     width: 'auto',
+    border: `1px solid ${color.dark300}`,
   })
-  global(
-    `
-    table:not(.layout) th,
-    table:not(.layout) td,
-    `,
-    {
-      borderWidth: border.width.standard,
-      borderStyle: border.style.solid,
-      borderColor: color.dark300,
-    },
-  )
-
   global(
     `
     tr:not(:first-child) > th,
@@ -144,6 +145,16 @@ export const regulationContentStyling = (wrapper: string) => {
     },
   )
 
+  global(
+    `
+    .layout > * > * > th,
+    .layout > * > * > td,
+    `,
+    {
+      border: 0,
+    },
+  )
+
   global(`th`, {
     fontWeight: 'bold',
     backgroundColor: color.dark100,
@@ -158,8 +169,7 @@ export const regulationContentStyling = (wrapper: string) => {
     tfoot > tr:first-child> th
     `,
     {
-      borderTopWidth: border.width.standard,
-      borderTopStyle: border.style.solid as 'solid',
+      borderTop: '1px solid',
       borderTopColor: color.dark300,
     },
   )
@@ -175,25 +185,39 @@ export const regulationContentStyling = (wrapper: string) => {
     textAlign: 'center',
   })
 
-  global('.chapter__title', {
-    textAlign: 'center',
-    fontSize: '1em',
+  global('h1, h2,', {
+    // color: 'red',
+    marginTop: '2em',
+    fontSize: '1.2em',
+    fontWeight: typography.semiBold,
   })
-  global('.chapter__title > em', {
-    display: 'block',
-    fontStyle: 'inherit',
+  global('h3', {
+    marginTop: '1.5em',
+    fontWeight: typography.semiBold,
+    fontSize: '1.1em',
+  })
+  global('h4', {
+    // color: 'red',
+    fontSize: '1em',
+    fontWeight: typography.semiBold,
+  })
+  global('h5, h6', {
+    // color: 'red',
+    fontSize: '.9em',
+    fontWeight: typography.semiBold,
   })
 
   global('.chapter__title', {
     marginTop: '2em',
     textAlign: 'center',
     fontSize: '1em',
+    fontWeight: typography.regular,
     lineHeight: '2em',
   })
   global('.chapter__title:first-child', {
     marginTop: '0',
   })
-  global('.chapter__name', {
+  global('em.chapter__name', {
     display: 'block',
     fontStyle: 'inherit',
     fontWeight: typography.headingsFontWeight,
@@ -204,6 +228,7 @@ export const regulationContentStyling = (wrapper: string) => {
     marginBottom: '1.5em',
     textAlign: 'center',
     fontSize: '1em',
+    fontWeight: typography.regular,
     lineHeight: '2em',
   })
   global(
@@ -215,7 +240,7 @@ export const regulationContentStyling = (wrapper: string) => {
       marginTop: '0',
     },
   )
-  global('.article__name', {
+  global('em.article__name', {
     display: 'block',
     fontStyle: 'italic',
   })
