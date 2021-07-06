@@ -8,9 +8,7 @@ interface EndorsementApprovedProps {
   showAsWarning?: boolean
 }
 
-const EndorsementApproved = ({
-  showAsWarning,
-}: EndorsementApprovedProps) => {
+const EndorsementApproved = ({ showAsWarning }: EndorsementApprovedProps) => {
   const { formatMessage } = useLocale()
 
   return (
