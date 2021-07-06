@@ -20,15 +20,6 @@ export const assetsModule: ServicePortalModule = {
         render: () =>
           lazy(() => import('./screens/AssetsOverview/AssetsOverview')),
       },
-      {
-        name: defineMessage({
-          id: 'service.portal:vehicles',
-          defaultMessage: 'Ökutæki',
-        }),
-        path: ServicePortalPath.AssetsVehicles,
-        render: () =>
-          lazy(() => import('./screens/AssetsVehicles/AssetsVehicles')),
-      },
     ]
 
     return routes

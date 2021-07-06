@@ -18,5 +18,11 @@ export const wipModule: ServicePortalModule = {
       path: ServicePortalPath.FinanceRoot,
       render: () => lazy(() => import('./screens/FinanceWIP/FinanceWIP')),
     },
+    {
+      name: 'Ökutæki',
+      path: ServicePortalPath.AssetsVehicles,
+      render: () =>
+        lazy(() => import('./screens/AssetsVehicles/AssetsVehicles')),
+    },
   ],
 }

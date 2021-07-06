@@ -15,12 +15,15 @@ const rootName = defineMessage({
 export const documentsModule: ServicePortalModule = {
   name: rootName,
   widgets: () => [],
-  routes: ({ userInfo }) => [
-    {
-      name: rootName,
-      path: ServicePortalPath.ElectronicDocumentsRoot,
-      enabled: userInfo.scopes.includes(DocumentsScope.main),
-      render: () => lazy(() => import('./screens/Overview/Overview')),
-    },
-  ],
+  routes: ({ userInfo }) => {
+    console.log('userInfo', userInfo)
+    return [
+      {
+        name: rootName,
+        path: ServicePortalPath.ElectronicDocumentsRoot,
+        enabled: userInfo.scopes.includes(DocumentsScope.main),
+        render: () => lazy(() => import('./screens/Overview/Overview')),
+      },
+    ]
+  },
 }
