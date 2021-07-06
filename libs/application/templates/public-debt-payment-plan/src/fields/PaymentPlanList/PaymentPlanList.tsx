@@ -1,3 +1,4 @@
+import { PaymentScheduleDebts } from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -14,10 +15,9 @@ export const PaymentPlanList = ({
   application,
   goToScreen,
 }: FieldBaseProps) => {
-  console.log(application)
   const { formatMessage } = useLocale()
   const paymentScheduleDebts = (application.externalData as PaymentPlanExternalData)
-    .paymentScheduleDebts
+    .paymentPlanPrerequisites?.data?.debts as PaymentScheduleDebts[]
   const answers = application.answers as PublicDebtPaymentPlan
 
   const handleEditPaymentPlan = (id: string) => {
@@ -31,7 +31,7 @@ export const PaymentPlanList = ({
       <Text marginBottom={3}>
         {formatMessage(paymentPlan.general.pageDescription)}
       </Text>
-      {paymentScheduleDebts?.data.map((payment, index) => {
+      {paymentScheduleDebts?.map((payment, index) => {
         const isAnswered = getPaymentPlanIds(answers.paymentPlans).some(
           (id) => id === payment.type,
         )

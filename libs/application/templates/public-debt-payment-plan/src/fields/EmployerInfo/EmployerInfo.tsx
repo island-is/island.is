@@ -1,3 +1,4 @@
+import { PaymentScheduleEmployer } from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import React from 'react'
@@ -5,7 +6,7 @@ import { PaymentPlanExternalData } from '../../lib/dataSchema'
 
 export const EmployerInfo = ({ application }: FieldBaseProps) => {
   const employerInfo = (application.externalData as PaymentPlanExternalData)
-    .paymentScheduleEmployer
+    .paymentPlanPrerequisites?.data?.employer as PaymentScheduleEmployer
 
   if (!employerInfo) {
     // TODO: What should happen?
@@ -14,9 +15,9 @@ export const EmployerInfo = ({ application }: FieldBaseProps) => {
 
   return (
     <Box marginTop={5} marginBottom={3}>
-      <Text variant="h2">{employerInfo.data.name}</Text>
+      <Text variant="h2">{employerInfo.name}</Text>
       <Text variant="eyebrow" color="blue400">
-        {employerInfo.data.nationalId}
+        {employerInfo.nationalId}
       </Text>
     </Box>
   )

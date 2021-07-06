@@ -1,8 +1,10 @@
 import { PaymentScheduleConditions } from '@island.is/api/schema'
 import { ExternalData } from '@island.is/application/core'
+import { PaymentPlanExternalData } from './dataSchema'
 
 export const prerequisitesFailed = (data: ExternalData) => {
-  const prerequisites = data.paymentPlanPrerequisites?.data as
+  const prerequisites = (data as PaymentPlanExternalData)
+    .paymentPlanPrerequisites?.data?.conditions as
     | PaymentScheduleConditions
     | undefined
 

@@ -32,7 +32,12 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const answers = application.answers as PublicDebtPaymentPlan
   const index = field.defaultValue as number
   // Assign a payment to this screen by using the index of the step
-  const payment = externalData.paymentScheduleDebts?.data[index]
+  const payment = externalData.paymentPlanPrerequisites?.data?.debts[index]
+  // Geta min/max month and min/max payment data
+  const initialMinMaxData = externalData.paymentPlanPrerequisites?.data?.allInitialSchedules.find(
+    (x) => x.scheduleType === payment?.type,
+  )
+  console.log(initialMinMaxData)
   // Locate the entry of the payment plan in answers.
   const entryKey = getPaymentPlanKeyById(
     answers.paymentPlans,
@@ -134,9 +139,9 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       {paymentMode === 'amount' && (
         <PlanSlider
           id={`${entry}.amountPerMonth`}
-          minValue={30000}
-          maxValue={200000}
-          currentValue={30000}
+          minValue={initialMinMaxData?.minPayment || 5000}
+          maxValue={initialMinMaxData?.maxPayment || 10000}
+          currentValue={initialMinMaxData?.minPayment || 5000}
           multiplier={10000}
           heading={paymentPlan.labels.chooseAmountPerMonth}
           onChange={handleAmountChange}
@@ -160,9 +165,9 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       {paymentMode === 'months' && (
         <PlanSlider
           id={`${entry}.numberOfMonths`}
-          minValue={1}
-          maxValue={12}
-          currentValue={12}
+          minValue={initialMinMaxData?.minCountMonth || 1}
+          maxValue={initialMinMaxData?.maxCountMonth || 12}
+          currentValue={initialMinMaxData?.maxCountMonth || 12}
           heading={paymentPlan.labels.chooseNumberOfMonths}
           onChange={handleMonthChange}
           label={{

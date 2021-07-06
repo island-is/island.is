@@ -13,7 +13,6 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { PaymentType } from '../dataProviders/tempAPITypes'
 import {
   PaymentPlanExternalData,
   paymentPlanIndexKeyMapper,
@@ -89,24 +88,6 @@ export const PaymentPlanForm: Form = buildForm({
               title: externalData.labels.paymentPlanTitle,
               type: 'PaymentPlanPrerequisitesProvider',
               subTitle: externalData.labels.paymentPlanSubtitle,
-            }),
-            buildDataProviderItem({
-              id: 'paymentScheduleEmployer',
-              title: externalData.labels.paymentEmployerTitle,
-              type: 'PaymentScheduleEmployerProvider',
-              subTitle: externalData.labels.paymentEmployerSubtitle,
-            }),
-            buildDataProviderItem({
-              id: 'paymentScheduleDebts',
-              title: externalData.labels.paymentDebtsTitle,
-              type: 'PaymentScheduleDebtsProvider',
-              subTitle: externalData.labels.paymentDebtsSubtitle,
-            }),
-            buildDataProviderItem({
-              id: 'paymentPlanList',
-              title: 'Payment plan list',
-              type: 'PaymentPlanList',
-              subTitle: 'Payment plan list subtitle',
             }),
           ],
         }),
@@ -220,7 +201,8 @@ export const PaymentPlanForm: Form = buildForm({
       id: 'employer',
       title: section.employer,
       condition: (_formValue, externalData) => {
-        const prerequisites = externalData.paymentPlanPrerequisites?.data as
+        const prerequisites = (externalData as PaymentPlanExternalData)
+          .paymentPlanPrerequisites?.data?.conditions as
           | PaymentScheduleConditions
           | undefined
         return prerequisites?.taxReturns || false
@@ -265,11 +247,12 @@ export const PaymentPlanForm: Form = buildForm({
           description: employer.general.disposableIncomePageDescription,
           component: 'DisposableIncome',
           condition: (_formValue, externalData) => {
-            const paymentPlanList = (externalData as PaymentPlanExternalData)
-              ?.paymentPlanList
+            const debts = (externalData as PaymentPlanExternalData)
+              ?.paymentPlanPrerequisites?.data?.debts
             return (
-              paymentPlanList?.data.find((x) => x.type === PaymentType.O) !==
-              undefined
+              // For some reason it doesn't work to use PaymentScheduleType.OverpaidBenefits from api/schema
+              // Ask Óli about it!
+              debts?.find((x) => x.type === 'OverpaidBenefits') !== undefined
             )
           },
         }),
