@@ -18,6 +18,7 @@ import {
   Button,
   Inline,
   Logo,
+  ColorSchemeContext
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
@@ -29,7 +30,8 @@ import {
   SimplePieChart,
   SimpleLineChart,
   ChartsCard,
-  SectionTitle
+  SectionTitle,
+  Header,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
@@ -150,7 +152,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
     '[Undanfarin misseri hafa ...] Í þessu samhengi teljast til opinberra gagna öll gögn sem safnað hefur verið saman, vistuð með skipulegum eða kerfisbundnum hætti af opinberum aðilum og eru eða geta verið birt og varðveitt með rafrænum hætti. Hér eru tenglar á helstu vefi sem tengjast opnum gögnum á Íslandi.'
 
   return (
-    <Box id="main-content" style={{ overflow: 'hidden' }}>
+    <Box id="main-content" style={{ overflow: 'hidden', top: 0 }}>
       <Section
         aria-labelledby="openDataHeroTitle"
         background="blue100"

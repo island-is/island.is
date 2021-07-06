@@ -29,7 +29,6 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({
   children,
 }) => {
   const { colorScheme } = useContext(ColorSchemeContext)
-  console.log(colorScheme)
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 360
