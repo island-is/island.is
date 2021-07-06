@@ -135,7 +135,7 @@ jobs:
       - name: Git refs
         id: git_refs
         run: |
-          if [[ ! -z "$GITHUB_BASE_REF" ]]
+          if [[ -n "$GITHUB_BASE_REF" ]]
           then
            # a PR
            GIT_BASE_BRANCH=$GITHUB_BASE_REF
