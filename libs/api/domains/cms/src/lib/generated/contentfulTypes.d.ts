@@ -1012,7 +1012,6 @@ export interface IGraphFields {
 
   /** Datakeys */
   datakeys: Record<string, any>
-
   /** Type */
   type?: 'Bar' | 'Line' | 'Mixed' | 'Pie' | undefined
 }
@@ -1861,40 +1860,35 @@ export interface IOneColumnText extends Entry<IOneColumnTextFields> {
 }
 
 export interface IOpenDataPageFields {
-  /** Page title */
-  pageTitle: string
+   /** Page title */
+   pageTitle: string
 
-  /** Page Description */
-  pageDescription?: string | undefined
-  /** Page Header Graph */
-  pageHeaderGraph?: IGraph | undefined
-
-  /** Link */
-  link?: string | undefined
-
-  /** Link Title */
-  linkTitle?: string | undefined
-
-  /** External Link Cards */
-  externalLinkCards?: ICard[] | undefined
-
-  /** External Link Section Body */
-  externalLinkSectionBody?: string | undefined
-
-  /** External Link Section Title */
-  externalLinkSectionTitle?: string | undefined
-
-  /** External Link Section Image */
-  externalLinkSectionImage?: Asset | undefined
-
-  /** Statistic Section */
-  statisticSection?: ICardSection | undefined
-
-  /** Chart Section Title */
-  chartSectionTitle?: string | undefined
-
-  /** Graph Cards */
-  graphCards?: IGraphCard[] | undefined
+   /** Page Description */
+   pageDescription?: string | undefined
+ 
+   /** Page Header Graph */
+   pageHeaderGraph?: IGraph | undefined
+ 
+   /** Link */
+   link?: string | undefined
+ 
+   /** Link Title */
+   linkTitle?: string | undefined
+ 
+   /** Statistic Section */
+   statisticSection?: ICardSection | undefined
+ 
+   /** Chart Section Title */
+   chartSectionTitle?: string | undefined
+ 
+   /** Graph Cards */
+   graphCards?: IGraphCard[] | undefined
+ 
+   /** External Link Card Selection */
+   externalLinkCardSelection?: ICardSection | undefined
+ 
+   /** External Link Section */
+   externalLinkSection?: ISectionWithImage | undefined
 }
 
 /** Landing page for Open Data Page, where public data is made available. */

@@ -3,7 +3,10 @@ import { IOpenDataPage } from '../generated/contentfulTypes'
 import * as types from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
 import { Image, mapImage } from './image.model'
-import { LinkCard, mapLinkCard } from './linkCard.model'
+import { SectionWithImage, mapSectionWithImage } from './SectionWithImage.model'
+import { LinkCardSlice, mapLinkCardSlice } from './linkCardSlice.model'
+import { Graph, mapGraph } from './graph.model'
+import { GraphCard, mapGraphCard } from './graphCard.model'
 
 @ObjectType()
 export class OpenDataPage {
@@ -17,7 +20,7 @@ export class OpenDataPage {
   pageDescription!: string
 
   @Field()
-  pageHeaderGraph?: IGraph
+  pageHeaderGraph?: Graph | null
 
   @Field()
   link?: string
@@ -25,26 +28,20 @@ export class OpenDataPage {
   @Field()
   linkTitle?: string
 
-  @Field()
-  externalLinkCards?: ICard[]
-
-  @Field()
-  externalLinkSectionBody?: string
-
-  @Field()
-  externalLinkSectionTitle?: string
-
-  @Field()
-  externalLinkSectionImage?: Image | null
-
-  @Field()
-  statisticSection?: ICardSection
+  @Field(() => LinkCardSlice)
+  statisticSection?: LinkCardSlice | null
 
   @Field()
   chartSectionTitle?: string
 
-  @Field()
-  graphCards?: IGraphCard[]
+  @Field(() => [GraphCard])
+  graphCards?: Array<GraphCard>
+
+  @Field(() => LinkCardSlice)
+  externalLinkCardSelection?: LinkCardSlice | null
+
+//   @Field()
+//   externalLinkSection?: SectionWithImage
 }
 
 export const mapOpenDataPage = ({
@@ -55,5 +52,12 @@ export const mapOpenDataPage = ({
   id: sys.id,
   pageTitle: fields.pageTitle ?? '',
   pageDescription: fields.pageDescription ?? '',
-  externalLinkSectionImage: fields.externalLinkSectionImage ? mapImage(fields.externalLinkSectionImage) : null,
+  pageHeaderGraph: fields.pageHeaderGraph ? mapGraph(fields.pageHeaderGraph) : null,
+  link: fields.link ?? '',
+  linkTitle: fields.linkTitle ?? '',
+  statisticSection: fields.statisticSection ? mapLinkCardSlice(fields.statisticSection ) : null,
+  chartSectionTitle: fields.chartSectionTitle ?? '',
+  externalLinkCardSelection: fields.externalLinkCardSelection ? mapLinkCardSlice(fields.externalLinkCardSelection ) : null,
+  graphCards: (fields.graphCards ?? []).map(mapGraphCard)
+  
 })
