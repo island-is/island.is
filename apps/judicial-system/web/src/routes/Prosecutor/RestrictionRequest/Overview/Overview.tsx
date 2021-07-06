@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
+import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 
 import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
@@ -9,7 +12,6 @@ import {
   CaseType,
   CaseTransition,
 } from '@island.is/judicial-system/types'
-
 import {
   formatDate,
   capitalize,
@@ -29,16 +31,16 @@ import {
   TIME_FORMAT,
   formatRequestedCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
-import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { useRouter } from 'next/router'
-import * as styles from './Overview.treat'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+
+import * as styles from './Overview.treat'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -50,6 +52,7 @@ export const Overview: React.FC = () => {
 
   const { transitionCase, sendNotification, isSendingNotification } = useCase()
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -157,7 +160,7 @@ export const Overview: React.FC = () => {
                     }`,
                   },
                   {
-                    title: 'Ósk um fyrirtökudag og tíma',
+                    title: formatMessage(requestCourtDate.heading),
                     value: `${capitalize(
                       formatDate(
                         workingCase.requestedCourtDate,

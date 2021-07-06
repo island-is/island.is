@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Case } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
@@ -28,6 +29,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { icRulingStepOne } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -39,6 +41,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
 
   const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
@@ -96,7 +99,11 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Greinargerð um málsatvik{' '}
-              <Tooltip text="Greinargerð lögreglu er forbókuð hér fyrir neðan. Hægt er að breyta textanum og mun hann birtast með þeim hætti í úrskurði dómara." />
+              <Tooltip
+                text={formatMessage(
+                  icRulingStepOne.sections.courtCaseFacts.tooltip,
+                )}
+              />
             </Text>
           </Box>
           <Box marginBottom={5}>
@@ -139,7 +146,11 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Greinargerð um lagarök{' '}
-              <Tooltip text="Greinargerð lögreglu er forbókuð hér fyrir neðan. Hægt er að breyta textanum og mun hann birtast með þeim hætti í úrskurði dómara." />
+              <Tooltip
+                text={formatMessage(
+                  icRulingStepOne.sections.courtLegalArguments.tooltip,
+                )}
+              />
             </Text>
           </Box>
           <Box marginBottom={5}>
