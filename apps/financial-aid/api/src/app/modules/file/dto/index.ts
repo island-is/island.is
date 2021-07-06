@@ -1,1 +1,1 @@
-export { GetSignedUrlDto } from './getSignedUrl.dto'
+export { GetSignedUrlInput } from './getSignedUrl.input'

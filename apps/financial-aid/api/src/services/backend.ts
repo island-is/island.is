@@ -47,7 +47,7 @@ class BackendAPI extends RESTDataSource {
   }
 
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
-    return this.post(`api/file/url`, getSignedUrl)
+    return this.post('/file/url', getSignedUrl)
   }
 }
 

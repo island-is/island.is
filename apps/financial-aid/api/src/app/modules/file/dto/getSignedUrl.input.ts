@@ -5,7 +5,7 @@ import { Field, InputType } from '@nestjs/graphql'
 import { GetSignedUrl } from '@island.is/financial-aid/shared'
 
 @InputType()
-export class GetSignedUrlDto implements GetSignedUrl {
+export class GetSignedUrlInput implements GetSignedUrl {
   @Allow()
   @Field()
   readonly fileName!: string

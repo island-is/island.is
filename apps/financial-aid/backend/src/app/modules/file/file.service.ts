@@ -18,8 +18,15 @@ export class FileService {
   ) {}
 
   createSignedUrl(folder: string, fileName: string): SignedUrlModel {
-    const fileUrl = `${environment.files.fileBaseUrl}${folder}/${fileName}`
+    const key = `${folder}/${fileName}`
 
-    return this.cloudFrontService.createPresignedPost(fileUrl)
+    const fileUrl = `${environment.files.fileBaseUrl}/${key}`
+
+    const signedUrl = this.cloudFrontService.createPresignedPost(fileUrl)
+
+    return {
+      key,
+      url: signedUrl,
+    }
   }
 }

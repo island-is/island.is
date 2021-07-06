@@ -3,7 +3,7 @@ import { CloudFront } from 'aws-sdk'
 import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
-import { PresignedPostModel } from './models'
+import { SignedUrlModel } from './models'
 
 @Injectable()
 export class CloudFrontService {
@@ -16,16 +16,14 @@ export class CloudFrontService {
     )
   }
 
-  createPresignedPost(url: string): PresignedPostModel {
+  createPresignedPost(url: string): string {
     const expiresInSeconds = environment.files.postTimeToLiveMinutes * 60
 
     const expires = Math.floor((Date.now() + expiresInSeconds * 1000) / 1000)
 
-    const signedUrl = this.signer.getSignedUrl({
+    return this.signer.getSignedUrl({
       url,
       expires,
     })
-
-    return { url: signedUrl }
   }
 }

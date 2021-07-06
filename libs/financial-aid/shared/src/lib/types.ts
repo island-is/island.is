@@ -108,6 +108,7 @@ export interface GetSignedUrl {
 
 export interface SignedUrl {
   url: string
+  key: string
 }
 
 // export type HomeCircumstances =

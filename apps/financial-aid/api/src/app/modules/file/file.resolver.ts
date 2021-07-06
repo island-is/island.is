@@ -6,7 +6,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { JwtGraphQlAuthGuard } from '@island.is/judicial-system/auth'
 
 import { BackendAPI } from '../../../services'
-import { GetSignedUrlDto } from './dto'
+import { GetSignedUrlInput } from './dto'
 import { SignedUrlModel } from './models'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -19,8 +19,8 @@ export class FileResolver {
 
   @Mutation(() => SignedUrlModel)
   getSignedUrl(
-    @Args('input', { type: () => GetSignedUrlDto })
-    input: GetSignedUrlDto,
+    @Args('input', { type: () => GetSignedUrlInput })
+    input: GetSignedUrlInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<SignedUrlModel> {
     this.logger.debug('Creating signed url')
