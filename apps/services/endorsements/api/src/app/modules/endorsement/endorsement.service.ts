@@ -122,6 +122,8 @@ export class EndorsementService {
       this.logger.debug('Failed validation rules', {
         listId: listId,
         nationalId,
+        validationRules,
+        metadata
       })
       throw new BadRequestException('Failed list validation rules')
     }

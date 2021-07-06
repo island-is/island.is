@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client'
-
 import { GetUserEndorsements } from '../graphql/queries'
-import { Endorsement, EndorsementListTagsEnum } from '../types/schema'
+import { Endorsement, EndorsementListOpenTagsEnum } from '../types/schema'
 
 interface EndorsementData {
   endorsementSystemUserEndorsements?: Endorsement[]
@@ -12,22 +11,24 @@ export const useHasEndorsed = () => {
     data: endorsementsData,
     loading,
     refetch,
-  } = useQuery<EndorsementData>(GetUserEndorsements, {
-    variables: {
-      input: {
-        tags: [
-          EndorsementListTagsEnum.PartyApplicationNordausturkjordaemi2021,
-          EndorsementListTagsEnum.PartyApplicationNordvesturkjordaemi2021,
-          EndorsementListTagsEnum.PartyApplicationReykjavikurkjordaemiNordur2021,
-          EndorsementListTagsEnum.PartyApplicationReykjavikurkjordaemiSudur2021,
-          EndorsementListTagsEnum.PartyApplicationSudurkjordaemi2021,
-          EndorsementListTagsEnum.PartyApplicationSudvesturkjordaemi2021,
-        ],
-      },
-    },
-  })
+  } = useQuery<EndorsementData>(GetUserEndorsements)
+
+  const restrictedTags = [
+    EndorsementListOpenTagsEnum.PartyApplicationNordausturkjordaemi2021,
+    EndorsementListOpenTagsEnum.PartyApplicationNordvesturkjordaemi2021,
+    EndorsementListOpenTagsEnum.PartyApplicationReykjavikurkjordaemiNordur2021,
+    EndorsementListOpenTagsEnum.PartyApplicationReykjavikurkjordaemiSudur2021,
+    EndorsementListOpenTagsEnum.PartyApplicationSudurkjordaemi2021,
+    EndorsementListOpenTagsEnum.PartyApplicationSudvesturkjordaemi2021,
+  ]
 
   const endorsements = endorsementsData?.endorsementSystemUserEndorsements
-  const hasEndorsed = (endorsements && endorsements.length > 0) ?? false
+  
+  // user has endorsed if any tags of his endorsements match the list of restricted tags
+  const hasEndorsed = endorsements?.some((endorsement) => {
+    const endorsementListTags = endorsement.endorsementList?.tags ?? []
+    return endorsementListTags.some((tag)  => restrictedTags.includes(tag))
+  })
+  
   return { hasEndorsed, loading, refetch }
 }

@@ -1,24 +1,14 @@
 import { useQuery } from '@apollo/client'
-
 import { GetUserEndorsements } from '../graphql/queries'
-import { Endorsement, EndorsementListTagsEnum } from '../types/schema'
-
-const partyLetterTag = EndorsementListTagsEnum['PartyLetter2021']
+import { Endorsement } from '../types/schema'
 
 interface EndorsementData {
   endorsementSystemUserEndorsements?: Endorsement[]
 }
 
 export const useHasEndorsed = (endorsementListId: string) => {
-  const { data: endorsementsData, loading } = useQuery<EndorsementData>(
-    GetUserEndorsements,
-    {
-      variables: {
-        input: {
-          tags: [partyLetterTag],
-        },
-      },
-    },
+  const { data: endorsementsData } = useQuery<EndorsementData>(
+    GetUserEndorsements
   )
 
   const endorsements = endorsementsData?.endorsementSystemUserEndorsements
