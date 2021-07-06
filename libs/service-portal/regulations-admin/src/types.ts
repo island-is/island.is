@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 // TODO: add link to original DOC/PDF file in Stjórnartíðindi's data store.
 
-import { FC } from 'react'
-import { MessageDescriptor } from 'react-intl'
-import { RegulationDraft } from './types-api'
+import { Regulation } from '@island.is/regulations/web'
 
 /** Regulations are roughly classified based on whether they contain
  * any original text/stipulations, or whether they **only**  prescribe
@@ -11,7 +10,7 @@ import { RegulationDraft } from './types-api'
  * `base` = Stofnreglugerð
  * `amending` = Breytingareglugerð
  */
-export type RegulationType = 'base' | 'amending'
+export type RegulationType = Regulation['type']
 
 // TODO: add link to original DOC/PDF file in Stjórnartíðindi's data store.
 /** Regulations are roughly classified based on whether they contain
