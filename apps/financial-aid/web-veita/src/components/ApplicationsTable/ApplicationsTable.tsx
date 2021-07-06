@@ -1,8 +1,9 @@
 import React, { ReactNode } from 'react'
-import { Text } from '@island.is/island-ui/core'
+import { Text, Icon, Box } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
 import * as styles from './ApplicationsTable.treat'
+import { useRouter } from 'next/router'
 
 import cn from 'classnames'
 
@@ -11,7 +12,7 @@ interface PageProps {
   headers: TableHeadersProps[]
   className?: string
   setSortBy: (filter: any) => void
-  [key: string]: any
+  sortBy: 'modified' | 'state'
 }
 
 interface TableBodyProps {
@@ -29,8 +30,10 @@ const ApplicationsTable: React.FC<PageProps> = ({
   headers,
   className,
   setSortBy,
-  key,
+  sortBy,
 }) => {
+  const router = useRouter()
+
   if (applications && applications.length > 0) {
     return (
       <table
@@ -38,7 +41,7 @@ const ApplicationsTable: React.FC<PageProps> = ({
           [`${styles.tableContainer}`]: true,
           [`${className}`]: true,
         })}
-        key={key}
+        key={router.pathname}
       >
         <thead>
           <tr>
@@ -57,9 +60,28 @@ const ApplicationsTable: React.FC<PageProps> = ({
                             [`${styles.firstChildPadding}`]: index === 0,
                           })}
                         >
-                          <Text color="dark300" fontWeight="semiBold">
-                            {item.title}
-                          </Text>
+                          <Box display="flex" alignItems="center">
+                            <Text color="dark300" fontWeight="semiBold">
+                              {item.title}
+                            </Text>
+
+                            <Box
+                              display="block"
+                              opacity={0}
+                              marginLeft="smallGutter"
+                              className={cn({
+                                [`${styles.showIcon}`]:
+                                  sortBy === item.filterBy,
+                              })}
+                            >
+                              <Icon
+                                color="dark300"
+                                icon="chevronDown"
+                                size="small"
+                                type="filled"
+                              />
+                            </Box>
+                          </Box>
                         </button>
                       </th>
                     )

@@ -27,6 +27,7 @@ import {
   getState,
   Municipality,
   aidCalculator,
+  calculateAidFinalAmount,
 } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
@@ -46,6 +47,7 @@ import {
   Files,
   AdminLayout,
   StateModal,
+  AidAmountModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 interface ApplicantData {
@@ -59,7 +61,9 @@ interface MunicipalityData {
 const ApplicationProfile = () => {
   const router = useRouter()
 
-  const [isModalVisible, setModalVisible] = useState(false)
+  const [isStateModalVisible, setStateModalVisible] = useState(false)
+
+  const [isAidModalVisible, setAidModalVisible] = useState(false)
 
   const [prevUrl, setPrevUrl] = useState<any>()
 
@@ -104,6 +108,8 @@ const ApplicationProfile = () => {
     }
   }, [data])
 
+  const currentYear = format(new Date(), 'yyyy')
+
   if (application) {
     const applicationInfo = [
       {
@@ -118,7 +124,14 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Sótt um',
-        content: `${aidAmount?.toLocaleString('de-DE')} kr.`,
+        content: `${calculateAidFinalAmount(
+          aidAmount,
+          application.usePersonalTaxCredit,
+          currentYear,
+        ).toLocaleString('de-DE')} kr.`,
+        onclick: () => {
+          setAidModalVisible(!isAidModalVisible)
+        },
       },
       {
         title: 'Veitt',
@@ -282,7 +295,7 @@ const ApplicationProfile = () => {
                 icon="pencil"
                 iconType="filled"
                 onClick={() => {
-                  setModalVisible(!isModalVisible)
+                  setStateModalVisible(!isStateModalVisible)
                 }}
                 preTextIconType="filled"
                 size="small"
@@ -344,9 +357,9 @@ const ApplicationProfile = () => {
 
         {application.state && (
           <StateModal
-            isVisible={isModalVisible}
+            isVisible={isStateModalVisible}
             onVisiblityChange={(isVisibleBoolean) => {
-              setModalVisible(isVisibleBoolean)
+              setStateModalVisible(isVisibleBoolean)
             }}
             onStateChange={(applicationState: ApplicationState) => {
               setApplication({
@@ -355,6 +368,17 @@ const ApplicationProfile = () => {
               })
             }}
             application={application}
+          />
+        )}
+
+        {aidAmount && (
+          <AidAmountModal
+            aidAmount={aidAmount}
+            usePersonalTaxCredit={application.usePersonalTaxCredit}
+            isVisible={isAidModalVisible}
+            onVisiblityChange={(isVisibleBoolean) => {
+              setAidModalVisible(isVisibleBoolean)
+            }}
           />
         )}
       </AdminLayout>

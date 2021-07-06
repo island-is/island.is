@@ -2,7 +2,7 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const tableContainer = style({
-  marginBottom: theme.spacing[4],
+  marginBottom: theme.spacing[15],
   marginRight: -theme.spacing[2],
   marginLeft: -theme.spacing[2],
 })
@@ -33,4 +33,8 @@ export const tableBody = style({
 
 export const firstChildPadding = style({
   paddingLeft: theme.spacing[2],
+})
+
+export const showIcon = style({
+  opacity: 1,
 })

@@ -14,3 +14,12 @@ export const container = style({
 export const headings = style({
   gridColumn: '1/-1',
 })
+
+export const button = style({
+  color: theme.color.blue400,
+  selectors: {
+    '&:hover': {
+      color: theme.color.blueberry400,
+    },
+  },
+})

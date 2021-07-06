@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box, Link } from '@island.is/island-ui/core'
+import { Text, Box, Link, Button } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.treat'
 import cn from 'classnames'
@@ -10,6 +10,7 @@ interface Props {
     title: string
     content?: string
     link?: string
+    onclick?: () => void
     other?: string
   }[]
   className?: string
@@ -43,13 +44,19 @@ const Profile: React.FC<Props> = ({ heading, info, className }) => {
                 {item.title}
               </Text>
 
-              {item.link ? (
-                <Link href={item.link} color="blue400">
+              {item.link && (
+                <Link href={item.link} color="blue400" onClick={item.onclick}>
                   {item.content}
                 </Link>
-              ) : (
-                <Text>{item.content}</Text>
               )}
+
+              {item.onclick && (
+                <button onClick={item.onclick} className={styles.button}>
+                  {item.content}
+                </button>
+              )}
+
+              {!item.link && !item.onclick && <Text>{item.content}</Text>}
 
               {item.other && (
                 <Box

@@ -63,7 +63,7 @@ export const ApplicationsOverview = () => {
     return (
       <AdminLayout>
         <Box className={`contentUp delay-25`} key={currentNavigationItem.label}>
-          <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={4}>
+          <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={15}>
             {currentNavigationItem.label}
           </Text>
         </Box>
@@ -71,11 +71,11 @@ export const ApplicationsOverview = () => {
         {data?.applications && (
           <ApplicationsTable
             className={`contentUp delay-50`}
-            key={router.pathname}
             headers={currentNavigationItem.headers}
             setSortBy={(filter) => {
               setSortBy(filter)
             }}
+            sortBy={sortBy}
             applications={data.applications
               .sort((a, b) =>
                 a[sortBy] > b[sortBy] ? -1 : a[sortBy] < b[sortBy] ? 1 : 0,
