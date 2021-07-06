@@ -134,42 +134,42 @@ const Review: FC<ReviewScreenProps> = ({
 
             {otherParent === MANUAL && (
               <GridRow>
-                  <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-                    <InputController
-                      id="otherParentName"
-                      name="otherParentName"
-                      defaultValue={otherParentName}
-                      label={formatMessage(
-                        parentalLeaveFormMessages.shared.otherParentName,
-                      )}
-                      onChange={(e) =>
-                        setStateful((prev) => ({
-                          ...prev,
-                          otherParentName: e.target.value,
-                        }))
-                      }
-                    />
-                  </GridColumn>
+                <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                  <InputController
+                    id="otherParentName"
+                    name="otherParentName"
+                    defaultValue={otherParentName}
+                    label={formatMessage(
+                      parentalLeaveFormMessages.shared.otherParentName,
+                    )}
+                    onChange={(e) =>
+                      setStateful((prev) => ({
+                        ...prev,
+                        otherParentName: e.target.value,
+                      }))
+                    }
+                  />
+                </GridColumn>
 
-                  <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-                    <InputController
-                      id="otherParentId"
-                      name="otherParentId"
-                      defaultValue={otherParentId}
-                      format="######-####"
-                      placeholder="000000-0000"
-                      label={formatMessage(
-                        parentalLeaveFormMessages.shared.otherParentID,
-                      )}
-                      onChange={(e) =>
-                        setStateful((prev) => ({
-                          ...prev,
-                          otherParentId: e.target.value?.replace('-', ''),
-                        }))
-                      }
-                    />
-                  </GridColumn>
-                </GridRow>
+                <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                  <InputController
+                    id="otherParentId"
+                    name="otherParentId"
+                    defaultValue={otherParentId}
+                    format="######-####"
+                    placeholder="000000-0000"
+                    label={formatMessage(
+                      parentalLeaveFormMessages.shared.otherParentID,
+                    )}
+                    onChange={(e) =>
+                      setStateful((prev) => ({
+                        ...prev,
+                        otherParentId: e.target.value?.replace('-', ''),
+                      }))
+                    }
+                  />
+                </GridColumn>
+              </GridRow>
             )}
           </>
         }
@@ -185,24 +185,24 @@ const Review: FC<ReviewScreenProps> = ({
 
         {otherParent === MANUAL && (
           <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <DataValue
-                  label={formatMessage(
-                    parentalLeaveFormMessages.shared.otherParentName,
-                  )}
-                  value={otherParentName}
-                />
-              </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.otherParentName,
+                )}
+                value={otherParentName}
+              />
+            </GridColumn>
 
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <DataValue
-                  label={formatMessage(
-                    parentalLeaveFormMessages.shared.otherParentID,
-                  )}
-                  value={otherParentId}
-                />
-              </GridColumn>
-            </GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.otherParentID,
+                )}
+                value={otherParentId}
+              />
+            </GridColumn>
+          </GridRow>
         )}
       </ReviewGroup>
 
