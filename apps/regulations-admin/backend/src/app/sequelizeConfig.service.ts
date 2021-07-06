@@ -3,9 +3,11 @@ import {
   SequelizeModuleOptions,
   SequelizeOptionsFactory,
 } from '@nestjs/sequelize'
-import * as databaseConfig from '../../sequelize.config.js'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import * as databaseConfig from '../../sequelize.config.js'
 
 @Injectable()
 export class SequelizeConfigService implements SequelizeOptionsFactory {

@@ -5,7 +5,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { AuditModule } from '@island.is/nest/audit'
 
 import { environment } from '../environments'
-import { ResourceModule } from './modules/resource/resource.module'
+import { DraftRegulationModule } from './modules/draft_regulation/draft_regulation.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
@@ -15,7 +15,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    ResourceModule,
+    DraftRegulationModule,
   ],
 })
 export class AppModule {}

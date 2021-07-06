@@ -5975,6 +5975,11 @@
                 "output": "./migrations"
               },
               {
+                "glob": "*",
+                "input": "apps/regulations-admin/backend/seeders",
+                "output": "./seeders"
+              },
+              {
                 "glob": ".sequelizerc",
                 "input": "apps/regulations-admin/backend",
                 "output": "./"
