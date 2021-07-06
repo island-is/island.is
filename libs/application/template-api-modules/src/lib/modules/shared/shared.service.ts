@@ -141,10 +141,15 @@ export class SharedTemplateApiService {
     })
   }
 
-  async createCharge(authorization: string, applicationId: string) {
+  async createCharge(
+    authorization: string,
+    applicationId: string,
+    chargeItemCode: string,
+  ) {
     return this.makeGraphqlQuery(authorization, PAYMENT_QUERY, {
       input: {
         applicationId,
+        chargeItemCode,
       },
     })
       .then((res) => {

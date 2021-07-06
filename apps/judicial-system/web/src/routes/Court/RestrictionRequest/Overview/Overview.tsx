@@ -21,7 +21,7 @@ import {
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import OverviewForm from './OverviewForm'
-import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal'
+import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 
 export const JudgeOverview: React.FC = () => {
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')

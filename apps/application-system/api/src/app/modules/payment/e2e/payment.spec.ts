@@ -5,6 +5,8 @@ import { ApplicationScope } from '@island.is/auth/scopes'
 
 import { setup } from '../../../../../test/setup'
 import { PaymentAPI } from '@island.is/clients/payment'
+import { CreateChargeInput } from '../dto/createChargeInput.dto'
+import { PaymentService } from '../payment.service'
 
 let app: INestApplication
 
@@ -13,6 +15,66 @@ class MockPaymentApi {
     return {
       user4: 'user4',
       receptionID: 'receptionid',
+    }
+  }
+  async getCatalogByPerformingOrg() {
+    const json = {
+      item: [
+        {
+          performingOrgID: '6509142520',
+          chargeType: 'AY1',
+          chargeItemCode: 'AY101',
+          chargeItemName: 'Sakarvottorð',
+          priceAmount: 2500,
+        },
+        {
+          performingOrgID: '6509142520',
+          chargeType: 'AY1',
+          chargeItemCode: 'AY102',
+          chargeItemName: 'Veðbókarvottorð',
+          priceAmount: 2000,
+        },
+        {
+          performingOrgID: '6509142520',
+          chargeType: 'AY1',
+          chargeItemCode: 'AY110',
+          chargeItemName: 'Ökuskírteini',
+          priceAmount: 8000,
+        },
+      ],
+    }
+    return json
+  }
+}
+
+class MockPaymentService {
+  async findApplicationById() {
+    return {
+      typeId: 'DrivingLicense',
+    }
+  }
+
+  async searchCorrectCatalog() {
+    return {
+      performingOrgID: '6509142520',
+      chargeType: 'AY1',
+      chargeItemCode: 'AY110',
+      chargeItemName: 'Ökuskírteini',
+      priceAmount: 8000,
+    }
+  }
+
+  async createCharge() {
+    return {
+      user4: 'amazing-user4-code-for-url',
+      receptionID: '96b5333b-6666-9999-1111-e8feb01d3dcd',
+      paymentUrl: 'www.nice-url.island.is',
+    }
+  }
+
+  async findPaymentByApplicationId() {
+    return {
+      fulfilled: true,
     }
   }
 }
@@ -33,6 +95,8 @@ beforeAll(async () => {
             scope: [ApplicationScope.read, ApplicationScope.write],
           }),
         )
+        .overrideProvider(PaymentService)
+        .useClass(MockPaymentService)
         .compile()
     },
   })
@@ -42,10 +106,13 @@ beforeAll(async () => {
 
 describe('Application system payments API', () => {
   // Creating a new application
-  it(`POST /application/96b5237b-6896-4154-898d-d8feb01d3dcd/payment should create a payment object`, async () => {
+  it(`POST /application/96b5237b-6896-4154-898d-e8feb01d3dcd/payment should create a payment object`, async () => {
     // Act
     const response = await server
       .post('/applications/96b5237b-6896-4154-898d-d8feb01d3dcd/payment')
+      .send({
+        chargeItemCode: 'AY110',
+      } as CreateChargeInput)
       .expect(201)
 
     // Assert
