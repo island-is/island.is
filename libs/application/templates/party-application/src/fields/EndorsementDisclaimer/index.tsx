@@ -65,7 +65,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <Box>
-      {!loading && hasEndorsed || endorsedNow ? (
+      {!loading && (hasEndorsed || endorsedNow) ? (
         <EndorsementApproved hasEndorsedBefore={hasEndorsed} />
       ) : (
         <Box>

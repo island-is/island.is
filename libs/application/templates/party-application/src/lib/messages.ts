@@ -287,8 +287,7 @@ export const m: MessageDir = {
     },
     approvedSubtitle: {
       id: 'pa.application:application.approved.card.subtitle',
-      defaultMessage:
-        'Frekari upplýsingar veitir viðkomandi yfirkjörstjórn.',
+      defaultMessage: 'Frekari upplýsingar veitir viðkomandi yfirkjörstjórn.',
       description: 'Subtitle for approved card',
     },
     bulletListTitle: {
@@ -578,7 +577,8 @@ export const m: MessageDir = {
   supremeCourt: defineMessages({
     title: {
       id: 'pa.application:supreme.court.title',
-      defaultMessage: 'Meðmæli með framboðslista stjórnmálasamtaka til yfirkjörstjórnar',
+      defaultMessage:
+        'Meðmæli með framboðslista stjórnmálasamtaka til yfirkjörstjórnar',
       description: 'Supreme court review title',
     },
     description: {
