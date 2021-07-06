@@ -20,7 +20,8 @@ module.exports = {
             },
             allowNull: false,
           },
-          regulationId: {
+          /* Regulation name from external db */
+          regulation: {
             type: Sequelize.STRING,
             allowNull: false,
           },

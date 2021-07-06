@@ -44,7 +44,7 @@ const draftRegulationSeed = `[
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    var model = queryInterface.sequelize.define('user', {
+    var model = queryInterface.sequelize.define('draft_regulation', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
@@ -69,8 +69,6 @@ module.exports = {
             'draft_regulation',
             {
               ...reg,
-              created: new Date(),
-              modified: new Date(),
             },
             { id: reg.id },
             model,
@@ -83,7 +81,7 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.bulkDelete('user', null, { transaction: t }),
+      queryInterface.bulkDelete('draft_regulation', null, { transaction: t }),
     )
   },
 }

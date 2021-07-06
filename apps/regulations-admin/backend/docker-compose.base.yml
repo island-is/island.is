@@ -1,9 +1,9 @@
 version: '3.3'
 
 services:
-  db_reference_backend:
+  db_regulations_admin_backend:
     image: public.ecr.aws/bitnami/postgresql:11.12.0
-    container_name: db_reference_backend
+    container_name: db_regulations_admin_backend
     networks:
       - local
     environment:

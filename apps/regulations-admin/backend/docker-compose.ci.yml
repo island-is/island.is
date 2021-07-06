@@ -6,19 +6,19 @@ services:
       context: .
       dockerfile: ../../scripts/ci/Dockerfile.test
       args:
-        DB_NAME: db_reference_backend
-        APP: reference-backend
+        DB_NAME: db_regulations_admin_backend
+        APP: regulations-admin-backend
     networks:
       - local
     depends_on:
-      - db_reference_backend
+      - db_regulations_admin_backend
     environment:
       - TEST_DB_USER=test_db
       - TEST_DB_PASS=test_db
       - TEST_DB_NAME=test_db
-      - DB_HOST=db_reference_backend
+      - DB_HOST=db_regulations_admin_backend
     volumes:
       - ../..:/code
 
-  db_reference_backend:
+  db_regulations_admin_backend:
     ports: []
