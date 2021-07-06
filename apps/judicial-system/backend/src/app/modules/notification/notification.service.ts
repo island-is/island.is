@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
+import { IntlService } from '@island.is/api/domains/translations'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
@@ -58,6 +59,7 @@ export class NotificationService {
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private intlService: IntlService,
   ) {}
 
   private async existsRevokableNotification(
@@ -232,7 +234,11 @@ export class NotificationService {
   private async sendReadyForCourtEmailNotificationToProsecutor(
     existingCase: Case,
   ): Promise<Recipient> {
-    const pdf = await getRequestPdfAsString(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+    const pdf = await getRequestPdfAsString(existingCase, intl.formatMessage)
 
     const subject = `Krafa í máli ${existingCase.policeCaseNumber}`
     const html = 'Sjá viðhengi'
@@ -260,7 +266,11 @@ export class NotificationService {
   }
 
   private async uploadRequestPdfToCourt(existingCase: Case): Promise<void> {
-    const pdf = await getRequestPdfAsBuffer(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+    const pdf = await getRequestPdfAsBuffer(existingCase, intl.formatMessage)
 
     try {
       const streamId = await this.courtService.uploadStream(
@@ -384,7 +394,11 @@ export class NotificationService {
     let attachments: Attachment[]
 
     if (existingCase.sendRequestToDefender) {
-      const pdf = await getRequestPdfAsString(existingCase)
+      const intl = await this.intlService.useIntl(
+        ['judicial.system.backend'],
+        'is',
+      )
+      const pdf = await getRequestPdfAsString(existingCase, intl.formatMessage)
 
       attachments = [
         {

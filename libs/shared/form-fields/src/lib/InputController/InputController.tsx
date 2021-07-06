@@ -1,12 +1,14 @@
 import React, { FC } from 'react'
 import { Input, InputBackgroundColor } from '@island.is/island-ui/core'
-import { Controller } from 'react-hook-form'
+import { Controller, Control, ValidationRules } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 
 interface Props {
   autoFocus?: boolean
   defaultValue?: string
   disabled?: boolean
+  control?: Control
+  rules?: ValidationRules
   error?: string
   id: string
   label?: string
@@ -41,6 +43,8 @@ export const InputController: FC<Props> = ({
   label,
   name = id,
   placeholder,
+  control,
+  rules,
   backgroundColor,
   textarea,
   currency,
@@ -165,6 +169,8 @@ export const InputController: FC<Props> = ({
   return (
     <Controller
       name={name}
+      control={control}
+      rules={rules}
       {...(defaultValue !== undefined && { defaultValue })}
       render={renderChildInput}
     />
