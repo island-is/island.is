@@ -8,7 +8,7 @@ interface EndorsementData {
 
 export const useHasEndorsed = (endorsementListId: string) => {
   const { data: endorsementsData } = useQuery<EndorsementData>(
-    GetUserEndorsements
+    GetUserEndorsements,
   )
 
   const endorsements = endorsementsData?.endorsementSystemUserEndorsements

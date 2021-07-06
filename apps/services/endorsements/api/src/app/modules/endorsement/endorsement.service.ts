@@ -123,7 +123,7 @@ export class EndorsementService {
         listId: listId,
         nationalId,
         validationRules,
-        metadata
+        metadata,
       })
       throw new BadRequestException('Failed list validation rules')
     }

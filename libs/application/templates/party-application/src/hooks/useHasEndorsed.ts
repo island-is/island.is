@@ -23,12 +23,12 @@ export const useHasEndorsed = () => {
   ]
 
   const endorsements = endorsementsData?.endorsementSystemUserEndorsements
-  
+
   // user has endorsed if any tags of his endorsements match the list of restricted tags
   const hasEndorsed = endorsements?.some((endorsement) => {
     const endorsementListTags = endorsement.endorsementList?.tags ?? []
-    return endorsementListTags.some((tag)  => restrictedTags.includes(tag))
+    return endorsementListTags.some((tag) => restrictedTags.includes(tag))
   })
-  
+
   return { hasEndorsed, loading, refetch }
 }
