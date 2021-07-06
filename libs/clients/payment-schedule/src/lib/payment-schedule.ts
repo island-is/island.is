@@ -18,6 +18,11 @@ import {
   DistributionInitialPositionRequest,
   DistributionInitialPositionResponse,
 } from './types/distribution-initial.type'
+import {
+  PaymentDistribution,
+  PaymentDistributionRequest,
+  PaymentDistributionResponse,
+} from './types/distribution.type'
 
 export class PaymentScheduleAPI extends RESTDataSource {
   constructor(
@@ -52,7 +57,7 @@ export class PaymentScheduleAPI extends RESTDataSource {
     )
 
     response.deptAndSchedules.map((x) => console.log(x.chargetypes))
-    console.log(response)
+
     return response.deptAndSchedules
   }
 
@@ -71,5 +76,29 @@ export class PaymentScheduleAPI extends RESTDataSource {
       `distributionInitialPosition/${nationalId}/${type}?totalAmount=${totalAmount}&disposableIncome=${disposableIncome}`,
     )
     return response.DistributionInitialPosition
+  }
+
+  async getPaymentDistribtion(
+    request: PaymentDistributionRequest,
+  ): Promise<PaymentDistribution> {
+    const {
+      nationalId,
+      totalAmount,
+      scheduleType,
+      monthAmount,
+      monthCount,
+    } = request
+
+    const queryParams = new URLSearchParams()
+    queryParams.append('totalAmount', totalAmount.toString())
+
+    if (monthAmount) queryParams.append('monthAmount', monthAmount.toString())
+    if (monthCount) queryParams.append('monthCount', monthCount.toString())
+
+    const response = await this.get<PaymentDistributionResponse>(
+      `paymentDistribution/${nationalId}/${scheduleType}`,
+      queryParams.toString(),
+    )
+    return response.paymentDistribution
   }
 }
