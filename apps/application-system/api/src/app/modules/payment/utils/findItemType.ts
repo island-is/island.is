@@ -1,74 +1,49 @@
-//import { DrivingLicenseType } from '../types/schema'
-
 export const findItemType = (itemCode: string) => {
-  let typeId = itemCode
-  // AYXXX PayableDummyTemplate should be deleted when Dummy testing has finished.
-  switch (typeId) {
+  // TODO: AYXXX PayableDummyTemplate should be deleted when Dummy testing has finished.
+  switch (itemCode) {
     case 'AYXXX':
-      typeId = 'PayableDummyTemplate'
-      break
+      return 'PayableDummyTemplate'
     case 'AY101':
-      typeId = 'Sakarvottorð'
-      break
+      return 'Sakarvottorð'
     case 'AY102':
-      typeId = 'Veðbókarvottorð'
-      break
+      return 'Veðbókarvottorð'
     case 'AY110':
-      typeId = 'DrivingLicense'
-      break
+      return 'DrivingLicense'
     case 'AY111':
-      typeId = 'Ökuskírteini fyrir flokka M&T'
-      break
+      return 'Ökuskírteini fyrir flokka M&T'
     case 'AY112':
-      typeId = 'Alþjóðlegt ökuskírteini'
-      break
+      return 'Alþjóðlegt ökuskírteini'
     case 'AY113':
-      typeId = 'Skírteini fyrir 65 ára & eldri'
-      break
+      return 'Skírteini fyrir 65 ára & eldri'
     case 'AY114':
-      typeId = 'Bráðabirgðaökuskírteini'
-      break
+      return 'Bráðabirgðaökuskírteini'
     case 'AY120':
-      typeId = 'Heimagisting'
-      break
+      return 'Heimagisting'
     case 'AY121':
-      typeId = 'Gististaður án veitinga'
-      break
+      return 'Gististaður án veitinga'
     case 'AY122':
-      typeId = 'Gististaður með veitingum'
-      break
+      return 'Gististaður með veitingum'
     case 'AY123':
-      typeId = 'Gististaður með áfengisveitingum'
-      break
+      return 'Gististaður með áfengisveitingum'
     case 'FO141':
-      typeId = 'Ferðaskrifstofuleyfi'
-      break
+      return 'Ferðaskrifstofuleyfi'
     case 'FO142':
-      typeId = 'Yfirferðar bókhaldsgagna'
-      break
+      return 'Yfirferðar bókhaldsgagna'
     case 'FO143':
-      typeId = 'Leyfi ferðasala - dagsferðir'
-      break
+      return 'Leyfi ferðasala - dagsferðir'
     case 'FO144':
-      typeId = 'Skráningargjald upplýsingam.'
-      break
+      return 'Skráningargjald upplýsingam.'
     case 'FO145':
-      typeId = 'Þjónustugjöld'
-      break
+      return 'Þjónustugjöld'
     case 'FO146':
-      typeId = 'Endurmat tryggingarfjárhæðar'
-      break
+      return 'Endurmat tryggingarfjárhæðar'
     case 'L1101':
-      typeId = 'Umsókn um ríkisborgararétt'
-      break
+      return 'Umsókn um ríkisborgararétt'
     case 'L2101':
-      typeId = 'Búsforræðisvottorð'
-      break
+      return 'Búsforræðisvottorð'
     case 'L3101':
-      typeId = 'Staðfesting áritana'
-      break
+      return 'Staðfesting áritana'
     default:
-      typeId = 'UnknownCatalog'
+      return 'UnknownCatalog'
   }
-  return typeId
 }

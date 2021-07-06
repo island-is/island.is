@@ -111,7 +111,7 @@ export class PaymentService {
         handleError,
       )
     }
-    // TEMP !!! This is only while payment dummy is being used/tested. Should be deleted later.
+    // TODO: temp - This is only while payment dummy is being used/tested. Should be deleted later.
     if (!isRunningOnEnvironment('production') && chargeItemCode === 'AYXXX') {
       chargeItemCode = 'AY110'
     }
@@ -133,7 +133,6 @@ export class PaymentService {
     applicationType: string,
   ): Promise<ApplicationModel> {
     const application = await ApplicationModel.findAll({
-      raw: true,
       where: {
         id: applicationId,
         typeId: applicationType,
