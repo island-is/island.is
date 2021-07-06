@@ -7,9 +7,11 @@ import {
 import { PaymentScheduleAPI } from '@island.is/clients/payment-schedule'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { PaymentScheduleConditions, PaymentScheduleDebts } from './models'
 import { PaymentScheduleEmployer } from './models/employer.model'
+import { GetInitialScheduleInput } from './dto/getInitialScheduleInput'
+import { PaymentScheduleInitialSchedule } from './models/InitialSchedule.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -49,5 +51,21 @@ export class PaymentScheduleResolver {
       name: employerResponse.employerName,
       nationalId: employerResponse.employerNationalId,
     }
+  }
+
+  @Query(() => PaymentScheduleInitialSchedule, {
+    name: 'paymentScheduleInitialSchedule',
+    nullable: true,
+  })
+  @Audit()
+  async intitialSchedule(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => GetInitialScheduleInput })
+    input: GetInitialScheduleInput,
+  ): Promise<PaymentScheduleInitialSchedule> {
+    return await this.paymentScheduleClientApi.getInitalSchedule({
+      nationalId: user.nationalId,
+      ...input,
+    })
   }
 }
