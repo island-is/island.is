@@ -28,7 +28,7 @@ function extract_environment() {
 }
 
 function find_placeholder() {
-  grep "$placeholder" "$file"
+  [[ -f "$file" ]] && grep "$placeholder" "$file"
 }
 
 function insert_environment() {
@@ -43,8 +43,7 @@ function insert_environment() {
 }
 
 function main() {
-  has_placeholder=$(find_placeholder)
-  if [[ -n "$has_placeholder" ]]; then
+  if find_placeholder; then
     echo "Extracting environment"
     environment=$(extract_environment)
 

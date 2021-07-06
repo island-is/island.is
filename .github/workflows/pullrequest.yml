@@ -226,6 +226,8 @@ jobs:
         run: ./scripts/ci/20_lint-workspace.sh
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@1.1.0
+        with:
+          ignore: node_modules
 
   formatting:
     needs:
