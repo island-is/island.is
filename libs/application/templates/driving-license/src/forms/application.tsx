@@ -112,7 +112,7 @@ export const application: Form = buildForm({
               title: 'Afhending',
               titleVariant: 'h4',
               description:
-                'Veldu það embætti sýslumanns sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
+                'Veldu það embætti sýslumanns sem þú vilt skila inn bráðabirgðaskírteini og fá afhennt nýtt fullnaðarskírteini',
             }),
             buildSelectField({
               id: 'juristiction',
@@ -156,7 +156,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.hasReducedPeripheralVision',
+                id: 'healthDeclaration.hasEpilepsy',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -166,7 +166,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.hasEpilepsy',
+                id: 'healthDeclaration.hasHeartDisease',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -176,7 +176,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.hasHeartDisease',
+                id: 'healthDeclaration.hasMentalIllness',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -186,7 +186,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.hasMentalIllness',
+                id: 'healthDeclaration.usesMedicalDrugs',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -196,7 +196,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.usesMedicalDrugs',
+                id: 'healthDeclaration.isAlcoholic',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -206,7 +206,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.isAlcoholic',
+                id: 'healthDeclaration.hasDiabetes',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -216,7 +216,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.hasDiabetes',
+                id: 'healthDeclaration.isDisabled',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -226,22 +226,12 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.isDisabled',
-                title: '',
-                component: 'HealthDeclaration',
-              },
-              {
-                label: m.healthDeclaration9,
-              },
-            ),
-            buildCustomField(
-              {
                 id: 'healthDeclaration.hasOtherDiseases',
                 title: '',
                 component: 'HealthDeclaration',
               },
               {
-                label: m.healthDeclaration10,
+                label: m.healthDeclaration9,
               },
             ),
           ],
@@ -356,7 +346,6 @@ export const application: Form = buildForm({
             buildKeyValueField({
               label: m.overviewPaymentCharge,
               value: ({ externalData }) => {
-                // needs a lot of refactoring
                 const str = Object.values(externalData.payment.data as object)
                 // more refactoring
                 return (parseInt(str[1], 10) + ' kr.') as StaticText

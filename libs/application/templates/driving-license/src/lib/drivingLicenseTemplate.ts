@@ -29,7 +29,6 @@ const dataSchema = z.object({
   juristiction: z.string(),
   healthDeclaration: z.object({
     usesContactGlasses: z.enum(['yes', 'no']),
-    hasReducedPeripheralVision: z.enum(['yes', 'no']),
     hasEpilepsy: z.enum(['yes', 'no']),
     hasHeartDisease: z.enum(['yes', 'no']),
     hasMentalIllness: z.enum(['yes', 'no']),
