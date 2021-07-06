@@ -20,22 +20,26 @@ const Container = styled.View`
   background-color: ${(props) => props.theme.shade.background};
 `
 
-const SearchBarComponent = () => {
+const SearchBarComponent = ({
+  queryKey = 'inboxQuery',
+}: {
+  queryKey?: 'inboxQuery' | 'applicationQuery'
+} = {}) => {
   const intl = useIntl()
-  const { query } = useUiStore()
+  const ui = useUiStore()
   return (
     <Host>
       <Container>
         <SearchBar
-          value={query}
-          onChangeText={(text) => uiStore.setState({ query: text })}
-          onCancelPress={() => uiStore.setState({ query: '' })}
+          value={ui[queryKey]}
+          onChangeText={(text) => uiStore.setState({ [queryKey]: text } as any)}
+          onCancelPress={() => uiStore.setState({ [queryKey]: '' } as any)}
           placeholder={intl.formatMessage({ id: 'inbox.searchPlaceholder' })}
           returnKeyType="search"
         />
       </Container>
     </Host>
-  );
+  )
 }
 
 export const AndroidSearchBar = () => {
@@ -45,5 +49,5 @@ export const AndroidSearchBar = () => {
         <SearchBarComponent />
       </ThemeProvider>
     </I18nProvider>
-  );
+  )
 }

@@ -26,6 +26,7 @@ import { LIST_SEARCH_QUERY } from '../../graphql/queries/list-search.query'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { openBrowser } from '../../lib/rn-island'
 import { useUiStore } from '../../stores/ui-store'
+import { ComponentRegistry } from '../../utils/component-registry'
 import { testIDs } from '../../utils/test-ids'
 
 interface IndexedApplication extends IArticleSearchResults {
@@ -50,11 +51,22 @@ const {
   }),
   {
     topBar: {
+      elevation: 0,
+      height: 120,
       searchBar: {
         visible: true,
         hideTopBarOnFocus: true,
       },
       rightButtons: [],
+      background: {
+        component:
+          Platform.OS === 'android'
+            ? {
+                name: ComponentRegistry.AndroidSearchBar,
+                passProps: { queryKey: 'applicationQuery' }
+              }
+            : undefined,
+      },
     },
   },
 )

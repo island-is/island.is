@@ -41,6 +41,7 @@ import { config } from '../../utils/config'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
 import { useBiometricType } from '../onboarding/onboarding-biometrics'
+import { useUiStore } from '../../stores/ui-store'
 
 const PreferencesSwitch = React.memo(
   ({ name }: { name: keyof PreferencesStore }) => {
@@ -76,18 +77,13 @@ export function TabSettings() {
     setUseBiometrics,
     appLockTimeout,
   } = usePreferencesStore()
-  const [isEnrolled, setIsEnrolled] = useState(false)
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
   const [pushToken, setPushToken] = useState('loading...')
   const efficient = useRef<any>({}).current
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
-  const [
-    supportedAuthenticationTypes,
-    setSupportedAuthenticationTypes,
-  ] = useState<AuthenticationType[]>([])
-
-  const biometricType = useBiometricType(supportedAuthenticationTypes)
+  const { authenticationTypes, isEnrolledBiometrics } = useUiStore();
+  const biometricType = useBiometricType(authenticationTypes)
 
   const onLogoutPress = async () => {
     await authStore.getState().logout()
@@ -117,8 +113,6 @@ export function TabSettings() {
   }
 
   useEffect(() => {
-    isEnrolledAsync().then(setIsEnrolled)
-    supportedAuthenticationTypesAsync().then(setSupportedAuthenticationTypes)
     setTimeout(() => {
       // @todo move to ui store, persist somehow
       setLoadingCP(true)
@@ -131,11 +125,6 @@ export function TabSettings() {
         .then((token) => setPushToken(token))
         .catch(() => setPushToken('no token in simulator'))
     }, 330)
-    AppState.addEventListener('change', (state) => {
-      if (state === 'active') {
-        isEnrolledAsync().then(setIsEnrolled)
-      }
-    })
   }, [])
 
   return (
@@ -283,7 +272,7 @@ export function TabSettings() {
             },
           )}
           subtitle={
-            isEnrolled
+            isEnrolledBiometrics
               ? intl.formatMessage(
                   {
                     id: 'settings.security.useBiometricsDescription',
@@ -311,7 +300,7 @@ export function TabSettings() {
                   setUseBiometrics(value)
                 }
               }}
-              disabled={!isEnrolled}
+              disabled={!isEnrolledBiometrics}
               value={useBiometrics}
               thumbColor={Platform.select({ android: theme.color.dark100 })}
               trackColor={{

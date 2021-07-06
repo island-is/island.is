@@ -22,7 +22,7 @@ import {
   preferencesStore,
   usePreferencesStore,
 } from '../../stores/preferences-store'
-import { uiStore } from '../../stores/ui-store'
+import { uiStore, useUiStore } from '../../stores/ui-store'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
 
@@ -56,20 +56,12 @@ const Center = styled.View`
 `
 
 function useBiometricType() {
-  const [
-    type,
-    setSupportedAuthenticationTypes,
-  ] = useState<AuthenticationType[]>([])
-
-  useEffect(() => {
-    supportedAuthenticationTypesAsync().then(setSupportedAuthenticationTypes)
-  }, []);
-
-  if (type.includes(AuthenticationType.FACIAL_RECOGNITION)) {
+  const { authenticationTypes } = useUiStore();
+  if (authenticationTypes.includes(AuthenticationType.FACIAL_RECOGNITION)) {
     return 'faceid'
-  } else if (type.includes(AuthenticationType.FINGERPRINT)) {
+  } else if (authenticationTypes.includes(AuthenticationType.FINGERPRINT)) {
     return 'fingerprint'
-  } else if (type.includes(AuthenticationType.IRIS)) {
+  } else if (authenticationTypes.includes(AuthenticationType.IRIS)) {
     return 'iris'
   }
   return undefined
@@ -80,15 +72,13 @@ export const AppLockScreen: NavigationFunctionComponent<{
   status: string
 }> = ({ componentId, lockScreenActivatedAt, status }) => {
   const av = useRef(new Animated.Value(1)).current
-
-  const theme = useTheme()
   const isPromptRef = useRef(false)
   const [code, setCode] = useState('')
   const [invalidCode, setInvalidCode] = useState(false)
   const [attempts, setAttempts] = useState(0)
   const { useBiometrics } = usePreferencesStore()
-  const intl = useIntl()
   const biometricType = useBiometricType();
+  const intl = useIntl()
 
   const resetLockScreen = useCallback(() => {
     authStore.setState(() => ({

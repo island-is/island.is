@@ -141,7 +141,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const ui = useUiStore()
   const theme = useTheme()
-  const { nationalId, initialized, readItems, actions } = useInboxStore()
+  const { initialized, readItems, actions } = useInboxStore()
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const flatListRef = useRef<FlatList>(null)
@@ -195,15 +195,15 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   })
 
   useNavigationSearchBarUpdate((e) => {
-    if (e.text !== ui.query) {
+    if (e.text !== ui.inboxQuery) {
       setSearchLoading(true)
     }
-    ui.setQuery(e.text)
+    ui.setInboxQuery(e.text)
   })
 
   useNavigationSearchBarCancelPress(() => {
     setSearchLoading(true)
-    ui.setQuery('')
+    ui.setInboxQuery('')
   })
 
   // when res data is loaded
@@ -231,13 +231,13 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   // search query updates
   useEffect(() => {
     setSearchLoading(false)
-    const q = ui.query.toLocaleLowerCase().trim()
+    const q = ui.inboxQuery.toLocaleLowerCase().trim()
     if (q !== '') {
       setInboxItems(indexedItems.filter((item) => item.fulltext.includes(q)))
     } else {
       setInboxItems([...indexedItems])
     }
-  }, [ui.query, indexedItems])
+  }, [ui.inboxQuery, indexedItems])
 
   useEffect(() => {
     if (!initialized) {
@@ -290,7 +290,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
     [readItems],
   )
 
-  const isSearch = ui.query.length > 0
+  const isSearch = ui.inboxQuery.length > 0
   const isLoading = res.loading
   const isEmpty = (res?.data?.listDocuments ?? []).length === 0
 

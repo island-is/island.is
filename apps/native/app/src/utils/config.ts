@@ -26,6 +26,8 @@ const defaults = {
       'api_resource.scope',
       'offline_access',
       '@island.is/applications:read',
+      '@island.is/documents',
+      // '@island.is/user-profile:read'
     ],
     clientId: '@island.is-app',
   },

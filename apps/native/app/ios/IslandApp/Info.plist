@@ -39,6 +39,8 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NFCReaderUsageDescription</key>
+	<string>Used for license scanning capabilities</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -52,10 +54,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Used for license scanning capabilities</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Used for unlocking the app</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Used for determining your location while using the app</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Used for license scanning capabilities</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>IBMPlexSans-Regular.ttf</string>
@@ -98,11 +104,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSCameraUsageDescription</key>
-	<string>Used for license scanning capabilities</string>
-	<key>NFCReaderUsageDescription</key>
-	<string>Used for license scanning capabilities</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Used for license scanning capabilities</string>
 </dict>
 </plist>

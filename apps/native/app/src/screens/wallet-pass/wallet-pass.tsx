@@ -17,9 +17,12 @@ import {
   SafeAreaView,
   View,
   ActivityIndicator,
+  NativeModules,
+  Linking,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
+import * as FileSystem from 'expo-file-system'
 import styled, { useTheme } from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { client } from '../../graphql/client'
@@ -155,39 +158,50 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     ...licenseRes.data?.genericLicense,
   }
 
-  const onAddPkPass = () => {
-    PassKit.canAddPasses().then((result: boolean) => {
-      if (result) {
-        client
-          .mutate({
-            mutation: GENERATE_PKPASS_MUTATION,
-            variables: {
-              input: {
-                licenseType: GenericLicenseType.DriversLicense,
-              },
-            },
-          })
-          .then(async ({ data }) => {
-            try {
-              const res = await fetch(data.generatePkPass.pkpassUrl)
-              const blob = await res.blob()
-              const reader = new FileReader()
-              reader.readAsDataURL(blob)
-              reader.onloadend = () => {
-                const passData = reader.result?.toString()!
-                PassKit.addPass(passData.substr(41), 'com.snjallveskid')
-              }
-            } catch (err) {
-              alert('Failed to add pass')
-            }
-          })
-          .catch((err) => {
-            alert('Failed to fetch pass')
-          })
-      } else {
-        alert('You cannot add passes on this device');
-      }
+  const onAddPkPass = async () => {
+    const { canAddPasses, addPass } = Platform.select({
+      ios: PassKit,
+      android: NativeModules.IslandModule,
     })
+    const canAddPass = await canAddPasses()
+    if (Platform.OS === 'android' || canAddPass) {
+      try {
+        const { data } = await client.mutate({
+          mutation: GENERATE_PKPASS_MUTATION,
+          variables: {
+            input: {
+              licenseType: GenericLicenseType.DriversLicense,
+            },
+          },
+        });
+        if (Platform.OS === 'android') {
+          const pkPassUri =
+            FileSystem.documentDirectory! + Date.now() + '.pkpass'
+          await FileSystem.downloadAsync(
+            data.generatePkPass.pkpassUrl,
+            pkPassUri,
+          )
+          const pkPassContentUri = await FileSystem.getContentUriAsync(
+            pkPassUri,
+          )
+          addPass(pkPassContentUri, 'com.snjallveskid')
+          return
+        }
+        const res = await fetch(data.generatePkPass.pkpassUrl)
+        const blob = await res.blob()
+        const reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onloadend = () => {
+          const passData = reader.result?.toString()!
+          addPass(passData.substr(41), 'com.snjallveskid')
+        }
+      } catch (err) {
+        alert('Failed to fetch or add pass');
+        console.error(err);
+      }
+    } else {
+      alert('You cannot add passes on this device')
+    }
   }
 
   const fields = data?.payload?.data ?? []

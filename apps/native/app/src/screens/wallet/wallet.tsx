@@ -6,7 +6,7 @@ import {
   Skeleton,
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import {
   Animated,
   FlatList,
