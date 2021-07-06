@@ -460,8 +460,8 @@ export const HearingArrangements: React.FC = () => {
           </FormContentContainer>
           {modalVisible && (
             <Modal
-              title="Tilkynning um fyrirtökutíma hefur verið send"
-              text="Tilkynning um fyrirtökutíma hefur verið send á ákæranda, fangelsi og verjanda hafi verjandi verið skráður."
+              title={formatMessage(rcHearingArrangements.modal.heading)}
+              text={formatMessage(rcHearingArrangements.modal.text)}
               handlePrimaryButtonClick={() => {
                 router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
               }}

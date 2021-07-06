@@ -81,7 +81,7 @@ const HearingArrangements = () => {
           }),
       )
     }
-  }, [userData])
+  }, [userData, user?.institution?.id])
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
