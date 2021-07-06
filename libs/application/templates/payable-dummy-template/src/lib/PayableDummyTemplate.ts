@@ -41,6 +41,7 @@ const PayableDummyTemplate: ApplicationTemplate<
   name: m.name,
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
+  readyForProduction: true,
   dataSchema: Schema,
   stateMachineConfig: {
     initial: States.DRAFT,
