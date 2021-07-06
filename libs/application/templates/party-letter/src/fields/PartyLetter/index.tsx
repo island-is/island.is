@@ -36,8 +36,9 @@ export const ACTIVE_PARTIES: { letter: string; name: string }[] = [
 const PartyLetter: FC<FieldBaseProps> = () => {
   const { formatMessage } = useLocale()
 
-  const first = ACTIVE_PARTIES.slice(0, Math.ceil(ACTIVE_PARTIES.length / 2))
-  const second = ACTIVE_PARTIES.slice(Math.ceil(ACTIVE_PARTIES.length / 2))
+  const indexOfHalf = Math.ceil(ACTIVE_PARTIES.length / 2)
+  const first = ACTIVE_PARTIES.slice(0, indexOfHalf)
+  const second = ACTIVE_PARTIES.slice(indexOfHalf)
 
   const renderPartyList = (list: { letter: string; name: string }[]) => (
     <Stack space={1}>

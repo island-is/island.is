@@ -5,24 +5,24 @@ import { Approved } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 
 interface EndorsementApprovedProps {
-  hasEndorsedBefore?: boolean
+  showAsWarning?: boolean
 }
 
 const EndorsementApproved = ({
-  hasEndorsedBefore,
+  showAsWarning,
 }: EndorsementApprovedProps) => {
   const { formatMessage } = useLocale()
 
   return (
     <Box>
       <Box marginBottom={12}>
-        {!hasEndorsedBefore && (
+        {!showAsWarning && (
           <Approved
             title={formatMessage(m.endorsementApproved.cardTitle)}
             subtitle={formatMessage(m.endorsementApproved.cardSubtitle)}
           />
         )}
-        {hasEndorsedBefore && (
+        {showAsWarning && (
           <AlertMessage
             type="warning"
             title={formatMessage(m.endorsementApproved.cardTitleWarning)}
