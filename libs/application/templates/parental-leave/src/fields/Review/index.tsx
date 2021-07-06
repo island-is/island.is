@@ -156,21 +156,24 @@ const Review: FC<ReviewScreenProps> = ({
                     }
                   />
                   {otherParentWillApprove && (
-                    <InputController
-                      id="otherParentEmail"
-                      name="otherParentEmail"
-                      defaultValue={otherParentEmail}
-                      label={formatMessage(
-                        parentalLeaveFormMessages.shared
-                          .otherParentEmailSubSection,
-                      )}
-                      onChange={(e) =>
-                        setStateful((prev) => ({
-                          ...prev,
-                          otherParentEmail: e.target.value,
-                        }))
-                      }
-                    />
+                    <>
+                      <br />
+                      <InputController
+                        id="otherParentEmail"
+                        name="otherParentEmail"
+                        defaultValue={otherParentEmail}
+                        label={formatMessage(
+                          parentalLeaveFormMessages.shared
+                            .otherParentEmailSubSection,
+                        )}
+                        onChange={(e) =>
+                          setStateful((prev) => ({
+                            ...prev,
+                            otherParentEmail: e.target.value,
+                          }))
+                        }
+                      />
+                    </>
                   )}
                 </GridColumn>
 
