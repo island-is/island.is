@@ -18,5 +18,5 @@ export class UpdateApplicationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly comment: string
+  readonly rejection: string
 }

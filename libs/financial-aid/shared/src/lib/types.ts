@@ -46,6 +46,7 @@ export interface Application {
   state: ApplicationState
   amount?: number
   comment?: string
+  rejection?: string
 }
 
 export interface CreateApplication {
@@ -73,7 +74,7 @@ export interface CreateApplication {
 export interface UpdateApplication {
   state: ApplicationState
   amount?: number
-  comment?: string
+  rejection?: string
 }
 
 export interface CreateApplicationEvent {

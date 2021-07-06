@@ -55,7 +55,7 @@ const StateModal: React.FC<Props> = ({
     application: Application,
     state: ApplicationState,
     amount?: number,
-    comment?: string,
+    rejection?: string,
   ) => {
     const prevState = application.state
 
@@ -66,7 +66,7 @@ const StateModal: React.FC<Props> = ({
             id: application.id,
             state: state,
             amount: amount,
-            comment: comment,
+            rejection: rejection,
           },
         },
       })

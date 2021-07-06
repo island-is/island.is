@@ -63,7 +63,7 @@ export class ApplicationService {
     const eventModel = await this.applicationEventService.create({
       applicationId: id,
       state: update.state,
-      comment: update.comment,
+      comment: update.rejection,
     })
 
     return { numberOfAffectedRows, updatedApplication }

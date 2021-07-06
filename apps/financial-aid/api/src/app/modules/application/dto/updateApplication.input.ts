@@ -23,5 +23,5 @@ export class UpdateApplicationInput implements UpdateApplication {
 
   @Allow()
   @Field({ nullable: true })
-  readonly comment?: string
+  readonly rejection?: string
 }

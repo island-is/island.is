@@ -124,23 +124,34 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Sótt um',
-        content: `${calculateAidFinalAmount(
-          aidAmount,
-          application.usePersonalTaxCredit,
-          currentYear,
-        ).toLocaleString('de-DE')} kr.`,
+        content: `${
+          aidAmount &&
+          calculateAidFinalAmount(
+            aidAmount,
+            application.usePersonalTaxCredit,
+            currentYear,
+          ).toLocaleString('de-DE')
+        } kr.`,
         onclick: () => {
           setAidModalVisible(!isAidModalVisible)
         },
       },
-      {
-        title: 'Veitt',
-        content:
-          application.state === ApplicationState.APPROVED
-            ? `${application.amount?.toLocaleString('de-DE')} kr.`
-            : `Umsókn ekki samþykkt`,
-      },
     ]
+
+    if (application.state === ApplicationState.APPROVED) {
+      applicationInfo.push({
+        title: 'Veitt',
+        content: `${application.amount?.toLocaleString('de-DE')} kr.`,
+      })
+    }
+    if (application.state === ApplicationState.REJECTED) {
+      applicationInfo.push({
+        title: 'Aðstoð synjað',
+        content: application?.rejection
+          ? application?.rejection
+          : 'enginn ástæða gefin',
+      })
+    }
 
     const applicant = [
       {

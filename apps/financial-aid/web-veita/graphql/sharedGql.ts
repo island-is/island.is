@@ -25,6 +25,7 @@ export const GetApplicationQuery = gql`
       formComment
       studentCustom
       amount
+      rejection
     }
   }
 `
