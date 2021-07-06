@@ -30,9 +30,9 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
 
   const { formatMessage } = useLocale()
   const [agreed, setAgreed] = useState(false)
+  const [endorsedNow, setEndorsedNow] = useState(false)
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
   const { hasEndorsed, loading, refetch } = useHasEndorsed()
-
   const constituency = application.answers.constituency
   const { data: userData } = useQuery(GetFullName)
   const isClosed = useIsClosed(endorsementListId)
@@ -50,6 +50,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
       },
     })
     if (success) {
+      setEndorsedNow(true)
       refetch()
     }
   }
@@ -64,8 +65,8 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <Box>
-      {!loading && hasEndorsed ? (
-        <EndorsementApproved />
+      {!loading && (hasEndorsed || endorsedNow) ? (
+        <EndorsementApproved showAsWarning={hasEndorsed && !endorsedNow} />
       ) : (
         <Box>
           <Box marginBottom={2}>
@@ -83,7 +84,6 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
           {alertBannerDescription && (
             <Box marginY={5}>
               <AlertBanner
-                title={formatMessage(m.endorsementDisclaimer.alertMessageTitle)}
                 description={alertBannerDescription}
                 variant="warning"
               />
@@ -121,10 +121,17 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               )}
             />
           </Box>
-          <Box marginBottom={5}>
+          <Box marginBottom={4}>
             <FieldDescription
               description={formatMessage(
                 m.endorsementDisclaimer.descriptionPt2,
+              )}
+            />
+          </Box>
+          <Box marginBottom={5}>
+            <FieldDescription
+              description={formatMessage(
+                m.endorsementDisclaimer.descriptionPt3,
               )}
             />
           </Box>
