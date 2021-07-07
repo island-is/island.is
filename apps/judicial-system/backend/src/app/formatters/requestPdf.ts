@@ -43,7 +43,7 @@ function constructRestrictionRequestPdf(
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
-  console.log(existingCase.defenderName)
+
   doc
     .font('Helvetica-Bold')
     .fontSize(26)
