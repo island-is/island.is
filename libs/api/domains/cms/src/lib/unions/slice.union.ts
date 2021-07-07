@@ -208,8 +208,7 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
     case 'overviewLinks':
       return mapOverviewLinks(slice as IOverviewLinks)
     case 'eventSlice':
-      const x = mapEventSlice(slice as IEventSlice)
-      return x
+      return mapEventSlice(slice as IEventSlice)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }
