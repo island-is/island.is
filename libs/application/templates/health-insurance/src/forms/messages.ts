@@ -486,7 +486,7 @@ export const m = defineMessages({
   pendingApplicationDescription: {
     id: 'hi.application:oldPendingApplication.description',
     defaultMessage:
-      'Þú hefur nú þegar sótt um sjúkratryggingu. Númer umsókninnar er **{applicationNumber}**. Vinsamlegast hafið samband við Sjúkratryggingar Íslands ef spurningar vakna.',
+      'Þú hefur nú þegar sótt um sjúkratryggingu. Númer umsókninnar er {applicationNumber}. Vinsamlegast hafið samband við Sjúkratryggingar Íslands ef spurningar vakna.',
     description:
       'You have already submitted an application for health insurance. Your application number is **{applicationNumber}**. Please contact the Icelandic Health Insurance if you have any questions.',
   },
@@ -539,5 +539,10 @@ export const m = defineMessages({
     id: 'hi.application:externalDataSuccessTitle',
     defaultMessage: 'Hefja umsókn',
     description: 'Start application',
+  },
+  unexpectedError: {
+    id: 'hi.application:unexpectedError',
+    defaultMessage: 'Villa kom upp',
+    description: 'Unexpected error',
   },
 })

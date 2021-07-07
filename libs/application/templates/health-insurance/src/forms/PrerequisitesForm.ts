@@ -116,6 +116,11 @@ export const PrerequisitesForm: Form = buildForm({
               title: '',
               description: m.externalDataSuccessDescription,
             }),
+            buildCustomField({
+              title: 'test',
+              component: 'PrerequisiteSummary',
+              id: 'prerequisiteSummary',
+            }),
             buildSubmitField({
               id: 'toDraft',
               placement: 'footer',
