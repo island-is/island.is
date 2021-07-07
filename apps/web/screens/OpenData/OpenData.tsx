@@ -44,7 +44,18 @@ interface OpenDataProps {
 const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
   const { linkResolver } = useLinkResolver()
   console.log(page)
-  const { pageTitle, pageDescription } = page
+  const {  pageTitle,
+    pageDescription,
+    pageHeaderGraph,
+    link,
+    linkTitle,
+    statisticsCardsSection,
+    chartSectionTitle,
+    graphCards,
+    externalLinkCardSelection,
+    externalLinkSectionTitle,
+    externalLinkSectionDescription,
+    externalLinkSectionImage } = page
   
 
   // Hard coded values for the data links cards section, will be removed once connected to contentful
@@ -174,7 +185,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
                   ]}
                   renderLink={(link) => {
                     return (
-                      <NextLink {...linkResolver('homepage')} passHref>
+                      <NextLink {...linkResolver('opendatapage')} passHref>
                         {link}
                       </NextLink>
                     )
@@ -195,7 +206,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
                     variant="text"
                     as="span"
                   >
-                    Skoða mælaborð Rannís
+                    {linkTitle}
                   </Button>
                 </Link>
               </Box>
@@ -208,7 +219,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
       </Section>
       {/* TODO: Will need to change the props so facts card get their data from a query */}
       <Section aria-labelledby="factsCardsTitle">
-        <StatisticsCardsSection title="Stafrænt Ísland" />
+        <StatisticsCardsSection title="Stafrænt Ísland" cards={statisticsCardsSection} />
       </Section>
       <Section>
         <GridContainer>

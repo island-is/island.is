@@ -31,14 +31,13 @@ export const StatisticsCard = ({
 
   const items = (
     <Box
-      ref={ref}
       display="flex"
       flexGrow={1}
       flexDirection={shouldStack ? 'columnReverse' : 'row'}
       alignItems="stretch"
-      justifyContent="flexEnd"
+    
     >
-      <Box style={{ width: shouldStack ? '100%' : hasImage ? '70%' : '100%' }}>
+      <Box style={{ width: shouldStack ? '100%' : hasImage ? '60%' : '100%' }} paddingTop={8} paddingLeft={4}>
         <Stack space={1}>
           <Box display="flex" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
@@ -60,7 +59,6 @@ export const StatisticsCard = ({
           style={{
             width: shouldStack ? '100%' : '204px',
             height: shouldStack ? '100%' : '204px',
-            top: !shouldStack && '-51px',
           }}
         >
           <BackgroundImage
@@ -86,7 +84,7 @@ const FrameWrapper = ({ children }) => {
       overflow="visible"
       background="blue100"
       outline="none"
-      padding={[2, 2, 4]}
+      justifyContent='center'
     >
       {children}
     </Box>

@@ -145,6 +145,10 @@ export const routesTemplate = {
     is: '/',
     en: '/en',
   },
+  opendatapage: {
+    is: '/gagnatorg',
+    en: '/en/gagnatorg'
+  }
 }
 
 // This considers one block ("[someVar]") to be one variable and ignores the path variables name

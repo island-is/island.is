@@ -15,6 +15,14 @@ export const GET_OPEN_DATA_PAGE_QUERY = gql`
       statisticsCardsSection {
         title
         statistic
+        image {
+          id
+          url
+          title
+          contentType
+          width
+          height
+        }
       }
       chartSectionTitle
       externalLinkCardSelection {
