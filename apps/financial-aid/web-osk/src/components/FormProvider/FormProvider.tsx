@@ -3,7 +3,6 @@ import React, { createContext, useEffect, useState } from 'react'
 import {
   HomeCircumstances,
   Employment,
-  ApplicationFile,
 } from '@island.is/financial-aid/shared'
 import { UploadFile } from '@island.is/island-ui/core'
 
@@ -19,7 +18,7 @@ export interface Form {
   employmentCustom?: string
   hasIncome?: boolean
   incomeFiles: UploadFile[]
-  taxReturnFiles?: UploadFile[]
+  taxReturnFiles: UploadFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string
@@ -31,7 +30,7 @@ export interface Form {
   formComment?: string
 }
 
-export const initialState = { submitted: false, incomeFiles: [] }
+export const initialState = { submitted: false, incomeFiles: [], taxReturnFiles: [] }
 
 interface FormProvider {
   form: Form

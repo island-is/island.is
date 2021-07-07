@@ -92,7 +92,7 @@ const IncomeFilesForm = () => {
 
       <FormFooter
         previousUrl={navigation?.prevUrl}
-        nextButtonText={files.length > 0? 'Áfram' : 'Skila gögnum seinna'}
+        nextButtonText={files.length > 0? 'Halda áfram' : 'Skila gögnum seinna'}
         onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
