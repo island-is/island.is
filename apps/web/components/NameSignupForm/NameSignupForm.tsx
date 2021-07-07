@@ -83,7 +83,7 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
                 'Þetta netfang er þegar á skrá.',
               ),
             })
-          } else if (!!data) {
+          } else if (data) {
             setMessage({
               type: 'success',
               text: n('formSuccessTitle', 'Skráning tókst, takk fyrir!'),
@@ -112,7 +112,7 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
       <form onSubmit={formik.handleSubmit}>
         <Stack space={5}>
           <GridRow>
-            <GridColumn span={'12/12'} paddingBottom={!!message ? 0 : 3}>
+            <GridColumn span={'12/12'} paddingBottom={message ? 0 : 3}>
               <Text as="h3" variant="h3" color="blue600">
                 Skráning{' '}
                 {message.type === 'success'
