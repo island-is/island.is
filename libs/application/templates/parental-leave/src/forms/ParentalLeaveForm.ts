@@ -27,10 +27,10 @@ import {
   getAllPeriodDates,
   getSelectedChild,
   createRange,
-  calculatePeriodPercentage,
   requiresOtherParentApproval,
   getApplicationAnswers,
   allowOtherParent,
+  getPeriodPercentage,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -727,11 +727,10 @@ export const ParentalLeaveForm: Form = buildForm({
               title: parentalLeaveFormMessages.endDate.title,
               description: parentalLeaveFormMessages.endDate.description,
               children: [
-                buildDateField({
-                  id: 'periods[0].endDate',
-                  width: 'half',
+                buildCustomField({
+                  id: 'periods',
                   title: parentalLeaveFormMessages.endDate.label,
-                  placeholder: parentalLeaveFormMessages.endDate.placeholder,
+                  component: 'PeriodEndDate',
                 }),
               ],
             }),
@@ -755,19 +754,14 @@ export const ParentalLeaveForm: Form = buildForm({
                   defaultValue: (
                     application: Application,
                     field: SelectField,
-                  ) => {
-                    const percentage = calculatePeriodPercentage(application, {
-                      field,
-                    })
-
-                    return `${percentage}`
-                  },
+                  ) => getPeriodPercentage(application.answers, field),
                   options: (application: Application, field: Field) => {
-                    const percentage = calculatePeriodPercentage(application, {
+                    const percentage = getPeriodPercentage(
+                      application.answers,
                       field,
-                    })
+                    )
                     const existingOptions = percentOptions.filter(
-                      (option) => Number(option.value) < percentage,
+                      (option) => Number(option.value) < Number(percentage),
                     )
 
                     return [
@@ -810,28 +804,34 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.endDate.title,
                   description: parentalLeaveFormMessages.endDate.description,
                   children: [
-                    buildDateField({
-                      id: 'endDate',
-                      title: parentalLeaveFormMessages.endDate.label,
-                      placeholder:
-                        parentalLeaveFormMessages.endDate.placeholder,
-                      minDate: (application) => {
-                        const { periods } = getApplicationAnswers(
-                          application.answers,
-                        )
-                        const latestStartDate =
-                          periods[periods.length - 1].startDate
-
-                        return addDays(new Date(latestStartDate), minPeriodDays)
+                    buildCustomField(
+                      {
+                        id: 'endDate',
+                        title: parentalLeaveFormMessages.endDate.label,
+                        component: 'PeriodEndDate',
                       },
-                      excludeDates: (application) => {
-                        const { periods } = getApplicationAnswers(
-                          application.answers,
-                        )
+                      {
+                        minDate: (application: Application) => {
+                          const { periods } = getApplicationAnswers(
+                            application.answers,
+                          )
+                          const latestStartDate =
+                            periods[periods.length - 1].startDate
 
-                        return getAllPeriodDates(periods)
+                          return addDays(
+                            new Date(latestStartDate),
+                            minPeriodDays,
+                          )
+                        },
+                        excludeDates: (application: Application) => {
+                          const { periods } = getApplicationAnswers(
+                            application.answers,
+                          )
+
+                          return getAllPeriodDates(periods)
+                        },
                       },
-                    }),
+                    ),
                   ],
                 }),
                 buildMultiField({
@@ -847,21 +847,14 @@ export const ParentalLeaveForm: Form = buildForm({
                       defaultValue: (
                         application: Application,
                         field: SelectField,
-                      ) => {
-                        const percentage = calculatePeriodPercentage(
-                          application,
-                          { field },
-                        )
-
-                        return `${percentage}`
-                      },
+                      ) => getPeriodPercentage(application.answers, field),
                       options: (application: Application, field: Field) => {
-                        const percentage = calculatePeriodPercentage(
-                          application,
-                          { field },
+                        const percentage = getPeriodPercentage(
+                          application.answers,
+                          field,
                         )
                         const existingOptions = percentOptions.filter(
-                          (option) => Number(option.value) < percentage,
+                          (option) => Number(option.value) < Number(percentage),
                         )
 
                         return [
@@ -879,7 +872,6 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
-
         // TODO: Bring back payment calculation info, once we have an api
         // app.asana.com/0/1182378413629561/1200214178491335/f
         // buildSubSection({

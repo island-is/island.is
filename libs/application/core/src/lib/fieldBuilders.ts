@@ -6,7 +6,7 @@ import type {
   BoxProps,
 } from '@island.is/island-ui/core/types'
 
-import { Answer, Application } from '../types/Application'
+import { Application } from '../types/Application'
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,

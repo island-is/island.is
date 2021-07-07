@@ -1,6 +1,5 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import differenceInMonths from 'date-fns/differenceInMonths'
 import addMonths from 'date-fns/addMonths'
 import formatISO from 'date-fns/formatISO'
 import parseISO from 'date-fns/parseISO'
@@ -18,10 +17,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 
 import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
-import {
-  getExpectedDateOfBirth,
-  calculatePeriodPercentageBetweenDates,
-} from '../../lib/parentalLeaveUtils'
+import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
 import { StartDateOptions } from '../../constants'
@@ -29,10 +25,14 @@ import { monthsToDays } from '../../lib/directorateOfLabour.utils'
 import { useGetOrRequestEndDates } from '../../hooks/useGetOrRequestEndDates'
 
 const df = 'yyyy-MM-dd'
-
 const DEFAULT_PERIOD_LENGTH = 1
+const DEFAULT_PERIOD_PERCENTAGE = 100
 
-const Duration: FC<FieldBaseProps> = ({ field, application }) => {
+const Duration: FC<FieldBaseProps> = ({
+  field,
+  application,
+  setFieldLoadingState,
+}) => {
   const { id } = field
   const { register, clearErrors } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
@@ -53,25 +53,25 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
     ),
   ) as string
 
-  const startDate = parseISO(currentStartDateAnswer)
-  const endDate = parseISO(currentEndDateAnswer)
-
   // Use the duration already persisted if available
-  const currentDuration = getValueViaPath(
+  const monthsToUse = getValueViaPath(
     answers,
     `periods[${currentIndex}].duration`,
     DEFAULT_PERIOD_LENGTH,
   ) as number
 
-  const monthsToUse = currentDuration
+  const percentageForPeriod = getValueViaPath(
+    answers,
+    `periods[${currentIndex}].percentage`,
+    DEFAULT_PERIOD_PERCENTAGE,
+  ) as number
+
   const [chosenEndDate, setChosenEndDate] = useState<string>(
     currentEndDateAnswer,
   )
   const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
-  const [percent, setPercent] = useState<number>(
-    calculatePeriodPercentageBetweenDates(application, startDate, endDate),
-  )
-  const getEndDate = useGetOrRequestEndDates(application)
+  const [percent, setPercent] = useState<number>(percentageForPeriod)
+  const { getEndDate, loading } = useGetOrRequestEndDates(application)
 
   const handleChange = async (months: number) => {
     clearErrors(id)
@@ -95,6 +95,10 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
     setChosenEndDate(date.toISOString())
     setPercent(endDateResult.percentage)
   }
+
+  useEffect(() => {
+    setFieldLoadingState?.(loading)
+  }, [loading])
 
   return (
     <Box>
@@ -132,8 +136,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
           >
             <Text variant="h4" as="span">
               {formatMessage(parentalLeaveFormMessages.duration.paymentsRatio)}
-              &nbsp;&nbsp;
-              {/* 
+              {/*
                 Remove for first release
                 https://app.asana.com/0/1182378413629561/1200472736049963/f
                */}
@@ -218,6 +221,13 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
         type="hidden"
         value={chosenDuration}
         name={`periods[${currentIndex}].duration`}
+      />
+
+      <input
+        ref={register}
+        type="hidden"
+        value={percent}
+        name={`periods[${currentIndex}].percentage`}
       />
     </Box>
   )

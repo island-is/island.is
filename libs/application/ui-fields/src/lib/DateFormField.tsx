@@ -27,6 +27,7 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
     backgroundColor,
     excludeDates,
     minDate,
+    onChange,
   } = field
   const { formatMessage, lang } = useLocale()
 
@@ -71,7 +72,7 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
         application,
         field,
       ),
-    [excludeDates, application],
+    [excludeDates, application, field],
   )
 
   return (
@@ -86,7 +87,7 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
         <DatePickerController
           disabled={disabled}
           id={id}
-          name={`${id}`}
+          name={id}
           locale={lang}
           excludeDates={finalExcludeDates}
           minDate={finalMinDate}
@@ -98,6 +99,7 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
               : undefined
           }
           error={error}
+          onChange={onChange}
         />
       </Box>
     </div>

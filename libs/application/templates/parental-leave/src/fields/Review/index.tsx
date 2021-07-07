@@ -51,11 +51,6 @@ interface ReviewScreenProps {
   editable?: boolean
 }
 
-type selectOption = {
-  label: string
-  value: string
-}
-
 const Review: FC<ReviewScreenProps> = ({
   application,
   field,
