@@ -5,6 +5,7 @@ import {
   Employment,
   ApplicationFile,
 } from '@island.is/financial-aid/shared'
+import { UploadFile } from '@island.is/island-ui/core'
 
 export interface Form {
   customAddress?: boolean
@@ -17,8 +18,8 @@ export interface Form {
   employment?: Employment
   employmentCustom?: string
   hasIncome?: boolean
-  incomeFiles?: ApplicationFile[]
-  taxReturnFiles?: ApplicationFile[]
+  incomeFiles: UploadFile[]
+  taxReturnFiles?: UploadFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string
@@ -33,11 +34,11 @@ export interface Form {
 export const initialState = { submitted: false, incomeFiles: [] }
 
 interface FormProvider {
-  form?: Form
+  form: Form
   updateForm?: any
 }
 
-export const FormContext = createContext<FormProvider>({})
+export const FormContext = createContext<FormProvider>({ form: initialState })
 
 const FormProvider: React.FC = ({ children }) => {
   const getSessionStorageOrDefault = (key: any) => {

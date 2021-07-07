@@ -12,7 +12,9 @@ import * as styles from './incomeFilesForm.treat'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 import cn from 'classnames'
 
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import {
+  NavigationProps,
+} from '@island.is/financial-aid/shared'
 import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFIleUpload'
 
 const IncomeFilesForm = () => {
@@ -26,16 +28,13 @@ const IncomeFilesForm = () => {
     onChange,
     onRemove,
     onRetry,
-  } = useFileUpload()
+  } = useFileUpload(form.incomeFiles)
 
   useEffect(() => {
-    const formFiles = files.filter((f) => f.status === 'done')
+    const formFiles = files
+      .filter((f) => f.status === 'done')
 
-    // Set files in form
-  }, [files])
-
-  useEffect(() => {
-    updateForm({ ...form, incomeFiles: files })
+    updateForm({ ...form, incomeFiles: formFiles })
   }, [files])
 
   const navigation: NavigationProps = useFormNavigation(
@@ -93,7 +92,7 @@ const IncomeFilesForm = () => {
 
       <FormFooter
         previousUrl={navigation?.prevUrl}
-        nextButtonText="Skila gögnum seinna"
+        nextButtonText={files.length > 0? 'Áfram' : 'Skila gögnum seinna'}
         onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
