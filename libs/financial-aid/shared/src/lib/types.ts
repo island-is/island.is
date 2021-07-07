@@ -45,6 +45,15 @@ export interface Application {
   state?: ApplicationState
 }
 
+export interface ApplicationFile {
+  id: string
+  created: string
+  applicationId: string
+  name: string
+  key: string
+  size: number
+}
+
 export interface CreateApplication {
   nationalId: string
   name: string
