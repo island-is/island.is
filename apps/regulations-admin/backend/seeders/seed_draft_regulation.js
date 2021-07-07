@@ -3,85 +3,55 @@
 const draftRegulationSeed = `[
   {
     "id": "a1fd62db-18a6-4741-88eb-a7b7a7e05833",
-    "draftingStatus": "draft",
+    "drafting_status": "draft",
     "name": "1234-1234",
     "title": "Reglugerð um x",
     "text": "<p>Lorem ipsum dolor</p>",
-    draftingNotes: "",
-    idealPublishDate: "",
-    ministryId: "fsr",
-    signatureDate: "",
-    effectiveDate: "",
-    type: "base"
+    "drafting_notes": "",
+    "ideal_publish_date": "2021-08-08",
+    "ministry_id": "fsr",
+    "signature_date": "2021-08-08",
+    "effective_date": "2021-08-08",
+    "type": "base"
   },
   {
     "id": "a0bdbe60-2aa3-4036-80d1-8a3d448312d1",
-    "draftingStatus": "proposal",
+    "drafting_status": "proposal",
     "name": "4321-4321",
     "title": "Breytingareglugerð um y",
     "text": "<p>Lorem ipsum dolor</p>",
-    draftingNotes: "",
-    idealPublishDate: "",
-    ministryId: "avnsr",
-    signatureDate: "",
-    effectiveDate: "",
-    type: "amending"
+    "drafting_notes": "",
+    "ideal_publish_date": "2021-08-08",
+    "ministry_id": "avnsr",
+    "signature_date": "2021-08-08",
+    "effective_date": "2021-08-08",
+    "type": "amending"
   },
   {
     "id": "0cb3a68b-f368-4d01-a594-ba73e0dc396d",
-    "draftingStatus": "draft",
+    "drafting_status": "draft",
     "name": "3241-2314",
     "title": "Breytingareglugerð um z",
     "text": "<p>Lorem ipsum dolor</p>",
-    draftingNotes: "",
-    idealPublishDate: "",
-    ministryId: "ssvr",
-    signatureDate: "",
-    effectiveDate: "",
-    type: "amending"
+    "drafting_notes": "",
+    "ideal_publish_date": "2021-08-08",
+    "ministry_id": "ssvr",
+    "signature_date": "2021-08-08",
+    "effective_date": "2021-08-08",
+    "type": "amending"
   }
 ]`
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
-    var model = queryInterface.sequelize.define('draft_regulation', {
-      id: {
-        type: Sequelize.UUID,
-        primaryKey: true,
-        allowNull: false,
-      },
-      draftingStatus: Sequelize.ENUM('draft', 'proposal', 'shipped'),
-      name: Sequelize.STRING,
-      title: Sequelize.STRING,
-      text: Sequelize.TEXT,
-      draftingNotes: Sequelize.TEXT,
-      idealPublishDate: Sequelize.DATEONLY,
-      ministryId: Sequelize.STRING,
-      signatureDate: Sequelize.DATEONLY,
-      effectiveDate: Sequelize.DATEONLY,
-      type: Sequelize.ENUM('base', 'amending'),
-    })
-
-    return queryInterface.sequelize.transaction((t) =>
-      Promise.all(
-        JSON.parse(draftRegulationSeed).map((reg) =>
-          queryInterface.upsert(
-            'draft_regulation',
-            {
-              ...reg,
-            },
-            { id: reg.id },
-            model,
-            { transaction: t },
-          ),
-        ),
-      ),
+  up: (queryInterface) => {
+    return queryInterface.bulkInsert(
+      'draft_regulation',
+      JSON.parse(draftRegulationSeed),
+      {},
     )
   },
 
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.bulkDelete('draft_regulation', null, { transaction: t }),
-    )
+  down: (queryInterface) => {
+    return queryInterface.bulkDelete('draft_regulation', null, {})
   },
 }

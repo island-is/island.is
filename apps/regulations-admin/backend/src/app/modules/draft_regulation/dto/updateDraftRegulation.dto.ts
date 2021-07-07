@@ -6,7 +6,7 @@ export class UpdateDraftRegulationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly draftingStatus?: string
+  readonly drafting_status?: string
 
   @IsOptional()
   @IsString()
@@ -26,12 +26,12 @@ export class UpdateDraftRegulationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly draftingNotes?: string
+  readonly drafting_notes?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly idealPublishDate?: Date
+  readonly ideal_publish_date?: Date
 
   @IsOptional()
   @IsString()
@@ -41,12 +41,12 @@ export class UpdateDraftRegulationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly signatureDate?: Date
+  readonly signature_date?: Date
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly effectiveDate?: Date
+  readonly effective_date?: Date
 
   @IsOptional()
   @IsString()

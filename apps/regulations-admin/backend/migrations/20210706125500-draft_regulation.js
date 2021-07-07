@@ -12,7 +12,7 @@ module.exports = {
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
           },
-          draftingStatus: {
+          drafting_status: {
             type: Sequelize.ENUM('draft', 'proposal', 'shipped'),
           },
           name: {
@@ -24,23 +24,33 @@ module.exports = {
           text: {
             type: Sequelize.TEXT,
           },
-          draftingNotes: {
+          drafting_notes: {
             type: Sequelize.TEXT,
           },
-          idealPublishDate: {
+          ideal_publish_date: {
             type: Sequelize.DATEONLY,
           },
-          ministryId: {
+          ministry_id: {
             type: Sequelize.STRING,
           },
-          signatureDate: {
+          signature_date: {
             type: Sequelize.DATEONLY,
           },
-          effectiveDate: {
+          effective_date: {
             type: Sequelize.DATEONLY,
           },
           type: {
             type: Sequelize.ENUM('base', 'amending'),
+          },
+          created: {
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            allowNull: false,
+          },
+          modified: {
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            allowNull: false,
           },
         },
         { transaction: t },

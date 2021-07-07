@@ -30,7 +30,7 @@ export class DraftRegulation extends Model<DraftRegulation> {
     values: ['draft', 'proposal', 'shipped'],
   })
   @ApiProperty()
-  draftingStatus!: 'draft' | 'proposal' | 'shipped'
+  drafting_status!: 'draft' | 'proposal' | 'shipped'
 
   @Column({
     type: DataType.STRING,
@@ -57,31 +57,31 @@ export class DraftRegulation extends Model<DraftRegulation> {
     type: DataType.TEXT,
   })
   @ApiProperty()
-  draftingNotes?: string
+  drafting_notes?: string
 
   @Column({
     type: DataType.DATEONLY,
   })
   @ApiProperty()
-  idealPublishDate?: Date
+  ideal_publish_date?: Date
 
   @Column({
     type: DataType.STRING,
   })
   @ApiProperty()
-  ministryId?: string
+  ministry_id?: string
 
   @Column({
     type: DataType.DATEONLY,
   })
   @ApiProperty()
-  signatureDate?: Date
+  signature_date?: Date
 
   @Column({
     type: DataType.DATEONLY,
   })
   @ApiProperty()
-  effectiveDate?: Date
+  effective_date?: Date
 
   @Column({
     type: DataType.ENUM,

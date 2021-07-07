@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger'
 export class CreateDraftRegulationDto {
   @IsString()
   @ApiProperty()
-  readonly draftingStatus!: string
+  readonly drafting_status!: string
 
   @IsOptional()
   @IsString()
@@ -25,27 +25,27 @@ export class CreateDraftRegulationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly draftingNotes?: string
+  readonly drafting_notes?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly idealPublishDate?: Date
+  readonly ideal_publish_date?: Date
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly ministryId?: string
+  readonly ministry_id?: string
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly signatureDate?: Date
+  readonly signature_date?: Date
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly effectiveDate?: Date
+  readonly effective_date?: Date
 
   @IsOptional()
   @IsString()

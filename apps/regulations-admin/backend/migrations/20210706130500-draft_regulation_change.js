@@ -12,7 +12,7 @@ module.exports = {
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
           },
-          changingId: {
+          changing_id: {
             type: Sequelize.UUID,
             references: {
               model: 'draft_regulation',
@@ -34,6 +34,16 @@ module.exports = {
           },
           text: {
             type: Sequelize.TEXT,
+          },
+          created: {
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            allowNull: false,
+          },
+          modified: {
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            allowNull: false,
           },
         },
         { transaction: t },

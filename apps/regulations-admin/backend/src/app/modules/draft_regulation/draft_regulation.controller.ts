@@ -79,7 +79,7 @@ export class DraftRegulationController {
     const user = await this.draftRegulationService.findById(id)
 
     if (!user) {
-      throw new NotFoundException(`User ${id} not found`)
+      throw new NotFoundException(`DraftRegulation ${id} not found`)
     }
 
     return user

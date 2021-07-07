@@ -12,7 +12,7 @@ module.exports = {
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
           },
-          draftId: {
+          draft_id: {
             type: Sequelize.UUID,
             references: {
               model: 'draft_regulation',
@@ -20,8 +20,18 @@ module.exports = {
             },
             allowNull: false,
           },
-          authorId: {
+          author_id: {
             type: Sequelize.STRING,
+            allowNull: false,
+          },
+          created: {
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            allowNull: false,
+          },
+          modified: {
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
         },
