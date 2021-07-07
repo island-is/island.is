@@ -43,7 +43,7 @@ function constructRestrictionRequestPdf(
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
-
+  console.log(existingCase.defenderName)
   doc
     .font('Helvetica-Bold')
     .fontSize(26)
@@ -95,8 +95,9 @@ function constructRestrictionRequestPdf(
     .text(`${formatMessage(m.baseInfo.address)} ${existingCase.accusedAddress}`)
     .text(
       formatMessage(m.baseInfo.defender, {
-        defenderName:
-          existingCase.defenderName ?? formatMessage(m.baseInfo.noDefender),
+        defenderName: existingCase.defenderName
+          ? existingCase.defenderName
+          : formatMessage(m.baseInfo.noDefender),
       }),
     )
     .text(' ')
