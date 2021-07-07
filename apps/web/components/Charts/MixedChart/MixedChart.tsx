@@ -11,12 +11,6 @@ import {
   Line,
 } from 'recharts'
 
-const dataKeysName = {
-  sott: 'Umsóknir',
-  veitt: 'Veittir styrkir',
-  amount: 'Heildarupphæð styrkja',
-}
-
 const CustomizedAxisTick = (props) => {
   const { x, y, className, payload } = props
   const xAxis = className.includes('xAxis')
@@ -61,7 +55,7 @@ const renderLegend = (props) => {
               marginLeft: '32px',
             }}
           />
-          {dataKeysName[entry.value]}
+          {entry.value}
         </li>
       ))}
     </ul>

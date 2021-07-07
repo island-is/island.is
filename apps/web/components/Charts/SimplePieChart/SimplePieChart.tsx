@@ -3,77 +3,26 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, TooltipProps } from 
 import * as styles from './SimplePieChart.treat'
 import cn from 'classnames'
 
-const categories = [
-  {
-    name: 'Menning, hönnun og afþreying',
-    count: 21,
-  },
-  {
-    name: 'Almenn matvælatækni',
-    count: 18,
-  },
-  {
-    name:
-      'Almenn verslun og þjónusta (þ.m.t. fjármálaþjónusta og öryggisþjónusta)',
-    count: 15,
-  },
-  {
-    name: 'Heilbrigðis- og velferðarþjónusta',
-    count: 15,
-  },
-  {
-    name: 'Fræðslu- og menntatengd þjónusta',
-    count: 13,
-  },
-  {
-    name: 'Fjarskiptaþjónusta og samgöngur',
-    count: 12,
-  },
-  {
-    name: 'Vinnsla lífrænna og ólífrænna efna (önnur en efnaframleiðsla)',
-    count: 10,
-  },
-  {
-    name: 'Bygginga- og mannvirkjagerð (þ.m.t. viðhald)',
-    count: 10,
-  },
-  {
-    name: 'Hagnýting auðlinda lífríkis á landi (Landbúnaður skógrækt)',
-    count: 9,
-  },
-  {
-    name: 'Umhverfis- og skipulagsmál (þ.m.t. vatnsveitur og úrgangur)',
-    count: 9,
-  },
-  {
-    name: 'Ferðaþjónusta',
-    count: 7,
-  },
-  {
-    name: 'Annað',
-    count: 5,
-  },
-]
 
 const veitt = [
-  { name: "HB", count: 655 },
-  { name: null, count: 66 },
-  { name: "RN", count: 18 },
-  { name: "SL", count: 17 },
-  { name: "VF", count: 10 },
-  { name: "AL", count: 7 },
-  { name: "VL", count: 6 },
-  { name: "NV", count: 3 }
+  { "name": "HB", "count": 655 },
+  { "name": null, "count": 66 },
+  { "name": "RN", "count": 18 },
+  { "name": "SL", "count": 17 },
+  { "name": "VF", "count": 10 },
+  { "name": "AL", "count": 7 },
+  { "name": "VL", "count": 6 },
+  { "name": "NV", "count": 3 }
 ]
 const umsokn = [
-  { name: "HB", count: 3669 },
-  { name: null, count: 442 },
-  { name: "RN", count: 128 },
-  { name: "SL", count: 115 },
-  { name: "VL", count: 67 },
-  { name: "VF", count: 47 },
-  { name: "AL", count: 35 },
-  { name: "NV", count: 29 }
+  { "name": "HB", "count": 3669 },
+  { "name": null, "count": 442 },
+  { "name": "RN", "count": 128 },
+  { "name": "SL", "count": 115 },
+  { "name": "VL", "count": 67 },
+  { "name": "VF", "count": 47 },
+  { "name": "AL", "count": 35 },
+  { "name": "NV", "count": 29 }
 ]
 const COLORS = [
   '#00B39E',
@@ -110,32 +59,28 @@ const CustomTooltip = (props:  CustomTooltipProps) => {
   return null
 }
 
-interface SimplePieChartProps {
-  dataset?: string,
+interface GraphDataProps {
+  title?: string
+  data: string
+  datakeys: string
+}
+interface GraphProps {
+  graphData: GraphDataProps
 }
 
-export const SimplePieChart = ({dataset}: SimplePieChartProps) => {
-  const datakey="count"
-  let data = categories
-  switch(dataset) {
-    case "umsokn":
-      data = umsokn
-      break
-    case "veitt":
-      data = veitt
-      break
-    default:
-      data = categories
-      break 
-  }
-  const sum = data.reduce((sum, item) => sum+item[datakey], 0)
+export const SimplePieChart = ({graphData}: GraphProps) => {
+  const { title, data, datakeys } = graphData
+  const parsedData = JSON.parse(data)
+  const {datakey} = JSON.parse(datakeys)
+
+  const sum = parsedData.reduce((sum, item) => sum+item[datakey], 0)
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart width={10} height={10}>
         <Pie
           dataKey={datakey}
           isAnimationActive={true}
-          data={data}
+          data={parsedData}
           cx="50%"
           cy="50%"
           outerRadius={136}
@@ -145,7 +90,7 @@ export const SimplePieChart = ({dataset}: SimplePieChartProps) => {
           startAngle={90}
           endAngle={-270}
         >
-          {data.map((entry, index) => (
+          {parsedData.map((entry, index) => (
             <Cell key={index} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>

@@ -60,7 +60,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({
       children = <SimpleBarChart />
       break
     case 'Pie':
-      children = <SimplePieChart />
+      children = <SimplePieChart graphData={graph}/>
         break
     default:
 
@@ -80,9 +80,10 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({
       <Box
         style={{
           width: '100%',
-          height: '128px',
+          minHeight: '128px',
           borderTopLeftRadius: '8px',
           borderTopRightRadius: '8px',
+          paddingBottom: '24px'
         }}
         background={blue ? 'blue100' : 'purple100'}
       >
@@ -103,7 +104,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({
         </Box>
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center" style={{ width: '100%', height: '100%' }}>
-        <Box style={{ width: '100%', height: '518px' }}>{children}</Box>
+        <Box justifyContent="center" style={{ width: '80%', height: '80%' }}>{children}</Box>
       </Box>
     </Box>
   )

@@ -116,7 +116,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page }) => {
           cards={statisticsCardsSection}
         />
       </Section>
-      <Section>
+      <Section paddingBottom={8}> 
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12">
@@ -125,9 +125,9 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page }) => {
           </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '4/12', '4/12']}>
-              {/* <ChartsCard title="Rannís" description="Þjónustuaðili">
-                <SimplePieChart />
-              </ChartsCard> */}
+            <ChartsCard
+                data={graphCards[1]}
+              />
             </GridColumn>
             <GridColumn span={['12/12', '8/12', '8/12']}>
               <ChartsCard
