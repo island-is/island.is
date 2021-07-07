@@ -298,7 +298,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               name="accusedPleaAnnouncement"
               label="Afstaða varnaraðila"
               defaultValue={workingCase.accusedPleaAnnouncement}
-              placeholder="Hvað hafði varnaraðili að segja um kröfuna? Mótmælti eða samþykkti?"
+              placeholder={formatMessage(
+                icCourtRecord.sections.accusedPleaAnnouncement.placeholder,
+              )}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'accusedPleaAnnouncement',

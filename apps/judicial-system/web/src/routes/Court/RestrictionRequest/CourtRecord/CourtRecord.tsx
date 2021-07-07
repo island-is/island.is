@@ -375,9 +375,9 @@ export const CourtRecord: React.FC = () => {
                     NounCases.GENITIVE,
                   )}`}
                   defaultValue={workingCase.accusedPleaAnnouncement}
-                  placeholder={`Hvað hafði ${formatAccusedByGender(
-                    workingCase.accusedGender,
-                  )} að segja um kröfuna? Mótmælti eða samþykkti?`}
+                  placeholder={formatMessage(
+                    rcCourtRecord.sections.accusedPleaAnnouncement.placeholder,
+                  )}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'accusedPleaAnnouncement',

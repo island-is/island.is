@@ -27,5 +27,14 @@ export const icCourtRecord = {
         },
       }),
     },
+    accusedPleaAnnouncement: defineMessages({
+      placeholder: {
+        id:
+          'judicial.system.investigation_cases:court_record.accused_plea_announcement.tooltip',
+        defaultMessage: 'Nánari útlistun á afstöðu sakbornings',
+        description:
+          'Notaður sem skýritexti í "afstaða kærða" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+      },
+    }),
   },
 }

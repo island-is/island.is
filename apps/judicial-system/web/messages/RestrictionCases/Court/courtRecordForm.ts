@@ -20,5 +20,14 @@ export const rcCourtRecord = {
         },
       }),
     },
+    accusedPleaAnnouncement: defineMessages({
+      placeholder: {
+        id:
+          'judicial.system.restriction_cases:court_record.accused_plea_announcement.tooltip',
+        defaultMessage: 'Nánari útlistun á afstöðu sakbornings',
+        description:
+          'Notaður sem skýritexti í "afstaða kærða" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
   },
 }
