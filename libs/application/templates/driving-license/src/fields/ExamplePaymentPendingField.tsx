@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useQuery, gql } from '@apollo/client'
-import { CustomField, FieldBaseProps } from '@island.is/application/core'
+import { CustomField, DataProviderResult, DefaultEvents, FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../lib/messages'
 
@@ -25,7 +25,6 @@ export const ExamplePaymentPendingField: FC<Props> = ({
   application,
 }) => {
   const applicationId = application.id
-
   const { data, error: queryError, loading } = useQuery(QUERY, {
     variables: {
       applicationId,
@@ -46,11 +45,23 @@ export const ExamplePaymentPendingField: FC<Props> = ({
       {error && { error }}
 
       {!paymentStatus.fulfilled && (
-        <Box>
-          <Text variant="h2">{m.examplePaymentPendingField}</Text>
-          <Text marginTop="gutter">{m.examplePaymentPendingDescription}</Text>
+        <Box height="full">
+          <Text variant="h2">Augnablik meðan beðið er eftir greiðslu</Text>
+          <Text marginTop="gutter">Beðið er eftir staðfestingu frá greiðsluveitu</Text>
 
-          <Box backgroundPattern="dotted" height="full" width="half" />
+          <Box
+            backgroundPattern="dotted"
+            marginTop="gutter"
+            paddingTop="p5"
+            width="half"
+          >
+            &nbsp;
+          </Box>
+        </Box>
+      )}
+      {paymentStatus.fulfilled && (
+        <Box height="full">
+          <Text variant="h2">Greiðslan var samþykkt en við erum ennþá í ExamplePaymentPendingField.</Text>
         </Box>
       )}
     </>

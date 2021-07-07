@@ -38,30 +38,42 @@ export class DrivingLicenseSubmissionService {
     )
   }
 
-  async submitApplication({ application }: TemplateApiModuleActionProps) {
+  async submitApplication({ application, authorization }: TemplateApiModuleActionProps) {
     const { answers } = application
     const nationalId = application.applicant
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const juristictionId = answers.juristiction
 
-    const result = await this.drivingLicenseService
+    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(authorization, application.id)
+    console.log('THIS IS PAYMENT FULFILLED ======', isPayment.fulfilled)
+
+    if(isPayment.fulfilled) {
+
+      const result = await this.drivingLicenseService
       .newDrivingLicense(nationalId, {
         juristictionId: juristictionId as number,
         needsToPresentHealthCertificate: needsHealthCert,
       })
       .catch((e) => {
+        console.log(e.json)
         return {
           success: false,
           errorMessage: e.message,
         }
       })
-
-    if (!result.success) {
-      throw new Error(`Application submission failed (${result.errorMessage})`)
-    }
-
-    return {
-      success: result.success,
+      
+      if (!result.success) {
+        console.log('error inside submit application!!! submission service.')
+        console.log(result)
+        console.log(result.errorMessage)
+        throw new Error(`Application submission failed (${result.errorMessage})`)
+      }
+      
+      return {
+        success: result.success,
+      }
+    } else {
+      throw new Error('Ekki er búið að greiða fyrir umsóknina.')
     }
   }
 
