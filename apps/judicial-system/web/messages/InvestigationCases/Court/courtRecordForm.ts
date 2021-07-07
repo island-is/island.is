@@ -14,7 +14,7 @@ export const icCourtRecord = {
         reject: {
           id:
             'judicial.system.investigation_cases:court_record.accused_appeal_decision.options.reject',
-          defaultMessage: 'Varnaraðili samþykkir kröfuna',
+          defaultMessage: 'Varnaraðili mótmælir kröfunni',
           description:
             'Notaður sem texti fyrir valmöguleikann "hafnar kröfunni" í dómaraflæði í rannsóknarheimildum',
         },

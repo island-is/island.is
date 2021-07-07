@@ -227,7 +227,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             <div className={styles.accusedPleaDecision}>
               <RadioButton
                 name="accusedPleaDecision"
-                id="accused-plea-decision-accepting"
+                id="accused-plea-decision-rejecting"
                 label={formatMessage(
                   icCourtRecord.sections.accusedAppealDecision.options.reject,
                 )}
@@ -248,7 +248,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               />
               <RadioButton
                 name="accusedPleaDecision"
-                id="accused-plea-decision-rejecting"
+                id="accused-plea-decision-accepting"
                 label={formatMessage(
                   icCourtRecord.sections.accusedAppealDecision.options.accept,
                 )}
