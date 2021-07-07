@@ -12,9 +12,7 @@
   "paths": {
     "/api/Okuskirteini/{kennitala}": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Create medferd for digital licence created",
         "parameters": [
           {
@@ -43,9 +41,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get for person driver licence",
         "operationId": "GetCurrentLicense",
         "parameters": [
@@ -104,9 +100,7 @@
     },
     "/api/Okuskirteini/new": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Create a new licence",
         "parameters": [
           {
@@ -168,9 +162,7 @@
     },
     "/api/Okuskirteini/tegundirsviptinga": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get for types of driver licence deprivations",
         "parameters": [
           {
@@ -234,9 +226,7 @@
     },
     "/api/Okuskirteini/tegundirrettinda": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get types of categories",
         "parameters": [
           {
@@ -300,9 +290,7 @@
     },
     "/api/Okuskirteini/punktastada/{kennitala}": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get traffic violation points for person",
         "parameters": [
           {
@@ -360,9 +348,7 @@
     },
     "/api/Okuskirteini/tegundirathugasemda": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get types of remarks",
         "parameters": [
           {
@@ -426,9 +412,7 @@
     },
     "/api/Okuskirteini/svipting/{kennitala}": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get for current licence revoke",
         "parameters": [
           {
@@ -486,9 +470,7 @@
     },
     "/api/Okuskirteini/{kennitala}/all": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get for all persons driver licences",
         "parameters": [
           {
@@ -561,9 +543,7 @@
     },
     "/api/Okuskirteini/embaetti": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get for all districts",
         "parameters": [
           {
@@ -627,9 +607,7 @@
     },
     "/api/Okuskirteini/hasteachingrights/{kennitala}": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check if person has rights to be a driving teacher",
         "parameters": [
           {
@@ -692,9 +670,7 @@
     },
     "/api/Okuskirteini/{kennitala}/canapplyfor/{category}/full": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check if person can apply for full drivers license for a specific category",
         "parameters": [
           {
@@ -766,9 +742,7 @@
     },
     "/api/Okuskirteini/{kennitala}/hasqualityphoto": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check if person has quality marked photo",
         "parameters": [
           {
@@ -831,9 +805,7 @@
     },
     "/api/Okuskirteini/{kennitala}/hasqualitysignature": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check if person has quality marked photo",
         "parameters": [
           {
@@ -896,9 +868,7 @@
     },
     "/api/Okuskirteini/{kennitala}/getqualityphoto": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get quality marked photo for person",
         "parameters": [
           {
@@ -961,9 +931,7 @@
     },
     "/api/Okuskirteini/{kennitala}/getqualitysignature": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Get quality marked photo for person",
         "parameters": [
           {
@@ -1026,9 +994,7 @@
     },
     "/api/Okuskirteini/applications/new/{category}": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Apply for drivers license for a category",
         "parameters": [
           {
@@ -1131,9 +1097,7 @@
     },
     "/api/Okuskirteini/{kennitala}/finishedokugerdi": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Has person finised \"ökugerði\"",
         "parameters": [
           {
@@ -1190,9 +1154,7 @@
     },
     "/api/Okuskirteini/new/drivingassesment": {
       "post": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Create a new driver assessment",
         "parameters": [
           {
@@ -1254,9 +1216,7 @@
     },
     "/api/Okuskirteini/saekjaakstursmat/{kennitala}": {
       "get": {
-        "tags": [
-          "Okuskirteini"
-        ],
+        "tags": ["Okuskirteini"],
         "summary": "Check if person has driving assessment",
         "parameters": [
           {
@@ -1531,11 +1491,7 @@
         "description": "Licence entity"
       },
       "PostLicence": {
-        "required": [
-          "gildirTil",
-          "kennitala",
-          "utgafuDags"
-        ],
+        "required": ["gildirTil", "kennitala", "utgafuDags"],
         "type": "object",
         "properties": {
           "kennitala": {

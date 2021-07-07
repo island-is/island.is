@@ -20,6 +20,7 @@ import {
 import {
   AkstursmatDto,
   EmbaettiDto,
+  HefurLokidOkugerdiDto,
   OkuskirteiniApi,
   Rettindi,
   TegSviptingaDto,
@@ -160,11 +161,11 @@ export class DrivingLicenseService {
   async getTeachingRights(
     nationalId: User['nationalId'],
   ): Promise<TeachingRightsStatus> {
-    const statusStr = await this.drivingLicenseApi.apiOkuskirteiniHasteachingrightsKennitalaGet(
+    const statusStr = ((await this.drivingLicenseApi.apiOkuskirteiniHasteachingrightsKennitalaGet(
       {
         kennitala: nationalId,
       },
-    ) as unknown as string
+    )) as unknown) as string
 
     // API says number, type says number, but deserialization happens with a text
     // deserializer (runtime.TextApiResponse).
@@ -212,18 +213,18 @@ export class DrivingLicenseService {
   ): Promise<ApplicationEligibility> {
     const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
 
-    const hasFinishedSchoolResult = await this.drivingLicenseApi.apiOkuskirteiniKennitalaFinishedokugerdiGet(
+    const hasFinishedSchoolResult: HefurLokidOkugerdiDto = await this.drivingLicenseApi.apiOkuskirteiniKennitalaFinishedokugerdiGet(
       {
         kennitala: nationalId,
       },
     )
 
-    const canApplyResult = await this.drivingLicenseApi.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
+    const canApplyResult = ((await this.drivingLicenseApi.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
       {
         kennitala: nationalId,
         category: type,
       },
-    )
+    )) as unknown) as string
 
     const requirements = [
       {
@@ -234,11 +235,11 @@ export class DrivingLicenseService {
       },
       {
         key: RequirementKey.drivingSchoolMissing,
-        requirementMet: !!hasFinishedSchoolResult,
+        requirementMet: (hasFinishedSchoolResult.hefurLokidOkugerdi ?? 0) > 0,
       },
       {
         key: RequirementKey.deniedByService,
-        requirementMet: !!canApplyResult,
+        requirementMet: parseInt(canApplyResult, 10) > 0,
       },
     ]
 
