@@ -197,7 +197,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={1}>
             <Text as="h3" variant="h3">
-              Réttindi varnaraðila
+              {formatMessage(accusedRights.title, {
+                accusedType: 'varnaraðila',
+              })}
             </Text>
           </Box>
           <Box marginBottom={2}>

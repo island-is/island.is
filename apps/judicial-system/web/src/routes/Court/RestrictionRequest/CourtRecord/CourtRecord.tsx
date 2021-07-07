@@ -273,10 +273,12 @@ export const CourtRecord: React.FC = () => {
             <Box component="section" marginBottom={8}>
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
-                  {`Réttindi ${formatAccusedByGender(
-                    workingCase.accusedGender,
-                    NounCases.GENITIVE,
-                  )} `}
+                  {`${formatMessage(accusedRights.title, {
+                    accusedType: formatAccusedByGender(
+                      workingCase.accusedGender,
+                      NounCases.GENITIVE,
+                    ),
+                  })} `}
                   <Text as="span" fontWeight="semiBold" color="red600">
                     *
                   </Text>
