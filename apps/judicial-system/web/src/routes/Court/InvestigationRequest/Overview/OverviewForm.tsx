@@ -1,18 +1,14 @@
 import React, { useContext, useState } from 'react'
-import { Box, Button, Input, Text } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
-  BlueBox,
   CaseFileList,
   FormContentContainer,
   FormFooter,
   InfoCard,
   PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, IntegratedCourts } from '@island.is/judicial-system/types'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { Case } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   capitalize,
@@ -27,6 +23,9 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 
 interface Props {
   workingCase: Case
@@ -37,10 +36,14 @@ interface Props {
 const OverviewForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState<string>('')
-  const [createCaseSuccess, setCreateCaseSuccess] = useState<boolean>(false)
+  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
+    false,
+  )
+  const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   const { user } = useContext(UserContext)
-  const { updateCase, createCourtCase, isCreatingCourtCase } = useCase()
+  const { createCourtCase } = useCase()
+  const { formatMessage } = useIntl()
 
   const validations: FormSettings = {
     courtCaseNumber: {
@@ -58,7 +61,7 @@ const OverviewForm: React.FC<Props> = (props) => {
     createCourtCase(workingCase, setWorkingCase, setCourtCaseNumberEM)
 
     if (courtCaseNumberEM === '') {
-      setCreateCaseSuccess(true)
+      setCreateCourtCaseSuccess(true)
     }
   }
 
@@ -71,79 +74,15 @@ const OverviewForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={6}>
-          <Box marginBottom={2}>
-            <Text as="h2" variant="h3">
-              Málsnúmer héraðsdóms
-            </Text>
-          </Box>
-          <Box marginBottom={2}>
-            <Text>
-              Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer
-              sem er þegar til í Auði. Athugið að gögn verða sjálfkrafa vistuð á
-              það málsnúmer sem slegið er inn.
-            </Text>
-          </Box>
-          <BlueBox>
-            <div className={styles.createCourtCaseContainer}>
-              <Box display="flex">
-                {workingCase.court &&
-                  IntegratedCourts.includes(workingCase.court.id) && (
-                    <div className={styles.createCourtCaseButton}>
-                      <Button
-                        size="small"
-                        onClick={() => handleCreateCourtCase(workingCase)}
-                        loading={isCreatingCourtCase}
-                        disabled={Boolean(workingCase.courtCaseNumber)}
-                        fluid
-                      >
-                        Stofna nýtt mál
-                      </Button>
-                    </div>
-                  )}
-                <div className={styles.createCourtCaseInput}>
-                  <Input
-                    data-testid="courtCaseNumber"
-                    name="courtCaseNumber"
-                    label="Mál nr."
-                    placeholder="R-X/ÁÁÁÁ"
-                    size="sm"
-                    backgroundColor="white"
-                    value={workingCase.courtCaseNumber ?? ''}
-                    icon={
-                      workingCase.courtCaseNumber && createCaseSuccess
-                        ? 'checkmark'
-                        : undefined
-                    }
-                    errorMessage={courtCaseNumberEM}
-                    hasError={!isCreatingCourtCase && courtCaseNumberEM !== ''}
-                    onChange={(event) => {
-                      setCreateCaseSuccess(false)
-                      removeTabsValidateAndSet(
-                        'courtCaseNumber',
-                        event,
-                        ['empty'],
-                        workingCase,
-                        setWorkingCase,
-                        courtCaseNumberEM,
-                        setCourtCaseNumberEM,
-                      )
-                    }}
-                    onBlur={(event) => {
-                      validateAndSendToServer(
-                        'courtCaseNumber',
-                        event.target.value,
-                        ['empty'],
-                        workingCase,
-                        updateCase,
-                        setCourtCaseNumberEM,
-                      )
-                    }}
-                    required
-                  />
-                </div>
-              </Box>
-            </div>
-          </BlueBox>
+          <CourtCaseNumber
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            courtCaseNumberEM={courtCaseNumberEM}
+            setCourtCaseNumberEM={setCourtCaseNumberEM}
+            createCourtCaseSuccess={createCourtCaseSuccess}
+            setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
+            handleCreateCourtCase={handleCreateCourtCase}
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <InfoCard
@@ -163,7 +102,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                 }`,
               },
               {
-                title: 'Ósk um fyrirtökudag og tíma',
+                title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
                   formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
                     '',
@@ -317,12 +256,28 @@ const OverviewForm: React.FC<Props> = (props) => {
           />
         </div>
         <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title="Opna PDF kröfu"
-            pdfType="request"
-          />
+          <Box marginBottom={3}>
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF kröfu"
+              pdfType="request"
+            />
+          </Box>
+          <Button
+            variant="ghost"
+            icon="pencil"
+            size="small"
+            onClick={() => setIsDraftingConclusion(true)}
+          >
+            Skrifa drög að niðurstöðu
+          </Button>
         </Box>
+        <DraftConclusionModal
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          isDraftingConclusion={isDraftingConclusion}
+          setIsDraftingConclusion={setIsDraftingConclusion}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

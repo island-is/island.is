@@ -2,6 +2,7 @@ import { Application } from '@island.is/application/core'
 import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/driving-license'
 import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
+import { PartyApplicationServiceOptions } from '../modules/templates/party-application/party-application.service'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -33,6 +34,14 @@ export interface BaseTemplateAPIModuleConfig {
   attachmentBucket: string
   presignBucket: string
   paymentOptions: PaymentServiceOptions
+  partyLetter: {
+    partyLetterRegistryApiBasePath: string
+    endorsementsApiBasePath: string
+  }
+  partyApplication: {
+    endorsementsApiBasePath: string
+    options: PartyApplicationServiceOptions
+  }
 }
 
 export interface TemplateApiModuleActionProps {

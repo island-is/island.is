@@ -43,5 +43,5 @@ export class EndorsementListDto {
   @ApiProperty({ nullable: true })
   @IsOptional()
   @IsObject()
-  meta: object = {}
+  meta = {}
 }

@@ -11,6 +11,8 @@ api:
     CONTACT_US_EMAIL: island@island.is
     CONTENTFUL_HOST: cdn.contentful.com
     DOWNLOAD_SERVICE_BASE_PATH: https://api.island.is
+    DRIVING_LICENSE_PATH_REPLACEMENT_FROM: /RafraentOkuskirteini-v1/api/Okuskirteini/
+    DRIVING_LICENSE_PATH_REPLACEMENT_TO: /RafraentOkuskirteini-v1/api/okuskirteini/
     ELASTIC_NODE: https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/
     ENDORSEMENT_SYSTEM_BASE_API_URL: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_DOWNLOAD_BUCKET: island-is-prod-download-cache-api
@@ -105,6 +107,9 @@ api:
     POSTHOLF_CLIENT_SECRET: /k8s/documents/POSTHOLF_CLIENT_SECRET
     POSTHOLF_TOKEN_URL: /k8s/documents/POSTHOLF_TOKEN_URL
     REGULATIONS_API_URL: /k8s/api/REGULATIONS_API_URL
+    RSK_API_PASSWORD: /k8s/shared/api/RSK_API_PASSWORD
+    RSK_API_URL: /k8s/shared/api/RSK_API_URL
+    RSK_API_USERNAME: /k8s/shared/api/RSK_API_USERNAME
     SOFFIA_HOST_URL: /k8s/api/SOFFIA_HOST_URL
     SOFFIA_PASS: /k8s/service-portal/SOFFIA_PASS
     SOFFIA_SOAP_URL: /k8s/api/SOFFIA_SOAP_URL
@@ -135,7 +140,10 @@ application-system-api:
     DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
     DB_NAME: application_system_api
     DB_USER: application_system_api
+    DRIVING_LICENSE_PATH_REPLACEMENT_FROM: /RafraentOkuskirteini-v1/api/Okuskirteini/
+    DRIVING_LICENSE_PATH_REPLACEMENT_TO: /RafraentOkuskirteini-v1/api/okuskirteini/
     EMAIL_REGION: eu-west-1
+    ENDORSEMENTS_API_BASE_PATH: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_SERVICE_PRESIGN_BUCKET: island-is-prod-fs-presign-bucket
     FILE_STORAGE_UPLOAD_BUCKET: island-is-prod-upload-api
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
@@ -146,7 +154,8 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
     NOVA_USERNAME: IslandIs_User_Production
-    PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL: s@kogk.is
+    PARTY_LETTER_REGISTRY_API_BASE_PATH: >-
+      http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local
     PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: postur@dmr.is
     REDIS_URL_NODE_01: >-
       clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379
@@ -216,6 +225,19 @@ application-system-api:
     HEALTH_INSURANCE_XROAD_WSDLURL: /k8s/application-system-api/HEALTH_INSURANCE_XROAD_WSDLURL
     NOVA_PASSWORD: /k8s/application-system/api/NOVA_PASSWORD
     NOVA_URL: /k8s/application-system-api/NOVA_URL
+    PARTY_APPLICATION_NORTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_NORTH_ADMIN_EMAIL
+    PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL
+    PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS
+    PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL
+    PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL
+    PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_SOUTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_ADMIN_EMAIL
+    PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL
+    PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS
+    PARTY_LETTER_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS
     PAYMENT_ADDITION_CALLBACK_URL: /k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL
     PAYMENT_BASE_CALLBACK_URL: /k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL
     PAYMENT_PASSWORD: /k8s/application-system-api/PAYMENT_PASSWORD
@@ -349,6 +371,58 @@ download-service:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+endorsement-system-api:
+  enabled: true
+  env:
+    DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
+    DB_NAME: services_endorsements_api
+    DB_USER: services_endorsements_api
+    TEMPORARY_VOTER_REGISTRY_API_URL: >-
+      http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local
+  grantNamespaces:
+    - islandis
+    - application-system
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: /liveness
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: /liveness
+      timeoutSeconds: 3
+  image:
+    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api
+  initContainer:
+    containers:
+      - args:
+          - sequelize-cli
+          - db:migrate
+        command:
+          - npx
+        name: migrations
+    env:
+      DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
+      DB_NAME: services_endorsements_api
+      DB_USER: services_endorsements_api
+    secrets:
+      DB_PASS: /k8s/services-endorsements-api/DB_PASSWORD
+  namespace: endorsement-system
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  secrets:
+    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    DB_PASS: /k8s/services-endorsements-api/DB_PASSWORD
+    SOFFIA_HOST_URL: /k8s/endorsement-system-api/SOFFIA_HOST_URL
+    SOFFIA_PASS: /k8s/service-portal/SOFFIA_PASS
+    SOFFIA_SOAP_URL: /k8s/endorsement-system-api/SOFFIA_SOAP_URL
+    SOFFIA_USER: /k8s/service-portal/SOFFIA_USER
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 global:
   env:
     AUDIT_GROUP_NAME: /island-is/audit-log
@@ -445,6 +519,53 @@ island-ui-storybook:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+party-letter-registry-api:
+  enabled: true
+  env:
+    DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
+    DB_NAME: services_party_letter_registry_api
+    DB_USER: services_party_letter_registry_api
+  grantNamespaces:
+    - islandis
+    - application-system
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: /liveness
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: /liveness
+      timeoutSeconds: 3
+  image:
+    repository: >-
+      821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-party-letter-registry-api
+  initContainer:
+    containers:
+      - args:
+          - sequelize-cli
+          - db:migrate
+        command:
+          - npx
+        name: migrations
+    env:
+      DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
+      DB_NAME: services_party_letter_registry_api
+      DB_USER: services_party_letter_registry_api
+    secrets:
+      DB_PASS: /k8s/services-party-letter-registry-api/DB_PASSWORD
+  namespace: party-letter-registry
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  secrets:
+    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    DB_PASS: /k8s/services-party-letter-registry-api/DB_PASSWORD
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -816,6 +937,52 @@ skilavottord-ws:
     SAMGONGUSTOFA_SOAP_URL: /k8s/skilavottord-ws/SAMGONGUSTOFA_SOAP_URL
     SAMGONGUSTOFA_SOAP_USER: /k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER
     SKILAVOTTORD_USER_LIST: /k8s/skilavottord/SKILAVOTTORD_USER_LIST
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+temporary-voter-registry-api:
+  enabled: true
+  env:
+    DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
+    DB_NAME: services_temporary_voter_registry_api
+    DB_USER: services_temporary_voter_registry_api
+  grantNamespaces:
+    - islandis
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: /liveness
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: /liveness
+      timeoutSeconds: 3
+  image:
+    repository: >-
+      821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-temporary-voter-registry-api
+  initContainer:
+    containers:
+      - args:
+          - sequelize-cli
+          - db:migrate
+        command:
+          - npx
+        name: migrations
+    env:
+      DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
+      DB_NAME: services_temporary_voter_registry_api
+      DB_USER: services_temporary_voter_registry_api
+    secrets:
+      DB_PASS: /k8s/services-temporary-voter-registry-api/DB_PASSWORD
+  namespace: temporary-voter-registry
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  secrets:
+    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    DB_PASS: /k8s/services-temporary-voter-registry-api/DB_PASSWORD
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

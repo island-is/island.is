@@ -32,7 +32,7 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
   const personalMonths = getAvailablePersonalRightsInMonths(application)
   const total = round(getAvailableRightsInMonths(application))
   const requested = daysToMonths(requestDays)
-  const given = daysToMonths(giveDays)
+  const given = daysToMonths(Math.abs(giveDays))
 
   return (
     <DataValue
@@ -68,7 +68,7 @@ export const SummaryRights = ({ application }: SummaryRightsProps) => {
               </>
             )}
 
-            {isGivingRights === YES && giveDays > 0 && (
+            {isGivingRights === YES && giveDays !== 0 && (
               <>
                 {', '}
                 <Text as="span">
