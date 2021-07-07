@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Case, Institution } from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
@@ -14,8 +15,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
+import { icRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
@@ -35,6 +37,8 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     isLoading,
     handleNextButtonClick,
   } = props
+
+  const { formatMessage } = useIntl()
 
   const validations: FormSettings = {
     requestedCourtDate: {
@@ -63,7 +67,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Óskir um fyrirtöku
+            {formatMessage(icRequestedHearingArrangements.heading)}
           </Text>
         </Box>
         {prosecutors && (

@@ -12,6 +12,9 @@ export const GetUserEndorsements = gql`
   query endorsementSystemUserEndorsements {
     endorsementSystemUserEndorsements {
       endorsementListId
+      endorsementList {
+        tags
+      }
     }
   }
 `

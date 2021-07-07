@@ -14,7 +14,7 @@ import {
   getApplicationUIFields,
 } from '@island.is/application/template-loader'
 import { useApplicationNamespaces, useLocale } from '@island.is/localization'
-import { Box, LoadingIcon } from '@island.is/island-ui/core'
+import { Box, LoadingDots } from '@island.is/island-ui/core'
 
 import { RefetchProvider } from '../context/RefetchContext'
 import { FieldProvider, useFields } from '../context/FieldContext'
@@ -52,7 +52,7 @@ const ApplicationLoader: FC<{
         width="full"
         className={styles.root}
       >
-        <LoadingIcon animate size={50} />
+        <LoadingDots large />
       </Box>
     )
   }
@@ -142,7 +142,7 @@ const ShellWrapper: FC<{
         width="full"
         className={styles.root}
       >
-        <LoadingIcon animate size={50} />
+        <LoadingDots large />
       </Box>
     )
   }
