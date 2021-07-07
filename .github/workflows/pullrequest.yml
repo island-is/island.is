@@ -228,6 +228,7 @@ jobs:
         uses: ludeeus/action-shellcheck@1.1.0
         with:
           ignore: node_modules
+          severity: warning
 
   formatting:
     needs:
