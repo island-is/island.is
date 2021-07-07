@@ -1,2 +1,2 @@
-export { DraftRegulation } from './draft_regulation.model'
-export { DraftRegulationModule } from './draft_regulation.module'
+export { DraftRegulationChange } from './draft_regulation_change.model'
+export { DraftRegulationChangeModule } from './draft_regulation_change.module'
