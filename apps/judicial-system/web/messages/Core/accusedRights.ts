@@ -20,4 +20,19 @@ export const accusedRights = defineMessages({
     description:
       'Notaður sem upplýsingatexti í upplýsingasvæði við "réttindi kærða" í öllum málstegundum.',
   },
+  decisionOptionsAccept: {
+    id: 'judicial.system.core:accused_rights.decision_option_accept',
+    defaultMessage: '{accusedType} samþykkir kröfuna',
+    description: 'Notaður sem texti fyrir valmöguleikann "samþykkir kröfuna"',
+  },
+  decisionOptionsReject: {
+    id: 'judicial.system.core:accused_rights.decision_option_reject',
+    defaultMessage: '{accusedType} mótmælir kröfunni',
+    description: 'Notaður sem texti fyrir valmöguleikann "hafnar kröfunni"',
+  },
+  decisionOptionsNotApplicable: {
+    id: 'judicial.system.core:accused_rights.decision_option_not_applicable',
+    defaultMessage: 'Á ekki við',
+    description: 'Notaður sem texti fyrir valmöguleikann "á ekki við"',
+  },
 })

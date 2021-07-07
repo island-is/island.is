@@ -309,10 +309,12 @@ export const CourtRecord: React.FC = () => {
                 <div className={styles.accusedPleaDecision}>
                   <RadioButton
                     name="accusedPleaDecision"
-                    id="accused-plea-decision-accepting"
-                    label={`${capitalize(
-                      formatAccusedByGender(workingCase.accusedGender),
-                    )} hafnar kröfunni`}
+                    id="accused-plea-decision-rejecting"
+                    label={formatMessage(accusedRights.decisionOptionsReject, {
+                      accusedType: capitalize(
+                        formatAccusedByGender(workingCase.accusedGender),
+                      ),
+                    })}
                     checked={
                       workingCase.accusedPleaDecision ===
                       AccusedPleaDecision.REJECT
@@ -331,10 +333,12 @@ export const CourtRecord: React.FC = () => {
                   />
                   <RadioButton
                     name="accusedPleaDecision"
-                    id="accused-plea-decision-rejecting"
-                    label={`${capitalize(
-                      formatAccusedByGender(workingCase.accusedGender),
-                    )} samþykkir kröfuna`}
+                    id="accused-plea-decision-accepting"
+                    label={formatMessage(accusedRights.decisionOptionsAccept, {
+                      accusedType: capitalize(
+                        formatAccusedByGender(workingCase.accusedGender),
+                      ),
+                    })}
                     checked={
                       workingCase.accusedPleaDecision ===
                       AccusedPleaDecision.ACCEPT

@@ -225,7 +225,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="accusedPleaDecision"
                 id="accused-plea-decision-accepting"
-                label="Varnaraðili hafnar kröfunni"
+                label={formatMessage(accusedRights.decisionOptionsReject, {
+                  accusedType: 'Varnaraðili',
+                })}
                 checked={
                   workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
                 }
@@ -244,7 +246,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="accusedPleaDecision"
                 id="accused-plea-decision-rejecting"
-                label="Varnaraðili samþykkir kröfuna"
+                label={formatMessage(accusedRights.decisionOptionsAccept, {
+                  accusedType: 'Varnaraðili',
+                })}
                 checked={
                   workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
                 }
@@ -265,7 +269,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="accusedPleaDecision"
                 id="accused-plea-decision-na"
-                label="Á ekki við"
+                label={formatMessage(
+                  accusedRights.decisionOptionsNotApplicable,
+                )}
                 checked={
                   workingCase.accusedPleaDecision ===
                   AccusedPleaDecision.NOT_APPLICABLE
