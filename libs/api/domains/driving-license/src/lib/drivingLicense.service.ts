@@ -160,11 +160,17 @@ export class DrivingLicenseService {
   async getTeachingRights(
     nationalId: User['nationalId'],
   ): Promise<TeachingRightsStatus> {
-    const status = await this.drivingLicenseApi.apiOkuskirteiniHasteachingrightsKennitalaGet(
+    const statusStr = await this.drivingLicenseApi.apiOkuskirteiniHasteachingrightsKennitalaGet(
       {
         kennitala: nationalId,
       },
-    )
+    ) as unknown as string
+
+    // API says number, type says number, but deserialization happens with a text
+    // deserializer (runtime.TextApiResponse).
+    // Seems to be an outstanding bug? or I have no idea what I'm doing
+    // See https://github.com/OpenAPITools/openapi-generator/issues/2870
+    const status = parseInt(statusStr, 10)
 
     return {
       nationalId,
