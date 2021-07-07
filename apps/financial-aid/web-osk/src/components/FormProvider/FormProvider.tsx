@@ -1,6 +1,10 @@
 import React, { createContext, useEffect, useState } from 'react'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
+import {
+  HomeCircumstances,
+  Employment,
+  ApplicationFile,
+} from '@island.is/financial-aid/shared'
 
 export interface Form {
   customAddress?: boolean
@@ -13,7 +17,7 @@ export interface Form {
   employment?: Employment
   employmentCustom?: string
   hasIncome?: boolean
-  incomeFiles?: any
+  incomeFiles?: ApplicationFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string
