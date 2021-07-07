@@ -11,6 +11,8 @@ api:
     CONTACT_US_EMAIL: island@island.is
     CONTENTFUL_HOST: cdn.contentful.com
     DOWNLOAD_SERVICE_BASE_PATH: https://api.staging01.devland.is
+    DRIVING_LICENSE_PATH_REPLACEMENT_FROM: ''
+    DRIVING_LICENSE_PATH_REPLACEMENT_TO: ''
     ELASTIC_NODE: https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/
     ENDORSEMENT_SYSTEM_BASE_API_URL: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_DOWNLOAD_BUCKET: island-is-staging-download-cache-api
@@ -136,6 +138,8 @@ application-system-api:
     DB_HOST: staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com
     DB_NAME: application_system_api
     DB_USER: application_system_api
+    DRIVING_LICENSE_PATH_REPLACEMENT_FROM: ''
+    DRIVING_LICENSE_PATH_REPLACEMENT_TO: ''
     EMAIL_REGION: eu-west-1
     ENDORSEMENTS_API_BASE_PATH: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_SERVICE_PRESIGN_BUCKET: island-is-staging-fs-presign-bucket
