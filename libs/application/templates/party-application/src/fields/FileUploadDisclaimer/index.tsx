@@ -1,5 +1,4 @@
-import React, { FC } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -14,6 +13,9 @@ const FileUploadDisclaimer = () => {
       </Text>
       <Text variant="small">
         {formatMessage(m.collectEndorsements.includePapersDisclaimerPt2)}
+      </Text>
+      <Text variant="small">
+        {formatMessage(m.collectEndorsements.includePapersDisclaimerPt3)}
       </Text>
     </Box>
   )

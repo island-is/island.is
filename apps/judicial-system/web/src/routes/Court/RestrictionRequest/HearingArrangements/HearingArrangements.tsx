@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
+import { useIntl } from 'react-intl'
 
 import {
   AlertMessage,
@@ -49,6 +50,7 @@ import { ValueType } from 'react-select/src/types'
 import { useRouter } from 'next/router'
 import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
 
 export const HearingArrangements: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -66,6 +68,7 @@ export const HearingArrangements: React.FC = () => {
   const id = router.query.id
 
   const { updateCase, sendNotification, isSendingNotification } = useCase()
+  const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -217,7 +220,11 @@ export const HearingArrangements: React.FC = () => {
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
                   Dómari{' '}
-                  <Tooltip text="Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð." />
+                  <Tooltip
+                    text={formatMessage(
+                      rcHearingArrangements.sections.setJudge.tooltip,
+                    )}
+                  />
                 </Text>
               </Box>
               <Select
@@ -238,7 +245,11 @@ export const HearingArrangements: React.FC = () => {
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
                   Dómritari{' '}
-                  <Tooltip text="Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti." />
+                  <Tooltip
+                    text={formatMessage(
+                      rcHearingArrangements.sections.setRegistrar.tooltip,
+                    )}
+                  />
                 </Text>
               </Box>
               <Select
@@ -449,8 +460,8 @@ export const HearingArrangements: React.FC = () => {
           </FormContentContainer>
           {modalVisible && (
             <Modal
-              title="Tilkynning um fyrirtökutíma hefur verið send"
-              text="Tilkynning um fyrirtökutíma hefur verið send á ákæranda, fangelsi og verjanda hafi verjandi verið skráður."
+              title={formatMessage(rcHearingArrangements.modal.heading)}
+              text={formatMessage(rcHearingArrangements.modal.text)}
               handlePrimaryButtonClick={() => {
                 router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
               }}

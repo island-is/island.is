@@ -20,7 +20,7 @@ import {
   getApplicationExternalData,
   getOtherParentId,
 } from '@island.is/application/templates/parental-leave'
-import { isRunningOnEnvironment } from '@island.is/utils/shared'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
 
@@ -238,7 +238,8 @@ export const transformApplicationToParentalLeaveDTO = (
       personalAllowance: getPersonalAllowance(application),
       personalAllowanceFromSpouse: getPersonalAllowance(application, true),
       union: {
-        id: union,
+        // If a union is not selected then use the default 'no union' value
+        id: union ?? apiConstants.unions.noUnion,
         name: '',
       } as Union,
       pensionFund: getPensionFund(application),

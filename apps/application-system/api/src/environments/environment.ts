@@ -58,8 +58,7 @@ const devConfig = {
       xRoadClientId:
         process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
       xRoadProviderId:
-        process.env.PAYMENT_XROAD_PROVIDER_ID ??
-        'IS-DEV/GOV/10021/FJS-DEV-Public',
+        process.env.PAYMENT_XROAD_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
       callbackAdditionUrl:
         process.env.PAYMENT_ADDITION_CALLBACK_URL ??
         '/payment/thiswillneverwork',
@@ -75,6 +74,16 @@ const devConfig = {
     },
     partyApplication: {
       endorsementsApiBasePath: 'http://localhost:4246',
+      options: {
+        adminEmails: {
+          partyApplicationRvkSouth: 's@kogk.is',
+          partyApplicationRvkNorth: 's@kogk.is',
+          partyApplicationSouthWest: 's@kogk.is',
+          partyApplicationNorthWest: 's@kogk.is',
+          partyApplicationNorth: 's@kogk.is',
+          partyApplicationSouth: 's@kogk.is',
+        },
+      },
     },
   },
   application: {
@@ -160,6 +169,22 @@ const prodConfig = {
     },
     partyApplication: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
+      options: {
+        adminEmails: {
+          partyApplicationRvkSouth:
+            process.env.PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL,
+          partyApplicationRvkNorth:
+            process.env.PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL,
+          partyApplicationSouthWest:
+            process.env.PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL,
+          partyApplicationNorthWest:
+            process.env.PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL,
+          partyApplicationNorth:
+            process.env.PARTY_APPLICATION_NORTH_ADMIN_EMAIL,
+          partyApplicationSouth:
+            process.env.PARTY_APPLICATION_SOUTH_ADMIN_EMAIL,
+        },
+      },
     },
   },
   application: {
