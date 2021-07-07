@@ -1433,11 +1433,29 @@ export interface IMailingListSignupFields {
   /** Title */
   title: string
 
+  /** Variant */
+  variant: 'default' | 'conference'
+
   /** Description */
   description?: string | undefined
 
-  /** Input label */
+  /** Email label */
   inputLabel: string
+
+  /** Name label */
+  fullNameLabel: string
+
+  /** QuestionLabel */
+  questionLabel?: string | undefined
+
+  /** Yes Label */
+  yesLabel?: string | undefined
+
+  /** No Label */
+  noLabel?: string | undefined
+
+  /** Disclaimer Label */
+  disclaimerLabel?: string | undefined
 
   /** Submit button text */
   buttonText: string
