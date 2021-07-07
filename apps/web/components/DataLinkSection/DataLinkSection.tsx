@@ -14,7 +14,7 @@ interface LinkCardProps {
   title: string
   body: string
   link?: string
-  id?: string,
+  id?: string
   linkTitle?: string
 }
 
@@ -38,13 +38,13 @@ export const DataLinkSection = ({
   return (
     <GridContainer>
       <GridRow marginBottom={10}>
-        <GridColumn span={["12/12" , "5/12", "5/12"]}>
+        <GridColumn span={['12/12', '5/12', '5/12']}>
           <Text variant="h1" as="h1" paddingBottom={4} {...titleProps}>
             {title}
           </Text>
           <Text paddingBottom={4}>{description}</Text>
         </GridColumn>
-        <GridColumn span={["12/12", "6/12", "6/12"]}>
+        <GridColumn span={['12/12', '6/12', '6/12']}>
           <Box width="full">
             <BackgroundImage
               width={600}
@@ -57,18 +57,17 @@ export const DataLinkSection = ({
       </GridRow>
       <GridRow>
         {cards.map((card, index) => {
-          if(card.title.length > 0) {
+          if (card.title.length > 0) {
             return (
-            <GridColumn
-              key={index}
-              span={['12/12', '6/12', '6/12', '4/12']}
-              paddingBottom={3}
-            >
-              <DataLinkCard {...card} />
-            </GridColumn>
-          )
+              <GridColumn
+                key={index}
+                span={['12/12', '6/12', '6/12', '4/12']}
+                paddingBottom={3}
+              >
+                <DataLinkCard {...card} />
+              </GridColumn>
+            )
           }
-          
         })}
       </GridRow>
     </GridContainer>

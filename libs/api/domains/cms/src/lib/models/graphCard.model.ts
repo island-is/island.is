@@ -5,17 +5,17 @@ import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 
 @ObjectType()
 export class GraphCard {
- @Field()
- graphTitle!: string
+  @Field()
+  graphTitle!: string
 
- @Field()
- graphDescription?: string | undefined
+  @Field()
+  graphDescription?: string | undefined
 
- @Field()
- organization?: string | undefined
+  @Field()
+  organization?: string | undefined
 
- @Field(() => Graph)
- graph?: Graph | null
+  @Field(() => Graph)
+  graph?: Graph | null
 }
 
 export const mapGraphCard = ({ fields }: IGraphCard): GraphCard => {
@@ -23,6 +23,6 @@ export const mapGraphCard = ({ fields }: IGraphCard): GraphCard => {
     graphTitle: fields?.graphTitle ?? '',
     graphDescription: fields?.graphDescription ?? '',
     organization: fields?.organization ?? '',
-    graph: fields.graph ? mapGraph(fields.graph) : null
+    graph: fields.graph ? mapGraph(fields.graph) : null,
   }
 }

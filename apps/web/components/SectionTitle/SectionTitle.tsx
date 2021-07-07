@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 
 export interface SectionTitleProps {
-  title: string,
+  title: string
   icon: IconMapIcon
 }
 

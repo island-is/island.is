@@ -27,7 +27,11 @@ export const StatisticsCard = ({
       alignItems="stretch"
       justifyContent="flexEnd"
     >
-      <Box style={{ width: hasImage ? '70%' : '100%' }} paddingTop={[2, 2, 3]} paddingLeft={[2,2,3]}>
+      <Box
+        style={{ width: hasImage ? '70%' : '100%' }}
+        paddingTop={[2, 2, 3]}
+        paddingLeft={[2, 2, 3]}
+      >
         <Stack space={1}>
           <Box display="flex" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
@@ -50,7 +54,7 @@ export const StatisticsCard = ({
             style={{
               width: '204px',
               height: '204px',
-              top: '-40px'
+              top: '-40px',
             }}
           >
             <BackgroundImage
@@ -77,7 +81,6 @@ const FrameWrapper = ({ children }) => {
       overflow="visible"
       background="blue100"
       outline="none"
-      
     >
       {children}
     </Box>

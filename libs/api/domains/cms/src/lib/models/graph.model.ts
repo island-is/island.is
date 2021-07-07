@@ -3,17 +3,17 @@ import { IGraph } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class Graph {
- @Field()
- title?: string
+  @Field()
+  title?: string
 
- @Field()
- data!: string
+  @Field()
+  data!: string
 
- @Field()
- datakeys!: string
+  @Field()
+  datakeys!: string
 
- @Field()
- type?: string
+  @Field()
+  type?: string
 }
 
 export const mapGraph = ({ fields }: IGraph): Graph => {
@@ -21,6 +21,6 @@ export const mapGraph = ({ fields }: IGraph): Graph => {
     title: fields?.title ?? '',
     data: fields.data ? JSON.stringify(fields.data) : '',
     datakeys: fields.datakeys ? JSON.stringify(fields.datakeys) : '',
-    type: fields?.type ?? ''
+    type: fields?.type ?? '',
   }
 }

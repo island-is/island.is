@@ -19,7 +19,10 @@ interface StatisticsSectionProps {
   cards?: StatisticsCardProps[]
 }
 
-export const StatisticsCardsSection = ({ title, cards }: StatisticsSectionProps) => {
+export const StatisticsCardsSection = ({
+  title,
+  cards,
+}: StatisticsSectionProps) => {
   return (
     <GridContainer>
       <Box marginTop={[4, 4, 10]}>
@@ -44,20 +47,19 @@ export const StatisticsCardsSection = ({ title, cards }: StatisticsSectionProps)
               slideCount: 3,
             },
           }}
-          items={cards
-            .map(({ title, statistic, image }, index) => {
-              return (
-                <StatisticsCard
-                  key={index}
-                  title={title}
-                  description={statistic}
-                  image={{
-                    title: image.title,
-                    url: image.url,
-                  }}
-                />
-              )
-            })}
+          items={cards.map(({ title, statistic, image }, index) => {
+            return (
+              <StatisticsCard
+                key={index}
+                title={title}
+                description={statistic}
+                image={{
+                  title: image.title,
+                  url: image.url,
+                }}
+              />
+            )
+          })}
           carousleContoler
           logo
         />

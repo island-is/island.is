@@ -11,16 +11,21 @@ import {
   Line,
 } from 'recharts'
 
-
 const CustomizedAxisTick = (props) => {
   const { x, y, className, payload } = props
-  const xAxis = className.includes("xAxis")
+  const xAxis = className.includes('xAxis')
   return (
-      <g transform={`translate(${x},${y})`}>
-        <text x={xAxis ? 16 : -17} y={xAxis ? 20 : -10} dy={16} textAnchor="end" fill="#00003C">
-          {payload.value} {xAxis}
-        </text>
-      </g>
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={xAxis ? 16 : -17}
+        y={xAxis ? 20 : -10}
+        dy={16}
+        textAnchor="end"
+        fill="#00003C"
+      >
+        {payload.value} {xAxis}
+      </text>
+    </g>
   )
 }
 
@@ -28,7 +33,13 @@ const renderLegend = (props) => {
   const { payload } = props
 
   return (
-    <ul style={{ justifyContent: 'space-between', display: 'flex', paddingTop: '37px' }}>
+    <ul
+      style={{
+        justifyContent: 'space-between',
+        display: 'flex',
+        paddingTop: '37px',
+      }}
+    >
       {payload.map((entry, index) => (
         <li
           style={{
@@ -63,8 +74,8 @@ interface SimpleLineChartGraphProps {
   graphData: GraphDataProps
 }
 
-export const SimpleLineChart = ({graphData}: SimpleLineChartGraphProps) => {
-  const {title, data, datakeys } = graphData
+export const SimpleLineChart = ({ graphData }: SimpleLineChartGraphProps) => {
+  const { title, data, datakeys } = graphData
   const parsedData = JSON.parse(data)
   const parsedDatakeys = JSON.parse(datakeys)
 
@@ -103,7 +114,7 @@ export const SimpleLineChart = ({graphData}: SimpleLineChartGraphProps) => {
           padding={{ left: 30 }}
           tickLine={false}
         />
-        <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />}/>
+        <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
         <Tooltip />
         <Legend iconType="circle" content={renderLegend} />
         {parsedDatakeys[0].lines.map((item, index) => (

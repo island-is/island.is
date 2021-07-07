@@ -29,6 +29,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 
 const OpenDataSubPage: Screen = () => {
+  // TODO: Connect to contentful to finish, just static parts for now
   const { linkResolver } = useLinkResolver()
 
   return (
@@ -37,7 +38,7 @@ const OpenDataSubPage: Screen = () => {
         <GridRow>
           <GridColumn span="3/12">
             <Box display={'flex'} justifyContent="flexStart" marginBottom={3}>
-              <Link href="/opin-gogn" skipTab>
+              <Link href="/gagnatorg" skipTab>
                 <Button
                   preTextIcon="arrowBack"
                   preTextIconType="filled"
@@ -144,46 +145,46 @@ const OpenDataSubPage: Screen = () => {
             <Box marginBottom={3}>
               <GridRow>
                 <GridColumn span={['12/12', '4/12', '4/12']}>
-                  <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
+                  {/* <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
                     <SimplePieChart />
-                  </ChartsCard>
+                  </ChartsCard> */}
                 </GridColumn>
                 <GridColumn span={['12/12', '8/12', '8/12']}>
-                  <ChartsCard
+                  {/* <ChartsCard
                     title="Rannís"
                     description="Þjónustuaðili"
                     subTitle="Fjöldi sóttra og veittra styrkja seinustu tíu árin og heildarupphæð úthlutuna"
                     blue
                   >
                     <MixedChart />
-                  </ChartsCard>
+                  </ChartsCard> */}
                 </GridColumn>
               </GridRow>
             </Box>
             <Box marginBottom={3}>
               <GridRow>
                 <GridColumn span={['12/12', '6/12', '6/12']}>
-                  <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
+                  {/* <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
                     <SimplePieChart dataset="umsokn" />
-                  </ChartsCard>
+                  </ChartsCard> */}
                 </GridColumn>
                 <GridColumn span={['12/12', '6/12', '6/12']}>
-                  <ChartsCard
+                  {/* <ChartsCard
                     title="Rannís"
                     description="Þjónustuaðili"
                     blue
                   >
                     <SimplePieChart dataset="veitt" />
-                  </ChartsCard>
+                  </ChartsCard> */}
                 </GridColumn>
               </GridRow>
             </Box>
             <Box marginBottom={3}>
               <GridRow>
                 <GridColumn span={'12/12'}>
-                  <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
+                  {/* <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
                     <SimpleBarChart dataset="umsokn" />
-                  </ChartsCard>
+                  </ChartsCard> */}
                 </GridColumn>
               </GridRow>
             </Box>

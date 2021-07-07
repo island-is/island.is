@@ -630,6 +630,8 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IOpenDataPageFields>(lang, params)
       .catch(errorHandler('getOpenDataPage'))
 
-    return (result.items as types.IOpenDataPage[]).map(mapOpenDataPage)[0] ?? null
+    return (
+      (result.items as types.IOpenDataPage[]).map(mapOpenDataPage)[0] ?? null
+    )
   }
 }

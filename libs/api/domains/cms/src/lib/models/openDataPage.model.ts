@@ -41,13 +41,13 @@ export class OpenDataPage {
   @Field(() => LinkCardSlice)
   externalLinkCardSelection?: LinkCardSlice | null
 
- @Field()
+  @Field()
   externalLinkSectionTitle?: string | undefined
 
- @Field()
+  @Field()
   externalLinkSectionDescription?: string | undefined
 
- @Field(() => Image, {nullable: true})
+  @Field(() => Image, { nullable: true })
   externalLinkSectionImage?: Image | null
 }
 
@@ -59,14 +59,22 @@ export const mapOpenDataPage = ({
   id: sys.id,
   pageTitle: fields.pageTitle ?? '',
   pageDescription: fields.pageDescription ?? '',
-  pageHeaderGraph: fields.pageHeaderGraph ? mapGraph(fields.pageHeaderGraph) : null,
+  pageHeaderGraph: fields.pageHeaderGraph
+    ? mapGraph(fields.pageHeaderGraph)
+    : null,
   link: fields.link ?? '',
   linkTitle: fields.linkTitle ?? '',
-  statisticsCardsSection: (fields.statisticsCardsSection ?? []).map(mapStatisticsCard),
+  statisticsCardsSection: (fields.statisticsCardsSection ?? []).map(
+    mapStatisticsCard,
+  ),
   chartSectionTitle: fields.chartSectionTitle ?? '',
-  externalLinkCardSelection: fields.externalLinkCardSelection ? mapLinkCardSlice(fields.externalLinkCardSelection ) : null,
+  externalLinkCardSelection: fields.externalLinkCardSelection
+    ? mapLinkCardSlice(fields.externalLinkCardSelection)
+    : null,
   graphCards: (fields.graphCards ?? []).map(mapGraphCard),
-  externalLinkSectionTitle: fields.  externalLinkSectionTitle ?? '',
+  externalLinkSectionTitle: fields.externalLinkSectionTitle ?? '',
   externalLinkSectionDescription: fields.externalLinkSectionDescription ?? '',
-  externalLinkSectionImage: fields.externalLinkSectionImage ? mapImage(fields.externalLinkSectionImage) : null,
+  externalLinkSectionImage: fields.externalLinkSectionImage
+    ? mapImage(fields.externalLinkSectionImage)
+    : null,
 })

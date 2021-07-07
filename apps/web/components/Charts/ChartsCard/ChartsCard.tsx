@@ -1,16 +1,12 @@
 import React, { useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-import {
-  Box,
-  Text,
-  Hyphen,
-} from '@island.is/island-ui/core'
+import { Box, Text, Hyphen } from '@island.is/island-ui/core'
 import {
   MixedChart,
   SimpleBarChart,
   SimpleLineChart,
-  SimplePieChart
+  SimplePieChart,
 } from '../'
 import { ColorSchemeContext } from '@island.is/web/context'
 
@@ -35,14 +31,8 @@ export interface ChartsCardsProps {
   blue?: boolean
 }
 
-export const ChartsCard: React.FC<ChartsCardsProps> = ({
-  data,
-  blue,
-}) => {
-  const {graphTitle,
-    graphDescription,
-    organization,
-    graph} = data
+export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
+  const { graphTitle, graphDescription, organization, graph } = data
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
 
@@ -51,19 +41,18 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({
   let children = null
   switch (graph.type) {
     case 'Mixed':
-      children = <MixedChart graphData={graph}/>
+      children = <MixedChart graphData={graph} />
       break
     case 'Line':
-      children = <SimpleLineChart graphData={graph}/>
+      children = <SimpleLineChart graphData={graph} />
       break
     case 'Bar':
       children = <SimpleBarChart />
       break
     case 'Pie':
-      children = <SimplePieChart graphData={graph}/>
-        break
+      children = <SimplePieChart graphData={graph} />
+      break
     default:
-
       break
   }
 
@@ -83,28 +72,31 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({
           minHeight: '128px',
           borderTopLeftRadius: '8px',
           borderTopRightRadius: '8px',
-          paddingBottom: '24px'
+          paddingBottom: '24px',
         }}
         background={blue ? 'blue100' : 'purple100'}
       >
         <Box padding={[2, 2, 4]}>
-        {organization && (
+          {organization && (
             <Text variant="eyebrow" color="dark400">
               {organization}
             </Text>
           )}
-              <Text variant="h3" color="dark400">
-                <Hyphen>{graphTitle}</Hyphen>
-              </Text>
-          {graphDescription && (
-            <Text color="dark400">
-              {graphDescription}
-            </Text>
-          )}
+          <Text variant="h3" color="dark400">
+            <Hyphen>{graphTitle}</Hyphen>
+          </Text>
+          {graphDescription && <Text color="dark400">{graphDescription}</Text>}
         </Box>
       </Box>
-      <Box display="flex" justifyContent="center" alignItems="center" style={{ width: '100%', height: '100%' }}>
-        <Box justifyContent="center" style={{ width: '80%', height: '80%' }}>{children}</Box>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        style={{ width: '100%', height: '100%' }}
+      >
+        <Box justifyContent="center" style={{ width: '80%', height: '80%' }}>
+          {children}
+        </Box>
       </Box>
     </Box>
   )
@@ -113,7 +105,6 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({
 }
 
 const FrameWrapper = ({ children }) => {
-  
   return (
     <Box
       className={cn(styles.card)}

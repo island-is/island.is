@@ -92,7 +92,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page }) => {
               </Text>
               <Text paddingBottom={4}>{pageDescription}</Text>
               <Box display={'flex'} justifyContent="flexStart" marginTop={3}>
-                <Link {...linkResolver('lifeevents')} skipTab>
+                <Link href={link} skipTab>
                   <Button
                     icon="arrowForward"
                     iconType="filled"
@@ -116,7 +116,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page }) => {
           cards={statisticsCardsSection}
         />
       </Section>
-      <Section paddingBottom={8}> 
+      <Section paddingBottom={8}>
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12">
@@ -125,14 +125,10 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page }) => {
           </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '4/12', '4/12']}>
-            <ChartsCard
-                data={graphCards[1]}
-              />
+              <ChartsCard data={graphCards[1]} />
             </GridColumn>
             <GridColumn span={['12/12', '8/12', '8/12']}>
-              <ChartsCard
-                data={graphCards[0]}
-              />
+              <ChartsCard data={graphCards[0]} />
             </GridColumn>
           </GridRow>
         </GridContainer>

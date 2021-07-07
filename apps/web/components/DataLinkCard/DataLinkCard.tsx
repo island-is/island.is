@@ -19,11 +19,7 @@ export interface DataLinkCardProps {
   link?: string
 }
 
-export const DataLinkCard = ({
-  title,
-  body,
-  link,
-}: DataLinkCardProps) => {
+export const DataLinkCard = ({ title, body, link }: DataLinkCardProps) => {
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 360
