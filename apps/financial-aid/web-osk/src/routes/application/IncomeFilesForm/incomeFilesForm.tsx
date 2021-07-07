@@ -20,10 +20,11 @@ const IncomeFilesForm = () => {
 
   const { form, updateForm } = useContext(FormContext)
 
-  const [state, dispatch] = useReducer(form?.incomeFiles, form?.incomeFiles)
-  const [error, setError] = useState<string>()
-
   const { files, onChange } = useFileUpload()
+
+  useEffect(() => {
+    updateForm({ ...form, incomeFiles: files })
+  }, [files])
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -60,6 +61,7 @@ const IncomeFilesForm = () => {
               buttonLabel="Bættu við gögnum"
               onChange={onChange}
               onRemove={() => {}}
+              showFileSize
               // errorMessage={state.length > 0 ? error : undefined}
             />
           </Box>

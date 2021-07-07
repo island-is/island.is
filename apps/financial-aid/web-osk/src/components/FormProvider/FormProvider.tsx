@@ -18,6 +18,7 @@ export interface Form {
   employmentCustom?: string
   hasIncome?: boolean
   incomeFiles?: ApplicationFile[]
+  taxReturnFiles?: ApplicationFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string

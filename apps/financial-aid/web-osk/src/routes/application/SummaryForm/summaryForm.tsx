@@ -6,6 +6,7 @@ import {
   Button,
   LoadingDots,
   Input,
+  Icon,
 } from '@island.is/island-ui/core'
 
 import { useMutation, useQuery } from '@apollo/client'
@@ -61,6 +62,8 @@ const SummaryForm = () => {
 
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
+  console.log(form)
+
   const { user } = useContext(UserContext)
 
   const [isVisible, setIsVisible] = useState(false)
@@ -364,7 +367,61 @@ const SummaryForm = () => {
         >
           <Box marginRight={3}>
             <Text fontWeight="semiBold">Gögn</Text>
-            <Text></Text>
+            <Box>
+              {form?.incomeFiles && (
+                <>
+                  {form.incomeFiles.map((file, index) => {
+                    return (
+                      <a
+                        // href={file.name}
+                        key={`file-` + index}
+                        className={styles.filesButtons}
+                        target="_blank"
+                        download
+                      >
+                        <Box marginRight={1} display="flex" alignItems="center">
+                          <Icon
+                            color="blue400"
+                            icon="document"
+                            size="small"
+                            type="outline"
+                          />
+                        </Box>
+
+                        <Text>{file.name}</Text>
+                      </a>
+                    )
+                  })}
+                </>
+              )}
+
+              {form?.taxReturnFiles && (
+                <>
+                  {form.taxReturnFiles.map((file, index) => {
+                    return (
+                      <a
+                        // href={file.name}
+                        key={`file-` + index}
+                        className={styles.filesButtons}
+                        target="_blank"
+                        download
+                      >
+                        <Box marginRight={1} display="flex" alignItems="center">
+                          <Icon
+                            color="blue400"
+                            icon="document"
+                            size="small"
+                            type="outline"
+                          />
+                        </Box>
+
+                        <Text>{file.name}</Text>
+                      </a>
+                    )
+                  })}
+                </>
+              )}
+            </Box>
           </Box>
 
           <Button
