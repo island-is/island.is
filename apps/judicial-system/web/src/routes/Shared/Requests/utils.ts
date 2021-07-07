@@ -33,7 +33,7 @@ export const mapCaseStateToTagVariant = (
     case CaseState.REJECTED:
       return {
         color: 'rose',
-        text: isInvestigationCase ? 'Hafnað' : 'Kröfu hafnað',
+        text: 'Hafnað',
       }
     default:
       return { color: 'white', text: 'Óþekkt' }
