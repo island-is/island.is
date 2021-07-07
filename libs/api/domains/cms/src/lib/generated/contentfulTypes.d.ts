@@ -2390,6 +2390,9 @@ export interface IProjectPageFields {
 
   /** Project Subpages */
   projectSubpages?: IProjectSubpage[] | undefined
+
+  /** Featured Image */
+  featuredImage?: Asset | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
