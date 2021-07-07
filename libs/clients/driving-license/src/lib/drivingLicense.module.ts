@@ -1,7 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
-import fetch from 'isomorphic-fetch'
-import { createWrappedFetchWithLogging } from './utils'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   Configuration,
   FetchParams,
@@ -36,8 +34,6 @@ const replacePathMiddleware = ({ from, to }: PathReplacement) => {
   } as Middleware
 }
 
-const isRunningOnProduction = isRunningOnEnvironment('production')
-
 export class DrivingLicenseApiModule {
   static register(config: DrivingLicenseConfig): DynamicModule {
     return {
@@ -53,9 +49,9 @@ export class DrivingLicenseApiModule {
                       middleware: [replacePathMiddleware(config.replaceInPath)],
                     }
                   : {}),
-                fetchApi: isRunningOnProduction
-                  ? fetch
-                  : createWrappedFetchWithLogging,
+                fetchApi: createEnhancedFetch({
+                  name: 'clients-driving-license',
+                }),
                 headers: {
                   'X-Road-Client': config.xroadClientId,
                   SECRET: config.secret,
