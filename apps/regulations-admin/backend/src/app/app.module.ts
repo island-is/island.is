@@ -5,7 +5,8 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { AuditModule } from '@island.is/nest/audit'
 
 import { environment } from '../environments'
-import { DraftRegulationModule } from './modules/draft_regulation/draft_regulation.module'
+import { DraftRegulationModule } from './modules/draft_regulation'
+import { DraftRegulationChangeModule } from './modules/draft_regulation_change'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
@@ -16,6 +17,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       useClass: SequelizeConfigService,
     }),
     DraftRegulationModule,
+    DraftRegulationChangeModule,
   ],
 })
 export class AppModule {}

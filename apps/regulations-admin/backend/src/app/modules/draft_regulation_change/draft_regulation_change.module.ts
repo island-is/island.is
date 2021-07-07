@@ -11,4 +11,4 @@ import { DraftRegulationChange } from './draft_regulation_change.model'
   controllers: [DraftRegulationChangeController],
   exports: [DraftRegulationChangeService],
 })
-export class DraftRegulationModule {}
+export class DraftRegulationChangeModule {}
