@@ -1,19 +1,32 @@
 import React from 'react'
-import { Box, Button, Link } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Link } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Approved } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 
-const EndorsementApproved = () => {
+interface EndorsementApprovedProps {
+  showAsWarning?: boolean
+}
+
+const EndorsementApproved = ({ showAsWarning }: EndorsementApprovedProps) => {
   const { formatMessage } = useLocale()
 
   return (
     <Box>
       <Box marginBottom={12}>
-        <Approved
-          title={formatMessage(m.endorsementApproved.cardTitle)}
-          subtitle={formatMessage(m.endorsementApproved.cardSubtitle)}
-        />
+        {!showAsWarning && (
+          <Approved
+            title={formatMessage(m.endorsementApproved.cardTitle)}
+            subtitle={formatMessage(m.endorsementApproved.cardSubtitle)}
+          />
+        )}
+        {showAsWarning && (
+          <AlertMessage
+            type="warning"
+            title={formatMessage(m.endorsementApproved.cardTitleWarning)}
+            message={formatMessage(m.endorsementApproved.cardSubtitle)}
+          />
+        )}
       </Box>
       <Box display="flex" justifyContent="spaceBetween" alignItems="center">
         <Button variant="ghost">
@@ -21,13 +34,6 @@ const EndorsementApproved = () => {
             {formatMessage(m.endorsementApproved.myPagesButton)}
           </Link>
         </Button>
-        <Box>
-          <Button variant="text" icon="arrowForward" iconType="filled">
-            <Link href="https://island.is/althingiskosningar2021/medmaeli-kjosenda">
-              {formatMessage(m.endorsementApproved.partyListButton)}
-            </Link>
-          </Button>
-        </Box>
       </Box>
     </Box>
   )
