@@ -72,11 +72,18 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  createCharge(applicationId: string, auth: Auth) {
-    return this.paymentApiWithAuth(auth).paymentControllerCreateCharge({
-      authorization: auth.authorization,
-      applicationId: applicationId,
-    })
+  async createCharge(
+    applicationId: string,
+    auth: Auth,
+    chargeItemCode: string,
+  ) {
+    return this.paymentApiWithAuth(auth)
+      .paymentControllerCreateCharge({
+        applicationId: applicationId,
+        body: { chargeItemCode: chargeItemCode },
+        authorization: auth.authorization,
+      })
+      .catch(handleError)
   }
 
   async findAll(

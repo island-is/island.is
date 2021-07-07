@@ -58,8 +58,7 @@ const devConfig = {
       xRoadClientId:
         process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
       xRoadProviderId:
-        process.env.PAYMENT_XROAD_PROVIDER_ID ??
-        'IS-DEV/GOV/10021/FJS-DEV-Public',
+        process.env.PAYMENT_XROAD_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
       callbackAdditionUrl:
         process.env.PAYMENT_ADDITION_CALLBACK_URL ??
         '/payment/thiswillneverwork',
