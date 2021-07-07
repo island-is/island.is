@@ -25,7 +25,6 @@ export class DraftRegulationService {
       where: {
         active: true,
       },
-      // include: [{ model: Institution, as: 'institution' }],
     })
   }
 
@@ -34,7 +33,6 @@ export class DraftRegulationService {
 
     return this.draftRegulationModel.findOne({
       where: { id },
-      // include: [{ model: Institution, as: 'institution' }],
     })
   }
 

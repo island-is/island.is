@@ -73,15 +73,15 @@ export class DraftRegulationController {
   @Get('draft_regulation/:id')
   @ApiOkResponse({
     type: DraftRegulation,
-    description: 'Gets an existing user',
+    description: 'Gets a DraftRegulation',
   })
   async getById(@Param('id') id: string) {
-    const user = await this.draftRegulationService.findById(id)
+    const draftRegulation = await this.draftRegulationService.findById(id)
 
-    if (!user) {
+    if (!draftRegulation) {
       throw new NotFoundException(`DraftRegulation ${id} not found`)
     }
 
-    return user
+    return draftRegulation
   }
 }
