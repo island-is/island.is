@@ -1,11 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import {
-  GET_OPEN_DATA_PAGE_QUERY
-} from '../queries'
+import { GET_OPEN_DATA_PAGE_QUERY } from '../queries'
 import {
   GetOpenDataPageQuery,
-  QueryGetOpenDataPageArgs
+  QueryGetOpenDataPageArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GridContainer,
@@ -18,7 +16,7 @@ import {
   Button,
   Inline,
   Logo,
-  ColorSchemeContext
+  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
@@ -41,10 +39,11 @@ interface OpenDataProps {
   page: GetOpenDataPageQuery['getOpenDataPage']
 }
 
-const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
+const OpenDataPage: Screen<OpenDataProps> = ({ page }) => {
   const { linkResolver } = useLinkResolver()
   console.log(page)
-  const {  pageTitle,
+  const {
+    pageTitle,
     pageDescription,
     pageHeaderGraph,
     link,
@@ -55,8 +54,9 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
     externalLinkCardSelection,
     externalLinkSectionTitle,
     externalLinkSectionDescription,
-    externalLinkSectionImage } = page
-  
+    externalLinkSectionImage,
+  } = page
+
   return (
     <Box id="main-content" style={{ overflow: 'hidden', top: 0 }}>
       <Section
@@ -66,7 +66,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
       >
         <GridContainer>
           <GridRow>
-            <GridColumn span={["12/12", "5/12", "5/12"]} paddingBottom={2}>
+            <GridColumn span={['12/12', '5/12', '5/12']} paddingBottom={2}>
               <Box marginBottom={3}>
                 <Breadcrumbs
                   items={[
@@ -90,9 +90,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
               <Text variant="h1" as="h1" paddingBottom={4}>
                 {pageTitle}
               </Text>
-              <Text paddingBottom={4}>
-                {pageDescription}
-              </Text>
+              <Text paddingBottom={4}>{pageDescription}</Text>
               <Box display={'flex'} justifyContent="flexStart" marginTop={3}>
                 <Link {...linkResolver('lifeevents')} skipTab>
                   <Button
@@ -106,36 +104,35 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
                 </Link>
               </Box>
             </GridColumn>
-            <GridColumn span={["12/12", "7/12", "7/12"]}>
-              <SimpleLineChart graphData={pageHeaderGraph}/>
+            <GridColumn span={['12/12', '7/12', '7/12']}>
+              <SimpleLineChart graphData={pageHeaderGraph} />
             </GridColumn>
           </GridRow>
         </GridContainer>
       </Section>
       <Section aria-labelledby="factsCardsTitle">
-        <StatisticsCardsSection title="Stafrænt Ísland" cards={statisticsCardsSection} />
+        <StatisticsCardsSection
+          title="Stafrænt Ísland"
+          cards={statisticsCardsSection}
+        />
       </Section>
       <Section>
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12">
-              <SectionTitle title={chartSectionTitle} icon="business"/>
+              <SectionTitle title={chartSectionTitle} icon="business" />
             </GridColumn>
           </GridRow>
           <GridRow>
-            <GridColumn span={["12/12", "4/12","4/12"]}>
-              <ChartsCard title="Rannís" description="Þjónustuaðili">
+            <GridColumn span={['12/12', '4/12', '4/12']}>
+              {/* <ChartsCard title="Rannís" description="Þjónustuaðili">
                 <SimplePieChart />
-              </ChartsCard>
+              </ChartsCard> */}
             </GridColumn>
-            <GridColumn span={["12/12", "8/12","8/12"]}>
+            <GridColumn span={['12/12', '8/12', '8/12']}>
               <ChartsCard
-                title="Rannís"
-                description="Þjónustuaðili"
-                subTitle="Fjöldi sóttra og veittra styrkja seinustu tíu árin og heildarupphæð úthlutuna"
-              >
-                <MixedChart />
-              </ChartsCard>
+                data={graphCards[0]}
+              />
             </GridColumn>
           </GridRow>
         </GridContainer>
@@ -157,24 +154,24 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
   )
 }
 
-OpenDataPage.getInitialProps = async ({ apolloClient, locale}) => {
+OpenDataPage.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     {
-      data: { getOpenDataPage: page},
-    }
+      data: { getOpenDataPage: page },
+    },
   ] = await Promise.all([
     apolloClient.query<GetOpenDataPageQuery, QueryGetOpenDataPageArgs>({
       query: GET_OPEN_DATA_PAGE_QUERY,
       variables: {
         input: {
-          lang: locale
-        }
-      }
-    })
+          lang: locale,
+        },
+      },
+    }),
   ])
 
   return {
-    page
+    page,
   }
 }
 

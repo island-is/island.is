@@ -2,36 +2,70 @@ import React, { useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import {
-  GridContainer,
   Box,
-  GridRow,
-  GridColumn,
-  Stack,
   Text,
   Hyphen,
 } from '@island.is/island-ui/core'
+import {
+  MixedChart,
+  SimpleBarChart,
+  SimpleLineChart,
+  SimplePieChart
+} from '../'
 import { ColorSchemeContext } from '@island.is/web/context'
 
 import * as styles from './ChartsCard.treat'
 
+interface GraphDataProps {
+  title?: string
+  data: string
+  datakeys: string
+  type: string
+}
+
+interface ChartCardDataProps {
+  graphTitle?: string
+  graphDescription?: string
+  organization?: string
+  graph: GraphDataProps
+}
+
 export interface ChartsCardsProps {
-  title: string
-  subTitle?: string
-  description: string
+  data: ChartCardDataProps
   blue?: boolean
 }
 
 export const ChartsCard: React.FC<ChartsCardsProps> = ({
-  title,
-  subTitle,
-  description,
+  data,
   blue,
-  children,
 }) => {
+  const {graphTitle,
+    graphDescription,
+    organization,
+    graph} = data
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 360
+
+  let children = null
+  switch (graph.type) {
+    case 'Mixed':
+      children = <MixedChart graphData={graph}/>
+      break
+    case 'Line':
+      children = <SimpleLineChart graphData={graph}/>
+      break
+    case 'Bar':
+      children = <SimpleBarChart />
+      break
+    case 'Pie':
+      children = <SimplePieChart />
+        break
+    default:
+
+      break
+  }
 
   const items = (
     <Box
@@ -53,27 +87,23 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({
         background={blue ? 'blue100' : 'purple100'}
       >
         <Box padding={[2, 2, 4]}>
-          {description && (
-            <Text variant="eyebrow" color="purple600">
-              {description}
+        {organization && (
+            <Text variant="eyebrow" color="dark400">
+              {organization}
             </Text>
           )}
-          <Box display="flex" alignItems="center">
-            <Box display="inlineFlex" flexGrow={1}>
-              <Text variant="h3" color="purple600">
-                <Hyphen>{title}</Hyphen>
+              <Text variant="h3" color="dark400">
+                <Hyphen>{graphTitle}</Hyphen>
               </Text>
-            </Box>
-          </Box>
+          {graphDescription && (
+            <Text color="dark400">
+              {graphDescription}
+            </Text>
+          )}
         </Box>
       </Box>
-      {subTitle && 
-        <Box paddingLeft={[2, 15, 15]} padding={[2, 4, 4]} style={{ width: '100%', height: '100px' }}>
-          <Text variant="h4">{subTitle}</Text>
-        </Box>
-      }
-      <Box display="flex" justifyContent="center" style={{ width: '100%', height: '100%' }}>
-        <Box style={subTitle ? { width: '85%', height: '361px' } : { width: '100%', height: '518px' }}>{children}</Box>
+      <Box display="flex" justifyContent="center" alignItems="center" style={{ width: '100%', height: '100%' }}>
+        <Box style={{ width: '100%', height: '518px' }}>{children}</Box>
       </Box>
     </Box>
   )
@@ -82,6 +112,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({
 }
 
 const FrameWrapper = ({ children }) => {
+  
   return (
     <Box
       className={cn(styles.card)}
@@ -92,7 +123,6 @@ const FrameWrapper = ({ children }) => {
       outline="none"
       borderColor="purple100"
       borderWidth="standard"
-      //   padding={[2, 2, 4]}
     >
       {children}
     </Box>

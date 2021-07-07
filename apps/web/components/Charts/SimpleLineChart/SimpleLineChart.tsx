@@ -54,13 +54,13 @@ const renderLegend = (props) => {
     </ul>
   )
 }
-interface graphDataProps {
+interface GraphDataProps {
   title?: string
   data: string
   datakeys: string
 }
 interface SimpleLineChartGraphProps {
-  graphData: graphDataProps
+  graphData: GraphDataProps
 }
 
 export const SimpleLineChart = ({graphData}: SimpleLineChartGraphProps) => {
