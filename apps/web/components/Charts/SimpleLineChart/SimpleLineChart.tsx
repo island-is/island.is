@@ -10,18 +10,7 @@ import {
   ResponsiveContainer,
   Line,
 } from 'recharts'
-import { Text } from '@island.is/island-ui/core'
 
-const dataKeys = ['dk', 'eu', 'fi', 'ir', 'is', 'no', 'sv']
-const dataKeysName = {
-  dk: 'Danmörk',
-  eu: 'Evrópusamb.',
-  fi: 'Finnnland',
-  ir: 'Írland',
-  is: 'Ísland',
-  no: 'Noregur',
-  sv: 'Svíþjóð',
-}
 
 const CustomizedAxisTick = (props) => {
   const { x, y, className, payload } = props
@@ -59,30 +48,31 @@ const renderLegend = (props) => {
               marginLeft: '8px',
             }}
           />
-          {dataKeysName[entry.value]}
+          {entry.value}
         </li>
       ))}
     </ul>
   )
 }
+interface graphDataProps {
+  title?: string
+  data: string
+  datakeys: string
+}
+interface SimpleLineChartGraphProps {
+  graphData: graphDataProps
+}
 
-export const SimpleLineChart = () => {
-  let data = []
-  var year = 2000
-  for (var i = 13; i <= 19; i++) {
-    data.push({
-      year: year + i,
-      dk: Math.round(Math.random() * (4 - 1) + 1),
-      eu: Math.round(Math.random() * (4 - 1) + 1),
-      fi: Math.round(Math.random() * (4 - 1) + 1),
-      ir: Math.round(Math.random() * (4 - 1) + 1),
-      is: Math.round(Math.random() * (4 - 1) + 1),
-      no: Math.round(Math.random() * (4 - 1) + 1),
-      sv: Math.round(Math.random() * (4 - 1) + 1),
-    })
-  }
+export const SimpleLineChart = ({graphData}: SimpleLineChartGraphProps) => {
+  const {title, data, datakeys } = graphData
+  const parsedData = JSON.parse(data)
+  const parsedDatakeys = JSON.parse(datakeys)
 
   const COLORS = [
+    '#00B39E',
+    '#FFF066',
+    '#9A0074',
+    '#6A2EA0',
     '#99C0FF',
     '#D799C7',
     '#99F4EA',
@@ -90,13 +80,14 @@ export const SimpleLineChart = () => {
     '#C3ABD9',
     '#E6CF00',
     '#B5B6EC',
+    '#FF0050',
   ]
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart
         width={500}
         height={300}
-        data={data}
+        data={parsedData}
         margin={{
           top: 10,
           right: 10,
@@ -106,7 +97,7 @@ export const SimpleLineChart = () => {
       >
         <CartesianGrid strokeDasharray="1" vertical={false} stroke="#CCDFFF" />
         <XAxis
-          dataKey="year"
+          dataKey={parsedDatakeys.xAxis}
           stroke="#CCDFFF"
           tick={<CustomizedAxisTick />}
           padding={{ left: 30 }}
@@ -115,10 +106,10 @@ export const SimpleLineChart = () => {
         <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />}/>
         <Tooltip />
         <Legend iconType="circle" content={renderLegend} />
-        {dataKeys.map((datakey, index) => (
+        {parsedDatakeys[0].lines.map((item, index) => (
           <Line
             key={index}
-            dataKey={datakey}
+            dataKey={item.line}
             stroke={COLORS[index % COLORS.length]}
             strokeWidth={3}
             dot={{ r: 6, strokeWidth: 3 }}

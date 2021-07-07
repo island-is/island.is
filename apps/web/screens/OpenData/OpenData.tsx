@@ -57,111 +57,6 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
     externalLinkSectionDescription,
     externalLinkSectionImage } = page
   
-
-  // Hard coded values for the data links cards section, will be removed once connected to contentful
-  const cards = [
-    {
-      title: 'CLARIN á Íslandi',
-      description: 'Árnastofnun',
-      link: {
-        href: '/flokkur/akstur-og-bifreidar',
-      },
-    },
-    {
-      title: 'Gagnasöfn Orkustofunar',
-      description: 'Gögn um orkurannsóknir og orkunýtingu',
-      link: {
-        href: '/flokkur/atvinnurekstur-og-sjalfstaett-starfandi',
-      },
-    },
-    {
-      title: 'Gagnagátt Umhverfisstofnunar',
-      description: '',
-      link: {
-        href: '/flokkur/domstolar-og-rettarfar',
-      },
-    },
-    {
-      title: 'Gagnabrunnur Veðurstofunnar',
-      description: 'Veðurstofa Íslands',
-      link: {
-        href: '/flokkur/fjarmal-og-skattar',
-      },
-    },
-    {
-      title: 'Hagstofa Íslands',
-      description: 'Talnaefni og tilraunatölfræði',
-      link: {
-        href: '/flokkur/fjolskylda-og-velferd',
-      },
-    },
-    {
-      title: 'Landupplýsingagátt',
-      description: 'Landmælingar Íslands',
-      link: {
-        href: '/flokkur/heilbrigdismal',
-      },
-    },
-    {
-      title: 'Loftgæði á Íslandi',
-      description: 'Umhverfisstofnun',
-      link: {
-        href: '/flokkur/husnaedismal',
-      },
-    },
-    {
-      title: 'Lýðheilsuvísir Landlæknis',
-      description: '',
-      link: {
-        href: '/flokkur/idnadur',
-      },
-    },
-    {
-      title: 'Mælaborð ferðaþjónustunnar',
-      description: 'Ferðamálastofa',
-      link: {
-        href: '/flokkur/innflytjendamal',
-      },
-    },
-    {
-      title: 'Mælaborð Tryggingastofnunar',
-      description: '',
-      link: {
-        href: '/flokkur/launthegi-rettindi-og-lifeyrir',
-      },
-    },
-    {
-      title: 'Mælaborð Vinnumálastofnunar',
-      description: '',
-      link: {
-        href: '/flokkur/malefni-fatlads-folks',
-      },
-    },
-    {
-      title: 'Opingogn.is',
-      description: 'Opin gögn frá opinberum aðilum á Íslandi',
-      link: {
-        href: '/flokkur/samfelag-og-rettindi',
-      },
-    },
-    {
-      title: 'Opin gögn Reykjavíkurborgar',
-      description: '',
-      link: {
-        href: '/flokkur/samgongur',
-      },
-    },
-  ]
-
-  const image = {
-    title: 'company',
-    url:
-      '//images.ctfassets.net/8k0h54kbe6bj/3CpwPzdLqnw65iAv9lPFUJ/bb52802cd0e409cc03f6f0903423894a/company-life-event.svg',
-  }
-
-  const dataLinkDescription =
-    '[Undanfarin misseri hafa ...] Í þessu samhengi teljast til opinberra gagna öll gögn sem safnað hefur verið saman, vistuð með skipulegum eða kerfisbundnum hætti af opinberum aðilum og eru eða geta verið birt og varðveitt með rafrænum hætti. Hér eru tenglar á helstu vefi sem tengjast opnum gögnum á Íslandi.'
-
   return (
     <Box id="main-content" style={{ overflow: 'hidden', top: 0 }}>
       <Section
@@ -212,12 +107,11 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
               </Box>
             </GridColumn>
             <GridColumn span={["12/12", "7/12", "7/12"]}>
-              <SimpleLineChart />
+              <SimpleLineChart graphData={pageHeaderGraph}/>
             </GridColumn>
           </GridRow>
         </GridContainer>
       </Section>
-      {/* TODO: Will need to change the props so facts card get their data from a query */}
       <Section aria-labelledby="factsCardsTitle">
         <StatisticsCardsSection title="Stafrænt Ísland" cards={statisticsCardsSection} />
       </Section>

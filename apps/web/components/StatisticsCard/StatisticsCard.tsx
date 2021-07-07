@@ -1,5 +1,4 @@
 import React from 'react'
-import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import { Box, Stack, Text, Hyphen, Hidden } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
@@ -18,12 +17,7 @@ export const StatisticsCard = ({
   image,
   description,
 }: StatisticsCardsProps) => {
-  const [ref, { width }] = useMeasure()
-  console.log(image)
-  const shouldStack = width < 360
   const hasImage = image?.title.length > 0
-  console.log(hasImage)
-  console.log(shouldStack)
 
   const items = (
     <Box

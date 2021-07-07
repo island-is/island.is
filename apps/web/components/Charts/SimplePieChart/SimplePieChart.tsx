@@ -76,12 +76,20 @@ const umsokn = [
   { name: "NV", count: 29 }
 ]
 const COLORS = [
+  '#00B39E',
+  '#FFF066',
+  '#0061FF',
+  '#FF99B9',
+  '#C3ABD9',
+  '#E6CF00',
+  '#6A2EA0',
+  '#00E4CA',
+  '#9A0074',
   '#99C0FF',
   '#D799C7',
   '#99F4EA',
-  '#FF99B9',
-  '#C3ABD9',
   '#B5B6EC',
+  '#FF0050',
 ]
 
 interface CustomTooltipProps extends TooltipProps<string, number> {

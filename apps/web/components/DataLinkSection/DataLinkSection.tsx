@@ -57,7 +57,8 @@ export const DataLinkSection = ({
       </GridRow>
       <GridRow>
         {cards.map((card, index) => {
-          return (
+          if(card.title.length > 0) {
+            return (
             <GridColumn
               key={index}
               span={['12/12', '6/12', '6/12', '4/12']}
@@ -66,6 +67,8 @@ export const DataLinkSection = ({
               <DataLinkCard {...card} />
             </GridColumn>
           )
+          }
+          
         })}
       </GridRow>
     </GridContainer>

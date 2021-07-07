@@ -9,6 +9,7 @@ export const GET_OPEN_DATA_PAGE_QUERY = gql`
         title
         type
         data
+        datakeys
       }
       link
       linkTitle
