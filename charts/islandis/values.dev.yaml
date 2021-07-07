@@ -11,6 +11,8 @@ api:
     CONTACT_US_EMAIL: s@kogk.is
     CONTENTFUL_HOST: preview.contentful.com
     DOWNLOAD_SERVICE_BASE_PATH: https://api.dev01.devland.is
+    DRIVING_LICENSE_PATH_REPLACEMENT_FROM: ''
+    DRIVING_LICENSE_PATH_REPLACEMENT_TO: ''
     ELASTIC_NODE: https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com
     ENDORSEMENT_SYSTEM_BASE_API_URL: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_DOWNLOAD_BUCKET: island-is-dev-download-cache-api
@@ -140,6 +142,8 @@ application-system-api:
     DB_HOST: dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com
     DB_NAME: application_system_api
     DB_USER: application_system_api
+    DRIVING_LICENSE_PATH_REPLACEMENT_FROM: ''
+    DRIVING_LICENSE_PATH_REPLACEMENT_TO: ''
     EMAIL_REGION: eu-west-1
     ENDORSEMENTS_API_BASE_PATH: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_SERVICE_PRESIGN_BUCKET: island-is-dev-fs-presign-bucket
@@ -152,10 +156,9 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: gunnar.ingi@fjr.is
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: Gunnar Ingi
     NOVA_USERNAME: IslandIs_User_Development
-    PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL: s@kogk.is
     PARTY_LETTER_REGISTRY_API_BASE_PATH: >-
       http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local
-    PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: s@kogk.is
+    PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: thorhildur@parallelradgjof.is
     REDIS_URL_NODE_01: >-
       clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379
     SERVICE_DOCUMENTS_BASEPATH: http://web-services-documents.services-documents.svc.cluster.local

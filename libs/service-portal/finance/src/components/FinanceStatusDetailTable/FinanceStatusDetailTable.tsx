@@ -5,13 +5,8 @@ import {
   FinanceStatusDetailsType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
 import { Box, Text, Columns, Column, Button } from '@island.is/island-ui/core'
-import {
-  exportGjoldSundurlidunCSV,
-  exportGjoldSundurlidunXSLX,
-} from '../../utils/filesGjoldSundurlidun'
+import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
 import amountFormat from '../../utils/amountFormat'
-import { downloadXlsxDocument } from '@island.is/service-portal/graphql'
-import { gjoldSundurlidunHeaders } from '../../utils/dataHeaders'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import * as styles from './FinanceStatusDetailTable.treat'
@@ -25,7 +20,6 @@ const FinanceStatusDetailTable: FC<Props> = ({
   organization,
   financeStatusDetails,
 }) => {
-  const { downloadSheet } = downloadXlsxDocument()
   const { formatMessage } = useLocale()
   return (
     <Box className={styles.wrapper} background="white">
@@ -57,10 +51,11 @@ const FinanceStatusDetailTable: FC<Props> = ({
                   icon="arrowForward"
                   iconType="filled"
                   onClick={() =>
-                    downloadSheet({
-                      headers: gjoldSundurlidunHeaders,
-                      data: exportGjoldSundurlidunXSLX(financeStatusDetails),
-                    })
+                    exportGjoldSundurlidunFile(
+                      financeStatusDetails,
+                      organization?.chargeTypes?.[0].name || 'details',
+                      'xlsx',
+                    )
                   }
                   preTextIconType="filled"
                   size="small"
@@ -75,9 +70,10 @@ const FinanceStatusDetailTable: FC<Props> = ({
                     icon="arrowForward"
                     iconType="filled"
                     onClick={() =>
-                      exportGjoldSundurlidunCSV(
+                      exportGjoldSundurlidunFile(
                         financeStatusDetails,
                         organization?.chargeTypes?.[0].name || 'details',
+                        'csv',
                       )
                     }
                     preTextIconType="filled"

@@ -7,9 +7,5 @@ module.exports = (config) => {
   config.stats.chunks = false
   config.stats.modules = false
 
-  if (process.env.NODE_ENV === 'development') {
-    config.devServer.noInfo = true
-  }
-
   return config
 }

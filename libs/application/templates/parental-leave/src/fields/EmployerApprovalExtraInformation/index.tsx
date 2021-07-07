@@ -9,6 +9,7 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useUnion as useUnionOptions } from '../../hooks/useUnion'
 import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 interface ScreenProps {
   application: Application
@@ -16,19 +17,11 @@ interface ScreenProps {
   errors?: RecordObject
 }
 
-type selectOption = {
-  label: string
-  value: string
-}
-
 const EmployerApprovalExtraInformation: FC<ScreenProps> = ({ application }) => {
   const pensionFundOptions = usePensionFundOptions()
   const unionOptions = useUnionOptions()
   const { formatMessage } = useLocale()
   const { pensionFund, union } = useApplicationAnswers(application)
-
-  const getSelectOptionLabel = (options: selectOption[], id: string) =>
-    options.find((option) => option.value === id)?.label
 
   return (
     <GridRow marginTop={2}>

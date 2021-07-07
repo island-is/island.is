@@ -21,7 +21,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { reportForm } from '@island.is/judicial-system-web/messages'
+import { rcReportForm } from '@island.is/judicial-system-web/messages'
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatProsecutorDemands } from '@island.is/judicial-system/formatters'
@@ -114,23 +114,25 @@ export const StepFour: React.FC = () => {
           <FormContentContainer>
             <Box marginBottom={10}>
               <Text as="h1" variant="h1">
-                {formatMessage(reportForm.heading)}
+                {formatMessage(rcReportForm.heading)}
               </Text>
             </Box>
             <Box component="section" marginBottom={7}>
               <Box marginBottom={4}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(reportForm.courtClaim.heading)}{' '}
+                  {formatMessage(rcReportForm.sections.demands.heading)}{' '}
                   <Tooltip
-                    text={formatMessage(reportForm.courtClaim.tooltip)}
+                    text={formatMessage(rcReportForm.sections.demands.tooltip)}
                   />
                 </Text>
               </Box>
               <Box marginBottom={3}>
                 <Input
                   name="demands"
-                  label={formatMessage(reportForm.courtClaim.label)}
-                  placeholder={formatMessage(reportForm.courtClaim.placeholder)}
+                  label={formatMessage(rcReportForm.sections.demands.label)}
+                  placeholder={formatMessage(
+                    rcReportForm.sections.demands.placeholder,
+                  )}
                   defaultValue={workingCase?.demands}
                   errorMessage={demandsErrorMessage}
                   hasError={demandsErrorMessage !== ''}
@@ -164,11 +166,13 @@ export const StepFour: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(reportForm.facts.heading)}{' '}
+                  {formatMessage(rcReportForm.sections.caseFacts.heading)}{' '}
                   <Tooltip
                     placement="right"
                     as="span"
-                    text={formatMessage(reportForm.facts.tooltip)}
+                    text={formatMessage(
+                      rcReportForm.sections.caseFacts.tooltip,
+                    )}
                   />
                 </Text>
               </Box>
@@ -176,8 +180,10 @@ export const StepFour: React.FC = () => {
                 <Input
                   data-testid="caseFacts"
                   name="caseFacts"
-                  label={formatMessage(reportForm.facts.label)}
-                  placeholder={formatMessage(reportForm.facts.placeholder)}
+                  label={formatMessage(rcReportForm.sections.caseFacts.label)}
+                  placeholder={formatMessage(
+                    rcReportForm.sections.caseFacts.placeholder,
+                  )}
                   errorMessage={caseFactsErrorMessage}
                   hasError={caseFactsErrorMessage !== ''}
                   defaultValue={workingCase?.caseFacts}
@@ -211,11 +217,13 @@ export const StepFour: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(reportForm.legalArguments.heading)}{' '}
+                  {formatMessage(rcReportForm.sections.legalArguments.heading)}{' '}
                   <Tooltip
                     placement="right"
                     as="span"
-                    text={formatMessage(reportForm.legalArguments.tooltip)}
+                    text={formatMessage(
+                      rcReportForm.sections.legalArguments.tooltip,
+                    )}
                   />
                 </Text>
               </Box>
@@ -223,9 +231,11 @@ export const StepFour: React.FC = () => {
                 <Input
                   data-testid="legalArguments"
                   name="legalArguments"
-                  label={formatMessage(reportForm.legalArguments.label)}
+                  label={formatMessage(
+                    rcReportForm.sections.legalArguments.label,
+                  )}
                   placeholder={formatMessage(
-                    reportForm.legalArguments.placeholder,
+                    rcReportForm.sections.legalArguments.placeholder,
                   )}
                   defaultValue={workingCase?.legalArguments}
                   errorMessage={legalArgumentsErrorMessage}
@@ -259,12 +269,12 @@ export const StepFour: React.FC = () => {
               <Box component="section" marginBottom={7}>
                 <Box marginBottom={2}>
                   <Text as="h3" variant="h3">
-                    {formatMessage(reportForm.proceduralComments.heading)}{' '}
+                    {formatMessage(rcReportForm.sections.comments.heading)}{' '}
                     <Tooltip
                       placement="right"
                       as="span"
                       text={formatMessage(
-                        reportForm.proceduralComments.tooltip,
+                        rcReportForm.sections.comments.tooltip,
                       )}
                     />
                   </Text>
@@ -272,9 +282,9 @@ export const StepFour: React.FC = () => {
                 <Box marginBottom={3}>
                   <Input
                     name="comments"
-                    label={formatMessage(reportForm.proceduralComments.label)}
+                    label={formatMessage(rcReportForm.sections.comments.label)}
                     placeholder={formatMessage(
-                      reportForm.proceduralComments.placeholder,
+                      rcReportForm.sections.comments.placeholder,
                     )}
                     defaultValue={workingCase?.comments}
                     onChange={(event) =>
