@@ -140,8 +140,8 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
                     label={slice.fullNameLabel}
                     required
                     errorMessage={n(
-                      'formInvalidEmail',
-                      'Þetta er ógilt netfang.',
+                      'formInvalidName',
+                      'Þennan reit þarf að fylla út.',
                     )}
                     hasError={!!formik.errors.name}
                     defaultValue=""

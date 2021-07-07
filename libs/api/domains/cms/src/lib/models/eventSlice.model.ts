@@ -21,7 +21,7 @@ export class EventSlice {
   date!: string
 
   @Field(() => Link, { nullable: true })
-  link?: Link | null
+  link!: Link | null
 
   @Field(() => Image, { nullable: true })
   backgroundImage!: Image | null

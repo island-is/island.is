@@ -18,7 +18,6 @@ interface SliceProps {
 
 export const EventSlice: React.FC<SliceProps> = ({ slice }) => {
   const date = slice.date.split('-')
-  console.log(slice)
 
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
