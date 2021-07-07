@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
+import { useIntl } from 'react-intl'
+
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
 import {
@@ -7,7 +9,7 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-
+import { policeCaseNumber } from '@island.is/judicial-system-web/messages'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
@@ -16,6 +18,7 @@ interface Props {
 const LokeCaseNumber: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
   const [
     policeCaseNumberErrorMessage,
     setPoliceCaseNumberErrorMessage,
@@ -25,7 +28,7 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
     <>
       <Box marginBottom={3}>
         <Text as="h3" variant="h3">
-          Málsnúmer lögreglu
+          {formatMessage(policeCaseNumber.heading)}
         </Text>
       </Box>
       <InputMask
@@ -57,8 +60,8 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
         <Input
           data-testid="policeCaseNumber"
           name="policeCaseNumber"
-          label="Slá inn LÖKE málsnúmer"
-          placeholder={`007-${new Date().getFullYear()}-X`}
+          label={formatMessage(policeCaseNumber.label)}
+          placeholder={formatMessage(policeCaseNumber.placeholder)}
           defaultValue={workingCase.policeCaseNumber}
           errorMessage={policeCaseNumberErrorMessage}
           hasError={policeCaseNumberErrorMessage !== ''}
