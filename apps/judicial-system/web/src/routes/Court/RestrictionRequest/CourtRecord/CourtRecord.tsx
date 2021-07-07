@@ -297,10 +297,12 @@ export const CourtRecord: React.FC = () => {
                       updateCase,
                     )
                   }
-                  tooltip={`Með því að fela forbókun um réttindi ${formatAccusedByGender(
-                    workingCase.accusedGender,
-                    NounCases.GENITIVE,
-                  )} birtist hún ekki í Þingbók málsins.`}
+                  tooltip={formatMessage(accusedRights.tooltip, {
+                    accusedType: formatAccusedByGender(
+                      workingCase.accusedGender,
+                      NounCases.GENITIVE,
+                    ),
+                  })}
                 />
               </Box>
               <BlueBox>

@@ -215,7 +215,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                   updateCase,
                 )
               }
-              tooltip="Með því að fela forbókun um réttindi varnaraðila birtist hún ekki í Þingbók málsins."
+              tooltip={formatMessage(accusedRights.tooltip, {
+                accusedType: 'varnaraðila',
+              })}
             />
           </Box>
           <BlueBox>
