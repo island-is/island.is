@@ -11,15 +11,6 @@ import {
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
 
-import {
-  CurrentHttpUser,
-  JwtAuthGuard,
-  RolesGuard,
-  RolesRule,
-  RolesRules,
-  TokenGuaard,
-} from '@island.is/judicial-system/auth'
-
 import { CreateDraftRegulationDto, UpdateDraftRegulationDto } from './dto'
 import { DraftRegulation } from './draft_regulation.model'
 import { DraftRegulationService } from './draft_regulation.service'

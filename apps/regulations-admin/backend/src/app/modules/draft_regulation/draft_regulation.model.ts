@@ -7,9 +7,11 @@ import {
   Model,
   Table,
   UpdatedAt,
+  HasMany,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
+import { DraftAuthor } from '../draft_author'
 
 @Table({
   tableName: 'draft_regulation',
@@ -90,5 +92,10 @@ export class DraftRegulation extends Model<DraftRegulation> {
   })
   @ApiProperty()
   type?: 'base' | 'amending'
+
+
+  @HasMany(() => DraftAuthor)
+  @ApiProperty({ type: [DraftAuthor] })
+  authors!: DraftAuthor[]
 
 }
