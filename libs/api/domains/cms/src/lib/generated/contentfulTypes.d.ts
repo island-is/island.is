@@ -630,6 +630,40 @@ export interface IErrorPage extends Entry<IErrorPageFields> {
   }
 }
 
+export interface IEventSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Subtitle */
+  subtitle?: string | undefined
+
+  /** Date */
+  date?: string | undefined
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** Background Image */
+  backgroundImage?: Asset | undefined
+}
+
+export interface IEventSlice extends Entry<IEventSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'eventSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFaqListFields {
   /** Title */
   title: string
@@ -1918,6 +1952,7 @@ export interface IOrganizationPageFields {
         | IBigBulletList
         | IDistricts
         | IMailingListSignup
+        | IEventSlice
         | IFeaturedArticles
         | ISectionHeading
         | ILogoListSlice
@@ -2000,6 +2035,8 @@ export interface IOrganizationSubpageFields {
         | IContactUs
         | IDistricts
         | IMailingListSignup
+        | IEventSlice
+        | ILatestNewsSlice
         | IMultipleStatistics
         | IOneColumnText
         | ITabSection
@@ -3615,6 +3652,7 @@ export type CONTENT_TYPE =
   | 'districts'
   | 'embeddedVideo'
   | 'errorPage'
+  | 'eventSlice'
   | 'faqList'
   | 'featured'
   | 'featuredArticles'
