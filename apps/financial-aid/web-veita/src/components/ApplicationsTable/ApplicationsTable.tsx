@@ -7,12 +7,17 @@ import { useRouter } from 'next/router'
 
 import cn from 'classnames'
 
+interface sortByProps {
+  selected: 'modified' | 'state'
+  sorted: 'asc' | 'dsc'
+}
+
 interface PageProps {
   applications: TableBodyProps[]
   headers: TableHeadersProps[]
   className?: string
   setSortBy: (filter: any) => void
-  sortBy: 'modified' | 'state'
+  sortBy: sortByProps
 }
 
 interface TableBodyProps {
@@ -71,7 +76,7 @@ const ApplicationsTable: React.FC<PageProps> = ({
                               marginLeft="smallGutter"
                               className={cn({
                                 [`${styles.showIcon}`]:
-                                  sortBy === item.filterBy,
+                                  sortBy.selected === item.filterBy,
                               })}
                             >
                               <Icon

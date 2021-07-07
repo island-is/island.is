@@ -38,8 +38,8 @@ export interface NavigationElement {
 }
 
 interface sortByProps {
-  name: 'modified' | 'state'
-  fowards: boolean
+  selected: 'modified' | 'state'
+  sorted: 'asc' | 'dsc'
 }
 
 export const ApplicationsOverview = () => {
@@ -57,7 +57,10 @@ export const ApplicationsOverview = () => {
     (i) => i.link === router.pathname,
   )
 
-  const [sortBy, setSortBy] = useState<'modified' | 'state'>('modified')
+  const [sortBy, setSortBy] = useState<sortByProps>({
+    selected: 'modified',
+    sorted: 'asc',
+  })
 
   if (currentNavigationItem) {
     return (
@@ -73,12 +76,16 @@ export const ApplicationsOverview = () => {
             className={`contentUp delay-50`}
             headers={currentNavigationItem.headers}
             setSortBy={(filter) => {
-              setSortBy(filter)
+              setSortBy({ ...sortBy, selected: filter })
             }}
             sortBy={sortBy}
             applications={data.applications
               .sort((a, b) =>
-                a[sortBy] > b[sortBy] ? -1 : a[sortBy] < b[sortBy] ? 1 : 0,
+                a[sortBy.selected] > b[sortBy.selected]
+                  ? -1
+                  : a[sortBy.selected] < b[sortBy.selected]
+                  ? 1
+                  : 0,
               )
               .filter((item) =>
                 currentNavigationItem?.applicationState.includes(item?.state),
