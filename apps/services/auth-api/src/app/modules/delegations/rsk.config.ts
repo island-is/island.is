@@ -1,6 +1,8 @@
-import { RskModuleConfig } from '@island.is/clients/rsk/v2'
-import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 import { Base64 } from 'js-base64'
+
+import { RskModuleConfig } from '@island.is/clients/rsk/v2'
+import { createXRoadAPIPath } from '@island.is/shared/utils/server'
+
 import { environment } from '../../../environments'
 
 export const RskConfig: RskModuleConfig = {

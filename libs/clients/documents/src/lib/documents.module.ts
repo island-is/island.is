@@ -16,7 +16,7 @@ export class DocumentsClientModule {
       module: DocumentsClientModule,
       imports: [
         HttpModule.register({
-          timeout: 30000,
+          timeout: 60000,
         }),
       ],
       providers: [

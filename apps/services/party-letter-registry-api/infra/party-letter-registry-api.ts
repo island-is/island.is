@@ -21,6 +21,6 @@ export const serviceSetup = (): ServiceBuilder<'party-letter-registry-api'> =>
       ],
       postgres: postgresInfo,
     })
-    .grantNamespaces('islandis')
+    .grantNamespaces('islandis', 'application-system')
     .liveness('/liveness')
     .readiness('/liveness')

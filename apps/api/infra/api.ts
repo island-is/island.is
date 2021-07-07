@@ -184,6 +184,9 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID',
       PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER',
       PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD',
+      RSK_API_USERNAME: '/k8s/shared/api/RSK_API_USERNAME',
+      RSK_API_PASSWORD: '/k8s/shared/api/RSK_API_PASSWORD',
+      RSK_API_URL: '/k8s/shared/api/RSK_API_URL',
     })
 
     .ingress({

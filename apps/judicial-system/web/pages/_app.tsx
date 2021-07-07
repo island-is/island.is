@@ -23,7 +23,11 @@ const getTranslationStrings = ({
       query: GET_TRANSLATIONS,
       variables: {
         input: {
-          namespaces: ['judicial.system'],
+          namespaces: [
+            'judicial.system.core',
+            'judicial.system.restriction_cases',
+            'judicial.system.investigation_cases',
+          ],
           lang: 'is',
         },
       },

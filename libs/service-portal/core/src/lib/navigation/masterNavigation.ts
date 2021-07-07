@@ -240,6 +240,20 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'cellular',
         },
       },
+
+      // Ökutæki
+      {
+        name: defineMessage({
+          id: 'service.portal:vehicles',
+          defaultMessage: 'Ökutæki',
+        }),
+        path: ServicePortalPath.AssetsVehicles,
+        systemRoute: true,
+        icon: {
+          type: 'outline',
+          icon: 'car',
+        },
+      },
     ],
   },
 
@@ -268,17 +282,17 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
-      // Ökutæki
+      // Fjármál
       {
         name: defineMessage({
-          id: 'service.portal:vehicles',
-          defaultMessage: 'Ökutæki',
+          id: 'service.portal:finance',
+          defaultMessage: 'Fjármál',
         }),
-        path: ServicePortalPath.AssetsVehicles,
+        path: ServicePortalPath.FinanceRoot,
         systemRoute: true,
         icon: {
           type: 'outline',
-          icon: 'car',
+          icon: 'cellular',
         },
       },
 

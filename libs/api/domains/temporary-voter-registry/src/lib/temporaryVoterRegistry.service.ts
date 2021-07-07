@@ -9,7 +9,7 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 @Injectable()
 export class TemporaryVoterRegistryService {
   constructor(
-    private readonly _temporaryVoterRegistryApi: TemporaryVoterRegistryApi,
+    private readonly temporaryVoterRegistryApi: TemporaryVoterRegistryApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
@@ -24,8 +24,9 @@ export class TemporaryVoterRegistryService {
 
     throw new ApolloError('Failed to resolve request', error.status)
   }
+
   private temporaryVoterRegistryApiWithAuth(auth: Auth) {
-    return this._temporaryVoterRegistryApi.withMiddleware(
+    return this.temporaryVoterRegistryApi.withMiddleware(
       new AuthMiddleware(auth),
     )
   }
@@ -33,6 +34,6 @@ export class TemporaryVoterRegistryService {
   async temporaryVoterRegistryControllerFindByAuth(auth: User) {
     return await this.temporaryVoterRegistryApiWithAuth(auth)
       .voterRegistryControllerFindByAuth()
-      .catch(this.handleError)
+      .catch(this.handleError.bind(this))
   }
 }

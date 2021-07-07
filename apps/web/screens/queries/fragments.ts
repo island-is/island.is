@@ -416,6 +416,7 @@ export const slices = gql`
     title
     type
     accordionItems {
+      id
       title
       content {
         ...HtmlFields

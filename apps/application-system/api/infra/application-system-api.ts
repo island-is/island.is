@@ -1,11 +1,12 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import { MissingSetting } from '../../../../infra/src/dsl/types/input-types'
 
 const postgresInfo = {
   passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
 }
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
+  servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
+  servicesPartyLetterRegistryApi: ServiceBuilder<'services-party-letter-registry-api'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace('application-system')
@@ -109,12 +110,17 @@ export const serviceSetup = (services: {
       SERVICE_DOCUMENTS_BASEPATH: ref(
         (h) => `http://${h.svc(services.documentsService)}`,
       ),
-      PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL: 's@kogk.is',
       PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: {
-        dev: 's@kogk.is',
-        staging: 's@kogk.is',
+        dev: 'thorhildur@parallelradgjof.is',
+        staging: 'thorhildur@parallelradgjof.is',
         prod: 'postur@dmr.is',
       },
+      ENDORSEMENTS_API_BASE_PATH: ref(
+        (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
+      ),
+      PARTY_LETTER_REGISTRY_API_BASE_PATH: ref(
+        (h) => `http://${h.svc(services.servicesPartyLetterRegistryApi)}`,
+      ),
     })
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -147,6 +153,34 @@ export const serviceSetup = (services: {
       PAYMENT_ADDITION_CALLBACK_URL:
         '/k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL',
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
+
+      PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS',
+      PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS',
+      PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS',
+      PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS',
+      PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS',
+      PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS',
+      PARTY_LETTER_ASSIGNED_ADMINS:
+        '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS',
+
+      PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL:
+        '/k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL',
+      PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL:
+        '/k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL',
+      PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL:
+        '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL',
+      PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL:
+        '/k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL',
+      PARTY_APPLICATION_NORTH_ADMIN_EMAIL:
+        '/k8s/application-system/api/PARTY_APPLICATION_NORTH_ADMIN_EMAIL',
+      PARTY_APPLICATION_SOUTH_ADMIN_EMAIL:
+        '/k8s/application-system/api/PARTY_APPLICATION_SOUTH_ADMIN_EMAIL',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
