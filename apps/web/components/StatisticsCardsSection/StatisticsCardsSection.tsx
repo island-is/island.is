@@ -2,17 +2,16 @@ import React from 'react'
 import { GridContainer, Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { StatisticsCard, SimpleSlider } from '@island.is/web/components'
-import { compareDesc } from 'date-fns'
 import { ImageProps } from '@island.is/island-ui/contentful'
 
-interface Imageprops {
+interface CardImageprops {
   title?: string
   url?: string
 }
 interface StatisticsCardProps {
   title?: string
   statistic?: string
-  image?: ImageProps
+  image?: CardImageprops
 }
 
 interface StatisticsSectionProps {

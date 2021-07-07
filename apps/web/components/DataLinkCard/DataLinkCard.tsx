@@ -9,27 +9,19 @@ import {
   FocusableBox,
   Hyphen,
 } from '@island.is/island-ui/core'
-import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
+// import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './DataLinkCard.treat'
 
-export type DataLinkCardTagsProps = {
-  href?: string
-  title: string
-  subTitle?: string
-}
-
 export interface DataLinkCardProps {
   title: string
-  description: string
-  tags?: Array<DataLinkCardTagsProps>
-  linkProps?: LinkProps
-  link?: LinkResolverResponse
+  body: string
+  link?: string
 }
 
 export const DataLinkCard = ({
   title,
-  description,
+  body,
   link,
 }: DataLinkCardProps) => {
   const [ref, { width }] = useMeasure()
@@ -54,16 +46,16 @@ export const DataLinkCard = ({
               </Text>
             </Box>
           </Box>
-          {description && <Text>{description}</Text>}
+          {body && <Text>{body}</Text>}
         </Stack>
       </Box>
     </Box>
   )
 
-  if (link?.href) {
+  if (link) {
     return (
       <FocusableBox
-        href={link.href}
+        href={link}
         borderRadius="large"
         flexDirection="column"
         height="full"

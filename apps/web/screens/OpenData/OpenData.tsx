@@ -225,7 +225,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12">
-              <SectionTitle title="Stofnanir" icon="business"/>
+              <SectionTitle title={chartSectionTitle} icon="business"/>
             </GridColumn>
           </GridRow>
           <GridRow>
@@ -252,11 +252,11 @@ const OpenDataPage: Screen<OpenDataProps> = ({page}) => {
         aria-labelledby="dataLinksSection"
       >
         <DataLinkSection
-          title={'Opin gögn á Íslandi'}
+          title={externalLinkSectionTitle}
           titleId="OpenDataLinksTitle"
-          image={image}
-          description={dataLinkDescription}
-          cards={cards}
+          image={externalLinkSectionImage}
+          description={externalLinkSectionDescription}
+          cards={externalLinkCardSelection.cards}
         />
       </Section>
     </Box>

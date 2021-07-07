@@ -1,16 +1,10 @@
 import React from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-import { Box, Stack, Text, Hyphen } from '@island.is/island-ui/core'
+import { Box, Stack, Text, Hyphen, Hidden } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
 
 import * as styles from './StatisticsCard.treat'
-
-export type StatisticsCardsTagsProps = {
-  href?: string
-  title: string
-  subTitle?: string
-}
 
 export interface StatisticsCardsProps {
   title: string
@@ -25,19 +19,21 @@ export const StatisticsCard = ({
   description,
 }: StatisticsCardsProps) => {
   const [ref, { width }] = useMeasure()
-
+  console.log(image)
   const shouldStack = width < 360
   const hasImage = image?.title.length > 0
+  console.log(hasImage)
+  console.log(shouldStack)
 
   const items = (
     <Box
       display="flex"
       flexGrow={1}
-      flexDirection={shouldStack ? 'columnReverse' : 'row'}
+      flexDirection={'row'}
       alignItems="stretch"
-    
+      justifyContent="flexEnd"
     >
-      <Box style={{ width: shouldStack ? '100%' : hasImage ? '60%' : '100%' }} paddingTop={8} paddingLeft={4}>
+      <Box style={{ width: hasImage ? '70%' : '100%' }} paddingTop={[2, 2, 3]} paddingLeft={[2,2,3]}>
         <Stack space={1}>
           <Box display="flex" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
@@ -53,21 +49,24 @@ export const StatisticsCard = ({
           )}
         </Stack>
       </Box>
-      {hasImage && !shouldStack && (
-        <Box
-          position="relative"
-          style={{
-            width: shouldStack ? '100%' : '204px',
-            height: shouldStack ? '100%' : '204px',
-          }}
-        >
-          <BackgroundImage
-            width={300}
-            positionX={shouldStack ? undefined : 'right'}
-            backgroundSize="contain"
-            image={image}
-          />
-        </Box>
+      {hasImage && (
+        <Hidden below="md">
+          <Box
+            position="relative"
+            style={{
+              width: '204px',
+              height: '204px',
+              top: '-40px'
+            }}
+          >
+            <BackgroundImage
+              width={204}
+              positionX={'right'}
+              backgroundSize="contain"
+              image={image}
+            />
+          </Box>
+        </Hidden>
       )}
     </Box>
   )
@@ -84,7 +83,7 @@ const FrameWrapper = ({ children }) => {
       overflow="visible"
       background="blue100"
       outline="none"
-      justifyContent='center'
+      
     >
       {children}
     </Box>

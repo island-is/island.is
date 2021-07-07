@@ -91,7 +91,7 @@ const OpenDataSubPage: Screen = () => {
                   },
                   {
                     title: 'Gagnatorg',
-                    href: 'opin-gogn',
+                    href: '/gagnatorg',
                   },
                   {
                     title: 'Rannís',
@@ -99,7 +99,7 @@ const OpenDataSubPage: Screen = () => {
                 ]}
                 renderLink={(link) => {
                   return (
-                    <NextLink {...linkResolver('homepage')} passHref>
+                    <NextLink {...linkResolver('opendatapage')} passHref>
                       {link}
                     </NextLink>
                   )

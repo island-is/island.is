@@ -10,10 +10,12 @@ import { BackgroundSchemeContext } from '../../context'
 import { BackgroundImage, DataLinkCard } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
-interface Card {
+interface LinkCardProps {
   title: string
-  description: string
-  link: LinkResolverResponse
+  body: string
+  link?: string
+  id?: string,
+  linkTitle?: string
 }
 
 interface DataLinkSectionProps {
@@ -21,7 +23,7 @@ interface DataLinkSectionProps {
   titleId?: string
   description?: string
   image?: { title: string; url: string }
-  cards: Card[]
+  cards: LinkCardProps[]
 }
 
 export const DataLinkSection = ({
