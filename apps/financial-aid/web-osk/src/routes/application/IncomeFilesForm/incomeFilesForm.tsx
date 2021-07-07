@@ -14,7 +14,6 @@ import cn from 'classnames'
 
 import { NavigationProps } from '@island.is/financial-aid/shared'
 import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFIleUpload'
-import { truncate } from 'lodash'
 
 const IncomeFilesForm = () => {
   const router = useRouter()

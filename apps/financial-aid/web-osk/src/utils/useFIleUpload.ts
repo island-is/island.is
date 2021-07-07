@@ -33,6 +33,8 @@ export const useFileUpload = () => {
   }
 
   const onChange = (newFiles: File[], isRetry?: boolean) => {
+    setUploadErrorMessage(undefined)
+
     const newUploadFiles = newFiles as UploadFile[]
 
     if (!isRetry) {
@@ -48,18 +50,32 @@ export const useFileUpload = () => {
         updateFile(file)
 
         uploadToCloudFront(file, signedUrl.url)
+      } else {
+        file.status = 'error'
+
+        updateFile(file)
       }
     })
   }
 
-  const createSignedUrl = async (filename: string): Promise<SignedUrl> => {
+  const createSignedUrl = async (
+    filename: string,
+  ): Promise<SignedUrl | undefined> => {
     const validFileName = filename.replace(/ +/g, '_')
 
-    const { data: presignedUrlData } = await createSignedUrlMutation({
-      variables: { input: { fileName: validFileName } },
-    })
+    let signedUrl: SignedUrl | undefined = undefined
 
-    return presignedUrlData?.getSignedUrl
+    try {
+      const { data: presignedUrlData } = await createSignedUrlMutation({
+        variables: { input: { fileName: validFileName } },
+      })
+
+      signedUrl = presignedUrlData?.getSignedUrl
+    } catch (e) {
+      setUploadErrorMessage('Næ ekki sambandi við vefþjón')
+    }
+
+    return signedUrl
   }
 
   const uploadToCloudFront = (file: UploadFile, url: string) => {
@@ -84,6 +100,7 @@ export const useFileUpload = () => {
       if (evt.lengthComputable) {
         file.percent = 0
         file.status = 'error'
+        setUploadErrorMessage('Næ ekki að hlaða upp')
 
         updateFile(file)
       }
@@ -99,6 +116,7 @@ export const useFileUpload = () => {
       } else {
         file.status = 'error'
         file.percent = 0
+        setUploadErrorMessage('Næ ekki að hlaða upp')
       }
       updateFile(file)
     })
@@ -123,11 +141,19 @@ export const useFileUpload = () => {
   }
 
   const deleteUrl = async (url: string) => {
-    await fetch(url, {method: 'DELETE'})
+    let success = false
+
+    try {
+      await fetch(url, { method: 'DELETE' })
+
+      success = true
+    } catch (e) {
+      setUploadErrorMessage('Næ ekki að eyða skrá')
+    }
   }
 
   const onRemove = async (file: UploadFile) => {
-    // setUploadErrorMessage(undefined)
+    setUploadErrorMessage(undefined)
 
     if (file.key && file.key in requests) {
       requests[file.key].abort()
@@ -137,7 +163,6 @@ export const useFileUpload = () => {
     const signedUrl = await createSignedUrl(file.name)
 
     if (!signedUrl) {
-      // Error
       return
     }
 
@@ -147,7 +172,7 @@ export const useFileUpload = () => {
   }
 
   const onRetry = (file: UploadFile) => {
-    // setUploadErrorMessage(undefined)
+    setUploadErrorMessage(undefined)
     onChange([file as File], true)
   }
 
