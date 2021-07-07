@@ -222,6 +222,9 @@
         "libs/clients/document-provider/src/index.ts"
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
+      "@island.is/clients/driving-license": [
+        "libs/clients/driving-license/src/index.ts"
+      ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
