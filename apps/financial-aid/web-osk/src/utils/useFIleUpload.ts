@@ -7,8 +7,10 @@ import { SignedUrl } from '@island.is/financial-aid/shared'
 export const useFileUpload = () => {
   const [files, _setFiles] = useState<UploadFile[]>([])
   const filesRef = useRef<UploadFile[]>(files)
-
+  const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
+
+  const requests: { [Key: string]: XMLHttpRequest } = {}
 
   // Utils
   /**
@@ -16,6 +18,16 @@ export const useFileUpload = () => {
    * @param files Files to set to state.
    */
   const setFiles = (files: UploadFile[]) => {
+    /**
+     * Use the filesRef value instead of the files state value because
+     *
+     * 1. The process to update state is asynchronous therfore we can't trust
+     * that we always have the correct state in this function.
+     * 2. We are updating state in the event handlers in the uploadToS3 function
+     * and the listener belongs to the initial render and is not updated on
+     * subsequent rerenders.
+     * (source: https://medium.com/geographit/accessing-react-state-in-event-listeners-with-usestate-and-useref-hooks-8cceee73c559)
+     */
     filesRef.current = files
     _setFiles(files)
   }
@@ -41,8 +53,8 @@ export const useFileUpload = () => {
   }
 
   const createSignedUrl = async (filename: string): Promise<SignedUrl> => {
-    const validFileName = filename.replace(/ +/g, '_');
-    
+    const validFileName = filename.replace(/ +/g, '_')
+
     const { data: presignedUrlData } = await createSignedUrlMutation({
       variables: { input: { fileName: validFileName } },
     })
@@ -65,6 +77,10 @@ export const useFileUpload = () => {
     })
 
     request.upload.addEventListener('error', (evt) => {
+      if (file.key) {
+        delete requests[file.key]
+      }
+
       if (evt.lengthComputable) {
         file.percent = 0
         file.status = 'error'
@@ -74,14 +90,17 @@ export const useFileUpload = () => {
     })
 
     request.addEventListener('load', () => {
+      if (file.key) {
+        delete requests[file.key]
+      }
+
       if (request.status >= 200 && request.status < 300) {
-        //   addFileToCase(file)
         file.status = 'done'
       } else {
         file.status = 'error'
         file.percent = 0
-    }
-    updateFile(file)
+      }
+      updateFile(file)
     })
 
     request.open('PUT', url)
@@ -93,21 +112,7 @@ export const useFileUpload = () => {
     request.send(formData)
   }
 
-  /**
-   * Updates a file if it's in files and adds it to the end of files if not.
-   * @param file The file to update.
-   */
   const updateFile = (file: UploadFile) => {
-    /**
-     * Use the filesRef value instead of the files state value because
-     *
-     * 1. The process to update state is asynchronous therfore we can't trust
-     * that we always have the correct state in this function.
-     * 2. We are updating state in the event handlers in the uploadToS3 function
-     * and the listener belongs to the initial render and is not updated on
-     * subsequent rerenders.
-     * (source: https://medium.com/geographit/accessing-react-state-in-event-listeners-with-usestate-and-useref-hooks-8cceee73c559)
-     */
     const newFiles = [...filesRef.current]
 
     const updatedFiles = newFiles.map((newFile) => {
@@ -117,7 +122,34 @@ export const useFileUpload = () => {
     setFiles(updatedFiles)
   }
 
-  const addFileToApplication = (file: UploadFile) => {}
+  const deleteUrl = async (url: string) => {
+    await fetch(url, {method: 'DELETE'})
+  }
 
-  return { files, onChange }
+  const onRemove = async (file: UploadFile) => {
+    // setUploadErrorMessage(undefined)
+
+    if (file.key && file.key in requests) {
+      requests[file.key].abort()
+      delete requests[file.key]
+    }
+
+    const signedUrl = await createSignedUrl(file.name)
+
+    if (!signedUrl) {
+      // Error
+      return
+    }
+
+    deleteUrl(signedUrl.url)
+
+    setFiles([...files].filter((f) => f !== file))
+  }
+
+  const onRetry = (file: UploadFile) => {
+    // setUploadErrorMessage(undefined)
+    onChange([file as File], true)
+  }
+
+  return { files, uploadErrorMessage, onChange, onRemove, onRetry }
 }

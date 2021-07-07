@@ -20,10 +20,19 @@ const IncomeFilesForm = () => {
 
   const { form, updateForm } = useContext(FormContext)
 
-  const [state, dispatch] = useReducer(form?.incomeFiles, form?.incomeFiles)
-  const [error, setError] = useState<string>()
+  const {
+    files,
+    uploadErrorMessage,
+    onChange,
+    onRemove,
+    onRetry,
+  } = useFileUpload()
 
-  const { files, onChange } = useFileUpload()
+  useEffect(() => {
+    const formFiles = files.filter((f) => f.status === 'done')
+
+    // Set files in form
+  }, [files])
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -59,8 +68,9 @@ const IncomeFilesForm = () => {
               description="Tekið er við öllum hefðbundnum skráargerðum"
               buttonLabel="Bættu við gögnum"
               onChange={onChange}
-              onRemove={() => {}}
-              // errorMessage={state.length > 0 ? error : undefined}
+              onRemove={onRemove}
+              onRetry={onRetry}
+              errorMessage={uploadErrorMessage}
             />
           </Box>
           <div
