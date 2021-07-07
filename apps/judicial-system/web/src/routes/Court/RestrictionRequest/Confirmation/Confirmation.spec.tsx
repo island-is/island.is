@@ -8,6 +8,7 @@ import {
 import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { Confirmation } from './Confirmation'
+import { LocaleProvider } from '@island.is/localization'
 
 describe('Confirmation route', () => {
   test(`should allow users to continue if the user is the assigned judge`, async () => {
@@ -24,7 +25,9 @@ describe('Confirmation route', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <Confirmation />
+          <LocaleProvider locale="is" messages={{}}>
+            <Confirmation />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -51,7 +54,9 @@ describe('Confirmation route', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <Confirmation />
+          <LocaleProvider locale="is" messages={{}}>
+            <Confirmation />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -77,7 +82,9 @@ describe('Confirmation route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <Confirmation />
+          <LocaleProvider locale="is" messages={{}}>
+            <Confirmation />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -105,7 +112,9 @@ describe('Confirmation route', () => {
         addTypename={false}
       >
         <UserProvider>
-          <Confirmation />
+          <LocaleProvider locale="is" messages={{}}>
+            <Confirmation />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )

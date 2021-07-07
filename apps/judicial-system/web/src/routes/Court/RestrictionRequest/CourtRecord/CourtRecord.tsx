@@ -1,5 +1,8 @@
-import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
+import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import {
   FormFooter,
   CourtDocuments,
@@ -22,7 +25,6 @@ import {
   Case,
   CaseType,
 } from '@island.is/judicial-system/types'
-import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   CaseData,
@@ -35,10 +37,10 @@ import {
   setAndSendToServer,
   newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useRouter } from 'next/router'
-import { validate } from '../../../../utils/validate'
-import * as styles from './CourtRecord.treat'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { validate } from '../../../../utils/validate'
+import { accusedRights } from '@island.is/judicial-system-web/messages'
+import * as styles from './CourtRecord.treat'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -61,6 +63,7 @@ export const CourtRecord: React.FC = () => {
 
   const router = useRouter()
   const { updateCase, autofill } = useCase()
+  const { formatMessage } = useIntl()
 
   const id = router.query.id
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -281,11 +284,7 @@ export const CourtRecord: React.FC = () => {
               </Box>
               <Box marginBottom={2}>
                 <HideableText
-                  text="Sakborningi er bent á að honum sé óskylt að svara spurningum
-                  er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113.
-                  gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um
-                  sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr.
-                  114. gr. sömu laga"
+                  text={formatMessage(accusedRights.text)}
                   isHidden={workingCase.isAccusedAbsent}
                   onToggleVisibility={(isVisible: boolean) =>
                     setAndSendToServer(
