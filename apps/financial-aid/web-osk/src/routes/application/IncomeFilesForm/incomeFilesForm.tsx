@@ -14,6 +14,7 @@ import cn from 'classnames'
 
 import { NavigationProps } from '@island.is/financial-aid/shared'
 import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFIleUpload'
+import { truncate } from 'lodash'
 
 const IncomeFilesForm = () => {
   const router = useRouter()
@@ -32,6 +33,10 @@ const IncomeFilesForm = () => {
     const formFiles = files.filter((f) => f.status === 'done')
 
     // Set files in form
+  }, [files])
+
+  useEffect(() => {
+    updateForm({ ...form, incomeFiles: files })
   }, [files])
 
   const navigation: NavigationProps = useFormNavigation(
@@ -67,10 +72,11 @@ const IncomeFilesForm = () => {
               header="Dragðu gögn hingað"
               description="Tekið er við öllum hefðbundnum skráargerðum"
               buttonLabel="Bættu við gögnum"
+              showFileSize={true}
+              errorMessage={uploadErrorMessage}
               onChange={onChange}
               onRemove={onRemove}
               onRetry={onRetry}
-              errorMessage={uploadErrorMessage}
             />
           </Box>
           <div
