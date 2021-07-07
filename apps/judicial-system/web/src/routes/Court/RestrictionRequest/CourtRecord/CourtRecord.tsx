@@ -39,7 +39,10 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '../../../../utils/validate'
-import { accusedRights } from '@island.is/judicial-system-web/messages'
+import {
+  accusedRights,
+  rcCourtRecord,
+} from '@island.is/judicial-system-web/messages'
 import * as styles from './CourtRecord.treat'
 
 export const CourtRecord: React.FC = () => {
@@ -310,11 +313,15 @@ export const CourtRecord: React.FC = () => {
                   <RadioButton
                     name="accusedPleaDecision"
                     id="accused-plea-decision-rejecting"
-                    label={formatMessage(accusedRights.decisionOptionsReject, {
-                      accusedType: capitalize(
-                        formatAccusedByGender(workingCase.accusedGender),
-                      ),
-                    })}
+                    label={formatMessage(
+                      rcCourtRecord.sections.accusedAppealDecision.options
+                        .reject,
+                      {
+                        accusedType: capitalize(
+                          formatAccusedByGender(workingCase.accusedGender),
+                        ),
+                      },
+                    )}
                     checked={
                       workingCase.accusedPleaDecision ===
                       AccusedPleaDecision.REJECT
@@ -334,11 +341,15 @@ export const CourtRecord: React.FC = () => {
                   <RadioButton
                     name="accusedPleaDecision"
                     id="accused-plea-decision-accepting"
-                    label={formatMessage(accusedRights.decisionOptionsAccept, {
-                      accusedType: capitalize(
-                        formatAccusedByGender(workingCase.accusedGender),
-                      ),
-                    })}
+                    label={formatMessage(
+                      rcCourtRecord.sections.accusedAppealDecision.options
+                        .accept,
+                      {
+                        accusedType: capitalize(
+                          formatAccusedByGender(workingCase.accusedGender),
+                        ),
+                      },
+                    )}
                     checked={
                       workingCase.accusedPleaDecision ===
                       AccusedPleaDecision.ACCEPT

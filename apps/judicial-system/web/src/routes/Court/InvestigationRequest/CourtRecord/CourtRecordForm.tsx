@@ -23,7 +23,10 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { accusedRights } from '@island.is/judicial-system-web/messages'
+import {
+  accusedRights,
+  icCourtRecord,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './CourtRecord.treat'
 
@@ -225,9 +228,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="accusedPleaDecision"
                 id="accused-plea-decision-accepting"
-                label={formatMessage(accusedRights.decisionOptionsReject, {
-                  accusedType: 'Varnaraðili',
-                })}
+                label={formatMessage(
+                  icCourtRecord.sections.accusedAppealDecision.options.reject,
+                )}
                 checked={
                   workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
                 }
@@ -246,9 +249,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="accusedPleaDecision"
                 id="accused-plea-decision-rejecting"
-                label={formatMessage(accusedRights.decisionOptionsAccept, {
-                  accusedType: 'Varnaraðili',
-                })}
+                label={formatMessage(
+                  icCourtRecord.sections.accusedAppealDecision.options.accept,
+                )}
                 checked={
                   workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
                 }
@@ -270,7 +273,8 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 name="accusedPleaDecision"
                 id="accused-plea-decision-na"
                 label={formatMessage(
-                  accusedRights.decisionOptionsNotApplicable,
+                  icCourtRecord.sections.accusedAppealDecision.options
+                    .notApplicable,
                 )}
                 checked={
                   workingCase.accusedPleaDecision ===
