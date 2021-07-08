@@ -22,7 +22,10 @@ export class DraftAuthorController {
 
   // @UseGuards()
   @Post('draft_regulation')
-  @ApiCreatedResponse({ type: DraftAuthor, description: 'Creates a new DraftAuthor' })
+  @ApiCreatedResponse({
+    type: DraftAuthor,
+    description: 'Creates a new DraftAuthor',
+  })
   create(
     @Body()
     draftRegulationToCreate: CreateDraftAuthorDto,

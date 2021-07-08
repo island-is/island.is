@@ -14,9 +14,9 @@ import { ApiProperty } from '@nestjs/swagger'
 import { DraftRegulation } from '../draft_regulation'
 
 @Table({
-  tableName: 'draft_regulation_change',
+  tableName: 'draft_law_chapter',
 })
-export class DraftRegulationChange extends Model<DraftRegulationChange> {
+export class DraftLawChapter extends Model<DraftLawChapter> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -31,29 +31,11 @@ export class DraftRegulationChange extends Model<DraftRegulationChange> {
     type: DataType.UUID,
   })
   @ApiProperty()
-  changing_id!: string
+  draft_id!: string
 
   @Column({
     type: DataType.STRING,
   })
   @ApiProperty()
-  regulation!: string
-
-  @Column({
-    type: DataType.DATEONLY,
-  })
-  @ApiProperty()
-  date!: string
-
-  @Column({
-    type: DataType.STRING,
-  })
-  @ApiProperty()
-  title!: string
-
-  @Column({
-    type: DataType.TEXT,
-  })
-  @ApiProperty()
-  text!: string
+  lawChapterId!: string
 }

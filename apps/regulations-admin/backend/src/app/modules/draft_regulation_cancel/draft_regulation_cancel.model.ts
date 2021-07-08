@@ -44,17 +44,4 @@ export class DraftRegulationCancel extends Model<DraftRegulationCancel> {
   })
   @ApiProperty()
   date!: string
-
-  @Column({
-    type: DataType.STRING,
-  })
-  @ApiProperty()
-  title!: string
-
-  @Column({
-    type: DataType.TEXT,
-  })
-  @ApiProperty()
-  text!: string
-
 }

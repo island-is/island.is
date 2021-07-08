@@ -7,6 +7,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { environment } from '../../../environments'
 import { CreateDraftRegulationDto, UpdateDraftRegulationDto } from './dto'
 import { DraftRegulation } from './draft_regulation.model'
+import { DraftAuthor } from '../draft_author'
+import { DraftRegulationChange } from '../draft_regulation_change'
+import { DraftRegulationCancel } from '../draft_regulation_cancel'
+import { DraftLawChapter } from '../draft_law_chapter'
 
 @Injectable()
 export class DraftRegulationService {
@@ -21,10 +25,7 @@ export class DraftRegulationService {
     this.logger.debug('Getting all DraftRegulations')
 
     return this.draftRegulationModel.findAll({
-      order: ['name'],
-      where: {
-        active: true,
-      },
+      order: ['created'],
     })
   }
 
@@ -33,10 +34,18 @@ export class DraftRegulationService {
 
     return this.draftRegulationModel.findOne({
       where: { id },
+      include: [
+        { model: DraftAuthor },
+        { model: DraftRegulationChange },
+        { model: DraftRegulationCancel },
+        { model: DraftLawChapter },
+      ],
     })
   }
 
-  create(draftRegulationToCreate: CreateDraftRegulationDto): Promise<DraftRegulation> {
+  create(
+    draftRegulationToCreate: CreateDraftRegulationDto,
+  ): Promise<DraftRegulation> {
     this.logger.debug('Creating a new DraftRegulation')
 
     return this.draftRegulationModel.create(draftRegulationToCreate)
@@ -45,16 +54,19 @@ export class DraftRegulationService {
   async update(
     id: string,
     update: UpdateDraftRegulationDto,
-  ): Promise<{ numberOfAffectedRows: number; updatedDraftRegulation: DraftRegulation }> {
+  ): Promise<{
+    numberOfAffectedRows: number
+    updatedDraftRegulation: DraftRegulation
+  }> {
     this.logger.debug(`Updating DraftRegulation ${id}`)
 
-    const [numberOfAffectedRows, [updatedDraftRegulation]] = await this.draftRegulationModel.update(
-      update,
-      {
-        where: { id },
-        returning: true,
-      },
-    )
+    const [
+      numberOfAffectedRows,
+      [updatedDraftRegulation],
+    ] = await this.draftRegulationModel.update(update, {
+      where: { id },
+      returning: true,
+    })
 
     return { numberOfAffectedRows, updatedDraftRegulation }
   }

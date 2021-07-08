@@ -20,38 +20,38 @@ import {
   TokenGuaard,
 } from '@island.is/judicial-system/auth'
 
-import { CreateDraftRegulationChangeDto } from './dto'
-import { DraftRegulationChange } from './draft_regulation_change.model'
-import { DraftRegulationChangeService } from './draft_regulation_change.service'
+import { CreateDraftLawChapterDto } from './dto'
+import { DraftLawChapter } from './draft_law_chapter.model'
+import { DraftLawChapterService } from './draft_law_chapter.service'
 
 @Controller('api')
 @ApiTags('draft_regulations')
-export class DraftRegulationChangeController {
+export class DraftLawChapterController {
   constructor(
-    private readonly draftRegulationService: DraftRegulationChangeService,
+    private readonly draftRegulationService: DraftLawChapterService,
   ) {}
 
   // @UseGuards()
   @Post('draft_regulation')
   @ApiCreatedResponse({
-    type: DraftRegulationChange,
-    description: 'Creates a new DraftRegulationChange',
+    type: DraftLawChapter,
+    description: 'Creates a new DraftLawChapter',
   })
   create(
     @Body()
-    draftRegulationToCreate: CreateDraftRegulationChangeDto,
-  ): Promise<DraftRegulationChange> {
+    draftRegulationToCreate: CreateDraftLawChapterDto,
+  ): Promise<DraftLawChapter> {
     return this.draftRegulationService.create(draftRegulationToCreate)
   }
 
   // @UseGuards(JwtAuthGuard)
   @Get('draft_regulations')
   @ApiOkResponse({
-    type: DraftRegulationChange,
+    type: DraftLawChapter,
     isArray: true,
-    description: 'Gets all DraftRegulationChange for regulation',
+    description: 'Gets all DraftLawChapter for regulation',
   })
-  getAll(): Promise<DraftRegulationChange[]> {
+  getAll(): Promise<DraftLawChapter[]> {
     return this.draftRegulationService.getAll()
   }
 }

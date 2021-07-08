@@ -18,11 +18,16 @@ import { DraftRegulationService } from './draft_regulation.service'
 @Controller('api')
 @ApiTags('draft_regulations')
 export class DraftRegulationController {
-  constructor(private readonly draftRegulationService: DraftRegulationService) {}
+  constructor(
+    private readonly draftRegulationService: DraftRegulationService,
+  ) {}
 
   // @UseGuards()
   @Post('draft_regulation')
-  @ApiCreatedResponse({ type: DraftRegulation, description: 'Creates a new DraftRegulation' })
+  @ApiCreatedResponse({
+    type: DraftRegulation,
+    description: 'Creates a new DraftRegulation',
+  })
   create(
     @Body()
     draftRegulationToCreate: CreateDraftRegulationDto,
@@ -32,15 +37,18 @@ export class DraftRegulationController {
 
   // @UseGuards(JwtAuthGuard, RolesGuard)
   @Put('draft_regulation/:id')
-  @ApiOkResponse({ type: DraftRegulation, description: 'Updates an existing user' })
+  @ApiOkResponse({
+    type: DraftRegulation,
+    description: 'Updates an existing user',
+  })
   async update(
     @Param('id') id: string,
     @Body() draftRegulationToUpdate: UpdateDraftRegulationDto,
   ): Promise<DraftRegulation> {
-    const { numberOfAffectedRows, updatedDraftRegulation } = await this.draftRegulationService.update(
-      id,
-      draftRegulationToUpdate,
-    )
+    const {
+      numberOfAffectedRows,
+      updatedDraftRegulation,
+    } = await this.draftRegulationService.update(id, draftRegulationToUpdate)
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`DraftRegulation ${id} does not exist`)

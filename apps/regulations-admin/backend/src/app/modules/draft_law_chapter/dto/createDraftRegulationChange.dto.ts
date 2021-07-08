@@ -2,7 +2,7 @@ import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-export class CreateDraftRegulationCancelDto {
+export class CreateDraftLawChapterDto {
   @IsString()
   @ApiProperty()
   changing_id!: string
@@ -14,4 +14,12 @@ export class CreateDraftRegulationCancelDto {
   @IsDate()
   @ApiProperty()
   date!: string
+
+  @IsDate()
+  @ApiProperty()
+  title!: string
+
+  @IsDate()
+  @ApiProperty()
+  text!: string
 }

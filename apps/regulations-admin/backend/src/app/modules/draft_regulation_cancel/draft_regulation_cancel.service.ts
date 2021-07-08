@@ -40,7 +40,9 @@ export class DraftRegulationCancelService {
     })
   }
 
-  create(draftRegulationcancelToCreate: CreateDraftRegulationCancelDto): Promise<DraftRegulationCancel> {
+  create(
+    draftRegulationcancelToCreate: CreateDraftRegulationCancelDto,
+  ): Promise<DraftRegulationCancel> {
     this.logger.debug('Creating a new DraftRegulationcancel')
 
     return this.draftRegulationcancelModel.create(draftRegulationcancelToCreate)

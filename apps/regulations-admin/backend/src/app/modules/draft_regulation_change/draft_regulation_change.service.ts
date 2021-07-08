@@ -40,7 +40,9 @@ export class DraftRegulationChangeService {
     })
   }
 
-  create(draftRegulationChangeToCreate: CreateDraftRegulationChangeDto): Promise<DraftRegulationChange> {
+  create(
+    draftRegulationChangeToCreate: CreateDraftRegulationChangeDto,
+  ): Promise<DraftRegulationChange> {
     this.logger.debug('Creating a new DraftRegulationChange')
 
     return this.draftRegulationChangeModel.create(draftRegulationChangeToCreate)

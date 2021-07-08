@@ -18,11 +18,16 @@ import { DraftRegulationCancelService } from './draft_regulation_cancel.service'
 @Controller('api')
 @ApiTags('draft_regulations')
 export class DraftRegulationCancelController {
-  constructor(private readonly draftRegulationService: DraftRegulationCancelService) {}
+  constructor(
+    private readonly draftRegulationService: DraftRegulationCancelService,
+  ) {}
 
   // @UseGuards()
   @Post('draft_regulation')
-  @ApiCreatedResponse({ type: DraftRegulationCancel, description: 'Creates a new DraftRegulationCancel' })
+  @ApiCreatedResponse({
+    type: DraftRegulationCancel,
+    description: 'Creates a new DraftRegulationCancel',
+  })
   create(
     @Body()
     draftRegulationToCreate: CreateDraftRegulationCancelDto,

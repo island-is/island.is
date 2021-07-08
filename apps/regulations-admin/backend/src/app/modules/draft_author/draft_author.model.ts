@@ -31,30 +31,11 @@ export class DraftAuthor extends Model<DraftAuthor> {
     type: DataType.UUID,
   })
   @ApiProperty()
-  changing_id!: string
+  draft_id!: string
 
   @Column({
     type: DataType.STRING,
   })
   @ApiProperty()
-  regulation!: string
-
-  @Column({
-    type: DataType.DATEONLY,
-  })
-  @ApiProperty()
-  date!: string
-
-  @Column({
-    type: DataType.STRING,
-  })
-  @ApiProperty()
-  title!: string
-
-  @Column({
-    type: DataType.TEXT,
-  })
-  @ApiProperty()
-  text!: string
-
+  author_id!: string
 }
