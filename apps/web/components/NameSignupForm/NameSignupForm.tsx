@@ -114,12 +114,7 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
           <GridRow>
             <GridColumn span={'12/12'} paddingBottom={message ? 0 : 3}>
               <Text as="h3" variant="h3" color="blue600">
-                Skráning{' '}
-                {message.type === 'success'
-                  ? 'tókst'
-                  : message.type === 'error'
-                  ? 'mistókst'
-                  : ''}
+                {slice.title}
               </Text>
             </GridColumn>
           </GridRow>
