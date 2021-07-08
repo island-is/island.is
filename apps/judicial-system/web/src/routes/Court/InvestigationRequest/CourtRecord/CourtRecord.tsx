@@ -43,9 +43,11 @@ const CourtRecord = () => {
 
         if (
           wc.sessionArrangements === SessionArrangements.ALL_PRESENT &&
-          wc.accusedName
+          wc.accused.length > 0
         ) {
-          attendees += `${wc.accusedName} varnaraðili`
+          wc.accused.forEach((accused) => {
+            attendees += `${accused.name} varnaraðili\n`
+          })
         }
 
         if (
