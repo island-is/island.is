@@ -1,0 +1,6 @@
+version: '3.3'
+
+services:
+  db_regulations_admin_backend:
+    ports:
+      - 5432:5432

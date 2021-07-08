@@ -109,6 +109,9 @@
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
+      "@island.is/api/domains/regulations-admin": [
+        "libs/api/domains/regulations-admin/src/index.ts"
+      ],
       "@island.is/api/domains/rsk": ["libs/api/domains/rsk/src/index.ts"],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"

@@ -21,6 +21,7 @@ module.exports = {
     '<rootDir>/apps/judicial-system/backend',
     '<rootDir>/apps/judicial-system/web',
     '<rootDir>/apps/judicial-system/xrd-api',
+    '<rootDir>/apps/services/regulations-admin-backend',
     '<rootDir>/apps/services/auth-admin-api',
     '<rootDir>/apps/services/auth-api',
     '<rootDir>/apps/services/auth-public-api',
@@ -171,5 +172,6 @@ module.exports = {
     '<rootDir>/libs/shared/types',
     '<rootDir>/libs/skilavottord/consts',
     '<rootDir>/libs/skilavottord/types',
+    '<rootDir>/libs/api/domains/regulations-admin',
   ],
 }

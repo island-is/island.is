@@ -140,6 +140,9 @@
     "api-domains-regulations": {
       "tags": []
     },
+    "api-domains-regulations-admin": {
+      "tags": []
+    },
     "api-domains-rsk": {
       "tags": []
     },
@@ -512,6 +515,9 @@
       "tags": []
     },
     "regulations": {
+      "tags": []
+    },
+    "regulations-admin-backend": {
       "tags": []
     },
     "service-portal": {
