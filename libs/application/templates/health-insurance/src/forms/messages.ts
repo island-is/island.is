@@ -478,6 +478,62 @@ export const m = defineMessages({
     defaultMessage: 'Opna umsókn',
     description: 'Open draft',
   },
+  prerequisiteMetTitle: {
+    id: 'hi.application:prerequisiteMetDescription.title',
+    defaultMessage: 'Skilyrði uppfyllt',
+    description: 'Condition met',
+  },
+  prerequisiteMetDescription: {
+    id: 'hi.application:prerequisiteMetDescription.description',
+    defaultMessage: 'Skilyrði uppfyllt',
+    description: 'Condition met',
+  },
+  prerequisiteNationaalRegistryTitle: {
+    id: 'hi.application:prerequisiteNationaalRegistry.title',
+    defaultMessage: 'Uppfletting lögheimilis',
+    description: 'Legal residence lookup',
+  },
+  prerequisiteNationaalRegistryDescription: {
+    id: 'hi.application:prerequisiteNationaalRegistry.description',
+    defaultMessage: 'Athugað hvort notandi sé með skráð lögheimili á Íslandi',
+    description:
+      'Check whether the user has a registered legal residence in Iceland',
+  },
+  prerequisiteActiveDraftApplicationTitle: {
+    id: 'hi.application:prerequisiteActiveDraftApplication.title',
+    defaultMessage: 'Uppfletting umsókna í umsóknarkerfi Island.is',
+    description: 'Search for previous applications in Island.is',
+  },
+  prerequisiteActiveDraftApplicationDescription: {
+    id: 'hi.application:prerequisiteActiveDraftApplication.description',
+    defaultMessage:
+      'Athugað hvort notandi sé þegar með umsókn í umsóknarkerfi Island.is',
+    description:
+      'Search for previous applications in the application system at Island.is',
+  },
+  prerequisiteHealthInsuranceTitle: {
+    id: 'hi.application:prerequisiteHealthInsurance.title',
+    defaultMessage: 'Uppfletting sjúkratryggingar',
+    description: 'Checking health insurance',
+  },
+  prerequisiteHealthInsuranceDescription: {
+    id: 'hi.application:prerequisiteHealthInsurance.description',
+    defaultMessage: 'Athugað hvort notandi sé þegar með sjúkratryggingu',
+    description: 'Check if the user already has health insurance',
+  },
+  prerequisitePendingApplicationTitle: {
+    id: 'hi.application:prerequisitePendingApplication.title',
+    defaultMessage: 'Uppfletting umsókna í Sjúkratryggingum ríkisins.',
+    description:
+      'Search for previous applications in Sjúkratryggingar ríkisins',
+  },
+  prerequisitePendingApplicationDescription: {
+    id: 'hi.application:prerequisitePendingApplication.description',
+    defaultMessage:
+      'Athugað hvort notandi sé þegar með umsókn hjá Sjúkratryggingum ríkisins.',
+    description:
+      'Check whether the user already has an application with Sjúkratryggingar ríkisins',
+  },
   pendingApplicationTitle: {
     id: 'hi.application:activeApplication.title',
     defaultMessage: 'Virk umsókn',
@@ -486,7 +542,7 @@ export const m = defineMessages({
   pendingApplicationDescription: {
     id: 'hi.application:oldPendingApplication.description',
     defaultMessage:
-      'Þú hefur nú þegar sótt um sjúkratryggingu. Númer umsókninnar er {applicationNumber}. Vinsamlegast hafið samband við Sjúkratryggingar Íslands ef spurningar vakna.',
+      'Þú hefur nú þegar sótt um sjúkratryggingu. Númer umsókninnar er **{applicationNumber}**. Vinsamlegast hafið samband við Sjúkratryggingar Íslands ef spurningar vakna.',
     description:
       'You have already submitted an application for health insurance. Your application number is **{applicationNumber}**. Please contact the Icelandic Health Insurance if you have any questions.',
   },
