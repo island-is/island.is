@@ -39,6 +39,8 @@ export type RegulationPageTexts = Partial<
     | 'redirectText' // 'Þessi reglugerð er enn sem komið er hýst á eldri vefslóð:'
     | 'showDiff' // 'Sýna breytingar'
     | 'hideDiff' // 'Fela breytingar'
+    | 'showDiff_fromOriginal' // 'Sjá allar breytingar frá upphafi'
+    | 'showDiff_fromLast' // 'Sjá síðustu breytingar'
     | 'appendixesTitle' // 'Viðaukar'
     | 'appendixGenericTitle' // 'Viðauki'
     | 'commentsTitle' // 'Athugasemdir ritstjóra'
