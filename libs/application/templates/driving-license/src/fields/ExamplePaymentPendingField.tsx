@@ -1,9 +1,6 @@
 import React, { FC } from 'react'
 import { useQuery, gql } from '@apollo/client'
-import {
-  CustomField,
-  FieldBaseProps,
-} from '@island.is/application/core'
+import { CustomField, FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../lib/messages'
 

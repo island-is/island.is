@@ -443,5 +443,5 @@ export const m = defineMessages({
     id: 'dl.application.paymentPendingDescription',
     defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
     description: 'Please wait until the payment is confirmed',
-  }
+  },
 })
