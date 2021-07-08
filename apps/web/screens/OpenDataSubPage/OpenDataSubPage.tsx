@@ -11,6 +11,8 @@ import {
   Button,
   Inline,
   Icon,
+  
+  
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
@@ -58,6 +60,7 @@ const OpenDataSubPage: Screen = () => {
                 </Box>
               </Box>
             </Box>
+            <Link href="https://www.rannis.is/sjodir/rannsoknir/taeknithrounarsjodur/" skipTab>
             <Box
               padding={[2, 2, 4]}
               background="blueberry100"
@@ -72,6 +75,7 @@ const OpenDataSubPage: Screen = () => {
                 </Box>
               </Box>
             </Box>
+            </Link>
           </GridColumn>
           <GridColumn span="8/12" offset="1/12">
             <Box marginBottom={3}>
@@ -116,6 +120,7 @@ const OpenDataSubPage: Screen = () => {
                 />
                 <Text variant="eyebrow">Sjóðir Rannís</Text>
               </Inline>
+              <Text variant="h3">Tæknisjóður</Text>
             </Box>
             <Box marginBottom={3}>
               <GridRow>
