@@ -2,11 +2,11 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class DraftRegulationModel {
-  @Field({ nullable: true })
-  id?: string
+  @Field()
+  id!: string
 
-  @Field({ nullable: true })
-  drafting_status?: string
+  @Field()
+  drafting_status!: string
 
   @Field({ nullable: true })
   name?: string
@@ -34,10 +34,4 @@ export class DraftRegulationModel {
 
   @Field({ nullable: true })
   type?: string
-
-  @Field({ nullable: true })
-  created?: string
-
-  @Field({ nullable: true })
-  modified?: string
 }

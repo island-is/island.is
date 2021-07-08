@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
-import { DraftRegulation } from './regulationsAdmin.types'
+import { DraftRegulation, DraftRegulations } from './regulationsAdmin.types'
 
 export const REGULATIONS_ADMIN_OPTIONS = 'REGULATIONS_ADMIN_OPTIONS'
 
@@ -16,8 +16,8 @@ export class RegulationsAdminApi extends RESTDataSource {
     private readonly options: RegulationsAdminOptions,
   ) {
     super()
-    // this.baseURL = `${this.options.url}`
-    this.baseURL = `http://localhost:3333/api`
+    this.baseURL = `${this.options.url}`
+    // this.baseURL = `http://localhost:3333/api`
     this.initialize({} as DataSourceConfig<any>)
   }
 
@@ -25,8 +25,21 @@ export class RegulationsAdminApi extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
   }
 
+  async getDraftRegulations(authorization: string): Promise<object | null> {
+    const response = await this.get<object | null>(
+      '/draft_regulations/',
+      {},
+      {
+        cacheOptions: { ttl: this.options.ttl },
+        headers: { authorization },
+      },
+    )
+    return response
+  }
+
   async getDraftRegulation(
     regulationId: string,
+    authorization: string,
   ): Promise<DraftRegulation | null> {
     const response = await this.get<DraftRegulation | null>(
       // `/draft_regulation/${regulationId}`,
@@ -34,6 +47,7 @@ export class RegulationsAdminApi extends RESTDataSource {
       {},
       {
         cacheOptions: { ttl: this.options.ttl },
+        headers: { authorization },
       },
     )
     return response
