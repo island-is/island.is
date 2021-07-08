@@ -83,17 +83,21 @@ export const CourtRecord: React.FC = () => {
         attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
       }
 
-      if (wc.prosecutor && wc.accusedName) {
-        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
-          wc.accusedName
-        } ${formatAccusedByGender(wc?.accusedGender)}`
+      if (wc.prosecutor) {
+        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
+      }
+
+      if (wc.accused.length > 0) {
+        attendees += `${wc.accused[0].name} ${formatAccusedByGender(
+          wc.accused[0].gender,
+        )}\n`
       }
 
       if (wc.defenderName) {
         attendees += `\n${
           wc.defenderName
         } skipaður verjandi ${formatAccusedByGender(
-          wc?.accusedGender,
+          wc.accused[0].gender,
           NounCases.GENITIVE,
         )}`
       }
@@ -116,13 +120,13 @@ export const CourtRecord: React.FC = () => {
         autofill(
           'litigationPresentations',
           `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatAccusedByGender(
-            theCase.accusedGender,
+            theCase.accused[0].gender,
             NounCases.GENITIVE,
           )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatAccusedByGender(
-            theCase.accusedGender,
+            theCase.accused[0].gender,
             NounCases.DATIVE,
           )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatAccusedByGender(
-            theCase.accusedGender,
+            theCase.accused[0].gender,
             NounCases.DATIVE,
           )} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.`,
           theCase,
@@ -274,7 +278,7 @@ export const CourtRecord: React.FC = () => {
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
                   {`Réttindi ${formatAccusedByGender(
-                    workingCase.accusedGender,
+                    workingCase.accused[0].gender,
                     NounCases.GENITIVE,
                   )} `}
                   <Text as="span" fontWeight="semiBold" color="red600">
@@ -296,7 +300,7 @@ export const CourtRecord: React.FC = () => {
                     )
                   }
                   tooltip={`Með því að fela forbókun um réttindi ${formatAccusedByGender(
-                    workingCase.accusedGender,
+                    workingCase.accused[0].gender,
                     NounCases.GENITIVE,
                   )} birtist hún ekki í Þingbók málsins.`}
                 />
@@ -307,7 +311,7 @@ export const CourtRecord: React.FC = () => {
                     name="accusedPleaDecision"
                     id="accused-plea-decision-accepting"
                     label={`${capitalize(
-                      formatAccusedByGender(workingCase.accusedGender),
+                      formatAccusedByGender(workingCase.accused[0].gender),
                     )} hafnar kröfunni`}
                     checked={
                       workingCase.accusedPleaDecision ===
@@ -329,7 +333,7 @@ export const CourtRecord: React.FC = () => {
                     name="accusedPleaDecision"
                     id="accused-plea-decision-rejecting"
                     label={`${capitalize(
-                      formatAccusedByGender(workingCase.accusedGender),
+                      formatAccusedByGender(workingCase.accused[0].gender),
                     )} samþykkir kröfuna`}
                     checked={
                       workingCase.accusedPleaDecision ===
@@ -352,12 +356,12 @@ export const CourtRecord: React.FC = () => {
                   data-testid="accusedPleaAnnouncement"
                   name="accusedPleaAnnouncement"
                   label={`Afstaða ${formatAccusedByGender(
-                    workingCase.accusedGender,
+                    workingCase.accused[0].gender,
                     NounCases.GENITIVE,
                   )}`}
                   defaultValue={workingCase.accusedPleaAnnouncement}
                   placeholder={`Hvað hafði ${formatAccusedByGender(
-                    workingCase.accusedGender,
+                    workingCase.accused[0].gender,
                   )} að segja um kröfuna? Mótmælti eða samþykkti?`}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
