@@ -19,24 +19,6 @@ export class DraftLawChapterService {
     private readonly logger: Logger,
   ) {}
 
-  getAll(): Promise<DraftLawChapter[]> {
-    this.logger.debug('Getting all DraftLawChapters')
-
-    return this.draftLawChapterModel.findAll({
-      order: ['name'],
-      include: [{ model: DraftRegulation }],
-    })
-  }
-
-  findById(id: string): Promise<DraftLawChapter> {
-    this.logger.debug(`Finding DraftLawChapter ${id}`)
-
-    return this.draftLawChapterModel.findOne({
-      where: { id },
-      include: [{ model: DraftRegulation }],
-    })
-  }
-
   create(
     DraftLawChapterToCreate: CreateDraftLawChapterDto,
   ): Promise<DraftLawChapter> {

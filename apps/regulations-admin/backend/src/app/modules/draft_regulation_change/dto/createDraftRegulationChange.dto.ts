@@ -1,9 +1,9 @@
-import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsDate, IsOptional, IsString, IsUUID } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateDraftRegulationChangeDto {
-  @IsString()
+  @IsUUID()
   @ApiProperty()
   changing_id!: string
 

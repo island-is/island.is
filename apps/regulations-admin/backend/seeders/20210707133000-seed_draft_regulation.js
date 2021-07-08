@@ -17,7 +17,7 @@ const draftRegulationSeed = [
   {
     id: '32e191a3-497c-46e4-ae10-8ba579f07f28',
     drafting_status: 'draft',
-    name: '1234-1234',
+    name: '4567-6547',
     title: 'Reglugerð um xyz',
     text: '<p>Lorem ipsum dolor foo</p>',
     drafting_notes: '',

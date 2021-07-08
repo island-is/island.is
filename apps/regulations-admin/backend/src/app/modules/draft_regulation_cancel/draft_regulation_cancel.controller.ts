@@ -16,33 +16,22 @@ import { DraftRegulationCancel } from './draft_regulation_cancel.model'
 import { DraftRegulationCancelService } from './draft_regulation_cancel.service'
 
 @Controller('api')
-@ApiTags('draft_regulations')
+@ApiTags('draft_regulation_cancel')
 export class DraftRegulationCancelController {
   constructor(
     private readonly draftRegulationService: DraftRegulationCancelService,
   ) {}
 
   // @UseGuards()
-  @Post('draft_regulation')
+  @Post('draft_regulation_cancel')
   @ApiCreatedResponse({
     type: DraftRegulationCancel,
     description: 'Creates a new DraftRegulationCancel',
   })
   create(
     @Body()
-    draftRegulationToCreate: CreateDraftRegulationCancelDto,
+    draftRegulationCancelToCreate: CreateDraftRegulationCancelDto,
   ): Promise<DraftRegulationCancel> {
-    return this.draftRegulationService.create(draftRegulationToCreate)
-  }
-
-  // @UseGuards(JwtAuthGuard)
-  @Get('draft_regulations')
-  @ApiOkResponse({
-    type: DraftRegulationCancel,
-    isArray: true,
-    description: 'Gets all DraftRegulationCancel for regulation',
-  })
-  getAll(): Promise<DraftRegulationCancel[]> {
-    return this.draftRegulationService.getAll()
+    return this.draftRegulationService.create(draftRegulationCancelToCreate)
   }
 }

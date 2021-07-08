@@ -19,27 +19,6 @@ export class DraftAuthorService {
     private readonly logger: Logger,
   ) {}
 
-  getAll(): Promise<DraftAuthor[]> {
-    this.logger.debug('Getting all DraftAuthors')
-
-    return this.draftAuthorModel.findAll({
-      order: ['name'],
-      where: {
-        active: true,
-      },
-      include: [{ model: DraftRegulation, as: 'draft_regulation' }],
-    })
-  }
-
-  findById(id: string): Promise<DraftAuthor> {
-    this.logger.debug(`Finding DraftAuthor ${id}`)
-
-    return this.draftAuthorModel.findOne({
-      where: { id },
-      include: [{ model: DraftRegulation, as: 'draft_regulation' }],
-    })
-  }
-
   create(draftAuthorToCreate: CreateDraftAuthorDto): Promise<DraftAuthor> {
     this.logger.debug('Creating a new DraftAuthor')
 

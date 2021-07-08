@@ -1,25 +1,13 @@
-import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsDate, IsOptional, IsString, IsUUID } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateDraftLawChapterDto {
-  @IsString()
+  @IsUUID()
   @ApiProperty()
-  changing_id!: string
+  draft_id!: string
 
   @IsString()
   @ApiProperty()
-  regulation!: string
-
-  @IsDate()
-  @ApiProperty()
-  date!: string
-
-  @IsDate()
-  @ApiProperty()
-  title!: string
-
-  @IsDate()
-  @ApiProperty()
-  text!: string
+  law_chapter_id!: string
 }

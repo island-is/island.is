@@ -17,14 +17,14 @@ import { DraftRegulation } from '../draft_regulation'
   tableName: 'draft_regulation_cancel',
 })
 export class DraftRegulationCancel extends Model<DraftRegulationCancel> {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-  })
-  @ApiProperty()
-  id!: string
+  // @Column({
+  //   type: DataType.UUID,
+  //   primaryKey: true,
+  //   allowNull: false,
+  //   defaultValue: DataType.UUIDV4,
+  // })
+  // @ApiProperty()
+  // id!: string
 
   @ForeignKey(() => DraftRegulation)
   @Column({

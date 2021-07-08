@@ -37,5 +37,5 @@ export class DraftLawChapter extends Model<DraftLawChapter> {
     type: DataType.STRING,
   })
   @ApiProperty()
-  lawChapterId!: string
+  law_chapter_id!: string
 }

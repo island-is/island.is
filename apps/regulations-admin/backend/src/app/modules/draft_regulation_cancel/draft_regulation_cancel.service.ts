@@ -19,27 +19,6 @@ export class DraftRegulationCancelService {
     private readonly logger: Logger,
   ) {}
 
-  getAll(): Promise<DraftRegulationCancel[]> {
-    this.logger.debug('Getting all DraftRegulationCancels')
-
-    return this.draftRegulationcancelModel.findAll({
-      order: ['name'],
-      where: {
-        active: true,
-      },
-      include: [{ model: DraftRegulation, as: 'draft_regulation' }],
-    })
-  }
-
-  findById(id: string): Promise<DraftRegulationCancel> {
-    this.logger.debug(`Finding DraftRegulationcancel ${id}`)
-
-    return this.draftRegulationcancelModel.findOne({
-      where: { id },
-      include: [{ model: DraftRegulation, as: 'draft_regulation' }],
-    })
-  }
-
   create(
     draftRegulationcancelToCreate: CreateDraftRegulationCancelDto,
   ): Promise<DraftRegulationCancel> {
