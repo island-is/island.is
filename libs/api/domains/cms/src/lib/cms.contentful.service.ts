@@ -57,6 +57,8 @@ import { mapFrontpage, Frontpage } from './models/frontpage.model'
 import { GetFrontpageInput } from './dto/getFrontpage.input'
 import { OpenDataPage, mapOpenDataPage } from './models/openDataPage.model'
 import { GetOpenDataPageInput } from './dto/getOpenDataPage.input'
+import { mapProjectPage, ProjectPage } from './models/projectPage.model'
+import { IProjectPage } from './generated/contentfulTypes'
 
 const makePage = (
   page: number,
@@ -296,6 +298,24 @@ export class CmsContentfulService {
       .catch(errorHandler('getAuction'))
 
     return (result.items as types.IAuction[]).map(mapAuction)[0]
+  }
+
+  async getProjectPage(
+    slug: string,
+    lang: string,
+  ): Promise<ProjectPage | null> {
+    const params = {
+      ['content_type']: 'projectPage',
+      'fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IProjectPageFields>(lang, params)
+      .catch(errorHandler('getProjectPage'))
+
+    return result.items.length
+      ? mapProjectPage(result.items[0] as IProjectPage)
+      : null
   }
 
   async getArticle(slug: string, lang: string): Promise<Article | null> {

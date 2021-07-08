@@ -32,3 +32,12 @@ export const getConfigValue = (
 
   return value
 }
+
+export const PAYMENT_QUERY = `
+  mutation($input: ApplicationPaymentChargeInput!) {
+    applicationPaymentCharge(input: $input) {
+      id
+      paymentUrl
+    }
+  }
+`

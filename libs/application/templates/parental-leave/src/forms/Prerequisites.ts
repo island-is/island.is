@@ -14,7 +14,7 @@ import {
   FormModes,
   getValueViaPath,
 } from '@island.is/application/core'
-import { isRunningOnEnvironment } from '@island.is/utils/shared'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'

@@ -5,6 +5,7 @@ import { Box, Text, Inline, Input, Tooltip } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SchemaFormValues } from '../../lib/dataSchema'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 
 export interface Props extends FieldBaseProps {
@@ -21,14 +22,19 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
     endorsementListId,
     false,
   )
+  const constituency =
+    constituencyMapper[answers.constituency as EndorsementListTags]
 
-  //find selected endorsements from the endorsement system and find how many of them are invalidated
+  //find selected endorsements from the endorsement system and find how many of them are with region mismatch
   const endorsementsWithWarning = () => {
     const intersectingEndorsements = endorsementHook?.filter((e: any) => {
       return answers.endorsements?.indexOf(e.id) !== -1
     })
 
-    return intersectingEndorsements?.filter((e) => e.meta.invalidated).length
+    return intersectingEndorsements?.filter(
+      (e) =>
+        e.meta.voterRegion?.voterRegionNumber !== constituency.region_number,
+    ).length
   }
 
   const { register } = useFormContext()
@@ -58,7 +64,7 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5">
           {formatMessage(m.overviewSection.constituency)}
         </Text>
-        <Text>{answers.constituency}</Text>
+        <Text>{constituency.region_name}</Text>
       </Box>
       <Box marginBottom={3}>
         <Text variant="h5">

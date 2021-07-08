@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
+import { useIntl } from 'react-intl'
 
 import {
   Text,
@@ -22,6 +23,7 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { accused } from '@island.is/judicial-system-web/messages'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
@@ -34,6 +36,8 @@ interface Props {
 
 export const StepOneForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, loading, handleNextButtonClick } = props
+
+  const { formatMessage } = useIntl()
 
   const [
     defenderEmailErrorMessage,
@@ -97,15 +101,15 @@ export const StepOneForm: React.FC<Props> = (props) => {
         {workingCase.state === CaseState.RECEIVED && (
           <Box marginBottom={5}>
             <AlertMessage
-              title="Athugið"
-              message="Hægt er að breyta efni kröfunnar og bæta við rannsóknargögnum eftir að hún hefur verið send dómstól en til að breytingar skili sér í dómskjalið sem verður til hliðsjónar í þinghaldinu þarf að smella á Endursenda kröfu á skjánum Yfirlit kröfu."
+              title={formatMessage(accused.receivedAlert.title)}
+              message={formatMessage(accused.receivedAlert.message)}
               type="warning"
             />
           </Box>
         )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Sakborningur
+            {formatMessage(accused.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
@@ -117,7 +121,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Sakborningur
+              {formatMessage(accused.sections.accusedInfo.heading)}
             </Text>
           </Box>
           <DefendantInfo
@@ -133,7 +137,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
             marginBottom={2}
           >
             <Text as="h3" variant="h3">
-              Verjandi sakbornings
+              {formatMessage(accused.sections.defenderInfo.heading)}
             </Text>
           </Box>
           <BlueBox>
@@ -141,8 +145,10 @@ export const StepOneForm: React.FC<Props> = (props) => {
               <Input
                 data-testid="defenderName"
                 name="defenderName"
-                label="Nafn verjanda"
-                placeholder="Fullt nafn"
+                label={formatMessage(accused.sections.defenderInfo.name.label)}
+                placeholder={formatMessage(
+                  accused.sections.defenderInfo.name.placeholder,
+                )}
                 defaultValue={workingCase.defenderName}
                 onChange={(event) => setField(event.target)}
                 onBlur={(event) => validateAndSendToServer(event.target)}
@@ -152,8 +158,10 @@ export const StepOneForm: React.FC<Props> = (props) => {
               <Input
                 data-testid="defenderEmail"
                 name="defenderEmail"
-                label="Netfang verjanda"
-                placeholder="Netfang"
+                label={formatMessage(accused.sections.defenderInfo.email.label)}
+                placeholder={formatMessage(
+                  accused.sections.defenderInfo.email.placeholder,
+                )}
                 defaultValue={workingCase.defenderEmail}
                 errorMessage={defenderEmailErrorMessage}
                 hasError={defenderEmailErrorMessage !== ''}
@@ -171,8 +179,12 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 <Input
                   data-testid="defenderPhoneNumber"
                   name="defenderPhoneNumber"
-                  label="Símanúmer verjanda"
-                  placeholder="Símanúmer"
+                  label={formatMessage(
+                    accused.sections.defenderInfo.phoneNumber.label,
+                  )}
+                  placeholder={formatMessage(
+                    accused.sections.defenderInfo.phoneNumber.placeholder,
+                  )}
                   defaultValue={workingCase.defenderPhoneNumber}
                   errorMessage={defenderPhoneNumberErrorMessage}
                   hasError={defenderPhoneNumberErrorMessage !== ''}
@@ -181,12 +193,18 @@ export const StepOneForm: React.FC<Props> = (props) => {
             </Box>
             <Checkbox
               name="sendRequestToDefender"
-              label="Senda kröfu sjálfvirkt í tölvupósti til verjanda við úthlutun fyrirtökutíma"
-              tooltip={`Ef hakað er hér þá fær verjandi ${
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhaldskröfuna'
-                  : 'farbannskröfuna'
-              } senda þegar fyrirtökutíma hefur verið úthlutað`}
+              label={formatMessage(
+                accused.sections.defenderInfo.sendRequest.label,
+              )}
+              tooltip={formatMessage(
+                accused.sections.defenderInfo.sendRequest.tooltip,
+                {
+                  caseType:
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhaldskröfuna'
+                      : 'farbannskröfuna',
+                },
+              )}
               checked={workingCase.sendRequestToDefender}
               onChange={(event) => setAndSendToServer(event.target)}
               large
@@ -203,16 +221,22 @@ export const StepOneForm: React.FC<Props> = (props) => {
               marginBottom={2}
             >
               <Text as="h3" variant="h3">
-                Stjórnandi rannsóknar{' '}
-                <Tooltip text="Upplýsingar um stjórnanda rannsóknar birtast á vistunarseðli sem berst til gæslufangelsis." />
+                {formatMessage(accused.sections.leadInvestigator.heading)}{' '}
+                <Tooltip
+                  text={formatMessage(
+                    accused.sections.leadInvestigator.tooltip,
+                  )}
+                />
               </Text>
             </Box>
             <Box marginBottom={2}>
               <Input
                 data-testid="leadInvestigator"
                 name="leadInvestigator"
-                label="Sláðu inn stjórnanda rannsóknar"
-                placeholder="Hver stýrir rannsókn málsins?"
+                label={formatMessage(accused.sections.leadInvestigator.label)}
+                placeholder={formatMessage(
+                  accused.sections.leadInvestigator.placeholder,
+                )}
                 defaultValue={workingCase.leadInvestigator}
                 errorMessage={leadInvestigatorErrorMessage}
                 hasError={leadInvestigatorErrorMessage !== ''}

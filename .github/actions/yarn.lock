@@ -476,15 +476,15 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@octokit/action@^3.10.2":
-  version "3.10.2"
-  resolved "https://registry.yarnpkg.com/@octokit/action/-/action-3.10.2.tgz#5e805b41c61f829df544af25bc5693e2c7b00458"
-  integrity sha512-W6lvyjs5bfxkaLYaPtUrp54TtHwF6VNVKfPbieOP4UDf1ott2p8TgdsHABx6Aj/vCMB4BO/a2n5roe80HaouZA==
+"@octokit/action@^3.10.7":
+  version "3.10.7"
+  resolved "https://registry.yarnpkg.com/@octokit/action/-/action-3.10.7.tgz#89509e10aca19dd467ddfd6b8c36940f71f275bb"
+  integrity sha512-EnTP4ko0oxvvNvlwi53t6nOQxojMU5dIOPSfoswah5pYA7pZ5OiiPNvuFhKnp1Qr0piGf2FruhSbhr1mgGPFpQ==
   dependencies:
     "@octokit/auth-action" "^1.2.0"
     "@octokit/core" "^3.0.0"
     "@octokit/plugin-paginate-rest" "^2.2.4"
-    "@octokit/plugin-rest-endpoint-methods" "5.3.1"
+    "@octokit/plugin-rest-endpoint-methods" "5.3.6"
     "@octokit/types" "^6.16.1"
 
 "@octokit/auth-action@^1.2.0":
@@ -533,10 +533,10 @@
     "@octokit/types" "^6.0.3"
     universal-user-agent "^6.0.0"
 
-"@octokit/openapi-types@^7.2.3":
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-7.3.0.tgz#1d9ed79828513c57a95e6360b7c9b4749503e79d"
-  integrity sha512-o00X2FCLiEeXZkm1Ab5nvPUdVOlrpediwWZkpizUJ/xtZQsJ4FiQ2RB/dJEmb0Nk+NIz7zyDePcSCu/Y/0M3Ew==
+"@octokit/openapi-types@^8.1.3":
+  version "8.1.3"
+  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-8.1.3.tgz#45fbb4b0e5a5d61b21aeef7f33d345e05766236b"
+  integrity sha512-iK7SfjjkGdIiopuKEMAzPxSagZtIzWjwfYFBFxLKIS4Q4S8rSLQk7EnlTok2/bNAz1BvxnGKPKe+auSiCIU5QQ==
 
 "@octokit/plugin-paginate-rest@^2.2.4":
   version "2.13.3"
@@ -545,12 +545,12 @@
   dependencies:
     "@octokit/types" "^6.11.0"
 
-"@octokit/plugin-rest-endpoint-methods@5.3.1":
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-5.3.1.tgz#deddce769b4ec3179170709ab42e4e9e6195aaa9"
-  integrity sha512-3B2iguGmkh6bQQaVOtCsS0gixrz8Lg0v4JuXPqBcFqLKuJtxAUf3K88RxMEf/naDOI73spD+goJ/o7Ie7Cvdjg==
+"@octokit/plugin-rest-endpoint-methods@5.3.6":
+  version "5.3.6"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-5.3.6.tgz#1cc2106e73f44432e6dad9e464a33db7b5930a03"
+  integrity sha512-uJi23hKKzFS+ACePgKYthSPyYkRgQgB36h07AZAS0H98x2AyjZy2ppr9Q36Faq4eoHRgrPnmf1suquMmymkN/Q==
   dependencies:
-    "@octokit/types" "^6.16.2"
+    "@octokit/types" "^6.17.3"
     deprecation "^2.3.1"
 
 "@octokit/request-error@^2.0.5", "@octokit/request-error@^2.1.0":
@@ -581,12 +581,12 @@
   dependencies:
     "@types/node" ">= 8"
 
-"@octokit/types@^6.0.3", "@octokit/types@^6.11.0", "@octokit/types@^6.16.1", "@octokit/types@^6.16.2":
-  version "6.16.2"
-  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-6.16.2.tgz#62242e0565a3eb99ca2fd376283fe78b4ea057b4"
-  integrity sha512-wWPSynU4oLy3i4KGyk+J1BLwRKyoeW2TwRHgwbDz17WtVFzSK2GOErGliruIx8c+MaYtHSYTx36DSmLNoNbtgA==
+"@octokit/types@^6.0.3", "@octokit/types@^6.11.0", "@octokit/types@^6.16.1", "@octokit/types@^6.17.3":
+  version "6.17.3"
+  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-6.17.3.tgz#af5aaae50bd9230ac502d288a937c0d8e9f2181a"
+  integrity sha512-l3JiWbtK95CTsHTuF8WpE0Raq9efWUUU88CiWiCxRgTsauUkIRmVYZoDZTwAHn1xAnPz0aezQynIo6igS9EqQA==
   dependencies:
-    "@octokit/openapi-types" "^7.2.3"
+    "@octokit/openapi-types" "^8.1.3"
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.0"
@@ -3631,10 +3631,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@^4.3.3:
-  version "4.3.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.3.tgz#5401db69bd3203daf1851a1a74d199cb3112c11a"
-  integrity sha512-rUvLW0WtF7PF2b9yenwWUi9Da9euvDRhmH7BLyBG4DCFfOJ850LGNknmRpp8Z8kXNUPObdZQEfKOiHtXuQHHKA==
+typescript@^4.3.5:
+  version "4.3.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.5.tgz#4d1c37cc16e893973c45a06886b7113234f119f4"
+  integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
 
 union-value@^1.0.0:
   version "1.0.1"

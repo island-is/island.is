@@ -5,9 +5,9 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
-import { Endorsement } from '../endorsement/endorsement.model'
+import { Endorsement } from '../endorsement/models/endorsement.model'
 
-interface createInput extends EndorsementListDto {
+interface CreateInput extends EndorsementListDto {
   owner: string
 }
 @Injectable()
@@ -61,17 +61,17 @@ export class EndorsementListService {
   }
 
   async close(endorsementList: EndorsementList): Promise<EndorsementList> {
-    this.logger.debug('Closing endorsement list', endorsementList.id)
+    this.logger.info(`Closing endorsement list: ${endorsementList.id}`)
     return await endorsementList.update({ closedDate: new Date() })
   }
 
   async open(endorsementList: EndorsementList): Promise<EndorsementList> {
-    this.logger.debug('Opening endorsement list', endorsementList.id)
+    this.logger.info(`Opening endorsement list: ${endorsementList.id}`)
     return await endorsementList.update({ closedDate: null })
   }
 
-  async create(list: createInput) {
-    this.logger.debug('Creating endorsement list')
+  async create(list: CreateInput) {
+    this.logger.info(`Creating endorsement list: ${list.title}`)
     return this.endorsementListModel.create(list)
   }
 }

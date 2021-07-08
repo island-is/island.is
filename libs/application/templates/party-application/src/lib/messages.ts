@@ -28,7 +28,7 @@ export const m: MessageDir = {
     confirmationDescription: {
       id: 'pa.application:confirmation.description',
       defaultMessage:
-        'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp fyrir nýja meðmælendalista.',
+        'Vinsamlegast farðu yfir upplýsingarnar hér að neðan til að staðfesta að þær séu réttar.',
       description: 'Description of confirmation',
     },
   }),
@@ -41,13 +41,25 @@ export const m: MessageDir = {
     subtitle: {
       id: 'pa.application:disclaimerSection.subtitle',
       defaultMessage:
-        'Eftirfaranadi gildir um söfnun meðmæla fyrir framboðslista',
+        'Eftirfarandi gildir um söfnun meðmæla fyrir framboðslista',
       description: 'Subtitle of disclaimer section',
     },
     descriptionPt1: {
       id: 'pa.application:disclaimerSection.descrtipion.p1',
       defaultMessage:
-        'Eingöngu Þjóðskrá Íslands og yfirkjörstjórnir hafa aðgang að söfnum meðmælanna ásamt þeim stjórnmálasamtökum sem stofna söfnunina. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
+        'Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018. Yfirkjörstjórn ber ábyrgð á vinnslu persónuupplýsinga sem unnið er með.',
+      description: 'Description part one',
+    },
+    descriptionPt2: {
+      id: 'pa.application:disclaimerSection.descrtipion.p2',
+      defaultMessage:
+        'Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram eða nota í öðrum tilgangi.',
+      description: 'Description part one',
+    },
+    descriptionPt3: {
+      id: 'pa.application:disclaimerSection.descrtipion.p3',
+      defaultMessage:
+        'Nánari upplýsingar um vinnsluna þ.á m. réttindi einsstaklinga má nálgast á persónuverndarstefnu Ísland.is ',
       description: 'Description part one',
     },
     checkboxLabel: {
@@ -65,7 +77,7 @@ export const m: MessageDir = {
     description: {
       id: 'pa.application:overview.description',
       defaultMessage:
-        'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
+        'Vinsamlegast farðu yfir upplýsingarnar hér að neðan til að staðfesta að þær séu réttar.',
       description: 'Overview description',
     },
     subtitle: {
@@ -106,7 +118,7 @@ export const m: MessageDir = {
     signaturesInvalid: {
       id: 'pa.application:endorsementListSubmission.signaturesInvalid',
       defaultMessage:
-        'Ekki er hægt að sannreyna að meðmæli uppfylli skilyrði yfirkjörstjórnar',
+        'Ekki er hægt að sannreyna að meðmæli uppfylli lagaskilyrði',
       description: 'Warning message for invalid endorsements',
     },
     signaturesInvalidTitle: {
@@ -151,14 +163,9 @@ export const m: MessageDir = {
       defaultMessage: 'Afrita tengil',
       description: 'Copy link title',
     },
-    nameCount: {
-      id: 'pa.application:endorsementList.name.count',
-      defaultMessage: 'nafn á lista (af 500)',
-      description: 'X name on list',
-    },
     namesCount: {
       id: 'pa.application:endorsementList.names.count',
-      defaultMessage: 'nöfn á lista (af 500)',
+      defaultMessage: 'meðmæli á lista',
       description: 'X names on list',
     },
     invalidSignatures: {
@@ -168,7 +175,7 @@ export const m: MessageDir = {
     },
     searchbar: {
       id: 'pa.application:endorsementList.search',
-      defaultMessage: 'Leitaðu hér',
+      defaultMessage: 'Leitaðu að nafni',
       description: 'Searchbar placeholder',
     },
     thDate: {
@@ -198,7 +205,8 @@ export const m: MessageDir = {
     },
     signatureInvalidTooltip: {
       id: 'pa.application:endorsementList.tooltip',
-      defaultMessage: 'Meðmæli í vafa',
+      defaultMessage:
+        'Meðmæli í vafa, yfirkjörstjórn þarf að yfirfara aldur, búsetu og kjördæmi',
       description: 'Invalid signature tooltip',
     },
     isClosedMessage: {
@@ -210,7 +218,7 @@ export const m: MessageDir = {
   endorsementListSubmission: defineMessages({
     title: {
       id: 'pa.application:endorsementListSubmission.title',
-      defaultMessage: 'Veljið meðmæli til innsendingar',
+      defaultMessage: 'Veljið meðmæli til að senda yfirkjörstjórn',
       description: 'Choose endorsements to be sent',
     },
     shortTitle: {
@@ -227,7 +235,7 @@ export const m: MessageDir = {
     invalidEndorsement: {
       id: 'pa.application:endorsementListSubmission.invalidEndorsement',
       defaultMessage:
-        'Ekki er hægt að sannreyna að meðmæli uppfylli skilyrði yfirkjörstjórnar',
+        'Ekki er hægt að sannreyna að meðmæli uppfylli lagaskilyrði',
       description: 'Warning message for invalid endorsements',
     },
     selectAuto: {
@@ -242,27 +250,27 @@ export const m: MessageDir = {
     },
     chosenEndorsements: {
       id: 'pa.application:endorsementListSubmission.chosenEndorsements',
-      defaultMessage: 'Fjöldi atkvæða valin:',
+      defaultMessage: 'Fjöldi meðmæla valin:',
       description: 'Chosen endorsements',
     },
     warningMessageTitleHigh: {
       id: 'pa.application:endorsementListSubmission.warningMessageTitleHigh',
-      defaultMessage: 'Leyfilegur fjöldi meðmæla of mikill',
+      defaultMessage: 'Meðmæli of mörg',
       description: 'Warning message title when nr of endorsements is too high',
     },
     warningMessageTitleLow: {
       id: 'pa.application:endorsementListSubmission.warningMessageTitleLow',
-      defaultMessage: 'Leyfilegur fjöldi meðmæla of lítill',
+      defaultMessage: 'Meðmæli of fá',
       description: 'Warning message title when nr of endorsements is too low',
     },
     warningMessagePt1: {
       id: 'pa.application:endorsementListSubmission.warningMessagePt1',
-      defaultMessage: 'Fjöldi í þessu kjördæmi þarf að vera á milli ',
+      defaultMessage: 'Fjöldi meðmæla í þessu kjördæmi þarf að vera á milli ',
       description: 'Warning message',
     },
     warningMessagePt2: {
       id: 'pa.application:endorsementListSubmission.warningMessagePt2',
-      defaultMessage: '. Afhakaðu í réttan fjölda til að skila lista.',
+      defaultMessage: '. Hakaðu í réttan fjölda til að skila lista.',
       description: 'Warning message',
     },
   }),
@@ -279,8 +287,7 @@ export const m: MessageDir = {
     },
     approvedSubtitle: {
       id: 'pa.application:application.approved.card.subtitle',
-      defaultMessage:
-        'Staðfesting á móttöku verður send í pósthólf á Mínum síðum. Frekari upplýsingar veitir viðkomandi yfirkjörstjórn.',
+      defaultMessage: 'Frekari upplýsingar veitir viðkomandi yfirkjörstjórn.',
       description: 'Subtitle for approved card',
     },
     bulletListTitle: {
@@ -369,14 +376,20 @@ export const m: MessageDir = {
     includePapersDisclaimerPt1: {
       id: 'pa.application:recommendations.includePapers.disclaimer1',
       defaultMessage:
-        '*Fyrir meðmæli á pappír þarf að lista upp kennitölur meðmælenda í skjal og hlaða upp hér að neðan.',
+        '*Fyrir meðmæli sem safnað hefur verið á pappír þarf að skrá kennitölu meðmælenda í excel skrá og hlaða upp hér að neðan.',
       description: 'Include paper signatures disclaimer part 1',
     },
     includePapersDisclaimerPt2: {
       id: 'pa.application:recommendations.includePapers.disclaimer2',
       defaultMessage:
-        '*Pappírsmeðmæli skulu einnig sendast með bréfpósti til yfirkjörstjórnar.',
+        '*Excel skráin skal innihalda eina kennitölu í reit. Allar kennitölur skulu vera í fyrsta dálki (dálkur A), fyrsta kennitalan skal vera staðsett í reit A1.',
       description: 'Include paper signatures disclaimer part 2',
+    },
+    includePapersDisclaimerPt3: {
+      id: 'pa.application:recommendations.includePapers.disclaimer3',
+      defaultMessage:
+        '*Frumrit meðmæla sem safnað hefur verið á pappír skulu afhent yfirkjörstjórn.',
+      description: 'Include paper signatures disclaimer part 3',
     },
     noPaper: {
       id: 'pa.application:recommendations.paper.no',
@@ -413,11 +426,21 @@ export const m: MessageDir = {
       defaultMessage: 'Ekki tókst að hlaða upp pappírsmeðmælum',
       description: 'Upload failed text',
     },
+    attention: {
+      id: 'pa.application:uploadButton.attention',
+      defaultMessage: 'Athugið!',
+      description: 'Warning title',
+    },
+    uploadWarningText: {
+      id: 'pa.application:uploadButton.warningDescription',
+      defaultMessage: 'Ekki tókst að hlaða upp eftirfarandi kennitölur: ',
+      description: 'Warning description',
+    },
   }),
   endorsementDisclaimer: defineMessages({
     title: {
       id: 'pa.application:endorsement.disclaimer.title',
-      defaultMessage: 'Meðmæli með framboðslista',
+      defaultMessage: 'Mæla með framboðslista',
       description: 'Title for signature disclaimer',
     },
     messagePt1: {
@@ -434,14 +457,19 @@ export const m: MessageDir = {
     descriptionPt1: {
       id: 'pa.application:endorsement.disclaimer.description.pt1',
       defaultMessage:
-        'Með því veiti ég viðkomandi stjórnmálasamtökum, yfirkjörstjórn í kjördæmi, landskjörstjórn og Þjóðskrá Íslands aðgang að þeim upplýsingum sem skráðar eru á meðmælendalistan, þ.e. nafn, kt, heimilsfang og kjördæmi. Óheimilt er að miðla meðmælunum eða þeim upplýsingum sem þar koma fram.',
-      description: 'Part 1 of message disclaimer',
+        'Yfirkjörstjórn og þau stjórnmálasamtök sem stofnað hafa söfnunina hafa aðgang að upplýsingum sem skráðar eru á meðmælendalistann, þ.e. nafni, kennitölu og heimilsfangi meðmælandans og að meðmælandi hafi mælt með tilkeknum framboðslista. Óheimilt er að miðla meðmælum eða þeim upplýsingum sem þar koma fram eða nota í öðrum tilgangi.',
     },
     descriptionPt2: {
       id: 'pa.application:endorsement.disclaimer.description.pt2',
       defaultMessage:
-        'Þjóðskrá Íslands er heimilt að samkeyra upplýsingar úr meðmælendalista við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga.',
+        'Þjóðskrá Íslands er heimilt skv. beiðni yfirkjörstjórnar að sannreyna upplýsingar úr meðmælendalista við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga.',
       description: 'Part 2 of message disclaimer',
+    },
+    descriptionPt3: {
+      id: 'pa.application:endorsement.disclaimer.description.pt3',
+      defaultMessage:
+        'Nánari upplýsingar um vinnsluna þ.á m. réttindi einsstaklinga má nálgast á persónuverndarstefnu Island.is',
+      description: 'Part 3 of message disclaimer',
     },
     partyLetter: {
       id: 'pa.application:endorsement.disclaimer.party.letter',
@@ -452,6 +480,24 @@ export const m: MessageDir = {
       id: 'pa.application:endorsement.disclaimer.party.name',
       defaultMessage: 'Stjórnmálasamtök',
       description: 'Label for party name',
+    },
+    alertMessageTitle: {
+      id: 'pa.application:endorsement.alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Alert message title',
+    },
+    alertDescriptionVoterRegistryNotFound: {
+      id: 'pa.application:endorsement.alert.descrtipion.voter.registry',
+      defaultMessage:
+        'Þú ert ekki með skráða búsetu skv. bráðabirgðakjörskrá í þessu kjördæmi.  Meðmæli þarfnast yfirferðar hjá yfirkjörstjórn, ert þú viss um að þú viljir skrá meðmæli í völdu kjördæmi?',
+      description:
+        'Alert message if signaturee was not found in temp voter reg',
+    },
+    alertDescriptionWrongConstituency: {
+      id: 'pa.application:endorsement.alert.descrtipion.wrong.constituency',
+      defaultMessage:
+        'Þú ert ekki með skráða búsetu í þessu kjördæmi ertu viss um að vilja halda áfram?',
+      description: 'Alert message if signaturee is in the wrong constituency',
     },
   }),
   endorsementApproved: defineMessages({
@@ -465,9 +511,14 @@ export const m: MessageDir = {
       defaultMessage: 'Þú hefur verið skráður sem meðmælandi',
       description: 'Approved card title',
     },
+    cardTitleWarning: {
+      id: 'pa.application:endorsement.warning.card.title',
+      defaultMessage: 'Þú hefur þegar mælt með framboði',
+      description: 'Warning card title',
+    },
     cardSubtitle: {
       id: 'pa.application:endorsement.approved.card.subtitle',
-      defaultMessage: 'Hægt er að skoða virka lista undir ',
+      defaultMessage: 'Hægt er að skoða virk meðmæli á mínum síðum.',
       description: 'Approved card subtitle',
     },
     myPagesButton: {
@@ -526,13 +577,14 @@ export const m: MessageDir = {
   supremeCourt: defineMessages({
     title: {
       id: 'pa.application:supreme.court.title',
-      defaultMessage: 'Yfirkjörstjórn',
+      defaultMessage:
+        'Meðmæli með framboðslista stjórnmálasamtaka til yfirkjörstjórnar',
       description: 'Supreme court review title',
     },
     description: {
       id: 'pa.application:supreme.court.description',
       defaultMessage:
-        'Vinsamlegast farðu yfir upplýsingarnar hér að neðan og staðfestu að þær séu réttar.',
+        'Meðfylgjandi meðmælum með framboðslista hefur verið skila. Hnappinn "hafna" er unnt að nota til að setja athugasemd um að meðmæli séu ófullnægjandi og þá opnast fyrir söfnun á ný. Hnappinn "samþykkja lista" er unnt að nota ef yfirkjörstjórn vill koma skilaboðum til stjórnmálasamtaka um að meðmæli séu fullnægjandi.',
       description: 'Supreme court review description',
     },
     subtitle: {

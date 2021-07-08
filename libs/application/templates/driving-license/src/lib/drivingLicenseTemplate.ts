@@ -1,4 +1,3 @@
-import * as kennitala from 'kennitala'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -9,14 +8,18 @@ import {
   DefaultStateLifeCycle,
   DefaultEvents,
 } from '@island.is/application/core'
+import { State } from 'xstate'
 import * as z from 'zod'
 import { ApiActions } from '../shared'
+import { m } from './messages'
 
-type Events = { type: DefaultEvents.SUBMIT }
+type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.PAYMENT }
 
 enum States {
   DRAFT = 'draft',
   DONE = 'done',
+  PAYMENT = 'payment',
+  PAYMENT_PENDING = 'paymentPending',
 }
 
 const dataSchema = z.object({
@@ -26,6 +29,7 @@ const dataSchema = z.object({
   juristiction: z.string(),
   healthDeclaration: z.object({
     usesContactGlasses: z.enum(['yes', 'no']),
+    hasReducedPeripheralVision: z.enum(['yes', 'no']),
     hasEpilepsy: z.enum(['yes', 'no']),
     hasHeartDisease: z.enum(['yes', 'no']),
     hasMentalIllness: z.enum(['yes', 'no']),
@@ -63,6 +67,36 @@ const template: ApplicationTemplate<
                   Promise.resolve(val.application),
                 ),
               actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.continue,
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+        },
+      },
+      [States.PAYMENT]: {
+        meta: {
+          name: 'Payment state',
+          progress: 0.9,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.createCharge,
+          },
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/payment').then((val) =>
+                  Promise.resolve(val.payment),
+                ),
+              actions: [
                 { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
               ],
               write: 'all',
@@ -70,7 +104,25 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
+          '*': { target: States.PAYMENT_PENDING },
           [DefaultEvents.SUBMIT]: { target: States.DONE },
+        },
+      },
+      [States.PAYMENT_PENDING]: {
+        meta: {
+          name: 'Greiða',
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/paymentPending').then((val) =>
+                  Promise.resolve(val.PaymentPending),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
       [States.DONE]: {
@@ -78,9 +130,6 @@ const template: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
           roles: [
             {
               id: 'applicant',

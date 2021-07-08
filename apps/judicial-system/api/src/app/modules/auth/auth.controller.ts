@@ -1,4 +1,4 @@
-import IslandisLogin, { VerifyResult } from 'islandis-login'
+import IslandisLogin, { VerifyResult } from '@island.is/login'
 import { Entropy } from 'entropy-string'
 import { uuid } from 'uuidv4'
 import { CookieOptions, Request, Response } from 'express'
@@ -92,7 +92,7 @@ export class AuthController {
       return res.redirect('/?villa=innskraning-ogild')
     }
 
-    const { authId } = req.cookies[REDIRECT_COOKIE_NAME] || {}
+    const { authId } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
     const { user } = verifyResult
     if (!user || (authId && user.authId !== authId)) {
       this.logger.error('Could not verify user authenticity', {

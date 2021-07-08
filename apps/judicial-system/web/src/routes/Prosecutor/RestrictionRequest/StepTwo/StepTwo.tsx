@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import {
@@ -27,12 +28,13 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
 import StepTwoForm from './StepTwoForm'
 
 export const StepTwo: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
-
+  const { formatMessage } = useIntl()
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
@@ -129,12 +131,15 @@ export const StepTwo: React.FC = () => {
           />
           {modalVisible && (
             <Modal
-              title="Viltu senda tilkynningu?"
-              text={`Með því að senda tilkynningu á dómara á vakt um að krafa um ${
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhald'
-                  : 'farbann'
-              } sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála.`}
+              title={formatMessage(
+                rcRequestedHearingArrangements.modal.heading,
+              )}
+              text={formatMessage(rcRequestedHearingArrangements.modal.text, {
+                caseType:
+                  workingCase.type === CaseType.CUSTODY
+                    ? 'gæsluvarðhald'
+                    : 'farbann',
+              })}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
               handleClose={() => setModalVisible(false)}

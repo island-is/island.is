@@ -9,6 +9,7 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { RskApi } from '@island.is/clients/rsk/v2'
+import uniqBy from 'lodash/uniqBy'
 import type { CompaniesResponse } from '@island.is/clients/rsk/v2'
 import { uuid } from 'uuidv4'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
@@ -21,8 +22,11 @@ import {
   ApiScope,
   IdentityResource,
 } from '@island.is/auth-api-lib'
-import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import type { Auth } from '@island.is/auth-nest-tools'
+import type { Auth, User } from '@island.is/auth-nest-tools'
+import {
+  AuthMiddleware,
+  AuthMiddlewareOptions,
+} from '@island.is/auth-nest-tools'
 
 import {
   DelegationDTO,
@@ -49,13 +53,29 @@ export class DelegationsService {
     private logger: Logger,
   ) {}
 
+  async findAllTo(
+    user: User,
+    xRoadClient: string,
+    authMiddlewareOptions: AuthMiddlewareOptions,
+  ): Promise<DelegationDTO[]> {
+    const [wards, companies, custom] = await Promise.all([
+      this.findAllWardsTo(user, xRoadClient, authMiddlewareOptions),
+      this.findAllCompaniesTo(user.nationalId),
+      this.findAllValidCustomTo(user.nationalId),
+    ])
+
+    return uniqBy([...wards, ...companies, ...custom], 'fromNationalId')
+  }
+
   async findAllWardsTo(
     auth: Auth,
     xRoadClient: string,
+    authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO[]> {
     try {
+      this.logger.info(`findAllWardsTo: -${auth.nationalId?.substring(6, 10)}`)
       const response = await this.personApi
-        .withMiddleware(new AuthMiddleware(auth, false))
+        .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
         .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
           id: auth.nationalId,
           xRoadClient: xRoadClient,
@@ -67,7 +87,7 @@ export class DelegationsService {
 
       const resultPromises = distinct.map(async (nationalId) =>
         this.personApi
-          .withMiddleware(new AuthMiddleware(auth, false))
+          .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
           .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
             id: nationalId,
             xRoadClient: xRoadClient,
@@ -87,11 +107,7 @@ export class DelegationsService {
           },
       )
     } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error(`Error in findAllWardsTo.\n${error.stack}`)
-      } else {
-        this.logger.error(`Error in findAllWardsTo.\n${JSON.stringify(error)}`)
-      }
+      this.logger.error('Error in findAllWardsTo', error)
     }
 
     return []
@@ -122,13 +138,7 @@ export class DelegationsService {
         }
       }
     } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error(`Error in findAllCompaniesTo.\n${error.stack}`)
-      } else {
-        this.logger.error(
-          `Error in findAllCompaniesTo.\n${JSON.stringify(error)}`,
-        )
-      }
+      this.logger.error('Error in findAllCompaniesTo', error)
     }
 
     return []
@@ -154,16 +164,25 @@ export class DelegationsService {
       ],
     })
 
-    return result.map((d) => d.toDTO())
+    const filtered = result.filter(
+      (x) => x.delegationScopes !== null && x.delegationScopes!.length > 0,
+    )
+
+    return filtered.map((d) => d.toDTO())
   }
 
   async create(
     user: Auth,
     xRoadClient: string,
+    authMiddlewareOptions: AuthMiddlewareOptions,
     delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
     const person = await this.personApi
-      .withMiddleware(new AuthMiddleware(user, false))
+      .withMiddleware(
+        new AuthMiddleware(user, {
+          forwardUserInfo: authMiddlewareOptions.forwardUserInfo,
+        }),
+      )
       .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
         id: user.nationalId,
         xRoadClient: xRoadClient,

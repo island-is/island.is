@@ -76,6 +76,8 @@ import { Frontpage } from './models/frontpage.model'
 import { GetFrontpageInput } from './dto/getFrontpage.input'
 import { OpenDataPage } from './models/openDataPage.model'
 import { GetOpenDataPageInput } from './dto/getOpenDataPage.input'
+import { ProjectPage } from './models/projectPage.model'
+import { GetProjectPageInput } from './dto/getProjectPage.input'
 
 const { cacheTime } = environment
 
@@ -226,6 +228,14 @@ export class CmsResolver {
   @Query(() => Auction)
   getAuction(@Args('input') input: GetAuctionInput): Promise<Auction | null> {
     return this.cmsContentfulService.getAuction(input.id, input.lang)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => ProjectPage, { nullable: true })
+  getProjectPage(
+    @Args('input') input: GetProjectPageInput,
+  ): Promise<ProjectPage | null> {
+    return this.cmsContentfulService.getProjectPage(input.slug, input.lang)
   }
 
   @Directive(cacheControlDirective())
