@@ -75,7 +75,11 @@ const SummaryItem: FC<SummaryItemProps> = ({
             </Text>
           </Box>
 
-          {!prerequisiteMet && (
+          {prerequisiteMet ? (
+            <Box pointerEvents="none">
+              <Tag variant="blue">{SummaryItemState.complete}</Tag>
+            </Box>
+          ) : (
             <Box pointerEvents="none">
               <Tag variant="red">{SummaryItemState.requiresAction}</Tag>
             </Box>

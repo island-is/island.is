@@ -49,7 +49,7 @@ export const hasPendingApplications = (externalData: ExternalData) => {
   return pendingApplications?.length > 0
 }
 
-export const hasIcelandicAddress = (externalData: ExternalData) => {
+export const hasNoIcelandicAddress = (externalData: ExternalData) => {
   const address = (externalData?.nationalRegistry?.data as {
     address?: Address
   })?.address
@@ -58,11 +58,11 @@ export const hasIcelandicAddress = (externalData: ExternalData) => {
   return !address || (address && !(address.streetAddress && address.postalCode))
 }
 
-export const shouldShowModal = (externalData: ExternalData) => {
+export const prerequisitesFailed = (externalData: ExternalData) => {
   return (
     hasHealthInsurance(externalData) ||
     hasPendingApplications(externalData) ||
-    hasIcelandicAddress(externalData) ||
+    hasNoIcelandicAddress(externalData) ||
     hasActiveDraftApplication(externalData)
   )
 }

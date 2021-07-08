@@ -46,8 +46,8 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
-            // If application stays in this state for 1 hour it will be pruned automatically
-            whenToPrune: 1 * 3600 * 1000,
+            // If application stays in this state for 24 hours it will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
           },
           roles: [
             {
@@ -68,9 +68,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: ApplicationStates.DRAFT,
-          },
+          SUBMIT: { target: ApplicationStates.DRAFT },
         },
       },
       [ApplicationStates.DRAFT]: {

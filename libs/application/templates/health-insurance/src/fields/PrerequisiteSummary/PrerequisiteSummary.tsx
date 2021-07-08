@@ -1,37 +1,16 @@
 import React, { FC } from 'react'
 
 import { m } from '../../forms/messages'
-import {
-  ExternalData,
-  FieldBaseProps,
-  formatAndParseAsHTML,
-  formatText,
-} from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import SummaryItem from './SummaryItem'
 import {
   hasHealthInsurance,
   hasActiveDraftApplication,
   hasPendingApplications,
-  hasIcelandicAddress,
+  hasNoIcelandicAddress,
 } from '../../healthInsuranceUtils'
 import { useLocale } from '@island.is/localization'
-
-// TODO: we need a better way of getting the translated string in here, outside
-// of react. Possibly we should just make a more flexible results screen.
-// This string ends up being used as the paramejter displayed as the error message
-// for the failed dataprovider
-
-// interface PrerequisiteItem {
-//   title: string
-//   description: string
-//   statusOfPrerequisite: string
-// }
-
-// userProfile
-// applications
-// healthInsurance
-// pendingApplications
 
 const PREREQUISITESTOCHECK = [
   'applications',
@@ -43,8 +22,6 @@ const PREREQUISITESTOCHECK = [
 const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const externalData = application.externalData
-
-  console.log(externalData)
 
   // Build prerequisite object for summary item
   const buildPrerequisite = () => {
@@ -79,14 +56,16 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
     return pendingApplications[0]
   }
 
-  // replace unmettitle with name of data provider thing
-
+  // Following checks are made:
+  // User should have legal residence in Iceland
+  // User should not have an active draft application
+  // User should not already have health insurance
+  // User should not have an application already at sjukratryggingar
   const checkPrerequisite = (prerequisiteName: string) => {
     switch (prerequisiteName) {
-      // Should have a user application
       case 'nationalRegistry':
         return {
-          prerequisiteMet: hasIcelandicAddress(externalData),
+          prerequisiteMet: hasNoIcelandicAddress(externalData),
           prerequisiteTitle: formatMessage(
             m.prerequisiteNationaalRegistryTitle,
           ),
@@ -99,7 +78,6 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
           ),
           buttonText: formatMessage(m.registerYourselfButtonText),
         }
-      // Should not have a active draft application
       case 'applications':
         return {
           prerequisiteMet: !hasActiveDraftApplication(externalData),
@@ -115,9 +93,7 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
           ),
           buttonText: formatMessage(m.activeDraftApplicationButtonText),
         }
-      // Should not have a health insurance
       case 'healthInsurance':
-        console.log('healthInsurace')
         return {
           prerequisiteMet: !hasHealthInsurance(externalData),
           prerequisiteTitle: formatMessage(m.prerequisiteHealthInsuranceTitle),
@@ -130,7 +106,6 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
           ),
           buttonText: formatMessage(m.alreadyInsuredButtonText),
         }
-      // Should not have a pending application
       case 'pendingApplications':
         return {
           prerequisiteMet: !hasPendingApplications(externalData),
@@ -158,6 +133,7 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
           prerequisiteDescription: formatMessage(m.unexpectedError),
           furtherInformationTitle: formatMessage(m.unexpectedError),
           furtherInformationDescription: formatMessage(m.unexpectedError),
+          // TODO FIX, maybe just return empty string and not render it in the summaryItem?
           buttonText: formatMessage(m.pendingApplicationButtonText),
         }
     }

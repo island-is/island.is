@@ -8,7 +8,7 @@ import {
   hasHealthInsurance,
   hasActiveDraftApplication,
   hasPendingApplications,
-  hasIcelandicAddress,
+  hasNoIcelandicAddress,
   getBaseUrl,
   getOldestDraftApplicationId,
 } from '../healthInsuranceUtils'
@@ -76,7 +76,7 @@ export const useModalContent = (
           values: { applicationNumber: pendingApplications[0] },
         }),
       })
-    } else if (hasIcelandicAddress(externalData)) {
+    } else if (hasNoIcelandicAddress(externalData)) {
       setContent(contentList.registerAddress)
     } else if (hasActiveDraftApplication(externalData)) {
       const applications = externalData?.applications.data as Applications[]
