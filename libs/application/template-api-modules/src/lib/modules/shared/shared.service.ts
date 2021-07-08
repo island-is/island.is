@@ -126,7 +126,6 @@ export class SharedTemplateApiService {
     query: string,
     variables?: Record<string, any>,
   ): Promise<Response> {
-    console.log('makegraphqlquery', query, variables)
     const baseApiUrl = getConfigValue(
       this.configService,
       'baseApiUrl',

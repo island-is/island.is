@@ -67,7 +67,6 @@ export class PaymentService {
       this.paymentConfig.callbackAdditionUrl +
       payment.id
 
-    console.log(callbackUrl)
     try {
       const parsedDefinition = JSON.parse(
         (payment.definition as unknown) as string,

@@ -439,4 +439,9 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn þín um fullnaðarskírteini tókst.',
     description: 'Your application for full driving license was successful.',
   },
+  paymentPendingDescription: {
+    id: 'dl.application.paymentPendingDescription',
+    defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
+    description: 'Please wait until the payment is confirmed',
+  }
 })
