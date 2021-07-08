@@ -1316,6 +1316,27 @@
         }
       }
     },
+    "api-domains-regulations-admin": {
+      "root": "libs/api/domains/regulations-admin",
+      "sourceRoot": "libs/api/domains/regulations-admin/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/regulations-admin/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/regulations-admin"],
+          "options": {
+            "jestConfig": "libs/api/domains/regulations-admin/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-rsk": {
       "root": "libs/api/domains/rsk",
       "sourceRoot": "libs/api/domains/rsk/src",
@@ -8477,27 +8498,6 @@
             "linter": "eslint",
             "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/web-e2e/**/*"]
-          }
-        }
-      }
-    },
-    "api-domains-regulations-admin": {
-      "root": "libs/api/domains/regulations-admin",
-      "sourceRoot": "libs/api/domains/regulations-admin/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/api/domains/regulations-admin/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/domains/regulations-admin"],
-          "options": {
-            "jestConfig": "libs/api/domains/regulations-admin/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }

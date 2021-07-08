@@ -1,4 +1,4 @@
-# api-domains-regulations-admin
+# API Domains Regulations Admin
 
 This library was generated with [Nx](https://nx.dev).
 

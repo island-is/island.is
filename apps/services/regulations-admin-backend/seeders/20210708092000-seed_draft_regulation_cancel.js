@@ -6,7 +6,7 @@ const draftRegulationCancelSeed = [
     changing_id: '32e191a3-497c-46e4-ae10-8ba579f07f28',
     regulation: '4567-6547',
     date: '2021-08-10',
-  }
+  },
 ]
 
 module.exports = {

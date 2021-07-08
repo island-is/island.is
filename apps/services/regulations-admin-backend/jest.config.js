@@ -10,5 +10,6 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/apps/services/regulations-admin-backend',
+  coverageDirectory:
+    '../../../coverage/apps/services/regulations-admin-backend',
 }

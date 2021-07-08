@@ -9,8 +9,18 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { ApiTags, ApiOkResponse, ApiCreatedResponse, ApiHeader } from '@nestjs/swagger'
-import { CurrentUser, IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiCreatedResponse,
+  ApiHeader,
+} from '@nestjs/swagger'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 
 import { CreateDraftRegulationDto, UpdateDraftRegulationDto } from './dto'
