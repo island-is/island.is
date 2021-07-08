@@ -27,6 +27,7 @@ import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
+import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -192,6 +193,9 @@ const autoSchemaFile = environment.production
     }),
     RegulationsModule.register({
       url: environment.regulationsDomain.url,
+    }),
+    RegulationsAdminModule.register({
+      url: environment.regulationsAdmin.url,
     }),
     FinanceModule.register({
       username: environment.fjarmalDomain.username,
