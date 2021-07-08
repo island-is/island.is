@@ -1,8 +1,18 @@
-import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator'
+import {
+  IsBoolean,
+  IsDate,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateDraftRegulationDto {
+  @IsUUID()
+  @ApiProperty()
+  readonly id!: string
+
   @IsString()
   @ApiProperty()
   readonly drafting_status!: string

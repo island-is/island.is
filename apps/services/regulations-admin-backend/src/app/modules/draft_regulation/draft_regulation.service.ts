@@ -7,10 +7,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { environment } from '../../../environments'
 import { CreateDraftRegulationDto, UpdateDraftRegulationDto } from './dto'
 import { DraftRegulation } from './draft_regulation.model'
-import { DraftAuthor } from '../draft_author'
 import { DraftRegulationChange } from '../draft_regulation_change'
 import { DraftRegulationCancel } from '../draft_regulation_cancel'
-import { DraftLawChapter } from '../draft_law_chapter'
 
 @Injectable()
 export class DraftRegulationService {
@@ -38,10 +36,8 @@ export class DraftRegulationService {
     return this.draftRegulationModel.findOne({
       where: { id },
       include: [
-        { model: DraftAuthor },
         { model: DraftRegulationChange },
         { model: DraftRegulationCancel },
-        { model: DraftLawChapter },
       ],
     })
   }

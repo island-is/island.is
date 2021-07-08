@@ -12,10 +12,8 @@ import {
 } from 'sequelize-typescript'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { DraftAuthor } from '../draft_author'
 import { DraftRegulationChange } from '../draft_regulation_change'
 import { DraftRegulationCancel } from '../draft_regulation_cancel'
-import { DraftLawChapter } from '../draft_law_chapter'
 
 @Table({
   tableName: 'draft_regulation',
@@ -97,13 +95,17 @@ export class DraftRegulation extends Model<DraftRegulation> {
   @ApiProperty()
   type?: 'base' | 'amending'
 
-  @HasMany(() => DraftAuthor)
-  @ApiProperty({ type: [DraftAuthor] })
-  authors!: DraftAuthor[]
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+  })
+  @ApiProperty()
+  authors!: string[]
 
-  @HasOne(() => DraftLawChapter)
-  @ApiPropertyOptional({ type: DraftLawChapter })
-  law_chapter?: DraftLawChapter
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+  })
+  @ApiProperty()
+  law_chapters?: string[]
 
   @HasMany(() => DraftRegulationChange)
   @ApiPropertyOptional({ type: [DraftRegulationChange] })

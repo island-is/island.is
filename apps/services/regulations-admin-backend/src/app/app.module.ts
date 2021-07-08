@@ -8,7 +8,6 @@ import { environment } from '../environments'
 import { DraftRegulationModule } from './modules/draft_regulation'
 import { DraftRegulationChangeModule } from './modules/draft_regulation_change'
 import { DraftRegulationCancelModule } from './modules/draft_regulation_cancel'
-import { DraftAuthorModule } from './modules/draft_author'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
@@ -21,7 +20,6 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     DraftRegulationModule,
     DraftRegulationChangeModule,
     DraftRegulationCancelModule,
-    DraftAuthorModule,
   ],
 })
 export class AppModule {}

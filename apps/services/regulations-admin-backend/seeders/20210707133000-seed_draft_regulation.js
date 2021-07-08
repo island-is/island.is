@@ -13,6 +13,8 @@ const draftRegulationSeed = [
     signature_date: '2021-08-08',
     effective_date: '2021-08-08',
     type: 'base',
+    authors: ['0101012020', '0101012021'],
+    law_chapters: ['01', '02a'],
   },
   {
     id: '32e191a3-497c-46e4-ae10-8ba579f07f28',
@@ -26,6 +28,8 @@ const draftRegulationSeed = [
     signature_date: '2021-08-09',
     effective_date: '2021-08-09',
     type: 'base',
+    authors: ['0101012020'],
+    law_chapters: ['01a'],
   },
   {
     id: 'b99f6276-68ff-4ac7-a9f4-b42d522922e8',
@@ -39,6 +43,8 @@ const draftRegulationSeed = [
     signature_date: '2021-09-09',
     effective_date: '2021-09-09',
     type: 'base',
+    authors: ['0101012021'],
+    law_chapters: ['04', '05c'],
   },
   {
     id: 'a0bdbe60-2aa3-4036-80d1-8a3d448312d1',
@@ -52,6 +58,8 @@ const draftRegulationSeed = [
     signature_date: '2021-08-08',
     effective_date: '2021-08-08',
     type: 'amending',
+    authors: ['0123456789'],
+    law_chapters: ['01', '02'],
   },
   {
     id: '0cb3a68b-f368-4d01-a594-ba73e0dc396d',
@@ -65,6 +73,8 @@ const draftRegulationSeed = [
     signature_date: '2021-08-08',
     effective_date: '2021-08-08',
     type: 'amending',
+    authors: ['0101012021'],
+    law_chapters: ['02'],
   },
 ]
 
