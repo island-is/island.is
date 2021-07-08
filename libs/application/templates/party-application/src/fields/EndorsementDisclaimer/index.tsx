@@ -33,9 +33,9 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const [endorsedNow, setEndorsedNow] = useState(false)
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
   const { hasEndorsed, loading, refetch } = useHasEndorsed()
-  const constituency = constituencyMapper[
-    application.answers.constituency as EndorsementListTags
-  ].region_name
+  const constituency =
+    constituencyMapper[application.answers.constituency as EndorsementListTags]
+      .region_name
   const { data: userData } = useQuery(GetFullName)
   const isClosed = useIsClosed(endorsementListId)
   const { isInVoterRegistry, isInConstituency } = useVoterRegion(
