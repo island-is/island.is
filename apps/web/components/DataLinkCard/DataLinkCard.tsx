@@ -33,7 +33,7 @@ export const DataLinkCard = ({ title, body, link }: DataLinkCardProps) => {
       alignItems="stretch"
       justifyContent="flexEnd"
     >
-      <Box style={{ width: '100%' }}>
+      <Box width='full'>
         <Stack space={1}>
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
@@ -72,7 +72,7 @@ export const DataLinkCard = ({ title, body, link }: DataLinkCardProps) => {
 const FrameWrapper = ({ children }) => {
   return (
     <Box
-      className={cn(styles.card)}
+      className={styles.card}
       position="relative"
       borderRadius="large"
       overflow="hidden"
