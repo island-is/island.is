@@ -18,6 +18,7 @@ interface Props {
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
 }
 
+type SortableColumns = 'accused' | 'created'
 type SortOption = 'up' | 'down' | 'default'
 
 const ActiveRequests: React.FC<Props> = (props) => {
@@ -28,7 +29,19 @@ const ActiveRequests: React.FC<Props> = (props) => {
   const isCourtRole =
     user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
 
-  const [currentSort, setCurrentSort] = useState<SortOption>('default')
+  // What column is currently being sorted?
+  const [currentlySorting, setCurrentlySorting] = useState<SortableColumns>()
+
+  // What direction is the accused column currently being sorted?
+  const [currentAccusedSort, setCurrentAccusedSort] = useState<SortOption>(
+    'default',
+  )
+
+  // What direction is the created column currently being sorted?
+  const [currentCreatedSort, setCurrentCreatedSort] = useState<SortOption>(
+    'default',
+  )
+
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
@@ -49,14 +62,19 @@ const ActiveRequests: React.FC<Props> = (props) => {
     },
   }
 
-  const onSortChange = () => {
+  const onSortChange = (
+    currentSortDirection: SortOption,
+    setCurrentSortDirection: React.Dispatch<React.SetStateAction<SortOption>>,
+    currentlySorting: SortableColumns,
+  ) => {
     let nextSort: SortOption = 'default'
 
-    if (currentSort === 'down') nextSort = 'up'
-    else if (currentSort === 'up') nextSort = 'default'
-    else if (currentSort === 'default') nextSort = 'down'
+    if (currentSortDirection === 'down') nextSort = 'up'
+    else if (currentSortDirection === 'up') nextSort = 'default'
+    else if (currentSortDirection === 'default') nextSort = 'down'
 
-    setCurrentSort(nextSort)
+    setCurrentlySorting(currentlySorting)
+    setCurrentSortDirection(nextSort)
   }
 
   return (
@@ -78,15 +96,22 @@ const ActiveRequests: React.FC<Props> = (props) => {
               display="flex"
               alignItems="center"
               className={styles.thButton}
-              onClick={onSortChange}
+              onClick={() =>
+                onSortChange(
+                  currentAccusedSort,
+                  setCurrentAccusedSort,
+                  'accused',
+                )
+              }
               data-testid="accusedNameSortButton"
             >
               <Text fontWeight="regular">Sakborningur</Text>
               <Box
                 className={cn(styles.sortIcon, {
-                  [styles.sortAccusedNameAsc]: currentSort === 'up',
-                  [styles.sortAccusedNameDes]: currentSort === 'down',
-                  [styles.sortAccusedNameDefault]: currentSort === 'default',
+                  [styles.sortAccusedNameAsc]: currentAccusedSort === 'up',
+                  [styles.sortAccusedNameDes]: currentAccusedSort === 'down',
+                  [styles.sortAccusedNameDefault]:
+                    currentAccusedSort === 'default',
                 })}
                 marginLeft={1}
                 component="span"
@@ -113,16 +138,21 @@ const ActiveRequests: React.FC<Props> = (props) => {
               display="flex"
               alignItems="center"
               className={styles.thButton}
-              // onClick={() => requestSort('created')}
+              onClick={() =>
+                onSortChange(
+                  currentCreatedSort,
+                  setCurrentCreatedSort,
+                  'created',
+                )
+              }
             >
               <Text fontWeight="regular">Krafa stofnuð</Text>
               <Box
-                // className={cn(styles.sortIcon, {
-                //   [styles.sortCreatedAsc]:
-                //     getClassNamesFor('created') === 'ascending',
-                //   [styles.sortCreatedDes]:
-                //     getClassNamesFor('created') === 'descending',
-                // })}
+                className={cn(styles.sortIcon, {
+                  [styles.sortCreatedAsc]: currentCreatedSort === 'up',
+                  [styles.sortCreatedDes]: currentCreatedSort === 'down',
+                  [styles.sortCreatedDefault]: currentCreatedSort === 'default',
+                })}
                 marginLeft={1}
                 component="span"
                 display="flex"
@@ -136,126 +166,134 @@ const ActiveRequests: React.FC<Props> = (props) => {
         </tr>
       </thead>
       <tbody>
-        {[...cases].sort(sortTypes.accused[currentSort].fn).map((c, i) => (
-          <tr
-            key={i}
-            className={cn(
-              styles.tableRowContainer,
-              requestToRemoveIndex === i && 'isDeleting',
-            )}
-            data-testid="custody-requests-table-row"
-            role="button"
-            aria-label="Opna kröfu"
-            onClick={() => {
-              user?.role && onRowClick(c.id)
-            }}
-          >
-            <td className={styles.td}>
-              <Text as="span">{c.policeCaseNumber || '-'}</Text>
-            </td>
-            <td className={cn(styles.td, styles.largeColumn)}>
-              <Text>
-                <Box component="span" className={styles.accusedName}>
-                  {c.accused[0].name || '-'}
-                </Box>
-              </Text>
-              <Text>
-                {c.accused[0].nationalId && (
-                  <Text as="span" variant="small" color="dark400">
-                    {`kt. ${
-                      insertAt(
-                        c.accused[0].nationalId.replace('-', ''),
-                        '-',
-                        6,
-                      ) || '-'
-                    }`}
-                  </Text>
-                )}
-              </Text>
-            </td>
-            <td className={styles.td}>
-              <Box component="span" display="flex" flexDirection="column">
-                <Text as="span">{capitalize(caseTypes[c.type])}</Text>
-                {c.parentCase && (
-                  <Text as="span" variant="small" color="dark400">
-                    Framlenging
-                  </Text>
-                )}
-              </Box>
-            </td>
-            <td className={styles.td} data-testid="tdTag">
-              <Tag
-                variant={
-                  mapCaseStateToTagVariant(
-                    c.state,
-                    isCourtRole,
-                    c.isValidToDateInThePast,
-                  ).color
-                }
-                outlined
-                disabled
-              >
-                {
-                  mapCaseStateToTagVariant(
-                    c.state,
-                    isCourtRole,
-                    c.isValidToDateInThePast,
-                  ).text
-                }
-              </Tag>
-            </td>
-            <td className={styles.td}>
-              <Text as="span">
-                {format(parseISO(c.created), 'd.M.y', {
-                  locale: localeIS,
-                })}
-              </Text>
-            </td>
-            <td className={cn(styles.td, 'secondLast')}>
-              {isProsecutor &&
-                (c.state === CaseState.NEW ||
-                  c.state === CaseState.DRAFT ||
-                  c.state === CaseState.SUBMITTED ||
-                  c.state === CaseState.RECEIVED) && (
-                  <Box
-                    data-testid="deleteCase"
-                    component="button"
-                    aria-label="Viltu afturkalla kröfu?"
-                    className={styles.deleteButton}
-                    onClick={(evt) => {
-                      evt.stopPropagation()
-                      setRequestToRemoveIndex(
-                        requestToRemoveIndex === i ? undefined : i,
-                      )
-                    }}
-                  >
-                    <Icon icon="close" color="blue400" />
-                  </Box>
-                )}
-            </td>
-            <td
+        {[...cases]
+          .sort(
+            sortTypes.accused[
+              currentlySorting === 'accused'
+                ? currentAccusedSort
+                : currentCreatedSort
+            ].fn,
+          )
+          .map((c, i) => (
+            <tr
+              key={i}
               className={cn(
-                styles.deleteButtonContainer,
-                styles.td,
-                requestToRemoveIndex === i && 'open',
+                styles.tableRowContainer,
+                requestToRemoveIndex === i && 'isDeleting',
               )}
+              data-testid="custody-requests-table-row"
+              role="button"
+              aria-label="Opna kröfu"
+              onClick={() => {
+                user?.role && onRowClick(c.id)
+              }}
             >
-              <Button
-                colorScheme="destructive"
-                size="small"
-                onClick={(evt) => {
-                  evt.stopPropagation()
-                  setRequestToRemoveIndex(undefined)
-                  onDeleteCase && onDeleteCase(cases[i])
-                }}
-              >
-                <Box as="span" className={styles.deleteButtonText}>
-                  Afturkalla
+              <td className={styles.td}>
+                <Text as="span">{c.policeCaseNumber || '-'}</Text>
+              </td>
+              <td className={cn(styles.td, styles.largeColumn)}>
+                <Text>
+                  <Box component="span" className={styles.accusedName}>
+                    {c.accused[0].name || '-'}
+                  </Box>
+                </Text>
+                <Text>
+                  {c.accused[0].nationalId && (
+                    <Text as="span" variant="small" color="dark400">
+                      {`kt. ${
+                        insertAt(
+                          c.accused[0].nationalId.replace('-', ''),
+                          '-',
+                          6,
+                        ) || '-'
+                      }`}
+                    </Text>
+                  )}
+                </Text>
+              </td>
+              <td className={styles.td}>
+                <Box component="span" display="flex" flexDirection="column">
+                  <Text as="span">{capitalize(caseTypes[c.type])}</Text>
+                  {c.parentCase && (
+                    <Text as="span" variant="small" color="dark400">
+                      Framlenging
+                    </Text>
+                  )}
                 </Box>
-              </Button>
-            </td>
-          </tr>
-        ))}
+              </td>
+              <td className={styles.td} data-testid="tdTag">
+                <Tag
+                  variant={
+                    mapCaseStateToTagVariant(
+                      c.state,
+                      isCourtRole,
+                      c.isValidToDateInThePast,
+                    ).color
+                  }
+                  outlined
+                  disabled
+                >
+                  {
+                    mapCaseStateToTagVariant(
+                      c.state,
+                      isCourtRole,
+                      c.isValidToDateInThePast,
+                    ).text
+                  }
+                </Tag>
+              </td>
+              <td className={styles.td}>
+                <Text as="span">
+                  {format(parseISO(c.created), 'd.M.y', {
+                    locale: localeIS,
+                  })}
+                </Text>
+              </td>
+              <td className={cn(styles.td, 'secondLast')}>
+                {isProsecutor &&
+                  (c.state === CaseState.NEW ||
+                    c.state === CaseState.DRAFT ||
+                    c.state === CaseState.SUBMITTED ||
+                    c.state === CaseState.RECEIVED) && (
+                    <Box
+                      data-testid="deleteCase"
+                      component="button"
+                      aria-label="Viltu afturkalla kröfu?"
+                      className={styles.deleteButton}
+                      onClick={(evt) => {
+                        evt.stopPropagation()
+                        setRequestToRemoveIndex(
+                          requestToRemoveIndex === i ? undefined : i,
+                        )
+                      }}
+                    >
+                      <Icon icon="close" color="blue400" />
+                    </Box>
+                  )}
+              </td>
+              <td
+                className={cn(
+                  styles.deleteButtonContainer,
+                  styles.td,
+                  requestToRemoveIndex === i && 'open',
+                )}
+              >
+                <Button
+                  colorScheme="destructive"
+                  size="small"
+                  onClick={(evt) => {
+                    evt.stopPropagation()
+                    setRequestToRemoveIndex(undefined)
+                    onDeleteCase && onDeleteCase(cases[i])
+                  }}
+                >
+                  <Box as="span" className={styles.deleteButtonText}>
+                    Afturkalla
+                  </Box>
+                </Button>
+              </td>
+            </tr>
+          ))}
       </tbody>
     </table>
   )

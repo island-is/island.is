@@ -184,6 +184,10 @@ export const sortCreatedDes = style({
   transform: 'rotate(0deg)',
 })
 
+export const sortCreatedDefault = style({
+  opacity: 0,
+})
+
 export const sortAccusedNameAsc = style({
   opacity: 1,
   transform: 'rotate(0deg)',
