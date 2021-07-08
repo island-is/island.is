@@ -65,11 +65,15 @@ const PastRequests: React.FC<Props> = (props) => {
                 {row.row.original.accused[0].name}
               </Box>
               <Text as="span" variant="small">
-                {`kt. ${insertAt(
-                  row.row.original.accused[0].nationalId.replace('-', ''),
-                  '-',
-                  6,
-                )}`}
+                {row.row.original.accused.length === 1
+                  ? `kt. ${insertAt(
+                      row.row.original.accused[0].nationalId.replace('-', ''),
+                      '-',
+                      6,
+                    )}`
+                  : row.row.original.accused.length === 2
+                  ? '+ 1 annar'
+                  : `+ ${row.row.original.accused.length - 1} aðrir`}
               </Text>
             </>
           )

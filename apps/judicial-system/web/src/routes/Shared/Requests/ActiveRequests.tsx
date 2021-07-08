@@ -198,15 +198,25 @@ const ActiveRequests: React.FC<Props> = (props) => {
                   </Box>
                 </Text>
                 <Text>
-                  {c.accused[0].nationalId && (
+                  {c.accused.length === 1 ? (
                     <Text as="span" variant="small" color="dark400">
-                      {`kt. ${
-                        insertAt(
-                          c.accused[0].nationalId.replace('-', ''),
-                          '-',
-                          6,
-                        ) || '-'
-                      }`}
+                      {c.accused[0].nationalId
+                        ? `kt. ${
+                            insertAt(
+                              c.accused[0].nationalId.replace('-', ''),
+                              '-',
+                              6,
+                            ) || '-'
+                          }`
+                        : '-'}
+                    </Text>
+                  ) : c.accused.length === 2 ? (
+                    <Text as="span" variant="small" color="dark400">
+                      + 1 annar
+                    </Text>
+                  ) : (
+                    <Text as="span" variant="small" color="dark400">
+                      {`+ ${c.accused.length - 1} aðrir`}
                     </Text>
                   )}
                 </Text>
