@@ -38,7 +38,7 @@ const OpenDataSubPage: Screen = () => {
         <GridRow>
           <GridColumn span="3/12">
             <Box display={'flex'} justifyContent="flexStart" marginBottom={3}>
-              <Link href="/gagnatorg" skipTab>
+              <Link {...linkResolver('opendatapage')} skipTab>
                 <Button
                   preTextIcon="arrowBack"
                   preTextIconType="filled"
