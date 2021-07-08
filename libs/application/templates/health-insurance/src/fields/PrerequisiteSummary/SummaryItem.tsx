@@ -3,7 +3,7 @@ import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './SummaryItem.treat'
 import { Application } from '@island.is/application/core'
-import { MessageDescriptor } from 'react-intl'
+import HtmlParser from 'react-html-parser'
 
 export enum SummaryItemState {
   requiresAction = 'Requires action',
@@ -21,15 +21,6 @@ type SummaryItemProps = {
   buttonText: string
 }
 
-// based on eligibilitysummary from driving license
-// two possible states
-// done, needs work,
-// why not just keep the component dumb and make it render a list of
-// items with status and translation strings links to read more and issue
-// do i need to hook up the data provider for every item?
-// probably have to use the application data that is populated by the
-// data provider and set that to that field
-// any issue on having data providers?
 const SummaryItem: FC<SummaryItemProps> = ({
   title,
   description,
@@ -39,20 +30,21 @@ const SummaryItem: FC<SummaryItemProps> = ({
   prerequisiteMet,
   index,
 }) => {
-  prerequisiteMet = true
+  prerequisiteMet = false
   return (
     <Box
       position="relative"
       border="standard"
-      borderRadius="large"
       background={prerequisiteMet ? 'white' : 'red100'}
       marginBottom={2}
+      borderRadius={'large'}
     >
       <Box
-        borderRadius="large"
         padding={4}
         marginBottom={2}
         background={'white'}
+        borderRadius={'large'}
+        className={!prerequisiteMet && styles.borderRadiusLargeTopOnly}
       >
         {/* Section Number */}
         <Box
@@ -79,7 +71,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
           <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
             <Text variant="h3">{title}</Text>
             <Text marginTop={1} variant="default">
-              {description}
+              {HtmlParser(description)}
             </Text>
           </Box>
 
@@ -91,9 +83,9 @@ const SummaryItem: FC<SummaryItemProps> = ({
         </Box>
       </Box>
       {!prerequisiteMet && (
-        <Box>
-          <Text>{furtherInformationTitle}</Text>
-          <Text>{furtherInformationDescription}</Text>
+        <Box paddingX={4} marginBottom={2}>
+          <Text variant="h3">{HtmlParser(furtherInformationTitle)}</Text>
+          <Text>{HtmlParser(furtherInformationDescription)}</Text>
           <Button variant="text">{buttonText}</Button>
         </Box>
       )}

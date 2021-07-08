@@ -11,6 +11,10 @@ export const sectionNumber = style({
   background: theme.color.purple400,
 })
 
+export const borderRadiusLargeTopOnly = style({
+  borderRadius: '8px 8px 0 0',
+})
+
 export const sectionNumberText = style({
   color: theme.color.white,
   marginLeft: '-1px',
