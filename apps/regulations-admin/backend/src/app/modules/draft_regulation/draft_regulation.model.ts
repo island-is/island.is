@@ -8,10 +8,13 @@ import {
   Table,
   UpdatedAt,
   HasMany,
+  HasOne,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
 import { DraftAuthor } from '../draft_author'
+import { DraftRegulationChange } from '../draft_regulation_change'
+import { DraftRegulationCancel } from '../draft_regulation_cancel'
 
 @Table({
   tableName: 'draft_regulation',
@@ -97,5 +100,17 @@ export class DraftRegulation extends Model<DraftRegulation> {
   @HasMany(() => DraftAuthor)
   @ApiProperty({ type: [DraftAuthor] })
   authors!: DraftAuthor[]
+
+  // @HasOne(() => DraftLawChapter)
+  // @ApiProperty({ type: DraftLawChapter })
+  // law_chapter?: DraftLawChapter
+
+  @HasMany(() => DraftRegulationChange)
+  @ApiProperty({ type: [DraftRegulationChange] })
+  changes?: DraftRegulationChange[]
+
+  @HasOne(() => DraftRegulationCancel)
+  @ApiProperty({ type: DraftRegulationCancel })
+  cancel?: DraftRegulationCancel
 
 }

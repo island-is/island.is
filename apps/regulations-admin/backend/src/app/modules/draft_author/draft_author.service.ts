@@ -5,24 +5,24 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../environments'
-import { CreateDraftRegulationCancelDto } from './dto'
-import { DraftRegulationCancel } from './draft_regulation_cancel.model'
+import { CreateDraftAuthorDto } from './dto'
+import { DraftAuthor } from './draft_author.model'
 
 import { DraftRegulation } from '../draft_regulation/draft_regulation.model'
 
 @Injectable()
-export class DraftRegulationCancelService {
+export class DraftAuthorService {
   constructor(
-    @InjectModel(DraftRegulationCancel)
-    private readonly draftRegulationcancelModel: typeof DraftRegulationCancel,
+    @InjectModel(DraftAuthor)
+    private readonly draftAuthorModel: typeof DraftAuthor,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  getAll(): Promise<DraftRegulationCancel[]> {
-    this.logger.debug('Getting all DraftRegulationCancels')
+  getAll(): Promise<DraftAuthor[]> {
+    this.logger.debug('Getting all DraftAuthors')
 
-    return this.draftRegulationcancelModel.findAll({
+    return this.draftAuthorModel.findAll({
       order: ['name'],
       where: {
         active: true,
@@ -31,18 +31,18 @@ export class DraftRegulationCancelService {
     })
   }
 
-  findById(id: string): Promise<DraftRegulationCancel> {
-    this.logger.debug(`Finding DraftRegulationcancel ${id}`)
+  findById(id: string): Promise<DraftAuthor> {
+    this.logger.debug(`Finding DraftAuthor ${id}`)
 
-    return this.draftRegulationcancelModel.findOne({
+    return this.draftAuthorModel.findOne({
       where: { id },
       include: [{ model: DraftRegulation, as: 'draft_regulation' }],
     })
   }
 
-  create(draftRegulationcancelToCreate: CreateDraftRegulationCancelDto): Promise<DraftRegulationCancel> {
-    this.logger.debug('Creating a new DraftRegulationcancel')
+  create(draftAuthorToCreate: CreateDraftAuthorDto): Promise<DraftAuthor> {
+    this.logger.debug('Creating a new DraftAuthor')
 
-    return this.draftRegulationcancelModel.create(draftRegulationcancelToCreate)
+    return this.draftAuthorModel.create(draftAuthorToCreate)
   }
 }
