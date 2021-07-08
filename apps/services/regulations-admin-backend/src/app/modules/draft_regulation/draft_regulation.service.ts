@@ -25,7 +25,7 @@ export class DraftRegulationService {
     this.logger.debug('Getting all DraftRegulations')
 
     return this.draftRegulationModel.findAll({
-      order: ['created'],
+      order: [['drafting_status', 'ASC'], ['created', 'DESC']],
     })
   }
 

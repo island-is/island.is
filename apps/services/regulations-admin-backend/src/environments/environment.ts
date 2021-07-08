@@ -1,7 +1,7 @@
 export default {
   production: process.env.NODE_ENV === 'production',
   audit: {
-    defaultNamespace: '@island.is/regulations-admin/backend',
+    defaultNamespace: '@island.is/services/regulations-admin-backend',
     groupName: process.env.AUDIT_GROUP_NAME,
     // Same service name as in Nx workspace.json
     serviceName: 'regulations-admin-backend',

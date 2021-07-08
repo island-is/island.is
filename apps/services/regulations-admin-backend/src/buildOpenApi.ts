@@ -4,7 +4,7 @@ import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 
 buildOpenApi({
-  path: 'apps/regulations-admin/backend/src/openapi.yaml',
+  path: 'apps/services/regulations-admin-backend/src/openapi.yaml',
   appModule: AppModule,
   openApi,
 })

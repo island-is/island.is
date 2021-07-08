@@ -21,7 +21,7 @@ module.exports = {
     '<rootDir>/apps/judicial-system/backend',
     '<rootDir>/apps/judicial-system/web',
     '<rootDir>/apps/judicial-system/xrd-api',
-    '<rootDir>/apps/regulations-admin/backend',
+    '<rootDir>/apps/services/regulations-admin-backend',
     '<rootDir>/apps/services/auth-admin-api',
     '<rootDir>/apps/services/auth-api',
     '<rootDir>/apps/services/auth-public-api',
