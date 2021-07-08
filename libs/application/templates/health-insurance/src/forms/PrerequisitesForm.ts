@@ -90,7 +90,7 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildMultiField({
           id: 'externalDataSuccessPrerequisites',
-          title: m.activeDraftApplicationButtonText,
+          title: m.prerequisiteCheckScreenTitle,
           condition: (formValue: FormValue, externalData: ExternalData) => {
             return !prerequisitesFailed(externalData)
           },
@@ -114,11 +114,10 @@ export const PrerequisitesForm: Form = buildForm({
             }),
           ],
         }),
-        // Dirty fix because the submit button has to close the application when
-        // any of the prerequisites fail
+        // Fix to prevent the user from continuing the application when one of the prerequisites fails.
         buildMultiField({
           id: 'externalDataFailedPrerequisites',
-          title: 'Tókst að sækja gögn',
+          title: m.prerequisiteCheckScreenTitle,
           condition: (formValue: FormValue, externalData: ExternalData) => {
             return prerequisitesFailed(externalData)
           },

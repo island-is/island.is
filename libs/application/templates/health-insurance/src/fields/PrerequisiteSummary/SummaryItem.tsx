@@ -34,7 +34,6 @@ const SummaryItem: FC<SummaryItemProps> = ({
   tagText,
   index,
 }) => {
-  prerequisiteMet = false
   return (
     <Box
       position="relative"

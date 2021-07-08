@@ -55,7 +55,7 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
     switch (prerequisiteName) {
       case 'nationalRegistry':
         return {
-          prerequisiteMet: hasNoIcelandicAddressCheck,
+          prerequisiteMet: !hasNoIcelandicAddressCheck,
           title: formatMessage(m.prerequisiteNationalRegistryTitle),
           description: formatMessage(m.prerequisiteNationalRegistryDescription),
           furtherInformationTitle: formatMessage(m.registerYourselfTitle),
@@ -65,8 +65,8 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
           buttonText: formatMessage(m.registerYourselfButtonText),
           buttonLink: formatMessage(m.registerYourselfButtonLink),
           tagText: hasNoIcelandicAddressCheck
-            ? completeTagString
-            : requiresActionTagString,
+            ? requiresActionTagString
+            : completeTagString,
         }
 
       case 'applications':
