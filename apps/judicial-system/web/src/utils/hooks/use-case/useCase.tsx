@@ -92,10 +92,10 @@ const useCase = () => {
             input: {
               type: theCase.type,
               policeCaseNumber: theCase.policeCaseNumber,
-              accusedNationalId: theCase.accusedNationalId.replace('-', ''),
-              accusedName: theCase.accusedName,
-              accusedAddress: theCase.accusedAddress,
-              accusedGender: theCase.accusedGender,
+              accused: theCase.accused.map((accused) => ({
+                ...accused,
+                nationalId: accused.nationalId.replace('-', ''),
+              })),
               defenderName: theCase.defenderName,
               defenderEmail: theCase.defenderEmail,
               defenderPhoneNumber: theCase.defenderPhoneNumber,
