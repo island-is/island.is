@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, LoadingIcon } from '@island.is/island-ui/core'
+import { Box, LoadingDots } from '@island.is/island-ui/core'
 
 import * as styles from './ApplicationLoading.treat'
 
@@ -11,6 +11,6 @@ export const ApplicationLoading = () => (
     width="full"
     className={styles.root}
   >
-    <LoadingIcon animate size={50} />
+    <LoadingDots large />
   </Box>
 )

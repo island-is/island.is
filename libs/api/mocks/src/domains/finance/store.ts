@@ -11,7 +11,6 @@ import {
   getCustomerRecordsData,
   getDocumentsListData,
   getFinanceDocumentData,
-  getExcelDocumentData,
   getCustomerTapControlData,
 } from './static'
 
@@ -23,7 +22,6 @@ export const store = createStore(() => {
   const documentsList: DocumentsListModel = getDocumentsListData
   const tapControl = getCustomerTapControlData
   const financeDocuments = getFinanceDocumentData
-  const excelDocument = getExcelDocumentData
 
   return {
     financeStatus,
@@ -32,7 +30,6 @@ export const store = createStore(() => {
     customerRecords,
     documentsList,
     financeDocuments,
-    excelDocument,
     tapControl,
   }
 })

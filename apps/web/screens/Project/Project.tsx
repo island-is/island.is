@@ -21,8 +21,8 @@ import {
   Section,
   Stepper,
   EntryProjectHeader,
+  HeadWithSocialSharing,
 } from '@island.is/web/components'
-import Head from 'next/head'
 import {
   GridColumn,
   GridContainer,
@@ -99,9 +99,14 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
 
   return (
     <>
-      <Head>
-        <title>{projectPage.title} | Ísland.is</title>
-      </Head>
+      <HeadWithSocialSharing
+        title={`${projectPage.title} | Ísland.is`}
+        description={projectPage.intro}
+        imageUrl={projectPage.featuredImage?.url}
+        imageContentType={projectPage.featuredImage?.contentType}
+        imageWidth={projectPage.featuredImage?.width?.toString()}
+        imageHeight={projectPage.featuredImage?.height?.toString()}
+      />
       <ProjectHeader projectPage={projectPage} />
       <ProjectWrapper
         withSidebar={projectPage.sidebar}

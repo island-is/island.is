@@ -3,6 +3,7 @@ import {
   Regulation,
   RegulationRedirect,
   RegulationDiff,
+  RegulationOriginalDates,
 } from '@island.is/regulations/web'
 import { RegulationPageTexts } from '../../components/Regulations/RegulationTexts.types'
 
@@ -127,10 +128,10 @@ const assertDate = (
 const assertEarlierDate = (
   maybeISODate: string,
   date: ISODate | undefined,
-): 'original' | ISODate | undefined => {
+): ISODate | RegulationOriginalDates.gqlHack | undefined => {
   if (date) {
     if (maybeISODate === 'original') {
-      return 'original'
+      return RegulationOriginalDates.gqlHack
     }
     const baseDate = maybeISODate ? assertDate(maybeISODate) : undefined
     if (!baseDate || baseDate <= date) {

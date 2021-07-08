@@ -316,7 +316,6 @@ components:
         - applicationId
         - applicant
         - expectedDateOfBirth
-        - dateOfBirth
         - email
         - phoneNumber
         - paymentInfo
@@ -340,7 +339,6 @@ components:
           minLength: 1
         dateOfBirth:
           type: string
-          minLength: 1
         email:
           type: string
           minLength: 1
@@ -491,8 +489,8 @@ components:
           type: integer
           format: int32
         transferableMonths:
-          type: integer
-          format: int32
+          type: number
+          format: float
     EstimatedPaymentPlan:
       type: object
       additionalProperties: false

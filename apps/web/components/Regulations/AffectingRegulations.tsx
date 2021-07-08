@@ -40,7 +40,7 @@ export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
     return null
   }
 
-  let dates: string =
+  const dates: string =
     from === to
       ? formatDate(to)
       : interpolate(txt('affectingLinkDateRange'), {

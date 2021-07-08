@@ -3,15 +3,10 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 import qs from 'qs'
 
-import { Text, Page, Box, LoadingIcon, Stack } from '@island.is/island-ui/core'
+import { Text, Page, Box, LoadingDots, Stack } from '@island.is/island-ui/core'
 import { NotFound } from '@island.is/application/ui-shell'
-
 import { ASSIGN_APPLICATION } from '@island.is/application/graphql'
-import {
-  ApplicationConfigurations,
-  ApplicationTypes,
-  getSlugFromType,
-} from '@island.is/application/core'
+import { getSlugFromType } from '@island.is/application/core'
 
 export const AssignApplication = () => {
   const location = useLocation()
@@ -69,7 +64,8 @@ export const AssignApplication = () => {
       ) : loading ? (
         <Box display="flex" justifyContent="center" alignItems="center">
           <Stack space={3} align="center">
-            <LoadingIcon animate size={40} />
+            <LoadingDots large />
+
             <Text variant="h4" color="blue600">
               Tengist umsókn
             </Text>

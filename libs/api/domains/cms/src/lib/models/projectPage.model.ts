@@ -10,6 +10,7 @@ import { GenericTag, mapGenericTag } from './genericTag.model'
 import { Link, mapLink } from './link.model'
 import { mapProjectSubpage, ProjectSubpage } from './projectSubpage.model'
 import { mapStepper, Stepper } from './stepper.model'
+import { mapImage, Image } from './image.model'
 
 @ObjectType()
 export class ProjectPage {
@@ -51,6 +52,9 @@ export class ProjectPage {
 
   @Field(() => [ProjectSubpage])
   projectSubpages!: Array<ProjectSubpage>
+
+  @Field(() => Image, { nullable: true })
+  featuredImage!: Image | null
 }
 
 export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
@@ -69,4 +73,5 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
   newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
   projectSubpages: (fields.projectSubpages ?? []).map(mapProjectSubpage),
+  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
 })
