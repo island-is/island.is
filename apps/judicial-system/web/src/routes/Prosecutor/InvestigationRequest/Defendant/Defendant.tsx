@@ -46,13 +46,17 @@ const Defendant = () => {
         state: CaseState.NEW,
         description: '',
         policeCaseNumber: '',
-        accusedNationalId: '',
-        accusedName: '',
-        accusedAddress: '',
+        accused: [
+          {
+            name: '',
+            nationalId: '',
+            address: '',
+            gender: undefined,
+          },
+        ],
         defenderName: '',
         defenderEmail: '',
         sendRequestToDefender: false,
-        accusedGender: undefined,
       } as Case)
     }
   }, [id, workingCase, setWorkingCase, data])

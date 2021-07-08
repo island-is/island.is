@@ -62,13 +62,17 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
         type,
         state: CaseState.NEW,
         policeCaseNumber: '',
-        accusedNationalId: '',
-        accusedName: '',
-        accusedAddress: '',
+        accused: [
+          {
+            name: '',
+            nationalId: '',
+            address: '',
+            gender: undefined,
+          },
+        ],
         defenderName: '',
         defenderEmail: '',
         sendRequestToDefender: false,
-        accusedGender: undefined,
       })
     }
   }, [id, workingCase, setWorkingCase, data, type])

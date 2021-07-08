@@ -203,9 +203,7 @@ export const Overview: React.FC = () => {
                       : 'Var ekki skráður',
                   },
                 ]}
-                accusedName={workingCase.accusedName}
-                accusedNationalId={workingCase.accusedNationalId}
-                accusedAddress={workingCase.accusedAddress}
+                accused={workingCase.accused}
                 defender={{
                   name: workingCase.defenderName ?? '',
                   email: workingCase.defenderEmail,
