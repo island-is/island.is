@@ -462,6 +462,11 @@ export const m = defineMessages({
     defaultMessage: 'Leiðbeiningar',
     description: 'How to register',
   },
+  registerYourselfButtonLink: {
+    id: 'hi.application:registerYourself.buttonLink',
+    defaultMessage: 'https://island.is/logheimili-upplysingar-innflytjendur',
+    description: 'https://island.is/en/legal-domicile-immigrant',
+  },
   activeDraftApplicationTitle: {
     id: 'hi.application:activeDraftApplication.title',
     defaultMessage: 'Opna ókláraða umsókn',
@@ -477,6 +482,11 @@ export const m = defineMessages({
     id: 'hi.application:activeDraftApplication.buttonText',
     defaultMessage: 'Opna umsókn',
     description: 'Open draft',
+  },
+  activeDraftApplicationButtonLink: {
+    id: 'hi.application:activeDraftApplication.buttonLink',
+    defaultMessage: 'https://www.sjukra.is',
+    description: 'https://www.sjukra.is/english',
   },
   prerequisiteMetTitle: {
     id: 'hi.application:prerequisiteMetDescription.title',
@@ -551,6 +561,11 @@ export const m = defineMessages({
     defaultMessage: 'Hafa samband',
     description: 'Contact info',
   },
+  pendingApplicationButtonLink: {
+    id: 'hi.application:oldPendingApplication.buttonLink',
+    defaultMessage: 'https://www.sjukra.is/um-okkur/thjonustuleidir/',
+    description: 'https://www.sjukra.is/english',
+  },
   alreadyInsuredTitle: {
     id: 'hi.application:alreadyInsured.title',
     defaultMessage: 'Þú ert nú þegar sjúkratryggður',
@@ -567,6 +582,11 @@ export const m = defineMessages({
     id: 'hi.application:alreadyInsured.buttonText',
     defaultMessage: 'Opna vefsíðu',
     description: 'A button to go to sjukra website',
+  },
+  alreadyInsuredButtonLink: {
+    id: 'hi.application:alreadyInsured.buttonLink',
+    defaultMessage: 'https://www.sjukra.is',
+    description: 'https://www.sjukra.is/english',
   },
   externalDataCheckbox: {
     id: 'hi.application:externalDataCheckbox',

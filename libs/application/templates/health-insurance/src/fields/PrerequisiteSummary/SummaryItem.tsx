@@ -19,6 +19,8 @@ type SummaryItemProps = {
   furtherInformationTitle: string
   furtherInformationDescription: string
   buttonText: string
+  buttonLink: string
+  tagText: string
 }
 
 const SummaryItem: FC<SummaryItemProps> = ({
@@ -28,6 +30,8 @@ const SummaryItem: FC<SummaryItemProps> = ({
   furtherInformationDescription,
   buttonText,
   prerequisiteMet,
+  buttonLink,
+  tagText,
   index,
 }) => {
   prerequisiteMet = false
@@ -74,23 +78,23 @@ const SummaryItem: FC<SummaryItemProps> = ({
               {HtmlParser(description)}
             </Text>
           </Box>
-
-          {prerequisiteMet ? (
-            <Box pointerEvents="none">
-              <Tag variant="blue">{SummaryItemState.complete}</Tag>
-            </Box>
-          ) : (
-            <Box pointerEvents="none">
-              <Tag variant="red">{SummaryItemState.requiresAction}</Tag>
-            </Box>
-          )}
+          <Box pointerEvents="none">
+            <Tag variant={prerequisiteMet ? 'blue' : 'red'}>{tagText}</Tag>
+          </Box>
         </Box>
       </Box>
       {!prerequisiteMet && (
         <Box paddingX={4} marginBottom={2}>
           <Text variant="h3">{HtmlParser(furtherInformationTitle)}</Text>
           <Text>{HtmlParser(furtherInformationDescription)}</Text>
-          <Button variant="text">{buttonText}</Button>
+          <Button
+            variant="text"
+            onClick={() => {
+              window.location.href = buttonLink
+            }}
+          >
+            {buttonText}
+          </Button>
         </Box>
       )}
     </Box>
