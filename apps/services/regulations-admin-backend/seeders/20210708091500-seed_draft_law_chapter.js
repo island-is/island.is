@@ -21,6 +21,11 @@ const draftLawChapterSeed = [
     draft_id: '32e191a3-497c-46e4-ae10-8ba579f07f28',
     law_chapter_id: '01b',
   },
+  {
+    id: '25e9915c-5c6c-4623-8595-daf9b16b9fdb',
+    draft_id: 'b99f6276-68ff-4ac7-a9f4-b42d522922e8',
+    law_chapter_id: '02',
+  },
 ]
 
 module.exports = {

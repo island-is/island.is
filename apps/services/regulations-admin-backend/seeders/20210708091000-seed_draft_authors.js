@@ -26,6 +26,11 @@ const draftAuthorSeed = [
     draft_id: '0cb3a68b-f368-4d01-a594-ba73e0dc396d',
     author_id: '0101012021',
   },
+  {
+    id: '22a2cef3-20ec-4076-8dd7-25d009bcce2c',
+    draft_id: 'b99f6276-68ff-4ac7-a9f4-b42d522922e8',
+    author_id: '0101012020',
+  },
 ]
 
 module.exports = {
