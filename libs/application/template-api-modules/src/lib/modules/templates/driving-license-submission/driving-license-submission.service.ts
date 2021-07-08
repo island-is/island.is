@@ -38,37 +38,46 @@ export class DrivingLicenseSubmissionService {
     )
   }
 
-  async submitApplication({ application, authorization }: TemplateApiModuleActionProps) {
+  async submitApplication({
+    application,
+    authorization,
+  }: TemplateApiModuleActionProps) {
     const { answers } = application
     const nationalId = application.applicant
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const juristictionId = answers.juristiction
 
-    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(authorization, application.id)
+    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+      authorization,
+      application.id,
+    )
 
-    if(isPayment.fulfilled) {
-
+    if (isPayment.fulfilled) {
       const result = await this.drivingLicenseService
-      .newDrivingLicense(nationalId, {
-        juristictionId: juristictionId as number,
-        needsToPresentHealthCertificate: needsHealthCert,
-      })
-      .catch((e) => {
-        return {
-          success: false,
-          errorMessage: e.message,
-        }
-      })
-      
+        .newDrivingLicense(nationalId, {
+          juristictionId: juristictionId as number,
+          needsToPresentHealthCertificate: needsHealthCert,
+        })
+        .catch((e) => {
+          return {
+            success: false,
+            errorMessage: e.message,
+          }
+        })
+
       if (!result.success) {
-        throw new Error(`Application submission failed (${result.errorMessage})`)
+        throw new Error(
+          `Application submission failed (${result.errorMessage})`,
+        )
       }
-      
+
       return {
         success: result.success,
       }
     } else {
-      throw new Error('Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.')
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
     }
   }
 

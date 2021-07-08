@@ -15,7 +15,8 @@ export const payment: Form = buildForm({
   id: 'DrivingLicenseApplicationPaymentForm',
   title: '',
   mode: FormModes.APPLYING,
-  renderLastScreenButton: true && !!window.document.location.href.match(/\?done$/),
+  renderLastScreenButton:
+    true && !!window.document.location.href.match(/\?done$/),
   children: [
     buildSection({
       id: 'awaitingPayment',
@@ -72,7 +73,8 @@ export const payment: Form = buildForm({
                 },
               ],
             }),
-          ]}),
+          ],
+        }),
       ],
     }),
   ],

@@ -14,7 +14,7 @@ interface PropTypes extends FieldBaseProps {
 }
 
 interface name {
-  fullName: string,
+  fullName: string
 }
 
 function Congratulations({
@@ -36,10 +36,13 @@ function Congratulations({
 
         <Box marginTop={6}>
           <Text>
-            Ef beðið var um viðbótargögn (nýja ljósmynd eða læknisvottorð) þarf að skila þeim til Sýslumanns svo að fullnaðarskírteini fari í pöntun.
+            Ef beðið var um viðbótargögn (nýja ljósmynd eða læknisvottorð) þarf
+            að skila þeim til Sýslumanns svo að fullnaðarskírteini fari í
+            pöntun.
           </Text>
           <Text marginTop={4}>
-            Ef svo var ekki þá verður fullnaðarskírteinið tilbúið á afhendingarstað eftir 3 til 4 vikur.
+            Ef svo var ekki þá verður fullnaðarskírteinið tilbúið á
+            afhendingarstað eftir 3 til 4 vikur.
           </Text>
         </Box>
 

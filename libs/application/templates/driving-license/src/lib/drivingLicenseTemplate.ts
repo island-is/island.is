@@ -15,8 +15,11 @@ import { m } from './messages'
 import { useQuery, gql } from '@apollo/client'
 import { NestApplicationContext } from '@nestjs/core'
 
-
-type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.PAYMENT } | { type: DefaultEvents.APPROVE } | { type: DefaultEvents.REJECT }
+type Events =
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.PAYMENT }
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.REJECT }
 
 enum States {
   DRAFT = 'draft',
@@ -93,7 +96,7 @@ const template: ApplicationTemplate<
             apiModuleAction: ApiActions.createCharge,
           },
           onExit: {
-            apiModuleAction: ApiActions.submitApplication
+            apiModuleAction: ApiActions.submitApplication,
           },
           roles: [
             {

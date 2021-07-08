@@ -167,15 +167,12 @@ export class SharedTemplateApiService {
       })
   }
 
-  async getPaymentStatus(
-    authorization: string,
-    applicationId: string,
-  ) {
+  async getPaymentStatus(authorization: string, applicationId: string) {
     return await this.makeGraphqlQuery(authorization, PAYMENT_STATUS_QUERY, {
-        applicationId
+      applicationId,
     })
       .then((res) => {
-        if(!res.ok) {
+        if (!res.ok) {
           throw new Error('Couldnt query payment status')
         }
         return res

@@ -1,6 +1,11 @@
 import React, { FC } from 'react'
 import { useQuery, gql } from '@apollo/client'
-import { CustomField, DataProviderResult, DefaultEvents, FieldBaseProps } from '@island.is/application/core'
+import {
+  CustomField,
+  DataProviderResult,
+  DefaultEvents,
+  FieldBaseProps,
+} from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../lib/messages'
 
@@ -60,7 +65,10 @@ export const ExamplePaymentPendingField: FC<Props> = ({
       )}
       {paymentStatus.fulfilled && (
         <Box height="full">
-          <Text variant="h3">Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára umsóknina</Text>
+          <Text variant="h3">
+            Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára
+            umsóknina
+          </Text>
           <Box
             backgroundPattern="dotted"
             marginTop="gutter"
