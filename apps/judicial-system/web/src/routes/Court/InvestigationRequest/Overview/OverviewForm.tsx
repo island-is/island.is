@@ -120,15 +120,13 @@ const OverviewForm: React.FC<Props> = (props) => {
                 value: capitalize(caseTypes[workingCase.type]),
               },
             ]}
-            accusedName={workingCase.accusedName}
-            accusedNationalId={workingCase.accusedNationalId}
-            accusedAddress={workingCase.accusedAddress}
+            accused={workingCase.accused}
             defender={{
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
-            isRCase
+            isInvestigationCase
           />
         </Box>
         <Box marginBottom={5}>

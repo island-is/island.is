@@ -1,29 +1,36 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { Accused } from '@island.is/judicial-system/types'
 import React, { PropsWithChildren } from 'react'
 import * as styles from './InfoCard.treat'
 
 interface Props {
   data: Array<{ title: string; value?: string }>
-  accusedName?: string
-  accusedNationalId?: string
-  accusedAddress?: string
+  accused: Accused[]
   defender?: { name: string; email?: string; phoneNumber?: string }
-  isRCase?: boolean
+  isInvestigationCase?: boolean
 }
 
 const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
   return (
     <Box className={styles.infoCardContainer} data-testid="infoCard">
-      <Text variant="h4">{props.isRCase ? 'Varnaraðili' : 'Sakborningur'}</Text>
+      <Text variant="h4">
+        {props.isInvestigationCase
+          ? props.accused.length > 1
+            ? 'Varnaraðilar'
+            : 'Varnaraðili'
+          : 'Sakborningur'}
+      </Text>
       <Box className={styles.infoCardTitleContainer}>
         <Box marginBottom={4}>
-          <Text fontWeight="semiBold">
-            {props.accusedName}
-            <Text as="span">{`, `}</Text>
-            {`kt. ${formatNationalId(props.accusedNationalId ?? '')}`}
-            <Text as="span">{`, ${props.accusedAddress}`}</Text>
-          </Text>
+          {props.accused.map((accused) => (
+            <Text fontWeight="semiBold">
+              {accused.name}
+              <Text as="span">{`, `}</Text>
+              {`kt. ${formatNationalId(accused.nationalId ?? '')}`}
+              <Text as="span">{`, ${accused.address}`}</Text>
+            </Text>
+          ))}
         </Box>
         <Box>
           <Text variant="h4">Verjandi</Text>
