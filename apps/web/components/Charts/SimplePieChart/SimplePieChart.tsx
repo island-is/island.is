@@ -10,26 +10,7 @@ import {
 import * as styles from './SimplePieChart.treat'
 import cn from 'classnames'
 
-const veitt = [
-  { name: 'HB', count: 655 },
-  { name: null, count: 66 },
-  { name: 'RN', count: 18 },
-  { name: 'SL', count: 17 },
-  { name: 'VF', count: 10 },
-  { name: 'AL', count: 7 },
-  { name: 'VL', count: 6 },
-  { name: 'NV', count: 3 },
-]
-const umsokn = [
-  { name: 'HB', count: 3669 },
-  { name: null, count: 442 },
-  { name: 'RN', count: 128 },
-  { name: 'SL', count: 115 },
-  { name: 'VL', count: 67 },
-  { name: 'VF', count: 47 },
-  { name: 'AL', count: 35 },
-  { name: 'NV', count: 29 },
-]
+
 const COLORS = [
   '#00B39E',
   '#FFF066',

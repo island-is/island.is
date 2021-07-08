@@ -11,27 +11,18 @@ import {
   Button,
   Inline,
   Icon,
-  GridColumns,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
-import {
-  Section,
-  StatisticsCard,
-  DataLinkSection,
-  MixedChart,
-  SimplePieChart,
-  SimpleBarChart,
-  ChartsCard,
-  SectionTitle,
-} from '@island.is/web/components'
+import { StatisticsCard, ChartsCard } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
+import { area, gender, applications, category } from './data'
 
 const OpenDataSubPage: Screen = () => {
-  // TODO: Connect to contentful to finish, just static parts for now with comments of sections that need changing
+  // Contentful currently has no available content types, so this is a teporary solution for a demo
   const { linkResolver } = useLinkResolver()
-
+  const data = [area, gender, category, applications]
   return (
     <Box id="main-content" style={{ overflow: 'hidden' }}>
       <GridContainer>
@@ -142,52 +133,15 @@ const OpenDataSubPage: Screen = () => {
                 </GridColumn>
               </GridRow>
             </Box>
-            <Box marginBottom={3}>
-              <GridRow>
-                <GridColumn span={['12/12', '4/12', '4/12']}>
-                  {/* <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
-                    <SimplePieChart />
-                  </ChartsCard> */}
-                </GridColumn>
-                <GridColumn span={['12/12', '8/12', '8/12']}>
-                  {/* <ChartsCard
-                    title="Rannís"
-                    description="Þjónustuaðili"
-                    subTitle="Fjöldi sóttra og veittra styrkja seinustu tíu árin og heildarupphæð úthlutuna"
-                    blue
-                  >
-                    <MixedChart />
-                  </ChartsCard> */}
-                </GridColumn>
-              </GridRow>
-            </Box>
-            <Box marginBottom={3}>
-              <GridRow>
-                <GridColumn span={['12/12', '6/12', '6/12']}>
-                  {/* <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
-                    <SimplePieChart dataset="umsokn" />
-                  </ChartsCard> */}
-                </GridColumn>
-                <GridColumn span={['12/12', '6/12', '6/12']}>
-                  {/* <ChartsCard
-                    title="Rannís"
-                    description="Þjónustuaðili"
-                    blue
-                  >
-                    <SimplePieChart dataset="veitt" />
-                  </ChartsCard> */}
-                </GridColumn>
-              </GridRow>
-            </Box>
-            <Box marginBottom={3}>
-              <GridRow>
-                <GridColumn span={'12/12'}>
-                  {/* <ChartsCard title="Rannís" description="Þjónustuaðili" blue>
-                    <SimpleBarChart dataset="umsokn" />
-                  </ChartsCard> */}
-                </GridColumn>
-              </GridRow>
-            </Box>
+            <GridRow>
+              <GridColumn span={'12/12'}>
+                {data.map((item, index) => (
+                  <Box marginBottom={3} key={index}>
+                  <ChartsCard data={item} />
+                </Box>
+                ))}
+              </GridColumn>
+            </GridRow>
           </GridColumn>
         </GridRow>
       </GridContainer>

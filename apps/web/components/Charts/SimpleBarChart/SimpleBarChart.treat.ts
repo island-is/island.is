@@ -11,12 +11,12 @@ export const dot = style({
   height: '12px',
   borderRadius: '12px',
   marginRight: '2px',
-  marginLeft: '8px',
+  marginLeft: '45px',
 })
 
 export const listWrapper = style({
-    justifyContent: 'space-between',
-        display: 'flex',
-        paddingTop: '37px',
-  })
-  
+  display: 'flex',
+  justifyContent: 'flexEnd',
+  width: '100%',
+  paddingTop: '37px',
+})

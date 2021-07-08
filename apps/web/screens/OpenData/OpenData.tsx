@@ -49,7 +49,6 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page }) => {
     externalLinkSectionDescription,
     externalLinkSectionImage,
   } = page
-
   return (
     <Box id="main-content" style={{ overflow: 'hidden', top: 0 }}>
       <Section

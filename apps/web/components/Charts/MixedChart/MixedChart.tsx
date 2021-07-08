@@ -35,16 +35,11 @@ const renderLegend = (props) => {
   const { payload } = props
 
   return (
-    <ul
-    className={cn(styles.listWrapper)}
-    >
+    <ul className={cn(styles.listWrapper)}>
       {payload.map((entry, index) => (
-        <li
-          className={cn(styles.list)}
-          key={`item-${index}`}
-        >
+        <li className={cn(styles.list)} key={`item-${index}`}>
           <div
-          className={cn(styles.dot)}
+            className={cn(styles.dot)}
             style={{
               border: '3px solid ' + entry.color,
             }}
@@ -69,6 +64,8 @@ export const MixedChart = ({ graphData }: GraphProps) => {
   const { title, data, datakeys } = graphData
   const parsedData = JSON.parse(data)
   const parsedDatakeys = JSON.parse(datakeys)[0]
+  const stackIds = parsedDatakeys.bars.map((e) => e.stackId)
+  const shouldStack = new Set(stackIds).size !== stackIds.length
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -97,26 +94,30 @@ export const MixedChart = ({ graphData }: GraphProps) => {
         <Legend iconType="circle" align="right" content={renderLegend} />
         {parsedDatakeys.bars.map((item, index) => (
           <Bar
-            key={item.bar}
-            dataKey={item.bar}
+            key={index}
+            dataKey={item.datakey}
             fill={item.color}
-            stackId="a"
+            stackId={item.stackId}
             barSize={16}
             yAxisId="left"
             radius={
-              index + 1 === parsedDatakeys.bars.length ? [20, 20, 0, 0] : 0
+              index + 1 === parsedDatakeys.bars.length || !shouldStack
+                ? [20, 20, 0, 0]
+                : 0
             }
           />
         ))}
-        {parsedDatakeys.yAxis?.left && (
-          <Line
-            dataKey={parsedDatakeys.yAxis.left}
-            stroke="#99F4EA"
-            yAxisId="right"
-            strokeWidth={3}
-            dot={{ r: 6, strokeWidth: 3 }}
-          />
-        )}
+        {parsedDatakeys.yAxis?.left &&
+          parsedDatakeys.lines.map((item, index) => (
+            <Line
+              key={item.datakey}
+              dataKey={item.datakey}
+              stroke={item.color}
+              yAxisId="right"
+              strokeWidth={3}
+              dot={{ r: 6, strokeWidth: 3 }}
+            />
+          ))}
       </ComposedChart>
     </ResponsiveContainer>
   )

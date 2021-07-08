@@ -6,9 +6,8 @@ import {
   MixedChart,
   SimpleBarChart,
   SimpleLineChart,
-  SimplePieChart,
+  SimplePieChart
 } from '../'
-import { ColorSchemeContext } from '@island.is/web/context'
 
 import * as styles from './ChartsCard.treat'
 
@@ -23,7 +22,7 @@ interface ChartCardDataProps {
   graphTitle?: string
   graphDescription?: string
   organization?: string
-  graph: GraphDataProps
+  graph?: GraphDataProps
 }
 
 export interface ChartsCardsProps {
@@ -33,7 +32,6 @@ export interface ChartsCardsProps {
 
 export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
   const { graphTitle, graphDescription, organization, graph } = data
-  const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 360
@@ -47,7 +45,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
       children = <SimpleLineChart graphData={graph} />
       break
     case 'Bar':
-      children = <SimpleBarChart />
+      children = <SimpleBarChart graphData={graph}/>
       break
     case 'Pie':
       children = <SimplePieChart graphData={graph} />

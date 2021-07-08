@@ -13,103 +13,7 @@ import {
 import * as styles from './SimpleBarChart.treat'
 import cn from 'classnames'
 
-const data = [
-  {
-    fund_year: 2010,
-    'Karlmaður veittir styrkir': 16,
-    'Kona veittir styrkir': 6,
-    'Óskilgreint veittir styrkir': 1,
-    'Karlmaður umsóknir': 88,
-    'Kona umsóknir': 16,
-    'Óskilgreint umsóknir': 5,
-  },
-  {
-    fund_year: 2011,
-    'Karlmaður veittir styrkir': 30,
-    'Kona veittir styrkir': 15,
-    'Óskilgreint veittir styrkir': 1,
-    'Karlmaður umsóknir': 169,
-    'Kona umsóknir': 48,
-    'Óskilgreint umsóknir': 6,
-  },
-  {
-    fund_year: 2012,
-    'Karlmaður veittir styrkir': 38,
-    'Kona veittir styrkir': 14,
-    'Óskilgreint veittir styrkir': 1,
-    'Karlmaður umsóknir': 144,
-    'Kona umsóknir': 41,
-    'Óskilgreint umsóknir': 3,
-  },
-  {
-    fund_year: 2013,
-    'Karlmaður veittir styrkir': 41,
-    'Kona veittir styrkir': 19,
-    'Óskilgreint veittir styrkir': 1,
-    'Karlmaður umsóknir': 237,
-    'Kona umsóknir': 86,
-    'Óskilgreint umsóknir': 3,
-  },
-  {
-    fund_year: 2014,
-    'Karlmaður veittir styrkir': 40,
-    'Kona veittir styrkir': 16,
-    'Karlmaður umsóknir': 175,
-    'Kona umsóknir': 57,
-    'Óskilgreint umsóknir': 2,
-  },
-  {
-    fund_year: 2015,
-    'Karlmaður veittir styrkir': 69,
-    'Kona veittir styrkir': 18,
-    'Karlmaður umsóknir': 211,
-    'Kona umsóknir': 54,
-    'Óskilgreint umsóknir': 3,
-  },
-  {
-    fund_year: 2016,
-    'Karlmaður veittir styrkir': 75,
-    'Kona veittir styrkir': 31,
-    'Karlmaður umsóknir': 364,
-    'Kona umsóknir': 128,
-  },
-  {
-    fund_year: 2017,
-    'Karlmaður veittir styrkir': 64,
-    'Kona veittir styrkir': 37,
-    'Karlmaður umsóknir': 367,
-    'Kona umsóknir': 141,
-  },
-  {
-    fund_year: 2018,
-    'Karlmaður veittir styrkir': 54,
-    'Kona veittir styrkir': 30,
-    'Karlmaður umsóknir': 410,
-    'Kona umsóknir': 189,
-    'Óskilgreint umsóknir': 1,
-  },
-  {
-    fund_year: 2019,
-    'Karlmaður veittir styrkir': 54,
-    'Kona veittir styrkir': 22,
-    'Karlmaður umsóknir': 433,
-    'Kona umsóknir': 196,
-    'Óskilgreint umsóknir': 1,
-  },
-  {
-    fund_year: 2020,
-    'Karlmaður veittir styrkir': 66,
-    'Kona veittir styrkir': 23,
-    'Karlmaður umsóknir': 602,
-    'Kona umsóknir': 278,
-    'Óskilgreint umsóknir': 2,
-  },
-  {
-    fund_year: 2021,
-    'Karlmaður umsóknir': 48,
-    'Kona umsóknir': 24,
-  },
-]
+
 
 const dataKeysName = {
   sott: 'Umsóknir',
@@ -160,19 +64,24 @@ const renderLegend = (props) => {
   )
 }
 
-const renderLabel = (value: string) => {
-  return <p style={{ color: '#00003C' }}>{value}</p>
+interface GraphDataProps {
+  title?: string
+  data: string
+  datakeys: string
 }
-interface SimpleBarChartProps {
-  dataset?: string
+interface GraphProps {
+  graphData: GraphDataProps
 }
-export const SimpleBarChart = ({ dataset }: SimpleBarChartProps) => {
+export const SimpleBarChart = ({ graphData }: GraphProps) => {
+  const { title, data, datakeys } = graphData
+  const parsedData = JSON.parse(data)
+  const parsedDatakeys = JSON.parse(datakeys)
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
         width={250}
         height={150}
-        data={data}
+        data={parsedData}
         margin={{
           top: 30,
           right: 0,
@@ -182,7 +91,7 @@ export const SimpleBarChart = ({ dataset }: SimpleBarChartProps) => {
       >
         <CartesianGrid strokeDasharray="1" vertical={false} color="#CCDFFF" />
         <XAxis
-          dataKey="fund_year"
+          dataKey={parsedDatakeys.xAxis}
           stroke="#CCDFFF"
           tick={<CustomizedAxisTick />}
           padding={{ left: 30 }}
@@ -191,44 +100,18 @@ export const SimpleBarChart = ({ dataset }: SimpleBarChartProps) => {
         <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
         <Tooltip />
         <Legend iconType="circle" align="right" content={renderLegend} />
-        <Bar
-          dataKey="Óskilgreint umsóknir"
-          fill="#B5B6EC"
-          barSize={16}
-          stackId="a"
-        />
-        <Bar
-          dataKey="Karlmaður umsóknir"
-          fill="#FF99B9"
-          barSize={16}
-          stackId="a"
-        />
-        <Bar
-          dataKey="Kona umsóknir"
-          fill="#D799C7"
-          radius={[20, 20, 0, 0]}
-          barSize={16}
-          stackId="a"
-        />
-        <Bar
-          dataKey="Óskilgreint veittir styrkir"
-          fill="#99F4EA"
-          barSize={16}
-          stackId="b"
-        />
-        <Bar
-          dataKey="Karlmaður veittir styrkir"
-          fill="#C3ABD9"
-          barSize={16}
-          stackId="b"
-        />
-        <Bar
-          dataKey="Kona veittir styrkir"
-          fill="#99C0FF"
-          radius={[20, 20, 0, 0]}
-          barSize={16}
-          stackId="b"
-        />
+        {parsedDatakeys.bars.map((item, index) => (
+          <Bar
+            key={index}
+            dataKey={item.datakey}
+            fill={item.color}
+            stackId={item.stackId}
+            barSize={16}
+            radius={
+              index + 1 === parsedDatakeys.bars.length ? [20, 20, 0, 0] : 0
+            }
+          />
+        ))}
       </BarChart>
     </ResponsiveContainer>
   )
