@@ -13,13 +13,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Applications } from '../../dataProviders/APIDataTypes'
 
-const PREREQUISITESTOCHECK = [
-  'applications',
-  'healthInsurance',
-  'pendingApplications',
-  'nationalRegistry',
-]
-
 const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const externalData = application.externalData
@@ -27,8 +20,8 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
   const buildPrerequisite = () => {
     const prerequisiteObject = []
     for (const item in externalData) {
-      if (PREREQUISITESTOCHECK.includes(item)) {
-        const prerequisiteItem = checkPrerequisite(item)
+      const prerequisiteItem = checkPrerequisite(item)
+      if (prerequisiteItem) {
         prerequisiteObject.push({
           name: item,
           ...prerequisiteItem,
@@ -51,32 +44,34 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
     return `umsoknir/${applicationSlug}/${oldestDraftApplicationId}`
   }
 
-  // Following checks are made:
-  // User should have legal residence in Iceland
-  // User should not have an active draft application
-  // User should not already have health insurance
-  // User should not have an application already at sjukratryggingar
+  const requiresActionTagString = formatMessage(m.requiresActionTagLabel)
+  const completeTagString = formatMessage(m.completeTagLabel)
+  const hasNoIcelandicAddressCheck = hasNoIcelandicAddress(externalData)
+  const hasActiveDraftApplicationCheck = hasActiveDraftApplication(externalData)
+  const hasHealthInsuranceCheck = hasHealthInsurance(externalData)
+  const hasPendingApplicationsCheck = hasPendingApplications(externalData)
+
   const checkPrerequisite = (prerequisiteName: string) => {
     switch (prerequisiteName) {
       case 'nationalRegistry':
         return {
-          prerequisiteMet: hasNoIcelandicAddress(externalData),
-          title: formatMessage(m.prerequisiteNationaalRegistryTitle),
-          description: formatMessage(
-            m.prerequisiteNationaalRegistryDescription,
-          ),
+          prerequisiteMet: hasNoIcelandicAddressCheck,
+          title: formatMessage(m.prerequisiteNationalRegistryTitle),
+          description: formatMessage(m.prerequisiteNationalRegistryDescription),
           furtherInformationTitle: formatMessage(m.registerYourselfTitle),
           furtherInformationDescription: formatMessage(
             m.registerYourselfDescription,
           ),
           buttonText: formatMessage(m.registerYourselfButtonText),
           buttonLink: formatMessage(m.registerYourselfButtonLink),
-          tagText: 'something else',
+          tagText: hasNoIcelandicAddressCheck
+            ? completeTagString
+            : requiresActionTagString,
         }
 
       case 'applications':
         return {
-          prerequisiteMet: !hasActiveDraftApplication(externalData),
+          prerequisiteMet: !hasActiveDraftApplicationCheck,
           title: formatMessage(m.prerequisiteActiveDraftApplicationTitle),
           description: formatMessage(
             m.prerequisiteActiveDraftApplicationDescription,
@@ -87,12 +82,14 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
           ),
           buttonText: formatMessage(m.activeDraftApplicationButtonText),
           buttonLink: buildPendingApplicationLink(),
-          tagText: 'something else',
+          tagText: hasActiveDraftApplicationCheck
+            ? requiresActionTagString
+            : completeTagString,
         }
 
       case 'healthInsurance':
         return {
-          prerequisiteMet: !hasHealthInsurance(externalData),
+          prerequisiteMet: !hasHealthInsuranceCheck,
           title: formatMessage(m.prerequisiteHealthInsuranceTitle),
           description: formatMessage(m.prerequisiteHealthInsuranceDescription),
           furtherInformationTitle: formatMessage(m.alreadyInsuredTitle),
@@ -101,12 +98,14 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
           ),
           buttonText: formatMessage(m.alreadyInsuredButtonText),
           buttonLink: formatMessage(m.alreadyInsuredButtonLink),
-          tagText: 'something else',
+          tagText: hasHealthInsuranceCheck
+            ? requiresActionTagString
+            : completeTagString,
         }
 
       case 'pendingApplications':
         return {
-          prerequisiteMet: !hasPendingApplications(externalData),
+          prerequisiteMet: !hasPendingApplicationsCheck,
           title: formatMessage(m.prerequisitePendingApplicationTitle),
           description: formatMessage(
             m.prerequisitePendingApplicationDescription,
@@ -120,40 +119,29 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
           ),
           buttonText: formatMessage(m.pendingApplicationButtonText),
           buttonLink: formatMessage(m.pendingApplicationButtonLink),
-          tagText: 'something else',
+          tagText: hasPendingApplicationsCheck
+            ? requiresActionTagString
+            : completeTagString,
         }
-      // Should never go to the default as we dont check prerequisites that arent defined in the PREREQUISITESTOCHECK
-      // constant but incase it does happen we send the requirement met flag as true in order not to block anything
+
       default:
-        return {
-          prerequisiteMet: true,
-          title: formatMessage(m.unexpectedError),
-          description: formatMessage(m.unexpectedError),
-          furtherInformationTitle: formatMessage(m.unexpectedError),
-          furtherInformationDescription: formatMessage(m.unexpectedError),
-          // TODO FIX, maybe just return empty string and not render it in the summaryItem?
-          buttonText: formatMessage(m.pendingApplicationButtonText),
-          buttonLink: 'something',
-          tagText: 'something else',
-        }
+        break
     }
   }
 
   const prerequisites = buildPrerequisite()
   return (
-    <Box marginBottom={10}>
-      <Box marginTop={7} marginBottom={8}>
-        {prerequisites.map((prerequisite, i) => {
-          return (
-            <SummaryItem
-              key={i}
-              index={i + 1}
-              application={application}
-              {...prerequisite}
-            />
-          )
-        })}
-      </Box>
+    <Box>
+      {prerequisites.map((prerequisite, i) => {
+        return (
+          <SummaryItem
+            key={i}
+            index={i + 1}
+            application={application}
+            {...prerequisite}
+          />
+        )
+      })}
     </Box>
   )
 }

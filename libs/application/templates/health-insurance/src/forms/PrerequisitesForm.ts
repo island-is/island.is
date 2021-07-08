@@ -88,33 +88,26 @@ export const PrerequisitesForm: Form = buildForm({
             }),
           ],
         }),
-        // todo better name of screen
         buildMultiField({
-          id: 'externalDataSuccessPassedPrerequisites',
-          title: 'Tókst að sækja gögn',
+          id: 'externalDataSuccessPrerequisites',
+          title: m.activeDraftApplicationButtonText,
           condition: (formValue: FormValue, externalData: ExternalData) => {
             return !prerequisitesFailed(externalData)
           },
           children: [
-            buildDescriptionField({
-              id: 'externalDataSuccessDescription',
-              title: '',
-              description: m.externalDataSuccessDescription,
-            }),
             buildCustomField({
-              title: 'test',
+              id: 'prerequisiteSuccessSummary',
+              title: '',
               component: 'PrerequisiteSummary',
-              id: 'prerequisiteSummary',
             }),
             buildSubmitField({
               id: 'toDraft',
-              placement: 'footer',
               title: m.externalDataSuccessSubmitFieldTitle,
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: 'SUBMIT',
-                  name: 'Hefja umsókn',
+                  name: m.prerequisiteStartApplication,
                   type: 'primary',
                 },
               ],
@@ -124,21 +117,16 @@ export const PrerequisitesForm: Form = buildForm({
         // Dirty fix because the submit button has to close the application when
         // any of the prerequisites fail
         buildMultiField({
-          id: 'externalDataSuccessFailedPrerequisites',
+          id: 'externalDataFailedPrerequisites',
           title: 'Tókst að sækja gögn',
           condition: (formValue: FormValue, externalData: ExternalData) => {
             return prerequisitesFailed(externalData)
           },
           children: [
-            buildDescriptionField({
-              id: 'externalDataSuccessDescription',
-              title: '',
-              description: m.externalDataSuccessDescription,
-            }),
             buildCustomField({
+              id: 'prerequisiteFailedSummary',
               title: 'test',
               component: 'PrerequisiteSummary',
-              id: 'prerequisiteSummary',
             }),
           ],
         }),

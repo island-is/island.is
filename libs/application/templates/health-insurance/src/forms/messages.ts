@@ -52,6 +52,11 @@ export const m = defineMessages({
     description:
       'Handles the collection of taxes and duties as well as oversees the legitimacy of tax returns. The Directorate of Internal Revenue also plays a multifaceted customs role at the border and provides society with protection against illegal import and export of goods.',
   },
+  prerequisiteStartApplication: {
+    id: 'hi.application:externalData.prerequisiteStartApplication',
+    defaultMessage: 'Hefja umsókn',
+    description: 'Start application',
+  },
   socialInsuranceAdministrationTitle: {
     id: 'hi.application:externalData.insuranceAdministration.title',
     defaultMessage: 'Tryggingastofnun ríkisins',
@@ -445,6 +450,16 @@ export const m = defineMessages({
     defaultMessage: 'Lesa meira',
     description: 'Read more',
   },
+  requiresActionTagLabel: {
+    id: 'hi.application:requiresActionTagLabel',
+    defaultMessage: 'Þarfnast aðgerðar',
+    description: 'Requires action',
+  },
+  completeTagLabel: {
+    id: 'hi.application:completeTagLabel',
+    defaultMessage: 'Uppfletting í lagi',
+    description: 'Complete',
+  },
   registerYourselfTitle: {
     id: 'hi.application:registerYourself.title',
     defaultMessage: 'Skrá lögheimili á Íslandi',
@@ -483,23 +498,18 @@ export const m = defineMessages({
     defaultMessage: 'Opna umsókn',
     description: 'Open draft',
   },
-  prerequisiteMetTitle: {
-    id: 'hi.application:prerequisiteMetDescription.title',
-    defaultMessage: 'Skilyrði uppfyllt',
-    description: 'Condition met',
+  prerequisiteCheckScreenTitle: {
+    id: 'hi.application:prerequisiteCheckScreenTitle',
+    defaultMessage: 'Öll gögn hafa verið sótt',
+    description: 'All data has been gathered',
   },
-  prerequisiteMetDescription: {
-    id: 'hi.application:prerequisiteMetDescription.description',
-    defaultMessage: 'Skilyrði uppfyllt',
-    description: 'Condition met',
-  },
-  prerequisiteNationaalRegistryTitle: {
-    id: 'hi.application:prerequisiteNationaalRegistry.title',
+  prerequisiteNationalRegistryTitle: {
+    id: 'hi.application:prerequisiteNationalRegistry.title',
     defaultMessage: 'Uppfletting lögheimilis',
     description: 'Legal residence lookup',
   },
-  prerequisiteNationaalRegistryDescription: {
-    id: 'hi.application:prerequisiteNationaalRegistry.description',
+  prerequisiteNationalRegistryDescription: {
+    id: 'hi.application:prerequisiteNationalRegistry.description',
     defaultMessage: 'Athugað hvort notandi sé með skráð lögheimili á Íslandi',
     description:
       'Check whether the user has a registered legal residence in Iceland',

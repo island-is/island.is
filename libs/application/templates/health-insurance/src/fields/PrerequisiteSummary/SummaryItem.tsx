@@ -40,7 +40,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
       position="relative"
       border="standard"
       background={prerequisiteMet ? 'white' : 'red100'}
-      marginBottom={2}
+      marginBottom={4}
       borderRadius={'large'}
     >
       <Box
