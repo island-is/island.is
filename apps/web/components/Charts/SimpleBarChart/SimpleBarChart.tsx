@@ -9,8 +9,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Line,
 } from 'recharts'
+import * as styles from './SimpleBarChart.treat'
+import cn from 'classnames'
 
 const data = [
   {
@@ -139,25 +140,17 @@ const renderLegend = (props) => {
 
   return (
     <ul
-      style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '37px' }}
+    className={cn(styles.listWrapper)}
     >
       {payload.map((entry, index) => (
         <li
-          style={{
-            color: '#00003C',
-            display: 'inline-flex',
-            alignItems: 'center',
-          }}
+          className={cn(styles.list)}
           key={`item-${index}`}
         >
           <div
+          className={cn(styles.dot)}
             style={{
-              width: '12px',
-              height: '12px',
               border: '3px solid ' + entry.color,
-              borderRadius: '12px',
-              marginRight: '8px',
-              marginLeft: '32px',
             }}
           />
           {entry.value}
