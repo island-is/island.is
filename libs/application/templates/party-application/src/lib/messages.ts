@@ -457,7 +457,7 @@ export const m: MessageDir = {
     descriptionPt1: {
       id: 'pa.application:endorsement.disclaimer.description.pt1',
       defaultMessage:
-        'Yfirkjörstjórn og þau stjórnmálasamtök sem stofnað hafa söfnunina hafa aðgang að upplýsingum sem skráðar eru á meðmælendalistann, þ.e. nafni, kennitölu og heimilsfangi meðmælandans og að meðmælandi hafi mælt með tilkeknum framboðslista. Óheimilt er að miðla meðmælum eða þeim upplýsingum sem þar koma fram eða nota í öðrum tilgangi.',
+        'Yfirkjörstjórn og þau stjórnmálasamtök sem stofnað hafa söfnunina hafa aðgang að upplýsingum sem skráðar eru á meðmælendalistann, þ.e. nafni, kennitölu og heimilsfangi meðmælandans og að meðmælandi hafi mælt með tilteknum framboðslista. Óheimilt er að miðla meðmælum eða þeim upplýsingum sem þar koma fram eða nota í öðrum tilgangi.',
     },
     descriptionPt2: {
       id: 'pa.application:endorsement.disclaimer.description.pt2',
