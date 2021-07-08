@@ -43,7 +43,7 @@ export const useRegulationLinkResolver = () => {
         const date = 'd' in props ? '/d/' + props.d : '/on/' + props.on
         const diff = props.diff ? '/diff' : ''
         const earlierDate =
-          diff && 'earlierDate' in props ? '/' + props.earlierDate : ''
+        props.diff && 'earlierDate' in props ? '/' + props.earlierDate : ''
         return href + date + diff + earlierDate
       }
       if ('diff' in props && props.diff) {
