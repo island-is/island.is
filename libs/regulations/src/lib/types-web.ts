@@ -222,3 +222,8 @@ export enum RegulationViewTypes {
   original = 'original',
   d = 'd',
 }
+
+export enum RegulationOriginalDates {
+  gqlHack = '0101-01-01',
+  api = 'original',
+}

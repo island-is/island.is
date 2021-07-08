@@ -7,6 +7,7 @@ import {
   RegulationLawChapterTree,
   RegulationListItem,
   RegulationMinistryList,
+  RegulationOriginalDates,
   RegulationRedirect,
   RegulationSearchResults,
   RegulationViewTypes,
@@ -49,8 +50,13 @@ export class RegulationsService extends RESTDataSource {
     name: RegQueryName,
     date?: ISODate,
     isCustomDiff?: boolean,
-    earlierDate?: ISODate | 'original',
+    _earlierDate?: ISODate | RegulationOriginalDates.gqlHack,
   ): Promise<Regulation | RegulationRedirect | null> {
+    const earlierDate =
+      _earlierDate === RegulationOriginalDates.gqlHack
+        ? RegulationOriginalDates.api
+        : _earlierDate
+
     let params: string = viewType
 
     if (viewType === 'd') {
