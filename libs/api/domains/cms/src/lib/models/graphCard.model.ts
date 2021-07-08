@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { IGraphCard } from '../generated/contentfulTypes'
 import { Graph, mapGraph } from './graph.model'
-import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 
 @ObjectType()
 export class GraphCard {

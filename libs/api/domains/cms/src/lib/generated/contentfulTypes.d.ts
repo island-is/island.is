@@ -1875,9 +1875,6 @@ export interface IOpenDataPageFields {
   /** Link Title */
   linkTitle?: string | undefined
 
-  /** Statistics Cards Section */
-  statisticsCardsSection?: IStatisticsCard[] | undefined
-
   /** Chart Section Title */
   chartSectionTitle?: string | undefined
 
@@ -1886,6 +1883,9 @@ export interface IOpenDataPageFields {
 
   /** External Link Card Selection */
   externalLinkCardSelection?: ICardSection | undefined
+
+  /** Statistics Cards Section */
+  statisticsCardsSection?: IStatisticsCard[] | undefined
 
   /** External Link Section Title */
   externalLinkSectionTitle?: string | undefined
@@ -3759,6 +3759,8 @@ export type CONTENT_TYPE =
   | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'
+  | 'graph'
+  | 'graphCard'
   | 'groupedMenu'
   | 'homepage'
   | 'iconBullet'
@@ -3784,6 +3786,7 @@ export type CONTENT_TYPE =
   | 'numberBullet'
   | 'numberBulletSection'
   | 'oneColumnText'
+  | 'openDataPage'
   | 'organization'
   | 'organizationPage'
   | 'organizationSubpage'
@@ -3804,6 +3807,7 @@ export type CONTENT_TYPE =
   | 'sliceConnectedComponent'
   | 'statistic'
   | 'statistics'
+  | 'statisticsCard'
   | 'story'
   | 'storySection'
   | 'subArticle'
