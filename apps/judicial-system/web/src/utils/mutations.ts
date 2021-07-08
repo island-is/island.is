@@ -19,8 +19,10 @@ export const CasesQuery = gql`
       description
       state
       policeCaseNumber
-      accusedNationalId
-      accusedName
+      accused {
+        nationalId
+        name
+      }
       validToDate
       decision
       isValidToDateInThePast
@@ -44,10 +46,12 @@ export const ExtendCaseMutation = gql`
       description
       state
       policeCaseNumber
-      accusedNationalId
-      accusedName
-      accusedAddress
-      accusedGender
+      accused {
+        nationalId
+        name
+        address
+        gender
+      }
       defenderName
       defenderEmail
       defenderPhoneNumber
