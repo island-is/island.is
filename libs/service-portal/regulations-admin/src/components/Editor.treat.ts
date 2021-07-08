@@ -440,7 +440,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     {
       position: 'relative',
       paddingTop: `0.333rem`,
-      boxShadow: `-1em 0 0 rgba(0,0,0, 0.5)`,
+      boxShadow: `inset -1.5em 0 1em -1em rgba(0,0,0, 0.1)`,
     },
   )
   global(
