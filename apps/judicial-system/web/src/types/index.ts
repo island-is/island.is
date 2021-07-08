@@ -45,12 +45,6 @@ export enum LoginErrorCodes {
   LOGIN_FAILED = 'innskraning-ogild',
 }
 
-export type directionType = 'ascending' | 'descending'
-export interface SortConfig {
-  key: keyof Case
-  direction: directionType
-}
-
 export interface CaseData {
   case?: Case
 }

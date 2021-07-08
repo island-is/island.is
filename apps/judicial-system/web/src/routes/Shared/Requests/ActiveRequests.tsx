@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import cn from 'classnames'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 
@@ -9,10 +9,6 @@ import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import {
-  directionType,
-  SortConfig,
-} from '@island.is/judicial-system-web/src/types'
 import localeIS from 'date-fns/locale/is'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 
@@ -22,6 +18,8 @@ interface Props {
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
 }
 
+type SortOption = 'up' | 'down' | 'default'
+
 const ActiveRequests: React.FC<Props> = (props) => {
   const { cases, onRowClick, onDeleteCase } = props
 
@@ -30,46 +28,35 @@ const ActiveRequests: React.FC<Props> = (props) => {
   const isCourtRole =
     user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
 
-  const [sortConfig, setSortConfig] = useState<SortConfig>()
+  const [currentSort, setCurrentSort] = useState<SortOption>('default')
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
-  useMemo(() => {
-    const sortedCases = cases ?? []
-
-    if (sortConfig) {
-      sortedCases.sort((a: Case, b: Case) => {
-        // Credit: https://stackoverflow.com/a/51169
-        return sortConfig.direction === 'ascending'
-          ? ('' + a[sortConfig.key]).localeCompare(
-              b[sortConfig.key]?.toString() ?? '',
-            )
-          : ('' + b[sortConfig.key]).localeCompare(
-              a[sortConfig.key]?.toString() ?? '',
-            )
-      })
-    }
-    return sortedCases
-  }, [cases, sortConfig])
-
-  const requestSort = (key: keyof Case) => {
-    let d: directionType = 'ascending'
-
-    if (
-      sortConfig &&
-      sortConfig.key === key &&
-      sortConfig.direction === 'ascending'
-    ) {
-      d = 'descending'
-    }
-    setSortConfig({ key, direction: d })
+  const sortTypes = {
+    accused: {
+      up: {
+        fn: (a: Case, b: Case) =>
+          (a.accused[0].name || '') < (b.accused[0].name || '') ? -1 : 1,
+      },
+      down: {
+        fn: (a: Case, b: Case) =>
+          (a.accused[0].name || '') > (b.accused[0].name || '') ? -1 : 1,
+      },
+      default: {
+        fn: (a: Case, b: Case) =>
+          (a.accused[0].name || '') < (b.accused[0].name || '') ? -1 : 1,
+      },
+    },
   }
 
-  const getClassNamesFor = (name: keyof Case) => {
-    if (!sortConfig) {
-      return
-    }
-    return sortConfig.key === name ? sortConfig.direction : undefined
+  const onSortChange = () => {
+    let nextSort: SortOption = 'default'
+
+    if (currentSort === 'down') nextSort = 'up'
+    else if (currentSort === 'up') nextSort = 'default'
+    else if (currentSort === 'default') nextSort = 'down'
+
+    setCurrentSort(nextSort)
   }
 
   return (
@@ -91,17 +78,16 @@ const ActiveRequests: React.FC<Props> = (props) => {
               display="flex"
               alignItems="center"
               className={styles.thButton}
-              // onClick={() => requestSort('accusedName')} TODO: Fix
+              onClick={onSortChange}
               data-testid="accusedNameSortButton"
             >
               <Text fontWeight="regular">Sakborningur</Text>
               <Box
-                // className={cn(styles.sortIcon, {
-                //   [styles.sortAccusedNameAsc]:
-                //     getClassNamesFor('accusedName') === 'ascending',
-                //   [styles.sortAccusedNameDes]:
-                //     getClassNamesFor('accusedName') === 'descending',
-                // })} TODO: Fix
+                className={cn(styles.sortIcon, {
+                  [styles.sortAccusedNameAsc]: currentSort === 'up',
+                  [styles.sortAccusedNameDes]: currentSort === 'down',
+                  [styles.sortAccusedNameDefault]: currentSort === 'default',
+                })}
                 marginLeft={1}
                 component="span"
                 display="flex"
@@ -127,16 +113,16 @@ const ActiveRequests: React.FC<Props> = (props) => {
               display="flex"
               alignItems="center"
               className={styles.thButton}
-              onClick={() => requestSort('created')}
+              // onClick={() => requestSort('created')}
             >
               <Text fontWeight="regular">Krafa stofnuð</Text>
               <Box
-                className={cn(styles.sortIcon, {
-                  [styles.sortCreatedAsc]:
-                    getClassNamesFor('created') === 'ascending',
-                  [styles.sortCreatedDes]:
-                    getClassNamesFor('created') === 'descending',
-                })}
+                // className={cn(styles.sortIcon, {
+                //   [styles.sortCreatedAsc]:
+                //     getClassNamesFor('created') === 'ascending',
+                //   [styles.sortCreatedDes]:
+                //     getClassNamesFor('created') === 'descending',
+                // })}
                 marginLeft={1}
                 component="span"
                 display="flex"
@@ -150,7 +136,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
         </tr>
       </thead>
       <tbody>
-        {cases.map((c, i) => (
+        {[...cases].sort(sortTypes.accused[currentSort].fn).map((c, i) => (
           <tr
             key={i}
             className={cn(

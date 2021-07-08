@@ -165,7 +165,7 @@ export const deleteButtonText = style({
 
 export const sortIcon = style({
   opacity: 0.4,
-  transition: 'opacity .2s ease-in-out',
+  transition: 'opacity .2s ease-out',
 
   selectors: {
     [`${thButton}:hover &`]: {
@@ -192,4 +192,8 @@ export const sortAccusedNameAsc = style({
 export const sortAccusedNameDes = style({
   opacity: 1,
   transform: 'rotate(180deg)',
+})
+
+export const sortAccusedNameDefault = style({
+  opacity: 0,
 })
