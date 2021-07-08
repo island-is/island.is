@@ -6,9 +6,7 @@ import {
   GridContainer,
   Box,
 } from '@island.is/island-ui/core'
-import { BackgroundSchemeContext } from '../../context'
 import { BackgroundImage, DataLinkCard } from '@island.is/web/components'
-import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 interface LinkCardProps {
   title: string

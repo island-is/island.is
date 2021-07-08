@@ -14,9 +14,6 @@ import {
   Text,
   Link,
   Button,
-  Inline,
-  Logo,
-  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
@@ -24,12 +21,9 @@ import {
   Section,
   StatisticsCardsSection,
   DataLinkSection,
-  MixedChart,
-  SimplePieChart,
   SimpleLineChart,
   ChartsCard,
   SectionTitle,
-  Header,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
@@ -41,7 +35,6 @@ interface OpenDataProps {
 
 const OpenDataPage: Screen<OpenDataProps> = ({ page }) => {
   const { linkResolver } = useLinkResolver()
-  console.log(page)
   const {
     pageTitle,
     pageDescription,

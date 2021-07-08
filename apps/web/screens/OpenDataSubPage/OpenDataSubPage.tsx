@@ -29,7 +29,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 
 const OpenDataSubPage: Screen = () => {
-  // TODO: Connect to contentful to finish, just static parts for now
+  // TODO: Connect to contentful to finish, just static parts for now with comments of sections that need changing
   const { linkResolver } = useLinkResolver()
 
   return (
