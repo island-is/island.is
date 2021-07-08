@@ -104,6 +104,7 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'toDraft',
               title: m.externalDataSuccessSubmitFieldTitle,
               refetchApplicationAfterSubmit: true,
+              placement: 'footer',
               actions: [
                 {
                   event: 'SUBMIT',
@@ -128,13 +129,6 @@ export const PrerequisitesForm: Form = buildForm({
               component: 'PrerequisiteSummary',
             }),
           ],
-        }),
-        // Has to be here so that the submit button appears (does not appear if no screen is left).
-        // Tackle that as AS task.
-        buildDescriptionField({
-          id: 'unused',
-          title: '',
-          description: '',
         }),
       ],
     }),
