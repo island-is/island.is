@@ -13,13 +13,13 @@ export class CreateDraftRegulationChangeDto {
 
   @IsDate()
   @ApiProperty()
-  date!: string
+  date!: Date
 
-  @IsDate()
+  @IsString()
   @ApiProperty()
   title!: string
 
-  @IsDate()
+  @IsString()
   @ApiProperty()
   text!: string
 }

@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -28,7 +28,7 @@ export class CreateDraftRegulationDto {
   readonly drafting_notes?: string
 
   @IsOptional()
-  @IsString()
+  @IsDate()
   @ApiProperty()
   readonly ideal_publish_date?: Date
 
@@ -38,12 +38,12 @@ export class CreateDraftRegulationDto {
   readonly ministry_id?: string
 
   @IsOptional()
-  @IsString()
+  @IsDate()
   @ApiProperty()
   readonly signature_date?: Date
 
   @IsOptional()
-  @IsString()
+  @IsDate()
   @ApiProperty()
   readonly effective_date?: Date
 

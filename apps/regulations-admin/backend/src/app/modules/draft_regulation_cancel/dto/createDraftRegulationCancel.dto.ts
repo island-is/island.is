@@ -13,5 +13,5 @@ export class CreateDraftRegulationCancelDto {
 
   @IsDate()
   @ApiProperty()
-  date!: string
+  date!: Date
 }
