@@ -9,20 +9,33 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
+import { ApiTags, ApiOkResponse, ApiCreatedResponse, ApiHeader } from '@nestjs/swagger'
+import { CurrentUser, IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 
 import { CreateDraftRegulationDto, UpdateDraftRegulationDto } from './dto'
 import { DraftRegulation } from './draft_regulation.model'
 import { DraftRegulationService } from './draft_regulation.service'
+import { Audit, AuditService } from '@island.is/nest/audit'
 
-@Controller('api')
+import { environment } from '../../../environments'
+const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
+
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('draft_regulations')
+@ApiHeader({
+  name: 'authorization',
+  description: 'Bearer token authorization',
+})
+@Controller('api')
+@Audit({ namespace })
 export class DraftRegulationController {
   constructor(
     private readonly draftRegulationService: DraftRegulationService,
+    private readonly auditService: AuditService,
   ) {}
 
-  // @UseGuards()
+  @Scopes('@island.is/regulations:create')
   @Post('draft_regulation')
   @ApiCreatedResponse({
     type: DraftRegulation,
@@ -31,11 +44,12 @@ export class DraftRegulationController {
   create(
     @Body()
     draftRegulationToCreate: CreateDraftRegulationDto,
+    @CurrentUser() user: User,
   ): Promise<DraftRegulation> {
     return this.draftRegulationService.create(draftRegulationToCreate)
   }
 
-  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @Scopes('@island.is/regulations:create')
   @Put('draft_regulation/:id')
   @ApiOkResponse({
     type: DraftRegulation,
@@ -44,6 +58,7 @@ export class DraftRegulationController {
   async update(
     @Param('id') id: string,
     @Body() draftRegulationToUpdate: UpdateDraftRegulationDto,
+    @CurrentUser() user: User,
   ): Promise<DraftRegulation> {
     const {
       numberOfAffectedRows,
@@ -57,7 +72,7 @@ export class DraftRegulationController {
     return updatedDraftRegulation
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @Scopes('@island.is/regulations:create')
   @Get('draft_regulations')
   @ApiOkResponse({
     type: DraftRegulation,
@@ -68,7 +83,7 @@ export class DraftRegulationController {
     return this.draftRegulationService.getAll()
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @Scopes('@island.is/regulations:create')
   @Get('draft_regulation/:id')
   @ApiOkResponse({
     type: DraftRegulation,
