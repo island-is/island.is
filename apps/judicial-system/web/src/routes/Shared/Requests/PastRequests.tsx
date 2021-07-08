@@ -3,6 +3,7 @@ import { Box, Text, Tag } from '@island.is/island-ui/core'
 
 import { mapCaseStateToTagVariant } from './utils'
 import {
+  Accused,
   Case,
   CaseState,
   CaseType,
@@ -57,17 +58,15 @@ const PastRequests: React.FC<Props> = (props) => {
       {
         Header: 'Sakborningur',
         accessor: 'accusedName' as keyof Case,
-        Cell: (row: {
-          row: { original: { accusedName: string; accusedNationalId: string } }
-        }) => {
+        Cell: (row: { row: { original: { accused: Accused[] } } }) => {
           return (
             <>
               <Box component="span" display="block">
-                {row.row.original.accusedName}
+                {row.row.original.accused[0].name}
               </Box>
               <Text as="span" variant="small">
                 {`kt. ${insertAt(
-                  row.row.original.accusedNationalId.replace('-', ''),
+                  row.row.original.accused[0].nationalId.replace('-', ''),
                   '-',
                   6,
                 )}`}

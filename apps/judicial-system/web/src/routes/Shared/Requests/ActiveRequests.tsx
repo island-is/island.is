@@ -91,17 +91,17 @@ const ActiveRequests: React.FC<Props> = (props) => {
               display="flex"
               alignItems="center"
               className={styles.thButton}
-              onClick={() => requestSort('accusedName')}
+              // onClick={() => requestSort('accusedName')} TODO: Fix
               data-testid="accusedNameSortButton"
             >
               <Text fontWeight="regular">Sakborningur</Text>
               <Box
-                className={cn(styles.sortIcon, {
-                  [styles.sortAccusedNameAsc]:
-                    getClassNamesFor('accusedName') === 'ascending',
-                  [styles.sortAccusedNameDes]:
-                    getClassNamesFor('accusedName') === 'descending',
-                })}
+                // className={cn(styles.sortIcon, {
+                //   [styles.sortAccusedNameAsc]:
+                //     getClassNamesFor('accusedName') === 'ascending',
+                //   [styles.sortAccusedNameDes]:
+                //     getClassNamesFor('accusedName') === 'descending',
+                // })} TODO: Fix
                 marginLeft={1}
                 component="span"
                 display="flex"
@@ -170,15 +170,18 @@ const ActiveRequests: React.FC<Props> = (props) => {
             <td className={cn(styles.td, styles.largeColumn)}>
               <Text>
                 <Box component="span" className={styles.accusedName}>
-                  {c.accusedName || '-'}
+                  {c.accused[0].name || '-'}
                 </Box>
               </Text>
               <Text>
-                {c.accusedNationalId && (
+                {c.accused[0].nationalId && (
                   <Text as="span" variant="small" color="dark400">
                     {`kt. ${
-                      insertAt(c.accusedNationalId.replace('-', ''), '-', 6) ||
-                      '-'
+                      insertAt(
+                        c.accused[0].nationalId.replace('-', ''),
+                        '-',
+                        6,
+                      ) || '-'
                     }`}
                   </Text>
                 )}
