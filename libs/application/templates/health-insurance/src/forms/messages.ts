@@ -483,11 +483,6 @@ export const m = defineMessages({
     defaultMessage: 'Opna umsókn',
     description: 'Open draft',
   },
-  activeDraftApplicationButtonLink: {
-    id: 'hi.application:activeDraftApplication.buttonLink',
-    defaultMessage: 'https://www.sjukra.is',
-    description: 'https://www.sjukra.is/english',
-  },
   prerequisiteMetTitle: {
     id: 'hi.application:prerequisiteMetDescription.title',
     defaultMessage: 'Skilyrði uppfyllt',

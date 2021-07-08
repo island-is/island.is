@@ -50,7 +50,6 @@ const SummaryItem: FC<SummaryItemProps> = ({
         borderRadius={'large'}
         className={!prerequisiteMet && styles.borderRadiusLargeTopOnly}
       >
-        {/* Section Number */}
         <Box
           display="flex"
           alignItems="center"

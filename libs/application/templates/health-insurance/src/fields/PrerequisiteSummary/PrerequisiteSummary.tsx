@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
-
 import { m } from '../../forms/messages'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, getSlugFromType } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import SummaryItem from './SummaryItem'
 import {
@@ -9,8 +8,10 @@ import {
   hasActiveDraftApplication,
   hasPendingApplications,
   hasNoIcelandicAddress,
+  getOldestDraftApplicationId,
 } from '../../healthInsuranceUtils'
 import { useLocale } from '@island.is/localization'
+import { Applications } from '../../dataProviders/APIDataTypes'
 
 const PREREQUISITESTOCHECK = [
   'applications',
@@ -23,7 +24,6 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const externalData = application.externalData
 
-  // Build prerequisite object for summary item
   const buildPrerequisite = () => {
     const prerequisiteObject = []
     for (const item in externalData) {
@@ -44,6 +44,13 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
     return pendingApplications[0]
   }
 
+  const buildPendingApplicationLink = () => {
+    const applications = externalData?.applications.data as Applications[]
+    const applicationSlug = getSlugFromType(application.typeId)
+    const oldestDraftApplicationId = getOldestDraftApplicationId(applications)
+    return `umsoknir/${applicationSlug}/${oldestDraftApplicationId}`
+  }
+
   // Following checks are made:
   // User should have legal residence in Iceland
   // User should not have an active draft application
@@ -51,8 +58,6 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
   // User should not have an application already at sjukratryggingar
   const checkPrerequisite = (prerequisiteName: string) => {
     switch (prerequisiteName) {
-      // https://island.is/logheimili-upplysingar-innflytjendur
-      // https://island.is/en/legal-domicile-immigrant`
       case 'nationalRegistry':
         return {
           prerequisiteMet: hasNoIcelandicAddress(externalData),
@@ -69,10 +74,6 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
           tagText: 'something else',
         }
 
-      //const { externalData, typeId } = application
-      //const applicationSlug = getSlugFromType(typeId)
-      //const oldestDraftApplicationId = getOldestDraftApplicationId(applications)
-      //is/en umsoknir/${applicationSlug}/${oldestDraftApplicationId}
       case 'applications':
         return {
           prerequisiteMet: !hasActiveDraftApplication(externalData),
@@ -85,12 +86,10 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
             m.activeDraftApplicationDescription,
           ),
           buttonText: formatMessage(m.activeDraftApplicationButtonText),
-          buttonLink: 'something',
+          buttonLink: buildPendingApplicationLink(),
           tagText: 'something else',
         }
 
-      //is 'https://www.sjukra.is'
-      //en 'https://www.sjukra.is/english'
       case 'healthInsurance':
         return {
           prerequisiteMet: !hasHealthInsurance(externalData),
@@ -101,12 +100,10 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
             m.alreadyInsuredDescription,
           ),
           buttonText: formatMessage(m.alreadyInsuredButtonText),
-          buttonLink: formatMessage(m.activeDraftApplicationButtonLink),
+          buttonLink: formatMessage(m.alreadyInsuredButtonLink),
           tagText: 'something else',
         }
 
-      //is 'https://www.sjukra.is/um-okkur/thjonustuleidir/ '
-      //en 'https://www.sjukra.is/english'
       case 'pendingApplications':
         return {
           prerequisiteMet: !hasPendingApplications(externalData),
