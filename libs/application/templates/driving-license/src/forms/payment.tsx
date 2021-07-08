@@ -13,7 +13,7 @@ import {
 
 export const payment: Form = buildForm({
   id: 'DrivingLicenseApplicationPaymentForm',
-  title: m.payment,
+  title: '',
   mode: FormModes.APPLYING,
   renderLastScreenButton: true && !!window.document.location.href.match(/\?done$/),
   children: [

@@ -46,14 +46,13 @@ export const ExamplePaymentPendingField: FC<Props> = ({
 
       {!paymentStatus.fulfilled && (
         <Box height="full">
-          <Text variant="h2">Augnablik meðan beðið er eftir greiðslu</Text>
-          <Text marginTop="gutter">Beðið er eftir staðfestingu frá greiðsluveitu</Text>
+          <Text variant="h3">Augnablik meðan beðið er eftir staðfestingu</Text>
 
           <Box
             backgroundPattern="dotted"
             marginTop="gutter"
             paddingTop="p5"
-            width="half"
+            width="full"
           >
             &nbsp;
           </Box>
@@ -61,7 +60,15 @@ export const ExamplePaymentPendingField: FC<Props> = ({
       )}
       {paymentStatus.fulfilled && (
         <Box height="full">
-          <Text variant="h2">Greiðslan var samþykkt en við erum ennþá í ExamplePaymentPendingField.</Text>
+          <Text variant="h3">Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára umsóknina</Text>
+          <Box
+            backgroundPattern="dotted"
+            marginTop="gutter"
+            paddingTop="p5"
+            width="full"
+          >
+            &nbsp;
+          </Box>
         </Box>
       )}
     </>

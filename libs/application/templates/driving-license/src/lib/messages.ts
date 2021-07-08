@@ -406,7 +406,7 @@ export const m = defineMessages({
   },
   paymentCapital: {
     id: 'dl.application.awaitingPayment',
-    defaultMessage: 'Greiðsla',
+    defaultMessage: 'Staðfesting á greiðslu',
     description: 'Payment',
   },
   forwardingToPayment: {
@@ -433,5 +433,10 @@ export const m = defineMessages({
     id: 'dl.application.applicationEligibilityTitle',
     defaultMessage: 'Skilyrði umsóknar',
     description: 'title for requirement section',
+  },
+  congratulationsTitleSuccess: {
+    id: 'dl.application.congratulationsTitleSuccess',
+    defaultMessage: 'Umsókn þín um fullnaðarskírteini tókst.',
+    description: 'Your application for full driving license was successful.',
   },
 })

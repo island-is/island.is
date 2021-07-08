@@ -45,7 +45,6 @@ export class DrivingLicenseSubmissionService {
     const juristictionId = answers.juristiction
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(authorization, application.id)
-    console.log('THIS IS PAYMENT FULFILLED ======', isPayment.fulfilled)
 
     if(isPayment.fulfilled) {
 
@@ -55,7 +54,6 @@ export class DrivingLicenseSubmissionService {
         needsToPresentHealthCertificate: needsHealthCert,
       })
       .catch((e) => {
-        console.log(e.json)
         return {
           success: false,
           errorMessage: e.message,
@@ -63,9 +61,6 @@ export class DrivingLicenseSubmissionService {
       })
       
       if (!result.success) {
-        console.log('error inside submit application!!! submission service.')
-        console.log(result)
-        console.log(result.errorMessage)
         throw new Error(`Application submission failed (${result.errorMessage})`)
       }
       
@@ -73,7 +68,7 @@ export class DrivingLicenseSubmissionService {
         success: result.success,
       }
     } else {
-      throw new Error('Ekki er búið að greiða fyrir umsóknina.')
+      throw new Error('Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.')
     }
   }
 

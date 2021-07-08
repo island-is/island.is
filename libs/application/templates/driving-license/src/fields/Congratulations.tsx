@@ -2,8 +2,6 @@ import React from 'react'
 
 import {
   Box,
-  Accordion,
-  AccordionItem,
   Text,
   ContentBlock,
   AlertMessage,
@@ -15,42 +13,37 @@ interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
+interface name {
+  fullName: string,
+}
+
 function Congratulations({
   error,
   field,
   application,
 }: PropTypes): JSX.Element {
+  const name = application.externalData.nationalRegistry?.data as name
   return (
     <Box paddingTop={2}>
       <Box marginTop={2}>
         <ContentBlock>
           <AlertMessage
             type="success"
-            title="Til hamingju"
-            message={`
-              fullnaðarskírteinið þitt hefur verið samþykkt og mun vera tilbúið
-              hjá Sýslumanni í Reykjavík eftir 4 daga. Þegar þú sækir nýtt skírteini
-              þarftu að skila inn bráðabirgðaskírteininu þínu.
-            `}
+            title={`Til hamingju ${name.fullName}`}
+            message={`Umsókn þín um fullnaðarskírteini tókst.`}
           />
         </ContentBlock>
 
-        <Box marginTop={4}>
-          <Accordion singleExpand>
-            <AccordionItem
-              id="id_1"
-              label="Hvað gerist næst?"
-              labelVariant="h3"
-            >
-              <Text>
-                Næsta sem gerist er að við ákveðum hvað á að standa í þessu
-                boxi.
-              </Text>
-            </AccordionItem>
-          </Accordion>
+        <Box marginTop={6}>
+          <Text>
+            Ef beðið var um viðbótargögn (nýja ljósmynd eða læknisvottorð) þarf að skila þeim til Sýslumanns svo að fullnaðarskírteini fari í pöntun.
+          </Text>
+          <Text marginTop={4}>
+            Ef svo var ekki þá verður fullnaðarskírteinið tilbúið á afhendingarstað eftir 3 til 4 vikur.
+          </Text>
         </Box>
 
-        <Box marginTop={4}>
+        <Box marginTop={6}>
           <img role="presentation" src="/assets/images/movingTruck.svg" />
         </Box>
       </Box>
