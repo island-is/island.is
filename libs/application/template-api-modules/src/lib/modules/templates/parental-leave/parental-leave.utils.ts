@@ -230,7 +230,7 @@ export const transformApplicationToParentalLeaveDTO = (
     expectedDateOfBirth: selectedChild.expectedDateOfBirth,
     // TODO: get true date of birth, not expected
     // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
-    dateOfBirth: selectedChild.expectedDateOfBirth,
+    dateOfBirth: '',
     email,
     phoneNumber,
     paymentInfo: {
