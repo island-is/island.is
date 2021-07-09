@@ -3,26 +3,20 @@ import { DataSourceConfig } from 'apollo-datasource'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { Base64 } from 'js-base64'
 import {
-  PaymentScheduleServiceOptions,
-  PAYMENT_SCHEDULE_OPTIONS,
-} from './payment-schedule.type'
-import {
   Conditions,
   DebtSchedules,
   DebtSchedulesResponse,
   Employer,
   WageDeductionResponse,
-} from './types'
-import {
+  PaymentScheduleServiceOptions,
+  PAYMENT_SCHEDULE_OPTIONS,
   DistributionInitialPosition,
   DistributionInitialPositionRequest,
   DistributionInitialPositionResponse,
-} from './types/distribution-initial.type'
-import {
   PaymentDistribution,
   PaymentDistributionRequest,
   PaymentDistributionResponse,
-} from './types/distribution.type'
+} from './types'
 
 export class PaymentScheduleAPI extends RESTDataSource {
   constructor(
