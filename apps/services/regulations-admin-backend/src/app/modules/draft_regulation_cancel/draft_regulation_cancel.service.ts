@@ -5,25 +5,43 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../environments'
-import { CreateDraftRegulationCancelDto } from './dto'
+import { CreateDraftRegulationCancelDto, UpdateDraftRegulationCancelDto } from './dto'
 import { DraftRegulationCancel } from './draft_regulation_cancel.model'
-
-import { DraftRegulation } from '../draft_regulation/draft_regulation.model'
 
 @Injectable()
 export class DraftRegulationCancelService {
   constructor(
     @InjectModel(DraftRegulationCancel)
-    private readonly draftRegulationcancelModel: typeof DraftRegulationCancel,
+    private readonly draftRegulationCancelModel: typeof DraftRegulationCancel,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  create(
+  async create(
     draftRegulationcancelToCreate: CreateDraftRegulationCancelDto,
   ): Promise<DraftRegulationCancel> {
     this.logger.debug('Creating a new DraftRegulationcancel')
 
-    return this.draftRegulationcancelModel.create(draftRegulationcancelToCreate)
+    return await this.draftRegulationCancelModel.create(draftRegulationcancelToCreate)
+  }
+
+  async update(
+    id: string,
+    update: UpdateDraftRegulationCancelDto,
+  ): Promise<{
+    numberOfAffectedRows: number
+    updatedDraftRegulationCancel: DraftRegulationCancel
+  }> {
+    this.logger.debug(`Updating DraftRegulationCancel ${id}`)
+
+    const [
+      numberOfAffectedRows,
+      [updatedDraftRegulationCancel],
+    ] = await this.draftRegulationCancelModel.update(update, {
+      where: { id },
+      returning: true,
+    })
+
+    return { numberOfAffectedRows, updatedDraftRegulationCancel }
   }
 }

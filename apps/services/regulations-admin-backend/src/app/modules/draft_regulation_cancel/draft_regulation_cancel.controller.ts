@@ -19,7 +19,7 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
-import { CreateDraftRegulationCancelDto } from './dto'
+import { CreateDraftRegulationCancelDto, UpdateDraftRegulationCancelDto } from './dto'
 import { DraftRegulationCancel } from './draft_regulation_cancel.model'
 import { DraftRegulationCancelService } from './draft_regulation_cancel.service'
 
@@ -32,7 +32,7 @@ const namespace = `${environment.audit.defaultNamespace}/draft_regulation_cancel
 @Audit({ namespace })
 export class DraftRegulationCancelController {
   constructor(
-    private readonly draftRegulationService: DraftRegulationCancelService,
+    private readonly draftRegulationCancelService: DraftRegulationCancelService,
   ) {}
 
   @Scopes('@island.is/regulations:create')
@@ -41,11 +41,34 @@ export class DraftRegulationCancelController {
     type: DraftRegulationCancel,
     description: 'Creates a new DraftRegulationCancel',
   })
-  create(
+  async create(
     @Body()
     draftRegulationCancelToCreate: CreateDraftRegulationCancelDto,
     @CurrentUser() user: User,
   ): Promise<DraftRegulationCancel> {
-    return this.draftRegulationService.create(draftRegulationCancelToCreate)
+    return await this.draftRegulationCancelService.create(draftRegulationCancelToCreate)
+  }
+
+  @Scopes('@island.is/regulations:create')
+  @Put('draft_regulation_cancel/:id')
+  @ApiOkResponse({
+    type: DraftRegulationCancel,
+    description: 'Updates an existing user',
+  })
+  async update(
+    @Param('id') id: string,
+    @Body() draftRegulationCancelToUpdate: UpdateDraftRegulationCancelDto,
+    @CurrentUser() user: User,
+  ): Promise<DraftRegulationCancel> {
+    const {
+      numberOfAffectedRows,
+      updatedDraftRegulationCancel,
+    } = await this.draftRegulationCancelService.update(id, draftRegulationCancelToUpdate)
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`DraftRegulationCancel ${id} does not exist`)
+    }
+
+    return updatedDraftRegulationCancel
   }
 }

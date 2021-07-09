@@ -5,10 +5,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../environments'
-import { CreateDraftRegulationChangeDto } from './dto'
+import { CreateDraftRegulationChangeDto, UpdateDraftRegulationChangeDto } from './dto'
 import { DraftRegulationChange } from './draft_regulation_change.model'
-
-import { DraftRegulation } from '../draft_regulation/draft_regulation.model'
 
 @Injectable()
 export class DraftRegulationChangeService {
@@ -25,5 +23,25 @@ export class DraftRegulationChangeService {
     this.logger.debug('Creating a new DraftRegulationChange')
 
     return this.draftRegulationChangeModel.create(draftRegulationChangeToCreate)
+  }
+
+  async update(
+    id: string,
+    update: UpdateDraftRegulationChangeDto,
+  ): Promise<{
+    numberOfAffectedRows: number
+    updatedDraftRegulationChange: DraftRegulationChange
+  }> {
+    this.logger.debug(`Updating DraftRegulationChange ${id}`)
+
+    const [
+      numberOfAffectedRows,
+      [updatedDraftRegulationChange],
+    ] = await this.draftRegulationChangeModel.update(update, {
+      where: { id },
+      returning: true,
+    })
+
+    return { numberOfAffectedRows, updatedDraftRegulationChange }
   }
 }
