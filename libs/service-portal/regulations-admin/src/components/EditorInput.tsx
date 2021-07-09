@@ -6,7 +6,7 @@ import {
   EditorProps,
 } from '@hugsmidjan/regulations-editor/Editor'
 import { HTMLText } from '@island.is/regulations'
-import { RegulationDraft } from '../types-api'
+import { RegulationDraft } from '@island.is/regulations/admin'
 
 type EditorInputProps = Omit<EditorProps, 'valueRef' | 'name'> & {
   label: string

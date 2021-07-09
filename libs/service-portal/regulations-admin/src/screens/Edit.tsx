@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { RegulationDraftId } from '../types-database'
+import { RegulationDraftId } from '@island.is/regulations/admin'
 import { EditBasics } from '../components/EditBasics'
 import { EditMeta } from '../components/EditMeta'
 import { editorMsgs } from '../messages'

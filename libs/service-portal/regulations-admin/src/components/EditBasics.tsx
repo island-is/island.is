@@ -3,8 +3,7 @@ import { Box, DatePicker, Input, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
-import { RegulationDraft } from '../types-api'
-import { HTMLText } from '@hugsmidjan/regulations-editor/types'
+import { HTMLText } from '@island.is/regulations'
 import { RegDraftForm } from '../state/useDraftingState'
 
 type WrapProps = {

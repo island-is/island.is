@@ -5,9 +5,9 @@ import React, { MutableRefObject, useState } from 'react'
 import { useIsBrowserSide } from '../utils/hooks'
 import { MiniDiff } from './MiniDiff'
 import { useIntl } from 'react-intl'
-import { domid, HTMLText, PlainText, RegName } from '@island.is/regulations'
 import { editorMsgs as msg } from '../messages'
-import { RegulationDraft } from '../types-api'
+import { domid, HTMLText, PlainText } from '@island.is/regulations'
+import { RegulationDraft } from '@island.is/regulations/admin'
 
 const NEW_PREFIX = 'new---'
 
