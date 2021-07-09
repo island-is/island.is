@@ -110,10 +110,9 @@ export const serviceSetup = (services: {
       SERVICE_DOCUMENTS_BASEPATH: ref(
         (h) => `http://${h.svc(services.documentsService)}`,
       ),
-      PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL: 's@kogk.is',
       PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: {
-        dev: 's@kogk.is',
-        staging: 's@kogk.is',
+        dev: 'thorhildur@parallelradgjof.is',
+        staging: 'thorhildur@parallelradgjof.is',
         prod: 'postur@dmr.is',
       },
       ENDORSEMENTS_API_BASE_PATH: ref(
@@ -122,6 +121,16 @@ export const serviceSetup = (services: {
       PARTY_LETTER_REGISTRY_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesPartyLetterRegistryApi)}`,
       ),
+      DRIVING_LICENSE_PATH_REPLACEMENT_FROM: {
+        prod: '/RafraentOkuskirteini-v1/api/Okuskirteini/',
+        staging: '',
+        dev: '',
+      },
+      DRIVING_LICENSE_PATH_REPLACEMENT_TO: {
+        prod: '/RafraentOkuskirteini-v1/api/okuskirteini/',
+        staging: '',
+        dev: '',
+      },
     })
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
