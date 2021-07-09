@@ -40,7 +40,7 @@ export class NationalRegistryXRoadModule {
           xRoadClient: config.xRoadClientId,
         }),
       ],
-      exports: [],
+      exports: [NationalRegistryXRoadService],
     }
   }
 }
