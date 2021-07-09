@@ -35,6 +35,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ACCIDENT_NOTIFICATION,
   name: application.general.name,
+  institution: application.general.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.AccidentNotification.translation,
   ],
@@ -44,7 +45,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
     states: {
       [AccidentNotificationStates.draft]: {
         meta: {
-          name: 'hello',
+          name: application.general.name.defaultMessage,
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [

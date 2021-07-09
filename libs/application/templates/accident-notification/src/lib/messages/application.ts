@@ -7,5 +7,10 @@ export const application = {
       defaultMessage: 'Slysatilkynning til Sjúkratryggingar Íslands ',
       description: 'Accident notification to Sjúkratryggingar Íslands',
     },
+    institutionName: {
+      id: 'an.application:application.institutionName',
+      defaultMessage: 'Sjúkratryggingar Íslands',
+      description: 'Sjúkratryggingar Íslands',
+    },
   }),
 }
