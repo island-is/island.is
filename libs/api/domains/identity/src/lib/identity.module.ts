@@ -1,13 +1,15 @@
 import { Module, DynamicModule } from '@nestjs/common'
 
-import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
-import { NationalRegistryConfig } from '@island.is/clients/national-registry-v1'
+import {
+  NationalRegistryXRoadConfig,
+  NationalRegistryXRoadModule,
+} from '@island.is/api/domains/national-registry-x-road'
 
 import { IdentityResolver } from './identity.resolver'
 import { IdentityService } from './identity.service'
 
 export type Config = {
-  nationalRegistry: NationalRegistryConfig
+  nationalRegistryXRoad: NationalRegistryXRoadConfig
 }
 
 @Module({})
@@ -16,9 +18,7 @@ export class IdentityModule {
     return {
       module: IdentityModule,
       imports: [
-        NationalRegistryModule.register({
-          nationalRegistry: config.nationalRegistry,
-        }),
+        NationalRegistryXRoadModule.register(config.nationalRegistryXRoad),
       ],
       providers: [IdentityResolver, IdentityService],
       exports: [IdentityService],
