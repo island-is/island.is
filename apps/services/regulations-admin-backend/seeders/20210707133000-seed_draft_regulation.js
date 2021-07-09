@@ -1,4 +1,11 @@
+/* eslint-disable local-rules/disallow-kennitalas */
 'use strict'
+
+const TEST_USERS = {
+  utlond: '0101307789',
+  afrika: '0101303019',
+  amerika: '0101302989',
+}
 
 const draftRegulationSeed = [
   {
@@ -13,7 +20,7 @@ const draftRegulationSeed = [
     signature_date: '2021-08-08',
     effective_date: '2021-08-08',
     type: 'base',
-    authors: ['0101012020', '0101012021'],
+    authors: [TEST_USERS.utlond, TEST_USERS.afrika],
     law_chapters: ['01', '02a'],
   },
   {
@@ -28,7 +35,7 @@ const draftRegulationSeed = [
     signature_date: '2021-08-09',
     effective_date: '2021-08-09',
     type: 'base',
-    authors: ['0101012020'],
+    authors: [TEST_USERS.amerika],
     law_chapters: ['01a'],
   },
   {
@@ -43,7 +50,7 @@ const draftRegulationSeed = [
     signature_date: '2021-09-09',
     effective_date: '2021-09-09',
     type: 'base',
-    authors: ['0101012021'],
+    authors: [TEST_USERS.afrika],
     law_chapters: ['04', '05c'],
   },
   {
@@ -58,7 +65,7 @@ const draftRegulationSeed = [
     signature_date: '2021-08-08',
     effective_date: '2021-08-08',
     type: 'amending',
-    authors: ['0123456789'],
+    authors: ['0101302989'],
     law_chapters: ['01', '02'],
   },
   {
@@ -73,7 +80,7 @@ const draftRegulationSeed = [
     signature_date: '2021-08-08',
     effective_date: '2021-08-08',
     type: 'amending',
-    authors: ['0101012021'],
+    authors: [TEST_USERS.afrika],
     law_chapters: ['02'],
   },
 ]
