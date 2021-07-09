@@ -106,7 +106,10 @@ export class DraftRegulationController {
     description: 'Gets all DraftRegulations with status draft and proposal',
   })
   async getAll(@CurrentUser() user: User): Promise<DraftRegulation[]> {
-    return await this.draftRegulationService.getAll()
+    const canManage = user.scope.includes('@island.is/regulations:manage')
+    return await this.draftRegulationService.getAll(
+      !canManage ? user.nationalId : undefined,
+    )
   }
 
   @Scopes('@island.is/regulations:manage')
@@ -117,7 +120,7 @@ export class DraftRegulationController {
     description: 'Gets all DraftRegulations with status shipped',
   })
   async getAllShipped(@CurrentUser() user: User): Promise<DraftRegulation[]> {
-    return await this.draftRegulationService.getAll('shipped')
+    return await this.draftRegulationService.getAllShipped()
   }
 
   @Scopes('@island.is/regulations:create')

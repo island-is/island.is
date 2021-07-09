@@ -20,25 +20,47 @@ export class DraftRegulationService {
     private readonly logger: Logger,
   ) {}
 
-  getAll(status?: 'shipped'): Promise<DraftRegulation[]> {
-    this.logger.debug('Getting all DraftRegulations')
+  getAll(nationalId?: string): Promise<DraftRegulation[]> {
+    this.logger.debug(
+      'Getting all non shipped DraftRegulations, filtered by national id for non managers',
+    )
+
+    if (nationalId) {
+      return this.draftRegulationModel.findAll({
+        where: {
+          [Op.or]: [
+            { drafting_status: 'draft' },
+            { drafting_status: 'proposal' },
+          ],
+          authors: { [Op.contains]: [nationalId] }
+        },
+        order: [
+          ['drafting_status', 'ASC'],
+          ['created', 'DESC'],
+        ],
+      })
+    } else {
+      return this.draftRegulationModel.findAll({
+        where: {
+          [Op.or]: [
+            { drafting_status: 'draft' },
+            { drafting_status: 'proposal' },
+          ],
+        },
+        order: [
+          ['drafting_status', 'ASC'],
+          ['created', 'DESC'],
+        ],
+      })
+    }
+  }
+
+  getAllShipped(): Promise<DraftRegulation[]> {
+    this.logger.debug('Getting all shipped DraftRegulations')
 
     return this.draftRegulationModel.findAll({
-      where:
-        status === 'shipped'
-          ? {
-              drafting_status: 'shipped',
-            }
-          : {
-              [Op.or]: [
-                { drafting_status: 'draft' },
-                { drafting_status: 'proposal' },
-              ],
-            },
-      order: [
-        ['drafting_status', 'ASC'],
-        ['created', 'DESC'],
-      ],
+      where: { drafting_status: 'shipped' },
+      order: [['created', 'DESC']],
     })
   }
 
