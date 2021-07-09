@@ -1286,6 +1286,35 @@
         }
       }
     },
+    "api-domains-payment-schedule": {
+      "root": "libs/api/domains/payment-schedule",
+      "sourceRoot": "libs/api/domains/payment-schedule/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/payment-schedule/tsconfig.lib.json",
+              "libs/api/domains/payment-schedule/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/payment-schedule/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/payment-schedule"],
+          "options": {
+            "jestConfig": "libs/api/domains/payment-schedule/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-regulations": {
       "root": "libs/api/domains/regulations",
       "sourceRoot": "libs/api/domains/regulations/src",
@@ -3248,6 +3277,35 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/clients/payment"]
+        }
+      }
+    },
+    "clients-payment-schedule": {
+      "root": "libs/clients/payment-schedule",
+      "sourceRoot": "libs/clients/payment-schedule/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/payment-schedule/tsconfig.lib.json",
+              "libs/clients/payment-schedule/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/clients/payment-schedule/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/payment-schedule"],
+          "options": {
+            "jestConfig": "libs/clients/payment-schedule/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },
@@ -8337,48 +8395,6 @@
             "linter": "eslint",
             "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/web-e2e/**/*"]
-          }
-        }
-      }
-    },
-    "clients-payment-schedule": {
-      "root": "libs/clients/payment-schedule",
-      "sourceRoot": "libs/clients/payment-schedule/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/clients/payment-schedule/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/clients/payment-schedule"],
-          "options": {
-            "jestConfig": "libs/clients/payment-schedule/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "api-domains-payment-schedule": {
-      "root": "libs/api/domains/payment-schedule",
-      "sourceRoot": "libs/api/domains/payment-schedule/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/api/domains/payment-schedule/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/domains/payment-schedule"],
-          "options": {
-            "jestConfig": "libs/api/domains/payment-schedule/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }
