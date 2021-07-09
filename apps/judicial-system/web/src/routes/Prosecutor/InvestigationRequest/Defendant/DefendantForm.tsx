@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence } from 'framer-motion'
 import { ValueType } from 'react-select/src/types'
-import { Box, Input, Select, Text } from '@island.is/island-ui/core'
+import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
@@ -70,6 +71,28 @@ const DefendantForm: React.FC<Props> = (props) => {
     setWorkingCase,
     validations,
   )
+
+  const handleAddAccused = () => {
+    // TODO: How do I update accused server side?
+    // Add a new accused to the case
+    setWorkingCase({
+      ...workingCase,
+      accused: [
+        ...workingCase.accused,
+        {
+          name: '',
+          address: '',
+          nationalId: '',
+          gender: undefined,
+        },
+      ],
+    })
+
+    setTimeout(() => {
+      // Smooth scroll to the bottom of the page
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+    }, 500)
+  }
 
   return (
     <>
@@ -175,10 +198,25 @@ const DefendantForm: React.FC<Props> = (props) => {
               {formatMessage(defendant.sections.defendantInfo.heading)}
             </Text>
           </Box>
-          <DefendantInfo
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
+          <AnimatePresence>
+            {workingCase.accused.map((accused, index) => {
+              return (
+                <Box marginBottom={4} key={index}>
+                  <DefendantInfo
+                    key={index}
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    accused={accused}
+                  />
+                </Box>
+              )
+            })}
+          </AnimatePresence>
+          <Box display="flex" justifyContent="flexEnd">
+            <Button variant="ghost" icon="add" onClick={handleAddAccused}>
+              Bæta við varnaraðila
+            </Button>
+          </Box>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

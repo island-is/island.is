@@ -127,6 +127,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
           <DefendantInfo
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            accused={workingCase.accused[0]}
           />
         </Box>
         <Box component="section" marginBottom={7}>
