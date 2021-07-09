@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Accused, Case, CaseGender } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
