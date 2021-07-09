@@ -8,7 +8,7 @@ import { m } from '../lib/messages'
 
 export const done: Form = buildForm({
   id: 'done',
-  title: 'Í vinnslu',
+  title: 'Lokið',
   mode: FormModes.APPROVED,
   children: [
     buildCustomField({

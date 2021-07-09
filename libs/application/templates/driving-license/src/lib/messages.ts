@@ -406,7 +406,7 @@ export const m = defineMessages({
   },
   paymentCapital: {
     id: 'dl.application.awaitingPayment',
-    defaultMessage: 'Greiðsla',
+    defaultMessage: 'Staðfesting á greiðslu',
     description: 'Payment',
   },
   forwardingToPayment: {
@@ -433,5 +433,40 @@ export const m = defineMessages({
     id: 'dl.application.applicationEligibilityTitle',
     defaultMessage: 'Skilyrði umsóknar',
     description: 'title for requirement section',
+  },
+  congratulationsTitleSuccess: {
+    id: 'dl.application.congratulationsTitleSuccess',
+    defaultMessage: 'Umsókn þín um fullnaðarskírteini tókst.',
+    description: 'Your application for full driving license was successful.',
+  },
+  congratulationsTitle: {
+    id: 'dl.application.congratulationsTitle',
+    defaultMessage: 'Til hamingju',
+    description: 'Congratulations',
+  },
+  paymentPendingDescription: {
+    id: 'dl.application.paymentPendingDescription',
+    defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
+    description: 'Please wait until the payment is confirmed',
+  },
+  paymentSuccessExtraDocuments: {
+    id: 'dl.application.paymentSuccessExtraDocuments',
+    defaultMessage:
+      'Ef beðið var um viðbótargögn (nýja ljósmynd eða læknisvottorð) þarf að skila þeim til Sýslumanns svo að fullnaðarskírteini fari í pöntun.',
+    description:
+      'If extra documents are required(new photograph or doctor certificate), you must return them to district commissioner so the driving license can be ordered.',
+  },
+  paymentSuccessIfNotReadyFewWeeks: {
+    id: 'dl.application.paymentSuccessIfNotReadyFewWeeks',
+    defaultMessage:
+      'Ef svo var ekki þá verður fullnaðarskírteinið tilbúið á afhendingarstað eftir 3 til 4 vikur.',
+    description:
+      'If not then the driving license will be ready at the drop off location in 3 to 4 weeks.',
+  },
+  paymentApprovedContinue: {
+    id: 'dl.application.paymentApprovedContinue',
+    defaultMessage: `Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára umsóknina.`,
+    description:
+      'The payment has been confirmed, choose "Continue" to finish the application.',
   },
 })

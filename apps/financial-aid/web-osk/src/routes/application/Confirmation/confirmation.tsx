@@ -32,7 +32,7 @@ const Confirmation = () => {
 
   const nextSteps = [
     'Fjölskylduþjónusta Hafnarfjarðar vinnur úr umsókninni. Afgreiðsla umsóknarinnar tekur 1–3 virka daga.',
-    'Staðfesting verður send á þig í tölvupósti og í þitt pósthólf á Ísland.is',
+    'Staðfesting verður send á þig í tölvupósti',
     'Ef þörf er á frekari upplýsingum eða gögnum mun fjölskylduþjónusta Hafnarfjarðar hafa samband.',
   ]
 
@@ -101,15 +101,6 @@ const Confirmation = () => {
           </BulletList>
         </Box>
       </FormContentContainer>
-
-      <FormFooter
-        hidePreviousButton={true}
-        nextButtonText="Sjá stöðu umsóknar"
-        nextButtonIcon="open"
-        onNextButtonClick={() => {
-          router.push(navigation?.nextUrl ?? '/umsokn')
-        }}
-      />
     </FormLayout>
   )
 }
