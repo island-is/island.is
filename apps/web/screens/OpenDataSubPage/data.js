@@ -5,9 +5,9 @@ export const area = {
   graph: {
     title: 'Úthlutun styrkja eftir landshluta',
     data:
-      '[{"name":"HB","veitt":655,"sott":3669},{"name":"Annað","veitt":66,"sott":442},{"name":"RN","veitt":18,"sott":128},{"name":"SL","veitt":17,"sott":115},{"name":"VF","veitt":10,"sott":67},{"name":"AL","veitt":7,"sott":47},{"name":"VL","veitt":6,"sott":35},{"name":"NV","veitt":3,"sott":29}]',
+      '[{"name":"HB","Veittir styrkir":655,"Umsóknir":3669},{"name":"Annað","Veittir styrkir":66,"Umsóknir":442},{"name":"RN","Veittir styrkir":18,"Umsóknir":128},{"name":"SL","Veittir styrkir":17,"Umsóknir":115},{"name":"VF","Veittir styrkir":10,"Umsóknir":67},{"name":"AL","Veittir styrkir":7,"Umsóknir":47},{"name":"VL","Veittir styrkir":6,"Umsóknir":35},{"name":"NV","Veittir styrkir":3,"Umsóknir":29}]',
     datakeys:
-      '{"xAxis":"name","bars":[{"datakey":"sott","stackId":"a","color":"#C3ABD9"},{"datakey":"veitt","stackId":"a","color":"#6A2EA0"}]}',
+      '{"xAxis":"name","bars":[{"datakey":"Umsóknir","stackId":"a","color":"#C3ABD9"},{"datakey":"Veittir styrkir","stackId":"a","color":"#6A2EA0"}]}',
     type: 'Bar',
   },
 }
