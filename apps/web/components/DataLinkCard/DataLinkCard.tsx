@@ -33,7 +33,7 @@ export const DataLinkCard = ({ title, body, link }: DataLinkCardProps) => {
       alignItems="stretch"
       justifyContent="flexEnd"
     >
-      <Box width='full'>
+      <Box width="full">
         <Stack space={1}>
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>

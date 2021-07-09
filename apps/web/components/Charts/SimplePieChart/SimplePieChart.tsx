@@ -10,7 +10,6 @@ import {
 import * as styles from './SimplePieChart.treat'
 import cn from 'classnames'
 
-
 const COLORS = [
   '#00B39E',
   '#FFF066',

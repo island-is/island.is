@@ -11,8 +11,6 @@ import {
   Button,
   Inline,
   Icon,
-  
-  
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
@@ -60,21 +58,24 @@ const OpenDataSubPage: Screen = () => {
                 </Box>
               </Box>
             </Box>
-            <Link href="https://www.rannis.is/sjodir/rannsoknir/taeknithrounarsjodur/" skipTab>
-            <Box
-              padding={[2, 2, 4]}
-              background="blueberry100"
-              borderRadius="large"
+            <Link
+              href="https://www.rannis.is/sjodir/rannsoknir/taeknithrounarsjodur/"
+              skipTab
             >
-              <Text variant="eyebrow" color="blueberry600">
-                Tengt efni
-              </Text>
-              <Box display="flex" alignItems="center">
-                <Box display="inlineFlex" flexGrow={1}>
-                  <Text color="blueberry600">Tæknisjóður</Text>
+              <Box
+                padding={[2, 2, 4]}
+                background="blueberry100"
+                borderRadius="large"
+              >
+                <Text variant="eyebrow" color="blueberry600">
+                  Tengt efni
+                </Text>
+                <Box display="flex" alignItems="center">
+                  <Box display="inlineFlex" flexGrow={1}>
+                    <Text color="blueberry600">Tæknisjóður</Text>
+                  </Box>
                 </Box>
               </Box>
-            </Box>
             </Link>
           </GridColumn>
           <GridColumn span="8/12" offset="1/12">
@@ -142,8 +143,8 @@ const OpenDataSubPage: Screen = () => {
               <GridColumn span={'12/12'}>
                 {data.map((item, index) => (
                   <Box marginBottom={3} key={index}>
-                  <ChartsCard data={item} />
-                </Box>
+                    <ChartsCard data={item} />
+                  </Box>
                 ))}
               </GridColumn>
             </GridRow>

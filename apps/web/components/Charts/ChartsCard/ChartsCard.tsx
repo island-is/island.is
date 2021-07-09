@@ -6,7 +6,7 @@ import {
   MixedChart,
   SimpleBarChart,
   SimpleLineChart,
-  SimplePieChart
+  SimplePieChart,
 } from '../'
 
 import * as styles from './ChartsCard.treat'
@@ -45,7 +45,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
       children = <SimpleLineChart graphData={graph} />
       break
     case 'Bar':
-      children = <SimpleBarChart graphData={graph}/>
+      children = <SimpleBarChart graphData={graph} />
       break
     case 'Pie':
       children = <SimplePieChart graphData={graph} />
