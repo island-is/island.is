@@ -8,24 +8,6 @@ export const icDemands = {
       'Notaður sem titill á lagagrundvöllur og dómkröfur skrefi í rannsóknarheimildum.',
   }),
   sections: {
-    requestToDate: defineMessages({
-      heading: {
-        id: 'judicial.system:investigation_cases.request_to_date.heading',
-        defaultMessage: 'Gildistími heimildar',
-        description: 'Police Demands form Request valid to date: Heading',
-      },
-      tooltip: {
-        id: 'judicial.system:investigation_cases.request_to_date.tooltip',
-        defaultMessage:
-          'Ef rannsókn á að fara fram yfir ákveðið tímabil er hægt að slá inn gildistíma heimildar hér.',
-        description: 'Police Demands form Request valid to date: Tooltip',
-      },
-      dateLabel: {
-        id: 'judicial.system:investigation_cases.request_to_date.dateLabel',
-        defaultMessage: 'Heimild gildir til:',
-        description: 'Police Demands form Request valid to date: Date Label',
-      },
-    }),
     demands: {
       heading: defineMessage({
         id:
