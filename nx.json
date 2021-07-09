@@ -26,13 +26,15 @@
           "schemas/openapi-generator",
           "schemas/build-graphql-schema",
           "schemas/codegen"
-        ]
+        ],
+        "cacheDirectory": ".cache/nx"
       }
     },
     "docker-test": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": []
+        "cacheableOperations": [],
+        "cacheDirectory": ".cache/nx"
       }
     }
   },
