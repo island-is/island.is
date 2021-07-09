@@ -3,15 +3,15 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class GetScheduleDistributionInput {
-  @Field((_) => Number, { nullable: true })
+  @Field(() => Number, { nullable: true })
   monthAmount?: number
 
-  @Field((_) => Number, { nullable: true })
+  @Field(() => Number, { nullable: true })
   monthCount?: number
 
-  @Field((_) => ScheduleType)
+  @Field(() => ScheduleType)
   scheduleType!: ScheduleType
 
-  @Field((_) => Number)
+  @Field(() => Number)
   totalAmount!: number
 }

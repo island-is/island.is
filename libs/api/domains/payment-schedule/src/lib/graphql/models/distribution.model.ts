@@ -4,12 +4,12 @@ import { PaymentSchedulePayment } from './payment.model'
 
 @ObjectType()
 export class PaymentScheduleDistribution {
-  @Field((_) => ID)
+  @Field(() => ID)
   nationalId!: string
 
-  @Field((_) => ScheduleType)
+  @Field(() => ScheduleType)
   scheduleType!: ScheduleType
 
-  @Field((_) => [PaymentSchedulePayment])
+  @Field(() => [PaymentSchedulePayment])
   payments!: PaymentSchedulePayment[]
 }

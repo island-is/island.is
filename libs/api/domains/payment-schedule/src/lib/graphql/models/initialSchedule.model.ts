@@ -9,15 +9,15 @@ export class PaymentScheduleInitialSchedule {
   @Field(() => ScheduleType)
   scheduleType!: ScheduleType
 
-  @Field((_) => Number)
+  @Field(() => Number)
   minPayment!: number
 
-  @Field((_) => Number)
+  @Field(() => Number)
   maxPayment!: number
 
-  @Field((_) => Number)
+  @Field(() => Number)
   minCountMonth!: number
 
-  @Field((_) => Number)
+  @Field(() => Number)
   maxCountMonth!: number
 }
