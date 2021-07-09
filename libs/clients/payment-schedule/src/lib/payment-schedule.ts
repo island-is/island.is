@@ -56,8 +56,6 @@ export class PaymentScheduleAPI extends RESTDataSource {
       `debtsandschedules/${nationalId}`,
     )
 
-    response.deptAndSchedules.map((x) => console.log(x.chargetypes))
-
     return response.deptAndSchedules
   }
 

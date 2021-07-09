@@ -28,8 +28,6 @@ import { PaymentPlanCard } from '../PaymentPlanList/PaymentPlanCard/PaymentPlanC
 import * as styles from './PaymentPlan.treat'
 import { useDebouncedSliderValues } from './useDebouncedSliderValues'
 
-// type PaymentModeState = null | 'amount' | 'months'
-
 // An array might not work for this schema
 // Might need to define specific fields for each one
 export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
