@@ -48,24 +48,6 @@ export const diffInfo = style({
   opacity: 0.67,
 })
 
-export const diffTogglerWrap = style({
-  float: 'right',
-  textAlign: 'right',
-  marginLeft: spacing[2],
-})
-
-export const diffToggler = style({
-  selectors: {
-    '&[class]': {
-      marginBottom: 0,
-    },
-  },
-})
-
-export const diffTotalToggler = style({
-  fontSize: '0.75rem',
-})
-
 const makeWatermark = (text: string, size = 1, opacity = 1) => {
   const fontSize = size * 200
   opacity *= 0.0575
