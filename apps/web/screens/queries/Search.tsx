@@ -77,13 +77,6 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           slug
         }
 
-        ... on AboutPage {
-          id
-          title
-          seoDescription
-          slug
-        }
-
         ... on SubArticle {
           id
           title
@@ -217,13 +210,6 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           id
           intro
           title
-          slug
-        }
-
-        ... on AboutPage {
-          id
-          title
-          seoDescription
           slug
         }
 

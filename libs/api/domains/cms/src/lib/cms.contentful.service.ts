@@ -6,7 +6,6 @@ import sortBy from 'lodash/sortBy'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { ContentSlug, mapContentSlug } from './models/contentSlug.model'
-import { AboutPage, mapAboutPage } from './models/aboutPage.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
 import {
   GenericOverviewPage,
@@ -21,7 +20,6 @@ import {
 import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
 import { GetContentSlugInput } from './dto/getContentSlug.input'
-import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
@@ -38,7 +36,6 @@ import { ContentfulRepository } from './contentful.repository'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { mapUrl, Url } from './models/url.model'
-import { AboutSubPage, mapAboutSubPage } from './models/aboutSubPage.model'
 import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
@@ -389,42 +386,6 @@ export class CmsContentfulService {
       .catch(errorHandler('getNews'))
 
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
-  }
-
-  async getAboutPage({ lang }: GetAboutPageInput): Promise<AboutPage | null> {
-    const params = {
-      ['content_type']: 'page',
-      include: 10,
-      order: '-sys.createdAt',
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IPageFields>(lang, params)
-      .catch(errorHandler('getAboutPage'))
-
-    return (result.items as types.IPage[]).map(mapAboutPage)[0] ?? null
-  }
-
-  async getAboutSubPage({
-    lang,
-    url,
-  }: {
-    lang: string
-    url: string
-  }): Promise<AboutSubPage | null> {
-    const params = {
-      ['content_type']: 'aboutSubPage',
-      include: 10,
-      'fields.url': url,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IAboutSubPageFields>(lang, params)
-      .catch(errorHandler('getAboutSubPage'))
-
-    return (
-      (result.items as types.IAboutSubPage[]).map(mapAboutSubPage)[0] ?? null
-    )
   }
 
   async getContentSlug({

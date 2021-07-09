@@ -3,54 +3,6 @@
 import { Asset, Entry } from 'contentful'
 import { Document } from '@contentful/rich-text-types'
 
-export interface IAboutSubPageFields {
-  /** Title */
-  title: string
-
-  /** Slug (old) */
-  slug: string
-
-  /** Url */
-  url: string
-
-  /** Description */
-  description?: string | undefined
-
-  /** Intro */
-  intro?: Document | undefined
-
-  /** subDescription */
-  subDescription?: string | undefined
-
-  /** Content */
-  content: Document
-
-  /** belowContent */
-  belowContent?: ILocation[] | undefined
-
-  /** Parent */
-  parent?: IPage | undefined
-}
-
-/** sub-page of the about-page */
-
-export interface IAboutSubPage extends Entry<IAboutSubPageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'aboutSubPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IAccordionSliceFields {
   /** Title */
   title?: string | undefined
@@ -99,14 +51,12 @@ export interface IAlertBannerFields {
 
   /** Link */
   link?:
-    | IAboutSubPage
     | IArticle
     | IArticleCategory
     | ISubArticle
     | ILifeEventPage
     | ILinkUrl
     | INews
-    | IPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
     | undefined
@@ -731,13 +681,7 @@ export interface IFeaturedFields {
   attention?: boolean | undefined
 
   /** Link */
-  thing?:
-    | IAboutSubPage
-    | IArticle
-    | ILinkUrl
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
-    | undefined
+  thing?: IArticle | ILinkUrl | IVidspyrnaFrontpage | IVidspyrnaPage | undefined
 }
 
 export interface IFeatured extends Entry<IFeaturedFields> {
@@ -1166,7 +1110,6 @@ export interface IIntroLinkImageFields {
 
   /** Link */
   link:
-    | IAboutSubPage
     | IArticle
     | IArticleCategory
     | ISubArticle
@@ -1570,7 +1513,6 @@ export interface IMenuLinkFields {
 
   /** Link */
   link?:
-    | IAboutSubPage
     | IArticle
     | IArticleCategory
     | ISubArticle
@@ -1610,7 +1552,6 @@ export interface IMenuLinkWithChildrenFields {
 
   /** Link */
   link?:
-    | IAboutSubPage
     | IArticle
     | IArticleCategory
     | ISubArticle
@@ -3314,7 +3255,6 @@ export interface IUrlFields {
 
   /** Page */
   page:
-    | IAboutSubPage
     | IArticle
     | IArticleCategory
     | ILifeEventPage

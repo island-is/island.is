@@ -6,7 +6,6 @@ import { CmsSyncService } from './cmsSync.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
-import { AboutPageSyncService } from './importers/aboutPage.service'
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
@@ -25,7 +24,6 @@ import { SubArticleSyncService } from './importers/subArticle.service'
     LifeEventsPageSyncService,
     ArticleCategorySyncService,
     NewsSyncService,
-    AboutPageSyncService,
     AdgerdirPageSyncService,
     MenuSyncService,
     GroupedMenuSyncService,
