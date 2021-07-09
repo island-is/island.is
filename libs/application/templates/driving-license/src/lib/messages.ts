@@ -472,7 +472,7 @@ export const m = defineMessages({
   chooseDistrictCommisioner: {
     id: 'dl.application.chooseDistrictCommisioner',
     defaultMessage:
-      'Veldu það embætti sýslumanns þar þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
+      'Veldu það embætti sýslumanns þar sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
     description:
       'Choose the district jurisdiction where you will return the temporary driving license and recieve permanent driving license.',
   },
