@@ -166,13 +166,11 @@ export class DrivingLicenseService {
         kennitala: nationalId,
       },
     )) as unknown) as string
-
     // API says number, type says number, but deserialization happens with a text
     // deserializer (runtime.TextApiResponse).
     // Seems to be an outstanding bug? or I have no idea what I'm doing
     // See https://github.com/OpenAPITools/openapi-generator/issues/2870
     const status = parseInt(statusStr, 10)
-
     return {
       nationalId,
       hasTeachingRights: status > 0,
