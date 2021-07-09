@@ -1,4 +1,4 @@
-# api-domains-payment-schedule
+# API Domains Payment Schedule
 
 This library was generated with [Nx](https://nx.dev).
 
