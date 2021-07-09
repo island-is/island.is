@@ -27,13 +27,4 @@ export class IdentityResolver {
     const nationalId = input?.nationalId || user.nationalId
     return this.identityService.getIdentity(nationalId, user)
   }
-
-  @ResolveField('name', () => String)
-  resolveName(@Parent() identity: Identity & NationalRegistryUser): string {
-    if (identity.type === IdentityType.Person) {
-      return identity.fullName
-    }
-    // TODO: need to handle companies
-    return 'unknown'
-  }
 }
