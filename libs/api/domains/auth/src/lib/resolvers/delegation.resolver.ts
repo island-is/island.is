@@ -110,7 +110,7 @@ export class DelegationResolver {
   }
 
   @ResolveField('to', () => Identity)
-  resolveTo(@Parent() delegation: DelegationDTO): Promise<Identity | null> {
+  resolveTo(@Parent() delegation: DelegationDTO, @CurrentUser() user: User): Promise<Identity | null> {
     if (kennitala.isCompany(delegation.toNationalId)) {
       // XXX: temp until rsk gets implemented
       return Promise.resolve({
@@ -119,11 +119,11 @@ export class DelegationResolver {
         type: 'company',
       } as Identity)
     }
-    return this.identityService.getIdentity(delegation.toNationalId)
+    return this.identityService.getIdentity(delegation.toNationalId, user)
   }
 
   @ResolveField('from', () => Identity)
-  resolveFrom(@Parent() delegation: DelegationDTO): Promise<Identity | null> {
+  resolveFrom(@Parent() delegation: DelegationDTO, @CurrentUser() user: User): Promise<Identity | null> {
     if (kennitala.isCompany(delegation.fromNationalId)) {
       // XXX: temp until rsk gets implemented
       return Promise.resolve({
@@ -132,6 +132,6 @@ export class DelegationResolver {
         type: 'company',
       } as Identity)
     }
-    return this.identityService.getIdentity(delegation.fromNationalId)
+    return this.identityService.getIdentity(delegation.fromNationalId, user)
   }
 }
