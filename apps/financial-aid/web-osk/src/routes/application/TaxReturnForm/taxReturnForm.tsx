@@ -18,11 +18,26 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFor
 import cn from 'classnames'
 
 import { NavigationProps } from '@island.is/financial-aid/shared'
+import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFIleUpload'
 
 const TaxReturnForm = () => {
   const router = useRouter()
 
   const { form, updateForm } = useContext(FormContext)
+
+  const {
+    files,
+    uploadErrorMessage,
+    onChange,
+    onRemove,
+    onRetry,
+  } = useFileUpload(form.taxReturnFiles)
+
+  useEffect(() => {
+    const formFiles = files.filter((f) => f.status === 'done')
+
+    updateForm({ ...form, taxReturnFiles: formFiles })
+  }, [files])
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -83,13 +98,15 @@ const TaxReturnForm = () => {
         <div className={styles.fileContainer}>
           <Box className={styles.files} marginBottom={2}>
             <InputFileUpload
-              fileList={[]}
+              fileList={files}
               header="Dragðu skattframtalið hingað"
               description="Tekið er við öllum hefðbundnum skráargerðum"
               buttonLabel="Bættu við gögnum"
-              onChange={() => {}}
-              onRemove={() => {}}
-              // errorMessage={state.length > 0 ? error : undefined}
+              showFileSize={true}
+              errorMessage={uploadErrorMessage}
+              onChange={onChange}
+              onRemove={onRemove}
+              onRetry={onRetry}
             />
           </Box>
           <div

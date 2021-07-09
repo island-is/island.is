@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
 import { CreateSignedUrlMutation } from '@island.is/financial-aid-web/oskgraphql/sharedGql'
-import { ApplicationFile, SignedUrl } from '@island.is/financial-aid/shared'
+import { SignedUrl } from '@island.is/financial-aid/shared'
 
 export const useFileUpload = (formFiles: UploadFile[]) => {
   const [files, _setFiles] = useState<UploadFile[]>([])
