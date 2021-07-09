@@ -21,12 +21,12 @@ interface Delegation {
 export const UserDelegations = ({ onSwitch }: UserDelegationsProps) => {
   const { formatMessage } = useLocale()
   const { userInfo, switchUser } = useAuth()
-  const { data } = useActorDelegationsQuery()
+  const { data, error, loading } = useActorDelegationsQuery()
   const currentNationalId = userInfo?.profile.nationalId as string
   const actor = userInfo?.profile.actor
 
-  // Loading or no delegations.
-  if (!data || data.authActorDelegations.length === 0) {
+  // Loading.
+  if (loading) {
     return (
       <Stack space={1}>
         <Text variant="h5" as="h5" marginBottom={1}>
@@ -38,6 +38,11 @@ export const UserDelegations = ({ onSwitch }: UserDelegationsProps) => {
         <SkeletonLoader display="block" height={59} borderRadius="large" />
       </Stack>
     )
+  }
+
+  // Error or no data.
+  if (error || !data || data.authActorDelegations.length === 0) {
+    return null
   }
 
   let delegations: Delegation[] = data.authActorDelegations.map(
