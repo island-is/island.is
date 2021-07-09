@@ -14,8 +14,7 @@ import { IdentityService } from './identity.service'
 import { Identity, IdentityPerson, IdentityCompany } from './models'
 
 @UseGuards(IdsUserGuard)
-@Resolver(() => IdentityPerson)
-@Resolver(() => IdentityCompany)
+@Resolver(() => Identity)
 export class IdentityResolver {
   constructor(private identityService: IdentityService) {}
 

@@ -36,9 +36,7 @@ const ignore404 = (e: Response) => {
 }
 
 @UseGuards(IdsUserGuard)
-@Resolver(() => CustomDelegation)
-@Resolver(() => LegalGuardianDelegation)
-@Resolver(() => ProcuringHolderDelegation)
+@Resolver(() => Delegation)
 export class DelegationResolver {
   constructor(
     private authService: AuthService,
