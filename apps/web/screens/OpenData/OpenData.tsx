@@ -64,11 +64,6 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
   } = page
 
   return (
-    <>
-      <Head>
-        <title>Gagnatorg</title>
-        <meta name="description" content={pageDescription} />
-      </Head>
       <Box id="main-content" position="relative" style={{ overflow: 'hidden' }}>
         <Box background="blue100">
           <Header megaMenuData={megaMenuData} />
@@ -77,6 +72,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
           aria-labelledby="openDataHeroTitle"
           background="blue100"
           paddingBottom={6}
+          paddingTop={8}
         >
           <GridContainer>
             <GridRow>
@@ -161,7 +157,6 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
           />
         </Section>
       </Box>
-    </>
   )
 }
 

@@ -35,7 +35,7 @@ const renderLegend = (props) => {
   const { payload } = props
 
   return (
-    <ul className={cn(styles.listWrapper)}>
+      <ul className={cn(styles.listWrapper)}>
       {payload.map((entry, index) => (
         <li className={cn(styles.list)} key={`item-${index}`}>
           <div
@@ -78,6 +78,7 @@ export const SimpleLineChart = ({ graphData }: SimpleLineChartGraphProps) => {
     '#B5B6EC',
     '#FF0050',
   ]
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart
