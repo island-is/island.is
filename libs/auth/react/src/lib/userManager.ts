@@ -44,6 +44,7 @@ export const configureMock = (user?: MockUser) => {
     profile: { name: 'Mock', locale: 'is', nationalId: '0000000000' },
     expired: false,
     expires_in: 9999,
+    scopes: [],
     ...user,
   }
   const empty = () => {

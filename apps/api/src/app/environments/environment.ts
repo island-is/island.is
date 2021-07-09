@@ -15,6 +15,7 @@ const devConfig = {
     xroadPath:
       process.env.DRIVING_LICENSE_XROAD_PATH ??
       'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
+    replaceInPath: null,
   },
   education: {
     xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
@@ -164,6 +165,10 @@ const prodConfig = {
   drivingLicense: {
     secret: process.env.DRIVING_LICENSE_SECRET,
     xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH,
+    replaceInPath: {
+      from: process.env.DRIVING_LICENSE_PATH_REPLACEMENT_FROM,
+      to: process.env.DRIVING_LICENSE_PATH_REPLACEMENT_TO,
+    },
   },
   education: {
     xroadLicenseServiceId: process.env.XROAD_MMS_LICENSE_SERVICE_ID,
