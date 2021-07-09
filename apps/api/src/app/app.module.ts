@@ -70,11 +70,11 @@ const autoSchemaFile = environment.production
     }),
     AuthDomainModule.register({
       identity: {
-        nationalRegistry: {
-          baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
-          user: environment.nationalRegistry.user,
-          password: environment.nationalRegistry.password,
-          host: environment.nationalRegistry.host,
+        nationalRegistryXRoad: {
+          xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
+          xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
+          xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
+          xRoadClientId: environment.nationalRegistryXRoad.clientId,
         },
       },
       authPublicApi: environment.authPublicApi,
@@ -86,6 +86,8 @@ const autoSchemaFile = environment.production
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
       secret: environment.drivingLicense.secret,
+      xroadPath: environment.drivingLicense.xroadPath,
+      replaceInPath: environment.drivingLicense.replaceInPath,
     }),
     EducationModule.register({
       xroad: {
@@ -163,11 +165,11 @@ const autoSchemaFile = environment.production
     CommunicationsModule,
     ApiCatalogueModule,
     IdentityModule.register({
-      nationalRegistry: {
-        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
-        user: environment.nationalRegistry.user,
-        password: environment.nationalRegistry.password,
-        host: environment.nationalRegistry.host,
+      nationalRegistryXRoad: {
+        xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
+        xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
+        xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
+        xRoadClientId: environment.nationalRegistryXRoad.clientId,
       },
     }),
     AuthModule.register(environment.auth),
