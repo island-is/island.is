@@ -9,6 +9,7 @@ import { CreateDraftRegulationDto, UpdateDraftRegulationDto } from './dto'
 import { DraftRegulation } from './draft_regulation.model'
 import { DraftRegulationChange } from '../draft_regulation_change'
 import { DraftRegulationCancel } from '../draft_regulation_cancel'
+import { Op } from 'sequelize'
 
 @Injectable()
 export class DraftRegulationService {
@@ -19,10 +20,21 @@ export class DraftRegulationService {
     private readonly logger: Logger,
   ) {}
 
-  getAll(): Promise<DraftRegulation[]> {
+  getAll(status?: 'shipped'): Promise<DraftRegulation[]> {
     this.logger.debug('Getting all DraftRegulations')
 
     return this.draftRegulationModel.findAll({
+      where:
+        status === 'shipped'
+          ? {
+              drafting_status: 'shipped',
+            }
+          : {
+              [Op.or]: [
+                { drafting_status: 'draft' },
+                { drafting_status: 'proposal' },
+              ],
+            },
       order: [
         ['drafting_status', 'ASC'],
         ['created', 'DESC'],
