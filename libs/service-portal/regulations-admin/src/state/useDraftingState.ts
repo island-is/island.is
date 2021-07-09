@@ -18,11 +18,10 @@ import {
   DraftingStatus,
   DraftRegulationCancel,
   DraftRegulationChange,
-  Kennitala,
   RegulationDraft,
   RegulationDraftId,
-  RegulationType,
 } from '@island.is/regulations/admin'
+import { Kennitala, RegulationType } from '@island.is/regulations'
 
 export type DraftIdFromParam = 'new' | RegulationDraftId
 
