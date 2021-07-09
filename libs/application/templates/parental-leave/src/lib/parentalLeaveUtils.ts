@@ -31,7 +31,7 @@ import {
   ChildInformation,
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
-import { Boolean, Period } from '../types'
+import { YesOrNo, Period } from '../types'
 import { maxDaysToGiveOrReceive, daysInMonth } from '../config'
 
 export function getExpectedDateOfBirth(
@@ -376,7 +376,7 @@ export const calculatePeriodPercentage = (
 }
 
 const getOrFallback = (
-  condition: Boolean,
+  condition: YesOrNo,
   value: number | undefined = maxDaysToGiveOrReceive,
 ) => {
   if (condition === YES) {
@@ -448,7 +448,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const usePrivatePensionFund = getValueViaPath(
     answers,
     'usePrivatePensionFund',
-  ) as Boolean
+  ) as YesOrNo
 
   const privatePensionFund = getValueViaPath(
     answers,
@@ -464,7 +464,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const isSelfEmployed = getValueViaPath(
     answers,
     'employer.isSelfEmployed',
-  ) as Boolean
+  ) as YesOrNo
 
   const otherParentName = getValueViaPath(answers, 'otherParentName') as string
 
@@ -481,18 +481,18 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'usePersonalAllowance',
     NO,
-  ) as Boolean
+  ) as YesOrNo
 
   const usePersonalAllowanceFromSpouse = getValueViaPath(
     answers,
     'usePersonalAllowanceFromSpouse',
     NO,
-  ) as Boolean
+  ) as YesOrNo
 
   const personalUseAsMuchAsPossible = getValueViaPath(
     answers,
     'personalAllowance.useAsMuchAsPossible',
-  ) as Boolean
+  ) as YesOrNo
 
   const personalUsage = getValueViaPath(
     answers,
@@ -502,7 +502,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const spouseUseAsMuchAsPossible = getValueViaPath(
     answers,
     'personalAllowanceFromSpouse.useAsMuchAsPossible',
-  ) as Boolean
+  ) as YesOrNo
 
   const spouseUsage = getValueViaPath(
     answers,
@@ -519,14 +519,14 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const shareInformationWithOtherParent = getValueViaPath(
     answers,
     'shareInformationWithOtherParent',
-  ) as Boolean
+  ) as YesOrNo
 
   const selectedChild = getValueViaPath(answers, 'selectedChild') as string
 
   const isRequestingRights = getValueViaPath(
     answers,
     'requestRights.isRequestingRights',
-  ) as Boolean
+  ) as YesOrNo
 
   const requestValue = getValueViaPath(answers, 'requestRights.requestDays') as
     | number
@@ -537,7 +537,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const isGivingRights = getValueViaPath(
     answers,
     'giveRights.isGivingRights',
-  ) as Boolean
+  ) as YesOrNo
 
   const giveValue = getValueViaPath(answers, 'giveRights.giveDays') as
     | number

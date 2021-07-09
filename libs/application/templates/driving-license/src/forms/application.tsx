@@ -54,9 +54,8 @@ export const application: Form = buildForm({
             buildDataProviderItem({
               id: 'eligibility',
               type: 'EligibilityProvider',
-              title: 'Upplýsingar úr ökuskírteinaskrá',
-              subTitle:
-                'Staðfesting akstursmats, punktastaða, sviptingar, ökuréttindi og almennar upplýsingar um skilríki',
+              title: m.infoFromLicenseRegistry,
+              subTitle: m.confirmationStatusOfEligability,
             }),
             buildDataProviderItem({
               id: 'juristictions',
@@ -101,7 +100,8 @@ export const application: Form = buildForm({
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
-              value: '',
+              value: ({ externalData: { nationalRegistry } }) =>
+                (nationalRegistry.data as NationalRegistryUser).fullName,
             }),
             buildDividerField({
               title: '',
@@ -111,8 +111,7 @@ export const application: Form = buildForm({
               id: 'afhending',
               title: 'Afhending',
               titleVariant: 'h4',
-              description:
-                'Veldu það embætti sýslumanns sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
+              description: m.chooseDistrictCommisioner,
             }),
             buildSelectField({
               id: 'juristiction',
@@ -356,7 +355,6 @@ export const application: Form = buildForm({
             buildKeyValueField({
               label: m.overviewPaymentCharge,
               value: ({ externalData }) => {
-                // needs a lot of refactoring
                 const str = Object.values(externalData.payment.data as object)
                 // more refactoring
                 return (parseInt(str[1], 10) + ' kr.') as StaticText

@@ -12,7 +12,7 @@ import { RadioFormField } from '@island.is/application/ui-fields'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { NO, YES } from '../../constants'
 import { maxDaysToGiveOrReceive } from '../../config'
-import { Boolean } from '../../types'
+import { YesOrNo } from '../../types'
 
 interface RequestRightsRadioProps extends FieldBaseProps {
   field: RadioField
@@ -23,7 +23,7 @@ const RequestRightsRadio = ({
   application,
 }: RequestRightsRadioProps) => {
   const { register } = useFormContext()
-  const [radio, setRadio] = useState<Boolean | undefined>(undefined)
+  const [radio, setRadio] = useState<YesOrNo | undefined>(undefined)
 
   return (
     <>
@@ -37,7 +37,7 @@ const RequestRightsRadio = ({
           children: undefined,
           component: FieldComponents.RADIO,
           width: 'half',
-          onSelect: (value: string) => setRadio(value as Boolean),
+          onSelect: (value: string) => setRadio(value as YesOrNo),
           options: [
             {
               label: parentalLeaveFormMessages.shared.yesOptionLabel,

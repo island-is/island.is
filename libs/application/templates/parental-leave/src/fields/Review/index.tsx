@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-
 import React, { FC, useMemo } from 'react'
 import get from 'lodash/get'
 import has from 'lodash/has'
@@ -35,7 +33,7 @@ import {
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES, NO, MANUAL, ParentalRelations } from '../../constants'
-import { Boolean } from '../../types'
+import { YesOrNo } from '../../types'
 import { SummaryTimeline } from '../components/Timeline/SummaryTimeline'
 import { SummaryRights } from '../Rights/SummaryRights'
 import { useUnion as useUnionOptions } from '../../hooks/useUnion'
@@ -363,7 +361,7 @@ const Review: FC<ReviewScreenProps> = ({
               onSelect={(s: string) => {
                 setStateful((prev) => ({
                   ...prev,
-                  usePrivatePensionFund: s as Boolean,
+                  usePrivatePensionFund: s as YesOrNo,
                 }))
               }}
               error={hasError('usePrivatePensionFund')}
@@ -526,7 +524,7 @@ const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => ({
                     ...prev,
-                    usePersonalAllowance: s as Boolean,
+                    usePersonalAllowance: s as YesOrNo,
                   }))
                 }}
                 error={hasError('usePersonalAllowance')}
@@ -563,7 +561,7 @@ const Review: FC<ReviewScreenProps> = ({
                     onSelect={(s: string) => {
                       setStateful((prev) => ({
                         ...prev,
-                        personalUseAsMuchAsPossible: s as Boolean,
+                        personalUseAsMuchAsPossible: s as YesOrNo,
                       }))
                     }}
                     error={hasError('personalAllowance.useAsMuchAsPossible')}
@@ -682,7 +680,7 @@ const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => ({
                     ...prev,
-                    usePersonalAllowanceFromSpouse: s as Boolean,
+                    usePersonalAllowanceFromSpouse: s as YesOrNo,
                   }))
                 }}
                 error={hasError('usePersonalAllowanceFromSpouse')}
@@ -719,7 +717,7 @@ const Review: FC<ReviewScreenProps> = ({
                     onSelect={(s: string) => {
                       setStateful((prev) => ({
                         ...prev,
-                        spouseUseAsMuchAsPossible: s as Boolean,
+                        spouseUseAsMuchAsPossible: s as YesOrNo,
                       }))
                     }}
                     error={hasError(
@@ -830,7 +828,7 @@ const Review: FC<ReviewScreenProps> = ({
               onSelect={(s: string) =>
                 setStateful((prev) => ({
                   ...prev,
-                  isSelfEmployed: s as Boolean,
+                  isSelfEmployed: s as YesOrNo,
                 }))
               }
               error={hasError('employer.isSelfEmployed')}
