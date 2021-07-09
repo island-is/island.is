@@ -2929,10 +2929,10 @@
   resolved "https://registry.yarnpkg.com/@hugsmidjan/qj/-/qj-4.7.0.tgz#ef2793bf1f349bc01b2118dc2d20d6f22163fa84"
   integrity sha512-/kIAN1WvMTlzmtKXgIRl57KbTpAd9UmNgPfcO0NtZNllwhfKDRVOrN9c6ZeBxnrfWsYBP6/BFldYur1aBDBO2g==
 
-"@hugsmidjan/regulations-editor@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.2.1.tgz#ff9df98cab07dfdc02a849e10b0be3712fe4e9b3"
-  integrity sha512-CjVwY+4jwfD8DS4t+nPTTezUpz81HITPMgjpmIB+O70vaEMlSkj9QNbNnAHkmdFU7FWqjmcph2N7OcL61ry3LQ==
+"@hugsmidjan/regulations-editor@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@hugsmidjan/regulations-editor/-/regulations-editor-0.2.2.tgz#b97eb4459948aa44a9555f430addd09681bda59a"
+  integrity sha512-TrFF1A8rkE37IjcvgWHIUz+4aplMtu7c1ElaLO7jSqfC8SufbVl+j4m2nUZaOxBAL8qsfkzPW1JEGXAeW13OTQ==
   dependencies:
     "@hugsmidjan/qj" "^4.7.0"
     "@tinymce/tinymce-react" "^3.8.4"
@@ -18996,6 +18996,7 @@ minipass-fetch@^1.3.0, minipass-fetch@^1.3.2:
   resolved "https://registry.yarnpkg.com/minipass-fetch/-/minipass-fetch-1.3.3.tgz#34c7cea038c817a8658461bf35174551dce17a0a"
   integrity sha512-akCrLDWfbdAWkMLBxJEeWTdNsjML+dt5YgOI4gJ53vuO0vrmYQkUPxa6j6V65s9CcePIr2SSWqjT2EcrNseryQ==
   dependencies:
+    encoding "^0.1.12"
     minipass "^3.1.0"
     minipass-sized "^1.0.3"
     minizlib "^2.0.0"
