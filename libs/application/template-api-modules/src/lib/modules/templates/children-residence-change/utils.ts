@@ -21,7 +21,7 @@ const syslumennOffices = {
   },
   nordurlandVestra: {
     postalCodePrefixes: ['5'],
-    email: 'nordurlandvestra.fjolskylda@syslumenn.is',
+    email: 'nordurlandvestra@syslumenn.is',
     name: 'Sýslumaðurinn á Norðurlandi vestra',
   },
   nordurlandEystra: {
@@ -41,7 +41,7 @@ const syslumennOffices = {
   },
   vestmannaeyjar: {
     postalCodePrefixes: ['9'],
-    email: 'vestmannaeyjar.fjolskylda@syslumenn.is',
+    email: 'arndis@syslumenn.is',
     name: 'Sýslumaðurinn í Vestmannaeyjum',
   },
 }
