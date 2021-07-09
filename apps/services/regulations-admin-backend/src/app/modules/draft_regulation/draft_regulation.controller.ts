@@ -51,12 +51,12 @@ export class DraftRegulationController {
     type: DraftRegulation,
     description: 'Creates a new DraftRegulation',
   })
-  create(
+  async create(
     @Body()
     draftRegulationToCreate: CreateDraftRegulationDto,
     @CurrentUser() user: User,
   ): Promise<DraftRegulation> {
-    return this.draftRegulationService.create(draftRegulationToCreate)
+    return await this.draftRegulationService.create(draftRegulationToCreate)
   }
 
   @Scopes('@island.is/regulations:create')
@@ -87,10 +87,21 @@ export class DraftRegulationController {
   @ApiOkResponse({
     type: DraftRegulation,
     isArray: true,
-    description: 'Gets all existing DraftRegulations',
+    description: 'Gets all DraftRegulations with status draft and proposal',
   })
-  getAll(): Promise<DraftRegulation[]> {
-    return this.draftRegulationService.getAll()
+  async getAll(@CurrentUser() user: User): Promise<DraftRegulation[]> {
+    return await this.draftRegulationService.getAll()
+  }
+
+  @Scopes('@island.is/regulations:manage')
+  @Get('draft_regulations_shipped')
+  @ApiOkResponse({
+    type: DraftRegulation,
+    isArray: true,
+    description: 'Gets all DraftRegulations with status shipped',
+  })
+  async getAllShipped(@CurrentUser() user: User): Promise<DraftRegulation[]> {
+    return await this.draftRegulationService.getAll('shipped')
   }
 
   @Scopes('@island.is/regulations:create')
@@ -99,7 +110,7 @@ export class DraftRegulationController {
     type: DraftRegulation,
     description: 'Gets a DraftRegulation',
   })
-  async getById(@Param('id') id: string) {
+  async getById(@Param('id') id: string, @CurrentUser() user: User) {
     const draftRegulation = await this.draftRegulationService.findById(id)
 
     if (!draftRegulation) {
