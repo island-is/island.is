@@ -102,7 +102,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page }) => {
           </GridRow>
         </GridContainer>
       </Section>
-      <Section aria-labelledby="factsCardsTitle">
+      <Section aria-labelledby="factsCardsTitle" paddingBottom={8}>
         <StatisticsCardsSection
           title="Stafrænt Ísland"
           cards={statisticsCardsSection}
