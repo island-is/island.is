@@ -13,6 +13,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import CourtRecord from './CourtRecord'
+import { LocaleProvider } from '@island.is/localization'
 
 describe('/domari-krafa/thingbok', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -54,14 +55,14 @@ describe('/domari-krafa/thingbok', () => {
         addTypename={false}
       >
         <UserProvider>
-          <CourtRecord />
+          <LocaleProvider locale="is" messages={{}}>
+            <CourtRecord />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
 
     // Act
-    expect(document.title).toEqual('Þingbók - Réttarvörslugátt')
-
     expect(
       ((await screen.findByLabelText(
         'Viðstaddir og hlutverk þeirra *',
@@ -124,7 +125,9 @@ describe('/domari-krafa/thingbok', () => {
         addTypename={false}
       >
         <UserProvider>
-          <CourtRecord />
+          <LocaleProvider locale="is" messages={{}}>
+            <CourtRecord />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )

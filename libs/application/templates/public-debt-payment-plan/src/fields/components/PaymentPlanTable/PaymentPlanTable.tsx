@@ -1,3 +1,4 @@
+import { PaymentScheduleDistribution } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -5,39 +6,43 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
+import format from 'date-fns/format'
 import React, { useState } from 'react'
-import { MockPaymentPlan } from '../../PaymentPlan/useMockPaymentPlan'
 
 interface Props {
   isLoading: boolean
-  data: MockPaymentPlan | null
+  data: PaymentScheduleDistribution
+  totalAmount: number
 }
+
+const formatIsk = (value: number): string =>
+  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
 const TableRow = ({
   dueDate,
   payment,
-  remaining,
-  interestRates,
-  totalPayment,
+  accumulated,
+  totalAmount,
 }: {
   dueDate: string
-  payment: string
-  remaining: string
-  interestRates: string
-  totalPayment: string
-}) => (
-  <T.Row>
-    <T.Data>{dueDate}</T.Data>
-    <T.Data>{remaining}</T.Data>
-    <T.Data>{payment}</T.Data>
-    <T.Data>{interestRates}</T.Data>
-    <T.Data>
-      <Text variant="h5">{totalPayment}</Text>
-    </T.Data>
-  </T.Row>
-)
+  payment: number
+  accumulated: number
+  totalAmount: number
+}) => {
+  const remaining = totalAmount > accumulated ? totalAmount - accumulated : 0
+  return (
+    <T.Row>
+      <T.Data>{format(new Date(dueDate), 'dd.MM.yyyy')}</T.Data>
+      <T.Data>{formatIsk(remaining)}</T.Data>
+      <T.Data>{formatIsk(payment)}</T.Data>
+      <T.Data>
+        <Text variant="h5">{formatIsk(payment)}</Text>
+      </T.Data>
+    </T.Row>
+  )
+}
 
-export const PaymentPlanTable = ({ isLoading, data }: Props) => {
+export const PaymentPlanTable = ({ isLoading, data, totalAmount }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const handleExpandTable = () => setIsExpanded(!isExpanded)
@@ -49,26 +54,25 @@ export const PaymentPlanTable = ({ isLoading, data }: Props) => {
           <LoadingIcon animate size={50} />
         </Box>
       )}
-      {!isLoading && data !== null && (
+      {!isLoading && (
         <T.Table>
           <T.Head>
             <T.Row>
               <T.HeadData>Gjalddagi</T.HeadData>
               <T.HeadData>Eftirstöðvar</T.HeadData>
               <T.HeadData>Innborgun</T.HeadData>
-              <T.HeadData>Vextir</T.HeadData>
               <T.HeadData>Greiðsla alls</T.HeadData>
             </T.Row>
           </T.Head>
           <T.Body>
-            {!isExpanded && data.schedule.length > 6 ? (
+            {!isExpanded && data.payments.length > 6 ? (
               <>
-                {data.schedule.slice(0, 2).map((line, index) => (
-                  <TableRow key={index} {...line} />
+                {data.payments.slice(0, 2).map((line, index) => (
+                  <TableRow key={index} totalAmount={totalAmount} {...line} />
                 ))}
-                {data.schedule.length > 2 && (
+                {data.payments.length > 2 && (
                   <T.Row>
-                    <T.Data colSpan={5} box={{ background: 'blue100' }}>
+                    <T.Data colSpan={4} box={{ background: 'blue100' }}>
                       <Box display="flex" justifyContent="center" marginY={1}>
                         <Button
                           variant="ghost"
@@ -81,15 +85,15 @@ export const PaymentPlanTable = ({ isLoading, data }: Props) => {
                     </T.Data>
                   </T.Row>
                 )}
-                {data.schedule
-                  .slice(data.schedule.length - 2, data.schedule.length)
+                {data.payments
+                  .slice(data.payments.length - 2, data.payments.length)
                   .map((line, index) => (
-                    <TableRow key={index} {...line} />
+                    <TableRow key={index} totalAmount={totalAmount} {...line} />
                   ))}
               </>
             ) : (
-              data.schedule.map((line, index) => (
-                <TableRow key={index} {...line} />
+              data.payments.map((line, index) => (
+                <TableRow key={index} totalAmount={totalAmount} {...line} />
               ))
             )}
             <T.Row>
@@ -99,17 +103,14 @@ export const PaymentPlanTable = ({ isLoading, data }: Props) => {
               <T.Data />
               <T.Data />
               <T.Data>
-                <Text variant="eyebrow">0 kr.</Text>
-              </T.Data>
-              <T.Data>
                 <Text variant="h4" color="blue400">
-                  45.000 kr.
+                  {formatIsk(totalAmount)}
                 </Text>
               </T.Data>
             </T.Row>
-            {isExpanded && data.schedule.length > 6 && (
+            {isExpanded && data.payments.length > 6 && (
               <T.Row>
-                <T.Data colSpan={5} box={{ background: 'blue100' }}>
+                <T.Data colSpan={4} box={{ background: 'blue100' }}>
                   <Box display="flex" justifyContent="center" marginY={1}>
                     <Button
                       variant="ghost"

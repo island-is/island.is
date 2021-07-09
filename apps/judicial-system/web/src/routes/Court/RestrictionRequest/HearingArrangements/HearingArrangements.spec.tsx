@@ -11,6 +11,7 @@ import {
 import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { HearingArrangements } from './HearingArrangements'
+import { LocaleProvider } from '@island.is/localization'
 
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -56,7 +57,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         addTypename={false}
       >
         <UserProvider>
-          <HearingArrangements />
+          <LocaleProvider locale="is" messages={{}}>
+            <HearingArrangements />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -115,7 +118,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         addTypename={false}
       >
         <UserProvider>
-          <HearingArrangements />
+          <LocaleProvider locale="is" messages={{}}>
+            <HearingArrangements />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -162,7 +167,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         addTypename={false}
       >
         <UserProvider>
-          <HearingArrangements />
+          <LocaleProvider locale="is" messages={{}}>
+            <HearingArrangements />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -209,7 +216,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         addTypename={false}
       >
         <UserProvider>
-          <HearingArrangements />
+          <LocaleProvider locale="is" messages={{}}>
+            <HearingArrangements />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )

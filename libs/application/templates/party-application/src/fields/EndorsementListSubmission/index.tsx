@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import isEqual from 'lodash/isEqual'
-import sortBy from 'lodash/sortBy'
+import orderBy from 'lodash/orderBy'
 import shuffle from 'lodash/shuffle'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
@@ -151,7 +151,11 @@ const EndorsementListSubmission = ({ application }: FieldBaseProps) => {
   }
 
   const handlePagination = (page: number) => {
-    const endorsementsSortedByDate = sortBy(endorsementsHook, 'created')
+    const endorsementsSortedByDate = orderBy(
+      endorsementsHook,
+      'created',
+      'desc',
+    )
     const endorsementPage =
       paginate(endorsementsSortedByDate, PAGE_SIZE, page) ?? []
     setPaginatedEndorsements(endorsementPage)

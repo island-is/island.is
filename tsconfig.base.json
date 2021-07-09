@@ -106,6 +106,9 @@
       "@island.is/api/domains/payment": [
         "libs/api/domains/payment/src/index.ts"
       ],
+      "@island.is/api/domains/payment-schedule": [
+        "libs/api/domains/payment-schedule/src/index.ts"
+      ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
@@ -222,6 +225,9 @@
         "libs/clients/document-provider/src/index.ts"
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
+      "@island.is/clients/driving-license": [
+        "libs/clients/driving-license/src/index.ts"
+      ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
@@ -234,6 +240,9 @@
         "libs/clients/national-registry/v2/src/index.ts"
       ],
       "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
+      "@island.is/clients/payment-schedule": [
+        "libs/clients/payment-schedule/src/index.ts"
+      ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
@@ -393,14 +402,13 @@
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
       "@island.is/shared/table": ["libs/shared/table/src/index.ts"],
       "@island.is/shared/types": ["libs/shared/types/src/index.ts"],
+      "@island.is/shared/utils": ["libs/shared/utils/src/index.ts"],
+      "@island.is/shared/utils/server": ["libs/shared/utils/src/server.ts"],
       "@island.is/skilavottord-web/*": ["apps/skilavottord/web/*"],
       "@island.is/skilavottord/consts": [
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
-      "@island.is/utils/api": ["libs/utils/api/src/index.ts"],
-      "@island.is/utils/environment": ["libs/utils/environment/src/index.ts"],
-      "@island.is/utils/shared": ["libs/utils/shared/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }

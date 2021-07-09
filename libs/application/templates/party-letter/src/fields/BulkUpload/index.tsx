@@ -73,20 +73,29 @@ const BulkUpload = ({ application, onSuccess }: BulkUploadProps) => {
     fileReader.onload = () => {
       try {
         const workbook = read(fileReader.result, { type: 'binary' })
-        let data: any[] = []
+        let data: string[] = []
         for (const sheet in workbook.Sheets) {
           const workSheet = workbook.Sheets[sheet]
-          /** Converts a worksheet object to an array of JSON objects */
-          const jsonSheet = utils.sheet_to_json(workSheet)
-          data = data.concat(jsonSheet)
+
+          // Converts a worksheet object to an array of JSON objects
+          let jsonSheet = utils.sheet_to_json(workSheet, { header: 'A' })
+
+          // Map each row object to array of nationalIds and then concat the rows into a single array
+          jsonSheet = jsonSheet.map((i: any) => Object.values(i))
+          let jsonArray: string[] = []
+          jsonSheet.map((i: any) => {
+            jsonArray = jsonArray.concat(i)
+          })
+
+          // Data from all the sheets (rows + columns)
+          data = data.concat(
+            jsonArray.map((x: string) => x.toString().replace(/[^0-9]/g, '')),
+          )
+
+          // Get rid of empty strings
+          data = data.filter((str) => str)
         }
-        const mapArray: string[] = []
-        data.map((d: any) => {
-          /**  Getting the value of the first column from the JSON object */
-          const nationalId = d[Object.keys(d)[0]]
-          mapArray.push(nationalId.toString().replace(/[^0-9]/g, ''))
-        })
-        onBulkUpload(mapArray)
+        onBulkUpload(data)
       } catch (e) {
         setBulkUploadFailed(true)
       }

@@ -20,8 +20,9 @@ import {
   OrganizationSlice,
   Section,
   Stepper,
+  EntryProjectHeader,
+  HeadWithSocialSharing,
 } from '@island.is/web/components'
-import Head from 'next/head'
 import {
   GridColumn,
   GridContainer,
@@ -34,6 +35,9 @@ import { QueryGetNewsArgs } from '@island.is/api/schema'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
+
+const lightThemes = ['traveling-to-iceland']
 
 interface ProjectWrapperProps {
   withSidebar?: boolean
@@ -65,6 +69,19 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
   )
 }
 
+interface ProjectHeaderProps {
+  projectPage: ProjectPageSchema
+}
+
+const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
+  switch (projectPage.theme) {
+    case 'traveling-to-iceland':
+      return <EntryProjectHeader projectPage={projectPage} />
+    default:
+      return <DefaultProjectHeader projectPage={projectPage} />
+  }
+}
+
 interface PageProps {
   projectPage: Query['getProjectPage']
   news: GetNewsQuery['getNews']['items']
@@ -82,10 +99,15 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
 
   return (
     <>
-      <Head>
-        <title>{projectPage.title} | Ísland.is</title>
-      </Head>
-      <DefaultProjectHeader projectPage={projectPage} />
+      <HeadWithSocialSharing
+        title={`${projectPage.title} | Ísland.is`}
+        description={projectPage.intro}
+        imageUrl={projectPage.featuredImage?.url}
+        imageContentType={projectPage.featuredImage?.contentType}
+        imageWidth={projectPage.featuredImage?.width?.toString()}
+        imageHeight={projectPage.featuredImage?.height?.toString()}
+      />
+      <ProjectHeader projectPage={projectPage} />
       <ProjectWrapper
         withSidebar={projectPage.sidebar}
         sidebarContent={
@@ -119,6 +141,8 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           <Stepper
             stepper={projectPage.stepper}
             startAgainLabel={n('stepperStartAgain', 'Byrja upp á nýtt')}
+            answerLabel={n('stepperAnswer', 'Niðurstaða byggð á þínum svörum')}
+            backLabel={n('stepperBack', 'Til baka')}
           />
         )}
         {(subpage ?? projectPage).slices.map((slice) => (
@@ -205,12 +229,14 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Project page not found')
   }
 
+  const isLightTheme = lightThemes.includes(getProjectPage.theme)
+
   return {
     projectPage: getProjectPage,
     namespace,
     news: getNewsQuery?.data.getNews.items,
     showSearchInHeader: false,
-    darkTheme: true,
+    ...(isLightTheme ? {} : { darkTheme: true }),
   }
 }
 

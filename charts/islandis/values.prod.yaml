@@ -11,6 +11,8 @@ api:
     CONTACT_US_EMAIL: island@island.is
     CONTENTFUL_HOST: cdn.contentful.com
     DOWNLOAD_SERVICE_BASE_PATH: https://api.island.is
+    DRIVING_LICENSE_PATH_REPLACEMENT_FROM: /RafraentOkuskirteini-v1/api/Okuskirteini/
+    DRIVING_LICENSE_PATH_REPLACEMENT_TO: /RafraentOkuskirteini-v1/api/okuskirteini/
     ELASTIC_NODE: https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/
     ENDORSEMENT_SYSTEM_BASE_API_URL: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_DOWNLOAD_BUCKET: island-is-prod-download-cache-api
@@ -138,6 +140,8 @@ application-system-api:
     DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
     DB_NAME: application_system_api
     DB_USER: application_system_api
+    DRIVING_LICENSE_PATH_REPLACEMENT_FROM: /RafraentOkuskirteini-v1/api/Okuskirteini/
+    DRIVING_LICENSE_PATH_REPLACEMENT_TO: /RafraentOkuskirteini-v1/api/okuskirteini/
     EMAIL_REGION: eu-west-1
     ENDORSEMENTS_API_BASE_PATH: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_SERVICE_PRESIGN_BUCKET: island-is-prod-fs-presign-bucket
@@ -150,7 +154,6 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: island@island.is
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: Stafrænt Ísland
     NOVA_USERNAME: IslandIs_User_Production
-    PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL: s@kogk.is
     PARTY_LETTER_REGISTRY_API_BASE_PATH: >-
       http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local
     PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: postur@dmr.is
@@ -222,13 +225,19 @@ application-system-api:
     HEALTH_INSURANCE_XROAD_WSDLURL: /k8s/application-system-api/HEALTH_INSURANCE_XROAD_WSDLURL
     NOVA_PASSWORD: /k8s/application-system/api/NOVA_PASSWORD
     NOVA_URL: /k8s/application-system-api/NOVA_URL
-    PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS
-    PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS
-    PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS
-    PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS
-    PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS
-    PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS
-    PARTY_LETTER_ASSIGNED_ADMINS: /k8s/application-system-form/PARTY_LETTER_ASSIGNED_ADMINS
+    PARTY_APPLICATION_NORTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_NORTH_ADMIN_EMAIL
+    PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL
+    PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS
+    PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL
+    PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL
+    PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_SOUTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_ADMIN_EMAIL
+    PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL
+    PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS
+    PARTY_LETTER_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS
     PAYMENT_ADDITION_CALLBACK_URL: /k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL
     PAYMENT_BASE_CALLBACK_URL: /k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL
     PAYMENT_PASSWORD: /k8s/application-system-api/PAYMENT_PASSWORD
@@ -372,6 +381,7 @@ endorsement-system-api:
       http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local
   grantNamespaces:
     - islandis
+    - application-system
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -520,6 +530,7 @@ party-letter-registry-api:
     DB_USER: services_party_letter_registry_api
   grantNamespaces:
     - islandis
+    - application-system
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
