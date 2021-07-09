@@ -24,9 +24,6 @@ const TaxReturnForm = () => {
 
   const { form, updateForm } = useContext(FormContext)
 
-  const [state, dispatch] = useReducer(form?.incomeFiles, form?.incomeFiles)
-  const [error, setError] = useState<string | undefined>(undefined)
-
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps

@@ -13,10 +13,10 @@ import { ApiProperty } from '@nestjs/swagger'
 import { ApplicationModel } from '../../application'
 
 @Table({
-  tableName: 'application_file',
+  tableName: 'application_files',
   timestamps: false,
 })
-export class ApplicationFile extends Model<ApplicationFile> {
+export class ApplicationFileModel extends Model<ApplicationFileModel> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

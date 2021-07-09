@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsBoolean,
   IsEnum,
+  IsArray,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -12,6 +13,7 @@ import {
   HomeCircumstances,
   Employment,
   ApplicationState,
+  CreateApplicationFile,
 } from '@island.is/financial-aid/shared'
 
 export class CreateApplicationDto {
@@ -104,4 +106,8 @@ export class CreateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly state: ApplicationState
+
+  @IsArray()
+  @ApiProperty()
+  readonly files: CreateApplicationFile[]
 }

@@ -62,7 +62,6 @@ const SummaryForm = () => {
 
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
-  console.log(form)
 
   const { user } = useContext(UserContext)
 
@@ -87,6 +86,14 @@ const SummaryForm = () => {
   )
 
   const createApplication = async () => {
+    const formatFiles = form?.incomeFiles.map((f) => {
+      return {
+        name: f.name ?? 'mofoJones.png',
+        key: f.key ?? '12345',
+        size: f.size ?? 100,
+      }
+    })
+
     const { data } = await creatApplicationMutation({
       variables: {
         input: {
@@ -108,6 +115,7 @@ const SummaryForm = () => {
           employmentCustom: form?.employmentCustom,
           formComment: form?.formComment,
           state: ApplicationState.NEW,
+          files: formatFiles,
         },
       },
     })
@@ -373,7 +381,7 @@ const SummaryForm = () => {
                   {form.incomeFiles.map((file, index) => {
                     return (
                       <a
-                        // href={file.name}
+                        href={file.name}
                         key={`file-` + index}
                         className={styles.filesButtons}
                         target="_blank"
@@ -395,12 +403,12 @@ const SummaryForm = () => {
                 </>
               )}
 
-              {form?.taxReturnFiles && (
+              {/* {form?.taxReturnFiles && (
                 <>
                   {form.taxReturnFiles.map((file, index) => {
                     return (
                       <a
-                        // href={file.name}
+                        href={file.name}
                         key={`file-` + index}
                         className={styles.filesButtons}
                         target="_blank"
@@ -420,7 +428,7 @@ const SummaryForm = () => {
                     )
                   })}
                 </>
-              )}
+              )} */}
             </Box>
           </Box>
 

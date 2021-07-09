@@ -1,2 +1,2 @@
 export { SignedUrlModel } from './signedUrl.model'
-export { ApplicationFile } from './file.model'
+export { ApplicationFileModel } from './file.model'

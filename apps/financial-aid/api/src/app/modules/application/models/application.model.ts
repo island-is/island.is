@@ -7,6 +7,8 @@ import {
   ApplicationState,
 } from '@island.is/financial-aid/shared'
 
+import { ApplicationFileModel } from '../../file'
+
 @ObjectType()
 export class ApplicationModel implements Application {
   @Field(() => ID)
@@ -71,4 +73,7 @@ export class ApplicationModel implements Application {
 
   @Field(() => String)
   readonly state!: ApplicationState
+
+  @Field(() => [ApplicationFileModel], { nullable: true })
+  readonly files?: ApplicationFileModel[]
 }

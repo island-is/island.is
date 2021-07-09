@@ -54,6 +54,12 @@ export interface ApplicationFile {
   size: number
 }
 
+export interface CreateApplicationFile {
+  name: string
+  key: string
+  size: number
+}
+
 export interface CreateApplication {
   nationalId: string
   name: string
@@ -73,6 +79,7 @@ export interface CreateApplication {
   studentCustom?: string
   formComment?: string
   state?: ApplicationState
+  files: CreateApplicationFile[]
 }
 
 export interface UpdateApplication {
