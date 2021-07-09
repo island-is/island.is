@@ -65,8 +65,8 @@ const queryPaymentScheduleEmployer = `
   }
 `
 
-const paymentScheduleInitialSchedule = `
-	query paymentScheduleInitialSchedule($input: GetInitialScheduleInput!) {
+const queryPaymentScheduleInitialSchedule = `
+	query PaymentScheduleInitialSchedule($input: GetInitialScheduleInput!) {
 		paymentScheduleInitialSchedule (input : $input){
 			nationalId
 			scheduleType
@@ -165,7 +165,7 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
     disposableIncome: number,
     type: string,
   ): Promise<PaymentScheduleInitialSchedule> {
-    return this.useGraphqlGateway(paymentScheduleInitialSchedule, {
+    return this.useGraphqlGateway(queryPaymentScheduleInitialSchedule, {
       input: {
         totalAmount,
         disposableIncome,

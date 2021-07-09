@@ -6,7 +6,7 @@ import {
 } from '@island.is/api/schema'
 import { SuccessfulDataProviderResult } from '@island.is/application/core'
 import * as z from 'zod'
-import { NO, YES } from '../shared/constants'
+import { AMOUNT, MONTHS, NO, YES } from '../shared/constants'
 
 interface PrerequisitesResult extends SuccessfulDataProviderResult {
   data: {
@@ -50,11 +50,15 @@ export type PaymentPlanExternalData = {
   userProfile?: UserProfileResult
 }
 
+const PaymentMode = z.enum([AMOUNT, MONTHS])
+export type PaymentModeState = z.infer<typeof PaymentMode>
+
 const paymentPlanSchema = z
   .object({
     id: z.string().nonempty(),
     amountPerMonth: z.number().optional(),
     numberOfMonths: z.number().optional(),
+    paymentMode: PaymentMode.optional(),
   })
   .optional()
 

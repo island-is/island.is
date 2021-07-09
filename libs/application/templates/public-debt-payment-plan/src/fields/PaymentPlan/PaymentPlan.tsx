@@ -1,33 +1,48 @@
-import { FieldBaseProps } from '@island.is/application/core'
-import { useAuth } from '@island.is/auth/react'
-import { Box, RadioButton, Stack, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import React, { useState } from 'react'
-import { useFormContext } from 'react-hook-form'
 import {
+  GetScheduleDistributionInput,
+  PaymentScheduleDistribution,
+} from '@island.is/api/schema'
+import { FieldBaseProps } from '@island.is/application/core'
+import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { RadioController } from '@island.is/shared/form-fields'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { useLazyDistribution } from '../../hooks/useLazyDistribution'
+import {
+  PaymentModeState,
   PaymentPlanExternalData,
   PublicDebtPaymentPlan,
 } from '../../lib/dataSchema'
 import { shared } from '../../lib/messages'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
+import { formatIsk } from '../../lib/paymentPlanUtils'
+import { AMOUNT, MONTHS } from '../../shared/constants'
 import {
   getEmptyPaymentPlanEntryKey,
   getPaymentPlanKeyById,
 } from '../../shared/utils'
+import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 import { PlanSlider } from '../components/PlanSlider/PlanSlider'
 import { PaymentPlanCard } from '../PaymentPlanList/PaymentPlanCard/PaymentPlanCard'
 import * as styles from './PaymentPlan.treat'
 import { useDebouncedSliderValues } from './useDebouncedSliderValues'
 
-type PaymentModeState = null | 'amount' | 'months'
+// type PaymentModeState = null | 'amount' | 'months'
 
 // An array might not work for this schema
 // Might need to define specific fields for each one
 export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const [paymentMode, setPaymentMode] = useState<PaymentModeState>(null)
   const { register } = useFormContext()
-  const { userInfo } = useAuth()
+  const getDistribution = useLazyDistribution()
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [
+    distributionData,
+    setDistributionData,
+  ] = useState<PaymentScheduleDistribution | null>(null)
+
   const externalData = application.externalData as PaymentPlanExternalData
   const answers = application.answers as PublicDebtPaymentPlan
   const index = field.defaultValue as number
@@ -37,7 +52,6 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const initialMinMaxData = externalData.paymentPlanPrerequisites?.data?.allInitialSchedules.find(
     (x) => x.scheduleType === payment?.type,
   )
-  console.log(initialMinMaxData)
   // Locate the entry of the payment plan in answers.
   const entryKey = getPaymentPlanKeyById(
     answers.paymentPlans,
@@ -49,36 +63,70 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       answers.paymentPlans,
     )) as keyof typeof answers.paymentPlans
 
-  console.log('Answer key: ', answerKey)
-  console.log('Answers: ', answers)
-
-  if (!answerKey) {
-    // There is no entry available for this plan
-    // The user can not continue the application
-    // TODO: Better UX and error logging for this
-    return <div>No more available entries in schema</div>
-  }
   const entry = `paymentPlans.${answerKey}`
   const currentAnswers = answers.paymentPlans
     ? answers.paymentPlans[answerKey]
     : undefined
+
+  const [paymentMode, setPaymentMode] = useState<PaymentModeState | undefined>(
+    currentAnswers?.paymentMode,
+  )
+
+  const getDistributionCallback = useCallback(
+    async ({
+      monthAmount = null,
+      monthCount = null,
+      totalAmount,
+      scheduleType,
+    }: GetScheduleDistributionInput) => {
+      const { data } = await getDistribution({
+        input: {
+          monthAmount,
+          monthCount,
+          totalAmount,
+          scheduleType,
+        },
+      })
+
+      return data
+    },
+    [getDistribution],
+  )
 
   const {
     debouncedAmount,
     debouncedMonths,
     setAmount,
     setMonths,
-    // eslint-disable-next-line react-hooks/rules-of-hooks
   } = useDebouncedSliderValues(currentAnswers)
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  /* const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
-    userInfo?.profile.nationalId,
-    payment?.type,
+
+  useEffect(() => {
+    if (payment) {
+      setIsLoading(true)
+      getDistributionCallback({
+        monthAmount: paymentMode === AMOUNT ? debouncedAmount : null,
+        monthCount: paymentMode === MONTHS ? debouncedMonths : null,
+        totalAmount: payment.totalAmount,
+        scheduleType: payment.type,
+      })
+        .then((response) => {
+          setDistributionData(response?.paymentScheduleDistribution || null)
+          setIsLoading(false)
+        })
+        .catch((error) => {
+          // Do something?
+          console.log('An error occured fetching payment distribution: ', error)
+        })
+    }
+  }, [
     debouncedAmount,
     debouncedMonths,
-  ) */
+    getDistributionCallback,
+    payment,
+    paymentMode,
+  ])
 
-  const handleSelectPaymentMode = (mode: PaymentModeState) => {
+  const handleSelectPaymentMode = (mode: any) => {
     setPaymentMode(mode)
   }
 
@@ -97,6 +145,47 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       <div>Eitthvað fór úrskeiðis, núverandi greiðsludreifing fannst ekki</div>
     )
 
+  const SliderDescriptor = () => {
+    if (!distributionData || distributionData?.payments?.length < 1) return null
+
+    const monthlyPayments = distributionData.payments[0].payment
+    const lastMonthsPayment =
+      distributionData.payments[distributionData.payments.length - 1].payment
+
+    if (monthlyPayments === lastMonthsPayment) {
+      return (
+        <Box display="flex" justifyContent="flexEnd">
+          <Text variant="small" fontWeight="semiBold">
+            <span>Greiðsla </span>
+            <span className={styles.valueLabel}>
+              {formatIsk(monthlyPayments)}{' '}
+            </span>
+            <span>
+              í {distributionData.payments.length}{' '}
+              {distributionData.payments.length === 1 ? 'mánuð' : 'mánuði'}.
+            </span>
+          </Text>
+        </Box>
+      )
+    }
+
+    return (
+      <Box display="flex" justifyContent="flexEnd">
+        <Text variant="small" fontWeight="semiBold">
+          <span>Greiðsla </span>
+          <span className={styles.valueLabel}>
+            {formatIsk(monthlyPayments)}{' '}
+          </span>
+          <span>í {distributionData.payments.length - 1} mánuði og </span>
+          <span className={styles.valueLabel}>
+            {formatIsk(lastMonthsPayment)}{' '}
+          </span>
+          <span>á {distributionData.payments.length}. mánuði.</span>
+        </Text>
+      </Box>
+    )
+  }
+
   return (
     <div>
       <input
@@ -114,29 +203,25 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
       <Text variant="h4" marginBottom={3}>
         {formatMessage(paymentPlan.labels.paymentModeTitle)}
       </Text>
-      <Stack space={2}>
-        <RadioButton
-          label={formatMessage(paymentPlan.labels.payByAmount)}
-          backgroundColor="blue"
-          large
-          id="payment-mode-amount"
-          name="paymentMode"
-          value="amount"
-          checked={paymentMode === 'amount'}
-          onChange={handleSelectPaymentMode.bind(null, 'amount')}
-        />
-        <RadioButton
-          label={formatMessage(paymentPlan.labels.payByMonths)}
-          backgroundColor="blue"
-          large
-          id="payment-mode-months"
-          name="paymentMode"
-          value="months"
-          checked={paymentMode === 'months'}
-          onChange={handleSelectPaymentMode.bind(null, 'months')}
-        />
-      </Stack>
-      {paymentMode === 'amount' && (
+      <RadioController
+        id={`${entry}.paymentMode`}
+        disabled={false}
+        name={`${entry}.paymentMode`}
+        largeButtons={true}
+        defaultValue={paymentMode}
+        onSelect={handleSelectPaymentMode}
+        options={[
+          {
+            value: AMOUNT,
+            label: formatMessage(paymentPlan.labels.payByAmount),
+          },
+          {
+            value: MONTHS,
+            label: formatMessage(paymentPlan.labels.payByMonths),
+          },
+        ]}
+      />
+      {paymentMode === AMOUNT && (
         <PlanSlider
           id={`${entry}.amountPerMonth`}
           minValue={initialMinMaxData?.minPayment || 5000}
@@ -149,20 +234,10 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
             singular: 'kr.',
             plural: 'kr.',
           }}
-          descriptor={
-            <Box display="flex" justifyContent="flexEnd">
-              <Text variant="small" fontWeight="semiBold">
-                <span>Greiðsla </span>
-                <span className={styles.valueLabel}>60.000 kr. </span>
-                <span>í 6 mánuði og </span>
-                <span className={styles.valueLabel}>45.585 kr. </span>
-                <span>á 7. mánuði.</span>
-              </Text>
-            </Box>
-          }
+          descriptor={<SliderDescriptor />}
         />
       )}
-      {paymentMode === 'months' && (
+      {paymentMode === MONTHS && (
         <PlanSlider
           id={`${entry}.numberOfMonths`}
           minValue={initialMinMaxData?.minCountMonth || 1}
@@ -174,19 +249,10 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
             singular: formatMessage(shared.month),
             plural: formatMessage(shared.months),
           }}
-          descriptor={
-            <Box display="flex" justifyContent="flexEnd">
-              <Text variant="small" fontWeight="semiBold">
-                <span>Greiðsla </span>
-                <span className={styles.valueLabel}>60.000 kr. </span>
-                <span>í 6 mánuði. Heildargreiðsla með vöxtum er </span>
-                <span className={styles.valueLabel}>45.585 kr.</span>
-              </Text>
-            </Box>
-          }
+          descriptor={<SliderDescriptor />}
         />
       )}
-      {/* (isLoading || paymentPlanResults) && (
+      {distributionData && (
         <Box marginTop={5}>
           <AccordionItem
             id="payment-plan-table"
@@ -196,10 +262,14 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
             }
             startExpanded
           >
-            <PaymentPlanTable isLoading={isLoading} data={paymentPlanResults} />
+            <PaymentPlanTable
+              isLoading={isLoading}
+              data={distributionData}
+              totalAmount={payment.totalAmount}
+            />
           </AccordionItem>
         </Box>
-          ) */}
+      )}
     </div>
   )
 }

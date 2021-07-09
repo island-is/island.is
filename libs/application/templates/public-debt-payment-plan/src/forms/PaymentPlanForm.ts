@@ -1,4 +1,7 @@
-import { PaymentScheduleConditions } from '@island.is/api/schema'
+import {
+  PaymentScheduleConditions,
+  PaymentScheduleDebts,
+} from '@island.is/api/schema'
 import {
   buildCustomField,
   buildDataProviderItem,
@@ -37,7 +40,9 @@ const buildPaymentPlanStep = (index: PaymentPlanBuildIndex): CustomField =>
     defaultValue: index,
     condition: (_formValue, externalData) => {
       return (
-        index < ((externalData.paymentScheduleDebts?.data as any)?.length || 0)
+        index <
+        (((externalData as PaymentPlanExternalData).paymentPlanPrerequisites
+          ?.data?.debts as PaymentScheduleDebts[])?.length || 0)
       )
     },
   })

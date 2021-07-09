@@ -3,15 +3,8 @@ import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import AnimateHeight from 'react-animate-height'
-import { PaymentType } from '../../../dataProviders/tempAPITypes'
 import { paymentPlan } from '../../../lib/messages/paymentPlan'
 import * as styles from './PaymentPlanCard.treat'
-
-// TODO: Map correct type to the appropriate label
-const getPaymentTypeLabel = (type: PaymentType) =>
-  type === PaymentType.O
-    ? paymentPlan.labels.deductedFromSalary
-    : paymentPlan.labels.sentAsAClaim
 
 interface Props {
   payment: PaymentScheduleDebts

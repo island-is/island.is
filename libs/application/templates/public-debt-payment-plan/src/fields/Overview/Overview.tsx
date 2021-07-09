@@ -3,10 +3,7 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import React from 'react'
-import { PaymentType } from '../../dataProviders/tempAPITypes'
 import { PaymentPlanExternalData } from '../../lib/dataSchema'
-import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
-import { useMockPaymentPlan } from '../PaymentPlan/useMockPaymentPlan'
 
 export const Overview = ({ application }: FieldBaseProps) => {
   const externalData = application.externalData as PaymentPlanExternalData
@@ -66,24 +63,24 @@ export const Overview = ({ application }: FieldBaseProps) => {
         // const returnedPayment = externalData.paymentPlanList?.data[index]
         // TODO: Perhaps there is a better way to do this? Look into later.
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
+        /* const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
           '2811903429',
           PaymentType.O,
           14000,
           11,
-        )
+        ) */
         return (
           <ReviewGroup isEditable editAction={editAction}>
             <Box paddingBottom={[2, 4]}>
               <Label>{payment.paymentSchedule}</Label>
               <Text>Mánaðarlegar greiðslur</Text>
             </Box>
-            {(isLoading || paymentPlanResults) && (
+            {/* (isLoading || paymentPlanResults) && (
               <PaymentPlanTable
                 isLoading={isLoading}
                 data={paymentPlanResults}
               />
-            )}
+            ) */}
           </ReviewGroup>
         )
       })}
