@@ -55,6 +55,9 @@ const PayableDummyTemplate: ApplicationTemplate<
           },
           progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.createCharge,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
