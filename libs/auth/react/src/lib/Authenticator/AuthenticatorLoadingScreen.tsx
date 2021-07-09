@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, LoadingIcon } from '@island.is/island-ui/core'
+import { Box, LoadingDots } from '@island.is/island-ui/core'
 import * as styles from './Authenticator.treat'
 
 const AuthenticatorLoadingScreen = () => {
@@ -12,7 +12,7 @@ const AuthenticatorLoadingScreen = () => {
       role="progressbar"
       aria-valuetext="Er að vinna í innskráningu"
     >
-      <LoadingIcon animate size={40} />
+      <LoadingDots large />
     </Box>
   )
 }

@@ -9,7 +9,7 @@ import { useEndorsements } from '../../hooks/useFetchEndorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import { Endorsement } from '../../types/schema'
 import BulkUpload from '../BulkUpload'
-import sortBy from 'lodash/sortBy'
+import orderBy from 'lodash/orderBy'
 import { paginate, totalPages as pages } from '../components/utils'
 
 const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
@@ -32,14 +32,8 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
 
   useEffect(() => {
     refetch()
-    setEndorsements(sortBy(endorsementsHook, 'created'))
+    setEndorsements(orderBy(endorsementsHook, 'created', 'desc'))
   }, [endorsementsHook, updateOnBulkImport])
-
-  const namesCountString = formatMessage(
-    endorsementsHook && endorsementsHook.length > 1
-      ? m.endorsementList.namesCount
-      : m.endorsementList.nameCount,
-  )
 
   useEffect(() => {
     filter(searchTerm)
@@ -58,7 +52,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     page: number,
     endorsements: Endorsement[] | undefined,
   ) => {
-    const sortEndorements = sortBy(endorsements, 'created')
+    const sortEndorements = orderBy(endorsements, 'created', 'desc')
     setPage(page)
     setTotalPages(pages(endorsements?.length))
     setFilteredEndorsements(sortEndorements)
@@ -88,7 +82,9 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
                 : 0}
             </Text>
             <Box marginLeft={1}>
-              <Text variant="default">{namesCountString}</Text>
+              <Text variant="default">
+                {formatMessage(m.endorsementList.namesCount)}
+              </Text>
             </Box>
           </Box>
           <Input

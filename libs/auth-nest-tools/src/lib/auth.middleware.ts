@@ -1,5 +1,5 @@
 import { Auth } from './auth'
-
+import fetch from 'isomorphic-fetch'
 // These types are copied from our OpenAPI generated api clients.
 type FetchAPI = WindowOrWorkerGlobalScope['fetch']
 
@@ -28,6 +28,7 @@ export interface TokenExchangeOptions {
   clientId: string
   clientSecret: string
   scope: string
+  requestActorToken?: boolean
 }
 
 /**
@@ -44,12 +45,7 @@ export class AuthMiddleware implements Middleware {
   async pre(context: RequestContext) {
     let bearerToken = this.auth.authorization
 
-    if (
-      this.options.tokenExchangeOptions &&
-      this.options.tokenExchangeOptions.scope
-        .split(' ')
-        .some((s) => !this.auth.scope.includes(s))
-    ) {
+    if (this.options.tokenExchangeOptions) {
       const accessToken = await this.exchangeToken(
         bearerToken.replace('Bearer ', ''),
         context,
@@ -94,6 +90,9 @@ export class AuthMiddleware implements Middleware {
         client_secret: options.clientSecret,
         subject_token: accessToken,
         subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+        requested_token_type: options.requestActorToken
+          ? 'islandis:oauth:token-type:actor-access-token'
+          : 'urn:ietf:params:oauth:token-type:access_token',
       }),
     })
 

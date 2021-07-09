@@ -1,4 +1,4 @@
-import { XRoadMemberClass } from '@island.is/utils/api'
+import { XRoadMemberClass } from '@island.is/shared/utils/server'
 
 const devConfig = {
   production: false,
@@ -35,7 +35,8 @@ const devConfig = {
         issuer: 'https://identity-server.dev01.devland.is',
         clientId: '@island.is/clients/national-registry',
         clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
-        scope: '@skra.is/individuals api_resource.scope', // TODO: remove api_resource.scope
+        scope: 'openid @skra.is/individuals api_resource.scope', // TODO: remove api_resource.scope
+        requestActorToken: true,
       },
     },
   },
@@ -76,9 +77,10 @@ const prodConfig = {
       forwardUserInfo: false,
       tokenExchangeOptions: {
         issuer: process.env.IDS_ISSUER,
-        clientId: process.env.NATIONAL_REGISTRY_IDS_CLIENT_ID,
+        clientId: '@island.is/clients/national-registry',
         clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
-        scope: process.env.NATIONAL_REGISTRY_IDS_SCOPE,
+        scope: 'openid @skra.is/individuals api_resource.scope', // TODO: remove api_resource.scope
+        requestActorToken: true,
       },
     },
   },

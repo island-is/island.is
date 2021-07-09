@@ -64,6 +64,7 @@
     "@formatjs/intl-numberformat": "6.2.1",
     "@formatjs/intl-utils": "3.8.4",
     "@hookform/error-message": "0.0.5",
+    "@island.is/login": "1.2.1",
     "@nestjs/bull": "0.1.2",
     "@nestjs/common": "7.4.4",
     "@nestjs/config": "0.5.0",
@@ -156,6 +157,7 @@
     "graphql-middleware-sentry": "3.2.1",
     "graphql-tag": "2.10.3",
     "graphql-type-json": "0.3.2",
+    "handlebars": "4.7.7",
     "http-proxy-middleware": "0.19.1",
     "hypher": "0.2.5",
     "identicon.js": "2.3.3",
@@ -164,7 +166,6 @@
     "ioredis": "4.17.3",
     "is-circular": "1.0.2",
     "is-url": "1.2.4",
-    "islandis-login": "1.1.6",
     "isomorphic-fetch": "2.2.1",
     "isomorphic-unfetch": "3.0.0",
     "js-base64": "2.5.2",
@@ -173,6 +174,7 @@
     "jsbarcode": "3.11.0",
     "jsonp": "0.2.1",
     "jsonwebtoken": "8.5.1",
+    "juice": "8.0.0",
     "jwks-rsa": "1.10.1",
     "jwt-decode": "2.2.0",
     "kennitala": "1.2.4",
@@ -387,6 +389,7 @@
     "prettier": "2.2.1",
     "quicktype": "15.0.258",
     "sequelize-cli": "5.5.1",
+    "sort-paths": "1.1.1",
     "storybook-addon-designs": "5.4.2",
     "ts-dedent": "2.0.0",
     "ts-jest": "26.4.0",
@@ -406,7 +409,7 @@
     "serialize-javascript": "4.0.0",
     "webpack": "4.44.1",
     "xml-crypto": "2.0.0",
-    "prismjs": "1.23.0",
+    "prismjs": "1.24.0",
     "urijs": "1.19.6",
     "elliptic": "6.5.4",
     "serialize-to-js": "3.1.1",
@@ -444,6 +447,7 @@
     "css-what": "5.0.1",
     "glob-parent": "5.1.2",
     "trim-newlines": "3.0.1",
-    "normalize-url": "4.5.1"
+    "normalize-url": "4.5.1",
+    "dicer": "0.3.0"
   }
 }

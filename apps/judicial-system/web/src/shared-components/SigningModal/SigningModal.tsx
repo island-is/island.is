@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import {
   Case,
   CaseDecision,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
@@ -14,6 +16,10 @@ import { SignatureConfirmationQuery } from '../../utils/mutations'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import { Modal } from '..'
+import {
+  icConfirmation,
+  rcConfirmation,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface SigningModalProps {
@@ -36,6 +42,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
   ] = useState<SignatureConfirmationResponse>()
 
   const { transitionCase, sendNotification } = useCase()
+  const { formatMessage } = useIntl()
 
   const { data } = useQuery(SignatureConfirmationQuery, {
     variables: {
@@ -109,6 +116,12 @@ const SigningModal: React.FC<SigningModalProps> = ({
     )
   }
 
+  const renderSuccessText = (caseType: CaseType) => {
+    return caseType === CaseType.CUSTODY || caseType === CaseType.TRAVEL_BAN
+      ? formatMessage(rcConfirmation.modal.text)
+      : formatMessage(icConfirmation.modal.text)
+  }
+
   return (
     <Modal
       title={
@@ -124,7 +137,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
         !signatureConfirmationResponse
           ? renderControlCode()
           : signatureConfirmationResponse.documentSigned
-          ? 'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.'
+          ? renderSuccessText(workingCase.type)
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
       }
       secondaryButtonText={

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Modal,
   PageLayout,
@@ -17,6 +18,7 @@ import HearingArrangementsForm from './HearingArrangementsForm'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
 
 const HearingArrangements = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -25,6 +27,7 @@ const HearingArrangements = () => {
   const router = useRouter()
   const id = router.query.id
   const { sendNotification, isSendingNotification } = useCase()
+  const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -86,12 +89,15 @@ const HearingArrangements = () => {
           />
           {modalVisible && (
             <Modal
-              title="Tilkynning um fyrirtökutíma hefur verið send"
-              text={`Tilkynning um fyrirtökutíma hefur verið send á ákæranda, fangelsi og ${
-                workingCase.defenderIsSpokesperson ? 'talsmann' : 'verjanda'
-              } hafi ${
-                workingCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-              } verið skráður.`}
+              title={formatMessage(icHearingArrangements.modal.heading)}
+              text={formatMessage(icHearingArrangements.modal.text, {
+                defenderTypeNomative: workingCase.defenderIsSpokesperson
+                  ? 'talsmaður'
+                  : 'verjandi',
+                defenderTypeAccusative: workingCase.defenderIsSpokesperson
+                  ? 'talsmanninn'
+                  : 'verjandann',
+              })}
               handlePrimaryButtonClick={() => {
                 router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${id}`)
               }}

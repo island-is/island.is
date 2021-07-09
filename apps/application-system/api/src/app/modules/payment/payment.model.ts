@@ -73,7 +73,7 @@ export class Payment extends Model<Application> {
     defaultValue: {},
   })
   @ApiPropertyOptional()
-  definition?: string
+  definition?: object
 
   @Column({
     type: DataType.STRING,

@@ -43,8 +43,8 @@ export enum ServicePortalPath {
   FinanceExternal = 'https://minarsidur.island.is/minar-sidur/fjarmal/fjarmal-stada-vid-rikissjod-og-stofnanir/',
 
   // Electronic Documents
-  ElectronicDocumentsRoot = '/rafraen-skjol',
-  ElectronicDocumentsFileDownload = '/rafraen-skjol/:id',
+  ElectronicDocumentsRoot = '/postholf',
+  ElectronicDocumentsFileDownload = '/postholf/:id',
 
   // Heilsa
   HealthRoot = '/heilsa',
