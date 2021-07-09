@@ -20,7 +20,7 @@ import { EndorseList } from '../../graphql/mutations'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import { useVoterRegion } from '../../hooks/temporaryVoterRegistry'
 import { useHasEndorsed } from '../../hooks/useHasEndorsed'
-import { EndorsementListTags } from '../../constants'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const endorsementListId = (application.externalData?.createEndorsementList
@@ -33,7 +33,9 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const [endorsedNow, setEndorsedNow] = useState(false)
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
   const { hasEndorsed, loading, refetch } = useHasEndorsed()
-  const constituency = application.answers.constituency
+  const constituency =
+    constituencyMapper[application.answers.constituency as EndorsementListTags]
+      .region_name
   const { data: userData } = useQuery(GetFullName)
   const isClosed = useIsClosed(endorsementListId)
   const { isInVoterRegistry, isInConstituency } = useVoterRegion(

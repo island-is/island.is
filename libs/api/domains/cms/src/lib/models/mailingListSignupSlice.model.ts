@@ -11,10 +11,28 @@ export class MailingListSignupSlice {
   title!: string
 
   @Field({ nullable: true })
+  variant!: string
+
+  @Field({ nullable: true })
   description?: string
 
   @Field()
   inputLabel!: string
+
+  @Field({ nullable: true })
+  fullNameLabel!: string
+
+  @Field({ nullable: true })
+  questionLabel!: string
+
+  @Field({ nullable: true })
+  yesLabel!: string
+
+  @Field({ nullable: true })
+  noLabel!: string
+
+  @Field({ nullable: true })
+  disclaimerLabel!: string
 
   @Field()
   buttonText!: string
@@ -30,8 +48,14 @@ export const mapMailingListSignup = ({
   typename: 'MailingListSignupSlice',
   id: sys.id,
   title: fields.title ?? '',
+  variant: fields.variant ?? '',
   description: fields.description ?? '',
   inputLabel: fields.inputLabel ?? '',
+  fullNameLabel: fields.fullNameLabel ?? '',
+  questionLabel: fields.questionLabel ?? '',
+  yesLabel: fields.yesLabel ?? '',
+  noLabel: fields.noLabel ?? '',
+  disclaimerLabel: fields.disclaimerLabel ?? '',
   buttonText: fields.buttonText ?? '',
   signupUrl: fields.signupUrl ?? '',
 })

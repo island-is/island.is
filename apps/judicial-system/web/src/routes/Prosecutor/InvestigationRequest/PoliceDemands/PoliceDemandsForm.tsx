@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
-  DateTime,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { Case, CaseType } from '@island.is/judicial-system/types'
 import {
-  newSetAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -74,7 +72,6 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   }
   const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
-  const [, setRequestedValidToDateIsValid] = useState<boolean>(true)
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
@@ -110,41 +107,6 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             {formatMessage(icDemands.heading)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(icDemands.sections.requestToDate.heading)}{' '}
-              <Tooltip
-                placement="right"
-                text={formatMessage(icDemands.sections.requestToDate.tooltip)}
-              />
-            </Text>
-          </Box>
-          <DateTime
-            name="reqValidToDate"
-            datepickerLabel={formatMessage(
-              icDemands.sections.requestToDate.dateLabel,
-            )}
-            minDate={new Date()}
-            selectedDate={
-              workingCase.requestedValidToDate
-                ? new Date(workingCase.requestedValidToDate)
-                : undefined
-            }
-            onChange={(date: Date | undefined, valid: boolean) => {
-              newSetAndSendDateToServer(
-                'requestedValidToDate',
-                date,
-                valid,
-                workingCase,
-                setWorkingCase,
-                setRequestedValidToDateIsValid,
-                updateCase,
-              )
-            }}
-          />
-        </Box>
-
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
@@ -229,7 +191,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             rows={7}
           />
         </Box>
-        <Box component="section" marginBottom={5}>
+        <Box component="section" marginBottom={10}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               {formatMessage(icDemands.sections.legalBasis.heading)}
