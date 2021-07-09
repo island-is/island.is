@@ -43,6 +43,7 @@ export interface Application {
   studentCustom?: string
   formComment?: string
   state?: ApplicationState
+  files?: ApplicationFile[]
 }
 
 export interface ApplicationFile {

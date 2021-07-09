@@ -26,6 +26,17 @@ export class FileService {
     return this.fileModel.create(createFile)
   }
 
+  getAllApplicationFiles(
+    applicationId: string,
+  ): Promise<ApplicationFileModel[]> {
+    this.logger.debug(`Getting all files for case ${applicationId}`)
+
+    return this.fileModel.findAll({
+      where: { applicationId },
+      order: [['created', 'DESC']],
+    })
+  }
+
   createSignedUrl(folder: string, fileName: string): SignedUrlModel {
     const key = `${folder}/${fileName}`
 

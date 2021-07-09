@@ -22,17 +22,22 @@ export class ApplicationService {
     return this.applicationModel.findAll()
   }
 
-  findById(id: string): Promise<ApplicationModel | null> {
-    return this.applicationModel.findOne({
+  async findById(id: string): Promise<ApplicationModel | null> {
+    const application = await this.applicationModel.findOne({
       where: { id },
     })
+
+    const files = await this.fileService.getAllApplicationFiles(id)
+
+    application.setDataValue('files', files)
+
+    return application
   }
 
   async create(
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    // console.log('virkar að fara hingad eða? ', application)
     const applModel = await this.applicationModel.create(application)
 
     //Create fileEvent
@@ -47,7 +52,6 @@ export class ApplicationService {
       })
     }
 
-    // this.logger.debug('Creating a new case')
     return applModel
   }
 

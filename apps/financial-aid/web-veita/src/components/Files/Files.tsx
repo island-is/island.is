@@ -12,10 +12,11 @@ import { useRouter } from 'next/router'
 import * as styles from './Files.treat'
 import cn from 'classnames'
 import { calcDifferenceInDate, getFileType } from '../../utils/formHelper'
+import { ApplicationFile } from '@island.is/financial-aid/shared'
 
 interface Props {
   heading?: string
-  filesArr?: [string]
+  filesArr: ApplicationFile[]
 }
 
 const Files: React.FC<Props> = ({ heading, filesArr }) => {
@@ -31,24 +32,26 @@ const Files: React.FC<Props> = ({ heading, filesArr }) => {
       {filesArr && (
         <>
           {filesArr.map((item) => {
+            let sizeInKilo = Math.floor(item.size / 1000)
+
             return (
               <a
-                href={item}
+                href={item.name}
                 target="_blank"
                 className={styles.filesLink}
-                // download
+                download
               >
                 <div className={styles.container}>
                   <div className={styles.type}>
                     <Text color="dark300" fontWeight="semiBold" variant="small">
-                      {getFileType(item)}
+                      {getFileType(item.name)}
                     </Text>
                   </div>
                   <div className={styles.name}>
-                    <Text variant="small">{item}</Text>
+                    <Text variant="small">{item.name}</Text>
                   </div>
-                  <Text variant="small">Skjal • 184 KB</Text>
-                  <Text variant="small">45 mínútur</Text>
+                  <Text variant="small">{`Skjal • ${sizeInKilo} KB`}</Text>
+                  <Text variant="small"> {`${item.created}`}</Text>
                 </div>
               </a>
             )

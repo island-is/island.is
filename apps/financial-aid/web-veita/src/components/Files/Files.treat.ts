@@ -32,4 +32,5 @@ export const type = style({
 
 export const name = style({
   gridColumn: 'span 2',
+  overflow: 'hidden',
 })

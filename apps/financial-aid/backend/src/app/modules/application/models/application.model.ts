@@ -14,6 +14,7 @@ import {
   Employment,
   ApplicationState,
 } from '@island.is/financial-aid/shared'
+import { ApplicationFileModel } from '../../file/models'
 
 @Table({
   tableName: 'applications',
@@ -165,4 +166,7 @@ export class ApplicationModel extends Model<ApplicationModel> {
   })
   @ApiProperty({ enum: ApplicationState })
   state: ApplicationState
+
+  @ApiProperty({ type: [ApplicationFileModel] })
+  files: ApplicationFileModel[]
 }

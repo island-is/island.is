@@ -21,6 +21,12 @@ export const GetApplicantyQuery = gql`
       interview
       employmentCustom
       homeCircumstancesCustom
+      files {
+        applicationId
+        name
+        size
+        created
+      }
     }
   }
 `
