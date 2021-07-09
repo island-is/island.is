@@ -469,4 +469,23 @@ export const m = defineMessages({
     description:
       'The payment has been confirmed, choose "Continue" to finish the application.',
   },
+  chooseDistrictCommisioner: {
+    id: 'dl.application.chooseDistrictCommisioner',
+    defaultMessage:
+      'Veldu það embætti sýslumanns þar þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
+    description:
+      'Choose the district juristiction where you will return the temporary driving license and recieve permanent driving license.',
+  },
+  confirmationStatusOfEligability: {
+    id: 'dl.application.confirmationStatusOfEligability',
+    defaultMessage:
+      'Staðfesting akstursmats, punktastaða, sviptingar, ökuréttindi og almennar upplýsingar um skilríki',
+    description:
+      'Confirmation driving assessment, penalties, license loss, driving license and general information about identification',
+  },
+  infoFromLicenseRegistry: {
+    id: 'dl.application.infoFromLicenseRegistry',
+    defaultMessage: 'Upplýsingar úr ökuskírteinaskrá',
+    description: 'Information from driving license registry',
+  },
 })
