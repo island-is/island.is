@@ -4,11 +4,18 @@ import { ISODate, ISODateTime, RegName, RegQueryName } from './types'
 
 // ---------------------------------------------------------------------------
 
+/** Simple string interpolation helper that returns an Array.
+ *
+ * This allows interpolated values to be React vdom nodes.
+ *
+ * Replaces all `${key}` tokens in the input `textTemplate` with the corresponding keyed `values`
+ *
+ */
 export const interpolateArray = (
-  text: string,
-  values: Record<string, ReactNode>,
+  textTemplate: string,
+  values: Record<string, ReactNode | string | number>,
 ): Array<string | ReactNode> =>
-  text
+  textTemplate
     .replace(/\$\{([a-z0-9_$]+)\}/gi, '|||$1|||')
     .split('|||')
     .map((segment, i) =>
@@ -19,11 +26,15 @@ export const interpolateArray = (
         : '${' + segment + '}',
     )
 
+/** Simple string interpolation helper.
+ *
+ * Replaces all `${key}` tokens in the input `textTemplate` with the corresponding keyed `values`
+ */
 export const interpolate = (
-  text: string,
+  textTemplate: string,
   values: Record<string, string | number>,
 ): string =>
-  text.replace(/\$\{([a-z0-9_$]+)\}/gi, (marker, name) =>
+  textTemplate.replace(/\$\{([a-z0-9_$]+)\}/gi, (marker, name) =>
     values[name] != null ? values[name] + '' : marker,
   )
 
