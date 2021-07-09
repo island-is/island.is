@@ -1,9 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { GET_OPEN_DATA_PAGE_QUERY } from '../queries'
+import { GET_OPEN_DATA_PAGE_QUERY, GET_CATEGORIES_QUERY } from '../queries'
 import {
   GetOpenDataPageQuery,
   QueryGetOpenDataPageArgs,
+  GetGroupedMenuQuery,
+  QueryGetGroupedMenuArgs,
+  GetArticleCategoriesQuery,
+  QueryGetArticleCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GridContainer,
@@ -31,12 +35,18 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 import { Locale } from '@island.is/shared/types'
 import Head from 'next/head'
+import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
+import {
+  formatMegaMenuCategoryLinks,
+  formatMegaMenuLinks,
+} from '@island.is/web/utils/processMenuData'
 
 interface OpenDataProps {
   page: GetOpenDataPageQuery['getOpenDataPage']
+  megaMenuData
 }
 
-const OpenDataPage: Screen<OpenDataProps> = ({ page }) => {
+const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
   const { linkResolver } = useLinkResolver()
   const {
     pageTitle,
@@ -53,158 +63,6 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page }) => {
     externalLinkSectionImage,
   } = page
 
-  const megaMenuData = {
-    asideTopLinks: [
-      {
-        text: 'Stafrænt Ísland',
-        href: 'https://island.is/s/stafraent-island',
-        sub: [],
-      },
-      {
-        text: 'Þjónusta Ísland.is',
-        href: 'https://island.is/s/stafraent-island/thjonustur',
-        sub: [],
-      },
-      {
-        text: 'Opinberir aðilar',
-        href: 'https://island.is/stofnanir',
-        sub: [],
-      },
-      {
-        text: 'Þróun',
-        href: 'https://island.is/stofnanir/stafraent-island/throun',
-        sub: [
-          {
-            text: 'Vefþjónustur ',
-            href: 'https://island.is/s/stafraent-island/vefthjonustur',
-            sub: null,
-          },
-          {
-            text: 'Þróunarhandbók',
-            href: 'https://island.is/s/stafraent-island/throunarhandbok',
-            sub: null,
-          },
-          {
-            text: 'Ísland UI',
-            href: 'https://ui.devland.is/',
-            sub: null,
-          },
-          {
-            text: 'Hönnunarkerfi',
-            href: 'https://www.figma.com/@islandis',
-            sub: null,
-          },
-        ],
-      },
-    ],
-    asideBottomTitle: 'Aðrir opinberir vefir',
-    asideBottomLinks: [
-      {
-        text: 'Opinber nýsköpun',
-        href: 'https://opinbernyskopun.island.is/',
-        sub: [],
-      },
-      {
-        text: 'Samráðsgátt',
-        href: 'https://samradsgatt.island.is',
-        sub: [],
-      },
-      {
-        text: 'Mannanöfn',
-        href: 'https://vefur.island.is/mannanofn/',
-        sub: [],
-      },
-      {
-        text: 'Undirskriftarlistar',
-        href: 'https://island.is/undirskriftalistar-stofna-nyjan-lista',
-        sub: [],
-      },
-      {
-        text: 'Opnir reikningar ríkisins',
-        href: 'http://www.opnirreikningar.is/',
-        sub: [],
-      },
-      {
-        text: 'Tekjusagan',
-        href: 'https://tekjusagan.is/',
-        sub: [],
-      },
-    ],
-    mainLinks: [
-      {
-        text: 'Akstur og bifreiðar',
-        href: '/flokkur/akstur-og-bifreidar',
-      },
-      {
-        text: 'Atvinnurekstur og sjálfstætt starfandi',
-        href: '/flokkur/atvinnurekstur-og-sjalfstaett-starfandi',
-      },
-      {
-        text: 'Dómstólar og réttarfar',
-        href: '/flokkur/domstolar-og-rettarfar',
-      },
-      {
-        text: 'Fjármál og skattar',
-        href: '/flokkur/fjarmal-og-skattar',
-      },
-      {
-        text: 'Fjölskylda og velferð',
-        href: '/flokkur/fjolskylda-og-velferd',
-      },
-      {
-        text: 'Heilbrigðismál',
-        href: '/flokkur/heilbrigdismal',
-      },
-      {
-        text: 'Húsnæðismál',
-        href: '/flokkur/husnaedismal',
-      },
-      {
-        text: 'Iðnaður',
-        href: '/flokkur/idnadur',
-      },
-      {
-        text: 'Innflytjendamál',
-        href: '/flokkur/innflytjendamal',
-      },
-      {
-        text: 'Launþegi, réttindi og lífeyrir',
-        href: '/flokkur/launthegi-rettindi-og-lifeyrir',
-      },
-      {
-        text: 'Málefni fatlaðs fólks',
-        href: '/flokkur/malefni-fatlads-folks',
-      },
-      {
-        text: 'Menntun',
-        href: '/flokkur/menntun',
-      },
-      {
-        text: 'Neytendamál',
-        href: '/flokkur/neytendamal',
-      },
-      {
-        text: 'Samfélag og réttindi',
-        href: '/flokkur/samfelag-og-rettindi',
-      },
-      {
-        text: 'Samgöngur',
-        href: '/flokkur/samgongur',
-      },
-      {
-        text: 'Umhverfismál',
-        href: '/flokkur/umhverfismal',
-      },
-      {
-        text: 'Vegabréf, ferðalög og búseta erlendis',
-        href: '/flokkur/vegabref-ferdalog-og-buseta-erlendis',
-      },
-      {
-        text: 'Þjónusta Ísland.is',
-        href: '/flokkur/thjonusta-island-is',
-      },
-    ],
-  }
   return (
     <>
       <Head>
@@ -312,6 +170,8 @@ OpenDataPage.getInitialProps = async ({ apolloClient, locale }) => {
     {
       data: { getOpenDataPage: page },
     },
+    megaMenuData,
+    categories,
   ] = await Promise.all([
     apolloClient.query<GetOpenDataPageQuery, QueryGetOpenDataPageArgs>({
       query: GET_OPEN_DATA_PAGE_QUERY,
@@ -321,10 +181,42 @@ OpenDataPage.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
+    apolloClient
+      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+        query: GET_GROUPED_MENU_QUERY,
+        variables: {
+          input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang: locale },
+        },
+      })
+      .then((res) => res.data.getGroupedMenu),
+    apolloClient
+      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
+        query: GET_CATEGORIES_QUERY,
+        variables: {
+          input: {
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => res.data.getArticleCategories),
   ])
+
+  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   return {
     page,
+    megaMenuData: {
+      asideTopLinks: formatMegaMenuLinks(
+        locale as Locale,
+        asideTopLinksData.menuLinks,
+      ),
+      asideBottomTitle: asideBottomLinksData.title,
+      asideBottomLinks: formatMegaMenuLinks(
+        locale as Locale,
+        asideBottomLinksData.menuLinks,
+      ),
+      mainLinks: formatMegaMenuCategoryLinks(locale as Locale, categories),
+    },
   }
 }
 
