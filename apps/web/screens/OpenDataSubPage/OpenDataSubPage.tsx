@@ -27,7 +27,7 @@ const OpenDataSubPage: Screen = () => {
     <Box id="main-content" style={{ overflow: 'hidden' }}>
       <GridContainer>
         <GridRow>
-          <GridColumn span="3/12">
+          <GridColumn span={["12/12", "12/12", "3/12"]}>
             <Box display={'flex'} justifyContent="flexStart" marginBottom={3}>
               <Link {...linkResolver('opendatapage')} skipTab>
                 <Button
@@ -78,7 +78,7 @@ const OpenDataSubPage: Screen = () => {
               </Box>
             </Link>
           </GridColumn>
-          <GridColumn span="8/12" offset="1/12">
+          <GridColumn span={["12/12", "12/12", "8/12"]} offset={["0", "0", "1/12"]}>
             <Box marginBottom={3}>
               <Breadcrumbs
                 items={[
@@ -123,22 +123,24 @@ const OpenDataSubPage: Screen = () => {
               </Inline>
               <Text variant="h3">Tæknisjóður</Text>
             </Box>
-            <Box marginBottom={3}>
-              <GridRow>
-                <GridColumn span="6/12">
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <Box marginBottom={3}>
                   <StatisticsCard
                     title="Samningar/umsóknir 2020-21"
                     description="127/745"
                   />
-                </GridColumn>
-                <GridColumn span="6/12">
+                </Box>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <Box marginBottom={3}>
                   <StatisticsCard
                     title="Heildarupphæð styrkja 2020-21"
                     description="19.536 m.kr"
                   />
-                </GridColumn>
-              </GridRow>
-            </Box>
+                </Box>
+              </GridColumn>
+            </GridRow>
             <GridRow>
               <GridColumn span={'12/12'}>
                 {data.map((item, index) => (

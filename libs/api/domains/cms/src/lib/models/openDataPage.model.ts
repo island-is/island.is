@@ -19,7 +19,7 @@ export class OpenDataPage {
   @Field()
   pageDescription!: string
 
-  @Field()
+  @Field(() => Graph)
   pageHeaderGraph?: Graph | null
 
   @Field()
@@ -41,10 +41,10 @@ export class OpenDataPage {
   externalLinkCardSelection?: LinkCardSlice | null
 
   @Field()
-  externalLinkSectionTitle?: string | undefined
+  externalLinkSectionTitle?: string
 
   @Field()
-  externalLinkSectionDescription?: string | undefined
+  externalLinkSectionDescription?: string
 
   @Field(() => Image, { nullable: true })
   externalLinkSectionImage?: Image | null

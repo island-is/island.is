@@ -8,10 +8,10 @@ export class GraphCard {
   graphTitle!: string
 
   @Field()
-  graphDescription?: string | undefined
+  graphDescription?: string
 
-  @Field()
-  organization?: string | undefined
+  @Field({ nullable: true })
+  organization?: string
 
   @Field(() => Graph)
   graph?: Graph | null
