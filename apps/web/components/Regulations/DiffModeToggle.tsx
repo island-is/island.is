@@ -1,0 +1,89 @@
+import * as s from './DiffModeToggle.treat'
+
+import { Link, ToggleSwitchLink } from '@island.is/island-ui/core'
+import React from 'react'
+import { RegulationPageTexts } from './RegulationTexts.types'
+import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+import { useRegulationLinkResolver } from './regulationUtils'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
+import { ISODate } from '@hugsmidjan/regulations-editor/types'
+
+export type DiffModeToggleProps = {
+  regulation: RegulationMaybeDiff
+  urlDate?: ISODate
+  texts: RegulationPageTexts
+}
+
+export const DiffModeToggle = (props: DiffModeToggleProps) => {
+  const txt = useNamespace(props.texts)
+  const { linkToRegulation } = useRegulationLinkResolver()
+
+  const { regulation } = props
+  const { timelineDate, effectiveDate, lastAmendDate, showingDiff } = regulation
+
+  const isDiffable =
+    regulation.history.length > 0 && timelineDate !== effectiveDate
+
+  if (!isDiffable) {
+    return null
+  }
+
+  const diffView = !!showingDiff
+  const diffIsAgainstOriginal =
+    !!showingDiff && showingDiff.from === regulation.history[0].date
+
+  return (
+    <div className={s.wrapper}>
+      <ToggleSwitchLink
+        className={s.toggler}
+        checked={diffView}
+        href={linkToRegulation(regulation.name, {
+          diff: !diffView,
+          ...(props.urlDate
+            ? { on: props.urlDate }
+            : timelineDate
+            ? { d: timelineDate }
+            : !diffView
+            ? { d: lastAmendDate }
+            : undefined),
+        })}
+        scroll={false}
+        linkText={diffView ? txt('hideDiff') : txt('showDiff')}
+        label={txt('showDiff')}
+      />
+      {diffView && (
+        <div className={s.totalToggler}>
+          {diffIsAgainstOriginal ? (
+            <Link
+              href={linkToRegulation(regulation.name, {
+                diff: true,
+                ...(props.urlDate
+                  ? { on: props.urlDate }
+                  : { d: timelineDate || lastAmendDate }),
+              })}
+              color="blue400"
+              underline="small"
+            >
+              {txt('showDiff_fromLast')}
+            </Link>
+          ) : (
+            <Link
+              href={linkToRegulation(regulation.name, {
+                diff: true,
+                ...(props.urlDate
+                  ? { on: props.urlDate, earlierDate: 'original' }
+                  : timelineDate
+                  ? { d: timelineDate, earlierDate: 'original' }
+                  : undefined),
+              })}
+              color="blue400"
+              underline="small"
+            >
+              {txt('showDiff_fromOriginal')}
+            </Link>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
