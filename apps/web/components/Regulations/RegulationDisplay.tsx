@@ -48,22 +48,11 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
   const { regulation, texts } = props
 
   const txt = useNamespace(texts)
-  const { linkToRegulation, linkResolver } = useRegulationLinkResolver()
+  const { linkResolver } = useRegulationLinkResolver()
 
   const name = prettyName(regulation.name)
 
-  const {
-    timelineDate,
-    effectiveDate,
-    lastAmendDate,
-    repealedDate,
-    showingDiff,
-  } = regulation
-
-  const diffView = !!showingDiff
-
-  const isDiffable =
-    regulation.history.length > 0 && timelineDate !== effectiveDate
+  const { timelineDate, lastAmendDate, repealedDate } = regulation
 
   const isRepealed = !!repealedDate
   const isCurrent =
@@ -80,9 +69,6 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
     : !isCurrent
     ? s.oudatedWarning + (isUpcoming ? ' ' + s.upcomingWarning : '')
     : undefined
-
-  const diffIsAgainstOriginal =
-    !!showingDiff && showingDiff.from === regulation.history[0].date
 
   const key = getKey(regulation)
 
