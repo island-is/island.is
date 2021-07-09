@@ -7,7 +7,12 @@ import {
   AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { CustomField, FieldBaseProps } from '@island.is/application/core'
+import {
+  CustomField,
+  FieldBaseProps,
+  formatText,
+} from '@island.is/application/core'
+import { m } from '../lib/messages'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -23,26 +28,41 @@ function Congratulations({
   application,
 }: PropTypes): JSX.Element {
   const name = application.externalData.nationalRegistry?.data as name
+  const { formatMessage } = useLocale()
+
   return (
     <Box paddingTop={2}>
       <Box marginTop={2}>
         <ContentBlock>
           <AlertMessage
             type="success"
-            title={`Til hamingju ${name.fullName}`}
-            message={`Umsókn þín um fullnaðarskírteini tókst.`}
+            title={`${formatText(
+              m.congratulationsTitle,
+              application,
+              formatMessage,
+            )} ${name.fullName}`}
+            message={formatText(
+              m.congratulationsTitleSuccess,
+              application,
+              formatMessage,
+            )}
           />
         </ContentBlock>
 
         <Box marginTop={6}>
           <Text>
-            Ef beðið var um viðbótargögn (nýja ljósmynd eða læknisvottorð) þarf
-            að skila þeim til Sýslumanns svo að fullnaðarskírteini fari í
-            pöntun.
+            {formatText(
+              m.paymentSuccessExtraDocuments,
+              application,
+              formatMessage,
+            )}
           </Text>
           <Text marginTop={4}>
-            Ef svo var ekki þá verður fullnaðarskírteinið tilbúið á
-            afhendingarstað eftir 3 til 4 vikur.
+            {formatText(
+              m.paymentSuccessIfNotReadyFewWeeks,
+              application,
+              formatMessage,
+            )}
           </Text>
         </Box>
 

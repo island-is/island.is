@@ -1,8 +1,13 @@
 import React, { FC } from 'react'
 import { useQuery, gql } from '@apollo/client'
-import { CustomField, FieldBaseProps } from '@island.is/application/core'
+import {
+  CustomField,
+  FieldBaseProps,
+  formatText,
+} from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 const QUERY = gql`
   query status($applicationId: String!) {
@@ -25,6 +30,7 @@ export const ExamplePaymentPendingField: FC<Props> = ({
   application,
 }) => {
   const applicationId = application.id
+  const { formatMessage } = useLocale()
   const { data, error: queryError, loading } = useQuery(QUERY, {
     variables: {
       applicationId,
@@ -46,7 +52,13 @@ export const ExamplePaymentPendingField: FC<Props> = ({
 
       {!paymentStatus.fulfilled && (
         <Box height="full">
-          <Text variant="h3">Augnablik meðan beðið er eftir staðfestingu</Text>
+          <Text variant="h3">
+            {formatText(
+              m.paymentPendingDescription,
+              application,
+              formatMessage,
+            )}
+          </Text>
 
           <Box
             backgroundPattern="dotted"
@@ -61,8 +73,7 @@ export const ExamplePaymentPendingField: FC<Props> = ({
       {paymentStatus.fulfilled && (
         <Box height="full">
           <Text variant="h3">
-            Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára
-            umsóknina
+            {formatText(m.paymentApprovedContinue, application, formatMessage)}
           </Text>
           <Box
             backgroundPattern="dotted"
