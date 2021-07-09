@@ -1,6 +1,8 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -70,5 +72,19 @@ export class DraftRegulationCancelController {
     }
 
     return updatedDraftRegulationCancel
+  }
+
+  @Scopes('@island.is/regulations:create')
+  @Delete('draft_regulation_cancel/:id')
+  @ApiCreatedResponse()
+  async delete(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<number> {
+    if (!id) {
+      throw new BadRequestException('id must be provided')
+    }
+
+    return await this.draftRegulationCancelService.delete(id)
   }
 }

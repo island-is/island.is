@@ -6,8 +6,10 @@ import {
   Param,
   Post,
   Put,
+  Delete,
   Query,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common'
 import {
   ApiTags,
@@ -80,6 +82,20 @@ export class DraftRegulationController {
     }
 
     return updatedDraftRegulation
+  }
+
+  @Scopes('@island.is/regulations:create')
+  @Delete('draft_regulation/:id')
+  @ApiCreatedResponse()
+  async delete(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<number> {
+    if (!id) {
+      throw new BadRequestException('id must be provided')
+    }
+
+    return await this.draftRegulationService.delete(id)
   }
 
   @Scopes('@island.is/regulations:create')

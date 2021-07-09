@@ -1,6 +1,8 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -50,7 +52,7 @@ export class DraftRegulationChangeController {
   }
 
   @Scopes('@island.is/regulations:create')
-  @Put('draft_regulation_cancel/:id')
+  @Put('draft_regulation_change/:id')
   @ApiOkResponse({
     type: DraftRegulationChange,
     description: 'Updates an existing user',
@@ -70,5 +72,19 @@ export class DraftRegulationChangeController {
     }
 
     return updatedDraftRegulationChange
+  }
+
+  @Scopes('@island.is/regulations:create')
+  @Delete('draft_regulation_change/:id')
+  @ApiCreatedResponse()
+  async delete(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<number> {
+    if (!id) {
+      throw new BadRequestException('id must be provided')
+    }
+
+    return await this.draftRegulationChangeService.delete(id)
   }
 }

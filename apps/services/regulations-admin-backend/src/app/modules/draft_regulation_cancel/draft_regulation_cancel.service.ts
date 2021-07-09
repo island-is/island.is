@@ -44,4 +44,14 @@ export class DraftRegulationCancelService {
 
     return { numberOfAffectedRows, updatedDraftRegulationCancel }
   }
+
+  async delete(id: string): Promise<number> {
+    this.logger.debug(`Deleting DraftRegulationCancel ${id}`)
+
+    return this.draftRegulationCancelModel.destroy({
+      where: {
+        id,
+      },
+    })
+  }
 }
