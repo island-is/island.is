@@ -40,12 +40,9 @@ const main = async () => {
 
     try {
       await exec(
-        `nx run-many --target=${target} --all --with-deps --parallel --maxParallel=6 $NX_OPTIONS`,
-        {
-          env: skipCache
-            ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
-            : process.env,
-        },
+        `nx run-many --target=${target} --all --with-deps --parallel --maxParallel=6 ${
+          skipCache ? '--skip-nx-cache' : ''
+        }`,
       )
     } catch (err) {
       console.error(`Error running command: ${err.message}`)
