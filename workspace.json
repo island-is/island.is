@@ -2455,9 +2455,9 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "nx run services-endorsements-api:schemas/external-openapi-generator",
-              "nx run services-endorsements-api:schemas/build-openapi",
-              "nx run application-templates-party-application:schemas/openapi-generator"
+              "nx run services-endorsements-api:schemas/external-openapi-generator $NX_OPTIONS",
+              "nx run services-endorsements-api:schemas/build-openapi $NX_OPTIONS",
+              "nx run application-templates-party-application:schemas/openapi-generator $NX_OPTIONS"
             ],
             "parallel": false
           }
@@ -2514,10 +2514,10 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "nx run services-endorsements-api:schemas/external-openapi-generator",
-              "nx run services-endorsements-api:schemas/build-openapi",
-              "nx run services-party-letter-registry-api:schemas/build-openapi",
-              "nx run application-templates-party-letter:schemas/openapi-generator"
+              "nx run services-endorsements-api:schemas/external-openapi-generator $NX_OPTIONS",
+              "nx run services-endorsements-api:schemas/build-openapi $NX_OPTIONS",
+              "nx run services-party-letter-registry-api:schemas/build-openapi $NX_OPTIONS",
+              "nx run application-templates-party-letter:schemas/openapi-generator $NX_OPTIONS"
             ],
             "parallel": false
           }
@@ -7225,8 +7225,8 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "nx run services-temporary-voter-registry-api:schemas/build-openapi",
-              "nx run services-endorsements-api:schemas/openapi-generator"
+              "nx run services-temporary-voter-registry-api:schemas/build-openapi $NX_OPTIONS",
+              "nx run services-endorsements-api:schemas/openapi-generator $NX_OPTIONS"
             ],
             "parallel": false
           }
