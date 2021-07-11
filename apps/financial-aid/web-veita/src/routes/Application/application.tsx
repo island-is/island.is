@@ -100,6 +100,7 @@ const ApplicationProfile = () => {
     if (data?.application) {
       setApplication(data.application)
       // //WIP
+      // TODO: should be a function in a navigation helper or something like that.
       setPrevUrl(
         navigationItems.find((i) =>
           i.applicationState.includes(data.application.state),

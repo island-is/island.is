@@ -50,10 +50,14 @@ const ApplicationsTable: React.FC<PageProps> = ({
       >
         <thead>
           <tr>
+            {/* TODO: Why is there a if on headers? */}
             {headers && (
               <>
+              {/* TODO: Clean this up, put some of this into components */}
                 {headers.map((item, index) => {
                   if (item.filterBy) {
+                    // TODO: You dont need to return, it returns by default
+                    // Same goes for all the other returns
                     return (
                       <th key={'headers-' + index}>
                         <button
@@ -111,12 +115,14 @@ const ApplicationsTable: React.FC<PageProps> = ({
         </thead>
 
         <tbody className={styles.tableBody}>
+          {/* TODO: this is also too complex */}
           {applications.map((item: TableBodyProps, index: number) => {
             return (
               <Link href={'application/' + item.link} key={'key-' + index}>
                 <tr className={styles.link}>
                   {item?.listElement && (
                     <>
+                    {/* TODO: dont use both index and i, i is short for index :) */}
                       {item.listElement.map((el: ReactNode, i: number) => {
                         return (
                           <td

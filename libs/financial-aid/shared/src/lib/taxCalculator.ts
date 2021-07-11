@@ -1,6 +1,13 @@
 // import { AidtaxInfoListItem } from './veitaFinancialAidDefinitions'
 
-import _taxInfo from './taxInfo.json'
+// import _taxInfo from './taxInfo.json'
+
+export const _taxInfo = {
+  '2021': {
+    taxPercentage: 31.45,
+    personalTaxAllowance: 50792,
+  },
+}
 
 interface TaxInfoYear {
   [id: string]: TaxInfo

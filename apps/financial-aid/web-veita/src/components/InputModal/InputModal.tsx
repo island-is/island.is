@@ -7,7 +7,7 @@ import {
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import { ApplicationState } from '@island.is/financial-aid/shared'
-
+// TODO: No any, por favor.
 interface Props {
   onShowInputChange: (e: any) => void
   type: ApplicationState | undefined

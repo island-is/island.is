@@ -70,7 +70,7 @@ export const ApplicationsOverview = () => {
             {currentNavigationItem.label}
           </Text>
         </Box>
-
+        {/* TODO: sorting & filtering should be done out side of the rendering. */}
         {data?.applications && (
           <ApplicationsTable
             className={`contentUp delay-50`}
@@ -91,6 +91,7 @@ export const ApplicationsOverview = () => {
                 currentNavigationItem?.applicationState.includes(item?.state),
               )
               .map((item) => ({
+                // TODO: Its kinda weird to give it all the element in props but now children.
                 listElement: [
                   <Box display="flex" alignItems="center">
                     <GeneratedProfile size={32} nationalId={item.nationalId} />
@@ -106,6 +107,7 @@ export const ApplicationsOverview = () => {
 
                   <Text> {calcDifferenceInDate(item.modified)}</Text>,
                   <Text>
+                    {/* TODO: Cant we get the Iclandic name from date-fns? */}
                     {translateMonth(
                       parseInt(format(new Date(item.created), 'M')),
                     )}
@@ -123,6 +125,7 @@ export const ApplicationsOverview = () => {
     <div>
       <Box className={`contentUp delay-25`}>
         <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={4}>
+          {/* TODO: "á þessari slóð?" */}
           Ekkert fundið á þessari slóð
         </Text>
       </Box>

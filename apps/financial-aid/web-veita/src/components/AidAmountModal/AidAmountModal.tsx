@@ -85,6 +85,7 @@ const AidAmountModal: React.FC<Props> = ({
           </Text>
 
           {calculation.map((item) => {
+            // TODO: Dont need the return
             return (
               <Box
                 display="flex"

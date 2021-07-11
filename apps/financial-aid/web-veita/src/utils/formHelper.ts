@@ -15,6 +15,8 @@ export const calcDifferenceInDate = (dateCreated: string | undefined) => {
     const days = differenceInDays(new Date(), new Date(dateCreated))
     const weeks = differenceInWeeks(new Date(), new Date(dateCreated))
 
+    // TODO: add "just now" when under a minute, silly to see 0 minutes.
+
     if (minutes < 60) {
       return `${minutes} min`
     }
@@ -64,11 +66,12 @@ export const calcAge = (ssn: string) => {
 }
 
 export const getFileType = (fileName: string) => {
-  // Todo: hande no file type? Handle when files is ready?
+  // TODO: hande no file type? Handle when files is ready?
 
   return fileName.substring(fileName.lastIndexOf('.') + 1)
 }
 
+// TODO: This is nota a "form function" shoule be somewhere else.
 export const navigationItems = [
   {
     label: 'Ný mál',
