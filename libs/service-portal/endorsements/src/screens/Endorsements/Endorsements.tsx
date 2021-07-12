@@ -219,7 +219,7 @@ const Endorsements = () => {
                           input: { listId: endorsement.endorsementList?.id },
                         },
                       }),
-                    disabled: !!endorsement.endorsementList?.closedDate,
+                    disabled: !endorsement.endorsementList?.closedDate
                   }}
                 />
               )
