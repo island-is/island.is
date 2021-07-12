@@ -101,9 +101,6 @@ export class AuthController {
     const samlEntryPoint =
       service === 'osk' ? samlEntryPointOsk : samlEntryPointVeita
 
-    console.log(service)
-    console.log(samlEntryPoint)
-
     return res
       .cookie(
         REDIRECT_COOKIE.name,
