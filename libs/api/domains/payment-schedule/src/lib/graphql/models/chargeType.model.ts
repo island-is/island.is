@@ -8,7 +8,7 @@ registerEnumType(ChargeType, {
 
 @ObjectType()
 export class PaymentScheduleCharge {
-  @Field((_) => ChargeType)
+  @Field(() => ChargeType)
   id!: ChargeType
 
   @Field(() => String)

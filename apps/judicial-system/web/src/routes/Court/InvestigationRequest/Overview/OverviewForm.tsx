@@ -42,7 +42,7 @@ const OverviewForm: React.FC<Props> = (props) => {
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   const { user } = useContext(UserContext)
-  const { createCourtCase } = useCase()
+  const { createCourtCase, isCreatingCourtCase } = useCase()
   const { formatMessage } = useIntl()
 
   const validations: FormSettings = {
@@ -82,6 +82,7 @@ const OverviewForm: React.FC<Props> = (props) => {
             createCourtCaseSuccess={createCourtCaseSuccess}
             setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
             handleCreateCourtCase={handleCreateCourtCase}
+            isCreatingCourtCase={isCreatingCourtCase}
           />
         </Box>
         <Box component="section" marginBottom={5}>

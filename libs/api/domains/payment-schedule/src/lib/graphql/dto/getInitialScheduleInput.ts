@@ -3,12 +3,12 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class GetInitialScheduleInput {
-  @Field((_) => Number)
+  @Field(() => Number)
   totalAmount!: number
 
-  @Field((_) => Number)
+  @Field(() => Number)
   disposableIncome!: number
 
-  @Field((_) => ScheduleType)
+  @Field(() => ScheduleType)
   type!: ScheduleType
 }

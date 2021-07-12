@@ -13,7 +13,7 @@ export class PaymentScheduleDebts {
   @Field(() => ID)
   nationalId!: string
 
-  @Field((_) => ScheduleType)
+  @Field(() => ScheduleType)
   type!: ScheduleType
 
   @Field(() => String)
