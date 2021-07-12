@@ -6,7 +6,8 @@ import { DraftRegulation, DraftRegulations } from './regulationsAdmin.types'
 export const REGULATIONS_ADMIN_OPTIONS = 'REGULATIONS_ADMIN_OPTIONS'
 
 export interface RegulationsAdminOptions {
-  url?: string
+  baseApiUrl?: string
+  regulationsApiUrl: string
   ttl?: number
 }
 
@@ -16,8 +17,7 @@ export class RegulationsAdminApi extends RESTDataSource {
     private readonly options: RegulationsAdminOptions,
   ) {
     super()
-    this.baseURL = `${this.options.url}`
-    // this.baseURL = `http://localhost:3333/api`
+    this.baseURL = `${this.options.baseApiUrl}`
     this.initialize({} as DataSourceConfig<any>)
   }
 
@@ -25,15 +25,16 @@ export class RegulationsAdminApi extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
   }
 
-  async getDraftRegulations(authorization: string): Promise<object | null> {
-    const response = await this.get<object | null>(
-      '/draft_regulations/',
+  async getDraftRegulations(authorization: string): Promise<DraftRegulations> {
+    const response = await this.get<DraftRegulations>(
+      '/draft_regulations',
       {},
       {
         cacheOptions: { ttl: this.options.ttl },
         headers: { authorization },
       },
     )
+    // TODO:  get authors
     return response
   }
 
@@ -49,15 +50,17 @@ export class RegulationsAdminApi extends RESTDataSource {
         cacheOptions: { ttl: this.options.ttl },
         headers: { authorization },
       },
-    ) // get ministry, get lawchapter, get author
+    )
+
+    // TODO:  get ministry, get lawchapter, get author
     return response
   }
 
   async getShippedRegulation(
     regulationId: string,
     authorization: string,
-  ): Promise<DraftRegulation | null> {
-    const response = await this.get<DraftRegulation | null>(
+  ): Promise<DraftRegulations | null> {
+    const response = await this.get<DraftRegulations | null>(
       // `/shipped_regulation/${regulationId}`,
       `/shipped_regulation/a1fd62db-18a6-4741-88eb-a7b7a7e05833`,
       {},
@@ -66,6 +69,7 @@ export class RegulationsAdminApi extends RESTDataSource {
         headers: { authorization },
       },
     )
+    // TODO:  get authors
     return response
   }
 }

@@ -197,7 +197,8 @@ const autoSchemaFile = environment.production
       url: environment.regulationsDomain.url,
     }),
     RegulationsAdminModule.register({
-      url: environment.regulationsAdmin.url,
+      baseApiUrl: environment.regulationsAdmin.baseApiUrl,
+      regulationsApiUrl: environment.regulationsAdmin.regulationsApiUrl,
     }),
     FinanceModule.register({
       username: environment.fjarmalDomain.username,
