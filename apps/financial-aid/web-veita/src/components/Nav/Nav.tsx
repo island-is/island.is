@@ -14,6 +14,8 @@ import { ApplicationState } from '@island.is/financial-aid/shared'
 
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 
+import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
+
 const Nav: React.FC = () => {
   const router = useRouter()
 
@@ -41,7 +43,7 @@ const Nav: React.FC = () => {
       </header>
 
       <div>
-        {navigationItems.map((item: any, index: number) => {
+        {navigationItems.map((item: NavigationElement, index: number) => {
           return (
             <Link href={item.link} key={'NavigationLinks-' + index}>
               <a
@@ -61,7 +63,12 @@ const Nav: React.FC = () => {
                           return statistics[state]
                         }
                       })
-                      .reduce((a: number, b: number) => a + b, 0)}
+                      .reduce((a?: number, b?: number) => {
+                        if (a && b) {
+                          return a + b
+                        }
+                        return 0
+                      })}
                   </Text>
                 </Box>
               </a>

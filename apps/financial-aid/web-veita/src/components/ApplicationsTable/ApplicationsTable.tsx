@@ -10,23 +10,17 @@ import {
   TableBody,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { Application } from '@island.is/financial-aid/shared'
-
-interface sortByProps {
-  selected: 'modified' | 'state'
-  sorted: 'asc' | 'dsc'
-}
+import {
+  sortByProps,
+  TableHeadersProps,
+} from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
 interface PageProps {
   applications: Application[]
   headers: TableHeadersProps[]
   className?: string
-  setSortBy: (filter: any) => void
+  setSortBy(filter: string): void
   sortBy: sortByProps
-}
-
-interface TableHeadersProps {
-  filterBy?: string | undefined
-  title: string
 }
 
 const ApplicationsTable: React.FC<PageProps> = ({

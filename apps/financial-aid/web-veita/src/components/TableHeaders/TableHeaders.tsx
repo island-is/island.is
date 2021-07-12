@@ -4,22 +4,16 @@ import { Text, Icon, Box } from '@island.is/island-ui/core'
 import * as styles from './TableHeaders.treat'
 
 import cn from 'classnames'
+import {
+  sortByProps,
+  TableHeadersProps,
+} from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
 interface PageProps {
   header: TableHeadersProps
   index: number
-  setSortBy: React.Dispatch<React.SetStateAction<sortByProps>>
+  setSortBy(filter: string): void
   sortBy: sortByProps
-}
-
-interface sortByProps {
-  selected: 'modified' | 'state'
-  sorted: 'asc' | 'dsc'
-}
-
-interface TableHeadersProps {
-  filterBy?: string | undefined
-  title: string
 }
 
 const TableHeaders: React.FC<PageProps> = ({
@@ -33,7 +27,9 @@ const TableHeaders: React.FC<PageProps> = ({
       <th key={'headers-' + index}>
         <button
           onClick={() => {
-            setSortBy(header.filterBy)
+            if (header.filterBy != undefined) {
+              setSortBy(header.filterBy)
+            }
           }}
           className={cn({
             [`${styles.tablePadding}`]: true,

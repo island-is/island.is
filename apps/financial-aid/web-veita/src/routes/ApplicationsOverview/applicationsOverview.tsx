@@ -24,12 +24,12 @@ export interface NavigationElement {
   headers: TableHeadersProps[]
 }
 
-interface TableHeadersProps {
-  filterBy?: string | undefined
+export interface TableHeadersProps {
+  filterBy?: string
   title: string
 }
 
-interface sortByProps {
+export interface sortByProps {
   selected: 'modified' | 'state'
   sorted: 'asc' | 'dsc'
 }
@@ -88,7 +88,9 @@ export const ApplicationsOverview = () => {
             className={`contentUp delay-50`}
             headers={currentNavigationItem.headers}
             setSortBy={(filter) => {
-              setSortBy({ ...sortBy, selected: filter })
+              if (filter === 'modified' || filter === 'state') {
+                setSortBy({ ...sortBy, selected: filter })
+              }
             }}
             sortBy={sortBy}
             applications={applications}
