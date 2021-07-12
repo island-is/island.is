@@ -118,6 +118,7 @@ export interface User {
   nationalId: string
   name: string
   phoneNumber: string
+  service: 'osk' | 'veita'
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
