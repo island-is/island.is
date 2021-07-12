@@ -23,7 +23,7 @@ export const calculateAidFinalAmount = (
   usePersonalTaxAllowance: boolean,
   currentYear: string,
 ): number => {
-  var taxInfoYear: TaxInfoYear = _taxInfo
+  const taxInfoYear: TaxInfoYear = _taxInfo
   const taxInfo = taxInfoYear[currentYear]
 
   const taxPercentage = taxInfo.taxPercentage / 100
@@ -45,7 +45,7 @@ export const calulateTaxOfAmount = (
   amount: number,
   currentYear: string,
 ): number => {
-  var taxInfoYear: TaxInfoYear = _taxInfo
+  const taxInfoYear: TaxInfoYear = _taxInfo
   const taxInfo = taxInfoYear[currentYear]
 
   const taxPercentage = taxInfo.taxPercentage / 100
@@ -58,7 +58,7 @@ export const calulatePersonalTaxAllowanceUsed = (
   usePersonalTaxAllowance: boolean,
   currentYear: string,
 ): number => {
-  var taxInfoYear: TaxInfoYear = _taxInfo
+  const taxInfoYear: TaxInfoYear = _taxInfo
   const taxInfo = taxInfoYear[currentYear]
 
   const personalTaxAllowance = taxInfo.personalTaxAllowance
