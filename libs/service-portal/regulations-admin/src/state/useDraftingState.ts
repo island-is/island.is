@@ -1,25 +1,27 @@
 import { useQuery, gql } from '@apollo/client'
-import { HTMLText, PlainText, RegName } from '@island.is/regulations'
+import {
+  HTMLText,
+  LawChapterSlug,
+  MinistrySlug,
+  PlainText,
+} from '@island.is/regulations'
 import { Query } from '@island.is/api/schema'
 import { AuthContextType, useAuth } from '@island.is/auth/react'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Reducer, useEffect, useReducer } from 'react'
 import { produce, setAutoFreeze } from 'immer'
 import { useHistory, generatePath } from 'react-router-dom'
-import { DraftingStatus, RegulationType, Step } from '../types'
-import {
-  RegulationDraft,
-  DraftRegulationCancel,
-  DraftRegulationChange,
-} from '../types-api'
-import {
-  AuthorId,
-  LawChapterId,
-  MinistryId,
-  RegulationDraftId,
-} from '../types-database'
+import { Step } from '../types'
 import { mockDraftRegulations, useMockQuery, mockSave } from '../_mockData'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
+import {
+  DraftingStatus,
+  DraftRegulationCancel,
+  DraftRegulationChange,
+  RegulationDraft,
+  RegulationDraftId,
+} from '@island.is/regulations/admin'
+import { Kennitala, RegulationType } from '@island.is/regulations'
 
 const RegulationDraftQuery = gql`
   query draftRegulations($input: GetDraftRegulationInput!) {
@@ -100,15 +102,15 @@ export type RegDraftForm = BodyDraftFields & {
   idealPublishDate: DraftField<Date | undefined>
   signatureDate: DraftField<Date | undefined>
   effectiveDate: DraftField<Date | undefined>
-  lawChapters: DraftField<ReadonlyArray<LawChapterId>>
-  ministry: DraftField<MinistryId | undefined>
+  lawChapters: DraftField<ReadonlyArray<LawChapterSlug>>
+  ministry: DraftField<MinistrySlug | undefined>
   type: DraftField<RegulationType | undefined>
 
   impacts: ReadonlyArray<ChangeDraftFields | CancelDraftFields>
 
   readonly draftingStatus: DraftingStatus // non-editable except via saveStatus or propose actions
   draftingNotes: HtmlDraftField
-  authors: DraftField<ReadonlyArray<AuthorId>>
+  authors: DraftField<ReadonlyArray<Kennitala>>
 
   id: RegulationDraft['id']
 }
@@ -147,8 +149,8 @@ const makeDraftForm = (
     signatureDate: f(draft.signatureDate && new Date(draft.signatureDate)),
     effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
 
-    lawChapters: f(draft.lawChapters.map((chapter) => chapter.id)),
-    ministry: f(draft.ministry?.id),
+    lawChapters: f(draft.lawChapters.map((chapter) => chapter.slug)),
+    ministry: f(draft.ministry?.slug),
     type: f(draft.type),
 
     impacts: draft.impacts.map((impact) =>

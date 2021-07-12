@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-
 import React, { FC, useMemo } from 'react'
 
 import {
@@ -32,7 +30,7 @@ import {
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES, NO, MANUAL, ParentalRelations } from '../../constants'
-import { Boolean } from '../../types'
+import { YesOrNo } from '../../types'
 import { SummaryTimeline } from '../components/Timeline/SummaryTimeline'
 import { SummaryRights } from '../Rights/SummaryRights'
 import { useUnion as useUnionOptions } from '../../hooks/useUnion'
@@ -297,7 +295,7 @@ const Review: FC<ReviewScreenProps> = ({
               onSelect={(s: string) => {
                 setStateful((prev) => ({
                   ...prev,
-                  usePrivatePensionFund: s as Boolean,
+                  usePrivatePensionFund: s as YesOrNo,
                 }))
               }}
             />
@@ -452,7 +450,7 @@ const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => ({
                     ...prev,
-                    usePersonalAllowance: s as Boolean,
+                    usePersonalAllowance: s as YesOrNo,
                   }))
                 }}
               />
@@ -488,7 +486,7 @@ const Review: FC<ReviewScreenProps> = ({
                     onSelect={(s: string) => {
                       setStateful((prev) => ({
                         ...prev,
-                        personalUseAsMuchAsPossible: s as Boolean,
+                        personalUseAsMuchAsPossible: s as YesOrNo,
                       }))
                     }}
                   />
@@ -600,7 +598,7 @@ const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => ({
                     ...prev,
-                    usePersonalAllowanceFromSpouse: s as Boolean,
+                    usePersonalAllowanceFromSpouse: s as YesOrNo,
                   }))
                 }}
               />
@@ -636,7 +634,7 @@ const Review: FC<ReviewScreenProps> = ({
                     onSelect={(s: string) => {
                       setStateful((prev) => ({
                         ...prev,
-                        spouseUseAsMuchAsPossible: s as Boolean,
+                        spouseUseAsMuchAsPossible: s as YesOrNo,
                       }))
                     }}
                   />
@@ -739,7 +737,7 @@ const Review: FC<ReviewScreenProps> = ({
               onSelect={(s: string) =>
                 setStateful((prev) => ({
                   ...prev,
-                  isSelfEmployed: s as Boolean,
+                  isSelfEmployed: s as YesOrNo,
                 }))
               }
             />

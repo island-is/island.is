@@ -1,24 +1,22 @@
-import { HTMLText, RegName, toISODate } from '@island.is/regulations'
+import {
+  HTMLText,
+  RegName,
+  toISODate,
+  MinistrySlug,
+  Kennitala,
+} from '@island.is/regulations'
+import { RegulationMinistryList } from '@island.is/regulations/web'
 import { startOfDay } from 'date-fns/esm'
 import { useEffect, useRef, useState } from 'react'
-import { Kennitala } from './types'
 import {
   DraftSummary,
   ShippedSummary,
   RegulationDraft,
-  RegulationOption,
   RegulationList,
   EmailAddress,
   Author,
-} from './types-api'
-import {
-  DBx_Ministry,
-  DraftAuthorId,
   RegulationDraftId,
-  MinistryId,
-  RegulationId,
-  AuthorId,
-} from './types-database'
+} from '@island.is/regulations/admin'
 // import { } from './utils'
 
 export const useMockQuery = <T>(data: T, skip?: boolean) => {
@@ -50,12 +48,12 @@ export const useMockQuery = <T>(data: T, skip?: boolean) => {
 
 export const mockAuthors: ReadonlyArray<Author> = [
   {
-    authorId: 1 as AuthorId,
+    authorId: '1234567809' as Kennitala,
     name: 'Már Örlygsson',
     email: 'mar@hugsmidjan.is' as EmailAddress,
   },
   {
-    authorId: 2 as AuthorId,
+    authorId: '6543217809' as Kennitala,
     name: 'Valur Sverrisson',
     email: 'valur@hugsmidjan.is' as EmailAddress,
   },
@@ -109,17 +107,15 @@ export const mockDraftlist: ReadonlyArray<DraftSummary> = [
 
 // ---------------------------------------------------------------------------
 
-export const mockMinistrylist: ReadonlyArray<DBx_Ministry> = [
+export const mockMinistrylist: RegulationMinistryList = [
   {
-    id: 1234 as MinistryId,
     name: 'Forsætisráðuneyti',
-    slug: 'fsr',
+    slug: 'fsr' as MinistrySlug,
     current: true,
   },
   {
-    id: 4321 as MinistryId,
     name: 'Samgöngu- og sveitarstjórnarráðuneyti',
-    slug: 'ssvrn',
+    slug: 'ssvrn' as MinistrySlug,
     current: false,
   },
 ]
@@ -137,19 +133,8 @@ export const mockShippedList: ReadonlyArray<ShippedSummary> = [
 
 // ---------------------------------------------------------------------------
 
-export const mockMinistries: ReadonlyArray<RegulationDraft['ministry']> = [
-  {
-    id: 9876 as MinistryId,
-    name: 'Samgöngu- og sveitarstjórnarráðuneyti',
-    slug: 'ssvrn',
-    current: false,
-  },
-]
-
-// ---------------------------------------------------------------------------
-
 export const mockDraftRegulations: Record<
-  number,
+  string,
   RegulationDraft | undefined
 > = {
   '123': {
@@ -176,7 +161,7 @@ export const mockDraftRegulations: Record<
       },
     ],
     comments: '' as HTMLText,
-    ministry: mockMinistries[0],
+    ministry: mockMinistrylist[0],
     lawChapters: [],
     impacts: [],
   },
@@ -186,20 +171,17 @@ export const mockDraftRegulations: Record<
 
 export const mockRegulationOptions: RegulationList = [
   {
-    id: 3456 as RegulationId,
     name: '0244/2021' as RegName,
     title: 'Reglugerð fyrir hafnir Hafnasjóðs Dalvíkurbyggðar.',
     migrated: true,
   },
   {
-    id: 6543 as RegulationId,
     name: '0245/2021' as RegName,
     title: 'Reglugerð um (1.) breytingu á reglugerð nr. 101/2021.',
     cancelled: true,
     migrated: true,
   },
   {
-    id: 17543 as RegulationId,
     name: '0001/1975' as RegName,
     title: 'Reglugerð um eitthvað gamalt og gott.',
     migrated: false,

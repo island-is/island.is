@@ -1,15 +1,24 @@
+import type { Okuskirteini } from '@island.is/clients/driving-license'
+
+export interface Eligibility {
+  id: string
+  issued: Date | undefined
+  expires: Date | undefined
+  comment: string
+}
+
 export interface DrivingLicense {
+  id: Okuskirteini['id']
+  name: string
+  issued: Date | undefined
+  expires: Date | undefined
+  isProvisional: boolean | undefined
+  eligibilities: Eligibility[]
+}
+
+export interface DeprevationType {
   id: number
   name: string
-  issued: string
-  expires: string
-  isProvisional: boolean
-  eligibilities: {
-    id: string
-    issued: string
-    expires: string
-    comment: string
-  }[]
 }
 
 export interface StudentInformation {
@@ -19,6 +28,14 @@ export interface StudentInformation {
 export interface DrivingLicenseType {
   id: string
   name: string
+}
+
+export interface RemarkType {
+  id: number
+  remark: boolean
+  for: string
+  name: string
+  description: string
 }
 
 export interface PenaltyPointStatus {
@@ -54,4 +71,29 @@ export interface Juristiction {
   id: number
   name: string
   zip: number
+}
+
+export enum RequirementKey {
+  drivingAssessmentMissing = 'DrivingAssessmentMissing',
+  drivingSchoolMissing = 'DrivingSchoolMissing',
+  deniedByService = 'DeniedByService',
+}
+
+export interface ApplicationEligibilityRequirement {
+  key: RequirementKey
+  requirementMet: boolean
+}
+
+export interface ApplicationEligibility {
+  isEligible: boolean
+  requirements: ApplicationEligibilityRequirement[]
+}
+
+export enum DrivingLicenseCategory {
+  B = 'B',
+}
+
+export enum NeedsHealhCertificate {
+  TRUE = 1,
+  FALSE = 0,
 }

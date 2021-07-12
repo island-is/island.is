@@ -9,6 +9,7 @@ import { CreateDraftRegulationDto, UpdateDraftRegulationDto } from './dto'
 import { DraftRegulation } from './draft_regulation.model'
 import { DraftRegulationChange } from '../draft_regulation_change'
 import { DraftRegulationCancel } from '../draft_regulation_cancel'
+import { Op } from 'sequelize'
 
 @Injectable()
 export class DraftRegulationService {
@@ -19,14 +20,47 @@ export class DraftRegulationService {
     private readonly logger: Logger,
   ) {}
 
-  getAll(): Promise<DraftRegulation[]> {
-    this.logger.debug('Getting all DraftRegulations')
+  getAll(nationalId?: string): Promise<DraftRegulation[]> {
+    this.logger.debug(
+      'Getting all non shipped DraftRegulations, filtered by national id for non managers',
+    )
+
+    if (nationalId) {
+      return this.draftRegulationModel.findAll({
+        where: {
+          [Op.or]: [
+            { drafting_status: 'draft' },
+            { drafting_status: 'proposal' },
+          ],
+          authors: { [Op.contains]: [nationalId] }
+        },
+        order: [
+          ['drafting_status', 'ASC'],
+          ['created', 'DESC'],
+        ],
+      })
+    } else {
+      return this.draftRegulationModel.findAll({
+        where: {
+          [Op.or]: [
+            { drafting_status: 'draft' },
+            { drafting_status: 'proposal' },
+          ],
+        },
+        order: [
+          ['drafting_status', 'ASC'],
+          ['created', 'DESC'],
+        ],
+      })
+    }
+  }
+
+  getAllShipped(): Promise<DraftRegulation[]> {
+    this.logger.debug('Getting all shipped DraftRegulations')
 
     return this.draftRegulationModel.findAll({
-      order: [
-        ['drafting_status', 'ASC'],
-        ['created', 'DESC'],
-      ],
+      where: { drafting_status: 'shipped' },
+      order: [['created', 'DESC']],
     })
   }
 
@@ -68,5 +102,15 @@ export class DraftRegulationService {
     })
 
     return { numberOfAffectedRows, updatedDraftRegulation }
+  }
+
+  async delete(id: string): Promise<number> {
+    this.logger.debug(`Deleting DraftRegulation ${id}`)
+
+    return this.draftRegulationModel.destroy({
+      where: {
+        id,
+      },
+    })
   }
 }

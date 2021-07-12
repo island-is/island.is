@@ -1,4 +1,13 @@
-import { Year, ISODate, RegName, PlainText, HTMLText } from './types'
+import {
+  Year,
+  ISODate,
+  RegName,
+  PlainText,
+  HTMLText,
+  LawChapterSlug,
+  MinistrySlug,
+  RegulationType,
+} from './types'
 
 // Years
 export type RegulationYears = ReadonlyArray<Year>
@@ -9,7 +18,7 @@ export type RegulationLawChapter = {
   /** Name (title) of the law chapter */
   name: string
   /** Short, URL-friendly token to use for search filters, etc.  */
-  slug: string // '01a' |'01b' |'01c' | etc.
+  slug: LawChapterSlug // '01a' |'01b' |'01c' | etc.
 }
 
 export type RegulationLawChapterTree = Array<
@@ -29,7 +38,7 @@ export type RegulationMinistry = {
   /** Name (title) of the ministry */
   name: string
   /** Short, URL-friendly token to use for search filters, etc.  */
-  slug: string
+  slug: MinistrySlug
   /** False if this ministry is not current */
   current: boolean
 }
@@ -151,7 +160,7 @@ export type Regulation = {
    * `base` = Stofnreglugerð
    * `amending` = Breytingareglugerð
    */
-  type: 'base' | 'amending'
+  type: RegulationType
 
   /** List of change events (Amendments, Repeals) over the life time of this
    * regulation – **excluding** the original base/root regulation
@@ -218,4 +227,9 @@ export enum RegulationViewTypes {
   diff = 'diff',
   original = 'original',
   d = 'd',
+}
+
+export enum RegulationOriginalDates {
+  gqlHack = '0101-01-01',
+  api = 'original',
 }

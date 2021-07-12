@@ -6,8 +6,10 @@ import {
   Param,
   Post,
   Put,
+  Delete,
   Query,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common'
 import {
   ApiTags,
@@ -31,7 +33,7 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
-// @UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 // @ApiTags('draft_regulations')
 // @ApiHeader({
 //   name: 'authorization',
@@ -51,12 +53,12 @@ export class DraftRegulationController {
     type: DraftRegulation,
     description: 'Creates a new DraftRegulation',
   })
-  create(
+  async create(
     @Body()
     draftRegulationToCreate: CreateDraftRegulationDto,
     @CurrentUser() user: User,
   ): Promise<DraftRegulation> {
-    return this.draftRegulationService.create(draftRegulationToCreate)
+    return await this.draftRegulationService.create(draftRegulationToCreate)
   }
 
   @Scopes('@island.is/regulations:create')
@@ -82,15 +84,43 @@ export class DraftRegulationController {
     return updatedDraftRegulation
   }
 
-  // @Scopes('@island.is/regulations:create')
+  @Scopes('@island.is/regulations:create')
+  @Delete('draft_regulation/:id')
+  @ApiCreatedResponse()
+  async delete(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<number> {
+    if (!id) {
+      throw new BadRequestException('id must be provided')
+    }
+
+    return await this.draftRegulationService.delete(id)
+  }
+
+  @Scopes('@island.is/regulations:create')
   @Get('draft_regulations')
   @ApiOkResponse({
     type: DraftRegulation,
     isArray: true,
-    description: 'Gets all existing DraftRegulations',
+    description: 'Gets all DraftRegulations with status draft and proposal',
   })
-  getAll(): Promise<DraftRegulation[]> {
-    return this.draftRegulationService.getAll()
+  async getAll(@CurrentUser() user: User): Promise<DraftRegulation[]> {
+    const canManage = user.scope.includes('@island.is/regulations:manage')
+    return await this.draftRegulationService.getAll(
+      !canManage ? user.nationalId : undefined,
+    )
+  }
+
+  @Scopes('@island.is/regulations:manage')
+  @Get('draft_regulations_shipped')
+  @ApiOkResponse({
+    type: DraftRegulation,
+    isArray: true,
+    description: 'Gets all DraftRegulations with status shipped',
+  })
+  async getAllShipped(@CurrentUser() user: User): Promise<DraftRegulation[]> {
+    return await this.draftRegulationService.getAllShipped()
   }
 
   // @Scopes('@island.is/regulations:create')
@@ -99,7 +129,7 @@ export class DraftRegulationController {
     type: DraftRegulation,
     description: 'Gets a DraftRegulation',
   })
-  async getById(@Param('id') id: string) {
+  async getById(@Param('id') id: string, @CurrentUser() user: User) {
     const draftRegulation = await this.draftRegulationService.findById(id)
 
     if (!draftRegulation) {

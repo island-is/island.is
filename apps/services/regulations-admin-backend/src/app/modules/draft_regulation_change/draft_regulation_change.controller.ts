@@ -1,6 +1,8 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -19,20 +21,23 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
-import { CreateDraftRegulationChangeDto } from './dto'
+import {
+  CreateDraftRegulationChangeDto,
+  UpdateDraftRegulationChangeDto,
+} from './dto'
 import { DraftRegulationChange } from './draft_regulation_change.model'
 import { DraftRegulationChangeService } from './draft_regulation_change.service'
 
 import { environment } from '../../../environments'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulation_change`
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+// @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller('api')
-@ApiTags('draft_regulation_change')
+// @ApiTags('draft_regulation_change')
 @Audit({ namespace })
 export class DraftRegulationChangeController {
   constructor(
-    private readonly draftRegulationService: DraftRegulationChangeService,
+    private readonly draftRegulationChangeService: DraftRegulationChangeService,
   ) {}
 
   @Scopes('@island.is/regulations:create')
@@ -46,6 +51,48 @@ export class DraftRegulationChangeController {
     draftRegulationChangeToCreate: CreateDraftRegulationChangeDto,
     @CurrentUser() user: User,
   ): Promise<DraftRegulationChange> {
-    return this.draftRegulationService.create(draftRegulationChangeToCreate)
+    return this.draftRegulationChangeService.create(
+      draftRegulationChangeToCreate,
+    )
+  }
+
+  @Scopes('@island.is/regulations:create')
+  @Put('draft_regulation_change/:id')
+  @ApiOkResponse({
+    type: DraftRegulationChange,
+    description: 'Updates an existing user',
+  })
+  async update(
+    @Param('id') id: string,
+    @Body() draftRegulationChangeToUpdate: UpdateDraftRegulationChangeDto,
+    @CurrentUser() user: User,
+  ): Promise<DraftRegulationChange> {
+    const {
+      numberOfAffectedRows,
+      updatedDraftRegulationChange,
+    } = await this.draftRegulationChangeService.update(
+      id,
+      draftRegulationChangeToUpdate,
+    )
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`DraftRegulationChange ${id} does not exist`)
+    }
+
+    return updatedDraftRegulationChange
+  }
+
+  @Scopes('@island.is/regulations:create')
+  @Delete('draft_regulation_change/:id')
+  @ApiCreatedResponse()
+  async delete(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<number> {
+    if (!id) {
+      throw new BadRequestException('id must be provided')
+    }
+
+    return await this.draftRegulationChangeService.delete(id)
   }
 }

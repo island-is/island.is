@@ -1,7 +1,24 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // Draft of the required database types
-import { HTMLText, ISODate, PlainText, RegName } from '@island.is/regulations'
-import { DraftingStatus, RegulationType } from './types'
+import {
+  HTMLText,
+  ISODate,
+  PlainText,
+  RegName,
+  LawChapterSlug,
+  MinistrySlug,
+  RegulationType,
+} from './types'
+
+// ---------------------------------------------------------------------------
+
+/** Regulation drafts have three lifecycle states:
+ *
+ * `draft` = The regulation is still being drafted. Do NOT edit and/or publish!
+ * `proposal` = The regulation is ready for a final review/tweaking by an editor.
+ * `shipped` = The regulation has been sent to Stjórnartíðindi and is awaiting formal publication.
+ */
+export type DraftingStatus = 'draft' | 'proposal' | 'shipped'
 
 // ===========================================================================
 
@@ -48,7 +65,7 @@ export type DB_RegulationDraft = (
    */
   idealPublishDate?: ISODate
 
-  ministryId?: MinistryId
+  ministryId?: MinistrySlug
 
   /** Date signed in the ministry */
   signatureDate?: ISODate
@@ -124,18 +141,6 @@ export type DB_DraftRegulationChange = {
 // DBx Structures loaded from "Reglugerðagrunnur"
 // ===========================================================================
 
-declare const _MinistryId__Brand: unique symbol
-export type MinistryId = number & { [_MinistryId__Brand]: true }
-
-export type DBx_Ministry = {
-  /** Primary key */
-  id: MinistryId
-  name: string
-  slug: string
-  current: boolean
-  order?: number
-}
-
 // ===========================================================================
 
 declare const _LawChapterId__Brand: unique symbol
@@ -145,7 +150,7 @@ export type DBx_LawChapter = {
   /** Primary key */
   id: LawChapterId
   title: string
-  slug: string
+  slug: LawChapterSlug
   parentId?: LawChapterId
 }
 
