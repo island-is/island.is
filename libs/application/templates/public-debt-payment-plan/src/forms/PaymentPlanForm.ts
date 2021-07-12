@@ -255,8 +255,6 @@ export const PaymentPlanForm: Form = buildForm({
             const debts = (externalData as PaymentPlanExternalData)
               ?.paymentPlanPrerequisites?.data?.debts
             return (
-              // For some reason it doesn't work to use PaymentScheduleType.OverpaidBenefits from api/schema
-              // Ask Óli about it!
               debts?.find((x) => x.type === 'OverpaidBenefits') !== undefined
             )
           },
