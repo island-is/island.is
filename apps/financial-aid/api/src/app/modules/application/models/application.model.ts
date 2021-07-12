@@ -76,4 +76,10 @@ export class ApplicationModel implements Application {
 
   @Field(() => [ApplicationFileModel])
   readonly files?: ApplicationFileModel[]
+
+  @Field({ nullable: true })
+  readonly amount?: number
+
+  @Field({ nullable: true })
+  readonly rejection?: string
 }

@@ -1,13 +1,5 @@
-import React, { useContext } from 'react'
-import {
-  Logo,
-  Text,
-  Box,
-  Button,
-  GridContainer,
-  Link,
-} from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
+import React from 'react'
+import { Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './Files.treat'
 import cn from 'classnames'
@@ -16,17 +8,15 @@ import { ApplicationFile } from '@island.is/financial-aid/shared'
 
 interface Props {
   heading?: string
-  filesArray: ApplicationFile[]
+  className?: string
+  filesArray?: ApplicationFile[]
 }
 
-const Files: React.FC<Props> = ({ heading, filesArray }) => {
-  const router = useRouter()
-  // const { isAuthenticated, setUser, user } = useContext(UserContext)
-
+const Files: React.FC<Props> = ({ heading, className, filesArray }) => {
   return (
-    <Box>
+    <Box className={cn({ [`${className}`]: true })} marginBottom={2}>
       {' '}
-      <Text variant="eyebrow" marginBottom={1}>
+      <Text variant="eyebrow" marginBottom={2}>
         {heading}
       </Text>
       {filesArray && (

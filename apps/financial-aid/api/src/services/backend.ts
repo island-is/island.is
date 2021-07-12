@@ -9,6 +9,8 @@ import {
   CreateApplication,
   GetSignedUrl,
   SignedUrl,
+  ApplicationEvent,
+  CreateApplicationEvent,
 } from '@island.is/financial-aid/shared'
 
 import { environment } from '../environments'
@@ -25,6 +27,7 @@ class BackendAPI extends RESTDataSource {
   getApplications(): Promise<Application[]> {
     return this.get('applications')
   }
+
   getApplication(id: string): Promise<Application> {
     return this.get(`applications/${id}`)
   }
@@ -48,6 +51,20 @@ class BackendAPI extends RESTDataSource {
 
   getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
     return this.post('/file/url', getSignedUrl)
+  }
+
+  getApplicationEvents(): Promise<ApplicationEvent[]> {
+    return this.get('applicationEvents')
+  }
+
+  getApplicationEvent(id: string): Promise<ApplicationEvent> {
+    return this.get(`applicationEvents/${id}`)
+  }
+
+  createApplicationEvent(
+    createApplicationEvent: CreateApplicationEvent,
+  ): Promise<ApplicationEvent> {
+    return this.post('applicationEvent', createApplicationEvent)
   }
 }
 

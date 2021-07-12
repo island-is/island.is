@@ -1,14 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { ApplicationModel } from './models'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
-import { User, Application } from '@island.is/financial-aid/shared'
+import { User } from '@island.is/financial-aid/shared'
 import { FileService } from '../file'
+import { ApplicationEventService } from '../applicationEvent'
 
 @Injectable()
 export class ApplicationService {
@@ -16,6 +14,7 @@ export class ApplicationService {
     @InjectModel(ApplicationModel)
     private readonly applicationModel: typeof ApplicationModel,
     private readonly fileService: FileService,
+    private readonly applicationEventService: ApplicationEventService,
   ) {}
 
   getAll(): Promise<ApplicationModel[]> {
@@ -39,6 +38,13 @@ export class ApplicationService {
     user: User,
   ): Promise<ApplicationModel> {
     const appModel = await this.applicationModel.create(application)
+
+    //Create applicationEvent
+    const eventModel = await this.applicationEventService.create({
+      applicationId: appModel.id,
+      state: appModel.state,
+      comment: null,
+    })
 
     //Create file
     if (application.files) {
@@ -68,6 +74,13 @@ export class ApplicationService {
     ] = await this.applicationModel.update(update, {
       where: { id },
       returning: true,
+    })
+
+    //Create applicationEvent
+    const eventModel = await this.applicationEventService.create({
+      applicationId: id,
+      state: update.state,
+      comment: update.rejection,
     })
 
     return { numberOfAffectedRows, updatedApplication }

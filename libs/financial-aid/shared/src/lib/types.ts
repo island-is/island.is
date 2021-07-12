@@ -17,6 +17,7 @@ export enum Employment {
 export enum ApplicationState {
   NEW = 'New',
   INPROGRESS = 'InProgress',
+  DATANEEDED = 'DataNeeded',
   REJECTED = 'Rejected',
   APPROVED = 'Approved',
 }
@@ -59,6 +60,10 @@ export interface CreateApplicationFile {
   name: string
   key: string
   size: number
+  state: ApplicationState
+  amount?: number
+  comment?: string
+  rejection?: string
 }
 
 export interface CreateApplication {
@@ -81,10 +86,27 @@ export interface CreateApplication {
   formComment?: string
   state?: ApplicationState
   files: CreateApplicationFile[]
+  amount?: number
 }
 
 export interface UpdateApplication {
-  state?: ApplicationState
+  state: ApplicationState
+  amount?: number
+  rejection?: string
+}
+
+export interface CreateApplicationEvent {
+  applicationId: string
+  state: ApplicationState
+  comment?: string
+}
+
+export interface ApplicationEvent {
+  id: string
+  created: string
+  applicationId: string
+  comment?: string
+  state: ApplicationState
 }
 
 export interface Municipality {

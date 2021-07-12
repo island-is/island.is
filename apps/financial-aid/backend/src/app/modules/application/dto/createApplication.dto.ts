@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsEnum,
   IsArray,
+  IsNumber,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -110,4 +111,9 @@ export class CreateApplicationDto {
   @IsArray()
   @ApiProperty()
   readonly files: CreateApplicationFile[]
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty()
+  readonly amount: number
 }

@@ -5,9 +5,12 @@ import {
   Model,
   Table,
   UpdatedAt,
+  ForeignKey,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
+
+import { ApplicationEventModel } from '../../applicationEvent'
 
 import {
   HomeCircumstances,
@@ -169,4 +172,17 @@ export class ApplicationModel extends Model<ApplicationModel> {
 
   @ApiProperty({ type: [ApplicationFileModel] })
   files: ApplicationFileModel[]
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  @ApiProperty()
+  amount: number
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  rejection: string
 }
