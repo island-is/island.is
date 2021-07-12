@@ -37,8 +37,11 @@ const Login = () => {
           Skráðu þig inn til að vinna úr umsóknum um fjárhagsaðstoð.
         </Text>
 
+        <Link href="/api/auth/login?service=veita">Innskraning</Link>
+        <br />
+        <br />
         <Link href="/api/auth/login?nationalId=0000000002&service=veita">
-          innskraning
+          Plat notandi
         </Link>
 
         {/* <Button

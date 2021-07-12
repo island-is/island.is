@@ -82,17 +82,19 @@ export class AuthController {
   ) {
     this.logger.debug(`Received login request for the service ${service}`)
 
+    console.log('hææææ')
+
     // Local development
     if (environment.auth.allowFakeUsers && nationalId) {
       this.logger.debug(`Logging in as ${nationalId} in development mode`)
-
+      console.log('222222')
       const fakeUser = this.authService.fakeUser(nationalId)
 
       if (fakeUser) {
         return this.logInUser(fakeUser, res)
       }
     }
-
+    console.log('3333333')
     res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
 
     const authId = uuid()
@@ -100,6 +102,8 @@ export class AuthController {
 
     const samlEntryPoint =
       service === 'osk' ? samlEntryPointOsk : samlEntryPointVeita
+
+    console.log(samlEntryPoint)
 
     return res
       .cookie(
