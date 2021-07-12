@@ -19,8 +19,10 @@ import {
   LatestNewsSectionSlider,
   OrganizationSlice,
   Section,
+  Stepper,
+  EntryProjectHeader,
+  HeadWithSocialSharing,
 } from '@island.is/web/components'
-import Head from 'next/head'
 import {
   GridColumn,
   GridContainer,
@@ -33,6 +35,9 @@ import { QueryGetNewsArgs } from '@island.is/api/schema'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
+
+const lightThemes = ['traveling-to-iceland']
 
 interface ProjectWrapperProps {
   withSidebar?: boolean
@@ -64,6 +69,19 @@ const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
   )
 }
 
+interface ProjectHeaderProps {
+  projectPage: ProjectPageSchema
+}
+
+const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
+  switch (projectPage.theme) {
+    case 'traveling-to-iceland':
+      return <EntryProjectHeader projectPage={projectPage} />
+    default:
+      return <DefaultProjectHeader projectPage={projectPage} />
+  }
+}
+
 interface PageProps {
   projectPage: Query['getProjectPage']
   news: GetNewsQuery['getNews']['items']
@@ -81,10 +99,15 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
 
   return (
     <>
-      <Head>
-        <title>{projectPage.title} | Ísland.is</title>
-      </Head>
-      <DefaultProjectHeader projectPage={projectPage} />
+      <HeadWithSocialSharing
+        title={`${projectPage.title} | Ísland.is`}
+        description={projectPage.intro}
+        imageUrl={projectPage.featuredImage?.url}
+        imageContentType={projectPage.featuredImage?.contentType}
+        imageWidth={projectPage.featuredImage?.width?.toString()}
+        imageHeight={projectPage.featuredImage?.height?.toString()}
+      />
+      <ProjectHeader projectPage={projectPage} />
       <ProjectWrapper
         withSidebar={projectPage.sidebar}
         sidebarContent={
@@ -114,6 +137,14 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           </Text>
         )}
         {richText((subpage ?? projectPage).content as SliceType[])}
+        {!subpage && projectPage.stepper && (
+          <Stepper
+            stepper={projectPage.stepper}
+            startAgainLabel={n('stepperStartAgain', 'Byrja upp á nýtt')}
+            answerLabel={n('stepperAnswer', 'Niðurstaða byggð á þínum svörum')}
+            backLabel={n('stepperBack', 'Til baka')}
+          />
+        )}
         {(subpage ?? projectPage).slices.map((slice) => (
           <OrganizationSlice
             key={slice.id}
@@ -124,7 +155,7 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           />
         ))}
       </ProjectWrapper>
-      {!subpage && (
+      {!subpage && !!projectPage.newsTag && (
         <div style={{ overflow: 'hidden' }}>
           <Section
             paddingTop={[8, 8, 6]}
@@ -149,11 +180,6 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getProjectPage },
     },
-    {
-      data: {
-        getNews: { items: news },
-      },
-    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetProjectPageArgs>({
@@ -162,16 +188,6 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           slug: query.slug as string,
           lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<GetNewsQuery, QueryGetNewsArgs>({
-      query: GET_NEWS_QUERY,
-      variables: {
-        input: {
-          size: 3,
-          lang: locale as ContentLanguage,
-          tag: 'stafraent',
         },
       },
     }),
@@ -192,6 +208,19 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       ),
   ])
 
+  const getNewsQuery = getProjectPage?.newsTag
+    ? await apolloClient.query<GetNewsQuery, QueryGetNewsArgs>({
+        query: GET_NEWS_QUERY,
+        variables: {
+          input: {
+            size: 3,
+            lang: locale as ContentLanguage,
+            tag: getProjectPage?.newsTag.slug,
+          },
+        },
+      })
+    : null
+
   const subpage = getProjectPage?.projectSubpages.find(
     (x) => x.slug === query.subSlug,
   )
@@ -200,12 +229,14 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Project page not found')
   }
 
+  const isLightTheme = lightThemes.includes(getProjectPage.theme)
+
   return {
     projectPage: getProjectPage,
     namespace,
-    news,
+    news: getNewsQuery?.data.getNews.items,
     showSearchInHeader: false,
-    darkTheme: true,
+    ...(isLightTheme ? {} : { darkTheme: true }),
   }
 }
 

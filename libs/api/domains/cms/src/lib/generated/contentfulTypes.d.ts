@@ -630,6 +630,40 @@ export interface IErrorPage extends Entry<IErrorPageFields> {
   }
 }
 
+export interface IEventSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Subtitle */
+  subtitle?: string | undefined
+
+  /** Date */
+  date?: string | undefined
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** Background Image */
+  backgroundImage?: Asset | undefined
+}
+
+export interface IEventSlice extends Entry<IEventSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'eventSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFaqListFields {
   /** Title */
   title: string
@@ -1433,11 +1467,29 @@ export interface IMailingListSignupFields {
   /** Title */
   title: string
 
+  /** Variant */
+  variant: 'default' | 'conference'
+
   /** Description */
   description?: string | undefined
 
-  /** Input label */
+  /** Email label */
   inputLabel: string
+
+  /** Name label */
+  fullNameLabel: string
+
+  /** QuestionLabel */
+  questionLabel?: string | undefined
+
+  /** Yes Label */
+  yesLabel?: string | undefined
+
+  /** No Label */
+  noLabel?: string | undefined
+
+  /** Disclaimer Label */
+  disclaimerLabel?: string | undefined
 
   /** Submit button text */
   buttonText: string
@@ -1900,6 +1952,7 @@ export interface IOrganizationPageFields {
         | IBigBulletList
         | IDistricts
         | IMailingListSignup
+        | IEventSlice
         | IFeaturedArticles
         | ISectionHeading
         | ILogoListSlice
@@ -1982,6 +2035,8 @@ export interface IOrganizationSubpageFields {
         | IContactUs
         | IDistricts
         | IMailingListSignup
+        | IEventSlice
+        | ILatestNewsSlice
         | IMultipleStatistics
         | IOneColumnText
         | ITabSection
@@ -2370,6 +2425,9 @@ export interface IProjectPageFields {
   /** Content */
   content?: Document | undefined
 
+  /** Stepper */
+  stepper?: IStepper | undefined
+
   /** Slices */
   slices?:
     | (
@@ -2387,6 +2445,9 @@ export interface IProjectPageFields {
 
   /** Project Subpages */
   projectSubpages?: IProjectSubpage[] | undefined
+
+  /** Featured Image */
+  featuredImage?: Asset | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -2666,6 +2727,72 @@ export interface IStatistics extends Entry<IStatisticsFields> {
     contentType: {
       sys: {
         id: 'statistics'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IStepFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Subtitle */
+  subtitle?: Document | undefined
+
+  /** Text */
+  text?: Document | undefined
+
+  /** Is Answer */
+  isAnswer?: boolean | undefined
+
+  /** Options */
+  options?: Record<string, any> | undefined
+}
+
+/** Step for stepper */
+
+export interface IStep extends Entry<IStepFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'step'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IStepperFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Steps */
+  steps?: IStep[] | undefined
+}
+
+/** Used for asking users questions and returning an answer. */
+
+export interface IStepper extends Entry<IStepperFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'stepper'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3528,6 +3655,7 @@ export type CONTENT_TYPE =
   | 'districts'
   | 'embeddedVideo'
   | 'errorPage'
+  | 'eventSlice'
   | 'faqList'
   | 'featured'
   | 'featuredArticles'

@@ -1,14 +1,14 @@
-import { downloadCSV } from './downloadFile'
-import flatten from 'lodash/flatten'
+import { downloadFile } from './downloadFile'
 import {
   FinanceStatusDetailsType,
   FinanceStatusDetailsChangeItem,
 } from '../screens/FinanceStatus/FinanceStatusData.types'
 import { gjoldSundurlidunHeaders } from './dataHeaders'
 
-export const exportGjoldSundurlidunCSV = async (
+export const exportGjoldSundurlidunFile = async (
   data: FinanceStatusDetailsType,
   fileName: string,
+  type: 'xlsx' | 'csv',
 ) => {
   const name = `${fileName}_sundurlidun`
   const dataArray = data.chargeItemSubjects.map(
@@ -26,24 +26,5 @@ export const exportGjoldSundurlidunCSV = async (
     ],
   )
 
-  const headers = [...gjoldSundurlidunHeaders, 'Gjaldflokkur']
-  await downloadCSV(name, headers, dataArray)
-}
-
-export const exportGjoldSundurlidunXSLX = (data: FinanceStatusDetailsType) => {
-  const dataArray = data.chargeItemSubjects.map(
-    (item: FinanceStatusDetailsChangeItem) => [
-      item.chargeItemSubject,
-      item.timePeriod,
-      item.dueDate,
-      item.finalDueDate,
-      item.principal.toString(),
-      item.interest.toString(),
-      item.cost.toString(),
-      item.paid.toString(),
-      item.totals.toString(),
-    ],
-  )
-
-  return flatten(dataArray)
+  await downloadFile(name, gjoldSundurlidunHeaders, dataArray, type)
 }

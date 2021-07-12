@@ -1,13 +1,12 @@
 import {
-  Body,
   Controller,
   Param,
   Post,
-  UseInterceptors,
   UseGuards,
   Get,
   ParseUUIDPipe,
   BadRequestException,
+  Body,
 } from '@nestjs/common'
 
 import {
@@ -30,10 +29,12 @@ import { AuditService } from '@island.is/nest/audit'
 import { CreatePaymentResponseDto } from './dto'
 import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
-import type { Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 import { isUuid } from 'uuidv4'
+import { CreateChargeInput } from './dto/createChargeInput.dto'
+import { PaymentAPI } from '@island.is/clients/payment'
+import { findItemType } from './utils/findItemType'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -50,27 +51,71 @@ export class PaymentController {
   constructor(
     private readonly auditService: AuditService,
     private readonly paymentService: PaymentService,
+    private readonly paymentAPI: PaymentAPI,
     @InjectModel(Payment)
     private paymentModel: typeof Payment,
   ) {}
   @Scopes(ApplicationScope.write)
-  @Post('applications/:application_id/payment')
+  @Post('applications/:applicationId/payment')
   @ApiCreatedResponse({ type: CreatePaymentResponseDto })
   async createCharge(
     @CurrentUser() user: User,
-    @Param('application_id', new ParseUUIDPipe()) applicationId: string,
+    @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
+    @Body() payload: CreateChargeInput,
   ): Promise<CreatePaymentResponseDto> {
     if (!isUuid(applicationId)) {
       throw new BadRequestException(`ApplicationId is on wrong format.`)
     }
+    const DISTRICT_COMMISSIONER_OF_REYKJAVIK = '6509142520'
+    const inputApplicationType = findItemType(payload.chargeItemCode)
+
+    // Finding application to confirm correct catalog & price
+    const thisApplication = await this.paymentService
+      .findApplicationById(applicationId, user.nationalId, inputApplicationType)
+      .catch((error) => {
+        throw new BadRequestException(
+          `Unable to find application with the ID ${applicationId} ` + error,
+        )
+      })
+
+    if (thisApplication.typeId.toString() !== inputApplicationType) {
+      throw new BadRequestException(
+        new Error(
+          'Mismatch between create charge input and application payment.',
+        ),
+      )
+    }
+
+    const allCatalogs =
+      payload.chargeItemCode.slice(0, 2) === 'AY'
+        ? await this.paymentAPI.getCatalogByPerformingOrg(
+            DISTRICT_COMMISSIONER_OF_REYKJAVIK,
+          )
+        : await this.paymentAPI.getCatalog()
+
+    // Sort through all catalogs to find the correct one.
+    const catalog = await this.paymentService
+      .searchCorrectCatalog(payload.chargeItemCode, allCatalogs.item)
+      .catch((error) => {
+        throw new BadRequestException(
+          'Catalog request failed or bad input ' + error,
+        )
+      })
 
     const paymentDto: Pick<
       BasePayment,
-      'application_id' | 'fulfilled' | 'amount' | 'expires_at'
+      'application_id' | 'fulfilled' | 'amount' | 'definition' | 'expires_at'
     > = {
       application_id: applicationId,
       fulfilled: false,
-      amount: 8000,
+      amount: catalog.priceAmount,
+      definition: {
+        chargeItemName: catalog.chargeItemName,
+        chargeItemCode: catalog.chargeItemCode,
+        performingOrganiationID: catalog.performingOrgID,
+        chargeType: catalog.chargeType,
+        amount: catalog.priceAmount,
+      },
       expires_at: new Date(),
     }
 
@@ -91,59 +136,17 @@ export class PaymentController {
     }
   }
 
-  @Scopes(ApplicationScope.write)
-  @Post('applications/:application_id/payment/:id')
-  @ApiParam({
-    name: 'application_id',
-    type: String,
-    required: true,
-    description: 'The id of the application to update fulfilled status.',
-  })
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-    description: 'The id of the payment.',
-  })
-  async paymentApproved(
-    @Param('application_id') applicationId: string,
-    @Body() callback: Callback,
-    @Param('id') id: string,
-  ): Promise<void> {
-    if (!isUuid(applicationId) || !isUuid(id)) {
-      throw new BadRequestException(
-        `ApplicationId or paymentId is on wrong format.`,
-      )
-    }
-    if (callback.status !== 'paid') {
-      // TODO: no-op.. it would be nice eventually to update all statuses
-      return
-    }
-
-    await this.paymentModel.update(
-      {
-        fulfilled: true,
-      },
-      {
-        where: {
-          id,
-          application_id: applicationId,
-        },
-      },
-    )
-  }
-
   @Scopes(ApplicationScope.read)
-  @Get('applications/:application_id/payment-status')
+  @Get('applications/:applicationId/payment-status')
   @ApiOkResponse({ type: PaymentStatusResponseDto })
   @ApiParam({
-    name: 'application_id',
+    name: 'applicationId',
     type: String,
     required: true,
     description: 'The id of the application check if it is paid.',
   })
   async getPaymentStatus(
-    @Param('application_id') applicationId: string,
+    @Param('applicationId') applicationId: string,
   ): Promise<PaymentStatusResponseDto> {
     if (!isUuid(applicationId)) {
       throw new BadRequestException(`ApplicationId is on wrong format.`)

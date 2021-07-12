@@ -59,7 +59,7 @@ export class Delegation extends Model<Delegation> {
     const arrDates = this.delegationScopes
       ?.filter((x) => x.validTo !== null && x.validTo !== undefined)
       .map((x) => x.validTo) as Array<Date>
-    if (arrDates) {
+    if (arrDates && arrDates.length > 0) {
       // Return the max value
       return arrDates.reduce((a, b) => {
         return a > b ? a : b

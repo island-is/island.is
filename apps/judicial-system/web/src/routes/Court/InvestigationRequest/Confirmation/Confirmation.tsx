@@ -33,7 +33,7 @@ const Confirmation = () => {
     setRequestSignatureResponse,
   ] = useState<RequestSignatureResponse>()
 
-  const { requestSignature, isRequestingSignature } = useCase()
+  const { requestSignature } = useCase()
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
