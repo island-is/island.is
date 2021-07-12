@@ -29,11 +29,19 @@ export class AuthService {
         nationalId: '0000000000',
         name: 'Lárus Árnasson',
         phoneNumber: '9999999',
+        service: 'osk',
       },
       '0000000001': {
         nationalId: '0000000001',
         name: 'Lára Margrétardóttir',
         phoneNumber: '9999999',
+        service: 'osk',
+      },
+      '0000000002': {
+        nationalId: '0000000002',
+        name: 'Klára Línudóttir',
+        phoneNumber: '9999999',
+        service: 'veita',
       },
     }
 
