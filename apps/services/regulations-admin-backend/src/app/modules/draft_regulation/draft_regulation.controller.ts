@@ -34,12 +34,8 @@ import { environment } from '../../../environments'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('draft_regulations')
-@ApiHeader({
-  name: 'authorization',
-  description: 'Bearer token authorization',
-})
 @Controller('api')
+@ApiTags('draft_regulations')
 @Audit({ namespace })
 export class DraftRegulationController {
   constructor(
