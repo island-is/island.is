@@ -13,7 +13,7 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFor
 import cn from 'classnames'
 
 import { NavigationProps } from '@island.is/financial-aid/shared'
-import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFIleUpload'
+import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFileUpload'
 
 const IncomeFilesForm = () => {
   const router = useRouter()
