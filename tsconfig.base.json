@@ -75,9 +75,6 @@
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
-      "@island.is/api/domains/freshdesk": [
-        "libs/api/domains/freshdesk/src/index.ts"
-      ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],
@@ -209,7 +206,6 @@
         "libs/clients/document-provider/src/index.ts"
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
-      "@island.is/clients/freshdesk": ["libs/clients/freshdesk/src/index.ts"],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
       "@island.is/clients/national-registry-v1": [
         "libs/clients/national-registry/v1/src/index.ts"

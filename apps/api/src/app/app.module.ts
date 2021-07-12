@@ -30,7 +30,6 @@ import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-reg
 import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
 import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
-import { FreshdeskModule } from '@island.is/api/domains/freshdesk'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -180,10 +179,6 @@ const autoSchemaFile = environment.production
         xroadClientId: environment.xroad.clientId,
         drivingLicenseSecret: environment.drivingLicense.secret,
       },
-    }),
-    FreshdeskModule.register({
-      domain: environment.freshdesk.domain,
-      key: environment.freshdesk.key,
     }),
   ],
 })
