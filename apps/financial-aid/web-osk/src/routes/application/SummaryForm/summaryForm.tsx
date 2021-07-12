@@ -63,9 +63,9 @@ const SummaryForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
 
-  if (form.hasIncome) {
-    const allFiles = form.taxReturnFiles.concat(form.incomeFiles)
-  }
+  const allFiles = form.hasIncome
+    ? form.taxReturnFiles
+    : form.taxReturnFiles.concat(form.incomeFiles)
 
   const { user } = useContext(UserContext)
 
@@ -90,11 +90,11 @@ const SummaryForm = () => {
   )
 
   const createApplication = async () => {
-    const formatFiles = form?.incomeFiles.map((f) => {
+    const formatAllFiles = allFiles.map((f) => {
       return {
-        name: f.name ?? 'mofoJones.png',
-        key: f.key ?? '12345',
-        size: f.size ?? 100,
+        name: f.name ?? '',
+        key: f.key ?? '',
+        size: f.size ?? 0,
       }
     })
 
@@ -119,7 +119,7 @@ const SummaryForm = () => {
           employmentCustom: form?.employmentCustom,
           formComment: form?.formComment,
           state: ApplicationState.NEW,
-          files: formatFiles,
+          files: formatAllFiles,
         },
       },
     })
@@ -380,9 +380,9 @@ const SummaryForm = () => {
           <Box marginRight={3}>
             <Text fontWeight="semiBold">Gögn</Text>
             <Box>
-              {form?.incomeFiles && (
+              {allFiles && (
                 <>
-                  {form.incomeFiles.map((file, index) => {
+                  {allFiles.map((file, index) => {
                     return (
                       <a
                         href={file.name}
@@ -406,33 +406,6 @@ const SummaryForm = () => {
                   })}
                 </>
               )}
-
-              {/* {form?.taxReturnFiles && (
-                <>
-                  {form.taxReturnFiles.map((file, index) => {
-                    return (
-                      <a
-                        href={file.name}
-                        key={`file-` + index}
-                        className={styles.filesButtons}
-                        target="_blank"
-                        download
-                      >
-                        <Box marginRight={1} display="flex" alignItems="center">
-                          <Icon
-                            color="blue400"
-                            icon="document"
-                            size="small"
-                            type="outline"
-                          />
-                        </Box>
-
-                        <Text>{file.name}</Text>
-                      </a>
-                    )
-                  })}
-                </>
-              )} */}
             </Box>
           </Box>
 

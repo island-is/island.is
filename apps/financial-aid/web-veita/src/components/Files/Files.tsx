@@ -16,10 +16,10 @@ import { ApplicationFile } from '@island.is/financial-aid/shared'
 
 interface Props {
   heading?: string
-  filesArr: ApplicationFile[]
+  filesArray: ApplicationFile[]
 }
 
-const Files: React.FC<Props> = ({ heading, filesArr }) => {
+const Files: React.FC<Props> = ({ heading, filesArray }) => {
   const router = useRouter()
   // const { isAuthenticated, setUser, user } = useContext(UserContext)
 
@@ -29,9 +29,9 @@ const Files: React.FC<Props> = ({ heading, filesArr }) => {
       <Text variant="eyebrow" marginBottom={1}>
         {heading}
       </Text>
-      {filesArr && (
+      {filesArray && (
         <>
-          {filesArr.map((item) => {
+          {filesArray.map((item) => {
             let sizeInKilo = Math.floor(item.size / 1000)
 
             return (

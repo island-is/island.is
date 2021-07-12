@@ -221,7 +221,7 @@ const ApplicationProfile = () => {
           <Text as="h2" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
             Gögn frá umsækjanda
           </Text>
-          <Files heading="Tekjugögn" filesArr={data.application.files} />
+          <Files heading="Tekjugögn" filesArray={data.application.files} />
         </>
       </Box>
     )
