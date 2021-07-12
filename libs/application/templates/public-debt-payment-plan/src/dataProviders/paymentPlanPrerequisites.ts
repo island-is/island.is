@@ -66,16 +66,16 @@ const queryPaymentScheduleEmployer = `
 `
 
 const queryPaymentScheduleInitialSchedule = `
-	query PaymentScheduleInitialSchedule($input: GetInitialScheduleInput!) {
-		paymentScheduleInitialSchedule (input : $input){
-			nationalId
-			scheduleType
-			minPayment
-			maxPayment
-			minCountMonth
-			maxCountMonth
-		}
-	}
+  query PaymentScheduleInitialSchedule($input: GetInitialScheduleInput!) {
+    paymentScheduleInitialSchedule (input : $input){
+      nationalId
+      scheduleType
+      minPayment
+      maxPayment
+      minCountMonth
+      maxCountMonth
+    }
+  }
 `
 
 interface PaymentPlanPrerequisitesProps {
@@ -92,7 +92,7 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
     return this.useGraphqlGateway(queryPaymentScheduleDebts).then(
       async (res: Response) => {
         if (!res.ok) {
-          return this.handleError(res, 'Náði ekki sambandi við vefþjónustu')
+          return this.handleError(res, 'Could not connect to web service')
         }
 
         const response = await res.json()
@@ -116,7 +116,7 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
     return this.useGraphqlGateway(queryPaymentScheduleConditions).then(
       async (res: Response) => {
         if (!res.ok) {
-          return this.handleError(res, 'Náði ekki sambandi við vefþjónustu')
+          return this.handleError(res, 'Could not connect to web service')
         }
 
         const response = await res.json()
@@ -140,7 +140,7 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
     return this.useGraphqlGateway(queryPaymentScheduleEmployer).then(
       async (res: Response) => {
         if (!res.ok) {
-          return this.handleError(res, 'Náði ekki sambandi við vefþjónustu')
+          return this.handleError(res, 'Could not connect to web service')
         }
 
         const response = await res.json()
@@ -173,7 +173,7 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
       },
     }).then(async (res: Response) => {
       if (!res.ok) {
-        return this.handleError(res, 'Náði ekki sambandi við vefþjónustu')
+        return this.handleError(res, 'Could not connect to web service')
       }
 
       const response = await res.json()
@@ -237,6 +237,6 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
 
   handleError(error: Error | unknown, reason?: string) {
     console.error('response errors', error)
-    return Promise.reject({ reason: reason || 'Ekki tókst að sækja gögn' })
+    return Promise.reject({ reason: reason || 'Failed to fetch data' })
   }
 }

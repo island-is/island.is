@@ -60,22 +60,14 @@ export const Overview = ({ application }: FieldBaseProps) => {
         </GridRow>
       </ReviewGroup>
       {debts?.map((payment, index) => {
-        // const returnedPayment = externalData.paymentPlanList?.data[index]
-        // TODO: Perhaps there is a better way to do this? Look into later.
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        /* const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
-          '2811903429',
-          PaymentType.O,
-          14000,
-          11,
-        ) */
         return (
           <ReviewGroup isEditable editAction={editAction}>
             <Box paddingBottom={[2, 4]}>
               <Label>{payment.paymentSchedule}</Label>
               <Text>Mánaðarlegar greiðslur</Text>
             </Box>
-            {/* (isLoading || paymentPlanResults) && (
+            {/* TODO: Add actual service
+             (isLoading || paymentPlanResults) && (
               <PaymentPlanTable
                 isLoading={isLoading}
                 data={paymentPlanResults}
