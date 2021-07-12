@@ -37,7 +37,9 @@ const Login = () => {
           Skráðu þig inn til að vinna úr umsóknum um fjárhagsaðstoð.
         </Text>
 
-        <Link href="/api/auth/login?nationalId=0000000000&returnUrl=/nymal">innskraning</Link>
+        <Link href="/api/auth/login?nationalId=0000000000&returnUrl=/nymal">
+          innskraning
+        </Link>
 
         {/* <Button
           onClick={() => {
