@@ -22,7 +22,6 @@ export class FileService {
   ) {}
 
   createFile(createFile: CreateFileDto): Promise<ApplicationFileModel> {
-    // this.logger.debug('Creating a new application event')
     return this.fileModel.create(createFile)
   }
 

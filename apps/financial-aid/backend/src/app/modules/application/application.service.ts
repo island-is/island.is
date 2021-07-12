@@ -15,7 +15,7 @@ export class ApplicationService {
   constructor(
     @InjectModel(ApplicationModel)
     private readonly applicationModel: typeof ApplicationModel,
-    private readonly fileService: FileService, // private readonly fileService: FileService,
+    private readonly fileService: FileService,
   ) {}
 
   getAll(): Promise<ApplicationModel[]> {
@@ -38,13 +38,13 @@ export class ApplicationService {
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    const applModel = await this.applicationModel.create(application)
+    const appModel = await this.applicationModel.create(application)
 
-    //Create fileEvent
+    //Create file
     if (application.files) {
       const fileModel = await application.files.map((f) => {
         this.fileService.createFile({
-          applicationId: applModel.id,
+          applicationId: appModel.id,
           name: f.name,
           key: f.key,
           size: f.size,
@@ -52,7 +52,7 @@ export class ApplicationService {
       })
     }
 
-    return applModel
+    return appModel
   }
 
   async update(
