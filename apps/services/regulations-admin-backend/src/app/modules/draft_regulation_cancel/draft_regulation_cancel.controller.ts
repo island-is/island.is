@@ -35,6 +35,7 @@ const namespace = `${environment.audit.defaultNamespace}/draft_regulation_cancel
 export class DraftRegulationCancelController {
   constructor(
     private readonly draftRegulationCancelService: DraftRegulationCancelService,
+    private readonly auditService: AuditService,
   ) {}
 
   @Scopes('@island.is/regulations:create')
@@ -42,6 +43,9 @@ export class DraftRegulationCancelController {
   @ApiCreatedResponse({
     type: DraftRegulationCancel,
     description: 'Creates a new DraftRegulationCancel',
+  })
+  @Audit<DraftRegulationCancel>({
+    resources: (DraftRegulationCancel) => DraftRegulationCancel.id,
   })
   async create(
     @Body()
@@ -56,6 +60,9 @@ export class DraftRegulationCancelController {
   @ApiOkResponse({
     type: DraftRegulationCancel,
     description: 'Updates an existing user',
+  })
+  @Audit<DraftRegulationCancel>({
+    resources: (DraftRegulationCancel) => DraftRegulationCancel.id,
   })
   async update(
     @Param('id') id: string,
@@ -85,6 +92,14 @@ export class DraftRegulationCancelController {
       throw new BadRequestException('id must be provided')
     }
 
-    return await this.draftRegulationCancelService.delete(id)
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'delete',
+        namespace,
+        resources: id,
+      },
+      this.draftRegulationCancelService.delete(id),
+    )
   }
 }
