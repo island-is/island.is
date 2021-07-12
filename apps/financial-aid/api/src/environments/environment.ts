@@ -27,7 +27,7 @@ const prodConfig = {
       'https://innskraning.island.is/?id=financial-aid-osk.development',
     samlEntryPointVeita:
       process.env.SAML_ENTRY_POINT_VEITA ??
-      'https://innskraning.island.is/?id=financial-aid-osk.development',
+      'https://innskraning.island.is/?id=financial-aid-veita.development',
     audience: process.env.AUTH_AUDIENCE,
     allowFakeUsers: process.env.ALLOW_FAKE_USERS === 'true',
     jwtSecret: process.env.AUTH_JWT_SECRET!,
