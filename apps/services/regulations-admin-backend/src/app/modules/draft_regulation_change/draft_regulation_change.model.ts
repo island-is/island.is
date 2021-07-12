@@ -13,6 +13,11 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { DraftRegulation } from '../draft_regulation'
 
+import {
+  ISODate,
+  RegName,
+} from '@island.is/regulations'
+
 @Table({
   tableName: 'draft_regulation_change',
 })
@@ -37,13 +42,13 @@ export class DraftRegulationChange extends Model<DraftRegulationChange> {
     type: DataType.STRING,
   })
   @ApiProperty()
-  regulation!: string
+  regulation!: RegName
 
   @Column({
     type: DataType.DATEONLY,
   })
   @ApiProperty()
-  date!: string
+  date!: ISODate
 
   @Column({
     type: DataType.STRING,

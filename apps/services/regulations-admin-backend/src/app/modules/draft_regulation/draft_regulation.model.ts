@@ -11,6 +11,15 @@ import {
   HasOne,
 } from 'sequelize-typescript'
 
+import {
+  RegulationType,
+  ISODate,
+  RegName,
+  MinistrySlug,
+  LawChapterSlug,
+  Kennitala,
+} from '@island.is/regulations'
+
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { DraftRegulationChange } from '../draft_regulation_change'
 import { DraftRegulationCancel } from '../draft_regulation_cancel'
@@ -41,7 +50,7 @@ export class DraftRegulation extends Model<DraftRegulation> {
     unique: true,
   })
   @ApiProperty()
-  name?: string
+  name?: RegName
 
   @Column({
     type: DataType.STRING,
@@ -67,25 +76,25 @@ export class DraftRegulation extends Model<DraftRegulation> {
     type: DataType.DATEONLY,
   })
   @ApiProperty()
-  ideal_publish_date?: Date
+  ideal_publish_date?: ISODate
 
   @Column({
     type: DataType.STRING,
   })
   @ApiProperty()
-  ministry_id?: string
+  ministry_id?: MinistrySlug
 
   @Column({
     type: DataType.DATEONLY,
   })
   @ApiProperty()
-  signature_date?: Date
+  signature_date?: ISODate
 
   @Column({
     type: DataType.DATEONLY,
   })
   @ApiProperty()
-  effective_date?: Date
+  effective_date?: ISODate
 
   @Column({
     type: DataType.ENUM,
@@ -93,19 +102,19 @@ export class DraftRegulation extends Model<DraftRegulation> {
     values: ['base', 'amending'],
   })
   @ApiProperty()
-  type?: 'base' | 'amending'
+  type?: RegulationType
 
   @Column({
     type: DataType.ARRAY(DataType.STRING),
   })
   @ApiProperty()
-  authors!: string[]
+  authors!: Kennitala[]
 
   @Column({
     type: DataType.ARRAY(DataType.STRING),
   })
   @ApiProperty()
-  law_chapters?: string[]
+  law_chapters?: LawChapterSlug[]
 
   @HasMany(() => DraftRegulationChange)
   @ApiPropertyOptional({ type: [DraftRegulationChange] })
