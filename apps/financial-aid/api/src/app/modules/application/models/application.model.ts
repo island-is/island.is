@@ -71,4 +71,10 @@ export class ApplicationModel implements Application {
 
   @Field(() => String)
   readonly state!: ApplicationState
+
+  @Field({ nullable: true })
+  readonly amount?: number
+
+  @Field({ nullable: true })
+  readonly rejection?: string
 }

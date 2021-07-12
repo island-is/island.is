@@ -82,4 +82,8 @@ export class CreateApplicationInput implements CreateApplication {
   @Allow()
   @Field(() => String)
   readonly state!: ApplicationState
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly amount?: number
 }

@@ -8,12 +8,9 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 
-import {
-  GetMunicipalityQuery,
-  CreateApplicationQuery,
-} from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import {
   FormContentContainer,
@@ -36,7 +33,6 @@ import {
   calculateAidFinalAmount,
   calulateTaxOfAmount,
   calulatePersonalTaxAllowanceUsed,
-  TaxInfo,
 } from '@island.is/financial-aid-web/osk/src/utils/taxCalculator'
 
 import {
@@ -49,8 +45,9 @@ import {
   formatPhoneNumber,
   formatNationalId,
   aidCalculator,
-  ApplicationState,
 } from '@island.is/financial-aid/shared'
+
+import useApplication from '@island.is/financial-aid-web/osk/src/utils/useApplication'
 
 interface MunicipalityData {
   municipality: Municipality
@@ -79,56 +76,24 @@ const SummaryForm = () => {
     message: '',
   })
 
-  const [creatApplicationMutation, { loading: isUpdating }] = useMutation(
-    CreateApplicationQuery,
-  )
+  const { createApplication } = useApplication()
 
-  const createApplication = async () => {
-    const { data } = await creatApplicationMutation({
-      variables: {
-        input: {
-          nationalId: user?.nationalId,
-          name: user?.name,
-          phoneNumber: user?.phoneNumber,
-          email: form?.emailAddress,
-          homeCircumstances: form?.homeCircumstances,
-          homeCircumstancesCustom: form?.homeCircumstancesCustom,
-          student: Boolean(form?.student),
-          studentCustom: form?.studentCustom,
-          hasIncome: Boolean(form?.hasIncome),
-          usePersonalTaxCredit: Boolean(form?.usePersonalTaxCredit),
-          bankNumber: form?.bankNumber,
-          ledger: form?.ledger,
-          accountNumber: form?.accountNumber,
-          interview: Boolean(form?.interview),
-          employment: form?.employment,
-          employmentCustom: form?.employmentCustom,
-          formComment: form?.formComment,
-          state: ApplicationState.NEW,
-        },
-      },
-    })
-    return data
-  }
-
-  const errorCheck = () => {
-    createApplication()
-      .then(() => {
+  const handleNextButtonClick = async () => {
+    if (!form || !user) {
+      return
+    }
+    try {
+      await createApplication(form, user).then(() => {
         if (navigation?.nextUrl) {
-          router.push(navigation?.nextUrl)
+          router.push(navigation.nextUrl)
         }
-
-        router.events.on('routeChangeComplete', (url) => {
-          //Clear session storage
-          updateForm({ submitted: false, incomeFiles: [] })
-        })
       })
-      .catch((err) =>
-        setFormError({
-          status: true,
-          message: 'Obobb einhvað fór úrskeiðis',
-        }),
-      )
+    } catch (e) {
+      setFormError({
+        status: true,
+        message: 'Obobb einhvað fór úrskeiðis',
+      })
+    }
   }
 
   const aidAmount = useMemo(() => {
@@ -423,7 +388,7 @@ const SummaryForm = () => {
         }}
         previousIsDestructive={true}
         nextButtonText="Senda umsókn"
-        onNextButtonClick={() => errorCheck()}
+        onNextButtonClick={handleNextButtonClick}
       />
     </FormLayout>
   )
