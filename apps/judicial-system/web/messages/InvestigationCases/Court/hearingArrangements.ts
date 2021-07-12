@@ -1,4 +1,4 @@
-import { defineMessages } from 'react-intl'
+import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings for court officials
 export const icHearingArrangements = {
@@ -23,6 +23,46 @@ export const icHearingArrangements = {
           'Notaður sem upplýsingatexti í upplýsingasvæði við "dómari" titlinn á fyrirtöku skrefi í rannsóknarheimildum.',
       },
     }),
+    sessionArrangements: {
+      heading: defineMessage({
+        id:
+          'judicial.system:investigation_cases.hearing_arrangements.session_arrangements.heading',
+        defaultMessage: 'Fyrirtaka',
+        description:
+          'Notaður sem titill fyrir "fyrirtöku" hlutan á fyrirtöku skrefi í rannsóknarheimildum.',
+      }),
+      tooltip: defineMessage({
+        id:
+          'judicial.system:investigation_cases.hearing_arrangements.session_arrangements.tooltip',
+        defaultMessage:
+          'Hér er hægt að merkja hvaða aðilar málsins mæta í fyrirtöku eða hvort fyrirtakan fari fram rafrænt.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "Fyrirtaka" titlinn á fyrirtöku skrefi í rannsóknarheimildum.',
+      }),
+      options: {
+        allPresent: defineMessage({
+          id:
+            'judicial.system:investigation_cases.hearing_arrangements.session_arrangements.options.all_present',
+          defaultMessage: 'Fulltrúar málsaðila mæta',
+          description:
+            'Notaður sem texti fyrir valmöguleikann "Fulltrúar málsaðila mæta" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
+        }),
+        prosecutorPresent: defineMessage({
+          id:
+            'judicial.system:investigation_cases.hearing_arrangements.session_arrangements.options.prosecutor_present',
+          defaultMessage: 'Fulltrúi ákæruvalds mætir',
+          description:
+            'Notaður sem texti fyrir valmöguleikann "Fulltrúi ákæruvalds mætir" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
+        }),
+        remoteSession: defineMessage({
+          id:
+            'judicial.system:investigation_cases.hearing_arrangements.session_arrangements.options.remote_session',
+          defaultMessage: 'Fyrirtaka að málsaðilum fjarstöddum',
+          description:
+            'Notaður sem texti fyrir valmöguleikann "Fyrirtaka að málsaðilum fjarstöddum" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
+        }),
+      },
+    },
   },
   modal: defineMessages({
     heading: {
