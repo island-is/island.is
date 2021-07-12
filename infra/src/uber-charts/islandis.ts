@@ -26,16 +26,23 @@ import { serviceSetup as temporaryVoterRegistryServiceSetup } from '../../../app
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 
+const temporaryVoterRegistry = temporaryVoterRegistryServiceSetup()
+const partyLetterRegistry = partyLetterServiceSetup()
+const endorsement = endorsementServiceSetup({
+  servicesTemporaryVoterRegistryApi: temporaryVoterRegistry,
+})
+
 const documentsService = serviceDocumentsSetup()
-const appSystemApi = appSystemApiSetup({ documentsService })
+const appSystemApi = appSystemApiSetup({
+  documentsService,
+  servicesEndorsementApi: endorsement,
+  servicesPartyLetterRegistryApi: partyLetterRegistry,
+})
 const appSystemForm = appSystemFormSetup({})
 
 const servicePortalApi = servicePortalApiSetup()
 const servicePortal = servicePortalSetup({})
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
-const endorsement = endorsementServiceSetup()
-const partyLetterRegistry = partyLetterServiceSetup()
-const temporaryVoterRegistry = temporaryVoterRegistryServiceSetup()
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -75,6 +82,9 @@ export const Services: EnvironmentServices = {
     xroadCollector,
     downloadService,
     nameRegistryBackend,
+    endorsement,
+    partyLetterRegistry,
+    temporaryVoterRegistry,
   ],
   staging: [
     appSystemApi,
@@ -92,6 +102,9 @@ export const Services: EnvironmentServices = {
     xroadCollector,
     downloadService,
     nameRegistryBackend,
+    endorsement,
+    partyLetterRegistry,
+    temporaryVoterRegistry,
   ],
   dev: [
     appSystemApi,
@@ -110,6 +123,8 @@ export const Services: EnvironmentServices = {
     downloadService,
     nameRegistryBackend,
     endorsement,
+    partyLetterRegistry,
+    temporaryVoterRegistry,
   ],
 }
 

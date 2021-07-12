@@ -4,7 +4,6 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
@@ -14,10 +13,11 @@ import * as z from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 
-const States = {
-  draft: 'draft',
-  paymentPending: 'paymentPending',
-  paid: 'paid',
+enum States {
+  DRAFT = 'draft',
+  DONE = 'done',
+  PAYMENT = 'payment',
+  PAID = 'paid,',
 }
 
 type ReferenceTemplateEvent = { type: DefaultEvents.PAYMENT }
@@ -41,20 +41,21 @@ const PayableDummyTemplate: ApplicationTemplate<
   name: m.name,
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
+  readyForProduction: true,
   dataSchema: Schema,
   stateMachineConfig: {
-    initial: States.draft,
+    initial: States.DRAFT,
     states: {
-      [States.draft]: {
+      [States.DRAFT]: {
         meta: {
           name: 'Umsókn um greiðslu',
           actionCard: {
             title: m.draftTitle,
             description: m.draftDescription,
           },
-          progress: 0.25,
+          progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
-          onExit: {
+          onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
           roles: [
@@ -77,26 +78,53 @@ const PayableDummyTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.PAYMENT]: {
-            target: States.paymentPending,
+            target: States.PAYMENT,
           },
         },
       },
-      [States.paymentPending]: {
+      [States.PAYMENT]: {
         meta: {
-          name: 'Greiða',
+          name: 'Payment state',
+          progress: 0.7,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.createCharge,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Payment').then((val) =>
+                  Promise.resolve(val.payment),
+                ),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          '*': { target: States.DONE },
+        },
+      },
+      [States.DONE]: {
+        meta: {
+          name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/PaymentPending').then((val) =>
-                  Promise.resolve(val.PaymentPending),
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.done),
                 ),
               read: 'all',
             },
           ],
         },
+        type: 'final' as const,
       },
     },
   },

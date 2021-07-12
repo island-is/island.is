@@ -24,7 +24,7 @@ const SelectProsecutor: React.FC<Props> = (props) => {
     <>
       <Box marginBottom={3}>
         <Text as="h3" variant="h3">
-          Ákærandi{' '}
+          {`Ákærandi `}
           <Box component="span" data-testid="prosecutor-tooltip">
             <Tooltip text="Sá saksóknari sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis." />
           </Box>

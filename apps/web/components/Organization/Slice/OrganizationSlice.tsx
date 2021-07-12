@@ -57,6 +57,10 @@ const OverviewLinksSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OverviewLinksSlice),
 )
 
+const EventSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.EventSlice),
+)
+
 const MailingListSignupSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.MailingListSignupSlice),
 )
@@ -107,6 +111,8 @@ const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
       return <StorySlice slice={slice} />
     case 'OverviewLinks':
       return <OverviewLinksSlice slice={slice} />
+    case 'EventSlice':
+      return <EventSlice slice={slice} />
     case 'LatestNewsSlice':
       return (
         <LatestNewsSlice

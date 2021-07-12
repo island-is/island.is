@@ -119,9 +119,9 @@ export const serviceSetup = (services: {
         staging: 'https://api.staging01.devland.is',
       },
       XROAD_TJODSKRA_MEMBER_CODE: {
-        prod: '10001',
+        prod: '6503760649',
         dev: '10001',
-        staging: '10001',
+        staging: '6503760649',
       },
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
@@ -132,6 +132,16 @@ export const serviceSetup = (services: {
       PARTY_LETTER_REGISTRY_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesPartyLetterRegistryApi)}`,
       ),
+      DRIVING_LICENSE_PATH_REPLACEMENT_FROM: {
+        prod: '/RafraentOkuskirteini-v1/api/Okuskirteini/',
+        staging: '',
+        dev: '',
+      },
+      DRIVING_LICENSE_PATH_REPLACEMENT_TO: {
+        prod: '/RafraentOkuskirteini-v1/api/okuskirteini/',
+        staging: '',
+        dev: '',
+      },
     })
 
     .secrets({
@@ -174,6 +184,19 @@ export const serviceSetup = (services: {
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
       DOCUMENT_PROVIDER_ADMINS:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS',
+      FINANCE_PASS: '/k8s/service-portal/FINANCE_PASS',
+      FINANCE_USER: '/k8s/service-portal/FINANCE_USER',
+      XROAD_FINANCES_PATH: '/k8s/service-portal/XROAD_FINANCES_PATH',
+      PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
+      PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',
+      PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
+      PAYMENT_XROAD_PROVIDER_ID:
+        '/k8s/application-system-api/PAYMENT_XROAD_PROVIDER_ID',
+      PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER',
+      PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD',
+      RSK_API_USERNAME: '/k8s/shared/api/RSK_API_USERNAME',
+      RSK_API_PASSWORD: '/k8s/shared/api/RSK_API_PASSWORD',
+      RSK_API_URL: '/k8s/shared/api/RSK_API_URL',
     })
 
     .ingress({

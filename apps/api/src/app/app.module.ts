@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
+
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
@@ -16,6 +17,7 @@ import { TranslationsModule } from '@island.is/api/domains/translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
+import { IdentityModule } from '@island.is/api/domains/identity'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { HealthController } from './health.controller'
 import { environment } from './environments'
@@ -25,12 +27,16 @@ import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
+import { FinanceModule } from '@island.is/api/domains/finance'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
 import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
+import { AuditModule } from '@island.is/nest/audit'
+
+import { maskOutFieldsMiddleware } from './graphql.middleware'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -46,6 +52,9 @@ const autoSchemaFile = environment.production
       playground,
       autoSchemaFile,
       path: '/api/graphql',
+      buildSchemaOptions: {
+        fieldMiddleware: [maskOutFieldsMiddleware],
+      },
       plugins: [
         responseCachePlugin({
           shouldReadFromCache: ({
@@ -59,13 +68,26 @@ const autoSchemaFile = environment.production
         }),
       ],
     }),
-    AuthDomainModule.register(environment.authPublicApi),
+    AuthDomainModule.register({
+      identity: {
+        nationalRegistryXRoad: {
+          xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
+          xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
+          xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
+          xRoadClientId: environment.nationalRegistryXRoad.clientId,
+        },
+      },
+      authPublicApi: environment.authPublicApi,
+    }),
+    AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
       secret: environment.drivingLicense.secret,
+      xroadPath: environment.drivingLicense.xroadPath,
+      replaceInPath: environment.drivingLicense.replaceInPath,
     }),
     EducationModule.register({
       xroad: {
@@ -142,6 +164,14 @@ const autoSchemaFile = environment.production
     }),
     CommunicationsModule,
     ApiCatalogueModule,
+    IdentityModule.register({
+      nationalRegistryXRoad: {
+        xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
+        xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
+        xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
+        xRoadClientId: environment.nationalRegistryXRoad.clientId,
+      },
+    }),
     AuthModule.register(environment.auth),
     SyslumennModule.register({
       url: environment.syslumennService.url,
@@ -165,6 +195,15 @@ const autoSchemaFile = environment.production
     RegulationsModule.register({
       url: environment.regulationsDomain.url,
     }),
+    FinanceModule.register({
+      username: environment.fjarmalDomain.username,
+      password: environment.fjarmalDomain.password,
+      ttl: environment.fjarmalDomain.ttl,
+      downloadServiceBaseUrl: environment.downloadService.baseUrl,
+      xroadApiPath: environment.fjarmalDomain.xroadApiPath,
+      xroadBaseUrl: environment.xroad.baseUrl,
+      xroadClientId: environment.xroad.clientId,
+    }),
     NationalRegistryXRoadModule.register({
       xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
       xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
@@ -186,10 +225,15 @@ const autoSchemaFile = environment.production
     }),
     LicenseServiceModule.register({
       xroad: {
-        xroadBaseUrl: environment.xroad.baseUrl,
-        xroadClientId: environment.xroad.clientId,
-        xroadPath: environment.drivingLicense.xroadPath,
-        drivingLicenseSecret: environment.drivingLicense.secret,
+        baseUrl: environment.xroad.baseUrl,
+        clientId: environment.xroad.clientId,
+        path: environment.drivingLicense.xroadPath,
+        secret: environment.drivingLicense.secret,
+      },
+      pkpass: {
+        apiKey: environment.pkpass.apiKey,
+        apiUrl: environment.pkpass.apiUrl,
+        secretKey: environment.pkpass.secretKey,
       },
     }),
   ],

@@ -3,6 +3,7 @@ import { PostgresInfo, Service } from './types/input-types'
 import {
   getDependantServices,
   getPostgresInfoForFeature,
+  resolveWithMaxLength,
 } from './serialize-to-yaml'
 import { resolveDbHost } from './map-to-values'
 import { FeatureKubeJob } from './types/output-types'
@@ -41,7 +42,7 @@ export const generateJobsForFeature = (
           return {
             command: ['/app/create-db.sh'],
             image,
-            name: info!.name!.replace(/_/g, '-').substr(0, 60),
+            name: `${info!.name!.replace(/_/g, '-').substr(0, 60)}1`,
             securityContext,
             env: [
               {
@@ -89,7 +90,7 @@ export const generateJobsForFeature = (
     containers.push({
       name: 'noop',
       securityContext,
-      image: 'busybox',
+      image: 'public.ecr.aws/runecast/busybox:1.32.1',
       command: [
         'sh',
         '-c',
@@ -102,7 +103,10 @@ export const generateJobsForFeature = (
     apiVersion: 'batch/v1',
     kind: 'Job',
     metadata: {
-      name: `create-db-${feature}-${new Date().getTime()}`,
+      name: resolveWithMaxLength(
+        `create-db-${feature}-${new Date().getTime()}`,
+        62,
+      ),
     },
     spec: {
       template: {

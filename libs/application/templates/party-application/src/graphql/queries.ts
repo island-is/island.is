@@ -12,6 +12,9 @@ export const GetUserEndorsements = gql`
   query endorsementSystemUserEndorsements {
     endorsementSystemUserEndorsements {
       endorsementListId
+      endorsementList {
+        tags
+      }
     }
   }
 `
@@ -42,8 +45,8 @@ export const GetEndorsements = gql`
       meta {
         fullName
         address
-        invalidated
         bulkEndorsement
+        voterRegion
       }
       created
       modified

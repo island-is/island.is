@@ -1,14 +1,5 @@
 import { gql } from '@apollo/client'
 
-export const RequestSignatureMutation = gql`
-  mutation RequestSignatureMutation($input: RequestSignatureInput!) {
-    requestSignature(input: $input) {
-      controlCode
-      documentToken
-    }
-  }
-`
-
 export const SignatureConfirmationQuery = gql`
   query SignatureConfirmationQuery($input: SignatureConfirmationQueryInput!) {
     signatureConfirmation(input: $input) {
@@ -61,6 +52,7 @@ export const ExtendCaseMutation = gql`
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
+      defenderIsSpokesperson
       court {
         id
         type
@@ -92,6 +84,7 @@ export const ExtendCaseMutation = gql`
         name
       }
       courtCaseNumber
+      sessionArrangements
       courtDate
       courtRoom
       courtStartDate
@@ -112,7 +105,7 @@ export const ExtendCaseMutation = gql`
       custodyRestrictions
       otherRestrictions
       isolationToDate
-      additionToConclusion
+      conclusion
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision

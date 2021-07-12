@@ -257,7 +257,7 @@ jobs:
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
-            echo "::set-output name=IMAGES=$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
+            echo "::set-output name=IMAGES::$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
           fi
 
       - name: Gather unaffected docker images
@@ -338,11 +338,13 @@ jobs:
     needs:
       - prepare
       - pre-checks
+      - docker-build
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: ubuntu-20.04
     timeout-minutes: 5
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
     steps:
       - uses: actions/checkout@v2
 
@@ -467,7 +469,7 @@ jobs:
 
   failure-notification:
     runs-on: ubuntu-20.04
-    if: failure() && needs.pre-checks.outputs.PRE_CHECK
+    if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
       - prepare
