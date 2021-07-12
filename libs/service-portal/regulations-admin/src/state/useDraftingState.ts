@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { useQuery, gql } from '@apollo/client'
 import { HTMLText, PlainText, RegName } from '@island.is/regulations'
 import { Query } from '@island.is/api/schema'
 import { AuthContextType, useAuth } from '@island.is/auth/react'
@@ -20,6 +20,21 @@ import {
 } from '../types-database'
 import { mockDraftRegulations, useMockQuery, mockSave } from '../_mockData'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
+
+const RegulationDraftQuery = gql`
+  query draftRegulations($input: GetDraftRegulationInput!) {
+    getDraftRegulation(input: $input) {
+      draftingStatus
+      lawChapters
+      appendixes
+      impacts
+      id
+      title
+      text
+      authors
+    }
+  }
+`
 
 export type DraftIdFromParam = 'new' | RegulationDraftId
 
@@ -330,18 +345,35 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     getInitialState,
   )
 
-  const res = useMockQuery(
-    draftId !== 'new' &&
-      !state.error && { regulationDraft: mockDraftRegulations[draftId] },
-    isNew,
-  )
-  // const res = useQuery<Query>(RegulationDraftQuery, {
-  //   variables: { id: draftId },
-  //   skip: isNew && !state.error,
-  // })
+  // const res = useMockQuery(
+  //   draftId !== 'new' &&
+  //     !state.error && { regulationDraft: mockDraftRegulations[draftId] },
+  //   isNew,
+  // )
+  const res = useQuery<Query>(RegulationDraftQuery, {
+    variables: {
+      input: {
+        regulationId: draftId,
+      },
+    },
+    skip: isNew && !state.error,
+  })
   const { loading, error } = res
 
-  const draft = res.data ? res.data.regulationDraft : undefined
+  const draftRes = res.data ? res.data.getDraftRegulation : undefined
+
+  const draft = {
+    ...draftRes,
+    appendixes: [],
+    impacts: [], // vantar í draftRegulation.model
+    authors: [
+      {
+        authorId: 123,
+        name: 'Name nameson',
+        email: 'test@test.com',
+      },
+    ],
+  }
 
   useEffect(() => {
     dispatch({ type: 'CHANGE_STEP', stepName })
@@ -356,9 +388,11 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     } else if (draft) {
       dispatch({ type: 'LOADING_DRAFT_SUCCESS', draft })
     }
-  }, [loading, error, draft])
+  }, [loading, error])
 
   const stepNav = steps[stepName]
+
+  console.log('draft', draft)
 
   const actions = {
     // updateProp: (name: keyof ) => {

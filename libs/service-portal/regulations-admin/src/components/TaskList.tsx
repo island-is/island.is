@@ -1,7 +1,7 @@
 import React from 'react'
 
-// import { gql, useQuery } from '@apollo/client'
-// import { Query } from '@island.is/api/schema'
+import { gql, useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import {
   ActionCard,
   Box,
@@ -9,28 +9,31 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { mockDraftlist, useMockQuery } from '../_mockData'
+import { DraftingStatus } from '../types'
+// import { mockDraftlist, useMockQuery } from '../_mockData'
 import { homeMessages as msg, statusMsgs } from '../messages'
 import { ISODate } from '@island.is/regulations'
 import { workingDaysUntil, useLocale } from '../utils'
 import { generatePath, useHistory } from 'react-router'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
-// const RegulationTaskListQuery = gql`
-//   query RegulationTaskListQuery {
-//     taskList {
-//       id
-//       title
-//       draftStatus
-//       idealPublishDate
-//     }
-//   }
-// `
+const RegulationTaskListQuery = gql`
+  query RegulationTaskListQuery {
+    getDraftRegulations {
+      id
+      title
+      draftingStatus
+      idealPublishDate
+      authors
+    }
+  }
+`
 
 export const TaskList = () => {
   const { formatMessage, formatDateFns } = useLocale()
   const history = useHistory()
-  const { data, loading } = useMockQuery({ regulationDraft: mockDraftlist }) // useQuery<Query>(RegulationTaskListQuery)
+  // const { data, loading } = useMockQuery({ regulationDraft: mockDraftlist }) // useQuery<Query>(RegulationTaskListQuery)
+  const { data, loading } = useQuery<Query>(RegulationTaskListQuery)
 
   if (loading) {
     return (
@@ -40,9 +43,9 @@ export const TaskList = () => {
     )
   }
 
-  const { regulationDraft = [] } = data || {}
+  const { getDraftRegulations = [] } = data || {}
 
-  if (regulationDraft.length === 0) {
+  if (getDraftRegulations.length === 0) {
     return null
   }
 
@@ -59,6 +62,7 @@ export const TaskList = () => {
       fastTrack,
     }
   }
+  console.log('dataaaa', getDraftRegulations)
 
   return (
     <Box marginBottom={[4, 4, 6]}>
@@ -66,22 +70,25 @@ export const TaskList = () => {
         {formatMessage(msg.taskListTitle)}
       </Text>
       <Stack space={2}>
-        {regulationDraft.map((item) => {
+        {getDraftRegulations.map((item) => {
           const { id, title, idealPublishDate, draftingStatus, authors } = item
-          const idealDate = getReqDate(idealPublishDate)
-          const statusLabel = formatMessage(statusMsgs[draftingStatus])
+          const idealDate = getReqDate(idealPublishDate as ISODate)
+          // const statusLabel = formatMessage(statusMsgs[draftingStatus])
           return (
             <ActionCard
               key={id}
               date={idealDate.label}
               backgroundColor={idealDate.fastTrack ? 'blue' : undefined}
-              heading={title}
+              heading={title ?? ''}
               tag={{
-                label: formatMessage(statusMsgs[draftingStatus]),
+                label: formatMessage(
+                  statusMsgs[draftingStatus as DraftingStatus],
+                ),
                 outlined: true,
                 variant: draftingStatus === 'proposal' ? 'blueberry' : 'red',
               }}
-              text={authors.map(({ name }) => name).join(', ')}
+              // text={authors?.map(({ name }) => name).join(', ')}
+              text={authors?.map((item) => item).join(', ')}
               cta={{
                 label: formatMessage(msg.cta),
                 // variant: draftingStatus === 'draft' ? 'ghost' : undefined,

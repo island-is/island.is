@@ -31,12 +31,12 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
-@UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('draft_regulations')
-@ApiHeader({
-  name: 'authorization',
-  description: 'Bearer token authorization',
-})
+// @UseGuards(IdsUserGuard, ScopesGuard)
+// @ApiTags('draft_regulations')
+// @ApiHeader({
+//   name: 'authorization',
+//   description: 'Bearer token authorization',
+// })
 @Controller('api')
 @Audit({ namespace })
 export class DraftRegulationController {
@@ -82,7 +82,7 @@ export class DraftRegulationController {
     return updatedDraftRegulation
   }
 
-  @Scopes('@island.is/regulations:create')
+  // @Scopes('@island.is/regulations:create')
   @Get('draft_regulations')
   @ApiOkResponse({
     type: DraftRegulation,
@@ -93,7 +93,7 @@ export class DraftRegulationController {
     return this.draftRegulationService.getAll()
   }
 
-  @Scopes('@island.is/regulations:create')
+  // @Scopes('@island.is/regulations:create')
   @Get('draft_regulation/:id')
   @ApiOkResponse({
     type: DraftRegulation,

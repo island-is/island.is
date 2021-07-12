@@ -52,4 +52,20 @@ export class RegulationsAdminApi extends RESTDataSource {
     )
     return response
   }
+
+  async getShippedRegulation(
+    regulationId: string,
+    authorization: string,
+  ): Promise<DraftRegulation | null> {
+    const response = await this.get<DraftRegulation | null>(
+      // `/shipped_regulation/${regulationId}`,
+      `/shipped_regulation/a1fd62db-18a6-4741-88eb-a7b7a7e05833`,
+      {},
+      {
+        cacheOptions: { ttl: this.options.ttl },
+        headers: { authorization },
+      },
+    )
+    return response
+  }
 }
