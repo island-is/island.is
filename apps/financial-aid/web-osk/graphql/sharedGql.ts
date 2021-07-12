@@ -61,6 +61,15 @@ export const GetCurrentUserQuery = gql`
   }
 `
 
+export const CreateSignedUrlMutation = gql`
+  mutation getSignedUrl($input: GetSignedUrlInput!) {
+    getSignedUrl(input: $input) {
+      url
+      key
+    }
+  }
+`
+
 // export const GetApplicationQuery = gql`
 //   query GetApplicationQuery {
 //     applications {

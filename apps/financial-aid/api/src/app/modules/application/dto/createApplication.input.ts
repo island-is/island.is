@@ -9,6 +9,8 @@ import {
   ApplicationState,
 } from '@island.is/financial-aid/shared'
 
+import { CreateApplicationFileInput } from '../../file/dto'
+
 @InputType()
 export class CreateApplicationInput implements CreateApplication {
   @Allow()
@@ -84,6 +86,9 @@ export class CreateApplicationInput implements CreateApplication {
   readonly state!: ApplicationState
 
   @Allow()
+  @Field(() => [CreateApplicationFileInput])
+  readonly files!: CreateApplicationFileInput[]
+
   @Field({ nullable: true })
   readonly amount?: number
 }

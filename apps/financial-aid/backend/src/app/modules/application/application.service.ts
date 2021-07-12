@@ -3,10 +3,9 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { ApplicationModel } from './models'
 
-import { ApplicationEventModel } from '../applicationEvent/models'
-
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
-import { User, Application } from '@island.is/financial-aid/shared'
+import { User } from '@island.is/financial-aid/shared'
+import { FileService } from '../file'
 import { ApplicationEventService } from '../applicationEvent'
 
 @Injectable()
@@ -14,34 +13,52 @@ export class ApplicationService {
   constructor(
     @InjectModel(ApplicationModel)
     private readonly applicationModel: typeof ApplicationModel,
-    private readonly applicationEventService: ApplicationEventService, // private readonly applicationEventService: typeof ApplicationEventService, // private readonly applicationEventModel: typeof ApplicationEventModel,
+    private readonly fileService: FileService,
+    private readonly applicationEventService: ApplicationEventService,
   ) {}
 
   getAll(): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll()
   }
 
-  findById(id: string): Promise<ApplicationModel | null> {
-    return this.applicationModel.findOne({
+  async findById(id: string): Promise<ApplicationModel | null> {
+    const application = await this.applicationModel.findOne({
       where: { id },
     })
+
+    const files = await this.fileService.getAllApplicationFiles(id)
+
+    application.setDataValue('files', files)
+
+    return application
   }
 
   async create(
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    //Creates application
-    const applModal = await this.applicationModel.create(application)
+    const appModel = await this.applicationModel.create(application)
 
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
-      applicationId: applModal.id,
-      state: applModal.state,
+      applicationId: appModel.id,
+      state: appModel.state,
       comment: null,
     })
 
-    return applModal
+    //Create file
+    if (application.files) {
+      const fileModel = await application.files.map((f) => {
+        this.fileService.createFile({
+          applicationId: appModel.id,
+          name: f.name,
+          key: f.key,
+          size: f.size,
+        })
+      })
+    }
+
+    return appModel
   }
 
   async update(

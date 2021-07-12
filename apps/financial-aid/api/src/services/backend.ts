@@ -7,6 +7,8 @@ import {
   Municipality,
   UpdateApplication,
   CreateApplication,
+  GetSignedUrl,
+  SignedUrl,
   ApplicationEvent,
   CreateApplicationEvent,
 } from '@island.is/financial-aid/shared'
@@ -45,6 +47,10 @@ class BackendAPI extends RESTDataSource {
     updateApplication: UpdateApplication,
   ): Promise<Application> {
     return this.put(`applications/${id}`, updateApplication)
+  }
+
+  getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
+    return this.post('/file/url', getSignedUrl)
   }
 
   getApplicationEvents(): Promise<ApplicationEvent[]> {

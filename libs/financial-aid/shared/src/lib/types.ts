@@ -44,9 +44,25 @@ export interface Application {
   studentCustom?: string
   formComment?: string
   state: ApplicationState
+  files?: ApplicationFile[]
   amount?: number
   comment?: string
   rejection?: string
+}
+
+export interface ApplicationFile {
+  id: string
+  created: string
+  applicationId: string
+  name: string
+  key: string
+  size: number
+}
+
+export interface CreateApplicationFile {
+  name: string
+  key: string
+  size: number
 }
 
 export interface CreateApplication {
@@ -67,7 +83,8 @@ export interface CreateApplication {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
-  state: ApplicationState
+  state?: ApplicationState
+  files: CreateApplicationFile[]
   amount?: number
 }
 
@@ -118,10 +135,20 @@ export interface User {
   nationalId: string
   name: string
   phoneNumber: string
+  folder: string
   service: 'osk' | 'veita'
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
+
+export interface GetSignedUrl {
+  fileName: string
+}
+
+export interface SignedUrl {
+  url: string
+  key: string
+}
 
 // export type HomeCircumstances =
 //   | 'Unknown'

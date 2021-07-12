@@ -10,4 +10,6 @@ export type {
   NavigationProps,
   User,
   KeyMapping,
+  GetSignedUrl,
+  SignedUrl,
 } from './lib/types'

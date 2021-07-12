@@ -8,6 +8,7 @@ import {
 
 import { User, ApplicationState } from '@island.is/financial-aid/shared'
 import { Form } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import { UploadFile } from '@island.is/island-ui/core'
 
 const useApplication = () => {
   const [
@@ -16,8 +17,20 @@ const useApplication = () => {
   ] = useMutation(CreateApplicationQuery)
 
   const createApplication = useMemo(
-    () => async (form: Form, user: User): Promise<string | undefined> => {
+    () => async (
+      form: Form,
+      user: User,
+      allFiles: UploadFile[],
+    ): Promise<string | undefined> => {
       if (isCreatingApplication === false) {
+        const formatAllFiles = allFiles.map((f) => {
+          return {
+            name: f.name ?? '',
+            key: f.key ?? '',
+            size: f.size ?? 0,
+          }
+        })
+
         const { data } = await createApplicationMutation({
           variables: {
             input: {
@@ -39,6 +52,7 @@ const useApplication = () => {
               employmentCustom: form?.employmentCustom,
               formComment: form?.formComment,
               state: ApplicationState.NEW,
+              files: formatAllFiles,
             },
           },
         })

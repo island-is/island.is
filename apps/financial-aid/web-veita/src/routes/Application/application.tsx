@@ -362,10 +362,7 @@ const ApplicationProfile = () => {
             </Box>
             <Files
               heading="Skattframtal"
-              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
-            />
-            <Files
-              heading="Tekjugögn"
+              filesArray={application.files}
               className={`contentUp delay-125 ${styles.widtAlmostFull}`}
             />
           </>

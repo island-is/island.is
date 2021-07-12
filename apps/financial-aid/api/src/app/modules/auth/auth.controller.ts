@@ -146,6 +146,7 @@ export class AuthController {
       nationalId: islandUser.kennitala,
       name: islandUser.fullname,
       phoneNumber: islandUser.mobile,
+      folder: uuid(),
       service: service,
     }
 

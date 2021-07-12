@@ -14,5 +14,8 @@ export class UserModel implements User {
   readonly phoneNumber!: string
 
   @Field()
+  readonly folder!: string
+
+  @Field()
   readonly service!: 'osk' | 'veita'
 }

@@ -9,6 +9,7 @@ import {
   UserModule,
   ApplicationModule,
   MunicipalityModule,
+  FileModule,
   ApplicationEventModule,
 } from './modules/'
 
@@ -36,6 +37,7 @@ const autoSchemaFile = environment.production
     UserModule,
     ApplicationModule,
     MunicipalityModule,
+    FileModule,
     ApplicationEventModule,
   ],
   providers: [BackendAPI],
