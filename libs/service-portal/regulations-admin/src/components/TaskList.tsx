@@ -9,7 +9,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { DraftingStatus } from '../types'
+import { DraftingStatus } from '@island.is/regulations/admin'
 // import { mockDraftlist, useMockQuery } from '../_mockData'
 import { homeMessages as msg, statusMsgs } from '../messages'
 import { ISODate } from '@island.is/regulations'
@@ -62,7 +62,6 @@ export const TaskList = () => {
       fastTrack,
     }
   }
-  console.log('dataaaa', getDraftRegulations)
 
   return (
     <Box marginBottom={[4, 4, 6]}>

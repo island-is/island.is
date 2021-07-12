@@ -1,5 +1,5 @@
 import { defineMessages, MessageDescriptor } from 'react-intl'
-import { DraftingStatus } from './types'
+import { DraftingStatus } from '@island.is/regulations/admin'
 
 export const editorMsgs = defineMessages({
   step1Headline: {

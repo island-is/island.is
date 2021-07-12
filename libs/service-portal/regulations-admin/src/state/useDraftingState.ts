@@ -15,9 +15,11 @@ import { Step } from '../types'
 import { mockDraftRegulations, useMockQuery, mockSave } from '../_mockData'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
 import {
+  Author,
   DraftingStatus,
   DraftRegulationCancel,
   DraftRegulationChange,
+  EmailAddress,
   RegulationDraft,
   RegulationDraftId,
 } from '@island.is/regulations/admin'
@@ -366,16 +368,25 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
 
   const draft = {
     ...draftRes,
-    appendixes: [],
-    impacts: [], // vantar í draftRegulation.model
-    authors: [
-      {
-        authorId: 123,
-        name: 'Name nameson',
-        email: 'test@test.com',
-      },
-    ],
-  }
+    id: draftRes?.id as RegulationDraftId,
+    appendixes: [], // Hvernig er þetta búið til?
+    impacts: [], // Hvað er þetta?
+    // ministry: [], // getregulationministries
+    lawChapters: draftRes?.lawChapters?.map((lc) => ({
+      // vantar að sækja authors
+      slug: lc,
+      name: 'lawChapter name', // Hvaðan kemur þetta nafn  (getregulationlawchapter)
+    })),
+    draftingNotes: draftRes?.draftingNotes as HTMLText,
+    text: draftRes?.text as HTMLText,
+    comments: draftRes?.comments as HTMLText,
+    authors: draftRes?.authors?.map((authorKt) => ({
+      // vantar að sækja authors úr xroad
+      authorId: authorKt as Kennitala,
+      name: 'Test name',
+      email: 'not@needed.com' as EmailAddress, // Þarf líklegast ekki.
+    })),
+  } as RegulationDraft
 
   useEffect(() => {
     dispatch({ type: 'CHANGE_STEP', stepName })

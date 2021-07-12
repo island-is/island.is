@@ -1,18 +1,26 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
+import {
+  RegulationDraftId,
+  // RegulationDraft
+} from '@island.is/regulations/admin'
 // import { ISODate } from '@island.is/regulations'
 
 @ObjectType()
 export class DraftRegulationModel {
-  @Field()
-  id!: string
+  @Field((type) => ID)
+  id!: RegulationDraftId
+  // @Field()
+  // id!: string
 
   @Field({ name: 'draftingStatus', nullable: true })
+  // drafting_status!: DraftingStatus
   drafting_status!: string
 
   @Field({ name: 'draftingNotes', nullable: true })
+  // drafting_notes?: RegulationDraft['draftingNotes']
   drafting_notes?: string
 
-  @Field(() => [String], { nullable: true })
+  @Field(() => [String])
   authors!: string[]
 
   @Field({ nullable: true })
@@ -27,8 +35,8 @@ export class DraftRegulationModel {
   @Field({ nullable: true })
   comments?: string
 
-  @Field(() => [String], { nullable: true })
-  ministry!: string[]
+  @Field(() => String, { nullable: true })
+  ministry!: string // name + slug
 
   @Field(() => [String], { name: 'lawChapters', nullable: true })
   law_chapters!: string[]

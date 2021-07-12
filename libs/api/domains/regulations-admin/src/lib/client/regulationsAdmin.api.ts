@@ -49,7 +49,7 @@ export class RegulationsAdminApi extends RESTDataSource {
         cacheOptions: { ttl: this.options.ttl },
         headers: { authorization },
       },
-    )
+    ) // get ministry, get lawchapter, get author
     return response
   }
 
