@@ -52,7 +52,7 @@ export const aidCalculator = (
     case 'RegisteredLease':
       return aid.ownApartmentOrLease
     case 'WithOthers':
-      return aid.withOthersOrUnknow
+      return aid.ownApartmentOrLease
     case 'Other':
     case 'Unknown':
       return aid.withOthersOrUnknow

@@ -212,8 +212,14 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Fyrirtaka{' '}
-              <Tooltip text="Hér er hægt að merkja hvaða aðilar málsins mæta í fyrirtöku eða hvort fyrirtakan fari fram rafrænt." />
+              {`${formatMessage(
+                icHearingArrangements.sections.sessionArrangements.heading,
+              )} `}
+              <Tooltip
+                text={formatMessage(
+                  icHearingArrangements.sections.sessionArrangements.tooltip,
+                )}
+              />
             </Text>
           </Box>
           <BlueBox>
@@ -221,7 +227,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="session-arrangements-all-present"
                 id="session-arrangements-all-present"
-                label="Fulltrúar málsaðila mæta"
+                label={formatMessage(
+                  icHearingArrangements.sections.sessionArrangements.options
+                    .allPresent,
+                )}
                 checked={
                   workingCase.sessionArrangements ===
                   SessionArrangements.ALL_PRESENT
@@ -243,7 +252,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="session-arrangements-prosecutor-present"
                 id="session-arrangements-prosecutor-present"
-                label="Fulltrúi ákæruvalds mætir"
+                label={formatMessage(
+                  icHearingArrangements.sections.sessionArrangements.options
+                    .prosecutorPresent,
+                )}
                 checked={
                   workingCase.sessionArrangements ===
                   SessionArrangements.PROSECUTOR_PRESENT
@@ -264,7 +276,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             <RadioButton
               name="session-arrangements-remote-session"
               id="session-arrangements-remote-session"
-              label="Rafræn fyrirtaka"
+              label={formatMessage(
+                icHearingArrangements.sections.sessionArrangements.options
+                  .remoteSession,
+              )}
               checked={
                 workingCase.sessionArrangements ===
                 SessionArrangements.REMOTE_SESSION

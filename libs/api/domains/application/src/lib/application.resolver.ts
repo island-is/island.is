@@ -57,7 +57,6 @@ export class ApplicationResolver {
       user,
       locale,
     )
-
     return {
       fulfilled: status.fulfilled,
     }
