@@ -5,7 +5,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../environments'
-import { CreateDraftRegulationChangeDto, UpdateDraftRegulationChangeDto } from './dto'
+import {
+  CreateDraftRegulationChangeDto,
+  UpdateDraftRegulationChangeDto,
+} from './dto'
 import { DraftRegulationChange } from './draft_regulation_change.model'
 
 @Injectable()

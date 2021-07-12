@@ -124,7 +124,9 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
-  async getRegulationsMinistries(slugs?: Array<MinistrySlug>): Promise<RegulationMinistryList | null> {
+  async getRegulationsMinistries(
+    slugs?: Array<MinistrySlug>,
+  ): Promise<RegulationMinistryList | null> {
     const response = await this.get<RegulationMinistryList | null>(
       `ministries${slugs ? '?slugs=' + slugs.join(',') : ''}`,
       {
@@ -141,7 +143,9 @@ export class RegulationsService extends RESTDataSource {
     const response = await this.get<
       RegulationLawChapterTree | RegulationLawChapter[] | null
     >(
-      `lawchapters${tree ? '/tree' : ''}${slugs ? '?slugs=' + slugs.join(',') : ''}`,
+      `lawchapters${tree ? '/tree' : ''}${
+        slugs ? '?slugs=' + slugs.join(',') : ''
+      }`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },

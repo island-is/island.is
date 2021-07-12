@@ -32,7 +32,7 @@ export class DraftRegulationService {
             { drafting_status: 'draft' },
             { drafting_status: 'proposal' },
           ],
-          authors: { [Op.contains]: [nationalId] }
+          authors: { [Op.contains]: [nationalId] },
         },
         order: [
           ['drafting_status', 'ASC'],
