@@ -15,4 +15,7 @@ export class UserModel implements User {
 
   @Field()
   readonly folder!: string
+
+  @Field()
+  readonly service!: 'osk' | 'veita'
 }

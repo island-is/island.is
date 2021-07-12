@@ -1,7 +1,7 @@
 if (process.env.NODE_ENV === 'production') {
-  if (!process.env.SAML_ENTRY_POINT) {
-    throw new Error('Missing SAML_ENTRY_POINT environment.')
-  }
+  // if (!process.env.SAML_ENTRY_POINT) {
+  //   throw new Error('Missing SAML_ENTRY_POINT environment.')
+  // }
   if (!process.env.AUTH_AUDIENCE) {
     throw new Error('Missing AUTH_AUDIENCE environment.')
   }
@@ -22,7 +22,12 @@ if (process.env.NODE_ENV === 'production') {
 const prodConfig = {
   production: true,
   auth: {
-    samlEntryPoint: process.env.SAML_ENTRY_POINT,
+    samlEntryPointOsk:
+      process.env.SAML_ENTRY_POINT_OSK ??
+      'https://innskraning.island.is/?id=financial-aid-osk.development',
+    samlEntryPointVeita:
+      process.env.SAML_ENTRY_POINT_VEITA ??
+      'https://innskraning.island.is/?id=financial-aid-osk.development',
     audience: process.env.AUTH_AUDIENCE,
     allowFakeUsers: process.env.ALLOW_FAKE_USERS === 'true',
     jwtSecret: process.env.AUTH_JWT_SECRET!,
@@ -36,7 +41,10 @@ const prodConfig = {
 const devConfig = {
   production: false,
   auth: {
-    samlEntryPoint: 'https://innskraning.island.is/?id=judicial-system.local',
+    samlEntryPointOsk:
+      'https://innskraning.island.is/?id=financial-aid-osk.local',
+    samlEntryPointVeita:
+      'https://innskraning.island.is/?id=financial-aid-veita.local',
     audience: 'localhost:4200',
     allowAuthBypass: true,
     allowFakeUsers: true,

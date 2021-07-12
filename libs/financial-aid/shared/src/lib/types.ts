@@ -136,6 +136,7 @@ export interface User {
   name: string
   phoneNumber: string
   folder: string
+  service: 'osk' | 'veita'
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
