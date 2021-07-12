@@ -1,9 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react'
 
-import {
-  HomeCircumstances,
-  Employment,
-} from '@island.is/financial-aid/shared'
+import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
 import { UploadFile } from '@island.is/island-ui/core'
 
 export interface Form {
@@ -30,7 +27,11 @@ export interface Form {
   formComment?: string
 }
 
-export const initialState = { submitted: false, incomeFiles: [], taxReturnFiles: [] }
+export const initialState = {
+  submitted: false,
+  incomeFiles: [],
+  taxReturnFiles: [],
+}
 
 interface FormProvider {
   form: Form
