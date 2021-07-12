@@ -63,6 +63,10 @@ const SummaryForm = () => {
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
 
+  if (form.hasIncome) {
+    const allFiles = form.taxReturnFiles.concat(form.incomeFiles)
+  }
+
   const { user } = useContext(UserContext)
 
   const [isVisible, setIsVisible] = useState(false)
