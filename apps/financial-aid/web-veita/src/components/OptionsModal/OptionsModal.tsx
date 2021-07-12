@@ -8,7 +8,10 @@ import { getState, ApplicationState } from '@island.is/financial-aid/shared'
 
 interface Props {
   state: ApplicationState
-  onClick: (e: any, stateOption: ApplicationState) => void
+  onClick(
+    event: React.MouseEvent<HTMLButtonElement>,
+    stateOption: ApplicationState,
+  ): void
 }
 
 const OptionsModal: React.FC<Props> = ({ state, onClick }) => {

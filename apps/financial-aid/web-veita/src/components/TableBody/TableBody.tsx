@@ -1,45 +1,77 @@
-import React, { ReactNode } from 'react'
-
+import React from 'react'
+import { Text, Box } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
 import * as styles from './TableBody.treat'
-import { useRouter } from 'next/router'
 
 import cn from 'classnames'
+import { Application, getState } from '@island.is/financial-aid/shared'
+import format from 'date-fns/format'
+
+import {
+  GeneratedProfile,
+  GenerateName,
+} from '@island.is/financial-aid-web/veita/src/components'
+
+import {
+  calcDifferenceInDate,
+  translateMonth,
+  getTagByState,
+} from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 interface PageProps {
-  application: TableBodyProps
+  application: Application
   index: number
-}
-
-interface TableBodyProps {
-  listElement: JSX.Element[]
-  link: string
 }
 
 const TableBody: React.FC<PageProps> = ({ application, index }) => {
   return (
-    <Link href={'application/' + application.link} key={'key-' + index}>
+    <Link href={'application/' + application.id} key={'key-' + index}>
       <tr className={styles.link}>
-        {application?.listElement && (
-          <>
-            {application.listElement.map(
-              (el: ReactNode, listElementIndex: number) => {
-                return (
-                  <td
-                    className={cn({
-                      [`${styles.tablePadding}`]: true,
-                      [`${styles.firstChildPadding}`]: listElementIndex === 0,
-                    })}
-                    key={'tr-' + index + '-td-' + listElementIndex}
-                  >
-                    {el}
-                  </td>
-                )
-              },
+        <td
+          className={cn({
+            [`${styles.tablePadding} ${styles.firstChildPadding}`]: true,
+          })}
+        >
+          <Box display="flex" alignItems="center">
+            <GeneratedProfile size={32} nationalId={application.nationalId} />
+            <Box marginLeft={2}>
+              <Text variant="h5">{GenerateName(application.nationalId)}</Text>
+            </Box>
+          </Box>
+        </td>
+
+        <td
+          className={cn({
+            [`${styles.tablePadding} `]: true,
+          })}
+        >
+          <Box>
+            <div className={`tags ${getTagByState(application.state)}`}>
+              {getState[application.state]}
+            </div>
+          </Box>
+        </td>
+
+        <td
+          className={cn({
+            [`${styles.tablePadding} `]: true,
+          })}
+        >
+          <Text> {calcDifferenceInDate(application.modified)}</Text>
+        </td>
+
+        <td
+          className={cn({
+            [`${styles.tablePadding} `]: true,
+          })}
+        >
+          <Text>
+            {translateMonth(
+              parseInt(format(new Date(application.created), 'M')),
             )}
-          </>
-        )}
+          </Text>
+        </td>
       </tr>
     </Link>
   )

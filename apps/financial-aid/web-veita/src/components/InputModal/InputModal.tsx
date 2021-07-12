@@ -7,11 +7,15 @@ import {
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import { ApplicationState } from '@island.is/financial-aid/shared'
-// TODO: No any, por favor.
+
 interface Props {
-  onShowInputChange: (e: any) => void
+  onShowInputChange(event: React.MouseEvent<HTMLButtonElement>): void
   type: ApplicationState | undefined
-  onSaveState: (e: any, amount: number, comment?: string) => void
+  onSaveState(
+    event: React.MouseEvent<HTMLButtonElement>,
+    amount: number,
+    comment?: string,
+  ): void
 }
 
 const InputModal: React.FC<Props> = ({

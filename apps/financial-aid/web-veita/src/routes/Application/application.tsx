@@ -35,10 +35,11 @@ import format from 'date-fns/format'
 import {
   calcDifferenceInDate,
   calcAge,
-  navigationItems,
   translateMonth,
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
+
+import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 
 import {
   GeneratedProfile,
@@ -49,6 +50,8 @@ import {
   StateModal,
   AidAmountModal,
 } from '@island.is/financial-aid-web/veita/src/components'
+
+import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
 interface ApplicantData {
   application: Application
@@ -65,7 +68,13 @@ const ApplicationProfile = () => {
 
   const [isAidModalVisible, setAidModalVisible] = useState(false)
 
-  const [prevUrl, setPrevUrl] = useState<any>()
+  const [prevUrl, setPrevUrl] = useState<NavigationElement | undefined>()
+
+  const findPrevUrl = (
+    state: ApplicationState,
+  ): React.SetStateAction<NavigationElement | undefined> => {
+    return navigationItems.find((i) => i.applicationState.includes(state))
+  }
 
   const { data, error, loading } = useQuery<ApplicantData>(
     GetApplicationQuery,
@@ -99,13 +108,8 @@ const ApplicationProfile = () => {
   useEffect(() => {
     if (data?.application) {
       setApplication(data.application)
-      // //WIP
-      // TODO: should be a function in a navigation helper or something like that.
-      setPrevUrl(
-        navigationItems.find((i) =>
-          i.applicationState.includes(data.application.state),
-        ),
-      )
+
+      setPrevUrl(findPrevUrl(data.application.state))
     }
   }, [data])
 

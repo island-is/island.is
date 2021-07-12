@@ -12,7 +12,7 @@ import { NavigationStatisticsContext } from '@island.is/financial-aid-web/veita/
 import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
 import { ApplicationState } from '@island.is/financial-aid/shared'
 
-import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
+import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 
 const Nav: React.FC = () => {
   const router = useRouter()

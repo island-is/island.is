@@ -8,7 +8,7 @@ import cn from 'classnames'
 interface PageProps {
   header: TableHeadersProps
   index: number
-  setSortBy: (filter: any) => void
+  setSortBy: React.Dispatch<React.SetStateAction<sortByProps>>
   sortBy: sortByProps
 }
 

@@ -9,6 +9,7 @@ import {
   TableHeaders,
   TableBody,
 } from '@island.is/financial-aid-web/veita/src/components'
+import { Application } from '@island.is/financial-aid/shared'
 
 interface sortByProps {
   selected: 'modified' | 'state'
@@ -16,16 +17,11 @@ interface sortByProps {
 }
 
 interface PageProps {
-  applications: TableBodyProps[]
+  applications: Application[]
   headers: TableHeadersProps[]
   className?: string
   setSortBy: (filter: any) => void
   sortBy: sortByProps
-}
-
-interface TableBodyProps {
-  listElement: JSX.Element[]
-  link: string
 }
 
 interface TableHeadersProps {
@@ -65,7 +61,7 @@ const ApplicationsTable: React.FC<PageProps> = ({
         </thead>
 
         <tbody className={styles.tableBody}>
-          {applications.map((item: TableBodyProps, index: number) => (
+          {applications.map((item: Application, index: number) => (
             <TableBody application={item} index={index} />
           ))}
         </tbody>
