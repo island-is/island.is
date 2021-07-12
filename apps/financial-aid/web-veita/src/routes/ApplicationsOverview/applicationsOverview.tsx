@@ -60,15 +60,15 @@ export const ApplicationsOverview = () => {
     if (data?.applications) {
       setApplications(
         data.applications
+          .filter((item) =>
+            currentNavigationItem?.applicationState.includes(item?.state),
+          )
           .sort((a, b) =>
             a[sortBy.selected] > b[sortBy.selected]
               ? -1
               : a[sortBy.selected] < b[sortBy.selected]
               ? 1
               : 0,
-          )
-          .filter((item) =>
-            currentNavigationItem?.applicationState.includes(item?.state),
           ),
       )
     }
