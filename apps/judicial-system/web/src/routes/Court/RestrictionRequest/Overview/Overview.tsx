@@ -34,7 +34,12 @@ export const JudgeOverview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { createCourtCase, transitionCase, isTransitioningCase } = useCase()
+  const {
+    createCourtCase,
+    isCreatingCourtCase,
+    transitionCase,
+    isTransitioningCase,
+  } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -98,6 +103,7 @@ export const JudgeOverview: React.FC = () => {
             courtCaseNumberEM={courtCaseNumberEM}
             setCourtCaseNumberEM={setCourtCaseNumberEM}
             setIsDraftingConclusion={setIsDraftingConclusion}
+            isCreatingCourtCase={isCreatingCourtCase}
           />
           <FormContentContainer isFooter>
             <FormFooter

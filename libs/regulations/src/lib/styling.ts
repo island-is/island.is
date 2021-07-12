@@ -189,22 +189,22 @@ export const regulationContentStyling = (wrapper: string) => {
     // color: 'red',
     marginTop: '2em',
     fontSize: '1.2em',
-    fontWeight: typography.semiBold,
+    fontWeight: typography.headingsFontWeight,
   })
   global('h3', {
     marginTop: '1.5em',
-    fontWeight: typography.semiBold,
+    fontWeight: typography.headingsFontWeight,
     fontSize: '1.1em',
   })
   global('h4', {
     // color: 'red',
     fontSize: '1em',
-    fontWeight: typography.semiBold,
+    fontWeight: typography.headingsFontWeight,
   })
   global('h5, h6', {
     // color: 'red',
     fontSize: '.9em',
-    fontWeight: typography.semiBold,
+    fontWeight: typography.headingsFontWeight,
   })
 
   global('.chapter__title', {

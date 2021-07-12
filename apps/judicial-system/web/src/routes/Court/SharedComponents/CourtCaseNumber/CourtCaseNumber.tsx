@@ -19,6 +19,7 @@ interface Props {
   createCourtCaseSuccess: boolean
   setCreateCourtCaseSuccess: React.Dispatch<React.SetStateAction<boolean>>
   handleCreateCourtCase: (wc: Case) => void
+  isCreatingCourtCase: boolean
 }
 
 const CourtCaseNumber: React.FC<Props> = (props) => {
@@ -30,8 +31,9 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
     createCourtCaseSuccess,
     setCreateCourtCaseSuccess,
     handleCreateCourtCase,
+    isCreatingCourtCase,
   } = props
-  const { updateCase, isCreatingCourtCase } = useCase()
+  const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 
   return (
