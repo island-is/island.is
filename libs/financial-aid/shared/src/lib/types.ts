@@ -43,8 +43,11 @@ export interface Application {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
-  state?: ApplicationState
+  state: ApplicationState
   files?: ApplicationFile[]
+  amount?: number
+  comment?: string
+  rejection?: string
 }
 
 export interface ApplicationFile {
@@ -60,10 +63,6 @@ export interface CreateApplicationFile {
   name: string
   key: string
   size: number
-  state: ApplicationState
-  amount?: number
-  comment?: string
-  rejection?: string
 }
 
 export interface CreateApplication {
