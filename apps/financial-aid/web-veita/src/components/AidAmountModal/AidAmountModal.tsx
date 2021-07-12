@@ -84,22 +84,19 @@ const AidAmountModal: React.FC<Props> = ({
             Áætluð aðstoð
           </Text>
 
-          {calculation.map((item) => {
-            // TODO: Dont need the return
-            return (
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                paddingY={2}
-                paddingX={3}
-                borderTopWidth="standard"
-                borderColor="blue200"
-              >
-                <Text variant="small">{item.title}</Text>
-                <Text>{item.calculation}</Text>
-              </Box>
-            )
-          })}
+          {calculation.map((item) => (
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              paddingY={2}
+              paddingX={3}
+              borderTopWidth="standard"
+              borderColor="blue200"
+            >
+              <Text variant="small">{item.title}</Text>
+              <Text>{item.calculation}</Text>
+            </Box>
+          ))}
 
           <Box
             display="flex"

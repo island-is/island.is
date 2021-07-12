@@ -1,11 +1,14 @@
-import React, { ReactNode } from 'react'
-import { Text, Icon, Box } from '@island.is/island-ui/core'
-import Link from 'next/link'
+import React from 'react'
 
 import * as styles from './ApplicationsTable.treat'
 import { useRouter } from 'next/router'
 
 import cn from 'classnames'
+
+import {
+  TableHeaders,
+  TableBody,
+} from '@island.is/financial-aid-web/veita/src/components'
 
 interface sortByProps {
   selected: 'modified' | 'state'
@@ -50,98 +53,21 @@ const ApplicationsTable: React.FC<PageProps> = ({
       >
         <thead>
           <tr>
-            {/* TODO: Why is there a if on headers? */}
-            {headers && (
-              <>
-              {/* TODO: Clean this up, put some of this into components */}
-                {headers.map((item, index) => {
-                  if (item.filterBy) {
-                    // TODO: You dont need to return, it returns by default
-                    // Same goes for all the other returns
-                    return (
-                      <th key={'headers-' + index}>
-                        <button
-                          onClick={() => {
-                            setSortBy(item.filterBy)
-                          }}
-                          className={cn({
-                            [`${styles.tablePadding}`]: true,
-                            [`${styles.firstChildPadding}`]: index === 0,
-                          })}
-                        >
-                          <Box display="flex" alignItems="center">
-                            <Text color="dark300" fontWeight="semiBold">
-                              {item.title}
-                            </Text>
-
-                            <Box
-                              display="block"
-                              opacity={0}
-                              marginLeft="smallGutter"
-                              className={cn({
-                                [`${styles.showIcon}`]:
-                                  sortBy.selected === item.filterBy,
-                              })}
-                            >
-                              <Icon
-                                color="dark300"
-                                icon="chevronDown"
-                                size="small"
-                                type="filled"
-                              />
-                            </Box>
-                          </Box>
-                        </button>
-                      </th>
-                    )
-                  }
-                  return (
-                    <th
-                      key={'headers-' + index}
-                      className={cn({
-                        [`${styles.tablePadding}`]: true,
-                        [`${styles.firstChildPadding}`]: index === 0,
-                      })}
-                    >
-                      <Text color="dark300" fontWeight="semiBold">
-                        {item.title}
-                      </Text>
-                    </th>
-                  )
-                })}
-              </>
-            )}
+            {headers.map((item, index) => (
+              <TableHeaders
+                header={item}
+                index={index}
+                setSortBy={setSortBy}
+                sortBy={sortBy}
+              />
+            ))}
           </tr>
         </thead>
 
         <tbody className={styles.tableBody}>
-          {/* TODO: this is also too complex */}
-          {applications.map((item: TableBodyProps, index: number) => {
-            return (
-              <Link href={'application/' + item.link} key={'key-' + index}>
-                <tr className={styles.link}>
-                  {item?.listElement && (
-                    <>
-                    {/* TODO: dont use both index and i, i is short for index :) */}
-                      {item.listElement.map((el: ReactNode, i: number) => {
-                        return (
-                          <td
-                            className={cn({
-                              [`${styles.tablePadding}`]: true,
-                              [`${styles.firstChildPadding}`]: i === 0,
-                            })}
-                            key={'tr-' + index + '-td-' + i}
-                          >
-                            {el}
-                          </td>
-                        )
-                      })}
-                    </>
-                  )}
-                </tr>
-              </Link>
-            )
-          })}
+          {applications.map((item: TableBodyProps, index: number) => (
+            <TableBody application={item} index={index} />
+          ))}
         </tbody>
       </table>
     )
