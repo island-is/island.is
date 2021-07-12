@@ -21,7 +21,10 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
-import { CreateDraftRegulationChangeDto, UpdateDraftRegulationChangeDto } from './dto'
+import {
+  CreateDraftRegulationChangeDto,
+  UpdateDraftRegulationChangeDto,
+} from './dto'
 import { DraftRegulationChange } from './draft_regulation_change.model'
 import { DraftRegulationChangeService } from './draft_regulation_change.service'
 
@@ -52,7 +55,9 @@ export class DraftRegulationChangeController {
     draftRegulationChangeToCreate: CreateDraftRegulationChangeDto,
     @CurrentUser() user: User,
   ): Promise<DraftRegulationChange> {
-    return this.draftRegulationChangeService.create(draftRegulationChangeToCreate)
+    return this.draftRegulationChangeService.create(
+      draftRegulationChangeToCreate,
+    )
   }
 
   @Scopes('@island.is/regulations:create')
@@ -72,7 +77,10 @@ export class DraftRegulationChangeController {
     const {
       numberOfAffectedRows,
       updatedDraftRegulationChange,
-    } = await this.draftRegulationChangeService.update(id, draftRegulationChangeToUpdate)
+    } = await this.draftRegulationChangeService.update(
+      id,
+      draftRegulationChangeToUpdate,
+    )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`DraftRegulationChange ${id} does not exist`)

@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { useQuery, gql } from '@apollo/client'
 import {
   HTMLText,
   LawChapterSlug,
@@ -15,13 +15,30 @@ import { Step } from '../types'
 import { mockDraftRegulations, useMockQuery, mockSave } from '../_mockData'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
 import {
+  Author,
   DraftingStatus,
   DraftRegulationCancel,
   DraftRegulationChange,
+  EmailAddress,
   RegulationDraft,
   RegulationDraftId,
 } from '@island.is/regulations/admin'
 import { Kennitala, RegulationType } from '@island.is/regulations'
+
+const RegulationDraftQuery = gql`
+  query draftRegulations($input: GetDraftRegulationInput!) {
+    getDraftRegulation(input: $input) {
+      draftingStatus
+      lawChapters
+      appendixes
+      impacts
+      id
+      title
+      text
+      authors
+    }
+  }
+`
 
 export type DraftIdFromParam = 'new' | RegulationDraftId
 
@@ -332,18 +349,44 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     getInitialState,
   )
 
-  const res = useMockQuery(
-    draftId !== 'new' &&
-      !state.error && { regulationDraft: mockDraftRegulations[draftId] },
-    isNew,
-  )
-  // const res = useQuery<Query>(RegulationDraftQuery, {
-  //   variables: { id: draftId },
-  //   skip: isNew && !state.error,
-  // })
+  // const res = useMockQuery(
+  //   draftId !== 'new' &&
+  //     !state.error && { regulationDraft: mockDraftRegulations[draftId] },
+  //   isNew,
+  // )
+  const res = useQuery<Query>(RegulationDraftQuery, {
+    variables: {
+      input: {
+        regulationId: draftId,
+      },
+    },
+    skip: isNew && !state.error,
+  })
   const { loading, error } = res
 
-  const draft = res.data ? res.data.regulationDraft : undefined
+  const draftRes = res.data ? res.data.getDraftRegulation : undefined
+
+  const draft = {
+    ...draftRes,
+    id: draftRes?.id as RegulationDraftId,
+    appendixes: [], // Hvernig er þetta búið til?
+    impacts: [], // Hvað er þetta?
+    // ministry: [], // getregulationministries
+    lawChapters: draftRes?.lawChapters?.map((lc) => ({
+      // vantar að sækja authors
+      slug: lc,
+      name: 'lawChapter name', // Hvaðan kemur þetta nafn  (getregulationlawchapter)
+    })),
+    draftingNotes: draftRes?.draftingNotes as HTMLText,
+    text: draftRes?.text as HTMLText,
+    comments: draftRes?.comments as HTMLText,
+    authors: draftRes?.authors?.map((authorKt) => ({
+      // vantar að sækja authors úr xroad
+      authorId: authorKt as Kennitala,
+      name: 'Test name',
+      email: 'not@needed.com' as EmailAddress, // Þarf líklegast ekki.
+    })),
+  } as RegulationDraft
 
   useEffect(() => {
     dispatch({ type: 'CHANGE_STEP', stepName })
@@ -358,9 +401,11 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     } else if (draft) {
       dispatch({ type: 'LOADING_DRAFT_SUCCESS', draft })
     }
-  }, [loading, error, draft])
+  }, [loading, error])
 
   const stepNav = steps[stepName]
+
+  console.log('draft', draft)
 
   const actions = {
     // updateProp: (name: keyof ) => {

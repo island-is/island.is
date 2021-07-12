@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { RegulationDraftId } from '@island.is/regulations/admin'
+import { isUuid } from 'uuidv4'
 import { EditBasics } from '../components/EditBasics'
 import { EditMeta } from '../components/EditMeta'
 import { editorMsgs } from '../messages'
@@ -76,9 +77,9 @@ const assertDraftId = (maybeId: string): DraftIdFromParam => {
   if (maybeId === 'new') {
     return maybeId
   }
-  const id = parseInt(maybeId)
-  if (id > 0) {
-    return id as RegulationDraftId
+
+  if (isUuid(maybeId)) {
+    return maybeId as RegulationDraftId
   }
   throw new Error('Invalid RegulationDraft editing Id')
 }

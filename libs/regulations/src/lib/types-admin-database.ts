@@ -23,7 +23,7 @@ export type DraftingStatus = 'draft' | 'proposal' | 'shipped'
 // ===========================================================================
 
 declare const _RegulationDraftId__Brand: unique symbol
-export type RegulationDraftId = number & { [_RegulationDraftId__Brand]: true }
+export type RegulationDraftId = string & { [_RegulationDraftId__Brand]: true }
 
 export type DB_RegulationDraft = (
   | {

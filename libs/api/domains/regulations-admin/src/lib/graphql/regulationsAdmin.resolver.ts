@@ -26,7 +26,18 @@ export class RegulationsAdminResolver {
     )
   }
 
-  @Query(() => [DraftRegulationModel], { nullable: true })
+  @Query(() => DraftRegulationModel, { nullable: true })
+  async getShippedRegulation(
+    @Args('input') input: GetDraftRegulationInput,
+    @CurrentUser() { authorization }: User,
+  ) {
+    return this.RegulationsAdminApiService.getShippedRegulation(
+      input.regulationId,
+      authorization,
+    )
+  }
+
+  @Query(() => [DraftRegulationModel])
   async getDraftRegulations(@CurrentUser() { authorization }: User) {
     return this.RegulationsAdminApiService.getDraftRegulations(authorization)
   }
