@@ -15,6 +15,7 @@ import {
 import { GetRegulationsInput } from './dto/getRegulations.input'
 import { GetRegulationInput } from './dto/getRegulation.input'
 import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.input'
+import { GetRegulationsMinistriesInput } from './dto/getRegulationsMinistriesInput.input'
 import { GetRegulationsSearchInput } from './dto/getRegulationsSearch.input'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
@@ -65,14 +66,19 @@ export class RegulationsResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  getRegulationsMinistries(): Promise<RegulationMinistryList | null> {
-    return this.regulationsService.getRegulationsMinistries()
+  getRegulationsMinistries(
+    @Args('input') input: GetRegulationsMinistriesInput,
+  ): Promise<RegulationMinistryList | null> {
+    return this.regulationsService.getRegulationsMinistries(input.slugs)
   }
 
   @Query(() => graphqlTypeJson)
   getRegulationsLawChapters(
     @Args('input') input: GetRegulationsLawChaptersInput,
   ): Promise<RegulationLawChapterTree | Array<RegulationLawChapter> | null> {
-    return this.regulationsService.getRegulationsLawChapters(input.tree ?? true)
+    return this.regulationsService.getRegulationsLawChapters(
+      input.tree ?? (input.slugs ? false : true),
+      input.slugs,
+    )
   }
 }
