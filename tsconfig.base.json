@@ -138,6 +138,9 @@
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
       ],
+      "@island.is/application/templates/accident-notification": [
+        "libs/application/templates/accident-notification/src/index.ts"
+      ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
       ],
@@ -222,6 +225,9 @@
         "libs/clients/document-provider/src/index.ts"
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
+      "@island.is/clients/driving-license": [
+        "libs/clients/driving-license/src/index.ts"
+      ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"

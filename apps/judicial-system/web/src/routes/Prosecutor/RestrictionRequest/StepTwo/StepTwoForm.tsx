@@ -11,7 +11,7 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { requestCourtForm } from '@island.is/judicial-system-web/messages'
+import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
@@ -41,14 +41,14 @@ const StepTwoForm: React.FC<Props> = (props) => {
   ] = useState<boolean>(workingCase.requestedCourtDate !== null)
 
   const { formatMessage } = useIntl()
-
   const { updateCase } = useCase()
+
   return (
     <>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(requestCourtForm.heading)}
+            {formatMessage(rcRequestedHearingArrangements.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
@@ -69,7 +69,9 @@ const StepTwoForm: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                {formatMessage(requestCourtForm.arrestDate.heading)}
+                {formatMessage(
+                  rcRequestedHearingArrangements.sections.arrestDate.heading,
+                )}
               </Text>
             </Box>
             <DateTime
