@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
-import { DraftRegulation, DraftRegulations } from './regulationsAdmin.types'
+import { DB_RegulationDraft } from '@island.is/regulations/admin'
 
 export const REGULATIONS_ADMIN_OPTIONS = 'REGULATIONS_ADMIN_OPTIONS'
 
@@ -25,8 +25,8 @@ export class RegulationsAdminApi extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
   }
 
-  async getDraftRegulations(authorization: string): Promise<DraftRegulations> {
-    const response = await this.get<DraftRegulations>(
+  async getDraftRegulations(authorization: string): Promise<DB_RegulationDraft[]> {
+    const response = await this.get<DB_RegulationDraft[]>(
       '/draft_regulations',
       {},
       {
@@ -40,8 +40,8 @@ export class RegulationsAdminApi extends RESTDataSource {
 
   async getShippedRegulations(
     authorization: string,
-  ): Promise<DraftRegulations> {
-    const response = await this.get<DraftRegulations>(
+  ): Promise<DB_RegulationDraft[]> {
+    const response = await this.get<DB_RegulationDraft[]>(
       `/draft_regulations_shipped`,
       {},
       {
@@ -57,8 +57,8 @@ export class RegulationsAdminApi extends RESTDataSource {
   async getDraftRegulation(
     regulationId: string,
     authorization: string,
-  ): Promise<DraftRegulation | null> {
-    const response = await this.get<DraftRegulation | null>(
+  ): Promise<DB_RegulationDraft | null> {
+    const response = await this.get<DB_RegulationDraft | null>(
       // `/draft_regulation/${regulationId}`,
       `/draft_regulation/a1fd62db-18a6-4741-88eb-a7b7a7e05833`,
       {},

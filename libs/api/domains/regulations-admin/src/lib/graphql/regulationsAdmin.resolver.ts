@@ -3,7 +3,7 @@ import { Query, Resolver, Args } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
-import { DraftRegulationModel } from './models/draftRegulation.model'
+// import { DraftRegulationModel } from './models/draftRegulation.model'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -11,6 +11,10 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { RegulationsAdminApi } from '../client/regulationsAdmin.api'
+import { RegulationDraft } from '@island.is/regulations/admin'
+import { HTMLText, ISODate } from '@hugsmidjan/regulations-editor/types'
+import { extractAppendixesAndComments } from '@hugsmidjan/regulations-editor/cleanupEditorOutput'
+import { RegulationAppendix } from '@island.is/regulations/web'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -25,7 +29,7 @@ export class RegulationsAdminResolver {
   async getDraftRegulation(
     @Args('input') input: GetDraftRegulationInput,
     @CurrentUser() { authorization }: User,
-  ) {
+  ): Promise<RegulationDraft | null> {
     const regulation = await this.regulationsAdminApiService.getDraftRegulation(
       input.regulationId,
       authorization,
@@ -36,30 +40,41 @@ export class RegulationsAdminResolver {
           false,
           regulation.law_chapters,
         )
-      : []
-    console.log({ lawChapters })
+      : null
 
-    const ministries = regulation
+    const ministries = regulation?.ministry
       ? await this.regulationsService.getRegulationsMinistries([
-          regulation.ministry_id,
+          regulation.ministry,
         ])
       : null
-    console.log({ ministries })
+
+    if (!regulation) {
+      return null
+    }
+
+    const { text, appendixes, comments } = extractAppendixesAndComments(
+      regulation.text,
+    );
 
     return {
-      ...regulation,
-      lawChapters: lawChapters,
-      ministry: ministries?.[0],
+      id: regulation.id,
+      draftingStatus: regulation.drafting_status,
+      title: regulation.title,
+      name: regulation.name,
+      text: text as HTMLText,
+      lawChapters: lawChapters ?? undefined,
+      ministry: ministries?.[0] ?? undefined,
       authors: [
         // TODO: Sækja úr X-road
-        regulation?.authors.map((authorKt: String) => ({
+        regulation?.authors?.map((authorKt, idx) => ({
           authorId: authorKt,
-          name: 'Test name',
-        })),
+          name: 'Test name' + idx,
+        })) as any,
       ],
-      idealPublishDate: regulation?.ideal_publish_date, // TODO: Exclude original from response.
+      idealPublishDate: regulation.ideal_publish_date as any, // TODO: Exclude original from response.
       draftingNotes: regulation?.drafting_notes, // TODO: Exclude original from response.
-      appendixes: [], // TODO: Add this.
+      appendixes: appendixes as RegulationAppendix[],
+      comments: comments as HTMLText,
       impacts: [], // TODO: Add this.
     }
   }
