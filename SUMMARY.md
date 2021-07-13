@@ -133,6 +133,7 @@
   - [Template API Modules](libs/application/template-api-modules/README.md)
   - [Template Loader](libs/application/template-loader/README.md)
   - [Templates](libs/application/templates/README.md)
+    - [Application Templates Accident Notification](libs/application/templates/accident-notification/README.md)
     - [Application Templates Complaints to Althingi Ombudsman](libs/application/templates/complaints-to-althingi-ombudsman/README.md)
     - [Application Templates Data Protection Complaint](libs/application/templates/data-protection-complaint/README.md)
     - [Document Provider Onboarding](libs/application/templates/document-provider-onboarding/README.md)
