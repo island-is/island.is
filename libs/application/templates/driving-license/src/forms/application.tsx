@@ -15,6 +15,8 @@ import {
   buildDividerField,
   Form,
   FormModes,
+  DefaultEvents,
+  StaticText,
 } from '@island.is/application/core'
 import { NationalRegistryUser, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
@@ -28,12 +30,14 @@ export const application: Form = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'type',
+      id: 'externalData',
       title: m.externalDataSection,
       children: [
         buildExternalDataProvider({
-          title: 'Umsókn um fullnaðarskírteini',
+          title: m.externalDataTitle,
           id: 'approveExternalData',
+          subTitle: m.externalDataSubTitle,
+          checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
               id: 'nationalRegistry',
@@ -50,9 +54,8 @@ export const application: Form = buildForm({
             buildDataProviderItem({
               id: 'eligibility',
               type: 'EligibilityProvider',
-              title: 'Upplýsingar úr ökuskírteinaskrá',
-              subTitle:
-                'Staðfesting akstursmats, punktastaða, sviptingar, ökuréttindi og almennar upplýsingar um skilríki',
+              title: m.infoFromLicenseRegistry,
+              subTitle: m.confirmationStatusOfEligability,
             }),
             buildDataProviderItem({
               id: 'juristictions',
@@ -60,17 +63,40 @@ export const application: Form = buildForm({
               title: '',
               subTitle: '',
             }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'PaymentCatalogProvider',
+              title: '',
+            }),
           ],
         }),
       ],
     }),
+    buildSection({
+      id: 'requirements',
+      title: m.applicationEligibilityTitle,
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.eligibilityRequirementTitle,
+          children: [
+            buildCustomField({
+              title: m.eligibilityRequirementTitle,
+              component: 'EligibilitySummary',
+              id: 'eligsummary',
+            }),
+          ],
+        }),
+      ],
+    }),
+
     buildSection({
       id: 'user',
       title: m.informationSectionTitle,
       children: [
         buildMultiField({
           id: 'info',
-          title: m.informationMultiFieldTitle,
+          title: m.pickupLocationTitle,
           children: [
             buildKeyValueField({
               label: m.informationApplicant,
@@ -85,8 +111,7 @@ export const application: Form = buildForm({
               id: 'afhending',
               title: 'Afhending',
               titleVariant: 'h4',
-              description:
-                'Veldu það embætti sýslumanns sem þú vilt skila inn bráðabirgðaskírteini og fá afhennt nýtt fullnaðarskírteini',
+              description: m.chooseDistrictCommisioner,
             }),
             buildSelectField({
               id: 'juristiction',
@@ -130,7 +155,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.hasEpilepsy',
+                id: 'healthDeclaration.hasReducedPeripheralVision',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -140,7 +165,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.hasHeartDisease',
+                id: 'healthDeclaration.hasEpilepsy',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -150,7 +175,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.hasMentalIllness',
+                id: 'healthDeclaration.hasHeartDisease',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -160,7 +185,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.usesMedicalDrugs',
+                id: 'healthDeclaration.hasMentalIllness',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -170,7 +195,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.isAlcoholic',
+                id: 'healthDeclaration.usesMedicalDrugs',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -180,7 +205,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.hasDiabetes',
+                id: 'healthDeclaration.isAlcoholic',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -190,7 +215,7 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.isDisabled',
+                id: 'healthDeclaration.hasDiabetes',
                 title: '',
                 component: 'HealthDeclaration',
               },
@@ -200,12 +225,22 @@ export const application: Form = buildForm({
             ),
             buildCustomField(
               {
-                id: 'healthDeclaration.hasOtherDiseases',
+                id: 'healthDeclaration.isDisabled',
                 title: '',
                 component: 'HealthDeclaration',
               },
               {
                 label: m.healthDeclaration9,
+              },
+            ),
+            buildCustomField(
+              {
+                id: 'healthDeclaration.hasOtherDiseases',
+                title: '',
+                component: 'HealthDeclaration',
+              },
+              {
+                label: m.healthDeclaration10,
               },
             ),
           ],
@@ -222,6 +257,19 @@ export const application: Form = buildForm({
           space: 1,
           description: m.overviewMultiFieldDescription,
           children: [
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: m.orderDrivingLicense,
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.continue,
+                  type: 'primary',
+                },
+              ],
+            }),
             buildKeyValueField({
               label: m.overviewSubType,
               value: ({ answers: { subType } }) => subType as string[],
@@ -303,25 +351,15 @@ export const application: Form = buildForm({
                 return options
               },
             }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'payment',
-      title: 'Greiðsla',
-      children: [
-        buildMultiField({
-          id: 'paymentFinal',
-          title: 'Greiðsla',
-          children: [
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: 'Panta ökuskírteini',
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
+            buildDividerField({}),
+            buildKeyValueField({
+              label: m.overviewPaymentCharge,
+              value: ({ externalData }) => {
+                const str = Object.values(externalData.payment.data as object)
+                // more refactoring
+                return (parseInt(str[1], 10) + ' kr.') as StaticText
+              },
+              width: 'full',
             }),
           ],
         }),

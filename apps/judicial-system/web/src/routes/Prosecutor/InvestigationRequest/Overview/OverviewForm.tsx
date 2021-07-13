@@ -1,12 +1,8 @@
 import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
+
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
-import {
-  Case,
-  CaseCustodyProvisions,
-  CaseState,
-  CaseType,
-  ReadableCaseType,
-} from '@island.is/judicial-system/types'
+import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
   FormContentContainer,
@@ -16,11 +12,13 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   capitalize,
+  caseTypes,
   formatDate,
-  laws,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './Overview.treat'
 
@@ -33,6 +31,7 @@ interface Props {
 const OverviewForm: React.FC<Props> = (props) => {
   const { workingCase, handleNextButtonClick, isLoading } = props
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
 
   return (
     <>
@@ -56,13 +55,13 @@ const OverviewForm: React.FC<Props> = (props) => {
               {
                 title: 'Embætti',
                 value: `${
-                  workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
                 }`,
               },
               {
-                title: 'Ósk um fyrirtökudag og tíma',
+                title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ||
+                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
@@ -75,14 +74,14 @@ const OverviewForm: React.FC<Props> = (props) => {
               },
               {
                 title: 'Tegund kröfu',
-                value: capitalize(ReadableCaseType[workingCase.type]),
+                value: capitalize(caseTypes[workingCase.type]),
               },
             ]}
             accusedName={workingCase.accusedName}
             accusedNationalId={workingCase.accusedNationalId}
             accusedAddress={workingCase.accusedAddress}
             defender={{
-              name: workingCase.defenderName || '',
+              name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
@@ -123,16 +122,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               id="id_2"
               label="Lagaákvæði sem krafan er byggð á"
             >
-              {workingCase.custodyProvisions &&
-                workingCase.custodyProvisions.map(
-                  (custodyProvision: CaseCustodyProvisions, index) => {
-                    return (
-                      <div key={index}>
-                        <Text>{laws[custodyProvision]}</Text>
-                      </div>
-                    )
-                  },
-                )}
+              <Text>{workingCase.legalBasis}</Text>
             </AccordionItem>
             <AccordionItem
               labelVariant="h3"
@@ -217,7 +207,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               <Box marginY={3}>
                 <CaseFileList
                   caseId={workingCase.id}
-                  files={workingCase.files || []}
+                  files={workingCase.files ?? []}
                 />
               </Box>
             </AccordionItem>
@@ -240,7 +230,7 @@ const OverviewForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT

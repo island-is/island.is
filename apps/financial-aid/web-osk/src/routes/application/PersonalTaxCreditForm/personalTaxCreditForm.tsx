@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { Text } from '@island.is/island-ui/core'
 
 import {
@@ -25,18 +25,29 @@ const PersonalTaxCreditForm = () => {
     router.pathname,
   ) as NavigationProps
 
-  const [error, setError] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   const options = [
     {
       label: 'Já, nýta persónuafslátt',
-      value: 0,
-    },
-    {
-      label: 'Nei, nýti ekki persónuafslátt',
       value: 1,
     },
+    {
+      label: 'Nei, ekki nýta persónuafslátt',
+      value: 0,
+    },
   ]
+
+  const errorCheck = () => {
+    if (form?.usePersonalTaxCredit === undefined) {
+      setHasError(true)
+      return
+    }
+
+    if (navigation?.nextUrl) {
+      router.push(navigation?.nextUrl)
+    }
+  }
 
   return (
     <FormLayout
@@ -57,14 +68,14 @@ const PersonalTaxCreditForm = () => {
         <RadioButtonContainer
           className={styles.container}
           options={options}
-          error={error && !form?.usePersonalTaxCredit}
+          error={hasError && !form?.usePersonalTaxCredit}
           isChecked={(value: number | boolean) => {
             return value === form?.usePersonalTaxCredit
           }}
           onChange={(value: number | boolean) => {
             updateForm({ ...form, usePersonalTaxCredit: value })
-            if (error) {
-              setError(false)
+            if (hasError) {
+              setHasError(false)
             }
           }}
         />
@@ -73,18 +84,23 @@ const PersonalTaxCreditForm = () => {
           className={cn({
             [`errorMessage`]: true,
             [`showErrorMessage`]:
-              error && form?.usePersonalTaxCredit === undefined,
+              hasError && form?.usePersonalTaxCredit === undefined,
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að svara
+            Þú þarft að velja einn valmöguleika
           </Text>
         </div>
 
-        <Text as="h2" variant="h3" marginBottom={2} marginTop={[2, 2, 3]}>
+        <Text
+          as="h2"
+          variant="h3"
+          marginBottom={[1, 1, 2]}
+          marginTop={[2, 2, 3]}
+        >
           Nánar um persónuafslátt
         </Text>
-        <Text marginBottom={[5, 5, 4]}>
+        <Text marginBottom={[7, 7, 4]} variant="small">
           Persónuafsláttur er skattaafsláttur sem veittur er öllum einstaklingum
           eldri en 16 ára. Persónuafslætti má safna upp á milli mánaða og nýta
           síðar. Uppsafnaður persónuafsláttur sem ekki er nýttur innan árs
@@ -93,15 +109,8 @@ const PersonalTaxCreditForm = () => {
       </FormContentContainer>
 
       <FormFooter
-        previousUrl={navigation?.prevUrl ?? '/'}
-        nextUrl={navigation?.nextUrl ?? '/'}
-        onNextButtonClick={() => {
-          if (form?.usePersonalTaxCredit !== undefined) {
-            router.push(navigation?.nextUrl ?? '/')
-          } else {
-            setError(true)
-          }
-        }}
+        previousUrl={navigation?.prevUrl}
+        onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
   )

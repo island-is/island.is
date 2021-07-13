@@ -10,7 +10,11 @@ import {
 } from '@island.is/judicial-system/types'
 import parseISO from 'date-fns/parseISO'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  caseTypes,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
 import { Table } from '@island.is/judicial-system-web/src/shared-components'
 import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as styles from './Requests.treat'
@@ -81,9 +85,7 @@ const PastRequests: React.FC<Props> = (props) => {
           return (
             <>
               <Box component="span" display="block">
-                {row.row.original.type === CaseType.CUSTODY
-                  ? 'Gæsluvarðhald'
-                  : 'Farbann'}
+                {capitalize(caseTypes[row.row.original.type])}
               </Box>
               {row.row.original.parentCase && (
                 <Text as="span" variant="small">
@@ -100,18 +102,27 @@ const PastRequests: React.FC<Props> = (props) => {
         disableSortBy: true,
         Cell: (row: {
           row: {
-            original: { state: CaseState; isValidToDateInThePast: boolean }
+            original: {
+              state: CaseState
+              isValidToDateInThePast: boolean
+              type: CaseType
+            }
           }
         }) => {
+          const isInvestigationCase =
+            row.row.original.type !== CaseType.CUSTODY &&
+            row.row.original.type !== CaseType.TRAVEL_BAN
+
+          const tagVariant = mapCaseStateToTagVariant(
+            row.row.original.state,
+            isCourtRole,
+            isInvestigationCase,
+            row.row.original.isValidToDateInThePast,
+          )
+
           return (
-            <Tag outlined disabled>
-              {
-                mapCaseStateToTagVariant(
-                  row.row.original.state,
-                  isCourtRole,
-                  row.row.original.isValidToDateInThePast,
-                ).text
-              }
+            <Tag variant={tagVariant.color} outlined disabled>
+              {tagVariant.text}
             </Tag>
           )
         },
@@ -135,7 +146,7 @@ const PastRequests: React.FC<Props> = (props) => {
           const courtEndDate = row.row.original.courtEndTime
           const state = row.row.original.state
 
-          if (state === CaseState.REJECTED) {
+          if (state === CaseState.REJECTED || !validToDate) {
             return null
           } else if (rulingDate) {
             return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
@@ -161,7 +172,7 @@ const PastRequests: React.FC<Props> = (props) => {
   return (
     <Table
       columns={pastRequestsColumns}
-      data={pastRequestsData || []}
+      data={pastRequestsData ?? []}
       handleRowClick={onRowClick}
       className={styles.pastRequestsTable}
       sortableColumnIds={sortableColumnIds}

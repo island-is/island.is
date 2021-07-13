@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import {
   Modal,
@@ -26,6 +27,7 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { icRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
 import HearingArrangementsForms from './HearingArrangementsForm'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -37,6 +39,7 @@ const HearingArrangements = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const { user } = useContext(UserContext)
   const { courts } = useInstitution()
+  const { formatMessage } = useIntl()
   const {
     sendNotification,
     isSendingNotification,
@@ -78,7 +81,7 @@ const HearingArrangements = () => {
           }),
       )
     }
-  }, [userData])
+  }, [userData, user?.institution?.id])
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
@@ -99,9 +102,7 @@ const HearingArrangements = () => {
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
       ) {
-        router.push(
-          `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
-        )
+        router.push(`${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
       } else {
         setModalVisible(true)
       }
@@ -136,14 +137,16 @@ const HearingArrangements = () => {
           />
           {modalVisible && (
             <Modal
-              title="Viltu senda tilkynningu?"
-              text="Með því að senda tilkynningu á dómara á vakt um að krafa um rannsóknarheimild sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála."
+              title={formatMessage(
+                icRequestedHearingArrangements.modal.heading,
+              )}
+              text={formatMessage(icRequestedHearingArrangements.modal.text)}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
               handleClose={() => setModalVisible(false)}
               handleSecondaryButtonClick={() =>
                 router.push(
-                  `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                  `${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                 )
               }
               handlePrimaryButtonClick={async () => {
@@ -154,7 +157,7 @@ const HearingArrangements = () => {
 
                 if (notificationSent) {
                   router.push(
-                    `${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                    `${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                   )
                 }
               }}

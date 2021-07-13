@@ -5,11 +5,19 @@ import {
   Model,
   Table,
   UpdatedAt,
+  ForeignKey,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
+import { ApplicationEventModel } from '../../applicationEvent'
+
+import {
+  HomeCircumstances,
+  Employment,
+  ApplicationState,
+} from '@island.is/financial-aid/shared'
+import { ApplicationFileModel } from '../../file/models'
 
 @Table({
   tableName: 'applications',
@@ -146,4 +154,35 @@ export class ApplicationModel extends Model<ApplicationModel> {
   })
   @ApiProperty()
   interview: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  formComment: string
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(ApplicationState),
+  })
+  @ApiProperty({ enum: ApplicationState })
+  state: ApplicationState
+
+  @ApiProperty({ type: [ApplicationFileModel] })
+  files: ApplicationFileModel[]
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  @ApiProperty()
+  amount: number
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  rejection: string
 }

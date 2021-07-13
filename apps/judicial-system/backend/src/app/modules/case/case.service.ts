@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
+import { IntlService } from '@island.is/api/domains/translations'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -15,7 +16,9 @@ import {
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import {
+  CaseType,
   IntegratedCourts,
+  SessionArrangements,
   User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -43,6 +46,7 @@ export class CaseService {
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private intlService: IntlService,
   ) {}
 
   private async uploadSignedRulingPdfToCourt(
@@ -125,7 +129,7 @@ export class CaseService {
       ? await this.uploadSignedRulingPdfToCourt(existingCase, signedRulingPdf)
       : false
 
-    await Promise.all([
+    const promises = [
       this.sendEmail(
         existingCase.prosecutor?.name,
         existingCase.prosecutor?.email,
@@ -149,21 +153,41 @@ export class CaseService {
         signedRulingPdf,
         'Sjá viðhengi',
       ),
-      this.sendEmail(
-        existingCase.defenderName,
-        existingCase.defenderEmail,
-        existingCase.courtCaseNumber,
-        signedRulingPdf,
-        'Sjá viðhengi',
-      ),
-      this.sendEmail(
-        'Fangelsismálastofnun',
-        environment.notifications.prisonAdminEmail,
-        existingCase.courtCaseNumber,
-        signedRulingPdf,
-        'Sjá viðhengi',
-      ),
-    ])
+    ]
+
+    if (
+      existingCase.defenderEmail &&
+      (existingCase.type === CaseType.CUSTODY ||
+        existingCase.type === CaseType.TRAVEL_BAN ||
+        existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT)
+    ) {
+      promises.push(
+        this.sendEmail(
+          existingCase.defenderName,
+          existingCase.defenderEmail,
+          existingCase.courtCaseNumber,
+          signedRulingPdf,
+          'Sjá viðhengi',
+        ),
+      )
+    }
+
+    if (
+      existingCase.type === CaseType.CUSTODY ||
+      existingCase.type === CaseType.TRAVEL_BAN
+    ) {
+      promises.push(
+        this.sendEmail(
+          'Fangelsismálastofnun',
+          environment.notifications.prisonAdminEmail,
+          existingCase.courtCaseNumber,
+          signedRulingPdf,
+          'Sjá viðhengi',
+        ),
+      )
+    }
+
+    await Promise.all(promises)
   }
 
   private findById(id: string): Promise<Case> {
@@ -287,12 +311,15 @@ export class CaseService {
     return getRulingPdfAsString(existingCase)
   }
 
-  getRequestPdf(existingCase: Case): Promise<string> {
+  async getRequestPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the request for case ${existingCase.id} as a pdf document`,
     )
-
-    return getRequestPdfAsString(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+    return getRequestPdfAsString(existingCase, intl.formatMessage)
   }
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
@@ -389,7 +416,12 @@ export class CaseService {
 
     const existingCase = await this.findById(id)
 
-    const pdf = await getRequestPdfAsBuffer(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    const pdf = await getRequestPdfAsBuffer(existingCase, intl.formatMessage)
 
     try {
       const streamId = await this.courtService.uploadStream(

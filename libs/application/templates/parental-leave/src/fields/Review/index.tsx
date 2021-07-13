@@ -1,4 +1,6 @@
 import React, { FC, useMemo } from 'react'
+import get from 'lodash/get'
+import has from 'lodash/has'
 
 import {
   Application,
@@ -7,7 +9,7 @@ import {
   RecordObject,
   Field,
 } from '@island.is/application/core'
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import {
   InputController,
   RadioController,
@@ -24,19 +26,21 @@ import {
 import {
   getOtherParentOptions,
   getSelectedChild,
+  requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES, NO, MANUAL, ParentalRelations } from '../../constants'
-import { Boolean } from '../../types'
+import { YesOrNo } from '../../types'
 import { SummaryTimeline } from '../components/Timeline/SummaryTimeline'
 import { SummaryRights } from '../Rights/SummaryRights'
 import { useUnion as useUnionOptions } from '../../hooks/useUnion'
 import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../hooks/usePrivatePensionFund'
 import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
 import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
+import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
 
@@ -68,6 +72,7 @@ const Review: FC<ReviewScreenProps> = ({
     {
       otherParent,
       otherParentName,
+      otherParentEmail,
       otherParentId,
       pensionFund,
       union,
@@ -93,19 +98,30 @@ const Review: FC<ReviewScreenProps> = ({
   const isPrimaryParent =
     selectedChild?.parentalRelation === ParentalRelations.primary
 
-  const getSelectOptionLabel = (options: selectOption[], id: string) =>
-    options.find((option) => option.value === id)?.label
-
   const otherParentOptions = useMemo(
     () =>
       buildFieldOptions(getOtherParentOptions(application), application, field),
     [application],
   )
 
+  const otherParentWillApprove = requiresOtherParentApproval(
+    application.answers,
+  )
+
+  const hasError = (id: string) => get(errors, id) as string
+  const groupHasNoErrors = (ids: string[]) =>
+    ids.every((id) => !has(errors, id))
+
   return (
     <>
       <ReviewGroup
         isEditable={editable && isPrimaryParent}
+        canCloseEdit={groupHasNoErrors([
+          'otherParent',
+          'otherParentName',
+          'otherParentId',
+          'otherParentEmail',
+        ])}
         editChildren={
           <>
             <Label marginBottom={3}>
@@ -130,6 +146,7 @@ const Review: FC<ReviewScreenProps> = ({
                   otherParent: s as ValidOtherParentAnswer,
                 }))
               }}
+              error={hasError('otherParent')}
             />
 
             {otherParent === MANUAL && (
@@ -149,6 +166,7 @@ const Review: FC<ReviewScreenProps> = ({
                           otherParentName: e.target.value,
                         }))
                       }
+                      error={hasError('otherParentName')}
                     />
                   </GridColumn>
 
@@ -168,9 +186,35 @@ const Review: FC<ReviewScreenProps> = ({
                           otherParentId: e.target.value?.replace('-', ''),
                         }))
                       }
+                      error={hasError('otherParentId')}
                     />
                   </GridColumn>
+                  {otherParentWillApprove && (
+                    <GridColumn
+                      span={['12/12', '12/12', '12/12', '12/12']}
+                    ></GridColumn>
+                  )}
                 </GridRow>
+                {otherParentWillApprove && (
+                  <Box paddingTop={2}>
+                    <InputController
+                      id="otherParentEmail"
+                      name="otherParentEmail"
+                      defaultValue={otherParentEmail}
+                      label={formatMessage(
+                        parentalLeaveFormMessages.shared
+                          .otherParentEmailSubSection,
+                      )}
+                      onChange={(e) =>
+                        setStateful((prev) => ({
+                          ...prev,
+                          otherParentEmail: e.target.value,
+                        }))
+                      }
+                      error={hasError('otherParentEmail')}
+                    />
+                  </Box>
+                )}
               </>
             )}
           </>
@@ -186,32 +230,45 @@ const Review: FC<ReviewScreenProps> = ({
         )}
 
         {otherParent === MANUAL && (
-          <>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.otherParentName,
+                )}
+                value={otherParentName}
+              />
+              {otherParentWillApprove && (
                 <DataValue
                   label={formatMessage(
-                    parentalLeaveFormMessages.shared.otherParentName,
+                    parentalLeaveFormMessages.shared.otherParentEmailSubSection,
                   )}
-                  value={otherParentName}
+                  value={otherParentEmail}
                 />
-              </GridColumn>
+              )}
+            </GridColumn>
 
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <DataValue
-                  label={formatMessage(
-                    parentalLeaveFormMessages.shared.otherParentID,
-                  )}
-                  value={otherParentId}
-                />
-              </GridColumn>
-            </GridRow>
-          </>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.otherParentID,
+                )}
+                value={otherParentId}
+              />
+            </GridColumn>
+          </GridRow>
         )}
       </ReviewGroup>
 
       <ReviewGroup
         isEditable={editable}
+        canCloseEdit={groupHasNoErrors([
+          'payments.bank',
+          'payments.pensionFund',
+          'payments.union',
+          'usePrivatePensionFund',
+          'payments.privatePensionFund',
+        ])}
         editChildren={
           <>
             <Label marginBottom={3}>
@@ -232,6 +289,7 @@ const Review: FC<ReviewScreenProps> = ({
               onChange={(e) =>
                 setStateful((prev) => ({ ...prev, bank: e.target.value }))
               }
+              error={hasError('payments.bank')}
             />
 
             <GridRow marginTop={3} marginBottom={3}>
@@ -250,6 +308,7 @@ const Review: FC<ReviewScreenProps> = ({
                       pensionFund: s.value as string,
                     }))
                   }
+                  error={hasError('payments.pensionFund')}
                 />
               </GridColumn>
 
@@ -269,6 +328,7 @@ const Review: FC<ReviewScreenProps> = ({
                       union: s.value as string,
                     }))
                   }}
+                  error={hasError('payments.union')}
                 />
               </GridColumn>
             </GridRow>
@@ -301,9 +361,10 @@ const Review: FC<ReviewScreenProps> = ({
               onSelect={(s: string) => {
                 setStateful((prev) => ({
                   ...prev,
-                  usePrivatePensionFund: s as Boolean,
+                  usePrivatePensionFund: s as YesOrNo,
                 }))
               }}
+              error={hasError('usePrivatePensionFund')}
             />
 
             {usePrivatePensionFund === YES && (
@@ -323,6 +384,7 @@ const Review: FC<ReviewScreenProps> = ({
                         privatePensionFund: s.value as string,
                       }))
                     }
+                    error={hasError('payments.privatePensionFund')}
                   />
                 </GridColumn>
 
@@ -347,6 +409,7 @@ const Review: FC<ReviewScreenProps> = ({
                         privatePensionFundPercentage: s.value as string,
                       }))
                     }
+                    error={hasError('payments.union')}
                   />
                 </GridColumn>
               </GridRow>
@@ -426,6 +489,11 @@ const Review: FC<ReviewScreenProps> = ({
       {isPrimaryParent && (
         <ReviewGroup
           isEditable={editable}
+          canCloseEdit={groupHasNoErrors([
+            'usePersonalAllowance',
+            'personalAllowance.useAsMuchAsPossible',
+            'personalAllowance.usage',
+          ])}
           editChildren={
             <>
               <Label marginBottom={2}>
@@ -456,9 +524,10 @@ const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => ({
                     ...prev,
-                    usePersonalAllowance: s as Boolean,
+                    usePersonalAllowance: s as YesOrNo,
                   }))
                 }}
+                error={hasError('usePersonalAllowance')}
               />
 
               {usePersonalAllowance === YES && (
@@ -492,9 +561,10 @@ const Review: FC<ReviewScreenProps> = ({
                     onSelect={(s: string) => {
                       setStateful((prev) => ({
                         ...prev,
-                        personalUseAsMuchAsPossible: s as Boolean,
+                        personalUseAsMuchAsPossible: s as YesOrNo,
                       }))
                     }}
+                    error={hasError('personalAllowance.useAsMuchAsPossible')}
                   />
                 </>
               )}
@@ -520,6 +590,7 @@ const Review: FC<ReviewScreenProps> = ({
                         personalUsage: e.target.value?.replace('%', ''),
                       }))
                     }
+                    error={hasError('personalAllowance.usage')}
                   />
                 </>
               )}
@@ -574,6 +645,11 @@ const Review: FC<ReviewScreenProps> = ({
       {isPrimaryParent && (
         <ReviewGroup
           isEditable={editable}
+          canCloseEdit={groupHasNoErrors([
+            'usePersonalAllowanceFromSpouse',
+            'personalAllowance.useAsMuchAsPossibleFromSpouse',
+            'personalAllowanceFromSpouse.usage',
+          ])}
           editChildren={
             <>
               <Label marginBottom={2}>
@@ -604,9 +680,10 @@ const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => ({
                     ...prev,
-                    usePersonalAllowanceFromSpouse: s as Boolean,
+                    usePersonalAllowanceFromSpouse: s as YesOrNo,
                   }))
                 }}
+                error={hasError('usePersonalAllowanceFromSpouse')}
               />
 
               {usePersonalAllowanceFromSpouse === YES && (
@@ -640,9 +717,12 @@ const Review: FC<ReviewScreenProps> = ({
                     onSelect={(s: string) => {
                       setStateful((prev) => ({
                         ...prev,
-                        spouseUseAsMuchAsPossible: s as Boolean,
+                        spouseUseAsMuchAsPossible: s as YesOrNo,
                       }))
                     }}
+                    error={hasError(
+                      'personalAllowance.useAsMuchAsPossibleFromSpouse',
+                    )}
                   />
                 </>
               )}
@@ -668,6 +748,7 @@ const Review: FC<ReviewScreenProps> = ({
                         spouseUsage: e.target.value?.replace('%', ''),
                       }))
                     }
+                    error={hasError('personalAllowanceFromSpouse.usage')}
                   />
                 </>
               )}
@@ -715,6 +796,10 @@ const Review: FC<ReviewScreenProps> = ({
 
       <ReviewGroup
         isEditable={editable}
+        canCloseEdit={groupHasNoErrors([
+          'employer.isSelfEmployed',
+          'employer.email',
+        ])}
         editChildren={
           <>
             <Label marginBottom={3}>
@@ -743,9 +828,10 @@ const Review: FC<ReviewScreenProps> = ({
               onSelect={(s: string) =>
                 setStateful((prev) => ({
                   ...prev,
-                  isSelfEmployed: s as Boolean,
+                  isSelfEmployed: s as YesOrNo,
                 }))
               }
+              error={hasError('employer.isSelfEmployed')}
             />
 
             {isSelfEmployed === NO && (
@@ -760,6 +846,7 @@ const Review: FC<ReviewScreenProps> = ({
                     employerEmail: e.target.value,
                   }))
                 }
+                error={hasError('employer.email')}
               />
             )}
           </>

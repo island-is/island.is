@@ -6,7 +6,10 @@ import {
   CreateApplication,
   HomeCircumstances,
   Employment,
+  ApplicationState,
 } from '@island.is/financial-aid/shared'
+
+import { CreateApplicationFileInput } from '../../file/dto'
 
 @InputType()
 export class CreateApplicationInput implements CreateApplication {
@@ -73,4 +76,19 @@ export class CreateApplicationInput implements CreateApplication {
   @Allow()
   @Field({ nullable: true })
   readonly interview?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly formComment?: string
+
+  @Allow()
+  @Field(() => String)
+  readonly state!: ApplicationState
+
+  @Allow()
+  @Field(() => [CreateApplicationFileInput])
+  readonly files!: CreateApplicationFileInput[]
+
+  @Field({ nullable: true })
+  readonly amount?: number
 }

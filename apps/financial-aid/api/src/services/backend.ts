@@ -2,9 +2,16 @@ import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 
 import { Injectable } from '@nestjs/common'
 
-import { Application, Municipality } from '@island.is/financial-aid/shared'
-
-import { CreateApplicationInput } from '../app/modules/application/dto'
+import {
+  Application,
+  Municipality,
+  UpdateApplication,
+  CreateApplication,
+  GetSignedUrl,
+  SignedUrl,
+  ApplicationEvent,
+  CreateApplicationEvent,
+} from '@island.is/financial-aid/shared'
 
 import { environment } from '../environments'
 
@@ -20,7 +27,8 @@ class BackendAPI extends RESTDataSource {
   getApplications(): Promise<Application[]> {
     return this.get('applications')
   }
-  getApplicant(id: string): Promise<Application> {
+
+  getApplication(id: string): Promise<Application> {
     return this.get(`applications/${id}`)
   }
 
@@ -29,9 +37,34 @@ class BackendAPI extends RESTDataSource {
   }
 
   createApplication(
-    createApplication: CreateApplicationInput,
+    createApplication: CreateApplication,
   ): Promise<Application> {
     return this.post('application', createApplication)
+  }
+
+  updateApplication(
+    id: string,
+    updateApplication: UpdateApplication,
+  ): Promise<Application> {
+    return this.put(`applications/${id}`, updateApplication)
+  }
+
+  getSignedUrl(getSignedUrl: GetSignedUrl): Promise<SignedUrl> {
+    return this.post('/file/url', getSignedUrl)
+  }
+
+  getApplicationEvents(): Promise<ApplicationEvent[]> {
+    return this.get('applicationEvents')
+  }
+
+  getApplicationEvent(id: string): Promise<ApplicationEvent> {
+    return this.get(`applicationEvents/${id}`)
+  }
+
+  createApplicationEvent(
+    createApplicationEvent: CreateApplicationEvent,
+  ): Promise<ApplicationEvent> {
+    return this.post('applicationEvent', createApplicationEvent)
   }
 }
 

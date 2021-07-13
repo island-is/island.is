@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react'
 
 import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
+import { UploadFile } from '@island.is/island-ui/core'
 
 export interface Form {
   customAddress?: boolean
@@ -13,7 +14,8 @@ export interface Form {
   employment?: Employment
   employmentCustom?: string
   hasIncome?: boolean
-  incomeFiles?: any
+  incomeFiles: UploadFile[]
+  taxReturnFiles: UploadFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string
@@ -22,16 +24,21 @@ export interface Form {
   interview?: boolean
   submitted: boolean
   section?: Array<string>
+  formComment?: string
 }
 
-export const initialState = { submitted: false, incomeFiles: [] }
+export const initialState = {
+  submitted: false,
+  incomeFiles: [],
+  taxReturnFiles: [],
+}
 
 interface FormProvider {
-  form?: Form
+  form: Form
   updateForm?: any
 }
 
-export const FormContext = createContext<FormProvider>({})
+export const FormContext = createContext<FormProvider>({ form: initialState })
 
 const FormProvider: React.FC = ({ children }) => {
   const getSessionStorageOrDefault = (key: any) => {

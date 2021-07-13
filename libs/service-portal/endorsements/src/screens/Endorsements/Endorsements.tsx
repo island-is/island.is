@@ -1,6 +1,5 @@
 import React from 'react'
 import { Box, Text, ActionCard, Stack } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { useMutation, useQuery } from '@apollo/client'
@@ -12,6 +11,7 @@ import {
   EndorsementListOpenTagsEnum,
   TemporaryVoterRegistry,
 } from '../../types/schema'
+import { getSlugFromType } from '@island.is/application/core'
 
 export type UserEndorsement = Pick<
   Endorsement,
@@ -19,7 +19,7 @@ export type UserEndorsement = Pick<
 >
 export type RegionsEndorsementList = Pick<
   EndorsementList,
-  'id' | 'title' | 'description'
+  'id' | 'title' | 'description' | 'meta'
 > & { tags: EndorsementListOpenTagsEnum[] }
 
 export type UserVoterRegion = Pick<
@@ -31,9 +31,6 @@ interface UserEndorsementsResponse {
 }
 interface EndorsementListResponse {
   endorsementSystemFindEndorsementLists: RegionsEndorsementList[]
-}
-interface EndorseListResponse {
-  endorsementSystemEndorseList: UserEndorsement
 }
 interface UserVoterRegionResponse {
   temporaryVoterRegistryGetVoterRegion: UserVoterRegion
@@ -49,6 +46,7 @@ const GET_USER_ENDORSEMENTS = gql`
         title
         description
         tags
+        closedDate
       }
       meta {
         fullName
@@ -68,27 +66,7 @@ const GET_REGION_ENDORSEMENTS = gql`
       title
       description
       tags
-    }
-  }
-`
-
-const ENDORSE_LIST = gql`
-  mutation endorseList($input: FindEndorsementListInput!) {
-    endorsementSystemEndorseList(input: $input) {
-      id
-      endorser
-      endorsementList {
-        id
-        title
-        description
-        tags
-      }
-      meta {
-        fullName
-        address
-      }
-      created
-      modified
+      meta
     }
   }
 `
@@ -135,6 +113,18 @@ const regionNumberEndorsementListTagMap = {
   6: EndorsementListOpenTagsEnum.PartyApplicationSudurkjordaemi2021,
 }
 
+const isLocalhost = window.location.origin.includes('localhost')
+const isDev = window.location.origin.includes('beta.dev01.devland.is')
+const isStaging = window.location.origin.includes('beta.staging01.devland.is')
+
+const baseUrlForm = isLocalhost
+  ? 'http://localhost:4242/umsoknir'
+  : isDev
+  ? 'https://beta.dev01.devland.is/umsoknir'
+  : isStaging
+  ? 'https://beta.staging01.devland.is/umsoknir'
+  : 'https://island.is/umsoknir'
+
 const Endorsements = () => {
   const { formatMessage } = useLocale()
 
@@ -168,14 +158,10 @@ const Endorsements = () => {
           tags: endorsementListTags,
         },
       },
+      pollInterval: 20000,
     },
   )
 
-  const [endorseList] = useMutation<EndorseListResponse>(ENDORSE_LIST, {
-    onCompleted: () => {
-      refetchUserEndorsements()
-    },
-  })
   const [unendorseList] = useMutation<boolean>(UNENDORSE_LIST, {
     onCompleted: () => {
       refetchUserEndorsements()
@@ -195,10 +181,15 @@ const Endorsements = () => {
 
   return (
     <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={m.endorsement.introTitle}
-        intro={m.endorsement.intro}
-      />
+      <Stack space={2}>
+        <Text variant="h1" as="h1">
+          {formatMessage(m.endorsement.introTitle)}
+        </Text>
+
+        <Text as="p" variant="intro">
+          {formatMessage(m.endorsement.intro)}
+        </Text>
+      </Stack>
       {endorsements && endorsements.length > 0 && (
         <>
           <Text variant="h3" marginTop={4} marginBottom={2}>
@@ -232,6 +223,7 @@ const Endorsements = () => {
                           input: { listId: endorsement.endorsementList?.id },
                         },
                       }),
+                    disabled: !endorsement.endorsementList?.closedDate,
                   }}
                 />
               )
@@ -258,12 +250,15 @@ const Endorsements = () => {
               label: formatMessage(m.endorsement.actionCardButtonEndorse),
               variant: 'text',
               icon: undefined,
-              onClick: () =>
-                endorseList({
-                  variables: {
-                    input: { listId: endorsementList.id },
-                  },
-                }),
+              onClick: () => {
+                window.open(
+                  `${baseUrlForm}/${
+                    getSlugFromType(
+                      endorsementList.meta.applicationTypeId,
+                    ) as string
+                  }/${endorsementList.meta.applicationId}`,
+                )
+              },
             }}
           />
         ))}

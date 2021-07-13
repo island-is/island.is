@@ -21,6 +21,7 @@ import {
   ApplicationConfig,
 } from './application.configuration'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
+import { PaymentModule } from '../payment/payment.module'
 
 let BullModule: DynamicModule
 
@@ -45,6 +46,9 @@ if (process.env.INIT_SCHEMA === 'true') {
 
 @Module({
   imports: [
+    PaymentModule.register({
+      clientConfig: environment.templateApi.paymentOptions,
+    }),
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
     TemplateAPIModule.register(environment.templateApi),

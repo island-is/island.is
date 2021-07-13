@@ -8,6 +8,9 @@ export const GetApplicationQuery = gql`
       name
       phoneNumber
       email
+      modified
+      created
+      state
     }
   }
 `
@@ -15,6 +18,14 @@ export const GetApplicationQuery = gql`
 export const CreateApplicationQuery = gql`
   mutation createApplication($input: CreateApplicationInput!) {
     createApplication(input: $input) {
+      id
+    }
+  }
+`
+
+export const CreateApplicationEventQuery = gql`
+  mutation createApplicationEvent($input: CreateApplicationEventInput!) {
+    createApplicationEvent(input: $input) {
       id
     }
   }
@@ -30,10 +41,31 @@ export const GetMunicipalityQuery = gql`
   }
 `
 
+export const GetApplicationEventQuery = gql`
+  query GetApplicationEventQuery {
+    applicationEvents {
+      id
+      created
+      applicationId
+      state
+      comment
+    }
+  }
+`
+
 export const GetCurrentUserQuery = gql`
   query currentUserQuery {
     currentUser {
       name
+    }
+  }
+`
+
+export const CreateSignedUrlMutation = gql`
+  mutation getSignedUrl($input: GetSignedUrlInput!) {
+    getSignedUrl(input: $input) {
+      url
+      key
     }
   }
 `

@@ -1,6 +1,16 @@
-import { Constituencies } from './types'
+import { EndorsementListTagsEnum } from './types/schema'
 
-export enum API_MODULE_ACTIONS {
+export type EndorsementListTags = Extract<
+  EndorsementListTagsEnum,
+  | EndorsementListTagsEnum.PartyApplicationNordausturkjordaemi2021
+  | EndorsementListTagsEnum.PartyApplicationNordvesturkjordaemi2021
+  | EndorsementListTagsEnum.PartyApplicationReykjavikurkjordaemiNordur2021
+  | EndorsementListTagsEnum.PartyApplicationReykjavikurkjordaemiSudur2021
+  | EndorsementListTagsEnum.PartyApplicationSudurkjordaemi2021
+  | EndorsementListTagsEnum.PartyApplicationSudvesturkjordaemi2021
+>
+
+export enum ApiModuleActions {
   CreateEndorsementList = 'createEndorsementList',
   AssignSupremeCourt = 'assignSupremeCourt',
   ApplicationRejected = 'applicationRejected',
@@ -9,19 +19,44 @@ export enum API_MODULE_ACTIONS {
 }
 
 export const constituencyMapper: Record<
-  Constituencies,
+  EndorsementListTags,
   {
-    low: number
-    high: number
+    region_name: string
+    region_number: number
+    parliamentary_seats: number
   }
 > = {
-  // low: parliamentary seats * 30, high: parliamentary seats * 40
-  Norðausturkjördæmi: { low: 300, high: 400 },
-  Norðvesturkjördæmi: { low: 240, high: 320 },
-  'Reykjavíkurkjördæmi norður': { low: 330, high: 440 },
-  'Reykjavíkurkjördæmi suður': { low: 330, high: 440 },
-  Suðurkjördæmi: { low: 300, high: 400 },
-  Suðvesturkjördæmi: { low: 390, high: 520 },
+  partyApplicationReykjavikurkjordaemiSudur2021: {
+    region_name: 'Reykjavíkurkjördæmi suður',
+    region_number: 1,
+    parliamentary_seats: 11,
+  },
+  partyApplicationReykjavikurkjordaemiNordur2021: {
+    region_name: 'Reykjavíkurkjördæmi norður',
+    region_number: 2,
+    parliamentary_seats: 11,
+  },
+
+  partyApplicationSudvesturkjordaemi2021: {
+    region_name: 'Suðvesturkjördæmi',
+    region_number: 3,
+    parliamentary_seats: 13,
+  },
+  partyApplicationNordvesturkjordaemi2021: {
+    region_name: 'Norðvesturkjördæmi',
+    region_number: 4,
+    parliamentary_seats: 8,
+  },
+  partyApplicationNordausturkjordaemi2021: {
+    region_name: 'Norðausturkjördæmi',
+    region_number: 5,
+    parliamentary_seats: 10,
+  },
+  partyApplicationSudurkjordaemi2021: {
+    region_name: 'Suðurkjördæmi',
+    region_number: 6,
+    parliamentary_seats: 10,
+  },
 }
 
 export enum States {
@@ -42,4 +77,9 @@ export const csvFileName = (partyLetter: string, partyName: string): string => {
   const strippedPartyName = partyName.toString().replace(/\s/g, '')
   const strippedPartyLetter = partyLetter.toString().replace(/\s/g, '')
   return `Meðmælendalisti-${strippedPartyName}(${strippedPartyLetter}).csv`
+}
+
+export enum SelectedEndorsementsRadio {
+  AUTO,
+  RANDOM,
 }

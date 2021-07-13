@@ -4,11 +4,18 @@ import {
   IsOptional,
   IsBoolean,
   IsEnum,
+  IsArray,
+  IsNumber,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
+import {
+  HomeCircumstances,
+  Employment,
+  ApplicationState,
+  CreateApplicationFile,
+} from '@island.is/financial-aid/shared'
 
 export class CreateApplicationDto {
   @IsNotEmpty()
@@ -90,4 +97,23 @@ export class CreateApplicationDto {
   @IsBoolean()
   @ApiProperty()
   readonly hasIncome: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly formComment: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly state: ApplicationState
+
+  @IsArray()
+  @ApiProperty()
+  readonly files: CreateApplicationFile[]
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty()
+  readonly amount: number
 }

@@ -5,7 +5,7 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 
-import { ApplicationsApi } from '../../gen/fetch'
+import { ApplicationsApi, PaymentsApi } from '../../gen/fetch'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
@@ -18,6 +18,8 @@ import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
+import { ApplicationPayment } from './application.model'
+import { ApplicationPaymentChargeResponse } from './dto/applicationPaymentCharge'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -35,10 +37,17 @@ const handleError = async (error: any) => {
 
 @Injectable()
 export class ApplicationService {
-  constructor(private _applicationApi: ApplicationsApi) {}
+  constructor(
+    private _applicationApi: ApplicationsApi,
+    private _applicationPaymentApi: PaymentsApi,
+  ) {}
 
   applicationApiWithAuth(auth: Auth) {
     return this._applicationApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  paymentApiWithAuth(auth: Auth) {
+    return this._applicationPaymentApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async findOne(id: string, auth: Auth, locale: Locale) {
@@ -46,6 +55,33 @@ export class ApplicationService {
       .applicationControllerFindOne({
         id,
         locale,
+      })
+      .catch(handleError)
+  }
+
+  async getPaymentStatus(
+    applicationId: string,
+    auth: Auth,
+    locale: Locale,
+  ): Promise<ApplicationPayment> {
+    return await this.paymentApiWithAuth(auth)
+      .paymentControllerGetPaymentStatus({
+        applicationId,
+        locale,
+      })
+      .catch(handleError)
+  }
+
+  async createCharge(
+    applicationId: string,
+    auth: Auth,
+    chargeItemCode: string,
+  ) {
+    return this.paymentApiWithAuth(auth)
+      .paymentControllerCreateCharge({
+        applicationId: applicationId,
+        body: { chargeItemCode: chargeItemCode },
+        authorization: auth.authorization,
       })
       .catch(handleError)
   }
