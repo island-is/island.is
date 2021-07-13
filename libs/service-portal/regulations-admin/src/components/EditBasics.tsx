@@ -1,6 +1,13 @@
-import React, { ReactNode, useMemo, useRef, useState } from 'react'
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { MinistrySlug, toISODate } from '@island.is/regulations'
-import { Box, Option, DatePicker, Input, Select, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Option,
+  DatePicker,
+  Input,
+  Select,
+  Text,
+} from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
@@ -43,9 +50,12 @@ export type EditBasicsProps = {
 }
 
 export const EditBasics = (props: EditBasicsProps) => {
-  const [inputValue, setInputValue] = useState('')
   const t = useIntl().formatMessage
   const { draft } = props
+
+  const [titleValue, setTitleValue] = useState(draft.title.value)
+  const [ministryValue, setMinistryValue] = useState(draft.ministry.value)
+
   const textRef = useRef(() => draft.text.value)
   const { actions } = useDraftingState(draft.id, 'basics')
 
@@ -67,20 +77,23 @@ export const EditBasics = (props: EditBasicsProps) => {
     ) as ReadonlyArray<Option>
   }, [ministries])
 
-
   const onAnyInputChange = (data: { name: string; value: string }) => {
     actions.updateState({ ...data })
   }
 
-  const onTitleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setInputValue(e.target.value)
+  useEffect(() => {
     onAnyInputChange({
       name: 'title',
-      value: e.target.value,
+      value: titleValue,
     })
-  }
+  }, [titleValue])
+
+  useEffect(() => {
+    onAnyInputChange({
+      name: 'ministry',
+      value: ministryValue as string,
+    })
+  }, [ministryValue])
 
   return (
     <>
@@ -88,8 +101,8 @@ export const EditBasics = (props: EditBasicsProps) => {
         <Input
           label={t(msg.title)}
           name="title"
-          value={draft.title.value || inputValue}
-          onChange={onTitleChange}
+          value={titleValue}
+          onChange={(e) => setTitleValue(e.target.value)}
         />
       </Wrap>
 
@@ -116,12 +129,9 @@ export const EditBasics = (props: EditBasicsProps) => {
           isSearchable
           label={t(msg.ministry)}
           placeholder={t(msg.ministry)}
-          value={findValueOption(ministryOptions, draft.ministry.value)}
+          value={findValueOption(ministryOptions, ministryValue)}
           options={ministryOptions}
-          onChange={(option) =>
-            (draft.ministry.value =
-              ((option as Option).value as MinistrySlug) ?? undefined)
-          }
+          onChange={(option) => setMinistryValue((option as Option).value as MinistrySlug)}
           size="sm"
         />
       </Wrap>
