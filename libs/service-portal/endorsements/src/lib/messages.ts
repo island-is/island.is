@@ -12,7 +12,7 @@ export const m: MessageDir = {
     intro: {
       id: 'sp.endorsements:intro',
       defaultMessage:
-        'Einhver texti um hvaða umboð aðili hefur og hvaða aðgerðir eru í boði',
+        'Hér má finna lista yfir þau framboð og þá listabókstarfi sem þú getur eða hefur mælt með í þínu kjördæmi. Hægt er að mæla með einum eða fleiri listabókstöfum en eingögnu einu framboði.',
       description: 'Endorsement intro text',
     },
     myEndorsements: {

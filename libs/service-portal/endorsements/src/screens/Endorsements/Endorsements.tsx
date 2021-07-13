@@ -1,6 +1,5 @@
 import React from 'react'
 import { Box, Text, ActionCard, Stack } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { useMutation, useQuery } from '@apollo/client'
@@ -182,10 +181,15 @@ const Endorsements = () => {
 
   return (
     <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={m.endorsement.introTitle}
-        intro={m.endorsement.intro}
-      />
+      <Stack space={2}>
+        <Text variant="h1" as="h1">
+          {formatMessage(m.endorsement.introTitle)}
+        </Text>
+
+        <Text as="p" variant="intro">
+          {formatMessage(m.endorsement.intro)}
+        </Text>
+      </Stack>
       {endorsements && endorsements.length > 0 && (
         <>
           <Text variant="h3" marginTop={4} marginBottom={2}>
@@ -219,7 +223,7 @@ const Endorsements = () => {
                           input: { listId: endorsement.endorsementList?.id },
                         },
                       }),
-                    disabled: !endorsement.endorsementList?.closedDate
+                    disabled: !endorsement.endorsementList?.closedDate,
                   }}
                 />
               )
