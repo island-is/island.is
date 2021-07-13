@@ -12,7 +12,14 @@ import {
   RegulationLawChapter,
   RegulationMinistry,
 } from './types-web'
-import { RegName, Kennitala } from './types'
+import {
+  RegName,
+  Kennitala,
+  ISODate,
+  PlainText,
+  HTMLText,
+  RegulationType,
+} from './types'
 
 export type {
   DraftingStatus,
@@ -28,35 +35,42 @@ export type EmailAddress = string & { [_EmailAddress__Brand]: true }
 export type Author = {
   authorId: Kennitala
   name: string
-  email: EmailAddress
+  // email: EmailAddress
   // TODO: Add to this minimal list of fields... "org??"
 }
 
 // ---------------------------------------------------------------------------
 
-export type DraftSummary = Pick<
-  DB_RegulationDraft,
-  'id' | 'title' | 'idealPublishDate'
-> & {
+export type DraftSummary = Pick<DB_RegulationDraft, 'id' | 'title'> & {
+  idealPublishDate: ISODate
   draftingStatus: Exclude<DraftingStatus, 'shipped'>
   authors: ReadonlyArray<Author>
 }
 
 export type ShippedSummary = Required<
-  Pick<DB_RegulationDraft, 'id' | 'title' | 'name' | 'idealPublishDate'>
+  Pick<DB_RegulationDraft, 'id' | 'title' | 'name'> & {
+    idealPublishDate: ISODate
+  }
 >
 
 // ---------------------------------------------------------------------------
 
 export type RegulationDraft = {
-  /** 0 (zero) signifies a new regulation draft */
+  /** undefined signifies a new regulation draft */
   id: RegulationDraftId
+  draftingStatus: DraftingStatus
+  title: PlainText
+  name?: RegName
+  draftingNotes: HTMLText
   authors: ReadonlyArray<Author>
-  lawChapters: ReadonlyArray<RegulationLawChapter>
+  lawChapters?: ReadonlyArray<RegulationLawChapter>
+  idealPublishDate?: ISODate
+  signatureDate?: ISODate
+  effectiveDate?: ISODate
+  type?: RegulationType
   ministry?: RegulationMinistry
   impacts: ReadonlyArray<DraftRegulationCancel | DraftRegulationChange>
-} & Omit<DB_RegulationDraft, 'id' | 'ministryId' | 'text'> &
-  Pick<Regulation, 'text' | 'appendixes' | 'comments'>
+} & Pick<Regulation, 'text' | 'appendixes' | 'comments'>
 
 // ---------------------------------------------------------------------------
 

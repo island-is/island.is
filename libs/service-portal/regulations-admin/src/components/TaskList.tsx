@@ -68,6 +68,7 @@ export const TaskList = () => {
           const { id, title, idealPublishDate, draftingStatus, authors } = item
           const idealDate = getReqDate(idealPublishDate as ISODate)
           // const statusLabel = formatMessage(statusMsgs[draftingStatus])
+
           return (
             <ActionCard
               key={id}
@@ -82,7 +83,7 @@ export const TaskList = () => {
                 variant: draftingStatus === 'proposal' ? 'blueberry' : 'red',
               }}
               // text={authors?.map(({ name }) => name).join(', ')}
-              text={authors?.map((item) => item).join(', ')}
+              text={authors?.map((item) => item.name || item.authorId).join(', ')}
               cta={{
                 label: formatMessage(msg.cta),
                 // variant: draftingStatus === 'draft' ? 'ghost' : undefined,

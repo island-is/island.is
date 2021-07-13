@@ -4,8 +4,7 @@ import { UseGuards } from '@nestjs/common'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
 import { CreateDraftRegulationInput } from './dto/createDraftRegulation.input'
-import { DraftRegulationModel } from './models/draftRegulation.model'
-import { CreateDraftRegulationModel } from './models/createDraftRegulation.model'
+// import { DraftRegulationModel } from './models/draftRegulation.model'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -13,6 +12,15 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { RegulationsAdminApi } from '../client/regulationsAdmin.api'
+import {
+  Author,
+  DraftRegulationCancel,
+  DraftRegulationChange,
+  RegulationDraft,
+} from '@island.is/regulations/admin'
+import { HTMLText } from '@hugsmidjan/regulations-editor/types'
+import { extractAppendixesAndComments } from '@hugsmidjan/regulations-editor/cleanupEditorOutput'
+import { RegulationAppendix } from '@island.is/regulations/web'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -27,42 +35,82 @@ export class RegulationsAdminResolver {
   async getDraftRegulation(
     @Args('input') input: GetDraftRegulationInput,
     @CurrentUser() { authorization }: User,
-  ) {
+  ): Promise<RegulationDraft | null> {
     const regulation = await this.regulationsAdminApiService.getDraftRegulation(
       input.regulationId,
       authorization,
     )
+
+    if (!regulation) {
+      return null
+    }
 
     const lawChapters = regulation
       ? await this.regulationsService.getRegulationsLawChapters(
           false,
           regulation.law_chapters,
         )
-      : []
-    console.log({ lawChapters })
+      : null
 
-    const ministries = regulation
+    const ministries = regulation?.ministry_id
       ? await this.regulationsService.getRegulationsMinistries([
           regulation.ministry_id,
         ])
       : null
-    console.log({ ministries })
+
+    const authors: Author[] = []
+    regulation?.authors?.forEach(async (nationalId) => {
+      const author = await this.regulationsAdminApiService.getAuthorInfo(
+        nationalId,
+        authorization,
+      )
+      author && authors.push(author)
+    })
+
+    const impacts: (DraftRegulationCancel | DraftRegulationChange)[] = []
+    regulation.changes?.forEach((change) => {
+      const { text, appendixes, comments } = extractAppendixesAndComments(
+        regulation.text,
+      )
+
+      impacts.push({
+        id: change.id,
+        type: 'amend',
+        title: change.title,
+        text: text as HTMLText,
+        name: change.regulation,
+        date: change.date,
+        appendixes: appendixes as RegulationAppendix[],
+        comments: comments as HTMLText,
+      })
+    })
+    if (regulation.cancel) {
+      impacts.push({
+        id: regulation.cancel.id,
+        type: 'repeal',
+        name: regulation.cancel.regulation,
+        date: regulation.cancel.date,
+      })
+    }
+
+    const { text, appendixes, comments } = extractAppendixesAndComments(
+      regulation.text,
+    )
 
     return {
-      ...regulation,
-      lawChapters: lawChapters,
-      ministry: ministries?.[0],
-      authors: [
-        // TODO: Sækja úr X-road
-        regulation?.authors.map((authorKt: String) => ({
-          authorId: authorKt,
-          name: 'Test name',
-        })),
-      ],
-      idealPublishDate: regulation?.ideal_publish_date, // TODO: Exclude original from response.
+      id: regulation.id,
+      draftingStatus: regulation.drafting_status,
+      title: regulation.title,
+      name: regulation.name,
+      text: text as HTMLText,
+      lawChapters: lawChapters ?? undefined,
+      ministry: ministries?.[0] ?? undefined,
+      authors: authors,
+      idealPublishDate: regulation.ideal_publish_date as any, // TODO: Exclude original from response.
       draftingNotes: regulation?.drafting_notes, // TODO: Exclude original from response.
-      appendixes: [], // TODO: Add this.
-      impacts: [], // TODO: Add this.
+      appendixes: appendixes as RegulationAppendix[],
+      comments: comments as HTMLText,
+      impacts: impacts,
     }
   }
 
@@ -77,9 +125,41 @@ export class RegulationsAdminResolver {
   // @Query(() => [DraftRegulationModel])
   @Query(() => graphqlTypeJson)
   async getDraftRegulations(@CurrentUser() { authorization }: User) {
-    const regulations = await this.regulationsAdminApiService.getDraftRegulations(
+    const DBregulations = await this.regulationsAdminApiService.getDraftRegulations(
       authorization,
     )
+
+    const regulations: RegulationDraft[] = []
+    for await (const regulation of DBregulations) {
+      const authors: Author[] = []
+
+      if (regulation.authors) {
+        for await (const nationalId of regulation.authors) {
+          const author = await this.regulationsAdminApiService.getAuthorInfo(
+            nationalId,
+            authorization,
+          )
+
+          authors.push({
+            authorId: nationalId,
+            name: author?.name ?? '',
+          })
+        }
+      }
+
+      regulations.push({
+        id: regulation.id,
+        draftingStatus: regulation.drafting_status,
+        title: regulation.title,
+        draftingNotes: regulation.drafting_notes,
+        idealPublishDate: regulation.ideal_publish_date,
+        impacts: [],
+        authors: authors,
+        text: '' as any,
+        appendixes: [],
+        comments: '' as any,
+      })
+    }
 
     return regulations
   }
