@@ -1957,6 +1957,28 @@
         }
       }
     },
+    "application-templates-accident-notification": {
+      "root": "libs/application/templates/accident-notification",
+      "sourceRoot": "libs/application/templates/accident-notification/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/accident-notification/tsconfig.lib.json",
+              "libs/application/templates/accident-notification/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/accident-notification/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-children-residence-change": {
       "root": "libs/application/templates/family-matters/children-residence-change",
       "sourceRoot": "libs/application/templates/family-matters/children-residence-change/src",

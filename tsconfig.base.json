@@ -141,6 +141,9 @@
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
       ],
+      "@island.is/application/templates/accident-notification": [
+        "libs/application/templates/accident-notification/src/index.ts"
+      ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
       ],
