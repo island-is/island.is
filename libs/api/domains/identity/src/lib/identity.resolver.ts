@@ -14,8 +14,7 @@ import { IdentityService } from './identity.service'
 import { Identity, IdentityPerson, IdentityCompany } from './models'
 
 @UseGuards(IdsUserGuard)
-@Resolver(() => IdentityPerson)
-@Resolver(() => IdentityCompany)
+@Resolver(() => Identity)
 export class IdentityResolver {
   constructor(private identityService: IdentityService) {}
 
@@ -25,15 +24,6 @@ export class IdentityResolver {
     @Args('input', { nullable: true }) input: IdentityInput,
   ): Promise<Identity | null> {
     const nationalId = input?.nationalId || user.nationalId
-    return this.identityService.getIdentity(nationalId)
-  }
-
-  @ResolveField('name', () => String)
-  resolveName(@Parent() identity: Identity & NationalRegistryUser): string {
-    if (identity.type === IdentityType.Person) {
-      return identity.fullName
-    }
-    // TODO: need to handle companies
-    return 'unknown'
+    return this.identityService.getIdentity(nationalId, user)
   }
 }

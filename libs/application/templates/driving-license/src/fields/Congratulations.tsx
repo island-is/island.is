@@ -2,17 +2,24 @@ import React from 'react'
 
 import {
   Box,
-  Accordion,
-  AccordionItem,
   Text,
   ContentBlock,
   AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { CustomField, FieldBaseProps } from '@island.is/application/core'
+import {
+  CustomField,
+  FieldBaseProps,
+  formatText,
+} from '@island.is/application/core'
+import { m } from '../lib/messages'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
+}
+
+interface name {
+  fullName: string
 }
 
 function Congratulations({
@@ -20,37 +27,46 @@ function Congratulations({
   field,
   application,
 }: PropTypes): JSX.Element {
+  const name = application.externalData.nationalRegistry?.data as name
+  const { formatMessage } = useLocale()
+
   return (
     <Box paddingTop={2}>
       <Box marginTop={2}>
         <ContentBlock>
           <AlertMessage
             type="success"
-            title="Til hamingju"
-            message={`
-              fullnaðarskírteinið þitt hefur verið samþykkt og mun vera tilbúið
-              hjá Sýslumanni í Reykjavík eftir 4 daga. Þegar þú sækir nýtt skírteini
-              þarftu að skila inn bráðabirgðaskírteininu þínu.
-            `}
+            title={`${formatText(
+              m.congratulationsTitle,
+              application,
+              formatMessage,
+            )} ${name.fullName}`}
+            message={formatText(
+              m.congratulationsTitleSuccess,
+              application,
+              formatMessage,
+            )}
           />
         </ContentBlock>
 
-        <Box marginTop={4}>
-          <Accordion singleExpand>
-            <AccordionItem
-              id="id_1"
-              label="Hvað gerist næst?"
-              labelVariant="h3"
-            >
-              <Text>
-                Næsta sem gerist er að við ákveðum hvað á að standa í þessu
-                boxi.
-              </Text>
-            </AccordionItem>
-          </Accordion>
+        <Box marginTop={6}>
+          <Text>
+            {formatText(
+              m.paymentSuccessExtraDocuments,
+              application,
+              formatMessage,
+            )}
+          </Text>
+          <Text marginTop={4}>
+            {formatText(
+              m.paymentSuccessIfNotReadyFewWeeks,
+              application,
+              formatMessage,
+            )}
+          </Text>
         </Box>
 
-        <Box marginTop={4}>
+        <Box marginTop={6}>
           <img role="presentation" src="/assets/images/movingTruck.svg" />
         </Box>
       </Box>

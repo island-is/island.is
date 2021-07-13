@@ -41,3 +41,10 @@ export const PAYMENT_QUERY = `
     }
   }
 `
+export const PAYMENT_STATUS_QUERY = `
+  query($applicationId: String!) {
+    applicationPaymentStatus(applicationId: $applicationId) {
+      fulfilled
+    }
+  }
+`

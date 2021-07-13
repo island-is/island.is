@@ -8,7 +8,7 @@ import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
-import { ParentalLeave } from '../models/parentalLeaves.model'
+import { ParentalLeave } from '../models/parentalLeave.model'
 import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
 
 @Injectable()

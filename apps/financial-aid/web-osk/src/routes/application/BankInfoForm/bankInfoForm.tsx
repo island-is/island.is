@@ -150,9 +150,9 @@ const Form = () => {
 
         <Text marginBottom={[3, 3, 4]} variant="small">
           Þér er ekki skylt að gefa upp bankaupplýsingar hér. Ef þú gefur
-          bankaupplýsingarnar upp verða þær geymdar í gagnagrunni Stafræns
-          Íslands. Kjósirðu að gefa þær ekki upp núna verður hringt í þig og
-          óskað eftir þeim ef umsóknin verður samþykkt.
+          bankaupplýsingarnar upp verða þær geymdar í gagnagrunni
+          fjárhagsaðstoðar sveitarfélaganna. Kjósirðu að gefa þær ekki upp núna
+          verður hringt í þig og óskað eftir þeim ef umsóknin verður samþykkt.
         </Text>
       </FormContentContainer>
 

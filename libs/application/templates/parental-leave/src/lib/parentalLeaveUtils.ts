@@ -434,6 +434,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const otherParentId = getValueViaPath(answers, 'otherParentId') as string
 
+  const otherParentEmail = getValueViaPath(
+    answers,
+    'otherParentEmail',
+  ) as string
+
   const bank = getValueViaPath(answers, 'payments.bank') as string
 
   const usePersonalAllowance = getValueViaPath(
@@ -529,6 +534,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     isSelfEmployed,
     otherParentName,
     otherParentId,
+    otherParentEmail,
     bank,
     usePersonalAllowance,
     usePersonalAllowanceFromSpouse,
