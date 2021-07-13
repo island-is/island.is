@@ -267,7 +267,8 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 component: 'FieldTitle',
               },
               {
-                marginTop: 4,
+                marginTop: 7,
+                marginBottom: 3,
               },
             ),
             buildTextField({
@@ -278,6 +279,24 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               required: true,
               variant: 'textarea',
               rows: 6,
+            }),
+            buildCustomField(
+              {
+                id: 'complainedForInformation.titleField',
+                title: complainedFor.labels.powerOfAttorney,
+                component: 'FieldTitle',
+              },
+              {
+                marginTop: 7,
+                marginBottom: 3,
+              },
+            ),
+            buildFileUploadField({
+              id: 'complainedForInformation.powerOfAttorney',
+              title: '',
+              introduction: '',
+              uploadHeader: attachments.uploadHeader,
+              uploadButtonLabel: attachments.uploadButtonLabel,
             }),
           ],
         }),
@@ -446,7 +465,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           id: 'attachments.fileUpload',
           title: attachments.title,
           introduction: attachments.introduction,
-          uploadDescription: attachments.uploadDescription,
           uploadHeader: attachments.uploadHeader,
           uploadButtonLabel: attachments.uploadButtonLabel,
         }),
