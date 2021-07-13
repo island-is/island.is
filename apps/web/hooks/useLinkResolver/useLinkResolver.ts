@@ -30,7 +30,7 @@ Keys in routesTemplate should ideally match lowercased __typename of graphql api
 */
 export const routesTemplate = {
   aboutsubpage: {
-    is: '/stafraent-island/[slug]',
+    is: '/s/stafraent-island/[slug]',
     en: '',
   },
   page: {
