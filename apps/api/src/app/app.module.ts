@@ -199,6 +199,12 @@ const autoSchemaFile = environment.production
     RegulationsAdminModule.register({
       baseApiUrl: environment.regulationsAdmin.baseApiUrl,
       regulationsApiUrl: environment.regulationsAdmin.regulationsApiUrl,
+      nationalRegistryXRoad: {
+        xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
+        xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
+        xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
+        xRoadClientId: environment.nationalRegistryXRoad.clientId,
+      },
     }),
     FinanceModule.register({
       username: environment.fjarmalDomain.username,

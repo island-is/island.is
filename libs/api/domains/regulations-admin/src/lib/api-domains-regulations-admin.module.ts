@@ -6,6 +6,7 @@ import {
 } from './client'
 import { RegulationsAdminResolver } from './graphql/regulationsAdmin.resolver'
 import { RegulationsService } from '@island.is/clients/regulations'
+import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 
 @Module({})
 export class RegulationsAdminModule {
@@ -21,8 +22,12 @@ export class RegulationsAdminModule {
         RegulationsAdminApi,
         {
           provide: RegulationsService,
-          useFactory: async () => new RegulationsService({ url: config.regulationsApiUrl }),
+          useFactory: async () =>
+            new RegulationsService({ url: config.regulationsApiUrl }),
         },
+      ],
+      imports: [
+        NationalRegistryXRoadModule.register(config.nationalRegistryXRoad),
       ],
     }
   }

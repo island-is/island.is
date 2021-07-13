@@ -57,7 +57,7 @@ export type RegulationDraft = {
   draftingNotes: HTMLText
   authors: ReadonlyArray<Author>
   lawChapters?: ReadonlyArray<RegulationLawChapter>
-  idealPublishDate: ISODate
+  idealPublishDate?: ISODate
   signatureDate?: ISODate
   effectiveDate?: ISODate
   type?: RegulationType

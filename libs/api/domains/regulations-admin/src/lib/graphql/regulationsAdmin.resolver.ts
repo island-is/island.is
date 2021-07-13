@@ -11,7 +11,12 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { RegulationsAdminApi } from '../client/regulationsAdmin.api'
-import { DraftRegulationCancel, DraftRegulationChange, RegulationDraft } from '@island.is/regulations/admin'
+import {
+  Author,
+  DraftRegulationCancel,
+  DraftRegulationChange,
+  RegulationDraft,
+} from '@island.is/regulations/admin'
 import { HTMLText, ISODate } from '@hugsmidjan/regulations-editor/types'
 import { extractAppendixesAndComments } from '@hugsmidjan/regulations-editor/cleanupEditorOutput'
 import { RegulationAppendix } from '@island.is/regulations/web'
@@ -52,11 +57,20 @@ export class RegulationsAdminResolver {
         ])
       : null
 
+    const authors: Author[] = []
+    regulation?.authors?.forEach(async (nationalId) => {
+      const author = await this.regulationsAdminApiService.getAuthorInfo(
+        nationalId,
+        authorization,
+      )
+      author && authors.push(author)
+    })
+
     const impacts: (DraftRegulationCancel | DraftRegulationChange)[] = []
     regulation.changes?.forEach((change) => {
       const { text, appendixes, comments } = extractAppendixesAndComments(
         regulation.text,
-      );
+      )
 
       impacts.push({
         id: change.id,
@@ -67,20 +81,20 @@ export class RegulationsAdminResolver {
         date: change.date,
         appendixes: appendixes as RegulationAppendix[],
         comments: comments as HTMLText,
-      });
+      })
     })
     if (regulation.cancel) {
       impacts.push({
         id: regulation.cancel.id,
         type: 'repeal',
         name: regulation.cancel.regulation,
-        date: regulation.cancel.date
-      });
+        date: regulation.cancel.date,
+      })
     }
 
     const { text, appendixes, comments } = extractAppendixesAndComments(
       regulation.text,
-    );
+    )
 
     return {
       id: regulation.id,
@@ -90,13 +104,7 @@ export class RegulationsAdminResolver {
       text: text as HTMLText,
       lawChapters: lawChapters ?? undefined,
       ministry: ministries?.[0] ?? undefined,
-      authors: [
-        // TODO: Sækja úr X-road
-        regulation?.authors?.map((authorKt, idx) => ({
-          authorId: authorKt,
-          name: 'Test name' + idx,
-        })) as any,
-      ],
+      authors: authors,
       idealPublishDate: regulation.ideal_publish_date as any, // TODO: Exclude original from response.
       draftingNotes: regulation?.drafting_notes, // TODO: Exclude original from response.
       appendixes: appendixes as RegulationAppendix[],
@@ -116,9 +124,43 @@ export class RegulationsAdminResolver {
   // @Query(() => [DraftRegulationModel])
   @Query(() => graphqlTypeJson)
   async getDraftRegulations(@CurrentUser() { authorization }: User) {
-    const regulations = await this.regulationsAdminApiService.getDraftRegulations(
+    const DBregulations = await this.regulationsAdminApiService.getDraftRegulations(
       authorization,
     )
+
+    const regulations: RegulationDraft[] = []
+
+    for await (const regulation of DBregulations) {
+      const authors: Author[] = []
+
+      if (regulation.authors) {
+        for await (const nationalId of regulation.authors) {
+          const author = await this.regulationsAdminApiService.getAuthorInfo(
+            nationalId,
+            authorization,
+          )
+          console.log('GG2', { author })
+
+          authors.push({
+            authorId: nationalId,
+            name: author?.name ?? '',
+          })
+        }
+      }
+
+      regulations.push({
+        id: regulation.id,
+        draftingStatus: regulation.drafting_status,
+        title: regulation.title,
+        draftingNotes: regulation.drafting_notes,
+        idealPublishDate: regulation.ideal_publish_date,
+        impacts: [],
+        authors: authors,
+        text: '' as any,
+        appendixes: [],
+        comments: '' as any,
+      })
+    }
 
     return regulations
   }

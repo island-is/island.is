@@ -24,6 +24,7 @@ import {
   RegulationDraftId,
 } from '@island.is/regulations/admin'
 import { Kennitala, RegulationType } from '@island.is/regulations'
+import { uuid } from 'uuidv4'
 
 // const RegulationDraftQuery = gql`
 //   query draftRegulations($input: GetDraftRegulationInput!) {
@@ -157,7 +158,7 @@ const makeDraftForm = (
     signatureDate: f(draft.signatureDate && new Date(draft.signatureDate)),
     effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
 
-    lawChapters: f(draft.lawChapters.map((chapter) => chapter.slug)),
+    lawChapters: f(draft.lawChapters?.map((chapter) => chapter.slug)),
     ministry: f(draft.ministry?.slug),
     type: f(draft.type),
 
@@ -194,7 +195,7 @@ const makeDraftForm = (
 }
 
 const getEmptyDraft = (): RegulationDraft => ({
-  id: 0,
+  id: uuid() as RegulationDraftId,
   draftingStatus: 'draft',
   draftingNotes: '' as HTMLText,
   authors: [],
