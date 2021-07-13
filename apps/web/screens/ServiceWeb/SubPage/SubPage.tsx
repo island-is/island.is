@@ -20,15 +20,15 @@ import {
   Stack,
   Text,
   TopicCard,
+  ContentBlock,
+  AccordionCard,
+  Button,
+  Link,
 } from '@island.is/island-ui/core'
 
-import { solution, questions } from '../mock'
-import { ServiceWebHeader, renderHtml } from '@island.is/web/components'
-import {
-  LinkResolverResponse,
-  LinkType,
-  useLinkResolver,
-} from '@island.is/web/hooks/useLinkResolver'
+import { skirteini } from '../mock'
+import { ServiceWebHeader } from '@island.is/web/components'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { asSlug } from '../utils'
 
 import * as styles from './SubPage.treat'
@@ -42,13 +42,7 @@ interface SubPageProps {
   solutionSlug: string
 }
 
-const SubPage: Screen<SubPageProps> = ({
-  organization,
-  namespace,
-  organizationSlug,
-  categorySlug,
-  solutionSlug,
-}) => {
+const SubPage: Screen<SubPageProps> = ({ organizationSlug, categorySlug }) => {
   const { linkResolver } = useLinkResolver()
 
   const logoTitle = 'Þjónustuvefur Sýslumanna'
@@ -96,65 +90,76 @@ const SubPage: Screen<SubPageProps> = ({
                   </GridColumn>
                 </GridRow>
                 <GridRow>
-                  <GridColumn
-                    span={['12/12', '12/12', '12/12', '9/12']}
-                    paddingBottom={4}
-                  >
-                    <Text variant="h1" as="h1">
-                      {solution.title}
-                    </Text>
-                  </GridColumn>
-                </GridRow>
-                <GridRow>
-                  <GridColumn
-                    span={['12/12', '12/12', '12/12', '9/12']}
-                    paddingBottom={15}
-                  >
-                    {renderHtml(solution.description)}
-                  </GridColumn>
-                </GridRow>
-                <GridRow>
                   <GridColumn span="12/12">
-                    <Box
-                      className={styles.faqs}
-                      paddingX={[2, 2, 4, 15]}
-                      paddingY={[2, 2, 4, 8]}
-                    >
-                      <GridContainer>
-                        <GridRow>
-                          <GridColumn
-                            span={['12/12', '12/12', '12/12', '12/12', '9/12']}
-                          >
-                            <Stack space={1}>
-                              <Text variant="h3" as="h3">
-                                Skírteini
-                              </Text>
-                              <Text>
-                                Vegabréf, ökuskírteini, bílpróf, ökuréttindi
-                                o.fl.
-                              </Text>
-                            </Stack>
-
-                            <Box marginTop={[2, 2, 4, 8]}>
-                              <Stack space={2}>
-                                {questions.map(({ title }, index) => {
-                                  return (
-                                    <TopicCard
-                                      href={`/thjonustuvefur/${organizationSlug}/${categorySlug}/${asSlug(
-                                        title,
-                                      )}`}
-                                      key={index}
-                                    >
-                                      {title}
-                                    </TopicCard>
-                                  )
-                                })}
-                              </Stack>
+                    <Text variant="h1" as="h1">
+                      Skírteini
+                    </Text>
+                    <Text marginTop={2} variant="intro">
+                      Vegabréf, ökuskírteini, bílpróf, ökuréttindi o.fl.
+                    </Text>
+                    <ContentBlock>
+                      <Box paddingY={[1, 2]} marginTop={6}>
+                        {skirteini.map((s) => {
+                          return (
+                            <Box marginBottom={3}>
+                              <AccordionCard
+                                id="id_1"
+                                label={s.title}
+                                visibleContent={<Text>{s.subtitle}</Text>}
+                              >
+                                <Box marginTop={3}>
+                                  <Stack space={2}>
+                                    {s.accordionItems.map(
+                                      ({ title }, index) => {
+                                        return (
+                                          <Box>
+                                            <TopicCard
+                                              href={`/thjonustuvefur/${organizationSlug}/${categorySlug}/${asSlug(
+                                                title,
+                                              )}`}
+                                              key={index}
+                                            >
+                                              {title}
+                                            </TopicCard>
+                                          </Box>
+                                        )
+                                      },
+                                    )}
+                                  </Stack>
+                                </Box>
+                              </AccordionCard>
                             </Box>
-                          </GridColumn>
-                        </GridRow>
-                      </GridContainer>
-                    </Box>
+                          )
+                        })}
+                      </Box>
+                    </ContentBlock>
+                  </GridColumn>
+                </GridRow>
+                <GridRow marginTop={30}>
+                  <GridColumn span="12/12">
+                    <Link
+                      href={'https://island.is/stafraent-island/hafa-samband'}
+                    >
+                      <Box
+                        background="purple100"
+                        padding={10}
+                        borderRadius="large"
+                      >
+                        <Text variant="h3" as="h3">
+                          Finnurðu ekki það sem þig vantar?
+                        </Text>
+                        <Text marginTop={2} marginBottom={12} variant="intro">
+                          Hvernig getum við aðstoðað?
+                        </Text>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          icon="arrowForward"
+                        >
+                          Hafa samband
+                        </Button>
+                      </Box>
+                    </Link>
                   </GridColumn>
                 </GridRow>
               </GridContainer>

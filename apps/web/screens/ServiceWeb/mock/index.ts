@@ -81,3 +81,68 @@ export const questions = [
     title: 'Er til eyðublað fyrir kaupmála?',
   },
 ]
+
+export const skirteini = [
+  {
+    title: 'Vegabréf',
+    subtitle: 'Vegabréf, ökuskírteini, bílpróf, ökuréttindi o.fl.',
+    accordionItems: [
+      {
+        title: 'Vegabref 1',
+      },
+      {
+        title: 'Vegabref 2',
+      },
+      {
+        title: 'Ökustkírteini 1',
+      },
+      {
+        title: 'Ökustkírteini 2',
+      },
+      {
+        title: 'Rafræn skilríki 1',
+      },
+      {
+        title: 'Rafræn skilríki 2',
+      },
+    ],
+  },
+  {
+    title: 'Ökuréttindi',
+    subtitle:
+      'Hjónavígslur, forsjá barns, meðlag, sáttameðferð, skilnaður o.fl.',
+    accordionItems: [
+      {
+        title: 'Vegabref 1',
+      },
+      {
+        title: 'Vegabref 2',
+      },
+    ],
+  },
+  {
+    title: 'Rafræn skírteini',
+    subtitle: 'Andlátstilkynning, skipti dánarbús, arfur o.fl.',
+    accordionItems: [
+      {
+        title: 'Vegabref 1',
+      },
+      {
+        title: 'Vegabref 2',
+      },
+    ],
+  },
+  {
+    title: 'Annað',
+    subtitle:
+      'Innheimta sekta, vanrækslugjald, ofgreiddar bætur, endurkrafa skaðabóta o.fl.',
+    accordionItems: [
+      {
+        title: 'Vegabref 1',
+      },
+      {
+        title: 'Vegabref 2',
+      },
+    ],
+  },
+]
