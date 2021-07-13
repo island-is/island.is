@@ -129,7 +129,6 @@ export class RegulationsAdminResolver {
     )
 
     const regulations: RegulationDraft[] = []
-
     for await (const regulation of DBregulations) {
       const authors: Author[] = []
 
@@ -139,7 +138,6 @@ export class RegulationsAdminResolver {
             nationalId,
             authorization,
           )
-          console.log('GG2', { author })
 
           authors.push({
             authorId: nationalId,
