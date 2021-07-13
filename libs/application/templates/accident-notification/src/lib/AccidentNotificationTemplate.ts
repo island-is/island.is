@@ -52,8 +52,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () =>
-                import('../forms/TestForm').then((val) =>
-                  Promise.resolve(val.TestForm),
+                import('../forms/InformationAndDataProviderForm').then((val) =>
+                  Promise.resolve(val.InformationAndDataProviderForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
