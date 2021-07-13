@@ -7,7 +7,6 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { application } from './messages'
