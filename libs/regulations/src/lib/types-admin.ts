@@ -50,7 +50,7 @@ export type ShippedSummary = Required<
 
 export type RegulationDraft = {
   /** 0 (zero) signifies a new regulation draft */
-  id: RegulationDraftId | 0
+  id: RegulationDraftId
   authors: ReadonlyArray<Author>
   lawChapters: ReadonlyArray<RegulationLawChapter>
   ministry?: RegulationMinistry

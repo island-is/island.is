@@ -38,9 +38,9 @@ export class CreateDraftRegulationDto {
   readonly drafting_notes?: string
 
   @IsOptional()
-  @IsDate()
+  @IsString()
   @ApiProperty()
-  readonly ideal_publish_date?: Date
+  readonly ideal_publish_date?: string
 
   @IsOptional()
   @IsString()
@@ -48,14 +48,14 @@ export class CreateDraftRegulationDto {
   readonly ministry_id?: string
 
   @IsOptional()
-  @IsDate()
+  @IsString()
   @ApiProperty()
-  readonly signature_date?: Date
+  readonly signature_date?: string
 
   @IsOptional()
-  @IsDate()
+  @IsString()
   @ApiProperty()
-  readonly effective_date?: Date
+  readonly effective_date?: string
 
   @IsOptional()
   @IsString()

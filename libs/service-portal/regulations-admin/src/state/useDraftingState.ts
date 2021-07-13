@@ -1,4 +1,5 @@
-import { useQuery, gql } from '@apollo/client'
+import { useMutation, useQuery, gql } from '@apollo/client'
+import { uuid } from 'uuidv4'
 import {
   HTMLText,
   LawChapterSlug,
@@ -43,6 +44,12 @@ import { Kennitala, RegulationType } from '@island.is/regulations'
 const RegulationDraftQuery = gql`
   query draftRegulations($input: GetDraftRegulationInput!) {
     getDraftRegulation(input: $input)
+  }
+`
+
+export const CREATE_DRAFT_REGULATION_MUTATION = gql`
+  mutation CreateDraftRegulationMutation($input: CreateDraftRegulationInput!) {
+    createDraftRegulation(input: $input)
   }
 `
 
@@ -194,7 +201,8 @@ const makeDraftForm = (
 }
 
 const getEmptyDraft = (): RegulationDraft => ({
-  id: 0,
+  // id: uuid() as RegulationDraftId,
+  id: 'new' as RegulationDraftId,
   draftingStatus: 'draft',
   draftingNotes: '' as HTMLText,
   authors: [],
@@ -223,12 +231,12 @@ const getEmptyDraft = (): RegulationDraft => ({
 
 // ---------------------------------------------------------------------------
 
-// type NameValuePair<O extends Record<string, any>> = {
-//   [Key in keyof O]: {
-//     name: Key
-//     value: O[Key]
-//   }
-// }[keyof O]
+type NameValuePair<O extends Record<string, any>> = {
+  [Key in keyof O]: {
+    name: Key
+    value: O[Key]
+  }
+}[keyof O]
 
 type Action =
   | { type: 'CHANGE_STEP'; stepName: Step }
@@ -237,7 +245,7 @@ type Action =
   | { type: 'LOADING_DRAFT_ERROR'; error: Error }
   | { type: 'SAVING_STATUS' }
   | { type: 'SAVING_STATUS_DONE'; error?: Error }
-  // | ({ type: 'UPDATE_PROP' } & NameValuePair<Reg>)
+  | ({ type: 'UPDATE_PROP' } & NameValuePair<Reg>)
   | { type: 'SHIP' }
 
 type ActionName = Action['type']
@@ -281,12 +289,13 @@ const actionHandlers: {
     state.savingStatus = false
   },
 
-  // UPDATE_PROP: (state, { name, value }) => {
-  //   if (!state.draft) {
-  //     return
-  //   }
-  //   state.draft[name].value = value
-  // },
+  UPDATE_PROP: (state, { name, value }) => {
+    if (!state.draft) {
+      return
+    }
+    // state.draft[name].value = value
+    state.draft[name] = value
+  },
 
   SHIP: (state) => {
     if (!state.isEditor) {
@@ -304,11 +313,7 @@ const draftingStateReducer: Reducer<DraftingState, Action> = (
 ) => {
   setAutoFreeze(false)
   const newState = produce(state, (draft) =>
-    actionHandlers[action.type](
-      draft,
-      // @ts-expect-error  (Can't get this to work. FML)
-      action,
-    ),
+    actionHandlers[action.type](draft, action),
   )
   setAutoFreeze(true)
   return newState
@@ -360,6 +365,13 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   //     !state.error && { regulationDraft: mockDraftRegulations[draftId] },
   //   isNew,
   // )
+  // // const res = useQuery<Query>(RegulationDraftQuery, {
+  // //   variables: { id: draftId },
+  // //   skip: isNew && !state.error,
+  // // })
+  // const { loading, error } = res
+
+  // const draft = res.data ? res.data.regulationDraft : undefined
   const res = useQuery<Query>(RegulationDraftQuery, {
     variables: {
       input: {
@@ -368,9 +380,8 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     },
     skip: isNew && !state.error,
   })
-  const { loading, error } = res
 
-  // const draft = res.data ? res.data.getDraftRegulation : undefined
+  const { loading, error } = res
 
   const draft = res.data
     ? (res.data.getDraftRegulation as RegulationDraft)
@@ -391,10 +402,14 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     }
   }, [loading, error])
 
+  const [createDraftRegulation] = useMutation(CREATE_DRAFT_REGULATION_MUTATION)
+
   const stepNav = steps[stepName]
 
+  console.log('----')
+  console.log('isNew', isNew)
   console.log('draft', draft)
-  // console.log('draftRes', draftRes)
+  console.log('state', state)
 
   const actions = {
     // updateProp: (name: keyof ) => {
@@ -426,10 +441,39 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     saveStatus: draft
       ? () => {
           mockSave(draft).then(() => {
+            console.log('draft saveStatus', state)
             history.push(ServicePortalPath.RegulationsAdminRoot)
           })
         }
       : () => undefined,
+    updateState: (data: { name: String; value: String }) => {
+      dispatch({
+        type: 'UPDATE_PROP',
+        name: data.name,
+        value: data.value,
+      })
+    },
+    createDraft:
+      isNew && state.draft
+        ? () =>
+            createDraftRegulation({
+              variables: {
+                input: {
+                  id: uuid(),
+                  drafting_status: 'draft',
+                  title: 'Reglugerð um POST 2', // Ritill
+                  text: 'test text', // Ritill (text + appendix + comments)
+                  drafting_notes: '<p>POST test.</p>', // Ritill
+                  ministry_id: 'fsr',
+                  ideal_publish_date: '2021-07-13',
+                  type: 'base', // Þarf að velja
+                  name: 'TEST NAME', // OPTIONAL ??
+                  signature_date: '2021-07-13', // OPTIONAL ??
+                  effective_date: '2021-07-13', // OPTIONAL ??
+                },
+              },
+            })
+        : () => undefined,
     propose:
       draft && !isEditor
         ? () => {

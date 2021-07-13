@@ -8,8 +8,10 @@ import { StepNav } from '../state/useDraftingState'
 
 export type ButtonBarProps = {
   stepNav: StepNav
+  new?: boolean
   actions: {
     saveStatus: () => void
+    createDraft: () => void
     goBack?: () => void
     goForward?: () => void
     propose?: () => void
@@ -18,7 +20,7 @@ export type ButtonBarProps = {
 
 export const ButtonBar = (props: ButtonBarProps) => {
   const { stepNav, actions } = props
-  const { goBack, goForward, saveStatus, propose } = actions
+  const { goBack, goForward, saveStatus, createDraft, propose } = actions
   const t = useIntl().formatMessage
 
   return (
@@ -52,7 +54,7 @@ export const ButtonBar = (props: ButtonBarProps) => {
 
       <Box className={s.save}>
         <Button
-          onClick={saveStatus}
+          onClick={props.new ? createDraft : saveStatus}
           preTextIcon="save"
           preTextIconType="outline"
           colorScheme="light"

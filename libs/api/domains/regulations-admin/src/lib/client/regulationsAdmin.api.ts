@@ -2,6 +2,7 @@ import { Inject } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import { DraftRegulation, DraftRegulations } from './regulationsAdmin.types'
+import { CreateDraftRegulationInput } from '../graphql/dto/createDraftRegulation.input'
 
 export const REGULATIONS_ADMIN_OPTIONS = 'REGULATIONS_ADMIN_OPTIONS'
 
@@ -69,5 +70,12 @@ export class RegulationsAdminApi extends RESTDataSource {
     )
     // TODO:  get authors
     return response
+  }
+
+  create(
+    body: CreateDraftRegulationInput,
+    authorization: string,
+  ): Promise<any> {
+    return this.post(`/draft_regulation`, body, { headers: { authorization } })
   }
 }

@@ -1,9 +1,11 @@
 import graphqlTypeJson from 'graphql-type-json'
-import { Query, Resolver, Args } from '@nestjs/graphql'
+import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
+import { CreateDraftRegulationInput } from './dto/createDraftRegulation.input'
 import { DraftRegulationModel } from './models/draftRegulation.model'
+import { CreateDraftRegulationModel } from './models/createDraftRegulation.model'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -80,5 +82,14 @@ export class RegulationsAdminResolver {
     )
 
     return regulations
+  }
+
+  @Mutation(() => graphqlTypeJson)
+  // @Mutation(() => CreateDraftRegulationModel)
+  async createDraftRegulation(
+    @Args('input') input: CreateDraftRegulationInput,
+    @CurrentUser() { authorization }: User,
+  ): Promise<any> {
+    return this.regulationsAdminApiService.create(input, authorization ?? '')
   }
 }
