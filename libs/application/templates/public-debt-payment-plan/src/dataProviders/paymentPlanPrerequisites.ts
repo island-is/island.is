@@ -206,8 +206,8 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
     }
   }
 
-  handleError(error: Error, reason?: string) {
+  handleError(error: ErrorConstructor) {
     this.logger.error(`Error in Payment Plan Prerequisites Provider: ${error}`)
-    return Promise.reject({ reason: reason || 'Failed to fetch data' })
+    return Promise.reject('Failed to fetch data')
   }
 }
