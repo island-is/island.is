@@ -6,7 +6,8 @@ import { DraftRegulation, DraftRegulations } from './regulationsAdmin.types'
 export const REGULATIONS_ADMIN_OPTIONS = 'REGULATIONS_ADMIN_OPTIONS'
 
 export interface RegulationsAdminOptions {
-  url?: string
+  baseApiUrl?: string
+  regulationsApiUrl: string
   ttl?: number
 }
 
@@ -16,8 +17,7 @@ export class RegulationsAdminApi extends RESTDataSource {
     private readonly options: RegulationsAdminOptions,
   ) {
     super()
-    this.baseURL = `${this.options.url}`
-    // this.baseURL = `http://localhost:3333/api`
+    this.baseURL = `${this.options.baseApiUrl}`
     this.initialize({} as DataSourceConfig<any>)
   }
 
@@ -25,8 +25,8 @@ export class RegulationsAdminApi extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
   }
 
-  async getDraftRegulations(authorization: string): Promise<object | null> {
-    const response = await this.get<object | null>(
+  async getDraftRegulations(authorization: string): Promise<DraftRegulations> {
+    const response = await this.get<DraftRegulations>(
       '/draft_regulations',
       {},
       {
@@ -34,6 +34,7 @@ export class RegulationsAdminApi extends RESTDataSource {
         headers: { authorization },
       },
     )
+    // TODO:  get authors
     return response
   }
 
@@ -46,6 +47,8 @@ export class RegulationsAdminApi extends RESTDataSource {
         headers: { authorization },
       },
     )
+
+    // TODO:  get ministry, get lawchapter, get author
     return response
   }
 
@@ -61,7 +64,8 @@ export class RegulationsAdminApi extends RESTDataSource {
         cacheOptions: { ttl: this.options.ttl },
         headers: { authorization },
       },
-    ) // get ministry, get lawchapter, get author
+    )
+    // TODO:  get authors
     return response
   }
 

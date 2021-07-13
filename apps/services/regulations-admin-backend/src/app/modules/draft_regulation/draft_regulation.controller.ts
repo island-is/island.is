@@ -34,12 +34,8 @@ import { environment } from '../../../environments'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-// @ApiTags('draft_regulations')
-// @ApiHeader({
-//   name: 'authorization',
-//   description: 'Bearer token authorization',
-// })
 @Controller('api')
+@ApiTags('draft_regulations')
 @Audit({ namespace })
 export class DraftRegulationController {
   constructor(
@@ -53,6 +49,9 @@ export class DraftRegulationController {
     type: DraftRegulation,
     description: 'Creates a new DraftRegulation',
   })
+  @Audit<DraftRegulation>({
+    resources: (DraftRegulation) => DraftRegulation.id,
+  })
   async create(
     @Body()
     draftRegulationToCreate: CreateDraftRegulationDto,
@@ -63,9 +62,12 @@ export class DraftRegulationController {
 
   @Scopes('@island.is/regulations:create')
   @Put('draft_regulation/:id')
+  @Audit<DraftRegulation>({
+    resources: (DraftRegulation) => DraftRegulation.id,
+  })
   @ApiOkResponse({
     type: DraftRegulation,
-    description: 'Updates an existing user',
+    description: 'Updates an existing DraftRegulation',
   })
   async update(
     @Param('id') id: string,
@@ -95,7 +97,15 @@ export class DraftRegulationController {
       throw new BadRequestException('id must be provided')
     }
 
-    return await this.draftRegulationService.delete(id)
+    return this.auditService.auditPromise(
+      {
+        user,
+        action: 'delete',
+        namespace,
+        resources: id,
+      },
+      this.draftRegulationService.delete(id),
+    )
   }
 
   @Scopes('@island.is/regulations:create')
@@ -112,7 +122,7 @@ export class DraftRegulationController {
     )
   }
 
-  @Scopes('@island.is/regulations:manage')
+  @Scopes('@island.is/regulations:create')
   @Get('draft_regulations_shipped')
   @ApiOkResponse({
     type: DraftRegulation,
@@ -120,10 +130,14 @@ export class DraftRegulationController {
     description: 'Gets all DraftRegulations with status shipped',
   })
   async getAllShipped(@CurrentUser() user: User): Promise<DraftRegulation[]> {
+    const canManage = user.scope.includes('@island.is/regulations:manage')
+    if (!canManage) {
+      return []
+    }
     return await this.draftRegulationService.getAllShipped()
   }
 
-  // @Scopes('@island.is/regulations:create')
+  @Scopes('@island.is/regulations:create')
   @Get('draft_regulation/:id')
   @ApiOkResponse({
     type: DraftRegulation,

@@ -1,9 +1,16 @@
 import { Inject } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
-import { ISODate, RegQueryName, Year } from '@island.is/regulations'
+import {
+  ISODate,
+  LawChapterSlug,
+  MinistrySlug,
+  RegQueryName,
+  Year,
+} from '@island.is/regulations'
 import {
   Regulation,
+  RegulationLawChapter,
   RegulationLawChapterTree,
   RegulationListItem,
   RegulationMinistryList,
@@ -117,9 +124,11 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
-  async getRegulationsMinistries(): Promise<RegulationMinistryList | null> {
+  async getRegulationsMinistries(
+    slugs?: Array<MinistrySlug>,
+  ): Promise<RegulationMinistryList | null> {
     const response = await this.get<RegulationMinistryList | null>(
-      `ministries`,
+      `ministries${slugs ? '?slugs=' + slugs.join(',') : ''}`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
@@ -129,9 +138,14 @@ export class RegulationsService extends RESTDataSource {
 
   async getRegulationsLawChapters(
     tree: boolean,
-  ): Promise<RegulationLawChapterTree | null> {
-    const response = await this.get<RegulationLawChapterTree | null>(
-      `lawchapters${tree ? '/tree' : ''}`,
+    slugs?: Array<LawChapterSlug>,
+  ): Promise<RegulationLawChapterTree | RegulationLawChapter[] | null> {
+    const response = await this.get<
+      RegulationLawChapterTree | RegulationLawChapter[] | null
+    >(
+      `lawchapters${tree ? '/tree' : ''}${
+        slugs ? '?slugs=' + slugs.join(',') : ''
+      }`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },

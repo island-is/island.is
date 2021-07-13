@@ -5,7 +5,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../environments'
-import { CreateDraftRegulationCancelDto, UpdateDraftRegulationCancelDto } from './dto'
+import {
+  CreateDraftRegulationCancelDto,
+  UpdateDraftRegulationCancelDto,
+} from './dto'
 import { DraftRegulationCancel } from './draft_regulation_cancel.model'
 
 @Injectable()
@@ -22,7 +25,9 @@ export class DraftRegulationCancelService {
   ): Promise<DraftRegulationCancel> {
     this.logger.debug('Creating a new DraftRegulationcancel')
 
-    return await this.draftRegulationCancelModel.create(draftRegulationcancelToCreate)
+    return await this.draftRegulationCancelModel.create(
+      draftRegulationcancelToCreate,
+    )
   }
 
   async update(

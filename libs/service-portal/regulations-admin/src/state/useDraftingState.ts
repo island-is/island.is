@@ -378,11 +378,6 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     appendixes: [], // Hvernig er þetta búið til?
     impacts: [], // Hvað er þetta?
     idealPublishDate: draftRes?.ideal_publish_date,
-    ministry: { name: 'ministry name', slug: draftRes?.ministry_id }, // getregulationministries
-    lawChapters: draftRes?.law_chapters?.map((lawChapter: LawChapterSlug) => ({
-      slug: lawChapter,
-      name: 'lawChapter name', // getregulationlawchapter
-    })),
     draftingNotes: draftRes?.drafting_notes as HTMLText,
     authors: draftRes?.authors?.map((authorKt: Kennitala) => ({
       authorId: authorKt,

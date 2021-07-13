@@ -94,7 +94,10 @@ const devConfig = {
       'https://reglugerdir-api.herokuapp.com/api/v1',
   },
   regulationsAdmin: {
-    url: process.env.REGULATIONS_ADMIN_URL ?? 'http://localhost:3333/api',
+    baseApiUrl: process.env.REGULATIONS_ADMIN_URL ?? 'http://localhost:3333/api',
+    regulationsApiUrl:
+      process.env.REGULATIONS_API_URL ??
+      'https://reglugerdir-api.herokuapp.com/api/v1',
   },
   fjarmalDomain: {
     username: process.env.FINANCE_USER ?? '',
@@ -235,7 +238,8 @@ const prodConfig = {
     url: process.env.REGULATIONS_API_URL,
   },
   regulationsAdmin: {
-    url: process.env.REGULATIONS_ADMIN_URL,
+    baseApiUrl: process.env.REGULATIONS_ADMIN_URL,
+    regulationsApiUrl: process.env.REGULATIONS_API_URL,
   },
   endorsementSystem: {
     baseApiUrl: process.env.ENDORSEMENT_SYSTEM_BASE_API_URL,
