@@ -267,7 +267,8 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 component: 'FieldTitle',
               },
               {
-                marginTop: 4,
+                marginTop: 7,
+                marginBottom: 3,
               },
             ),
             buildTextField({
@@ -286,7 +287,8 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 component: 'FieldTitle',
               },
               {
-                marginTop: 4,
+                marginTop: 7,
+                marginBottom: 3,
               },
             ),
             buildFileUploadField({
