@@ -38,8 +38,10 @@ export class RegulationsAdminApi extends RESTDataSource {
     return response
   }
 
-  async getShippedRegulations(authorization: string): Promise<object | null> {
-    const response = await this.get<object | null>(
+  async getShippedRegulations(
+    authorization: string,
+  ): Promise<DraftRegulations> {
+    const response = await this.get<DraftRegulations>(
       `/draft_regulations_shipped`,
       {},
       {
@@ -68,20 +70,4 @@ export class RegulationsAdminApi extends RESTDataSource {
     // TODO:  get authors
     return response
   }
-
-  // async getShippedRegulation(
-  //   regulationId: string,
-  //   authorization: string,
-  // ): Promise<DraftRegulation | null> {
-  //   const response = await this.get<DraftRegulation | null>(
-  //     // `/shipped_regulation/${regulationId}`,
-  //     `/shipped_regulation/a1fd62db-18a6-4741-88eb-a7b7a7e05833`,
-  //     {},
-  //     {
-  //       cacheOptions: { ttl: this.options.ttl },
-  //       headers: { authorization },
-  //     },
-  //   )
-  //   return response
-  // }
 }

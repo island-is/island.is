@@ -372,18 +372,9 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
 
   // const draft = res.data ? res.data.getDraftRegulation : undefined
 
-  const draftRes = res.data ? res.data.getDraftRegulation : undefined
-  const draft = {
-    ...draftRes,
-    appendixes: [], // Hvernig er þetta búið til?
-    impacts: [], // Hvað er þetta?
-    idealPublishDate: draftRes?.ideal_publish_date,
-    draftingNotes: draftRes?.drafting_notes as HTMLText,
-    authors: draftRes?.authors?.map((authorKt: Kennitala) => ({
-      authorId: authorKt,
-      name: 'Test name', // vantar að sækja authors úr xroad
-    })),
-  } as RegulationDraft
+  const draft = res.data
+    ? (res.data.getDraftRegulation as RegulationDraft)
+    : undefined
 
   useEffect(() => {
     dispatch({ type: 'CHANGE_STEP', stepName })

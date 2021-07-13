@@ -43,13 +43,24 @@ export class RegulationsAdminResolver {
       ? await this.regulationsService.getRegulationsMinistries([
           regulation.ministry_id,
         ])
-      : ''
+      : null
     console.log({ ministries })
 
     return {
       ...regulation,
       lawChapters: lawChapters,
       ministry: ministries?.[0],
+      authors: [
+        // TODO: Sækja úr X-road
+        regulation?.authors.map((authorKt: String) => ({
+          authorId: authorKt,
+          name: 'Test name',
+        })),
+      ],
+      idealPublishDate: regulation?.ideal_publish_date, // TODO: Exclude original from response.
+      draftingNotes: regulation?.drafting_notes, // TODO: Exclude original from response.
+      appendixes: [], // TODO: Add this.
+      impacts: [], // TODO: Add this.
     }
   }
 
