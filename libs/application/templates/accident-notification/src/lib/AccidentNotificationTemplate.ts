@@ -46,8 +46,13 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       [AccidentNotificationStates.draft]: {
         meta: {
           name: application.general.name.defaultMessage,
-          progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          progress: 0.2,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            // Applications that stay in this state for 24 hours will be pruned automatically
+            whenToPrune: 3600 * 1000,
+          },
           roles: [
             {
               id: 'applicant',
