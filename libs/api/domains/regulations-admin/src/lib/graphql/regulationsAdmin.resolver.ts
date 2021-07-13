@@ -11,7 +11,7 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { RegulationsAdminApi } from '../client/regulationsAdmin.api'
-import { RegulationDraft } from '@island.is/regulations/admin'
+import { DraftRegulationCancel, DraftRegulationChange, RegulationDraft } from '@island.is/regulations/admin'
 import { HTMLText, ISODate } from '@hugsmidjan/regulations-editor/types'
 import { extractAppendixesAndComments } from '@hugsmidjan/regulations-editor/cleanupEditorOutput'
 import { RegulationAppendix } from '@island.is/regulations/web'
@@ -35,6 +35,10 @@ export class RegulationsAdminResolver {
       authorization,
     )
 
+    if (!regulation) {
+      return null
+    }
+
     const lawChapters = regulation
       ? await this.regulationsService.getRegulationsLawChapters(
           false,
@@ -48,8 +52,30 @@ export class RegulationsAdminResolver {
         ])
       : null
 
-    if (!regulation) {
-      return null
+    const impacts: (DraftRegulationCancel | DraftRegulationChange)[] = []
+    regulation.changes?.forEach((change) => {
+      const { text, appendixes, comments } = extractAppendixesAndComments(
+        regulation.text,
+      );
+
+      impacts.push({
+        id: change.id,
+        type: 'amend',
+        title: change.title,
+        text: text as HTMLText,
+        name: change.regulation,
+        date: change.date,
+        appendixes: appendixes as RegulationAppendix[],
+        comments: comments as HTMLText,
+      });
+    })
+    if (regulation.cancel) {
+      impacts.push({
+        id: regulation.cancel.id,
+        type: 'repeal',
+        name: regulation.cancel.regulation,
+        date: regulation.cancel.date
+      });
     }
 
     const { text, appendixes, comments } = extractAppendixesAndComments(
@@ -75,7 +101,7 @@ export class RegulationsAdminResolver {
       draftingNotes: regulation?.drafting_notes, // TODO: Exclude original from response.
       appendixes: appendixes as RegulationAppendix[],
       comments: comments as HTMLText,
-      impacts: [], // TODO: Add this.
+      impacts: impacts,
     }
   }
 

@@ -71,6 +71,10 @@ export type DB_RegulationDraft = {
   type?: RegulationType
 
   authors?: Kennitala[]
+
+  changes?: DB_DraftRegulationChange[]
+
+  cancel?: DB_DraftRegulationCancel
 }
 
 // ===========================================================================
@@ -84,7 +88,7 @@ export type DB_DraftRegulationCancel = {
   /** Primary key */
   id: DraftRegulationCancelId
   changing_id: RegulationDraftId
-  regulation_id: RegulationId
+  regulation: RegName
   date: ISODate
 }
 
@@ -99,7 +103,7 @@ export type DB_DraftRegulationChange = {
   /** Primary key */
   id: DraftRegulationChangeId
   changing_id: RegulationDraftId
-  regulation_id: RegulationId
+  regulation: RegName
   date: ISODate
   title: PlainText
   text: HTMLText
