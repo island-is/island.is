@@ -9,6 +9,8 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Logger } from '@nestjs/common'
 
 const queryPaymentScheduleDebts = `
   query PaymentScheduleDebts {
@@ -86,78 +88,55 @@ interface PaymentPlanPrerequisitesProps {
 }
 
 export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+  ) {
+    super()
+  }
+
   type = 'PaymentPlanPrerequisitesProvider'
 
   async queryPaymentScheduleDebts(): Promise<PaymentScheduleDebts[]> {
-    return this.useGraphqlGateway(queryPaymentScheduleDebts).then(
-      async (res: Response) => {
-        if (!res.ok) {
-          return this.handleError(res, 'Could not connect to web service')
-        }
-
+    return this.useGraphqlGateway(queryPaymentScheduleDebts)
+      .then(async (res: Response) => {
         const response = await res.json()
 
-        if (response.error) {
-          return this.handleError(response)
+        if (response.errors) {
+          return this.handleError(response.errors)
         }
 
-        const responseObj = response.data.paymentScheduleDebts
-
-        if (!responseObj) {
-          return this.handleError(responseObj)
-        }
-
-        return Promise.resolve(responseObj)
-      },
-    )
+        return Promise.resolve(response.data.paymentScheduleDebts)
+      })
+      .catch((error) => this.handleError(error))
   }
 
   async queryPaymentScheduleConditions(): Promise<PaymentScheduleConditions> {
-    return this.useGraphqlGateway(queryPaymentScheduleConditions).then(
-      async (res: Response) => {
-        if (!res.ok) {
-          return this.handleError(res, 'Could not connect to web service')
-        }
-
+    return this.useGraphqlGateway(queryPaymentScheduleConditions)
+      .then(async (res: Response) => {
         const response = await res.json()
 
-        if (response.error) {
-          return this.handleError(response)
+        if (response.errors) {
+          return this.handleError(response.errors)
         }
 
-        const responseObj = response.data.paymentScheduleConditions
-
-        if (!responseObj) {
-          return this.handleError(responseObj)
-        }
-
-        return Promise.resolve(responseObj)
-      },
-    )
+        return Promise.resolve(response.data.paymentScheduleConditions)
+      })
+      .catch((error) => this.handleError(error))
   }
 
   async queryPaymentScheduleEmployer(): Promise<PaymentScheduleEmployer> {
-    return this.useGraphqlGateway(queryPaymentScheduleEmployer).then(
-      async (res: Response) => {
-        if (!res.ok) {
-          return this.handleError(res, 'Could not connect to web service')
-        }
-
+    return this.useGraphqlGateway(queryPaymentScheduleEmployer)
+      .then(async (res: Response) => {
         const response = await res.json()
 
-        if (response.error) {
-          return this.handleError(response)
+        if (response.errors) {
+          return this.handleError(response.errors)
         }
 
-        const responseObj = response.data.paymentScheduleEmployer
-
-        if (!responseObj) {
-          return this.handleError(responseObj)
-        }
-
-        return Promise.resolve(responseObj)
-      },
-    )
+        return Promise.resolve(response.data.paymentScheduleEmployer)
+      })
+      .catch((error) => this.handleError(error))
   }
 
   async queryPaymentScheduleInitialSchedule(
@@ -171,25 +150,17 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
         disposableIncome,
         type,
       },
-    }).then(async (res: Response) => {
-      if (!res.ok) {
-        return this.handleError(res, 'Could not connect to web service')
-      }
-
-      const response = await res.json()
-
-      if (response.error) {
-        return this.handleError(response)
-      }
-
-      const responseObj = response.data.paymentScheduleInitialSchedule
-
-      if (!responseObj) {
-        return this.handleError(responseObj)
-      }
-
-      return Promise.resolve(responseObj)
     })
+      .then(async (res: Response) => {
+        const response = await res.json()
+
+        if (response.errors) {
+          return this.handleError(response.errors)
+        }
+
+        return Promise.resolve(response.data.paymentScheduleInitialSchedule)
+      })
+      .catch((error) => this.handleError(error))
   }
 
   async provide(): Promise<PaymentPlanPrerequisitesProps> {
@@ -235,8 +206,8 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
     }
   }
 
-  handleError(error: Error | unknown, reason?: string) {
-    console.error('response errors', error)
+  handleError(error: Error, reason?: string) {
+    this.logger.error(`Error in Payment Plan Prerequisites Provider: ${error}`)
     return Promise.reject({ reason: reason || 'Failed to fetch data' })
   }
 }
