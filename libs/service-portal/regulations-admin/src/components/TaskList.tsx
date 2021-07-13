@@ -85,6 +85,7 @@ export const TaskList = () => {
               // text={authors?.map(({ name }) => name).join(', ')}
               text={authors?.map((item) => item.name || item.authorId).join(', ')}
               cta={{
+                // icon: 'arrowForward',
                 label: formatMessage(msg.cta),
                 // variant: draftingStatus === 'draft' ? 'ghost' : undefined,
                 onClick: () => {

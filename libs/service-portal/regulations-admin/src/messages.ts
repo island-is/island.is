@@ -123,6 +123,14 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-labels-ministry',
     defaultMessage: 'Ráðuneyti',
   },
+  chooseMinistry: {
+    id: 'ap.regulations-admin:draft-labels-choose-ministry',
+    defaultMessage: 'Veldu ráðuneyti',
+  },
+  legacyMinistry: {
+    id: 'ap.regulations-admin:draft-labels-legacy-ministry',
+    defaultMessage: '(fyrrverandi ráðuneyti)',
+  },
 
   lawChapter: {
     id: 'ap.regulations-admin:draft-labels-lawchapter',

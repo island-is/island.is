@@ -1,11 +1,21 @@
-import React, { ReactNode, useRef, useState } from 'react'
-import { toISODate } from '@island.is/regulations'
-import { Box, DatePicker, Input, Text } from '@island.is/island-ui/core'
+import React, { ReactNode, useMemo, useRef, useState } from 'react'
+import { MinistrySlug, toISODate } from '@island.is/regulations'
+import { Box, Option, DatePicker, Input, Select, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { HTMLText } from '@island.is/regulations'
 import { RegDraftForm, useDraftingState } from '../state/useDraftingState'
+import { gql, useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
+import { emptyOption, findValueOption } from '../utils'
+import { RegulationMinistry } from '@island.is/regulations/web'
+
+const MinistriesQuery = gql`
+  query RegulationMinistriesQuery {
+    getRegulationMinistries
+  }
+`
 
 type WrapProps = {
   legend?: string
@@ -39,7 +49,26 @@ export const EditBasics = (props: EditBasicsProps) => {
   const textRef = useRef(() => draft.text.value)
   const { actions } = useDraftingState(draft.id, 'basics')
 
-  const onAnyInputChange = (data: { name: String; value: String }) => {
+  const {
+    data: getRegulationMinistriesData,
+    loading: getRegulationMinistriesLoading,
+  } = useQuery<Query>(MinistriesQuery)
+  const { getRegulationMinistries: ministries } =
+    getRegulationMinistriesData || {}
+
+  const ministryOptions = useMemo(() => {
+    return [emptyOption(t(msg.chooseMinistry))].concat(
+      ministries?.map(
+        (m: RegulationMinistry): Option => ({
+          value: m.slug,
+          label: m.name + (m.current ? '' : ` ${t(msg.legacyMinistry)}`),
+        }),
+      ) ?? [],
+    ) as ReadonlyArray<Option>
+  }, [ministries])
+
+
+  const onAnyInputChange = (data: { name: string; value: string }) => {
     actions.updateState({ ...data })
   }
 
@@ -78,6 +107,22 @@ export const EditBasics = (props: EditBasicsProps) => {
               value: textRef.current(),
             })
           }
+        />
+      </Wrap>
+
+      <Wrap>
+        <Select
+          name="rn"
+          isSearchable
+          label={t(msg.ministry)}
+          placeholder={t(msg.ministry)}
+          value={findValueOption(ministryOptions, draft.ministry.value)}
+          options={ministryOptions}
+          onChange={(option) =>
+            (draft.ministry.value =
+              ((option as Option).value as MinistrySlug) ?? undefined)
+          }
+          size="sm"
         />
       </Wrap>
 

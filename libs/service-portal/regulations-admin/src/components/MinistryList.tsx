@@ -49,11 +49,11 @@ export const MinistryList = () => {
   return (
     <Box marginBottom={[4, 4, 6]}>
       <Stack space={2}>
-        {regulationMinistries.map((item) => {
-          const { id, name, current } = item
+        {regulationMinistries.map((item, i) => {
+          const { name, slug, current } = item
           return (
             <ActionCard
-              key={id}
+              key={slug + '-' + i}
               heading={name}
               tag={{
                 label: current ? 'Active' : 'Inactive',

@@ -172,4 +172,10 @@ export class RegulationsAdminResolver {
   ): Promise<any> {
     return this.regulationsAdminApiService.create(input, authorization ?? '')
   }
+
+
+  @Query(() => graphqlTypeJson)
+  async getRegulationMinistries(@CurrentUser() { authorization }: User) {
+    return await this.regulationsService.getRegulationsMinistries()
+  }
 }
