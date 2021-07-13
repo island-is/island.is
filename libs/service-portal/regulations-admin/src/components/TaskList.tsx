@@ -1,4 +1,5 @@
 import React from 'react'
+import { RegulationDraft } from '@island.is/regulations/admin'
 
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -19,13 +20,7 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 
 const RegulationTaskListQuery = gql`
   query RegulationTaskListQuery {
-    getDraftRegulations {
-      id
-      title
-      draftingStatus
-      idealPublishDate
-      authors
-    }
+    getDraftRegulations
   }
 `
 
@@ -69,7 +64,7 @@ export const TaskList = () => {
         {formatMessage(msg.taskListTitle)}
       </Text>
       <Stack space={2}>
-        {getDraftRegulations.map((item) => {
+        {getDraftRegulations.map((item: RegulationDraft) => {
           const { id, title, idealPublishDate, draftingStatus, authors } = item
           const idealDate = getReqDate(idealPublishDate as ISODate)
           // const statusLabel = formatMessage(statusMsgs[draftingStatus])

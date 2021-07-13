@@ -1,3 +1,4 @@
+import graphqlTypeJson from 'graphql-type-json'
 import { Query, Resolver, Args } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
@@ -15,7 +16,8 @@ import { RegulationsAdminApi } from '../client/regulationsAdmin.api'
 export class RegulationsAdminResolver {
   constructor(private RegulationsAdminApiService: RegulationsAdminApi) {}
 
-  @Query(() => DraftRegulationModel, { nullable: true })
+  // @Query(() => DraftRegulationModel, { nullable: true })
+  @Query(() => graphqlTypeJson)
   async getDraftRegulation(
     @Args('input') input: GetDraftRegulationInput,
     @CurrentUser() { authorization }: User,
@@ -26,18 +28,14 @@ export class RegulationsAdminResolver {
     )
   }
 
-  @Query(() => DraftRegulationModel, { nullable: true })
-  async getShippedRegulation(
-    @Args('input') input: GetDraftRegulationInput,
-    @CurrentUser() { authorization }: User,
-  ) {
-    return this.RegulationsAdminApiService.getShippedRegulation(
-      input.regulationId,
-      authorization,
-    )
+  // @Query(() => [DraftRegulationModel])
+  @Query(() => graphqlTypeJson)
+  async getShippedRegulations(@CurrentUser() { authorization }: User) {
+    return this.RegulationsAdminApiService.getShippedRegulations(authorization)
   }
 
-  @Query(() => [DraftRegulationModel])
+  // @Query(() => [DraftRegulationModel])
+  @Query(() => graphqlTypeJson)
   async getDraftRegulations(@CurrentUser() { authorization }: User) {
     return this.RegulationsAdminApiService.getDraftRegulations(authorization)
   }

@@ -25,18 +25,24 @@ import {
 } from '@island.is/regulations/admin'
 import { Kennitala, RegulationType } from '@island.is/regulations'
 
+// const RegulationDraftQuery = gql`
+//   query draftRegulations($input: GetDraftRegulationInput!) {
+//     getDraftRegulation(input: $input) {
+//       draftingStatus
+//       getFullName
+//       lawChapters
+//       appendixes
+//       impacts
+//       id
+//       title
+//       text
+//       authors
+//     }
+//   }
+// `
 const RegulationDraftQuery = gql`
   query draftRegulations($input: GetDraftRegulationInput!) {
-    getDraftRegulation(input: $input) {
-      draftingStatus
-      lawChapters
-      appendixes
-      impacts
-      id
-      title
-      text
-      authors
-    }
+    getDraftRegulation(input: $input)
   }
 `
 
@@ -364,27 +370,23 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   })
   const { loading, error } = res
 
-  const draftRes = res.data ? res.data.getDraftRegulation : undefined
+  // const draft = res.data ? res.data.getDraftRegulation : undefined
 
+  const draftRes = res.data ? res.data.getDraftRegulation : undefined
   const draft = {
     ...draftRes,
-    id: draftRes?.id as RegulationDraftId,
     appendixes: [], // Hvernig er þetta búið til?
     impacts: [], // Hvað er þetta?
-    // ministry: [], // getregulationministries
-    lawChapters: draftRes?.lawChapters?.map((lc) => ({
-      // vantar að sækja authors
-      slug: lc,
-      name: 'lawChapter name', // Hvaðan kemur þetta nafn  (getregulationlawchapter)
+    idealPublishDate: draftRes?.ideal_publish_date,
+    ministry: { name: 'ministry name', slug: draftRes?.ministry_id }, // getregulationministries
+    lawChapters: draftRes?.law_chapters?.map((lawChapter: LawChapterSlug) => ({
+      slug: lawChapter,
+      name: 'lawChapter name', // getregulationlawchapter
     })),
-    draftingNotes: draftRes?.draftingNotes as HTMLText,
-    text: draftRes?.text as HTMLText,
-    comments: draftRes?.comments as HTMLText,
-    authors: draftRes?.authors?.map((authorKt) => ({
-      // vantar að sækja authors úr xroad
-      authorId: authorKt as Kennitala,
-      name: 'Test name',
-      email: 'not@needed.com' as EmailAddress, // Þarf líklegast ekki.
+    draftingNotes: draftRes?.drafting_notes as HTMLText,
+    authors: draftRes?.authors?.map((authorKt: Kennitala) => ({
+      authorId: authorKt,
+      name: 'Test name', // vantar að sækja authors úr xroad
     })),
   } as RegulationDraft
 
@@ -406,6 +408,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   const stepNav = steps[stepName]
 
   console.log('draft', draft)
+  // console.log('draftRes', draftRes)
 
   const actions = {
     // updateProp: (name: keyof ) => {
