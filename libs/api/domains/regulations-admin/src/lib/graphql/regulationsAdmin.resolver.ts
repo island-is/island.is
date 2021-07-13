@@ -51,9 +51,9 @@ export class RegulationsAdminResolver {
         )
       : null
 
-    const ministries = regulation?.ministry
+    const ministries = regulation?.ministry_id
       ? await this.regulationsService.getRegulationsMinistries([
-          regulation.ministry,
+          regulation.ministry_id,
         ])
       : null
 

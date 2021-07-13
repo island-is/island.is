@@ -58,7 +58,7 @@ export type DB_RegulationDraft = {
    */
   ideal_publish_date?: ISODate
 
-  ministry?: MinistrySlug
+  ministry_id?: MinistrySlug
 
   law_chapters?: LawChapterSlug[]
 
