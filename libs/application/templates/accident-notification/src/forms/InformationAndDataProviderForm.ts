@@ -5,51 +5,70 @@ import {
   FormModes,
   buildDataProviderItem,
   buildExternalDataProvider,
+  buildMultiField,
+  buildCustomField,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import { DataProviderTypes } from '../types'
-import * as m from '../lib/messages'
+import { externalData, application } from '../lib/messages'
 
 export const InformationAndDataProviderForm: Form = buildForm({
   id: 'InformationAndDataProviderForm',
-  title: m.application.general.name,
+  title: application.general.name,
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'informationAndDataProviderForm',
-      title: m.externalData.general.sectionTitle,
+      title: externalData.agreementDescription.sectionTitle,
+      children: [
+        buildMultiField({
+          title: externalData.agreementDescription.sectionTitle,
+          id: 'agreementDescriptionMultiField',
+          children: [
+            buildCustomField({
+              id: 'agreementDescriptionCustomField',
+              title: '',
+              component: 'AgreementDescription',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'informationAndDataProviderForm',
+      title: externalData.dataProvider.sectionTitle,
       children: [
         buildExternalDataProvider({
-          title: m.externalData.general.pageTitle,
+          title: externalData.dataProvider.pageTitle,
           id: 'approveExternalData',
-          subTitle: m.externalData.general.subTitle,
+          subTitle: externalData.dataProvider.subTitle,
           description: '',
-          checkboxLabel: m.externalData.general.checkboxLabel,
+          checkboxLabel: externalData.dataProvider.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
               id: 'nationalRegistry',
               type: DataProviderTypes.NationalRegistry,
-              title: m.externalData.nationalRegistry.title,
-              subTitle: m.externalData.nationalRegistry.description,
+              title: externalData.nationalRegistry.title,
+              subTitle: externalData.nationalRegistry.description,
             }),
             buildDataProviderItem({
               id: 'userProfile',
               type: DataProviderTypes.UserProfile,
-              title: m.externalData.userProfile.title,
-              subTitle: m.externalData.userProfile.description,
+              title: externalData.userProfile.title,
+              subTitle: externalData.userProfile.description,
             }),
             buildDataProviderItem({
               id: 'revAndCustoms',
               type: '',
-              title: m.externalData.revAndCustoms.title,
-              subTitle: m.externalData.revAndCustoms.description,
+              title: externalData.revAndCustoms.title,
+              subTitle: externalData.revAndCustoms.description,
             }),
             buildDataProviderItem({
               id: 'notifications',
               type: '',
-              title: m.externalData.notifications.title,
-              subTitle: m.externalData.notifications.description,
+              title: externalData.notifications.title,
+              subTitle: externalData.notifications.description,
             }),
           ],
         }),
