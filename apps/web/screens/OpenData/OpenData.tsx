@@ -64,99 +64,99 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
   } = page
 
   return (
-      <Box id="main-content" position="relative" style={{ overflow: 'hidden' }}>
-        <Box background="blue100">
-          <Header megaMenuData={megaMenuData} />
-        </Box>
-        <Section
-          aria-labelledby="openDataHeroTitle"
-          background="blue100"
-          paddingBottom={6}
-          paddingTop={8}
-        >
-          <GridContainer>
-            <GridRow>
-              <GridColumn span={['12/12', '5/12', '5/12']} paddingBottom={2}>
-                <Box marginBottom={3}>
-                  <Breadcrumbs
-                    items={[
-                      {
-                        title: 'Ísland.is',
-                        href: '/',
-                      },
-                      {
-                        title: 'Gagnatorg',
-                      },
-                    ]}
-                    renderLink={(link) => {
-                      return (
-                        <NextLink {...linkResolver('opendatapage')} passHref>
-                          {link}
-                        </NextLink>
-                      )
-                    }}
-                  />
-                </Box>
-                <Text variant="h1" as="h1" paddingBottom={4}>
-                  {pageTitle}
-                </Text>
-                <Text paddingBottom={4}>{pageDescription}</Text>
-                <Box display={'flex'} justifyContent="flexStart" marginTop={3}>
-                  <Link href={link} skipTab>
-                    <Button
-                      icon="arrowForward"
-                      iconType="filled"
-                      variant="text"
-                      as="span"
-                    >
-                      {linkTitle}
-                    </Button>
-                  </Link>
-                </Box>
-              </GridColumn>
-              <GridColumn span={['12/12', '7/12', '7/12']}>
-                <SimpleLineChart graphData={pageHeaderGraph} />
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
-        </Section>
-        <Section aria-labelledby="factsCardsTitle" paddingBottom={8}>
-          <StatisticsCardsSection
-            title="Stafrænt Ísland"
-            cards={statisticsCardsSection}
-          />
-        </Section>
-        <Section paddingBottom={8}>
-          <GridContainer>
-            <GridRow>
-              <GridColumn span="12/12">
-                <SectionTitle title={chartSectionTitle} icon="business" />
-              </GridColumn>
-            </GridRow>
-            <GridRow>
-              <GridColumn span={['12/12', '4/12', '4/12']}>
-                <ChartsCard data={graphCards[1]} />
-              </GridColumn>
-              <GridColumn span={['12/12', '8/12', '8/12']}>
-                <ChartsCard data={graphCards[0]} />
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
-        </Section>
-        <Section
-          paddingTop={[8, 8, 6]}
-          paddingBottom={[8, 8, 6]}
-          aria-labelledby="dataLinksSection"
-        >
-          <DataLinkSection
-            title={externalLinkSectionTitle}
-            titleId="OpenDataLinksTitle"
-            image={externalLinkSectionImage}
-            description={externalLinkSectionDescription}
-            cards={externalLinkCardSelection.cards}
-          />
-        </Section>
+    <Box id="main-content" position="relative" style={{ overflow: 'hidden' }}>
+      <Box background="blue100">
+        <Header megaMenuData={megaMenuData} />
       </Box>
+      <Section
+        aria-labelledby="openDataHeroTitle"
+        background="blue100"
+        paddingBottom={6}
+        paddingTop={8}
+      >
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={['12/12', '5/12', '5/12']} paddingBottom={2}>
+              <Box marginBottom={3}>
+                <Breadcrumbs
+                  items={[
+                    {
+                      title: 'Ísland.is',
+                      href: '/',
+                    },
+                    {
+                      title: 'Gagnatorg',
+                    },
+                  ]}
+                  renderLink={(link) => {
+                    return (
+                      <NextLink {...linkResolver('opendatapage')} passHref>
+                        {link}
+                      </NextLink>
+                    )
+                  }}
+                />
+              </Box>
+              <Text variant="h1" as="h1" paddingBottom={4}>
+                {pageTitle}
+              </Text>
+              <Text paddingBottom={4}>{pageDescription}</Text>
+              <Box display={'flex'} justifyContent="flexStart" marginTop={3}>
+                <Link href={link} skipTab>
+                  <Button
+                    icon="arrowForward"
+                    iconType="filled"
+                    variant="text"
+                    as="span"
+                  >
+                    {linkTitle}
+                  </Button>
+                </Link>
+              </Box>
+            </GridColumn>
+            <GridColumn span={['12/12', '7/12', '7/12']}>
+              <SimpleLineChart graphData={pageHeaderGraph} />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Section>
+      <Section aria-labelledby="factsCardsTitle" paddingBottom={8}>
+        <StatisticsCardsSection
+          title="Stafrænt Ísland"
+          cards={statisticsCardsSection}
+        />
+      </Section>
+      <Section paddingBottom={8}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span="12/12">
+              <SectionTitle title={chartSectionTitle} icon="business" />
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn span={['12/12', '4/12', '4/12']}>
+              <ChartsCard data={graphCards[1]} />
+            </GridColumn>
+            <GridColumn span={['12/12', '8/12', '8/12']}>
+              <ChartsCard data={graphCards[0]} />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Section>
+      <Section
+        paddingTop={[8, 8, 6]}
+        paddingBottom={[8, 8, 6]}
+        aria-labelledby="dataLinksSection"
+      >
+        <DataLinkSection
+          title={externalLinkSectionTitle}
+          titleId="OpenDataLinksTitle"
+          image={externalLinkSectionImage}
+          description={externalLinkSectionDescription}
+          cards={externalLinkCardSelection.cards}
+        />
+      </Section>
+    </Box>
   )
 }
 

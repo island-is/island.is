@@ -26,7 +26,6 @@ const COLORS = [
   '#FF0050',
   '#00B39E',
   '#0061FF',
-
 ]
 
 interface CustomTooltipProps extends TooltipProps<string, number> {

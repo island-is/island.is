@@ -35,7 +35,7 @@ const renderLegend = (props) => {
   const { payload } = props
 
   return (
-      <ul className={cn(styles.listWrapper)}>
+    <ul className={cn(styles.listWrapper)}>
       {payload.map((entry, index) => (
         <li className={cn(styles.list)} key={`item-${index}`}>
           <div
