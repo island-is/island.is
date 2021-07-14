@@ -75,7 +75,6 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
         />
       </ReviewGroup>
       <ReviewGroup isLast>
-        <Text variant="h5"></Text>
         <ValueLine
           label={complaintOverview.labels.attachments}
           value={attachmentsText}
