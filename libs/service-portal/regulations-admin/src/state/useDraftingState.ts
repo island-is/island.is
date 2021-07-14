@@ -152,7 +152,7 @@ const makeDraftForm = (
     id: draft.id,
     title: f(draft.title),
     text: fHtml(draft.text),
-    appendixes: draft.appendixes.map((appendix) => ({
+    appendixes: draft.appendixes?.map((appendix) => ({
       title: f(appendix.title),
       text: fHtml(appendix.text),
     })),
@@ -168,7 +168,7 @@ const makeDraftForm = (
     ministry: f(draft.ministry?.slug),
     type: f(draft.type),
 
-    impacts: draft.impacts.map((impact) =>
+    impacts: draft.impacts?.map((impact) =>
       impact.type === 'amend'
         ? {
             id: impact.id,
@@ -195,7 +195,7 @@ const makeDraftForm = (
 
     draftingNotes: fHtml(draft.draftingNotes),
     draftingStatus: draft.draftingStatus,
-    authors: f(draft.authors.map((author) => author.authorId)),
+    authors: f(draft.authors?.map((author) => author.authorId)),
   }
   return form
 }
@@ -461,17 +461,29 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                 input: {
                   id: uuid(),
                   drafting_status: 'draft',
-                  title: 'Reglugerð um POST 2', // Ritill
-                  text: 'test text', // Ritill (text + appendix + comments)
+                  title: state.draft?.title,
+                  text: state.draft?.text, // (text + appendix + comments)
                   drafting_notes: '<p>POST test.</p>', // Ritill
-                  ministry_id: 'fsr',
-                  ideal_publish_date: '2021-07-13',
-                  type: 'base', // Þarf að velja
+                  ministry_id: state.draft?.ministry,
+                  ideal_publish_date: state.draft?.idealPublishDate,
+                  type: 'base', // Ritill
                   name: 'TEST NAME', // OPTIONAL ??
                   signature_date: '2021-07-13', // OPTIONAL ??
                   effective_date: '2021-07-13', // OPTIONAL ??
                 },
               },
+            }).then((res) => {
+              const newDraft = res.data
+                ? (res.data.createDraftRegulation as RegulationDraft)
+                : undefined
+              if (newDraft?.id) {
+                history.replace(
+                  generatePath(ServicePortalPath.RegulationsAdminEdit, {
+                    id: newDraft?.id,
+                    step: stepNav.next,
+                  }),
+                )
+              }
             })
         : () => undefined,
     propose:

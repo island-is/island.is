@@ -47,6 +47,7 @@ const Wrap = (props: WrapProps) => (
 
 export type EditBasicsProps = {
   draft: RegDraftForm
+  new?: boolean
 }
 
 export const EditBasics = (props: EditBasicsProps) => {
@@ -57,7 +58,7 @@ export const EditBasics = (props: EditBasicsProps) => {
   const [ministryValue, setMinistryValue] = useState(draft.ministry.value)
 
   const textRef = useRef(() => draft.text.value)
-  const { actions } = useDraftingState(draft.id, 'basics')
+  const { actions } = useDraftingState(props.new ? 'new' : draft.id, 'basics')
 
   const {
     data: getRegulationMinistriesData,
@@ -131,7 +132,9 @@ export const EditBasics = (props: EditBasicsProps) => {
           placeholder={t(msg.ministry)}
           value={findValueOption(ministryOptions, ministryValue)}
           options={ministryOptions}
-          onChange={(option) => setMinistryValue((option as Option).value as MinistrySlug)}
+          onChange={(option) =>
+            setMinistryValue((option as Option).value as MinistrySlug)
+          }
           size="sm"
         />
       </Wrap>
