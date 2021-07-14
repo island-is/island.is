@@ -57,6 +57,8 @@ import { mapFrontpage, Frontpage } from './models/frontpage.model'
 import { GetFrontpageInput } from './dto/getFrontpage.input'
 import { mapProjectPage, ProjectPage } from './models/projectPage.model'
 import { IProjectPage } from './generated/contentfulTypes'
+import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
+import { mapSupportQNA, SupportQNA } from './models/supportQNA.model'
 
 const makePage = (
   page: number,
@@ -635,5 +637,17 @@ export class CmsContentfulService {
       .catch(errorHandler('getSubpageHeader'))
 
     return (result.items as types.ISubpageHeader[]).map(mapSubpageHeader)[0]
+  }
+
+  async getSupportQNAs({ lang }: GetSupportQNAsInput): Promise<SupportQNA[]> {
+    const params = {
+      ['content_type']: 'supportQNA',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISupportQnaFields>(lang, params)
+      .catch(errorHandler('getSupportQNAs'))
+
+    return (result.items as types.ISupportQna[]).map(mapSupportQNA)
   }
 }

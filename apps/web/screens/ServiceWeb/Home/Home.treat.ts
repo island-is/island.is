@@ -26,6 +26,7 @@ export const searchSection = style({
 })
 
 export const categories = style({
+  overflow: 'hidden',
   position: 'relative',
   display: 'inline-block',
   width: '100%',

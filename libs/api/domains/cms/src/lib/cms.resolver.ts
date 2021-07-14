@@ -76,6 +76,8 @@ import { Frontpage } from './models/frontpage.model'
 import { GetFrontpageInput } from './dto/getFrontpage.input'
 import { ProjectPage } from './models/projectPage.model'
 import { GetProjectPageInput } from './dto/getProjectPage.input'
+import { SupportQNA } from './models/supportQNA.model'
+import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
 
 const { cacheTime } = environment
 
@@ -411,6 +413,14 @@ export class CmsResolver {
     @Args('input') input: GetSubpageHeaderInput,
   ): Promise<SubpageHeader | null> {
     return this.cmsContentfulService.getSubpageHeader(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [SupportQNA])
+  getSupportQNAs(
+    @Args('input') input: GetSupportQNAsInput,
+  ): Promise<SupportQNA[]> {
+    return this.cmsContentfulService.getSupportQNAs(input)
   }
 }
 
