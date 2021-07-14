@@ -7,10 +7,13 @@ import {
   buildExternalDataProvider,
   buildMultiField,
   buildCustomField,
+  buildRadioField,
+  buildSubSection,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import { DataProviderTypes } from '../types'
-import { externalData, application } from '../lib/messages'
+import { externalData, application, hindrances } from '../lib/messages'
+import { NO, YES } from '../constants'
 
 export const InformationAndDataProviderForm: Form = buildForm({
   id: 'InformationAndDataProviderForm',
@@ -33,42 +36,96 @@ export const InformationAndDataProviderForm: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          id: 'informationAndDataProviderForm',
+          title: externalData.dataProvider.sectionTitle,
+          children: [
+            buildExternalDataProvider({
+              title: externalData.dataProvider.pageTitle,
+              id: 'approveExternalData',
+              subTitle: externalData.dataProvider.subTitle,
+              description: '',
+              checkboxLabel: externalData.dataProvider.checkboxLabel,
+              dataProviders: [
+                buildDataProviderItem({
+                  id: 'nationalRegistry',
+                  type: DataProviderTypes.NationalRegistry,
+                  title: externalData.nationalRegistry.title,
+                  subTitle: externalData.nationalRegistry.description,
+                }),
+                buildDataProviderItem({
+                  id: 'userProfile',
+                  type: DataProviderTypes.UserProfile,
+                  title: externalData.userProfile.title,
+                  subTitle: externalData.userProfile.description,
+                }),
+                buildDataProviderItem({
+                  id: 'revAndCustoms',
+                  type: '',
+                  title: externalData.revAndCustoms.title,
+                  subTitle: externalData.revAndCustoms.description,
+                }),
+                buildDataProviderItem({
+                  id: 'notifications',
+                  type: '',
+                  title: externalData.notifications.title,
+                  subTitle: externalData.notifications.description,
+                }),
+              ],
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
-      id: 'informationAndDataProviderForm',
-      title: externalData.dataProvider.sectionTitle,
+      id: 'hindrances',
+      title: hindrances.general.sectionTitle,
       children: [
-        buildExternalDataProvider({
-          title: externalData.dataProvider.pageTitle,
-          id: 'approveExternalData',
-          subTitle: externalData.dataProvider.subTitle,
-          description: '',
-          checkboxLabel: externalData.dataProvider.checkboxLabel,
-          dataProviders: [
-            buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: DataProviderTypes.NationalRegistry,
-              title: externalData.nationalRegistry.title,
-              subTitle: externalData.nationalRegistry.description,
+        buildMultiField({
+          id: 'timePassedHindrancesMultiField',
+          title: '',
+          children: [
+            buildRadioField({
+              id: 'timePassedHindrance',
+              defaultValue: YES,
+              options: [
+                { value: YES, label: application.general.yesOptionLabel },
+                { value: NO, label: application.general.noOptionLabel },
+              ],
+              title: hindrances.timePassedHindrance.radioFieldTitle,
+              width: 'half',
+              largeButtons: true,
             }),
-            buildDataProviderItem({
-              id: 'userProfile',
-              type: DataProviderTypes.UserProfile,
-              title: externalData.userProfile.title,
-              subTitle: externalData.userProfile.description,
+            buildCustomField({
+              component: 'FieldAlertMessage',
+              id: 'timePassedHindranceFielAlertMessage',
+              title: hindrances.timePassedHindrance.errorTitle,
+              description: hindrances.timePassedHindrance.errorDescription,
+              condition: (formValue) => formValue.timePassedHindrance === NO,
             }),
-            buildDataProviderItem({
-              id: 'revAndCustoms',
-              type: '',
-              title: externalData.revAndCustoms.title,
-              subTitle: externalData.revAndCustoms.description,
+          ],
+        }),
+        buildMultiField({
+          id: 'carHindrancesMultiField',
+          title: '',
+          children: [
+            buildRadioField({
+              id: 'carAccidentHindrance',
+              defaultValue: NO,
+              options: [
+                { value: YES, label: application.general.yesOptionLabel },
+                { value: NO, label: application.general.noOptionLabel },
+              ],
+              title: hindrances.carAccident.radioFieldTitle,
+              width: 'half',
+              largeButtons: true,
             }),
-            buildDataProviderItem({
-              id: 'notifications',
-              type: '',
-              title: externalData.notifications.title,
-              subTitle: externalData.notifications.description,
+            buildCustomField({
+              component: 'FieldAlertMessage',
+              id: 'carAccidentHindranceFielAlertMessage',
+              title: hindrances.carAccident.errorTitle,
+              description: hindrances.carAccident.errorDescription,
+              condition: (formValue) => formValue.carAccidentHindrance === YES,
             }),
           ],
         }),

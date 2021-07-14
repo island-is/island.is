@@ -7,7 +7,6 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { application } from './messages'
@@ -50,7 +49,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
             whenToPrune: 3600 * 1000,
           },
           roles: [
