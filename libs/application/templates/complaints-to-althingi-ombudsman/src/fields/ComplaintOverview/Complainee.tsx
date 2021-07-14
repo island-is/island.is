@@ -21,13 +21,13 @@ export const Complainee: FC<Props> = ({ type, name }) => {
   return (
     <ReviewGroup>
       <GridRow>
-        <GridColumn span={'4/12'}>
+        <GridColumn span={['12/12', '12/12', '6/12']}>
           <ValueLine
             label={complaintOverview.labels.complainee}
             value={complainee}
           />
         </GridColumn>
-        <GridColumn span={'6/12'}>
+        <GridColumn span={['12/12', '12/12', '6/12']}>
           <ValueLine
             label={complaintOverview.labels.complaineeName}
             value={name}
