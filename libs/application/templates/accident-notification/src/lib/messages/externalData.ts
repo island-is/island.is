@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-// External information retrieval
 export const externalData = {
   agreementDescription: defineMessages({
     sectionTitle: {
@@ -11,13 +10,13 @@ export const externalData = {
     bulletOne: {
       id: 'an.application:section.agreementDescription.BulletOne',
       defaultMessage:
-        'Vinnueftirlit ríkisins fær afrit þessa eyðublaðs á grundvelli 4. mgr. 79. gr. laga nr. 46/1980. Tryggingastofnun ríkisins fær upplýsingar um bótagreiðslur sem ekki greiðast samhliða bótum stofnunarinnar, sbr. 14. gr. laga nr. 45/2015..',
+        'Vinnueftirlit ríkisins fær afrit þessa eyðublaðs á grundvelli 4. mgr. 79. gr. laga nr. 46/1980. Tryggingastofnun ríkisins fær upplýsingar um bótagreiðslur sem ekki greiðast samhliða bótum stofnunarinnar, sbr. 14. gr. laga nr. 45/2015.',
       description: 'List item 1 on data gathering information',
     },
     bulletTwo: {
       id: 'an.application:section.agreementDescription.BulletTwo',
       defaultMessage:
-        'Þannig verður eitthvað óvænt að hafa átt sér stað og skilyrði er að óhappið verði ekki rakið til undirliggjandi sjúkdóms eða meinsemda hjá þeim sem fyrir óhappi verður..',
+        'Þannig verður eitthvað óvænt að hafa átt sér stað og skilyrði er að óhappið verði ekki rakið til undirliggjandi sjúkdóms eða meinsemda hjá þeim sem fyrir óhappi verður.',
       description: 'List item 2 on data gathering information',
     },
     bulletThree: {
