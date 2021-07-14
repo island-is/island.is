@@ -9,8 +9,6 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Logger } from '@nestjs/common'
 
 const queryPaymentScheduleDebts = `
   query PaymentScheduleDebts {
@@ -88,13 +86,6 @@ interface PaymentPlanPrerequisitesProps {
 }
 
 export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
-  constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-  ) {
-    super()
-  }
-
   type = 'PaymentPlanPrerequisitesProvider'
 
   async queryPaymentScheduleDebts(): Promise<PaymentScheduleDebts[]> {
@@ -206,8 +197,9 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
     }
   }
 
-  handleError(error: ErrorConstructor) {
-    this.logger.error(`Error in Payment Plan Prerequisites Provider: ${error}`)
+  handleError(error: Error | unknown) {
+    console.error(`Error in Payment Plan Prerequisites Provider:`, error)
+
     return Promise.reject('Failed to fetch data')
   }
 }
