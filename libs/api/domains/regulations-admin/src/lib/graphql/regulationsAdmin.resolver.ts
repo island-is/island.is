@@ -4,7 +4,9 @@ import { UseGuards } from '@nestjs/common'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
 import { CreateDraftRegulationInput } from './dto/createDraftRegulation.input'
+import { DeleteDraftRegulationInput } from './dto/deleteDraftRegulation.input'
 // import { DraftRegulationModel } from './models/draftRegulation.model'
+import { DeleteDraftRegulationModel } from './models/deleteDraftRegulation.model'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -173,6 +175,20 @@ export class RegulationsAdminResolver {
     return this.regulationsAdminApiService.create(input, authorization ?? '')
   }
 
+  @Mutation(() => DeleteDraftRegulationModel)
+  async deleteDraftRegulation(
+    @Args('input') input: DeleteDraftRegulationInput,
+    @CurrentUser() { authorization }: User,
+  ): Promise<any> {
+    await this.regulationsAdminApiService.deleteById(
+      input.id,
+      authorization ?? '',
+    )
+
+    return {
+      id: input.id,
+    }
+  }
 
   @Query(() => graphqlTypeJson)
   async getRegulationMinistries(@CurrentUser() { authorization }: User) {

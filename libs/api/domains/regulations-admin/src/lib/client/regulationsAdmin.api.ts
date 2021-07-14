@@ -85,6 +85,12 @@ export class RegulationsAdminApi extends RESTDataSource {
     return this.post(`/draft_regulation`, body, { headers: { authorization } })
   }
 
+  deleteById(id: string, authorization: string): Promise<number> {
+    return this.delete(`/draft_regulation/${id}`, undefined, {
+      headers: { authorization },
+    })
+  }
+
   async getAuthorInfo(
     nationalId: string,
     authorization: User['authorization'],

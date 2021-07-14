@@ -28,7 +28,9 @@ export const TaskList = () => {
   const { formatMessage, formatDateFns } = useLocale()
   const history = useHistory()
   // const { data, loading } = useMockQuery({ regulationDraft: mockDraftlist }) // useQuery<Query>(RegulationTaskListQuery)
-  const { data, loading } = useQuery<Query>(RegulationTaskListQuery)
+  const { data, loading } = useQuery<Query>(RegulationTaskListQuery, {
+    fetchPolicy: 'no-cache',
+  })
 
   if (loading) {
     return (

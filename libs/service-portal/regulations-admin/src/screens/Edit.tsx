@@ -122,7 +122,7 @@ const Edit = () => {
         <SkeletonLoader height={120} />
       )}
 
-      <ButtonBar new={id === 'new'} stepNav={stepNav} actions={actions} />
+      <ButtonBar id={id} stepNav={stepNav} actions={actions} />
     </Fragment>
   )
 }

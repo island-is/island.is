@@ -323,4 +323,8 @@ export const buttonsMsgs = defineMessages({
     id: 'ap.regulations-admin:btn-publish',
     defaultMessage: 'Senda til útgáfu í stjórnartíðindum',
   },
+  delete: {
+    id: 'ap.regulations-admin:btn-delete',
+    defaultMessage: 'Eyða færslu',
+  },
 })
