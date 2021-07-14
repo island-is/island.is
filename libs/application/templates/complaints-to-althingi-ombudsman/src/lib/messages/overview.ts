@@ -32,5 +32,15 @@ export const complaintOverview = {
       defaultMessage: 'Lagt fyrir dómstóla',
       description: 'Label for the court action answer',
     },
+    powerOfAttorney: {
+      id: 'ctao.application:overview.label.powerOfAttorney',
+      defaultMessage: 'Umboð frá kvörtunaraðila',
+      description: 'Label for power of attorney',
+    },
+    attachments: {
+      id: 'ctao.application:overview.label.attachments',
+      defaultMessage: 'Fylgiskjöl',
+      description: 'Label for attachments',
+    },
   }),
 }

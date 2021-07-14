@@ -33,6 +33,12 @@ export const ComplainedFor: FC<Props> = ({
             label={complaintOverview.labels.complainedForConnection}
             value={connection}
           />
+          {complainedFor.powerOfAttorney && (
+            <ValueLine
+              label={complaintOverview.labels.powerOfAttorney}
+              value={complainedFor.powerOfAttorney.name}
+            />
+          )}
         </>
       )}
     </ReviewGroup>

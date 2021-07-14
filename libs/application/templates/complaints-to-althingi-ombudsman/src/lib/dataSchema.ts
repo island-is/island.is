@@ -10,6 +10,12 @@ import {
 } from '../shared'
 import { error } from './messages/error'
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, { params: error.required }),
   information: z.object({
@@ -58,6 +64,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
     email: z.string(),
     phone: z.string(),
     connection: z.string(),
+    powerOfAttorney: FileSchema.optional(),
   }),
   complaintDescription: z.object({
     decisionDate: z.string().optional(), // TODO: Validate this block
@@ -71,6 +78,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
       }),
   }),
   courtActionAnswer: z.enum([YES, NO]),
+  attachments: z.object({ documents: z.array(FileSchema).optional() }),
 })
 
 export type ComplaintsToAlthingiOmbudsman = z.TypeOf<

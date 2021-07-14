@@ -71,11 +71,14 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
         />
       </ReviewGroup>
       <ReviewGroup isLast>
-        <Text variant="h5">Fylgiskjöl</Text>
+        <Text variant="h5"></Text>
+        <ValueLine
+          label={complaintOverview.labels.attachments}
+          value={
+            answers.attachments.documents?.map((x) => x.name).join(', ') ?? ''
+          }
+        />
       </ReviewGroup>
-      {/* 
-        6. Staðfesting og rafræn undirritun
-      */}
     </Box>
   )
 }
