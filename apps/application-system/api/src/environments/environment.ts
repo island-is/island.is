@@ -152,10 +152,6 @@ const prodConfig = {
       secret: process.env.DRIVING_LICENSE_SECRET,
       xroadClientId: process.env.XROAD_CLIENT_ID,
       xroadBaseUrl: process.env.XROAD_BASE_PATH,
-      replaceInPath: {
-        from: process.env.DRIVING_LICENSE_PATH_REPLACEMENT_FROM,
-        to: process.env.DRIVING_LICENSE_PATH_REPLACEMENT_TO,
-      },
     },
     paymentOptions: {
       arkBaseUrl: process.env.ARK_BASE_URL,
