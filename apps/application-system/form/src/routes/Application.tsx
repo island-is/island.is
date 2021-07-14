@@ -6,8 +6,6 @@ import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
 
-import { Layout } from '../components/Layout/Layout'
-
 export const Application = () => {
   const { slug, id } = useParams<{ slug: string; id: string }>()
   const { userInfo } = useAuth()

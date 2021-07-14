@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 import qs from 'qs'
+import * as Sentry from '@sentry/react'
 
 import { Text, Page, Box, LoadingDots, Stack } from '@island.is/island-ui/core'
 import { NotFound } from '@island.is/application/ui-shell'
@@ -31,19 +32,29 @@ export const AssignApplication = () => {
   const couldNotAssignApplication = !!assignApplicationError
 
   useEffect(() => {
-    if (isMissingToken) {
-      return
+    const init = async () => {
+      if (isMissingToken) {
+        Sentry.captureException(
+          new Error(
+            `Missing token, cannot assign the application ${location.search}`,
+          ),
+        )
+
+        return
+      }
+
+      const { token } = queryParams
+
+      await assignApplication({
+        variables: {
+          input: {
+            token,
+          },
+        },
+      })
     }
 
-    const { token } = queryParams
-
-    assignApplication({
-      variables: {
-        input: {
-          token,
-        },
-      },
-    })
+    init()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -51,17 +62,21 @@ export const AssignApplication = () => {
   // that receives status code as prop and use here as in <NotFound/>
   return (
     <Page>
-      {isMissingToken ? (
+      {isMissingToken && (
         <NotFound
           title="Enginn tóki fannst"
           subTitle="Ekki er hægt að tengja umsókn án auðkenningartóka"
         />
-      ) : couldNotAssignApplication ? (
+      )}
+
+      {couldNotAssignApplication && (
         <NotFound
           title="Ekki tókst að tengjast umsókn"
           subTitle="Villa koma upp við að tengjast umsókn og hefur hún verið skráð"
         />
-      ) : loading ? (
+      )}
+
+      {loading && (
         <Box display="flex" justifyContent="center" alignItems="center">
           <Stack space={3} align="center">
             <LoadingDots large />
@@ -71,7 +86,7 @@ export const AssignApplication = () => {
             </Text>
           </Stack>
         </Box>
-      ) : null}
+      )}
     </Page>
   )
 }

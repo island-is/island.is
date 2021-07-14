@@ -12,6 +12,7 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
+import * as Sentry from '@sentry/react'
 
 import Screen from '../components/Screen'
 import FormStepper from '../components/FormStepper'
@@ -20,10 +21,10 @@ import {
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import ErrorBoundary from '../components/ErrorBoundary'
 import { useHistorySync } from '../hooks/useHistorySync'
 import { useApplicationTitle } from '../hooks/useApplicationTitle'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
+import { ErrorMessage } from '../components/ErrorMessage'
 import * as styles from './FormShell.treat'
 
 export const FormShell: FC<{
@@ -97,9 +98,14 @@ export const FormShell: FC<{
                 borderRadius="large"
                 background="white"
               >
-                <ErrorBoundary
-                  application={application}
-                  currentScreen={currentScreen}
+                <Sentry.ErrorBoundary
+                  beforeCapture={(scope) => {
+                    scope.setTag('errorBoundaryLocation', 'FormShell')
+                    scope.setExtra('applicationType', application.typeId)
+                    scope.setExtra('applicationState', application.state)
+                    scope.setExtra('currentScreen', currentScreen.id)
+                  }}
+                  fallback={<ErrorMessage />}
                 >
                   <Screen
                     application={storedApplication}
@@ -134,7 +140,7 @@ export const FormShell: FC<{
                     screen={currentScreen}
                     mode={mode}
                   />
-                </ErrorBoundary>
+                </Sentry.ErrorBoundary>
               </Box>
             </GridColumn>
             <GridColumn

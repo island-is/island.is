@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
+import * as Sentry from '@sentry/react'
 
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
@@ -16,6 +17,7 @@ import {
 import { useApplicationNamespaces, useLocale } from '@island.is/localization'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 
+import { ErrorMessage } from '../components/ErrorMessage'
 import { RefetchProvider } from '../context/RefetchContext'
 import { FieldProvider, useFields } from '../context/FieldContext'
 import { FormShell } from './FormShell'
@@ -161,10 +163,19 @@ export const ApplicationForm: FC<{
   applicationId: string
   nationalRegistryId: string
 }> = ({ applicationId, nationalRegistryId }) => (
-  <FieldProvider>
-    <ApplicationLoader
-      applicationId={applicationId}
-      nationalRegistryId={nationalRegistryId}
-    />
-  </FieldProvider>
+  <Sentry.ErrorBoundary
+    beforeCapture={(scope) => {
+      scope.setTag('errorBoundaryLocation', 'ApplicationForm')
+      scope.setExtra('applicationId', applicationId)
+      scope.setExtra('nationalRegistryId', nationalRegistryId)
+    }}
+    fallback={<ErrorMessage />}
+  >
+    <FieldProvider>
+      <ApplicationLoader
+        applicationId={applicationId}
+        nationalRegistryId={nationalRegistryId}
+      />
+    </FieldProvider>
+  </Sentry.ErrorBoundary>
 )
