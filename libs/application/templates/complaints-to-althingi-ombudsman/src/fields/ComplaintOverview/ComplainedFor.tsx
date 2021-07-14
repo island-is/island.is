@@ -45,13 +45,13 @@ export const ComplainedFor: FC<Props> = ({
     {complainedForType === ComplainedForTypes.SOMEONEELSE && (
       <ReviewGroup>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.name}
               label={complainedForMessages.labels.name}
             />
           </GridColumn>
-          <GridColumn span={'6/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.ssn}
               label={complainedForMessages.labels.ssn}
@@ -59,13 +59,13 @@ export const ComplainedFor: FC<Props> = ({
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.address}
               label={complainedForMessages.labels.address}
             />
           </GridColumn>
-          <GridColumn span={'6/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.city}
               label={complainedForMessages.labels.city}
@@ -73,13 +73,13 @@ export const ComplainedFor: FC<Props> = ({
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.postcode}
               label={complainedForMessages.labels.postcode}
             />
           </GridColumn>
-          <GridColumn span={'6/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.phone}
               label={complainedForMessages.labels.phone}
@@ -87,7 +87,7 @@ export const ComplainedFor: FC<Props> = ({
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.email}
               label={complainedForMessages.labels.email}

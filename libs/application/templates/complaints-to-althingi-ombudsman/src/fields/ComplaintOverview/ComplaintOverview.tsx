@@ -17,7 +17,7 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
     <Box component="section" paddingTop={6}>
       <ReviewGroup>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={`${name}, ${ssn}, ${phone}, ${email}`}
               label={complaintOverview.labels.nationalRegistry}
@@ -27,13 +27,13 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
       </ReviewGroup>
       <ReviewGroup>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={name}
               label={information.aboutTheComplainer.name}
             />
           </GridColumn>
-          <GridColumn span={'6/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={address}
               label={information.aboutTheComplainer.address}
@@ -41,13 +41,13 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={phone}
               label={information.aboutTheComplainer.phone}
             />
           </GridColumn>
-          <GridColumn span={'6/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={email}
               label={information.aboutTheComplainer.email}
