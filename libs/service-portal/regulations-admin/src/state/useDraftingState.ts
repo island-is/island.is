@@ -378,6 +378,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
         regulationId: draftId,
       },
     },
+    fetchPolicy: 'no-cache',
     skip: isNew && !state.error,
   })
 
@@ -455,7 +456,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     },
     createDraft:
       isNew && state.draft
-        ? () =>
+        ? () => {
             createDraftRegulation({
               variables: {
                 input: {
@@ -485,6 +486,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                 )
               }
             })
+          }
         : () => undefined,
     propose:
       draft && !isEditor

@@ -68,8 +68,7 @@ export class RegulationsAdminApi extends RESTDataSource {
     authorization: string,
   ): Promise<DB_RegulationDraft | null> {
     const response = await this.get<DB_RegulationDraft | null>(
-      // `/draft_regulation/${regulationId}`,
-      `/draft_regulation/a1fd62db-18a6-4741-88eb-a7b7a7e05833`,
+      `/draft_regulation/${regulationId}`,
       {},
       {
         cacheOptions: { ttl: this.options.ttl },

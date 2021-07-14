@@ -34,6 +34,7 @@ import { MessageDescriptor } from 'react-intl'
 export type StepComponent = (props: {
   draft: RegDraftForm
   new?: boolean
+  actions?: any
 }) => ReturnType<FC>
 
 const stepData: Record<
@@ -116,7 +117,7 @@ const Edit = () => {
       </Box>
 
       {draft ? (
-        <step.Component new={id === 'new'} draft={draft} />
+        <step.Component actions={actions} new={id === 'new'} draft={draft} />
       ) : (
         <SkeletonLoader height={120} />
       )}

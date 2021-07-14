@@ -48,17 +48,18 @@ const Wrap = (props: WrapProps) => (
 export type EditBasicsProps = {
   draft: RegDraftForm
   new?: boolean
+  actions?: any
 }
 
 export const EditBasics = (props: EditBasicsProps) => {
   const t = useIntl().formatMessage
-  const { draft } = props
+  const { draft, actions } = props
 
-  const [titleValue, setTitleValue] = useState(draft.title.value)
-  const [ministryValue, setMinistryValue] = useState(draft.ministry.value)
+  const [titleValue, setTitleValue] = useState(draft.title?.value)
+  const [ministryValue, setMinistryValue] = useState(draft.ministry?.value)
+  const [dateValue, setDateValue] = useState(toISODate(new Date()))
 
   const textRef = useRef(() => draft.text.value)
-  const { actions } = useDraftingState(props.new ? 'new' : draft.id, 'basics')
 
   const {
     data: getRegulationMinistriesData,
@@ -95,6 +96,13 @@ export const EditBasics = (props: EditBasicsProps) => {
       value: ministryValue as string,
     })
   }, [ministryValue])
+
+  useEffect(() => {
+    onAnyInputChange({
+      name: 'idealPublishDate',
+      value: dateValue as string,
+    })
+  }, [dateValue])
 
   return (
     <>
@@ -144,12 +152,7 @@ export const EditBasics = (props: EditBasicsProps) => {
           label={t(msg.idealPublishDate)}
           placeholderText={t(msg.idealPublishDate_soon)}
           minDate={new Date()}
-          handleChange={(date: Date) =>
-            onAnyInputChange({
-              name: 'idealPublishDate',
-              value: toISODate(date),
-            })
-          }
+          handleChange={(date: Date) => setDateValue(toISODate(date))}
         />
       </Wrap>
     </>
