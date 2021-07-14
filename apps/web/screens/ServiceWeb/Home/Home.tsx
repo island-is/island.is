@@ -6,8 +6,13 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
+  QueryGetSupportQnAsArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_QUERY } from '../../queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_QUERY,
+  GET_SUPPORT_QNAS,
+} from '../../queries'
 import { Screen } from '../../../types'
 import {
   Accordion,
@@ -40,9 +45,23 @@ import * as sharedStyles from '../shared/styles.treat'
 interface HomeProps {
   organization?: Organization
   namespace: Query['getNamespace']
+  supportQNAs: Query['getSupportQNAs']
 }
 
-const Home: Screen<HomeProps> = ({ organization, namespace }) => {
+function generateCategories(supportQNAs: Query['getSupportQNAs']) {
+  let categorykeys = []
+  const categories = []
+  for (const supportQNA of supportQNAs) {
+    let categorykey = `${supportQNA.category.title}.${supportQNA.category.slug}`
+    if (!categorykeys.includes(categorykey)) {
+      categorykeys.push(categorykey)
+      categories.push(supportQNA.category)
+    }
+  }
+  return categories
+}
+
+const Home: Screen<HomeProps> = ({ organization, namespace, supportQNAs }) => {
   // const linkResolver = useLinkResolver()
   const { width } = useWindowSize()
 
@@ -56,20 +75,7 @@ const Home: Screen<HomeProps> = ({ organization, namespace }) => {
     '//images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
 
   const searchTitle = 'Getum við aðstoðað?'
-  const freshdeskCategories = [
-    {
-      name: 'Hundar',
-      description: 'Hundar eru hundar',
-    },
-    {
-      name: 'Kettir',
-      description: 'Kettir eru kettir',
-    },
-    {
-      name: 'Þingvellir',
-      description: 'Þingvellir eru vellir fyrir þing',
-    },
-  ]
+  const freshdeskCategories = generateCategories(supportQNAs)
 
   return (
     <>
@@ -217,7 +223,7 @@ const Home: Screen<HomeProps> = ({ organization, namespace }) => {
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug as string
 
-  const [organization, namespace] = await Promise.all([
+  const [organization, namespace, supportQNAs] = await Promise.all([
     !!slug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
         query: GET_ORGANIZATION_QUERY,
@@ -243,11 +249,20 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
+    apolloClient.query<Query, QueryGetSupportQnAsArgs>({
+      query: GET_SUPPORT_QNAS,
+      variables: {
+        input: {
+          lang: locale,
+        },
+      },
+    }),
   ])
 
   return {
     organization: organization?.data?.getOrganization,
     namespace,
+    supportQNAs: supportQNAs?.data?.getSupportQNAs,
   }
 }
 
