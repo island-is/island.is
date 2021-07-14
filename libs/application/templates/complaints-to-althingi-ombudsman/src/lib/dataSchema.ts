@@ -78,7 +78,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
       }),
   }),
   courtActionAnswer: z.enum([YES, NO]),
-  attachments: z.object({ documents: z.array(FileSchema).optional() }),
+  attachments: z.object({ documents: z.array(FileSchema) }),
 })
 
 export type ComplaintsToAlthingiOmbudsman = z.TypeOf<

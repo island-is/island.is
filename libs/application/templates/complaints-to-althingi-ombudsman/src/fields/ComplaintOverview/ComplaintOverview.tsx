@@ -12,6 +12,10 @@ import { yesNoMessageMapper } from '../../utils'
 export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const answers = (application as any).answers as ComplaintsToAlthingiOmbudsman
   const { name, ssn, phone, email, address } = answers.information
+  const attachmentsText =
+    answers.attachments.documents.length === 0
+      ? complaintOverview.general.noAttachments
+      : answers.attachments.documents.map((x) => x.name).join(', ')
 
   return (
     <Box component="section" paddingTop={6}>
@@ -74,9 +78,7 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
         <Text variant="h5"></Text>
         <ValueLine
           label={complaintOverview.labels.attachments}
-          value={
-            answers.attachments.documents?.map((x) => x.name).join(', ') ?? ''
-          }
+          value={attachmentsText}
         />
       </ReviewGroup>
     </Box>

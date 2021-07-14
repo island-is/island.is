@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const complaintOverview = {
+  general: defineMessages({
+    noAttachments: {
+      id: 'ctao.application:overview.noAttachments',
+      defaultMessage: 'Engin fylgiskjöl',
+      description:
+        'Fallback text to display in overview when there are no attachments',
+    },
+  }),
   labels: defineMessages({
     nationalRegistry: {
       id: 'ctao.application:overview.label.nationalRegistry',
