@@ -166,7 +166,7 @@ export class DrivingLicenseService {
         kennitala: nationalId,
       },
     )) as unknown) as string
-    console.log({ statusStr })
+
     // API says number, type says number, but deserialization happens with a text
     // deserializer (runtime.TextApiResponse).
     // Seems to be an outstanding bug? or I have no idea what I'm doing
