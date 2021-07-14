@@ -7,7 +7,6 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { application } from './messages'
@@ -46,14 +45,18 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       [AccidentNotificationStates.draft]: {
         meta: {
           name: application.general.name.defaultMessage,
-          progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          progress: 0.2,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
           roles: [
             {
               id: 'applicant',
               formLoader: () =>
-                import('../forms/TestForm').then((val) =>
-                  Promise.resolve(val.TestForm),
+                import('../forms/InformationAndDataProviderForm').then((val) =>
+                  Promise.resolve(val.InformationAndDataProviderForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },

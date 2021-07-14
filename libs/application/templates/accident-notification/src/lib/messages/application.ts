@@ -12,5 +12,15 @@ export const application = {
       defaultMessage: 'Sjúkratryggingar Íslands',
       description: 'Sjúkratryggingar Íslands',
     },
+    yesOptionLabel: {
+      id: 'an.application:application.yesOptionLabel',
+      defaultMessage: 'Já',
+      description: 'Yes',
+    },
+    noOptionLabel: {
+      id: 'an.application:application.noOptionLabel',
+      defaultMessage: 'Nei',
+      description: 'No',
+    },
   }),
 }
