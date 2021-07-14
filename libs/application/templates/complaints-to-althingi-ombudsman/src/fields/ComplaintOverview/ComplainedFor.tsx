@@ -36,7 +36,9 @@ export const ComplainedFor: FC<Props> = ({
           {complainedFor.powerOfAttorney && (
             <ValueLine
               label={complaintOverview.labels.powerOfAttorney}
-              value={complainedFor.powerOfAttorney.name}
+              value={complainedFor.powerOfAttorney
+                ?.map((x) => x.name)
+                .join(', ')}
             />
           )}
         </>
