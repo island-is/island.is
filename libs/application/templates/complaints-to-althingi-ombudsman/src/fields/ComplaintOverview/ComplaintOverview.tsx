@@ -12,12 +12,16 @@ import { yesNoMessageMapper } from '../../utils'
 export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const answers = (application as any).answers as ComplaintsToAlthingiOmbudsman
   const { name, ssn, phone, email, address } = answers.information
+  const attachmentsText =
+    answers.attachments.documents && answers.attachments.documents.length > 0
+      ? answers.attachments.documents?.map((x) => x.name).join(', ')
+      : complaintOverview.general.noAttachments
 
   return (
     <Box component="section" paddingTop={6}>
       <ReviewGroup>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={`${name}, ${ssn}, ${phone}, ${email}`}
               label={complaintOverview.labels.nationalRegistry}
@@ -27,13 +31,13 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
       </ReviewGroup>
       <ReviewGroup>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={name}
               label={information.aboutTheComplainer.name}
             />
           </GridColumn>
-          <GridColumn span={'6/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={address}
               label={information.aboutTheComplainer.address}
@@ -41,13 +45,13 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={phone}
               label={information.aboutTheComplainer.phone}
             />
           </GridColumn>
-          <GridColumn span={'6/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={email}
               label={information.aboutTheComplainer.email}
@@ -71,11 +75,11 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
         />
       </ReviewGroup>
       <ReviewGroup isLast>
-        <Text variant="h5">Fylgiskjöl</Text>
+        <ValueLine
+          label={complaintOverview.labels.attachments}
+          value={attachmentsText}
+        />
       </ReviewGroup>
-      {/* 
-        6. Staðfesting og rafræn undirritun
-      */}
     </Box>
   )
 }
