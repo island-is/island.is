@@ -1,5 +1,3 @@
-import { shouldPolyfill as shouldPolyfillNumberFormat } from '@formatjs/intl-numberformat/should-polyfill'
-import areIntlLocalesSupported from 'intl-locales-supported'
 import { Locale } from '@island.is/shared/types'
 
 interface PolyfilledIntl {
@@ -35,35 +33,33 @@ const localeDataModules = {
   },
 }
 
-const maybePolyfillNumberFormat = (locale: Locale) => {
-  // Polyfill Intl.NumberFormat if necessary
-  if (!areIntlLocalesSupported(locale) || shouldPolyfillNumberFormat()) {
-    return import(
-      /* webpackChunkName: "intl-numberformat" */ '@formatjs/intl-numberformat/polyfill-force'
-    )
-  }
+const maybePolyfillLocale = async () => {
+  await import(
+    /* webpackChunkName: "intl-locale" */ '@formatjs/intl-locale/polyfill'
+  )
 }
 
-const maybePolyfillDateTimeFormat = (locale: Locale) => {
-  // Polyfill Intl.DateTimeFormat if necessary
-  if (!areIntlLocalesSupported(locale)) {
-    return import(
-      /* webpackChunkName: "intl-datetimeformat" */ '@formatjs/intl-datetimeformat/polyfill-force'
-    )
-  }
+const maybePolyfillNumberFormat = async () => {
+  await import(
+    /* webpackChunkName: "intl-numberformat" */ '@formatjs/intl-numberformat/polyfill'
+  )
 }
 
-/**
- * Dynamically polyfill Intl API & its locale data
- * @param locale locale to polyfill
- */
+const maybePolyfillDateTimeFormat = async () => {
+  await import(
+    /* webpackChunkName: "intl-datetimeformat" */ '@formatjs/intl-datetimeformat/polyfill'
+  )
+}
+
 export async function polyfill(locale: Locale) {
   await Promise.all([
-    maybePolyfillNumberFormat(locale),
-    maybePolyfillDateTimeFormat(locale),
+    maybePolyfillLocale(),
+    maybePolyfillNumberFormat(),
+    maybePolyfillDateTimeFormat(),
   ])
 
   const dataPolyfills = []
+
   if ((Intl as PolyfilledIntl).NumberFormat.polyfilled) {
     dataPolyfills.push(localeDataModules.numberFormat[locale]())
   }
@@ -74,6 +70,7 @@ export async function polyfill(locale: Locale) {
         /* webpackChunkName: "intl-datetimeformat" */ '@formatjs/intl-datetimeformat/add-all-tz'
       ),
     )
+
     dataPolyfills.push(localeDataModules.dateTimeFormat[locale]())
   }
 
