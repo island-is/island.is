@@ -89,8 +89,8 @@ export const InformationAndDataProviderForm: Form = buildForm({
               id: 'timePassedHindrance',
               defaultValue: YES,
               options: [
-                { value: YES, label: 'Já' },
-                { value: NO, label: 'Nei' },
+                { value: YES, label: application.general.yesOptionLabel },
+                { value: NO, label: application.general.noOptionLabel },
               ],
               title: hindrances.timePassedHindrance.radioFieldTitle,
               width: 'half',
@@ -113,8 +113,8 @@ export const InformationAndDataProviderForm: Form = buildForm({
               id: 'carAccidentHindrance',
               defaultValue: NO,
               options: [
-                { value: YES, label: 'Já' },
-                { value: NO, label: 'Nei' },
+                { value: YES, label: application.general.yesOptionLabel },
+                { value: NO, label: application.general.noOptionLabel },
               ],
               title: hindrances.carAccident.radioFieldTitle,
               width: 'half',
