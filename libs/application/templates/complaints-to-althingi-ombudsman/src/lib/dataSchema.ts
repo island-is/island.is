@@ -64,7 +64,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
     email: z.string(),
     phone: z.string(),
     connection: z.string(),
-    powerOfAttorney: FileSchema.optional(),
+    powerOfAttorney: z.array(FileSchema).optional(),
   }),
   complaintDescription: z.object({
     decisionDate: z.string().optional(), // TODO: Validate this block
@@ -78,7 +78,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
       }),
   }),
   courtActionAnswer: z.enum([YES, NO]),
-  attachments: z.object({ documents: z.array(FileSchema) }),
+  attachments: z.object({ documents: z.array(FileSchema).optional() }),
 })
 
 export type ComplaintsToAlthingiOmbudsman = z.TypeOf<

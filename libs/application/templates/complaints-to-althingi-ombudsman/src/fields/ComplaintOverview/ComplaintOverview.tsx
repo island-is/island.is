@@ -13,9 +13,9 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const answers = (application as any).answers as ComplaintsToAlthingiOmbudsman
   const { name, ssn, phone, email, address } = answers.information
   const attachmentsText =
-    answers.attachments.documents.length === 0
-      ? complaintOverview.general.noAttachments
-      : answers.attachments.documents.map((x) => x.name).join(', ')
+    answers.attachments.documents && answers.attachments.documents.length > 0
+      ? answers.attachments.documents?.map((x) => x.name).join(', ')
+      : complaintOverview.general.noAttachments
 
   return (
     <Box component="section" paddingTop={6}>
