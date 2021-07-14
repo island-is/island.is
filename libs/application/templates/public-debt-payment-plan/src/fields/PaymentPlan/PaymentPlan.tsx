@@ -32,6 +32,7 @@ import { useDebouncedSliderValues } from './useDebouncedSliderValues'
 // An array might not work for this schema
 // Might need to define specific fields for each one
 export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
+  console.log(application)
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
   const getDistribution = useLazyDistribution()
