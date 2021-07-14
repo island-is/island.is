@@ -2104,6 +2104,63 @@ export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
   }
 }
 
+export interface IPageFields {
+  /** Content status */
+  contentStatus:
+    | 'Undefined'
+    | 'Needs work'
+    | 'In review'
+    | 'Needs translation'
+    | 'In translation'
+    | 'Done'
+
+  /** Page title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** SEO Page description */
+  seoDescription?: string | undefined
+
+  /** theme */
+  theme?: 'nautral' | 'red' | 'blue' | 'gradient' | undefined
+
+  /** header */
+  header: IPageHeader
+
+  /** Slices */
+  slices: (
+    | IBigBulletList
+    | IMailingListSignup
+    | ISectionHeading
+    | ILatestNewsSlice
+    | ICardSection
+    | ILogoListSlice
+    | IStorySection
+    | ITabSection
+    | ITimeline
+  )[]
+}
+
+/** Generic page with content defined in contentful */
+export interface IPage extends Entry<IPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'page'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IPageHeaderFields {
   /** Title */
   title?: string | undefined
