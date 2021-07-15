@@ -13,12 +13,13 @@ import {
 } from '@island.is/application/core'
 //replace
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
-import { DataProviderTypes } from '../types'
+import { DataProviderTypes, WhoIsTheNotificationForEnum } from '../types'
 import {
   externalData,
   application,
   hindrances,
   applicantInformation,
+  whoIsTheNotificationFor,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -218,6 +219,37 @@ export const InformationAndDataProviderForm: Form = buildForm({
               variant: 'tel',
               defaultValue: (application: AccidentNotification) =>
                 application.externalData?.userProfile?.data?.mobilePhoneNumber,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'whoIsTheNotificationFor',
+      title: whoIsTheNotificationFor.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'whoIsTheNotificationFor.multi',
+          title: whoIsTheNotificationFor.general.heading,
+          description: whoIsTheNotificationFor.general.description,
+          children: [
+            buildRadioField({
+              id: 'whoIsTheNotificationFor.answer',
+              title: '',
+              options: [
+                {
+                  value: WhoIsTheNotificationForEnum.ME,
+                  label: whoIsTheNotificationFor.labels.me,
+                },
+                {
+                  value: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
+                  label: whoIsTheNotificationFor.labels.powerOfAttorney,
+                },
+                {
+                  value: WhoIsTheNotificationForEnum.JURIDICALPERSON,
+                  label: whoIsTheNotificationFor.labels.juridicalPerson,
+                },
+              ],
             }),
           ],
         }),
