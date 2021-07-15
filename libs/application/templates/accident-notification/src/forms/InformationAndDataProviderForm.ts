@@ -293,6 +293,15 @@ export const InformationAndDataProviderForm: Form = buildForm({
                 title: attachments.labels.alertMessage,
                 description: attachments.general.alertMessage,
                 component: 'FieldAlertMessage',
+                condition: (formValue) => {
+                  console.log(formValue)
+                  return (
+                    (formValue as {
+                      attachments: { injuryCertificate: AttachmentsEnum }
+                    }).attachments?.injuryCertificate ===
+                    AttachmentsEnum.SENDCERTIFICATELATER
+                  )
+                },
               },
               { type: 'warning' },
             ),
