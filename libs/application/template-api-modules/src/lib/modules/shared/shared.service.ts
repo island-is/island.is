@@ -53,11 +53,13 @@ export class SharedTemplateApiService {
   async assignApplicationThroughEmail(
     templateGenerator: AssignmentEmailTemplateGenerator,
     application: Application,
+    expiresIn: number,
     locale = 'is',
   ) {
     const token = createAssignToken(
       application,
       getConfigValue(this.configService, 'jwtSecret'),
+      expiresIn,
     )
 
     const clientLocationOrigin = getConfigValue(
