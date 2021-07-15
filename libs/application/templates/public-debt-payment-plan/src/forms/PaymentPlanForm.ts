@@ -86,8 +86,6 @@ export const PaymentPlanForm: Form = buildForm({
               title: externalData.labels.userProfileTitle,
               subTitle: externalData.labels.userProfileSubTitle,
             }),
-            // TODO: we might have to define several external data points here
-            // since this data originates from more than one location
             buildDataProviderItem({
               id: 'paymentPlanPrerequisites',
               title: externalData.labels.paymentPlanTitle,

@@ -9,74 +9,12 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-
-const queryPaymentScheduleDebts = `
-  query PaymentScheduleDebts {
-    paymentScheduleDebts {
-      nationalId
-      type
-      paymentSchedule
-      organization
-      explanation
-      totalAmount
-      chargetypes {
-        id
-        name
-        principal
-        intrest
-        expenses
-        total
-      }
-    }
-  }		
-`
-
-const queryPaymentScheduleConditions = `
-  query PaymentScheduleConditions {
-      paymentScheduleConditions {
-        nationalId
-        maxDebtAmount
-        maxDebtAmount
-        totalDebtAmount
-        minPayment
-        maxPayment
-        collectionActions
-        doNotOwe
-        maxDebt
-        oweTaxes
-        disposableIncome
-        taxReturns
-        vatReturns
-        citReturns
-        accommodationTaxReturns
-        withholdingTaxReturns
-        wageReturns
-        alimony
-    }
-  }
-`
-
-const queryPaymentScheduleEmployer = `
-  query PaymentScheduleEmployer {
-    paymentScheduleEmployer {
-      nationalId    
-      name
-    }
-  }
-`
-
-const queryPaymentScheduleInitialSchedule = `
-  query PaymentScheduleInitialSchedule($input: GetInitialScheduleInput!) {
-    paymentScheduleInitialSchedule (input : $input){
-      nationalId
-      scheduleType
-      minPayment
-      maxPayment
-      minCountMonth
-      maxCountMonth
-    }
-  }
-`
+import {
+  queryPaymentScheduleConditions,
+  queryPaymentScheduleDebts,
+  queryPaymentScheduleEmployer,
+  queryPaymentScheduleInitialSchedule,
+} from '../graphql/queries'
 
 interface PaymentPlanPrerequisitesProps {
   conditions: PaymentScheduleConditions

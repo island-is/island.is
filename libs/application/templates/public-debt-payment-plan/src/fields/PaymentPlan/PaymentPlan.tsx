@@ -100,11 +100,21 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   } = useDebouncedSliderValues(currentAnswers)
 
   useEffect(() => {
-    if (payment) {
+    if (payment && paymentMode !== undefined && initialMinMaxData) {
       setIsLoading(true)
       getDistributionCallback({
-        monthAmount: paymentMode === AMOUNT ? debouncedAmount : null,
-        monthCount: paymentMode === MONTHS ? debouncedMonths : null,
+        monthAmount:
+          paymentMode === AMOUNT
+            ? debouncedAmount === undefined
+              ? initialMinMaxData?.minPayment
+              : debouncedAmount
+            : null,
+        monthCount:
+          paymentMode === MONTHS
+            ? debouncedMonths === undefined
+              ? initialMinMaxData?.maxCountMonth
+              : debouncedMonths
+            : null,
         totalAmount: payment.totalAmount,
         scheduleType: payment.type,
       })
@@ -125,6 +135,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     getDistributionCallback,
     payment,
     paymentMode,
+    initialMinMaxData,
   ])
 
   const handleSelectPaymentMode = (mode: any) => {
@@ -257,11 +268,9 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
           <AccordionItem
             id="payment-plan-table"
             label="Greiðsluáætlun skuldar"
-            visibleContent={
-              <Text>
-                {formatMessage(paymentPlan.labels.distributionDataTitle)}
-              </Text>
-            }
+            visibleContent={formatMessage(
+              paymentPlan.labels.distributionDataTitle,
+            )}
             startExpanded
           >
             <PaymentPlanTable
