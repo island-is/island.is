@@ -122,5 +122,19 @@ export const paymentPlan = {
       `,
       description: `Amount slider heading`,
     },
+    sliderDescriptor: {
+      id: `pdpp.application:section.paymentPlan.sliderDescriptorEvenMonths`,
+      defaultMessage: `
+        {count, plural, =0 {Greiðsla {monthlyPayments} í {monthsAmount} mánuð.} one {Greiðsla {monthlyPayments} í {monthsAmount} mánuði.} other {Greiðsla {monthlyPayments} í {monthsAmount} mánuði og {lastMonthsPayment} á {lastMonth}. mánuði.}}
+      `,
+      description: `Slider descriptor`,
+    },
+    distributionDataTitle: {
+      id: `pdpp.application:section.paymentPlan.distributionDataTitle`,
+      defaultMessage: `
+      Hér er hægt að sjá heildargreiðsluáætlun skuldar
+      `,
+      description: `Total distribution plan`,
+    },
   }),
 }

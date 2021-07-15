@@ -4,7 +4,7 @@ export const errorModal = defineMessages({
   maxDebt: {
     id: `pdpp.application:application.errorModal.maxDebt`,
     defaultMessage: 'Skuldar of mikið',
-    description: 'Ows to much',
+    description: 'Owes to much',
   },
   taxReturns: {
     id: `pdpp.application:application.errorModal.taxReturns`,

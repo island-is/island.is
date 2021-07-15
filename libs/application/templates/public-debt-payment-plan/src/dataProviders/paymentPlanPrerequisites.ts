@@ -9,76 +9,12 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Logger } from '@nestjs/common'
-
-const queryPaymentScheduleDebts = `
-  query PaymentScheduleDebts {
-    paymentScheduleDebts {
-      nationalId
-      type
-      paymentSchedule
-      organization
-      explanation
-      totalAmount
-      chargetypes {
-        id
-        name
-        principal
-        intrest
-        expenses
-        total
-      }
-    }
-  }		
-`
-
-const queryPaymentScheduleConditions = `
-  query PaymentScheduleConditions {
-      paymentScheduleConditions {
-        nationalId
-        maxDebtAmount
-        maxDebtAmount
-        totalDebtAmount
-        minPayment
-        maxPayment
-        collectionActions
-        doNotOwe
-        maxDebt
-        oweTaxes
-        disposableIncome
-        taxReturns
-        vatReturns
-        citReturns
-        accommodationTaxReturns
-        withholdingTaxReturns
-        wageReturns
-        alimony
-    }
-  }
-`
-
-const queryPaymentScheduleEmployer = `
-  query PaymentScheduleEmployer {
-    paymentScheduleEmployer {
-      nationalId    
-      name
-    }
-  }
-`
-
-const queryPaymentScheduleInitialSchedule = `
-  query PaymentScheduleInitialSchedule($input: GetInitialScheduleInput!) {
-    paymentScheduleInitialSchedule (input : $input){
-      nationalId
-      scheduleType
-      minPayment
-      maxPayment
-      minCountMonth
-      maxCountMonth
-    }
-  }
-`
+import {
+  queryPaymentScheduleConditions,
+  queryPaymentScheduleDebts,
+  queryPaymentScheduleEmployer,
+  queryPaymentScheduleInitialSchedule,
+} from '../graphql/queries'
 
 interface PaymentPlanPrerequisitesProps {
   conditions: PaymentScheduleConditions
@@ -88,13 +24,6 @@ interface PaymentPlanPrerequisitesProps {
 }
 
 export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
-  constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-  ) {
-    super()
-  }
-
   type = 'PaymentPlanPrerequisitesProvider'
 
   async queryPaymentScheduleDebts(): Promise<PaymentScheduleDebts[]> {
@@ -206,8 +135,9 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
     }
   }
 
-  handleError(error: ErrorConstructor) {
-    this.logger.error(`Error in Payment Plan Prerequisites Provider: ${error}`)
+  handleError(error: Error | unknown) {
+    console.error(`Error in Payment Plan Prerequisites Provider:`, error)
+
     return Promise.reject('Failed to fetch data')
   }
 }

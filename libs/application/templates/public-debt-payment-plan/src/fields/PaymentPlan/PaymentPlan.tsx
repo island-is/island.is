@@ -8,6 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import HtmlParser from 'react-html-parser'
 import { useLazyDistribution } from '../../hooks/useLazyDistribution'
 import {
   PaymentModeState,
@@ -99,11 +100,21 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   } = useDebouncedSliderValues(currentAnswers)
 
   useEffect(() => {
-    if (payment) {
+    if (payment && paymentMode !== undefined && initialMinMaxData) {
       setIsLoading(true)
       getDistributionCallback({
-        monthAmount: paymentMode === AMOUNT ? debouncedAmount : null,
-        monthCount: paymentMode === MONTHS ? debouncedMonths : null,
+        monthAmount:
+          paymentMode === AMOUNT
+            ? debouncedAmount === undefined
+              ? initialMinMaxData?.minPayment
+              : debouncedAmount
+            : null,
+        monthCount:
+          paymentMode === MONTHS
+            ? debouncedMonths === undefined
+              ? initialMinMaxData?.maxCountMonth
+              : debouncedMonths
+            : null,
         totalAmount: payment.totalAmount,
         scheduleType: payment.type,
       })
@@ -112,8 +123,10 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
           setIsLoading(false)
         })
         .catch((error) => {
-          // Do something?
-          console.log('An error occured fetching payment distribution: ', error)
+          console.error(
+            'An error occured fetching payment distribution: ',
+            error,
+          )
         })
     }
   }, [
@@ -122,6 +135,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     getDistributionCallback,
     payment,
     paymentMode,
+    initialMinMaxData,
   ])
 
   const handleSelectPaymentMode = (mode: any) => {
@@ -149,36 +163,35 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     const monthlyPayments = distributionData.payments[0].payment
     const lastMonthsPayment =
       distributionData.payments[distributionData.payments.length - 1].payment
+    let count = 0
 
     if (monthlyPayments === lastMonthsPayment) {
-      return (
-        <Box display="flex" justifyContent="flexEnd">
-          <Text variant="small" fontWeight="semiBold">
-            <span>Greiðsla </span>
-            <span className={styles.valueLabel}>
-              {formatIsk(monthlyPayments)}{' '}
-            </span>
-            <span>
-              í {distributionData.payments.length}{' '}
-              {distributionData.payments.length === 1 ? 'mánuð' : 'mánuði'}.
-            </span>
-          </Text>
-        </Box>
-      )
+      count = distributionData.payments.length === 1 ? 0 : 1
+    } else {
+      count = 2
     }
 
     return (
       <Box display="flex" justifyContent="flexEnd">
         <Text variant="small" fontWeight="semiBold">
-          <span>Greiðsla </span>
-          <span className={styles.valueLabel}>
-            {formatIsk(monthlyPayments)}{' '}
-          </span>
-          <span>í {distributionData.payments.length - 1} mánuði og </span>
-          <span className={styles.valueLabel}>
-            {formatIsk(lastMonthsPayment)}{' '}
-          </span>
-          <span>á {distributionData.payments.length}. mánuði.</span>
+          {formatMessage(paymentPlan.labels.sliderDescriptor, {
+            count,
+            monthlyPayments: HtmlParser(
+              `<span class="${styles.valueLabel}">${formatIsk(
+                monthlyPayments,
+              )}</span>`,
+            ),
+            monthsAmount:
+              count === 0 || count === 1
+                ? distributionData.payments.length
+                : distributionData.payments.length - 1,
+            lastMonthsPayment: HtmlParser(
+              `<span class="${styles.valueLabel}">${formatIsk(
+                lastMonthsPayment,
+              )}</span>`,
+            ),
+            lastMonth: distributionData.payments.length,
+          })}
         </Text>
       </Box>
     )
@@ -255,9 +268,9 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
           <AccordionItem
             id="payment-plan-table"
             label="Greiðsluáætlun skuldar"
-            visibleContent={
-              <Text>Hér er hægt að sjá heildargreiðsluáætlun skuldar</Text>
-            }
+            visibleContent={formatMessage(
+              paymentPlan.labels.distributionDataTitle,
+            )}
             startExpanded
           >
             <PaymentPlanTable
