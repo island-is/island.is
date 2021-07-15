@@ -4,7 +4,7 @@ export const whoIsTheNotificationFor = {
   general: defineMessages({
     sectionTitle: {
       id: 'an.application:whoIsTheNotificationFor.sectionTitle',
-      defaultMessage: 'Fyrir hvern',
+      defaultMessage: 'Fyrir hvern ertu að tilkynna slys?',
       description: 'Section title for who is the notifaction for',
     },
     heading: {

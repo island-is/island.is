@@ -225,11 +225,11 @@ export const InformationAndDataProviderForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'whoIsTheNotificationFor',
+      id: 'whoIsTheNotificationFor.section',
       title: whoIsTheNotificationFor.general.sectionTitle,
       children: [
         buildMultiField({
-          id: 'whoIsTheNotificationFor.multi',
+          id: 'whoIsTheNotificationFor',
           title: whoIsTheNotificationFor.general.heading,
           description: whoIsTheNotificationFor.general.description,
           children: [
