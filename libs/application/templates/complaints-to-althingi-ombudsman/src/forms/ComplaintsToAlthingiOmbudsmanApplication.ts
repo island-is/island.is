@@ -462,7 +462,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       title: section.attachments,
       children: [
         buildFileUploadField({
-          id: 'attachments.fileUpload',
+          id: 'attachments.documents',
           title: attachments.title,
           introduction: attachments.introduction,
           uploadHeader: attachments.uploadHeader,

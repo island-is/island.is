@@ -24,10 +24,6 @@ import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
       xroadPath: XROAD_PATH,
       xroadClientId: XROAD_CLIENT_ID,
       secret: DRIVING_LICENSE_SECRET,
-      replaceInPath: {
-        from: DRIVING_LICENSE_PATH_REPLACEMENT_FROM,
-        to: DRIVING_LICENSE_PATH_REPLACEMENT_TO,
-      }
     }),
   ],
 })

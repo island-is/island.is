@@ -2,12 +2,14 @@ import { PaymentScheduleDistribution } from '@island.is/api/schema'
 import {
   Box,
   Button,
-  LoadingIcon,
+  LoadingDots,
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import React, { useState } from 'react'
+import { paymentPlanTable } from '../../../lib/messages'
 
 interface Props {
   isLoading: boolean
@@ -44,24 +46,38 @@ const TableRow = ({
 
 export const PaymentPlanTable = ({ isLoading, data, totalAmount }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const { formatMessage } = useLocale()
 
   const handleExpandTable = () => setIsExpanded(!isExpanded)
 
   return (
     <>
       {isLoading && (
-        <Box display="flex" alignItems="center" justifyContent="center">
-          <LoadingIcon animate size={50} />
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          marginTop={2}
+        >
+          <LoadingDots large color="gradient" />
         </Box>
       )}
       {!isLoading && (
         <T.Table>
           <T.Head>
             <T.Row>
-              <T.HeadData>Gjalddagi</T.HeadData>
-              <T.HeadData>Eftirstöðvar</T.HeadData>
-              <T.HeadData>Innborgun</T.HeadData>
-              <T.HeadData>Greiðsla alls</T.HeadData>
+              <T.HeadData>
+                {formatMessage(paymentPlanTable.table.head.dueDate)}
+              </T.HeadData>
+              <T.HeadData>
+                {formatMessage(paymentPlanTable.table.head.remaining)}
+              </T.HeadData>
+              <T.HeadData>
+                {formatMessage(paymentPlanTable.table.head.payment)}
+              </T.HeadData>
+              <T.HeadData>
+                {formatMessage(paymentPlanTable.table.head.totalPayment)}
+              </T.HeadData>
             </T.Row>
           </T.Head>
           <T.Body>
@@ -79,7 +95,9 @@ export const PaymentPlanTable = ({ isLoading, data, totalAmount }: Props) => {
                           onClick={handleExpandTable}
                           size="small"
                         >
-                          Sjá alla gjalddaga
+                          {formatMessage(
+                            paymentPlanTable.table.labels.seeAllDates,
+                          )}
                         </Button>
                       </Box>
                     </T.Data>
@@ -98,7 +116,9 @@ export const PaymentPlanTable = ({ isLoading, data, totalAmount }: Props) => {
             )}
             <T.Row>
               <T.Data>
-                <Text variant="h5">Heildarupphæð</Text>
+                <Text variant="h5">
+                  {formatMessage(paymentPlanTable.table.labels.totalAmount)}
+                </Text>
               </T.Data>
               <T.Data />
               <T.Data />
@@ -117,7 +137,9 @@ export const PaymentPlanTable = ({ isLoading, data, totalAmount }: Props) => {
                       onClick={handleExpandTable}
                       size="small"
                     >
-                      Sjá minna
+                      {formatMessage(
+                        paymentPlanTable.table.labels.seeLessDates,
+                      )}
                     </Button>
                   </Box>
                 </T.Data>

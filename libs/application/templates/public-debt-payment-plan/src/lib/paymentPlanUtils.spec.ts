@@ -34,7 +34,7 @@ describe('prerequisitesFailed', () => {
     const application = buildApplication()
     const res = prerequisitesFailed(application.externalData)
 
-    expect(res).toBeTruthy()
+    expect(res).toBe(true)
   })
   it('should return a true value since the maxDebt prerequisite was false and caused the function to fail.', () => {
     const application = buildApplication({
@@ -58,7 +58,7 @@ describe('prerequisitesFailed', () => {
     })
     const res = prerequisitesFailed(application.externalData)
 
-    expect(res).toBeTruthy()
+    expect(res).toBe(true)
   })
 
   it('should return false since all prerequisites where true and therefore did not fail.', () => {
@@ -83,6 +83,6 @@ describe('prerequisitesFailed', () => {
     })
     const res = prerequisitesFailed(application.externalData)
 
-    expect(res).toBeFalsy()
+    expect(res).toBe(false)
   })
 })
