@@ -22,6 +22,7 @@ export type ButtonBarProps = {
   actions: {
     saveStatus: () => void
     createDraft: () => void
+    updateDraft: () => void
     goBack?: () => void
     goForward?: () => void
     propose?: () => void
@@ -31,7 +32,14 @@ export type ButtonBarProps = {
 export const ButtonBar = (props: ButtonBarProps) => {
   const { stepNav, actions, id } = props
   const history = useHistory()
-  const { goBack, goForward, saveStatus, createDraft, propose } = actions
+  const {
+    goBack,
+    goForward,
+    saveStatus,
+    createDraft,
+    updateDraft,
+    propose,
+  } = actions
   const t = useIntl().formatMessage
   const [deleteDraftRegulationMutation] = useMutation(
     DELETE_DRAFT_REGULATION_MUTATION,
@@ -104,7 +112,7 @@ export const ButtonBar = (props: ButtonBarProps) => {
 
       <Box className={s.save}>
         <Button
-          onClick={newDraft ? createDraft : saveStatus}
+          onClick={newDraft ? createDraft : updateDraft}
           preTextIcon="save"
           preTextIconType="outline"
           colorScheme="light"

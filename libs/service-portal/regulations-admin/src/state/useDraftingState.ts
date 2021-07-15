@@ -53,6 +53,12 @@ export const CREATE_DRAFT_REGULATION_MUTATION = gql`
   }
 `
 
+export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
+  mutation UpdateDraftRegulationMutation($input: EditDraftRegulationInput!) {
+    updateDraftRegulationById(input: $input)
+  }
+`
+
 export type DraftIdFromParam = 'new' | RegulationDraftId
 
 export type StepNav = {
@@ -293,8 +299,7 @@ const actionHandlers: {
     if (!state.draft) {
       return
     }
-    // state.draft[name].value = value
-    state.draft[name] = value
+    if (state.draft?.[name]?.value) state.draft[name].value = value
   },
 
   SHIP: (state) => {
@@ -404,6 +409,9 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   }, [loading, error])
 
   const [createDraftRegulation] = useMutation(CREATE_DRAFT_REGULATION_MUTATION)
+  const [updateDraftRegulationById] = useMutation(
+    UPDATE_DRAFT_REGULATION_MUTATION,
+  )
 
   const stepNav = steps[stepName]
 
@@ -488,6 +496,31 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
             })
           }
         : () => undefined,
+    updateDraft: state.draft
+      ? () => {
+          updateDraftRegulationById({
+            variables: {
+              input: {
+                id: state.draft?.id,
+                body: {
+                  drafting_status: 'draft',
+                  title: state.draft?.title?.value,
+                  text: state.draft?.text?.value, // (text + appendix + comments)
+                  drafting_notes: '<p>POST test.</p>', // Ritill
+                  ministryId: state.draft?.ministry?.value,
+                  ideal_publish_date: state.draft?.idealPublishDate?.value,
+                  type: 'base', // Ritill
+                  name: 'TEST NAME', // OPTIONAL ??
+                  signature_date: '2021-07-13', // OPTIONAL ??
+                  effective_date: '2021-07-13', // OPTIONAL ??
+                },
+              },
+            },
+          }).then((res) => {
+            console.log('!!DRAFT UPDATED!! ', res)
+          })
+        }
+      : () => undefined,
     propose:
       draft && !isEditor
         ? () => {

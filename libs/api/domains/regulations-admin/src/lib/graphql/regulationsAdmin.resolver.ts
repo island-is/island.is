@@ -5,6 +5,7 @@ import { RegulationsService } from '@island.is/clients/regulations'
 import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
 import { CreateDraftRegulationInput } from './dto/createDraftRegulation.input'
 import { DeleteDraftRegulationInput } from './dto/deleteDraftRegulation.input'
+import { EditDraftRegulationInput } from './dto/editDraftRegulation.input'
 // import { DraftRegulationModel } from './models/draftRegulation.model'
 import { DeleteDraftRegulationModel } from './models/deleteDraftRegulation.model'
 import type { User } from '@island.is/auth-nest-tools'
@@ -173,6 +174,19 @@ export class RegulationsAdminResolver {
     @CurrentUser() { authorization }: User,
   ): Promise<any> {
     return this.regulationsAdminApiService.create(input, authorization ?? '')
+  }
+
+  @Mutation(() => graphqlTypeJson)
+  // @Mutation(() => CreateDraftRegulationModel)
+  async updateDraftRegulationById(
+    @Args('input') input: EditDraftRegulationInput,
+    @CurrentUser() { authorization }: User,
+  ): Promise<any> {
+    return this.regulationsAdminApiService.updateById(
+      input.id,
+      input.body,
+      authorization ?? '',
+    )
   }
 
   @Mutation(() => DeleteDraftRegulationModel)

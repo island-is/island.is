@@ -57,7 +57,9 @@ export const EditBasics = (props: EditBasicsProps) => {
 
   const [titleValue, setTitleValue] = useState(draft.title?.value)
   const [ministryValue, setMinistryValue] = useState(draft.ministry?.value)
-  const [dateValue, setDateValue] = useState(toISODate(new Date()))
+  const [dateValue, setDateValue] = useState(
+    draft.idealPublishDate?.value || toISODate(new Date()),
+  )
 
   const textRef = useRef(() => draft.text.value)
 
@@ -152,6 +154,7 @@ export const EditBasics = (props: EditBasicsProps) => {
           label={t(msg.idealPublishDate)}
           placeholderText={t(msg.idealPublishDate_soon)}
           minDate={new Date()}
+          selected={new Date(dateValue)}
           handleChange={(date: Date) => setDateValue(toISODate(date))}
         />
       </Wrap>
