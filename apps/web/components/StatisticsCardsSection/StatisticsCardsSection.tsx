@@ -2,7 +2,6 @@ import React from 'react'
 import { GridContainer, Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { StatisticsCard, SimpleSlider } from '@island.is/web/components'
-import { ImageProps } from '@island.is/island-ui/contentful'
 
 interface CardImageprops {
   title?: string
@@ -60,7 +59,7 @@ export const StatisticsCardsSection = ({
               />
             )
           })}
-          carousleContoler
+          carouselController
           logo
         />
       </Box>

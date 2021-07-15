@@ -32,7 +32,7 @@ interface SimpleSliderProps {
   breakpoints?: SlideState['breakpoints']
   slideWidthOffset?: SlideState['slideWidthOffset']
   items: ReactNode[]
-  carousleContoler?: boolean
+  carouselController?: boolean
   logo?: boolean
 }
 
@@ -52,7 +52,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
   slideWidthOffset = 0,
   breakpoints = {},
   title,
-  carousleContoler,
+  carouselController,
   logo,
 }) => {
   const start = useRef(0)
@@ -189,7 +189,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
         </Box>
       )}
       <Box className={styles.nav}>
-        {!carousleContoler && (
+        {!carouselController && (
           <Hidden above="sm">
             <Inline space={2}>
               {items.map((x, index) => {
@@ -253,7 +253,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
           })}
         </Box>
       )}
-      {carousleContoler && (
+      {carouselController && (
         <Box display={'flex'} justifyContent="flexEnd" marginTop={[3, 3, 4]}>
           <Inline space={2}>
             {items.map((x, index) => {
