@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import { MinistrySlug, toISODate } from '@island.is/regulations'
+import { MinistrySlug } from '@island.is/regulations'
 import {
   Box,
   Option,
@@ -57,9 +57,7 @@ export const EditBasics = (props: EditBasicsProps) => {
 
   const [titleValue, setTitleValue] = useState(draft.title?.value)
   const [ministryValue, setMinistryValue] = useState(draft.ministry?.value)
-  const [dateValue, setDateValue] = useState(
-    draft.idealPublishDate?.value || toISODate(new Date()),
-  )
+  const [dateValue, setDateValue] = useState(draft.idealPublishDate?.value)
 
   const textRef = useRef(() => draft.text.value)
 
@@ -81,7 +79,7 @@ export const EditBasics = (props: EditBasicsProps) => {
     ) as ReadonlyArray<Option>
   }, [ministries])
 
-  const onAnyInputChange = (data: { name: string; value: string }) => {
+  const onAnyInputChange = (data: { name: string; value: string | Date }) => {
     actions.updateState({ ...data })
   }
 
@@ -102,7 +100,7 @@ export const EditBasics = (props: EditBasicsProps) => {
   useEffect(() => {
     onAnyInputChange({
       name: 'idealPublishDate',
-      value: dateValue as string,
+      value: dateValue as Date,
     })
   }, [dateValue])
 
@@ -154,8 +152,8 @@ export const EditBasics = (props: EditBasicsProps) => {
           label={t(msg.idealPublishDate)}
           placeholderText={t(msg.idealPublishDate_soon)}
           minDate={new Date()}
-          selected={new Date(dateValue)}
-          handleChange={(date: Date) => setDateValue(toISODate(date))}
+          selected={dateValue ? new Date(dateValue) : null}
+          handleChange={(date: Date) => setDateValue(date)}
         />
       </Wrap>
     </>

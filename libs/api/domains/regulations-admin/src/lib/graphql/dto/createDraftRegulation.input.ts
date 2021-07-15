@@ -11,7 +11,7 @@ export class CreateDraftRegulationInput {
   @IsString()
   drafting_status!: string
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   @IsOptional()
   name?: string
@@ -41,12 +41,12 @@ export class CreateDraftRegulationInput {
   @IsOptional()
   ideal_publish_date?: string
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   @IsOptional()
   signature_date?: string
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   @IsOptional()
   effective_date?: string

@@ -1,31 +1,31 @@
 import React from 'react'
 
 import { RegulationDraft } from '@island.is/regulations/admin'
+import { ISODate, RegName } from '@island.is/regulations'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { Box, Stack, Text, TopicCard } from '@island.is/island-ui/core'
-import { mockShippedList, useMockQuery } from '../_mockData'
+// import { mockShippedList, useMockQuery } from '../_mockData'
 import { homeMessages as msg } from '../messages'
 import { prettyName } from '@island.is/regulations'
 import { useLocale } from '../utils'
 
-// const ShippedRegulationsQuery = gql`
-//   query ShippedRegulationsQuery {
-//     shippedRegulations {
-//       id
-//       name
-//       title
-//       draftStatus
-//       idealPublishDate
-//     }
-//   }
-// `
-
 const ShippedRegulationsQuery = gql`
   query ShippedRegulationsQuery {
-    getShippedRegulations
+    getShippedRegulations {
+      id
+      name
+      title
+      idealPublishDate
+    }
   }
 `
+
+// const ShippedRegulationsQuery = gql`
+//   query ShippedRegulationsQuery {
+//     getShippedRegulations
+//   }
+// `
 
 export const ShippedRegulations = () => {
   const { formatMessage, formatDateFns } = useLocale()
@@ -53,10 +53,10 @@ export const ShippedRegulations = () => {
         {getShippedRegulations.map((shipped: RegulationDraft) => (
           <TopicCard
             key={shipped.id}
-            tag={formatDateFns(shipped.ideal_publish_date)}
+            tag={formatDateFns(shipped.idealPublishDate as ISODate)}
             onClick={() => undefined}
           >
-            {prettyName(shipped.name)} {shipped.title}
+            {prettyName(shipped.name as RegName)} {shipped.title}
           </TopicCard>
         ))}
       </Stack>

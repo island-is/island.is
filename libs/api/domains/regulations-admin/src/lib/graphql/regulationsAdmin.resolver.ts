@@ -6,7 +6,7 @@ import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
 import { CreateDraftRegulationInput } from './dto/createDraftRegulation.input'
 import { DeleteDraftRegulationInput } from './dto/deleteDraftRegulation.input'
 import { EditDraftRegulationInput } from './dto/editDraftRegulation.input'
-// import { DraftRegulationModel } from './models/draftRegulation.model'
+import { DraftRegulationModel } from './models/draftRegulation.model'
 import { DeleteDraftRegulationModel } from './models/deleteDraftRegulation.model'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -117,8 +117,7 @@ export class RegulationsAdminResolver {
     }
   }
 
-  // @Query(() => [DraftRegulationModel])
-  @Query(() => graphqlTypeJson)
+  @Query(() => [DraftRegulationModel])
   async getShippedRegulations(@CurrentUser() { authorization }: User) {
     return await this.regulationsAdminApiService.getShippedRegulations(
       authorization,

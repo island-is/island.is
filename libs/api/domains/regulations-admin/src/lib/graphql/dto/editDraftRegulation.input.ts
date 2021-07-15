@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql'
+import { Field, InputType, PartialType } from '@nestjs/graphql'
 import { IsString, IsOptional } from 'class-validator'
 
 @InputType()
@@ -7,45 +7,48 @@ export class EditDraftBody {
   @IsString()
   drafting_status!: string
 
-  @Field()
-  @IsOptional()
-  name?: string
-
-  @Field()
   @IsString()
-  @IsOptional()
-  title?: string
-
-  @Field()
-  @IsString()
+  @Field({ nullable: true })
   @IsOptional()
   text!: string
 
-  @Field()
   @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  name?: string
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  title?: string
+
+  @IsString()
+  @Field({ nullable: true })
   @IsOptional()
   drafting_notes?: string
 
-  @Field()
   @IsString()
+  @Field({ nullable: true })
   @IsOptional()
   ministryId?: string
 
-  @Field()
   @IsString()
+  @Field({ nullable: true })
   @IsOptional()
   ideal_publish_date?: string
 
-  @Field()
+  @IsString()
+  @Field({ nullable: true })
   @IsOptional()
   signature_date?: string
 
-  @Field()
+  @IsString()
+  @Field({ nullable: true })
   @IsOptional()
   effective_date?: string
 
-  @Field()
   @IsString()
+  @Field({ nullable: true })
   @IsOptional()
   type?: string
 }

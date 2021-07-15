@@ -123,7 +123,7 @@ export type RegDraftForm = BodyDraftFields & {
   idealPublishDate: DraftField<Date | undefined>
   signatureDate: DraftField<Date | undefined>
   effectiveDate: DraftField<Date | undefined>
-  lawChapters: DraftField<ReadonlyArray<LawChapterSlug>>
+  lawChapters: DraftField<ReadonlyArray<LawChapterSlug> | undefined>
   ministry: DraftField<MinistrySlug | undefined>
   type: DraftField<RegulationType | undefined>
 
@@ -251,7 +251,7 @@ type Action =
   | { type: 'LOADING_DRAFT_ERROR'; error: Error }
   | { type: 'SAVING_STATUS' }
   | { type: 'SAVING_STATUS_DONE'; error?: Error }
-  | ({ type: 'UPDATE_PROP' } & NameValuePair<Reg>)
+  | ({ type: 'UPDATE_PROP' } & NameValuePair<any>) // TODO: NameValuePair<Reg>
   | { type: 'SHIP' }
 
 type ActionName = Action['type']
@@ -318,7 +318,11 @@ const draftingStateReducer: Reducer<DraftingState, Action> = (
 ) => {
   setAutoFreeze(false)
   const newState = produce(state, (draft) =>
-    actionHandlers[action.type](draft, action),
+    actionHandlers[action.type](
+      draft,
+      // @ts-expect-error  (Can't get this to work. FML)
+      action,
+    ),
   )
   setAutoFreeze(true)
   return newState
@@ -455,7 +459,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
           })
         }
       : () => undefined,
-    updateState: (data: { name: String; value: String }) => {
+    updateState: (data: { name: string; value: string }) => {
       dispatch({
         type: 'UPDATE_PROP',
         name: data.name,
@@ -476,9 +480,6 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                   ministry_id: state.draft?.ministry,
                   ideal_publish_date: state.draft?.idealPublishDate,
                   type: 'base', // Ritill
-                  name: 'TEST NAME', // OPTIONAL ??
-                  signature_date: '2021-07-13', // OPTIONAL ??
-                  effective_date: '2021-07-13', // OPTIONAL ??
                 },
               },
             }).then((res) => {
@@ -503,16 +504,10 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
               input: {
                 id: state.draft?.id,
                 body: {
-                  drafting_status: 'draft',
                   title: state.draft?.title?.value,
                   text: state.draft?.text?.value, // (text + appendix + comments)
-                  drafting_notes: '<p>POST test.</p>', // Ritill
                   ministryId: state.draft?.ministry?.value,
                   ideal_publish_date: state.draft?.idealPublishDate?.value,
-                  type: 'base', // Ritill
-                  name: 'TEST NAME', // OPTIONAL ??
-                  signature_date: '2021-07-13', // OPTIONAL ??
-                  effective_date: '2021-07-13', // OPTIONAL ??
                 },
               },
             },
