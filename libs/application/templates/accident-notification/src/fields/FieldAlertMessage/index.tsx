@@ -1,4 +1,9 @@
-import { AlertMessage, Button, Link } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  AlertMessageType,
+  Button,
+  Link,
+} from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
@@ -11,6 +16,7 @@ type FieldAlertMessageProps = {
         title: string
         url: string
       }[]
+      type: AlertMessageType
     }
   }
 }
@@ -25,7 +31,7 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
   return (
     <Box marginBottom={5}>
       <AlertMessage
-        type="info"
+        type={props.type ?? 'info'}
         title={formatText(title, application, formatMessage)}
         message={
           <>

@@ -13,7 +13,11 @@ import {
 } from '@island.is/application/core'
 //replace
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
-import { DataProviderTypes, WhoIsTheNotificationForEnum } from '../types'
+import {
+  AttachmentsEnum,
+  DataProviderTypes,
+  WhoIsTheNotificationForEnum,
+} from '../types'
 import {
   externalData,
   application,
@@ -23,6 +27,7 @@ import {
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
+import { attachments } from '../lib/messages/attachments'
 
 export const InformationAndDataProviderForm: Form = buildForm({
   id: 'InformationAndDataProviderForm',
@@ -251,6 +256,46 @@ export const InformationAndDataProviderForm: Form = buildForm({
                 },
               ],
             }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'attachments.section',
+      title: attachments.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'attachments',
+          title: attachments.general.heading,
+          children: [
+            buildRadioField({
+              id: 'attachments.injuryCertificate',
+              title: '',
+              description: attachments.general.description,
+              options: [
+                {
+                  value: AttachmentsEnum.INJURYCERTIFICATE,
+                  label: attachments.labels.injuryCertificate,
+                },
+                {
+                  value: AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
+                  label: attachments.labels.hospitalSendsCertificate,
+                },
+                {
+                  value: AttachmentsEnum.SENDCERTIFICATELATER,
+                  label: attachments.labels.sendCertificateLater,
+                },
+              ],
+            }),
+            buildCustomField(
+              {
+                id: 'attachments.injuryCertificate.alert',
+                title: attachments.labels.alertMessage,
+                description: attachments.general.alertMessage,
+                component: 'FieldAlertMessage',
+              },
+              { type: 'warning' },
+            ),
           ],
         }),
       ],
