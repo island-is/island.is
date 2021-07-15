@@ -9,11 +9,19 @@ import {
   buildCustomField,
   buildRadioField,
   buildSubSection,
+  buildTextField,
 } from '@island.is/application/core'
+//replace
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import { DataProviderTypes } from '../types'
-import { externalData, application, hindrances } from '../lib/messages'
+import {
+  externalData,
+  application,
+  hindrances,
+  applicantInformation,
+} from '../lib/messages'
 import { NO, YES } from '../constants'
+import { AccidentNotification } from '../lib/dataSchema'
 
 export const InformationAndDataProviderForm: Form = buildForm({
   id: 'InformationAndDataProviderForm',
@@ -87,7 +95,7 @@ export const InformationAndDataProviderForm: Form = buildForm({
           children: [
             buildRadioField({
               id: 'timePassedHindrance',
-              defaultValue: YES,
+              defaultValue: NO,
               options: [
                 { value: YES, label: application.general.yesOptionLabel },
                 { value: NO, label: application.general.noOptionLabel },
@@ -101,7 +109,7 @@ export const InformationAndDataProviderForm: Form = buildForm({
               id: 'timePassedHindranceFielAlertMessage',
               title: hindrances.timePassedHindrance.errorTitle,
               description: hindrances.timePassedHindrance.errorDescription,
-              condition: (formValue) => formValue.timePassedHindrance === NO,
+              condition: (formValue) => formValue.timePassedHindrance === YES,
             }),
           ],
         }),
@@ -126,6 +134,90 @@ export const InformationAndDataProviderForm: Form = buildForm({
               title: hindrances.carAccident.errorTitle,
               description: hindrances.carAccident.errorDescription,
               condition: (formValue) => formValue.carAccidentHindrance === YES,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'informationAboutApplicant',
+      title: applicantInformation.general.title,
+      children: [
+        buildMultiField({
+          id: 'applicantSection',
+          title: applicantInformation.general.title,
+          description: applicantInformation.general.description,
+          children: [
+            buildTextField({
+              id: 'applicant.name',
+              title: applicantInformation.labels.name,
+              backgroundColor: 'blue',
+              disabled: true,
+              required: true,
+              defaultValue: (application: AccidentNotification) =>
+                application.externalData?.nationalRegistry?.data?.fullName,
+            }),
+            buildTextField({
+              id: 'applicant.nationalId',
+              title: applicantInformation.labels.nationalId,
+              format: '######-####',
+              width: 'half',
+              backgroundColor: 'blue',
+              disabled: true,
+              required: true,
+              defaultValue: (application: AccidentNotification) =>
+                application.externalData?.nationalRegistry?.data?.nationalId,
+            }),
+            buildTextField({
+              id: 'applicant.address',
+              title: applicantInformation.labels.address,
+              width: 'half',
+              backgroundColor: 'blue',
+              disabled: true,
+              required: true,
+              defaultValue: (application: AccidentNotification) =>
+                application.externalData?.nationalRegistry?.data?.address
+                  ?.streetAddress,
+            }),
+            buildTextField({
+              id: 'applicant.postalCode',
+              title: applicantInformation.labels.postalCode,
+              width: 'half',
+              backgroundColor: 'blue',
+              disabled: true,
+              required: true,
+              defaultValue: (application: AccidentNotification) => {
+                console.log(application.externalData)
+                return application.externalData?.nationalRegistry?.data?.address
+                  ?.postalCode
+              },
+            }),
+            buildTextField({
+              id: 'applicant.city',
+              title: applicantInformation.labels.city,
+              width: 'half',
+              backgroundColor: 'blue',
+              disabled: true,
+              required: true,
+              defaultValue: (application: AccidentNotification) =>
+                application.externalData?.nationalRegistry?.data?.address?.city,
+            }),
+            buildTextField({
+              id: 'applicant.email',
+              title: applicantInformation.labels.email,
+              width: 'half',
+              variant: 'email',
+              defaultValue: (application: AccidentNotification) =>
+                application.externalData?.userProfile?.data?.email,
+            }),
+            buildTextField({
+              id: 'applicant.phoneNumber',
+              title: applicantInformation.labels.tel,
+              format: '###-####',
+              width: 'half',
+              variant: 'tel',
+              defaultValue: (application: AccidentNotification) =>
+                application.externalData?.userProfile?.data?.mobilePhoneNumber,
             }),
           ],
         }),
