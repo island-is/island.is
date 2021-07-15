@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import { error } from './messages/error'
 import * as kennitala from 'kennitala'
+import { WhoIsTheNotificationForEnum } from '../types'
 
 export enum OnBehalf {
   MYSELF = 'myself',
@@ -50,6 +51,13 @@ export const AccidentNotificationSchema = z.object({
     city: z.string().nonempty(error.required.defaultMessage),
     email: z.string().email().optional(),
     phoneNumber: z.string().optional(),
+  }),
+  whoIsTheNotificationFor: z.object({
+    answer: z.enum([
+      WhoIsTheNotificationForEnum.JURIDICALPERSON,
+      WhoIsTheNotificationForEnum.ME,
+      WhoIsTheNotificationForEnum.POWEROFATTORNEY,
+    ]),
   }),
 })
 
