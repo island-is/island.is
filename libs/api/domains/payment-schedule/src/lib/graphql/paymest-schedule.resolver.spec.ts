@@ -81,7 +81,7 @@ describe('PaymentScheduleResolver', () => {
             ),
             getPaymentDistribtion: jest.fn((nationalId: string) => ({
               nationalId: '1234567890',
-              scheduleType: ScheduleType,
+              scheduleType: ScheduleType.FinesAndLegalCost,
               payments: [
                 {
                   dueDate: mockDate,
