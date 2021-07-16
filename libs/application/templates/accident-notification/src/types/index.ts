@@ -8,3 +8,9 @@ export enum WhoIsTheNotificationForEnum {
   ME = 'me',
   POWEROFATTORNEY = 'powerOfAttorney',
 }
+
+export enum AttachmentsEnum {
+  INJURYCERTIFICATE = 'injuryCertificate',
+  HOSPITALSENDSCERTIFICATE = 'hospitalSendsCertificate',
+  SENDCERTIFICATELATER = 'sendCertificateLater',
+}
