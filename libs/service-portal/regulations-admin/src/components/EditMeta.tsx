@@ -22,6 +22,7 @@ import { RegulationMinistry } from '@island.is/regulations/web'
 import { editorMsgs as msg } from '../messages'
 import { emptyOption, findValueOption } from '../utils'
 import { MinistrySlug } from '@island.is/regulations'
+import { LawChaptersSelect } from './LawChaptersSelect'
 
 type WrapProps = {
   legend?: string
@@ -29,8 +30,14 @@ type WrapProps = {
 }
 
 const MinistriesQuery = gql`
-  query RegulationMinistriesQuery {
-    getRegulationsMinistries
+  query DraftRegulationMinistriesQuery {
+    getDraftRegulationsMinistries
+  }
+`
+
+const LawChaptersQuery = gql`
+  query DraftRegulationsLawChaptersQuery {
+    getDraftRegulationsLawChapters
   }
 `
 
@@ -57,11 +64,18 @@ export const EditMeta: StepComponent = (props) => {
   const textRef = useRef(() => draft.text)
 
   const {
-    data: getRegulationsMinistriesData,
-    loading: getRegulationsMinistriesLoading,
+    data: getDraftRegulationsMinistriesData,
+    loading: getDraftRegulationsMinistriesLoading,
   } = useQuery<Query>(MinistriesQuery)
-  const { getRegulationsMinistries: ministries } =
-    getRegulationsMinistriesData || {}
+  const { getDraftRegulationsMinistries: ministries } =
+    getDraftRegulationsMinistriesData || {}
+
+  const {
+    data: getDraftRegulationsLawChaptersData,
+    loading: getDraftRegulationsLawChaptersLoading,
+  } = useQuery<Query>(LawChaptersQuery)
+  const { getDraftRegulationsLawChapters: lawChapters } =
+    getDraftRegulationsLawChaptersData || {}
 
   const ministryOptions = useMemo(() => {
     return [emptyOption(t(msg.chooseMinistry))].concat(
@@ -77,9 +91,6 @@ export const EditMeta: StepComponent = (props) => {
   return (
     <>
       <Wrap>
-        <p>Meta step</p>
-      </Wrap>
-      <Wrap>
         <Select
           name="rn"
           isSearchable
@@ -94,6 +105,14 @@ export const EditMeta: StepComponent = (props) => {
             })
           }
           size="sm"
+        />
+      </Wrap>
+      <Wrap>
+        <LawChaptersSelect
+          lawChapters={lawChapters}
+          activeChapters={draft.lawChapters.value}
+          addChapter={() => undefined}
+          removeChapter={() => undefined}
         />
       </Wrap>
     </>
