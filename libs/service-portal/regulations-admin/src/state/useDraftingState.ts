@@ -485,7 +485,10 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
           }
         : () => undefined,
       // FIXME: rename to updateProp??
-      updateState: (data: Omit<UpdateAction, 'type'>) => {
+      updateState: <Prop extends RegDraftFormSimpleProps>(data: {
+        name: Prop
+        value: RegDraftForm[Prop]['value']
+      }) => {
         // @ts-expect-error  (FML! FIXME: make this nicer)
         dispatch({ type: 'UPDATE_PROP', ...data })
       },
@@ -573,5 +576,5 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
 export type StepComponent = (props: {
   draft: RegDraftForm
   new?: boolean
-  actions?: ReturnType<typeof useDraftingState>['actions'] // FIXME: Ick! Ack!
+  actions: ReturnType<typeof useDraftingState>['actions'] // FIXME: Ick! Ack!
 }) => ReturnType<FC>
