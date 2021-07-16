@@ -8,7 +8,7 @@ import {
 import { Query } from '@island.is/api/schema'
 import { AuthContextType, useAuth } from '@island.is/auth/react'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { Reducer, useEffect, useMemo, useReducer } from 'react'
+import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
 import { produce, setAutoFreeze } from 'immer'
 import { useHistory, generatePath } from 'react-router-dom'
 import { Step } from '../types'
@@ -554,3 +554,11 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     actions,
   }
 }
+
+// ===========================================================================
+
+export type StepComponent = (props: {
+  draft: RegDraftForm
+  new?: boolean
+  actions?: ReturnType<typeof useDraftingState>['actions'] // FIXME: Ick! Ack!
+}) => ReturnType<FC>

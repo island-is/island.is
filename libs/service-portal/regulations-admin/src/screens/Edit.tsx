@@ -15,6 +15,7 @@ import {
   DraftIdFromParam,
   steps,
   RegDraftForm,
+  StepComponent,
 } from '../state/useDraftingState'
 import { MessageDescriptor } from 'react-intl'
 // import { gql, useQuery } from '@apollo/client'
@@ -30,12 +31,6 @@ import { MessageDescriptor } from 'react-intl'
 //     }
 //   }
 // `
-
-export type StepComponent = (props: {
-  draft: RegDraftForm
-  new?: boolean
-  actions?: any
-}) => ReturnType<FC>
 
 const stepData: Record<
   Step,

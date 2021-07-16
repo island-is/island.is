@@ -15,7 +15,11 @@ import { useIntl } from 'react-intl'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { HTMLText } from '@island.is/regulations'
-import { RegDraftForm, useDraftingState } from '../state/useDraftingState'
+import {
+  RegDraftForm,
+  useDraftingState,
+  StepComponent,
+} from '../state/useDraftingState'
 
 type WrapProps = {
   legend?: string
@@ -38,13 +42,7 @@ const Wrap = (props: WrapProps) => (
   </Box>
 )
 
-export type EditBasicsProps = {
-  draft: RegDraftForm
-  new?: boolean
-  actions?: any
-}
-
-export const EditBasics = (props: EditBasicsProps) => {
+export const EditBasics: StepComponent = (props) => {
   const t = useIntl().formatMessage
   const { draft, actions } = props
 
