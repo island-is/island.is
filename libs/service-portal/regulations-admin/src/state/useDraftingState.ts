@@ -8,7 +8,7 @@ import {
 import { Query } from '@island.is/api/schema'
 import { AuthContextType, useAuth } from '@island.is/auth/react'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { Reducer, useEffect, useReducer } from 'react'
+import { Reducer, useEffect, useMemo, useReducer } from 'react'
 import { produce, setAutoFreeze } from 'immer'
 import { useHistory, generatePath } from 'react-router-dom'
 import { Step } from '../types'
@@ -358,7 +358,6 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   const isEditor =
     useAuth().userInfo?.scopes?.includes(RegulationsAdminScope.manage) || false
 
-  const isNew = draftId === 'new'
   if (stepName === 'review' && !isEditor) {
     throw new Error()
   }
@@ -368,6 +367,8 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     { draftId, stepName, isEditor },
     getInitialState,
   )
+
+  const isNew = draftId === 'new'
 
   // const res = useMockQuery(
   //   draftId !== 'new' &&
@@ -410,7 +411,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     } else if (draft) {
       dispatch({ type: 'LOADING_DRAFT_SUCCESS', draft })
     }
-  }, [loading, error])
+  }, [loading, error, draft])
 
   const [createDraftRegulation] = useMutation(CREATE_DRAFT_REGULATION_MUTATION)
   const [updateDraftRegulationById] = useMutation(
@@ -424,107 +425,122 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   console.log('draft', draft)
   console.log('state', state)
 
-  const actions = {
-    // updateProp: (name: keyof ) => {
+  const actions = useMemo(() => {
+    const isNew = draftId === 'new'
 
-    // }
+    return {
+      // updateProp: (name: keyof ) => {
 
-    goBack:
-      draft && stepNav.prev
+      // }
+
+      goBack:
+        draft && stepNav.prev
+          ? () => {
+              history.replace(
+                generatePath(ServicePortalPath.RegulationsAdminEdit, {
+                  id: draftId,
+                  step: stepNav.prev,
+                }),
+              )
+            }
+          : undefined,
+      goForward:
+        draft && stepNav.next && (isEditor || stepNav.next !== 'review')
+          ? () => {
+              history.replace(
+                generatePath(ServicePortalPath.RegulationsAdminEdit, {
+                  id: draftId,
+                  step: stepNav.next,
+                }),
+              )
+            }
+          : undefined,
+      saveStatus: draft
         ? () => {
-            history.replace(
-              generatePath(ServicePortalPath.RegulationsAdminEdit, {
-                id: draftId,
-                step: stepNav.prev,
-              }),
-            )
-          }
-        : undefined,
-    goForward:
-      draft && stepNav.next && (isEditor || stepNav.next !== 'review')
-        ? () => {
-            history.replace(
-              generatePath(ServicePortalPath.RegulationsAdminEdit, {
-                id: draftId,
-                step: stepNav.next,
-              }),
-            )
-          }
-        : undefined,
-    saveStatus: draft
-      ? () => {
-          mockSave(draft).then(() => {
-            console.log('draft saveStatus', state)
-            history.push(ServicePortalPath.RegulationsAdminRoot)
-          })
-        }
-      : () => undefined,
-    updateState: (data: { name: string; value: string }) => {
-      dispatch({
-        type: 'UPDATE_PROP',
-        name: data.name,
-        value: data.value,
-      })
-    },
-    createDraft:
-      isNew && state.draft
-        ? () => {
-            createDraftRegulation({
-              variables: {
-                input: {
-                  id: uuid(),
-                  drafting_status: 'draft',
-                  title: state.draft?.title.value,
-                  text: state.draft?.text.value, // (text + appendix + comments)
-                  drafting_notes: '<p>POST test.</p>', // Ritill
-                  ministry_id: state.draft?.ministry.value,
-                  ideal_publish_date: state.draft?.idealPublishDate.value,
-                  type: 'base', // Ritill
-                },
-              },
-            }).then((res) => {
-              const newDraft = res.data
-                ? (res.data.createDraftRegulation as RegulationDraft)
-                : undefined
-              if (newDraft?.id) {
-                history.replace(
-                  generatePath(ServicePortalPath.RegulationsAdminEdit, {
-                    id: newDraft?.id,
-                    step: stepNav.next,
-                  }),
-                )
-              }
-            })
-          }
-        : () => undefined,
-    updateDraft: state.draft
-      ? () => {
-          updateDraftRegulationById({
-            variables: {
-              input: {
-                id: state.draft?.id,
-                body: {
-                  title: state.draft?.title?.value,
-                  text: state.draft?.text?.value, // (text + appendix + comments)
-                  ministryId: state.draft?.ministry?.value,
-                  ideal_publish_date: state.draft?.idealPublishDate?.value,
-                },
-              },
-            },
-          }).then((res) => {
-            console.log('!!DRAFT UPDATED!! ', res)
-          })
-        }
-      : () => undefined,
-    propose:
-      draft && !isEditor
-        ? () => {
-            mockSave({ ...draft, draftingStatus: 'proposal' }).then(() => {
+            mockSave(draft).then(() => {
+              console.log('draft saveStatus', state)
               history.push(ServicePortalPath.RegulationsAdminRoot)
             })
           }
-        : undefined,
-  }
+        : () => undefined,
+      updateState: (data: { name: string; value: string }) => {
+        dispatch({
+          type: 'UPDATE_PROP',
+          name: data.name,
+          value: data.value,
+        })
+      },
+      createDraft:
+        isNew && state.draft
+          ? () => {
+              createDraftRegulation({
+                variables: {
+                  input: {
+                    id: uuid(),
+                    drafting_status: 'draft',
+                    title: state.draft?.title.value,
+                    text: state.draft?.text.value, // (text + appendix + comments)
+                    drafting_notes: '<p>POST test.</p>', // Ritill
+                    ministry_id: state.draft?.ministry.value,
+                    ideal_publish_date: state.draft?.idealPublishDate.value,
+                    type: 'base', // Ritill
+                  },
+                },
+              }).then((res) => {
+                const newDraft = res.data
+                  ? (res.data.createDraftRegulation as RegulationDraft)
+                  : undefined
+                if (newDraft?.id) {
+                  history.replace(
+                    generatePath(ServicePortalPath.RegulationsAdminEdit, {
+                      id: newDraft?.id,
+                      step: stepNav.next,
+                    }),
+                  )
+                }
+              })
+            }
+          : () => undefined,
+      updateDraft: state.draft
+        ? () => {
+            updateDraftRegulationById({
+              variables: {
+                input: {
+                  id: state.draft?.id,
+                  body: {
+                    title: state.draft?.title?.value,
+                    text: state.draft?.text?.value, // (text + appendix + comments)
+                    ministryId: state.draft?.ministry?.value,
+                    ideal_publish_date: state.draft?.idealPublishDate?.value,
+                  },
+                },
+              },
+            }).then((res) => {
+              console.log('!!DRAFT UPDATED!! ', res)
+            })
+          }
+        : () => undefined,
+      propose:
+        draft && !isEditor
+          ? () => {
+              mockSave({ ...draft, draftingStatus: 'proposal' }).then(() => {
+                history.push(ServicePortalPath.RegulationsAdminRoot)
+              })
+            }
+          : undefined,
+    }
+  }, [
+    stepNav,
+    // TODO: Review the use of draft here, and remove if possible.
+    draft,
+    isEditor,
+    state,
+    draftId,
+
+    history, // NOTE: Should be immutable
+    createDraftRegulation, // NOTE: Should be immutable
+    updateDraftRegulationById, // NOTE: Should be immutable
+  ])
 
   return {
     state,

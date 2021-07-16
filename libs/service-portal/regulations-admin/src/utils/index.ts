@@ -78,7 +78,7 @@ export const getRSValue = (option: ValueType<OptionTypeBase>) => {
 
 export const emptyOption = (label?: string): Option => ({
   value: '',
-  label: label != null ? `– ${label} –` : '—',
+  label: label ? `– ${label} –` : '—',
 })
 
 /** Looks through a list of `Option`s for one with a matching

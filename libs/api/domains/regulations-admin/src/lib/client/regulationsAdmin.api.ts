@@ -72,7 +72,7 @@ export class RegulationsAdminApi extends RESTDataSource {
       `/draft_regulation/${regulationId}`,
       {},
       {
-        cacheOptions: { ttl: this.options.ttl },
+        // cacheOptions: { ttl: this.options.ttl },
         headers: { authorization },
       },
     )

@@ -1,6 +1,7 @@
 import {
   HTMLText,
   ISODate,
+  MinistrySlug,
   RegName,
   RegQueryName,
   Year,
@@ -26,13 +27,13 @@ export const demoRegulationsMinistries: RegulationMinistryList = [
     current: true,
     name: 'Forsætisráðuneyti',
     order: 1,
-    slug: 'fsrn',
+    slug: 'fsrn' as MinistrySlug,
   },
   {
     current: true,
     name: 'Atvinnuvega- og nýsköpunarráðuneyti',
     order: 2,
-    slug: 'avnsrn',
+    slug: 'avnsrn' as MinistrySlug,
   },
 ]
 
@@ -75,7 +76,7 @@ export const demoRegulation: Regulation = {
 
   ministry: {
     name: 'Samgöngu- og sveitarstjórnarráðuneyti',
-    slug: 'ssvrn',
+    slug: 'ssvrn' as MinistrySlug,
     current: false,
   },
   lawChapters: [],
