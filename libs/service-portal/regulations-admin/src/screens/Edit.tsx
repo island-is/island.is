@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react'
+import React, { Fragment } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
@@ -14,7 +14,6 @@ import {
   useDraftingState,
   DraftIdFromParam,
   steps,
-  RegDraftForm,
   StepComponent,
 } from '../state/useDraftingState'
 import { MessageDescriptor } from 'react-intl'
