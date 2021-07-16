@@ -247,7 +247,17 @@ type NameValuePair<O extends Record<string, any>> = {
   }
 }[keyof O]
 
-type RegDraftFormSimpleProps = 'draftingNotes' | 'authors'
+type RegDraftFormSimpleProps =
+  | 'title'
+  | 'text'
+  | 'idealPublishDate' // This prop needs its own action that checks for working days and updates the `fastTrack` flag accordingly
+  | 'signatureDate' // Need to be checked and must never be **after* `idealPublishDate`
+  | 'effectiveDate' // Need to be checked and must never be **before** `idealPublishDate`
+  | 'lawChapters'
+  | 'ministry'
+  | 'type'
+  | 'draftingNotes'
+  | 'authors'
 
 type Action =
   | { type: 'CHANGE_STEP'; stepName: Step }
