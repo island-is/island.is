@@ -1,4 +1,11 @@
-import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { MinistrySlug } from '@island.is/regulations'
 import {
   Box,
@@ -77,32 +84,35 @@ export const EditBasics = (props: EditBasicsProps) => {
         }),
       ) ?? [],
     ) as ReadonlyArray<Option>
-  }, [ministries])
+  }, [ministries, t])
 
-  const onAnyInputChange = (data: { name: string; value: string | Date }) => {
-    actions.updateState({ ...data })
-  }
+  const onAnyInputChange = useCallback(
+    (data: { name: string; value: string | Date }) => {
+      actions.updateState({ ...data })
+    },
+    [actions],
+  )
 
   useEffect(() => {
     onAnyInputChange({
       name: 'title',
       value: titleValue,
     })
-  }, [titleValue])
+  }, [titleValue, onAnyInputChange])
 
   useEffect(() => {
     onAnyInputChange({
       name: 'ministry',
       value: ministryValue as string,
     })
-  }, [ministryValue])
+  }, [ministryValue, onAnyInputChange])
 
   useEffect(() => {
     onAnyInputChange({
       name: 'idealPublishDate',
       value: dateValue as Date,
     })
-  }, [dateValue])
+  }, [dateValue, onAnyInputChange])
 
   return (
     <>
