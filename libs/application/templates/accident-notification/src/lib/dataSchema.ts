@@ -8,6 +8,12 @@ export enum OnBehalf {
   OTHERS = 'others',
 }
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 export const AccidentNotificationSchema = z.object({
   externalData: z.object({
     nationalRegistry: z.object({
@@ -65,6 +71,7 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.INJURYCERTIFICATE,
       AttachmentsEnum.SENDCERTIFICATELATER,
     ]),
+    injuryCertificateFile: z.array(FileSchema).optional(),
   }),
 })
 

@@ -26,6 +26,38 @@ export const attachments = {
         vegna fyrstu komu frá Landspítala að vera til staðar.`,
       description: 'Alert message when send certificate later is selecte',
     },
+    uploadSubSectionTitle: {
+      id: 'an.application:attachments.uploadSubSectionTitle',
+      defaultMessage: 'Hlaða upp',
+      description: 'Title for attachment upload subsection',
+    },
+    uploadTitle: {
+      id: 'an.application:attachments.uploadTitle',
+      defaultMessage: 'Hlaða upp fylgiskjali',
+      description: 'Title of subsection for attachment upload',
+    },
+    uploadDescription: {
+      id: 'an.application:attachments.uploadDescription',
+      defaultMessage: 'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf',
+      description: 'Definition of upload description',
+    },
+    uploadHeader: {
+      id: 'an.application:attachments.uploadHeader',
+      defaultMessage: 'Dragðu viðhengi hingað til að hlaða upp',
+      description: 'Definition of upload header',
+    },
+    uploadButtonLabel: {
+      id: 'an.application:attachments.uploadButtonLabel',
+      defaultMessage: 'Velja viðhengi til að hlaða upp',
+      description: 'Definition of upload button label',
+    },
+    uploadIntroduction: {
+      id: 'an.application:attachments.uploadIntroduction',
+      defaultMessage: `Athugaðu að það er hægt að tilkynna slys án þess að öll nauðsynleg skjöl
+       eru til staðar en Sjúkratryggingar Íslands kunna að óska eftir frekari gögnum
+       við afgreiðslu málsins, svo taka megi ákvörðun um bótarétt, fjárhæð og greiðslu bóta.`,
+      description: 'Upload introduction',
+    },
   }),
   labels: defineMessages({
     injuryCertificate: {

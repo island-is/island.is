@@ -10,6 +10,8 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
+  buildFileUploadField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 //replace
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
@@ -293,19 +295,34 @@ export const InformationAndDataProviderForm: Form = buildForm({
                 title: attachments.labels.alertMessage,
                 description: attachments.general.alertMessage,
                 component: 'FieldAlertMessage',
-                condition: (formValue) => {
-                  console.log(formValue)
-                  return (
-                    (formValue as {
-                      attachments: { injuryCertificate: AttachmentsEnum }
-                    }).attachments?.injuryCertificate ===
-                    AttachmentsEnum.SENDCERTIFICATELATER
-                  )
-                },
+                condition: (formValue) =>
+                  (formValue as {
+                    attachments: { injuryCertificate: AttachmentsEnum }
+                  }).attachments?.injuryCertificate ===
+                  AttachmentsEnum.SENDCERTIFICATELATER,
               },
               { type: 'warning' },
             ),
           ],
+        }),
+        buildSubSection({
+          id: 'attachments.injuryCertificateFile.section',
+          title: attachments.general.uploadTitle,
+          children: [
+            buildFileUploadField({
+              id: 'attachments.injuryCertificateFile',
+              title: attachments.general.uploadHeader,
+              uploadHeader: attachments.general.uploadHeader,
+              uploadDescription: attachments.general.uploadDescription,
+              uploadButtonLabel: attachments.general.uploadButtonLabel,
+              introduction: attachments.general.uploadIntroduction,
+            }),
+          ],
+          condition: (formValue) =>
+            (formValue as {
+              attachments: { injuryCertificate: AttachmentsEnum }
+            }).attachments?.injuryCertificate ===
+            AttachmentsEnum.INJURYCERTIFICATE,
         }),
       ],
     }),
