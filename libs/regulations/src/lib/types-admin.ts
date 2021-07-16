@@ -65,6 +65,7 @@ export type RegulationDraft = {
   authors: ReadonlyArray<Author>
   lawChapters?: ReadonlyArray<RegulationLawChapter>
   idealPublishDate?: ISODate
+  fastTrack?: boolean
   signatureDate?: ISODate
   effectiveDate?: ISODate
   type?: RegulationType

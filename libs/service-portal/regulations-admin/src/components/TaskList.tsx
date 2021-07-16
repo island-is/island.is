@@ -46,18 +46,19 @@ export const TaskList = () => {
     return null
   }
 
-  const getReqDate = (date: ISODate | undefined) => {
+  const getReqDate = (
+    date: ISODate | undefined,
+    fastTrack?: boolean,
+  ): string => {
     if (!date) {
-      return { label: formatMessage(msg.publishSoon) }
+      return formatMessage(msg.publishSoon)
     }
     const target = workingDaysUntil(date)
-    const fastTrack = target.workingDayCount === 0
-    return {
-      label:
-        (target.today ? formatMessage(msg.publishToday) : formatDateFns(date)) +
-        (fastTrack ? ' ' + formatMessage(msg.publishFastTrack) : ''),
-      fastTrack,
-    }
+    // const fastTrack = target.workingDayCount === 0
+    return (
+      (target.today ? formatMessage(msg.publishToday) : formatDateFns(date)) +
+      (fastTrack ? ' ' + formatMessage(msg.publishFastTrack) : '')
+    )
   }
 
   return (
@@ -68,14 +69,13 @@ export const TaskList = () => {
       <Stack space={2}>
         {getDraftRegulations.map((item: RegulationDraft) => {
           const { id, title, idealPublishDate, draftingStatus, authors } = item
-          const idealDate = getReqDate(idealPublishDate as ISODate)
           // const statusLabel = formatMessage(statusMsgs[draftingStatus])
 
           return (
             <ActionCard
               key={id}
-              date={idealDate.label}
-              backgroundColor={idealDate.fastTrack ? 'blue' : undefined}
+              date={getReqDate(idealPublishDate as ISODate, item.fastTrack)}
+              backgroundColor={item.fastTrack ? 'blue' : undefined}
               heading={title ?? ''}
               tag={{
                 label: formatMessage(

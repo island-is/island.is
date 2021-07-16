@@ -104,10 +104,17 @@ export const EditBasics: StepComponent = (props) => {
         <DatePicker
           label={t(msg.idealPublishDate)}
           placeholderText={t(msg.idealPublishDate_soon)}
-          minDate={new Date()}
+          minDate={new Date()} // FIXME: min date should not be today but 1 working day into the future.
           selected={dateValue ? new Date(dateValue) : null}
           handleChange={(date: Date) => setDateValue(date)}
         />
+        {/*
+          TODO: Add fast track toggler, but only make it shift the minDate to today
+          Then let the up-stream state reducer decide if the selected date is indeed a fastTrack request
+
+          draft.fastTrack should alaways be a derived value, based on idealPublishDate
+          ...and **POSSIBLY** only when the draftingStatus is "draft" ??? Needs customer input... Not important to resolve right away.
+        */}
       </Wrap>
     </>
   )

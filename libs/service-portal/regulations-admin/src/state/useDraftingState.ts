@@ -134,6 +134,7 @@ export type RegDraftForm = BodyDraftFields & {
   authors: DraftField<ReadonlyArray<Kennitala>>
 
   id: RegulationDraft['id']
+  fastTrack: RegulationDraft['fastTrack']
 }
 
 export type DraftingState = {
@@ -167,6 +168,8 @@ const makeDraftForm = (
     idealPublishDate: f(
       draft.idealPublishDate && new Date(draft.idealPublishDate),
     ),
+    fastTrack: draft.fastTrack,
+
     signatureDate: f(draft.signatureDate && new Date(draft.signatureDate)),
     effectiveDate: f(draft.effectiveDate && new Date(draft.effectiveDate)),
 
