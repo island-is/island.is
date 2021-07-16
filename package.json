@@ -230,6 +230,7 @@
     "react-uid": "2.2.0",
     "react-use": "15.3.3",
     "reakit": "1.0.2",
+    "recharts": "2.0.9",
     "redoc": "2.0.0-rc.48",
     "reflect-metadata": "0.1.13",
     "remark-parse": "9.0.0",

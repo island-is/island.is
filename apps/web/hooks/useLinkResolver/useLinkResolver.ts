@@ -81,6 +81,14 @@ export const routesTemplate = {
     is: '/s',
     en: '/en/o',
   },
+  opendatapage: {
+    is: '/gagnatorg',
+    en: '/en/gagnatorg',
+  },
+  opendatasubpage: {
+    is: '/gagnatorg/[slug]',
+    en: '/en/gagnatorg/[slug]',
+  },
   projectsubpage: {
     is: '/v/[slug]/[subSlug]',
     en: '/en/p/[slug]/[subSlug]',
