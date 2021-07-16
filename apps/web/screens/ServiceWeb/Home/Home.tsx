@@ -58,6 +58,7 @@ function generateCategories(supportQNAs: Query['getSupportQNAs']) {
       categories.push(supportQNA.category)
     }
   }
+
   return categories
 }
 
@@ -99,27 +100,29 @@ const Home: Screen<HomeProps> = ({ organization, namespace, supportQNAs }) => {
               </GridColumn>
             </GridRow>
             <GridRow>
-              {freshdeskCategories.map(({ name, description }, index) => {
-                return (
-                  <GridColumn
-                    key={index}
-                    span={['12/12', '6/12', '6/12', '4/12']}
-                    paddingBottom={[2, 2, 3]}
-                  >
-                    <Card
-                      title={name}
-                      description={description}
-                      link={
-                        {
-                          href: `/thjonustuvefur/${
-                            organization?.slug + '/' ?? ''
-                          }${asSlug(name)}`,
-                        } as LinkResolverResponse
-                      }
-                    />
-                  </GridColumn>
-                )
-              })}
+              {freshdeskCategories.map(
+                ({ title, slug, description }, index) => {
+                  return (
+                    <GridColumn
+                      key={index}
+                      span={['12/12', '6/12', '6/12', '4/12']}
+                      paddingBottom={[2, 2, 3]}
+                    >
+                      <Card
+                        title={title}
+                        description={description}
+                        link={
+                          {
+                            href: `/thjonustuvefur/${
+                              organization?.slug + '/' ?? ''
+                            }${asSlug(slug)}`,
+                          } as LinkResolverResponse
+                        }
+                      />
+                    </GridColumn>
+                  )
+                },
+              )}
             </GridRow>
           </GridContainer>
         </Box>
@@ -159,15 +162,15 @@ const Home: Screen<HomeProps> = ({ organization, namespace, supportQNAs }) => {
                     },
                   }}
                   items={freshdeskCategories.map(
-                    ({ name, description }, index) => {
+                    ({ title, slug, description }, index) => {
                       return (
                         <Card
                           key={index}
-                          title={name}
+                          title={title}
                           description={description}
                           link={
                             {
-                              href: `/thjonustuvefur/${asSlug(name)}`,
+                              href: `/thjonustuvefur/${asSlug(slug)}`,
                             } as LinkResolverResponse
                           }
                         />
