@@ -13,13 +13,18 @@ import {
 } from '@island.is/application/core'
 //replace
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
-import { DataProviderTypes, WhoIsTheNotificationForEnum } from '../types'
+import {
+  DataProviderTypes,
+  WhoIsTheNotificationForEnum,
+  AccidentTypeEnum,
+} from '../types'
 import {
   externalData,
   application,
   hindrances,
   applicantInformation,
   whoIsTheNotificationFor,
+  accidentType,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -248,6 +253,46 @@ export const InformationAndDataProviderForm: Form = buildForm({
                 {
                   value: WhoIsTheNotificationForEnum.JURIDICALPERSON,
                   label: whoIsTheNotificationFor.labels.juridicalPerson,
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'accidentType.section',
+      title: accidentType.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'accidentType.section',
+          title: accidentType.general.heading,
+          description: accidentType.general.description,
+          children: [
+            buildRadioField({
+              id: 'accidentType.radioButton',
+              width: 'half',
+              title: '',
+              options: [
+                {
+                  value: AccidentTypeEnum.HOMEACTIVITIES,
+                  label: accidentType.labels.homeActivites,
+                },
+                {
+                  value: AccidentTypeEnum.WORK,
+                  label: accidentType.labels.work,
+                },
+                {
+                  value: AccidentTypeEnum.RESCUEWORK,
+                  label: accidentType.labels.rescueWork,
+                },
+                {
+                  value: AccidentTypeEnum.STUDIES,
+                  label: accidentType.labels.studies,
+                },
+                {
+                  value: AccidentTypeEnum.SPORTS,
+                  label: accidentType.labels.sports,
                 },
               ],
             }),
