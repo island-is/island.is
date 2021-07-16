@@ -15,7 +15,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { RegDraftForm } from '../state/useDraftingState'
+import { RegDraftForm, StepComponent } from '../state/useDraftingState'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { RegulationMinistry } from '@island.is/regulations/web'
@@ -51,12 +51,7 @@ const Wrap = (props: WrapProps) => (
   </Box>
 )
 
-export type EditMetaProps = {
-  draft: RegDraftForm
-  actions?: any
-}
-
-export const EditMeta = (props: EditMetaProps) => {
+export const EditMeta: StepComponent = (props) => {
   const t = useIntl().formatMessage
   const { draft, actions } = props
   const textRef = useRef(() => draft.text)
