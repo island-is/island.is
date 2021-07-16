@@ -32,6 +32,7 @@ import {
 import { apiConstants } from './constants'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
+const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
 
 @Injectable()
@@ -66,6 +67,7 @@ export class ParentalLeaveService {
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignEmployerApplicationEmail,
       application,
+      SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
   }
 

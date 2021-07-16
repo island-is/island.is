@@ -5,14 +5,18 @@ import { Application } from '@island.is/application/core'
 
 import { BaseTemplateAPIModuleConfig } from '../../types'
 
-export const createAssignToken = (application: Application, secret: string) => {
+export const createAssignToken = (
+  application: Application,
+  secret: string,
+  expiresIn: number,
+) => {
   const token = jwt.sign(
     {
       applicationId: application.id,
       state: application.state,
     },
     secret,
-    { expiresIn: 24 * 60 * 60 },
+    { expiresIn },
   )
 
   return token
