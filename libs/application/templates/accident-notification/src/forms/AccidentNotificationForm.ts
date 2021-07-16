@@ -11,7 +11,7 @@ import {
   buildSubSection,
   buildTextField,
   buildFileUploadField,
-  buildDescriptionField,
+  buildDateField,
 } from '@island.is/application/core'
 //replace
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
@@ -26,19 +26,20 @@ import {
   hindrances,
   applicantInformation,
   whoIsTheNotificationFor,
+  accidentDetails,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments } from '../lib/messages/attachments'
 
-export const InformationAndDataProviderForm: Form = buildForm({
-  id: 'InformationAndDataProviderForm',
+export const AccidentNotificationForm: Form = buildForm({
+  id: 'AccidentNotificationForm',
   title: application.general.name,
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'informationAndDataProviderForm',
+      id: 'AccidentNotificationForm',
       title: externalData.agreementDescription.sectionTitle,
       children: [
         buildMultiField({
@@ -53,7 +54,7 @@ export const InformationAndDataProviderForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'informationAndDataProviderForm',
+          id: 'AccidentNotificationForm',
           title: externalData.dataProvider.sectionTitle,
           children: [
             buildExternalDataProvider({
@@ -323,6 +324,42 @@ export const InformationAndDataProviderForm: Form = buildForm({
               attachments: { injuryCertificate: AttachmentsEnum }
             }).attachments?.injuryCertificate ===
             AttachmentsEnum.INJURYCERTIFICATE,
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'accidentDetails.section',
+      title: accidentDetails.general.sectionTitle,
+      children: [
+        buildMultiField({
+          title: accidentDetails.general.sectionTitle,
+          description: accidentDetails.general.description,
+          children: [
+            buildDateField({
+              id: 'accidentDetails.dateOfAccident',
+              title: accidentDetails.labels.date,
+              placeholder: accidentDetails.placeholder.date,
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'accidentDetails.timeOfAccident',
+              title: accidentDetails.labels.time,
+              placeholder: accidentDetails.placeholder.time,
+              backgroundColor: 'blue',
+              width: 'half',
+              format: '##:##',
+            }),
+
+            buildTextField({
+              id: 'accidentDetails.descriptionOfAccident',
+              title: accidentDetails.labels.description,
+              placeholder: accidentDetails.placeholder.description,
+              backgroundColor: 'blue',
+              rows: 10,
+              variant: 'textarea',
+            }),
+          ],
         }),
       ],
     }),
