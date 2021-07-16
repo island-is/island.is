@@ -1,4 +1,5 @@
 export * from './applicationApprovedByEmployer'
 export * from './assignOtherParentEmail'
 export * from './assignEmployerEmail'
+export * from './retryAssignEmployerEmail'
 export * from './otherParentRejectedEmail'

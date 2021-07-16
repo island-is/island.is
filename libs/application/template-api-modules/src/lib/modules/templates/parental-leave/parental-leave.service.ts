@@ -24,6 +24,7 @@ import {
   generateAssignEmployerApplicationEmail,
   generateOtherParentRejected,
   generateApplicationApprovedByEmployerEmail,
+  generateRetryAssignEmployerApplicationEmail,
 } from './emailGenerators'
 import {
   getEmployer,
@@ -32,7 +33,7 @@ import {
 import { apiConstants } from './constants'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
-const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
+const ONE_MONTH_IN_SECONDS_EXPIRES = 31 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
 
 @Injectable()
@@ -67,7 +68,15 @@ export class ParentalLeaveService {
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignEmployerApplicationEmail,
       application,
-      SIX_MONTHS_IN_SECONDS_EXPIRES,
+      ONE_MONTH_IN_SECONDS_EXPIRES,
+    )
+  }
+
+  async retryAssignEmployer({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+      generateRetryAssignEmployerApplicationEmail,
+      application,
+      ONE_MONTH_IN_SECONDS_EXPIRES,
     )
   }
 
@@ -289,7 +298,9 @@ export class ParentalLeaveService {
       )
 
       if (!response.id) {
-        throw new Error(`Failed to send application: ${response.status}`)
+        throw new Error(
+          `Failed to send the parental leave application, no response.id from VMST API: ${response}`,
+        )
       }
 
       const employer = getEmployer(application)
@@ -306,7 +317,7 @@ export class ParentalLeaveService {
 
       return response
     } catch (e) {
-      this.logger.error('Failed to send application', e)
+      this.logger.error('Failed to send the parental leave application', e)
       throw e
     }
   }

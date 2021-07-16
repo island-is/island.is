@@ -15,6 +15,7 @@ export enum ParentalRelations {
 export enum API_MODULE_ACTIONS {
   assignOtherParent = 'assignOtherParent',
   assignEmployer = 'assignEmployer',
+  retryAssignEmployer = 'retryAssignEmployer',
   sendApplication = 'sendApplication',
   notifyApplicantOfRejectionFromOtherParent = 'notifyApplicantOfRejectionFromOtherParent',
 }

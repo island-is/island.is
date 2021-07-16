@@ -86,6 +86,7 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   roles?: RoleInState<T>[]
   onExit?: ApplicationTemplateAPIAction
   onEntry?: ApplicationTemplateAPIAction
+  retryOnAssignApplicationError?: ApplicationTemplateAPIAction
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>

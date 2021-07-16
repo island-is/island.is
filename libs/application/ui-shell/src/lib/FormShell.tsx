@@ -1,7 +1,10 @@
 import React, { FC, useEffect, useReducer } from 'react'
 import cn from 'classnames'
+import * as Sentry from '@sentry/react'
+
 import {
   Application,
+  coreMessages,
   Form,
   FormModes,
   Schema,
@@ -12,6 +15,7 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 import Screen from '../components/Screen'
 import FormStepper from '../components/FormStepper'
@@ -20,10 +24,10 @@ import {
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import ErrorBoundary from '../components/ErrorBoundary'
 import { useHistorySync } from '../hooks/useHistorySync'
 import { useApplicationTitle } from '../hooks/useApplicationTitle'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
+import { ErrorShell } from '../components/ErrorShell'
 import * as styles from './FormShell.treat'
 
 export const FormShell: FC<{
@@ -53,6 +57,7 @@ export const FormShell: FC<{
     sections,
     screens,
   } = state
+  const { formatMessage } = useLocale()
   const { mode = FormModes.APPLYING, renderLastScreenButton } = state.form
   const showProgressTag = mode !== FormModes.APPLYING
   const currentScreen = screens[activeScreen]
@@ -69,37 +74,47 @@ export const FormShell: FC<{
   }, [setInfo, application])
 
   return (
-    <Box
-      className={cn(styles.root, {
-        [styles.rootApplying]:
-          mode === FormModes.APPLYING || mode === FormModes.EDITING,
-        [styles.rootApproved]: mode === FormModes.APPROVED,
-        [styles.rootPending]: mode === FormModes.PENDING,
-        [styles.rootReviewing]: mode === FormModes.REVIEW,
-        [styles.rootRejected]: mode === FormModes.REJECTED,
-      })}
+    <Sentry.ErrorBoundary
+      beforeCapture={(scope) => {
+        scope.setTag('errorBoundaryLocation', 'FormShell')
+        scope.setExtra('applicationType', application.typeId)
+        scope.setExtra('applicationState', application.state)
+        scope.setExtra('currentScreen', currentScreen.id)
+      }}
+      fallback={
+        <ErrorShell
+          title={formatMessage(coreMessages.globalErrorTitle)}
+          subTitle={formatMessage(coreMessages.globalErrorMessage)}
+        />
+      }
     >
       <Box
-        paddingTop={[0, 4]}
-        paddingBottom={[0, 5]}
-        width="full"
-        height="full"
+        className={cn(styles.root, {
+          [styles.rootApplying]:
+            mode === FormModes.APPLYING || mode === FormModes.EDITING,
+          [styles.rootApproved]: mode === FormModes.APPROVED,
+          [styles.rootPending]: mode === FormModes.PENDING,
+          [styles.rootReviewing]: mode === FormModes.REVIEW,
+          [styles.rootRejected]: mode === FormModes.REJECTED,
+        })}
       >
-        <GridContainer>
-          <GridRow>
-            <GridColumn
-              span={['12/12', '12/12', '9/12', '9/12']}
-              className={styles.shellContainer}
-            >
-              <Box
-                paddingTop={[3, 6, 10]}
-                height="full"
-                borderRadius="large"
-                background="white"
+        <Box
+          paddingTop={[0, 4]}
+          paddingBottom={[0, 5]}
+          width="full"
+          height="full"
+        >
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                span={['12/12', '12/12', '9/12', '9/12']}
+                className={styles.shellContainer}
               >
-                <ErrorBoundary
-                  application={application}
-                  currentScreen={currentScreen}
+                <Box
+                  paddingTop={[3, 6, 10]}
+                  height="full"
+                  borderRadius="large"
+                  background="white"
                 >
                   <Screen
                     application={storedApplication}
@@ -134,46 +149,46 @@ export const FormShell: FC<{
                     screen={currentScreen}
                     mode={mode}
                   />
-                </ErrorBoundary>
-              </Box>
-            </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '3/12', '3/12']}
-              className={styles.sidebarContainer}
-            >
-              <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent="spaceBetween"
-                height="full"
-                paddingTop={[0, 0, 8]}
-                paddingLeft={[0, 0, 0, 4]}
-                className={styles.sidebarInner}
+                </Box>
+              </GridColumn>
+              <GridColumn
+                span={['12/12', '12/12', '3/12', '3/12']}
+                className={styles.sidebarContainer}
               >
-                <FormStepper
-                  application={storedApplication}
-                  mode={mode}
-                  showTag={showProgressTag}
-                  form={form}
-                  sections={sections}
-                  screen={currentScreen}
-                />
-                {FormLogo && (
-                  <Box
-                    display={['none', 'none', 'flex']}
-                    alignItems="center"
-                    justifyContent="center"
-                    marginRight={[0, 0, 0, 4]}
-                    paddingBottom={4}
-                  >
-                    <FormLogo />
-                  </Box>
-                )}
-              </Box>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="spaceBetween"
+                  height="full"
+                  paddingTop={[0, 0, 8]}
+                  paddingLeft={[0, 0, 0, 4]}
+                  className={styles.sidebarInner}
+                >
+                  <FormStepper
+                    application={storedApplication}
+                    mode={mode}
+                    showTag={showProgressTag}
+                    form={form}
+                    sections={sections}
+                    screen={currentScreen}
+                  />
+                  {FormLogo && (
+                    <Box
+                      display={['none', 'none', 'flex']}
+                      alignItems="center"
+                      justifyContent="center"
+                      marginRight={[0, 0, 0, 4]}
+                      paddingBottom={4}
+                    >
+                      <FormLogo />
+                    </Box>
+                  )}
+                </Box>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </Box>
       </Box>
-    </Box>
+    </Sentry.ErrorBoundary>
   )
 }

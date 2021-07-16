@@ -128,6 +128,16 @@ export class ApplicationTemplateHelper<
     return this.getTemplateAPIAction(action)
   }
 
+  getRetryOnAssignApplicationErrorAction(
+    stateKey: string = this.application.state,
+  ): ApplicationTemplateAPIAction | null {
+    const action =
+      this.template.stateMachineConfig.states[stateKey]?.meta
+        ?.retryOnAssignApplicationError ?? null
+
+    return this.getTemplateAPIAction(action)
+  }
+
   getApplicationStateInformation(
     stateKey: string = this.application.state,
   ): ApplicationStateMeta<TEvents> | undefined {

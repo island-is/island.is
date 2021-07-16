@@ -244,6 +244,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
             throwOnError: true,
           },
+          retryOnAssignApplicationError: {
+            apiModuleAction: API_MODULE_ACTIONS.retryAssignEmployer,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

@@ -192,4 +192,37 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Villa kom upp við að fjarlægja skrána.',
     description: 'Error message when deleting a file fails',
   },
+  isMissingTokenErrorTitle: {
+    id: 'application.system:core.missing.token.error.title',
+    defaultMessage: 'Úps! Enginn tóki fannst',
+    description: 'Oops! No token found',
+  },
+  isMissingTokenErrorDescription: {
+    id: 'application.system:core.missing.token.error.description',
+    defaultMessage: 'Ekki er hægt að tengja umsókn án auðkenningartóka',
+    description: 'It is not possible to open an application without a token',
+  },
+  expiredTokenWithRetryErrorTitle: {
+    id: 'application.system:core.expired.token.with.retry.error.title',
+    defaultMessage: 'Úps! Tölvupóstur tengill útrunninn',
+    description: 'Oops! Email link expired',
+  },
+  expiredTokenWithRetryErrorDescription: {
+    id: 'application.system:core.expired.token.with.retry.error.description',
+    defaultMessage:
+      'Fyrri hlekkur sem þú fékkst í tölvupósti er útrunninn, við sendum þér nýjan á skráð netfang, skoðaðu pósthólfið þitt til að finna nýjan link',
+    description: `Your previous email link has expired and we're sending a new email to the assigned person, check your email to find the new link`,
+  },
+  couldNotAssignApplicationErrorTitle: {
+    id: 'application.system:could.not.assign.application.error.title',
+    defaultMessage: 'Úps! Ekki tókst að tengjast umsókn',
+    description: 'Oops! Could not assign to the application',
+  },
+  couldNotAssignApplicationErrorDescription: {
+    id: 'application.system:could.not.assign.application.error.title',
+    defaultMessage:
+      'Villa koma upp við að tengjast umsókn og hefur hún verið skráð',
+    description:
+      'There are errors related to the application and it has been reported',
+  },
 })

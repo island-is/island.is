@@ -14,6 +14,7 @@ import {
   Query,
   UseGuards,
   UnauthorizedException,
+  Inject,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -56,6 +57,7 @@ import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { IntlService } from '@island.is/api/domains/translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 import { ApplicationService } from './application.service'
 import { FileService } from './files/file.service'
@@ -86,7 +88,7 @@ import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
 import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
 import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
-import { verifyToken } from './utils/tokenUtils'
+import { decodeToken, verifyToken } from './utils/tokenUtils'
 import { getApplicationLifecycle } from './utils/application'
 import {
   DecodedAssignmentToken,
@@ -117,6 +119,7 @@ export class ApplicationController {
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Scopes(ApplicationScope.read)
@@ -301,30 +304,91 @@ export class ApplicationController {
     @Body() assignApplicationDto: AssignApplicationDto,
     @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
-    const decodedToken = verifyToken<DecodedAssignmentToken>(
+    const verifiedToken = verifyToken<DecodedAssignmentToken>(
       assignApplicationDto.token,
     )
 
-    if (decodedToken === null) {
+    // We know the token expired, we will generate a new one and send an email again to the assignee email we get from the application answers
+    if (verifiedToken === 'TokenExpiredError') {
+      const decodedToken = decodeToken<DecodedAssignmentToken>(
+        assignApplicationDto.token,
+      )
+
+      if (!decodedToken?.applicationId) {
+        throw new BadRequestException('Invalid token')
+      }
+
+      const application = await this.applicationService.findOneById(
+        decodedToken.applicationId,
+      )
+
+      if (!application) {
+        throw new NotFoundException(
+          `An application with the id ${decodedToken.applicationId} does not exist`,
+        )
+      }
+
+      const baseApplication = application.toJSON() as BaseApplication
+      const templateId = baseApplication.typeId as ApplicationTypes
+      const template = await getApplicationTemplateByTypeId(templateId)
+      const helper = new ApplicationTemplateHelper(baseApplication, template)
+      const retryOnAssignApplicationErrorAction = helper.getRetryOnAssignApplicationErrorAction(
+        baseApplication.state,
+      )
+
+      if (retryOnAssignApplicationErrorAction) {
+        await this.performActionOnApplication(
+          baseApplication,
+          template,
+          user.authorization,
+          retryOnAssignApplicationErrorAction,
+        )
+
+        throw new BadRequestException('Token expired', 'retry')
+      }
+
+      this.logger.error(
+        'Token expired and no retryOnAssignApplicationErrorAction defined or not in the right state to run it',
+        {
+          tokenApplicationId: decodedToken?.applicationId,
+          tokenState: decodedToken?.state,
+          applicationState: baseApplication.state,
+        },
+      )
+
+      throw new BadRequestException('Token expired')
+    }
+
+    // We get another error from the token, we return a BadRequestException and logs some info about the application concerned
+    if (verifiedToken === null) {
+      const decodedToken = decodeToken<DecodedAssignmentToken>(
+        assignApplicationDto.token,
+      )
+
+      this.logger.error('Error when trying to verify the token', {
+        applicationId: decodedToken?.applicationId,
+        state: decodedToken?.state,
+      })
+
       throw new BadRequestException('Invalid token')
     }
 
     const existingApplication = await this.applicationService.findOneById(
-      decodedToken.applicationId,
+      verifiedToken.applicationId,
     )
 
     if (!existingApplication) {
       throw new NotFoundException(
-        `An application with the id ${decodedToken.applicationId} does not exist`,
+        `An application with the id ${verifiedToken.applicationId} does not exist`,
       )
     }
 
-    if (existingApplication.state !== decodedToken.state) {
+    if (existingApplication.state !== verifiedToken.state) {
       throw new NotFoundException('Application no longer in assignable state')
     }
 
     // TODO check if assignee is still the same?
-    // decodedToken.assignedEmail === get(existingApplication.answers, decodedToken.emailPath)
+    // verifiedToken.assignedEmail === get(existingApplication.answers, verifiedToken.emailPath)
     // throw new BadRequestException('Invalid token')
 
     const templateId = existingApplication.typeId as ApplicationTypes
