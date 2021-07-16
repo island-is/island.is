@@ -50,12 +50,10 @@ export const mockAuthors: ReadonlyArray<Author> = [
   {
     authorId: '1234567809' as Kennitala,
     name: 'Már Örlygsson',
-    email: 'mar@hugsmidjan.is' as EmailAddress,
   },
   {
     authorId: '6543217809' as Kennitala,
     name: 'Valur Sverrisson',
-    email: 'valur@hugsmidjan.is' as EmailAddress,
   },
 ]
 
