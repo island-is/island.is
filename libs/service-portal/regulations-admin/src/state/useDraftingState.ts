@@ -244,6 +244,8 @@ type NameValuePair<O extends Record<string, any>> = {
   }
 }[keyof O]
 
+type RegDraftFormSimpleProps = 'draftingNotes' | 'authors'
+
 type Action =
   | { type: 'CHANGE_STEP'; stepName: Step }
   | { type: 'LOADING_DRAFT' }
@@ -251,10 +253,14 @@ type Action =
   | { type: 'LOADING_DRAFT_ERROR'; error: Error }
   | { type: 'SAVING_STATUS' }
   | { type: 'SAVING_STATUS_DONE'; error?: Error }
-  | ({ type: 'UPDATE_PROP' } & NameValuePair<any>) // TODO: NameValuePair<Reg>
+  | ({ type: 'UPDATE_PROP' } & NameValuePair<
+      Pick<RegDraftForm, RegDraftFormSimpleProps>
+    >)
   | { type: 'SHIP' }
 
 type ActionName = Action['type']
+
+type UpdateAction = Extract<Action, { type: 'UPDATE_PROP' }>
 
 // ---------------------------------------------------------------------------
 
@@ -299,7 +305,9 @@ const actionHandlers: {
     if (!state.draft) {
       return
     }
-    state.draft[name].value = value
+    const prop = state.draft[name]
+    // @ts-expect-error  (FML! type matching of name and value is guaranteed, but TS can't tell)
+    prop.value = value
   },
 
   SHIP: (state) => {
@@ -463,12 +471,10 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
             })
           }
         : () => undefined,
-      updateState: (data: { name: string; value: string }) => {
-        dispatch({
-          type: 'UPDATE_PROP',
-          name: data.name,
-          value: data.value,
-        })
+      // FIXME: rename to updateProp??
+      updateState: (data: Omit<UpdateAction, 'type'>) => {
+        // @ts-expect-error  (FML! FIXME: make this nicer)
+        dispatch({ type: 'UPDATE_PROP', ...data })
       },
       createDraft:
         isNew && state.draft
