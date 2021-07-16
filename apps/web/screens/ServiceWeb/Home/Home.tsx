@@ -114,7 +114,7 @@ const Home: Screen<HomeProps> = ({ organization, namespace, supportQNAs }) => {
                         link={
                           {
                             href: `/thjonustuvefur/${
-                              organization?.slug + '/' ?? ''
+                              organization?.slug ? organization.slug + '/' : 'island-is/'
                             }${asSlug(slug)}`,
                           } as LinkResolverResponse
                         }
@@ -139,6 +139,7 @@ const Home: Screen<HomeProps> = ({ organization, namespace, supportQNAs }) => {
             <GridRow>
               <GridColumn span="12/12">
                 <SimpleSlider
+                  title={"Svör eftir flokkum"}
                   breakpoints={{
                     0: {
                       gutterWidth: theme.grid.gutter.mobile,
@@ -170,7 +171,9 @@ const Home: Screen<HomeProps> = ({ organization, namespace, supportQNAs }) => {
                           description={description}
                           link={
                             {
-                              href: `/thjonustuvefur/${asSlug(slug)}`,
+                              href: `/thjonustuvefur/${
+                                organization?.slug ? organization.slug + '/' : 'island-is/'
+                              }${asSlug(slug)}`
                             } as LinkResolverResponse
                           }
                         />
