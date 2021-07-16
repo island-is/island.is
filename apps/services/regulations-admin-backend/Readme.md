@@ -17,18 +17,21 @@ yarn start regulations-admin-backend
 3. Clean the database (skip this step on first install)
 
 ```bash
+cd apps/services/regulations-admin-backend
 npx sequelize db:migrate:undo:all
 ```
 
 4. Migrate table definitions
 
 ```bash
+cd apps/services/regulations-admin-backend
 npx sequelize db:migrate
 ```
 
 5. Run local seed data
 
 ```bash
+cd apps/services/regulations-admin-backend
 npx sequelize db:seed:undo:all
 npx sequelize db:seed:all
 ```
