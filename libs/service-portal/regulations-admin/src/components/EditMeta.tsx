@@ -74,25 +74,6 @@ export const EditMeta: StepComponent = (props) => {
     ) as ReadonlyArray<Option>
   }, [ministries, t])
 
-  const onAnyInputChange = useCallback(
-    (data: { name: string; value: string | Date }) => {
-      actions.updateState({ ...data })
-    },
-    [actions],
-  )
-
-  console.log('ministry!!!', draft.ministry?.value);
-
-
-  const [ministryValue, setMinistryValue] = useState(draft.ministry?.value)
-
-  useEffect(() => {
-    onAnyInputChange({
-      name: 'ministry',
-      value: ministryValue as string,
-    })
-  }, [ministryValue, onAnyInputChange])
-
   return (
     <>
       <Wrap>
@@ -104,10 +85,13 @@ export const EditMeta: StepComponent = (props) => {
           isSearchable
           label={t(msg.ministry)}
           placeholder={t(msg.ministry)}
-          value={findValueOption(ministryOptions, ministryValue)}
+          value={findValueOption(ministryOptions, draft.ministry.value)}
           options={ministryOptions}
           onChange={(option) =>
-            setMinistryValue((option as Option).value as MinistrySlug)
+            actions.updateState({
+              name: 'ministry',
+              value: (option as Option).value as MinistrySlug,
+            })
           }
           size="sm"
         />
