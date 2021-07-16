@@ -42,7 +42,7 @@ export type Author = {
 // ---------------------------------------------------------------------------
 
 export type DraftSummary = Pick<DB_RegulationDraft, 'id' | 'title'> & {
-  idealPublishDate: ISODate
+  idealPublishDate?: ISODate
   draftingStatus: Exclude<DraftingStatus, 'shipped'>
   authors: ReadonlyArray<Author>
 }
