@@ -204,7 +204,7 @@ export class RegulationsAdminResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  async getRegulationMinistries(@CurrentUser() { authorization }: User) {
+  async getRegulationsMinistries(@CurrentUser() { authorization }: User) {
     return await this.regulationsService.getRegulationsMinistries()
   }
 }
