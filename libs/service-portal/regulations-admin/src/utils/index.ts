@@ -49,7 +49,7 @@ export const isWorkday = (date: Date): boolean => {
 export const workingDaysUntil = (date: Date | ISODate) => {
   const targetDate = date instanceof Date ? startOfDay(date) : new Date(date)
   const refDate = startOfDay(Date.now())
-  if (!(refDate.getTime() < targetDate.getTime())) {
+  if (targetDate <= refDate) {
     return { workingDayCount: 0, today: true }
   }
 
