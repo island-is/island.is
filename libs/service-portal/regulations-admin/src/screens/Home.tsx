@@ -1,5 +1,5 @@
 import React from 'react'
-import { useAuth } from '@island.is/auth/react'
+import { useIntl } from 'react-intl'
 
 import { Box, Button } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
@@ -12,6 +12,7 @@ import { homeMessages as msg } from '../messages'
 const Home = () => {
   useNamespaces('ap.regulations-admin')
   const history = useHistory()
+  const t = useIntl().formatMessage
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -37,7 +38,7 @@ const Home = () => {
           )
         }
       >
-        Skrá nýja reglugerð
+        {t(msg.createRegulation)}
       </Button>
 
       <ShippedRegulations />

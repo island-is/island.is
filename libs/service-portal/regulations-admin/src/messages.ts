@@ -251,6 +251,10 @@ export const homeMessages = defineMessages({
     id: 'ap.regulations-admin:shipped-title',
     defaultMessage: 'Bíður formlegrar birtingar',
   },
+  createRegulation: {
+    id: 'ap.regulations-admin:create-regulation-cta',
+    defaultMessage: 'Skrá nýja reglugerð',
+  },
 
   cta: {
     id: 'ap.regulations-admin:task-cta',

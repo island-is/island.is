@@ -3,7 +3,7 @@ import { IsString, IsOptional } from 'class-validator'
 
 @InputType()
 export class EditDraftBody {
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   drafting_status!: string
 

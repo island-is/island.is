@@ -299,7 +299,7 @@ const actionHandlers: {
     if (!state.draft) {
       return
     }
-    if (state.draft?.[name]?.value) state.draft[name].value = value
+    state.draft[name].value = value
   },
 
   SHIP: (state) => {
@@ -474,11 +474,11 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                 input: {
                   id: uuid(),
                   drafting_status: 'draft',
-                  title: state.draft?.title,
-                  text: state.draft?.text, // (text + appendix + comments)
+                  title: state.draft?.title.value,
+                  text: state.draft?.text.value, // (text + appendix + comments)
                   drafting_notes: '<p>POST test.</p>', // Ritill
-                  ministry_id: state.draft?.ministry,
-                  ideal_publish_date: state.draft?.idealPublishDate,
+                  ministry_id: state.draft?.ministry.value,
+                  ideal_publish_date: state.draft?.idealPublishDate.value,
                   type: 'base', // Ritill
                 },
               },
