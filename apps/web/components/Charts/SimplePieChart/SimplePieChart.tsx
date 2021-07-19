@@ -11,7 +11,6 @@ import * as styles from './SimplePieChart.treat'
 import cn from 'classnames'
 import { COLORS } from '../utils'
 
-
 interface CustomTooltipProps extends TooltipProps<string, number> {
   sum: number
 }
@@ -65,7 +64,10 @@ export const SimplePieChart = ({ graphData }: GraphProps) => {
           endAngle={-270}
         >
           {parsedData.map((entry, index) => (
-            <Cell key={index} fill={ entry.color ? entry.color : COLORS[index % COLORS.length]} />
+            <Cell
+              key={index}
+              fill={entry.color ? entry.color : COLORS[index % COLORS.length]}
+            />
           ))}
         </Pie>
         <Tooltip content={<CustomTooltip sum={sum} />} />

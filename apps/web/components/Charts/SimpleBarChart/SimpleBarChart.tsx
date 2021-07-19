@@ -57,7 +57,7 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
           <Bar
             key={index}
             dataKey={item.datakey}
-            fill={ item.color ? item.color : COLORS[index % COLORS.length]}
+            fill={item.color ? item.color : COLORS[index % COLORS.length]}
             stackId={item.stackId}
             barSize={16}
             radius={

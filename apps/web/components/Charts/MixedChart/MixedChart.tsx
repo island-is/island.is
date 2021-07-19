@@ -74,7 +74,7 @@ export const MixedChart = ({ graphData }: GraphProps) => {
             <Line
               key={item.datakey}
               dataKey={item.datakey}
-              stroke={ item.color ? item.color : COLORS[index % COLORS.length]}
+              stroke={item.color ? item.color : COLORS[index % COLORS.length]}
               yAxisId="right"
               strokeWidth={3}
               dot={{ r: 6, strokeWidth: 3 }}
