@@ -15,7 +15,7 @@ export const dot = style({
 })
 
 export const listWrapper = style({
-  justifyContent: 'space-between',
+  justifyContent: 'flex-end',
   display: 'flex',
   paddingTop: '37px',
 })

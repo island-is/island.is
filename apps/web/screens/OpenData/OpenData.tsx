@@ -72,12 +72,12 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
         aria-labelledby="openDataHeroTitle"
         background="blue100"
         paddingBottom={6}
-        paddingTop={8}
+        paddingTop={4}
       >
         <GridContainer>
           <GridRow>
             <GridColumn span={['12/12', '5/12', '5/12']} paddingBottom={2}>
-              <Box marginBottom={3}>
+              <Box marginBottom={3} >
                 <Breadcrumbs
                   items={[
                     {
