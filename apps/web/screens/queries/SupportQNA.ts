@@ -41,8 +41,15 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
         description
         slug
       }
+      category {
+        description
+      }
+      answer {
+        ...AllSlices
+      }
     }
   }
+  ${slices}
 `
 
 export const GET_SUPPORT_CATEGORY = gql`

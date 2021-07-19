@@ -40,6 +40,7 @@ import { asSlug } from '../utils'
 import * as styles from './SubPage.treat'
 import * as sharedStyles from '../shared/styles.treat'
 import groupBy from 'lodash/groupBy'
+import { richText, RichText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SubPageProps {
   organization?: Organization
@@ -47,14 +48,7 @@ interface SubPageProps {
   organizationSlug: string
   categorySlug: string
   supportQNAs: Query['getSupportQNAsInCategory']
-}
-
-interface CategoryContainer {
-  title: string
-  questions: {
-    title: string
-    slug: string
-  }
+  questionSlug: string
 }
 
 const SubPage: Screen<SubPageProps> = ({
@@ -62,14 +56,20 @@ const SubPage: Screen<SubPageProps> = ({
   categorySlug,
   organization,
   supportQNAs,
+  questionSlug,
 }) => {
   const { linkResolver } = useLinkResolver()
   const organizationTitle = organization ? organization.title : 'Ísland.is'
+  const question = supportQNAs.find(
+    (supportQNA) => supportQNA.slug === questionSlug,
+  )
+
+  console.log({ supportQNAs, questionSlug, question })
 
   const logoTitle = `Þjónustuvefur ${organizationTitle}`
 
   // Already filtered by category, simply
-  const categoryDescription = supportQNAs[0]
+  const categoryDescription = supportQNAs[0]?.category?.description ?? ''
   const supportQNAsBySubCategory = groupBy(
     supportQNAs,
     (supportQNA) => supportQNA.subCategory.title,
@@ -123,8 +123,20 @@ const SubPage: Screen<SubPageProps> = ({
                       {organizationTitle}
                     </Text>
                     <Text marginTop={2} variant="intro">
-                      Vegabréf, ökuskírteini, bílpróf, ökuréttindi o.fl.
+                      {categoryDescription}
                     </Text>
+
+                    {question && (
+                      <>
+                        <Text marginTop={10} variant="h2" as="h2">
+                          {question.question}
+                        </Text>
+
+                        <Box>
+                          {richText(question.answer as SliceType[], undefined)}
+                        </Box>
+                      </>
+                    )}
 
                     <ContentBlock>
                       <Box paddingY={[1, 2]} marginTop={6}>
@@ -148,7 +160,7 @@ const SubPage: Screen<SubPageProps> = ({
                                         return (
                                           <Box>
                                             <TopicCard
-                                              href={`/thjonustuvefur/${organizationSlug}/${categorySlug}/${slug}`}
+                                              href={`/thjonustuvefur/${organizationSlug}/${categorySlug}?&q=${slug}`}
                                               key={index}
                                             >
                                               {question}
@@ -203,12 +215,15 @@ const SubPage: Screen<SubPageProps> = ({
   )
 }
 
+const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
+
 SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const slugs = query.slugs as string
+  console.log({ query })
 
   const organizationSlug = slugs[0] || ''
-  const categorySlug = slugs[1].split('#')[0]
-  const answerSlug = slugs[1].split('#')[1]
+  const categorySlug = slugs[1]
+  const questionSlug = single(query.q) ?? undefined
 
   const [organization, namespace, supportQNAs] = await Promise.all([
     !!organizationSlug &&
@@ -254,7 +269,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     organizationSlug,
     categorySlug,
     supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
-    answerSlug,
+    questionSlug,
   }
 }
 
