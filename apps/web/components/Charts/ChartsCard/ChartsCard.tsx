@@ -67,7 +67,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
       <Box
         style={{
           width: '100%',
-          minHeight: '128px',
+          minHeight: '156px',
           borderTopLeftRadius: '8px',
           borderTopRightRadius: '8px',
           paddingBottom: '24px',

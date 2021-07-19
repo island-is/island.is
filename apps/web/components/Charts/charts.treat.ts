@@ -9,6 +9,7 @@ export const list = style({
   fontWeight: 'normal',
   fontSize: '14px',
   lineHeight: '24px',
+  flexWrap: 'nowrap',
 })
 
 export const dot = style({
@@ -21,7 +22,9 @@ export const dot = style({
 
 export const listWrapper = style({
   display: 'flex',
+  flexDirection: 'row',
   justifyContent: 'flex-end',
+  flexWrap: 'wrap',
 })
 
 export const wrapper = style({

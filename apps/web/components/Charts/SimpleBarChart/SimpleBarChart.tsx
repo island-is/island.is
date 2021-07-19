@@ -9,7 +9,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { CustomizedAxisTick, RenderLegend } from '../utils'
+import { CustomizedAxisTick, RenderLegend, COLORS } from '../utils'
 
 const dataKeysName = {
   sott: 'Umsóknir',
@@ -57,7 +57,7 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
           <Bar
             key={index}
             dataKey={item.datakey}
-            fill={item.color}
+            fill={ item.color ? item.color : COLORS[index % COLORS.length]}
             stackId={item.stackId}
             barSize={16}
             radius={

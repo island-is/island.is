@@ -11,10 +11,8 @@ import {
   Line,
   Label,
 } from 'recharts'
-import * as styles from './SimpleLineChart.treat'
-import cn from 'classnames'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CustomizedAxisTick, RenderLegend } from '../utils'
+import { CustomizedAxisTick, RenderLegend, COLORS } from '../utils'
 
 interface GraphDataProps {
   title?: string
@@ -70,7 +68,7 @@ export const SimpleLineChart = ({ graphData }: SimpleLineChartGraphProps) => {
               <Line
                 key={index}
                 dataKey={item.line}
-                stroke={item.color}
+                stroke={ item.color ? item.color : COLORS[index % COLORS.length]}
                 strokeWidth={3}
                 dot={{ r: 6, strokeWidth: 3 }}
               />

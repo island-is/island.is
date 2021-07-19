@@ -11,7 +11,7 @@ import {
   Line,
 } from 'recharts'
 
-import { CustomizedAxisTick, RenderLegend } from '../utils'
+import { CustomizedAxisTick, RenderLegend, COLORS } from '../utils'
 
 interface GraphDataProps {
   title?: string
@@ -74,7 +74,7 @@ export const MixedChart = ({ graphData }: GraphProps) => {
             <Line
               key={item.datakey}
               dataKey={item.datakey}
-              stroke={item.color}
+              stroke={ item.color ? item.color : COLORS[index % COLORS.length]}
               yAxisId="right"
               strokeWidth={3}
               dot={{ r: 6, strokeWidth: 3 }}
