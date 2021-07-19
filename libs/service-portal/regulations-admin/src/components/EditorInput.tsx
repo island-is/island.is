@@ -14,7 +14,7 @@ type EditorInputProps = Omit<EditorProps, 'valueRef' | 'name'> & {
   baseText: HTMLText
   initialText?: HTMLText
   valueRef: MutableRefObject<() => HTMLText>
-  draftId: RegulationDraft['id']
+  draftId: string
 }
 
 export const EditorInput = (props: EditorInputProps) => {

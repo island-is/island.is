@@ -502,7 +502,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                     drafting_status: 'draft',
                     title: state.draft?.title.value,
                     text: state.draft?.text.value, // (text + appendix + comments)
-                    drafting_notes: '<p>POST test.</p>', // Ritill
+                    drafting_notes: state.draft?.draftingNotes.value,
                     ministry_id: state.draft?.ministry.value,
                     ideal_publish_date: state.draft?.idealPublishDate.value,
                     type: 'base', // Ritill
@@ -533,6 +533,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                     title: state.draft?.title?.value,
                     text: state.draft?.text?.value, // (text + appendix + comments)
                     ministryId: state.draft?.ministry?.value,
+                    drafting_notes: state.draft?.draftingNotes.value,
                     ideal_publish_date: state.draft?.idealPublishDate?.value,
                   },
                 },

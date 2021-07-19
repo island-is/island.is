@@ -11,6 +11,8 @@ import {
   Input,
   Text,
   Checkbox,
+  AccordionItem,
+  AccordionCard,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { EditorInput } from './EditorInput'
@@ -22,6 +24,7 @@ import {
   useDraftingState,
   StepComponent,
 } from '../state/useDraftingState'
+import { Editor as RegulationsEditor } from '@hugsmidjan/regulations-editor/Editor'
 
 type WrapProps = {
   legend?: string
@@ -53,6 +56,7 @@ export const EditBasics: StepComponent = (props) => {
   const [fastTrack, setFastTrack] = useState(false)
 
   const textRef = useRef(() => draft.text.value)
+  const notesRef = useRef(() => draft.draftingNotes?.value)
 
   const onAnyInputChange = useCallback(
     (data: { name: string; value: string | Date }) => {
@@ -128,6 +132,31 @@ export const EditBasics: StepComponent = (props) => {
           draft.fastTrack should alaways be a derived value, based on idealPublishDate
           ...and **POSSIBLY** only when the draftingStatus is "draft" ??? Needs customer input... Not important to resolve right away.
         */}
+        <Box marginTop={6}>
+          <AccordionCard
+            id="drafting-notes"
+            label="Minnispunktar"
+            labelUse="p"
+            labelVariant="default"
+            iconVariant="small"
+            startExpanded={draft.draftingNotes.value !== ''}
+          >
+            <EditorInput
+              label=""
+              baseText={'' as HTMLText}
+              initialText={draft.draftingNotes.value}
+              isImpact={false}
+              draftId={`${draft.id}-notes`}
+              valueRef={notesRef}
+              onChange={() =>
+                onAnyInputChange({
+                  name: 'draftingNotes',
+                  value: notesRef.current(),
+                })
+              }
+            />
+          </AccordionCard>
+        </Box>
       </Wrap>
     </>
   )
