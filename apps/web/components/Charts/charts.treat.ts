@@ -17,7 +17,6 @@ export const dot = style({
   borderRadius: '12px',
   marginRight: '2px',
   marginLeft: '8px',
-
 })
 
 export const listWrapper = style({
@@ -26,7 +25,7 @@ export const listWrapper = style({
 })
 
 export const wrapper = style({
-    paddingTop: '37px',
+  paddingTop: '37px',
 })
 
 export const title = style({
@@ -36,6 +35,5 @@ export const title = style({
   fontSize: '14px',
   lineHeight: '16px',
   color: '#00003C',
-  paddingBottom: '12px'
-  
+  paddingBottom: '12px',
 })

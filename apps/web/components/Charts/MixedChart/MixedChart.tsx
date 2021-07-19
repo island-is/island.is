@@ -11,8 +11,7 @@ import {
   Line,
 } from 'recharts'
 
-import { CustomizedAxisTick, RenderLegend} from '../utils'
-
+import { CustomizedAxisTick, RenderLegend } from '../utils'
 
 interface GraphDataProps {
   title?: string

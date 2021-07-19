@@ -77,7 +77,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
         <GridContainer>
           <GridRow>
             <GridColumn span={['12/12', '5/12', '5/12']} paddingBottom={2}>
-              <Box marginBottom={3} >
+              <Box marginBottom={3}>
                 <Breadcrumbs
                   items={[
                     {

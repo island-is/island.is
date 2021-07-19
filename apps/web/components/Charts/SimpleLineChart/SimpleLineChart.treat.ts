@@ -17,12 +17,11 @@ export const dot = style({
   borderRadius: '12px',
   marginRight: '2px',
   marginLeft: '8px',
-
 })
 
 export const listWrapper = style({
   display: 'flex',
-  justifyContent: 'flex-end'
+  justifyContent: 'flex-end',
 })
 
 export const wrapper = style({
@@ -36,5 +35,5 @@ export const title = style({
   fontSize: '14px',
   lineHeight: '16px',
   color: '#00003C',
-  paddingBottom: '12px'
+  paddingBottom: '12px',
 })

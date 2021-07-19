@@ -9,14 +9,13 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { CustomizedAxisTick, RenderLegend} from '../utils'
+import { CustomizedAxisTick, RenderLegend } from '../utils'
 
 const dataKeysName = {
   sott: 'Umsóknir',
   veitt: 'Veittir styrkir',
   amount: 'Heildarupphæð styrkja',
 }
-
 
 interface GraphDataProps {
   title?: string
