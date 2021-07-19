@@ -118,6 +118,10 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-otps-idealpublishdate-fasttrack',
     defaultMessage: '(hraðbirting)',
   },
+  applyForFastTrack: {
+    id: 'ap.regulations-admin:apply-for-fasttrack',
+    defaultMessage: 'Sækja um flýtimeðferð',
+  },
 
   ministry: {
     id: 'ap.regulations-admin:draft-labels-ministry',

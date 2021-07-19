@@ -10,11 +10,13 @@ import {
   DatePicker,
   Input,
   Text,
+  Checkbox,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { HTMLText } from '@island.is/regulations'
+import startOfTomorrow from 'date-fns/startOfTomorrow'
 import {
   RegDraftForm,
   useDraftingState,
@@ -48,6 +50,7 @@ export const EditBasics: StepComponent = (props) => {
 
   const [titleValue, setTitleValue] = useState(draft.title?.value)
   const [dateValue, setDateValue] = useState(draft.idealPublishDate?.value)
+  const [fastTrack, setFastTrack] = useState(false)
 
   const textRef = useRef(() => draft.text.value)
 
@@ -72,6 +75,8 @@ export const EditBasics: StepComponent = (props) => {
     })
   }, [dateValue, onAnyInputChange])
 
+  const fastTrackDate = fastTrack ? new Date() : null
+  const selectedDate = dateValue ? new Date(dateValue) : null
   return (
     <>
       <Wrap>
@@ -104,10 +109,18 @@ export const EditBasics: StepComponent = (props) => {
         <DatePicker
           label={t(msg.idealPublishDate)}
           placeholderText={t(msg.idealPublishDate_soon)}
-          minDate={new Date()} // FIXME: min date should not be today but 1 working day into the future.
-          selected={dateValue ? new Date(dateValue) : null}
+          minDate={startOfTomorrow()}
+          selected={fastTrackDate || selectedDate}
           handleChange={(date: Date) => setDateValue(date)}
         />
+        <Box marginTop={1}>
+          <Checkbox
+            label={t(msg.applyForFastTrack)}
+            labelVariant="default"
+            checked={fastTrack}
+            onChange={(e) => setFastTrack(e.target.checked)}
+          />
+        </Box>
         {/*
           TODO: Add fast track toggler, but only make it shift the minDate to today
           Then let the up-stream state reducer decide if the selected date is indeed a fastTrack request
