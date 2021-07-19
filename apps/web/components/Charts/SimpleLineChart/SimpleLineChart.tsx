@@ -14,26 +14,9 @@ import {
 import * as styles from './SimpleLineChart.treat'
 import cn from 'classnames'
 import { Box, Text } from '@island.is/island-ui/core'
+import { CustomizedAxisTick} from '../utils'
 
 let graphTitle = null
-
-const CustomizedAxisTick = (props) => {
-  const { x, y, className, payload } = props
-  const xAxis = className.includes('xAxis')
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text
-        x={xAxis ? 16 : -17}
-        y={xAxis ? 20 : -10}
-        dy={16}
-        textAnchor="end"
-        fill="#00003C"
-      >
-        {payload.value} {xAxis}
-      </text>
-    </g>
-  )
-}
 
 const renderLegend = (props) => {
   const { payload } = props
@@ -55,9 +38,9 @@ const renderLegend = (props) => {
       ))}
     </ul>
     </div>
-       
   )
 }
+
 interface GraphDataProps {
   title?: string
   data: string
