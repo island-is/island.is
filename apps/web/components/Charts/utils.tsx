@@ -25,7 +25,6 @@ interface CustomLegendProps extends LegendProps {
 }
 export const RenderLegend = (props: CustomLegendProps) => {
   const { payload, title } = props
-  console.log(title)
 
   return (
     <div className={cn(styles.wrapper)}>
