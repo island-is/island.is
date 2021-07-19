@@ -3,7 +3,11 @@ import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import React, { FC } from 'react'
 import { ComplaintsToAlthingiOmbudsman } from '../../lib/dataSchema'
-import { complaintOverview, information } from '../../lib/messages'
+import {
+  complaintOverview,
+  information,
+  complaintInformation,
+} from '../../lib/messages'
 import { ValueLine } from './ValueLine'
 import { ComplainedFor } from './ComplainedFor'
 import { Complainee } from './Complainee'
@@ -12,6 +16,7 @@ import { yesNoMessageMapper } from '../../utils'
 export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const answers = (application as any).answers as ComplaintsToAlthingiOmbudsman
   const { name, ssn, phone, email, address } = answers.information
+  const { appeals } = answers
   const attachmentsText =
     answers.attachments.documents && answers.attachments.documents.length > 0
       ? answers.attachments.documents?.map((x) => x.name).join(', ')
@@ -59,6 +64,7 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
           </GridColumn>
         </GridRow>
       </ReviewGroup>
+
       <ComplainedFor
         complainedForType={answers.complainedFor.decision}
         complainedFor={answers.complainedForInformation}
@@ -68,6 +74,16 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
         name={answers.complaintDescription.complaineeName}
         type={answers.complainee.type}
       />
+      <ReviewGroup>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
+            <ValueLine
+              value={yesNoMessageMapper[appeals]}
+              label={complaintInformation.appealsHeader}
+            />
+          </GridColumn>
+        </GridRow>
+      </ReviewGroup>
       <ReviewGroup>
         <ValueLine
           label={complaintOverview.labels.courtAction}

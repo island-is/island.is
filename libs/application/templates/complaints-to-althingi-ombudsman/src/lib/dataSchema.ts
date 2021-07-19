@@ -55,6 +55,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
       OmbudsmanComplaintTypeEnum.PROCEEDINGS,
     ]),
   }),
+  appeals: z.enum([YES, NO]),
   complainedForInformation: z.object({
     name: z.string(),
     ssn: z.string(),
