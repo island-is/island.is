@@ -29,3 +29,27 @@ export const GET_SUPPORT_QNAS = gql`
   }
   ${slices}
 `
+
+export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
+  query GetSupportQNAsInCategory($input: GetSupportQNAsInCategoryInput!) {
+    getSupportQNAsInCategory(input: $input) {
+      id
+      question
+      slug
+      subCategory {
+        title
+        description
+        slug
+      }
+    }
+  }
+`
+
+export const GET_SUPPORT_CATEGORY = gql`
+  query GET_SUPPORT_CATEGORY($input: GetSupportCategoryInput!) {
+    getSupportCategory(input: $input) {
+      title
+      description
+    }
+  }
+`

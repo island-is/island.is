@@ -78,6 +78,9 @@ import { ProjectPage } from './models/projectPage.model'
 import { GetProjectPageInput } from './dto/getProjectPage.input'
 import { SupportQNA } from './models/supportQNA.model'
 import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
+import { SupportCategory } from './models/supportCategory.model'
+import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
+import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
 
 const { cacheTime } = environment
 
@@ -421,6 +424,22 @@ export class CmsResolver {
     @Args('input') input: GetSupportQNAsInput,
   ): Promise<SupportQNA[]> {
     return this.cmsContentfulService.getSupportQNAs(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [SupportQNA])
+  getSupportQNAsInCategory(
+    @Args('input') input: GetSupportQNAsInCategoryInput,
+  ): Promise<SupportQNA[]> {
+    return this.cmsContentfulService.getSupportQNAsInCategory(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => SupportCategory)
+  getSupportCategory(
+    @Args('input') input: GetSupportCategoryInput,
+  ): Promise<SupportCategory> {
+    return this.cmsContentfulService.getSupportCategory(input)
   }
 }
 

@@ -59,6 +59,12 @@ import { mapProjectPage, ProjectPage } from './models/projectPage.model'
 import { IProjectPage } from './generated/contentfulTypes'
 import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
 import { mapSupportQNA, SupportQNA } from './models/supportQNA.model'
+import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
+import {
+  mapSupportCategory,
+  SupportCategory,
+} from './models/supportCategory.model'
+import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
 
 const makePage = (
   page: number,
@@ -649,5 +655,38 @@ export class CmsContentfulService {
       .catch(errorHandler('getSupportQNAs'))
 
     return (result.items as types.ISupportQna[]).map(mapSupportQNA)
+  }
+
+  async getSupportQNAsInCategory({
+    lang,
+    slug,
+  }: GetSupportQNAsInCategoryInput): Promise<SupportQNA[]> {
+    const params = {
+      ['content_type']: 'supportQNA',
+      'fields.category.sys.contentType.sys.id': 'supportCategory',
+      'fields.category.fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISupportQnaFields>(lang, params)
+      .catch(errorHandler('getSupportQNAsInCategory'))
+
+    return (result.items as types.ISupportQna[]).map(mapSupportQNA)
+  }
+
+  async getSupportCategory({
+    lang,
+    slug,
+  }: GetSupportCategoryInput): Promise<SupportCategory> {
+    const params = {
+      ['content_type']: 'supportCategory',
+      'fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISupportCategoryFields>(lang, params)
+      .catch(errorHandler('getSupportCategory'))
+
+    return (result.items as types.ISupportCategory[]).map(mapSupportCategory)[0]
   }
 }
