@@ -22,17 +22,14 @@ import {
   TopicCard,
   ContentBlock,
   AccordionCard,
-  Button,
-  Link,
 } from '@island.is/island-ui/core'
-
 import { skirteini } from '../mock'
 import { ServiceWebHeader } from '@island.is/web/components'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { asSlug } from '../utils'
 
-import * as styles from './SubPage.treat'
 import * as sharedStyles from '../shared/styles.treat'
+import ContactBanner from '../ContactBanner/ContactBanner'
 
 interface SubPageProps {
   organization?: Organization
@@ -44,7 +41,6 @@ interface SubPageProps {
 
 const SubPage: Screen<SubPageProps> = ({ organizationSlug, categorySlug }) => {
   const { linkResolver } = useLinkResolver()
-
   const logoTitle = 'Þjónustuvefur Sýslumanna'
 
   return (
@@ -135,33 +131,7 @@ const SubPage: Screen<SubPageProps> = ({ organizationSlug, categorySlug }) => {
                     </ContentBlock>
                   </GridColumn>
                 </GridRow>
-                <GridRow marginTop={30}>
-                  <GridColumn span="12/12">
-                    <Link
-                      href={'https://island.is/stafraent-island/hafa-samband'}
-                    >
-                      <Box
-                        background="purple100"
-                        padding={10}
-                        borderRadius="large"
-                      >
-                        <Text variant="h3" as="h3">
-                          Finnurðu ekki það sem þig vantar?
-                        </Text>
-                        <Text marginTop={2} marginBottom={12} variant="intro">
-                          Hvernig getum við aðstoðað?
-                        </Text>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          icon="arrowForward"
-                        >
-                          Hafa samband
-                        </Button>
-                      </Box>
-                    </Link>
-                  </GridColumn>
-                </GridRow>
+                <ContactBanner />
               </GridContainer>
             </GridColumn>
           </GridRow>

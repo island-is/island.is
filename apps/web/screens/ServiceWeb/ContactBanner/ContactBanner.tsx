@@ -1,0 +1,53 @@
+import React from 'react'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Text,
+  Button
+} from '@island.is/island-ui/core'
+import Link from 'next/link'
+
+import img from '../../../assets/images/educationLicense.svg'
+
+const ContactBanner = () => {
+  return (
+    <Box
+      marginTop={30}
+      background="purple100"
+      padding={10}
+      borderRadius="large"
+    >
+      <GridRow>
+        <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
+          <Text variant="h3" as="h3" marginBottom={2}>
+            {'Finnurðu ekki það sem þig vantar?'}
+          </Text>
+          <Text variant="intro" marginBottom={10}>{'Hvernig getum við aðstoðað?'}</Text>
+          <Link
+            href={'/thjonustuvefur/hafa-samband'}
+          >
+            <Button
+              type="button"
+              variant="ghost"
+              icon="arrowForward"
+            >
+              Hafa samband
+            </Button>
+          </Link>
+        </GridColumn>
+        <GridColumn
+          span={['8/8', '2/8']}
+          offset={['0', '0', '1/8']}
+          order={[1, 2]}
+        >
+          <Box textAlign={['center', 'right']} padding={[6, 0]}>
+            <img src={img} alt="" />
+          </Box>
+        </GridColumn>
+      </GridRow>
+    </Box>
+  )
+}
+
+export default ContactBanner

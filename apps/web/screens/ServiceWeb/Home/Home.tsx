@@ -33,7 +33,6 @@ import {
 } from '@island.is/web/components'
 import {
   LinkResolverResponse,
-  useLinkResolver,
 } from '@island.is/web/hooks/useLinkResolver'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -49,10 +48,10 @@ interface HomeProps {
 }
 
 function generateCategories(supportQNAs: Query['getSupportQNAs']) {
-  let categorykeys = []
+  const categorykeys = []
   const categories = []
   for (const supportQNA of supportQNAs) {
-    let categorykey = `${supportQNA.category.title}.${supportQNA.category.slug}`
+    const categorykey = `${supportQNA.category.title}.${supportQNA.category.slug}`
     if (!categorykeys.includes(categorykey)) {
       categorykeys.push(categorykey)
       categories.push(supportQNA.category)
@@ -62,7 +61,7 @@ function generateCategories(supportQNAs: Query['getSupportQNAs']) {
   return categories
 }
 
-const Home: Screen<HomeProps> = ({ organization, namespace, supportQNAs }) => {
+const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
   // const linkResolver = useLinkResolver()
   const { width } = useWindowSize()
 
