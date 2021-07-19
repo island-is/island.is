@@ -8,8 +8,14 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
+  QueryGetSupportQnAsInCategoryArgs,
+  SupportQna,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_QUERY } from '../../queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_QUERY,
+  GET_SUPPORT_QNAS_IN_CATEGORY,
+} from '../../queries'
 import { Screen } from '../../../types'
 import {
   Box,
@@ -33,19 +39,38 @@ import { asSlug } from '../utils'
 
 import * as styles from './SubPage.treat'
 import * as sharedStyles from '../shared/styles.treat'
+import _ from 'lodash'
 
 interface SubPageProps {
   organization?: Organization
   namespace: Query['getNamespace']
   organizationSlug: string
   categorySlug: string
-  solutionSlug: string
+  supportQNAs: Query['getSupportQNAsInCategory']
 }
 
-const SubPage: Screen<SubPageProps> = ({ organizationSlug, categorySlug }) => {
-  const { linkResolver } = useLinkResolver()
+interface CategoryContainer {
+  title: string
+  questions: {
+    title: string
+    slug: string
+  }
+}
 
-  const logoTitle = 'Þjónustuvefur Sýslumanna'
+const SubPage: Screen<SubPageProps> = ({
+  organizationSlug,
+  categorySlug,
+  organization,
+  supportQNAs,
+}) => {
+  const { linkResolver } = useLinkResolver()
+  const organizationTitle = organization ? organization.title : 'Ísland.is'
+
+  const logoTitle = `Þjónustuvefur ${organizationTitle}`
+  const supportQNAsBySubCategory = _.groupBy(
+    supportQNAs,
+    (supportQNA) => supportQNA.subCategory.title,
+  )
 
   return (
     <>
@@ -92,34 +117,37 @@ const SubPage: Screen<SubPageProps> = ({ organizationSlug, categorySlug }) => {
                 <GridRow>
                   <GridColumn span="12/12">
                     <Text variant="h1" as="h1">
-                      Skírteini
+                      {organizationTitle}
                     </Text>
                     <Text marginTop={2} variant="intro">
                       Vegabréf, ökuskírteini, bílpróf, ökuréttindi o.fl.
                     </Text>
                     <ContentBlock>
                       <Box paddingY={[1, 2]} marginTop={6}>
-                        {skirteini.map((s) => {
+                        {Object.keys(supportQNAsBySubCategory).map((subcat) => {
+                          const subCategoryDescription =
+                            supportQNAsBySubCategory[subcat][0].subCategory
+                              .description ?? ''
                           return (
                             <Box marginBottom={3}>
                               <AccordionCard
                                 id="id_1"
-                                label={s.title}
-                                visibleContent={<Text>{s.subtitle}</Text>}
+                                label={subcat}
+                                visibleContent={
+                                  <Text>{subCategoryDescription}</Text>
+                                }
                               >
                                 <Box marginTop={3}>
                                   <Stack space={2}>
-                                    {s.accordionItems.map(
-                                      ({ title }, index) => {
+                                    {supportQNAsBySubCategory[subcat].map(
+                                      ({ question, slug }, index) => {
                                         return (
                                           <Box>
                                             <TopicCard
-                                              href={`/thjonustuvefur/${organizationSlug}/${categorySlug}/${asSlug(
-                                                title,
-                                              )}`}
+                                              href={`/thjonustuvefur/${organizationSlug}/${categorySlug}/${slug}`}
                                               key={index}
                                             >
-                                              {title}
+                                              {question}
                                             </TopicCard>
                                           </Box>
                                         )
@@ -175,10 +203,9 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const slugs = query.slugs as string
 
   const organizationSlug = slugs[0] || ''
-  const categorySlug = slugs[1] || ''
-  const solutionSlug = slugs[2] || ''
+  const categorySlug = slugs[1]
 
-  const [organization, namespace] = await Promise.all([
+  const [organization, namespace, supportQNAs] = await Promise.all([
     !!organizationSlug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
         query: GET_ORGANIZATION_QUERY,
@@ -204,6 +231,16 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
+    !!categorySlug &&
+      apolloClient.query<Query, QueryGetSupportQnAsInCategoryArgs>({
+        query: GET_SUPPORT_QNAS_IN_CATEGORY,
+        variables: {
+          input: {
+            lang: locale as ContentLanguage,
+            slug: categorySlug,
+          },
+        },
+      }),
   ])
 
   return {
@@ -211,7 +248,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     organization: organization?.data?.getOrganization,
     organizationSlug,
     categorySlug,
-    solutionSlug,
+    supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
   }
 }
 
