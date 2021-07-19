@@ -23,11 +23,10 @@ export const dot = style({
 export const listWrapper = style({
   display: 'flex',
   justifyContent: 'flex-end',
-  paddingTop: '37px',
 })
 
 export const wrapper = style({
-  paddingTop: '37px',
+    paddingTop: '37px',
 })
 
 export const title = style({
@@ -38,4 +37,5 @@ export const title = style({
   lineHeight: '16px',
   color: '#00003C',
   paddingBottom: '12px'
+  
 })

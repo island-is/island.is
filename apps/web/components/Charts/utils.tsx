@@ -1,6 +1,7 @@
 import React from 'react'
 import * as styles from './charts.treat'
 import cn from 'classnames'
+import { LegendProps } from 'recharts'
 
 export const CustomizedAxisTick = (props) => {
   const { x, y, className, payload } = props
@@ -19,11 +20,16 @@ export const CustomizedAxisTick = (props) => {
     </g>
   )
 }
-
-export const renderLegend = (props) => {
-  const { payload } = props
+interface CustomLegendProps extends LegendProps {
+  title?: string
+}
+export const RenderLegend = (props: CustomLegendProps) => {
+  const { payload, title } = props
+  console.log(title)
 
   return (
+    <div className={cn(styles.wrapper)}>
+      <p className={cn(styles.title)}>{title}</p>
       <ul className={cn(styles.listWrapper)}>
         {payload.map((entry, index) => (
           <li className={cn(styles.list)} key={`item-${index}`}>
@@ -37,7 +43,8 @@ export const renderLegend = (props) => {
           </li>
         ))}
       </ul>
+    </div>
   )
 }
 
-export default renderLegend
+export default RenderLegend

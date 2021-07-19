@@ -9,7 +9,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { CustomizedAxisTick, renderLegend} from '../utils'
+import { CustomizedAxisTick, RenderLegend} from '../utils'
 
 const dataKeysName = {
   sott: 'Umsóknir',
@@ -53,7 +53,7 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
         />
         <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
         <Tooltip />
-        <Legend iconType="circle" align="right" content={renderLegend} />
+        <Legend iconType="circle" align="right" content={RenderLegend} />
         {parsedDatakeys.bars.map((item, index) => (
           <Bar
             key={index}

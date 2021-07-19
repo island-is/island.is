@@ -14,32 +14,7 @@ import {
 import * as styles from './SimpleLineChart.treat'
 import cn from 'classnames'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CustomizedAxisTick} from '../utils'
-
-let graphTitle = null
-
-const renderLegend = (props) => {
-  const { payload } = props
-
-  return (
-    <div className={cn(styles.wrapper)}>
-      <p className={cn(styles.title)}>{graphTitle}</p> 
-      <ul className={cn(styles.listWrapper)}>
-      {payload.map((entry, index) => (
-        <li className={cn(styles.list)} key={`item-${index}`}>
-          <div
-            className={cn(styles.dot)}
-            style={{
-              border: '3px solid ' + entry.color,
-            }}
-          />
-          {entry.value}
-        </li>
-      ))}
-    </ul>
-    </div>
-  )
-}
+import { CustomizedAxisTick, RenderLegend} from '../utils'
 
 interface GraphDataProps {
   title?: string
@@ -54,7 +29,6 @@ export const SimpleLineChart = ({ graphData }: SimpleLineChartGraphProps) => {
   const { title, data, datakeys } = graphData
   const parsedData = JSON.parse(data)
   const parsedDatakeys = JSON.parse(datakeys)
-  graphTitle = title
 
   return (
     <Box width="full" height="full">
@@ -86,7 +60,7 @@ export const SimpleLineChart = ({ graphData }: SimpleLineChartGraphProps) => {
               />
               <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
               <Tooltip />
-              <Legend iconType="circle" content={renderLegend} />
+              <Legend iconType="circle" content={<RenderLegend title={title}/>} />
               {parsedDatakeys.lines.map((item, index) => (
                 <Line
                   key={index}
