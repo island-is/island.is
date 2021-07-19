@@ -32,8 +32,7 @@ import { ServiceWebHeader } from '@island.is/web/components'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 import * as sharedStyles from '../shared/styles.treat'
-import ContactBanner from '../ContactBanner/ContactBanner'
-import _ from 'lodash'
+import groupBy from 'lodash/groupBy'
 
 interface SubPageProps {
   organization?: Organization
@@ -53,7 +52,10 @@ const SubPage: Screen<SubPageProps> = ({
   const organizationTitle = organization ? organization.title : 'Ísland.is'
 
   const logoTitle = `Þjónustuvefur ${organizationTitle}`
-  const supportQNAsBySubCategory = _.groupBy(
+
+  // Already filtered by category, simply
+  const categoryDescription = supportQNAs[0]
+  const supportQNAsBySubCategory = groupBy(
     supportQNAs,
     (supportQNA) => supportQNA.subCategory.title,
   )
@@ -108,6 +110,7 @@ const SubPage: Screen<SubPageProps> = ({
                     <Text marginTop={2} variant="intro">
                       Vegabréf, ökuskírteini, bílpróf, ökuréttindi o.fl.
                     </Text>
+
                     <ContentBlock>
                       <Box paddingY={[1, 2]} marginTop={6}>
                         {Object.keys(supportQNAsBySubCategory).map((subcat) => {
@@ -163,7 +166,8 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const slugs = query.slugs as string
 
   const organizationSlug = slugs[0] || ''
-  const categorySlug = slugs[1]
+  const categorySlug = slugs[1].split('#')[0]
+  const answerSlug = slugs[1].split('#')[1]
 
   const [organization, namespace, supportQNAs] = await Promise.all([
     !!organizationSlug &&
@@ -209,6 +213,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     organizationSlug,
     categorySlug,
     supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
+    answerSlug,
   }
 }
 
