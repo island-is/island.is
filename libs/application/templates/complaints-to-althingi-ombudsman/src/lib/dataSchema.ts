@@ -49,12 +49,10 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   complainee: z.object({
     type: z.enum([ComplaineeTypes.GOVERNMENT, ComplaineeTypes.OTHER]),
   }),
-  complaintInformation: z.object({
-    complaintType: z.enum([
-      OmbudsmanComplaintTypeEnum.DECISION,
-      OmbudsmanComplaintTypeEnum.PROCEEDINGS,
-    ]),
-  }),
+  complaintType: z.enum([
+    OmbudsmanComplaintTypeEnum.DECISION,
+    OmbudsmanComplaintTypeEnum.PROCEEDINGS,
+  ]),
   appeals: z.enum([YES, NO]),
   complainedForInformation: z.object({
     name: z.string(),
@@ -68,7 +66,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
     powerOfAttorney: z.array(FileSchema).optional(),
   }),
   complaintDescription: z.object({
-    decisionDate: z.string().optional(), // TODO: Validate this block
+    decisionDate: z.string().optional(),
     complaineeName: z.string().refine((val) => (val ? val.length > 0 : false), {
       params: error.required,
     }),

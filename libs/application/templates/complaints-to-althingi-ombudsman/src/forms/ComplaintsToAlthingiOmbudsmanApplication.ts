@@ -343,7 +343,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               title: complaintInformation.title,
               children: [
                 buildRadioField({
-                  id: 'complaintInformation.complaintType',
+                  id: 'complaintType',
                   title: '',
                   options: [
                     {
