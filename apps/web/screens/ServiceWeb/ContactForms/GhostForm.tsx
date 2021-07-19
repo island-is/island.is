@@ -1,9 +1,5 @@
 import React from 'react'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 
 const GhostForm = () => {
   return (

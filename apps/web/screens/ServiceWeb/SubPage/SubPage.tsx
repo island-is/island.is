@@ -32,6 +32,7 @@ import { ServiceWebHeader } from '@island.is/web/components'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 import * as sharedStyles from '../shared/styles.treat'
+import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
 
 interface SubPageProps {
@@ -103,7 +104,7 @@ const SubPage: Screen<SubPageProps> = ({
                   </GridColumn>
                 </GridRow>
                 <GridRow>
-                  <GridColumn span="12/12">
+                  <GridColumn span="10/12">
                     <Text variant="h1" as="h1">
                       {organizationTitle}
                     </Text>

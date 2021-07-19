@@ -31,9 +31,7 @@ import {
   ServiceWebSearchSection,
   ServiceWebHeader,
 } from '@island.is/web/components'
-import {
-  LinkResolverResponse,
-} from '@island.is/web/hooks/useLinkResolver'
+import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 

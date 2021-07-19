@@ -4,7 +4,7 @@ import {
   GridColumn,
   GridRow,
   Text,
-  Button
+  Button,
 } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
@@ -23,15 +23,11 @@ const ContactBanner = () => {
           <Text variant="h3" as="h3" marginBottom={2}>
             {'Finnurðu ekki það sem þig vantar?'}
           </Text>
-          <Text variant="intro" marginBottom={10}>{'Hvernig getum við aðstoðað?'}</Text>
-          <Link
-            href={'/thjonustuvefur/hafa-samband'}
-          >
-            <Button
-              type="button"
-              variant="ghost"
-              icon="arrowForward"
-            >
+          <Text variant="intro" marginBottom={10}>
+            {'Hvernig getum við aðstoðað?'}
+          </Text>
+          <Link href={'/thjonustuvefur/hafa-samband'}>
+            <Button type="button" variant="ghost" icon="arrowForward">
               Hafa samband
             </Button>
           </Link>
