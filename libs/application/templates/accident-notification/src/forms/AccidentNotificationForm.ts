@@ -12,6 +12,7 @@ import {
   buildTextField,
   buildFileUploadField,
   buildDateField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 //replace
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
@@ -149,11 +150,11 @@ export const AccidentNotificationForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'informationAboutApplicant',
+      id: 'informationAboutApplicantSection',
       title: applicantInformation.general.title,
       children: [
         buildMultiField({
-          id: 'applicantSection',
+          id: 'applicant',
           title: applicantInformation.general.title,
           description: applicantInformation.general.description,
           children: [
@@ -332,6 +333,7 @@ export const AccidentNotificationForm: Form = buildForm({
       title: accidentDetails.general.sectionTitle,
       children: [
         buildMultiField({
+          id: 'accidentDetails',
           title: accidentDetails.general.sectionTitle,
           description: accidentDetails.general.description,
           children: [
@@ -350,7 +352,6 @@ export const AccidentNotificationForm: Form = buildForm({
               width: 'half',
               format: '##:##',
             }),
-
             buildTextField({
               id: 'accidentDetails.descriptionOfAccident',
               title: accidentDetails.labels.description,
@@ -362,6 +363,12 @@ export const AccidentNotificationForm: Form = buildForm({
           ],
         }),
       ],
+    }),
+    // TODO remove before release, just there to continue with last screen
+    buildDescriptionField({
+      id: '',
+      description: '',
+      title: '',
     }),
   ],
 })

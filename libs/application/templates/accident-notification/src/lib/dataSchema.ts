@@ -2,6 +2,7 @@ import * as z from 'zod'
 import { error } from './messages/error'
 import * as kennitala from 'kennitala'
 import { AttachmentsEnum, WhoIsTheNotificationForEnum } from '../types'
+import { isValid24HFormatTime } from '../utils'
 
 export enum OnBehalf {
   MYSELF = 'myself',
@@ -72,6 +73,13 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.SENDCERTIFICATELATER,
     ]),
     injuryCertificateFile: z.array(FileSchema).optional(),
+  }),
+  accidentDetails: z.object({
+    dateOfAccident: z.string().nonempty(),
+    timeOfAccident: z
+      .string()
+      .refine((x) => (x ? isValid24HFormatTime(x) : false)),
+    descriptionOfAccident: z.string().nonempty(),
   }),
 })
 
