@@ -21,7 +21,6 @@ export default {
     'subArticle',
     'processEntry',
     'embeddedVideo',
-    'author',
     'faqList',
     'sliceConnectedComponent',
     'link',
