@@ -257,7 +257,8 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
         <Box display={'flex'} justifyContent="flexEnd" marginTop={[3, 3, 4]}>
           <Inline space={2}>
             {items.map((x, index) => {
-              if (index + 1 < numberOfSlides - slideCount) {
+              console.log(numberOfSlides - slideState.slideCount)
+              if (index <= numberOfSlides - slideState.slideCount) {
                 return (
                 <button
                   key={index}
