@@ -9,51 +9,12 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import * as styles from './SimpleBarChart.treat'
-import cn from 'classnames'
+import { CustomizedAxisTick, RenderLegend, COLORS } from '../utils'
 
 const dataKeysName = {
   sott: 'Umsóknir',
   veitt: 'Veittir styrkir',
   amount: 'Heildarupphæð styrkja',
-}
-
-const CustomizedAxisTick = (props) => {
-  const { x, y, className, payload } = props
-  const xAxis = className.includes('xAxis')
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text
-        x={xAxis ? 16 : -17}
-        y={xAxis ? 20 : -10}
-        dy={16}
-        textAnchor="end"
-        fill="#00003C"
-      >
-        {payload.value} {xAxis}
-      </text>
-    </g>
-  )
-}
-
-const renderLegend = (props) => {
-  const { payload } = props
-
-  return (
-    <ul className={cn(styles.listWrapper)}>
-      {payload.map((entry, index) => (
-        <li className={cn(styles.list)} key={`item-${index}`}>
-          <div
-            className={cn(styles.dot)}
-            style={{
-              border: '3px solid ' + entry.color,
-            }}
-          />
-          {entry.value}
-        </li>
-      ))}
-    </ul>
-  )
 }
 
 interface GraphDataProps {
@@ -91,12 +52,12 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
         />
         <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
         <Tooltip />
-        <Legend iconType="circle" align="right" content={renderLegend} />
+        <Legend iconType="circle" align="right" content={RenderLegend} />
         {parsedDatakeys.bars.map((item, index) => (
           <Bar
             key={index}
             dataKey={item.datakey}
-            fill={item.color}
+            fill={item.color ? item.color : COLORS[index % COLORS.length]}
             stackId={item.stackId}
             barSize={16}
             radius={
