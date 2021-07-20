@@ -23,6 +23,7 @@ export const getEmploymentStatus: KeyMapping<Employment, string> = {
 
 export const getState: KeyMapping<ApplicationState, string> = {
   New: 'Ný umsókn',
+  DataNeeded: 'Vantar gögn',
   InProgress: 'Í vinnslu',
   Rejected: 'Synjað',
   Approved: 'Samþykkt',

@@ -87,7 +87,6 @@ const autoSchemaFile = environment.production
       xroadClientId: environment.xroad.clientId,
       secret: environment.drivingLicense.secret,
       xroadPath: environment.drivingLicense.xroadPath,
-      replaceInPath: environment.drivingLicense.replaceInPath,
     }),
     EducationModule.register({
       xroad: {

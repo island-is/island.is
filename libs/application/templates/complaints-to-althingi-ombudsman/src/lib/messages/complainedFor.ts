@@ -106,5 +106,10 @@ export const complainedFor = {
       defaultMessage: 'Símanúmer',
       description: 'Complained for phone number',
     },
+    powerOfAttorney: {
+      id: 'ctao.applaction:complainedFor.powerOfAttorney',
+      defaultMessage: 'Umboð frá aðila',
+      description: 'Label for power of attorney document upload',
+    },
   }),
 }

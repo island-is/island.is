@@ -188,6 +188,9 @@
     "application-template-loader": {
       "tags": []
     },
+    "application-templates-accident-notification": {
+      "tags": []
+    },
     "application-templates-children-residence-change": {
       "tags": []
     },

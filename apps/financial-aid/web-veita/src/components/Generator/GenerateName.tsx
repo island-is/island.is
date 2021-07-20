@@ -1,4 +1,4 @@
-import words from '../../utils/words'
+import words from '@island.is/financial-aid-web/veita/src/utils/words'
 
 const wordsLength = words.length - 1
 

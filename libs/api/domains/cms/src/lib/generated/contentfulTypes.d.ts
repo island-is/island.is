@@ -1037,6 +1037,68 @@ export interface IGroupedMenu extends Entry<IGroupedMenuFields> {
   }
 }
 
+export interface IGraphFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Data */
+  data: Record<string, any>
+
+  /** Datakeys */
+  datakeys: Record<string, any>
+  /** Type */
+  type?: 'Bar' | 'Line' | 'Mixed' | 'Pie' | undefined
+}
+
+/** Graphs for visualisation, */
+
+export interface IGraph extends Entry<IGraphFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'graph'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+export interface IGraphCardFields {
+  /** Graph Title */
+  graphTitle: string
+
+  /** Graph Description */
+  graphDescription?: string | undefined
+
+  /** Organization */
+  organization?: string | undefined
+
+  /** Graph */
+  graph?: IGraph | undefined
+}
+
+export interface IGraphCard extends Entry<IGraphCardFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'graphCard'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IHomepageFields {
   /** Title */
   title?: string | undefined
@@ -1842,6 +1904,63 @@ export interface IOneColumnText extends Entry<IOneColumnTextFields> {
     contentType: {
       sys: {
         id: 'oneColumnText'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOpenDataPageFields {
+  /** Page title */
+  pageTitle: string
+
+  /** Page Description */
+  pageDescription?: string | undefined
+
+  /** Page Header Graph */
+  pageHeaderGraph?: IGraph | undefined
+
+  /** Link */
+  link?: string | undefined
+
+  /** Link Title */
+  linkTitle?: string | undefined
+
+  /** Chart Section Title */
+  chartSectionTitle?: string | undefined
+
+  /** Graph Cards */
+  graphCards?: IGraphCard[] | undefined
+
+  /** External Link Card Selection */
+  externalLinkCardSelection?: ICardSection | undefined
+
+  /** Statistics Cards Section */
+  statisticsCardsSection?: IStatisticsCard[] | undefined
+
+  /** External Link Section Title */
+  externalLinkSectionTitle?: string | undefined
+
+  /** External Link Section Description */
+  externalLinkSectionDescription?: string | undefined
+
+  /** External Link Section Image */
+  externalLinkSectionImage?: Asset | undefined
+}
+
+/** Landing page for Open Data Page, where public data is made available. */
+
+export interface IOpenDataPage extends Entry<IOpenDataPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'openDataPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2727,6 +2846,36 @@ export interface IStatistics extends Entry<IStatisticsFields> {
     contentType: {
       sys: {
         id: 'statistics'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IStatisticsCardFields {
+  /** Title */
+  title: string
+
+  /** Statistic */
+  statistic?: string | undefined
+
+  /** Image */
+  image?: Asset | undefined
+}
+
+/** Statistic Card for Open data page and open data dashboards. */
+
+export interface IStatisticsCard extends Entry<IStatisticsCardFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'statisticsCard'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3666,6 +3815,8 @@ export type CONTENT_TYPE =
   | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'
+  | 'graph'
+  | 'graphCard'
   | 'groupedMenu'
   | 'homepage'
   | 'iconBullet'
@@ -3691,6 +3842,7 @@ export type CONTENT_TYPE =
   | 'numberBullet'
   | 'numberBulletSection'
   | 'oneColumnText'
+  | 'openDataPage'
   | 'organization'
   | 'organizationPage'
   | 'organizationSubpage'
@@ -3711,6 +3863,7 @@ export type CONTENT_TYPE =
   | 'sliceConnectedComponent'
   | 'statistic'
   | 'statistics'
+  | 'statisticsCard'
   | 'story'
   | 'storySection'
   | 'subArticle'
