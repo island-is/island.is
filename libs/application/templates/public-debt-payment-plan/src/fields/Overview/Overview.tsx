@@ -1,15 +1,14 @@
+import { PaymentScheduleDebts } from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import React from 'react'
 import { PaymentPlanExternalData } from '../../lib/dataSchema'
-import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
-import { useMockPaymentPlan } from '../PaymentPlan/useMockPaymentPlan'
 
 export const Overview = ({ application }: FieldBaseProps) => {
   const externalData = application.externalData as PaymentPlanExternalData
-  const paymentPlanList = (application.externalData as PaymentPlanExternalData)
-    .paymentPlanList
+  const debts = externalData.paymentPlanPrerequisites?.data
+    ?.debts as PaymentScheduleDebts[]
 
   const editAction = () => {
     // TODO: Write better function. What will happen on edit?
@@ -60,28 +59,20 @@ export const Overview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </ReviewGroup>
-      {paymentPlanList?.data.map((payment, index) => {
-        const returnedPayment = externalData.paymentPlanList?.data[index]
-        // TODO: Perhaps there is a better way to do this? Look into later.
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const { isLoading, data: paymentPlanResults } = useMockPaymentPlan(
-          '2811903429',
-          returnedPayment?.type,
-          14000,
-          11,
-        )
+      {debts?.map((payment, index) => {
         return (
           <ReviewGroup isEditable editAction={editAction}>
             <Box paddingBottom={[2, 4]}>
-              <Label>Skattar og gjöld</Label>
+              <Label>{payment.paymentSchedule}</Label>
               <Text>Mánaðarlegar greiðslur</Text>
             </Box>
-            {(isLoading || paymentPlanResults) && (
+            {/* TODO: Add actual service
+             (isLoading || paymentPlanResults) && (
               <PaymentPlanTable
                 isLoading={isLoading}
                 data={paymentPlanResults}
               />
-            )}
+            ) */}
           </ReviewGroup>
         )
       })}

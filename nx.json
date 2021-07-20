@@ -137,6 +137,9 @@
     "api-domains-payment": {
       "tags": []
     },
+    "api-domains-payment-schedule": {
+      "tags": []
+    },
     "api-domains-regulations": {
       "tags": []
     },
@@ -312,6 +315,9 @@
       "tags": []
     },
     "clients-payment": {
+      "tags": []
+    },
+    "clients-payment-schedule": {
       "tags": []
     },
     "clients-regulations": {
