@@ -80,6 +80,33 @@ export const questions = [
   {
     title: 'Er til eyðublað fyrir kaupmála?',
   },
+  {
+    title: 'Hvernig virka rafræn skilríki?',
+  },
+  {
+    title: 'Hvert á ég að hafa samband vegna umsókna á Ísland.is?',
+  },
+  {
+    title: 'Hvernig virka rafræn skilríki?',
+  },
+  {
+    title: 'Á ég rétt á tómstundastyrk?',
+  },
+  {
+    title: 'Hvað er kaupmáli?',
+  },
+  {
+    title: 'Hvernig virka rafræn skilríki?',
+  },
+  {
+    title: 'Er til eyðublað fyrir kaupmála?',
+  },
+  {
+    title: 'Hvernig virka rafræn skilríki?',
+  },
+  {
+    title: 'Hvert á ég að hafa samband vegna umsókna á Ísland.is?',
+  },
 ]
 
 export const skirteini = [

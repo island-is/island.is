@@ -16,12 +16,12 @@ import {
 import { Screen } from '../../../types'
 import {
   Accordion,
-  AccordionItem,
   Box,
   GridColumn,
   GridContainer,
   GridRow,
   Text,
+  TopicCard,
 } from '@island.is/island-ui/core'
 
 import { questions } from '../mock'
@@ -34,6 +34,7 @@ import {
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import ContactBanner from '../ContactBanner/ContactBanner'
 
 import { asSlug } from '../utils'
 import * as styles from './Home.treat'
@@ -203,22 +204,34 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
                   Algengar spurningar
                 </Text>
 
-                <Box marginTop={[2, 2, 4, 8]}>
-                  <Accordion dividerOnTop={false} dividerOnBottom={false}>
+                <Box marginTop={[2, 2, 4, 5]}>
+                  <Accordion
+                    dividers={false}
+                    dividerOnTop={false}
+                    dividerOnBottom={false}
+                  >
                     {questions.map(({ title }, index) => {
                       return (
-                        <AccordionItem
-                          key={index}
-                          id={`service-web-faq-${index}`}
-                          label={title}
-                        >
+                        <TopicCard key={index} href="/">
                           {title}
-                        </AccordionItem>
+                        </TopicCard>
                       )
                     })}
                   </Accordion>
                 </Box>
               </Box>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
+      <Box marginY={[0, 0, 10]}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn
+              offset={[null, null, null, '1/12']}
+              span={['12/12', '12/12', '12/12', '10/12']}
+            >
+              <ContactBanner />
             </GridColumn>
           </GridRow>
         </GridContainer>

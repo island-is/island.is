@@ -107,9 +107,9 @@ const ContactForms = () => {
                     {!selectedForm && <GhostForm />}
                     {selectedForm && (
                       <Box>
-                        {selectedForm?.inputs?.map((input) => {
+                        {selectedForm?.inputs?.map((input, key) => {
                           return (
-                            <GridRow>
+                            <GridRow key={key}>
                               {input.type === 'dual' ? (
                                 input.items?.map((i) => {
                                   return (

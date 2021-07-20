@@ -34,7 +34,7 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as sharedStyles from '../shared/styles.treat'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
-import { richText, RichText, SliceType } from '@island.is/island-ui/contentful'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SubPageProps {
   organization?: Organization
@@ -57,8 +57,6 @@ const SubPage: Screen<SubPageProps> = ({
   const question = supportQNAs.find(
     (supportQNA) => supportQNA.slug === questionSlug,
   )
-
-  console.log({ supportQNAs, questionSlug, question })
 
   const logoTitle = `Þjónustuvefur ${organizationTitle}`
 
@@ -134,41 +132,42 @@ const SubPage: Screen<SubPageProps> = ({
 
                     <ContentBlock>
                       <Box paddingY={[1, 2]} marginTop={6}>
-                        {Object.keys(supportQNAsBySubCategory).map((subcat) => {
-                          const subCategoryDescription =
-                            supportQNAsBySubCategory[subcat][0].subCategory
-                              .description ?? ''
-                          return (
-                            <Box marginBottom={3}>
-                              <AccordionCard
-                                id="id_1"
-                                label={subcat}
-                                visibleContent={
-                                  <Text>{subCategoryDescription}</Text>
-                                }
-                              >
-                                <Box marginTop={3}>
-                                  <Stack space={2}>
-                                    {supportQNAsBySubCategory[subcat].map(
-                                      ({ question, slug }, index) => {
-                                        return (
-                                          <Box>
-                                            <TopicCard
-                                              href={`/thjonustuvefur/${organizationSlug}/${categorySlug}?&q=${slug}`}
-                                              key={index}
-                                            >
-                                              {question}
-                                            </TopicCard>
-                                          </Box>
-                                        )
-                                      },
-                                    )}
-                                  </Stack>
-                                </Box>
-                              </AccordionCard>
-                            </Box>
-                          )
-                        })}
+                        {Object.keys(supportQNAsBySubCategory).map(
+                          (subcat, key) => {
+                            const subCategoryDescription =
+                              supportQNAsBySubCategory[subcat][0].subCategory
+                                .description ?? ''
+                            return (
+                              <Box marginBottom={3} key={key}>
+                                <AccordionCard
+                                  id="id_1"
+                                  label={subcat}
+                                  visibleContent={
+                                    <Text>{subCategoryDescription}</Text>
+                                  }
+                                >
+                                  <Box marginTop={3}>
+                                    <Stack space={2}>
+                                      {supportQNAsBySubCategory[subcat].map(
+                                        ({ question, slug }, index) => {
+                                          return (
+                                            <Box key={index}>
+                                              <TopicCard
+                                                href={`/thjonustuvefur/${organizationSlug}/${categorySlug}?&q=${slug}`}
+                                              >
+                                                {question}
+                                              </TopicCard>
+                                            </Box>
+                                          )
+                                        },
+                                      )}
+                                    </Stack>
+                                  </Box>
+                                </AccordionCard>
+                              </Box>
+                            )
+                          },
+                        )}
                       </Box>
                     </ContentBlock>
                   </GridColumn>
@@ -187,8 +186,6 @@ const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
 SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const slugs = query.slugs as string
-  console.log({ query })
-
   const organizationSlug = slugs[0] || ''
   const categorySlug = slugs[1]
   const questionSlug = single(query.q) ?? undefined
