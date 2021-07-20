@@ -11,7 +11,10 @@ import {
   Input,
   Text,
   Button,
+  InputFileUpload,
 } from '@island.is/island-ui/core'
+
+import { supportForms } from '../mock'
 
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import GhostForm from './GhostForm'
@@ -19,9 +22,9 @@ import { ServiceWebHeader } from '@island.is/web/components'
 import * as sharedStyles from '../shared/styles.treat'
 
 const ContactForms = () => {
-  const { linkResolver } = useLinkResolver()
-  const [isGhostForm, setIsGhostForm] = useState(true)
   const logoTitle = 'Þjónustuvefur Sýslumanna'
+  const { linkResolver } = useLinkResolver()
+  const [selectedForm, setSelectedForm] = useState(undefined)
 
   return (
     <>
@@ -77,100 +80,98 @@ const ContactForms = () => {
                   </GridColumn>
                 </GridRow>
                 <GridRow marginTop={6}>
-                  <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
+                  <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
                     <Select
                       backgroundColor="blue"
                       icon="chevronDown"
                       isSearchable
                       label="Málaflokkur"
-                      name="select1"
+                      name="supportForm"
                       noOptionsMessage="Enginn valmöguleiki"
-                      onChange={() => setIsGhostForm(false)}
-                      options={[
-                        {
-                          label: 'Fjölskyldumál',
-                          value: '0',
-                        },
-                        {
-                          label: 'Valmöguleiki 2',
-                          value: '1',
-                        },
-                        {
-                          label: 'Valmöguleiki 3',
-                          value: '2',
-                        },
-                      ]}
+                      value={selectedForm?.value}
+                      onChange={(form) => {
+                        const formValue: any = form
+                        setSelectedForm(
+                          supportForms.find((sf) => sf.ref === formValue.value),
+                        )
+                      }}
+                      options={supportForms.map((sf) => {
+                        return {
+                          label: sf.ref,
+                          value: sf.ref,
+                        }
+                      })}
                       placeholder="Veldu flokk"
                       size="md"
                     />
-                    {isGhostForm && <GhostForm />}
-                    {!isGhostForm && (
-                      <>
-                        <GridRow>
-                          <GridColumn span="12/12" paddingTop={5}>
-                            <Input
-                              required
-                              backgroundColor="blue"
-                              label="Þitt nafn"
-                              name="Test1"
-                            />
-                          </GridColumn>
-                        </GridRow>
-                        <GridRow>
-                          <GridColumn span="12/12" paddingTop={5}>
-                            <Input
-                              required
-                              backgroundColor="blue"
-                              label="Netfang"
-                              name="Test1"
-                            />
-                          </GridColumn>
-                        </GridRow>
-                        <GridRow>
-                          <GridColumn span="12/12" paddingTop={5}>
-                            <Input
-                              required
-                              backgroundColor="blue"
-                              label="Nafn málsaðila"
-                              name="Test1"
-                            />
-                          </GridColumn>
-                        </GridRow>
-                        <GridRow>
-                          <GridColumn span="6/12" paddingTop={5}>
-                            <Input
-                              backgroundColor="blue"
-                              label="Kennitala málsaðila"
-                              name="Test1"
-                            />
-                          </GridColumn>
-                          <GridColumn span="6/12" paddingTop={5}>
-                            <Input
-                              backgroundColor="blue"
-                              label="Málsnúmer"
-                              name="Test1"
-                            />
-                          </GridColumn>
-                        </GridRow>
-                        <GridRow>
-                          <GridColumn span="12/12" paddingTop={5}>
-                            <Input
-                              textarea
-                              backgroundColor="blue"
-                              rows={10}
-                              label="Erindi"
-                              name="Test1"
-                            />
-                          </GridColumn>
-                        </GridRow>
-                      </>
+                    {!selectedForm && <GhostForm />}
+                    {selectedForm && (
+                      <Box>
+                        {selectedForm?.inputs?.map((input) => {
+                          return (
+                            <GridRow>
+                              {input.type === 'dual' ? (
+                                input.items?.map((i) => {
+                                  return (
+                                    <GridColumn
+                                      key={i.title}
+                                      span="6/12"
+                                      paddingTop={5}
+                                    >
+                                      {i.title && (
+                                        <Input
+                                          required={i.required}
+                                          backgroundColor="blue"
+                                          label={i.title}
+                                          name={i.title}
+                                        />
+                                      )}
+                                    </GridColumn>
+                                  )
+                                })
+                              ) : input.type === 'file' ? (
+                                <GridColumn span="12/12" paddingTop={5}>
+                                  <InputFileUpload
+                                    fileList={[]}
+                                    accept=".pdf"
+                                    header={input.header}
+                                    description={input.description}
+                                    buttonLabel={input.buttonText}
+                                    onChange={(_) => _}
+                                    onRemove={(_) => _}
+                                  />
+                                </GridColumn>
+                              ) : (
+                                <GridColumn span="12/12" paddingTop={5}>
+                                  <Input
+                                    type={
+                                      input.type === 'text' ||
+                                      input.type === 'number' ||
+                                      input.type === 'email' ||
+                                      input.type === 'tel'
+                                        ? input.type
+                                        : undefined
+                                    }
+                                    required={input.required}
+                                    backgroundColor="blue"
+                                    label={input.title}
+                                    name={input.title}
+                                    rows={input.type === 'textarea' ? 10 : 1}
+                                    textarea={input.type === 'textarea'}
+                                  />
+                                </GridColumn>
+                              )}
+                            </GridRow>
+                          )
+                        })}
+                      </Box>
                     )}
                   </GridColumn>
                 </GridRow>
                 <GridRow marginTop={7}>
                   <GridColumn
                     span={['12/12', '12/12', '12/12', '3/12']}
-                    offset={[null, null, null, '6/12']}
+                    offset={[null, null, null, '5/12']}
                   >
                     <Box
                       display="flex"
@@ -178,17 +179,7 @@ const ContactForms = () => {
                       justifyContent="flexEnd"
                       alignItems="flexEnd"
                     >
-                      <Button
-                        disabled
-                        colorScheme="default"
-                        iconType="filled"
-                        preTextIconType="filled"
-                        size="default"
-                        type="button"
-                        variant="primary"
-                      >
-                        Senda fyrirspurn
-                      </Button>
+                      <Button disabled>Senda fyrirspurn</Button>
                     </Box>
                   </GridColumn>
                 </GridRow>

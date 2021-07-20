@@ -146,3 +146,146 @@ export const skirteini = [
     ],
   },
 ]
+
+export const supportForms = [
+  {
+    ref: 'Fjölskyldumál',
+    inputs: [
+      {
+        type: 'text',
+        required: true,
+        title: 'Þitt nafn',
+      },
+      {
+        type: 'email',
+        required: true,
+        title: 'Netfang',
+      },
+      {
+        type: 'text',
+        required: true,
+        title: 'Nafn málsaðila',
+      },
+      {
+        type: 'dual',
+        items: [
+          {
+            required: false,
+            title: 'Kennitala málsaðila',
+          },
+          {
+            required: false,
+            title: 'Málsnúmer',
+          },
+        ],
+      },
+      {
+        type: 'textarea',
+        required: false,
+        title: 'Erindi',
+      },
+      {
+        type: 'file',
+        header: 'Dragðu skjöl hingað til að hlaða upp',
+        description: 'Tekið er við skjölum með endingu: .pdf',
+        buttonText: 'Velja skjöl til að hlaða upp',
+      },
+    ],
+  },
+  {
+    ref: 'Dánarbú/arfur',
+    inputs: [
+      {
+        type: 'text',
+        required: true,
+        title: 'Þitt nafn',
+      },
+      {
+        type: 'email',
+        required: true,
+        title: 'Netfang',
+      },
+      {
+        type: 'text',
+        required: true,
+        title: 'Nafn hins látna',
+      },
+      {
+        type: 'dual',
+        items: [
+          {
+            required: false,
+            title: 'Kennitala hins látna',
+          },
+          {
+            required: false,
+            title: 'Málsnúmer',
+          },
+        ],
+      },
+      {
+        type: 'dual',
+        items: [
+          {
+            required: false,
+            title: 'Kennitala arftaka',
+          },
+          {
+            required: false,
+            title: null,
+          },
+        ],
+      },
+      {
+        type: 'textarea',
+        required: false,
+        title: 'Erindi',
+      },
+      {
+        type: 'file',
+        header: 'Dragðu skjöl hingað til að hlaða upp',
+        description: 'Tekið er við skjölum með endingu: .pdf',
+        buttonText: 'Velja skjöl til að hlaða upp',
+      },
+    ],
+  },
+  {
+    ref: 'Innheimta',
+    inputs: [
+      {
+        type: 'text',
+        required: true,
+        title: 'Þitt nafn',
+      },
+      {
+        type: 'email',
+        required: true,
+        title: 'Netfang',
+      },
+      {
+        type: 'dual',
+        items: [
+          {
+            required: true,
+            title: 'Kennitala málsaðila',
+          },
+          {
+            required: false,
+            title: null,
+          },
+        ],
+      },
+      {
+        type: 'textarea',
+        required: false,
+        title: 'Erindi',
+      },
+      {
+        type: 'file',
+        header: 'Dragðu skjöl hingað til að hlaða upp',
+        description: 'Tekið er við skjölum með endingu: .pdf',
+        buttonText: 'Velja skjöl til að hlaða upp',
+      },
+    ],
+  },
+]
