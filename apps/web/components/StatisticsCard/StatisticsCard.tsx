@@ -59,6 +59,7 @@ export const StatisticsCard = ({
           >
             <BackgroundImage
               width={204}
+              quality={100}
               positionX={'right'}
               backgroundSize="contain"
               image={image}
@@ -81,6 +82,7 @@ const FrameWrapper = ({ children }) => {
       overflow="visible"
       background="blue100"
       outline="none"
+      marginTop={2}
     >
       {children}
     </Box>
