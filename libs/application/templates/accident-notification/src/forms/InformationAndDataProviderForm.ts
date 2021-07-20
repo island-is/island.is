@@ -10,18 +10,26 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
+  buildFileUploadField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 //replace
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
-import { DataProviderTypes } from '../types'
+import {
+  AttachmentsEnum,
+  DataProviderTypes,
+  WhoIsTheNotificationForEnum,
+} from '../types'
 import {
   externalData,
   application,
   hindrances,
   applicantInformation,
+  whoIsTheNotificationFor,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
+import { attachments } from '../lib/messages/attachments'
 
 export const InformationAndDataProviderForm: Form = buildForm({
   id: 'InformationAndDataProviderForm',
@@ -220,6 +228,101 @@ export const InformationAndDataProviderForm: Form = buildForm({
                 application.externalData?.userProfile?.data?.mobilePhoneNumber,
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'whoIsTheNotificationFor.section',
+      title: whoIsTheNotificationFor.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'whoIsTheNotificationFor',
+          title: whoIsTheNotificationFor.general.heading,
+          description: whoIsTheNotificationFor.general.description,
+          children: [
+            buildRadioField({
+              id: 'whoIsTheNotificationFor.answer',
+              title: '',
+              options: [
+                {
+                  value: WhoIsTheNotificationForEnum.ME,
+                  label: whoIsTheNotificationFor.labels.me,
+                },
+                {
+                  value: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
+                  label: whoIsTheNotificationFor.labels.powerOfAttorney,
+                },
+                {
+                  value: WhoIsTheNotificationForEnum.JURIDICALPERSON,
+                  label: whoIsTheNotificationFor.labels.juridicalPerson,
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'attachments.section',
+      title: attachments.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'attachments',
+          title: attachments.general.heading,
+          children: [
+            buildRadioField({
+              id: 'attachments.injuryCertificate',
+              title: '',
+              description: attachments.general.description,
+              options: [
+                {
+                  value: AttachmentsEnum.INJURYCERTIFICATE,
+                  label: attachments.labels.injuryCertificate,
+                },
+                {
+                  value: AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
+                  label: attachments.labels.hospitalSendsCertificate,
+                },
+                {
+                  value: AttachmentsEnum.SENDCERTIFICATELATER,
+                  label: attachments.labels.sendCertificateLater,
+                },
+              ],
+            }),
+            buildCustomField(
+              {
+                id: 'attachments.injuryCertificate.alert',
+                title: attachments.labels.alertMessage,
+                description: attachments.general.alertMessage,
+                component: 'FieldAlertMessage',
+                condition: (formValue) =>
+                  (formValue as {
+                    attachments: { injuryCertificate: AttachmentsEnum }
+                  }).attachments?.injuryCertificate ===
+                  AttachmentsEnum.SENDCERTIFICATELATER,
+              },
+              { type: 'warning' },
+            ),
+          ],
+        }),
+        buildSubSection({
+          id: 'attachments.injuryCertificateFile.section',
+          title: attachments.general.uploadTitle,
+          children: [
+            buildFileUploadField({
+              id: 'attachments.injuryCertificateFile',
+              title: attachments.general.uploadHeader,
+              uploadHeader: attachments.general.uploadHeader,
+              uploadDescription: attachments.general.uploadDescription,
+              uploadButtonLabel: attachments.general.uploadButtonLabel,
+              introduction: attachments.general.uploadIntroduction,
+            }),
+          ],
+          condition: (formValue) =>
+            (formValue as {
+              attachments: { injuryCertificate: AttachmentsEnum }
+            }).attachments?.injuryCertificate ===
+            AttachmentsEnum.INJURYCERTIFICATE,
         }),
       ],
     }),

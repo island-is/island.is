@@ -1,11 +1,18 @@
 import * as z from 'zod'
 import { error } from './messages/error'
 import * as kennitala from 'kennitala'
+import { AttachmentsEnum, WhoIsTheNotificationForEnum } from '../types'
 
 export enum OnBehalf {
   MYSELF = 'myself',
   OTHERS = 'others',
 }
+
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
 export const AccidentNotificationSchema = z.object({
   externalData: z.object({
@@ -50,6 +57,21 @@ export const AccidentNotificationSchema = z.object({
     city: z.string().nonempty(error.required.defaultMessage),
     email: z.string().email().optional(),
     phoneNumber: z.string().optional(),
+  }),
+  whoIsTheNotificationFor: z.object({
+    answer: z.enum([
+      WhoIsTheNotificationForEnum.JURIDICALPERSON,
+      WhoIsTheNotificationForEnum.ME,
+      WhoIsTheNotificationForEnum.POWEROFATTORNEY,
+    ]),
+  }),
+  attachments: z.object({
+    injuryCertificate: z.enum([
+      AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
+      AttachmentsEnum.INJURYCERTIFICATE,
+      AttachmentsEnum.SENDCERTIFICATELATER,
+    ]),
+    injuryCertificateFile: z.array(FileSchema).optional(),
   }),
 })
 
