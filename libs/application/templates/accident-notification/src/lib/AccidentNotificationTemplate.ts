@@ -10,6 +10,9 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { application } from './messages'
+// import { AccidentNotificationSchema } from './dataSchema'
+
+const AccidentNotificationSchema = z.object({})
 
 const AccidentNotificationStates = {
   draft: 'draft',
@@ -25,8 +28,6 @@ type AccidentNotificationEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
 
-const dataSchema = z.object({})
-
 const AccidentNotificationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<AccidentNotificationEvent>,
@@ -38,7 +39,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations.AccidentNotification.translation,
   ],
-  dataSchema,
+  dataSchema: AccidentNotificationSchema,
   stateMachineConfig: {
     initial: AccidentNotificationStates.draft,
     states: {
@@ -55,8 +56,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () =>
-                import('../forms/InformationAndDataProviderForm').then((val) =>
-                  Promise.resolve(val.InformationAndDataProviderForm),
+                import('../forms/AccidentNotificationForm').then((val) =>
+                  Promise.resolve(val.AccidentNotificationForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },

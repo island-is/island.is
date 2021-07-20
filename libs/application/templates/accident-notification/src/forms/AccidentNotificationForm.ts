@@ -11,6 +11,7 @@ import {
   buildSubSection,
   buildTextField,
   buildFileUploadField,
+  buildDateField,
   buildDescriptionField,
 } from '@island.is/application/core'
 //replace
@@ -27,20 +28,21 @@ import {
   hindrances,
   applicantInformation,
   whoIsTheNotificationFor,
+  accidentDetails,
   accidentType,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments } from '../lib/messages/attachments'
 
-export const InformationAndDataProviderForm: Form = buildForm({
-  id: 'InformationAndDataProviderForm',
+export const AccidentNotificationForm: Form = buildForm({
+  id: 'AccidentNotificationForm',
   title: application.general.name,
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'informationAndDataProviderForm',
+      id: 'AccidentNotificationForm',
       title: externalData.agreementDescription.sectionTitle,
       children: [
         buildMultiField({
@@ -55,7 +57,7 @@ export const InformationAndDataProviderForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'informationAndDataProviderForm',
+          id: 'AccidentNotificationForm',
           title: externalData.dataProvider.sectionTitle,
           children: [
             buildExternalDataProvider({
@@ -150,11 +152,11 @@ export const InformationAndDataProviderForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'informationAboutApplicant',
+      id: 'informationAboutApplicantSection',
       title: applicantInformation.general.title,
       children: [
         buildMultiField({
-          id: 'applicantSection',
+          id: 'applicant',
           title: applicantInformation.general.title,
           description: applicantInformation.general.description,
           children: [
@@ -367,6 +369,48 @@ export const InformationAndDataProviderForm: Form = buildForm({
             AttachmentsEnum.INJURYCERTIFICATE,
         }),
       ],
+    }),
+    buildSection({
+      id: 'accidentDetails.section',
+      title: accidentDetails.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'accidentDetails',
+          title: accidentDetails.general.sectionTitle,
+          description: accidentDetails.general.description,
+          children: [
+            buildDateField({
+              id: 'accidentDetails.dateOfAccident',
+              title: accidentDetails.labels.date,
+              placeholder: accidentDetails.placeholder.date,
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'accidentDetails.timeOfAccident',
+              title: accidentDetails.labels.time,
+              placeholder: accidentDetails.placeholder.time,
+              backgroundColor: 'blue',
+              width: 'half',
+              format: '##:##',
+            }),
+            buildTextField({
+              id: 'accidentDetails.descriptionOfAccident',
+              title: accidentDetails.labels.description,
+              placeholder: accidentDetails.placeholder.description,
+              backgroundColor: 'blue',
+              rows: 10,
+              variant: 'textarea',
+            }),
+          ],
+        }),
+      ],
+    }),
+    // TODO remove before release, just there to continue with last screen
+    buildDescriptionField({
+      id: '',
+      description: '',
+      title: '',
     }),
   ],
 })
