@@ -19,7 +19,7 @@ export const whoIsTheNotificationFor = {
 			 	Foreldrar og forráðamenn geta líka sent inn tilkynningu fyrir hönd barna sem þeir fara með forsjá yfir. 
 				Stofnanir, samtök og félög sem eru virk á sviði persónuverndar geta einnig sent inn
 				tilkynningu án umboðs að uppfylltum skilyrðum 80. gr. reglugerðar (ESB) 2016/679 (almennu persónuverndarreglugerðarinnar).`,
-      description: 'Heading for who is the notifaction for',
+      description: 'Description for who is the notifaction for',
     },
   }),
   labels: defineMessages({

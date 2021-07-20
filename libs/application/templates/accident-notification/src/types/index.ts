@@ -20,3 +20,9 @@ export enum AccidentTypeEnum {
 }
 
 export type YesOrNo = typeof NO | typeof YES
+
+export enum AttachmentsEnum {
+  INJURYCERTIFICATE = 'injuryCertificate',
+  HOSPITALSENDSCERTIFICATE = 'hospitalSendsCertificate',
+  SENDCERTIFICATELATER = 'sendCertificateLater',
+}
