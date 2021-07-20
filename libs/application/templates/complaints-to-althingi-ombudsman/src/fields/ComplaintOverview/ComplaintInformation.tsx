@@ -11,9 +11,14 @@ import { ValueLine } from './ValueLine'
 type Props = {
   type: ComplaineeTypes
   name: string
+  description: string
 }
 
-export const Complainee: FC<Props> = ({ type, name }) => {
+export const ComplaintInformation: FC<Props> = ({
+  type,
+  name,
+  description,
+}) => {
   const complainee =
     type === ComplaineeTypes.GOVERNMENT
       ? complaineeMessages.labels.governmentComplaint
@@ -31,6 +36,14 @@ export const Complainee: FC<Props> = ({ type, name }) => {
           <ValueLine
             label={complaintOverview.labels.complaineeName}
             value={name}
+          />
+        </GridColumn>
+      </GridRow>
+      <GridRow>
+        <GridColumn span={'12/12'}>
+          <ValueLine
+            label={complaintOverview.labels.complaintDescription}
+            value={description}
           />
         </GridColumn>
       </GridRow>
