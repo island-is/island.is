@@ -171,7 +171,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
 
   const atStart = slideState.current === 0
   const atEnd = slideState.current === items.length - 1
-
+  console.log(slideState)
   return (
     <Box
       ref={containerRef}
@@ -257,7 +257,8 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
         <Box display={'flex'} justifyContent="flexEnd" marginTop={[3, 3, 4]}>
           <Inline space={2}>
             {items.map((x, index) => {
-              return (
+              if (index + 1 < numberOfSlides - slideCount) {
+                return (
                 <button
                   key={index}
                   className={cn(styles.dot, {
@@ -266,6 +267,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
                   onClick={() => goTo(index)}
                 />
               )
+              }
             })}
           </Inline>
         </Box>
