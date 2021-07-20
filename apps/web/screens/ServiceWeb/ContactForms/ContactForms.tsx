@@ -169,18 +169,33 @@ const ContactForms = () => {
                   </GridColumn>
                 </GridRow>
                 <GridRow marginTop={7}>
-                  <GridColumn
-                    span={['12/12', '12/12', '12/12', '3/12']}
-                    offset={[null, null, null, '5/12']}
-                  >
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      justifyContent="flexEnd"
-                      alignItems="flexEnd"
-                    >
-                      <Button disabled>Senda fyrirspurn</Button>
-                    </Box>
+                  <GridColumn span="8/12">
+                    <GridRow>
+                      <GridColumn span="6/12">
+                        <Select
+                          backgroundColor="blue"
+                          icon="chevronDown"
+                          isSearchable
+                          label="Þinn sýslumaður"
+                          name="supportForm"
+                          noOptionsMessage="TODO: where be sýslumenn?"
+                          onChange={(_) => _}
+                          options={[]}
+                          placeholder="Veldu sýslumannsembætti"
+                          size="sm"
+                        />
+                      </GridColumn>
+                      <GridColumn span="4/12" offset="2/12">
+                        <Box
+                          display="flex"
+                          flexDirection="column"
+                          justifyContent="flexEnd"
+                          alignItems="flexEnd"
+                        >
+                          <Button disabled>Senda fyrirspurn</Button>
+                        </Box>
+                      </GridColumn>
+                    </GridRow>
                   </GridColumn>
                 </GridRow>
               </GridContainer>
