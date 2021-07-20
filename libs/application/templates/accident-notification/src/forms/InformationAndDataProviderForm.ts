@@ -19,6 +19,7 @@ import {
   AttachmentsEnum,
   DataProviderTypes,
   WhoIsTheNotificationForEnum,
+  WorkInjuryTypeEnum,
 } from '../types'
 import {
   externalData,
@@ -30,6 +31,7 @@ import {
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments } from '../lib/messages/attachments'
+import { workInjuryType } from '../lib/messages/workInjuryType'
 
 export const InformationAndDataProviderForm: Form = buildForm({
   id: 'InformationAndDataProviderForm',
@@ -323,6 +325,42 @@ export const InformationAndDataProviderForm: Form = buildForm({
               attachments: { injuryCertificate: AttachmentsEnum }
             }).attachments?.injuryCertificate ===
             AttachmentsEnum.INJURYCERTIFICATE,
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'workInjury.section',
+      title: workInjuryType.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'workInjury',
+          title: workInjuryType.general.sectionTitle,
+          description: workInjuryType.general.description,
+          children: [
+            buildRadioField({
+              id: 'workInjury.radioButtons',
+              width: 'half',
+              title: '',
+              options: [
+                {
+                  value: WorkInjuryTypeEnum.GENERAL,
+                  label: workInjuryType.labels.general,
+                },
+                {
+                  value: WorkInjuryTypeEnum.FISHERMAN,
+                  label: workInjuryType.labels.fisherman,
+                },
+                {
+                  value: WorkInjuryTypeEnum.ATHLETE,
+                  label: workInjuryType.labels.athlete,
+                },
+                {
+                  value: WorkInjuryTypeEnum.FARMER,
+                  label: workInjuryType.labels.farmer,
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),

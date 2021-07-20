@@ -14,3 +14,10 @@ export enum AttachmentsEnum {
   HOSPITALSENDSCERTIFICATE = 'hospitalSendsCertificate',
   SENDCERTIFICATELATER = 'sendCertificateLater',
 }
+
+export enum WorkInjuryTypeEnum {
+  GENERAL = 'generalWork',
+  FISHERMAN = 'fisherman',
+  ATHLETE = 'athlete',
+  FARMER = 'farmer',
+}
