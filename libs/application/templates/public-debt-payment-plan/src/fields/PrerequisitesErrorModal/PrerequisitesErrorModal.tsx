@@ -1,20 +1,14 @@
+import { PaymentScheduleConditions } from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
+import { Box, ModalBase, Text } from '@island.is/island-ui/core'
 import React from 'react'
-import {
-  Button,
-  Box,
-  ModalBase,
-  Text,
-  Stack,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
+import { PaymentPlanExternalData } from '../../lib/dataSchema'
+import { errorModal } from '../../lib/messages'
 import * as styles from './PrerequisitesErrorModal.treat'
-import { Prerequisites } from '../../dataProviders/tempAPITypes'
 
 export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
-  const prerequisites = application.externalData.paymentPlanPrerequisites
-    .data as Prerequisites
+  const prerequisites = (application.externalData as PaymentPlanExternalData)
+    .paymentPlanPrerequisites?.data?.conditions as PaymentScheduleConditions
 
   return (
     <ModalBase
@@ -26,17 +20,17 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
     >
       <Box background="white" padding={5}>
         <Text variant="h2">
-          {!prerequisites.maxDebtOk ? prerequisites.maxDebtText : ''}
-          {!prerequisites.taxReturnsOk ? prerequisites.taxReturnsText : ''}
-          {!prerequisites.vatOk ? prerequisites.vatText : ''}
-          {!prerequisites.citOk ? prerequisites.citText : ''}
-          {!prerequisites.accommodationTaxOk
-            ? prerequisites.accommodationTaxText
+          {prerequisites.maxDebt ? errorModal.maxDebt : ''}
+          {prerequisites.taxReturns ? errorModal.taxReturns : ''}
+          {prerequisites.vatReturns ? errorModal.vatReturns : ''}
+          {prerequisites.citReturns ? errorModal.citReturns : ''}
+          {prerequisites.accommodationTaxReturns
+            ? errorModal.accommodationTaxReturns
             : ''}
-          {!prerequisites.withholdingTaxOk
-            ? prerequisites.withholdingTaxText
+          {prerequisites.withholdingTaxReturns
+            ? errorModal.withholdingTaxReturns
             : ''}
-          {!prerequisites.wageReturnsOk ? prerequisites.wageReturnsText : ''}
+          {prerequisites.wageReturns ? errorModal.wageReturns : ''}
         </Text>
       </Box>
     </ModalBase>
