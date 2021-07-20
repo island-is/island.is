@@ -4,7 +4,8 @@ import { theme } from '@island.is/island-ui/theme'
 export const card = style({
   display: 'flex',
   height: '124px',
-  width: '432px',
+  width: '100%',
+  minWidth: '252px',
   flexDirection: 'column',
   boxSizing: 'border-box',
   minHeight: 124,

@@ -30,7 +30,7 @@ export const StatisticsCard = ({
       <Box
         style={{ width: hasImage ? '70%' : '100%' }}
         paddingTop={[2, 2, 3]}
-        paddingLeft={[2, 2, 3]}
+        paddingLeft={[1, 1, 3]}
       >
         <Stack space={1}>
           <Box display="flex" alignItems="center">
