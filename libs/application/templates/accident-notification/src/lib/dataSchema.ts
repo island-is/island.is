@@ -1,7 +1,11 @@
 import * as z from 'zod'
 import { error } from './messages/error'
 import * as kennitala from 'kennitala'
-import { AttachmentsEnum, WhoIsTheNotificationForEnum } from '../types'
+import {
+  AttachmentsEnum,
+  GeneralWorkplaceAccidentLocationEnum,
+  WhoIsTheNotificationForEnum,
+} from '../types'
 import { isValid24HFormatTime } from '../utils'
 
 export enum OnBehalf {
@@ -80,6 +84,13 @@ export const AccidentNotificationSchema = z.object({
       .string()
       .refine((x) => (x ? isValid24HFormatTime(x) : false)),
     descriptionOfAccident: z.string().nonempty(),
+  }),
+  accidentLocation: z.object({
+    answer: z.enum([
+      GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
+      GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+      GeneralWorkplaceAccidentLocationEnum.OTHER,
+    ]),
   }),
 })
 

@@ -21,6 +21,7 @@ import {
   DataProviderTypes,
   WhoIsTheNotificationForEnum,
   AttachmentsEnum,
+  GeneralWorkplaceAccidentLocationEnum,
 } from '../types'
 import {
   externalData,
@@ -30,6 +31,8 @@ import {
   whoIsTheNotificationFor,
   accidentDetails,
   accidentType,
+  generalAccident,
+  accidentLocation,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -299,6 +302,38 @@ export const AccidentNotificationForm: Form = buildForm({
                 {
                   value: AccidentTypeEnum.SPORTS,
                   label: accidentType.labels.sports,
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'accidentLocation',
+      title: accidentLocation.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'accidentLocation.generalAccident',
+          title: accidentLocation.general.heading,
+          description: accidentLocation.general.description,
+          children: [
+            buildRadioField({
+              id: 'accidentLocation.answer',
+              title: '',
+              options: [
+                {
+                  value: GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
+                  label: generalAccident.accidentLocation.atTheWorkplace,
+                },
+                {
+                  value:
+                    GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                  label: generalAccident.accidentLocation.toOrFromTheWorkplace,
+                },
+                {
+                  value: GeneralWorkplaceAccidentLocationEnum.OTHER,
+                  label: generalAccident.accidentLocation.other,
                 },
               ],
             }),
