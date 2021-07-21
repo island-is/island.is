@@ -143,14 +143,7 @@ const ContactForms = () => {
                               ) : (
                               <GridColumn span="12/12" paddingTop={5}>
                                 <Input
-                                  type={
-                                    input.type === 'text' ||
-                                    input.type === 'number' ||
-                                    input.type === 'email' ||
-                                    input.type === 'tel'
-                                      ? input.type
-                                      : undefined
-                                  }
+                                  type={input.type}
                                   required={input.required}
                                   label={input.title}
                                   name={input.title}
