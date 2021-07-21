@@ -21,7 +21,7 @@ import { Query } from '@island.is/api/schema'
 import { RegulationMinistry } from '@island.is/regulations/web'
 import { editorMsgs as msg } from '../messages'
 import { emptyOption, findValueOption } from '../utils'
-import { MinistrySlug } from '@island.is/regulations'
+import { MinistrySlug, LawChapterSlug } from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
 
 type WrapProps = {
@@ -111,8 +111,12 @@ export const EditMeta: StepComponent = (props) => {
         <LawChaptersSelect
           lawChapters={lawChapters}
           activeChapters={draft.lawChapters.value}
-          addChapter={() => undefined}
-          removeChapter={() => undefined}
+          addChapter={(chapter: LawChapterSlug) =>
+            actions.updateLawChapterProp({ action: 'add', value: chapter })
+          }
+          removeChapter={(chapter: LawChapterSlug) =>
+            actions.updateLawChapterProp({ action: 'delete', value: chapter })
+          }
         />
       </Wrap>
     </>

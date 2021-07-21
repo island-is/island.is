@@ -11,7 +11,6 @@ import {
   Input,
   Text,
   Checkbox,
-  AccordionItem,
   AccordionCard,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
@@ -19,12 +18,7 @@ import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { HTMLText } from '@island.is/regulations'
 import startOfTomorrow from 'date-fns/startOfTomorrow'
-import {
-  RegDraftForm,
-  useDraftingState,
-  StepComponent,
-} from '../state/useDraftingState'
-import { Editor as RegulationsEditor } from '@hugsmidjan/regulations-editor/Editor'
+import { StepComponent } from '../state/useDraftingState'
 
 type WrapProps = {
   legend?: string
@@ -151,7 +145,9 @@ export const EditBasics: StepComponent = (props) => {
               onChange={() =>
                 onAnyInputChange({
                   name: 'draftingNotes',
-                  value: notesRef.current(),
+                  value: notesRef
+                    .current()
+                    .replace(/(<(?!\/)[^>]+>)+(<\/[^>]+>)+/, ''), // Replaces empty HTML with empty string ('')
                 })
               }
             />

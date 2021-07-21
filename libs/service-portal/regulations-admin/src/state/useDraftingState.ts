@@ -253,7 +253,7 @@ type RegDraftFormSimpleProps =
   | 'idealPublishDate' // This prop needs its own action that checks for working days and updates the `fastTrack` flag accordingly
   | 'signatureDate' // Need to be checked and must never be **after* `idealPublishDate`
   | 'effectiveDate' // Need to be checked and must never be **before** `idealPublishDate`
-  | 'lawChapters'
+  // | 'lawChapters'
   | 'ministry'
   | 'type'
   | 'draftingNotes'
@@ -266,6 +266,11 @@ type Action =
   | { type: 'LOADING_DRAFT_ERROR'; error: Error }
   | { type: 'SAVING_STATUS' }
   | { type: 'SAVING_STATUS_DONE'; error?: Error }
+  | {
+      type: 'UPDATE_LAWCHAPTER_PROP'
+      action?: 'add' | 'delete'
+      value: LawChapterSlug | undefined
+    }
   | ({ type: 'UPDATE_PROP' } & NameValuePair<
       Pick<RegDraftForm, RegDraftFormSimpleProps>
     >)
@@ -321,6 +326,22 @@ const actionHandlers: {
     const prop = state.draft[name]
     // @ts-expect-error  (FML! type matching of name and value is guaranteed, but TS can't tell)
     prop.value = value
+  },
+
+  UPDATE_LAWCHAPTER_PROP: (state, { action, value }) => {
+    if (!state.draft) {
+      return
+    }
+    const prop = state.draft.lawChapters
+    if (prop.value && value) {
+      let newLawChapterArray = [...prop.value]
+      if (action === 'add') {
+        newLawChapterArray.push(value)
+      } else {
+        newLawChapterArray = newLawChapterArray.filter((item) => item !== value)
+      }
+      prop.value = newLawChapterArray
+    }
   },
 
   SHIP: (state) => {
@@ -455,7 +476,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
       // }
 
       goBack:
-        draft && stepNav.prev
+        (draft || isNew) && stepNav.prev
           ? () => {
               history.replace(
                 generatePath(ServicePortalPath.RegulationsAdminEdit, {
@@ -466,7 +487,9 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
             }
           : undefined,
       goForward:
-        draft && stepNav.next && (isEditor || stepNav.next !== 'review')
+        (draft || isNew) &&
+        stepNav.next &&
+        (isEditor || stepNav.next !== 'review')
           ? () => {
               history.replace(
                 generatePath(ServicePortalPath.RegulationsAdminEdit, {
@@ -492,6 +515,12 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
         // @ts-expect-error  (FML! FIXME: make this nicer)
         dispatch({ type: 'UPDATE_PROP', ...data })
       },
+      updateLawChapterProp: (data: {
+        action: 'add' | 'delete'
+        value: LawChapterSlug | undefined
+      }) => {
+        dispatch({ type: 'UPDATE_LAWCHAPTER_PROP', ...data })
+      },
       createDraft:
         isNew && state.draft
           ? () => {
@@ -503,7 +532,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                     title: state.draft?.title.value,
                     text: state.draft?.text.value, // (text + appendix + comments)
                     drafting_notes: state.draft?.draftingNotes.value,
-                    ministry_id: state.draft?.ministry.value,
+                    ministry_id: state.draft?.ministry.value || '',
                     ideal_publish_date: state.draft?.idealPublishDate.value,
                     type: 'base', // Ritill
                   },
@@ -535,6 +564,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                     ministryId: state.draft?.ministry?.value,
                     drafting_notes: state.draft?.draftingNotes.value,
                     ideal_publish_date: state.draft?.idealPublishDate?.value,
+                    law_chapters: state.draft?.lawChapters?.value,
                   },
                 },
               },

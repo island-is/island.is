@@ -40,14 +40,14 @@ export const LawChaptersSelect = (props: LawChaptersSelectProps) => {
     ) as ReadonlyArray<Option>
   }, [lawChapters, t])
 
-  console.log({activeChapters, lawChapters});
+  console.log({ activeChapters, lawChapters })
 
   return (
     <>
       <ul>
         {activeChapters?.map((chapter) => {
           return (
-            <li>
+            <li key={chapter}>
               {lawChapters?.find((c) => c.slug === chapter)?.name ?? chapter}{' '}
               <Button
                 icon={'remove'}
@@ -66,8 +66,8 @@ export const LawChaptersSelect = (props: LawChaptersSelectProps) => {
         <Select
           name="addLawChapter"
           isSearchable
-          label={t(msg.ministry)}
-          placeholder={t(msg.ministry)}
+          label={'Lagakafli'}
+          placeholder={'Lagakafli'}
           value={findValueOption(lawChaptersOptions, activeSel)}
           options={lawChaptersOptions}
           onChange={(option) =>

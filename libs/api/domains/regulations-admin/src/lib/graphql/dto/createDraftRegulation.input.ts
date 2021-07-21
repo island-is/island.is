@@ -55,16 +55,4 @@ export class CreateDraftRegulationInput {
   @IsString()
   @IsOptional()
   type?: string
-
-  //   "id": "string",
-  //   "drafting_status": "string",
-  //   "name": "string",
-  //   "title": "string",
-  //   "text": "string",
-  //   "drafting_notes": "string",
-  //   "ideal_publish_date": "2021-07-13T09:27:36.485Z",
-  //   "ministry_id": "string",
-  //   "signature_date": "2021-07-13T09:27:36.485Z",
-  //   "effective_date": "2021-07-13T09:27:36.485Z",
-  //   "type": "string"
 }
