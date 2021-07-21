@@ -111,22 +111,22 @@ const ContactForms = () => {
                           return (
                             <GridRow key={key}>
                               {input.type === 'dual' ? (
-                                input.items?.map((i) => {
+                                input.items?.map((input) => {
                                   return (
-                                    <GridColumn
-                                      key={i.title}
-                                      span="6/12"
-                                      paddingTop={5}
-                                    >
-                                      {i.title && (
+                                    input.title && (
+                                      <GridColumn
+                                        key={input.title}
+                                        span="6/12"
+                                        paddingTop={5}
+                                      >
                                         <Input
-                                          required={i.required}
                                           backgroundColor="blue"
-                                          label={i.title}
-                                          name={i.title}
+                                          required={input.required}
+                                          label={input.title}
+                                          name={input.title}
                                         />
-                                      )}
-                                    </GridColumn>
+                                      </GridColumn>
+                                    )
                                   )
                                 })
                               ) : input.type === 'file' ? (
@@ -153,9 +153,9 @@ const ContactForms = () => {
                                         : undefined
                                     }
                                     required={input.required}
-                                    backgroundColor="blue"
                                     label={input.title}
                                     name={input.title}
+                                    backgroundColor="blue"
                                     rows={input.type === 'textarea' ? 10 : 1}
                                     textarea={input.type === 'textarea'}
                                   />
