@@ -518,7 +518,7 @@ export const m: MessageDir = {
     },
     cardSubtitle: {
       id: 'pa.application:endorsement.approved.card.subtitle',
-      defaultMessage: 'Hægt er að skoða virk meðmæli á Mínum Síðum.',
+      defaultMessage: 'Hægt er að skoða virk meðmæli á mínum síðum.',
       description: 'Approved card subtitle',
     },
     myPagesButton: {
