@@ -14061,9 +14061,10 @@ fresh@0.5.2:
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=
 
-"fridagar@github:maranomynet/fridagar-node#v3.2.0-beta":
-  version "3.1.1"
-  resolved "https://codeload.github.com/maranomynet/fridagar-node/tar.gz/4bf090b45f746d880123c2e08fb25b88415e5312"
+fridagar@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/fridagar/-/fridagar-3.2.0.tgz#d28bd11e6299b45fe6aeb786ab75fe0a547fe47e"
+  integrity sha512-DY/0W923VID0FgMUQay6Tk1o83X80SmIEsyoTNOtuzFohsqrUXdZzjrTYjgVCpkZQX334XhDLn3DiDL87tkMlA==
 
 from2@^2.1.0:
   version "2.3.0"
