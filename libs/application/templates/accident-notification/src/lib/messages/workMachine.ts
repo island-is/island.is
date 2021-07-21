@@ -9,8 +9,8 @@ export const workMachine = {
     },
     subSectionTitle: {
       id: 'an.application:general.subSectionTitle',
-      defaultMessage: 'Nánari gögn um vinnuvél',
-      description: 'Further data on the machinery',
+      defaultMessage: 'Upplýsingar um vinnuvél',
+      description: 'Information on the machinery',
     },
     workMachineRadioTitle: {
       id: 'an.application:general.workMachineRadioTitle',

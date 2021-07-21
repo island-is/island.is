@@ -435,7 +435,7 @@ export const AccidentNotificationForm: Form = buildForm({
           condition: (formValue) => formValue.workMachineRadio === YES,
           children: [
             buildMultiField({
-              title: '',
+              title: workMachine.general.subSectionTitle,
               children: [
                 buildTextField({
                   id: 'workMachine.registrationNumber',
