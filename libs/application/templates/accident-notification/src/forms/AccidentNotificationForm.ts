@@ -22,6 +22,9 @@ import {
   WhoIsTheNotificationForEnum,
   AttachmentsEnum,
   GeneralWorkplaceAccidentLocationEnum,
+  ProfessionalAthleteAccidentLocationEnum,
+  AgricultureAccidentLocationEnum,
+  FishermanWorkplaceAccidentLocationEnum,
 } from '../types'
 import {
   externalData,
@@ -334,6 +337,117 @@ export const AccidentNotificationForm: Form = buildForm({
                 {
                   value: GeneralWorkplaceAccidentLocationEnum.OTHER,
                   label: accidentLocation.generalWorkAccident.other,
+                },
+              ],
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'accidentLocation.generalWorkAccident',
+          title: accidentLocation.general.heading,
+          description: accidentLocation.general.description,
+          children: [
+            buildRadioField({
+              id: 'accidentLocation.answer',
+              title: '',
+              options: [
+                {
+                  value: GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
+                  label: accidentLocation.generalWorkAccident.atTheWorkplace,
+                },
+                {
+                  value:
+                    GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                  label:
+                    accidentLocation.generalWorkAccident.toOrFromTheWorkplace,
+                },
+                {
+                  value: GeneralWorkplaceAccidentLocationEnum.OTHER,
+                  label: accidentLocation.generalWorkAccident.other,
+                },
+              ],
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'accidentLocation.fishermanAccident',
+          title: accidentLocation.general.heading,
+          description: accidentLocation.general.description,
+          children: [
+            buildRadioField({
+              id: 'accidentLocation.answer',
+              title: '',
+              options: [
+                {
+                  value: FishermanWorkplaceAccidentLocationEnum.ONTHESHIP,
+                  label: accidentLocation.fishermanAccident.onTheShip,
+                },
+                {
+                  value:
+                    FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                  label:
+                    accidentLocation.fishermanAccident.toOrFromTheWorkplace,
+                },
+                {
+                  value: FishermanWorkplaceAccidentLocationEnum.OTHER,
+                  label: accidentLocation.fishermanAccident.other,
+                },
+              ],
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'accidentLocation.professionalAthleteAccident',
+          title: accidentLocation.general.heading,
+          description: accidentLocation.general.description,
+          children: [
+            buildRadioField({
+              id: 'accidentLocation.answer',
+              title: '',
+              options: [
+                {
+                  value:
+                    ProfessionalAthleteAccidentLocationEnum.SPORTCLUBSFACILITES,
+                  label:
+                    accidentLocation.professionalAthleteAccident
+                      .atTheClubsSportsFacilites,
+                },
+                {
+                  value:
+                    ProfessionalAthleteAccidentLocationEnum.TOORFROMTHESPORTCLUBSFACILITES,
+                  label:
+                    accidentLocation.professionalAthleteAccident
+                      .toOrFromTheSportsFacilites,
+                },
+                {
+                  value: ProfessionalAthleteAccidentLocationEnum.OTHER,
+                  label: accidentLocation.professionalAthleteAccident.other,
+                },
+              ],
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'accidentLocation.agricultureAccident',
+          title: accidentLocation.general.heading,
+          description: accidentLocation.general.description,
+          children: [
+            buildRadioField({
+              id: 'accidentLocation.answer',
+              title: '',
+              options: [
+                {
+                  value: AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
+                  label: accidentLocation.agricultureAccident.atTheWorkplace,
+                },
+                {
+                  value: AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                  label:
+                    accidentLocation.agricultureAccident.toOrFromTheWorkplace,
+                },
+                {
+                  value: AgricultureAccidentLocationEnum.OTHER,
+                  label: accidentLocation.agricultureAccident.other,
                 },
               ],
             }),
