@@ -31,7 +31,6 @@ import {
   whoIsTheNotificationFor,
   accidentDetails,
   accidentType,
-  generalAccident,
   accidentLocation,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
@@ -324,16 +323,17 @@ export const AccidentNotificationForm: Form = buildForm({
               options: [
                 {
                   value: GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
-                  label: generalAccident.accidentLocation.atTheWorkplace,
+                  label: accidentLocation.generalWorkAccident.atTheWorkplace,
                 },
                 {
                   value:
                     GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                  label: generalAccident.accidentLocation.toOrFromTheWorkplace,
+                  label:
+                    accidentLocation.generalWorkAccident.toOrFromTheWorkplace,
                 },
                 {
                   value: GeneralWorkplaceAccidentLocationEnum.OTHER,
-                  label: generalAccident.accidentLocation.other,
+                  label: accidentLocation.generalWorkAccident.other,
                 },
               ],
             }),

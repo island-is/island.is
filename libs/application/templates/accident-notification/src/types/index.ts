@@ -29,6 +29,24 @@ export enum AttachmentsEnum {
 
 export enum GeneralWorkplaceAccidentLocationEnum {
   ATTHEWORKPLACE = 'atTheWorkplace',
+  TOORFROMTHEWORKPLACE = 'GeneralWorkplaceAccidentLocation.toOrFromTheWorkplace',
+  OTHER = 'GeneralWorkplaceAccidentLocation.other',
+}
+
+export enum FishermanWorkplaceAccidentLocationEnum {
+  ONTHESHIP = 'onTheShip',
+  TOORFROMTHEWORKPLACE = 'FishermanWorkplaceAccidentLocation.toOrFromTheWorkplace',
+  OTHER = 'FishermanWorkplaceAccidentLocation.other',
+}
+
+export enum ProfessionalAthleteAccidentLocationEnum {
+  SPORTCLUBSFACILITES = 'sportClubsFacilites',
+  TOORFROMTHESPORTCLUBSFACILITES = 'toOrFromTheSportClubsFacilites',
+  OTHER = 'ProfessionalAthleteAccidentLocation.other',
+}
+
+export enum AgricultureAccidentLocationEnum {
+  ATTHEWORKPLACE = 'atTheWorkplace',
   TOORFROMTHEWORKPLACE = 'toOrFromTheWorkplace',
-  OTHER = 'other',
+  OTHER = 'AgricultureAccidentLocation.other',
 }

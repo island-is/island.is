@@ -2,8 +2,11 @@ import * as z from 'zod'
 import { error } from './messages/error'
 import * as kennitala from 'kennitala'
 import {
+  AgricultureAccidentLocationEnum,
   AttachmentsEnum,
+  FishermanWorkplaceAccidentLocationEnum,
   GeneralWorkplaceAccidentLocationEnum,
+  ProfessionalAthleteAccidentLocationEnum,
   WhoIsTheNotificationForEnum,
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
@@ -90,6 +93,15 @@ export const AccidentNotificationSchema = z.object({
       GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
       GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
       GeneralWorkplaceAccidentLocationEnum.OTHER,
+      FishermanWorkplaceAccidentLocationEnum.ONTHESHIP,
+      FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+      FishermanWorkplaceAccidentLocationEnum.OTHER,
+      ProfessionalAthleteAccidentLocationEnum.SPORTCLUBSFACILITES,
+      ProfessionalAthleteAccidentLocationEnum.TOORFROMTHESPORTCLUBSFACILITES,
+      ProfessionalAthleteAccidentLocationEnum.OTHER,
+      AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
+      AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+      AgricultureAccidentLocationEnum.OTHER,
     ]),
   }),
 })

@@ -18,4 +18,107 @@ export const accidentLocation = {
       description: 'Accident location description',
     },
   }),
+  generalWorkAccident: defineMessages({
+    atTheWorkplace: {
+      id: 'an.application:accidentLocation.generalWorkAccident.atTheWorkplace',
+      defaultMessage: 'Á vinnustað',
+      description:
+        'Label for the at the workplace option in general accident location',
+    },
+    toOrFromTheWorkplace: {
+      id:
+        'an.application:accidentLocation.generalWorkAccident.toOrFromTheWorkplace',
+      defaultMessage: 'Á leið til eða frá vinnustað',
+      description:
+        'Label for the to or from the workplace option in general accident location',
+    },
+    other: {
+      id: 'an.application:accidentLocation.generalWorkAccident.other',
+      defaultMessage: 'Annars staðar á vegum vinnunar',
+      description:
+        'Label for the to or from the other option in general accident location',
+    },
+    heading: {
+      id: 'an.application:accidentLocation.generalWorkAccident.heading',
+      defaultMessage: 'Hvar gerðist slysið?',
+      description: 'General accident location heading',
+    },
+  }),
+  fishermanAccident: defineMessages({
+    onTheShip: {
+      id: 'an.application:accidentLocation.fishermanAccident.onTheShip',
+      defaultMessage: 'Um borð í skipinu',
+      description:
+        'Label for the on the ship option in fisherman accident location',
+    },
+    toOrFromTheWorkplace: {
+      id:
+        'an.application:accidentLocation.fishermanAccident.toOrFromTheWorkplace',
+      defaultMessage: 'Á leið til eða frá vinnu',
+      description:
+        'Label for the to or from the workplace option in fisherman accident location',
+    },
+    other: {
+      id: 'an.application:accidentLocation.fishermanAccident.other',
+      defaultMessage: 'Annars staðar',
+      description: 'Label for the other option in fisherman accident location',
+    },
+    heading: {
+      id: 'an.application:accidentLocation.fishermanAccident.heading',
+      defaultMessage: 'Hvar gerðist slysið?',
+      description: 'Fisherman accident location heading',
+    },
+  }),
+  professionalAthleteAccident: defineMessages({
+    atTheClubsSportsFacilites: {
+      id:
+        'an.application:accidentLocation.professionalAthleteAccident.atTheClubsSportsFacilites',
+      defaultMessage: 'Á skipulagðri æfingu, sýningu eða keppni.',
+      description:
+        'Label for the at the sports facilities option in sports accident location',
+    },
+    toOrFromTheSportsFacilites: {
+      id:
+        'an.application:accidentLocation.professionalAthleteAccident.toOrFromTheSportsFacilites',
+      defaultMessage: '"Á leið til eða frá æfingu, sýningu eða keppni',
+      description:
+        'Label for the to or from the sports facilities option in sports accident location',
+    },
+    other: {
+      id: 'an.application:accidentLocation.professionalAthleteAccident.other',
+      defaultMessage: 'Annars staðar',
+      description: 'Label for the  other option in sports accident location',
+    },
+    heading: {
+      id: 'an.application:accidentLocation.professionalAthleteAccident.heading',
+      defaultMessage: 'Hvar gerðist slysið?',
+      description: 'Sports accident location heading',
+    },
+  }),
+  agricultureAccident: defineMessages({
+    atTheWorkplace: {
+      id: 'an.application:accidentLocation.agricultureAccident.atTheWorkplace',
+      defaultMessage: 'Á vinnustað',
+      description:
+        'Label for the at the workplace option in agriculture accident location',
+    },
+    toOrFromTheWorkplace: {
+      id:
+        'an.application:accidentLocation.agricultureAccident.toOrFromTheWorkplace',
+      defaultMessage: 'Á leið til eða frá vinnustað',
+      description:
+        'Label for the to or from the workplace option in agriculture accident location',
+    },
+    other: {
+      id: 'an.application:accidentLocation.agricultureAccident.other',
+      defaultMessage: 'Annars staðar á vegum vinnunar',
+      description:
+        'Label for the to or from the other option in agriculture accident location',
+    },
+    heading: {
+      id: 'an.application:accidentLocation.agricultureAccident.heading',
+      defaultMessage: 'Hvar gerðist slysið?',
+      description: 'Agriculture accident location heading',
+    },
+  }),
 }
