@@ -72,25 +72,25 @@ export const accidentLocation = {
   professionalAthleteAccident: defineMessages({
     atTheClubsSportsFacilites: {
       id:
-        'an.application:accidentLocation.professionalAthleteAccident.atTheClubsSportsFacilites',
+        'an.application:accidentLocation.professionalAth.atTheClubsSportsFacilites',
       defaultMessage: 'Á skipulagðri æfingu, sýningu eða keppni.',
       description:
         'Label for the at the sports facilities option in sports accident location',
     },
     toOrFromTheSportsFacilites: {
       id:
-        'an.application:accidentLocation.professionalAthleteAccident.toOrFromTheSportsFacilites',
-      defaultMessage: '"Á leið til eða frá æfingu, sýningu eða keppni',
+        'an.application:accidentLocation.professionalAth.toOrFromTheSportsFacilites',
+      defaultMessage: 'Á leið til eða frá æfingu, sýningu eða keppni',
       description:
         'Label for the to or from the sports facilities option in sports accident location',
     },
     other: {
-      id: 'an.application:accidentLocation.professionalAthleteAccident.other',
+      id: 'an.application:accidentLocation.professionalAth.other',
       defaultMessage: 'Annars staðar',
       description: 'Label for the  other option in sports accident location',
     },
     heading: {
-      id: 'an.application:accidentLocation.professionalAthleteAccident.heading',
+      id: 'an.application:accidentLocation.professionalAth.heading',
       defaultMessage: 'Hvar gerðist slysið?',
       description: 'Sports accident location heading',
     },

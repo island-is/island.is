@@ -46,4 +46,44 @@ export const accidentType = {
       description: 'Sport activites',
     },
   }),
+  workAccidentType: defineMessages({
+    generalWorkAccident: {
+      id: 'an.application:accidentType.workAccidentType.generalWorkAccident',
+      defaultMessage: 'Almennt vinnuslys á landi',
+      description: 'General work accident',
+    },
+    fishermanAccident: {
+      id: 'an.application:accidentType.workAccidentType.fishermanAccident',
+      defaultMessage: 'Vinnuslys sjómanna',
+      description: 'Fisherman accident',
+    },
+    professionalAthlete: {
+      id: 'an.application:accidentType.workAccidentType.professionalAthlete',
+      defaultMessage: 'Atvinnumennska í íþróttum',
+      description: 'Professional athlete accident',
+    },
+    agricultureAccident: {
+      id: 'an.application:accidentType.workAccidentType.agricultureAccident',
+      defaultMessage: 'Slys við landbúnað',
+      description: 'Agriculture Accident',
+    },
+    heading: {
+      id: 'an.application:accidentType.workAccidentType.heading',
+      defaultMessage: 'Vinnuslys',
+      description: 'Work accident type heading',
+    },
+    description: {
+      id: 'an.application:accidentType.workAccidentType.description',
+      defaultMessage: `Allir launþegar án tillits til aldurs, sem starfa hér á landi.
+        Starf um borð í skipi eða loftfari, íslensku eða sem gert er út eða rekið af íslenskum aðilum
+        jafngildir starfi hér á landi ef laun eru greidd hér á landi eru slysatryggðir.
+        Veldu slysaflokk hér að neðan sem að á við`,
+      description: 'Work accident type description',
+    },
+    subSectionTitle: {
+      id: 'an.application:accidentType.workAccidentType.subsection',
+      defaultMessage: 'Vinnuslys',
+      description: 'Title for the work accident type subsection',
+    },
+  }),
 }

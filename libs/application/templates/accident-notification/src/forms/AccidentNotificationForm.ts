@@ -25,6 +25,7 @@ import {
   ProfessionalAthleteAccidentLocationEnum,
   AgricultureAccidentLocationEnum,
   FishermanWorkplaceAccidentLocationEnum,
+  WorkAccidentTypeEnum,
 } from '../types'
 import {
   externalData,
@@ -305,6 +306,42 @@ export const AccidentNotificationForm: Form = buildForm({
                   value: AccidentTypeEnum.SPORTS,
                   label: accidentType.labels.sports,
                 },
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'workAccidentType.subSection',
+          title: accidentType.workAccidentType.subSectionTitle,
+          children: [
+            buildMultiField({
+              id: 'workAccidentType.section',
+              title: accidentType.workAccidentType.heading,
+              description: accidentType.workAccidentType.description,
+              children: [
+                buildRadioField({
+                  id: 'workAccidentType',
+                  width: 'half',
+                  title: '',
+                  options: [
+                    {
+                      value: WorkAccidentTypeEnum.GENERAL,
+                      label: accidentType.workAccidentType.generalWorkAccident,
+                    },
+                    {
+                      value: WorkAccidentTypeEnum.FISHERMAN,
+                      label: accidentType.workAccidentType.fishermanAccident,
+                    },
+                    {
+                      value: WorkAccidentTypeEnum.PROFESSIONALATHLETE,
+                      label: accidentType.workAccidentType.professionalAthlete,
+                    },
+                    {
+                      value: WorkAccidentTypeEnum.AGRICULTURE,
+                      label: accidentType.workAccidentType.agricultureAccident,
+                    },
+                  ],
+                }),
               ],
             }),
           ],

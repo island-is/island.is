@@ -50,3 +50,10 @@ export enum AgricultureAccidentLocationEnum {
   TOORFROMTHEWORKPLACE = 'toOrFromTheWorkplace',
   OTHER = 'AgricultureAccidentLocation.other',
 }
+
+export enum WorkAccidentTypeEnum {
+  GENERAL = 'general',
+  FISHERMAN = 'fisherman',
+  PROFESSIONALATHLETE = 'professionalAthlete',
+  AGRICULTURE = 'agriculture',
+}
