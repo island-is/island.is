@@ -106,65 +106,63 @@ const ContactForms = () => {
                     />
                     {!selectedForm && <GhostForm />}
                     {selectedForm && (
-                      <Box>
-                        {selectedForm?.inputs?.map((input, key) => {
-                          return (
-                            <GridRow key={key}>
-                              {input.type === 'dual' ? (
-                                input.items?.map((input) => {
-                                  return (
-                                    input.title && (
-                                      <GridColumn
-                                        key={input.title}
-                                        span="6/12"
-                                        paddingTop={5}
-                                      >
-                                        <Input
-                                          backgroundColor="blue"
-                                          required={input.required}
-                                          label={input.title}
-                                          name={input.title}
-                                        />
-                                      </GridColumn>
-                                    )
+                      selectedForm.inputs?.map((input, key) => {
+                        return (
+                          <GridRow key={key}>
+                            {input.type === 'dual' ? (
+                              input.items?.map((input) => {
+                                return (
+                                  input.title && (
+                                    <GridColumn
+                                      key={input.title}
+                                      span="6/12"
+                                      paddingTop={5}
+                                    >
+                                      <Input
+                                        backgroundColor="blue"
+                                        required={input.required}
+                                        label={input.title}
+                                        name={input.title}
+                                      />
+                                    </GridColumn>
                                   )
-                                })
-                              ) : input.type === 'file' ? (
-                                <GridColumn span="12/12" paddingTop={5}>
-                                  <InputFileUpload
-                                    fileList={[]}
-                                    accept=".pdf"
-                                    header={input.header}
-                                    description={input.description}
-                                    buttonLabel={input.buttonText}
-                                    onChange={(_) => _}
-                                    onRemove={(_) => _}
-                                  />
-                                </GridColumn>
+                                )
+                              })
+                            ) : input.type === 'file' ? (
+                              <GridColumn span="12/12" paddingTop={5}>
+                                <InputFileUpload
+                                  fileList={[]}
+                                  accept=".pdf"
+                                  header={input.header}
+                                  description={input.description}
+                                  buttonLabel={input.buttonText}
+                                  onChange={(_) => _}
+                                  onRemove={(_) => _}
+                                />
+                              </GridColumn>
                               ) : (
-                                <GridColumn span="12/12" paddingTop={5}>
-                                  <Input
-                                    type={
-                                      input.type === 'text' ||
-                                      input.type === 'number' ||
-                                      input.type === 'email' ||
-                                      input.type === 'tel'
-                                        ? input.type
-                                        : undefined
-                                    }
-                                    required={input.required}
-                                    label={input.title}
-                                    name={input.title}
-                                    backgroundColor="blue"
-                                    rows={input.type === 'textarea' ? 10 : 1}
-                                    textarea={input.type === 'textarea'}
-                                  />
-                                </GridColumn>
-                              )}
-                            </GridRow>
-                          )
-                        })}
-                      </Box>
+                              <GridColumn span="12/12" paddingTop={5}>
+                                <Input
+                                  type={
+                                    input.type === 'text' ||
+                                    input.type === 'number' ||
+                                    input.type === 'email' ||
+                                    input.type === 'tel'
+                                      ? input.type
+                                      : undefined
+                                  }
+                                  required={input.required}
+                                  label={input.title}
+                                  name={input.title}
+                                  backgroundColor="blue"
+                                  rows={input.type === 'textarea' ? 10 : 1}
+                                  textarea={input.type === 'textarea'}
+                                />
+                              </GridColumn>
+                            )}
+                          </GridRow>
+                        )
+                      })
                     )}
                   </GridColumn>
                 </GridRow>
