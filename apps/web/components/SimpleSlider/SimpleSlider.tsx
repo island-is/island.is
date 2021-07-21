@@ -2,13 +2,12 @@ import React, {
   useState,
   useRef,
   useEffect,
-  useLayoutEffect,
   TouchEventHandler,
   FC,
   ReactNode,
 } from 'react'
 import cn from 'classnames'
-import { useWindowSize, useMountedState } from 'react-use'
+import { useWindowSize } from 'react-use'
 import { Box, Button, Hidden, Inline, Text } from '@island.is/island-ui/core'
 
 import * as styles from './SimpleSlider.treat'
@@ -21,6 +20,7 @@ type Breakpoints = Record<number, BreakpointOption>
 
 interface SimpleSliderProps {
   title?: string
+  titleColor?: 'white' | 'dark400'
   gutterWidth?: SlideState['gutterWidth']
   slideCount?: SlideState['slideCount']
   breakpoints?: SlideState['breakpoints']
@@ -44,6 +44,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
   slideWidthOffset = 0,
   breakpoints = {},
   title,
+  titleColor,
 }) => {
   const start = useRef(0)
   const touchDirection = useRef(null)
@@ -172,7 +173,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
     >
       {!!title && (
         <Box paddingBottom={4}>
-          <Text variant="h3">{title}</Text>
+          <Text variant="h3" color={titleColor}>{title}</Text>
         </Box>
       )}
       <Box className={styles.nav}>

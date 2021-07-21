@@ -12,7 +12,6 @@ export const searchSection = style({
   position: 'relative',
   display: 'inline-block',
   width: '100%',
-  height: MOBILE_HEIGHT - DESKTOP_HEADER_HEIGHT,
   marginTop: DESKTOP_HEADER_HEIGHT,
   paddingBottom: 150,
   top: -DESKTOP_HEADER_HEIGHT,
@@ -22,6 +21,9 @@ export const searchSection = style({
       marginTop: MOBILE_HEADER_HEIGHT,
       top: -MOBILE_HEADER_HEIGHT,
     },
+    md: {
+      height: MOBILE_HEIGHT - DESKTOP_HEADER_HEIGHT,
+    }
   }),
 })
 

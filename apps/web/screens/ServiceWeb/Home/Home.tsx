@@ -130,16 +130,10 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
         <Box className={styles.categories}>
           <GridContainer>
             <GridRow>
-              <GridColumn span="12/12" paddingBottom={3}>
-                <Text variant="h3" color="white">
-                  Svör eftir flokkum
-                </Text>
-              </GridColumn>
-            </GridRow>
-            <GridRow>
               <GridColumn span="12/12">
                 <SimpleSlider
                   title={'Svör eftir flokkum'}
+                  titleColor={'white'}
                   breakpoints={{
                     0: {
                       gutterWidth: theme.grid.gutter.mobile,
@@ -188,7 +182,7 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
           </GridContainer>
         </Box>
       )}
-      <Box marginY={[0, 0, 10]}>
+      <Box marginY={[7, 10, 10]}>
         <GridContainer>
           <GridRow>
             <GridColumn
@@ -220,18 +214,9 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
                   </Accordion>
                 </Box>
               </Box>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-      </Box>
-      <Box marginY={[0, 0, 10]}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn
-              offset={[null, null, null, '1/12']}
-              span={['12/12', '12/12', '12/12', '10/12']}
-            >
-              <ContactBanner />
+              <Box marginY={[10, 10, 20]}>
+                <ContactBanner />
+              </Box>
             </GridColumn>
           </GridRow>
         </GridContainer>

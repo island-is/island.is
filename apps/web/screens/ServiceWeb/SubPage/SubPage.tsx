@@ -110,7 +110,7 @@ const SubPage: Screen<SubPageProps> = ({
                   </GridColumn>
                 </GridRow>
                 <GridRow>
-                  <GridColumn span="10/12">
+                  <GridColumn span={["12/12", "12/12", "10/12"]}>
                     <Text variant="h1" as="h1">
                       {organizationTitle}
                     </Text>
@@ -172,8 +172,10 @@ const SubPage: Screen<SubPageProps> = ({
                     </ContentBlock>
                   </GridColumn>
                 </GridRow>
-                <ContactBanner />
               </GridContainer>
+              <Box marginY={[10, 10, 20]}>
+                <ContactBanner />
+              </Box>
             </GridColumn>
           </GridRow>
         </GridContainer>

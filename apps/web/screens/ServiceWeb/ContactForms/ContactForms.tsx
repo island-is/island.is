@@ -30,7 +30,7 @@ const ContactForms = () => {
     <>
       <ServiceWebHeader logoTitle={logoTitle} />
       <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
-      <Box marginY={[3, 3, 10]}>
+      <Box marginY={[3, 3, 10]} marginBottom={10}>
         <GridContainer>
           <GridRow>
             <GridColumn
@@ -160,9 +160,9 @@ const ContactForms = () => {
                   </GridColumn>
                 </GridRow>
                 <GridRow marginTop={7}>
-                  <GridColumn span="8/12">
+                  <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
                     <GridRow>
-                      <GridColumn span="6/12">
+                      <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
                         <Select
                           backgroundColor="blue"
                           icon="chevronDown"
@@ -176,8 +176,9 @@ const ContactForms = () => {
                           size="sm"
                         />
                       </GridColumn>
-                      <GridColumn span="4/12" offset="2/12">
+                      <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
                         <Box
+                          marginTop={[6, 6, 0, 0]}
                           display="flex"
                           flexDirection="column"
                           justifyContent="flexEnd"
