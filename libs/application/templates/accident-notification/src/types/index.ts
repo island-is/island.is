@@ -46,8 +46,8 @@ export enum ProfessionalAthleteAccidentLocationEnum {
 }
 
 export enum AgricultureAccidentLocationEnum {
-  ATTHEWORKPLACE = 'atTheWorkplace',
-  TOORFROMTHEWORKPLACE = 'toOrFromTheWorkplace',
+  ATTHEWORKPLACE = 'agriculture.atTheWorkplace',
+  TOORFROMTHEWORKPLACE = 'agriculture.toOrFromTheWorkplace',
   OTHER = 'AgricultureAccidentLocation.other',
 }
 
@@ -58,8 +58,20 @@ export enum WorkAccidentTypeEnum {
   AGRICULTURE = 'agriculture',
 }
 
-export enum RescueWorkAccidentEnum {
+export enum RescueWorkAccidentLocationEnum {
   DURINGRESCUE = 'duringRescue',
   TOORFROMRESCUE = 'toOrFromRescue',
   OTHER = 'rescueWork.other',
+}
+
+export enum StudiesAccidentTypeEnum {
+  INTERNSHIP = 'internship',
+  APPRENTICESHIP = 'apprenticeship',
+  VOCATIONALEDUCATION = 'vocationalEducation',
+}
+
+export enum StudiesAccidentLocationEnum {
+  ATTHESCHOOL = 'atTheSchool',
+  DURINGSTUDIES = 'duringStudies',
+  OTHER = 'studiesLocation.other',
 }

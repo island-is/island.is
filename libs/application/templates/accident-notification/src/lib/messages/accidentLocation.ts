@@ -146,4 +146,32 @@ export const accidentLocation = {
       description: 'Rescue work accident description',
     },
   }),
+  studiesAccidentLocation: defineMessages({
+    heading: {
+      id: 'an.application:accidentLocation.studiesAccidentLocation.heading',
+      defaultMessage: 'Hvar gerðist slysið?',
+      description: 'Studies accident location heading',
+    },
+    description: {
+      id: 'an.application:accidentLocation.studiesAccidentLocation.description',
+      defaultMessage: 'Vinsamlegast veldu hvar atvikið átti sér stað',
+      description: 'Studies accident location description',
+    },
+    atTheSchool: {
+      id: 'an.application:accidentLocation.studiesAccidentLocation.atTheSchool',
+      defaultMessage: 'Í kennslustofu eða skólahúsnæði',
+      description: 'Label for at the school location',
+    },
+    duringStudies: {
+      id:
+        'an.application:accidentLocation.studiesAccidentLocation.duringStudies',
+      defaultMessage: 'Á meðan verið var að sinna námi',
+      description: 'Label for at the during studies location',
+    },
+    other: {
+      id: 'an.application:accidentLocation.studiesAccidentLocation.other',
+      defaultMessage: 'Annars staðar á vegum skólans',
+      description: 'Label for the other studies location',
+    },
+  }),
 }

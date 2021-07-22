@@ -86,4 +86,38 @@ export const accidentType = {
       description: 'Title for the work accident type subsection',
     },
   }),
+  studiesAccidentType: defineMessages({
+    heading: {
+      id: 'an.application:accidentType.studiesAccidentType.heading',
+      defaultMessage: 'Í hverskonar námi gerðist slysið?',
+      description: 'Studies accident type heading',
+    },
+    description: {
+      id: 'an.application:accidentType.studiesAccidentType.description',
+      defaultMessage: `Allir nemendur í iðnnámi í löggiltum iðngreinum og nemar í starfsnámi sem stunda nám 
+      í heilbrigðisgreinum og raunvísindum og háskólanemar þegar þeir 
+      sinna verklegu námi eru slysatryggðir hjá Sjúkratryggingum Íslands.`,
+      description: 'Studies accident type description',
+    },
+    subSectionTitle: {
+      id: 'an.application:accidentType.studiesAccidentType.subsection',
+      defaultMessage: 'Slys við nám ',
+      description: 'Title for the studies accident type subsection',
+    },
+    apprenticeship: {
+      id: 'an.application:accidentType.studiesAccidentType.appprenticeship',
+      defaultMessage: 'Verknámi í Háskóla',
+      description: 'Label for the apprenticeship studies accident',
+    },
+    internship: {
+      id: 'an.application:accidentType.studiesAccidentType.internship',
+      defaultMessage: 'Starfsnám',
+      description: 'Label for the internship studies accident',
+    },
+    vocationalEducation: {
+      id: 'an.application:accidentType.studiesAccidentType.vocationalEducation',
+      defaultMessage: 'Iðnnám í löggildum iðngreinum',
+      description: 'Label for the internship studies accident',
+    },
+  }),
 }
