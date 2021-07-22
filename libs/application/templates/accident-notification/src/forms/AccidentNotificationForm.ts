@@ -33,6 +33,10 @@ import {
   accidentType,
   companyInfo,
   workMachine,
+  schoolInfo,
+  fishingCompanyInfo,
+  sportsClubInfo,
+  rescueSquadInfo,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -409,6 +413,8 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+    // TODO implement condition on all institute and company sections below
+    // there is a PR in progress with utility checks for that condition
     buildSection({
       title: companyInfo.general.title,
       children: [
@@ -424,7 +430,7 @@ export const AccidentNotificationForm: Form = buildForm({
               required: true,
             }),
             buildCheckboxField({
-              id: 'companyInfo.isRepresentativeOfCompany',
+              id: 'isRepresentativeOfCompanyOrInstitue',
               title: '',
               defaultValue: [],
               options: [
@@ -441,7 +447,14 @@ export const AccidentNotificationForm: Form = buildForm({
               titleVariant: 'h5',
               title: companyInfo.labels.descriptionField,
               condition: (formValue) => {
-                return formValue.isRepresentativeOfCompany?.toString() === YES
+                console.log(formValue)
+                console.log(
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString(),
+                )
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
               },
             }),
             // These should all be required if the user is not the representative of the company.
@@ -451,8 +464,10 @@ export const AccidentNotificationForm: Form = buildForm({
               title: companyInfo.labels.name,
               backgroundColor: 'blue',
               condition: (formValue) => {
-                console.log(formValue.isRepresentativeOfCompany)
-                return formValue.isRepresentativeOfCompany?.toString() === YES
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
               },
             }),
             buildTextField({
@@ -461,7 +476,10 @@ export const AccidentNotificationForm: Form = buildForm({
               backgroundColor: 'blue',
               width: 'half',
               condition: (formValue) => {
-                return formValue.isRepresentativeOfCompany?.toString() === YES
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
               },
             }),
             buildTextField({
@@ -470,7 +488,326 @@ export const AccidentNotificationForm: Form = buildForm({
               backgroundColor: 'blue',
               width: 'half',
               condition: (formValue) => {
-                return formValue.isRepresentativeOfCompany?.toString() === YES
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      title: schoolInfo.general.title,
+      children: [
+        buildMultiField({
+          title: schoolInfo.general.title,
+          description: schoolInfo.general.description,
+          children: [
+            buildTextField({
+              id: 'schoolInfo.nationalRegistrationId',
+              title: schoolInfo.labels.nationalId,
+              backgroundColor: 'blue',
+              variant: 'textarea',
+              required: true,
+            }),
+            buildCheckboxField({
+              id: 'isRepresentativeOfCompanyOrInstitue',
+              title: '',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: schoolInfo.labels.checkBox,
+                },
+              ],
+            }),
+            buildDescriptionField({
+              id: 'schoolInfo.descriptionField',
+              description: '',
+              space: 'containerGutter',
+              titleVariant: 'h5',
+              title: schoolInfo.labels.descriptionField,
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+            // These should all be required if the user is not the representative of the company.
+            // Should look into if we can require conditionally
+            buildTextField({
+              id: 'schoolInfo.name',
+              title: schoolInfo.labels.name,
+              backgroundColor: 'blue',
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+            buildTextField({
+              id: 'schoolInfo.email',
+              title: schoolInfo.labels.email,
+              backgroundColor: 'blue',
+              width: 'half',
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+            buildTextField({
+              id: 'schoolInfo.phoneNumber',
+              title: schoolInfo.labels.tel,
+              backgroundColor: 'blue',
+              width: 'half',
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      title: fishingCompanyInfo.general.title,
+      children: [
+        buildMultiField({
+          title: fishingCompanyInfo.general.title,
+          description: fishingCompanyInfo.general.description,
+          children: [
+            buildTextField({
+              id: 'fishingCompanyInfo.nationalRegistrationId',
+              title: fishingCompanyInfo.labels.nationalId,
+              backgroundColor: 'blue',
+              variant: 'textarea',
+              required: true,
+            }),
+            buildCheckboxField({
+              id: 'isRepresentativeOfCompanyOrInstitue',
+              title: '',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: fishingCompanyInfo.labels.checkBox,
+                },
+              ],
+            }),
+            buildDescriptionField({
+              id: 'fishingCompanyInfo.descriptionField',
+              description: '',
+              space: 'containerGutter',
+              titleVariant: 'h5',
+              title: fishingCompanyInfo.labels.descriptionField,
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+            // These should all be required if the user is not the representative of the company.
+            // Should look into if we can require conditionally
+            buildTextField({
+              id: 'fishingCompanyInfo.name',
+              title: fishingCompanyInfo.labels.name,
+              backgroundColor: 'blue',
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+            buildTextField({
+              id: 'fishingCompanyInfo.email',
+              title: fishingCompanyInfo.labels.email,
+              backgroundColor: 'blue',
+              width: 'half',
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+            buildTextField({
+              id: 'fishingCompanyInfo.phoneNumber',
+              title: fishingCompanyInfo.labels.tel,
+              backgroundColor: 'blue',
+              width: 'half',
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      title: sportsClubInfo.general.title,
+      children: [
+        buildMultiField({
+          title: sportsClubInfo.general.title,
+          description: sportsClubInfo.general.description,
+          children: [
+            buildTextField({
+              id: 'sportsClubInfo.nationalRegistrationId',
+              title: sportsClubInfo.labels.nationalId,
+              backgroundColor: 'blue',
+              variant: 'textarea',
+              required: true,
+            }),
+            buildCheckboxField({
+              id: 'isRepresentativeOfCompanyOrInstitue',
+              title: '',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: sportsClubInfo.labels.checkBox,
+                },
+              ],
+            }),
+            buildDescriptionField({
+              id: 'sportsClubInfo.descriptionField',
+              description: '',
+              space: 'containerGutter',
+              titleVariant: 'h5',
+              title: sportsClubInfo.labels.descriptionField,
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+            // These should all be required if the user is not the representative of the company.
+            // Should look into if we can require conditionally
+            buildTextField({
+              id: 'sportsClubInfo.name',
+              title: sportsClubInfo.labels.name,
+              backgroundColor: 'blue',
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+            buildTextField({
+              id: 'sportsClubInfo.email',
+              title: sportsClubInfo.labels.email,
+              backgroundColor: 'blue',
+              width: 'half',
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+            buildTextField({
+              id: 'sportsClubInfo.phoneNumber',
+              title: sportsClubInfo.labels.tel,
+              backgroundColor: 'blue',
+              width: 'half',
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      title: rescueSquadInfo.general.title,
+      children: [
+        buildMultiField({
+          title: rescueSquadInfo.general.title,
+          description: rescueSquadInfo.general.description,
+          children: [
+            buildTextField({
+              id: 'rescueSquadInfo.nationalRegistrationId',
+              title: rescueSquadInfo.labels.nationalId,
+              backgroundColor: 'blue',
+              variant: 'textarea',
+              required: true,
+            }),
+            buildCheckboxField({
+              id: 'isRepresentativeOfCompanyOrInstitue',
+              title: '',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: rescueSquadInfo.labels.checkBox,
+                },
+              ],
+            }),
+            buildDescriptionField({
+              id: 'rescueSquadInfo.descriptionField',
+              description: '',
+              space: 'containerGutter',
+              titleVariant: 'h5',
+              title: rescueSquadInfo.labels.descriptionField,
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+            // These should all be required if the user is not the representative of the company.
+            // Should look into if we can require conditionally
+            buildTextField({
+              id: 'rescueSquadInfo.name',
+              title: rescueSquadInfo.labels.name,
+              backgroundColor: 'blue',
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+            buildTextField({
+              id: 'rescueSquadInfo.email',
+              title: rescueSquadInfo.labels.email,
+              backgroundColor: 'blue',
+              width: 'half',
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
+              },
+            }),
+            buildTextField({
+              id: 'rescueSquadInfo.phoneNumber',
+              title: rescueSquadInfo.labels.tel,
+              backgroundColor: 'blue',
+              width: 'half',
+              condition: (formValue) => {
+                return (
+                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
+                  YES
+                )
               },
             }),
           ],
