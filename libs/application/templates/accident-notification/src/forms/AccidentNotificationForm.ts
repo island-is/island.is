@@ -395,6 +395,39 @@ export const AccidentNotificationForm: Form = buildForm({
           },
         }),
         buildMultiField({
+          id: 'accidentLocation.rescueWorkAccident',
+          title: accidentLocation.general.heading,
+          description: accidentLocation.rescueWorkAccident.description,
+          children: [
+            buildRadioField({
+              id: 'accidentLocation.answer',
+              title: '',
+              options: [
+                {
+                  value: GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
+                  label: accidentLocation.generalWorkAccident.atTheWorkplace,
+                },
+                {
+                  value:
+                    GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                  label:
+                    accidentLocation.generalWorkAccident.toOrFromTheWorkplace,
+                },
+                {
+                  value: GeneralWorkplaceAccidentLocationEnum.OTHER,
+                  label: accidentLocation.generalWorkAccident.other,
+                },
+              ],
+            }),
+          ],
+          condition: (formValue) => {
+            const accidentType = (formValue as {
+              accidentType: { radioButton: AccidentTypeEnum }
+            })?.accidentType?.radioButton
+            return accidentType === AccidentTypeEnum.RESCUEWORK
+          },
+        }),
+        buildMultiField({
           id: 'accidentLocation.fishermanAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.general.description,

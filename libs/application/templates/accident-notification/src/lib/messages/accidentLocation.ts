@@ -121,4 +121,29 @@ export const accidentLocation = {
       description: 'Agriculture accident location heading',
     },
   }),
+  rescueWorkAccident: defineMessages({
+    duringRescue: {
+      id: 'an.application:accidentLocation.rescueWorkAccident.duringRescue',
+      defaultMessage: 'Við björgunaraðgerðir',
+      description:
+        'Label for the during rescue option in rescue work accident location',
+    },
+    toOrFromRescue: {
+      id: 'an.application:accidentLocation.rescueWorkAccident.toOrFromRescue',
+      defaultMessage: 'Á leið til eða frá vinnustað',
+      description:
+        'Label for the to or from the rescue in rescue work accident location',
+    },
+    other: {
+      id: 'an.application:accidentLocation.rescueWorkAccident.other',
+      defaultMessage: 'Annars staðar',
+      description: 'Label for the other in rescue work accident location',
+    },
+    description: {
+      id: 'an.application:accidentLocation.rescueWorkAccident.description',
+      defaultMessage:
+        'Þeir sem vinna að björgun manna úr lífsháska eða vörnum gegn yfirvofandi meiriháttar tjóni á verðmætum eru slysatryggðir hjá Sjúkratryggingum Íslands.',
+      description: 'Rescue work accident description',
+    },
+  }),
 }

@@ -8,6 +8,7 @@ import {
   FishermanWorkplaceAccidentLocationEnum,
   GeneralWorkplaceAccidentLocationEnum,
   ProfessionalAthleteAccidentLocationEnum,
+  RescueWorkAccidentEnum,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
 } from '../types'
@@ -103,11 +104,13 @@ export const AccidentNotificationSchema = z.object({
       ProfessionalAthleteAccidentLocationEnum.OTHER,
       AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
       AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-      AgricultureAccidentLocationEnum.OTHER,
+      RescueWorkAccidentEnum.TOORFROMRESCUE,
+      RescueWorkAccidentEnum.DURINGRESCUE,
+      RescueWorkAccidentEnum.OTHER,
     ]),
   }),
   accidentType: z.object({
-    answer: z.enum([
+    radioButton: z.enum([
       AccidentTypeEnum.WORK,
       AccidentTypeEnum.HOMEACTIVITIES,
       AccidentTypeEnum.RESCUEWORK,

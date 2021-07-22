@@ -57,3 +57,9 @@ export enum WorkAccidentTypeEnum {
   PROFESSIONALATHLETE = 'professionalAthlete',
   AGRICULTURE = 'agriculture',
 }
+
+export enum RescueWorkAccidentEnum {
+  DURINGRESCUE = 'duringRescue',
+  TOORFROMRESCUE = 'toOrFromRescue',
+  OTHER = 'rescueWork.other',
+}
