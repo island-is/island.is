@@ -34,9 +34,9 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
   const { formatMessage } = useLocale()
   const handleExpand = () => setExpand(!expand)
 
-  const handleRootItemClick = (external?: boolean) => {
+  const handleRootItemClick = (external?: boolean, children?: number) => {
     if (nav.path === undefined) handleExpand()
-    if (onItemClick) onItemClick()
+    if (onItemClick && !children) onItemClick()
     if (external) {
       servicePortalOutboundLink()
     }
@@ -68,7 +68,7 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
         enabled={nav.enabled}
         external={nav.external}
         onClick={() => {
-          handleRootItemClick(nav.external)
+          handleRootItemClick(nav.external, nav.children?.length)
         }}
         variant={variant}
       >
