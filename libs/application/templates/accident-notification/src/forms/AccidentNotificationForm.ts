@@ -526,9 +526,7 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => {
-            return isFishermanAccident(formValue)
-          },
+          condition: (formValue) => isFishermanAccident(formValue),
         }),
         buildMultiField({
           id: 'accidentLocation.professionalAthleteAccident',
@@ -560,9 +558,7 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => {
-            return isProfessionalAthleteAccident(formValue)
-          },
+          condition: (formValue) => isProfessionalAthleteAccident(formValue),
         }),
         buildMultiField({
           id: 'accidentLocation.agricultureAccident',
@@ -589,11 +585,9 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
+          condition: (formValue) => isAgricultureAccident(formValue),
         }),
       ],
-      condition: (formValue) => {
-        return isAgricultureAccident(formValue)
-      },
     }),
     buildSection({
       id: 'attachments.section',
