@@ -1,10 +1,20 @@
+import {
+  PaymentScheduleConditions,
+  PaymentScheduleDebts,
+  PaymentScheduleEmployer,
+  PaymentScheduleInitialSchedule,
+} from '@island.is/api/schema'
 import { SuccessfulDataProviderResult } from '@island.is/application/core'
 import * as z from 'zod'
-import { Payment, Prerequisites } from '../dataProviders/tempAPITypes'
-import { NO, YES } from '../shared/constants'
+import { AMOUNT, MONTHS, NO, YES } from '../shared/constants'
 
 interface PrerequisitesResult extends SuccessfulDataProviderResult {
-  data: Prerequisites
+  data: {
+    conditions: PaymentScheduleConditions
+    debts: PaymentScheduleDebts[]
+    allInitialSchedules: PaymentScheduleInitialSchedule[]
+    employer: PaymentScheduleEmployer
+  }
 }
 
 interface UserProfileResult extends SuccessfulDataProviderResult {
@@ -34,22 +44,21 @@ interface NatRegResult extends SuccessfulDataProviderResult {
   }
 }
 
-interface PaymentPlanListResult extends SuccessfulDataProviderResult {
-  data: Payment[]
-}
-
 export type PaymentPlanExternalData = {
   paymentPlanPrerequisites?: PrerequisitesResult
   nationalRegistry?: NatRegResult
   userProfile?: UserProfileResult
-  paymentPlanList?: PaymentPlanListResult
 }
+
+const PaymentMode = z.enum([AMOUNT, MONTHS])
+export type PaymentModeState = z.infer<typeof PaymentMode>
 
 const paymentPlanSchema = z
   .object({
     id: z.string().nonempty(),
     amountPerMonth: z.number().optional(),
     numberOfMonths: z.number().optional(),
+    paymentMode: PaymentMode.optional(),
   })
   .optional()
 
