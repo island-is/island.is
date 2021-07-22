@@ -81,6 +81,13 @@ export const AccidentNotificationSchema = z.object({
       .refine((x) => (x ? isValid24HFormatTime(x) : false)),
     descriptionOfAccident: z.string().nonempty(),
   }),
+  companyInfo: z.object({
+    nationalRegistrationId: z.string().optional(),
+    descriptionField: z.string().optional(),
+    name: z.string().optional(),
+    email: z.string().optional(),
+    phoneNumber: z.string().optional(),
+  }),
 })
 
 export type AccidentNotification = z.TypeOf<typeof AccidentNotificationSchema>
