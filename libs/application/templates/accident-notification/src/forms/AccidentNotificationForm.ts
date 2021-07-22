@@ -32,6 +32,7 @@ import {
   accidentDetails,
   accidentType,
   companyInfo,
+  workMachine,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -471,6 +472,57 @@ export const AccidentNotificationForm: Form = buildForm({
               condition: (formValue) => {
                 return formValue.isRepresentativeOfCompany?.toString() === YES
               },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'workMachine.section',
+      title: workMachine.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'workMachine',
+          title: workMachine.general.workMachineRadioTitle,
+          description: '',
+          children: [
+            buildRadioField({
+              id: 'workMachineRadio',
+              title: '',
+              backgroundColor: 'blue',
+              defaultValue: NO,
+              width: 'half',
+              options: [
+                { value: YES, label: application.general.yesOptionLabel },
+                { value: NO, label: application.general.noOptionLabel },
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'workMachine.subSection',
+          title: workMachine.general.subSectionTitle,
+          condition: (formValue) => formValue.workMachineRadio === YES,
+          children: [
+            buildMultiField({
+              title: workMachine.general.subSectionTitle,
+              children: [
+                buildTextField({
+                  id: 'workMachine.registrationNumber',
+                  title: workMachine.labels.registrationNumber,
+                  backgroundColor: 'blue',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'workMachine.desriptionOfMachine',
+                  title: workMachine.labels.desriptionOfMachine,
+                  placeholder: workMachine.placeholder.desriptionOfMachine,
+                  backgroundColor: 'blue',
+                  rows: 4,
+                  variant: 'textarea',
+                  required: true,
+                }),
+              ],
             }),
           ],
         }),
