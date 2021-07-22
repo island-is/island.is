@@ -1,6 +1,7 @@
 import { FormValue } from '@island.is/application/core'
 import { WorkAccidentTypeEnum } from '../types'
 import { isProfessionalAthleteAccident } from './isProfessionalAthleteAccident'
+
 describe('isProfessionalAthleteAccident', () => {
   const professionalAthleteAccident: FormValue = {
     workAccident: { type: WorkAccidentTypeEnum.PROFESSIONALATHLETE },
@@ -17,7 +18,7 @@ describe('isProfessionalAthleteAccident', () => {
       true,
     )
   })
-  it('should return true for workplace accidents other than professional athlete', () => {
+  it('should return false for workplace accidents other than professional athlete', () => {
     expect(isProfessionalAthleteAccident(someOtherAccident)).toEqual(false)
   })
   it('should return false for empty object', () => {

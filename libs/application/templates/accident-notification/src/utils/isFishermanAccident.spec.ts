@@ -15,7 +15,7 @@ describe('isFishermanAccident', () => {
   it('should return true for fisherman accidents', () => {
     expect(isFishermanAccident(fishermanAccident)).toEqual(true)
   })
-  it('should return true for workplace accidents other than fisherman', () => {
+  it('should return false for workplace accidents other than fisherman', () => {
     expect(isFishermanAccident(someOtherAccident)).toEqual(false)
   })
   it('should return false for empty object', () => {

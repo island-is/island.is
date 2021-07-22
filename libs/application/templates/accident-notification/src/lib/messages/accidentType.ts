@@ -22,7 +22,7 @@ export const accidentType = {
   labels: defineMessages({
     homeActivites: {
       id: 'an.application:accidentType.labels.homeActivites',
-      defaultMessage: 'Heimlisstörf',
+      defaultMessage: 'Heimilisstörf',
       description: 'Home activites',
     },
     work: {

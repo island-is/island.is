@@ -47,6 +47,9 @@ import {
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isProfessionalAthleteAccident,
+  isRescueWorkAccident,
+  isStudiesAccident,
+  isWorkAccident,
 } from '../utils'
 
 export const AccidentNotificationForm: Form = buildForm({
@@ -352,12 +355,7 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => {
-            const accidentType = (formValue as {
-              accidentType: { radioButton: AccidentTypeEnum }
-            })?.accidentType?.radioButton
-            return accidentType === AccidentTypeEnum.WORK
-          },
+          condition: (formValue) => isWorkAccident(formValue),
         }),
         buildSubSection({
           id: 'studiesAccident.subSection',
@@ -390,12 +388,7 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => {
-            const accidentType = (formValue as {
-              accidentType: { radioButton: AccidentTypeEnum }
-            })?.accidentType?.radioButton
-            return accidentType === AccidentTypeEnum.STUDIES
-          },
+          condition: (formValue) => isStudiesAccident(formValue),
         }),
       ],
     }),
@@ -429,12 +422,7 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => {
-            const workAccidentType = (formValue as {
-              workAccident: { type: WorkAccidentTypeEnum }
-            })?.workAccident?.type
-            return workAccidentType === WorkAccidentTypeEnum.GENERAL
-          },
+          condition: (formValue) => isGeneralWorkplaceAccident(formValue),
         }),
         buildMultiField({
           id: 'accidentLocation.rescueWorkAccident',
@@ -462,12 +450,7 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => {
-            const accidentType = (formValue as {
-              accidentType: { radioButton: AccidentTypeEnum }
-            })?.accidentType?.radioButton
-            return accidentType === AccidentTypeEnum.RESCUEWORK
-          },
+          condition: (formValue) => isRescueWorkAccident(formValue),
         }),
         buildMultiField({
           id: 'accidentLocation.studiesAccident',
@@ -493,12 +476,7 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => {
-            const accidentType = (formValue as {
-              accidentType: { radioButton: AccidentTypeEnum }
-            })?.accidentType?.radioButton
-            return accidentType === AccidentTypeEnum.STUDIES
-          },
+          condition: (formValue) => isStudiesAccident(formValue),
         }),
         buildMultiField({
           id: 'accidentLocation.fishermanAccident',

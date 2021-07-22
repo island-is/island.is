@@ -15,7 +15,7 @@ describe('isGeneralWorkplaceAccident', () => {
   it('should return true for general workplace accidents', () => {
     expect(isGeneralWorkplaceAccident(generalWorkplaceAccident)).toEqual(true)
   })
-  it('should return true for workplace accidents other than general', () => {
+  it('should return false for workplace accidents other than general', () => {
     expect(isGeneralWorkplaceAccident(someOtherAccident)).toEqual(false)
   })
   it('should return false for empty object', () => {
