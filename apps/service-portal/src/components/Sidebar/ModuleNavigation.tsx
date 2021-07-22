@@ -10,7 +10,6 @@ import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
 import NavItem from './NavItem/NavItem'
 import SubNavItem from './NavItem/SubNavItem'
-import { useStore } from '../../store/stateProvider'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 
 interface Props {
@@ -21,7 +20,6 @@ interface Props {
 
 const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
   const [expand, setExpand] = useState(false)
-  const [{ routes }] = useStore()
   const { pathname } = useLocation()
   const isModuleActive =
     (nav.path &&
@@ -36,7 +34,11 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
 
   const handleRootItemClick = (external?: boolean, children?: number) => {
     if (nav.path === undefined) handleExpand()
-    if (onItemClick && !children) onItemClick()
+    if (onItemClick) {
+      if ((children && isModuleActive) || !children) {
+        onItemClick()
+      }
+    }
     if (external) {
       servicePortalOutboundLink()
     }
@@ -68,7 +70,7 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
         enabled={nav.enabled}
         external={nav.external}
         onClick={() => {
-          handleRootItemClick(nav.external, nav.children?.length)
+          handleRootItemClick(nav.external, navChildren?.length)
         }}
         variant={variant}
       >
