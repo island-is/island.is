@@ -1,0 +1,24 @@
+import { FormValue } from '@island.is/application/core'
+import { WorkAccidentTypeEnum } from '../types'
+import { isGeneralWorkplaceAccident } from './isGeneralWorkplaceAccident'
+describe('isGeneralWorkplaceAccident', () => {
+  const generalWorkplaceAccident: FormValue = {
+    workAccident: { type: WorkAccidentTypeEnum.GENERAL },
+  }
+
+  const someOtherAccident: FormValue = {
+    workAccident: { type: WorkAccidentTypeEnum.PROFESSIONALATHLETE },
+  }
+
+  const emptyObject = {}
+
+  it('should return true for general workplace accidents', () => {
+    expect(isGeneralWorkplaceAccident(generalWorkplaceAccident)).toEqual(true)
+  })
+  it('should return true for workplace accidents other than general', () => {
+    expect(isGeneralWorkplaceAccident(someOtherAccident)).toEqual(false)
+  })
+  it('should return false for empty object', () => {
+    expect(isGeneralWorkplaceAccident(emptyObject)).toEqual(false)
+  })
+})

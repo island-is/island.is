@@ -40,6 +40,12 @@ import {
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments } from '../lib/messages/attachments'
+import {
+  isAgricultureAccident,
+  isFishermanAccident,
+  isGeneralWorkplaceAccident,
+  isProfessionalAthleteAccident,
+} from '../utils'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
@@ -311,16 +317,16 @@ export const AccidentNotificationForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'workAccidentType.subSection',
+          id: 'workAccident.subSection',
           title: accidentType.workAccidentType.subSectionTitle,
           children: [
             buildMultiField({
-              id: 'workAccidentType.section',
+              id: 'workAccident.section',
               title: accidentType.workAccidentType.heading,
               description: accidentType.workAccidentType.description,
               children: [
                 buildRadioField({
-                  id: 'workAccidentType',
+                  id: 'workAccident.type',
                   width: 'half',
                   title: '',
                   options: [
@@ -345,6 +351,12 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
+          condition: (formValue) => {
+            const accidentType = (formValue as {
+              accidentType: { radioButton: AccidentTypeEnum }
+            })?.accidentType?.radioButton
+            return accidentType === AccidentTypeEnum.WORK
+          },
         }),
       ],
     }),
@@ -352,33 +364,6 @@ export const AccidentNotificationForm: Form = buildForm({
       id: 'accidentLocation',
       title: accidentLocation.general.sectionTitle,
       children: [
-        buildMultiField({
-          id: 'accidentLocation.generalAccident',
-          title: accidentLocation.general.heading,
-          description: accidentLocation.general.description,
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value: GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
-                  label: accidentLocation.generalWorkAccident.atTheWorkplace,
-                },
-                {
-                  value:
-                    GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                  label:
-                    accidentLocation.generalWorkAccident.toOrFromTheWorkplace,
-                },
-                {
-                  value: GeneralWorkplaceAccidentLocationEnum.OTHER,
-                  label: accidentLocation.generalWorkAccident.other,
-                },
-              ],
-            }),
-          ],
-        }),
         buildMultiField({
           id: 'accidentLocation.generalWorkAccident',
           title: accidentLocation.general.heading,
@@ -405,6 +390,9 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
+          condition: (formValue) => {
+            return isGeneralWorkplaceAccident(formValue)
+          },
         }),
         buildMultiField({
           id: 'accidentLocation.fishermanAccident',
@@ -432,6 +420,9 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
+          condition: (formValue) => {
+            return isFishermanAccident(formValue)
+          },
         }),
         buildMultiField({
           id: 'accidentLocation.professionalAthleteAccident',
@@ -463,6 +454,9 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
+          condition: (formValue) => {
+            return isProfessionalAthleteAccident(formValue)
+          },
         }),
         buildMultiField({
           id: 'accidentLocation.agricultureAccident',
@@ -491,6 +485,9 @@ export const AccidentNotificationForm: Form = buildForm({
           ],
         }),
       ],
+      condition: (formValue) => {
+        return isAgricultureAccident(formValue)
+      },
     }),
     buildSection({
       id: 'attachments.section',

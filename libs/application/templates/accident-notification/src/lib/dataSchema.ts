@@ -2,12 +2,14 @@ import * as z from 'zod'
 import { error } from './messages/error'
 import * as kennitala from 'kennitala'
 import {
+  AccidentTypeEnum,
   AgricultureAccidentLocationEnum,
   AttachmentsEnum,
   FishermanWorkplaceAccidentLocationEnum,
   GeneralWorkplaceAccidentLocationEnum,
   ProfessionalAthleteAccidentLocationEnum,
   WhoIsTheNotificationForEnum,
+  WorkAccidentTypeEnum,
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
 
@@ -103,6 +105,25 @@ export const AccidentNotificationSchema = z.object({
       AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
       AgricultureAccidentLocationEnum.OTHER,
     ]),
+  }),
+  accidentType: z.object({
+    answer: z.enum([
+      AccidentTypeEnum.WORK,
+      AccidentTypeEnum.HOMEACTIVITIES,
+      AccidentTypeEnum.RESCUEWORK,
+      AccidentTypeEnum.SPORTS,
+      AccidentTypeEnum.STUDIES,
+    ]),
+  }),
+  workAccident: z.object({
+    type: z
+      .enum([
+        WorkAccidentTypeEnum.AGRICULTURE,
+        WorkAccidentTypeEnum.FISHERMAN,
+        WorkAccidentTypeEnum.GENERAL,
+        WorkAccidentTypeEnum.PROFESSIONALATHLETE,
+      ])
+      .optional(),
   }),
 })
 
