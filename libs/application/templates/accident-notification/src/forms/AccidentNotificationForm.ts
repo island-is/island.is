@@ -13,6 +13,7 @@ import {
   buildFileUploadField,
   buildDateField,
   buildDescriptionField,
+  buildCheckboxField,
 } from '@island.is/application/core'
 //replace
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
@@ -30,6 +31,8 @@ import {
   whoIsTheNotificationFor,
   accidentDetails,
   accidentType,
+  companyInfo,
+  workMachine,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -401,6 +404,125 @@ export const AccidentNotificationForm: Form = buildForm({
               backgroundColor: 'blue',
               rows: 10,
               variant: 'textarea',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      title: companyInfo.general.title,
+      children: [
+        buildMultiField({
+          title: companyInfo.general.title,
+          description: companyInfo.general.description,
+          children: [
+            buildTextField({
+              id: 'companyInfo.nationalRegistrationId',
+              title: companyInfo.labels.nationalId,
+              backgroundColor: 'blue',
+              variant: 'textarea',
+              required: true,
+            }),
+            buildCheckboxField({
+              id: 'companyInfo.isRepresentativeOfCompany',
+              title: '',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: companyInfo.labels.checkBox,
+                },
+              ],
+            }),
+            buildDescriptionField({
+              id: 'companyInfo.descriptionField',
+              description: '',
+              space: 'containerGutter',
+              titleVariant: 'h5',
+              title: companyInfo.labels.descriptionField,
+              condition: (formValue) => {
+                return formValue.isRepresentativeOfCompany?.toString() === YES
+              },
+            }),
+            // These should all be required if the user is not the representative of the company.
+            // Should look into if we can require conditionally
+            buildTextField({
+              id: 'companyInfo.name',
+              title: companyInfo.labels.name,
+              backgroundColor: 'blue',
+              condition: (formValue) => {
+                console.log(formValue.isRepresentativeOfCompany)
+                return formValue.isRepresentativeOfCompany?.toString() === YES
+              },
+            }),
+            buildTextField({
+              id: 'companyInfo.email',
+              title: companyInfo.labels.email,
+              backgroundColor: 'blue',
+              width: 'half',
+              condition: (formValue) => {
+                return formValue.isRepresentativeOfCompany?.toString() === YES
+              },
+            }),
+            buildTextField({
+              id: 'companyInfo.phoneNumber',
+              title: companyInfo.labels.tel,
+              backgroundColor: 'blue',
+              width: 'half',
+              condition: (formValue) => {
+                return formValue.isRepresentativeOfCompany?.toString() === YES
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'workMachine.section',
+      title: workMachine.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'workMachine',
+          title: workMachine.general.workMachineRadioTitle,
+          description: '',
+          children: [
+            buildRadioField({
+              id: 'workMachineRadio',
+              title: '',
+              backgroundColor: 'blue',
+              defaultValue: NO,
+              width: 'half',
+              options: [
+                { value: YES, label: application.general.yesOptionLabel },
+                { value: NO, label: application.general.noOptionLabel },
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'workMachine.subSection',
+          title: workMachine.general.subSectionTitle,
+          condition: (formValue) => formValue.workMachineRadio === YES,
+          children: [
+            buildMultiField({
+              title: workMachine.general.subSectionTitle,
+              children: [
+                buildTextField({
+                  id: 'workMachine.registrationNumber',
+                  title: workMachine.labels.registrationNumber,
+                  backgroundColor: 'blue',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'workMachine.desriptionOfMachine',
+                  title: workMachine.labels.desriptionOfMachine,
+                  placeholder: workMachine.placeholder.desriptionOfMachine,
+                  backgroundColor: 'blue',
+                  rows: 4,
+                  variant: 'textarea',
+                  required: true,
+                }),
+              ],
             }),
           ],
         }),
