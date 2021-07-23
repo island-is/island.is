@@ -33,6 +33,7 @@ import {
   accidentType,
   companyInfo,
   workMachine,
+  locationAndPurpose,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -523,6 +524,41 @@ export const AccidentNotificationForm: Form = buildForm({
                   required: true,
                 }),
               ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      title: locationAndPurpose.general.title,
+      children: [
+        buildMultiField({
+          title: locationAndPurpose.general.title,
+          description: locationAndPurpose.general.description,
+          children: [
+            buildTextField({
+              id: 'locationAndPurpose.location',
+              title: locationAndPurpose.labels.location,
+              backgroundColor: 'blue',
+            }),
+            buildTextField({
+              id: 'locationAndPurpose.postalCode',
+              title: locationAndPurpose.labels.postalCode,
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'locationAndPurpose.city',
+              title: locationAndPurpose.labels.city,
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'locationAndPurpose.purpose',
+              title: locationAndPurpose.labels.purpose,
+              backgroundColor: 'blue',
+              rows: 6,
+              variant: 'textarea',
             }),
           ],
         }),

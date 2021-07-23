@@ -88,6 +88,12 @@ export const AccidentNotificationSchema = z.object({
     email: z.string().optional(),
     phoneNumber: z.string().optional(),
   }),
+  locationAndPurpose: z.object({
+    location: z.string().nonempty(),
+    postalCode: z.string().nonempty(),
+    city: z.string().nonempty(),
+    purpose: z.string().nonempty(),
+  }),
 })
 
 export type AccidentNotification = z.TypeOf<typeof AccidentNotificationSchema>
