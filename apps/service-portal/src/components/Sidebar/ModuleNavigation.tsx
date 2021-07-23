@@ -15,10 +15,16 @@ import { servicePortalOutboundLink } from '@island.is/plausible'
 interface Props {
   nav: ServicePortalNavigationItem
   variant: 'blue' | 'blueberry'
+  alwaysExpanded?: boolean
   onItemClick?: () => void
 }
 
-const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
+const ModuleNavigation: FC<Props> = ({
+  nav,
+  variant,
+  alwaysExpanded,
+  onItemClick,
+}) => {
   const [expand, setExpand] = useState(false)
   const { pathname } = useLocation()
   const isModuleActive =
@@ -32,13 +38,9 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
   const { formatMessage } = useLocale()
   const handleExpand = () => setExpand(!expand)
 
-  const handleRootItemClick = (external?: boolean, children?: number) => {
+  const handleRootItemClick = (external?: boolean) => {
     if (nav.path === undefined) handleExpand()
-    if (onItemClick) {
-      if ((children && isModuleActive) || !children) {
-        onItemClick()
-      }
-    }
+    if (onItemClick) onItemClick()
     if (external) {
       servicePortalOutboundLink()
     }
@@ -70,14 +72,17 @@ const ModuleNavigation: FC<Props> = ({ nav, variant, onItemClick }) => {
         enabled={nav.enabled}
         external={nav.external}
         onClick={() => {
-          handleRootItemClick(nav.external, navChildren?.length)
+          handleRootItemClick(nav.external)
         }}
         variant={variant}
       >
         {formatMessage(nav.name)}
       </NavItem>
       {Array.isArray(navChildren) && navChildren.length > 0 && (
-        <AnimateHeight duration={300} height={isModuleActive ? 'auto' : 0}>
+        <AnimateHeight
+          duration={300}
+          height={isModuleActive || alwaysExpanded ? 'auto' : 0}
+        >
           <div>
             <Box className={styles.subnav} marginTop={2}>
               <Stack space={1}>
