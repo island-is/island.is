@@ -17,8 +17,8 @@ import { useIntl } from 'react-intl'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { HTMLText } from '@island.is/regulations'
-import startOfTomorrow from 'date-fns/startOfTomorrow'
 import { StepComponent } from '../state/useDraftingState'
+import { getMinDate, getNextWorkday } from '../utils'
 
 type WrapProps = {
   legend?: string
@@ -73,8 +73,9 @@ export const EditBasics: StepComponent = (props) => {
     })
   }, [dateValue, onAnyInputChange])
 
-  const fastTrackDate = fastTrack ? new Date() : null
+  const fastTrackDate = fastTrack ? getNextWorkday(new Date()) : null
   const selectedDate = dateValue ? new Date(dateValue) : null
+
   return (
     <>
       <Wrap>
@@ -107,9 +108,10 @@ export const EditBasics: StepComponent = (props) => {
         <DatePicker
           label={t(msg.idealPublishDate)}
           placeholderText={t(msg.idealPublishDate_soon)}
-          minDate={startOfTomorrow()}
+          minDate={getMinDate()}
           selected={fastTrackDate || selectedDate}
-          handleChange={(date: Date) => setDateValue(date)}
+          handleChange={(date: Date) => setDateValue(getNextWorkday(date))} // Auto selects next workday (Excludes weekends and holidays).
+          // excludeDates={[]} --> Do we want to exclude holidays and weekends from the calendar?
         />
         <Box marginTop={1}>
           <Checkbox

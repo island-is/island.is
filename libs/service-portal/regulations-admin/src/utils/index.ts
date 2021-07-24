@@ -1,7 +1,8 @@
 import { useLocale as _useLocale } from '@island.is/localization'
 import { getHolidays } from 'fridagar'
 import { ISODate, toISODate } from '@island.is/regulations'
-import { startOfDay } from 'date-fns/esm'
+import startOfTomorrow from 'date-fns/startOfTomorrow'
+import { startOfDay, addDays } from 'date-fns/esm'
 import { OptionTypeBase, ValueType } from 'react-select'
 
 import { Option } from '@island.is/island-ui/core'
@@ -42,6 +43,22 @@ export const isWorkday = (date: Date): boolean => {
   }
   const holidays = getHolidayMap(date.getFullYear())
   return holidays[toISODate(date)] !== true
+}
+
+export const getMinDate = () => {
+  // Returns today unless the time is 15:00 or later.
+  const d = new Date()
+  const setMinDate = d.getHours() > 15 ? startOfTomorrow() : new Date()
+  return setMinDate
+}
+
+export const getNextWorkday = (date: Date) => {
+  // Returns the next workday.
+  let nextDay = date
+  while (!isWorkday(nextDay)) {
+    nextDay = addDays(nextDay, 1)
+  }
+  return nextDay
 }
 
 // ---------------------------------------------------------------------------
