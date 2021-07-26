@@ -46,6 +46,7 @@ import {
   isAgricultureAccident,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
+  isHomeActitivitesAccident,
   isProfessionalAthleteAccident,
   isRescueWorkAccident,
   isStudiesAccident,
@@ -422,7 +423,9 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => isGeneralWorkplaceAccident(formValue),
+          condition: (formValue) =>
+            isGeneralWorkplaceAccident(formValue) &&
+            !isHomeActitivitesAccident(formValue),
         }),
         buildMultiField({
           id: 'accidentLocation.rescueWorkAccident',
@@ -450,7 +453,9 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => isRescueWorkAccident(formValue),
+          condition: (formValue) =>
+            isRescueWorkAccident(formValue) &&
+            !isHomeActitivitesAccident(formValue),
         }),
         buildMultiField({
           id: 'accidentLocation.studiesAccident',
@@ -476,7 +481,9 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => isStudiesAccident(formValue),
+          condition: (formValue) =>
+            isStudiesAccident(formValue) &&
+            !isHomeActitivitesAccident(formValue),
         }),
         buildMultiField({
           id: 'accidentLocation.fishermanAccident',
@@ -504,7 +511,9 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => isFishermanAccident(formValue),
+          condition: (formValue) =>
+            isFishermanAccident(formValue) &&
+            !isHomeActitivitesAccident(formValue),
         }),
         buildMultiField({
           id: 'accidentLocation.professionalAthleteAccident',
@@ -536,7 +545,9 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => isProfessionalAthleteAccident(formValue),
+          condition: (formValue) =>
+            isProfessionalAthleteAccident(formValue) &&
+            !isHomeActitivitesAccident(formValue),
         }),
         buildMultiField({
           id: 'accidentLocation.agricultureAccident',
@@ -563,7 +574,9 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) => isAgricultureAccident(formValue),
+          condition: (formValue) =>
+            isAgricultureAccident(formValue) &&
+            !isHomeActitivitesAccident(formValue),
         }),
       ],
     }),
