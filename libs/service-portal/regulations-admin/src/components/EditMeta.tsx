@@ -20,7 +20,7 @@ import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { RegulationMinistry } from '@island.is/regulations/web'
 import { editorMsgs as msg } from '../messages'
-import { emptyOption, findValueOption } from '../utils'
+import { emptyOption, findValueOption, findMinistryInText } from '../utils'
 import { MinistrySlug, LawChapterSlug } from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
 
@@ -88,6 +88,7 @@ export const EditMeta: StepComponent = (props) => {
     ) as ReadonlyArray<Option>
   }, [ministries, t])
 
+  console.log('findMinistryInText', findMinistryInText(draft.text.value))
   return (
     <>
       <Wrap>

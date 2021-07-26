@@ -1,6 +1,6 @@
 import { useLocale as _useLocale } from '@island.is/localization'
 import { getHolidays } from 'fridagar'
-import { ISODate, toISODate } from '@island.is/regulations'
+import { ISODate, toISODate, HTMLText } from '@island.is/regulations'
 import startOfTomorrow from 'date-fns/startOfTomorrow'
 import { startOfDay, addDays } from 'date-fns/esm'
 import { OptionTypeBase, ValueType } from 'react-select'
@@ -120,4 +120,36 @@ export const findValueOption = (
     }) ||
     null
   )
+}
+
+export const findMinistryInText = (textString: HTMLText) => {
+  var htmlDiv = document.createElement('div')
+  htmlDiv.innerHTML = textString
+  const innertext = htmlDiv.querySelectorAll('.Dags')[0]
+
+  const threeLetterMonths = [
+    'jan',
+    'feb',
+    'mar',
+    'apr',
+    'maí',
+    'jún',
+    'júl',
+    'ágú',
+    'sep',
+    'okt',
+    'nóv',
+    'des',
+  ]
+
+  const undirskrRe = /^(.+?ráðuneyti)(?:ð|nu),? (\d{1,2})\.? (jan|feb|mar|apr|maí|jún|júl|ágú|sep|okt|nóv|des)(?:\.|\w+)? (2\d{3}).?$/i
+  const text = innertext?.textContent?.trim().replace(/\s+/g, ' ')
+  const m = text?.match(undirskrRe)
+  if (m) {
+    const ministryName = m[1]
+    const dayOfMonth = m[2]
+    const monthIndex = threeLetterMonths.indexOf(m[3].toLowerCase())
+    const year = m[4]
+    return { ministryName, dayOfMonth, monthIndex, year }
+  }
 }
