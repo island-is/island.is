@@ -78,6 +78,10 @@ module.exports = {
 
     const voterRegions = data.map((data) => {
       const registryData = Object.values(data)
+      registryData.forEach((item) => {
+        if (!(typeof item === 'string'))
+          throw `Record ${registryData.toString()} has some errors.\n----> ${item} <---- has the wrong type, should be string, quitting ...`
+      })
       return {
         national_id: registryData[0].trim(),
         region_number: parseInt(registryData[1]),
