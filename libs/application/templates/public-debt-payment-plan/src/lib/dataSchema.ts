@@ -24,7 +24,7 @@ interface UserProfileResult extends SuccessfulDataProviderResult {
   }
 }
 
-interface NatRegResult extends SuccessfulDataProviderResult {
+export interface NatRegResult extends SuccessfulDataProviderResult {
   data: {
     nationalId: string
     age: number
@@ -64,6 +64,15 @@ const paymentPlanSchema = z
 
 export const PublicDebtPaymentPlanSchema = z.object({
   // TODO: Applicant schema
+  applicant: z.object({
+    address: z.string(),
+    city: z.string(),
+    email: z.string(),
+    name: z.string(),
+    nationalId: z.string(),
+    phoneNumber: z.string(),
+    postalCode: z.string(),
+  }),
   employer: z.object({
     isCorrectInfo: z.enum([YES, NO]),
     correctedNationalId: z.string().optional(),

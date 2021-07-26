@@ -1,14 +1,26 @@
-import { PaymentScheduleDebts } from '@island.is/api/schema'
+import {
+  PaymentScheduleDebts,
+  PaymentScheduleEmployer,
+} from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import React from 'react'
-import { PaymentPlanExternalData } from '../../lib/dataSchema'
+import {
+  PaymentPlanExternalData,
+  PublicDebtPaymentPlan,
+} from '../../lib/dataSchema'
+import { YES } from '../../shared/constants'
 
 export const Overview = ({ application }: FieldBaseProps) => {
   const externalData = application.externalData as PaymentPlanExternalData
-  const debts = externalData.paymentPlanPrerequisites?.data
-    ?.debts as PaymentScheduleDebts[]
+  const paymentPrerequisites = externalData.paymentPlanPrerequisites?.data
+  const debts = paymentPrerequisites?.debts as PaymentScheduleDebts[]
+  const employerInfo = paymentPrerequisites?.employer as PaymentScheduleEmployer
+  const nationalRegistry = externalData.nationalRegistry?.data
+  const answers = application.answers as PublicDebtPaymentPlan
+  const applicant = answers?.applicant
+  const employer = answers?.employer
 
   const editAction = () => {
     // TODO: Write better function. What will happen on edit?
@@ -22,41 +34,59 @@ export const Overview = ({ application }: FieldBaseProps) => {
       <ReviewGroup isEditable editAction={editAction}>
         <GridRow>
           <GridColumn span={['6/12', '5/12']}>
-            <Box>
-              <Label>Nafn</Label>
-              <Text>Fjármundur Skuldason</Text>
-            </Box>
-            <Box>
-              <Label marginTop={2}>Sími</Label>
-              <Text>8486525</Text>
-            </Box>
+            {nationalRegistry?.fullName && (
+              <Box>
+                <Label>Nafn</Label>
+                <Text>{nationalRegistry?.fullName}</Text>
+              </Box>
+            )}
+            {applicant?.phoneNumber && (
+              <Box>
+                <Label marginTop={2}>Sími</Label>
+                <Text>{applicant?.phoneNumber}</Text>
+              </Box>
+            )}
           </GridColumn>
           <GridColumn span={['6/12', '5/12']}>
-            <Box>
-              <Label>Heimilisfang</Label>
-              <Text>Skuldagötu 2, 110 Reykjavík</Text>
-            </Box>
-            <Box>
-              <Label marginTop={2}>Netfang</Label>
-              <Text>Fjarmundurskuldason@simnet.is</Text>
-            </Box>
+            {nationalRegistry?.address?.streetAddress &&
+              nationalRegistry?.address?.postalCode &&
+              nationalRegistry?.address?.city && (
+                <Box>
+                  <Label>Heimilisfang</Label>
+                  <Text>{`${nationalRegistry?.address?.streetAddress}, ${nationalRegistry?.address?.postalCode} ${nationalRegistry?.address?.city}`}</Text>
+                </Box>
+              )}
+            {applicant?.email && (
+              <Box>
+                <Label marginTop={2}>Netfang</Label>
+                <Text>{applicant?.email}</Text>
+              </Box>
+            )}
           </GridColumn>
         </GridRow>
       </ReviewGroup>
       <ReviewGroup isEditable editAction={editAction}>
         <GridRow>
-          <GridColumn span={['6/12', '5/12']}>
-            <Box>
-              <Label>Vinnuveitandi</Label>
-              <Text>Krónan ehf.</Text>
-            </Box>
-          </GridColumn>
-          <GridColumn span={['6/12', '5/12']}>
-            <Box>
-              <Label>Kennitala vinnuveitanda</Label>
-              <Text>711298-2239</Text>
-            </Box>
-          </GridColumn>
+          {employer?.isCorrectInfo === YES && (
+            <GridColumn span={['6/12', '5/12']}>
+              <Box>
+                <Label>Vinnuveitandi</Label>
+                <Text>{employerInfo.name}</Text>
+              </Box>
+            </GridColumn>
+          )}
+          {employerInfo?.nationalId && (
+            <GridColumn span={['6/12', '5/12']}>
+              <Box>
+                <Label>Kennitala vinnuveitanda</Label>
+                <Text>
+                  {employer?.isCorrectInfo === YES
+                    ? employerInfo?.nationalId
+                    : employer?.correctedNationalId}
+                </Text>
+              </Box>
+            </GridColumn>
+          )}
         </GridRow>
       </ReviewGroup>
       {debts?.map((payment, index) => {
