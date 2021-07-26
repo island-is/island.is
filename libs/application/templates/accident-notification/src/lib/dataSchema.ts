@@ -51,11 +51,11 @@ export const AccidentNotificationSchema = z.object({
     onBehalf: z.enum([OnBehalf.MYSELF, OnBehalf.OTHERS]),
   }),
   applicant: z.object({
-    name: z.string().nonempty(error.required.defaultMessage),
+    name: z.string().min(1, error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().nonempty(error.required.defaultMessage),
-    postalCode: z.string().nonempty(error.required.defaultMessage),
-    city: z.string().nonempty(error.required.defaultMessage),
+    address: z.string().min(1, error.required.defaultMessage),
+    postalCode: z.string().min(1, error.required.defaultMessage),
+    city: z.string().min(1, error.required.defaultMessage),
     email: z.string().email().optional(),
     phoneNumber: z.string().optional(),
   }),
@@ -75,11 +75,11 @@ export const AccidentNotificationSchema = z.object({
     injuryCertificateFile: z.array(FileSchema).optional(),
   }),
   accidentDetails: z.object({
-    dateOfAccident: z.string().nonempty(),
+    dateOfAccident: z.string().min(1),
     timeOfAccident: z
       .string()
       .refine((x) => (x ? isValid24HFormatTime(x) : false)),
-    descriptionOfAccident: z.string().nonempty(),
+    descriptionOfAccident: z.string().min(1),
   }),
   companyInfo: z.object({
     nationalRegistrationId: z.string().optional(),
@@ -89,10 +89,10 @@ export const AccidentNotificationSchema = z.object({
     phoneNumber: z.string().optional(),
   }),
   locationAndPurpose: z.object({
-    location: z.string().nonempty(),
-    postalCode: z.string().nonempty(),
-    city: z.string().nonempty(),
-    purpose: z.string().nonempty(),
+    location: z.string().min(1),
+    postalCode: z.string().min(1),
+    city: z.string().min(1),
+    purpose: z.string().min(1),
   }),
 })
 
