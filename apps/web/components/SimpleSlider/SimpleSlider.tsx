@@ -123,7 +123,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
     switch (direction) {
       case 'next':
         current = slideState.current + 1
-        if (current > numberOfSlides - 1) {
+        if ( current > numberOfSlides - slideState.slideCount) {
           return false
         }
         break
