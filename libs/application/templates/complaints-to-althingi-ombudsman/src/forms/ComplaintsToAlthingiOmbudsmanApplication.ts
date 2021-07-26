@@ -343,7 +343,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               title: complaintInformation.title,
               children: [
                 buildRadioField({
-                  id: 'complaintInformation.complaintType',
+                  id: 'complaintType',
                   title: '',
                   options: [
                     {
@@ -430,6 +430,20 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   },
                   { spaceTop: 2 },
                 ),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'complaint.section.appeals',
+          title: complaintInformation.appealsSectionTitle,
+          children: [
+            buildRadioField({
+              id: 'appeals',
+              title: complaintInformation.appealsHeader,
+              options: [
+                { label: complaintInformation.yes, value: YES },
+                { label: complaintInformation.no, value: NO },
               ],
             }),
           ],

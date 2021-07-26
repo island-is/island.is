@@ -1,12 +1,19 @@
 import * as z from 'zod'
 import { error } from './messages/error'
 import * as kennitala from 'kennitala'
-import { WhoIsTheNotificationForEnum } from '../types'
+import { AttachmentsEnum, WhoIsTheNotificationForEnum } from '../types'
+import { isValid24HFormatTime } from '../utils'
 
 export enum OnBehalf {
   MYSELF = 'myself',
   OTHERS = 'others',
 }
+
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
 export const AccidentNotificationSchema = z.object({
   externalData: z.object({
@@ -58,6 +65,28 @@ export const AccidentNotificationSchema = z.object({
       WhoIsTheNotificationForEnum.ME,
       WhoIsTheNotificationForEnum.POWEROFATTORNEY,
     ]),
+  }),
+  attachments: z.object({
+    injuryCertificate: z.enum([
+      AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
+      AttachmentsEnum.INJURYCERTIFICATE,
+      AttachmentsEnum.SENDCERTIFICATELATER,
+    ]),
+    injuryCertificateFile: z.array(FileSchema).optional(),
+  }),
+  accidentDetails: z.object({
+    dateOfAccident: z.string().nonempty(),
+    timeOfAccident: z
+      .string()
+      .refine((x) => (x ? isValid24HFormatTime(x) : false)),
+    descriptionOfAccident: z.string().nonempty(),
+  }),
+  companyInfo: z.object({
+    nationalRegistrationId: z.string().optional(),
+    descriptionField: z.string().optional(),
+    name: z.string().optional(),
+    email: z.string().optional(),
+    phoneNumber: z.string().optional(),
   }),
 })
 
