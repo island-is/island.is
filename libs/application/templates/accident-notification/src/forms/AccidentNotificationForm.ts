@@ -425,7 +425,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'companyInfo.nationalRegistrationId',
               title: companyInfo.labels.nationalId,
               backgroundColor: 'blue',
-              variant: 'textarea',
+              format: '######-####',
               required: true,
             }),
             buildCheckboxField({
@@ -504,7 +504,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'schoolInfo.nationalRegistrationId',
               title: schoolInfo.labels.nationalId,
               backgroundColor: 'blue',
-              variant: 'textarea',
+              format: '######-####',
               required: true,
             }),
             buildCheckboxField({
@@ -583,7 +583,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'fishingCompanyInfo.nationalRegistrationId',
               title: fishingCompanyInfo.labels.nationalId,
               backgroundColor: 'blue',
-              variant: 'textarea',
+              format: '######-####',
               required: true,
             }),
             buildCheckboxField({
@@ -662,7 +662,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'sportsClubInfo.nationalRegistrationId',
               title: sportsClubInfo.labels.nationalId,
               backgroundColor: 'blue',
-              variant: 'textarea',
+              format: '######-####',
               required: true,
             }),
             buildCheckboxField({
@@ -741,7 +741,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'rescueSquadInfo.nationalRegistrationId',
               title: rescueSquadInfo.labels.nationalId,
               backgroundColor: 'blue',
-              variant: 'textarea',
+              format: '######-####',
               required: true,
             }),
             buildCheckboxField({
