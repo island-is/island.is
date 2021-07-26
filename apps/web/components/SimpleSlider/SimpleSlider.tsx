@@ -258,14 +258,14 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
             {items.map((x, index) => {
               if (index <= numberOfSlides - slideState.slideCount) {
                 return (
-                <button
-                  key={index}
-                  className={cn(styles.dot, {
-                    [styles.dotActive]: index === slideState.current,
-                  })}
-                  onClick={() => goTo(index)}
-                />
-              )
+                  <button
+                    key={index}
+                    className={cn(styles.dot, {
+                      [styles.dotActive]: index === slideState.current,
+                    })}
+                    onClick={() => goTo(index)}
+                  />
+                )
               }
             })}
           </Inline>
