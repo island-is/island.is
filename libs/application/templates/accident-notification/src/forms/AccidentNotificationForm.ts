@@ -401,14 +401,21 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+    // Question to consider with designer: Is general work not just work thats not a fisherman, agriculture or sports related?
+    // Is the sports related incidents work related?
+    // Why not just have agriculture, sports and fisherman as the first radio buttons? Would simplify the flow...
+    // Accident location section
     buildSection({
       id: 'accidentLocation',
       title: accidentLocation.general.sectionTitle,
+      condition: (formValue) => isGeneralWorkplaceAccident(formValue),
       children: [
+        // location of general work related accident
         buildMultiField({
           id: 'accidentLocation.generalWorkAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.general.description,
+          condition: (formValue) => isGeneralWorkplaceAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -431,14 +438,13 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) =>
-            isGeneralWorkplaceAccident(formValue) &&
-            !isHomeActivitiesAccident(formValue),
         }),
+        // location of rescue work related accident
         buildMultiField({
           id: 'accidentLocation.rescueWorkAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.rescueWorkAccident.description,
+          condition: (formValue) => isRescueWorkAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -461,14 +467,13 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) =>
-            isRescueWorkAccident(formValue) &&
-            !isHomeActivitiesAccident(formValue),
         }),
+        // location of studies related accident
         buildMultiField({
           id: 'accidentLocation.studiesAccident',
           title: accidentLocation.studiesAccidentLocation.heading,
           description: accidentLocation.studiesAccidentLocation.description,
+          condition: (formValue) => isStudiesAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -489,14 +494,13 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) =>
-            isStudiesAccident(formValue) &&
-            !isHomeActivitiesAccident(formValue),
         }),
+        // location of fisherman related accident
         buildMultiField({
           id: 'accidentLocation.fishermanAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.general.description,
+          condition: (formValue) => isFishermanAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -519,9 +523,6 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) =>
-            isFishermanAccident(formValue) &&
-            !isHomeActivitiesAccident(formValue),
         }),
         buildMultiField({
           id: 'accidentLocation.professionalAthleteAccident',
@@ -582,12 +583,11 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) =>
-            isAgricultureAccident(formValue) &&
-            !isHomeActivitiesAccident(formValue),
+          condition: (formValue) => isAgricultureAccident(formValue),
         }),
       ],
     }),
+    // Attachments section files are optional at this point
     buildSection({
       id: 'attachments.section',
       title: attachments.general.sectionTitle,
@@ -652,6 +652,7 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+    // Details of the accident
     buildSection({
       id: 'accidentDetails.section',
       title: accidentDetails.general.sectionTitle,
@@ -688,10 +689,10 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
-    // TODO implement condition on all institute and company sections below
-    // there is a PR in progress with utility checks for that condition
+    // Company information if work accident without being a the injured being a fisherman
     buildSection({
       title: companyInfo.general.title,
+      condition: (formValue) => isGeneralWorkplaceAccident(formValue),
       children: [
         buildMultiField({
           title: companyInfo.general.title,
@@ -769,8 +770,10 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+    // School information if school accident
     buildSection({
       title: schoolInfo.general.title,
+      condition: (formValue) => isStudiesAccident(formValue),
       children: [
         buildMultiField({
           title: schoolInfo.general.title,
@@ -848,8 +851,10 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+    // fishery information if fisherman
     buildSection({
       title: fishingCompanyInfo.general.title,
+      condition: (formValue) => isFishermanAccident(formValue),
       children: [
         buildMultiField({
           title: fishingCompanyInfo.general.title,
@@ -927,8 +932,10 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+    // Sports club information when the injured has a sports related accident
     buildSection({
       title: sportsClubInfo.general.title,
+      condition: (formValue) => isProfessionalAthleteAccident(formValue),
       children: [
         buildMultiField({
           title: sportsClubInfo.general.title,
@@ -1008,6 +1015,7 @@ export const AccidentNotificationForm: Form = buildForm({
     }),
     buildSection({
       title: rescueSquadInfo.general.title,
+      condition: (formValue) => isRescueWorkAccident(formValue),
       children: [
         buildMultiField({
           title: rescueSquadInfo.general.title,
@@ -1085,9 +1093,11 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+    // Workmachine information only applicable to generic workplace accidents
     buildSection({
       id: 'workMachine.section',
       title: workMachine.general.sectionTitle,
+      condition: (formValue) => isGeneralWorkplaceAccident(formValue),
       children: [
         buildMultiField({
           id: 'workMachine',
@@ -1136,8 +1146,10 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+    // Location and purpose of the injured when the accident occured, relevant to all cases except home activites
     buildSection({
       title: locationAndPurpose.general.title,
+      condition: (formValue) => !isHomeActivitiesAccident(formValue),
       children: [
         buildMultiField({
           title: locationAndPurpose.general.title,
