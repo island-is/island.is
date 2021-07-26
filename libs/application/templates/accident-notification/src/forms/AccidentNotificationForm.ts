@@ -528,6 +528,17 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'overview.section',
+      title: 'Yfirlit',
+      children: [
+        buildCustomField({
+          id: 'overview',
+          title: 'Yfirlit tilkynningar slyss',
+          component: 'FormOverview',
+        }),
+      ],
+    }),
     // TODO remove before release, just there to continue with last screen
     buildDescriptionField({
       id: '',
