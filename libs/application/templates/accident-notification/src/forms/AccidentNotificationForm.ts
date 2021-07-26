@@ -33,6 +33,7 @@ import {
   accidentType,
   companyInfo,
   workMachine,
+  overview,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -530,11 +531,11 @@ export const AccidentNotificationForm: Form = buildForm({
     }),
     buildSection({
       id: 'overview.section',
-      title: 'Yfirlit',
+      title: overview.general.sectionTitle,
       children: [
         buildCustomField({
           id: 'overview',
-          title: 'Yfirlit tilkynningar slyss',
+          title: overview.general.sectionTitle,
           component: 'FormOverview',
         }),
       ],
