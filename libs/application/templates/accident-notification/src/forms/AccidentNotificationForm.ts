@@ -206,7 +206,6 @@ export const AccidentNotificationForm: Form = buildForm({
               disabled: true,
               required: true,
               defaultValue: (application: AccidentNotification) => {
-                console.log(application.externalData)
                 return application.externalData?.nationalRegistry?.data?.address
                   ?.postalCode
               },
@@ -447,10 +446,6 @@ export const AccidentNotificationForm: Form = buildForm({
               titleVariant: 'h5',
               title: companyInfo.labels.descriptionField,
               condition: (formValue) => {
-                console.log(formValue)
-                console.log(
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString(),
-                )
                 return (
                   formValue.isRepresentativeOfCompanyOrInstitue?.toString() ===
                   YES

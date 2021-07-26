@@ -15,7 +15,7 @@ export const rescueSquadInfo = {
     description: {
       id: 'an.application:rescueSquadInfo.general.description',
       defaultMessage:
-        'Vinsamlegast fylltu út upplýsingar um björgunarsveitina..',
+        'Vinsamlegast fylltu út upplýsingar um björgunarsveitina.',
       description: `Please fill in the details of the resuce squad with whom the injured person was working at the time of the accident.`,
     },
   }),
