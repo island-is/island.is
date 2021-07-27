@@ -3,6 +3,7 @@ import { error } from './messages/error'
 import * as kennitala from 'kennitala'
 import { AttachmentsEnum, WhoIsTheNotificationForEnum } from '../types'
 import { isValid24HFormatTime } from '../utils'
+import { NO, YES } from '../constants'
 
 export enum OnBehalf {
   MYSELF = 'myself',
@@ -81,6 +82,7 @@ export const AccidentNotificationSchema = z.object({
       .refine((x) => (x ? isValid24HFormatTime(x) : false)),
     descriptionOfAccident: z.string().min(1),
   }),
+  isRepresentativeOfCompanyOrInstitue: z.enum([YES, NO]),
   companyInfo: z.object({
     nationalRegistrationId: z.string().optional(),
     descriptionField: z.string().optional(),

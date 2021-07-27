@@ -3,11 +3,13 @@ import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { AccidentNotification } from '../../lib/dataSchema'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
-import { ValueLine } from './ValueLine'
+import { FileValueLine, ValueLine } from './ValueLine'
 import {
   accidentDetails,
   accidentType,
   applicantInformation,
+  companyInfo,
+  locationAndPurpose,
   overview,
 } from '../../lib/messages'
 import { AccidentTypeEnum, WhoIsTheNotificationForEnum } from '../../types'
@@ -15,6 +17,8 @@ import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
+import { YES } from '../../constants'
+import { getRepresentativeData } from '../../utils'
 
 export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
   const answers = application.answers as AccidentNotification
@@ -24,11 +28,14 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
   const time = `${timeOfAccident.slice(0, 2)}:${timeOfAccident.slice(2, 4)}`
   const date = format(parseISO(dateOfAccident), 'dd.MM.yy', { locale: is })
 
+  const representativeData = getRepresentativeData(application.answers)
+
   return (
     <Box component="section" paddingTop={2}>
       <Text>
         {formatText(overview.general.description, application, formatMessage)}
       </Text>
+
       <Text variant="h4" paddingTop={10} paddingBottom={3}>
         {formatText(
           applicantInformation.general.title,
@@ -91,7 +98,7 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
           <ReviewGroup isLast editAction={() => null}>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine label="Nafn" value="Knattspyrnufélag Reykjavíkur" />
+                <ValueLine label="Nafn" value="Hans Klaufi" />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine label="Kennitala" value="525458-8548" />
@@ -115,21 +122,37 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
 
       {/* TODO: Only display this if individual household accident */}
       <Text variant="h4" paddingTop={6} paddingBottom={3}>
-        Staðsetning á slysi
+        {formatText(
+          locationAndPurpose.general.title,
+          application,
+          formatMessage,
+        )}
       </Text>
       <ReviewGroup isLast editAction={() => null}>
         <GridRow>
           <GridColumn span="12/12">
-            <ValueLine label="Heimili / póstfang" value="Fálkagata 13" />
+            <ValueLine
+              label={locationAndPurpose.labels.location}
+              value={answers.locationAndPurpose.location}
+            />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '6/12']}>
-            <ValueLine label="Póstnúmer" value="107" />
+            <ValueLine
+              label={locationAndPurpose.labels.postalCode}
+              value={answers.locationAndPurpose.postalCode}
+            />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '6/12']}>
-            <ValueLine label="Sveitarfélag" value="Reykjavík" />
+            <ValueLine
+              label={locationAndPurpose.labels.city}
+              value={answers.locationAndPurpose.city}
+            />
           </GridColumn>
           <GridColumn span="12/12">
-            <ValueLine label="Nánar" value="Íbúð 101" />
+            <ValueLine
+              label={locationAndPurpose.labels.purpose}
+              value={answers.locationAndPurpose.purpose}
+            />
           </GridColumn>
         </GridRow>
       </ReviewGroup>
@@ -149,26 +172,46 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
         </GridRow>
       </ReviewGroup>
 
-      {/* TODO: Only display this if representative */}
-      <Text variant="h4" paddingTop={6} paddingBottom={3}>
-        Upplýsingar um forsvarsmann
-      </Text>
-      <ReviewGroup isLast editAction={() => null}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
-            <ValueLine label="Nafn" value="Andrés Önd" />
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
-            <ValueLine label="Kennitala" value="200496-5182" />
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
-            <ValueLine label="Netfang" value="andres@simnet.is" />
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
-            <ValueLine label="Símanúmer" value="868-5854" />
-          </GridColumn>
-        </GridRow>
-      </ReviewGroup>
+      {answers.isRepresentativeOfCompanyOrInstitue?.toString() === YES &&
+        representativeData && (
+          <>
+            <Text variant="h4" paddingTop={6} paddingBottom={3}>
+              {formatText(
+                representativeData.title ?? '',
+                application,
+                formatMessage,
+              )}
+            </Text>
+            <ReviewGroup isLast editAction={() => null}>
+              <GridRow>
+                <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <ValueLine
+                    label={companyInfo.labels.name}
+                    value={representativeData.info.name ?? ''}
+                  />
+                </GridColumn>
+                <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <ValueLine
+                    label={companyInfo.labels.nationalId}
+                    value={representativeData.info.nationalRegistrationId ?? ''}
+                  />
+                </GridColumn>
+                <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <ValueLine
+                    label={companyInfo.labels.email}
+                    value={representativeData.info.email ?? ''}
+                  />
+                </GridColumn>
+                <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <ValueLine
+                    label={companyInfo.labels.tel}
+                    value={representativeData.info.phoneNumber ?? ''}
+                  />
+                </GridColumn>
+              </GridRow>
+            </ReviewGroup>
+          </>
+        )}
 
       <Text variant="h4" paddingTop={6} paddingBottom={3}>
         {formatText(
@@ -197,16 +240,12 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
               value={answers.accidentDetails.descriptionOfAccident}
             />
           </GridColumn>
-          {answers.attachments.injuryCertificateFile && (
-            <GridColumn span={['12/12', '12/12', '9/12']}>
-              <ValueLine
-                label={overview.labels.attachments}
-                value={answers.attachments.injuryCertificateFile
-                  ?.map((x) => x.name)
-                  .join(', ')}
-              />
-            </GridColumn>
-          )}
+          <GridColumn span={['12/12', '12/12', '9/12']}>
+            <FileValueLine
+              label={overview.labels.attachments}
+              files={answers.attachments.injuryCertificateFile}
+            />
+          </GridColumn>
         </GridRow>
       </ReviewGroup>
     </Box>
