@@ -3,10 +3,12 @@ import {
   PaymentScheduleDebts,
   PaymentScheduleEmployer,
   PaymentScheduleInitialSchedule,
+  PaymentScheduleType,
 } from '@island.is/api/schema'
 import { SuccessfulDataProviderResult } from '@island.is/application/core'
 import * as z from 'zod'
 import { AMOUNT, MONTHS, NO, YES } from '../shared/constants'
+import { error } from './messages'
 
 interface PrerequisitesResult extends SuccessfulDataProviderResult {
   data: {
@@ -22,6 +24,13 @@ interface UserProfileResult extends SuccessfulDataProviderResult {
     email: string
     mobilePhoneNumber: string
   }
+}
+
+export interface PaymentDistribution {
+  monthAmount: number | null
+  monthCount: number | null
+  totalAmount: number
+  scheduleType: PaymentScheduleType
 }
 
 export interface NatRegResult extends SuccessfulDataProviderResult {
@@ -58,7 +67,9 @@ const paymentPlanSchema = z
     id: z.string().nonempty(),
     amountPerMonth: z.number().optional(),
     numberOfMonths: z.number().optional(),
-    paymentMode: PaymentMode.optional(),
+    paymentMode: PaymentMode.refine((x) => x !== null, {
+      params: error.paymentMode,
+    }),
   })
   .optional()
 
@@ -94,6 +105,20 @@ export const PublicDebtPaymentPlanSchema = z.object({
     ten: paymentPlanSchema,
   }),
 })
+
+export type PaymentPlanBuildIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+export type PaymentPlanKeys =
+  | 'one'
+  | 'two'
+  | 'three'
+  | 'four'
+  | 'five'
+  | 'six'
+  | 'seven'
+  | 'eight'
+  | 'nine'
+  | 'ten'
 
 export const paymentPlanIndexKeyMapper = {
   0: 'one',
