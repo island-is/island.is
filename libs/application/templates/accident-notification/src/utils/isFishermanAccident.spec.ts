@@ -1,9 +1,10 @@
 import { FormValue } from '@island.is/application/core'
-import { WorkAccidentTypeEnum } from '../types'
+import { AccidentTypeEnum, WorkAccidentTypeEnum } from '../types'
 import { isFishermanAccident } from './isFishermanAccident'
 describe('isFishermanAccident', () => {
   const fishermanAccident: FormValue = {
     workAccident: { type: WorkAccidentTypeEnum.FISHERMAN },
+    accidentType: { radioButton: AccidentTypeEnum.WORK },
   }
 
   const someOtherAccident: FormValue = {
