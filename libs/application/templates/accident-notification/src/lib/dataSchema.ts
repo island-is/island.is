@@ -1,7 +1,18 @@
 import * as z from 'zod'
 import { error } from './messages/error'
 import * as kennitala from 'kennitala'
-import { AttachmentsEnum, WhoIsTheNotificationForEnum } from '../types'
+import {
+  AccidentTypeEnum,
+  AgricultureAccidentLocationEnum,
+  AttachmentsEnum,
+  FishermanWorkplaceAccidentLocationEnum,
+  GeneralWorkplaceAccidentLocationEnum,
+  ProfessionalAthleteAccidentLocationEnum,
+  RescueWorkAccidentLocationEnum,
+  StudiesAccidentLocationEnum,
+  WhoIsTheNotificationForEnum,
+  WorkAccidentTypeEnum,
+} from '../types'
 import { isValid24HFormatTime } from '../utils'
 
 export enum OnBehalf {
@@ -51,11 +62,11 @@ export const AccidentNotificationSchema = z.object({
     onBehalf: z.enum([OnBehalf.MYSELF, OnBehalf.OTHERS]),
   }),
   applicant: z.object({
-    name: z.string().nonempty(error.required.defaultMessage),
+    name: z.string().min(1, error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().nonempty(error.required.defaultMessage),
-    postalCode: z.string().nonempty(error.required.defaultMessage),
-    city: z.string().nonempty(error.required.defaultMessage),
+    address: z.string().min(1, error.required.defaultMessage),
+    postalCode: z.string().min(1, error.required.defaultMessage),
+    city: z.string().min(1, error.required.defaultMessage),
     email: z.string().email().optional(),
     phoneNumber: z.string().optional(),
   }),
@@ -75,11 +86,11 @@ export const AccidentNotificationSchema = z.object({
     injuryCertificateFile: z.array(FileSchema).optional(),
   }),
   accidentDetails: z.object({
-    dateOfAccident: z.string().nonempty(),
+    dateOfAccident: z.string().min(1),
     timeOfAccident: z
       .string()
       .refine((x) => (x ? isValid24HFormatTime(x) : false)),
-    descriptionOfAccident: z.string().nonempty(),
+    descriptionOfAccident: z.string().min(1),
   }),
   companyInfo: z.object({
     nationalRegistrationId: z.string().optional(),
@@ -87,6 +98,52 @@ export const AccidentNotificationSchema = z.object({
     name: z.string().optional(),
     email: z.string().optional(),
     phoneNumber: z.string().optional(),
+  }),
+  locationAndPurpose: z.object({
+    location: z.string().min(1),
+    postalCode: z.string().min(1),
+    city: z.string().min(1),
+    purpose: z.string().min(1),
+  }),
+  accidentLocation: z.object({
+    answer: z.enum([
+      GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
+      GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+      GeneralWorkplaceAccidentLocationEnum.OTHER,
+      FishermanWorkplaceAccidentLocationEnum.ONTHESHIP,
+      FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+      FishermanWorkplaceAccidentLocationEnum.OTHER,
+      ProfessionalAthleteAccidentLocationEnum.SPORTCLUBSFACILITES,
+      ProfessionalAthleteAccidentLocationEnum.TOORFROMTHESPORTCLUBSFACILITES,
+      ProfessionalAthleteAccidentLocationEnum.OTHER,
+      AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
+      AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+      RescueWorkAccidentLocationEnum.TOORFROMRESCUE,
+      RescueWorkAccidentLocationEnum.DURINGRESCUE,
+      RescueWorkAccidentLocationEnum.OTHER,
+      StudiesAccidentLocationEnum.ATTHESCHOOL,
+      StudiesAccidentLocationEnum.DURINGSTUDIES,
+      StudiesAccidentLocationEnum.OTHER,
+    ]),
+  }),
+  accidentType: z.object({
+    radioButton: z.enum([
+      AccidentTypeEnum.WORK,
+      AccidentTypeEnum.HOMEACTIVITIES,
+      AccidentTypeEnum.RESCUEWORK,
+      AccidentTypeEnum.SPORTS,
+      AccidentTypeEnum.STUDIES,
+    ]),
+  }),
+  workAccident: z.object({
+    type: z
+      .enum([
+        WorkAccidentTypeEnum.AGRICULTURE,
+        WorkAccidentTypeEnum.FISHERMAN,
+        WorkAccidentTypeEnum.GENERAL,
+        WorkAccidentTypeEnum.PROFESSIONALATHLETE,
+      ])
+      .optional(),
   }),
 })
 

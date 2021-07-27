@@ -26,3 +26,52 @@ export enum AttachmentsEnum {
   HOSPITALSENDSCERTIFICATE = 'hospitalSendsCertificate',
   SENDCERTIFICATELATER = 'sendCertificateLater',
 }
+
+export enum GeneralWorkplaceAccidentLocationEnum {
+  ATTHEWORKPLACE = 'atTheWorkplace',
+  TOORFROMTHEWORKPLACE = 'GeneralWorkplaceAccidentLocation.toOrFromTheWorkplace',
+  OTHER = 'GeneralWorkplaceAccidentLocation.other',
+}
+
+export enum FishermanWorkplaceAccidentLocationEnum {
+  ONTHESHIP = 'onTheShip',
+  TOORFROMTHEWORKPLACE = 'FishermanWorkplaceAccidentLocation.toOrFromTheWorkplace',
+  OTHER = 'FishermanWorkplaceAccidentLocation.other',
+}
+
+export enum ProfessionalAthleteAccidentLocationEnum {
+  SPORTCLUBSFACILITES = 'sportClubsFacilites',
+  TOORFROMTHESPORTCLUBSFACILITES = 'toOrFromTheSportClubsFacilites',
+  OTHER = 'ProfessionalAthleteAccidentLocation.other',
+}
+
+export enum AgricultureAccidentLocationEnum {
+  ATTHEWORKPLACE = 'agriculture.atTheWorkplace',
+  TOORFROMTHEWORKPLACE = 'agriculture.toOrFromTheWorkplace',
+  OTHER = 'AgricultureAccidentLocation.other',
+}
+
+export enum WorkAccidentTypeEnum {
+  GENERAL = 'general',
+  FISHERMAN = 'fisherman',
+  PROFESSIONALATHLETE = 'professionalAthlete',
+  AGRICULTURE = 'agriculture',
+}
+
+export enum RescueWorkAccidentLocationEnum {
+  DURINGRESCUE = 'duringRescue',
+  TOORFROMRESCUE = 'toOrFromRescue',
+  OTHER = 'rescueWork.other',
+}
+
+export enum StudiesAccidentTypeEnum {
+  INTERNSHIP = 'internship',
+  APPRENTICESHIP = 'apprenticeship',
+  VOCATIONALEDUCATION = 'vocationalEducation',
+}
+
+export enum StudiesAccidentLocationEnum {
+  ATTHESCHOOL = 'atTheSchool',
+  DURINGSTUDIES = 'duringStudies',
+  OTHER = 'studiesLocation.other',
+}
