@@ -160,52 +160,56 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
       {workplaceData && (
         <>
           <Text variant="h4" paddingTop={6} paddingBottom={3}>
-            Upplýsingar um Íþróttafélag
+            {formatText(
+              workplaceData.general.title,
+              application,
+              formatMessage,
+            )}
           </Text>
           <ReviewGroup isLast editAction={() => null}>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine label="Nafn" value="Knattspyrnufélag Reykjavíkur" />
+                <ValueLine
+                  label={workplaceData.labels.companyName}
+                  value={workplaceData.info.companyName}
+                />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine label="Kennitala" value="525458-8548" />
+                <ValueLine
+                  label={workplaceData.labels.nationalId}
+                  value={workplaceData.info.nationalRegistrationId ?? ''}
+                />
               </GridColumn>
             </GridRow>
           </ReviewGroup>
 
-          {answers.isRepresentativeOfCompanyOrInstitue?.toString() === YES && (
+          {answers.isRepresentativeOfCompanyOrInstitue?.toString() !== YES && (
             <>
               <Text variant="h4" paddingTop={6} paddingBottom={3}>
                 {formatText(
-                  workplaceData.title ?? '',
+                  workplaceData.labels.descriptionField,
                   application,
                   formatMessage,
                 )}
               </Text>
               <ReviewGroup isLast editAction={() => null}>
                 <GridRow>
-                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <GridColumn span="12/12">
                     <ValueLine
-                      label={companyInfo.labels.name}
-                      value={workplaceData.info.name ?? ''}
+                      label={workplaceData.labels.name}
+                      value={workplaceData.info.name}
                     />
                   </GridColumn>
                   <GridColumn span={['12/12', '12/12', '6/12']}>
                     <ValueLine
-                      label={companyInfo.labels.nationalId}
-                      value={workplaceData.info.nationalRegistrationId ?? ''}
+                      label={workplaceData.labels.email}
+                      value={workplaceData.info.email}
                     />
                   </GridColumn>
                   <GridColumn span={['12/12', '12/12', '6/12']}>
                     <ValueLine
-                      label={companyInfo.labels.email}
-                      value={workplaceData.info.email ?? ''}
-                    />
-                  </GridColumn>
-                  <GridColumn span={['12/12', '12/12', '6/12']}>
-                    <ValueLine
-                      label={companyInfo.labels.tel}
-                      value={workplaceData.info.phoneNumber ?? ''}
+                      label={workplaceData.labels.tel}
+                      value={workplaceData.info.phoneNumber}
                     />
                   </GridColumn>
                 </GridRow>

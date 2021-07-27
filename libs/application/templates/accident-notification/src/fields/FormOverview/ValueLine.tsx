@@ -14,7 +14,7 @@ export const ValueLine: FC<ValueLineProps> = ({ label, value, color }) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingY={2}>
+    <Box paddingBottom={3}>
       <Text variant="h5">{formatMessage(label)}</Text>
       <Text color={color}>{formatMessage(value)}</Text>
     </Box>
@@ -38,7 +38,7 @@ export const FileValueLine: FC<FileValueLineProps> = ({ label, files }) => {
   if (!files || files.length === 0) return null
 
   return (
-    <Box paddingY={2}>
+    <Box paddingBottom={3}>
       <Text variant="h5">{formatMessage(label)}</Text>
       <Box display="flex" flexWrap="wrap">
         {files?.map((file, index) => (
