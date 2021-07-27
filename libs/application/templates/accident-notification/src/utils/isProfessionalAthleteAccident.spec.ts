@@ -1,10 +1,15 @@
 import { FormValue } from '@island.is/application/core'
-import { WorkAccidentTypeEnum } from '../types'
+import { AccidentTypeEnum, WorkAccidentTypeEnum } from '../types'
 import { isProfessionalAthleteAccident } from './isProfessionalAthleteAccident'
 
 describe('isProfessionalAthleteAccident', () => {
-  const professionalAthleteAccident: FormValue = {
+  const professionalAthleteAccidentRadio: FormValue = {
+    accidentType: { radioButton: AccidentTypeEnum.SPORTS },
+  }
+
+  const professionalAthleteAccidentSecondaryWorkQuestion: FormValue = {
     workAccident: { type: WorkAccidentTypeEnum.PROFESSIONALATHLETE },
+    accidentType: { radioButton: AccidentTypeEnum.WORK },
   }
 
   const someOtherAccident: FormValue = {
@@ -14,10 +19,19 @@ describe('isProfessionalAthleteAccident', () => {
   const emptyObject = {}
 
   it('should return true for professional athlete accidents', () => {
-    expect(isProfessionalAthleteAccident(professionalAthleteAccident)).toEqual(
-      true,
-    )
+    expect(
+      isProfessionalAthleteAccident(professionalAthleteAccidentRadio),
+    ).toEqual(true)
   })
+
+  it('should return true for professional athlete accident when user picked work related and then sports related', () => {
+    expect(
+      isProfessionalAthleteAccident(
+        professionalAthleteAccidentSecondaryWorkQuestion,
+      ),
+    ).toEqual(true)
+  })
+
   it('should return false for workplace accidents other than professional athlete', () => {
     expect(isProfessionalAthleteAccident(someOtherAccident)).toEqual(false)
   })

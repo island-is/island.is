@@ -401,14 +401,10 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
-    // Question to consider with designer: Is general work not just work thats not a fisherman, agriculture or sports related?
-    // Is the sports related incidents work related?
-    // Why not just have agriculture, sports and fisherman as the first radio buttons? Would simplify the flow...
     // Accident location section
     buildSection({
       id: 'accidentLocation',
       title: accidentLocation.general.sectionTitle,
-      condition: (formValue) => isGeneralWorkplaceAccident(formValue),
       children: [
         // location of general work related accident
         buildMultiField({
@@ -524,10 +520,14 @@ export const AccidentNotificationForm: Form = buildForm({
             }),
           ],
         }),
+        // location of sports related accident
         buildMultiField({
           id: 'accidentLocation.professionalAthleteAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.general.description,
+          condition: (formValue) =>
+            isProfessionalAthleteAccident(formValue) &&
+            !isHomeActivitiesAccident(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -554,10 +554,8 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
-          condition: (formValue) =>
-            isProfessionalAthleteAccident(formValue) &&
-            !isHomeActivitiesAccident(formValue),
         }),
+        // location of agriculture related accident
         buildMultiField({
           id: 'accidentLocation.agricultureAccident',
           title: accidentLocation.general.heading,
@@ -584,6 +582,133 @@ export const AccidentNotificationForm: Form = buildForm({
             }),
           ],
           condition: (formValue) => isAgricultureAccident(formValue),
+        }),
+      ],
+    }),
+    // Location and purpose of the injured when the accident occured, relevant to all cases except home activites
+    buildSection({
+      title: locationAndPurpose.general.title,
+      condition: (formValue) => !isHomeActivitiesAccident(formValue),
+      children: [
+        buildMultiField({
+          title: locationAndPurpose.general.title,
+          description: locationAndPurpose.general.description,
+          children: [
+            buildTextField({
+              id: 'locationAndPurpose.location',
+              title: locationAndPurpose.labels.location,
+              backgroundColor: 'blue',
+            }),
+            buildTextField({
+              id: 'locationAndPurpose.postalCode',
+              title: locationAndPurpose.labels.postalCode,
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'locationAndPurpose.city',
+              title: locationAndPurpose.labels.city,
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'locationAndPurpose.purpose',
+              title: locationAndPurpose.labels.purpose,
+              backgroundColor: 'blue',
+              rows: 6,
+              variant: 'textarea',
+            }),
+          ],
+        }),
+      ],
+    }),
+    // Workmachine information only applicable to generic workplace accidents
+    buildSection({
+      id: 'workMachine.section',
+      title: workMachine.general.sectionTitle,
+      condition: (formValue) => isGeneralWorkplaceAccident(formValue),
+      children: [
+        buildMultiField({
+          id: 'workMachine',
+          title: workMachine.general.workMachineRadioTitle,
+          description: '',
+          children: [
+            buildRadioField({
+              id: 'workMachineRadio',
+              title: '',
+              backgroundColor: 'blue',
+              defaultValue: NO,
+              width: 'half',
+              options: [
+                { value: YES, label: application.general.yesOptionLabel },
+                { value: NO, label: application.general.noOptionLabel },
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'workMachine.subSection',
+          title: workMachine.general.subSectionTitle,
+          condition: (formValue) => formValue.workMachineRadio === YES,
+          children: [
+            buildMultiField({
+              title: workMachine.general.subSectionTitle,
+              children: [
+                buildTextField({
+                  id: 'workMachine.registrationNumber',
+                  title: workMachine.labels.registrationNumber,
+                  backgroundColor: 'blue',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'workMachine.desriptionOfMachine',
+                  title: workMachine.labels.desriptionOfMachine,
+                  placeholder: workMachine.placeholder.desriptionOfMachine,
+                  backgroundColor: 'blue',
+                  rows: 4,
+                  variant: 'textarea',
+                  required: true,
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    // Details of the accident
+    buildSection({
+      id: 'accidentDetails.section',
+      title: accidentDetails.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'accidentDetails',
+          title: accidentDetails.general.sectionTitle,
+          description: accidentDetails.general.description,
+          children: [
+            buildDateField({
+              id: 'accidentDetails.dateOfAccident',
+              title: accidentDetails.labels.date,
+              placeholder: accidentDetails.placeholder.date,
+              backgroundColor: 'blue',
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'accidentDetails.timeOfAccident',
+              title: accidentDetails.labels.time,
+              placeholder: accidentDetails.placeholder.time,
+              backgroundColor: 'blue',
+              width: 'half',
+              format: '##:##',
+            }),
+            buildTextField({
+              id: 'accidentDetails.descriptionOfAccident',
+              title: accidentDetails.labels.description,
+              placeholder: accidentDetails.placeholder.description,
+              backgroundColor: 'blue',
+              rows: 10,
+              variant: 'textarea',
+            }),
+          ],
         }),
       ],
     }),
@@ -652,44 +777,7 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
-    // Details of the accident
-    buildSection({
-      id: 'accidentDetails.section',
-      title: accidentDetails.general.sectionTitle,
-      children: [
-        buildMultiField({
-          id: 'accidentDetails',
-          title: accidentDetails.general.sectionTitle,
-          description: accidentDetails.general.description,
-          children: [
-            buildDateField({
-              id: 'accidentDetails.dateOfAccident',
-              title: accidentDetails.labels.date,
-              placeholder: accidentDetails.placeholder.date,
-              backgroundColor: 'blue',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'accidentDetails.timeOfAccident',
-              title: accidentDetails.labels.time,
-              placeholder: accidentDetails.placeholder.time,
-              backgroundColor: 'blue',
-              width: 'half',
-              format: '##:##',
-            }),
-            buildTextField({
-              id: 'accidentDetails.descriptionOfAccident',
-              title: accidentDetails.labels.description,
-              placeholder: accidentDetails.placeholder.description,
-              backgroundColor: 'blue',
-              rows: 10,
-              variant: 'textarea',
-            }),
-          ],
-        }),
-      ],
-    }),
-    // Company information if work accident without being a the injured being a fisherman
+    // Company information if work accident without the injured being a fisherman
     buildSection({
       title: companyInfo.general.title,
       condition: (formValue) => isGeneralWorkplaceAccident(formValue),
@@ -1013,6 +1101,7 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+    // Rescue squad information when accident is related to rescue squad
     buildSection({
       title: rescueSquadInfo.general.title,
       condition: (formValue) => isRescueWorkAccident(formValue),
@@ -1088,96 +1177,6 @@ export const AccidentNotificationForm: Form = buildForm({
                   YES
                 )
               },
-            }),
-          ],
-        }),
-      ],
-    }),
-    // Workmachine information only applicable to generic workplace accidents
-    buildSection({
-      id: 'workMachine.section',
-      title: workMachine.general.sectionTitle,
-      condition: (formValue) => isGeneralWorkplaceAccident(formValue),
-      children: [
-        buildMultiField({
-          id: 'workMachine',
-          title: workMachine.general.workMachineRadioTitle,
-          description: '',
-          children: [
-            buildRadioField({
-              id: 'workMachineRadio',
-              title: '',
-              backgroundColor: 'blue',
-              defaultValue: NO,
-              width: 'half',
-              options: [
-                { value: YES, label: application.general.yesOptionLabel },
-                { value: NO, label: application.general.noOptionLabel },
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'workMachine.subSection',
-          title: workMachine.general.subSectionTitle,
-          condition: (formValue) => formValue.workMachineRadio === YES,
-          children: [
-            buildMultiField({
-              title: workMachine.general.subSectionTitle,
-              children: [
-                buildTextField({
-                  id: 'workMachine.registrationNumber',
-                  title: workMachine.labels.registrationNumber,
-                  backgroundColor: 'blue',
-                  required: true,
-                }),
-                buildTextField({
-                  id: 'workMachine.desriptionOfMachine',
-                  title: workMachine.labels.desriptionOfMachine,
-                  placeholder: workMachine.placeholder.desriptionOfMachine,
-                  backgroundColor: 'blue',
-                  rows: 4,
-                  variant: 'textarea',
-                  required: true,
-                }),
-              ],
-            }),
-          ],
-        }),
-      ],
-    }),
-    // Location and purpose of the injured when the accident occured, relevant to all cases except home activites
-    buildSection({
-      title: locationAndPurpose.general.title,
-      condition: (formValue) => !isHomeActivitiesAccident(formValue),
-      children: [
-        buildMultiField({
-          title: locationAndPurpose.general.title,
-          description: locationAndPurpose.general.description,
-          children: [
-            buildTextField({
-              id: 'locationAndPurpose.location',
-              title: locationAndPurpose.labels.location,
-              backgroundColor: 'blue',
-            }),
-            buildTextField({
-              id: 'locationAndPurpose.postalCode',
-              title: locationAndPurpose.labels.postalCode,
-              backgroundColor: 'blue',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'locationAndPurpose.city',
-              title: locationAndPurpose.labels.city,
-              backgroundColor: 'blue',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'locationAndPurpose.purpose',
-              title: locationAndPurpose.labels.purpose,
-              backgroundColor: 'blue',
-              rows: 6,
-              variant: 'textarea',
             }),
           ],
         }),
