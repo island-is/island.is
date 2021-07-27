@@ -18,7 +18,7 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { YES } from '../../constants'
-import { getRepresentativeData } from '../../utils'
+import { getWorkplaceData } from '../../utils'
 
 export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
   const answers = application.answers as AccidentNotification
@@ -28,7 +28,7 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
   const time = `${timeOfAccident.slice(0, 2)}:${timeOfAccident.slice(2, 4)}`
   const date = format(parseISO(dateOfAccident), 'dd.MM.yy', { locale: is })
 
-  const representativeData = getRepresentativeData(application.answers)
+  const workplaceData = getWorkplaceData(application.answers)
 
   return (
     <Box component="section" paddingTop={2}>
@@ -157,61 +157,63 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
         </GridRow>
       </ReviewGroup>
 
-      {/* TODO: Only display this if sporting accident - and add this for other all accident types */}
-      <Text variant="h4" paddingTop={6} paddingBottom={3}>
-        Upplýsingar um Íþróttafélag
-      </Text>
-      <ReviewGroup isLast editAction={() => null}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
-            <ValueLine label="Nafn" value="Knattspyrnufélag Reykjavíkur" />
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
-            <ValueLine label="Kennitala" value="525458-8548" />
-          </GridColumn>
-        </GridRow>
-      </ReviewGroup>
+      {workplaceData && (
+        <>
+          <Text variant="h4" paddingTop={6} paddingBottom={3}>
+            Upplýsingar um Íþróttafélag
+          </Text>
+          <ReviewGroup isLast editAction={() => null}>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine label="Nafn" value="Knattspyrnufélag Reykjavíkur" />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine label="Kennitala" value="525458-8548" />
+              </GridColumn>
+            </GridRow>
+          </ReviewGroup>
 
-      {answers.isRepresentativeOfCompanyOrInstitue?.toString() === YES &&
-        representativeData && (
-          <>
-            <Text variant="h4" paddingTop={6} paddingBottom={3}>
-              {formatText(
-                representativeData.title ?? '',
-                application,
-                formatMessage,
-              )}
-            </Text>
-            <ReviewGroup isLast editAction={() => null}>
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <ValueLine
-                    label={companyInfo.labels.name}
-                    value={representativeData.info.name ?? ''}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <ValueLine
-                    label={companyInfo.labels.nationalId}
-                    value={representativeData.info.nationalRegistrationId ?? ''}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <ValueLine
-                    label={companyInfo.labels.email}
-                    value={representativeData.info.email ?? ''}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <ValueLine
-                    label={companyInfo.labels.tel}
-                    value={representativeData.info.phoneNumber ?? ''}
-                  />
-                </GridColumn>
-              </GridRow>
-            </ReviewGroup>
-          </>
-        )}
+          {answers.isRepresentativeOfCompanyOrInstitue?.toString() === YES && (
+            <>
+              <Text variant="h4" paddingTop={6} paddingBottom={3}>
+                {formatText(
+                  workplaceData.title ?? '',
+                  application,
+                  formatMessage,
+                )}
+              </Text>
+              <ReviewGroup isLast editAction={() => null}>
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={companyInfo.labels.name}
+                      value={workplaceData.info.name ?? ''}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={companyInfo.labels.nationalId}
+                      value={workplaceData.info.nationalRegistrationId ?? ''}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={companyInfo.labels.email}
+                      value={workplaceData.info.email ?? ''}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <ValueLine
+                      label={companyInfo.labels.tel}
+                      value={workplaceData.info.phoneNumber ?? ''}
+                    />
+                  </GridColumn>
+                </GridRow>
+              </ReviewGroup>
+            </>
+          )}
+        </>
+      )}
 
       <Text variant="h4" paddingTop={6} paddingBottom={3}>
         {formatText(

@@ -1,5 +1,12 @@
 import { FormValue } from '@island.is/application/core'
 import {
+  isGeneralWorkplaceAccident,
+  isStudiesAccident,
+  isFishermanAccident,
+  isProfessionalAthleteAccident,
+  isRescueWorkAccident,
+} from './'
+import {
   companyInfo,
   fishingCompanyInfo,
   rescueSquadInfo,
@@ -14,7 +21,7 @@ type CompanyInfoType = {
   phoneNumber: string
 }
 
-export const getRepresentativeData = (answers: FormValue) => {
+export const getWorkplaceData = (answers: FormValue) => {
   if (isGeneralWorkplaceAccident(answers))
     return {
       info: (answers as { companyInfo: CompanyInfoType }).companyInfo,
