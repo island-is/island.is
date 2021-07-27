@@ -1,7 +1,18 @@
 import * as z from 'zod'
 import { error } from './messages/error'
 import * as kennitala from 'kennitala'
-import { AttachmentsEnum, WhoIsTheNotificationForEnum } from '../types'
+import {
+  AccidentTypeEnum,
+  AgricultureAccidentLocationEnum,
+  AttachmentsEnum,
+  FishermanWorkplaceAccidentLocationEnum,
+  GeneralWorkplaceAccidentLocationEnum,
+  ProfessionalAthleteAccidentLocationEnum,
+  RescueWorkAccidentLocationEnum,
+  StudiesAccidentLocationEnum,
+  WhoIsTheNotificationForEnum,
+  WorkAccidentTypeEnum,
+} from '../types'
 import { isValid24HFormatTime } from '../utils'
 import { NO, YES } from '../constants'
 
@@ -95,6 +106,46 @@ export const AccidentNotificationSchema = z.object({
     postalCode: z.string().min(1),
     city: z.string().min(1),
     purpose: z.string().min(1),
+  }),
+  accidentLocation: z.object({
+    answer: z.enum([
+      GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
+      GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+      GeneralWorkplaceAccidentLocationEnum.OTHER,
+      FishermanWorkplaceAccidentLocationEnum.ONTHESHIP,
+      FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+      FishermanWorkplaceAccidentLocationEnum.OTHER,
+      ProfessionalAthleteAccidentLocationEnum.SPORTCLUBSFACILITES,
+      ProfessionalAthleteAccidentLocationEnum.TOORFROMTHESPORTCLUBSFACILITES,
+      ProfessionalAthleteAccidentLocationEnum.OTHER,
+      AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
+      AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+      RescueWorkAccidentLocationEnum.TOORFROMRESCUE,
+      RescueWorkAccidentLocationEnum.DURINGRESCUE,
+      RescueWorkAccidentLocationEnum.OTHER,
+      StudiesAccidentLocationEnum.ATTHESCHOOL,
+      StudiesAccidentLocationEnum.DURINGSTUDIES,
+      StudiesAccidentLocationEnum.OTHER,
+    ]),
+  }),
+  accidentType: z.object({
+    radioButton: z.enum([
+      AccidentTypeEnum.WORK,
+      AccidentTypeEnum.HOMEACTIVITIES,
+      AccidentTypeEnum.RESCUEWORK,
+      AccidentTypeEnum.SPORTS,
+      AccidentTypeEnum.STUDIES,
+    ]),
+  }),
+  workAccident: z.object({
+    type: z
+      .enum([
+        WorkAccidentTypeEnum.AGRICULTURE,
+        WorkAccidentTypeEnum.FISHERMAN,
+        WorkAccidentTypeEnum.GENERAL,
+        WorkAccidentTypeEnum.PROFESSIONALATHLETE,
+      ])
+      .optional(),
   }),
 })
 
