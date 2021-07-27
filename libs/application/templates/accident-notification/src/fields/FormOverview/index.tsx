@@ -120,7 +120,6 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
         </>
       )}
 
-      {/* TODO: Only display this if individual household accident */}
       <Text variant="h4" paddingTop={6} paddingBottom={3}>
         {formatText(
           locationAndPurpose.general.title,
