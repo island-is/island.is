@@ -899,14 +899,16 @@ export const AccidentNotificationForm: Form = buildForm({
     }),
 
     buildSection({
-            id: 'overview.section',
-            title: overview.general.sectionTitle,
-            children: [
-              buildCustomField({
-                id: 'overview',
-                title: overview.general.sectionTitle,
-                component: 'FormOverview',
-          }),
+      id: 'overview.section',
+      title: overview.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'overview',
+          title: overview.general.sectionTitle,
+          component: 'FormOverview',
+        }),
+      ],
+    }),
 
     // TODO remove before release, just there to continue with last screen
     buildDescriptionField({
