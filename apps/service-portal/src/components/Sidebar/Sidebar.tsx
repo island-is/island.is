@@ -25,6 +25,7 @@ export const Sidebar: FC<{}> = () => {
               (navRoot, index) =>
                 navRoot.path !== ServicePortalPath.MinarSidurRoot && (
                   <ModuleNavigation
+                    alwaysExpanded
                     key={index}
                     nav={navRoot}
                     variant={rootIndex === 0 ? 'blue' : 'blueberry'}
