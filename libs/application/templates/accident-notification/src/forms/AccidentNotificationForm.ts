@@ -1182,6 +1182,18 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+
+    buildSection({
+      title: 'Umsókn móttekin',
+      children: [
+        buildCustomField({
+          id: 'conclusion.information',
+          title: 'Umsókn móttekin!',
+          component: 'FormConclusion',
+        }),
+      ],
+    }),
+
     // TODO remove before release, just there to continue with last screen
     buildDescriptionField({
       id: '',
