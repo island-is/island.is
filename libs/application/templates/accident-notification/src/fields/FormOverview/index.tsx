@@ -9,6 +9,7 @@ import {
   accidentType,
   applicantInformation,
   companyInfo,
+  injuredPerson,
   locationAndPurpose,
   overview,
 } from '../../lib/messages'
@@ -93,27 +94,49 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
         WhoIsTheNotificationForEnum.ME && (
         <>
           <Text variant="h4" paddingTop={6} paddingBottom={3}>
-            Upplýsingar um þann slasaða
+            {formatText(
+              injuredPerson.general.title,
+              application,
+              formatMessage,
+            )}
           </Text>
           <ReviewGroup isLast editAction={() => null}>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine label="Nafn" value="Hans Klaufi" />
+                <ValueLine
+                  label={injuredPerson.labels.name}
+                  value="Hans Klaufi"
+                />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine label="Kennitala" value="525458-8548" />
+                <ValueLine
+                  label={injuredPerson.labels.nationalId}
+                  value="525458-8548"
+                />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine label="Heimili" value="Kötluhlíð" />
+                <ValueLine
+                  label={injuredPerson.labels.address}
+                  value="Kötluhlíð"
+                />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine label="Sveitarfélag" value="270, Mosfellsbær" />
+                <ValueLine
+                  label={injuredPerson.labels.city}
+                  value="270, Mosfellsbær"
+                />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine label="Netfang" value="hansklaufi@gmail.com" />
+                <ValueLine
+                  label={injuredPerson.labels.email}
+                  value="hansklaufi@gmail.com"
+                />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine label="Símanúmer" value="868-2888" />
+                <ValueLine
+                  label={injuredPerson.labels.phoneNumber}
+                  value="868-2888"
+                />
               </GridColumn>
             </GridRow>
           </ReviewGroup>
