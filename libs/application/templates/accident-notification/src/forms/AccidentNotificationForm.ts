@@ -46,6 +46,8 @@ import {
   fishingCompanyInfo,
   sportsClubInfo,
   rescueSquadInfo,
+  fatalAccident,
+  fatalAccidentAttachment,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -56,6 +58,7 @@ import {
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
   isProfessionalAthleteAccident,
+  isReportingOnBehalfOfInjured,
   isRescueWorkAccident,
   isStudiesAccident,
   isWorkAccident,
@@ -288,6 +291,68 @@ export const AccidentNotificationForm: Form = buildForm({
               ],
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'fatalAccident.section',
+      title: fatalAccident.general.sectionTitle,
+      condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
+      children: [
+        buildRadioField({
+          id: 'wasTheAccidentFatal',
+          title: fatalAccident.labels.title,
+          backgroundColor: 'blue',
+          defaultValue: NO,
+          width: 'half',
+          options: [
+            { value: YES, label: application.general.yesOptionLabel },
+            { value: NO, label: application.general.noOptionLabel },
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'fatalAccidentAttachment.section',
+      title: fatalAccidentAttachment.general.sectionTitle,
+      condition: (formValue) =>
+        isReportingOnBehalfOfInjured(formValue) &&
+        formValue.wasTheAccidentFatal === YES,
+      children: [
+        buildRadioField({
+          id: 'fatalAccidentAttachment',
+          title: fatalAccidentAttachment.labels.title,
+          description: fatalAccidentAttachment.labels.description,
+          backgroundColor: 'blue',
+          defaultValue: NO,
+          options: [
+            {
+              value: YES,
+              label: fatalAccidentAttachment.options.addAttachmentsNow,
+            },
+            {
+              value: NO,
+              label: fatalAccidentAttachment.options.addAttachmentsLater,
+            },
+          ],
+        }),
+        buildSubSection({
+          id: 'attachments.deathCertificateFile.section',
+          title: attachments.general.uploadTitle,
+          children: [
+            buildFileUploadField({
+              id: 'attachments.deathCertificateFile',
+              title: attachments.general.uploadHeader,
+              uploadHeader: attachments.general.uploadHeader,
+              uploadDescription: attachments.general.uploadDescription,
+              uploadButtonLabel: attachments.general.uploadButtonLabel,
+              introduction: attachments.general.uploadIntroduction,
+            }),
+          ],
+          condition: (formValue) =>
+            isReportingOnBehalfOfInjured(formValue) &&
+            formValue.wasTheAccidentFatal === YES &&
+            formValue.fatalAccidentAttachment === YES,
         }),
       ],
     }),
