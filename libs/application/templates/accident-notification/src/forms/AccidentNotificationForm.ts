@@ -320,7 +320,7 @@ export const AccidentNotificationForm: Form = buildForm({
         formValue.wasTheAccidentFatal === YES,
       children: [
         buildRadioField({
-          id: 'fatalAccidentAttachment',
+          id: 'fatalAccidentUploadDeathCertificateNow',
           title: fatalAccidentAttachment.labels.title,
           description: fatalAccidentAttachment.labels.description,
           backgroundColor: 'blue',
@@ -337,7 +337,7 @@ export const AccidentNotificationForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'attachments.deathCertificateFile.section',
+          id: 'attachments.deathCertificateFile.subSection',
           title: attachments.general.uploadTitle,
           children: [
             buildFileUploadField({
@@ -352,7 +352,7 @@ export const AccidentNotificationForm: Form = buildForm({
           condition: (formValue) =>
             isReportingOnBehalfOfInjured(formValue) &&
             formValue.wasTheAccidentFatal === YES &&
-            formValue.fatalAccidentAttachment === YES,
+            formValue.fatalAccidentUploadDeathCertificateNow === YES,
         }),
       ],
     }),
