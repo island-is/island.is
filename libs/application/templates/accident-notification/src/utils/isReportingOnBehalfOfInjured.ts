@@ -1,4 +1,3 @@
-// formvalue.whoIsTheNotificationFor === WhoIsTheNotificationForEnum.JURIDICALPERSON eða WhoIsTheNotificationForEnum.POWEROFATTORNEY
 import { FormValue } from '@island.is/application/core'
 import { WhoIsTheNotificationForEnum } from '../types'
 
