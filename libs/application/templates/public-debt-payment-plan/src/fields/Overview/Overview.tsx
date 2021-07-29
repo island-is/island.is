@@ -7,15 +7,15 @@ import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
+import { overview } from '../../lib/messages'
+import { AMOUNT, MONTHS, YES } from '../../shared/constants'
 import {
   PaymentPlanBuildIndex,
   PaymentPlanExternalData,
   paymentPlanIndexKeyMapper,
   PaymentPlanKeys,
   PublicDebtPaymentPlan,
-} from '../../lib/dataSchema'
-import { overview } from '../../lib/messages'
-import { AMOUNT, MONTHS, YES } from '../../shared/constants'
+} from '../../types'
 import { DistributionTable } from './DistributionTabel'
 
 export const Overview = ({ application, goToScreen }: FieldBaseProps) => {

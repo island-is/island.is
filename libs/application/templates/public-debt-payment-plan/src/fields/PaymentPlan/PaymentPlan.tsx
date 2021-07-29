@@ -10,11 +10,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import HtmlParser from 'react-html-parser'
 import { useLazyDistribution } from '../../hooks/useLazyDistribution'
-import {
-  PaymentModeState,
-  PaymentPlanExternalData,
-  PublicDebtPaymentPlan,
-} from '../../lib/dataSchema'
 import { shared } from '../../lib/messages'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
 import { formatIsk } from '../../lib/paymentPlanUtils'
@@ -23,6 +18,11 @@ import {
   getEmptyPaymentPlanEntryKey,
   getPaymentPlanKeyById,
 } from '../../shared/utils'
+import {
+  PaymentModeState,
+  PaymentPlanExternalData,
+  PublicDebtPaymentPlan,
+} from '../../types'
 import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 import { PlanSlider } from '../components/PlanSlider/PlanSlider'
 import { PaymentPlanCard } from '../PaymentPlanList/PaymentPlanCard/PaymentPlanCard'

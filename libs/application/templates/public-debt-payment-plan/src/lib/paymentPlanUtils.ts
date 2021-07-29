@@ -6,7 +6,7 @@ import {
 import { ExternalData } from '@island.is/application/core'
 import { useCallback, useEffect, useState } from 'react'
 import { useLazyDistribution } from '../hooks/useLazyDistribution'
-import { PaymentDistribution, PaymentPlanExternalData } from './dataSchema'
+import { PaymentDistribution, PaymentPlanExternalData } from '../types'
 
 export const prerequisitesFailed = (data: ExternalData) => {
   const prerequisites = (data as PaymentPlanExternalData)
@@ -74,8 +74,7 @@ export const useDistributionTable = ({
       scheduleType,
     })
       .then((response) => {
-        if (!response) return
-        setDistributionData(response?.paymentScheduleDistribution)
+        setDistributionData(response?.paymentScheduleDistribution || null)
       })
       .catch((error) => {
         console.error('An error occured fetching payment distribution: ', error)

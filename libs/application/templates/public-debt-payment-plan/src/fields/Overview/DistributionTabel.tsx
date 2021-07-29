@@ -1,6 +1,6 @@
 import React from 'react'
-import { PaymentDistribution } from '../../lib/dataSchema'
 import { useDistributionTable } from '../../lib/paymentPlanUtils'
+import { PaymentDistribution } from '../../types'
 import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 
 export const DistributionTable = ({
