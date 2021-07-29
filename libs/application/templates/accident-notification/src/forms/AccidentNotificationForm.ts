@@ -62,6 +62,8 @@ import {
   isStudiesAccident,
   isWorkAccident,
 } from '../utils'
+import { isReportingOnBehalfOfInjured } from '../utils/isReportingOnBehalfOfInjured'
+import { injuredPersonInformation } from '../lib/messages/injuredPersonInformation'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
@@ -292,6 +294,72 @@ export const AccidentNotificationForm: Form = buildForm({
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'injuredPersonInformation.section',
+      title: injuredPersonInformation.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'injuredPersonInformation',
+          title: injuredPersonInformation.general.heading,
+          description: injuredPersonInformation.general.description,
+          children: [
+            buildTextField({
+              id: 'injuredPersonInformation.name',
+              title: injuredPersonInformation.labels.name,
+              backgroundColor: 'blue',
+              required: true,
+            }),
+            buildTextField({
+              id: 'injuredPersonInformation.nationalId',
+              title: injuredPersonInformation.labels.nationalId,
+              format: '######-####',
+              width: 'half',
+              backgroundColor: 'blue',
+              required: true,
+            }),
+            buildTextField({
+              id: 'injuredPersonInformation.address',
+              title: injuredPersonInformation.labels.address,
+              width: 'half',
+              backgroundColor: 'blue',
+              required: true,
+            }),
+            buildTextField({
+              id: 'injuredPersonInformation.postalCode',
+              title: injuredPersonInformation.labels.postalCode,
+              width: 'half',
+              backgroundColor: 'blue',
+              required: true,
+            }),
+            buildTextField({
+              id: 'injuredPersonInformation.city',
+              title: injuredPersonInformation.labels.city,
+              width: 'half',
+              backgroundColor: 'blue',
+              required: true,
+            }),
+            buildTextField({
+              id: 'injuredPersonInformation.email',
+              title: injuredPersonInformation.labels.email,
+              backgroundColor: 'blue',
+              width: 'half',
+              variant: 'email',
+              required: true,
+            }),
+            buildTextField({
+              id: 'injuredPersonInformation.phoneNumber',
+              title: injuredPersonInformation.labels.tel,
+              backgroundColor: 'blue',
+              format: '###-####',
+              width: 'half',
+              variant: 'tel',
+              required: true,
+            }),
+          ],
+        }),
+      ],
+      condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
     }),
     buildSection({
       id: 'accidentType.section',
