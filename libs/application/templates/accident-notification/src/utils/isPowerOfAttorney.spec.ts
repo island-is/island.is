@@ -1,8 +1,8 @@
 import { FormValue } from '@island.is/application/core'
 import { WhoIsTheNotificationForEnum } from '../types'
-import { isReportingOnBehalfOfInjured } from './isReportingOnBehalfOfInjured'
+import { isPowerOfAttorney } from './isPowerOfAttorney'
 
-describe('isReportingOnBehalfOfInjured', () => {
+describe('isPowerOfAttorney', () => {
   const powerOfAttorneyReporter: FormValue = {
     whoIsTheNotificationFor: {
       answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
@@ -22,18 +22,18 @@ describe('isReportingOnBehalfOfInjured', () => {
   const emptyObject = {}
 
   it('should return true for power of attorney reporter', () => {
-    expect(isReportingOnBehalfOfInjured(powerOfAttorneyReporter)).toEqual(true)
+    expect(isPowerOfAttorney(powerOfAttorneyReporter)).toEqual(true)
   })
 
-  it('should return true for power of juridical person reporter', () => {
-    expect(isReportingOnBehalfOfInjured(juridicialPersonReporter)).toEqual(true)
+  it('should return false for power of juridical person reporter', () => {
+    expect(isPowerOfAttorney(juridicialPersonReporter)).toEqual(false)
   })
 
   it('should return false for reporting for yourself', () => {
-    expect(isReportingOnBehalfOfInjured(reportingForSelf)).toEqual(false)
+    expect(isPowerOfAttorney(reportingForSelf)).toEqual(false)
   })
 
   it('should return false for empty object', () => {
-    expect(isReportingOnBehalfOfInjured(emptyObject)).toEqual(false)
+    expect(isPowerOfAttorney(emptyObject)).toEqual(false)
   })
 })

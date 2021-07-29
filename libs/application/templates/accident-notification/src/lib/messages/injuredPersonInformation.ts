@@ -8,7 +8,7 @@ export const injuredPersonInformation = {
       description: 'Section title for injured person information person',
     },
     heading: {
-      id: 'an.application:injuredPersonInformation.general.haeding',
+      id: 'an.application:injuredPersonInformation.general.heading',
       defaultMessage: 'Upplýsingar um þann slasaða',
       description: 'Section title for injured person information person',
     },

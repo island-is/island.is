@@ -29,6 +29,7 @@ import {
   WorkAccidentTypeEnum,
   StudiesAccidentTypeEnum,
   StudiesAccidentLocationEnum,
+  PowerOfAttorneyUploadEnum,
 } from '../types'
 import {
   externalData,
@@ -64,6 +65,9 @@ import {
 } from '../utils'
 import { isReportingOnBehalfOfInjured } from '../utils/isReportingOnBehalfOfInjured'
 import { injuredPersonInformation } from '../lib/messages/injuredPersonInformation'
+import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
+import { powerOfAttorney } from '../lib/messages/powerOfAttorney'
+import { isUploadNow } from '../utils/isUploadNow'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
@@ -293,73 +297,126 @@ export const AccidentNotificationForm: Form = buildForm({
             }),
           ],
         }),
-      ],
-    }),
-    buildSection({
-      id: 'injuredPersonInformation.section',
-      title: injuredPersonInformation.general.sectionTitle,
-      children: [
-        buildMultiField({
-          id: 'injuredPersonInformation',
-          title: injuredPersonInformation.general.heading,
-          description: injuredPersonInformation.general.description,
+        buildSubSection({
+          id: 'injuredPersonInformation.section',
+          title: injuredPersonInformation.general.sectionTitle,
           children: [
-            buildTextField({
-              id: 'injuredPersonInformation.name',
-              title: injuredPersonInformation.labels.name,
-              backgroundColor: 'blue',
-              required: true,
-            }),
-            buildTextField({
-              id: 'injuredPersonInformation.nationalId',
-              title: injuredPersonInformation.labels.nationalId,
-              format: '######-####',
-              width: 'half',
-              backgroundColor: 'blue',
-              required: true,
-            }),
-            buildTextField({
-              id: 'injuredPersonInformation.address',
-              title: injuredPersonInformation.labels.address,
-              width: 'half',
-              backgroundColor: 'blue',
-              required: true,
-            }),
-            buildTextField({
-              id: 'injuredPersonInformation.postalCode',
-              title: injuredPersonInformation.labels.postalCode,
-              width: 'half',
-              backgroundColor: 'blue',
-              required: true,
-            }),
-            buildTextField({
-              id: 'injuredPersonInformation.city',
-              title: injuredPersonInformation.labels.city,
-              width: 'half',
-              backgroundColor: 'blue',
-              required: true,
-            }),
-            buildTextField({
-              id: 'injuredPersonInformation.email',
-              title: injuredPersonInformation.labels.email,
-              backgroundColor: 'blue',
-              width: 'half',
-              variant: 'email',
-              required: true,
-            }),
-            buildTextField({
-              id: 'injuredPersonInformation.phoneNumber',
-              title: injuredPersonInformation.labels.tel,
-              backgroundColor: 'blue',
-              format: '###-####',
-              width: 'half',
-              variant: 'tel',
-              required: true,
+            buildMultiField({
+              id: 'injuredPersonInformation',
+              title: injuredPersonInformation.general.heading,
+              description: injuredPersonInformation.general.description,
+              children: [
+                buildTextField({
+                  id: 'injuredPersonInformation.name',
+                  title: injuredPersonInformation.labels.name,
+                  backgroundColor: 'blue',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'injuredPersonInformation.nationalId',
+                  title: injuredPersonInformation.labels.nationalId,
+                  format: '######-####',
+                  width: 'half',
+                  backgroundColor: 'blue',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'injuredPersonInformation.address',
+                  title: injuredPersonInformation.labels.address,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'injuredPersonInformation.postalCode',
+                  title: injuredPersonInformation.labels.postalCode,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'injuredPersonInformation.city',
+                  title: injuredPersonInformation.labels.city,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'injuredPersonInformation.email',
+                  title: injuredPersonInformation.labels.email,
+                  backgroundColor: 'blue',
+                  width: 'half',
+                  variant: 'email',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'injuredPersonInformation.phoneNumber',
+                  title: injuredPersonInformation.labels.tel,
+                  backgroundColor: 'blue',
+                  format: '###-####',
+                  width: 'half',
+                  variant: 'tel',
+                  required: true,
+                }),
+              ],
             }),
           ],
+          condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
+        }),
+        buildSubSection({
+          id: 'powerOfAttorney.type.section',
+          title: powerOfAttorney.upload.sectionTitle,
+          children: [
+            buildMultiField({
+              id: 'powerOfAttorney.type.multifield',
+              title: powerOfAttorney.type.heading,
+              description: powerOfAttorney.type.description,
+              children: [
+                buildRadioField({
+                  id: 'powerOfAttorney.type',
+                  title: '',
+                  options: [
+                    {
+                      value: PowerOfAttorneyUploadEnum.UPLOADNOW,
+                      label: powerOfAttorney.labels.uploadNow,
+                    },
+                    {
+                      value: PowerOfAttorneyUploadEnum.UPLOADLATER,
+                      label: powerOfAttorney.labels.uploadLater,
+                    },
+                    {
+                      value: PowerOfAttorneyUploadEnum.FORCHILDINCUSTODY,
+                      label: powerOfAttorney.labels.forChildInCustody,
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+          condition: (formValue) => isPowerOfAttorney(formValue),
+        }),
+        buildSubSection({
+          id: 'powerOfAttorney.upload.section',
+          title: powerOfAttorney.upload.sectionTitle,
+          children: [
+            buildMultiField({
+              id: 'powerOfAttorney',
+              title: powerOfAttorney.upload.heading,
+              description: powerOfAttorney.upload.uploadDescription,
+              children: [
+                buildFileUploadField({
+                  id: 'powerOfAttorney.upload',
+                  title: '',
+                  introduction: '',
+                  uploadHeader: powerOfAttorney.upload.uploadHeader,
+                  uploadButtonLabel: powerOfAttorney.upload.uploadButtonLabel,
+                }),
+              ],
+            }),
+          ],
+          condition: (formValue) => isUploadNow(formValue),
         }),
       ],
-      condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
     }),
     buildSection({
       id: 'accidentType.section',
