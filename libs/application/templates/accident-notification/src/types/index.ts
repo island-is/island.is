@@ -34,6 +34,7 @@ export enum AttachmentsEnum {
   INJURYCERTIFICATE = 'injuryCertificate',
   HOSPITALSENDSCERTIFICATE = 'hospitalSendsCertificate',
   SENDCERTIFICATELATER = 'sendCertificateLater',
+  INJUREDSENDSCERTIFICATE = 'injuredSendsCertificate',
 }
 
 export enum GeneralWorkplaceAccidentLocationEnum {
