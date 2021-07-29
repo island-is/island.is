@@ -1,5 +1,14 @@
 import { YES, NO } from './../constants'
 
+export type CompanyInfo = {
+  nationalRegistrationId: string
+  companyName: string
+  name: string
+  email: string
+  phoneNumber: string
+  type: AccidentTypeEnum | WorkAccidentTypeEnum
+}
+
 export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
   UserProfile = 'UserProfileProvider',
