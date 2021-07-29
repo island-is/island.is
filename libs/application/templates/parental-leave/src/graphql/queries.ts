@@ -26,3 +26,13 @@ export const GetPrivatePensionFunds = gql`
     }
   }
 `
+
+export const GetUserCompanies = gql`
+  query GetUserCompanies {
+    rskCurrentUserCompanies {
+      nationalId
+      name
+      hasProcuration
+    }
+  }
+`

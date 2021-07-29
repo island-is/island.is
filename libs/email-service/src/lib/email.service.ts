@@ -27,7 +27,7 @@ export class EmailService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private adapterService: AdapterService,
-  ) {}
+  ) { }
 
   private async getTransport() {
     if (this.options.useNodemailerApp) {

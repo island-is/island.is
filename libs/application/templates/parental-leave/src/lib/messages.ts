@@ -1323,6 +1323,17 @@ export const employerFormMessages = defineMessages({
     description:
       'Your employee has applied for parental leave. Do you approve of his/her selected periods?',
   },
+  externalDataEmployerCompaniesTitle: {
+    id: 'pl.application:employer.externalData.employerCompanies.title',
+    defaultMessage: 'Fyrirtæki kennitala',
+    description: 'Companies national ID',
+  },
+  externalDataEmployerCompaniesSubTitle: {
+    id: 'pl.application:employer.externalData.employerCompanies.subtitle',
+    defaultMessage: 'Þjóðarauðkenni fyrirtækisins þíns verða sótt af Þjóðskrá.',
+    description:
+      'Your company national ids will be retrieved from Registers Iceland.',
+  },
 })
 
 export const inReviewFormMessages = defineMessages({
