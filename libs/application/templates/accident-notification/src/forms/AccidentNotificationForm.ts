@@ -365,7 +365,7 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'powerOfAttorney.type.section',
-          title: powerOfAttorney.upload.sectionTitle,
+          title: powerOfAttorney.type.sectionTitle,
           children: [
             buildMultiField({
               id: 'powerOfAttorney.type.multifield',
