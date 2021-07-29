@@ -96,6 +96,7 @@ export const AccidentNotificationSchema = z.object({
       .refine((x) => (x ? isValid24HFormatTime(x) : false)),
     descriptionOfAccident: z.string().min(1),
   }),
+  isRepresentativeOfCompanyOrInstitue: z.enum([YES, NO]),
   companyInfo: z.object({
     nationalRegistrationId: z.string().optional(),
     descriptionField: z.string().optional(),
