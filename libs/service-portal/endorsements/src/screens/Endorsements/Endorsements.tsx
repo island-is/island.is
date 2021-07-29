@@ -218,6 +218,9 @@ const Endorsements = () => {
           </Text>
           <Stack space={4}>
             {endorsements.map((endorsement) => {
+              const tagLabel = getEndorsementListTagNames(
+                endorsement.endorsementList?.tags ?? [],
+              ).join(' ')
               return (
                 <ActionCard
                   key={endorsement.id}
@@ -225,13 +228,18 @@ const Endorsements = () => {
                   eyebrow={formatDate(endorsement.created, 'dd.MM.yyyy')}
                   heading={`${endorsement.endorsementList?.title} (${endorsement.endorsementList?.description})`}
                   tag={{
-                    label: getEndorsementListTagNames(
-                      endorsement.endorsementList?.tags ?? [],
-                    ).join(' '),
+                    label: tagLabel,
                     variant: 'darkerBlue',
                     outlined: false,
                   }}
-                  text={userVoterRegion?.regionName ?? ''}
+                  text={
+                    tagLabel !==
+                    getEndorsementListTagNames([
+                      EndorsementListOpenTagsEnum.PartyLetter2021,
+                    ]).join(' ')
+                      ? userVoterRegion?.regionName ?? ''
+                      : ''
+                  }
                   cta={{
                     label: formatMessage(
                       m.endorsement.actionCardButtonUnendorse,
