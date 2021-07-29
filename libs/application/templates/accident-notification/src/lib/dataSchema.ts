@@ -85,7 +85,10 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.SENDCERTIFICATELATER,
     ]),
     injuryCertificateFile: z.array(FileSchema).optional(),
+    deathCertificateFile: z.array(FileSchema).optional(),
   }),
+  wasTheAccidentFatal: z.enum([YES, NO]),
+  fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
   accidentDetails: z.object({
     dateOfAccident: z.string().min(1),
     timeOfAccident: z
@@ -137,6 +140,7 @@ export const AccidentNotificationSchema = z.object({
       AccidentTypeEnum.STUDIES,
     ]),
   }),
+
   workAccident: z.object({
     type: z
       .enum([
