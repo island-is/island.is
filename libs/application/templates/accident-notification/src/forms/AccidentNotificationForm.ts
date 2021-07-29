@@ -66,7 +66,6 @@ import {
   isStudiesAccident,
   isWorkAccident,
 } from '../utils'
-import { isReportingOnBehalfOfInjured } from '../utils/isReportingOnBehalfOfInjured'
 import { injuredPersonInformation } from '../lib/messages/injuredPersonInformation'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { powerOfAttorney } from '../lib/messages/powerOfAttorney'
