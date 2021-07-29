@@ -46,6 +46,7 @@ import {
   fishingCompanyInfo,
   sportsClubInfo,
   rescueSquadInfo,
+  conclusion,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -1182,6 +1183,18 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+
+    buildSection({
+      title: conclusion.general.title,
+      children: [
+        buildCustomField({
+          id: 'conclusion.information',
+          title: conclusion.general.title,
+          component: 'FormConclusion',
+        }),
+      ],
+    }),
+
     // TODO remove before release, just there to continue with last screen
     buildDescriptionField({
       id: '',
