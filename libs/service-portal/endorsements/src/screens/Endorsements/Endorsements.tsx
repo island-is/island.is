@@ -19,7 +19,7 @@ export type UserEndorsement = Pick<
 >
 export type RegionsEndorsementList = Pick<
   EndorsementList,
-  'id' | 'title' | 'description' | 'meta'
+  'id' | 'title' | 'description' | 'meta' | 'closedDate'
 > & { tags: EndorsementListOpenTagsEnum[] }
 
 export type UserVoterRegion = Pick<
@@ -67,6 +67,7 @@ const GET_REGION_ENDORSEMENTS = gql`
       description
       tags
       meta
+      closedDate
     }
   }
 `
@@ -176,7 +177,7 @@ const Endorsements = () => {
     ({ endorsementList }) => endorsementList?.id,
   )
   const endorsementLists = allEndorsementLists.filter(
-    ({ id }) => !signedLists.includes(id),
+    ({ id, closedDate }) => !signedLists.includes(id) && closedDate === null,
   )
 
   return (
