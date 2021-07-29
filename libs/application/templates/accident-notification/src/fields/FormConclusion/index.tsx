@@ -10,9 +10,9 @@ import {
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { FamilyIllustration } from '../../assets'
+import { conclusion } from '../../lib/messages'
 
 export const FormConclusion: FC<FieldBaseProps> = ({ application, field }) => {
-  const { title } = field
   const { formatMessage } = useLocale()
 
   return (
@@ -20,36 +20,58 @@ export const FormConclusion: FC<FieldBaseProps> = ({ application, field }) => {
       <Box marginY={5}>
         <AlertMessage
           type="success"
-          title="Tilkynning um slys hefur verið send til Sjúkratryggingar Íslands"
+          title={formatText(
+            conclusion.general.alertTitle,
+            application,
+            formatMessage,
+          )}
         />
       </Box>
       <AccordionCard
         id="conclusion.information"
-        label={formatText(title, application, formatMessage)}
+        label={formatText(
+          conclusion.information.title,
+          application,
+          formatMessage,
+        )}
         labelVariant="h3"
         startExpanded
       >
         <Text marginBottom={[3, 3, 4]}>
-          Hjá Sjúkratryggingum er umsóknin yfirfarin. Ef þörf er á er kallað
-          eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa
-          borist er afstaða tekin til bótaskyldu.
+          {formatText(
+            conclusion.information.description,
+            application,
+            formatMessage,
+          )}
         </Text>
         <BulletList space={2} type="ul">
           <Bullet>
-            Þriðji aðilli fer yfir tilkynninguna og staðfestir að allar
-            upplýsingar eru réttar
+            {formatText(
+              conclusion.information.bulletOne,
+              application,
+              formatMessage,
+            )}
           </Bullet>
           <Bullet>
-            Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.
+            {formatText(
+              conclusion.information.bulletTwo,
+              application,
+              formatMessage,
+            )}
           </Bullet>
           <Bullet>
-            Þegar öll nauðsynleg gögn hafa borist, fer Sjúkratryggingar Íslands
-            yfir umsókn og er afstaða tekin til bótaskyldu.
+            {formatText(
+              conclusion.information.bulletThree,
+              application,
+              formatMessage,
+            )}
           </Bullet>
           <Bullet>
-            Þegar fallist hefur verið á að um bótaskylt slys samkvæmt
-            almannatryggingalögum sé að ræða er hinn slasaði upplýstur um rétt
-            sinn til greiðslu bóta.
+            {formatText(
+              conclusion.information.bulletFour,
+              application,
+              formatMessage,
+            )}
           </Bullet>
         </BulletList>
       </AccordionCard>
