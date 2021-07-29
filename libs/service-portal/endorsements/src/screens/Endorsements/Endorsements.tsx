@@ -176,8 +176,28 @@ const Endorsements = () => {
   const signedLists = endorsements.map(
     ({ endorsementList }) => endorsementList?.id,
   )
+
+  // all endorsement lists that are not signed and still open
   const endorsementLists = allEndorsementLists.filter(
     ({ id, closedDate }) => !signedLists.includes(id) && closedDate === null,
+  )
+
+  // party-application lists
+  const applicationLists = endorsementLists.filter(
+    (list) =>
+      getEndorsementListTagNames(list.tags).join(' ') !==
+      getEndorsementListTagNames([
+        EndorsementListOpenTagsEnum.PartyLetter2021,
+      ]).join(' '),
+  )
+
+  // party-letter application lists
+  const partyLetterLists = endorsementLists.filter(
+    (list) =>
+      getEndorsementListTagNames(list.tags).join(' ') ===
+      getEndorsementListTagNames([
+        EndorsementListOpenTagsEnum.PartyLetter2021,
+      ]).join(' '),
   )
 
   return (
@@ -198,6 +218,9 @@ const Endorsements = () => {
           </Text>
           <Stack space={4}>
             {endorsements.map((endorsement) => {
+              const tagLabel = getEndorsementListTagNames(
+                endorsement.endorsementList?.tags ?? [],
+              ).join(' ')
               return (
                 <ActionCard
                   key={endorsement.id}
@@ -205,13 +228,18 @@ const Endorsements = () => {
                   eyebrow={formatDate(endorsement.created, 'dd.MM.yyyy')}
                   heading={`${endorsement.endorsementList?.title} (${endorsement.endorsementList?.description})`}
                   tag={{
-                    label: getEndorsementListTagNames(
-                      endorsement.endorsementList?.tags ?? [],
-                    ).join(' '),
+                    label: tagLabel,
                     variant: 'darkerBlue',
                     outlined: false,
                   }}
-                  text="Kjördæmi"
+                  text={
+                    tagLabel !==
+                    getEndorsementListTagNames([
+                      EndorsementListOpenTagsEnum.PartyLetter2021,
+                    ]).join(' ')
+                      ? userVoterRegion?.regionName ?? ''
+                      : ''
+                  }
                   cta={{
                     label: formatMessage(
                       m.endorsement.actionCardButtonUnendorse,
@@ -232,38 +260,86 @@ const Endorsements = () => {
           </Stack>
         </>
       )}
-      <Text variant="h3" marginTop={8} marginBottom={2}>
-        {formatMessage(m.endorsement.availableEndorsements)}
-      </Text>
-      <Stack space={4}>
-        {endorsementLists.map((endorsementList) => (
-          <ActionCard
-            key={endorsementList.id}
-            heading={endorsementList.title}
-            eyebrow={getEndorsementListTagNames(endorsementList.tags).join(' ')}
-            tag={{
-              label: getEndorsementListTagNames(endorsementList.tags).join(' '),
-              variant: 'blue',
-              outlined: false,
-            }}
-            text={endorsementList.description ?? ''}
-            cta={{
-              label: formatMessage(m.endorsement.actionCardButtonEndorse),
-              variant: 'text',
-              icon: undefined,
-              onClick: () => {
-                window.open(
-                  `${baseUrlForm}/${
-                    getSlugFromType(
-                      endorsementList.meta.applicationTypeId,
-                    ) as string
-                  }/${endorsementList.meta.applicationId}`,
-                )
-              },
-            }}
-          />
-        ))}
-      </Stack>
+      {applicationLists && applicationLists.length > 0 && (
+        <>
+          <Text variant="h3" marginTop={8} marginBottom={2}>
+            {formatMessage(m.endorsement.availablePartyApplicationEndorsements)}
+          </Text>
+          <Stack space={4}>
+            {applicationLists.map((endorsementList) => (
+              <ActionCard
+                key={endorsementList.id}
+                heading={endorsementList.title}
+                eyebrow={getEndorsementListTagNames(endorsementList.tags).join(
+                  ' ',
+                )}
+                tag={{
+                  label: getEndorsementListTagNames(endorsementList.tags).join(
+                    ' ',
+                  ),
+                  variant: 'blue',
+                  outlined: false,
+                }}
+                text={endorsementList.description ?? ''}
+                cta={{
+                  label: formatMessage(m.endorsement.actionCardButtonEndorse),
+                  variant: 'text',
+                  icon: undefined,
+                  onClick: () => {
+                    window.open(
+                      `${baseUrlForm}/${
+                        getSlugFromType(
+                          endorsementList.meta.applicationTypeId,
+                        ) as string
+                      }/${endorsementList.meta.applicationId}`,
+                    )
+                  },
+                }}
+              />
+            ))}
+          </Stack>
+        </>
+      )}
+      {partyLetterLists && partyLetterLists.length > 0 && (
+        <>
+          <Text variant="h3" marginTop={8} marginBottom={2}>
+            {formatMessage(m.endorsement.availablePartyLetterEndorsements)}
+          </Text>
+          <Stack space={4}>
+            {partyLetterLists.map((endorsementList) => (
+              <ActionCard
+                key={endorsementList.id}
+                heading={endorsementList.title}
+                eyebrow={getEndorsementListTagNames(endorsementList.tags).join(
+                  ' ',
+                )}
+                tag={{
+                  label: getEndorsementListTagNames(endorsementList.tags).join(
+                    ' ',
+                  ),
+                  variant: 'blue',
+                  outlined: false,
+                }}
+                text={endorsementList.description ?? ''}
+                cta={{
+                  label: formatMessage(m.endorsement.actionCardButtonEndorse),
+                  variant: 'text',
+                  icon: undefined,
+                  onClick: () => {
+                    window.open(
+                      `${baseUrlForm}/${
+                        getSlugFromType(
+                          endorsementList.meta.applicationTypeId,
+                        ) as string
+                      }/${endorsementList.meta.applicationId}`,
+                    )
+                  },
+                }}
+              />
+            ))}
+          </Stack>
+        </>
+      )}
     </Box>
   )
 }
