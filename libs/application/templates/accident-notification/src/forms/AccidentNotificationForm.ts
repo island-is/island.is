@@ -313,6 +313,7 @@ export const AccidentNotificationForm: Form = buildForm({
                 buildTextField({
                   id: 'injuredPersonInformation.name',
                   title: injuredPersonInformation.labels.name,
+                  width: 'half',
                   backgroundColor: 'blue',
                   required: true,
                 }),
@@ -320,27 +321,6 @@ export const AccidentNotificationForm: Form = buildForm({
                   id: 'injuredPersonInformation.nationalId',
                   title: injuredPersonInformation.labels.nationalId,
                   format: '######-####',
-                  width: 'half',
-                  backgroundColor: 'blue',
-                  required: true,
-                }),
-                buildTextField({
-                  id: 'injuredPersonInformation.address',
-                  title: injuredPersonInformation.labels.address,
-                  width: 'half',
-                  backgroundColor: 'blue',
-                  required: true,
-                }),
-                buildTextField({
-                  id: 'injuredPersonInformation.postalCode',
-                  title: injuredPersonInformation.labels.postalCode,
-                  width: 'half',
-                  backgroundColor: 'blue',
-                  required: true,
-                }),
-                buildTextField({
-                  id: 'injuredPersonInformation.city',
-                  title: injuredPersonInformation.labels.city,
                   width: 'half',
                   backgroundColor: 'blue',
                   required: true,
@@ -366,6 +346,45 @@ export const AccidentNotificationForm: Form = buildForm({
             }),
           ],
           condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
+        }),
+        buildSubSection({
+          id: 'juridicalPerson.company',
+          title: juridicalPerson.general.sectionTitle,
+          children: [
+            buildMultiField({
+              id: 'juridicalPerson.company',
+              title: juridicalPerson.general.title,
+              description: juridicalPerson.general.description,
+              children: [
+                buildTextField({
+                  id: 'juridicalPerson.companyName',
+                  backgroundColor: 'blue',
+                  title: juridicalPerson.labels.companyName,
+                  width: 'half',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'juridicalPerson.companyNationalId',
+                  backgroundColor: 'blue',
+                  title: juridicalPerson.labels.companyNationalId,
+                  format: '######-####',
+                  width: 'half',
+                  required: true,
+                }),
+                buildCheckboxField({
+                  id: 'juridicalPerson.companyConfirmation',
+                  title: '',
+                  options: [
+                    {
+                      value: YES,
+                      label: juridicalPerson.labels.confirmation,
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+          condition: (formValue) => isReportingOnBehalfOfEmployee(formValue),
         }),
         buildSubSection({
           id: 'powerOfAttorney.type.section',
@@ -481,92 +500,6 @@ export const AccidentNotificationForm: Form = buildForm({
             isReportingOnBehalfOfInjured(formValue) &&
             formValue.wasTheAccidentFatal === YES &&
             formValue.fatalAccidentUploadDeathCertificateNow === YES,
-        }),
-      ],
-    }),
-
-    buildSection({
-      id: 'theInjuredPerson.section',
-      title: 'Upplýsingar um þann slasaða',
-      condition: (formValue) => isReportingOnBehalfOfEmployee(formValue),
-      children: [
-        buildMultiField({
-          id: 'theInjuredPerson.information',
-          title: 'Upplýsingar um þann slasaða',
-          description:
-            'Ef tilkynning er sett fram fyrir hönd einhvers annars þarftu að skila inn skriflegu og undirrituðu umboði frá viðkomandi aðila og skila því inn sem fylgiskjali með tilkynningunni.',
-          children: [
-            buildTextField({
-              id: 'theInjuredPerson.information.name',
-              title: 'Fullt nafn',
-              width: 'half',
-              backgroundColor: 'blue',
-              required: true,
-            }),
-            buildTextField({
-              id: 'theInjuredPerson.information.nationalid',
-              title: 'Kennitala',
-              backgroundColor: 'blue',
-              format: '######-####',
-              width: 'half',
-              required: true,
-            }),
-            buildTextField({
-              id: 'theInjuredPerson.information.email',
-              backgroundColor: 'blue',
-              title: 'Netfang',
-              variant: 'email',
-              width: 'half',
-              required: true,
-            }),
-            buildTextField({
-              id: 'theInjuredPerson.information.phoneNumber',
-              backgroundColor: 'blue',
-              title: 'Símanúmer',
-              format: '###-####',
-              variant: 'tel',
-              width: 'half',
-              required: true,
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'theInjuredPerson.company',
-          title: juridicalPerson.general.sectionTitle,
-          children: [
-            buildMultiField({
-              id: 'theInjuredPerson.company',
-              title: juridicalPerson.general.title,
-              description: juridicalPerson.general.description,
-              children: [
-                buildTextField({
-                  id: 'theInjuredPerson.company.name',
-                  backgroundColor: 'blue',
-                  title: juridicalPerson.labels.companyName,
-                  width: 'half',
-                  required: true,
-                }),
-                buildTextField({
-                  id: 'theInjuredPerson.company.nationalId',
-                  backgroundColor: 'blue',
-                  title: juridicalPerson.labels.companyNationalId,
-                  format: '######-####',
-                  width: 'half',
-                  required: true,
-                }),
-                buildCheckboxField({
-                  id: 'theInjuredPerson.company.confirmation',
-                  title: '',
-                  options: [
-                    {
-                      value: YES,
-                      label: juridicalPerson.labels.confirmation,
-                    },
-                  ],
-                }),
-              ],
-            }),
-          ],
         }),
       ],
     }),

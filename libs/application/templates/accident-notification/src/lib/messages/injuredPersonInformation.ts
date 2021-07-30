@@ -30,21 +30,6 @@ export const injuredPersonInformation = {
       defaultMessage: 'Kennitala',
       description: 'National ID',
     },
-    address: {
-      id: 'an.application:injuredPersonInformation.labels.address',
-      defaultMessage: 'Heimili / póstfang',
-      description: 'Address',
-    },
-    postalCode: {
-      id: 'an.application:injuredPersonInformation.labels.postalCode',
-      defaultMessage: 'Póstnúmer',
-      description: 'Postal Code',
-    },
-    city: {
-      id: 'an.application:injuredPersonInformation.labels.city',
-      defaultMessage: 'Sveitarfélag',
-      description: 'City',
-    },
     email: {
       id: 'an.application:injuredPersonInformation.labels.email',
       defaultMessage: 'Netfang',
