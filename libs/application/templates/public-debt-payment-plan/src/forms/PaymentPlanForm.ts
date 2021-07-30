@@ -16,18 +16,17 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import {
-  PaymentPlanExternalData,
-  paymentPlanIndexKeyMapper,
-  PublicDebtPaymentPlan,
-} from '../lib/dataSchema'
 import { application, employer, info, section } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
 import { paymentPlan } from '../lib/messages/paymentPlan'
 import { prerequisitesFailed } from '../lib/paymentPlanUtils'
 import { NO, YES } from '../shared/constants'
-
-type PaymentPlanBuildIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+import {
+  PaymentPlanBuildIndex,
+  PaymentPlanExternalData,
+  paymentPlanIndexKeyMapper,
+  PublicDebtPaymentPlan,
+} from '../types'
 
 // Builds a payment plan step that exists of two custom fields:
 // The overview step detailing a list of all payment plans and their status
