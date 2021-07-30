@@ -52,6 +52,8 @@ import {
   fatalAccidentAttachment,
   conclusion,
   juridicalPerson,
+  injuredPersonInformation,
+  powerOfAttorney,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -68,9 +70,7 @@ import {
   isReportingOnBehalfOfEmployee,
   isWorkAccident,
 } from '../utils'
-import { injuredPersonInformation } from '../lib/messages/injuredPersonInformation'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
-import { powerOfAttorney } from '../lib/messages/powerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
 
 export const AccidentNotificationForm: Form = buildForm({
