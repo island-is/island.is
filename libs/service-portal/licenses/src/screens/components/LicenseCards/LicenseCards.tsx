@@ -37,6 +37,7 @@ const GenericLicensesQuery = gql`
           id
         }
         pkpass
+        pkpassVerify
         timeout
         status
       }
@@ -87,6 +88,15 @@ const generatePkPassMutation = gql`
   mutation generatePkPassMutation($input: GeneratePkPassInput!) {
     generatePkPass(input: $input) {
       pkpassUrl
+    }
+  }
+`
+
+const verifyPkPassMutation = gql`
+  mutation verifyPkPassMutation($input: VerifyPkPassInput!) {
+    verifyPkPass(input: $input) {
+      data
+      valid
     }
   }
 `
@@ -182,6 +192,36 @@ const PkPass = ({ licenseType }: PkPassProps) => {
   )
 }
 
+const PkPassVerify = ({ licenseType }: PkPassProps) => {
+  console.log('licenseType :>> ', licenseType)
+  const [pkpass, setPkpass] = useState<string | null>(null)
+  const [text, setText] = useState<string>('')
+  const { data: userProfile } = useUserProfile()
+  const locale = (userProfile?.locale as Locale) ?? 'is'
+  const [verifyPkPass, { loading }] = useMutation(verifyPkPassMutation)
+
+  const onClick = async () => {
+    const response = await verifyPkPass({
+      variables: { locale, input: { licenseType, data: text } },
+    })
+
+    if (!response.errors) {
+      setPkpass(response?.data?.generatePkPass?.data ?? null)
+    } else {
+      setPkpass(JSON.stringify(response.errors))
+    }
+  }
+
+  return (
+    <>
+      <textarea onChange={(e) => setText(e.target?.value ?? '')} value={text} />
+      <Button onClick={onClick}>Staðfesta pkpass</Button>
+      {loading && <SkeletonLoader width="100%" height={158} />}
+      {pkpass && <p>{pkpass}</p>}
+    </>
+  )
+}
+
 const LicenseCards = () => {
   const [showLicense, setShowLicense] = useState<boolean>(false)
   const { data: userProfile } = useUserProfile()
@@ -249,6 +289,15 @@ const LicenseCards = () => {
               <PkPass licenseType={license.license.type} />
             )}
             {!license.license.pkpass && <p>Skírteini hefur ekki pkpass</p>}
+          </>
+          <>
+            <h2>PKPASS staðfesting</h2>
+            {license.license.pkpassVerify && (
+              <PkPassVerify licenseType={license.license.type} />
+            )}
+            {!license.license.pkpassVerify && (
+              <p>Skírteini hefur ekki staðfestingu á pkpass</p>
+            )}
           </>
         </Box>
       ))}

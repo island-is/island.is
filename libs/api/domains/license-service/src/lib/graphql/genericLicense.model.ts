@@ -52,6 +52,9 @@ export class GenericLicense {
   @Field({ description: 'Does the license support pkpass?' })
   pkpass!: boolean
 
+  @Field({ description: 'Does the license support verification of pkpass?' })
+  pkpassVerify!: boolean
+
   @Field({
     description:
       'How long the data about the license should be treated as fresh',
@@ -94,4 +97,16 @@ export class GenericUserLicense {
 export class GenericPkPass {
   @Field(() => String)
   pkpassUrl!: string
+}
+
+@ObjectType()
+export class GenericPkPassVerification {
+  @Field(() => String, {
+    nullable: true,
+    description: 'Optional data related to the pkpass verification',
+  })
+  data?: string
+
+  @Field({ description: 'Is the pkpass valid?' })
+  valid!: boolean
 }
