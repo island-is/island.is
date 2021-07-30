@@ -84,3 +84,9 @@ export enum StudiesAccidentLocationEnum {
   DURINGSTUDIES = 'duringStudies',
   OTHER = 'studiesLocation.other',
 }
+
+export enum PowerOfAttorneyUploadEnum {
+  UPLOADNOW = 'uploadNow',
+  UPLOADLATER = 'uploadLater',
+  FORCHILDINCUSTODY = 'forChildInCustody',
+}
