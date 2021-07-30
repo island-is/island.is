@@ -2,8 +2,8 @@ import { PaymentScheduleConditions } from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, ModalBase, Text } from '@island.is/island-ui/core'
 import React from 'react'
-import { PaymentPlanExternalData } from '../../lib/dataSchema'
 import { errorModal } from '../../lib/messages'
+import { PaymentPlanExternalData } from '../../types'
 import * as styles from './PrerequisitesErrorModal.treat'
 
 export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
