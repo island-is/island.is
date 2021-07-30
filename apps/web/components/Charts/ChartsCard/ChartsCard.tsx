@@ -1,13 +1,14 @@
 import React, { useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-import { Box, Text, Hyphen } from '@island.is/island-ui/core'
+import { Box, Text, Hyphen, Inline } from '@island.is/island-ui/core'
 import {
   MixedChart,
   SimpleBarChart,
   SimpleLineChart,
   SimplePieChart,
 } from '../'
+import { ExportCSVButton } from '@island.is/web/components'
 
 import * as styles from './ChartsCard.treat'
 
@@ -64,15 +65,15 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
       alignItems="stretch"
       justifyContent="flexStart"
     >
+      <Box display="flex" flexDirection='row' background={blue ? 'blue100' : 'purple100'} alignItems='center' justifyContent='spaceBetween'>
       <Box
         style={{
-          width: '100%',
           minHeight: '156px',
           borderTopLeftRadius: '8px',
           borderTopRightRadius: '8px',
           paddingBottom: '24px',
         }}
-        background={blue ? 'blue100' : 'purple100'}
+        
       >
         <Box padding={[2, 2, 4]}>
           {organization && (
@@ -86,6 +87,11 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
           {graphDescription && <Text color="dark400">{graphDescription}</Text>}
         </Box>
       </Box>
+      <Box padding={[2, 2, 4]}>
+      <ExportCSVButton data={graph.data}/>
+      </Box>
+      </Box>
+
       <Box
         display="flex"
         justifyContent="center"
