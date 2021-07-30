@@ -368,7 +368,7 @@ export class GenericDrivingLicenseApi
     if (!accessToken) {
       return null
     }
-    console.log('accessToken :>> ', accessToken)
+
     let res: Response | null = null
 
     try {
