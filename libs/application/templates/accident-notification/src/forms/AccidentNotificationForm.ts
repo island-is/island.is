@@ -435,11 +435,7 @@ export const AccidentNotificationForm: Form = buildForm({
                     description:
                       accidentType.warning.agricultureAccidentWarning,
                     component: 'FieldAlertMessage',
-                    condition: (formValue) =>
-                      (formValue as {
-                        workAccident: { type: WorkAccidentTypeEnum }
-                      }).workAccident?.type ===
-                      WorkAccidentTypeEnum.AGRICULTURE,
+                    condition: (formValue) => isAgricultureAccident(formValue),
                   },
                   { type: 'warning' },
                 ),
