@@ -7,6 +7,7 @@ import {
   AttachmentsEnum,
   FishermanWorkplaceAccidentLocationEnum,
   GeneralWorkplaceAccidentLocationEnum,
+  PowerOfAttorneyUploadEnum,
   ProfessionalAthleteAccidentLocationEnum,
   RescueWorkAccidentLocationEnum,
   StudiesAccidentLocationEnum,
@@ -150,6 +151,22 @@ export const AccidentNotificationSchema = z.object({
         WorkAccidentTypeEnum.PROFESSIONALATHLETE,
       ])
       .optional(),
+  }),
+  injuredPersonInformation: z.object({
+    name: z.string().min(1, error.required.defaultMessage),
+    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+    address: z.string().min(1, error.required.defaultMessage),
+    postalCode: z.string().min(1, error.required.defaultMessage),
+    city: z.string().min(1, error.required.defaultMessage),
+    email: z.string().email().min(1, error.required.defaultMessage),
+    phoneNumber: z.string().min(1, error.required.defaultMessage),
+  }),
+  powerOfAttorney: z.object({
+    type: z.enum([
+      PowerOfAttorneyUploadEnum.FORCHILDINCUSTODY,
+      PowerOfAttorneyUploadEnum.UPLOADLATER,
+      PowerOfAttorneyUploadEnum.UPLOADNOW,
+    ]),
   }),
 })
 
