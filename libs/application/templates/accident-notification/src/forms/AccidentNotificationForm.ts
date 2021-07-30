@@ -59,6 +59,7 @@ import {
   isProfessionalAthleteAccident,
   isRescueWorkAccident,
   isStudiesAccident,
+  isSubmittingOnBehalfOfEmployee,
   isWorkAccident,
 } from '../utils'
 
@@ -292,6 +293,95 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+
+    buildSection({
+      id: 'theInjuredPerson.section',
+      title: 'Upplýsingar um þann slasaða',
+      condition: (formValue) => isSubmittingOnBehalfOfEmployee(formValue),
+      children: [
+        buildMultiField({
+          id: 'theInjuredPerson.information',
+          title: 'Upplýsingar um þann slasaða',
+          description:
+            'Ef tilkynning er sett fram fyrir hönd einhvers annars þarftu að skila inn skriflegu og undirrituðu umboði frá viðkomandi aðila og skila því inn sem fylgiskjali með tilkynningunni.',
+          children: [
+            buildTextField({
+              id: 'theInjuredPerson.information.name',
+              title: 'Fullt nafn',
+              width: 'half',
+              backgroundColor: 'blue',
+              required: true,
+            }),
+            buildTextField({
+              id: 'theInjuredPerson.information.nationalid',
+              title: 'Kennitala',
+              backgroundColor: 'blue',
+              format: '######-####',
+              width: 'half',
+              required: true,
+            }),
+            buildTextField({
+              id: 'theInjuredPerson.information.email',
+              backgroundColor: 'blue',
+              title: 'Netfang',
+              variant: 'email',
+              width: 'half',
+              required: true,
+            }),
+            buildTextField({
+              id: 'theInjuredPerson.information.phoneNumber',
+              backgroundColor: 'blue',
+              title: 'Símanúmer',
+              format: '###-####',
+              variant: 'tel',
+              width: 'half',
+              required: true,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'theInjuredPerson.company',
+          title: 'Upplýsingar um félag',
+          children: [
+            buildMultiField({
+              id: 'theInjuredPerson.company',
+              title: 'Upplýsingar um félag eða atvinnurekanda',
+              description:
+                'Vinsamlegast fylltu út upplýsingar um félagið sem þú ert forsvarsmaður hjá.',
+              children: [
+                buildTextField({
+                  id: 'theInjuredPerson.company.name',
+                  backgroundColor: 'blue',
+                  title: 'Nafn félags',
+                  width: 'half',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'theInjuredPerson.company.nationalId',
+                  backgroundColor: 'blue',
+                  title: 'Kennitala félags',
+                  format: '######-####',
+                  width: 'half',
+                  required: true,
+                }),
+                buildCheckboxField({
+                  id: 'theInjuredPerson.company.confirmation',
+                  title: '',
+                  options: [
+                    {
+                      value: YES,
+                      label:
+                        'Ég staðfesti að ég er forsvarsmaður hjá ofangreindu félagi',
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+
     buildSection({
       id: 'accidentType.section',
       title: accidentType.general.sectionTitle,
