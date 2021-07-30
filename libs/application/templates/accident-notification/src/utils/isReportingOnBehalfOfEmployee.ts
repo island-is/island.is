@@ -1,7 +1,7 @@
 import { FormValue } from '@island.is/application/core'
 import { WhoIsTheNotificationForEnum } from '../types'
 
-export const isSubmittingOnBehalfOfEmployee = (formValue: FormValue) => {
+export const isReportingOnBehalfOfEmployee = (formValue: FormValue) => {
   const whoIsTheNotificationFor = (formValue as {
     whoIsTheNotificationFor: { answer: WhoIsTheNotificationForEnum }
   })?.whoIsTheNotificationFor?.answer

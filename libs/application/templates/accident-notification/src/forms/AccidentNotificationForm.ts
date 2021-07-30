@@ -47,6 +47,7 @@ import {
   sportsClubInfo,
   rescueSquadInfo,
   conclusion,
+  juridicalPerson,
 } from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
@@ -59,7 +60,7 @@ import {
   isProfessionalAthleteAccident,
   isRescueWorkAccident,
   isStudiesAccident,
-  isSubmittingOnBehalfOfEmployee,
+  isReportingOnBehalfOfEmployee,
   isWorkAccident,
 } from '../utils'
 
@@ -297,7 +298,7 @@ export const AccidentNotificationForm: Form = buildForm({
     buildSection({
       id: 'theInjuredPerson.section',
       title: 'Upplýsingar um þann slasaða',
-      condition: (formValue) => isSubmittingOnBehalfOfEmployee(formValue),
+      condition: (formValue) => isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
           id: 'theInjuredPerson.information',
@@ -341,25 +342,24 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'theInjuredPerson.company',
-          title: 'Upplýsingar um félag',
+          title: juridicalPerson.general.sectionTitle,
           children: [
             buildMultiField({
               id: 'theInjuredPerson.company',
-              title: 'Upplýsingar um félag eða atvinnurekanda',
-              description:
-                'Vinsamlegast fylltu út upplýsingar um félagið sem þú ert forsvarsmaður hjá.',
+              title: juridicalPerson.general.title,
+              description: juridicalPerson.general.description,
               children: [
                 buildTextField({
                   id: 'theInjuredPerson.company.name',
                   backgroundColor: 'blue',
-                  title: 'Nafn félags',
+                  title: juridicalPerson.labels.companyName,
                   width: 'half',
                   required: true,
                 }),
                 buildTextField({
                   id: 'theInjuredPerson.company.nationalId',
                   backgroundColor: 'blue',
-                  title: 'Kennitala félags',
+                  title: juridicalPerson.labels.companyNationalId,
                   format: '######-####',
                   width: 'half',
                   required: true,
@@ -370,8 +370,7 @@ export const AccidentNotificationForm: Form = buildForm({
                   options: [
                     {
                       value: YES,
-                      label:
-                        'Ég staðfesti að ég er forsvarsmaður hjá ofangreindu félagi',
+                      label: juridicalPerson.labels.confirmation,
                     },
                   ],
                 }),

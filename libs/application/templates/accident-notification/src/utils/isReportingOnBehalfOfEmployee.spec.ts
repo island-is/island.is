@@ -1,7 +1,7 @@
 import { FormValue } from '@island.is/application/core'
 import { WhoIsTheNotificationForEnum } from '../types'
-import { isSubmittingOnBehalfOfEmployee } from './isSubmittingOnBehalfOfEmployee'
-describe('isSubmittingOnBehalfOfEmployee', () => {
+import { isReportingOnBehalfOfEmployee } from './isReportingOnBehalfOfEmployee'
+describe('isReportingOnBehalfOfEmployee', () => {
   const onBehalfOfEmployee: FormValue = {
     whoIsTheNotificationFor: {
       answer: WhoIsTheNotificationForEnum.JURIDICALPERSON,
@@ -16,15 +16,15 @@ describe('isSubmittingOnBehalfOfEmployee', () => {
 
   const emptyObject = {}
 
-  it('should return true if submitting on behalf of employee', () => {
-    expect(isSubmittingOnBehalfOfEmployee(onBehalfOfEmployee)).toEqual(true)
+  it('should return true if reporting on behalf of employee', () => {
+    expect(isReportingOnBehalfOfEmployee(onBehalfOfEmployee)).toEqual(true)
   })
-  it('should return false if submitting on behalf of some other person', () => {
-    expect(isSubmittingOnBehalfOfEmployee(onBehalfOfSomeOtherPerson)).toEqual(
+  it('should return false if reporting on behalf of some other person', () => {
+    expect(isReportingOnBehalfOfEmployee(onBehalfOfSomeOtherPerson)).toEqual(
       false,
     )
   })
   it('should return false for empty object', () => {
-    expect(isSubmittingOnBehalfOfEmployee(emptyObject)).toEqual(false)
+    expect(isReportingOnBehalfOfEmployee(emptyObject)).toEqual(false)
   })
 })
