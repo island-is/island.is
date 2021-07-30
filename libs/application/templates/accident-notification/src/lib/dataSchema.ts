@@ -107,8 +107,6 @@ export const AccidentNotificationSchema = z.object({
   }),
   locationAndPurpose: z.object({
     location: z.string().min(1),
-    postalCode: z.string().min(1),
-    city: z.string().min(1),
     purpose: z.string().min(1),
   }),
   accidentLocation: z.object({
