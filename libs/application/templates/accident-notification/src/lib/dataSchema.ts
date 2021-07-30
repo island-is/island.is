@@ -7,6 +7,7 @@ import {
   AttachmentsEnum,
   FishermanWorkplaceAccidentLocationEnum,
   GeneralWorkplaceAccidentLocationEnum,
+  PowerOfAttorneyUploadEnum,
   ProfessionalAthleteAccidentLocationEnum,
   RescueWorkAccidentLocationEnum,
   StudiesAccidentLocationEnum,
@@ -14,6 +15,7 @@ import {
   WorkAccidentTypeEnum,
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
+import { NO, YES } from '../constants'
 
 export enum OnBehalf {
   MYSELF = 'myself',
@@ -84,7 +86,10 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.SENDCERTIFICATELATER,
     ]),
     injuryCertificateFile: z.array(FileSchema).optional(),
+    deathCertificateFile: z.array(FileSchema).optional(),
   }),
+  wasTheAccidentFatal: z.enum([YES, NO]),
+  fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
   accidentDetails: z.object({
     dateOfAccident: z.string().min(1),
     timeOfAccident: z
@@ -92,6 +97,7 @@ export const AccidentNotificationSchema = z.object({
       .refine((x) => (x ? isValid24HFormatTime(x) : false)),
     descriptionOfAccident: z.string().min(1),
   }),
+  isRepresentativeOfCompanyOrInstitue: z.enum([YES, NO]),
   companyInfo: z.object({
     nationalRegistrationId: z.string().optional(),
     descriptionField: z.string().optional(),
@@ -135,6 +141,7 @@ export const AccidentNotificationSchema = z.object({
       AccidentTypeEnum.STUDIES,
     ]),
   }),
+
   workAccident: z.object({
     type: z
       .enum([
@@ -144,6 +151,22 @@ export const AccidentNotificationSchema = z.object({
         WorkAccidentTypeEnum.PROFESSIONALATHLETE,
       ])
       .optional(),
+  }),
+  injuredPersonInformation: z.object({
+    name: z.string().min(1, error.required.defaultMessage),
+    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+    address: z.string().min(1, error.required.defaultMessage),
+    postalCode: z.string().min(1, error.required.defaultMessage),
+    city: z.string().min(1, error.required.defaultMessage),
+    email: z.string().email().min(1, error.required.defaultMessage),
+    phoneNumber: z.string().min(1, error.required.defaultMessage),
+  }),
+  powerOfAttorney: z.object({
+    type: z.enum([
+      PowerOfAttorneyUploadEnum.FORCHILDINCUSTODY,
+      PowerOfAttorneyUploadEnum.UPLOADLATER,
+      PowerOfAttorneyUploadEnum.UPLOADNOW,
+    ]),
   }),
 })
 
