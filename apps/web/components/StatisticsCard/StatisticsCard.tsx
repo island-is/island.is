@@ -2,6 +2,7 @@ import React from 'react'
 import cn from 'classnames'
 import { Box, Stack, Text, Hyphen, Hidden } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
+import { useMeasure } from 'react-use'
 
 import * as styles from './StatisticsCard.treat'
 
@@ -18,6 +19,9 @@ export const StatisticsCard = ({
   description,
 }: StatisticsCardsProps) => {
   const hasImage = image?.title.length > 0
+  const [ref, { width }] = useMeasure()
+
+  const shouldStack = width < 1280
 
   const items = (
     <Box
@@ -30,7 +34,7 @@ export const StatisticsCard = ({
       <Box
         style={{ width: hasImage ? '70%' : '100%' }}
         paddingTop={[2, 2, 3]}
-        paddingLeft={[2, 2, 3]}
+        paddingLeft={[1, 1, 3]}
       >
         <Stack space={1}>
           <Box display="flex" alignItems="center">
@@ -48,7 +52,7 @@ export const StatisticsCard = ({
         </Stack>
       </Box>
       {hasImage && (
-        <Hidden below="md">
+        <Box>
           <Box
             position="relative"
             style={{
@@ -58,13 +62,14 @@ export const StatisticsCard = ({
             }}
           >
             <BackgroundImage
-              width={204}
+              width={shouldStack ? 155 : 204}
+              quality={100}
               positionX={'right'}
               backgroundSize="contain"
               image={image}
             />
           </Box>
-        </Hidden>
+        </Box>
       )}
     </Box>
   )
@@ -81,6 +86,7 @@ const FrameWrapper = ({ children }) => {
       overflow="visible"
       background="blue100"
       outline="none"
+      marginTop={2}
     >
       {children}
     </Box>

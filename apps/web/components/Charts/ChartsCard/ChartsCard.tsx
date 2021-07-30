@@ -65,31 +65,40 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
       alignItems="stretch"
       justifyContent="flexStart"
     >
-      <Box display="flex" flexDirection='row' background={blue ? 'blue100' : 'purple100'} alignItems='center' justifyContent='spaceBetween'>
       <Box
-        style={{
-          minHeight: '156px',
-          borderTopLeftRadius: '8px',
-          borderTopRightRadius: '8px',
-          paddingBottom: '24px',
-        }}
-        
+        display="flex"
+        flexDirection="row"
+        background={blue ? 'blue100' : 'purple100'}
+        alignItems="center"
+        justifyContent="spaceBetween"
       >
-        <Box padding={[2, 2, 4]}>
-          {organization && (
-            <Text variant="eyebrow" color="dark400">
-              {organization}
+        <Box
+          style={{
+            minHeight: '156px',
+            borderTopLeftRadius: '8px',
+            borderTopRightRadius: '8px',
+            paddingBottom: '24px',
+          }}
+        >
+          <Box padding={[2, 2, 4]}>
+            {organization && (
+              <Text variant="eyebrow" color="dark400">
+                {organization}
+              </Text>
+            )}
+            <Text variant="h3" color="dark400">
+              <Hyphen>{graphTitle}</Hyphen>
             </Text>
-          )}
-          <Text variant="h3" color="dark400">
-            <Hyphen>{graphTitle}</Hyphen>
-          </Text>
-          {graphDescription && <Text color="dark400">{graphDescription}</Text>}
+            {graphDescription && (
+              <Text color="dark400">{graphDescription}</Text>
+            )}
+          </Box>
         </Box>
-      </Box>
-      <Box padding={[2, 2, 4]}>
-      <ExportCSVButton data={graph.data}/>
-      </Box>
+        {blue && (
+          <Box padding={[2, 2, 4]}>
+            <ExportCSVButton data={graph.data} />
+          </Box>
+        )}
       </Box>
 
       <Box
