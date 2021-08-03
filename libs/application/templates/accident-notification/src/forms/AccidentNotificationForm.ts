@@ -308,7 +308,10 @@ export const AccidentNotificationForm: Form = buildForm({
             buildMultiField({
               id: 'injuredPersonInformation',
               title: injuredPersonInformation.general.heading,
-              description: injuredPersonInformation.general.description,
+              description: (formValue) =>
+                isReportingOnBehalfOfEmployee(formValue.answers)
+                  ? injuredPersonInformation.general.juridicalDescription
+                  : injuredPersonInformation.general.description,
               children: [
                 buildTextField({
                   id: 'injuredPersonInformation.name',
@@ -520,7 +523,7 @@ export const AccidentNotificationForm: Form = buildForm({
               options: [
                 {
                   value: AccidentTypeEnum.HOMEACTIVITIES,
-                  label: accidentType.labels.homeActivites,
+                  label: accidentType.labels.homeActivities,
                 },
                 {
                   value: AccidentTypeEnum.WORK,
@@ -993,7 +996,9 @@ export const AccidentNotificationForm: Form = buildForm({
     // Company information if work accident without the injured being a fisherman
     buildSection({
       title: companyInfo.general.title,
-      condition: (formValue) => isGeneralWorkplaceAccident(formValue),
+      condition: (formValue) =>
+        isGeneralWorkplaceAccident(formValue) &&
+        !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
           title: companyInfo.general.title,
@@ -1082,7 +1087,9 @@ export const AccidentNotificationForm: Form = buildForm({
     // School information if school accident
     buildSection({
       title: schoolInfo.general.title,
-      condition: (formValue) => isStudiesAccident(formValue),
+      condition: (formValue) =>
+        isStudiesAccident(formValue) &&
+        !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
           title: schoolInfo.general.title,
@@ -1171,7 +1178,9 @@ export const AccidentNotificationForm: Form = buildForm({
     // fishery information if fisherman
     buildSection({
       title: fishingCompanyInfo.general.title,
-      condition: (formValue) => isFishermanAccident(formValue),
+      condition: (formValue) =>
+        isFishermanAccident(formValue) &&
+        !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
           title: fishingCompanyInfo.general.title,
@@ -1260,7 +1269,9 @@ export const AccidentNotificationForm: Form = buildForm({
     // Sports club information when the injured has a sports related accident
     buildSection({
       title: sportsClubInfo.general.title,
-      condition: (formValue) => isProfessionalAthleteAccident(formValue),
+      condition: (formValue) =>
+        isProfessionalAthleteAccident(formValue) &&
+        !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
           title: sportsClubInfo.general.title,
@@ -1349,7 +1360,9 @@ export const AccidentNotificationForm: Form = buildForm({
     // Rescue squad information when accident is related to rescue squad
     buildSection({
       title: rescueSquadInfo.general.title,
-      condition: (formValue) => isRescueWorkAccident(formValue),
+      condition: (formValue) =>
+        isRescueWorkAccident(formValue) &&
+        !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
           title: rescueSquadInfo.general.title,

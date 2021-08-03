@@ -18,6 +18,13 @@ export const injuredPersonInformation = {
         'Ef tilkynning er sett fram fyrir hönd einhvers annars þarftu að skila inn skriflegu og undirrituðu umboði frá viðkomandi aðila og skila því inn sem fylgiskjali með tilkynningunni.',
       description: 'Description label for injured person information section.',
     },
+    juridicalDescription: {
+      id:
+        'an.application:injuredPersonInformation.general.juridicalDescription',
+      defaultMessage: 'Hér vantar texta.',
+      description:
+        'Description label for injured person information section when submitting for juridical person.',
+    },
   }),
   labels: defineMessages({
     name: {

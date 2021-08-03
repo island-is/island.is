@@ -162,7 +162,7 @@ export const AccidentNotificationSchema = z.object({
     companyName: z.string().min(1, error.required.defaultMessage),
     companyNationalId: z
       .string()
-      .refine((x) => (x ? kennitala.isPerson(x) : false)),
+      .refine((x) => (x ? kennitala.isCompany(x) : false)),
     companyConfirmation: z.enum([YES]),
   }),
   powerOfAttorney: z.object({
