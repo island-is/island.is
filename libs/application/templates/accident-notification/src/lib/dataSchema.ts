@@ -153,11 +153,15 @@ export const AccidentNotificationSchema = z.object({
   injuredPersonInformation: z.object({
     name: z.string().min(1, error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().min(1, error.required.defaultMessage),
-    postalCode: z.string().min(1, error.required.defaultMessage),
-    city: z.string().min(1, error.required.defaultMessage),
     email: z.string().email().min(1, error.required.defaultMessage),
     phoneNumber: z.string().min(1, error.required.defaultMessage),
+  }),
+  juridicalPerson: z.object({
+    companyName: z.string().min(1, error.required.defaultMessage),
+    companyNationalId: z
+      .string()
+      .refine((x) => (x ? kennitala.isCompany(x) : false)),
+    companyConfirmation: z.enum([YES]),
   }),
   powerOfAttorney: z.object({
     type: z.enum([
