@@ -1,5 +1,9 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  FormValue,
+} from '@island.is/application/core'
 import { AccidentNotification } from '../../lib/dataSchema'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
@@ -8,18 +12,21 @@ import {
   accidentDetails,
   accidentType,
   applicantInformation,
-  companyInfo,
-  injuredPerson,
+  injuredPersonInformation,
+  juridicalPerson,
   locationAndPurpose,
   overview,
 } from '../../lib/messages'
-import { AccidentTypeEnum, WhoIsTheNotificationForEnum } from '../../types'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { YES } from '../../constants'
-import { getWorkplaceData } from '../../utils'
+import {
+  getWorkplaceData,
+  isReportingOnBehalfOfEmployee,
+  isReportingOnBehalfOfInjured,
+} from '../../utils'
 
 export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
   const answers = application.answers as AccidentNotification
@@ -89,13 +96,11 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
         </GridRow>
       </ReviewGroup>
 
-      {/* TODO: Get this data from answers once form is ready */}
-      {answers.whoIsTheNotificationFor.answer !==
-        WhoIsTheNotificationForEnum.ME && (
+      {isReportingOnBehalfOfInjured(answers as FormValue) && (
         <>
           <Text variant="h4" paddingTop={6} paddingBottom={3}>
             {formatText(
-              injuredPerson.general.title,
+              injuredPersonInformation.general.heading,
               application,
               formatMessage,
             )}
@@ -104,38 +109,54 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
-                  label={injuredPerson.labels.name}
-                  value="Hans Klaufi"
+                  label={injuredPersonInformation.labels.name}
+                  value={answers.injuredPersonInformation.name}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
-                  label={injuredPerson.labels.nationalId}
-                  value="525458-8548"
+                  label={injuredPersonInformation.labels.nationalId}
+                  value={answers.injuredPersonInformation.nationalId}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
-                  label={injuredPerson.labels.address}
-                  value="Kötluhlíð"
+                  label={injuredPersonInformation.labels.email}
+                  value={answers.injuredPersonInformation.email}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
-                  label={injuredPerson.labels.city}
-                  value="270, Mosfellsbær"
+                  label={injuredPersonInformation.labels.tel}
+                  value={answers.injuredPersonInformation.phoneNumber}
+                />
+              </GridColumn>
+            </GridRow>
+          </ReviewGroup>
+        </>
+      )}
+
+      {isReportingOnBehalfOfEmployee(answers as FormValue) && (
+        <>
+          <Text variant="h4" paddingTop={6} paddingBottom={3}>
+            {formatText(
+              juridicalPerson.general.title,
+              application,
+              formatMessage,
+            )}
+          </Text>
+          <ReviewGroup isLast editAction={() => null}>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={juridicalPerson.labels.companyName}
+                  value={answers.juridicalPerson.companyName}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
-                  label={injuredPerson.labels.email}
-                  value="hansklaufi@gmail.com"
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
-                  label={injuredPerson.labels.phoneNumber}
-                  value="868-2888"
+                  label={juridicalPerson.labels.companyNationalId}
+                  value={answers.juridicalPerson.companyNationalId}
                 />
               </GridColumn>
             </GridRow>
@@ -167,7 +188,7 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
         </GridRow>
       </ReviewGroup>
 
-      {workplaceData && (
+      {workplaceData && !isReportingOnBehalfOfEmployee(answers as FormValue) && (
         <>
           <Text variant="h4" paddingTop={6} paddingBottom={3}>
             {formatText(
@@ -241,7 +262,7 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
           <GridColumn span="12/12">
             <ValueLine
               label={overview.labels.accidentType}
-              value={accidentType.labels[AccidentTypeEnum.SPORTS]}
+              value={accidentType.labels[answers.accidentType.radioButton]}
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '6/12']}>
