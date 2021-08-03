@@ -70,7 +70,6 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
           minHeight: '156px',
           borderTopLeftRadius: '8px',
           borderTopRightRadius: '8px',
-          paddingBottom: '24px',
         }}
         background={blue ? 'blue100' : 'purple100'}
       >
