@@ -22,7 +22,6 @@ export const StatisticsCard = ({
 
   const shouldStack = width < 370
   const hasImage = image?.title.length > 0
-  console.log(width)
 
   const items = (
     <Box
