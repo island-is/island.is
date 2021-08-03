@@ -11,6 +11,7 @@ import * as styles from './SimplePieChart.treat'
 import cn from 'classnames'
 import { COLORS } from '../utils'
 
+
 interface CustomTooltipProps extends TooltipProps<string, number> {
   sum: number
 }
