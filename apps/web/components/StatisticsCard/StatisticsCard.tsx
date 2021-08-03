@@ -18,13 +18,15 @@ export const StatisticsCard = ({
   image,
   description,
 }: StatisticsCardsProps) => {
-  const hasImage = image?.title.length > 0
   const [ref, { width }] = useMeasure()
 
-  const shouldStack = width < 1280
+  const shouldStack = width < 370
+  const hasImage = image?.title.length > 0
+  console.log(width)
 
   const items = (
     <Box
+      ref={ref}
       display="flex"
       flexGrow={1}
       flexDirection={'row'}
@@ -34,7 +36,8 @@ export const StatisticsCard = ({
       <Box
         style={{ width: hasImage ? '70%' : '100%' }}
         paddingTop={[2, 2, 3]}
-        paddingLeft={[1, 1, 3]}
+        paddingLeft={[2, 2, 3]}
+        // position='relative'
       >
         <Stack space={1}>
           <Box display="flex" alignItems="center">
@@ -56,13 +59,13 @@ export const StatisticsCard = ({
           <Box
             position="relative"
             style={{
-              width: '204px',
+              width: shouldStack ? '150px' : '204px',
               height: '204px',
               top: '-40px',
             }}
           >
             <BackgroundImage
-              width={shouldStack ? 155 : 204}
+              width={204}
               quality={100}
               positionX={'right'}
               backgroundSize="contain"
@@ -81,12 +84,12 @@ const FrameWrapper = ({ children }) => {
   return (
     <Box
       className={cn(styles.card)}
-      position="relative"
+      position="absolute"
       borderRadius="large"
       overflow="visible"
       background="blue100"
       outline="none"
-      marginTop={2}
+      style={{marginRight: '24px'}}
     >
       {children}
     </Box>

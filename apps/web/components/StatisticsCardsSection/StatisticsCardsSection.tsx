@@ -35,7 +35,7 @@ export const StatisticsCardsSection = ({
             },
             [theme.breakpoints.sm]: {
               gutterWidth: theme.grid.gutter.mobile,
-              slideCount: 2,
+              slideCount: 1,
             },
             [theme.breakpoints.md]: {
               gutterWidth: theme.spacing[3],
@@ -43,7 +43,7 @@ export const StatisticsCardsSection = ({
             },
             [theme.breakpoints.lg]: {
               gutterWidth: theme.spacing[3],
-              slideCount: 2,
+              slideCount: 3,
             },
             [theme.breakpoints.xl]: {
               gutterWidth: theme.spacing[3],
