@@ -45,7 +45,6 @@ import {
 } from '../lib/messages'
 import { attachments } from '../lib/messages/attachments'
 import {
-  AccidentTypeEnum,
   AgricultureAccidentLocationEnum,
   AttachmentsEnum,
   DataProviderTypes,
@@ -618,7 +617,6 @@ export const AccidentNotificationForm: Form = buildForm({
       title: locationAndPurpose.general.title,
       condition: (formValue) => !isHomeActivitiesAccident(formValue),
       children: [
-        
         // Sports club employee hindrance
         buildSubSection({
           id: 'sportsClubInfo.employee.section',
