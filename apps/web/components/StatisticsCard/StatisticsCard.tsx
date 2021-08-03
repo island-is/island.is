@@ -89,7 +89,7 @@ const FrameWrapper = ({ children }) => {
       overflow="visible"
       background="blue100"
       outline="none"
-      style={{marginRight: '24px'}}
+      style={{ marginRight: '24px' }}
     >
       {children}
     </Box>

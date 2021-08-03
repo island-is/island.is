@@ -27,9 +27,7 @@ const useCsvExport = (data) => {
       const csvContent = makeCsv(allFlat)
 
       triggerDownload(`opin_gogn${new Date()}.csv`, csvContent)
-    } catch (e) {
-
-    }
+    } catch (e) {}
   }
 
   return

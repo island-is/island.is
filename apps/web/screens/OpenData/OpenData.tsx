@@ -8,7 +8,7 @@ import {
   QueryGetGroupedMenuArgs,
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
-  ContentLanguage
+  ContentLanguage,
 } from '@island.is/web/graphql/schema'
 import {
   GridContainer,
@@ -48,7 +48,6 @@ interface OpenDataProps {
 }
 
 const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
-  console.log(page)
   const { linkResolver } = useLinkResolver()
   const {
     pageTitle,
@@ -163,7 +162,6 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
 }
 
 OpenDataPage.getInitialProps = async ({ apolloClient, locale }) => {
-  console.log(locale)
   const [
     {
       data: { getOpenDataPage: page },
