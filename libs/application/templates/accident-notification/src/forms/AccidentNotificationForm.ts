@@ -1,70 +1,74 @@
 import {
-  buildForm,
-  buildSection,
-  Form,
-  FormModes,
-  buildDataProviderItem,
-  buildExternalDataProvider,
-  buildMultiField,
+  buildCheckboxField,
   buildCustomField,
-  buildRadioField,
-  buildSubSection,
-  buildTextField,
-  buildFileUploadField,
+  buildDataProviderItem,
   buildDateField,
   buildDescriptionField,
-  buildCheckboxField,
+  buildExternalDataProvider,
+  buildFileUploadField,
+  buildForm,
+  buildMultiField,
+  buildRadioField,
+  buildSection,
+  buildSubSection,
+  buildTextField,
+  Form,
+  FormModes,
 } from '@island.is/application/core'
-//replace
-import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
+import Logo from '../assets/Logo'
+import { NO, YES } from '../constants'
+import { AccidentNotification } from '../lib/dataSchema'
 import {
-  AccidentTypeEnum,
-  DataProviderTypes,
-  WhoIsTheNotificationForEnum,
-  AttachmentsEnum,
-  GeneralWorkplaceAccidentLocationEnum,
-  ProfessionalAthleteAccidentLocationEnum,
-  AgricultureAccidentLocationEnum,
-  FishermanWorkplaceAccidentLocationEnum,
-  WorkAccidentTypeEnum,
-  StudiesAccidentTypeEnum,
-  StudiesAccidentLocationEnum,
-  PowerOfAttorneyUploadEnum,
-} from '../types'
-import {
-  externalData,
-  application,
-  hindrances,
-  applicantInformation,
-  whoIsTheNotificationFor,
   accidentDetails,
-  accidentType,
   accidentLocation,
+  accidentType,
+  applicantInformation,
+  application,
   companyInfo,
-  workMachine,
-  overview,
-  locationAndPurpose,
-  schoolInfo,
-  fishingCompanyInfo,
-  sportsClubInfo,
-  rescueSquadInfo,
+  conclusion,
+  externalData,
   fatalAccident,
   fatalAccidentAttachment,
-  conclusion,
+  fishingCompanyInfo,
+  fishingLocationAndPurpose,
+  hindrances,
+  locationAndPurpose,
+  overview,
+  rescueSquadInfo,
+  schoolInfo,
+  sportsClubInfo,
   juridicalPerson,
   injuredPersonInformation,
   powerOfAttorney,
+  whoIsTheNotificationFor,
+  workMachine,
 } from '../lib/messages'
-import { NO, YES } from '../constants'
-import { AccidentNotification } from '../lib/dataSchema'
 import { attachments } from '../lib/messages/attachments'
 import {
+  AccidentTypeEnum,
+  AgricultureAccidentLocationEnum,
+  AttachmentsEnum,
+  DataProviderTypes,
+  FishermanWorkplaceAccidentLocationEnum,
+  FishermanWorkplaceAccidentShipLocationEnum,
+  GeneralWorkplaceAccidentLocationEnum,
+  PowerOfAttorneyUploadEnum,
+  ProfessionalAthleteAccidentLocationEnum,
+  StudiesAccidentLocationEnum,
+  StudiesAccidentTypeEnum,
+  WhoIsTheNotificationForEnum,
+  WorkAccidentTypeEnum,
+} from '../types'
+import {
+  isAboardShip,
   isAgricultureAccident,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
+  isLocatedOnShipOther,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfInjured,
+  isRepresentativeOfCompanyOrInstitute,
   isRescueWorkAccident,
   isStudiesAccident,
   isReportingOnBehalfOfEmployee,
@@ -142,16 +146,16 @@ export const AccidentNotificationForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'timePassedHindrancesMultiField',
-          title: '',
+          title: hindrances.timePassedHindrance.radioFieldTitle,
           children: [
             buildRadioField({
               id: 'timePassedHindrance',
               defaultValue: NO,
+              title: '',
               options: [
                 { value: YES, label: application.general.yesOptionLabel },
                 { value: NO, label: application.general.noOptionLabel },
               ],
-              title: hindrances.timePassedHindrance.radioFieldTitle,
               width: 'half',
               largeButtons: true,
             }),
@@ -166,16 +170,16 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
         buildMultiField({
           id: 'carHindrancesMultiField',
-          title: '',
+          title: hindrances.carAccident.radioFieldTitle,
           children: [
             buildRadioField({
+              title: '',
               id: 'carAccidentHindrance',
               defaultValue: NO,
               options: [
                 { value: YES, label: application.general.yesOptionLabel },
                 { value: NO, label: application.general.noOptionLabel },
               ],
-              title: hindrances.carAccident.radioFieldTitle,
               width: 'half',
               largeButtons: true,
             }),
@@ -557,6 +561,17 @@ export const AccidentNotificationForm: Form = buildForm({
                     },
                   ],
                 }),
+                buildCustomField(
+                  {
+                    id: 'attachments.injuryCertificate.alert',
+                    title: attachments.labels.alertMessage,
+                    description:
+                      accidentType.warning.agricultureAccidentWarning,
+                    component: 'FieldAlertMessage',
+                    condition: (formValue) => isAgricultureAccident(formValue),
+                  },
+                  { type: 'warning' },
+                ),
               ],
             }),
           ],
@@ -597,222 +612,288 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
-    // Accident location section
-    buildSection({
-      id: 'accidentLocation',
-      title: accidentLocation.general.sectionTitle,
-      children: [
-        // location of general work related accident
-        buildMultiField({
-          id: 'accidentLocation.generalWorkAccident',
-          title: accidentLocation.general.heading,
-          description: accidentLocation.general.description,
-          condition: (formValue) => isGeneralWorkplaceAccident(formValue),
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value: GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
-                  label: accidentLocation.generalWorkAccident.atTheWorkplace,
-                },
-                {
-                  value:
-                    GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                  label:
-                    accidentLocation.generalWorkAccident.toOrFromTheWorkplace,
-                },
-                {
-                  value: GeneralWorkplaceAccidentLocationEnum.OTHER,
-                  label: accidentLocation.generalWorkAccident.other,
-                },
-              ],
-            }),
-          ],
-        }),
-        // location of rescue work related accident
-        buildMultiField({
-          id: 'accidentLocation.rescueWorkAccident',
-          title: accidentLocation.general.heading,
-          description: accidentLocation.rescueWorkAccident.description,
-          condition: (formValue) => isRescueWorkAccident(formValue),
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value: GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
-                  label: accidentLocation.generalWorkAccident.atTheWorkplace,
-                },
-                {
-                  value:
-                    GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                  label:
-                    accidentLocation.generalWorkAccident.toOrFromTheWorkplace,
-                },
-                {
-                  value: GeneralWorkplaceAccidentLocationEnum.OTHER,
-                  label: accidentLocation.generalWorkAccident.other,
-                },
-              ],
-            }),
-          ],
-        }),
-        // location of studies related accident
-        buildMultiField({
-          id: 'accidentLocation.studiesAccident',
-          title: accidentLocation.studiesAccidentLocation.heading,
-          description: accidentLocation.studiesAccidentLocation.description,
-          condition: (formValue) => isStudiesAccident(formValue),
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value: StudiesAccidentLocationEnum.ATTHESCHOOL,
-                  label: accidentLocation.studiesAccidentLocation.atTheSchool,
-                },
-                {
-                  value: StudiesAccidentLocationEnum.DURINGSTUDIES,
-                  label: accidentLocation.studiesAccidentLocation.duringStudies,
-                },
-                {
-                  value: StudiesAccidentLocationEnum.OTHER,
-                  label: accidentLocation.studiesAccidentLocation.other,
-                },
-              ],
-            }),
-          ],
-        }),
-        // location of fisherman related accident
-        buildMultiField({
-          id: 'accidentLocation.fishermanAccident',
-          title: accidentLocation.general.heading,
-          description: accidentLocation.general.description,
-          condition: (formValue) => isFishermanAccident(formValue),
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value: FishermanWorkplaceAccidentLocationEnum.ONTHESHIP,
-                  label: accidentLocation.fishermanAccident.onTheShip,
-                },
-                {
-                  value:
-                    FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                  label:
-                    accidentLocation.fishermanAccident.toOrFromTheWorkplace,
-                },
-                {
-                  value: FishermanWorkplaceAccidentLocationEnum.OTHER,
-                  label: accidentLocation.fishermanAccident.other,
-                },
-              ],
-            }),
-          ],
-        }),
-        // location of sports related accident
-        buildMultiField({
-          id: 'accidentLocation.professionalAthleteAccident',
-          title: accidentLocation.general.heading,
-          description: accidentLocation.general.description,
-          condition: (formValue) =>
-            isProfessionalAthleteAccident(formValue) &&
-            !isHomeActivitiesAccident(formValue),
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value:
-                    ProfessionalAthleteAccidentLocationEnum.SPORTCLUBSFACILITES,
-                  label:
-                    accidentLocation.professionalAthleteAccident
-                      .atTheClubsSportsFacilites,
-                },
-                {
-                  value:
-                    ProfessionalAthleteAccidentLocationEnum.TOORFROMTHESPORTCLUBSFACILITES,
-                  label:
-                    accidentLocation.professionalAthleteAccident
-                      .toOrFromTheSportsFacilites,
-                },
-                {
-                  value: ProfessionalAthleteAccidentLocationEnum.OTHER,
-                  label: accidentLocation.professionalAthleteAccident.other,
-                },
-              ],
-            }),
-          ],
-        }),
-        // location of agriculture related accident
-        buildMultiField({
-          id: 'accidentLocation.agricultureAccident',
-          title: accidentLocation.general.heading,
-          description: accidentLocation.general.description,
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value: AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
-                  label: accidentLocation.agricultureAccident.atTheWorkplace,
-                },
-                {
-                  value: AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                  label:
-                    accidentLocation.agricultureAccident.toOrFromTheWorkplace,
-                },
-                {
-                  value: AgricultureAccidentLocationEnum.OTHER,
-                  label: accidentLocation.agricultureAccident.other,
-                },
-              ],
-            }),
-          ],
-          condition: (formValue) => isAgricultureAccident(formValue),
-        }),
-      ],
-    }),
     // Location and purpose of the injured when the accident occured, relevant to all cases except home activites
     buildSection({
       title: locationAndPurpose.general.title,
       condition: (formValue) => !isHomeActivitiesAccident(formValue),
       children: [
+        // Accident location section
+        buildSubSection({
+          id: 'accidentLocation',
+          title: accidentLocation.general.sectionTitle,
+          children: [
+            // location of general work related accident
+            buildMultiField({
+              id: 'accidentLocation.generalWorkAccident',
+              title: accidentLocation.general.heading,
+              description: accidentLocation.general.description,
+              condition: (formValue) => isGeneralWorkplaceAccident(formValue),
+              children: [
+                buildRadioField({
+                  id: 'accidentLocation.answer',
+                  title: '',
+                  options: [
+                    {
+                      value:
+                        GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
+                      label:
+                        accidentLocation.generalWorkAccident.atTheWorkplace,
+                    },
+                    {
+                      value:
+                        GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                      label:
+                        accidentLocation.generalWorkAccident
+                          .toOrFromTheWorkplace,
+                    },
+                    {
+                      value: GeneralWorkplaceAccidentLocationEnum.OTHER,
+                      label: accidentLocation.generalWorkAccident.other,
+                    },
+                  ],
+                }),
+              ],
+            }),
+            // location of rescue work related accident
+            buildMultiField({
+              id: 'accidentLocation.rescueWorkAccident',
+              title: accidentLocation.general.heading,
+              description: accidentLocation.rescueWorkAccident.description,
+              condition: (formValue) => {
+                return isRescueWorkAccident(formValue)
+              },
+              children: [
+                buildRadioField({
+                  id: 'accidentLocation.answer',
+                  title: '',
+                  options: [
+                    {
+                      value:
+                        GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
+                      label:
+                        accidentLocation.generalWorkAccident.atTheWorkplace,
+                    },
+                    {
+                      value:
+                        GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                      label:
+                        accidentLocation.generalWorkAccident
+                          .toOrFromTheWorkplace,
+                    },
+                    {
+                      value: GeneralWorkplaceAccidentLocationEnum.OTHER,
+                      label: accidentLocation.generalWorkAccident.other,
+                    },
+                  ],
+                }),
+              ],
+            }),
+            // location of studies related accident
+            buildMultiField({
+              id: 'accidentLocation.studiesAccident',
+              title: accidentLocation.studiesAccidentLocation.heading,
+              description: accidentLocation.studiesAccidentLocation.description,
+              condition: (formValue) => isStudiesAccident(formValue),
+              children: [
+                buildRadioField({
+                  id: 'accidentLocation.answer',
+                  title: '',
+                  options: [
+                    {
+                      value: StudiesAccidentLocationEnum.ATTHESCHOOL,
+                      label:
+                        accidentLocation.studiesAccidentLocation.atTheSchool,
+                    },
+                    {
+                      value: StudiesAccidentLocationEnum.DURINGSTUDIES,
+                      label:
+                        accidentLocation.studiesAccidentLocation.duringStudies,
+                    },
+                    {
+                      value: StudiesAccidentLocationEnum.OTHER,
+                      label: accidentLocation.studiesAccidentLocation.other,
+                    },
+                  ],
+                }),
+              ],
+            }),
+            // location of fisherman related accident
+            buildMultiField({
+              id: 'accidentLocation.fishermanAccident',
+              title: accidentLocation.general.heading,
+              description: accidentLocation.general.description,
+              condition: (formValue) => isFishermanAccident(formValue),
+              children: [
+                buildRadioField({
+                  id: 'accidentLocation.answer',
+                  title: '',
+                  options: [
+                    {
+                      value: FishermanWorkplaceAccidentLocationEnum.ONTHESHIP,
+                      label: accidentLocation.fishermanAccident.onTheShip,
+                    },
+                    {
+                      value:
+                        FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                      label:
+                        accidentLocation.fishermanAccident.toOrFromTheWorkplace,
+                    },
+                    {
+                      value: FishermanWorkplaceAccidentLocationEnum.OTHER,
+                      label: accidentLocation.fishermanAccident.other,
+                    },
+                  ],
+                }),
+              ],
+            }),
+            // location of sports related accident
+            buildMultiField({
+              id: 'accidentLocation.professionalAthleteAccident',
+              title: accidentLocation.general.heading,
+              description: accidentLocation.general.description,
+              condition: (formValue) =>
+                isProfessionalAthleteAccident(formValue) &&
+                !isHomeActivitiesAccident(formValue),
+              children: [
+                buildRadioField({
+                  id: 'accidentLocation.answer',
+                  title: '',
+                  options: [
+                    {
+                      value:
+                        ProfessionalAthleteAccidentLocationEnum.SPORTCLUBSFACILITES,
+                      label:
+                        accidentLocation.professionalAthleteAccident
+                          .atTheClubsSportsFacilites,
+                    },
+                    {
+                      value:
+                        ProfessionalAthleteAccidentLocationEnum.TOORFROMTHESPORTCLUBSFACILITES,
+                      label:
+                        accidentLocation.professionalAthleteAccident
+                          .toOrFromTheSportsFacilites,
+                    },
+                    {
+                      value: ProfessionalAthleteAccidentLocationEnum.OTHER,
+                      label: accidentLocation.professionalAthleteAccident.other,
+                    },
+                  ],
+                }),
+              ],
+            }),
+            // location of agriculture related accident
+            buildMultiField({
+              id: 'accidentLocation.agricultureAccident',
+              title: accidentLocation.general.heading,
+              description: accidentLocation.general.description,
+              children: [
+                buildRadioField({
+                  id: 'accidentLocation.answer',
+                  title: '',
+                  options: [
+                    {
+                      value: AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
+                      label:
+                        accidentLocation.agricultureAccident.atTheWorkplace,
+                    },
+                    {
+                      value:
+                        AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                      label:
+                        accidentLocation.agricultureAccident
+                          .toOrFromTheWorkplace,
+                    },
+                    {
+                      value: AgricultureAccidentLocationEnum.OTHER,
+                      label: accidentLocation.agricultureAccident.other,
+                    },
+                  ],
+                }),
+              ],
+              condition: (formValue) => isAgricultureAccident(formValue),
+            }),
+          ],
+        }),
+        // Fisherman information only applicable to fisherman workplace accidents
+        // that happen aboard a ship.
+        buildSubSection({
+          id: 'fishermanLocation.section',
+          title: accidentLocation.fishermanAccidentLocation.heading,
+          condition: (formValue) => isAboardShip(formValue),
+          children: [
+            buildMultiField({
+              id: 'fishermanLocation.multifield',
+              title: accidentLocation.fishermanAccidentLocation.heading,
+              description:
+                accidentLocation.fishermanAccidentLocation.description,
+              children: [
+                buildRadioField({
+                  id: 'fishermanLocation.answer',
+                  title: '',
+                  backgroundColor: 'blue',
+                  options: [
+                    {
+                      value:
+                        FishermanWorkplaceAccidentShipLocationEnum.SAILINGORFISHING,
+                      label:
+                        accidentLocation.fishermanAccidentLocation.whileSailing,
+                    },
+                    {
+                      value: FishermanWorkplaceAccidentShipLocationEnum.HARBOR,
+                      label:
+                        accidentLocation.fishermanAccidentLocation.inTheHarbor,
+                    },
+                    {
+                      value: FishermanWorkplaceAccidentShipLocationEnum.OTHER,
+                      label: accidentLocation.fishermanAccidentLocation.other,
+                    },
+                  ],
+                }),
+              ],
+            }),
+            buildMultiField({
+              id: 'fishermanLocation.other',
+              title: fishingLocationAndPurpose.general.title,
+              description: fishingLocationAndPurpose.general.description,
+              condition: (formValue) => isLocatedOnShipOther(formValue),
+              children: [
+                buildTextField({
+                  id: 'fishermanLocation.locationAndPurpose.location',
+                  title: fishingLocationAndPurpose.labels.location,
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'fishermanLocation.locationAndPurpose.purpose',
+                  title: fishingLocationAndPurpose.labels.purpose,
+                  backgroundColor: 'blue',
+                  rows: 6,
+                  variant: 'textarea',
+                  placeholder: fishingLocationAndPurpose.placeholder.purpose,
+                }),
+              ],
+            }),
+          ],
+        }),
         buildMultiField({
           title: locationAndPurpose.general.title,
           description: locationAndPurpose.general.description,
+          condition: (formValue) => !isFishermanAccident(formValue),
           children: [
             buildTextField({
               id: 'locationAndPurpose.location',
               title: locationAndPurpose.labels.location,
               backgroundColor: 'blue',
-            }),
-            buildTextField({
-              id: 'locationAndPurpose.postalCode',
-              title: locationAndPurpose.labels.postalCode,
-              backgroundColor: 'blue',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'locationAndPurpose.city',
-              title: locationAndPurpose.labels.city,
-              backgroundColor: 'blue',
-              width: 'half',
+              variant: 'textarea',
+              required: true,
+              rows: 4,
             }),
             buildTextField({
               id: 'locationAndPurpose.purpose',
               title: locationAndPurpose.labels.purpose,
               backgroundColor: 'blue',
-              rows: 6,
               variant: 'textarea',
+              required: true,
+              rows: 6,
             }),
           ],
         }),
@@ -850,12 +931,6 @@ export const AccidentNotificationForm: Form = buildForm({
             buildMultiField({
               title: workMachine.general.subSectionTitle,
               children: [
-                buildTextField({
-                  id: 'workMachine.registrationNumber',
-                  title: workMachine.labels.registrationNumber,
-                  backgroundColor: 'blue',
-                  required: true,
-                }),
                 buildTextField({
                   id: 'workMachine.desriptionOfMachine',
                   title: workMachine.labels.desriptionOfMachine,
@@ -921,6 +996,8 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'attachments.injuryCertificate',
               title: '',
               description: attachments.general.description,
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
               options: [
                 {
                   value: AttachmentsEnum.INJURYCERTIFICATE,
@@ -929,6 +1006,31 @@ export const AccidentNotificationForm: Form = buildForm({
                 {
                   value: AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
                   label: attachments.labels.hospitalSendsCertificate,
+                },
+                {
+                  value: AttachmentsEnum.SENDCERTIFICATELATER,
+                  label: attachments.labels.sendCertificateLater,
+                },
+              ],
+            }),
+            buildRadioField({
+              id: 'attachments.injuryCertificate',
+              title: '',
+              description: attachments.general.description,
+              condition: (formValue) =>
+                isRepresentativeOfCompanyOrInstitute(formValue),
+              options: [
+                {
+                  value: AttachmentsEnum.INJURYCERTIFICATE,
+                  label: attachments.labels.injuryCertificate,
+                },
+                {
+                  value: AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
+                  label: attachments.labels.hospitalSendsCertificate,
+                },
+                {
+                  value: AttachmentsEnum.INJUREDSENDSCERTIFICATE,
+                  label: attachments.labels.injuredSendsCertificate,
                 },
                 {
                   value: AttachmentsEnum.SENDCERTIFICATELATER,
@@ -1016,12 +1118,8 @@ export const AccidentNotificationForm: Form = buildForm({
               space: 'containerGutter',
               titleVariant: 'h5',
               title: companyInfo.labels.descriptionField,
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
@@ -1029,36 +1127,24 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'companyInfo.name',
               title: companyInfo.labels.name,
               backgroundColor: 'blue',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'companyInfo.email',
               title: companyInfo.labels.email,
               backgroundColor: 'blue',
               width: 'half',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'companyInfo.phoneNumber',
               title: companyInfo.labels.tel,
               backgroundColor: 'blue',
               width: 'half',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
           ],
         }),
@@ -1107,12 +1193,8 @@ export const AccidentNotificationForm: Form = buildForm({
               space: 'containerGutter',
               titleVariant: 'h5',
               title: schoolInfo.labels.descriptionField,
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
@@ -1120,36 +1202,24 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'schoolInfo.name',
               title: schoolInfo.labels.name,
               backgroundColor: 'blue',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'schoolInfo.email',
               title: schoolInfo.labels.email,
               backgroundColor: 'blue',
               width: 'half',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'schoolInfo.phoneNumber',
               title: schoolInfo.labels.tel,
               backgroundColor: 'blue',
               width: 'half',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
           ],
         }),
@@ -1198,12 +1268,8 @@ export const AccidentNotificationForm: Form = buildForm({
               space: 'containerGutter',
               titleVariant: 'h5',
               title: fishingCompanyInfo.labels.descriptionField,
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
@@ -1211,36 +1277,24 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'fishingCompanyInfo.name',
               title: fishingCompanyInfo.labels.name,
               backgroundColor: 'blue',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'fishingCompanyInfo.email',
               title: fishingCompanyInfo.labels.email,
               backgroundColor: 'blue',
               width: 'half',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'fishingCompanyInfo.phoneNumber',
               title: fishingCompanyInfo.labels.tel,
               backgroundColor: 'blue',
               width: 'half',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
           ],
         }),
@@ -1289,12 +1343,8 @@ export const AccidentNotificationForm: Form = buildForm({
               space: 'containerGutter',
               titleVariant: 'h5',
               title: sportsClubInfo.labels.descriptionField,
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             // These should all be required if the user is not the representative of the company.
             // Should look into if we can require conditionally
@@ -1302,36 +1352,24 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'sportsClubInfo.name',
               title: sportsClubInfo.labels.name,
               backgroundColor: 'blue',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'sportsClubInfo.email',
               title: sportsClubInfo.labels.email,
               backgroundColor: 'blue',
               width: 'half',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'sportsClubInfo.phoneNumber',
               title: sportsClubInfo.labels.tel,
               backgroundColor: 'blue',
               width: 'half',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
           ],
         }),
@@ -1380,49 +1418,31 @@ export const AccidentNotificationForm: Form = buildForm({
               space: 'containerGutter',
               titleVariant: 'h5',
               title: rescueSquadInfo.labels.descriptionField,
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
-            // These should all be required if the user is not the representative of the company.
-            // Should look into if we can require conditionally
             buildTextField({
               id: 'rescueSquadInfo.name',
               title: rescueSquadInfo.labels.name,
               backgroundColor: 'blue',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'rescueSquadInfo.email',
               title: rescueSquadInfo.labels.email,
               backgroundColor: 'blue',
               width: 'half',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
             buildTextField({
               id: 'rescueSquadInfo.phoneNumber',
               title: rescueSquadInfo.labels.tel,
               backgroundColor: 'blue',
               width: 'half',
-              condition: (formValue) => {
-                return (
-                  formValue.isRepresentativeOfCompanyOrInstitue?.toString() !==
-                  YES
-                )
-              },
+              condition: (formValue) =>
+                !isRepresentativeOfCompanyOrInstitute(formValue),
             }),
           ],
         }),

@@ -120,4 +120,13 @@ export const accidentType = {
       description: 'Label for the internship studies accident',
     },
   }),
+  warning: defineMessages({
+    agricultureAccidentWarning: {
+      id: 'an.application:accidentType.warning.agricultureAccidentWarning',
+      defaultMessage:
+        'Slys við landbúnað á einungis við um bændur, maka þeirra og börn. Annars á almennt vinnuslys á landi við.',
+      description:
+        'Agricultural accidents only apply to farmers, their spouses and children. Otherwise, a general work accident on land applies.',
+    },
+  }),
 }

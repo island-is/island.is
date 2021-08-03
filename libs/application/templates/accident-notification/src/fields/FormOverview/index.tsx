@@ -179,18 +179,6 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
               value={answers.locationAndPurpose.location}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
-            <ValueLine
-              label={locationAndPurpose.labels.postalCode}
-              value={answers.locationAndPurpose.postalCode}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
-            <ValueLine
-              label={locationAndPurpose.labels.city}
-              value={answers.locationAndPurpose.city}
-            />
-          </GridColumn>
           <GridColumn span="12/12">
             <ValueLine
               label={locationAndPurpose.labels.purpose}

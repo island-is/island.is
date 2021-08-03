@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const locationAndPurpose = {
+export const fishingLocationAndPurpose = {
   general: defineMessages({
     title: {
       id: 'an.application:locationAndPurpose.general.title',
@@ -17,8 +17,8 @@ export const locationAndPurpose = {
   labels: defineMessages({
     location: {
       id: 'an.application:locationAndPurpose.labels.descriptionField',
-      defaultMessage: 'Staðsetning / póstnúmer',
-      description: `Location / postal code`,
+      defaultMessage: 'Staðsetning / póstfang',
+      description: `Location / email`,
     },
     purpose: {
       id: 'an.application:locationAndPurpose.labels.purpose',
