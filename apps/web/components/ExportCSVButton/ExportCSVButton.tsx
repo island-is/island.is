@@ -1,6 +1,5 @@
-import React, { FC, MouseEvent } from 'react'
+import React, { FC} from 'react'
 import { Button, Box } from '@island.is/island-ui/core'
-import { forEach } from 'lodash'
 
 const isIterableObject = (val) => {
   return typeof val === 'object' && val !== null && !Array.isArray(val)
@@ -19,19 +18,7 @@ const forAll = function* (obj, keyPrefix = '') {
   }
 }
 
-const useCsvExport = (data) => {
-  if (data) {
-    try {
-      const allFlat = data.map((obj) => [...forAll(obj)])
 
-      const csvContent = makeCsv(allFlat)
-
-      triggerDownload(`opin_gogn${new Date()}.csv`, csvContent)
-    } catch (e) {}
-  }
-
-  return
-}
 
 const triggerDownload = (filename, csvContent) => {
   const encodedUri = encodeURI(csvContent)
@@ -59,16 +46,29 @@ export interface ExportCSVButtonProps {
 }
 
 export const ExportCSVButton: FC<ExportCSVButtonProps> = ({ data }) => {
-  data = JSON.parse(data)
+  const newdata = JSON.parse(data)
+  const useCsvExport = () => {
+    if (data) {
+      try {
+        const allFlat = newdata.map((obj) => [...forAll(obj)])
+  
+        const csvContent = makeCsv(allFlat)
+  
+        triggerDownload(`opin_gogn${new Date()}.csv`, csvContent)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  
+    return
+  }
   return (
     <Box style={{ height: '48px' }}>
       <Button
         colorScheme="default"
         preTextIcon="download"
         iconType="filled"
-        onBlur={function noRefCheck() {}}
-        onClick={() => useCsvExport(data)}
-        onFocus={function noRefCheck() {}}
+        onClick={() => useCsvExport}
         preTextIconType="filled"
         size="small"
         type="button"
