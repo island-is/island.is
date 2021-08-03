@@ -1,4 +1,4 @@
-import React, { FC} from 'react'
+import React, { FC } from 'react'
 import { Button, Box } from '@island.is/island-ui/core'
 
 const isIterableObject = (val) => {
@@ -17,8 +17,6 @@ const forAll = function* (obj, keyPrefix = '') {
     }
   }
 }
-
-
 
 const triggerDownload = (filename, csvContent) => {
   const encodedUri = encodeURI(csvContent)
@@ -51,15 +49,15 @@ export const ExportCSVButton: FC<ExportCSVButtonProps> = ({ data }) => {
     if (data) {
       try {
         const allFlat = newdata.map((obj) => [...forAll(obj)])
-  
+
         const csvContent = makeCsv(allFlat)
-  
+
         triggerDownload(`opin_gogn${new Date()}.csv`, csvContent)
       } catch (e) {
         console.log(e)
       }
     }
-  
+
     return
   }
   return (
