@@ -31,11 +31,10 @@ export const StatisticsCardsSection = ({
             0: {
               gutterWidth: theme.grid.gutter.mobile,
               slideCount: 1,
-              slideWidthOffset: 100,
             },
             [theme.breakpoints.sm]: {
               gutterWidth: theme.grid.gutter.mobile,
-              slideCount: 1,
+              slideCount: 2,
             },
             [theme.breakpoints.md]: {
               gutterWidth: theme.spacing[3],

@@ -65,7 +65,7 @@ export const StatisticsCard = ({
             }}
           >
             <BackgroundImage
-              width={204}
+              width={500}
               quality={100}
               positionX={'right'}
               backgroundSize="contain"
