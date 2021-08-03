@@ -25,7 +25,7 @@
 /apps/services/temporary-voter-registry-api/                                                  @island-is/kosmos-kaos
 /apps/services/party-letter-registry-api/                                                     @island-is/kosmos-kaos
 /apps/icelandic-names-registry*/                                                              @island-is/kosmos-kaos
-/libs/api/domains/cms/                                                                        @island-is/kosmos-kaos
+/libs/cms/                                                                                    @island-is/kosmos-kaos
 /libs/api/domains/endorsement-system                                                          @island-is/kosmos-kaos
 /libs/api/domains/icelandic-names-registry/                                                   @island-is/kosmos-kaos
 /libs/api/domains/temporary-voter-registry/                                                   @island-is/kosmos-kaos
@@ -55,7 +55,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission   @island-is/kosmos-kaos
 
 /apps/reference-next-app/                                                                     @island-is/aranja-core
-/libs/api/domains/translations/                                                               @island-is/aranja-core
+/libs/cms-translations/                                                                       @island-is/aranja-core
 /libs/contentful-extensions/translation/                                                      @island-is/aranja-core
 /libs/clients/auth-public-api/                                                                @island-is/aranja-core
 /libs/clients/middlewares/                                                                    @island-is/aranja-core

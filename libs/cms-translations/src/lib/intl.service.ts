@@ -4,7 +4,7 @@ import { StaticText } from '@island.is/application/core'
 import { createIntl, createIntlCache, IntlShape } from '@formatjs/intl'
 import { logger } from '@island.is/logging'
 
-import { TranslationsService } from '../translations.service'
+import { CmsTranslationsService } from './cms-translations.service'
 
 export type NestIntl = Promise<IntlShape<string>>
 
@@ -12,10 +12,10 @@ export type NestIntl = Promise<IntlShape<string>>
 export class IntlService {
   private intlCache = createIntlCache()
 
-  constructor(private translationsService: TranslationsService) {}
+  constructor(private cmsTranslationsService: CmsTranslationsService) {}
 
   useIntl = async (namespaces: string[], locale: Locale) => {
-    const messages = await this.translationsService.getTranslations(
+    const messages = await this.cmsTranslationsService.getTranslations(
       namespaces,
       locale,
     )
