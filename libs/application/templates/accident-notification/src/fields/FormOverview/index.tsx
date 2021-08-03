@@ -1,5 +1,9 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  FormValue,
+} from '@island.is/application/core'
 import { AccidentNotification } from '../../lib/dataSchema'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
@@ -11,7 +15,9 @@ import {
   companyInfo,
   injuredPerson,
   locationAndPurpose,
+  application as applicationMessages,
   overview,
+  sportsClubInfo,
 } from '../../lib/messages'
 import { AccidentTypeEnum, WhoIsTheNotificationForEnum } from '../../types'
 import { useLocale } from '@island.is/localization'
@@ -19,7 +25,7 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { YES } from '../../constants'
-import { getWorkplaceData } from '../../utils'
+import { getWorkplaceData, isProfessionalAthleteAccident } from '../../utils'
 
 export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
   const answers = application.answers as AccidentNotification
@@ -190,6 +196,19 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
                   value={workplaceData.info.nationalRegistrationId ?? ''}
                 />
               </GridColumn>
+              {isProfessionalAthleteAccident(answers as FormValue) &&
+                workplaceData.info.employee && (
+                  <GridColumn span="12/12">
+                    <ValueLine
+                      label={sportsClubInfo.employee.sectionTitle}
+                      value={
+                        workplaceData.info.employee.radioButton === YES
+                          ? applicationMessages.general.yesOptionLabel
+                          : applicationMessages.general.noOptionLabel
+                      }
+                    />
+                  </GridColumn>
+                )}
             </GridRow>
           </ReviewGroup>
 
