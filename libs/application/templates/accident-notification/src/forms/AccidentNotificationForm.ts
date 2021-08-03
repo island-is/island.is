@@ -69,6 +69,7 @@ import {
   isStudiesAccident,
   isReportingOnBehalfOfEmployee,
   isWorkAccident,
+  getAccidentTypeOptions,
 } from '../utils'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
@@ -520,28 +521,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'accidentType.radioButton',
               width: 'half',
               title: '',
-              options: [
-                {
-                  value: AccidentTypeEnum.HOMEACTIVITIES,
-                  label: accidentType.labels.homeActivities,
-                },
-                {
-                  value: AccidentTypeEnum.WORK,
-                  label: accidentType.labels.work,
-                },
-                {
-                  value: AccidentTypeEnum.RESCUEWORK,
-                  label: accidentType.labels.rescueWork,
-                },
-                {
-                  value: AccidentTypeEnum.STUDIES,
-                  label: accidentType.labels.studies,
-                },
-                {
-                  value: AccidentTypeEnum.SPORTS,
-                  label: accidentType.labels.sports,
-                },
-              ],
+              options: (app) => getAccidentTypeOptions(app.answers),
             }),
           ],
         }),
