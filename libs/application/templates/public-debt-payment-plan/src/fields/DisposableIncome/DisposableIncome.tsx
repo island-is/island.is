@@ -1,9 +1,9 @@
-import React from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import React from 'react'
 import { employer } from '../../lib/messages'
-import { PaymentPlanExternalData } from '../../lib/dataSchema'
+import { PaymentPlanExternalData } from '../../types'
 
 const InfoBox = ({ title, text }: { title: string | number; text: string }) => (
   <Box
@@ -36,7 +36,7 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
         {/* TODO: Handle null values? */}
         <InfoBox
           title={`${
-            externalData.paymentPlanPrerequisites?.data.disposableIncome.toLocaleString(
+            externalData.paymentPlanPrerequisites?.data?.conditions?.disposableIncome.toLocaleString(
               'is-IS',
             ) || 0
           } kr.`}
@@ -52,7 +52,7 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
       {/* TODO: Handle null values? */}
       <InfoBox
         title={`${
-          externalData.paymentPlanPrerequisites?.data.minimumPayment.toLocaleString(
+          externalData.paymentPlanPrerequisites?.data?.conditions?.minPayment.toLocaleString(
             'is-IS',
           ) || 0
         } kr.`}
