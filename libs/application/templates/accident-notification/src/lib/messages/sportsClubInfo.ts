@@ -29,6 +29,11 @@ export const sportsClubInfo = {
       defaultMessage: 'Kennitala íþróttafélags',
       description: 'National ID of sports club',
     },
+    companyName: {
+      id: 'an.application:sportsClubInfo.labels.companyName',
+      defaultMessage: 'Nafn íþróttafélags',
+      description: `Name of sports club`,
+    },
     name: {
       id: 'an.application:sportsClubInfo.labels.name',
       defaultMessage: 'Fullt nafn',

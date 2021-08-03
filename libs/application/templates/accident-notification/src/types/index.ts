@@ -1,5 +1,14 @@
 import { NO, YES } from './../constants'
 
+export type CompanyInfo = {
+  nationalRegistrationId: string
+  companyName: string
+  name: string
+  email: string
+  phoneNumber: string
+  type: AccidentTypeEnum | WorkAccidentTypeEnum
+}
+
 export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
   UserProfile = 'UserProfileProvider',
@@ -25,6 +34,7 @@ export enum AttachmentsEnum {
   INJURYCERTIFICATE = 'injuryCertificate',
   HOSPITALSENDSCERTIFICATE = 'hospitalSendsCertificate',
   SENDCERTIFICATELATER = 'sendCertificateLater',
+  INJUREDSENDSCERTIFICATE = 'injuredSendsCertificate',
 }
 
 export enum GeneralWorkplaceAccidentLocationEnum {
@@ -80,4 +90,10 @@ export enum StudiesAccidentLocationEnum {
   ATTHESCHOOL = 'atTheSchool',
   DURINGSTUDIES = 'duringStudies',
   OTHER = 'studiesLocation.other',
+}
+
+export enum PowerOfAttorneyUploadEnum {
+  UPLOADNOW = 'uploadNow',
+  UPLOADLATER = 'uploadLater',
+  FORCHILDINCUSTODY = 'forChildInCustody',
 }

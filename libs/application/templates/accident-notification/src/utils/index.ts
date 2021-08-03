@@ -8,10 +8,13 @@ export const isValid24HFormatTime = (value: string) => {
 }
 
 export * from './fishermanUtils'
+export * from './getWorkplaceData'
 export * from './isAgricultureAccident'
 export * from './isGeneralWorkplaceAccident'
 export * from './isHomeActivitiesAccident'
 export * from './isProfessionalAthleteAccident'
+export * from './isReportingOnBehalfOfInjured'
+export * from './isRepresentativeOfCompanyOrInstitue'
 export * from './isRescueWorkAccident'
 export * from './isStudiesAccident'
 export * from './isWorkAccident'
