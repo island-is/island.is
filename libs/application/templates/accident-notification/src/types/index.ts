@@ -1,4 +1,4 @@
-import { YES, NO } from './../constants'
+import { NO, YES } from './../constants'
 
 export type CompanyInfo = {
   nationalRegistrationId: string
@@ -47,6 +47,12 @@ export enum FishermanWorkplaceAccidentLocationEnum {
   ONTHESHIP = 'onTheShip',
   TOORFROMTHEWORKPLACE = 'FishermanWorkplaceAccidentLocation.toOrFromTheWorkplace',
   OTHER = 'FishermanWorkplaceAccidentLocation.other',
+}
+
+export enum FishermanWorkplaceAccidentShipLocationEnum {
+  SAILINGORFISHING = 'FishermanWorkplaceAccidentShipLocation.sailingOrFishing',
+  HARBOR = 'FishermanWorkplaceAccidentShipLocation.harbor',
+  OTHER = 'FishermanWorkplaceAccidentShipLocation.other',
 }
 
 export enum ProfessionalAthleteAccidentLocationEnum {
