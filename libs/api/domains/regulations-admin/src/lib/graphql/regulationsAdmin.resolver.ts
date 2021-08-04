@@ -114,6 +114,9 @@ export class RegulationsAdminResolver {
       appendixes: appendixes as RegulationAppendix[],
       comments: comments as HTMLText,
       impacts: impacts,
+      type: regulation.type,
+      signatureDate: regulation.signature_date,
+      effectiveDate: regulation.effective_date,
     }
   }
 

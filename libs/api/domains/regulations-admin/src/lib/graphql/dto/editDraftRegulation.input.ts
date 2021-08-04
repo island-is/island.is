@@ -30,7 +30,7 @@ export class EditDraftBody {
   @IsString()
   @Field({ nullable: true })
   @IsOptional()
-  ministryId?: string
+  ministry_id?: string
 
   @IsString()
   @Field({ nullable: true })

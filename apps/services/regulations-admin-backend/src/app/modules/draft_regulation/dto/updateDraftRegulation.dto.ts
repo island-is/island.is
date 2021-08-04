@@ -36,7 +36,7 @@ export class UpdateDraftRegulationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly ministryId?: string
+  readonly ministry_id?: string
 
   @IsOptional()
   @IsString()

@@ -21,8 +21,17 @@ import { Query } from '@island.is/api/schema'
 import { RegulationMinistry } from '@island.is/regulations/web'
 import { editorMsgs as msg } from '../messages'
 import { emptyOption, findValueOption, findSignatureInText } from '../utils'
-import { MinistrySlug, LawChapterSlug } from '@island.is/regulations'
+import {
+  MinistrySlug,
+  LawChapterSlug,
+  RegulationType,
+} from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
+
+const regulationTypes = [
+  { label: 'Stofnreglugerð', value: 'base' },
+  { label: 'Breytingareglugerð', value: 'amending' },
+]
 
 type WrapProps = {
   legend?: string
@@ -122,8 +131,26 @@ export const EditMeta: StepComponent = (props) => {
         />
       </Wrap>
       <Wrap>
+        <Select
+          name="type-select"
+          placeholder="Tegund reglugerðar"
+          size="sm"
+          isSearchable={false}
+          label="Tegund"
+          options={regulationTypes}
+          value={findValueOption(regulationTypes, draft.type.value)}
+          onChange={(typeOption) =>
+            actions.updateState({
+              name: 'type',
+              value: (typeOption as Option).value as RegulationType,
+            })
+          }
+        />
+      </Wrap>
+      <Wrap>
         <DatePicker
           label="Undirritunardagur"
+          size="sm"
           placeholderText="Undirritunardagur"
           selected={draft.signatureDate?.value || signatureDate}
           handleChange={(date: Date) =>
@@ -137,6 +164,7 @@ export const EditMeta: StepComponent = (props) => {
       <Wrap>
         <DatePicker
           label="Gildistökudagur"
+          size="sm"
           placeholderText="Gildistökudagur"
           selected={draft.effectiveDate?.value}
           minDate={draft.idealPublishDate?.value}

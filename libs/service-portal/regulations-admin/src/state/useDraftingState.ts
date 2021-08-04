@@ -395,10 +395,13 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                   body: {
                     title: state.draft?.title?.value,
                     text: state.draft?.text?.value, // (text + appendix + comments)
-                    ministryId: state.draft?.ministry?.value,
+                    ministry_id: state.draft?.ministry?.value,
                     drafting_notes: state.draft?.draftingNotes.value,
                     ideal_publish_date: state.draft?.idealPublishDate?.value,
                     law_chapters: state.draft?.lawChapters?.value,
+                    signature_date: state.draft?.signatureDate?.value,
+                    effective_date: state.draft?.effectiveDate?.value,
+                    type: state.draft?.type?.value,
                   },
                 },
               },
