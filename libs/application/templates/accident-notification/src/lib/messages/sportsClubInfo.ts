@@ -18,6 +18,19 @@ export const sportsClubInfo = {
       description: `Please fill in the details of the sports club with whom the injured person was working at the time of the accident.`,
     },
   }),
+  employee: defineMessages({
+    sectionTitle: {
+      id: 'an.application:sportsClubInfo.employee.sectionTitle',
+      defaultMessage: 'Launþegi hjá íþróttafélagi',
+      description: `Title of sports club employee section.`,
+    },
+    title: {
+      id: 'an.application:sportsClubInfo.employee.title',
+      defaultMessage:
+        'Ert þú launþegi hjá íþróttafélaginu sem þú slasaðist hjá?',
+      description: `Title of sports club employee section.`,
+    },
+  }),
   labels: defineMessages({
     descriptionField: {
       id: 'an.application:sportsClubInfo.labels.descriptionField',

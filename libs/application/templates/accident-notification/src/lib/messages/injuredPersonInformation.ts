@@ -18,6 +18,13 @@ export const injuredPersonInformation = {
         'Ef tilkynning er sett fram fyrir hönd einhvers annars þarftu að skila inn skriflegu og undirrituðu umboði frá viðkomandi aðila og skila því inn sem fylgiskjali með tilkynningunni.',
       description: 'Description label for injured person information section.',
     },
+    juridicalDescription: {
+      id:
+        'an.application:injuredPersonInformation.general.juridicalDescription',
+      defaultMessage: 'Hér vantar texta.',
+      description:
+        'Description label for injured person information section when submitting for juridical person.',
+    },
   }),
   labels: defineMessages({
     name: {
@@ -29,21 +36,6 @@ export const injuredPersonInformation = {
       id: 'an.application:injuredPersonInformation.labels.nationalId',
       defaultMessage: 'Kennitala',
       description: 'National ID',
-    },
-    address: {
-      id: 'an.application:injuredPersonInformation.labels.address',
-      defaultMessage: 'Heimili / póstfang',
-      description: 'Address',
-    },
-    postalCode: {
-      id: 'an.application:injuredPersonInformation.labels.postalCode',
-      defaultMessage: 'Póstnúmer',
-      description: 'Postal Code',
-    },
-    city: {
-      id: 'an.application:injuredPersonInformation.labels.city',
-      defaultMessage: 'Sveitarfélag',
-      description: 'City',
     },
     email: {
       id: 'an.application:injuredPersonInformation.labels.email',
