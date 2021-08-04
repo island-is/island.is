@@ -90,7 +90,10 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        style={{ width: graph.type === 'Pie' || !shouldStack ? '100%' : '889px', height: '100%' }}
+        style={{
+          width: graph.type === 'Pie' || !shouldStack ? '100%' : '889px',
+          height: '100%',
+        }}
       >
         <Box justifyContent="center" style={{ width: '90%', height: '80%' }}>
           {children}
