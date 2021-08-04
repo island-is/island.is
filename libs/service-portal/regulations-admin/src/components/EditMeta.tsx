@@ -15,12 +15,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { RegDraftForm, StepComponent } from '../state/useDraftingState'
+import { StepComponent } from '../state/useDraftingState'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { RegulationMinistry } from '@island.is/regulations/web'
 import { editorMsgs as msg } from '../messages'
-import { emptyOption, findValueOption, findMinistryInText } from '../utils'
+import { emptyOption, findValueOption, findSignatureInText } from '../utils'
 import { MinistrySlug, LawChapterSlug } from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
 
@@ -88,7 +88,8 @@ export const EditMeta: StepComponent = (props) => {
     ) as ReadonlyArray<Option>
   }, [ministries, t])
 
-  console.log('findMinistryInText', findMinistryInText(draft.text.value))
+  const { ministryName, signatureDate } = findSignatureInText(draft.text.value)
+  const ministyValue = draft.ministry.value || ministryName // If no ministry is selected, guess it. (defaults to undefined)
   return (
     <>
       <Wrap>
@@ -97,7 +98,7 @@ export const EditMeta: StepComponent = (props) => {
           isSearchable
           label={t(msg.ministry)}
           placeholder={t(msg.ministry)}
-          value={findValueOption(ministryOptions, draft.ministry.value)}
+          value={findValueOption(ministryOptions, ministyValue)}
           options={ministryOptions}
           onChange={(option) =>
             actions.updateState({
@@ -117,6 +118,32 @@ export const EditMeta: StepComponent = (props) => {
           }
           removeChapter={(chapter: LawChapterSlug) =>
             actions.updateLawChapterProp({ action: 'delete', value: chapter })
+          }
+        />
+      </Wrap>
+      <Wrap>
+        <DatePicker
+          label="signatureDate"
+          placeholderText="signature Date"
+          selected={draft.signatureDate?.value || signatureDate}
+          handleChange={(date: Date) =>
+            actions.updateState({
+              name: 'signatureDate',
+              value: date,
+            })
+          }
+        />
+      </Wrap>
+      <Wrap>
+        <DatePicker
+          label="effectiveDate"
+          placeholderText="effective Date"
+          selected={draft.effectiveDate?.value}
+          handleChange={(date: Date) =>
+            actions.updateState({
+              name: 'effectiveDate',
+              value: date,
+            })
           }
         />
       </Wrap>

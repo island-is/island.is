@@ -18,6 +18,7 @@ import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
 import { HTMLText } from '@island.is/regulations'
 import { StepComponent } from '../state/useDraftingState'
+import { RegDraftFormSimpleProps } from '../state/types'
 import { getMinDate, getNextWorkday } from '../utils'
 
 type WrapProps = {
@@ -53,7 +54,7 @@ export const EditBasics: StepComponent = (props) => {
   const notesRef = useRef(() => draft.draftingNotes?.value)
 
   const onAnyInputChange = useCallback(
-    (data: { name: string; value: string | Date }) => {
+    (data: { name: RegDraftFormSimpleProps; value: string | Date }) => {
       actions.updateState({ ...data })
     },
     [actions],

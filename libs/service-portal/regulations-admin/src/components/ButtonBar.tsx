@@ -6,7 +6,7 @@ import { Box, Button } from '@island.is/island-ui/core'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { buttonsMsgs as msg } from '../messages'
-import { StepNav } from '../state/useDraftingState'
+import { StepNav } from '../state/types'
 
 export const DELETE_DRAFT_REGULATION_MUTATION = gql`
   mutation DeleteDraftRegulationMutation($input: DeleteDraftRegulationInput!) {

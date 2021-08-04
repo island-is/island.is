@@ -12,10 +12,10 @@ import { Step } from '../types'
 import { ButtonBar } from '../components/ButtonBar'
 import {
   useDraftingState,
-  DraftIdFromParam,
   steps,
   StepComponent,
 } from '../state/useDraftingState'
+import { DraftIdFromParam } from '../state/types'
 import { MessageDescriptor } from 'react-intl'
 // import { gql, useQuery } from '@apollo/client'
 // import { Query } from '@island.is/api/schema'

@@ -2,7 +2,7 @@ import { useLocale as _useLocale } from '@island.is/localization'
 import { getHolidays } from 'fridagar'
 import { ISODate, toISODate, HTMLText } from '@island.is/regulations'
 import startOfTomorrow from 'date-fns/startOfTomorrow'
-import { startOfDay, addDays } from 'date-fns/esm'
+import { startOfDay, addDays, set } from 'date-fns/esm'
 import { OptionTypeBase, ValueType } from 'react-select'
 
 import { Option } from '@island.is/island-ui/core'
@@ -112,7 +112,7 @@ export const findValueOption = (
   if (!value) {
     return null
   }
-  const opt = options.find((opt) => opt.value === value)
+  const opt = options.find((opt) => opt.value === value || opt.label === value)
   return (
     (opt && {
       value: opt.value,
@@ -122,7 +122,7 @@ export const findValueOption = (
   )
 }
 
-export const findMinistryInText = (textString: HTMLText) => {
+export const findSignatureInText = (textString: HTMLText) => {
   var htmlDiv = document.createElement('div')
   htmlDiv.innerHTML = textString
   const innertext = htmlDiv.querySelectorAll('.Dags')[0]
@@ -145,11 +145,22 @@ export const findMinistryInText = (textString: HTMLText) => {
   const undirskrRe = /^(.+?ráðuneyti)(?:ð|nu),? (\d{1,2})\.? (jan|feb|mar|apr|maí|jún|júl|ágú|sep|okt|nóv|des)(?:\.|\w+)? (2\d{3}).?$/i
   const text = innertext?.textContent?.trim().replace(/\s+/g, ' ')
   const m = text?.match(undirskrRe)
-  if (m) {
-    const ministryName = m[1]
-    const dayOfMonth = m[2]
-    const monthIndex = threeLetterMonths.indexOf(m[3].toLowerCase())
-    const year = m[4]
-    return { ministryName, dayOfMonth, monthIndex, year }
-  }
+
+  const ministryName = m?.[1]
+  const dayOfMonth = m?.[2]
+  const monthIndex = m?.[3]
+    ? threeLetterMonths.indexOf(m[3].toLowerCase())
+    : undefined
+  const year = m?.[4]
+
+  const signatureDate =
+    monthIndex && year && dayOfMonth
+      ? set(new Date(), {
+          year: parseInt(year, 10),
+          month: monthIndex,
+          date: parseInt(dayOfMonth, 10),
+        })
+      : undefined
+
+  return { ministryName, signatureDate }
 }

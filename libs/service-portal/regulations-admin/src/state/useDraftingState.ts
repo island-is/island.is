@@ -1,51 +1,30 @@
-import { useMutation, useQuery, gql } from '@apollo/client'
-import {
-  HTMLText,
-  LawChapterSlug,
-  MinistrySlug,
-  PlainText,
-} from '@island.is/regulations'
-import { Query } from '@island.is/api/schema'
-import { AuthContextType, useAuth } from '@island.is/auth/react'
+import { useMutation, gql } from '@apollo/client'
+import { HTMLText, LawChapterSlug } from '@island.is/regulations'
+import { useRegulationDraftQuery } from '@island.is/service-portal/graphql'
+import { useAuth } from '@island.is/auth/react'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
 import { produce, setAutoFreeze } from 'immer'
 import { useHistory, generatePath } from 'react-router-dom'
 import { Step } from '../types'
-import { mockDraftRegulations, useMockQuery, mockSave } from '../_mockData'
+import { mockSave } from '../_mockData'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
 import {
-  Author,
-  DraftingStatus,
-  DraftRegulationCancel,
-  DraftRegulationChange,
-  EmailAddress,
   RegulationDraft,
   RegulationDraftId,
 } from '@island.is/regulations/admin'
-import { Kennitala, RegulationType } from '@island.is/regulations'
+import {
+  DraftIdFromParam,
+  StepNav,
+  DraftField,
+  HtmlDraftField,
+  RegDraftForm,
+  DraftingState,
+  RegDraftFormSimpleProps,
+  Action,
+  ActionName,
+} from './types'
 import { uuid } from 'uuidv4'
-
-// const RegulationDraftQuery = gql`
-//   query draftRegulations($input: GetDraftRegulationInput!) {
-//     getDraftRegulation(input: $input) {
-//       draftingStatus
-//       getFullName
-//       lawChapters
-//       appendixes
-//       impacts
-//       id
-//       title
-//       text
-//       authors
-//     }
-//   }
-// `
-const RegulationDraftQuery = gql`
-  query draftRegulations($input: GetDraftRegulationInput!) {
-    getDraftRegulation(input: $input)
-  }
-`
 
 export const CREATE_DRAFT_REGULATION_MUTATION = gql`
   mutation CreateDraftRegulationMutation($input: CreateDraftRegulationInput!) {
@@ -58,13 +37,6 @@ export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
     updateDraftRegulationById(input: $input)
   }
 `
-
-export type DraftIdFromParam = 'new' | RegulationDraftId
-
-export type StepNav = {
-  prev?: Step
-  next?: Step
-}
 
 export const steps: Record<Step, StepNav> = {
   basics: {
@@ -81,69 +53,6 @@ export const steps: Record<Step, StepNav> = {
   review: {
     prev: 'impacts',
   },
-}
-
-// ---------------------------------------------------------------------------
-
-type DraftFieldExtras = {
-  min: Date
-  max: Date
-}
-
-type DraftField<Type, Extras extends keyof DraftFieldExtras = never> = {
-  value: Type
-  dirty?: boolean
-  error?: string
-} & Pick<DraftFieldExtras, Extras>
-
-// TODO: Figure out how the Editor components lazy valueRef.current() getter fits into this
-type HtmlDraftField = DraftField<HTMLText>
-
-type BodyDraftFields = {
-  title: DraftField<PlainText>
-  text: HtmlDraftField
-  appendixes: ReadonlyArray<{
-    title: DraftField<PlainText>
-    text: HtmlDraftField
-  }>
-  comments: HtmlDraftField
-}
-
-type ChangeDraftFields = Readonly<
-  // always prefilled on "create" - non-editable
-  Pick<DraftRegulationChange, 'id' | 'type' | 'name'>
-> & { date: DraftField<Date> } & BodyDraftFields
-
-type CancelDraftFields = Readonly<
-  // always prefilled on "create" - non-editable
-  Pick<DraftRegulationCancel, 'id' | 'type' | 'name'>
-> & { date: DraftField<Date> }
-
-export type RegDraftForm = BodyDraftFields & {
-  idealPublishDate: DraftField<Date | undefined>
-  signatureDate: DraftField<Date | undefined>
-  effectiveDate: DraftField<Date | undefined>
-  lawChapters: DraftField<ReadonlyArray<LawChapterSlug> | undefined>
-  ministry: DraftField<MinistrySlug | undefined>
-  type: DraftField<RegulationType | undefined>
-
-  impacts: ReadonlyArray<ChangeDraftFields | CancelDraftFields>
-
-  readonly draftingStatus: DraftingStatus // non-editable except via saveStatus or propose actions
-  draftingNotes: HtmlDraftField
-  authors: DraftField<ReadonlyArray<Kennitala>>
-
-  id: RegulationDraft['id']
-  fastTrack: RegulationDraft['fastTrack']
-}
-
-export type DraftingState = {
-  isEditor: boolean
-  stepName: Step
-  savingStatus?: boolean
-  loading?: boolean
-  error?: Error
-  draft?: RegDraftForm
 }
 
 // ---------------------------------------------------------------------------
@@ -210,7 +119,6 @@ const makeDraftForm = (
 }
 
 const getEmptyDraft = (): RegulationDraft => ({
-  // id: uuid() as RegulationDraftId,
   id: 'new' as RegulationDraftId,
   draftingStatus: 'draft',
   draftingNotes: '' as HTMLText,
@@ -237,48 +145,6 @@ const getEmptyDraft = (): RegulationDraft => ({
 // ) => {
 //   return
 // }
-
-// ---------------------------------------------------------------------------
-
-type NameValuePair<O extends Record<string, any>> = {
-  [Key in keyof O]: {
-    name: Key
-    value: O[Key]
-  }
-}[keyof O]
-
-type RegDraftFormSimpleProps =
-  | 'title'
-  | 'text'
-  | 'idealPublishDate' // This prop needs its own action that checks for working days and updates the `fastTrack` flag accordingly
-  | 'signatureDate' // Need to be checked and must never be **after* `idealPublishDate`
-  | 'effectiveDate' // Need to be checked and must never be **before** `idealPublishDate`
-  // | 'lawChapters'
-  | 'ministry'
-  | 'type'
-  | 'draftingNotes'
-  | 'authors'
-
-type Action =
-  | { type: 'CHANGE_STEP'; stepName: Step }
-  | { type: 'LOADING_DRAFT' }
-  | { type: 'LOADING_DRAFT_SUCCESS'; draft: RegulationDraft }
-  | { type: 'LOADING_DRAFT_ERROR'; error: Error }
-  | { type: 'SAVING_STATUS' }
-  | { type: 'SAVING_STATUS_DONE'; error?: Error }
-  | {
-      type: 'UPDATE_LAWCHAPTER_PROP'
-      action?: 'add' | 'delete'
-      value: LawChapterSlug | undefined
-    }
-  | ({ type: 'UPDATE_PROP' } & NameValuePair<
-      Pick<RegDraftForm, RegDraftFormSimpleProps>
-    >)
-  | { type: 'SHIP' }
-
-type ActionName = Action['type']
-
-type UpdateAction = Extract<Action, { type: 'UPDATE_PROP' }>
 
 // ---------------------------------------------------------------------------
 
@@ -411,34 +277,10 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
   )
 
   const isNew = draftId === 'new'
-
-  // const res = useMockQuery(
-  //   draftId !== 'new' &&
-  //     !state.error && { regulationDraft: mockDraftRegulations[draftId] },
-  //   isNew,
-  // )
-  // // const res = useQuery<Query>(RegulationDraftQuery, {
-  // //   variables: { id: draftId },
-  // //   skip: isNew && !state.error,
-  // // })
-  // const { loading, error } = res
-
-  // const draft = res.data ? res.data.regulationDraft : undefined
-  const res = useQuery<Query>(RegulationDraftQuery, {
-    variables: {
-      input: {
-        regulationId: draftId,
-      },
-    },
-    fetchPolicy: 'no-cache',
-    skip: isNew && !state.error,
-  })
-
-  const { loading, error } = res
-
-  const draft = res.data
-    ? (res.data.getDraftRegulation as RegulationDraft)
-    : undefined
+  const { draft, loading, error } = useRegulationDraftQuery(
+    isNew && !state.error,
+    draftId,
+  )
 
   useEffect(() => {
     dispatch({ type: 'CHANGE_STEP', stepName })
@@ -466,10 +308,6 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
     const isNew = draftId === 'new'
 
     return {
-      // updateProp: (name: keyof ) => {
-
-      // }
-
       goBack:
         (draft || isNew) && stepNav.prev
           ? () => {
