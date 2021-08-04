@@ -123,8 +123,8 @@ export const EditMeta: StepComponent = (props) => {
       </Wrap>
       <Wrap>
         <DatePicker
-          label="signatureDate"
-          placeholderText="signature Date"
+          label="Undirritunardagur"
+          placeholderText="Undirritunardagur"
           selected={draft.signatureDate?.value || signatureDate}
           handleChange={(date: Date) =>
             actions.updateState({
@@ -136,9 +136,10 @@ export const EditMeta: StepComponent = (props) => {
       </Wrap>
       <Wrap>
         <DatePicker
-          label="effectiveDate"
-          placeholderText="effective Date"
+          label="Gildistökudagur"
+          placeholderText="Gildistökudagur"
           selected={draft.effectiveDate?.value}
+          minDate={draft.idealPublishDate?.value}
           handleChange={(date: Date) =>
             actions.updateState({
               name: 'effectiveDate',

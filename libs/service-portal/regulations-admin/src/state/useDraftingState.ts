@@ -304,6 +304,7 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
 
   const stepNav = steps[stepName]
 
+  console.log('state', state)
   const actions = useMemo(() => {
     const isNew = draftId === 'new'
 
