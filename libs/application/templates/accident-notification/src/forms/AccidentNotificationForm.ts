@@ -45,7 +45,6 @@ import {
 } from '../lib/messages'
 import { attachments } from '../lib/messages/attachments'
 import {
-  AccidentTypeEnum,
   AgricultureAccidentLocationEnum,
   AttachmentsEnum,
   DataProviderTypes,
@@ -612,11 +611,42 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+
     // Location and purpose of the injured when the accident occured, relevant to all cases except home activites
     buildSection({
       title: locationAndPurpose.general.title,
       condition: (formValue) => !isHomeActivitiesAccident(formValue),
       children: [
+        // Sports club employee hindrance
+        buildSubSection({
+          id: 'sportsClubInfo.employee.section',
+          title: sportsClubInfo.employee.sectionTitle,
+          condition: (formValue) => isProfessionalAthleteAccident(formValue),
+          children: [
+            buildMultiField({
+              id: 'sportsClubInfo.employee.field',
+              title: sportsClubInfo.employee.title,
+              children: [
+                buildRadioField({
+                  id: 'sportsClubInfo.employee.radioButton',
+                  width: 'half',
+                  title: '',
+                  options: [
+                    {
+                      value: YES,
+                      label: application.general.yesOptionLabel,
+                    },
+                    {
+                      value: NO,
+                      label: application.general.noOptionLabel,
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+
         // Accident location section
         buildSubSection({
           id: 'accidentLocation',

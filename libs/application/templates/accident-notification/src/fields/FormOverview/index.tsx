@@ -15,7 +15,9 @@ import {
   injuredPersonInformation,
   juridicalPerson,
   locationAndPurpose,
+  application as applicationMessages,
   overview,
+  sportsClubInfo,
 } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
@@ -26,6 +28,7 @@ import {
   getWorkplaceData,
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
+  isProfessionalAthleteAccident,
 } from '../../utils'
 
 export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
@@ -211,6 +214,19 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
                   value={workplaceData.info.nationalRegistrationId ?? ''}
                 />
               </GridColumn>
+              {isProfessionalAthleteAccident(answers as FormValue) &&
+                workplaceData.info.employee && (
+                  <GridColumn span="12/12">
+                    <ValueLine
+                      label={sportsClubInfo.employee.sectionTitle}
+                      value={
+                        workplaceData.info.employee.radioButton === YES
+                          ? applicationMessages.general.yesOptionLabel
+                          : applicationMessages.general.noOptionLabel
+                      }
+                    />
+                  </GridColumn>
+                )}
             </GridRow>
           </ReviewGroup>
 
