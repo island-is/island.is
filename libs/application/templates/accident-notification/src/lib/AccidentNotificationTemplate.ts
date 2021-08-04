@@ -83,7 +83,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             whenToPrune: 12 * 3600 * 1000,
           },
           onEntry: {
-            apiModuleAction: ApiActions.createApplication,
+            apiModuleAction: ApiActions.submitApplication,
           },
         },
       },

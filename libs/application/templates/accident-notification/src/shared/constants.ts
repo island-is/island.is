@@ -1,5 +1,5 @@
 export enum ApiActions {
-  createApplication = 'createApplication',
+  submitApplication = 'submitApplication',
   doStuffThatFails = 'doStuffThatFails',
   completeApplication = 'completeApplication',
 }
