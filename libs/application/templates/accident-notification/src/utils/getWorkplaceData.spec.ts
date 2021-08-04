@@ -1,4 +1,5 @@
 import { FormValue } from '@island.is/application/core'
+import { YES } from '../constants'
 import { AccidentTypeEnum, WorkAccidentTypeEnum } from '../types'
 import { getWorkplaceData } from './getWorkplaceData'
 
@@ -6,10 +7,12 @@ describe('getWorkplaceData', () => {
   const generalWorkplaceAccident: FormValue = {
     workAccident: { type: WorkAccidentTypeEnum.GENERAL },
     accidentType: { radioButton: AccidentTypeEnum.WORK },
+    companyInfo: {},
   }
 
   const professionalAthleteAccident: FormValue = {
     accidentType: { radioButton: AccidentTypeEnum.SPORTS },
+    sportsClubInfo: { employee: { radioButton: YES } },
   }
 
   const rescueWorkAccident: FormValue = {
@@ -36,6 +39,18 @@ describe('getWorkplaceData', () => {
   it('should return sports type data for professional athlete accidents', () => {
     expect(getWorkplaceData(professionalAthleteAccident)?.type).toEqual(
       AccidentTypeEnum.SPORTS,
+    )
+  })
+
+  it('should return employee information for professional athlete accidents', () => {
+    expect(
+      getWorkplaceData(professionalAthleteAccident)?.info.employee?.radioButton,
+    ).toBe(YES)
+  })
+
+  it('should not return employee information for general workplace accident', () => {
+    expect(getWorkplaceData(generalWorkplaceAccident)?.info.employee).toBe(
+      undefined,
     )
   })
 
