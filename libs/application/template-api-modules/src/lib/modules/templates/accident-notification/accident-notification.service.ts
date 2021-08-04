@@ -17,7 +17,7 @@ export class AccidentNotificationService {
     private readonly fileStorageService: FileStorageService,
   ) {}
 
-  async sendApplication({ application }: TemplateApiModuleActionProps) {
+  async createApplication({ application }: TemplateApiModuleActionProps) {
     const attachments = await this.prepareAttachments(application)
 
     await this.sharedTemplateAPIService.sendEmail(

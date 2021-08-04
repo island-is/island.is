@@ -69,7 +69,7 @@ export const AccidentNotificationSchema = z.object({
     address: z.string().min(1, error.required.defaultMessage),
     postalCode: z.string().min(1, error.required.defaultMessage),
     city: z.string().min(1, error.required.defaultMessage),
-    email: z.string().email().optional(),
+    email: z.string().email(),
     phoneNumber: z.string().optional(),
   }),
   whoIsTheNotificationFor: z.object({

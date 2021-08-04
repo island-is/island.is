@@ -9,6 +9,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import * as z from 'zod'
+import { ApiActions } from '../shared'
 import { application } from './messages'
 // import { AccidentNotificationSchema } from './dataSchema'
 
@@ -69,6 +70,20 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         on: {
           SUBMIT: {
             target: AccidentNotificationStates.submitted,
+          },
+        },
+      },
+      [AccidentNotificationStates.submitted]: {
+        meta: {
+          name: application.general.name.defaultMessage,
+          progress: 0.6,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true, // Only on dev
+            whenToPrune: 12 * 3600 * 1000,
+          },
+          onEntry: {
+            apiModuleAction: ApiActions.createApplication,
           },
         },
       },

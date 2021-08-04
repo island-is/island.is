@@ -2,7 +2,6 @@ import { dedent } from 'ts-dedent'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { overviewTemplate } from './overviewTemplate'
 import { SendMailOptions } from 'nodemailer'
-import { getValueViaPath } from '@island.is/application/core'
 import { FileAttachment, NodemailAttachment } from '../types'
 import { AccidentNotificationAnswers } from '@island.is/application/templates/accident-notification'
 
@@ -26,29 +25,24 @@ export const generateConfirmationEmail: ConfirmationEmail = (
     options: { locale },
   } = props
 
-  const institutionName = getValueViaPath(
-    application.answers,
-    'organizationOrInstitutionName',
-  )
-
   const answers = application.answers as AccidentNotificationAnswers
 
   const applicant = {
     name: answers.applicant.name,
-    address: answers.applicant.email ?? '',
+    address: answers.applicant.email,
   }
 
-  const subject = `Umsókn þín fyrir ${institutionName} hefur verið móttekin.`
+  const subject = `Tilkynning um slys hefur verið móttekin.`
   const overview = overviewTemplate(application)
 
   const body = dedent(`
-        <h2>Umsókn móttekin</h2>
+        <h2>Tilkynning móttekin</h2>
         <p>
-          Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar. </br>
-          Við verðum í sambandi ef okkur vantar frekari upplýsingar. </br>
-          Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið <a href="mailto:island@island.is">island@island.is</a> </br>
+            Takk fyrir að tilkynna slys. Sjúkratryggingar Íslands verður í sambandi við þig ef frekari upplýsingar vantar.
+            Ef þú vilt hafa samband getur þú sent tölvupóst á netfangið <a href="mailto:info@sjukra.is">info@sjukra.is</a> </br>
+            Þú getur fylgst með stöðu mála á <a href="https://island.is/umsoknir/tilkynning-um-slys">https://island.is/umsoknir/tilkynning-um-slys</a> </br>
         </p>
-        <h2>Yfirlit umsóknar</h2>
+        <h2>Yfirlit tilkynningar</h2>
         ${overview}
       `)
 
