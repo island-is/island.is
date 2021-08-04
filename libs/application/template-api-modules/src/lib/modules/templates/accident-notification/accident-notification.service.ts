@@ -5,7 +5,11 @@ import { generateConfirmationEmail } from './emailGenerators'
 import type { AccidentNotificationConfig } from './config'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { FileStorageService } from '@island.is/file-storage'
-import { Application, getValueViaPath } from '@island.is/application/core'
+import {
+  Application,
+  FormValue,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { FileAttachment } from './types'
 
 @Injectable()
@@ -36,10 +40,25 @@ export class AccidentNotificationService {
   private async prepareAttachments(
     application: Application,
   ): Promise<FileAttachment[]> {
-    const attachments = getValueViaPath(
+    const powerOfAttorneyFiles = this.getFilesFromAnswers(
       application.answers,
-      'project.attachments',
-    ) as Array<{ key: string; name: string }>
+      'attachments.powerOfAttorneyFile',
+    )
+    const deathCertificateFiles = this.getFilesFromAnswers(
+      application.answers,
+      'attachments.deathCertificateFile',
+    )
+    const injuryCertificateFiles = this.getFilesFromAnswers(
+      application.answers,
+      'attachments.injuryCertificateFile',
+    )
+
+    const attachments = [
+      ...powerOfAttorneyFiles,
+      ...deathCertificateFiles,
+      ...injuryCertificateFiles,
+    ]
+
     const hasAttachments = attachments && attachments?.length > 0
 
     if (!hasAttachments) {
@@ -57,5 +76,9 @@ export class AccidentNotificationService {
         return { name, url: signedUrl }
       }),
     )
+  }
+
+  private getFilesFromAnswers(answers: FormValue, id: string) {
+    return getValueViaPath(answers, id) as Array<{ key: string; name: string }>
   }
 }
