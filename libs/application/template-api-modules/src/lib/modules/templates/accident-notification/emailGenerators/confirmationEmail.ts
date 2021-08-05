@@ -35,15 +35,19 @@ export const generateConfirmationEmail: ConfirmationEmail = (
   const subject = `Tilkynning um slys hefur verið móttekin.`
   const overview = overviewTemplate(application)
 
+  // TODO: Translations?
   const body = dedent(`
-        <h2>Tilkynning móttekin</h2>
-        <p>
-            Takk fyrir að tilkynna slys. Sjúkratryggingar Íslands verður í sambandi við þig ef frekari upplýsingar vantar.
-            Ef þú vilt hafa samband getur þú sent tölvupóst á netfangið <a href="mailto:info@sjukra.is">info@sjukra.is</a> </br>
-            Þú getur fylgst með stöðu mála á <a href="https://island.is/umsoknir/tilkynning-um-slys">https://island.is/umsoknir/tilkynning-um-slys</a>
-        </p>
-        ${overview}
-      `)
+    <h2>Tilkynning móttekin</h2>
+    <p>
+      Takk fyrir að tilkynna slys. Sjúkratryggingar Íslands verður í sambandi við þig ef frekari upplýsingar vantar.
+      Ef þú vilt hafa samband getur þú sent tölvupóst á netfangið <a href="mailto:info@sjukra.is">info@sjukra.is</a>
+    </p>
+    <p>
+      Þú getur fylgst með stöðu mála á
+      <a href="https://island.is/umsoknir/tilkynning-um-slys">https://island.is/umsoknir/tilkynning-um-slys</a>
+    </p> </br>
+    ${overview}
+`)
 
   const mailAttachments = attachments
     ? attachments.map(

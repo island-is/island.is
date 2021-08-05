@@ -71,9 +71,9 @@ export const overviewTemplate = (application: Application): string => {
   const time = `${timeOfAccident.slice(0, 2)}:${timeOfAccident.slice(2, 4)}`
   const date = format(parseISO(dateOfAccident), 'dd.MM.yy', { locale: is })
 
-  // TODO finish this and add translations somehow
+  // TODO: finish this and add translations
   return dedent(`
-    <h2>Yfirlit tilkynningar</h2> </br>
+    <h2>Yfirlit tilkynningar</h2>
     <h3>${messages.injuredPersonInformation.general.heading.defaultMessage}</h3>
     ${
       utils.isReportingOnBehalfOfInjured(answers)

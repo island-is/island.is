@@ -1521,12 +1521,5 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
-
-    // TODO remove before release, just there to continue with last screen
-    buildDescriptionField({
-      id: '',
-      description: '',
-      title: '',
-    }),
   ],
 })
