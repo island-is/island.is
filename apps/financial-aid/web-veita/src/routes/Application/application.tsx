@@ -37,6 +37,7 @@ import {
   calcAge,
   translateMonth,
   getTagByState,
+  formatPhoneNumber,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
@@ -179,8 +180,7 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Sími',
-        content:
-          insertAt(application.phoneNumber.replace('-', ''), '-', 3) || '-',
+        content: formatPhoneNumber(application.phoneNumber),
         link: 'tel:' + application.phoneNumber,
       },
       {

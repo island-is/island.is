@@ -4,7 +4,7 @@ import differenceInDays from 'date-fns/differenceInDays'
 import differenceInYears from 'date-fns/differenceInYears'
 import differenceInWeeks from 'date-fns/differenceInWeeks'
 
-import { ApplicationState } from '@island.is/financial-aid/shared'
+import { ApplicationState, insertAt } from '@island.is/financial-aid/shared'
 
 export const isPluralInIcelandic = (value: number): boolean =>
   value % 10 !== 1 || value % 100 === 11
@@ -84,5 +84,16 @@ export const getTagByState = (state: ApplicationState) => {
       return 'outDatedOrDenied'
     case ApplicationState.DATANEEDED:
       return 'outDatedOrDenied'
+  }
+}
+
+export const formatPhoneNumber = (phoneNumber: string) => {
+  if (phoneNumber.length === 7) {
+    return insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
+  }
+  if (phoneNumber.length === 10) {
+    return insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
+  } else {
+    return insertAt(phoneNumber.replace('-', ''), '-', 4) || '-'
   }
 }
