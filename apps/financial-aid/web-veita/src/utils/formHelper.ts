@@ -86,14 +86,3 @@ export const getTagByState = (state: ApplicationState) => {
       return 'outDatedOrDenied'
   }
 }
-
-export const formatPhoneNumber = (phoneNumber: string) => {
-  if (phoneNumber.length === 7) {
-    return insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
-  }
-  if (phoneNumber.length === 10) {
-    return insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
-  } else {
-    return insertAt(phoneNumber.replace('-', ''), '-', 4) || '-'
-  }
-}

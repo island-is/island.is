@@ -28,6 +28,7 @@ import {
   Municipality,
   aidCalculator,
   calculateAidFinalAmount,
+  formatPhoneNumber,
 } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
@@ -37,7 +38,6 @@ import {
   calcAge,
   translateMonth,
   getTagByState,
-  formatPhoneNumber,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'

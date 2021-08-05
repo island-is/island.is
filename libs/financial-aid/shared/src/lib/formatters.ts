@@ -32,8 +32,17 @@ export const getState: KeyMapping<ApplicationState, string> = {
 export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`
 
-export const formatPhoneNumber = (phoneNumber: string) =>
-  insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
+export const formatPhoneNumber = (phoneNumber: string) => {
+  if (phoneNumber.length === 7) {
+    return insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
+  }
+  if (phoneNumber.length === 10) {
+    return insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
+  } else {
+    return insertAt(phoneNumber.replace('-', ''), '-', 4) || '-'
+  }
+}
+// insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
 
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
