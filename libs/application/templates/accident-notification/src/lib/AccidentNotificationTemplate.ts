@@ -7,8 +7,10 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
+import { States } from '../constants'
 import { application } from './messages'
 // import { AccidentNotificationSchema } from './dataSchema'
 
@@ -27,6 +29,7 @@ enum Roles {
 type AccidentNotificationEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.EDIT }
 
 const AccidentNotificationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -41,9 +44,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   ],
   dataSchema: AccidentNotificationSchema,
   stateMachineConfig: {
-    initial: AccidentNotificationStates.draft,
+    initial: States.DELIVERY_OF_DOCUMENTS,
     states: {
-      [AccidentNotificationStates.draft]: {
+      [States.DRAFT]: {
         meta: {
           name: application.general.name.defaultMessage,
           progress: 0.2,
@@ -68,8 +71,56 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: AccidentNotificationStates.submitted,
+            target: States.DELIVERY_OF_DOCUMENTS,
           },
+        },
+      },
+      [States.DELIVERY_OF_DOCUMENTS]: {
+        meta: {
+          name: application.deliveryOfData.name.defaultMessage,
+          progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'edit', type: 'primary' },
+              ],
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.DRAFT,
+          },
+        },
+      },
+      [States.DOCUMENTS_HAVE_BEEN_DELIVERED]: {
+        meta: {
+          name: application.deliveryOfData.name.defaultMessage,
+          progress: 0.6,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              actions: [{ event: 'SUBMIT', name: ' ', type: 'primary' }],
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
         },
       },
     },

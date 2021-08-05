@@ -1,31 +1,66 @@
-import React, { FC } from 'react'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
-import { AccidentNotification } from '../../lib/dataSchema'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
-import { FileValueLine, ValueLine } from './ValueLine'
+import { useLocale } from '@island.is/localization'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import parseISO from 'date-fns/parseISO'
+import React, { FC } from 'react'
+import { NO, YES } from '../../constants'
 import {
   accidentDetails,
   accidentType,
   applicantInformation,
-  companyInfo,
   injuredPerson,
   locationAndPurpose,
   overview,
 } from '../../lib/messages'
-import { AccidentTypeEnum, WhoIsTheNotificationForEnum } from '../../types'
-import { useLocale } from '@island.is/localization'
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
-import is from 'date-fns/locale/is'
-import { YES } from '../../constants'
+import {
+  AccidentTypeEnum,
+  AttachmentsEnum,
+  WhoIsTheNotificationForEnum,
+  WorkAccidentTypeEnum,
+} from '../../types'
 import { getWorkplaceData } from '../../utils'
+import { FileValueLine, ValueLine } from './ValueLine'
 
 export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
-  const answers = application.answers as AccidentNotification
+  console.log(application)
+  const answers = {
+    accidentDetails: {
+      timeOfAccident: '1415',
+      dateOfAccident: '2020-09-25T14:34:32.999Z',
+      descriptionOfAccident: 'Description of accident',
+    },
+    applicant: {
+      name: 'Sigrún Tinna',
+      nationalId: '2811901234',
+      address: 'Flétturimi 11',
+      city: 'Reykjavík',
+      email: 'sigrun@sendiradid.is',
+      phoneNumber: '6612056',
+    },
+    whoIsTheNotificationFor: {
+      answer: WhoIsTheNotificationForEnum.ME,
+    },
+    locationAndPurpose: {
+      location: 'Reykjavík',
+      purpose: 'Some purpose',
+    },
+    isRepresentativeOfCompanyOrInstitue: NO,
+    workAccident: {
+      type: WorkAccidentTypeEnum.GENERAL,
+    },
+    attachments: {
+      injuryCertificate: AttachmentsEnum.SENDCERTIFICATELATER,
+      injuryCertificateFile: [],
+      deathCertificateFile: [],
+    },
+  } // application.answers as AccidentNotification
   const { formatMessage } = useLocale()
 
   const { timeOfAccident, dateOfAccident } = answers.accidentDetails
+
   const time = `${timeOfAccident.slice(0, 2)}:${timeOfAccident.slice(2, 4)}`
   const date = format(parseISO(dateOfAccident), 'dd.MM.yy', { locale: is })
 
