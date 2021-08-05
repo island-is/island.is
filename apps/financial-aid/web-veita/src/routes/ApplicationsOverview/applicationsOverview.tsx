@@ -56,6 +56,14 @@ export const ApplicationsOverview = () => {
 
   const [applications, setApplications] = useState<Application[]>()
 
+  const sortApplications = (a: Application, b: Application): number => {
+    return a[sortBy.selected] > b[sortBy.selected]
+      ? -1
+      : a[sortBy.selected] < b[sortBy.selected]
+      ? 1
+      : 0
+  }
+
   useEffect(() => {
     if (data?.applications) {
       setApplications(
@@ -64,11 +72,9 @@ export const ApplicationsOverview = () => {
             currentNavigationItem?.applicationState.includes(item?.state),
           )
           .sort((a, b) =>
-            a[sortBy.selected] > b[sortBy.selected]
-              ? -1
-              : a[sortBy.selected] < b[sortBy.selected]
-              ? 1
-              : 0,
+            sortBy.sorted === 'asc'
+              ? sortApplications(a, b)
+              : sortApplications(b, a),
           ),
       )
     }
@@ -88,8 +94,15 @@ export const ApplicationsOverview = () => {
             className={`contentUp delay-50`}
             headers={currentNavigationItem.headers}
             setSortBy={(filter) => {
-              if (filter === 'modified' || filter === 'state') {
-                setSortBy({ ...sortBy, selected: filter })
+              if (filter !== 'modified' && filter !== 'state') return
+
+              if (filter === sortBy.selected) {
+                setSortBy({
+                  ...sortBy,
+                  sorted: sortBy.sorted === 'asc' ? 'dsc' : 'asc',
+                })
+              } else {
+                setSortBy({ sorted: 'asc', selected: filter })
               }
             }}
             sortBy={sortBy}
