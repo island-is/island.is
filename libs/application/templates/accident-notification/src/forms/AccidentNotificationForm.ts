@@ -10,8 +10,10 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildSubmitField,
   buildSubSection,
   buildTextField,
+  DefaultEvents,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -1483,15 +1485,33 @@ export const AccidentNotificationForm: Form = buildForm({
       id: 'overview.section',
       title: overview.general.sectionTitle,
       children: [
-        buildCustomField({
-          id: 'overview',
+        buildMultiField({
+          id: 'overview.multifield',
           title: overview.general.sectionTitle,
-          component: 'FormOverview',
+          children: [
+            buildCustomField({
+              id: 'overview',
+              title: overview.general.sectionTitle,
+              component: 'FormOverview',
+            }),
+            buildSubmitField({
+              id: 'overview.submit',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.labels.submit,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
 
     buildSection({
+      id: 'conclusion.section',
       title: conclusion.general.title,
       children: [
         buildCustomField({

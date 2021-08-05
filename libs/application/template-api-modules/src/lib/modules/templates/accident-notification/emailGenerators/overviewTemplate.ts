@@ -81,9 +81,23 @@ export const overviewTemplate = (application: Application): string => {
         : getApplicantInformation(answers)
     }
     ${
-      workplaceData &&
-      !utils.isReportingOnBehalfOfEmployee(answers) &&
-      `
+      utils.isReportingOnBehalfOfEmployee(answers)
+        ? `
+      <h3>${messages.juridicalPerson.general.title.defaultMessage}</h3>
+      <p>
+        <b>${messages.juridicalPerson.labels.companyName.defaultMessage}</b>
+        ${answers.juridicalPerson.companyName}
+      </p>
+      <p>
+        <b>${messages.juridicalPerson.labels.companyNationalId.defaultMessage}</b>
+        ${answers.juridicalPerson.companyNationalId}
+      </p> </br>
+    `
+        : ''
+    }
+    ${
+      workplaceData && !utils.isReportingOnBehalfOfEmployee(answers)
+        ? `
         <h3>${workplaceData.general.title.defaultMessage}</h3>
         <p>
           <b>${workplaceData.labels.companyName.defaultMessage}</b>
@@ -95,8 +109,8 @@ export const overviewTemplate = (application: Application): string => {
         </p>
         ${
           utils.isProfessionalAthleteAccident(answers) &&
-          workplaceData.info.employee &&
-          `
+          workplaceData.info.employee
+            ? `
             <p>
               <b>${
                 messages.sportsClubInfo.employee.sectionTitle.defaultMessage
@@ -104,10 +118,11 @@ export const overviewTemplate = (application: Application): string => {
               ${getAthleteEmployeeAnswer(workplaceData.info)}
             </p>
         `
+            : ''
         }
         ${
-          answers.isRepresentativeOfCompanyOrInstitue?.toString() !== YES &&
-          `
+          answers.isRepresentativeOfCompanyOrInstitue?.toString() !== YES
+            ? `
             </br> <h3>${workplaceData.labels.descriptionField.defaultMessage}</h3>
             <p>
               <b>${workplaceData.labels.name.defaultMessage}</b>
@@ -122,14 +137,19 @@ export const overviewTemplate = (application: Application): string => {
               ${workplaceData.info.phoneNumber}
             </p>
         `
+            : ''
         }
         </br>
     `
+        : ''
     }
     <h3>${messages.accidentDetails.general.sectionTitle.defaultMessage}</h3>
     <p>
       <b>${messages.overview.labels.accidentType.defaultMessage}</b>
-      ${messages.accidentType.labels[answers.accidentType.radioButton]}
+      ${
+        messages.accidentType.labels[answers.accidentType.radioButton]
+          .defaultMessage
+      }
     </p>
     <p>
       <b>${messages.accidentDetails.labels.date.defaultMessage}</b>

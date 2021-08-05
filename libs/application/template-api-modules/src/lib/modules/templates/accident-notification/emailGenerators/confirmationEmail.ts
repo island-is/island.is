@@ -41,7 +41,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
             Takk fyrir að tilkynna slys. Sjúkratryggingar Íslands verður í sambandi við þig ef frekari upplýsingar vantar.
             Ef þú vilt hafa samband getur þú sent tölvupóst á netfangið <a href="mailto:info@sjukra.is">info@sjukra.is</a> </br>
             Þú getur fylgst með stöðu mála á <a href="https://island.is/umsoknir/tilkynning-um-slys">https://island.is/umsoknir/tilkynning-um-slys</a>
-        </p> </br>
+        </p>
         ${overview}
       `)
 

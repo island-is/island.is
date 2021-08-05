@@ -53,11 +53,11 @@ export class AccidentNotificationService {
       'attachments.injuryCertificateFile',
     )
 
-    const attachments = [
-      ...powerOfAttorneyFiles,
-      ...deathCertificateFiles,
-      ...injuryCertificateFiles,
-    ]
+    const attachments = []
+
+    if (powerOfAttorneyFiles) attachments.push(...powerOfAttorneyFiles)
+    if (deathCertificateFiles) attachments.push(...deathCertificateFiles)
+    if (injuryCertificateFiles) attachments.push(...injuryCertificateFiles)
 
     const hasAttachments = attachments && attachments?.length > 0
 
