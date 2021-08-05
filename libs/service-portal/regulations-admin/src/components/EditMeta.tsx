@@ -20,18 +20,19 @@ import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { RegulationMinistry } from '@island.is/regulations/web'
 import { editorMsgs as msg } from '../messages'
-import { emptyOption, findValueOption, findSignatureInText } from '../utils'
+import {
+  emptyOption,
+  findValueOption,
+  findSignatureInText,
+  findRegulationType,
+} from '../utils'
+import { regulationTypes } from '../utils/constants'
 import {
   MinistrySlug,
   LawChapterSlug,
   RegulationType,
 } from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
-
-const regulationTypes = [
-  { label: 'Stofnreglugerð', value: 'base' },
-  { label: 'Breytingareglugerð', value: 'amending' },
-]
 
 type WrapProps = {
   legend?: string
@@ -99,6 +100,8 @@ export const EditMeta: StepComponent = (props) => {
 
   const { ministryName, signatureDate } = findSignatureInText(draft.text.value)
   const ministyValue = draft.ministry.value || ministryName // If no ministry is selected, guess it. (defaults to undefined)
+  const regulationTypeValue =
+    draft.type.value || findRegulationType(draft.title.value)
   return (
     <>
       <Wrap>
@@ -138,7 +141,7 @@ export const EditMeta: StepComponent = (props) => {
           isSearchable={false}
           label="Tegund"
           options={regulationTypes}
-          value={findValueOption(regulationTypes, draft.type.value)}
+          value={findValueOption(regulationTypes, regulationTypeValue)}
           onChange={(typeOption) =>
             actions.updateState({
               name: 'type',

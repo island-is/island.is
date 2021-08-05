@@ -4,6 +4,7 @@ import { ISODate, toISODate, HTMLText } from '@island.is/regulations'
 import startOfTomorrow from 'date-fns/startOfTomorrow'
 import { startOfDay, addDays, set } from 'date-fns/esm'
 import { OptionTypeBase, ValueType } from 'react-select'
+import { regulationTypes } from './constants'
 
 import { Option } from '@island.is/island-ui/core'
 
@@ -163,4 +164,11 @@ export const findSignatureInText = (textString: HTMLText) => {
       : undefined
 
   return { ministryName, signatureDate }
+}
+
+export const findRegulationType = (textString: string) => {
+  const undirskrRe = /(?=.*breytingu á reglugerð nr)^Reglugerð um/
+  const m = textString?.match(undirskrRe)
+  const regType = m ? 'amending' : 'base'
+  return regType
 }
