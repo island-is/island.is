@@ -28,6 +28,17 @@ const InputModal: React.FC<Props> = ({
 
   const [comment, setComment] = useState<string>()
 
+  const sumbitButtonText = (
+    type: ApplicationState | undefined,
+  ): string | undefined => {
+    switch (type) {
+      case ApplicationState.REJECTED:
+        return 'Synja'
+      case ApplicationState.APPROVED:
+        return 'Samþykkja'
+    }
+  }
+
   return (
     <Box display="block" width="full" padding={4}>
       {type === ApplicationState.APPROVED && (
@@ -47,7 +58,7 @@ const InputModal: React.FC<Props> = ({
           Hætta við
         </Button>
         <Button onClick={(e) => onSaveState(e, amount, comment)}>
-          Samþykkja
+          {sumbitButtonText(type)}
         </Button>
       </Box>
     </Box>
