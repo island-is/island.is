@@ -1,10 +1,14 @@
 import { useLocale as _useLocale } from '@island.is/localization'
 import { getHolidays } from 'fridagar'
-import { ISODate, toISODate, HTMLText } from '@island.is/regulations'
+import {
+  ISODate,
+  toISODate,
+  HTMLText,
+  MinistrySlug,
+} from '@island.is/regulations'
 import startOfTomorrow from 'date-fns/startOfTomorrow'
 import { startOfDay, addDays, set } from 'date-fns/esm'
 import { OptionTypeBase, ValueType } from 'react-select'
-import { regulationTypes } from './constants'
 
 import { Option } from '@island.is/island-ui/core'
 
@@ -170,5 +174,25 @@ export const findRegulationType = (textString: string) => {
   const undirskrRe = /(?=.*breytingu á reglugerð nr)^Reglugerð um/
   const m = textString?.match(undirskrRe)
   const regType = m ? 'amending' : 'base'
-  return regType
+  return regType as 'amending' | 'base'
+}
+
+export const getAllGuessableValues = (text: HTMLText, title: string) => {
+  const { ministryName, signatureDate } = findSignatureInText(text)
+  const regulationTypeValue = findRegulationType(title)
+
+  return {
+    ministry: {
+      value: ministryName as MinistrySlug,
+      guessed: true,
+    },
+    signatureDate: {
+      value: signatureDate,
+      guessed: true,
+    },
+    type: {
+      value: regulationTypeValue,
+      guessed: true,
+    },
+  }
 }

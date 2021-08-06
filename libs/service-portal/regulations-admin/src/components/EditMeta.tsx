@@ -98,10 +98,6 @@ export const EditMeta: StepComponent = (props) => {
     ) as ReadonlyArray<Option>
   }, [ministries, t])
 
-  const { ministryName, signatureDate } = findSignatureInText(draft.text.value)
-  const ministyValue = draft.ministry.value || ministryName // If no ministry is selected, guess it. (defaults to undefined)
-  const regulationTypeValue =
-    draft.type.value || findRegulationType(draft.title.value)
   return (
     <>
       <Wrap>
@@ -110,7 +106,7 @@ export const EditMeta: StepComponent = (props) => {
           isSearchable
           label={t(msg.ministry)}
           placeholder={t(msg.ministry)}
-          value={findValueOption(ministryOptions, ministyValue)}
+          value={findValueOption(ministryOptions, draft.ministry.value)}
           options={ministryOptions}
           onChange={(option) =>
             actions.updateState({
@@ -141,7 +137,7 @@ export const EditMeta: StepComponent = (props) => {
           isSearchable={false}
           label="Tegund"
           options={regulationTypes}
-          value={findValueOption(regulationTypes, regulationTypeValue)}
+          value={findValueOption(regulationTypes, draft.type.value)}
           onChange={(typeOption) =>
             actions.updateState({
               name: 'type',
@@ -155,7 +151,7 @@ export const EditMeta: StepComponent = (props) => {
           label="Undirritunardagur"
           size="sm"
           placeholderText="Undirritunardagur"
-          selected={draft.signatureDate?.value || signatureDate}
+          selected={draft.signatureDate?.value}
           handleChange={(date: Date) =>
             actions.updateState({
               name: 'signatureDate',

@@ -7,6 +7,7 @@ import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
 import { produce, setAutoFreeze } from 'immer'
 import { useHistory, generatePath } from 'react-router-dom'
 import { Step } from '../types'
+import { getAllGuessableValues } from '../utils'
 import { mockSave } from '../_mockData'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
 import {
@@ -60,9 +61,10 @@ export const steps: Record<Step, StepNav> = {
 const makeDraftForm = (
   draft: RegulationDraft,
   dirty?: boolean,
+  guessed?: boolean,
 ): RegDraftForm => {
-  const f = <T>(value: T): DraftField<T> => ({ value, dirty })
-  const fHtml = (value: HTMLText): HtmlDraftField => ({ value, dirty })
+  const f = <T>(value: T): DraftField<T> => ({ value, dirty, guessed })
+  const fHtml = (value: HTMLText): HtmlDraftField => ({ value, dirty, guessed })
 
   const form: RegDraftForm = {
     id: draft.id,
@@ -192,6 +194,17 @@ const actionHandlers: {
     const prop = state.draft[name]
     // @ts-expect-error  (FML! type matching of name and value is guaranteed, but TS can't tell)
     prop.value = value
+  },
+
+  UPDATE_MULTIPLE_PROPS: (state, { multiData }) => {
+    if (!state.draft) {
+      return
+    }
+
+    state.draft = {
+      ...state.draft,
+      ...multiData,
+    }
   },
 
   UPDATE_LAWCHAPTER_PROP: (state, { action, value }) => {
@@ -325,6 +338,17 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
         stepNav.next &&
         (isEditor || stepNav.next !== 'review')
           ? () => {
+              if (state.draft?.text.value && state.draft?.title.value) {
+                const guessableValues = getAllGuessableValues(
+                  state.draft?.text.value,
+                  state.draft?.title.value,
+                )
+                dispatch({
+                  type: 'UPDATE_MULTIPLE_PROPS',
+                  multiData: guessableValues,
+                })
+              }
+
               history.replace(
                 generatePath(ServicePortalPath.RegulationsAdminEdit, {
                   id: draftId,

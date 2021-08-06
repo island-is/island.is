@@ -29,6 +29,7 @@ export type DraftFieldExtras = {
 export type DraftField<Type, Extras extends keyof DraftFieldExtras = never> = {
   value: Type
   dirty?: boolean
+  guessed?: boolean
   error?: string
 } & Pick<DraftFieldExtras, Extras>
 
@@ -114,6 +115,10 @@ export type Action =
       type: 'UPDATE_LAWCHAPTER_PROP'
       action?: 'add' | 'delete'
       value: LawChapterSlug | undefined
+    }
+  | {
+      type: 'UPDATE_MULTIPLE_PROPS'
+      multiData: Pick<RegDraftForm, 'type' | 'ministry' | 'signatureDate'>
     }
   | ({ type: 'UPDATE_PROP' } & NameValuePair<
       Pick<RegDraftForm, RegDraftFormSimpleProps>
