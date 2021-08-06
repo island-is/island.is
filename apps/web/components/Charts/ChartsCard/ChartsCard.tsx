@@ -66,17 +66,12 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
       justifyContent="flexStart"
     >
       <Box
-<<<<<<< HEAD
-        display="flex"
-        flexDirection="row"
-=======
         style={{
           width: '100%',
           minHeight: '156px',
           borderTopLeftRadius: '8px',
           borderTopRightRadius: '8px',
         }}
->>>>>>> main
         background={blue ? 'blue100' : 'purple100'}
         alignItems="center"
         justifyContent="spaceBetween"
