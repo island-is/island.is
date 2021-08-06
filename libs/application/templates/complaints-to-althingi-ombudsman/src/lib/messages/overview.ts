@@ -50,5 +50,20 @@ export const complaintOverview = {
       defaultMessage: 'Fylgiskjöl',
       description: 'Label for attachments',
     },
+    complaintDescription: {
+      id: 'ctao.application:overview.label.complaintDescription',
+      defaultMessage: 'Lýsing kvörtunar',
+      description: 'Label for complaint description',
+    },
+    decisionDate: {
+      id: 'ctao.application:overview.label.decisionDate',
+      defaultMessage: 'Dagsetning ákvörðunar',
+      description: 'Label for decision date',
+    },
+    complaintType: {
+      id: 'ctao.application:overview.label.complaintType',
+      defaultMessage: 'Kvörtunin varðar',
+      description: 'Label for complaint type',
+    },
   }),
 }
