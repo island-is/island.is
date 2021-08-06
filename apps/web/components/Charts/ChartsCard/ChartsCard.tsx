@@ -66,8 +66,17 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
       justifyContent="flexStart"
     >
       <Box
+<<<<<<< HEAD
         display="flex"
         flexDirection="row"
+=======
+        style={{
+          width: '100%',
+          minHeight: '156px',
+          borderTopLeftRadius: '8px',
+          borderTopRightRadius: '8px',
+        }}
+>>>>>>> main
         background={blue ? 'blue100' : 'purple100'}
         alignItems="center"
         justifyContent="spaceBetween"
@@ -107,7 +116,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
         alignItems="center"
         style={{ width: '100%', height: '100%' }}
       >
-        <Box justifyContent="center" style={{ width: '80%', height: '80%' }}>
+        <Box justifyContent="center" style={{ width: '80%', height: '408px' }}>
           {children}
         </Box>
       </Box>
