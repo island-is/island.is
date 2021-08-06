@@ -3426,7 +3426,7 @@
       }
     },
     "cms": {
-      "root": "libs/api/domains/cms",
+      "root": "libs/cms",
       "sourceRoot": "libs/cms/src",
       "projectType": "library",
       "schematics": {},
@@ -3448,7 +3448,7 @@
             "jestConfig": "libs/cms/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/libs/api/domains/cms"]
+          "outputs": ["coverage/libs/cms"]
         }
       }
     },
