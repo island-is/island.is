@@ -75,3 +75,23 @@ export const GET_SUPPORT_FORM_IN_ORGANIZATION = gql`
     }
   }
 `
+
+export const GET_SUPPORT_SEARCH_RESULTS_QUERY = gql`
+  query GetSupportSearchResults($query: SearcherInput!) {
+    searchResults(query: $query) {
+      total
+      items {
+        ... on SupportQNA {
+          id
+          question
+          slug
+        }
+      }
+      tagCounts {
+        key
+        value
+        count
+      }
+    }
+  }
+`
