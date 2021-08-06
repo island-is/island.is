@@ -23,7 +23,7 @@ export const searchSection = style({
     },
     md: {
       height: MOBILE_HEIGHT - DESKTOP_HEADER_HEIGHT,
-    }
+    },
   }),
 })
 

@@ -110,7 +110,7 @@ const SubPage: Screen<SubPageProps> = ({
                   </GridColumn>
                 </GridRow>
                 <GridRow>
-                  <GridColumn span={["12/12", "12/12", "10/12"]}>
+                  <GridColumn span={['12/12', '12/12', '10/12']}>
                     <Text variant="h1" as="h1">
                       {organizationTitle}
                     </Text>

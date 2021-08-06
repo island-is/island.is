@@ -173,7 +173,9 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
     >
       {!!title && (
         <Box paddingBottom={4}>
-          <Text variant="h3" color={titleColor}>{title}</Text>
+          <Text variant="h3" color={titleColor}>
+            {title}
+          </Text>
         </Box>
       )}
       <Box className={styles.nav}>

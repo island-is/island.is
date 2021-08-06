@@ -105,7 +105,7 @@ const ContactForms = () => {
                       size="md"
                     />
                     {!selectedForm && <GhostForm />}
-                    {selectedForm && (
+                    {selectedForm &&
                       selectedForm.inputs?.map((input, key) => {
                         return (
                           <GridRow key={key}>
@@ -140,7 +140,7 @@ const ContactForms = () => {
                                   onRemove={(_) => _}
                                 />
                               </GridColumn>
-                              ) : (
+                            ) : (
                               <GridColumn span="12/12" paddingTop={5}>
                                 <Input
                                   type={input.type}
@@ -155,8 +155,7 @@ const ContactForms = () => {
                             )}
                           </GridRow>
                         )
-                      })
-                    )}
+                      })}
                   </GridColumn>
                 </GridRow>
                 <GridRow marginTop={7}>
