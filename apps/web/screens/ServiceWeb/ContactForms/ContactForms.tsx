@@ -15,13 +15,36 @@ import {
 } from '@island.is/island-ui/core'
 
 import { supportForms } from '../mock'
+import { Screen } from '../../../types'
 
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import GhostForm from './GhostForm'
 import { ServiceWebHeader } from '@island.is/web/components'
 import * as sharedStyles from '../shared/styles.treat'
+import { Organization, Query } from '@island.is/api/schema'
+import {
+  ContentLanguage,
+  QueryGetNamespaceArgs,
+  QueryGetOrganizationArgs,
+  QueryGetSupportFormInOrganizationArgs,
+} from '@island.is/web/graphql/schema'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_SUPPORT_FORM_IN_ORGANIZATION,
+  GET_ORGANIZATION_QUERY,
+} from '../../queries'
 
-const ContactForms = () => {
+interface ContactFormsProps {
+  organization?: Organization
+  namespace: Query['getNamespace']
+  supportForms: Query['getSupportFormInOrganization']
+}
+
+const ContactForms: Screen<ContactFormsProps> = ({
+  organization,
+  namespace,
+  supportForms,
+}) => {
   const logoTitle = 'Þjónustuvefur Sýslumanna'
   const { linkResolver } = useLinkResolver()
   const [selectedForm, setSelectedForm] = useState(undefined)
@@ -91,14 +114,19 @@ const ContactForms = () => {
                       value={selectedForm?.value}
                       onChange={(form) => {
                         const formValue: any = form
+                        console.log('FOUND')
                         setSelectedForm(
-                          supportForms.find((sf) => sf.ref === formValue.value),
+                          JSON.parse(
+                            supportForms.find(
+                              (sf) => sf.category === formValue.value,
+                            ).form,
+                          ),
                         )
                       }}
                       options={supportForms.map((sf) => {
                         return {
-                          label: sf.ref,
-                          value: sf.ref,
+                          label: sf.category,
+                          value: sf.category,
                         }
                       })}
                       placeholder="Veldu flokk"
@@ -106,7 +134,7 @@ const ContactForms = () => {
                     />
                     {!selectedForm && <GhostForm />}
                     {selectedForm &&
-                      selectedForm.inputs?.map((input, key) => {
+                      selectedForm.formItems.map((input, key) => {
                         return (
                           <GridRow key={key}>
                             {input.type === 'dual' ? (
@@ -196,6 +224,60 @@ const ContactForms = () => {
       </Box>
     </>
   )
+}
+
+ContactForms.getInitialProps = async ({ apolloClient, locale, query }) => {
+  const slug = !!query.slug ? (query.slug as string) : 'stafraent-island'
+
+  console.log(slug)
+
+  const [organization, namespace, supportForms] = await Promise.all([
+    apolloClient.query<Query, QueryGetOrganizationArgs>({
+      query: GET_ORGANIZATION_QUERY,
+      variables: {
+        input: {
+          slug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Global',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) =>
+        variables.data.getNamespace.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
+    apolloClient.query<Query, QueryGetSupportFormInOrganizationArgs>({
+      query: GET_SUPPORT_FORM_IN_ORGANIZATION,
+      variables: {
+        input: {
+          slug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+  ])
+  console.log('PROPS')
+  console.log({
+    organization: organization?.data?.getOrganization,
+    namespace,
+    supportForms: supportForms?.data?.getSupportFormInOrganization,
+  })
+
+  return {
+    organization: organization?.data?.getOrganization,
+    namespace,
+    supportForms: supportForms?.data?.getSupportFormInOrganization,
+  }
 }
 
 export default ContactForms

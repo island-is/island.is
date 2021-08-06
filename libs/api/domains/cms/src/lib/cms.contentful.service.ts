@@ -65,6 +65,8 @@ import {
   SupportCategory,
 } from './models/supportCategory.model'
 import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
+import { GetSupportFormInOrganizationInput } from './dto/getSupportFormInOrganization.input'
+import { mapSupportForm, SupportForm } from './models/supportForm.model'
 
 const makePage = (
   page: number,
@@ -688,5 +690,22 @@ export class CmsContentfulService {
       .catch(errorHandler('getSupportCategory'))
 
     return (result.items as types.ISupportCategory[]).map(mapSupportCategory)[0]
+  }
+
+  async getSupportFormInOrganization({
+    lang,
+    slug,
+  }: GetSupportFormInOrganizationInput): Promise<SupportForm[]> {
+    const params = {
+      ['content_type']: 'supportForm',
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISupportFormFields>(lang, params)
+      .catch(errorHandler('getSupportFormInOrganization'))
+
+    return (result.items as types.ISupportForm[]).map(mapSupportForm)
   }
 }

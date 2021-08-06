@@ -60,3 +60,18 @@ export const GET_SUPPORT_CATEGORY = gql`
     }
   }
 `
+
+export const GET_SUPPORT_FORM_IN_ORGANIZATION = gql`
+  query GET_SUPPORT_FORM_IN_ORGANIZATION(
+    $input: GetSupportFormInOrganizationInput!
+  ) {
+    getSupportFormInOrganization(input: $input) {
+      id
+      category
+      form
+      organization {
+        slug
+      }
+    }
+  }
+`
