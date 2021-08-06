@@ -107,7 +107,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
         alignItems="center"
         style={{ width: '100%', height: '100%' }}
       >
-        <Box justifyContent="center" style={{ width: '80%', height: '80%' }}>
+        <Box justifyContent="center" style={{ width: '80%', height: '408px' }}>
           {children}
         </Box>
       </Box>
