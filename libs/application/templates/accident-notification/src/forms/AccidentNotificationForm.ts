@@ -1,74 +1,80 @@
 import {
-  buildForm,
-  buildSection,
-  Form,
-  FormModes,
-  buildDataProviderItem,
-  buildExternalDataProvider,
-  buildMultiField,
+  buildCheckboxField,
   buildCustomField,
-  buildRadioField,
-  buildSubSection,
-  buildTextField,
-  buildFileUploadField,
+  buildDataProviderItem,
   buildDateField,
   buildDescriptionField,
-  buildCheckboxField,
+  buildExternalDataProvider,
+  buildFileUploadField,
+  buildForm,
+  buildMultiField,
+  buildRadioField,
+  buildSection,
+  buildSubSection,
+  buildTextField,
+  Form,
+  FormModes,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
-import {
-  AccidentTypeEnum,
-  DataProviderTypes,
-  WhoIsTheNotificationForEnum,
-  AttachmentsEnum,
-  GeneralWorkplaceAccidentLocationEnum,
-  ProfessionalAthleteAccidentLocationEnum,
-  AgricultureAccidentLocationEnum,
-  FishermanWorkplaceAccidentLocationEnum,
-  WorkAccidentTypeEnum,
-  StudiesAccidentTypeEnum,
-  StudiesAccidentLocationEnum,
-  PowerOfAttorneyUploadEnum,
-} from '../types'
-import {
-  externalData,
-  application,
-  hindrances,
-  applicantInformation,
-  whoIsTheNotificationFor,
-  accidentDetails,
-  accidentType,
-  accidentLocation,
-  companyInfo,
-  workMachine,
-  overview,
-  locationAndPurpose,
-  schoolInfo,
-  fishingCompanyInfo,
-  sportsClubInfo,
-  rescueSquadInfo,
-  fatalAccident,
-  fatalAccidentAttachment,
-  conclusion,
-} from '../lib/messages'
 import { NO, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
+import {
+  accidentDetails,
+  accidentLocation,
+  accidentType,
+  applicantInformation,
+  application,
+  companyInfo,
+  conclusion,
+  externalData,
+  fatalAccident,
+  fatalAccidentAttachment,
+  fishingCompanyInfo,
+  fishingLocationAndPurpose,
+  hindrances,
+  locationAndPurpose,
+  overview,
+  rescueSquadInfo,
+  schoolInfo,
+  sportsClubInfo,
+  juridicalPerson,
+  injuredPersonInformation,
+  powerOfAttorney,
+  whoIsTheNotificationFor,
+  workMachine,
+} from '../lib/messages'
 import { attachments } from '../lib/messages/attachments'
 import {
+  AgricultureAccidentLocationEnum,
+  AttachmentsEnum,
+  DataProviderTypes,
+  FishermanWorkplaceAccidentLocationEnum,
+  FishermanWorkplaceAccidentShipLocationEnum,
+  GeneralWorkplaceAccidentLocationEnum,
+  PowerOfAttorneyUploadEnum,
+  ProfessionalAthleteAccidentLocationEnum,
+  StudiesAccidentLocationEnum,
+  StudiesAccidentTypeEnum,
+  WhoIsTheNotificationForEnum,
+  WorkAccidentTypeEnum,
+} from '../types'
+import {
+  isAboardShip,
   isAgricultureAccident,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
+  isLocatedOnShipOther,
   isProfessionalAthleteAccident,
-  isRepresentativeOfCompanyOrInstitute,
   isReportingOnBehalfOfInjured,
+  isRepresentativeOfCompanyOrInstitute,
   isRescueWorkAccident,
   isStudiesAccident,
+  isReportingOnBehalfOfEmployee,
   isWorkAccident,
+  getAccidentTypeOptions,
 } from '../utils'
-import { injuredPersonInformation } from '../lib/messages/injuredPersonInformation'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
-import { powerOfAttorney } from '../lib/messages/powerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
 
 export const AccidentNotificationForm: Form = buildForm({
@@ -306,11 +312,15 @@ export const AccidentNotificationForm: Form = buildForm({
             buildMultiField({
               id: 'injuredPersonInformation',
               title: injuredPersonInformation.general.heading,
-              description: injuredPersonInformation.general.description,
+              description: (formValue) =>
+                isReportingOnBehalfOfEmployee(formValue.answers)
+                  ? injuredPersonInformation.general.juridicalDescription
+                  : injuredPersonInformation.general.description,
               children: [
                 buildTextField({
                   id: 'injuredPersonInformation.name',
                   title: injuredPersonInformation.labels.name,
+                  width: 'half',
                   backgroundColor: 'blue',
                   required: true,
                 }),
@@ -318,27 +328,6 @@ export const AccidentNotificationForm: Form = buildForm({
                   id: 'injuredPersonInformation.nationalId',
                   title: injuredPersonInformation.labels.nationalId,
                   format: '######-####',
-                  width: 'half',
-                  backgroundColor: 'blue',
-                  required: true,
-                }),
-                buildTextField({
-                  id: 'injuredPersonInformation.address',
-                  title: injuredPersonInformation.labels.address,
-                  width: 'half',
-                  backgroundColor: 'blue',
-                  required: true,
-                }),
-                buildTextField({
-                  id: 'injuredPersonInformation.postalCode',
-                  title: injuredPersonInformation.labels.postalCode,
-                  width: 'half',
-                  backgroundColor: 'blue',
-                  required: true,
-                }),
-                buildTextField({
-                  id: 'injuredPersonInformation.city',
-                  title: injuredPersonInformation.labels.city,
                   width: 'half',
                   backgroundColor: 'blue',
                   required: true,
@@ -364,6 +353,45 @@ export const AccidentNotificationForm: Form = buildForm({
             }),
           ],
           condition: (formValue) => isReportingOnBehalfOfInjured(formValue),
+        }),
+        buildSubSection({
+          id: 'juridicalPerson.company',
+          title: juridicalPerson.general.sectionTitle,
+          children: [
+            buildMultiField({
+              id: 'juridicalPerson.company',
+              title: juridicalPerson.general.title,
+              description: juridicalPerson.general.description,
+              children: [
+                buildTextField({
+                  id: 'juridicalPerson.companyName',
+                  backgroundColor: 'blue',
+                  title: juridicalPerson.labels.companyName,
+                  width: 'half',
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'juridicalPerson.companyNationalId',
+                  backgroundColor: 'blue',
+                  title: juridicalPerson.labels.companyNationalId,
+                  format: '######-####',
+                  width: 'half',
+                  required: true,
+                }),
+                buildCheckboxField({
+                  id: 'juridicalPerson.companyConfirmation',
+                  title: '',
+                  options: [
+                    {
+                      value: YES,
+                      label: juridicalPerson.labels.confirmation,
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+          condition: (formValue) => isReportingOnBehalfOfEmployee(formValue),
         }),
         buildSubSection({
           id: 'powerOfAttorney.type.section',
@@ -482,6 +510,7 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+
     buildSection({
       id: 'accidentType.section',
       title: accidentType.general.sectionTitle,
@@ -495,28 +524,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'accidentType.radioButton',
               width: 'half',
               title: '',
-              options: [
-                {
-                  value: AccidentTypeEnum.HOMEACTIVITIES,
-                  label: accidentType.labels.homeActivites,
-                },
-                {
-                  value: AccidentTypeEnum.WORK,
-                  label: accidentType.labels.work,
-                },
-                {
-                  value: AccidentTypeEnum.RESCUEWORK,
-                  label: accidentType.labels.rescueWork,
-                },
-                {
-                  value: AccidentTypeEnum.STUDIES,
-                  label: accidentType.labels.studies,
-                },
-                {
-                  value: AccidentTypeEnum.SPORTS,
-                  label: accidentType.labels.sports,
-                },
-              ],
+              options: (app) => getAccidentTypeOptions(app.answers),
             }),
           ],
         }),
@@ -603,200 +611,303 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
-    // Accident location section
-    buildSection({
-      id: 'accidentLocation',
-      title: accidentLocation.general.sectionTitle,
-      children: [
-        // location of general work related accident
-        buildMultiField({
-          id: 'accidentLocation.generalWorkAccident',
-          title: accidentLocation.general.heading,
-          description: accidentLocation.general.description,
-          condition: (formValue) => isGeneralWorkplaceAccident(formValue),
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value: GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
-                  label: accidentLocation.generalWorkAccident.atTheWorkplace,
-                },
-                {
-                  value:
-                    GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                  label:
-                    accidentLocation.generalWorkAccident.toOrFromTheWorkplace,
-                },
-                {
-                  value: GeneralWorkplaceAccidentLocationEnum.OTHER,
-                  label: accidentLocation.generalWorkAccident.other,
-                },
-              ],
-            }),
-          ],
-        }),
-        // location of rescue work related accident
-        buildMultiField({
-          id: 'accidentLocation.rescueWorkAccident',
-          title: accidentLocation.general.heading,
-          description: accidentLocation.rescueWorkAccident.description,
-          condition: (formValue) => {
-            return isRescueWorkAccident(formValue)
-          },
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value: GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
-                  label: accidentLocation.generalWorkAccident.atTheWorkplace,
-                },
-                {
-                  value:
-                    GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                  label:
-                    accidentLocation.generalWorkAccident.toOrFromTheWorkplace,
-                },
-                {
-                  value: GeneralWorkplaceAccidentLocationEnum.OTHER,
-                  label: accidentLocation.generalWorkAccident.other,
-                },
-              ],
-            }),
-          ],
-        }),
-        // location of studies related accident
-        buildMultiField({
-          id: 'accidentLocation.studiesAccident',
-          title: accidentLocation.studiesAccidentLocation.heading,
-          description: accidentLocation.studiesAccidentLocation.description,
-          condition: (formValue) => isStudiesAccident(formValue),
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value: StudiesAccidentLocationEnum.ATTHESCHOOL,
-                  label: accidentLocation.studiesAccidentLocation.atTheSchool,
-                },
-                {
-                  value: StudiesAccidentLocationEnum.DURINGSTUDIES,
-                  label: accidentLocation.studiesAccidentLocation.duringStudies,
-                },
-                {
-                  value: StudiesAccidentLocationEnum.OTHER,
-                  label: accidentLocation.studiesAccidentLocation.other,
-                },
-              ],
-            }),
-          ],
-        }),
-        // location of fisherman related accident
-        buildMultiField({
-          id: 'accidentLocation.fishermanAccident',
-          title: accidentLocation.general.heading,
-          description: accidentLocation.general.description,
-          condition: (formValue) => isFishermanAccident(formValue),
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value: FishermanWorkplaceAccidentLocationEnum.ONTHESHIP,
-                  label: accidentLocation.fishermanAccident.onTheShip,
-                },
-                {
-                  value:
-                    FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                  label:
-                    accidentLocation.fishermanAccident.toOrFromTheWorkplace,
-                },
-                {
-                  value: FishermanWorkplaceAccidentLocationEnum.OTHER,
-                  label: accidentLocation.fishermanAccident.other,
-                },
-              ],
-            }),
-          ],
-        }),
-        // location of sports related accident
-        buildMultiField({
-          id: 'accidentLocation.professionalAthleteAccident',
-          title: accidentLocation.general.heading,
-          description: accidentLocation.general.description,
-          condition: (formValue) =>
-            isProfessionalAthleteAccident(formValue) &&
-            !isHomeActivitiesAccident(formValue),
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value:
-                    ProfessionalAthleteAccidentLocationEnum.SPORTCLUBSFACILITES,
-                  label:
-                    accidentLocation.professionalAthleteAccident
-                      .atTheClubsSportsFacilites,
-                },
-                {
-                  value:
-                    ProfessionalAthleteAccidentLocationEnum.TOORFROMTHESPORTCLUBSFACILITES,
-                  label:
-                    accidentLocation.professionalAthleteAccident
-                      .toOrFromTheSportsFacilites,
-                },
-                {
-                  value: ProfessionalAthleteAccidentLocationEnum.OTHER,
-                  label: accidentLocation.professionalAthleteAccident.other,
-                },
-              ],
-            }),
-          ],
-        }),
-        // location of agriculture related accident
-        buildMultiField({
-          id: 'accidentLocation.agricultureAccident',
-          title: accidentLocation.general.heading,
-          description: accidentLocation.general.description,
-          children: [
-            buildRadioField({
-              id: 'accidentLocation.answer',
-              title: '',
-              options: [
-                {
-                  value: AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
-                  label: accidentLocation.agricultureAccident.atTheWorkplace,
-                },
-                {
-                  value: AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
-                  label:
-                    accidentLocation.agricultureAccident.toOrFromTheWorkplace,
-                },
-                {
-                  value: AgricultureAccidentLocationEnum.OTHER,
-                  label: accidentLocation.agricultureAccident.other,
-                },
-              ],
-            }),
-          ],
-          condition: (formValue) => isAgricultureAccident(formValue),
-        }),
-      ],
-    }),
+
     // Location and purpose of the injured when the accident occured, relevant to all cases except home activites
     buildSection({
       title: locationAndPurpose.general.title,
       condition: (formValue) => !isHomeActivitiesAccident(formValue),
       children: [
+        // Sports club employee hindrance
+        buildSubSection({
+          id: 'sportsClubInfo.employee.section',
+          title: sportsClubInfo.employee.sectionTitle,
+          condition: (formValue) => isProfessionalAthleteAccident(formValue),
+          children: [
+            buildMultiField({
+              id: 'sportsClubInfo.employee.field',
+              title: sportsClubInfo.employee.title,
+              children: [
+                buildRadioField({
+                  id: 'sportsClubInfo.employee.radioButton',
+                  width: 'half',
+                  title: '',
+                  options: [
+                    {
+                      value: YES,
+                      label: application.general.yesOptionLabel,
+                    },
+                    {
+                      value: NO,
+                      label: application.general.noOptionLabel,
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+
+        // Accident location section
+        buildSubSection({
+          id: 'accidentLocation',
+          title: accidentLocation.general.sectionTitle,
+          children: [
+            // location of general work related accident
+            buildMultiField({
+              id: 'accidentLocation.generalWorkAccident',
+              title: accidentLocation.general.heading,
+              description: accidentLocation.general.description,
+              condition: (formValue) => isGeneralWorkplaceAccident(formValue),
+              children: [
+                buildRadioField({
+                  id: 'accidentLocation.answer',
+                  title: '',
+                  options: [
+                    {
+                      value:
+                        GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
+                      label:
+                        accidentLocation.generalWorkAccident.atTheWorkplace,
+                    },
+                    {
+                      value:
+                        GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                      label:
+                        accidentLocation.generalWorkAccident
+                          .toOrFromTheWorkplace,
+                    },
+                    {
+                      value: GeneralWorkplaceAccidentLocationEnum.OTHER,
+                      label: accidentLocation.generalWorkAccident.other,
+                    },
+                  ],
+                }),
+              ],
+            }),
+            // location of rescue work related accident
+            buildMultiField({
+              id: 'accidentLocation.rescueWorkAccident',
+              title: accidentLocation.general.heading,
+              description: accidentLocation.rescueWorkAccident.description,
+              condition: (formValue) => {
+                return isRescueWorkAccident(formValue)
+              },
+              children: [
+                buildRadioField({
+                  id: 'accidentLocation.answer',
+                  title: '',
+                  options: [
+                    {
+                      value:
+                        GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
+                      label:
+                        accidentLocation.generalWorkAccident.atTheWorkplace,
+                    },
+                    {
+                      value:
+                        GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                      label:
+                        accidentLocation.generalWorkAccident
+                          .toOrFromTheWorkplace,
+                    },
+                    {
+                      value: GeneralWorkplaceAccidentLocationEnum.OTHER,
+                      label: accidentLocation.generalWorkAccident.other,
+                    },
+                  ],
+                }),
+              ],
+            }),
+            // location of studies related accident
+            buildMultiField({
+              id: 'accidentLocation.studiesAccident',
+              title: accidentLocation.studiesAccidentLocation.heading,
+              description: accidentLocation.studiesAccidentLocation.description,
+              condition: (formValue) => isStudiesAccident(formValue),
+              children: [
+                buildRadioField({
+                  id: 'accidentLocation.answer',
+                  title: '',
+                  options: [
+                    {
+                      value: StudiesAccidentLocationEnum.ATTHESCHOOL,
+                      label:
+                        accidentLocation.studiesAccidentLocation.atTheSchool,
+                    },
+                    {
+                      value: StudiesAccidentLocationEnum.DURINGSTUDIES,
+                      label:
+                        accidentLocation.studiesAccidentLocation.duringStudies,
+                    },
+                    {
+                      value: StudiesAccidentLocationEnum.OTHER,
+                      label: accidentLocation.studiesAccidentLocation.other,
+                    },
+                  ],
+                }),
+              ],
+            }),
+            // location of fisherman related accident
+            buildMultiField({
+              id: 'accidentLocation.fishermanAccident',
+              title: accidentLocation.general.heading,
+              description: accidentLocation.general.description,
+              condition: (formValue) => isFishermanAccident(formValue),
+              children: [
+                buildRadioField({
+                  id: 'accidentLocation.answer',
+                  title: '',
+                  options: [
+                    {
+                      value: FishermanWorkplaceAccidentLocationEnum.ONTHESHIP,
+                      label: accidentLocation.fishermanAccident.onTheShip,
+                    },
+                    {
+                      value:
+                        FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                      label:
+                        accidentLocation.fishermanAccident.toOrFromTheWorkplace,
+                    },
+                    {
+                      value: FishermanWorkplaceAccidentLocationEnum.OTHER,
+                      label: accidentLocation.fishermanAccident.other,
+                    },
+                  ],
+                }),
+              ],
+            }),
+            // location of sports related accident
+            buildMultiField({
+              id: 'accidentLocation.professionalAthleteAccident',
+              title: accidentLocation.general.heading,
+              description: accidentLocation.general.description,
+              condition: (formValue) =>
+                isProfessionalAthleteAccident(formValue) &&
+                !isHomeActivitiesAccident(formValue),
+              children: [
+                buildRadioField({
+                  id: 'accidentLocation.answer',
+                  title: '',
+                  options: [
+                    {
+                      value:
+                        ProfessionalAthleteAccidentLocationEnum.SPORTCLUBSFACILITES,
+                      label:
+                        accidentLocation.professionalAthleteAccident
+                          .atTheClubsSportsFacilites,
+                    },
+                    {
+                      value:
+                        ProfessionalAthleteAccidentLocationEnum.TOORFROMTHESPORTCLUBSFACILITES,
+                      label:
+                        accidentLocation.professionalAthleteAccident
+                          .toOrFromTheSportsFacilites,
+                    },
+                    {
+                      value: ProfessionalAthleteAccidentLocationEnum.OTHER,
+                      label: accidentLocation.professionalAthleteAccident.other,
+                    },
+                  ],
+                }),
+              ],
+            }),
+            // location of agriculture related accident
+            buildMultiField({
+              id: 'accidentLocation.agricultureAccident',
+              title: accidentLocation.general.heading,
+              description: accidentLocation.general.description,
+              children: [
+                buildRadioField({
+                  id: 'accidentLocation.answer',
+                  title: '',
+                  options: [
+                    {
+                      value: AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
+                      label:
+                        accidentLocation.agricultureAccident.atTheWorkplace,
+                    },
+                    {
+                      value:
+                        AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+                      label:
+                        accidentLocation.agricultureAccident
+                          .toOrFromTheWorkplace,
+                    },
+                    {
+                      value: AgricultureAccidentLocationEnum.OTHER,
+                      label: accidentLocation.agricultureAccident.other,
+                    },
+                  ],
+                }),
+              ],
+              condition: (formValue) => isAgricultureAccident(formValue),
+            }),
+          ],
+        }),
+        // Fisherman information only applicable to fisherman workplace accidents
+        // that happen aboard a ship.
+        buildSubSection({
+          id: 'fishermanLocation.section',
+          title: accidentLocation.fishermanAccidentLocation.heading,
+          condition: (formValue) => isAboardShip(formValue),
+          children: [
+            buildMultiField({
+              id: 'fishermanLocation.multifield',
+              title: accidentLocation.fishermanAccidentLocation.heading,
+              description:
+                accidentLocation.fishermanAccidentLocation.description,
+              children: [
+                buildRadioField({
+                  id: 'fishermanLocation.answer',
+                  title: '',
+                  backgroundColor: 'blue',
+                  options: [
+                    {
+                      value:
+                        FishermanWorkplaceAccidentShipLocationEnum.SAILINGORFISHING,
+                      label:
+                        accidentLocation.fishermanAccidentLocation.whileSailing,
+                    },
+                    {
+                      value: FishermanWorkplaceAccidentShipLocationEnum.HARBOR,
+                      label:
+                        accidentLocation.fishermanAccidentLocation.inTheHarbor,
+                    },
+                    {
+                      value: FishermanWorkplaceAccidentShipLocationEnum.OTHER,
+                      label: accidentLocation.fishermanAccidentLocation.other,
+                    },
+                  ],
+                }),
+              ],
+            }),
+            buildMultiField({
+              id: 'fishermanLocation.other',
+              title: fishingLocationAndPurpose.general.title,
+              description: fishingLocationAndPurpose.general.description,
+              condition: (formValue) => isLocatedOnShipOther(formValue),
+              children: [
+                buildTextField({
+                  id: 'fishermanLocation.locationAndPurpose.location',
+                  title: fishingLocationAndPurpose.labels.location,
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'fishermanLocation.locationAndPurpose.purpose',
+                  title: fishingLocationAndPurpose.labels.purpose,
+                  backgroundColor: 'blue',
+                  rows: 6,
+                  variant: 'textarea',
+                  placeholder: fishingLocationAndPurpose.placeholder.purpose,
+                }),
+              ],
+            }),
+          ],
+        }),
         buildMultiField({
           title: locationAndPurpose.general.title,
           description: locationAndPurpose.general.description,
+          condition: (formValue) => !isFishermanAccident(formValue),
           children: [
             buildTextField({
               id: 'locationAndPurpose.location',
@@ -997,7 +1108,9 @@ export const AccidentNotificationForm: Form = buildForm({
     // Company information if work accident without the injured being a fisherman
     buildSection({
       title: companyInfo.general.title,
-      condition: (formValue) => isGeneralWorkplaceAccident(formValue),
+      condition: (formValue) =>
+        isGeneralWorkplaceAccident(formValue) &&
+        !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
           title: companyInfo.general.title,
@@ -1070,7 +1183,9 @@ export const AccidentNotificationForm: Form = buildForm({
     // School information if school accident
     buildSection({
       title: schoolInfo.general.title,
-      condition: (formValue) => isStudiesAccident(formValue),
+      condition: (formValue) =>
+        isStudiesAccident(formValue) &&
+        !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
           title: schoolInfo.general.title,
@@ -1143,7 +1258,9 @@ export const AccidentNotificationForm: Form = buildForm({
     // fishery information if fisherman
     buildSection({
       title: fishingCompanyInfo.general.title,
-      condition: (formValue) => isFishermanAccident(formValue),
+      condition: (formValue) =>
+        isFishermanAccident(formValue) &&
+        !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
           title: fishingCompanyInfo.general.title,
@@ -1216,7 +1333,9 @@ export const AccidentNotificationForm: Form = buildForm({
     // Sports club information when the injured has a sports related accident
     buildSection({
       title: sportsClubInfo.general.title,
-      condition: (formValue) => isProfessionalAthleteAccident(formValue),
+      condition: (formValue) =>
+        isProfessionalAthleteAccident(formValue) &&
+        !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
           title: sportsClubInfo.general.title,
@@ -1289,7 +1408,9 @@ export const AccidentNotificationForm: Form = buildForm({
     // Rescue squad information when accident is related to rescue squad
     buildSection({
       title: rescueSquadInfo.general.title,
-      condition: (formValue) => isRescueWorkAccident(formValue),
+      condition: (formValue) =>
+        isRescueWorkAccident(formValue) &&
+        !isReportingOnBehalfOfEmployee(formValue),
       children: [
         buildMultiField({
           title: rescueSquadInfo.general.title,

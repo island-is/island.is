@@ -174,4 +174,37 @@ export const accidentLocation = {
       description: 'Label for the other studies location',
     },
   }),
+  fishermanAccidentLocation: defineMessages({
+    whileSailing: {
+      id:
+        'an.application:accidentLocation.fishermanAccidentLocation.whileSailing',
+      defaultMessage: 'Á siglingu / á veiðum',
+      description:
+        'Label for the while sailing or fishing option in fisherman accident location',
+    },
+    inTheHarbor: {
+      id:
+        'an.application:accidentLocation.fishermanAccidentLocation.inTheHarbor',
+      defaultMessage: 'Í heimahöfn',
+      description:
+        'Label for the in the harbor option in fisherman accident location',
+    },
+    other: {
+      id: 'an.application:accidentLocation.fishermanAccidentLocation.other',
+      defaultMessage: 'Annars staðar',
+      description: 'Label for the other option in fisherman accident location',
+    },
+    heading: {
+      id: 'an.application:accidentLocation.fishermanAccidentLocation.heading',
+      defaultMessage: 'Staðsetning skips',
+      description: 'Fisherman accident location heading',
+    },
+    description: {
+      id:
+        'an.application:accidentLocation.fishermanAccidentLocation.description',
+      defaultMessage:
+        'Vinsamlegast skráðu staðsetningu skips þegar slysið átti sér stað',
+      description: 'Fisherman accident location description',
+    },
+  }),
 }

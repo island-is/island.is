@@ -1,4 +1,4 @@
-import { YES, NO } from './../constants'
+import { NO, YES } from './../constants'
 
 export type CompanyInfo = {
   nationalRegistrationId: string
@@ -7,6 +7,9 @@ export type CompanyInfo = {
   email: string
   phoneNumber: string
   type: AccidentTypeEnum | WorkAccidentTypeEnum
+  employee?: {
+    radioButton: YesOrNo
+  }
 }
 
 export enum DataProviderTypes {
@@ -47,6 +50,12 @@ export enum FishermanWorkplaceAccidentLocationEnum {
   ONTHESHIP = 'onTheShip',
   TOORFROMTHEWORKPLACE = 'FishermanWorkplaceAccidentLocation.toOrFromTheWorkplace',
   OTHER = 'FishermanWorkplaceAccidentLocation.other',
+}
+
+export enum FishermanWorkplaceAccidentShipLocationEnum {
+  SAILINGORFISHING = 'FishermanWorkplaceAccidentShipLocation.sailingOrFishing',
+  HARBOR = 'FishermanWorkplaceAccidentShipLocation.harbor',
+  OTHER = 'FishermanWorkplaceAccidentShipLocation.other',
 }
 
 export enum ProfessionalAthleteAccidentLocationEnum {
