@@ -7,10 +7,12 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { application } from './messages'
+// import { AccidentNotificationSchema } from './dataSchema'
+
+const AccidentNotificationSchema = z.object({})
 
 const AccidentNotificationStates = {
   draft: 'draft',
@@ -26,8 +28,6 @@ type AccidentNotificationEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
 
-const dataSchema = z.object({})
-
 const AccidentNotificationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<AccidentNotificationEvent>,
@@ -39,21 +39,25 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations.AccidentNotification.translation,
   ],
-  dataSchema,
+  dataSchema: AccidentNotificationSchema,
   stateMachineConfig: {
     initial: AccidentNotificationStates.draft,
     states: {
       [AccidentNotificationStates.draft]: {
         meta: {
           name: application.general.name.defaultMessage,
-          progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          progress: 0.2,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
           roles: [
             {
               id: 'applicant',
               formLoader: () =>
-                import('../forms/TestForm').then((val) =>
-                  Promise.resolve(val.TestForm),
+                import('../forms/AccidentNotificationForm').then((val) =>
+                  Promise.resolve(val.AccidentNotificationForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },

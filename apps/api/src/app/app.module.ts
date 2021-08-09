@@ -35,6 +35,7 @@ import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-v
 import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { AuditModule } from '@island.is/nest/audit'
+import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
@@ -87,7 +88,6 @@ const autoSchemaFile = environment.production
       xroadClientId: environment.xroad.clientId,
       secret: environment.drivingLicense.secret,
       xroadPath: environment.drivingLicense.xroadPath,
-      replaceInPath: environment.drivingLicense.replaceInPath,
     }),
     EducationModule.register({
       xroad: {
@@ -235,6 +235,13 @@ const autoSchemaFile = environment.production
         apiUrl: environment.pkpass.apiUrl,
         secretKey: environment.pkpass.secretKey,
       },
+    }),
+    PaymentScheduleModule.register({
+      xRoadProviderId: environment.paymentSchedule.xRoadProviderId,
+      xRoadBaseUrl: environment.paymentSchedule.xRoadBaseUrl,
+      xRoadClientId: environment.xroad.clientId,
+      password: environment.paymentSchedule.password,
+      username: environment.paymentSchedule.username,
     }),
   ],
 })

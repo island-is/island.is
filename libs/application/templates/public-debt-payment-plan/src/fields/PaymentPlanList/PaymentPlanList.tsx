@@ -1,22 +1,20 @@
-import React from 'react'
+import { PaymentScheduleDebts } from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import React from 'react'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
-import {
-  PaymentPlanExternalData,
-  PublicDebtPaymentPlan,
-} from '../../lib/dataSchema'
-import { PaymentPlanCard } from './PaymentPlanCard/PaymentPlanCard'
 import { getPaymentPlanIds, getPaymentPlanKeyById } from '../../shared/utils'
+import { PaymentPlanExternalData, PublicDebtPaymentPlan } from '../../types'
+import { PaymentPlanCard } from './PaymentPlanCard/PaymentPlanCard'
 
 export const PaymentPlanList = ({
   application,
   goToScreen,
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const paymentPlanList = (application.externalData as PaymentPlanExternalData)
-    .paymentPlanList
+  const paymentScheduleDebts = (application.externalData as PaymentPlanExternalData)
+    .paymentPlanPrerequisites?.data?.debts as PaymentScheduleDebts[]
   const answers = application.answers as PublicDebtPaymentPlan
 
   const handleEditPaymentPlan = (id: string) => {
@@ -30,9 +28,9 @@ export const PaymentPlanList = ({
       <Text marginBottom={3}>
         {formatMessage(paymentPlan.general.pageDescription)}
       </Text>
-      {paymentPlanList?.data.map((payment, index) => {
+      {paymentScheduleDebts?.map((payment, index) => {
         const isAnswered = getPaymentPlanIds(answers.paymentPlans).some(
-          (id) => id === payment.id,
+          (id) => id === payment.type,
         )
 
         return (
