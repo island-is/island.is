@@ -231,7 +231,7 @@ export const regulationContentStyling = (wrapper: string) => {
   })
   global(
     `
-    .chapter__title:first-child
+    .chapter__title:first-child,
     .section__title + .chapter__title
     `,
     {
@@ -255,7 +255,7 @@ export const regulationContentStyling = (wrapper: string) => {
   global(
     `
     .article__title:first-child,
-    .section__title + .chapter__title
+    .section__title + .chapter__title,
     .chapter__title + .article__title
     `,
     {
