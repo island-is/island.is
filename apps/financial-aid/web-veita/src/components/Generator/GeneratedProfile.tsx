@@ -18,13 +18,6 @@ const GeneratedProfile: FunctionComponent<Props> = ({ nationalId, size }) => {
     },
   )
 
-  // const data = {
-  //   size,
-  //   background: [255, 255, 255, 0],
-  //   format: 'svg',
-  //   margin: 0.1,
-  // }
-
   return (
     <img
       src={`data:image/svg+xml;base64,${data}`}

@@ -96,6 +96,7 @@ module.exports = {
     '<rootDir>/libs/application/ui-components',
     '<rootDir>/libs/application/ui-fields',
     '<rootDir>/libs/application/ui-shell',
+    '<rootDir>/libs/application/templates/accident-notification',
     '<rootDir>/libs/application/templates/complaints-to-althingi-ombudsman',
     '<rootDir>/libs/application/templates/data-protection-complaint',
     '<rootDir>/libs/application/templates/document-provider-onboarding',

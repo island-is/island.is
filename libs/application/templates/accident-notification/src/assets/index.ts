@@ -1,0 +1,1 @@
+export { FamilyIllustration } from './FamilyIllustration'

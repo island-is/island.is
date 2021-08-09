@@ -132,7 +132,6 @@ export class EndorsementListController {
       'listId',
       new ParseUUIDPipe({ version: '4' }),
       EndorsementListByIdPipe,
-      IsEndorsementListOwnerValidationPipe,
     )
     endorsementList: EndorsementList,
   ): Promise<EndorsementList> {

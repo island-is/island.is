@@ -19,6 +19,7 @@ export enum ApplicationTypes {
   JOINT_CUSTODY_AGREEMENT = 'JointCustodyAgreement',
   PAYABLE_DUMMY_TEMPLATE = 'PayableDummyTemplate',
   COMPLAINTS_TO_ALTHINGI_OMBUDSMAN = 'ComplaintsToAlthingiOmbudsman',
+  ACCIDENT_NOTIFICATION = 'AccidentNotification',
 }
 
 export const ApplicationConfigurations = {
@@ -101,5 +102,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {
     slug: 'kvortun-til-umbodsmanns-althingis',
     translation: 'ctao.application',
+  },
+  [ApplicationTypes.ACCIDENT_NOTIFICATION]: {
+    slug: 'slysatilkynning',
+    translation: 'an.application',
   },
 }
