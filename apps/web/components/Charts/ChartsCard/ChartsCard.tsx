@@ -94,7 +94,16 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
 }
 
 const FrameWrapper = ({ children }) => {
-  return <Box className={cn(styles.frameWrapper)}>{children}</Box>
+  return (
+    <Box
+      className={cn(styles.frameWrapper)}
+      borderColor="purple100"
+      borderWidth="standard"
+      borderRadius="large"
+    >
+      {children}
+    </Box>
+  )
 }
 
 export default ChartsCard

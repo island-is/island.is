@@ -10,12 +10,9 @@ export const frameWrapper = style({
   minHeight: 124,
   textDecoration: 'none',
   position: 'relative',
-  borderRadius: 'large',
   overflow: 'visible',
   background: 'transparent',
   outline: 'none',
-  borderColor: 'purple100',
-  borderWidth: 'standard',
   ':hover': {
     textDecoration: 'none',
   },
