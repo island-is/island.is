@@ -8,6 +8,7 @@ export const frameWrapper = style({
   boxSizing: 'border-box',
   minHeight: 124,
   textDecoration: 'none',
+  overflowX: 'scroll',
   position: 'relative',
   overflow: 'visible',
   background: 'transparent',

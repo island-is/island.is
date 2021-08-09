@@ -116,7 +116,11 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
               </Box>
             </GridColumn>
             <GridColumn span={['12/12', '7/12', '7/12']}>
-              <SimpleLineChart graphData={pageHeaderGraph} />
+              <Box style={{ height: '500px', overflowX: 'scroll' }}>
+                <Box style={{ width: '899px', height: '100%' }}>
+                  <SimpleLineChart graphData={pageHeaderGraph} />
+                </Box>
+              </Box>
             </GridColumn>
           </GridRow>
         </GridContainer>

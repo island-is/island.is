@@ -60,6 +60,9 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
       <Box
         className={cn(styles.outerWrapper)}
         background={subPage ? 'blue100' : 'purple100'}
+        style={{
+          width: graph.type === 'Pie' ? '100%' : '889px',
+        }}
       >
         <Box className={cn(styles.innerWrapper)}>
           <Box padding={[2, 2, 4]}>
@@ -83,9 +86,15 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
           )}
         </Box>
       </Box>
-
-      <Box className={cn(styles.graphWrapper)}>
-        <Box className={cn(styles.graphParent)}>{children}</Box>
+      <Box
+        className={cn(styles.graphWrapper)}
+        style={{
+          width: graph.type === 'Pie' || !shouldStack ? '100%' : '889px',
+        }}
+      >
+        <Box className={cn(styles.graphParent)}>
+          {children}
+        </Box>
       </Box>
     </Box>
   )
