@@ -148,10 +148,9 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: gunnar.ingi@fjr.is
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: Gunnar Ingi
     NOVA_USERNAME: IslandIs_User_Development
-    PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL: s@kogk.is
     PARTY_LETTER_REGISTRY_API_BASE_PATH: >-
       http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local
-    PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: s@kogk.is
+    PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: thorhildur@parallelradgjof.is
     REDIS_URL_NODE_01: >-
       clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379
     SERVICE_DOCUMENTS_BASEPATH: http://web-services-documents.services-documents.svc.cluster.local
@@ -376,6 +375,7 @@ endorsement-system-api:
       http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local
   grantNamespaces:
     - islandis
+    - application-system
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -525,6 +525,7 @@ party-letter-registry-api:
     DB_USER: services_party_letter_registry_api
   grantNamespaces:
     - islandis
+    - application-system
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

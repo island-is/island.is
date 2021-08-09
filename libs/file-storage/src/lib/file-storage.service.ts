@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
 import AmazonS3URI from 'amazon-s3-uri'
+import kebabCase from 'lodash/kebabCase'
 
 import type { FileStorageConfig } from './file-storage.configuration'
 import { FILE_STORAGE_CONFIG } from './file-storage.configuration'
@@ -24,7 +25,7 @@ export class FileStorageService {
     }
 
     const fileId = uuid()
-    const key = `${fileId}_${filename}`
+    const key = `${fileId}_${kebabCase(filename)}`
 
     const params = {
       Bucket: this.config.uploadBucket,
@@ -46,9 +47,10 @@ export class FileStorageService {
     })
   }
 
-  public generateSignedUrl(url: string, key: string): Promise<string> {
-    const { bucket } = AmazonS3URI(url)
+  public generateSignedUrl(url: string): Promise<string> {
+    const { bucket, key } = AmazonS3URI(url)
     const params = { Bucket: bucket, Expires: SIGNED_GET_EXPIRES, Key: key }
+
     return this.s3.getSignedUrlPromise('getObject', params)
   }
 

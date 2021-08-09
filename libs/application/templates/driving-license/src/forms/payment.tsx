@@ -5,13 +5,18 @@ import {
   buildSection,
   Form,
   FormModes,
+  buildCustomField,
+  buildSubmitField,
+  DefaultEvents,
+  buildMultiField,
 } from '@island.is/application/core'
 
 export const payment: Form = buildForm({
   id: 'DrivingLicenseApplicationPaymentForm',
-  title: m.payment,
+  title: '',
   mode: FormModes.APPLYING,
-  renderLastScreenButton: true,
+  renderLastScreenButton:
+    true && !!window.document.location.href.match(/\?done$/),
   children: [
     buildSection({
       id: 'awaitingPayment',
@@ -19,8 +24,11 @@ export const payment: Form = buildForm({
       children: [
         // TODO: ekki tókst að stofna til greiðslu skjár - condition
         buildDescriptionField({
-          id: 'info',
+          id: 'infoAwaitingPayment',
           title: m.paymentCapital,
+          condition: () => {
+            return !window.document.location.href.match(/\?done$/)
+          },
           description: (application) => {
             const { paymentUrl } = application.externalData.createCharge
               .data as { paymentUrl: string }
@@ -31,12 +39,41 @@ export const payment: Form = buildForm({
 
             const returnUrl = window.document.location.href
             const redirectUrl = `${paymentUrl}&returnURL=${encodeURIComponent(
-              returnUrl,
+              returnUrl + '?done',
             )}`
             window.document.location.href = redirectUrl
 
             return m.forwardingToPayment
           },
+        }),
+        buildMultiField({
+          condition: () => {
+            return !!window.document.location.href.match(/\?done$/)
+          },
+          id: 'overviewAwaitingPayment',
+          title: '',
+          space: 1,
+          description: '',
+          children: [
+            buildCustomField({
+              component: 'ExamplePaymentPendingField',
+              id: 'paymentPendingField',
+              title: '',
+            }),
+            buildSubmitField({
+              id: 'submitAlreadyPaid',
+              placement: 'footer',
+              title: '',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.continue,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),

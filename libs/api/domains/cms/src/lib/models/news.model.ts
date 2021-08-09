@@ -1,7 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { INews } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
-import { Author, mapAuthor } from './author.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 
@@ -18,9 +17,6 @@ export class News {
 
   @Field()
   subtitle!: string
-
-  @Field(() => Author, { nullable: true })
-  author?: Author | null
 
   @Field({ nullable: true })
   intro!: string
@@ -43,7 +39,6 @@ export const mapNews = ({ fields, sys }: INews): News => ({
   slug: fields.slug ?? '',
   title: fields.title ?? '',
   subtitle: fields.subtitle ?? '',
-  author: fields.author ? mapAuthor(fields.author) : null,
   intro: fields.intro ?? '',
   image: mapImage(fields.image),
   date: fields.date ?? '',

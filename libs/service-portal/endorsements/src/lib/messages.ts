@@ -12,7 +12,7 @@ export const m: MessageDir = {
     intro: {
       id: 'sp.endorsements:intro',
       defaultMessage:
-        'Einhver texti um hvaða umboð aðili hefur og hvaða aðgerðir eru í boði',
+        'Hér má finna lista yfir þau framboð og þá listabókstafi sem þú getur eða hefur mælt með. Hægt er að mæla með einum eða fleiri listabókstöfum en eingöngu einu framboði.',
       description: 'Endorsement intro text',
     },
     myEndorsements: {
@@ -20,9 +20,14 @@ export const m: MessageDir = {
       defaultMessage: 'Mínar skráningar',
       description: 'Section title for your endorsements',
     },
-    availableEndorsements: {
+    availablePartyApplicationEndorsements: {
       id: 'sp.endorsements:available-endorsements',
-      defaultMessage: 'Meðmælendalistar sem þú getur stutt í þínu kjördæmi',
+      defaultMessage: 'Framboðslistar sem þú getur stutt í þínu kjördæmi',
+      description: 'Section title for available endorsements in your area',
+    },
+    availablePartyLetterEndorsements: {
+      id: 'sp.endorsements:available-party-letter-endorsements',
+      defaultMessage: 'Listabókstafir sem þú getur mælt með',
       description: 'Section title for available endorsements in your area',
     },
     actionCardButtonEndorse: {

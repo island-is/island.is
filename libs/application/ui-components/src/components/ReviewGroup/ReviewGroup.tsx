@@ -15,6 +15,7 @@ interface ReviewGroupProps {
   editAction?(): void
   isEditable?: boolean
   isLast?: boolean
+  canCloseEdit?: boolean
 }
 
 export const ReviewGroup: FC<ReviewGroupProps> = ({
@@ -23,11 +24,14 @@ export const ReviewGroup: FC<ReviewGroupProps> = ({
   editAction,
   isEditable = true,
   isLast,
+  canCloseEdit = true,
 }) => {
   const [editable, setEditable] = useState(false)
   const { formatMessage } = useLocale()
 
   const handleClick = () => {
+    if (!canCloseEdit) return
+
     if (editAction) {
       editAction()
     } else {
