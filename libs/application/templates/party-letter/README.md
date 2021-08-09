@@ -46,6 +46,20 @@ RSK_API_PASSWORD
 
 - A good way to get environment variables is to run `yarn get-secrets service-portal`
 
+## Running project locally
+
+To docker environment run (this only needs to be run once):
+
+```bash
+yarn nx run application-templates-party-letter:init
+```
+
+To start all required services:
+
+```bash
+yarn nx run application-templates-party-letter:start
+```
+
 ## Code owners and maintainers
 
 - [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-kaos)
