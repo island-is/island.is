@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { MessageDescriptor } from 'react-intl'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { ServicePortalPath, m } from '@island.is/service-portal/core'
 import {
   Box,
   GridColumn,
@@ -39,12 +39,7 @@ function Application({ heading, subText }: PropTypes): JSX.Element {
           <Text marginBottom={[3, 4]}>{formatMessage(subText)}</Text>
           <Box>
             <Link to={ServicePortalPath.ApplicationDrivingLicense}>
-              <ArrowLink>
-                {formatMessage({
-                  id: 'service.portal:continue-button',
-                  defaultMessage: 'Halda áfram',
-                })}
-              </ArrowLink>
+              <ArrowLink>{formatMessage(m.continue)}</ArrowLink>
             </Link>
           </Box>
         </Box>
