@@ -308,7 +308,8 @@ export const m: MessageDir = {
     },
     bulletLink2: {
       id: 'pa.application:application.approved.card.bulletLink2',
-      defaultMessage: 'https://www.stjornarradid.is/verkefni/kosningar/',
+      defaultMessage:
+        'https://www.stjornarradid.is/verkefni/kosningar/althingiskosningar/frambod-leidbeiningar/listabokstafir/',
       description: 'Link to kosning.is',
     },
     bulletLink2Title: {
@@ -518,7 +519,7 @@ export const m: MessageDir = {
     },
     cardSubtitle: {
       id: 'pa.application:endorsement.approved.card.subtitle',
-      defaultMessage: 'Hægt er að skoða virk meðmæli á mínum síðum.',
+      defaultMessage: 'Hægt er að skoða virk meðmæli á Mínum Síðum.',
       description: 'Approved card subtitle',
     },
     myPagesButton: {
