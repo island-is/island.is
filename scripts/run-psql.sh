@@ -98,7 +98,7 @@ fi
 if [ "$PSQL" == true ]; then
   # run psql console, query is empty
   read -r POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB <<< $(get_creds)
-  connect "$POSTGRES_USER" "$POSTGRES_PASSWORD" "$POSTGRES_DB" "$QUERY" $PSQL
+  psql_connect "$POSTGRES_USER" "$POSTGRES_PASSWORD" "$POSTGRES_DB" "$QUERY" $PSQL
   exit 0
 fi
 
