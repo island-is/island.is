@@ -14,6 +14,7 @@ import {
 import {
   ContainerEnvironmentVariables,
   ContainerRunHelm,
+  ContainerSecrets,
   SerializeMethod,
   ServiceHelm,
 } from './types/output-types'
@@ -141,6 +142,14 @@ export const serializeService: SerializeMethod = (
     ...toggleEnvs.reduce(
       (acc, toggle) => ({ ...acc, ...toggle.vars.envs }),
       {} as ContainerEnvironmentVariables,
+    ),
+  }
+
+  result.secrets = {
+    ...result.secrets,
+    ...toggleSecrets.reduce(
+      (acc, toggle) => ({ ...acc, ...toggle.secrets }),
+      {} as ContainerSecrets,
     ),
   }
 

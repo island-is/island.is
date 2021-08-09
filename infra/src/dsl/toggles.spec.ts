@@ -48,4 +48,16 @@ describe('Server-side toggles', () => {
     ) as SerializeSuccess
     expect(result.serviceDef.env!['A']).toBeUndefined()
   })
+
+  it('secret present in toggled env', () => {
+    expect(result.serviceDef.secrets!['KEY']).toBe('/k8s/secret')
+  })
+
+  it('secret missing in untoggled env', () => {
+    const result = serializeService(
+      sut,
+      new UberChart({ ...Staging, type: 'prod' }),
+    ) as SerializeSuccess
+    expect(result.serviceDef.env!['KEY']).toBeUndefined()
+  })
 })
