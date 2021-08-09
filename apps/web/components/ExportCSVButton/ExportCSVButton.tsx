@@ -43,29 +43,28 @@ export interface ExportCSVButtonProps {
   data: string
 }
 
-const useCsvExport = (data) => {
-  const newdata = JSON.parse(data)
-  if (data) {
-    try {
-      const allFlat = newdata.map((obj) => [...forAll(obj)])
+export const ExportCSVButton: FC<ExportCSVButtonProps> = ({ data }) => {
+  function useCsvExport() {
+    const newdata = JSON.parse(data)
+    if (data) {
+      try {
+        const allFlat = newdata.map((obj) => [...forAll(obj)])
 
-      const csvContent = makeCsv(allFlat)
+        const csvContent = makeCsv(allFlat)
 
-      triggerDownload(`opin_gogn${new Date()}.csv`, csvContent)
-    } catch (e) {
-      console.log(e)
+        triggerDownload(`opin_gogn${new Date()}.csv`, csvContent)
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
-}
-
-export const ExportCSVButton: FC<ExportCSVButtonProps> = ({ data }) => {
   return (
     <Box style={{ height: '48px' }}>
       <Button
         colorScheme="default"
         preTextIcon="download"
         iconType="filled"
-        onClick={() => useCsvExport(data)}
+        onClick={useCsvExport}
         preTextIconType="filled"
         size="small"
         type="button"
