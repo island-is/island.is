@@ -78,7 +78,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
 
           {subPage && (
             <Box padding={[2, 2, 4]}>
-              <ExportCSVButton data={graph.data} />
+              <ExportCSVButton data={graph.data} title={graph.title} />
             </Box>
           )}
         </Box>

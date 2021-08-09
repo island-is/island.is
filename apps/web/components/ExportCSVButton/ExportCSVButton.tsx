@@ -41,9 +41,10 @@ const makeCsv = (allFlat) => {
 }
 export interface ExportCSVButtonProps {
   data: string
+  title: string
 }
 
-export const ExportCSVButton: FC<ExportCSVButtonProps> = ({ data }) => {
+export const ExportCSVButton: FC<ExportCSVButtonProps> = ({ data, title }) => {
   function useCsvExport() {
     const newdata = JSON.parse(data)
     if (data) {
@@ -52,7 +53,7 @@ export const ExportCSVButton: FC<ExportCSVButtonProps> = ({ data }) => {
 
         const csvContent = makeCsv(allFlat)
 
-        triggerDownload(`opin_gogn${new Date()}.csv`, csvContent)
+        triggerDownload(`${title}_${new Date()}.csv`, csvContent)
       } catch (e) {
         console.log(e)
       }
