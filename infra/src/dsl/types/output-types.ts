@@ -18,6 +18,8 @@ export type ContainerRunHelm = {
   }
 }
 
+export type ContainerEnvironmentVariables = { [name: string]: string }
+
 export interface ServiceHelm {
   replicaCount?: ReplicaCount
   healthCheck: {
@@ -84,7 +86,7 @@ export interface ServiceHelm {
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
 
-  env?: { [name: string]: string }
+  env?: ContainerEnvironmentVariables
   secrets?: { [name: string]: string }
   enabled: boolean
   namespace: string

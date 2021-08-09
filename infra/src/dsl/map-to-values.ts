@@ -12,6 +12,7 @@ import {
   PostgresInfo,
 } from './types/input-types'
 import {
+  ContainerEnvironmentVariables,
   ContainerRunHelm,
   SerializeMethod,
   ServiceHelm,
@@ -117,6 +118,30 @@ export const serializeService: SerializeMethod = (
   // secrets
   if (Object.keys(serviceDef.secrets).length > 0) {
     result.secrets = serviceDef.secrets
+  }
+
+  const activeToggles = Object.entries(serviceDef.toggles).filter(
+    ([_, v]) => v.status[uberChart.env.type] === 'ON',
+  )
+  const toggleEnvs = activeToggles.map(([name, v]) => {
+    return {
+      name,
+      vars: serializeEnvironmentVariables(service, uberChart, v.env),
+    }
+  })
+  const toggleSecrets = activeToggles.map(([name, v]) => {
+    return {
+      name,
+      secrets: v.secrets,
+    }
+  })
+
+  result.env = {
+    ...result.env,
+    ...toggleEnvs.reduce(
+      (acc, toggle) => ({ ...acc, ...toggle.vars.envs }),
+      {} as ContainerEnvironmentVariables,
+    ),
   }
 
   // service account

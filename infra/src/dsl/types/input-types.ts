@@ -26,14 +26,23 @@ export type HealthProbe = {
   timeoutSeconds: number
 }
 
+export type Secrets = { [name: string]: string }
+
+export type Toggle = {
+  env: EnvironmentVariables
+  secrets: Secrets
+  status: {[idx in OpsEnv] : 'OFF'|'ON'}
+}
+
 export type ServiceDefinition = {
   liveness: HealthProbe
   readiness: HealthProbe
   port?: number
   initContainers?: InitContainers
   env: EnvironmentVariables
-  secrets: { [name: string]: string }
+  secrets: Secrets
   ingress: { [name: string]: Ingress }
+  toggles: { [name: string]: Toggle }
   postgres?: PostgresInfo
   namespace: string
   grantNamespaces: string[]

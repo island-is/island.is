@@ -12,6 +12,7 @@ import {
   PostgresInfo,
   OpsEnv,
   HealthProbe,
+  Toggle,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -41,11 +42,17 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
+  toggles(toggles: { [name: string]: Toggle }) {
+    this.serviceDef.toggles = toggles
+    return this
+  }
+
   constructor(name: string) {
     this.serviceDef = {
       liveness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       readiness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       env: {},
+      toggles: {},
       name: name,
       grantNamespaces: [],
       grantNamespacesEnabled: false,
