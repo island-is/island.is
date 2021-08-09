@@ -303,7 +303,7 @@ export class Children extends BasicDataProvider {
 
   handleError(error: Error | unknown) {
     console.error('Provider.ParentalLeave.Children:', error)
-    return Promise.reject('Failed to fetch children')
+    return Promise.reject('Failed to fetch children for this parental leave')
   }
 
   onProvideSuccess(children: ChildInformation[]): SuccessfulDataProviderResult {
