@@ -1,13 +1,14 @@
 import React, { useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-import { Box, Text, Hyphen } from '@island.is/island-ui/core'
+import { Box, Text, Hyphen, Inline } from '@island.is/island-ui/core'
 import {
   MixedChart,
   SimpleBarChart,
   SimpleLineChart,
   SimplePieChart,
 } from '../'
+import { ExportCSVButton } from '@island.is/web/components'
 
 import * as styles from './ChartsCard.treat'
 
@@ -72,19 +73,38 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
           borderTopRightRadius: '8px',
         }}
         background={blue ? 'blue100' : 'purple100'}
+        alignItems="center"
+        justifyContent="spaceBetween"
       >
-        <Box padding={[2, 2, 4]}>
-          {organization && (
-            <Text variant="eyebrow" color="dark400">
-              {organization}
+        <Box
+          style={{
+            minHeight: '156px',
+            borderTopLeftRadius: '8px',
+            borderTopRightRadius: '8px',
+            paddingBottom: '24px',
+          }}
+        >
+          <Box padding={[2, 2, 4]}>
+            {organization && (
+              <Text variant="eyebrow" color="dark400">
+                {organization}
+              </Text>
+            )}
+            <Text variant="h3" color="dark400">
+              <Hyphen>{graphTitle}</Hyphen>
             </Text>
-          )}
-          <Text variant="h3" color="dark400">
-            <Hyphen>{graphTitle}</Hyphen>
-          </Text>
-          {graphDescription && <Text color="dark400">{graphDescription}</Text>}
+            {graphDescription && (
+              <Text color="dark400">{graphDescription}</Text>
+            )}
+          </Box>
         </Box>
+        {blue && (
+          <Box padding={[2, 2, 4]}>
+            <ExportCSVButton data={graph.data} />
+          </Box>
+        )}
       </Box>
+
       <Box
         display="flex"
         justifyContent="center"
