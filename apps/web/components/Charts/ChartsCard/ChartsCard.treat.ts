@@ -1,7 +1,7 @@
 import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const card = style({
+export const frameWrapper = style({
   display: 'flex',
   height: '646px',
   width: '100%',
@@ -10,7 +10,55 @@ export const card = style({
   minHeight: 124,
   textDecoration: 'none',
   position: 'relative',
+  borderRadius: 'large',
+  overflow: 'visible',
+  background: 'transparent',
+  outline: 'none',
+  borderColor: 'purple100',
+  borderWidth: 'standard',
   ':hover': {
     textDecoration: 'none',
   },
+})
+
+export const card = style({
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+  alignItems: 'stretch',
+  justifyContent: 'flexStart',
+})
+
+export const outerWrapper = style({
+  width: '100%',
+  minHeight: '156px',
+  borderTopLeftRadius: '8px',
+  borderTopRightRadius: '8px',
+  alignItems: 'center',
+  justifyContent: 'spaceBetween',
+})
+
+export const innerWrapper = style({
+  minHeight: '156px',
+  borderTopLeftRadius: '8px',
+  borderTopRightRadius: '8px',
+  paddingBottom: '24px',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+})
+
+export const graphWrapper = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100%',
+  height: '100%',
+})
+
+export const graphParent = style({
+  justifyContent: 'center',
+  width: '80%',
+  height: '408px',
 })

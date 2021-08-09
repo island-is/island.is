@@ -28,10 +28,10 @@ interface ChartCardDataProps {
 
 export interface ChartsCardsProps {
   data: ChartCardDataProps
-  blue?: boolean
+  subPage?: boolean
 }
 
-export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
+export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
   const { graphTitle, graphDescription, organization, graph } = data
   const [ref, { width }] = useMeasure()
 
@@ -56,34 +56,12 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
   }
 
   const items = (
-    <Box
-      ref={ref}
-      display="flex"
-      style={{ flexDirection: 'column' }}
-      flexGrow={1}
-      flexDirection={shouldStack ? 'columnReverse' : 'row'}
-      alignItems="stretch"
-      justifyContent="flexStart"
-    >
+    <Box ref={ref} className={cn(styles.card)}>
       <Box
-        style={{
-          width: '100%',
-          minHeight: '156px',
-          borderTopLeftRadius: '8px',
-          borderTopRightRadius: '8px',
-        }}
-        background={blue ? 'blue100' : 'purple100'}
-        alignItems="center"
-        justifyContent="spaceBetween"
+        className={cn(styles.outerWrapper)}
+        background={subPage ? 'blue100' : 'purple100'}
       >
-        <Box
-          style={{
-            minHeight: '156px',
-            borderTopLeftRadius: '8px',
-            borderTopRightRadius: '8px',
-            paddingBottom: '24px',
-          }}
-        >
+        <Box className={cn(styles.innerWrapper)}>
           <Box padding={[2, 2, 4]}>
             {organization && (
               <Text variant="eyebrow" color="dark400">
@@ -97,23 +75,17 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
               <Text color="dark400">{graphDescription}</Text>
             )}
           </Box>
+
+          {subPage && (
+            <Box padding={[2, 2, 4]}>
+              <ExportCSVButton data={graph.data} />
+            </Box>
+          )}
         </Box>
-        {blue && (
-          <Box padding={[2, 2, 4]}>
-            <ExportCSVButton data={graph.data} />
-          </Box>
-        )}
       </Box>
 
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        style={{ width: '100%', height: '100%' }}
-      >
-        <Box justifyContent="center" style={{ width: '80%', height: '408px' }}>
-          {children}
-        </Box>
+      <Box className={cn(styles.graphWrapper)}>
+        <Box className={cn(styles.graphParent)}>{children}</Box>
       </Box>
     </Box>
   )
@@ -122,20 +94,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
 }
 
 const FrameWrapper = ({ children }) => {
-  return (
-    <Box
-      className={cn(styles.card)}
-      position="relative"
-      borderRadius="large"
-      overflow="visible"
-      background="transparent"
-      outline="none"
-      borderColor="purple100"
-      borderWidth="standard"
-    >
-      {children}
-    </Box>
-  )
+  return <Box className={cn(styles.frameWrapper)}>{children}</Box>
 }
 
 export default ChartsCard
