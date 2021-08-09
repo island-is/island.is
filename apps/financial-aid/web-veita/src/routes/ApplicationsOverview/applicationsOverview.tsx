@@ -13,6 +13,8 @@ import { GetApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql
 
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 
+import * as styles from './applicationsOverview.treat'
+
 interface ApplicationsProvider {
   applications?: Application[]
 }
@@ -82,9 +84,9 @@ export const ApplicationsOverview = () => {
 
   if (currentNavigationItem) {
     return (
-      <AdminLayout>
+      <AdminLayout className={styles.adminPadding}>
         <Box className={`contentUp delay-25`} key={currentNavigationItem.label}>
-          <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={15}>
+          <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
             {currentNavigationItem.label}
           </Text>
         </Box>

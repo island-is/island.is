@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Text } from '@island.is/island-ui/core'
 import * as styles from './ApplicationsTable.treat'
 import { useRouter } from 'next/router'
 
@@ -63,7 +63,7 @@ const ApplicationsTable: React.FC<PageProps> = ({
     )
   }
 
-  return <div>Engar umsóknir</div>
+  return <Text>Engar umsóknir bíða þín, vel gert 👏</Text>
 }
 
 export default ApplicationsTable
