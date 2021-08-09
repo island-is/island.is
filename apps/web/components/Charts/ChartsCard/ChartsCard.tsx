@@ -1,7 +1,7 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-import { Box, Text, Hyphen, Inline } from '@island.is/island-ui/core'
+import { Box, Text, Hyphen } from '@island.is/island-ui/core'
 import {
   MixedChart,
   SimpleBarChart,

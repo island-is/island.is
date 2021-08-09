@@ -66,6 +66,7 @@ export const DataLinkSection = ({
               </GridColumn>
             )
           }
+          return
         })}
       </GridRow>
     </GridContainer>
