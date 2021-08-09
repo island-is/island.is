@@ -1,6 +1,6 @@
 # Party Application
 
-This application allows governmental parties to apply to take part in the upcoming elections.
+This application allows political parties to announce candidacy.
 
 ## Setup
 
