@@ -363,7 +363,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     marginTop: '2.25rem',
   })
 
-  global('.chapter__title, .article__title', {
+  global('.section__title, .chapter__title, .article__title', {
     marginTop: '3rem',
     marginBottom: '.333rem',
     fontSize: '1.2em',
@@ -377,6 +377,13 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     marginBottom: '.75rem',
     fontSize: '1.1em',
     backgroundColor: 'rgba(0,102,255, 0.06)',
+  })
+  global('.section__title', {
+    fontSize: '1.25em',
+    backgroundColor: 'rgba(153,0,255, 0.06)',
+  })
+  global('.section__title::before', {
+    content: '"Hluti"',
   })
   global('.chapter__title::before', {
     content: '"Kafli"',
@@ -411,6 +418,8 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
 
   global(
     `
+    .section__title em,
+    .section__title i,
     .chapter__title em,
     .chapter__title i,
     .article__title em,
