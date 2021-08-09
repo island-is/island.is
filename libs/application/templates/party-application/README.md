@@ -4,7 +4,19 @@ This application allows governmental parties to apply to take part in the upcomi
 
 ## Setup
 
-Application System setup: [Setup](https://docs.devland.is/apps/application-system)
+To setup the docker environment run (this only needs to be run once):
+
+```bash
+yarn nx run application-templates-party-application:init
+```
+
+To start all required services:
+
+```bash
+yarn nx run application-templates-party-application:start
+```
+
+This template runs within the application system, make sure your setup fulfills requirements set by the [Application System](https://docs.devland.is/apps/application-system)
 
 ### Additional setup
 
@@ -35,30 +47,6 @@ SOFFIA_USER
 
 - Run `kubectl port-forward svc/socat-soffia 8443:443 -n socat`
 - Keep this process running while running the project
-
-### Current user companies provider
-
-Make sure the following environment variable is set
-
-```bash
-RSK_API_PASSWORD
-```
-
-- A good way to get environment variables is to run `yarn get-secrets service-portal`
-
-## Running project locally
-
-To docker environment run (this only needs to be run once):
-
-```bash
-yarn nx run application-templates-party-application:init
-```
-
-To start all required services:
-
-```bash
-yarn nx run application-templates-party-application:start
-```
 
 ## Code owners and maintainers
 

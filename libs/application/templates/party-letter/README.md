@@ -4,7 +4,19 @@ This application allows governmental parties to get assigned a party letter for 
 
 ## Setup
 
-Application System setup: [Setup](https://docs.devland.is/apps/application-system)
+To setup the docker environment run (this only needs to be run once):
+
+```bash
+yarn nx run application-templates-party-letter:init
+```
+
+To start all required services:
+
+```bash
+yarn nx run application-templates-party-letter:start
+```
+
+This template runs within the application system, make sure your setup fulfills requirements set by the [Application System](https://docs.devland.is/apps/application-system)
 
 ### Additional setup
 
@@ -45,20 +57,6 @@ RSK_API_PASSWORD
 ```
 
 - A good way to get environment variables is to run `yarn get-secrets service-portal`
-
-## Running project locally
-
-To docker environment run (this only needs to be run once):
-
-```bash
-yarn nx run application-templates-party-letter:init
-```
-
-To start all required services:
-
-```bash
-yarn nx run application-templates-party-letter:start
-```
 
 ## Code owners and maintainers
 
