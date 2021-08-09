@@ -179,7 +179,7 @@ export const RegulationsSearchSection = (
           opts = opts.concat(
             subChapters.map(({ name, slug }) => ({
               value: slug,
-              label: `    ${name}`,
+              label: '    ' + name,
             })),
           )
           return opts
