@@ -10,7 +10,7 @@ export const frameWrapper = style({
   textDecoration: 'none',
   overflowX: 'scroll',
   position: 'relative',
-  overflow: 'visible',
+  // overflow: 'visible',
   background: 'transparent',
   outline: 'none',
   ':hover': {
@@ -56,6 +56,6 @@ export const graphWrapper = style({
 
 export const graphParent = style({
   justifyContent: 'center',
-  width: '80%',
-  height: '408px',
+  width: '90%',
+  height: '80%',
 })

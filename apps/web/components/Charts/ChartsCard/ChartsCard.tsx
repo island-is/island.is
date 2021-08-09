@@ -87,9 +87,12 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
         </Box>
       </Box>
       <Box
-        className={cn(styles.graphWrapper)}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
         style={{
           width: graph.type === 'Pie' || !shouldStack ? '100%' : '889px',
+          height: '100%',
         }}
       >
         <Box className={cn(styles.graphParent)}>
