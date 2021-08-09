@@ -15,12 +15,13 @@ import {
   Toggle,
 } from './types/input-types'
 
-export class ServiceBuilder<ServiceType> implements Service {
+export class ServiceBuilder<ServiceType, FeatureToggles extends string>
+  implements Service<FeatureToggles> {
   extraAttributes(attr: ExtraValues) {
     this.serviceDef.extraAttributes = attr
     return this
   }
-  serviceDef: ServiceDefinition
+  serviceDef: ServiceDefinition<FeatureToggles>
   liveness(path: string | Partial<HealthProbe>) {
     if (typeof path === 'string') {
       this.serviceDef.liveness.path = path
@@ -42,7 +43,7 @@ export class ServiceBuilder<ServiceType> implements Service {
     return this
   }
 
-  toggles(toggles: { [name: string]: Toggle }) {
+  toggles(toggles: { [name in FeatureToggles]: Toggle }) {
     this.serviceDef.toggles = toggles
     return this
   }
@@ -52,7 +53,6 @@ export class ServiceBuilder<ServiceType> implements Service {
       liveness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       readiness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       env: {},
-      toggles: {},
       name: name,
       grantNamespaces: [],
       grantNamespacesEnabled: false,
@@ -218,6 +218,13 @@ export const ref = (renderer: (env: Context) => string) => {
 }
 export const service = <Service extends string>(
   name: Service,
-): ServiceBuilder<Service> => {
+): ServiceBuilder<Service, ''> => {
   return new ServiceBuilder(name)
+}
+
+export const service2 = <Service extends string, FeatureToggles extends string>(
+  name: Service,
+  features: FeatureToggles,
+): ServiceBuilder<Service, FeatureToggles> => {
+  return new ServiceBuilder<Service, FeatureToggles>(name)
 }

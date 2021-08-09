@@ -1,4 +1,4 @@
-import { service } from './dsl'
+import { service, service2 } from './dsl'
 import { UberChart } from './uber-chart'
 import { serializeService } from './map-to-values'
 import { SerializeSuccess } from './types/output-types'
@@ -15,33 +15,41 @@ const Staging: EnvironmentConfig = {
   global: {},
 }
 
+const tglz = <t extends string>(): t => {
+  return '' as t
+}
+
 describe('Server-side toggles', () => {
-  const sut = service('api')
+  const sut = service2('api', tglz<'api' | 'backend'>())
     .namespace('islandis')
     .image('test')
+    .env({
+      B: 'A',
+    })
     .toggles({
-      A: {
+      api: {
         env: {
           A: 'B',
         },
         secrets: { KEY: '/k8s/secret' },
-        status: {
-          dev: 'ON',
-          prod: 'OFF',
-          staging: 'ON',
-        },
+      },
+      backend: {
+        env: {},
+        secrets: {},
       },
     })
-  const result = serializeService(
-    sut,
-    new UberChart(Staging),
-  ) as SerializeSuccess
+    .initContainer({
+      containers: [{ command: 'go' }],
+    })
+  const result = serializeService(sut, new UberChart(Staging), [
+    'api',
+  ]) as SerializeSuccess
 
-  it('env variables present in toggled env', () => {
+  it('env variables present when feature toggled', () => {
     expect(result.serviceDef.env!['A']).toBe('B')
   })
 
-  it('env variables missing in untoggled env', () => {
+  it('env variables missing when feature not toggled', () => {
     const result = serializeService(
       sut,
       new UberChart({ ...Staging, type: 'prod' }),
@@ -49,11 +57,11 @@ describe('Server-side toggles', () => {
     expect(result.serviceDef.env!['A']).toBeUndefined()
   })
 
-  it('secret present in toggled env', () => {
+  it('secret present when feature toggled', () => {
     expect(result.serviceDef.secrets!['KEY']).toBe('/k8s/secret')
   })
 
-  it('secret missing in untoggled env', () => {
+  it('secret missing when feature not toggled', () => {
     const result = serializeService(
       sut,
       new UberChart({ ...Staging, type: 'prod' }),

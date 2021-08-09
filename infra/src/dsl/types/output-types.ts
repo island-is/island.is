@@ -130,9 +130,10 @@ export type SerializeErrors = {
   errors: string[]
 }
 
-export type SerializeMethod = (
-  service: Service,
+export type SerializeMethod = <FeatureToggles extends string>(
+  service: Service<FeatureToggles>,
   uberChart: UberChartType,
+  featuresOn?: FeatureToggles[],
 ) => SerializeSuccess | SerializeErrors
 
 export type ValueFile = { [name: string]: ServiceHelm }

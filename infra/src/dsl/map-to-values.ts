@@ -10,6 +10,7 @@ import {
   ExtraValues,
   EnvironmentVariableValue,
   PostgresInfo,
+  Toggle,
 } from './types/input-types'
 import {
   ContainerEnvironmentVariables,
@@ -25,9 +26,12 @@ import { EnvironmentConfig, UberChartType } from './types/charts'
  * @param service Our service definition
  * @param uberChart Uber chart in a specific environment the service will be part of
  */
-export const serializeService: SerializeMethod = (
-  service: Service,
+export const serializeService: SerializeMethod = <
+  FeatureToggles extends string
+>(
+  service: Service<FeatureToggles>,
   uberChart: UberChartType,
+  featuresOn: FeatureToggles[] = [],
 ) => {
   let allErrors: string[] = []
   const serviceDef = service.serviceDef
@@ -121,36 +125,38 @@ export const serializeService: SerializeMethod = (
     result.secrets = serviceDef.secrets
   }
 
-  const activeToggles = Object.entries(serviceDef.toggles).filter(
-    ([_, v]) => v.status[uberChart.env.type] === 'ON',
-  )
-  const toggleEnvs = activeToggles.map(([name, v]) => {
-    return {
-      name,
-      vars: serializeEnvironmentVariables(service, uberChart, v.env),
-    }
-  })
-  const toggleSecrets = activeToggles.map(([name, v]) => {
-    return {
-      name,
-      secrets: v.secrets,
-    }
-  })
+  if (serviceDef.toggles) {
+    const activeToggles = Object.entries(serviceDef.toggles!).filter(([_, v]) =>
+      featuresOn.includes(_ as FeatureToggles),
+    ) as [FeatureToggles, Toggle][]
+    const toggleEnvs = activeToggles.map(([name, v]) => {
+      return {
+        name,
+        vars: serializeEnvironmentVariables(service, uberChart, v.env),
+      }
+    })
+    const toggleSecrets = activeToggles.map(([name, v]) => {
+      return {
+        name,
+        secrets: v.secrets,
+      }
+    })
 
-  result.env = {
-    ...result.env,
-    ...toggleEnvs.reduce(
-      (acc, toggle) => ({ ...acc, ...toggle.vars.envs }),
-      {} as ContainerEnvironmentVariables,
-    ),
-  }
+    result.env = {
+      ...result.env,
+      ...toggleEnvs.reduce(
+        (acc, toggle) => ({ ...acc, ...toggle.vars.envs }),
+        {} as ContainerEnvironmentVariables,
+      ),
+    }
 
-  result.secrets = {
-    ...result.secrets,
-    ...toggleSecrets.reduce(
-      (acc, toggle) => ({ ...acc, ...toggle.secrets }),
-      {} as ContainerSecrets,
-    ),
+    result.secrets = {
+      ...result.secrets,
+      ...toggleSecrets.reduce(
+        (acc, toggle) => ({ ...acc, ...toggle.secrets }),
+        {} as ContainerSecrets,
+      ),
+    }
   }
 
   // service account
@@ -253,10 +259,10 @@ export const serializeService: SerializeMethod = (
 }
 
 export const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
-export const resolveDbHost = (
+export const resolveDbHost = <FeatureToggles extends string>(
   postgres: PostgresInfo,
   uberChart: UberChartType,
-  service: Service,
+  service: Service<FeatureToggles>,
 ) => {
   if (postgres.host) {
     const resolved = resolveVariable(
@@ -277,10 +283,10 @@ export const resolveDbHost = (
     return uberChart.env.auroraHost
   }
 }
-function serializePostgres(
-  serviceDef: ServiceDefinition,
+function serializePostgres<FeatureToggles extends string>(
+  serviceDef: ServiceDefinition<FeatureToggles>,
   uberChart: UberChartType,
-  service: Service,
+  service: Service<FeatureToggles>,
   postgres: PostgresInfo,
 ) {
   const existingEnvVars = ['DB_USER', 'DB_NAME', 'DB_HOST'].filter((v) =>
@@ -313,8 +319,8 @@ function serializePostgres(
   return { env, secrets, envErros, secretErrors }
 }
 
-function serializeIngress(
-  serviceDef: ServiceDefinition,
+function serializeIngress<FeatureToggles extends string>(
+  serviceDef: ServiceDefinition<FeatureToggles>,
   ingressConf: Ingress,
   env: EnvironmentConfig,
   ingressName: string,
@@ -372,10 +378,10 @@ function serializeContainerRuns(
   })
 }
 
-function serializeValueType(
+function serializeValueType<FeatureToggles extends string>(
   value: ValueType,
   uberChart: UberChartType,
-  service: Service,
+  service: Service<FeatureToggles>,
 ): { type: 'error' } | { type: 'success'; value: string } {
   if (value === MissingSetting) return { type: 'error' }
   const result =
@@ -389,8 +395,8 @@ function serializeValueType(
   return { type: 'success', value: result }
 }
 
-function serializeExtraVariables(
-  service: Service,
+function serializeExtraVariables<FeatureToggles extends string>(
+  service: Service<FeatureToggles>,
   uberChart: UberChartType,
   envs: ExtraValues,
 ): { errors: string[]; envs: Hash } {
@@ -407,8 +413,8 @@ function serializeExtraVariables(
   }
 }
 
-function serializeEnvironmentVariables(
-  service: Service,
+function serializeEnvironmentVariables<FeatureToggles extends string>(
+  service: Service<FeatureToggles>,
   uberChart: UberChartType,
   envs: EnvironmentVariables,
 ): { errors: string[]; envs: { [name: string]: string } } {
@@ -448,10 +454,10 @@ const hostFullName = (host: string, env: EnvironmentConfig) => {
 const internalHostFullName = (host: string, env: EnvironmentConfig) =>
   host.indexOf('.') < 0 ? `${host}.internal.${env.domain}` : host
 
-function resolveVariable(
+function resolveVariable<FeatureToggles extends string>(
   value: EnvironmentVariableValue,
   uberChart: UberChartType,
-  service: Service,
+  service: Service<FeatureToggles>,
 ) {
   return typeof value === 'object'
     ? serializeValueType(value[uberChart.env.type], uberChart, service)
