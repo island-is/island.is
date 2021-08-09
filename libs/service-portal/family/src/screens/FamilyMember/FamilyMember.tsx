@@ -16,6 +16,7 @@ import {
   NotFound,
   ServicePortalModuleComponent,
   UserInfoLine,
+  m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -72,26 +73,17 @@ const FamilyMember: ServicePortalModuleComponent = () => {
       </Box>
       <Stack space={1}>
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:display-name',
-            defaultMessage: 'Birtingarnafn',
-          })}
+          label={defineMessage(m.displayName)}
           content={person?.fullName || '...'}
           loading={loading}
         />
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:natreg',
-            defaultMessage: 'Kennitala',
-          })}
+          label={defineMessage(m.natreg)}
           content={formatNationalId(nationalId)}
           loading={loading}
         />
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:gender',
-            defaultMessage: 'Kyn',
-          })}
+          label={defineMessage(m.gender)}
           content={
             error
               ? formatMessage(dataNotFoundMessage)

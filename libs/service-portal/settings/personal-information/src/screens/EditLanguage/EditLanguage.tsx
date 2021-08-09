@@ -13,6 +13,7 @@ import { Locale } from '@island.is/shared/types'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
+  m,
 } from '@island.is/service-portal/core'
 import {
   useCreateUserProfile,
@@ -109,12 +110,7 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
         language={language}
         renderBackButton={() => (
           <Link to={ServicePortalPath.SettingsPersonalInformation}>
-            <Button variant="ghost">
-              {formatMessage({
-                id: 'service.portal:go-back',
-                defaultMessage: 'Til baka',
-              })}
-            </Button>
+            <Button variant="ghost">{formatMessage(m.goBack)}</Button>
           </Link>
         )}
         renderSubmitButton={() => (

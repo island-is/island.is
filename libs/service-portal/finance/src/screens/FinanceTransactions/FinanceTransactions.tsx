@@ -13,7 +13,7 @@ import {
   CustomerRecords,
 } from './FinanceTransactionsData.types'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import { m } from '../../lib/messages'
+import { m } from '@island.is/service-portal/core'
 import {
   Box,
   Text,
