@@ -37,13 +37,15 @@ describe('Server-side toggles', () => {
     new UberChart(Staging),
   ) as SerializeSuccess
 
-  it('env variables', () => {
+  it('env variables present in toggled env', () => {
     expect(result.serviceDef.env!['A']).toBe('B')
   })
 
-  it('image and repo', () => {
-    expect(result.serviceDef.image.repository).toBe(
-      '821090935708.dkr.ecr.eu-west-1.amazonaws.com/test',
-    )
+  it('env variables missing in untoggled env', () => {
+    const result = serializeService(
+      sut,
+      new UberChart({ ...Staging, type: 'prod' }),
+    ) as SerializeSuccess
+    expect(result.serviceDef.env!['A']).toBeUndefined()
   })
 })
