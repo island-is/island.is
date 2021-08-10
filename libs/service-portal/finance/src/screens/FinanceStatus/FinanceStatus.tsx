@@ -1,7 +1,7 @@
 import React from 'react'
 import flatten from 'lodash/flatten'
 import { gql, useQuery } from '@apollo/client'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
 import {
@@ -16,7 +16,6 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../lib/messages'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
