@@ -41,6 +41,15 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
 
   const workplaceData = getWorkplaceData(application.answers)
 
+  const attachments = [
+    ...(answers.attachments.deathCertificateFile
+      ? answers.attachments.deathCertificateFile
+      : []),
+    ...(answers.attachments.injuryCertificateFile
+      ? answers.attachments.injuryCertificateFile
+      : []),
+  ]
+
   return (
     <Box component="section" paddingTop={2}>
       <Text>
@@ -296,7 +305,7 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
           <GridColumn span={['12/12', '12/12', '9/12']}>
             <FileValueLine
               label={overview.labels.attachments}
-              files={answers.attachments.injuryCertificateFile}
+              files={attachments}
             />
           </GridColumn>
         </GridRow>
