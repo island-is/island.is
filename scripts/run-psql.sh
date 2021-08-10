@@ -13,6 +13,8 @@ trap "kill 0" EXIT
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 get_creds() {
+  local ns
+  ns="$1"
   kubectl get pods -o=jsonpath='{.items[0]..metadata.name}' | \
       xargs -I{} \
       kubectl exec --stdin {} -- \
@@ -52,7 +54,8 @@ run_proxy() {
 function usage {
         echo "Usage: $(basename $0) [-anq]" 2>&1
         echo '   -c   returns db credentials.'
-        echo '   -n   set cluster name [dev,staging,prod], this will run db-proxy in subshell.'
+        echo '   -l   set cluster name [dev,staging,prod], this will run db-proxy in subshell.'
+        echo '   -n   cluster namespace.'
         echo '   -q   SQL query, returns json results.'
         echo '   -p   enter psql console.'
         exit 1
@@ -62,11 +65,12 @@ if [[ ${#} -eq 0 ]]; then
    usage
 fi
 CLUSTER_NAME=""
+NAMESPACE=""
 CREDS=false
 PSQL=false
 QUERY=""
 
-while getopts ':cpn:q:' arg; do
+while getopts ':cpn:l:q:' arg; do
   case "${arg}" in
     p)
       PSQL=true
@@ -74,8 +78,11 @@ while getopts ':cpn:q:' arg; do
     c)
       CREDS=true
       ;;
-    n)
+    l)
       CLUSTER_NAME="${OPTARG}"
+      ;;
+    n)
+      NAMESPACE="${OPTARG}"
       ;;
     q)
       QUERY="${OPTARG}"
@@ -88,8 +95,13 @@ while getopts ':cpn:q:' arg; do
   esac
 done
 
+if [ -z "$NAMESPACE" ]; then
+  echo "ERROR: -n [namespace] is required"
+  exit 1
+fi
+
 if [ "$CREDS" == true ]; then
-  read -r POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB <<< $(get_creds)
+  read -r POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB <<< $(get_creds "$NAMESPACE")
   echo "export DB_USER=$POSTGRES_USER DB_PASS=$POSTGRES_PASSWORD DB_NAME=$POSTGRES_DB"
   exit 0
 fi
@@ -100,7 +112,7 @@ fi
 
 if [ "$PSQL" == true ]; then
   # run psql console, query is empty
-  read -r POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB <<< $(get_creds)
+  read -r POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB <<< $(get_creds "$NAMESPACE")
   psql_connect "$POSTGRES_USER" "$POSTGRES_PASSWORD" "$POSTGRES_DB" "$QUERY" $PSQL
   exit 0
 fi
@@ -110,7 +122,7 @@ if [ -z "$QUERY" ]; then
   exit 1
 fi
 
-read -r POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB <<< $(get_creds)
+read -r POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB <<< $(get_creds "$NAMESPACE")
 psql_connect \
   "$POSTGRES_USER" \
   "$POSTGRES_PASSWORD" \
