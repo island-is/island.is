@@ -8,6 +8,7 @@ import {
   QueryGetGroupedMenuArgs,
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
+  ContentLanguage,
 } from '@island.is/web/graphql/schema'
 import {
   GridContainer,
@@ -172,7 +173,7 @@ OpenDataPage.getInitialProps = async ({ apolloClient, locale }) => {
       query: GET_OPEN_DATA_PAGE_QUERY,
       variables: {
         input: {
-          lang: locale,
+          lang: locale as ContentLanguage,
         },
       },
     }),

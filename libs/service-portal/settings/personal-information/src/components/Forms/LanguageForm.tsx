@@ -1,6 +1,7 @@
 import { Box, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
+import { m } from '@island.is/service-portal/core'
 import React, { FC, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
@@ -56,10 +57,7 @@ export const LanguageForm: FC<Props> = ({
                     language: value as LanguageFormOption,
                   })
               }}
-              label={formatMessage({
-                id: 'service.portal:language',
-                defaultMessage: 'Tungumál',
-              })}
+              label={formatMessage(m.language)}
               options={[
                 { label: 'Íslenska', value: 'is' },
                 { label: 'English', value: 'en' },

@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { Box, Button, Input } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 
 export interface PhoneFormData {
@@ -100,10 +101,7 @@ export const FormStep: FC<Props> = ({
           icon="arrowForward"
           disabled={loading}
         >
-          {formatMessage({
-            id: 'service.portal:confirm-code',
-            defaultMessage: 'Senda staðfestingarkóða',
-          })}
+          {formatMessage(m.confirmCode)}
         </Button>
       </Box>
     </form>

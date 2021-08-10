@@ -4,6 +4,7 @@ import { defineMessage } from 'react-intl'
 import {
   ServicePortalModule,
   ServicePortalPath,
+  m,
 } from '@island.is/service-portal/core'
 
 export const endorsementsModule: ServicePortalModule = {
@@ -11,10 +12,7 @@ export const endorsementsModule: ServicePortalModule = {
   widgets: () => [],
   routes: () => [
     {
-      name: defineMessage({
-        id: 'service.portal:endorsements',
-        defaultMessage: 'Meðmæli',
-      }),
+      name: m.endorsements,
       path: ServicePortalPath.Endorsements,
       render: () => lazy(() => import('./screens/Endorsements')),
     },
