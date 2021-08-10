@@ -26,5 +26,10 @@ export const overview = {
       defaultMessage: 'Fylgiskjöl',
       description: 'Attachments',
     },
+    workMachine: {
+      id: 'an.application:overview.labels.workMachine',
+      defaultMessage: 'Upplýsingar um vinnuvél sem tengist slysi',
+      description: 'Label for work machine section in overview',
+    },
   }),
 }
