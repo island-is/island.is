@@ -18,7 +18,7 @@ import {
   Pagination,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { m } from '@island.is/service-portal/core'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
 import amountFormat from '../../utils/amountFormat'
 import { showPdfDocument } from '@island.is/service-portal/graphql'

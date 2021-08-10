@@ -13,11 +13,13 @@ function EducationStudentAssessment(): JSX.Element {
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
         title={defineMessage({
-          id: 'service.portal:education-student-assessment-title',
+          id:
+            'sp.education-student-assessment:education-student-assessment-title',
           defaultMessage: 'Námsmat',
         })}
         intro={defineMessage({
-          id: 'service.portal:education-student-assessment-intro',
+          id:
+            'sp.education-student-assessment:education-student-assessment-intro',
           defaultMessage: 'Hér getur þú skoðað námsmat.',
         })}
         img="./assets/images/educationGrades.svg"

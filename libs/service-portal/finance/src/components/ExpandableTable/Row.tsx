@@ -9,7 +9,7 @@ import {
   LoadingDots,
   Table as T,
 } from '@island.is/island-ui/core'
-import { m } from '../../lib/messages'
+import { m } from '@island.is/service-portal/core'
 import * as styles from './ExpandableTable.treat'
 
 interface Props {
