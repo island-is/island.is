@@ -13,10 +13,10 @@ import {
   OpsEnv,
   HealthProbe,
   Toggle,
+  Toggles,
 } from './types/input-types'
 
-export class ServiceBuilder<ServiceType, FeatureToggles extends string>
-  implements Service {
+export class ServiceBuilder<ServiceType> implements Service {
   extraAttributes(attr: ExtraValues) {
     this.serviceDef.extraAttributes = attr
     return this
@@ -43,14 +43,8 @@ export class ServiceBuilder<ServiceType, FeatureToggles extends string>
     return this
   }
 
-  toggles(toggles: { [name in FeatureToggles]?: Toggle }) {
-    this.serviceDef.toggles = Object.entries(toggles).reduce(
-      (acc, entry) => ({
-        ...acc,
-        [entry[0]]: entry[1],
-      }),
-      {},
-    )
+  toggles(toggles: Partial<Toggles>) {
+    this.serviceDef.toggles = toggles
     return this
   }
 
@@ -223,15 +217,9 @@ const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
 export const ref = (renderer: (env: Context) => string) => {
   return renderer
 }
+
 export const service = <Service extends string>(
   name: Service,
-): ServiceBuilder<Service, ''> => {
+): ServiceBuilder<Service> => {
   return new ServiceBuilder(name)
-}
-
-export const service2 = <Service extends string, FeatureToggles extends string>(
-  name: Service,
-  features: FeatureToggles,
-): ServiceBuilder<Service, FeatureToggles> => {
-  return new ServiceBuilder<Service, FeatureToggles>(name)
 }

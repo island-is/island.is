@@ -20,15 +20,14 @@ import {
   ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig, UberChartType } from './types/charts'
+import { FeatureToggles } from './features'
 
 /**
  * Transforms our definition of a service to a Helm values object
  * @param service Our service definition
  * @param uberChart Uber chart in a specific environment the service will be part of
  */
-export const serializeService: SerializeMethod = <
-  FeatureToggles extends string
->(
+export const serializeService: SerializeMethod = (
   service: Service,
   uberChart: UberChartType,
   featuresOn: FeatureToggles[] = [],
@@ -209,6 +208,42 @@ export const serializeService: SerializeMethod = <
         }
         allErrors = allErrors.concat(envErros)
         allErrors = allErrors.concat(secretErrors)
+      }
+      if (serviceDef.initContainers.toggles) {
+        const activeToggles = Object.entries(
+          serviceDef.initContainers.toggles,
+        ).filter(([_, v]) => featuresOn.includes(_ as FeatureToggles)) as [
+          FeatureToggles,
+          Toggle,
+        ][]
+        const toggleEnvs = activeToggles.map(([name, v]) => {
+          return {
+            name,
+            vars: serializeEnvironmentVariables(service, uberChart, v.env),
+          }
+        })
+        const toggleSecrets = activeToggles.map(([name, v]) => {
+          return {
+            name,
+            secrets: v.secrets,
+          }
+        })
+
+        result.initContainer.env = {
+          ...result.initContainer.env,
+          ...toggleEnvs.reduce(
+            (acc, toggle) => ({ ...acc, ...toggle.vars.envs }),
+            {} as ContainerEnvironmentVariables,
+          ),
+        }
+
+        result.initContainer.secrets = {
+          ...result.initContainer.secrets,
+          ...toggleSecrets.reduce(
+            (acc, toggle) => ({ ...acc, ...toggle.secrets }),
+            {} as ContainerSecrets,
+          ),
+        }
       }
     } else {
       allErrors.push('No containers to run defined in initContainers')

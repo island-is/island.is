@@ -1,5 +1,6 @@
 import { Hash, ReplicaCount, Service, ValueType } from './input-types'
 import { UberChartType } from './charts'
+import { FeatureToggles } from '../features'
 
 // Output types
 export type ContainerRunHelm = {
@@ -130,7 +131,7 @@ export type SerializeErrors = {
   errors: string[]
 }
 
-export type SerializeMethod = <FeatureToggles extends string>(
+export type SerializeMethod = (
   service: Service,
   uberChart: UberChartType,
   featuresOn?: FeatureToggles[],

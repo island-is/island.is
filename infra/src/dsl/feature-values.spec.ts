@@ -20,7 +20,7 @@ const Dev: EnvironmentConfig = {
 describe('Feature-deployment support', () => {
   const dependencyA = service('service-a').namespace('A')
   const dependencyB = service('service-b')
-  const apiService: ServiceBuilder<'graphql', ''> = service('graphql')
+  const apiService: ServiceBuilder<'graphql'> = service('graphql')
     .env({
       A: ref((h) => `${h.svc(dependencyA)}`),
       B: ref((h) => `${h.featureName ? 'feature-' : ''}${h.svc(dependencyB)}`),
@@ -77,6 +77,7 @@ describe('Feature-deployment support', () => {
     expect(values['graphql'].namespace).toEqual(`feature-${Dev.feature}`)
     expect(values['service-a'].namespace).toEqual(`feature-${Dev.feature}`)
   })
+
   it('feature deployment ingress', () => {
     expect(values.graphql.ingress).toEqual({
       'primary-alb': {

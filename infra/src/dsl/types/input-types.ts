@@ -1,3 +1,4 @@
+import { FeatureToggles } from '../features'
 import { EnvironmentConfig } from './charts'
 
 export type OpsEnv = 'dev' | 'staging' | 'prod'
@@ -33,6 +34,8 @@ export type Toggle = {
   secrets: Secrets
 }
 
+export type Toggles = { [name in FeatureToggles]?: Toggle }
+
 export type ServiceDefinition = {
   liveness: HealthProbe
   readiness: HealthProbe
@@ -41,7 +44,7 @@ export type ServiceDefinition = {
   env: EnvironmentVariables
   secrets: Secrets
   ingress: { [name: string]: Ingress }
-  toggles: { [name: string]: Toggle }
+  toggles: Partial<Toggles>
   postgres?: PostgresInfo
   namespace: string
   grantNamespaces: string[]
@@ -89,6 +92,7 @@ export type ReplicaCount = {
 export type InitContainers = {
   envs?: EnvironmentVariables
   secrets?: { [key: string]: SecretType }
+  toggles?: Partial<Toggles>
   containers: {
     command: string
     args?: string[]

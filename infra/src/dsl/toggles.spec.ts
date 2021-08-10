@@ -1,4 +1,4 @@
-import { service, service2 } from './dsl'
+import { service } from './dsl'
 import { UberChart } from './uber-chart'
 import { serializeService } from './map-to-values'
 import { SerializeSuccess } from './types/output-types'
@@ -15,19 +15,15 @@ const Staging: EnvironmentConfig = {
   global: {},
 }
 
-const tglz = <t extends string>(): t => {
-  return '' as t
-}
-
 describe('Server-side toggles', () => {
-  const sut = service2('api', tglz<'api' | 'backend'>())
+  const sut = service('api')
     .namespace('islandis')
     .image('test')
     .env({
       B: 'A',
     })
     .toggles({
-      api: {
+      'do-not-remove-for-testing-only': {
         env: {
           A: 'B',
         },
@@ -36,9 +32,19 @@ describe('Server-side toggles', () => {
     })
     .initContainer({
       containers: [{ command: 'go' }],
+      toggles: {
+        'do-not-remove-for-testing-only': {
+          env: {
+            C: 'D',
+          },
+          secrets: {
+            INIT: '/a/b/c',
+          },
+        },
+      },
     })
   const result = serializeService(sut, new UberChart(Staging), [
-    'api',
+    'do-not-remove-for-testing-only',
   ]) as SerializeSuccess
 
   it('env variables present when feature toggled', () => {
@@ -48,7 +54,7 @@ describe('Server-side toggles', () => {
   it('env variables missing when feature not toggled', () => {
     const result = serializeService(
       sut,
-      new UberChart({ ...Staging, type: 'prod' }),
+      new UberChart(Staging),
     ) as SerializeSuccess
     expect(result.serviceDef.env!['A']).toBeUndefined()
   })
@@ -60,8 +66,16 @@ describe('Server-side toggles', () => {
   it('secret missing when feature not toggled', () => {
     const result = serializeService(
       sut,
-      new UberChart({ ...Staging, type: 'prod' }),
+      new UberChart(Staging),
     ) as SerializeSuccess
     expect(result.serviceDef.env!['KEY']).toBeUndefined()
+  })
+
+  it('should have initcontainer env variables present when feature toggled', () => {
+    expect(result.serviceDef.initContainer!.env!['C']).toBe('D')
+  })
+
+  it('should have initcontainer secret present when feature toggled', () => {
+    expect(result.serviceDef.initContainer!.secrets!['INIT']).toBe('/a/b/c')
   })
 })
