@@ -7,27 +7,27 @@ export const m = defineMessages({
     defaultMessage: 'Skjalaveita',
   },
   documentProviders: {
-    id: 'service.portal:document-provider-document-providers',
+    id: 'sp.document-provider:document-providers',
     defaultMessage: 'Skjalaveitur',
   },
   documentProviderSingle: {
-    id: 'service.portal:document-provider-document-provider-single',
+    id: 'sp.document-provider:document-provider-single',
     defaultMessage: 'Skjalaveitandi',
   },
   MyCategories: {
-    id: 'service.portal:document-provider-my-categories',
+    id: 'sp.document-provider:my-categories',
     defaultMessage: 'Mínir flokkar',
   },
   Settings: {
-    id: 'service.portal:document-provider-settings',
+    id: 'sp.document-provider:settings',
     defaultMessage: 'Stillingar',
   },
   TechnicalInformation: {
-    id: 'service.portal:document-provider-technical-information',
+    id: 'sp.document-provider:technical-information',
     defaultMessage: 'Tæknileg útfærsla',
   },
   Statistics: {
-    id: 'service.portal:document-provider-statistics',
+    id: 'sp.document-provider:statistics',
     defaultMessage: 'Tölfræði',
   },
 
@@ -42,47 +42,43 @@ export const m = defineMessages({
     defaultMessage: 'Á þessari síðu getur þú skoðað tölfræði yfir send skjöl.',
   },
   DashBoardStatisticsFileName: {
-    id: 'service.portal:document-provider-dashboard-statistics-file-name',
+    id: 'sp.document-provider:dashboard-statistics-file-name',
     defaultMessage: 'Leitaðu eftir skjalaheiti',
   },
   DashBoardStatisticsCategory: {
-    id: 'service.portal:document-provider-dashboard-statistics-category',
+    id: 'sp.document-provider:dashboard-statistics-category',
     defaultMessage: 'Flokkur',
   },
   DashBoardStatisticsCategoryPlaceHolder: {
-    id:
-      'service.portal:document-provider-dashboard-statistics-category-placeholder',
+    id: 'sp.document-provider:dashboard-statistics-category-placeholder',
     defaultMessage: 'Veldu flokk',
   },
   DashBoardStatisticsType: {
-    id: 'service.portal:document-provider-dashboard-statistics-type',
+    id: 'sp.document-provider:dashboard-statistics-type',
     defaultMessage: 'Tegund',
   },
   DashBoardStatisticsTypePlaceHolder: {
-    id:
-      'service.portal:document-provider-dashboard-statistics-type-placeholder',
+    id: 'sp.document-provider:dashboard-statistics-type-placeholder',
     defaultMessage: 'Veldu tegund',
   },
   DashBoardStatisticsDateFrom: {
-    id: 'service.portal:document-provider-dashboard-statistics-date-from',
+    id: 'sp.document-provider:dashboard-statistics-date-from',
     defaultMessage: 'Dagsetning frá',
   },
   DashBoardStatisticsDateFromPlaceHolder: {
-    id:
-      'service.portal:document-provider-dashboard-statistics-date-from-placeholder',
+    id: 'sp.document-provider:dashboard-statistics-date-from-placeholder',
     defaultMessage: 'Veldu dagsetningu',
   },
   DashBoardStatisticsDateTo: {
-    id: 'service.portal:document-provider-dashboard-statistics-date-to',
+    id: 'sp.document-provider:dashboard-statistics-date-to',
     defaultMessage: 'Dagsetning til',
   },
   DashBoardStatisticsDateToPlaceHolder: {
-    id:
-      'service.portal:document-provider-dashboard-statistics-date-to-placeholder',
+    id: 'sp.document-provider:dashboard-statistics-date-to-placeholder',
     defaultMessage: 'Veldu dagsetningu',
   },
   DashBoardStatisticsSearchButton: {
-    id: 'service.portal:document-provider-dashboard-statistics-search-button',
+    id: 'sp.document-provider:dashboard-statistics-search-button',
     defaultMessage: 'Skoða tölfræði',
   },
 
@@ -463,7 +459,7 @@ export const m = defineMessages({
 
   //Settings
   SettingsTitle: {
-    id: 'service.portal:document-provider-settings-title',
+    id: 'sp.document-provider:document-provider-settings-title',
     defaultMessage: 'Stillingar',
   },
   //Stofnun
@@ -475,26 +471,6 @@ export const m = defineMessages({
     id: 'sp.document-provider:edit-institution-description',
     defaultMessage: 'Hér getur þú breytt grunnupplýsingum fyrir stofnun',
   },
-  EditInstitutionTagOne: {
-    id: 'service.portal:name',
-    defaultMessage: 'Nafn',
-  },
-  EditInstitutionTagTwo: {
-    id: 'service.portal:nationalId',
-    defaultMessage: 'Kennitala',
-  },
-  EditInstitutionTagThree: {
-    id: 'service.portal:address',
-    defaultMessage: 'Heimilisfang',
-  },
-  EditInstitutionTagFour: {
-    id: 'service.portal:email',
-    defaultMessage: 'Netfang',
-  },
-  EditInstitutionTagFive: {
-    id: 'service.portal:tel',
-    defaultMessage: 'Símanúmer',
-  },
 
   //Ábyrgðarmaður
   EditResponsibleContact: {
@@ -504,18 +480,6 @@ export const m = defineMessages({
   EditResponsibleContactDescription: {
     id: 'sp.document-provider:edit-responsible-contact-description',
     defaultMessage: 'Hér getur þú breytt upplýsingum um ábyrgðarmann',
-  },
-  EditResponsibleContactTagOne: {
-    id: 'service.portal:name',
-    defaultMessage: 'Nafn',
-  },
-  EditResponsibleContactTagTwo: {
-    id: 'service.portal:email',
-    defaultMessage: 'Netfang',
-  },
-  EditResponsibleContactTagThree: {
-    id: 'service.portal:tel',
-    defaultMessage: 'Símanúmer',
   },
 
   //Tæknilegur tengiliður
@@ -527,18 +491,6 @@ export const m = defineMessages({
     id: 'sp.document-provider:edit-technical-contact-description',
     defaultMessage: 'Hér getur þú breytt upplýsingum um tæknilegan tengilið',
   },
-  EditTechnicalContactTagOne: {
-    id: 'service.portal:nafn',
-    defaultMessage: 'Nafn',
-  },
-  EditTechnicalContactTagTwo: {
-    id: 'service.portal:email',
-    defaultMessage: 'Netfang',
-  },
-  EditTechnicalContactTagThree: {
-    id: 'service.portal:tel',
-    defaultMessage: 'Símanúmer',
-  },
 
   //Notendaaðstoð
   EditUserHelpContact: {
@@ -549,14 +501,6 @@ export const m = defineMessages({
     id: 'sp.document-provider:edit-user-help-contact',
     defaultMessage: 'Hér getur þú breytt upplýsingum um notendaaðstoð',
   },
-  EditUserHelpContactTagOne: {
-    id: 'service.portal:email',
-    defaultMessage: 'Netfang',
-  },
-  EditUserHelpContactTagTwo: {
-    id: 'service.portal:tel',
-    defaultMessage: 'Símanúmer',
-  },
 
   //Endapunktur
   EditEndPoints: {
@@ -566,10 +510,6 @@ export const m = defineMessages({
   EditEndPointsDescription: {
     id: 'sp.document-provider:edit-endpoints',
     defaultMessage: 'Hér getur þú breytt endpunkt',
-  },
-  EditEndPointsTagOne: {
-    id: 'service.portal:endpoint',
-    defaultMessage: 'Endapunktur',
   },
 
   //EditInstitution

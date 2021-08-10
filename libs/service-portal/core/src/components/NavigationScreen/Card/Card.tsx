@@ -1,4 +1,5 @@
 import { Box, Inline, Tag, Text } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
@@ -16,12 +17,7 @@ const Card: FC<Props> = ({ title, description, tags, disabled }) => {
   const { formatMessage } = useLocale()
 
   return disabled ? (
-    <WipCard
-      label={formatMessage({
-        id: 'service.portal:in-progress',
-        defaultMessage: 'Í vinnslu',
-      })}
-    />
+    <WipCard label={formatMessage(m.inProgress)} />
   ) : (
     <Box
       position="relative"
