@@ -6,7 +6,7 @@ interface IdsAuthClaims {
   name: string
   nat: string
   idp: string
-  act?: {
+  actor?: {
     nationalId: string
     name: string
   }

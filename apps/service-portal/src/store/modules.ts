@@ -15,6 +15,7 @@ import { educationCareerModule } from '@island.is/service-portal/education-caree
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { licensesModule } from '@island.is/service-portal/licenses'
+import { wipModule } from '@island.is/service-portal/wip'
 
 /**
  * NOTE:
@@ -43,6 +44,7 @@ export type ModuleKeys =
   | 'assets'
   | 'applications'
   | 'licenses'
+  | 'wip'
 
 export const featureFlaggedModules: ModuleKeys[] = [
   'accessControl',
@@ -53,6 +55,7 @@ export const featureFlaggedModules: ModuleKeys[] = [
   'educationStudentAssessment',
   'endorsements',
   'icelandicNamesRegistry',
+  'finance',
   'personalInformation',
   'licenses',
 ]
@@ -73,4 +76,5 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   applications: applicationsModule,
   accessControl: accessControlModule,
   licenses: licensesModule,
+  wip: wipModule,
 }

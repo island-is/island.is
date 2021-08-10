@@ -69,6 +69,7 @@ export const Input = forwardRef(
       backgroundColor = 'white',
       onFocus,
       onBlur,
+      readOnly,
       onClick,
       onKeyDown,
       textarea,
@@ -183,6 +184,7 @@ export const Input = forwardRef(
                   onBlur(e)
                 }
               }}
+              readOnly={readOnly}
               type={type}
               {...(ariaError as AriaError)}
               {...inputProps}

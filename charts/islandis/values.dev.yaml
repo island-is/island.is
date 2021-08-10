@@ -89,6 +89,8 @@ api:
     DOCUMENT_PROVIDER_TOKEN_URL_TEST: /k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST
     DRIVING_LICENSE_SECRET: /k8s/api/DRIVING_LICENSE_SECRET
     DRIVING_LICENSE_XROAD_PATH: /k8s/api/DRIVING_LICENSE_XROAD_PATH
+    FINANCE_PASS: /k8s/service-portal/FINANCE_PASS
+    FINANCE_USER: /k8s/service-portal/FINANCE_USER
     HEALTH_INSURANCE_XROAD_PASSWORD: /k8s/health-insurance/XROAD-PASSWORD
     HEALTH_INSURANCE_XROAD_USERNAME: /k8s/health-insurance/XROAD-USER
     HEALTH_INSURANCE_XROAD_WSDLURL: /k8s/api/HEALTH_INSURANCE_XROAD_WSDLURL
@@ -103,6 +105,9 @@ api:
     POSTHOLF_CLIENT_SECRET: /k8s/documents/POSTHOLF_CLIENT_SECRET
     POSTHOLF_TOKEN_URL: /k8s/documents/POSTHOLF_TOKEN_URL
     REGULATIONS_API_URL: /k8s/api/REGULATIONS_API_URL
+    RSK_API_PASSWORD: /k8s/shared/api/RSK_API_PASSWORD
+    RSK_API_URL: /k8s/shared/api/RSK_API_URL
+    RSK_API_USERNAME: /k8s/shared/api/RSK_API_USERNAME
     SOFFIA_HOST_URL: /k8s/api/SOFFIA_HOST_URL
     SOFFIA_PASS: /k8s/service-portal/SOFFIA_PASS
     SOFFIA_SOAP_URL: /k8s/api/SOFFIA_SOAP_URL
@@ -111,6 +116,7 @@ api:
     SYSLUMENN_PASSWORD: /k8s/api/SYSLUMENN_PASSWORD
     SYSLUMENN_USERNAME: /k8s/api/SYSLUMENN_USERNAME
     VMST_API_KEY: /k8s/vmst-client/VMST_API_KEY
+    XROAD_FINANCES_PATH: /k8s/service-portal/XROAD_FINANCES_PATH
     XROAD_TJODSKRA_API_PATH: /k8s/api/XROAD_TJODSKRA_API_PATH
     XROAD_VMST_API_PATH: /k8s/api/XROAD_VMST_API_PATH
     ZENDESK_CONTACT_FORM_EMAIL: /k8s/api/ZENDESK_CONTACT_FORM_EMAIL
@@ -135,6 +141,7 @@ application-system-api:
     DB_NAME: application_system_api
     DB_USER: application_system_api
     EMAIL_REGION: eu-west-1
+    ENDORSEMENTS_API_BASE_PATH: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_SERVICE_PRESIGN_BUCKET: island-is-dev-fs-presign-bucket
     FILE_STORAGE_UPLOAD_BUCKET: island-is-dev-upload-api
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: gunnar.ingi@fjr.is
@@ -145,8 +152,9 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: gunnar.ingi@fjr.is
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: Gunnar Ingi
     NOVA_USERNAME: IslandIs_User_Development
-    PARTY_APPLICATION_SUBMISSION_DESTINATION_EMAIL: s@kogk.is
-    PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: s@kogk.is
+    PARTY_LETTER_REGISTRY_API_BASE_PATH: >-
+      http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local
+    PARTY_LETTER_SUBMISSION_DESTINATION_EMAIL: thorhildur@parallelradgjof.is
     REDIS_URL_NODE_01: >-
       clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379
     SERVICE_DOCUMENTS_BASEPATH: http://web-services-documents.services-documents.svc.cluster.local
@@ -215,6 +223,19 @@ application-system-api:
     HEALTH_INSURANCE_XROAD_WSDLURL: /k8s/application-system-api/HEALTH_INSURANCE_XROAD_WSDLURL
     NOVA_PASSWORD: /k8s/application-system/api/NOVA_PASSWORD
     NOVA_URL: /k8s/application-system-api/NOVA_URL
+    PARTY_APPLICATION_NORTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_NORTH_ADMIN_EMAIL
+    PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_NORTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL
+    PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_NORTH_WEST_ASSIGNED_ADMINS
+    PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL
+    PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_RVK_NORTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL
+    PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_RVK_SOUTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_SOUTH_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_ADMIN_EMAIL
+    PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_ASSIGNED_ADMINS
+    PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL
+    PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_APPLICATION_SOUTH_WEST_ASSIGNED_ADMINS
+    PARTY_LETTER_ASSIGNED_ADMINS: /k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS
     PAYMENT_ADDITION_CALLBACK_URL: /k8s/application-system-api/PAYMENT_ADDITION_CALLBACK_URL
     PAYMENT_BASE_CALLBACK_URL: /k8s/application-system-api/PAYMENT_BASE_CALLBACK_URL
     PAYMENT_PASSWORD: /k8s/application-system-api/PAYMENT_PASSWORD
@@ -364,6 +385,7 @@ endorsement-system-api:
       http://web-temporary-voter-registry-api.temporary-voter-registry.svc.cluster.local
   grantNamespaces:
     - islandis
+    - application-system
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -519,6 +541,7 @@ party-letter-registry-api:
     DB_USER: services_party_letter_registry_api
   grantNamespaces:
     - islandis
+    - application-system
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

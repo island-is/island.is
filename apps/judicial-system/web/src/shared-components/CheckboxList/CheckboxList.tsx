@@ -1,4 +1,5 @@
 import React from 'react'
+import { useIntl, MessageDescriptor } from 'react-intl'
 import {
   Box,
   GridContainer,
@@ -11,7 +12,7 @@ import {
 interface CheckboxInfo {
   title: string
   id: string
-  info: string
+  info: MessageDescriptor
 }
 
 interface Props {
@@ -27,6 +28,7 @@ const CheckboxList: React.FC<Props> = ({
   onChange,
   fullWidth,
 }: Props) => {
+  const { formatMessage } = useIntl()
   return (
     <GridContainer>
       <GridRow>
@@ -50,7 +52,7 @@ const CheckboxList: React.FC<Props> = ({
                   label={checkbox.title}
                   value={checkbox.id}
                   checked={selected && selected.indexOf(checkbox.id) > -1}
-                  tooltip={checkbox.info}
+                  tooltip={formatMessage(checkbox.info)}
                   onChange={({ target }) => onChange(target.value)}
                   large
                   filled

@@ -1,3 +1,4 @@
+import { join } from 'path'
 import get from 'lodash/get'
 
 import {
@@ -19,6 +20,7 @@ import {
   getApplicationExternalData,
   getOtherParentId,
 } from '@island.is/application/templates/parental-leave'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
 
@@ -228,7 +230,7 @@ export const transformApplicationToParentalLeaveDTO = (
     expectedDateOfBirth: selectedChild.expectedDateOfBirth,
     // TODO: get true date of birth, not expected
     // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
-    dateOfBirth: selectedChild.expectedDateOfBirth,
+    dateOfBirth: '',
     email,
     phoneNumber,
     paymentInfo: {
@@ -236,7 +238,8 @@ export const transformApplicationToParentalLeaveDTO = (
       personalAllowance: getPersonalAllowance(application),
       personalAllowanceFromSpouse: getPersonalAllowance(application, true),
       union: {
-        id: union,
+        // If a union is not selected then use the default 'no union' value
+        id: union ?? apiConstants.unions.noUnion,
         name: '',
       } as Union,
       pensionFund: getPensionFund(application),
@@ -249,4 +252,15 @@ export const transformApplicationToParentalLeaveDTO = (
     rightsCode: getRightsCode(application),
     attachments,
   }
+}
+
+export const pathToAsset = (file: string) => {
+  if (isRunningOnEnvironment('local')) {
+    return join(
+      __dirname,
+      `../../../../libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/${file}`,
+    )
+  }
+
+  return join(__dirname, `./parental-leave-assets/${file}`)
 }

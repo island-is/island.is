@@ -6,9 +6,9 @@ This project forms the base for all business applications belonging to island.is
 
 ## URLs
 
-- [Dev](https://umsoknir.dev01.devland.is)
-- [Staging](https://umsoknir.staging01.devland.is)
-- Production: N/A
+- [Dev](https://beta.dev01.devland.is/umsoknir/)
+- [Staging](https://beta.staging01.devland.is/umsoknir/)
+- [Production](https://island.is/umsoknir/)
 
 ## API
 

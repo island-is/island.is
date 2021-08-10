@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Case, CaseAppealDecision } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -29,7 +30,7 @@ import {
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './RulingStepTwo.treat'
+import { icRulingStepTwo } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -40,6 +41,7 @@ interface Props {
 const RulingStepTwoForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
   const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
   const [courtDocumentEndEM, setCourtDocumentEndEM] = useState<string>('')
   const { isValidTime: isValidCourtEndTime } = useDateTime({
     time: getTimeFromDate(workingCase?.courtEndTime),
@@ -95,8 +97,9 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
           </Box>
           <Box marginBottom={3}>
             <Text variant="h4" fontWeight="light">
-              Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð
-              þennan til Landsréttar innan þriggja sólarhringa.
+              {formatMessage(
+                icRulingStepTwo.sections.accusedAppealDecision.disclaimer,
+              )}
             </Text>
           </Box>
           <Box marginBottom={3}>
@@ -401,7 +404,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             </BlueBox>
           </Box>
         </Box>
-        <Box className={styles.courtEndTimeContainer}>
+        <Box marginBottom={10}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               Þinghald

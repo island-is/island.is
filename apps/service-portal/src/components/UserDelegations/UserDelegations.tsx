@@ -8,6 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useActorDelegationsQuery } from '@island.is/service-portal/graphql'
+import { m } from '@island.is/service-portal/core'
 
 interface UserDelegationsProps {
   onSwitch?: (delegation: Delegation) => void
@@ -21,29 +22,31 @@ interface Delegation {
 export const UserDelegations = ({ onSwitch }: UserDelegationsProps) => {
   const { formatMessage } = useLocale()
   const { userInfo, switchUser } = useAuth()
-  const { data } = useActorDelegationsQuery()
+  const { data, error, loading } = useActorDelegationsQuery()
   const currentNationalId = userInfo?.profile.nationalId as string
-  const actor = userInfo?.profile.act
+  const actor = userInfo?.profile.actor
 
-  // Loading or no delegations.
-  if (!data || data.authActorDelegations.length === 0) {
+  // Loading.
+  if (loading) {
     return (
       <Stack space={1}>
         <Text variant="h5" as="h5" marginBottom={1}>
-          {formatMessage({
-            id: 'service.portal:loadingData',
-            defaultMessage: `Sæki gögn`,
-          })}
+          {formatMessage(m.loadingData)}
         </Text>
         <SkeletonLoader display="block" height={59} borderRadius="large" />
       </Stack>
     )
   }
 
+  // Error or no data.
+  if (error || !data || data.authActorDelegations.length === 0) {
+    return null
+  }
+
   let delegations: Delegation[] = data.authActorDelegations.map(
     (delegation) => ({
-      nationalId: delegation.fromNationalId,
-      name: delegation.fromName,
+      nationalId: delegation.from.nationalId,
+      name: delegation.from.name,
     }),
   )
 
@@ -67,10 +70,7 @@ export const UserDelegations = ({ onSwitch }: UserDelegationsProps) => {
   return (
     <Stack space={1}>
       <Text variant="h5" as="h5" marginBottom={1}>
-        {formatMessage({
-          id: 'service.portal:user-delegation-list',
-          defaultMessage: `Aðgangar/umboð`,
-        })}
+        {formatMessage(m.userDelegationList)}
       </Text>
       {delegations.map((delegation) => (
         <TopicCard

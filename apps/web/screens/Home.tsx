@@ -50,7 +50,6 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
   }
-
   const cards = categories.map(({ __typename, title, slug, description }) => {
     return {
       title,

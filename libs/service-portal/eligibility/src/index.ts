@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/react'
 import {
   ServicePortalModule,
   ServicePortalPath,
-  ServicePortalRoute,
+  m,
 } from '@island.is/service-portal/core'
 
 export const eligibilityModule: ServicePortalModule = {
@@ -13,10 +13,7 @@ export const eligibilityModule: ServicePortalModule = {
   widgets: () => [],
   routes: () => [
     {
-      name: defineMessage({
-        id: 'service.portal:eligibility',
-        defaultMessage: 'Mín réttindi',
-      }),
+      name: m.eligibility,
       path: ServicePortalPath.MyLicensesRoot,
       render: () => lazy(() => import('./screens/Eligibility')),
     },

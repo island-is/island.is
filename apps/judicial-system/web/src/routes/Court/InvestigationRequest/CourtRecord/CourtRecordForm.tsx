@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
@@ -17,11 +18,15 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { caseTypes } from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import {
+  accusedRights,
+  icCourtRecord,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './CourtRecord.treat'
 
@@ -65,6 +70,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
     setWorkingCase,
     validations,
   )
+  const { formatMessage } = useIntl()
 
   return (
     <>
@@ -180,7 +186,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <CourtDocuments
-            title={`Krafa um ${caseTypes[workingCase.type]}`}
+            title={`Krafa - ${capitalize(caseTypes[workingCase.type])}`}
             tagText="Þingmerkt nr. 1"
             tagVariant="darkerBlue"
             text="Rannsóknargögn málsins liggja frammi."
@@ -194,17 +200,15 @@ const CourtRecordForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={1}>
             <Text as="h3" variant="h3">
-              Réttindi varnaraðila
+              {formatMessage(accusedRights.title, {
+                accusedType: 'varnaraðila',
+              })}
             </Text>
           </Box>
           <Box marginBottom={2}>
             <HideableText
-              text="Sakborningi er bent á að honum sé óskylt að svara spurningum
-                  er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113.
-                  gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um
-                  sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr.
-                  114. gr. sömu laga"
-              defaultIsVisible={workingCase.isAccusedAbsent}
+              text={formatMessage(accusedRights.text)}
+              isHidden={workingCase.isAccusedAbsent}
               onToggleVisibility={(isVisible: boolean) =>
                 setAndSendToServer(
                   'isAccusedAbsent',
@@ -214,15 +218,19 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                   updateCase,
                 )
               }
-              tooltip="Með því að fela forbókun um réttindi varnaraðila birtist hún ekki í Þingbók málsins."
+              tooltip={formatMessage(accusedRights.tooltip, {
+                accusedType: 'varnaraðila',
+              })}
             />
           </Box>
           <BlueBox>
             <div className={styles.accusedPleaDecision}>
               <RadioButton
                 name="accusedPleaDecision"
-                id="accused-plea-decision-accepting"
-                label="Varnaraðili hafnar kröfunni"
+                id="accused-plea-decision-rejecting"
+                label={formatMessage(
+                  icCourtRecord.sections.accusedAppealDecision.options.reject,
+                )}
                 checked={
                   workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
                 }
@@ -240,8 +248,10 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               />
               <RadioButton
                 name="accusedPleaDecision"
-                id="accused-plea-decision-rejecting"
-                label="Varnaraðili samþykkir kröfuna"
+                id="accused-plea-decision-accepting"
+                label={formatMessage(
+                  icCourtRecord.sections.accusedAppealDecision.options.accept,
+                )}
                 checked={
                   workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
                 }
@@ -262,7 +272,10 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="accusedPleaDecision"
                 id="accused-plea-decision-na"
-                label="Á ekki við"
+                label={formatMessage(
+                  icCourtRecord.sections.accusedAppealDecision.options
+                    .notApplicable,
+                )}
                 checked={
                   workingCase.accusedPleaDecision ===
                   AccusedPleaDecision.NOT_APPLICABLE
@@ -285,7 +298,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               name="accusedPleaAnnouncement"
               label="Afstaða varnaraðila"
               defaultValue={workingCase.accusedPleaAnnouncement}
-              placeholder="Hvað hafði varnaraðili að segja um kröfuna? Mótmælti eða samþykkti?"
+              placeholder={formatMessage(
+                icCourtRecord.sections.accusedPleaAnnouncement.placeholder,
+              )}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'accusedPleaAnnouncement',

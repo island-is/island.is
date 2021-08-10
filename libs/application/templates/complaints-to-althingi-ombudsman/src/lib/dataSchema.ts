@@ -1,11 +1,24 @@
-// import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as z from 'zod'
-import { ComplaineeTypes, NO, OmbudsmanComplaintTypeEnum, YES } from '../shared'
+import {
+  ComplainedForTypes,
+  ComplaineeTypes,
+  NO,
+  OmbudsmanComplaintTypeEnum,
+  YES,
+} from '../shared'
 import { error } from './messages/error'
+
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, { params: error.required }),
-  /* information: z.object({
+  information: z.object({
     name: z.string().nonempty(),
     ssn: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
     address: z.string().nonempty(),
@@ -26,18 +39,34 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
         params: error.required,
       },
     ),
-  }), */
+  }),
+  complainedFor: z.object({
+    decision: z.enum([
+      ComplainedForTypes.MYSELF,
+      ComplainedForTypes.SOMEONEELSE,
+    ]),
+  }),
   complainee: z.object({
     type: z.enum([ComplaineeTypes.GOVERNMENT, ComplaineeTypes.OTHER]),
   }),
-  complaintInformation: z.object({
-    complaintType: z.enum([
-      OmbudsmanComplaintTypeEnum.DECISION,
-      OmbudsmanComplaintTypeEnum.PROCEEDINGS,
-    ]),
+  complaintType: z.enum([
+    OmbudsmanComplaintTypeEnum.DECISION,
+    OmbudsmanComplaintTypeEnum.PROCEEDINGS,
+  ]),
+  appeals: z.enum([YES, NO]),
+  complainedForInformation: z.object({
+    name: z.string(),
+    ssn: z.string(),
+    address: z.string(),
+    postcode: z.string(),
+    city: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    connection: z.string(),
+    powerOfAttorney: z.array(FileSchema).optional(),
   }),
   complaintDescription: z.object({
-    decisionDate: z.string().optional(), // TODO: Validate this block
+    decisionDate: z.string().optional(),
     complaineeName: z.string().refine((val) => (val ? val.length > 0 : false), {
       params: error.required,
     }),
@@ -48,6 +77,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
       }),
   }),
   courtActionAnswer: z.enum([YES, NO]),
+  attachments: z.object({ documents: z.array(FileSchema).optional() }),
 })
 
 export type ComplaintsToAlthingiOmbudsman = z.TypeOf<

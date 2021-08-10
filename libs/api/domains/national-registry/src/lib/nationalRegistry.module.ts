@@ -25,7 +25,7 @@ export class NationalRegistryModule {
             NationalRegistryApi.instanciateClass(config.nationalRegistry),
         },
       ],
-      exports: [],
+      exports: [NationalRegistryService],
     }
   }
 }

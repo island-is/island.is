@@ -1,5 +1,6 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
 
 import {
   capitalize,
@@ -14,6 +15,8 @@ import {
   CaseCustodyProvisions,
   CaseType,
 } from '@island.is/judicial-system/types'
+import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.treat'
 interface Props {
@@ -23,10 +26,19 @@ interface Props {
 const PoliceRequestAccordionItem: React.FC<Props> = ({
   workingCase,
 }: Props) => {
+  const { formatMessage } = useIntl()
+  const isRestrictionCase =
+    workingCase.type === CaseType.CUSTODY ||
+    workingCase.type === CaseType.TRAVEL_BAN
+
   return (
     <AccordionItem
       id="id_1"
-      label={`Krafa um ${caseTypes[workingCase.type]}`}
+      label={`Krafa ${
+        isRestrictionCase
+          ? `um ${caseTypes[workingCase.type]}`
+          : `- ${capitalize(caseTypes[workingCase.type])}`
+      }`}
       labelVariant="h3"
     >
       <Box marginBottom={2}>
@@ -53,7 +65,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         </AccordionListItem>
       )}
       {workingCase.requestedCourtDate && (
-        <AccordionListItem title="Ósk um fyrirtökudag og tíma">
+        <AccordionListItem title={formatMessage(requestCourtDate.heading)}>
           <Text>
             {`${capitalize(
               formatDate(workingCase.requestedCourtDate, 'PPPP') ?? '',
@@ -71,8 +83,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         <Text>{workingCase.lawsBroken}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagaákvæði sem krafan er byggð á" breakSpaces>
-        {workingCase.type === CaseType.CUSTODY ||
-        workingCase.type === CaseType.TRAVEL_BAN ? (
+        {isRestrictionCase ? (
           workingCase.custodyProvisions &&
           workingCase.custodyProvisions.map(
             (custodyProvision: CaseCustodyProvisions, index) => {
@@ -87,28 +98,32 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
           <Text>{workingCase.legalBasis}</Text>
         )}
       </AccordionListItem>
-      <Box marginBottom={1}>
-        <Text variant="h5">{`Takmarkanir og tilhögun ${
-          workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-        }`}</Text>
-      </Box>
-      <Box marginBottom={4}>
-        <Text>
-          {formatRequestedCustodyRestrictions(
-            workingCase.type,
-            workingCase.requestedCustodyRestrictions,
-            workingCase.requestedOtherRestrictions,
-          )
-            .split('\n')
-            .map((requestedCustodyRestriction, index) => {
-              return (
-                <span key={index} className={styles.block}>
-                  <Text as="span">{requestedCustodyRestriction}</Text>
-                </span>
+      {isRestrictionCase && (
+        <>
+          <Box marginBottom={1}>
+            <Text variant="h5">{`Takmarkanir og tilhögun ${
+              workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
+            }`}</Text>
+          </Box>
+          <Box marginBottom={4}>
+            <Text>
+              {formatRequestedCustodyRestrictions(
+                workingCase.type,
+                workingCase.requestedCustodyRestrictions,
+                workingCase.requestedOtherRestrictions,
               )
-            })}
-        </Text>
-      </Box>
+                .split('\n')
+                .map((requestedCustodyRestriction, index) => {
+                  return (
+                    <span key={index} className={styles.block}>
+                      <Text as="span">{requestedCustodyRestriction}</Text>
+                    </span>
+                  )
+                })}
+            </Text>
+          </Box>
+        </>
+      )}
       <Box marginBottom={2}>
         <Text variant="h4" as="h4">
           Greinargerð um málsatvik og lagarök
@@ -120,6 +135,14 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       <AccordionListItem title="Lagarök" breakSpaces>
         <Text>{workingCase.legalArguments}</Text>
       </AccordionListItem>
+      {workingCase.requestProsecutorOnlySession && (
+        <AccordionListItem
+          title="Beiðni um dómþing að varnaraðila fjarstöddum"
+          breakSpaces
+        >
+          <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
+        </AccordionListItem>
+      )}
     </AccordionItem>
   )
 }

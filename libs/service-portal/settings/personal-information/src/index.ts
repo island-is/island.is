@@ -4,6 +4,7 @@ import {
   ServicePortalPath,
   ServicePortalRoute,
   ServicePortalGlobalComponent,
+  m,
 } from '@island.is/service-portal/core'
 import { USER_PROFILE } from '@island.is/service-portal/graphql'
 import { lazy } from 'react'
@@ -16,10 +17,7 @@ export const personalInformationModule: ServicePortalModule = {
   routes: () => {
     const routes: ServicePortalRoute[] = [
       {
-        name: defineMessage({
-          id: 'service.portal:personalInformation',
-          defaultMessage: 'Persónuupplýsingar',
-        }),
+        name: m.personalInformation,
         path: ServicePortalPath.SettingsPersonalInformation,
         render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
       },
@@ -49,10 +47,7 @@ export const personalInformationModule: ServicePortalModule = {
         render: () => lazy(() => import('./screens/EditLanguage/EditLanguage')),
       },
       {
-        name: defineMessage({
-          id: 'service.portal:messages',
-          defaultMessage: 'Skilaboð',
-        }),
+        name: m.messages,
         path: ServicePortalPath.MessagesRoot,
         render: () => lazy(() => import('./screens/Messages/Messages')),
       },
