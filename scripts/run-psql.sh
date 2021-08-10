@@ -39,15 +39,14 @@ psql_connect() {
   fi
   echo "Waiting for db-proxy to be ready on port 5432..."
   repeat run_query "$1" "$2" "$3" "-c 'select now()'"
-
-  run_query "$1" "$2" "$3" "$QUERY_CMD"
-
+  result=$(run_query "$1" "$2" "$3" "$QUERY_CMD")
+  echo "$result" | jq
 }
 
 run_proxy() {
   local CLUSTER_ARG
   CLUSTER_ARG=$1
-  (CLUSTER="$CLUSTER_ARG"-cluster01 "$DIR"/run-db-proxy.sh; echo "Running db-proxy in subshell...") &
+  (CLUSTER="$CLUSTER_ARG"-cluster01 "$DIR"/run-db-proxy.sh > /dev/null; echo "Running db-proxy in subshell...") &
 }
 
 function usage {
@@ -112,5 +111,10 @@ if [ -z "$QUERY" ]; then
 fi
 
 read -r POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB <<< $(get_creds)
-psql_connect "$POSTGRES_USER" "$POSTGRES_PASSWORD" "$POSTGRES_DB" "$QUERY" $PSQL
+psql_connect \
+  "$POSTGRES_USER" \
+  "$POSTGRES_PASSWORD" \
+  "$POSTGRES_DB" \
+  "$QUERY" \
+  $PSQL
 echo "done!"
