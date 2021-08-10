@@ -6,11 +6,13 @@ import {
   AgricultureAccidentLocationEnum,
   AttachmentsEnum,
   FishermanWorkplaceAccidentLocationEnum,
+  FishermanWorkplaceAccidentShipLocationEnum,
   GeneralWorkplaceAccidentLocationEnum,
   PowerOfAttorneyUploadEnum,
   ProfessionalAthleteAccidentLocationEnum,
   RescueWorkAccidentLocationEnum,
   StudiesAccidentLocationEnum,
+  StudiesAccidentTypeEnum,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
 } from '../types'
@@ -26,6 +28,16 @@ const FileSchema = z.object({
   name: z.string(),
   key: z.string(),
   url: z.string().optional(),
+})
+
+const CompanyInfoSchema = z.object({
+  nationalRegistrationId: z
+    .string()
+    .refine((x) => (x ? kennitala.isCompany(x) : false)),
+  companyName: z.string().min(1),
+  name: z.string().min(1),
+  email: z.string().email(),
+  phoneNumber: z.string().optional(),
 })
 
 export const AccidentNotificationSchema = z.object({
@@ -63,6 +75,8 @@ export const AccidentNotificationSchema = z.object({
   info: z.object({
     onBehalf: z.enum([OnBehalf.MYSELF, OnBehalf.OTHERS]),
   }),
+  timePassedHindrance: z.enum([YES, NO]),
+  carAccidentHindrance: z.enum([YES, NO]),
   applicant: z.object({
     name: z.string().min(1, error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
@@ -84,9 +98,11 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
       AttachmentsEnum.INJURYCERTIFICATE,
       AttachmentsEnum.SENDCERTIFICATELATER,
+      AttachmentsEnum.INJUREDSENDSCERTIFICATE,
     ]),
     injuryCertificateFile: z.array(FileSchema).optional(),
     deathCertificateFile: z.array(FileSchema).optional(),
+    powerOfAttorneyFile: z.array(FileSchema).optional(),
   }),
   wasTheAccidentFatal: z.enum([YES, NO]),
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
@@ -98,13 +114,11 @@ export const AccidentNotificationSchema = z.object({
     descriptionOfAccident: z.string().min(1),
   }),
   isRepresentativeOfCompanyOrInstitue: z.enum([YES, NO]),
-  companyInfo: z.object({
-    nationalRegistrationId: z.string().optional(),
-    descriptionField: z.string().optional(),
-    name: z.string().optional(),
-    email: z.string().optional(),
-    phoneNumber: z.string().optional(),
-  }),
+  companyInfo: CompanyInfoSchema,
+  schoolInfo: CompanyInfoSchema,
+  fishingCompanyInfo: CompanyInfoSchema,
+  sportsClubInfo: CompanyInfoSchema,
+  rescueSquadInfo: CompanyInfoSchema,
   locationAndPurpose: z.object({
     location: z.string().min(1),
     purpose: z.string().min(1),
@@ -130,6 +144,21 @@ export const AccidentNotificationSchema = z.object({
       StudiesAccidentLocationEnum.OTHER,
     ]),
   }),
+  fishermanLocation: z.object({
+    answer: z.enum([
+      FishermanWorkplaceAccidentShipLocationEnum.SAILINGORFISHING,
+      FishermanWorkplaceAccidentShipLocationEnum.HARBOR,
+      FishermanWorkplaceAccidentShipLocationEnum.OTHER,
+    ]),
+    locationAndPurpose: z.object({
+      location: z.string().min(1),
+      purpose: z.string().min(1),
+    }),
+  }),
+  workMachineRadio: z.enum([YES, NO]),
+  workMachine: z.object({
+    desriptionOfMachine: z.string().min(1),
+  }),
   accidentType: z.object({
     radioButton: z.enum([
       AccidentTypeEnum.WORK,
@@ -139,7 +168,6 @@ export const AccidentNotificationSchema = z.object({
       AccidentTypeEnum.STUDIES,
     ]),
   }),
-
   workAccident: z.object({
     type: z
       .enum([
@@ -150,11 +178,20 @@ export const AccidentNotificationSchema = z.object({
       ])
       .optional(),
   }),
+  studiesAccident: z.object({
+    type: z
+      .enum([
+        StudiesAccidentTypeEnum.APPRENTICESHIP,
+        StudiesAccidentTypeEnum.INTERNSHIP,
+        StudiesAccidentTypeEnum.VOCATIONALEDUCATION,
+      ])
+      .optional(),
+  }),
   injuredPersonInformation: z.object({
     name: z.string().min(1, error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
     email: z.string().email().min(1, error.required.defaultMessage),
-    phoneNumber: z.string().min(1, error.required.defaultMessage),
+    phoneNumber: z.string().optional(),
   }),
   juridicalPerson: z.object({
     companyName: z.string().min(1, error.required.defaultMessage),
