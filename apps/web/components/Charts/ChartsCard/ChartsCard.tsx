@@ -35,8 +35,6 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
   const { graphTitle, graphDescription, organization, graph } = data
   const [ref, { width }] = useMeasure()
 
-  const shouldStack = width < 360
-
   let children = null
   switch (graph.type) {
     case 'Mixed':
@@ -56,15 +54,28 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
   }
 
   const items = (
-    <Box ref={ref} className={cn(styles.card)}>
+    <Box
+      ref={ref}
+      display="flex"
+      flexDirection="column"
+      flexGrow={1}
+      alignItems="stretch"
+      justifyContent="flexStart"
+    >
       <Box
-        className={cn(styles.outerWrapper)}
+        className={cn(styles.outerWrapper, {
+          [styles.pie]: graph.type === 'Pie',
+        })}
         background={subPage ? 'blue100' : 'purple100'}
-        style={{
-          width: graph.type === 'Pie' ? '100%' : '889px',
-        }}
       >
-        <Box className={cn(styles.innerWrapper)}>
+        <Box
+          className={styles.innerWrapper}
+          paddingBottom={4}
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="spaceBetween"
+        >
           <Box padding={[2, 2, 4]}>
             {organization && (
               <Text variant="eyebrow" color="dark400">
@@ -90,12 +101,13 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        style={{
-          width: graph.type === 'Pie' || !shouldStack ? '100%' : '889px',
-          height: '100%',
-        }}
+        className={cn(styles.graphWrapper, {
+          [styles.pie]: graph.type === 'Pie',
+        })}
       >
-        <Box className={cn(styles.graphParent)}>{children}</Box>
+        <Box justifyContent="center" className={styles.graphParent}>
+          {children}
+        </Box>
       </Box>
     </Box>
   )
@@ -106,10 +118,12 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
 const FrameWrapper = ({ children }) => {
   return (
     <Box
-      className={cn(styles.frameWrapper)}
+      className={styles.frameWrapper}
       borderColor="purple100"
       borderWidth="standard"
       borderRadius="large"
+      display="flex"
+      flexDirection="column"
     >
       {children}
     </Box>
