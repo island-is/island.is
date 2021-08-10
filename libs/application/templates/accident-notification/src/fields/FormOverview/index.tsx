@@ -48,6 +48,9 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
     ...(answers.attachments.injuryCertificateFile
       ? answers.attachments.injuryCertificateFile
       : []),
+    ...(answers.attachments.powerOfAttorneyFile
+      ? answers.attachments.powerOfAttorneyFile
+      : []),
   ]
 
   return (
