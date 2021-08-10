@@ -58,7 +58,7 @@ psql_connect() {
   local console="$5"
   local query='SELECT json_agg(q) from ('"$query_raw"') q;'
 
-  psql='PGPASSWORD=$POSTGRES_PASSWORD psql -v ON_ERROR_STOP=1 -h localhost -U $POSTGRES_USER -A $POSTGRES_DB'
+  psql='PAGER= PGPASSWORD=$POSTGRES_PASSWORD psql -v ON_ERROR_STOP=1 -h localhost -U $POSTGRES_USER -A $POSTGRES_DB'
 
   echo "Checking for db-proxy on port 5432..."
   repeat run_query "$1" "$2" "$3" "$psql -c \"select now();\""
