@@ -20,7 +20,11 @@ get_creds() {
 }
 
 run_query() {
-  docker run --rm -it --network host -e POSTGRES_USER="$1" -e POSTGRES_PASSWORD="$2" -e POSTGRES_DB="$3" postgres bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -v ON_ERROR_STOP=1 -h localhost -U $POSTGRES_USER -A $POSTGRES_DB '"$4"''
+  docker run --rm -it --network host \
+    -e POSTGRES_USER="$1" \
+    -e POSTGRES_PASSWORD="$2" \
+    -e POSTGRES_DB="$3" \
+    postgres bash -c 'PGPASSWORD=$POSTGRES_PASSWORD psql -v ON_ERROR_STOP=1 -h localhost -U $POSTGRES_USER -A $POSTGRES_DB '"$4"' -t'
 }
 
 repeat() { while :; do "$@" > /dev/null && return; sleep 2; echo "still waiting...."; done }
@@ -28,7 +32,7 @@ repeat() { while :; do "$@" > /dev/null && return; sleep 2; echo "still waiting.
 psql_connect() {
   local QUERY_ARG="$4"
   local CONSOLE="$5"
-  local QUERY_CMD='-c "SELECT json_agg(t) from ('"$QUERY_ARG"') t;"'
+  local QUERY_CMD='-c "SELECT json_agg(q) from ('"$QUERY_ARG"') q;"'
 
   if [ "$CONSOLE" == true ]; then
     QUERY_CMD=
@@ -59,17 +63,17 @@ if [[ ${#} -eq 0 ]]; then
    usage
 fi
 CLUSTER_NAME=""
-CREDS='false'
-PSQL='false'
+CREDS=false
+PSQL=false
 QUERY=""
 
 while getopts ':cpn:q:' arg; do
   case "${arg}" in
     p)
-      PSQL='true'
+      PSQL=true
       ;;
     c)
-      CREDS='true'
+      CREDS=true
       ;;
     n)
       CLUSTER_NAME="${OPTARG}"
@@ -92,7 +96,7 @@ if [ "$CREDS" == true ]; then
 fi
 
 if [ -n "$CLUSTER_NAME" ]; then
-  psql_connect "$CLUSTER_NAME"
+  run_proxy "$CLUSTER_NAME"
 fi
 
 if [ "$PSQL" == true ]; then
