@@ -1,4 +1,4 @@
-import { Application } from '@island.is/application/core'
+import { Application, FormValue } from '@island.is/application/core'
 import {
   messages,
   utils,
@@ -65,7 +65,7 @@ const getApplicantInformation = (answers: AccidentNotificationAnswers) => `
 
 export const overviewTemplate = (application: Application): string => {
   const answers = application.answers as AccidentNotificationAnswers
-  const workplaceData = utils.getWorkplaceData(answers)
+  const workplaceData = utils.getWorkplaceData(answers as FormValue)
 
   const { timeOfAccident, dateOfAccident } = answers.accidentDetails
   const time = `${timeOfAccident.slice(0, 2)}:${timeOfAccident.slice(2, 4)}`
@@ -76,12 +76,12 @@ export const overviewTemplate = (application: Application): string => {
     <h2>Yfirlit tilkynningar</h2>
     <h3>${messages.injuredPersonInformation.general.heading.defaultMessage}</h3>
     ${
-      utils.isReportingOnBehalfOfInjured(answers)
+      utils.isReportingOnBehalfOfInjured(answers as FormValue)
         ? getInjuredPersonInformation(answers)
         : getApplicantInformation(answers)
     }
     ${
-      utils.isReportingOnBehalfOfEmployee(answers)
+      utils.isReportingOnBehalfOfEmployee(answers as FormValue)
         ? `
       <h3>${messages.juridicalPerson.general.title.defaultMessage}</h3>
       <p>
@@ -96,7 +96,8 @@ export const overviewTemplate = (application: Application): string => {
         : ''
     }
     ${
-      workplaceData && !utils.isReportingOnBehalfOfEmployee(answers)
+      workplaceData &&
+      !utils.isReportingOnBehalfOfEmployee(answers as FormValue)
         ? `
         <h3>${workplaceData.general.title.defaultMessage}</h3>
         <p>
@@ -108,7 +109,7 @@ export const overviewTemplate = (application: Application): string => {
           ${workplaceData.info.nationalRegistrationId}
         </p>
         ${
-          utils.isProfessionalAthleteAccident(answers) &&
+          utils.isProfessionalAthleteAccident(answers as FormValue) &&
           workplaceData.info.employee
             ? `
             <p>
