@@ -29,6 +29,7 @@ import {
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
   isProfessionalAthleteAccident,
+  isMachineRelatedAccident,
 } from '../../utils'
 
 export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
@@ -287,6 +288,14 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine label={accidentDetails.labels.time} value={time} />
           </GridColumn>
+          {isMachineRelatedAccident(answers as FormValue) && (
+            <GridColumn span={['12/12', '12/12', '9/12']}>
+              <ValueLine
+                label={overview.labels.workMachine}
+                value={answers.workMachine.desriptionOfMachine}
+              />
+            </GridColumn>
+          )}
           <GridColumn span={['12/12', '12/12', '9/12']}>
             <ValueLine
               label={accidentDetails.labels.description}
