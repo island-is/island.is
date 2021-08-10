@@ -95,9 +95,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
           height: '100%',
         }}
       >
-        <Box className={cn(styles.graphParent)}>
-          {children}
-        </Box>
+        <Box className={cn(styles.graphParent)}>{children}</Box>
       </Box>
     </Box>
   )
