@@ -437,7 +437,7 @@ export const AccidentNotificationForm: Form = buildForm({
               description: powerOfAttorney.upload.uploadDescription,
               children: [
                 buildFileUploadField({
-                  id: 'powerOfAttorney.upload',
+                  id: 'attachments.powerOfAttorneyFile',
                   title: '',
                   introduction: '',
                   uploadAccept: UPLOAD_ACCEPT,

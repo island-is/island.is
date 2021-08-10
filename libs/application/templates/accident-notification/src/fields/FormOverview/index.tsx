@@ -140,7 +140,7 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
                   label={injuredPersonInformation.labels.tel}
-                  value={answers.injuredPersonInformation.phoneNumber}
+                  value={answers.injuredPersonInformation.phoneNumber ?? ''}
                 />
               </GridColumn>
             </GridRow>
