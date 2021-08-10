@@ -29,7 +29,7 @@ import { EnvironmentConfig, UberChartType } from './types/charts'
 export const serializeService: SerializeMethod = <
   FeatureToggles extends string
 >(
-  service: Service<FeatureToggles>,
+  service: Service,
   uberChart: UberChartType,
   featuresOn: FeatureToggles[] = [],
 ) => {
@@ -259,10 +259,10 @@ export const serializeService: SerializeMethod = <
 }
 
 export const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
-export const resolveDbHost = <FeatureToggles extends string>(
+export const resolveDbHost = (
   postgres: PostgresInfo,
   uberChart: UberChartType,
-  service: Service<FeatureToggles>,
+  service: Service,
 ) => {
   if (postgres.host) {
     const resolved = resolveVariable(
@@ -283,10 +283,10 @@ export const resolveDbHost = <FeatureToggles extends string>(
     return uberChart.env.auroraHost
   }
 }
-function serializePostgres<FeatureToggles extends string>(
-  serviceDef: ServiceDefinition<FeatureToggles>,
+function serializePostgres(
+  serviceDef: ServiceDefinition,
   uberChart: UberChartType,
-  service: Service<FeatureToggles>,
+  service: Service,
   postgres: PostgresInfo,
 ) {
   const existingEnvVars = ['DB_USER', 'DB_NAME', 'DB_HOST'].filter((v) =>
@@ -319,8 +319,8 @@ function serializePostgres<FeatureToggles extends string>(
   return { env, secrets, envErros, secretErrors }
 }
 
-function serializeIngress<FeatureToggles extends string>(
-  serviceDef: ServiceDefinition<FeatureToggles>,
+function serializeIngress(
+  serviceDef: ServiceDefinition,
   ingressConf: Ingress,
   env: EnvironmentConfig,
   ingressName: string,
@@ -378,10 +378,10 @@ function serializeContainerRuns(
   })
 }
 
-function serializeValueType<FeatureToggles extends string>(
+function serializeValueType(
   value: ValueType,
   uberChart: UberChartType,
-  service: Service<FeatureToggles>,
+  service: Service,
 ): { type: 'error' } | { type: 'success'; value: string } {
   if (value === MissingSetting) return { type: 'error' }
   const result =
@@ -395,8 +395,8 @@ function serializeValueType<FeatureToggles extends string>(
   return { type: 'success', value: result }
 }
 
-function serializeExtraVariables<FeatureToggles extends string>(
-  service: Service<FeatureToggles>,
+function serializeExtraVariables(
+  service: Service,
   uberChart: UberChartType,
   envs: ExtraValues,
 ): { errors: string[]; envs: Hash } {
@@ -413,8 +413,8 @@ function serializeExtraVariables<FeatureToggles extends string>(
   }
 }
 
-function serializeEnvironmentVariables<FeatureToggles extends string>(
-  service: Service<FeatureToggles>,
+function serializeEnvironmentVariables(
+  service: Service,
   uberChart: UberChartType,
   envs: EnvironmentVariables,
 ): { errors: string[]; envs: { [name: string]: string } } {
@@ -454,10 +454,10 @@ const hostFullName = (host: string, env: EnvironmentConfig) => {
 const internalHostFullName = (host: string, env: EnvironmentConfig) =>
   host.indexOf('.') < 0 ? `${host}.internal.${env.domain}` : host
 
-function resolveVariable<FeatureToggles extends string>(
+function resolveVariable(
   value: EnvironmentVariableValue,
   uberChart: UberChartType,
-  service: Service<FeatureToggles>,
+  service: Service,
 ) {
   return typeof value === 'object'
     ? serializeValueType(value[uberChart.env.type], uberChart, service)

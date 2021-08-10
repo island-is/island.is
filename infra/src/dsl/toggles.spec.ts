@@ -33,10 +33,6 @@ describe('Server-side toggles', () => {
         },
         secrets: { KEY: '/k8s/secret' },
       },
-      backend: {
-        env: {},
-        secrets: {},
-      },
     })
     .initContainer({
       containers: [{ command: 'go' }],

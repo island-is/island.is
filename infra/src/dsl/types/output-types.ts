@@ -131,7 +131,7 @@ export type SerializeErrors = {
 }
 
 export type SerializeMethod = <FeatureToggles extends string>(
-  service: Service<FeatureToggles>,
+  service: Service,
   uberChart: UberChartType,
   featuresOn?: FeatureToggles[],
 ) => SerializeSuccess | SerializeErrors

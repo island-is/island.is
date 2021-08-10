@@ -3,8 +3,8 @@ import { EnvironmentConfig } from './charts'
 export type OpsEnv = 'dev' | 'staging' | 'prod'
 export const MissingSetting = 'Missing setting'
 export type MissingSettingType = typeof MissingSetting
-export interface Service<FeatureToggles extends string> {
-  serviceDef: ServiceDefinition<FeatureToggles>
+export interface Service {
+  serviceDef: ServiceDefinition
 }
 // Input types
 export type Hash = { [name: string]: Hash | string }
@@ -33,7 +33,7 @@ export type Toggle = {
   secrets: Secrets
 }
 
-export type ServiceDefinition<FeatureToggles extends string> = {
+export type ServiceDefinition = {
   liveness: HealthProbe
   readiness: HealthProbe
   port?: number
@@ -41,7 +41,7 @@ export type ServiceDefinition<FeatureToggles extends string> = {
   env: EnvironmentVariables
   secrets: Secrets
   ingress: { [name: string]: Ingress }
-  toggles?: { [name in FeatureToggles]: Toggle }
+  toggles: { [name: string]: Toggle }
   postgres?: PostgresInfo
   namespace: string
   grantNamespaces: string[]

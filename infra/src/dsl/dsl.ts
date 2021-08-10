@@ -16,12 +16,12 @@ import {
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType, FeatureToggles extends string>
-  implements Service<FeatureToggles> {
+  implements Service {
   extraAttributes(attr: ExtraValues) {
     this.serviceDef.extraAttributes = attr
     return this
   }
-  serviceDef: ServiceDefinition<FeatureToggles>
+  serviceDef: ServiceDefinition
   liveness(path: string | Partial<HealthProbe>) {
     if (typeof path === 'string') {
       this.serviceDef.liveness.path = path
@@ -43,8 +43,14 @@ export class ServiceBuilder<ServiceType, FeatureToggles extends string>
     return this
   }
 
-  toggles(toggles: { [name in FeatureToggles]: Toggle }) {
-    this.serviceDef.toggles = toggles
+  toggles(toggles: { [name in FeatureToggles]?: Toggle }) {
+    this.serviceDef.toggles = Object.entries(toggles).reduce(
+      (acc, entry) => ({
+        ...acc,
+        [entry[0]]: entry[1],
+      }),
+      {},
+    )
     return this
   }
 
@@ -53,6 +59,7 @@ export class ServiceBuilder<ServiceType, FeatureToggles extends string>
       liveness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       readiness: { path: '/', timeoutSeconds: 3, initialDelaySeconds: 3 },
       env: {},
+      toggles: {},
       name: name,
       grantNamespaces: [],
       grantNamespacesEnabled: false,
