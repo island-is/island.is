@@ -15,6 +15,7 @@ interface Option {
   subLabel?: string
   tooltip?: React.ReactNode
   excludeOthers?: boolean
+  illustration?: React.FC
 }
 interface Props {
   defaultValue?: any
@@ -73,6 +74,7 @@ export const RadioController: FC<Props> = ({
                 disabled={disabled}
                 hasError={error !== undefined}
                 backgroundColor={backgroundColor}
+                illustration={option.illustration}
               />
             </GridColumn>
           ))}

@@ -44,6 +44,14 @@ export const largeLabel = style({
     },
   },
 })
+export const labelWithError = style({
+  padding: `${theme.spacing[3]}px ${theme.spacing[2]}px 0 ${theme.spacing[3]}px`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      padding: `${theme.spacing[3]}px ${theme.spacing[3]}px 0 ${theme.spacing[3]}px`,
+    },
+  },
+})
 export const radioButtonDisabled = style({
   background: 'transparent',
   borderColor: theme.color.blue200,
@@ -91,8 +99,19 @@ export const radioButtonLabelDisabled = style({
   color: theme.color.dark300,
 })
 
-export const radioButtonError = style(inputErrorState)
-export const errorMessage = style(inputErrorMessage)
+export const radioButtonError = style({
+  ...inputErrorState,
+  paddingBottom: 0,
+})
+export const errorMessage = style({
+  ...inputErrorMessage,
+  padding: `0 ${theme.spacing[3]}px ${theme.spacing[2]}px ${theme.spacing[2]}px`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      padding: `0 ${theme.spacing[3]}px ${theme.spacing[2]}px ${theme.spacing[3]}px`,
+    },
+  },
+})
 
 export const tooltipContainer = style({
   display: 'inline-block',
@@ -102,4 +121,8 @@ export const tooltipContainer = style({
 export const tooltipLargeContainer = style({
   marginLeft: 'auto',
   paddingLeft: theme.spacing[2],
+})
+
+export const toolTipLargeContainerWithIllustration = style({
+  marginLeft: 0,
 })
