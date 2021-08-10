@@ -111,7 +111,6 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
       </Box>
     </Box>
   )
-
   return <FrameWrapper>{items}</FrameWrapper>
 }
 
