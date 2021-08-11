@@ -34,7 +34,7 @@ import {
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES, NO, MANUAL, ParentalRelations } from '../../constants'
 import { YesOrNo } from '../../types'
-import { SummaryTimeline } from '../components/Timeline/SummaryTimeline'
+import { SummaryTimeline } from '../components/SummaryTimeline/SummaryTimeline'
 import { SummaryRights } from '../Rights/SummaryRights'
 import { useUnion as useUnionOptions } from '../../hooks/useUnion'
 import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../hooks/usePrivatePensionFund'
@@ -50,11 +50,6 @@ interface ReviewScreenProps {
   goToScreen?: (id: string) => void
   errors?: RecordObject
   editable?: boolean
-}
-
-type selectOption = {
-  label: string
-  value: string
 }
 
 const Review: FC<ReviewScreenProps> = ({

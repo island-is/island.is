@@ -30,6 +30,7 @@ import {
 } from '../../types'
 import {
   getWorkplaceData,
+  isMachineRelatedAccident,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
@@ -67,6 +68,7 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
       injuryCertificate: AttachmentsEnum.SENDCERTIFICATELATER,
       injuryCertificateFile: [],
       deathCertificateFile: [],
+      powerOfAttorneyFile: [],
     },
     injuredPersonInformation: {
       name: '',
@@ -81,6 +83,9 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
     accidentType: {
       radioButton: AccidentTypeEnum.WORK,
     },
+    workMachine: {
+      desriptionOfMachine: '',
+    },
   } // application.answers as AccidentNotification
   const { formatMessage } = useLocale()
 
@@ -90,6 +95,18 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
   const date = format(parseISO(dateOfAccident), 'dd.MM.yy', { locale: is })
 
   const workplaceData = getWorkplaceData(application.answers)
+
+  const attachments = [
+    ...(answers.attachments.deathCertificateFile
+      ? answers.attachments.deathCertificateFile
+      : []),
+    ...(answers.attachments.injuryCertificateFile
+      ? answers.attachments.injuryCertificateFile
+      : []),
+    ...(answers.attachments.powerOfAttorneyFile
+      ? answers.attachments.powerOfAttorneyFile
+      : []),
+  ]
 
   return (
     <Box component="section" paddingTop={2}>
@@ -181,7 +198,7 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
                   label={injuredPersonInformation.labels.tel}
-                  value={answers.injuredPersonInformation.phoneNumber}
+                  value={answers.injuredPersonInformation.phoneNumber ?? ''}
                 />
               </GridColumn>
             </GridRow>
@@ -337,6 +354,14 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine label={accidentDetails.labels.time} value={time} />
           </GridColumn>
+          {isMachineRelatedAccident(answers as FormValue) && (
+            <GridColumn span={['12/12', '12/12', '9/12']}>
+              <ValueLine
+                label={overview.labels.workMachine}
+                value={answers.workMachine.desriptionOfMachine}
+              />
+            </GridColumn>
+          )}
           <GridColumn span={['12/12', '12/12', '9/12']}>
             <ValueLine
               label={accidentDetails.labels.description}
@@ -346,7 +371,7 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
           <GridColumn span={['12/12', '12/12', '9/12']}>
             <FileValueLine
               label={overview.labels.attachments}
-              files={answers.attachments.injuryCertificateFile}
+              files={attachments}
             />
           </GridColumn>
         </GridRow>
