@@ -1,63 +1,83 @@
-import { dynamicColor, LicenceCard } from '@island.is/island-ui-native'
-import React from 'react'
-import { useIntl } from 'react-intl'
-import { Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
-import styled from 'styled-components/native'
-import rskLogo from '../../assets/temp/agency-logo.png'
-import { LicenseStatus, LicenseType } from '../../types/license-type'
+import { client } from '../../graphql/client'
+import { VERIFY_PKPASS_MUTATION } from '../../graphql/queries/verify-pkpass.mutation'
 import { StackRegistry } from '../../utils/component-registry'
-
-const DetailText = styled.Text`
-  margin-top: 32px;
-  font-size: 16px;
-  text-align: center;
-  color: ${dynamicColor('foreground')};
-`
-
-const LicenseNumber = styled.Text`
-  margin-top: 8px;
-  font-size: 32px;
-  text-align: center;
-  color: ${dynamicColor('foreground')};
-`
+import { ScanResultCard } from './scan-result-card'
 
 export const LicenseScanDetailScreen: NavigationFunctionComponent<{
   data: string
 }> = ({ componentId, data }) => {
-  const intl = useIntl()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [name, setName] = useState<string>();
+  const [nationalId, setNationalId] = useState<string>();
+  const [photo, setPhoto] = useState<string>();
+
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === 'LICENSE_SCANNER_DONE') {
       Navigation.dismissModal(StackRegistry.LicenseScannerStack)
     }
   })
 
+  useEffect(() => {
+    client.mutate({
+      mutation: VERIFY_PKPASS_MUTATION,
+      variables: {
+        licenseType: 'DriversLicense',
+        data,
+      }
+    })
+    .then((res) => {
+      if (res.errors) {
+        setError(true);
+        setErrorMessage('Unknown error');
+        setLoading(false);
+      } else {
+        const { data } = res.data.verifyPkPass;
+        try {
+          const { name, nationalId, photo } = JSON.parse(data);
+          setNationalId(nationalId);
+          setName(name)
+          setPhoto(photo);
+        } catch (err) {
+          // whoops
+        }
+        setError(false);
+        setLoading(false);
+      }
+    }).catch(() => {
+      setError(true);
+      setErrorMessage('Network error');
+      setLoading(false);
+    })
+  }, [data]);
+
   let driverLicenseNumber
   try {
     const parsed = JSON.parse(data)
     driverLicenseNumber = parsed?.TGLJZW
-  } catch (err) {}
+  } catch (err) {
+    // noop
+  }
 
   return (
     <View style={{ flex: 1, padding: 16 }}>
-      <LicenceCard
-        title=""
-        status={
-          driverLicenseNumber ? LicenseStatus.VALID : LicenseStatus.NOT_VALID
-        }
-        type={LicenseType.DRIVERS_LICENSE}
-        agencyLogo={rskLogo}
+      <ScanResultCard
+        loading={loading}
+        error={error}
+        errorMessage={errorMessage}
+        name={name}
+        nationalId={nationalId}
+        licenseNumber={driverLicenseNumber}
+        photo={photo}
       />
-      <DetailText>
-        {intl.formatMessage({ id: 'licenseScannerDetail.driverLicenseNumber' })}
-        </DetailText>
-      <LicenseNumber>
-        {driverLicenseNumber ?? 'N/A'}
-      </LicenseNumber>
     </View>
   )
 }
