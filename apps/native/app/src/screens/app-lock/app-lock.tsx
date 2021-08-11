@@ -47,7 +47,7 @@ const Subtitle = styled.Text`
   ${font({
     fontSize: 20,
   })}
-  height: 20px;
+  height: 22px;
 `
 
 const Center = styled.View`
