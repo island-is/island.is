@@ -8,38 +8,22 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import * as z from 'zod'
-import { NO, YES } from '../constants'
 import { API_MODULE } from '../shared'
 import { answerValidators } from './answerValidators'
 import { m } from '../forms/messages'
-
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
+import { HealthInsuranceSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
+enum Roles {
+  APPLICANT = 'applicant',
+}
+
 enum ApplicationStates {
+  PREREQUESITES = 'prerequisites',
   DRAFT = 'draft',
   IN_REVIEW = 'inReview',
 }
-
-const HealthInsuranceSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  applicant: z.object({
-    name: z.string().nonempty(),
-    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-    address: z.string().nonempty(),
-    postalCode: z.string().min(3).max(3),
-    city: z.string().nonempty(),
-    email: z.string().email(),
-    phoneNumber: z.string().optional(),
-    citizenship: z.string().optional(),
-  }),
-  children: z.string().nonempty(),
-  hasAdditionalInfo: z.enum([YES, NO]),
-  additionalRemarks: z.string().optional(),
-  confirmCorrectInfo: z.boolean().refine((v) => v),
-})
 
 const applicationName = m.formTitle.defaultMessage
 
@@ -53,8 +37,40 @@ const HealthInsuranceTemplate: ApplicationTemplate<
   readyForProduction: true,
   dataSchema: HealthInsuranceSchema,
   stateMachineConfig: {
-    initial: ApplicationStates.DRAFT,
+    initial: ApplicationStates.PREREQUESITES,
     states: {
+      [ApplicationStates.PREREQUESITES]: {
+        meta: {
+          name: applicationName,
+          progress: 0,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            // If application stays in this state for 24 hours it will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/PrerequisitesForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Hefja umsókn',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: { target: ApplicationStates.DRAFT },
+        },
+      },
       [ApplicationStates.DRAFT]: {
         meta: {
           name: applicationName,
@@ -62,7 +78,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/HealthInsuranceForm').then((module) =>
                   Promise.resolve(module.HealthInsuranceForm),
@@ -94,10 +110,10 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ConfirmationScreen').then((val) =>
-                  Promise.resolve(val.HealthInsuranceConfirmation),
+                import('../forms/ConfirmationScreen').then((module) =>
+                  Promise.resolve(module.HealthInsuranceConfirmation),
                 ),
               read: 'all',
             },
@@ -106,8 +122,14 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, application: Application): ApplicationRole {
-    return 'applicant'
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
   answerValidators,
 }
