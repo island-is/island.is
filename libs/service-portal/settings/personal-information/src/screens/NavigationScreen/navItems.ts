@@ -1,6 +1,7 @@
 import {
   NavigationScreenItem,
   ServicePortalPath,
+  m,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 
@@ -16,36 +17,14 @@ export const navScreenItems: NavigationScreenItem[] = [
       defaultMessage:
         'Hér getur þú m.a. breytt símanúmeri, netfangi og tungumáli.',
     }),
-    tags: [
-      defineMessage({
-        id: 'service.portal:email',
-        defaultMessage: 'Netfang',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-    ],
+    tags: [m.email, m.telNumber],
   },
   {
     name: 'Skilaboð - í vinnslu',
     url: ServicePortalPath.UserProfileRoot,
     text:
       'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
-    tags: [
-      defineMessage({
-        id: 'service.portal:email',
-        defaultMessage: 'Netfang',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-    ],
+    tags: [m.email, m.telNumber, m.telNumber],
     disabled: true,
   },
   {
@@ -53,20 +32,7 @@ export const navScreenItems: NavigationScreenItem[] = [
     url: ServicePortalPath.UserProfileRoot,
     text:
       'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
-    tags: [
-      defineMessage({
-        id: 'service.portal:email',
-        defaultMessage: 'Netfang',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-    ],
+    tags: [m.email, m.telNumber, m.telNumber],
     disabled: true,
   },
   {
@@ -74,20 +40,7 @@ export const navScreenItems: NavigationScreenItem[] = [
     url: ServicePortalPath.UserProfileRoot,
     text:
       'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
-    tags: [
-      defineMessage({
-        id: 'service.portal:email',
-        defaultMessage: 'Netfang',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-    ],
+    tags: [m.email, m.telNumber, m.telNumber],
     disabled: true,
   },
   {
@@ -95,20 +48,7 @@ export const navScreenItems: NavigationScreenItem[] = [
     url: ServicePortalPath.UserProfileRoot,
     text:
       'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
-    tags: [
-      defineMessage({
-        id: 'service.portal:email',
-        defaultMessage: 'Netfang',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-    ],
+    tags: [m.email, m.telNumber, m.telNumber],
     disabled: true,
   },
   {
@@ -116,20 +56,7 @@ export const navScreenItems: NavigationScreenItem[] = [
     url: ServicePortalPath.UserProfileRoot,
     text:
       'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
-    tags: [
-      defineMessage({
-        id: 'service.portal:email',
-        defaultMessage: 'Netfang',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-      defineMessage({
-        id: 'service.portal:tel',
-        defaultMessage: 'Símanúmer',
-      }),
-    ],
+    tags: [m.email, m.telNumber, m.telNumber],
     disabled: true,
   },
 ]

@@ -8,7 +8,7 @@ import { Box, Text, Columns, Column, Button } from '@island.is/island-ui/core'
 import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
 import amountFormat from '../../utils/amountFormat'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { m } from '@island.is/service-portal/core'
 import * as styles from './FinanceStatusDetailTable.treat'
 
 interface Props {

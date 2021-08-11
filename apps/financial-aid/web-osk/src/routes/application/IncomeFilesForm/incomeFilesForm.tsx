@@ -13,14 +13,26 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFor
 import cn from 'classnames'
 
 import { NavigationProps } from '@island.is/financial-aid/shared'
+import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFileUpload'
 
 const IncomeFilesForm = () => {
   const router = useRouter()
 
   const { form, updateForm } = useContext(FormContext)
 
-  const [state, dispatch] = useReducer(form?.incomeFiles, form?.incomeFiles)
-  const [error, setError] = useState<string>()
+  const {
+    files,
+    uploadErrorMessage,
+    onChange,
+    onRemove,
+    onRetry,
+  } = useFileUpload(form.incomeFiles)
+
+  useEffect(() => {
+    const formFiles = files.filter((f) => f.status === 'done')
+
+    updateForm({ ...form, incomeFiles: formFiles })
+  }, [files])
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -51,13 +63,15 @@ const IncomeFilesForm = () => {
         <div className={styles.fileContainer}>
           <Box className={styles.files} marginBottom={[1, 1, 2]}>
             <InputFileUpload
-              fileList={[]}
+              fileList={files}
               header="Dragðu gögn hingað"
               description="Tekið er við öllum hefðbundnum skráargerðum"
               buttonLabel="Bættu við gögnum"
-              onChange={() => {}}
-              onRemove={() => {}}
-              // errorMessage={state.length > 0 ? error : undefined}
+              showFileSize={true}
+              errorMessage={uploadErrorMessage}
+              onChange={onChange}
+              onRemove={onRemove}
+              onRetry={onRetry}
             />
           </Box>
           <div
@@ -75,7 +89,9 @@ const IncomeFilesForm = () => {
 
       <FormFooter
         previousUrl={navigation?.prevUrl}
-        nextButtonText="Skila gögnum seinna"
+        nextButtonText={
+          files.length > 0 ? 'Halda áfram' : 'Skila gögnum seinna'
+        }
         onNextButtonClick={() => errorCheck()}
       />
     </FormLayout>
