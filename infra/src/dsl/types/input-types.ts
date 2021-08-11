@@ -34,7 +34,7 @@ export type Toggle = {
   secrets: Secrets
 }
 
-export type Toggles = { [name in FeatureToggles]?: Toggle }
+export type Toggles = { [name in FeatureToggles]: Toggle }
 
 export type ServiceDefinition = {
   liveness: HealthProbe
