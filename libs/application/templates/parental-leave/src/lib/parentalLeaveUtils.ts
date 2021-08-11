@@ -326,6 +326,10 @@ export const getPeriodIndex = (field?: Field) => {
     return -1
   }
 
+  if (id === 'periods') {
+    return 0
+  }
+
   return parseInt(id.substring(id.indexOf('[') + 1, id.indexOf(']')), 10)
 }
 

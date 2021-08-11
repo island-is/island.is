@@ -699,7 +699,6 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildDateField({
                   id: 'periods[0].startDate',
-                  width: 'half',
                   title: parentalLeaveFormMessages.startDate.label,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                 }),
@@ -748,7 +747,6 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildSelectField({
                   id: 'periods[0].ratio',
-                  width: 'half',
                   title: parentalLeaveFormMessages.ratio.label,
                   placeholder: parentalLeaveFormMessages.ratio.placeholder,
                   defaultValue: (
@@ -841,7 +839,6 @@ export const ParentalLeaveForm: Form = buildForm({
                   children: [
                     buildSelectField({
                       id: 'ratio',
-                      width: 'half',
                       title: parentalLeaveFormMessages.ratio.label,
                       placeholder: parentalLeaveFormMessages.ratio.placeholder,
                       defaultValue: (
