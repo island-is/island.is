@@ -6,6 +6,6 @@ export const headerGraphWrapper = style({
 })
 
 export const headerGraphParent = style({
-  width: '899px',
+  width: '770px',
   height: '100%',
 })
