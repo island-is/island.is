@@ -16,7 +16,6 @@ module.exports = {
   ],
   webpackFinal: (config) => {
     config.plugins.push(new TreatPlugin())
-    config.resolve.extensions.push('.tsx', '.ts')
     config.devtool = false
 
     config.module.rules.push(

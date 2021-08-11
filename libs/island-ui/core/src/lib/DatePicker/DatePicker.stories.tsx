@@ -1,5 +1,4 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { DatePicker } from './DatePicker'
@@ -8,9 +7,9 @@ import { Text } from '../Text/Text'
 export default {
   title: 'Form/DatePicker',
   component: DatePicker,
-  decorators: [withDesign],
   parameters: withFigma('DatePicker'),
 }
+
 const Template = (args) => <DatePicker {...args} />
 
 export const Default = Template.bind({})

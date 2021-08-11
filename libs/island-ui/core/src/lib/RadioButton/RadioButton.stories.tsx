@@ -1,5 +1,4 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { RadioButton } from './RadioButton'
@@ -8,7 +7,6 @@ import { Box } from '../Box/Box'
 export default {
   title: 'Form/RadioButton',
   component: RadioButton,
-  decorators: [withDesign],
   parameters: withFigma('RadioButton'),
 }
 

@@ -26114,10 +26114,10 @@ store2@^2.12.0:
   resolved "https://registry.yarnpkg.com/store2/-/store2-2.12.0.tgz#e1f1b7e1a59b6083b2596a8d067f6ee88fd4d3cf"
   integrity sha512-7t+/wpKLanLzSnQPX8WAcuLCCeuSHoWdQuh9SB3xD0kNOM38DNf+0Oa+wmvxmYueRzkmh6IcdKFtvTa+ecgPDw==
 
-storybook-addon-designs@6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/storybook-addon-designs/-/storybook-addon-designs-6.0.0.tgz#ecc826bf053bf965773ce74f1234427c90fddbeb"
-  integrity sha512-nwwUusxOmUt82ajTjfBDQfOU2zEO3WrHxG9J7rZmSLnoC42OC8P/FJtAuhL5JregCQildVbjIfeFfz7pMGJOjQ==
+storybook-addon-designs@6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/storybook-addon-designs/-/storybook-addon-designs-6.0.1.tgz#e87fadf688ecb2dc03d22564232c7476eb3af5a9"
+  integrity sha512-BVoh8a1UoXz3xUuUeP5F+V95xGqmHlGR+K9vgZfwnpFLB7IWkRFUmW9a+bF+tl94b3PvcncI33qUnQeBn5KlqA==
   dependencies:
     "@figspec/react" "^0.1.6"
 

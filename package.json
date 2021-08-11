@@ -389,7 +389,7 @@
     "quicktype": "15.0.258",
     "sequelize-cli": "5.5.1",
     "sort-paths": "1.1.1",
-    "storybook-addon-designs": "6.0.0",
+    "storybook-addon-designs": "6.0.1",
     "ts-dedent": "2.0.0",
     "ts-jest": "26.4.0",
     "ts-node": "9.1.1",

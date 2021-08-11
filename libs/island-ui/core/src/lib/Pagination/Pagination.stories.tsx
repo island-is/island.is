@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { Pagination } from './Pagination'
@@ -8,7 +7,6 @@ import { Box } from '../Box/Box'
 export default {
   title: 'Navigation/Pagination',
   component: Pagination,
-  decorators: [withDesign],
   parameters: withFigma('Pagination'),
 }
 

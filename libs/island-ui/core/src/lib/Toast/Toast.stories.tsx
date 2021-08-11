@@ -1,5 +1,4 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { Button } from '../Button/Button'
@@ -9,7 +8,6 @@ import { ToastContainer, toast } from './Toast'
 export default {
   title: 'Alerts/Toast',
   component: ToastContainer,
-  decorators: [withDesign],
   parameters: withFigma('Toast'),
 }
 

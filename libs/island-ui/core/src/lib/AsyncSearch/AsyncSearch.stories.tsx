@@ -1,5 +1,4 @@
 import React, { FC, useState, useEffect } from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { Stack } from '../Stack/Stack'
@@ -10,7 +9,6 @@ import { AsyncSearch } from './AsyncSearch'
 export default {
   title: 'Components/AsyncSearch',
   component: AsyncSearch,
-  decorators: [withDesign],
   parameters: withFigma('AsyncSearch'),
 }
 

@@ -1,5 +1,4 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { Checkbox } from './Checkbox'
@@ -7,7 +6,6 @@ import { Checkbox } from './Checkbox'
 export default {
   title: 'Form/Checkbox',
   component: Checkbox,
-  decorators: [withDesign],
   parameters: withFigma('Checkbox'),
 }
 
