@@ -1,3 +1,4 @@
+import { FeatureToggles as ServerSideFeatureToggles } from '../../../../infra/src/dsl/features'
 export interface User {
   id: string
   attributes?: { [key: string]: string }
@@ -13,4 +14,9 @@ export interface FeatureFlagClient {
 
 export interface FeatureFlagClientProps {
   sdkKey?: string
+}
+
+/// This is an interface to query the status of feature flags specific to the server side
+export interface ServerSideFlag {
+  isOn(flag: ServerSideFeatureToggles): boolean
 }
