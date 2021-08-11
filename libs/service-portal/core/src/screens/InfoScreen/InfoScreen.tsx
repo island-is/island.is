@@ -14,6 +14,7 @@ import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { servicePortalOutboundLink } from '@island.is/plausible'
+import { m } from '@island.is/service-portal/core'
 
 interface Props {
   title: MessageDescriptor
@@ -58,12 +59,7 @@ export const InfoScreen: FC<Props> = ({
                     {formatMessage(title)}
                   </Text>
                   {inProgress && (
-                    <Tag variant="blue">
-                      {formatMessage({
-                        id: 'service.portal:in-progress',
-                        defaultMessage: 'Í vinnslu',
-                      })}
-                    </Tag>
+                    <Tag variant="blue">{formatMessage(m.inProgress)}</Tag>
                   )}
                 </Inline>
               </Box>

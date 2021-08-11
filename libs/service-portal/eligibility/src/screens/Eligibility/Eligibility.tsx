@@ -16,6 +16,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
+  m,
 } from '@island.is/service-portal/core'
 
 type Data = {
@@ -27,10 +28,7 @@ type Data = {
 
 const data: Data[] = [
   {
-    heading: defineMessage({
-      id: 'service.portal:eligibility-parental-leave-heading',
-      defaultMessage: 'Fæðingarorlof',
-    }),
+    heading: m.parentalLeave,
     subtext: defineMessage({
       id: 'sp.eligibility:parental-leave-subtext',
       defaultMessage:
@@ -40,12 +38,9 @@ const data: Data[] = [
     image: '/assets/images/baby.jpg',
   },
   {
-    heading: defineMessage({
-      id: 'service.portal:eligibility-driving-license-heading',
-      defaultMessage: 'Ökuskírteini',
-    }),
+    heading: m.drivingLicense,
     subtext: defineMessage({
-      id: 'service.portal:eligibility-driving-license-subtext',
+      id: 'sp.eligibility:eligibility-driving-license-subtext',
       defaultMessage:
         'Hér er hægt að skoða stöðu núverandi ökuskírteinis, ásamt því að sækja um og eða endurnýja ökupróf í öllum flokkum.',
     }),
@@ -73,10 +68,7 @@ function Eligibility(): JSX.Element {
                     })}
                   </Text>
                   <Tag variant="blue" outlined>
-                    {formatMessage({
-                      id: 'service.portal:in-progress',
-                      defaultMessage: 'Í vinnslu',
-                    })}
+                    {formatMessage(m.inProgress)}
                   </Tag>
                 </Inline>
                 <Text as="p">
@@ -108,12 +100,7 @@ function Eligibility(): JSX.Element {
                 <Text marginBottom={[3, 4]}>{formatMessage(item.subtext)}</Text>
                 <Box>
                   <Link to={item.link}>
-                    <ArrowLink>
-                      {formatMessage({
-                        id: 'service.portal:continue-button',
-                        defaultMessage: 'Halda áfram',
-                      })}
-                    </ArrowLink>
+                    <ArrowLink>{formatMessage(m.continue)}</ArrowLink>
                   </Link>
                 </Box>
               </Box>
