@@ -41,6 +41,7 @@ import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
+import * as styles from './OpenData.treat'
 
 interface OpenDataProps {
   page: GetOpenDataPageQuery['getOpenDataPage']
@@ -116,8 +117,8 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
               </Box>
             </GridColumn>
             <GridColumn span={['12/12', '7/12', '7/12']}>
-              <Box style={{ height: '500px', overflowX: 'scroll' }}>
-                <Box style={{ width: '899px', height: '100%' }}>
+              <Box className={styles.headerGraphWrapper}>
+                <Box className={styles.headerGraphParent}>
                   <SimpleLineChart graphData={pageHeaderGraph} />
                 </Box>
               </Box>
