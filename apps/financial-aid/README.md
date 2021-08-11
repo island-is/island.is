@@ -1,4 +1,4 @@
-# Financial aid system for Samband Sveitarfélaga
+# Financial Aid System for Samband Sveitarfélaga
 
 This is the financial aid system created for Samband Sveitarfélaga by Kolibri.
 
