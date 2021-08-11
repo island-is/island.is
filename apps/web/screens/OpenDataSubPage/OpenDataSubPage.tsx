@@ -148,7 +148,7 @@ const OpenDataSubPage: Screen = () => {
               <GridColumn span={'12/12'}>
                 {data.map((item, index) => (
                   <Box marginBottom={3} key={index}>
-                    <ChartsCard data={item} />
+                    <ChartsCard data={item} subPage />
                   </Box>
                 ))}
               </GridColumn>

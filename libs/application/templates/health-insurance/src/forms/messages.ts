@@ -52,6 +52,11 @@ export const m = defineMessages({
     description:
       'Information on tax payments (month/year) <br> Name of employer',
   },
+  prerequisiteStartApplication: {
+    id: 'hi.application:externalData.prerequisiteStartApplication',
+    defaultMessage: 'Hefja umsókn',
+    description: 'Start application',
+  },
   socialInsuranceAdministrationTitle: {
     id: 'hi.application:externalData.insuranceAdministration.title',
     defaultMessage: 'Tryggingastofnun ríkisins',
@@ -445,6 +450,16 @@ export const m = defineMessages({
     defaultMessage: 'Lesa meira',
     description: 'Read more',
   },
+  requiresActionTagLabel: {
+    id: 'hi.application:requiresActionTagLabel',
+    defaultMessage: 'Þarfnast aðgerðar',
+    description: 'Requires action',
+  },
+  completeTagLabel: {
+    id: 'hi.application:completeTagLabel',
+    defaultMessage: 'Uppfletting í lagi',
+    description: 'Complete',
+  },
   registerYourselfTitle: {
     id: 'hi.application:registerYourself.title',
     defaultMessage: 'Skrá lögheimili á Íslandi',
@@ -462,6 +477,11 @@ export const m = defineMessages({
     defaultMessage: 'Leiðbeiningar',
     description: 'How to register',
   },
+  registerYourselfButtonLink: {
+    id: 'hi.application:registerYourself.buttonLink',
+    defaultMessage: 'https://island.is/logheimili-upplysingar-innflytjendur',
+    description: 'https://island.is/en/legal-domicile-immigrant',
+  },
   activeDraftApplicationTitle: {
     id: 'hi.application:activeDraftApplication.title',
     defaultMessage: 'Opna ókláraða umsókn',
@@ -477,6 +497,57 @@ export const m = defineMessages({
     id: 'hi.application:activeDraftApplication.buttonText',
     defaultMessage: 'Opna umsókn',
     description: 'Open draft',
+  },
+  prerequisiteCheckScreenTitle: {
+    id: 'hi.application:prerequisiteCheckScreenTitle',
+    defaultMessage: 'Öll gögn hafa verið sótt',
+    description: 'All data has been gathered',
+  },
+  prerequisiteNationalRegistryTitle: {
+    id: 'hi.application:prerequisiteNationalRegistry.title',
+    defaultMessage: 'Uppfletting lögheimilis',
+    description: 'Legal residence lookup',
+  },
+  prerequisiteNationalRegistryDescription: {
+    id: 'hi.application:prerequisiteNationalRegistry.description',
+    defaultMessage: 'Athugað hvort notandi sé með skráð lögheimili á Íslandi',
+    description:
+      'Check whether the user has a registered legal residence in Iceland',
+  },
+  prerequisiteActiveDraftApplicationTitle: {
+    id: 'hi.application:prerequisiteActiveDraftApplication.title',
+    defaultMessage: 'Uppfletting umsókna í umsóknarkerfi Island.is',
+    description: 'Search for previous applications in Island.is',
+  },
+  prerequisiteActiveDraftApplicationDescription: {
+    id: 'hi.application:prerequisiteActiveDraftApplication.description',
+    defaultMessage:
+      'Athugað hvort notandi sé þegar með umsókn í umsóknarkerfi Island.is',
+    description:
+      'Search for previous applications in the application system at Island.is',
+  },
+  prerequisiteHealthInsuranceTitle: {
+    id: 'hi.application:prerequisiteHealthInsurance.title',
+    defaultMessage: 'Uppfletting sjúkratryggingar',
+    description: 'Checking health insurance',
+  },
+  prerequisiteHealthInsuranceDescription: {
+    id: 'hi.application:prerequisiteHealthInsurance.description',
+    defaultMessage: 'Athugað hvort notandi sé þegar með sjúkratryggingu',
+    description: 'Check if the user already has health insurance',
+  },
+  prerequisitePendingApplicationTitle: {
+    id: 'hi.application:prerequisitePendingApplication.title',
+    defaultMessage: 'Uppfletting umsókna í Sjúkratryggingum ríkisins.',
+    description:
+      'Search for previous applications in Sjúkratryggingar ríkisins',
+  },
+  prerequisitePendingApplicationDescription: {
+    id: 'hi.application:prerequisitePendingApplication.description',
+    defaultMessage:
+      'Athugað hvort notandi sé þegar með umsókn hjá Sjúkratryggingum ríkisins.',
+    description:
+      'Check whether the user already has an application with Sjúkratryggingar ríkisins',
   },
   pendingApplicationTitle: {
     id: 'hi.application:activeApplication.title',
@@ -495,6 +566,11 @@ export const m = defineMessages({
     defaultMessage: 'Hafa samband',
     description: 'Contact info',
   },
+  pendingApplicationButtonLink: {
+    id: 'hi.application:oldPendingApplication.buttonLink',
+    defaultMessage: 'https://www.sjukra.is/um-okkur/thjonustuleidir/',
+    description: 'https://www.sjukra.is/english',
+  },
   alreadyInsuredTitle: {
     id: 'hi.application:alreadyInsured.title',
     defaultMessage: 'Þú ert nú þegar sjúkratryggður',
@@ -512,6 +588,11 @@ export const m = defineMessages({
     defaultMessage: 'Opna vefsíðu',
     description: 'A button to go to sjukra website',
   },
+  alreadyInsuredButtonLink: {
+    id: 'hi.application:alreadyInsured.buttonLink',
+    defaultMessage: 'https://www.sjukra.is',
+    description: 'https://www.sjukra.is/english',
+  },
   externalDataCheckbox: {
     id: 'hi.application:externalDataCheckbox',
     defaultMessage: 'Ég skil að ofangreindra gagna verður aflað',
@@ -523,5 +604,25 @@ export const m = defineMessages({
       'Unnið verður með persónugreinanleg gögn frá eftirfarandi stofnunum við vinnslu umsóknarinnar',
     description:
       'Personally identifiable data from the following institutions will be processed during the processing of the application',
+  },
+  prerequisitesFormTitle: {
+    id: 'hi.application:PrerequisitesFormTitle',
+    defaultMessage: 'Skilyrði',
+    description: 'Conditions',
+  },
+  externalDataSuccessDescription: {
+    id: 'hi.application:externalDataSuccessTitle',
+    defaultMessage: 'Öll gögn hafa verið sótt og er hægt að hefja umsókn',
+    description: 'All data has been fetched and the application can be started',
+  },
+  externalDataSuccessSubmitFieldTitle: {
+    id: 'hi.application:externalDataSuccessTitle',
+    defaultMessage: 'Hefja umsókn',
+    description: 'Start application',
+  },
+  unexpectedError: {
+    id: 'hi.application:unexpectedError',
+    defaultMessage: 'Villa kom upp',
+    description: 'Unexpected error',
   },
 })
