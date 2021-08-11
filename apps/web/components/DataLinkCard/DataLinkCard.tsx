@@ -1,7 +1,5 @@
 import React from 'react'
 import { useMeasure } from 'react-use'
-import cn from 'classnames'
-import { LinkProps } from 'next/link'
 import {
   Box,
   Stack,

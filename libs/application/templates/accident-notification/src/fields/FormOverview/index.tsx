@@ -15,7 +15,9 @@ import {
   injuredPersonInformation,
   juridicalPerson,
   locationAndPurpose,
+  application as applicationMessages,
   overview,
+  sportsClubInfo,
 } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
@@ -26,6 +28,8 @@ import {
   getWorkplaceData,
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
+  isProfessionalAthleteAccident,
+  isMachineRelatedAccident,
 } from '../../utils'
 
 export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
@@ -37,6 +41,18 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
   const date = format(parseISO(dateOfAccident), 'dd.MM.yy', { locale: is })
 
   const workplaceData = getWorkplaceData(application.answers)
+
+  const attachments = [
+    ...(answers.attachments.deathCertificateFile
+      ? answers.attachments.deathCertificateFile
+      : []),
+    ...(answers.attachments.injuryCertificateFile
+      ? answers.attachments.injuryCertificateFile
+      : []),
+    ...(answers.attachments.powerOfAttorneyFile
+      ? answers.attachments.powerOfAttorneyFile
+      : []),
+  ]
 
   return (
     <Box component="section" paddingTop={2}>
@@ -128,7 +144,7 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
                   label={injuredPersonInformation.labels.tel}
-                  value={answers.injuredPersonInformation.phoneNumber}
+                  value={answers.injuredPersonInformation.phoneNumber ?? ''}
                 />
               </GridColumn>
             </GridRow>
@@ -211,6 +227,19 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
                   value={workplaceData.info.nationalRegistrationId ?? ''}
                 />
               </GridColumn>
+              {isProfessionalAthleteAccident(answers as FormValue) &&
+                workplaceData.info.employee && (
+                  <GridColumn span="12/12">
+                    <ValueLine
+                      label={sportsClubInfo.employee.sectionTitle}
+                      value={
+                        workplaceData.info.employee.radioButton === YES
+                          ? applicationMessages.general.yesOptionLabel
+                          : applicationMessages.general.noOptionLabel
+                      }
+                    />
+                  </GridColumn>
+                )}
             </GridRow>
           </ReviewGroup>
 
@@ -271,6 +300,14 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine label={accidentDetails.labels.time} value={time} />
           </GridColumn>
+          {isMachineRelatedAccident(answers as FormValue) && (
+            <GridColumn span={['12/12', '12/12', '9/12']}>
+              <ValueLine
+                label={overview.labels.workMachine}
+                value={answers.workMachine.desriptionOfMachine}
+              />
+            </GridColumn>
+          )}
           <GridColumn span={['12/12', '12/12', '9/12']}>
             <ValueLine
               label={accidentDetails.labels.description}
@@ -280,7 +317,7 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
           <GridColumn span={['12/12', '12/12', '9/12']}>
             <FileValueLine
               label={overview.labels.attachments}
-              files={answers.attachments.injuryCertificateFile}
+              files={attachments}
             />
           </GridColumn>
         </GridRow>

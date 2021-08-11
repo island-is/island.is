@@ -45,7 +45,6 @@ import {
 } from '../lib/messages'
 import { attachments } from '../lib/messages/attachments'
 import {
-  AccidentTypeEnum,
   AgricultureAccidentLocationEnum,
   AttachmentsEnum,
   DataProviderTypes,
@@ -78,6 +77,8 @@ import {
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
 import { WorkTypeIllustration } from '../assets/WorkTypeIllustration'
+
+const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
@@ -437,9 +438,10 @@ export const AccidentNotificationForm: Form = buildForm({
               description: powerOfAttorney.upload.uploadDescription,
               children: [
                 buildFileUploadField({
-                  id: 'powerOfAttorney.upload',
+                  id: 'attachments.powerOfAttorneyFile',
                   title: '',
                   introduction: '',
+                  uploadAccept: UPLOAD_ACCEPT,
                   uploadHeader: powerOfAttorney.upload.uploadHeader,
                   uploadButtonLabel: powerOfAttorney.upload.uploadButtonLabel,
                 }),
@@ -499,6 +501,7 @@ export const AccidentNotificationForm: Form = buildForm({
             buildFileUploadField({
               id: 'attachments.deathCertificateFile',
               title: attachments.general.uploadHeader,
+              uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.general.uploadHeader,
               uploadDescription: attachments.general.uploadDescription,
               uploadButtonLabel: attachments.general.uploadButtonLabel,
@@ -617,11 +620,42 @@ export const AccidentNotificationForm: Form = buildForm({
         }),
       ],
     }),
+
     // Location and purpose of the injured when the accident occured, relevant to all cases except home activites
     buildSection({
       title: locationAndPurpose.general.title,
       condition: (formValue) => !isHomeActivitiesAccident(formValue),
       children: [
+        // Sports club employee hindrance
+        buildSubSection({
+          id: 'sportsClubInfo.employee.section',
+          title: sportsClubInfo.employee.sectionTitle,
+          condition: (formValue) => isProfessionalAthleteAccident(formValue),
+          children: [
+            buildMultiField({
+              id: 'sportsClubInfo.employee.field',
+              title: sportsClubInfo.employee.title,
+              children: [
+                buildRadioField({
+                  id: 'sportsClubInfo.employee.radioButton',
+                  width: 'half',
+                  title: '',
+                  options: [
+                    {
+                      value: YES,
+                      label: application.general.yesOptionLabel,
+                    },
+                    {
+                      value: NO,
+                      label: application.general.noOptionLabel,
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+
         // Accident location section
         buildSubSection({
           id: 'accidentLocation',
@@ -1066,6 +1100,7 @@ export const AccidentNotificationForm: Form = buildForm({
             buildFileUploadField({
               id: 'attachments.injuryCertificateFile',
               title: attachments.general.uploadHeader,
+              uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.general.uploadHeader,
               uploadDescription: attachments.general.uploadDescription,
               uploadButtonLabel: attachments.general.uploadButtonLabel,

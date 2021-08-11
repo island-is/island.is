@@ -7,6 +7,15 @@ export type CompanyInfo = {
   email: string
   phoneNumber: string
   type: AccidentTypeEnum | WorkAccidentTypeEnum
+  employee?: {
+    radioButton: YesOrNo
+  }
+}
+
+export type FileType = {
+  url?: string | undefined
+  name: string
+  key: string
 }
 
 export enum DataProviderTypes {

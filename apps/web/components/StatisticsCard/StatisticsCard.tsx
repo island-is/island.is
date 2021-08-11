@@ -1,7 +1,8 @@
 import React from 'react'
 import cn from 'classnames'
-import { Box, Stack, Text, Hyphen, Hidden } from '@island.is/island-ui/core'
+import { Box, Stack, Text, Hyphen } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
+import { useMeasure } from 'react-use'
 
 import * as styles from './StatisticsCard.treat'
 
@@ -17,10 +18,14 @@ export const StatisticsCard = ({
   image,
   description,
 }: StatisticsCardsProps) => {
+  const [ref, { width }] = useMeasure()
+
+  const shouldStack = width < 370
   const hasImage = image?.title.length > 0
 
   const items = (
     <Box
+      ref={ref}
       display="flex"
       flexGrow={1}
       flexDirection={'row'}
@@ -31,6 +36,7 @@ export const StatisticsCard = ({
         style={{ width: hasImage ? '70%' : '100%' }}
         paddingTop={[2, 2, 3]}
         paddingLeft={[2, 2, 3]}
+        // position='relative'
       >
         <Stack space={1}>
           <Box display="flex" alignItems="center">
@@ -48,23 +54,24 @@ export const StatisticsCard = ({
         </Stack>
       </Box>
       {hasImage && (
-        <Hidden below="md">
+        <Box>
           <Box
             position="relative"
             style={{
-              width: '204px',
+              width: shouldStack ? '150px' : '204px',
               height: '204px',
               top: '-40px',
             }}
           >
             <BackgroundImage
-              width={204}
+              width={500}
+              quality={100}
               positionX={'right'}
               backgroundSize="contain"
               image={image}
             />
           </Box>
-        </Hidden>
+        </Box>
       )}
     </Box>
   )
@@ -76,11 +83,12 @@ const FrameWrapper = ({ children }) => {
   return (
     <Box
       className={cn(styles.card)}
-      position="relative"
+      position="absolute"
       borderRadius="large"
       overflow="visible"
       background="blue100"
       outline="none"
+      style={{ marginRight: '24px' }}
     >
       {children}
     </Box>

@@ -8,109 +8,13 @@ import isSameDay from 'date-fns/isSameDay'
 import addMonths from 'date-fns/addMonths'
 import endOfMonth from 'date-fns/endOfMonth'
 import parseISO from 'date-fns/parseISO'
-import { useWindowSize } from 'react-use'
 
-import { Box, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { useLocale } from '@island.is/localization'
 
 import { useDrag } from '../utils'
-import * as styles from './Timeline.treat'
-import { parentalLeaveFormMessages } from '../../../lib/messages'
-
-export interface TimelinePeriod {
-  actualDob?: boolean
-  startDate: string
-  endDate: string
-  ratio: string
-  duration: string
-  title: string
-  color?: string
-  canDelete?: boolean
-}
-
-const isFirstPeriodUsingActualDateOfBirth = (periods: TimelinePeriod[]) =>
-  periods?.[0].actualDob
-
-const Panel: FC<{
-  editable: boolean
-  initDate: Date
-  title: string
-  titleSmall: string
-  periods: TimelinePeriod[]
-  isMobile: boolean
-  onDeletePeriod?: (index: number) => void
-}> = ({
-  editable = true,
-  initDate,
-  title,
-  titleSmall,
-  periods,
-  isMobile,
-  onDeletePeriod,
-}) => {
-  const { formatMessage } = useLocale()
-  const formatStyle = isMobile ? 'dd MMM' : 'dd MMM yyyy'
-  const titleLabel = isMobile ? titleSmall : title
-  const firstPeriodUsingActualDateOfBirth = periods?.[0]?.actualDob
-
-  return (
-    <Box className={styles.panel}>
-      <Box className={styles.panelRow}>
-        <Text variant="small">
-          <Text variant="small" as="span" fontWeight="semiBold" color="blue400">
-            {titleLabel}
-          </Text>
-
-          <br />
-
-          {firstPeriodUsingActualDateOfBirth
-            ? ''
-            : format(initDate, 'dd MMM yyyy')}
-        </Text>
-        <Box className={styles.firstPanelRowSeparator} />
-      </Box>
-
-      {periods.map((p, index) => (
-        <Box className={styles.panelRow} key={index}>
-          {p.canDelete && editable && onDeletePeriod && (
-            <Box
-              className={styles.deleteIcon}
-              onClick={() => onDeletePeriod(index)}
-            >
-              <Icon
-                color="dark200"
-                icon="removeCircle"
-                size="medium"
-                type="outline"
-              />
-            </Box>
-          )}
-
-          <Text variant="small">
-            <Text variant="small" as="span" fontWeight="semiBold">
-              {p.title}
-            </Text>
-
-            <br />
-
-            {p.actualDob
-              ? formatMessage(
-                  parentalLeaveFormMessages.reviewScreen.periodActualDob,
-                  {
-                    duration: p.duration,
-                  },
-                )
-              : `${format(parseISO(p.startDate), formatStyle)} - ${format(
-                  parseISO(p.endDate),
-                  formatStyle,
-                )}`}
-          </Text>
-        </Box>
-      ))}
-    </Box>
-  )
-}
+import * as styles from './Chart.treat'
+import { TimelinePeriod } from './Timeline'
 
 const ChartMonths: FC<{
   initDate: Date
@@ -169,7 +73,7 @@ const ChartMonths: FC<{
   )
 }
 
-const Chart: FC<{
+export const Chart: FC<{
   initDate: Date
   periods: TimelinePeriod[]
   dayWidth: number
@@ -284,50 +188,3 @@ const Chart: FC<{
     </Box>
   )
 }
-
-interface TimelineProps {
-  editable?: boolean
-  initDate: Date
-  periods: TimelinePeriod[]
-  spanInMonths?: number
-  title: string
-  titleSmall?: string
-  onDeletePeriod?: (index: number) => void
-}
-
-const Timeline: FC<TimelineProps> = ({
-  editable = true,
-  initDate,
-  periods,
-  spanInMonths = 18,
-  title,
-  titleSmall,
-  onDeletePeriod,
-}) => {
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
-  const dayWidth = isMobile ? 2 : 3
-
-  return (
-    <Box display="flex" width="full" position="relative">
-      <Panel
-        initDate={initDate}
-        title={title}
-        titleSmall={titleSmall || title}
-        periods={periods}
-        isMobile={isMobile}
-        editable={editable}
-        onDeletePeriod={onDeletePeriod}
-      />
-      <Chart
-        initDate={initDate}
-        periods={periods}
-        dayWidth={dayWidth}
-        spanInMonths={spanInMonths}
-      />
-      <Box className={styles.scrollGradient} />
-    </Box>
-  )
-}
-
-export default Timeline
