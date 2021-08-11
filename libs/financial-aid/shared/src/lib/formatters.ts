@@ -33,14 +33,11 @@ export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`
 
 export const formatPhoneNumber = (phoneNumber: string) => {
-  if (phoneNumber.length === 7) {
+  if (phoneNumber.length <= 10) {
     return insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
   }
-  if (phoneNumber.length === 10) {
-    return insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
-  } else {
-    return insertAt(phoneNumber.replace('-', ''), '-', 4) || '-'
-  }
+
+  return insertAt(phoneNumber.replace('-', ''), '-', 4) || '-'
 }
 // insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
 
