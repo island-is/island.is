@@ -2,7 +2,7 @@ import { dedent } from 'ts-dedent'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { overviewTemplate } from './overviewTemplate'
 import { SendMailOptions } from 'nodemailer'
-import { FileAttachment, NodemailAttachment } from '../types'
+import { Attachment } from 'nodemailer/lib/mailer'
 import { AccidentNotificationAnswers } from '@island.is/application/templates/accident-notification'
 
 interface ConfirmationEmail {
@@ -10,7 +10,7 @@ interface ConfirmationEmail {
     props: EmailTemplateGeneratorProps,
     applicationSenderName: string,
     applicationSenderEmail: string,
-    attachments: FileAttachment[],
+    attachments: Attachment[],
   ): SendMailOptions
 }
 
@@ -26,7 +26,6 @@ export const generateConfirmationEmail: ConfirmationEmail = (
   } = props
 
   const answers = application.answers as AccidentNotificationAnswers
-
   const applicant = {
     name: answers.applicant.name,
     address: answers.applicant.email,
@@ -49,16 +48,6 @@ export const generateConfirmationEmail: ConfirmationEmail = (
     ${overview}
 `)
 
-  const mailAttachments = attachments
-    ? attachments.map(
-        ({ url, name }) =>
-          ({
-            filename: name,
-            href: url ?? '',
-          } as NodemailAttachment),
-      )
-    : []
-
   return {
     from: {
       name: applicationSenderName,
@@ -66,7 +55,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
     },
     to: applicant,
     cc: undefined,
-    attachments: mailAttachments,
+    attachments,
     subject,
     html: body,
   }

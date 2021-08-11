@@ -5,12 +5,12 @@ import { generateConfirmationEmail } from './emailGenerators'
 import type { AccidentNotificationConfig } from './config'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { FileStorageService } from '@island.is/file-storage'
+import { Attachment } from 'nodemailer/lib/mailer'
 import {
   Application,
   FormValue,
   getValueViaPath,
 } from '@island.is/application/core'
-import { FileAttachment } from './types'
 
 @Injectable()
 export class AccidentNotificationService {
@@ -39,7 +39,7 @@ export class AccidentNotificationService {
   // Generating signedUrls for mail attachments
   private async prepareAttachments(
     application: Application,
-  ): Promise<FileAttachment[]> {
+  ): Promise<Attachment[]> {
     const powerOfAttorneyFiles = this.getFilesFromAnswers(
       application.answers,
       'attachments.powerOfAttorneyFile',
@@ -53,17 +53,11 @@ export class AccidentNotificationService {
       'attachments.injuryCertificateFile',
     )
 
-    const attachments = []
-
-    if (powerOfAttorneyFiles) attachments.push(...powerOfAttorneyFiles)
-    if (deathCertificateFiles) attachments.push(...deathCertificateFiles)
-    if (injuryCertificateFiles) attachments.push(...injuryCertificateFiles)
-
-    const hasAttachments = attachments && attachments?.length > 0
-
-    if (!hasAttachments) {
-      return []
-    }
+    const attachments = [
+      ...powerOfAttorneyFiles,
+      ...deathCertificateFiles,
+      ...injuryCertificateFiles,
+    ]
 
     return await Promise.all(
       attachments.map(async ({ key, name }) => {
@@ -73,12 +67,15 @@ export class AccidentNotificationService {
 
         const signedUrl = await this.fileStorageService.generateSignedUrl(url)
 
-        return { name, url: signedUrl }
+        return { filename: name, href: signedUrl }
       }),
     )
   }
 
   private getFilesFromAnswers(answers: FormValue, id: string) {
-    return getValueViaPath(answers, id) as Array<{ key: string; name: string }>
+    return (
+      (getValueViaPath(answers, id) as Array<{ key: string; name: string }>) ??
+      []
+    )
   }
 }
