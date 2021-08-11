@@ -1,5 +1,5 @@
-import { ServerSideFlags, ServerSideFlagsOnTheClientSide } from "./server-side";
-import { ServerSideFlag } from "./types";
+import { ServerSideFlags, ServerSideFlagsOnTheClientSide } from './server-side'
+import { ServerSideFlag } from './types'
 
 export const ServerSideFlagClient: ServerSideFlag =
   typeof window === 'undefined'
