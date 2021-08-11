@@ -29,6 +29,9 @@ export class AccidentNotificationService {
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     const attachments = await this.prepareAttachments(application)
+    const shouldRequestReview =
+      !utils.isHomeActivitiesAccident(application.answers) &&
+      !utils.isRepresentativeOfCompanyOrInstitute(application.answers)
 
     await this.sharedTemplateAPIService.sendEmail(
       (props) =>
@@ -41,8 +44,7 @@ export class AccidentNotificationService {
       application,
     )
 
-    // Assign representative reviewer in all cases except home activites
-    if (!utils.isHomeActivitiesAccident(application.answers)) {
+    if (shouldRequestReview) {
       await this.sharedTemplateAPIService.assignApplicationThroughEmail(
         generateAssignReviewerEmail,
         application,

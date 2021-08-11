@@ -1,4 +1,3 @@
-import get from 'lodash/get'
 import { AssignmentEmailTemplateGenerator } from '../../../../types'
 import { Message } from '@island.is/email-service'
 import { utils } from '@island.is/application/templates/accident-notification'
@@ -50,7 +49,7 @@ export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
         {
           component: 'Button',
           context: {
-            copy: 'Yfirfara umsókn',
+            copy: 'Yfirfara tilkynningu',
             href: assignLink,
           },
         },

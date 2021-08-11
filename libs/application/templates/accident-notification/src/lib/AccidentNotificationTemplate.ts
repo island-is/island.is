@@ -17,6 +17,7 @@ const AccidentNotificationSchema = z.object({})
 
 const AccidentNotificationStates = {
   draft: 'draft',
+  representativeApproval: 'representativeApproval',
   submitted: 'submitted',
 }
 
@@ -69,11 +70,11 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: AccidentNotificationStates.submitted,
+            target: AccidentNotificationStates.representativeApproval,
           },
         },
       },
-      [AccidentNotificationStates.submitted]: {
+      [AccidentNotificationStates.representativeApproval]: {
         meta: {
           name: application.general.name.defaultMessage,
           progress: 0.6,
