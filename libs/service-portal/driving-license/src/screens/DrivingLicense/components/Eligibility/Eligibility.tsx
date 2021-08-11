@@ -121,11 +121,11 @@ function Eligibility(): JSX.Element | null {
       {drivingLicense.isProvisional && (
         <Application
           heading={defineMessage({
-            id: 'service.portal:driving-license-final-license-heading',
+            id: 'sp.driving-license:driving-license-final-license-heading',
             defaultMessage: 'Fullnaðarskírteini',
           })}
           subText={defineMessage({
-            id: 'service.portal:driving-license-final-license-subtext',
+            id: 'sp.driving-license:driving-license-final-license-subtext',
             defaultMessage:
               'Ökumaður getur fengið fullnaðarskírteini, hafi hann haft bráðabirgðaskírteini samfellt í 12 mánuði og ekki á þeim tíma fengið punkta í punktakerfi vegna umferðarlagabrota og farið í akstursmat.',
           })}

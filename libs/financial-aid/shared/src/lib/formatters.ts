@@ -23,6 +23,7 @@ export const getEmploymentStatus: KeyMapping<Employment, string> = {
 
 export const getState: KeyMapping<ApplicationState, string> = {
   New: 'Ný umsókn',
+  DataNeeded: 'Vantar gögn',
   InProgress: 'Í vinnslu',
   Rejected: 'Synjað',
   Approved: 'Samþykkt',
@@ -51,7 +52,7 @@ export const aidCalculator = (
     case 'RegisteredLease':
       return aid.ownApartmentOrLease
     case 'WithOthers':
-      return aid.withOthersOrUnknow
+      return aid.ownApartmentOrLease
     case 'Other':
     case 'Unknown':
       return aid.withOthersOrUnknow

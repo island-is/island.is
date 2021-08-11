@@ -36,6 +36,20 @@ const Index = () => {
       <GridContainer>
         <Button
           onClick={() => {
+            router.push('/api/auth/login')
+          }}
+          data-testid="logout-button"
+          preTextIconType="filled"
+          size="small"
+          type="button"
+          variant="primary"
+        >
+          Innskráning
+        </Button>
+        <br />
+        <br />
+        <Button
+          onClick={() => {
             router.push('/api/auth/login?nationalId=0000000000')
           }}
           data-testid="logout-button"
@@ -44,7 +58,7 @@ const Index = () => {
           type="button"
           variant="primary"
         >
-          Login
+          Plat notandi
         </Button>
       </GridContainer>
     </div>

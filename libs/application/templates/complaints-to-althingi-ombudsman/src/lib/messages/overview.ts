@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const complaintOverview = {
+  general: defineMessages({
+    noAttachments: {
+      id: 'ctao.application:overview.noAttachments',
+      defaultMessage: 'Engin fylgiskjöl',
+      description:
+        'Fallback text to display in overview when there are no attachments',
+    },
+  }),
   labels: defineMessages({
     nationalRegistry: {
       id: 'ctao.application:overview.label.nationalRegistry',
@@ -31,6 +39,31 @@ export const complaintOverview = {
       id: 'ctao.application:overview.label.courtAction',
       defaultMessage: 'Lagt fyrir dómstóla',
       description: 'Label for the court action answer',
+    },
+    powerOfAttorney: {
+      id: 'ctao.application:overview.label.powerOfAttorney',
+      defaultMessage: 'Umboð frá kvörtunaraðila',
+      description: 'Label for power of attorney',
+    },
+    attachments: {
+      id: 'ctao.application:overview.label.attachments',
+      defaultMessage: 'Fylgiskjöl',
+      description: 'Label for attachments',
+    },
+    complaintDescription: {
+      id: 'ctao.application:overview.label.complaintDescription',
+      defaultMessage: 'Lýsing kvörtunar',
+      description: 'Label for complaint description',
+    },
+    decisionDate: {
+      id: 'ctao.application:overview.label.decisionDate',
+      defaultMessage: 'Dagsetning ákvörðunar',
+      description: 'Label for decision date',
+    },
+    complaintType: {
+      id: 'ctao.application:overview.label.complaintType',
+      defaultMessage: 'Kvörtunin varðar',
+      description: 'Label for complaint type',
     },
   }),
 }

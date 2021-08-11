@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
@@ -12,7 +13,7 @@ import {
   CustomerRecords,
 } from './FinanceTransactionsData.types'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import { m } from '../../lib/messages'
+import { m } from '@island.is/service-portal/core'
 import {
   Box,
   Text,
@@ -27,20 +28,14 @@ import {
   AlertBanner,
   Hidden,
 } from '@island.is/island-ui/core'
-import { greidsluStadaHeaders } from '../../utils/dataHeaders'
-import {
-  exportHreyfingarCSV,
-  exportHreyfingarXSLX,
-} from '../../utils/filesHreyfingar'
-import { downloadXlsxDocument } from '@island.is/service-portal/graphql'
+import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
 
-const FinanceTransactions = () => {
+const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
-  const { downloadSheet } = downloadXlsxDocument()
 
   const [fromDate, setFromDate] = useState<string>()
   const [toDate, setToDate] = useState<string>()
@@ -116,12 +111,11 @@ const FinanceTransactions = () => {
                   <Columns space="p2" align="right">
                     <Column width="content">
                       <DropdownExport
-                        onGetCSV={() => exportHreyfingarCSV(recordsDataArray)}
+                        onGetCSV={() =>
+                          exportHreyfingarFile(recordsDataArray, 'csv')
+                        }
                         onGetExcel={() =>
-                          downloadSheet({
-                            headers: greidsluStadaHeaders,
-                            data: exportHreyfingarXSLX(recordsDataArray),
-                          })
+                          exportHreyfingarFile(recordsDataArray, 'xlsx')
                         }
                       />
                     </Column>

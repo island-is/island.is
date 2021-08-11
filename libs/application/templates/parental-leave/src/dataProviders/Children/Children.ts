@@ -29,7 +29,7 @@ import {
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { calculateRemainingNumberOfDays } from '../../lib/directorateOfLabour.utils'
 import { getSelectedChild } from '../../lib/parentalLeaveUtils'
-import { Boolean } from '../../types'
+import { YesOrNo } from '../../types'
 
 export interface PregnancyStatusAndRightsResults {
   childrenAndExistingApplications: ChildrenAndExistingApplications
@@ -174,7 +174,7 @@ export class Children extends BasicDataProvider {
       application.answers,
       'mock.useMockedApplication',
       NO,
-    ) as Boolean
+    ) as YesOrNo
 
     if (useApplication === NO) {
       const children = getChildrenFromMockData(application)

@@ -1,7 +1,7 @@
-import { downloadCSV } from './downloadFile'
-import flatten from 'lodash/flatten'
+import { downloadFile } from './downloadFile'
 import { CustomerRecordsDetails } from '../screens/FinanceTransactions/FinanceTransactionsData.types'
 import { hreyfingarHeaders } from './dataHeaders'
+const name = 'Hreyfingar'
 
 const getDataArray = (data: Array<any>) =>
   data.map((record: CustomerRecordsDetails) => [
@@ -20,15 +20,10 @@ const getDataArray = (data: Array<any>) =>
     record.reference,
   ])
 
-export const exportHreyfingarCSV = async (data: CustomerRecordsDetails[]) => {
-  const name = 'Hreyfingar'
+export const exportHreyfingarFile = async (
+  data: CustomerRecordsDetails[],
+  type: 'csv' | 'xlsx',
+) => {
   const dataArrays = getDataArray(data)
-
-  await downloadCSV(name, hreyfingarHeaders, dataArrays)
-}
-
-export const exportHreyfingarXSLX = (data: CustomerRecordsDetails[]) => {
-  const dataArrays = getDataArray(data)
-
-  return flatten(dataArrays)
+  await downloadFile(name, hreyfingarHeaders, dataArrays, type)
 }

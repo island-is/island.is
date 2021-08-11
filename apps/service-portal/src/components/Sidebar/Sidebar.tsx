@@ -4,7 +4,7 @@ import * as styles from './Sidebar.treat'
 import ModuleNavigation from './ModuleNavigation'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { useLocale } from '@island.is/localization'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { ServicePortalPath, m } from '@island.is/service-portal/core'
 
 export const Sidebar: FC<{}> = () => {
   const { formatMessage } = useLocale()
@@ -25,6 +25,7 @@ export const Sidebar: FC<{}> = () => {
               (navRoot, index) =>
                 navRoot.path !== ServicePortalPath.MinarSidurRoot && (
                   <ModuleNavigation
+                    alwaysExpanded
                     key={index}
                     nav={navRoot}
                     variant={rootIndex === 0 ? 'blue' : 'blueberry'}
@@ -34,10 +35,7 @@ export const Sidebar: FC<{}> = () => {
           </Stack>
           {rootIndex === 1 && (
             <Text variant="small" color="blueberry600" marginTop={3}>
-              {formatMessage({
-                id: 'service.portal:incoming-services-footer',
-                defaultMessage: `Þessi virkni er aðgengileg í eldri útgáfu á Mínum síðun en mun birtast hérna hérna innan tíðar.`,
-              })}
+              {formatMessage(m.incomingServicesFooterMobile)}
             </Text>
           )}
         </Box>

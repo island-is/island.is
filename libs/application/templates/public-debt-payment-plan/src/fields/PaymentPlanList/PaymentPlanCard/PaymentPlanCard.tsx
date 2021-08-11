@@ -1,19 +1,13 @@
+import { PaymentScheduleDebts } from '@island.is/api/schema'
 import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import AnimateHeight from 'react-animate-height'
-import { Payment, PaymentType } from '../../../dataProviders/tempAPITypes'
 import { paymentPlan } from '../../../lib/messages/paymentPlan'
 import * as styles from './PaymentPlanCard.treat'
 
-// TODO: Map correct type to the appropriate label
-const getPaymentTypeLabel = (type: PaymentType) =>
-  type === PaymentType.O
-    ? paymentPlan.labels.deductedFromSalary
-    : paymentPlan.labels.sentAsAClaim
-
 interface Props {
-  payment: Payment
+  payment: PaymentScheduleDebts
   isAnswered?: boolean
   onEditClick?: (id: string) => void
 }
@@ -59,7 +53,7 @@ export const PaymentPlanCard = ({
           {payment.organization}
         </Text>
         <Tag variant="purple" disabled>
-          {formatMessage(getPaymentTypeLabel(payment.type))}
+          {formatMessage(payment.explanation)}
         </Tag>
       </Box>
       <Text variant="h3">
@@ -75,12 +69,13 @@ export const PaymentPlanCard = ({
         <b>{` ${payment.totalAmount.toLocaleString('is-IS')} kr.`}</b>
       </Text>
       <AnimateHeight duration={400} height={isExpanded ? 'auto' : 0}>
-        <Box paddingY={2}>
-          {payment.chargeTypes.map((chargeType, index) => (
+        <Box marginY={2}>
+          {payment.chargetypes.map((chargeType, index) => (
             <Box
               key={index}
               paddingY={2}
               paddingX={3}
+              marginTop={2}
               background="blue100"
               borderRadius="large"
             >
@@ -94,11 +89,11 @@ export const PaymentPlanCard = ({
               />
               <ValueLine
                 label={formatMessage(paymentPlan.labels.interest)}
-                value={chargeType.interest}
+                value={chargeType.intrest}
               />
               <ValueLine
                 label={formatMessage(paymentPlan.labels.expense)}
-                value={chargeType.expense}
+                value={chargeType.expenses}
               />
               <ValueLine
                 label={formatMessage(paymentPlan.labels.totalAmount)}
@@ -130,7 +125,7 @@ export const PaymentPlanCard = ({
             icon="pencil"
             iconType="outline"
             size="small"
-            onClick={onEditClick.bind(null, payment.id)}
+            onClick={onEditClick.bind(null, payment.type)}
           >
             {formatMessage(paymentPlan.labels.editPaymentPlan)}
           </Button>

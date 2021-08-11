@@ -1,60 +1,29 @@
-import { SuccessfulDataProviderResult } from '@island.is/application/core'
 import * as z from 'zod'
-import { Payment, Prerequisites } from '../dataProviders/tempAPITypes'
-import { NO, YES } from '../shared/constants'
-
-interface PrerequisitesResult extends SuccessfulDataProviderResult {
-  data: Prerequisites
-}
-
-interface UserProfileResult extends SuccessfulDataProviderResult {
-  data: {
-    email: string
-    mobilePhoneNumber: string
-  }
-}
-
-interface NatRegResult extends SuccessfulDataProviderResult {
-  data: {
-    nationalId: string
-    age: number
-    fullName: string
-    citizenship: {
-      code: string
-      name: string
-    }
-    legalResidence: string
-    address: {
-      code: string
-      postalCode: string
-      city: string
-      streetAddress: string
-      lastUpdated: string
-    }
-  }
-}
-
-interface PaymentPlanListResult extends SuccessfulDataProviderResult {
-  data: Payment[]
-}
-
-export type PaymentPlanExternalData = {
-  paymentPlanPrerequisites?: PrerequisitesResult
-  nationalRegistry?: NatRegResult
-  userProfile?: UserProfileResult
-  paymentPlanList?: PaymentPlanListResult
-}
+import { AMOUNT, MONTHS, NO, YES } from '../shared/constants'
+import { error } from './messages'
 
 const paymentPlanSchema = z
   .object({
     id: z.string().nonempty(),
     amountPerMonth: z.number().optional(),
     numberOfMonths: z.number().optional(),
+    paymentMode: z.enum([AMOUNT, MONTHS]).refine((x) => x !== null, {
+      params: error.paymentMode,
+    }),
   })
   .optional()
 
 export const PublicDebtPaymentPlanSchema = z.object({
   // TODO: Applicant schema
+  applicant: z.object({
+    address: z.string(),
+    city: z.string(),
+    email: z.string(),
+    name: z.string(),
+    nationalId: z.string(),
+    phoneNumber: z.string(),
+    postalCode: z.string(),
+  }),
   employer: z.object({
     isCorrectInfo: z.enum([YES, NO]),
     correctedNationalId: z.string().optional(),
@@ -76,31 +45,3 @@ export const PublicDebtPaymentPlanSchema = z.object({
     ten: paymentPlanSchema,
   }),
 })
-
-export const paymentPlanIndexKeyMapper = {
-  0: 'one',
-  1: 'two',
-  2: 'three',
-  3: 'four',
-  4: 'five',
-  5: 'six',
-  6: 'seven',
-  7: 'eight',
-  8: 'nine',
-  9: 'ten',
-}
-
-export const paymentPlanEntryKeys = [
-  'one',
-  'two',
-  'three',
-  'four',
-  'five',
-  'six',
-  'seven',
-  'eight',
-  'nine',
-  'ten',
-]
-
-export type PublicDebtPaymentPlan = z.TypeOf<typeof PublicDebtPaymentPlanSchema>

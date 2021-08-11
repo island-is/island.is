@@ -50,6 +50,12 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           ...AllSlices
         }
       }
+      featuredImage {
+        url
+        contentType
+        width
+        height
+      }
     }
   }
   ${slices}

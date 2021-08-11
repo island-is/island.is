@@ -12,6 +12,7 @@ import {
   createAssignToken,
   getConfigValue,
   PAYMENT_QUERY,
+  PAYMENT_STATUS_QUERY,
 } from './shared.utils'
 
 @Injectable()
@@ -53,11 +54,13 @@ export class SharedTemplateApiService {
   async assignApplicationThroughEmail(
     templateGenerator: AssignmentEmailTemplateGenerator,
     application: Application,
+    expiresIn: number,
     locale = 'is',
   ) {
     const token = createAssignToken(
       application,
       getConfigValue(this.configService, 'jwtSecret'),
+      expiresIn,
     )
 
     const clientLocationOrigin = getConfigValue(
@@ -162,6 +165,22 @@ export class SharedTemplateApiService {
       .then((res) => res.json())
       .then((json) => {
         return json.data.applicationPaymentCharge
+      })
+  }
+
+  async getPaymentStatus(authorization: string, applicationId: string) {
+    return await this.makeGraphqlQuery(authorization, PAYMENT_STATUS_QUERY, {
+      applicationId,
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Couldnt query payment status')
+        }
+        return res
+      })
+      .then((res) => res.json())
+      .then((json) => {
+        return json.data.applicationPaymentStatus
       })
   }
 }

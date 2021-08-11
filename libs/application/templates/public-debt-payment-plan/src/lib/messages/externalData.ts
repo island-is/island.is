@@ -53,5 +53,25 @@ export const externalData = {
         'Símanúmer, netfang. Upplýsingar um símanúmer eða netfang er hægt að uppfæra á vefsíðu island.is ef þess þarf.',
       description: 'User Profile Subtitle',
     },
+    paymentEmployerTitle: {
+      id: `pdpp.application:section.externalData.paymentEmployerTitle`,
+      defaultMessage: 'Upplýsingar frá skattinum',
+      description: 'External data section payment plan title',
+    },
+    paymentEmployerSubtitle: {
+      id: `pdpp.application:section.externalData.paymentEmployerSubtitle`,
+      defaultMessage: 'Upplýsingar um vinnuveitanda',
+      description: 'External data section payment plan title',
+    },
+    paymentDebtsTitle: {
+      id: `pdpp.application:section.externalData.paymentEmployerTitle`,
+      defaultMessage: 'Upplýsingar frá skattinum',
+      description: 'External data section payment plan title',
+    },
+    paymentDebtsSubtitle: {
+      id: `pdpp.application:section.externalData.paymentEmployerSubtitle`,
+      defaultMessage: 'Upplýsingar um skuldir',
+      description: 'External data section payment plan title',
+    },
   }),
 }
