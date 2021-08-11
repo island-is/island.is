@@ -1,10 +1,12 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 
-import { ApplicationForm, ErrorShell } from '@island.is/application/ui-shell'
+import { ApplicationForm, NotFound } from '@island.is/application/ui-shell'
 import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
+
+import { Layout } from '../components/Layout/Layout'
 
 export const Application = () => {
   const { slug, id } = useParams<{ slug: string; id: string }>()
@@ -13,12 +15,12 @@ export const Application = () => {
   const nationalRegistryId = userInfo?.profile?.nationalId
 
   if (!id || !slug) {
-    return <ErrorShell />
+    return <NotFound />
   }
 
   if (!nationalRegistryId) {
     return (
-      <ErrorShell
+      <NotFound
         title={formatMessage(coreMessages.notLoggedIn)}
         subTitle={formatMessage(coreMessages.notLoggedInDescription)}
       />

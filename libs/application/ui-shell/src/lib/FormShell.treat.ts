@@ -1,10 +1,8 @@
 import { style } from 'treat'
-
 import { theme } from '@island.is/island-ui/theme'
 import { escapeGrid } from '@island.is/island-ui/utils'
 
 const headerHeight = 112
-
 export const root = style({
   minHeight: '-webkit-fill-available',
   display: 'flex',

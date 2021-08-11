@@ -15,7 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
-import { ErrorShell } from '@island.is/application/ui-shell'
+import { NotFound } from '@island.is/application/ui-shell'
 import {
   useApplicationNamespaces,
   useLocale,
@@ -73,7 +73,7 @@ export const Applications: FC = () => {
 
   if (!type || applicationsError) {
     return (
-      <ErrorShell
+      <NotFound
         title={formatMessage(coreMessages.notFoundApplicationType)}
         subTitle={formatMessage(coreMessages.notFoundApplicationTypeMessage, {
           type,
@@ -84,7 +84,7 @@ export const Applications: FC = () => {
 
   if (createError) {
     return (
-      <ErrorShell
+      <NotFound
         title={formatMessage(coreMessages.createErrorApplication)}
         subTitle={formatMessage(coreMessages.createErrorApplicationMessage, {
           type,
