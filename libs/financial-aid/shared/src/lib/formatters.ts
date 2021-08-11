@@ -39,7 +39,6 @@ export const formatPhoneNumber = (phoneNumber: string) => {
 
   return insertAt(phoneNumber.replace('-', ''), '-', 4) || '-'
 }
-// insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
 
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
