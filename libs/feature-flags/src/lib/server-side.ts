@@ -28,8 +28,3 @@ export class ServerSideFlagsOnTheClientSide implements ServerSideFlag {
     throw new Error('Using server-side flags in the browser is not supported')
   }
 }
-
-export const ServerSideFlagClient: ServerSideFlag =
-  typeof window === 'undefined'
-    ? new ServerSideFlagsOnTheClientSide()
-    : new ServerSideFlags(process.env.SSF_ON)

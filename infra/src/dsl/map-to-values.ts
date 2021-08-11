@@ -124,38 +124,37 @@ export const serializeService: SerializeMethod = (
     result.secrets = serviceDef.secrets
   }
 
-  if (serviceDef.toggles) {
-    const activeToggles = Object.entries(serviceDef.toggles!).filter(([_, v]) =>
-      featuresOn.includes(_ as FeatureToggles),
-    ) as [FeatureToggles, Toggle][]
-    const toggleEnvs = activeToggles.map(([name, v]) => {
-      return {
-        name,
-        vars: serializeEnvironmentVariables(service, uberChart, v.env),
-      }
-    })
-    const toggleSecrets = activeToggles.map(([name, v]) => {
-      return {
-        name,
-        secrets: v.secrets,
-      }
-    })
-
-    result.env = {
-      ...result.env,
-      ...toggleEnvs.reduce(
-        (acc, toggle) => ({ ...acc, ...toggle.vars.envs }),
-        {} as ContainerEnvironmentVariables,
-      ),
+  const activeToggles = Object.entries(serviceDef.toggles!).filter(([_, v]) =>
+    featuresOn.includes(_ as FeatureToggles),
+  ) as [FeatureToggles, Toggle][]
+  const toggleEnvs = activeToggles.map(([name, v]) => {
+    return {
+      name,
+      vars: serializeEnvironmentVariables(service, uberChart, v.env),
     }
-
-    result.secrets = {
-      ...result.secrets,
-      ...toggleSecrets.reduce(
-        (acc, toggle) => ({ ...acc, ...toggle.secrets }),
-        {} as ContainerSecrets,
-      ),
+  })
+  const toggleSecrets = activeToggles.map(([name, v]) => {
+    return {
+      name,
+      secrets: v.secrets,
     }
+  })
+
+  result.env = {
+    ...result.env,
+    ...toggleEnvs.reduce(
+      (acc, toggle) => ({ ...acc, ...toggle.vars.envs }),
+      {} as ContainerEnvironmentVariables,
+    ),
+    SSF_ON: featuresOn.join(','),
+  }
+
+  result.secrets = {
+    ...result.secrets,
+    ...toggleSecrets.reduce(
+      (acc, toggle) => ({ ...acc, ...toggle.secrets }),
+      {} as ContainerSecrets,
+    ),
   }
 
   // service account
@@ -180,6 +179,9 @@ export const serializeService: SerializeMethod = (
         containers: serializeContainerRuns(
           serviceDef.initContainers.containers,
         ),
+        env: {
+          SSF_ON: featuresOn.join(','),
+        },
       }
       if (typeof serviceDef.initContainers.envs !== 'undefined') {
         const { envs, errors } = serializeEnvironmentVariables(
@@ -188,7 +190,7 @@ export const serializeService: SerializeMethod = (
           serviceDef.initContainers.envs,
         )
         allErrors = allErrors.concat(errors)
-        result.initContainer.env = envs
+        result.initContainer.env = { ...result.initContainer.env, ...envs }
       }
       if (typeof serviceDef.initContainers.secrets !== 'undefined') {
         result.initContainer.secrets = serviceDef.initContainers.secrets

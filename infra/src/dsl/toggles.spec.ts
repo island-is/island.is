@@ -51,6 +51,20 @@ describe('Server-side toggles', () => {
     expect(result.serviceDef.env!['A']).toBe('B')
   })
 
+  it('should be added to the ON list', () => {
+    expect(result.serviceDef.env!['SSF_ON']).toBe(
+      'do-not-remove-for-testing-only',
+    )
+  })
+
+  it('should have ON list emtpy when nothing is toggled', () => {
+    const result = serializeService(
+      sut,
+      new UberChart(Staging),
+    ) as SerializeSuccess
+    expect(result.serviceDef.env!['SSF_ON']).toBe('')
+  })
+
   it('env variables missing when feature not toggled', () => {
     const result = serializeService(
       sut,
@@ -77,5 +91,19 @@ describe('Server-side toggles', () => {
 
   it('should have initcontainer secret present when feature toggled', () => {
     expect(result.serviceDef.initContainer!.secrets!['INIT']).toBe('/a/b/c')
+  })
+
+  it('should be added to the ON list for the init container', () => {
+    expect(result.serviceDef.initContainer!.env!['SSF_ON']).toBe(
+      'do-not-remove-for-testing-only',
+    )
+  })
+
+  it('should have ON list for the init container emtpy when nothing is toggled', () => {
+    const result = serializeService(
+      sut,
+      new UberChart(Staging),
+    ) as SerializeSuccess
+    expect(result.serviceDef.initContainer!.env!['SSF_ON']).toBe('')
   })
 })

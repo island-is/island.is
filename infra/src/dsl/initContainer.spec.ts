@@ -67,30 +67,15 @@ describe('Init-container definitions', () => {
           name: 'seedation',
         },
       ],
-      env: { A: 'B', B: 'b', DB_USER: 'api', DB_NAME: 'api', DB_HOST: 'a' },
+      env: {
+        A: 'B',
+        B: 'b',
+        DB_USER: 'api',
+        DB_NAME: 'api',
+        DB_HOST: 'a',
+        SSF_ON: '',
+      },
       secrets: { S1: '/as/dfadf', DB_PASS: '/k8s/api/DB_PASSWORD' },
-    })
-  })
-  it('Basic setup', () => {
-    const sut = service('api').initContainer({
-      containers: [
-        {
-          command: 'migration',
-          args: ['all'],
-        },
-      ],
-    })
-    const result = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
-    expect(result.serviceDef.initContainer).toEqual({
-      containers: [
-        {
-          command: ['migration'],
-          args: ['all'],
-        },
-      ],
     })
   })
   it('Empty list of containers', () => {
