@@ -65,6 +65,7 @@ export const RadioButton = ({
     <Box
       className={cn(styles.container, {
         [styles.large]: large,
+        [styles.largeError]: large && hasError,
       })}
       background={
         large && backgroundColor ? backgroundColors[backgroundColor] : undefined
@@ -122,7 +123,8 @@ export const RadioButton = ({
           <div
             className={cn(styles.tooltipContainer, {
               [styles.tooltipLargeContainer]: large,
-              [styles.toolTipLargeContainerWithIllustration]: Illustration,
+              [styles.toolTipLargeContainerWithIllustration]:
+                large && Illustration,
             })}
           >
             <Tooltip text={tooltip} />

@@ -18,6 +18,10 @@ export const large = style({
   border: `1px solid ${theme.color.blue200}`,
 })
 
+export const largeError = style({
+  border: `1px solid ${theme.color.red600}`,
+})
+
 export const input = style({
   height: radioButtonSize,
   left: 0,
@@ -103,14 +107,10 @@ export const radioButtonError = style({
   ...inputErrorState,
   paddingBottom: 0,
 })
+
 export const errorMessage = style({
   ...inputErrorMessage,
-  padding: `0 ${theme.spacing[3]}px ${theme.spacing[2]}px ${theme.spacing[2]}px`,
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
-      padding: `0 ${theme.spacing[3]}px ${theme.spacing[2]}px ${theme.spacing[3]}px`,
-    },
-  },
+  padding: `0 ${theme.spacing[3]}px ${theme.spacing[2]}px ${theme.spacing[3]}px`,
 })
 
 export const tooltipContainer = style({
