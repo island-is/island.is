@@ -11,7 +11,7 @@ export class ServerSideFlags implements ServerSideFlag {
   isOn(flag: ServerSideFeatureToggles): boolean {
     if (!this.processed) {
       if (typeof this.input === 'undefined') {
-        throw new Error('')
+        throw new Error('Server-side feature flags input is missing or corrupt')
       } else {
         this.flagsOn = this.input
           .split(',')
