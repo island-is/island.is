@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { Box, Button, Input } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 
@@ -43,23 +44,14 @@ export const ConfirmationStep: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: formatMessage({
-                id: 'service.portal:verification-code-required',
-                defaultMessage: 'Skylda er að setja inn öryggiskóða',
-              }),
+              message: formatMessage(m.verificationCodeRequired),
             },
           }}
           defaultValue={''}
           render={({ onChange, value, name }) => (
             <Input
-              label={formatMessage({
-                id: 'service.portal:verification-code',
-                defaultMessage: 'Öryggiskóði',
-              })}
-              placeholder={formatMessage({
-                id: 'service.portal:verification-code',
-                defaultMessage: 'Öryggiskóði',
-              })}
+              label={formatMessage(m.verificationCode)}
+              placeholder={formatMessage(m.verificationCode)}
               name={name}
               value={value}
               hasError={errors.code}
@@ -86,10 +78,7 @@ export const ConfirmationStep: FC<Props> = ({
       >
         <Box marginTop={[1, 0]}>
           <Button variant="ghost" onClick={onBack}>
-            {formatMessage({
-              id: 'service.portal:go-back',
-              defaultMessage: 'Til baka',
-            })}
+            {formatMessage(m.goBack)}
           </Button>
         </Box>
         <Button

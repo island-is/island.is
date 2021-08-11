@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useDebounce } from 'react-use'
+import { PaymentModeState } from '../../types'
 
 export const useDebouncedSliderValues = (
   currentAnswers:
     | {
         amountPerMonth?: number | undefined
         numberOfMonths?: number | undefined
+        paymentMode?: PaymentModeState | undefined
         id: string
       }
     | undefined,

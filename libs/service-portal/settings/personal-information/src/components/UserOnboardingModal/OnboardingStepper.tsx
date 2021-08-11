@@ -1,6 +1,7 @@
 import { Box, Inline } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { defineMessage, MessageDescriptor } from 'react-intl'
+import { m } from '@island.is/service-portal/core'
 import { OnboardingStep } from './UserOnboardingModal'
 import * as styles from './UserOnboardingModal.treat'
 import cn from 'classnames'
@@ -14,31 +15,19 @@ const steps: {
   steps: OnboardingStep[]
 }[] = [
   {
-    label: defineMessage({
-      id: 'service.portal:language',
-      defaultMessage: 'Tungumál',
-    }),
+    label: m.language,
     steps: ['language-form'],
   },
   {
-    label: defineMessage({
-      id: 'global:telephone',
-      defaultMessage: 'Símanúmer',
-    }),
+    label: m.telNumber,
     steps: ['tel-form'],
   },
   {
-    label: defineMessage({
-      id: 'global:email',
-      defaultMessage: 'Netfang',
-    }),
+    label: m.email,
     steps: ['email-form', 'submit-form'],
   },
   {
-    label: defineMessage({
-      id: 'service.portal:confirmation',
-      defaultMessage: 'Staðfesting',
-    }),
+    label: m.confirmation,
     steps: ['form-submitted'],
   },
 ]

@@ -1286,6 +1286,35 @@
         }
       }
     },
+    "api-domains-payment-schedule": {
+      "root": "libs/api/domains/payment-schedule",
+      "sourceRoot": "libs/api/domains/payment-schedule/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/payment-schedule/tsconfig.lib.json",
+              "libs/api/domains/payment-schedule/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/payment-schedule/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/payment-schedule"],
+          "options": {
+            "jestConfig": "libs/api/domains/payment-schedule/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-regulations": {
       "root": "libs/api/domains/regulations",
       "sourceRoot": "libs/api/domains/regulations/src",
@@ -1928,6 +1957,44 @@
         }
       }
     },
+    "application-templates-accident-notification": {
+      "root": "libs/application/templates/accident-notification",
+      "sourceRoot": "libs/application/templates/accident-notification/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/accident-notification/tsconfig.lib.json",
+              "libs/application/templates/accident-notification/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/accident-notification/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/accident-notification/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": [
+            "coverage/libs/application/templates/accident-notification"
+          ]
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/accident-notification/src/lib/messages/index.ts"
+          }
+        }
+      }
+    },
     "application-templates-children-residence-change": {
       "root": "libs/application/templates/family-matters/children-residence-change",
       "sourceRoot": "libs/application/templates/family-matters/children-residence-change/src",
@@ -2455,9 +2522,9 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "nx run services-endorsements-api:schemas/external-openapi-generator",
-              "nx run services-endorsements-api:schemas/build-openapi",
-              "nx run application-templates-party-application:schemas/openapi-generator"
+              "nx run services-endorsements-api:schemas/external-openapi-generator $NX_OPTIONS",
+              "nx run services-endorsements-api:schemas/build-openapi $NX_OPTIONS",
+              "nx run application-templates-party-application:schemas/openapi-generator $NX_OPTIONS"
             ],
             "parallel": false
           }
@@ -2514,10 +2581,10 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "nx run services-endorsements-api:schemas/external-openapi-generator",
-              "nx run services-endorsements-api:schemas/build-openapi",
-              "nx run services-party-letter-registry-api:schemas/build-openapi",
-              "nx run application-templates-party-letter:schemas/openapi-generator"
+              "nx run services-endorsements-api:schemas/external-openapi-generator $NX_OPTIONS",
+              "nx run services-endorsements-api:schemas/build-openapi $NX_OPTIONS",
+              "nx run services-party-letter-registry-api:schemas/build-openapi $NX_OPTIONS",
+              "nx run application-templates-party-letter:schemas/openapi-generator $NX_OPTIONS"
             ],
             "parallel": false
           }
@@ -3248,6 +3315,35 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/clients/payment"]
+        }
+      }
+    },
+    "clients-payment-schedule": {
+      "root": "libs/clients/payment-schedule",
+      "sourceRoot": "libs/clients/payment-schedule/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/payment-schedule/tsconfig.lib.json",
+              "libs/clients/payment-schedule/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/clients/payment-schedule/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/payment-schedule"],
+          "options": {
+            "jestConfig": "libs/clients/payment-schedule/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },
@@ -7246,8 +7342,8 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "nx run services-temporary-voter-registry-api:schemas/build-openapi",
-              "nx run services-endorsements-api:schemas/openapi-generator"
+              "nx run services-temporary-voter-registry-api:schemas/build-openapi $NX_OPTIONS",
+              "nx run services-endorsements-api:schemas/openapi-generator $NX_OPTIONS"
             ],
             "parallel": false
           }
