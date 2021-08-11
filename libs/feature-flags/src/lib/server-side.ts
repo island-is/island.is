@@ -3,7 +3,7 @@ import { FeatureToggles as ServerSideFeatureToggles } from '../../../../infra/sr
 
 export class ServerSideFlags implements ServerSideFlag {
   input: string
-  processed: boolean = false
+  processed = false
   flagsOn: ServerSideFeatureToggles[]
   constructor(flagsOn: string) {
     this.input = flagsOn
