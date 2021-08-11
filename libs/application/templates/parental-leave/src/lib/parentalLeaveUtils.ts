@@ -14,7 +14,7 @@ import {
 import { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
-import { TimelinePeriod } from '../fields/components/Timeline'
+import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import {
   YES,
   NO,
