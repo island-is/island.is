@@ -1,7 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { generateConfirmationEmail } from './emailGenerators'
+import {
+  generateAssignReviewerEmail,
+  generateConfirmationEmail,
+} from './emailGenerators'
 import type { AccidentNotificationConfig } from './config'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { FileStorageService } from '@island.is/file-storage'
@@ -11,6 +14,9 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { FileAttachment } from './types'
+import { utils } from '@island.is/application/templates/accident-notification'
+
+const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 
 @Injectable()
 export class AccidentNotificationService {
@@ -34,6 +40,15 @@ export class AccidentNotificationService {
         ),
       application,
     )
+
+    // Assign representative reviewer in all cases except home activites
+    if (!utils.isHomeActivitiesAccident(application.answers)) {
+      await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+        generateAssignReviewerEmail,
+        application,
+        SIX_MONTHS_IN_SECONDS_EXPIRES,
+      )
+    }
   }
 
   // Generating signedUrls for mail attachments
