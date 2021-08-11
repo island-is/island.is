@@ -28,7 +28,7 @@ const InputModal: React.FC<Props> = ({
 
   const [comment, setComment] = useState<string>()
 
-  const sumbitButtonText = (
+  const submitButtonText = (
     type: ApplicationState | undefined,
   ): string | undefined => {
     switch (type) {
@@ -58,7 +58,7 @@ const InputModal: React.FC<Props> = ({
           Hætta við
         </Button>
         <Button onClick={(e) => onSaveState(e, amount, comment)}>
-          {sumbitButtonText(type)}
+          {submitButtonText(type)}
         </Button>
       </Box>
     </Box>
