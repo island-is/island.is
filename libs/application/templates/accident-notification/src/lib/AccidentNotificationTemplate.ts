@@ -44,7 +44,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   ],
   dataSchema: AccidentNotificationSchema,
   stateMachineConfig: {
-    initial: States.DELIVERY_OF_DOCUMENTS,
+    initial: States.NEEDS_DOCUMENT_AND_REVIEW,
     states: {
       [States.DRAFT]: {
         meta: {
@@ -71,11 +71,11 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: States.DELIVERY_OF_DOCUMENTS,
+            target: States.NEEDS_DOCUMENT_AND_REVIEW,
           },
         },
       },
-      [States.DELIVERY_OF_DOCUMENTS]: {
+      [States.NEEDS_DOCUMENT_AND_REVIEW]: {
         meta: {
           name: application.deliveryOfData.name.defaultMessage,
           progress: 0.4,
@@ -87,21 +87,61 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'edit', type: 'primary' },
-              ],
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: {
+            target: States.NEEDS_DOCUMENT,
+          },
+        },
+      },
+      [States.NEEDS_DOCUMENT]: {
+        meta: {
+          name: application.deliveryOfData.name.defaultMessage,
+          progress: 0.6,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              actions: [{ event: 'SUBMIT', name: ' ', type: 'primary' }],
               read: 'all',
               write: 'all',
             },
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
-          },
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
         },
       },
-      [States.DOCUMENTS_HAVE_BEEN_DELIVERED]: {
+      [States.NEEDS_REVIEW]: {
+        meta: {
+          name: application.deliveryOfData.name.defaultMessage,
+          progress: 0.6,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              actions: [{ event: 'SUBMIT', name: ' ', type: 'primary' }],
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+        },
+      },
+      [States.IN_FINAL_REVIEW]: {
         meta: {
           name: application.deliveryOfData.name.defaultMessage,
           progress: 0.6,

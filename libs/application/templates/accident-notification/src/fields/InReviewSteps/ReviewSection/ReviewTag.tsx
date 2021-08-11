@@ -30,15 +30,11 @@ export const ReviewTag: FC<ReviedTagProps> = ({ application, state }) => {
           </Tag>
         </Box>
       )
-    case ReviewSectionState.missingDocuments:
+    case ReviewSectionState.missing:
       return (
         <Box pointerEvents="none">
           <Tag variant="rose">
-            {formatText(
-              inReview.tags.missingDocuments,
-              application,
-              formatMessage,
-            )}
+            {formatText(inReview.tags.missing, application, formatMessage)}
           </Tag>
         </Box>
       )

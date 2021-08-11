@@ -19,10 +19,10 @@ export const inReview = {
     },
   }),
   tags: defineMessages({
-    missingDocuments: {
+    missing: {
       id: 'an.application:inReview.tags.missingDocuments',
-      defaultMessage: 'Skjöl vantar',
-      description: 'Missing documents',
+      defaultMessage: 'Vantar',
+      description: 'Missing',
     },
     approved: {
       id: 'an.application:inReview.tags.approved',
@@ -48,7 +48,7 @@ export const inReview = {
   application: defineMessages({
     title: {
       id: 'an.application:inReview.application.title',
-      defaultMessage: 'Tilkynning móttekin',
+      defaultMessage: 'Slysatilkynning',
       description: 'Title for application section in review',
     },
     summary: {
@@ -61,12 +61,13 @@ export const inReview = {
   documents: defineMessages({
     title: {
       id: 'an.application:inReview.documents.title',
-      defaultMessage: 'Afhending skjala',
+      defaultMessage: 'Fylgiskjöl',
       description: 'Title for documents section in review',
     },
     summary: {
       id: 'an.application:inReview.documents.summary',
-      defaultMessage: 'Nauðsynleg gögn vantar: ',
+      defaultMessage:
+        'Til þess að Sjúkratryggingar Íslands geti hafið vinnslu slysatilkynningar þurfa viðeigandi gögn að berast.',
       description: 'Summary for documents section in review',
     },
     summaryApproved: {
@@ -78,20 +79,20 @@ export const inReview = {
   representative: defineMessages({
     title: {
       id: 'an.application:inReview.representative.title',
-      defaultMessage: 'Forsvarsmaður fer yfir tilkynningu',
+      defaultMessage: 'Yfirferð og staðfesting',
       description: 'Title for representative section in review',
     },
     summary: {
       id: 'an.application:inReview.representative.summary',
       defaultMessage:
-        'Svo hægt er að greiða út bætur fyrir slysið þarf þriðji aðilli að staðfesta að upplýsingar eru réttar',
+        'Ef slysið átti sér stað á vinnustað/skóla/stofnun/íþróttafélagi þá þarf forsvarsmaður þess að yfirfara og staðfesta upplýsingar í tilkynningu.',
       description: 'Summary for representative section in review',
     },
   }),
   sjukratrygging: defineMessages({
     title: {
       id: 'an.application:inReview.sjukratrygging.title',
-      defaultMessage: 'Sjúkratryggingar Íslands fer yfir umsókn',
+      defaultMessage: 'Afstaða til bótastöðu',
       description: 'Title for sjukratrygging section in review',
     },
     summary: {
@@ -108,4 +109,44 @@ export const inReview = {
       description: 'Message to user when application has been updated',
     },
   }),
+  action: {
+    documents: defineMessages({
+      title: {
+        id: 'an.application:inReview.action.documents.title',
+        defaultMessage: 'Áminning frá Sjúkratryggingum Íslands',
+        description: 'Title for action message in document section',
+      },
+      description: {
+        id: 'an.application:inReview.action.documents.description',
+        defaultMessage:
+          'Eftirtalin skjöl hafa enn ekki borist en eru nauðsynleg svo hægt er að taka afstöðu til bótaskyldu: ',
+        description: 'Description for action message in document section',
+      },
+      actionButtonTitle: {
+        id: 'an.application:inReview.action.documents.actionButtonTitle',
+        defaultMessage: 'Bæta við skjölum',
+        description:
+          'Action button title for action message in document section',
+      },
+    }),
+    representative: defineMessages({
+      title: {
+        id: 'an.application:inReview.action.representative.title',
+        defaultMessage: 'Áminning frá Sjúkratryggingum Íslands',
+        description: 'Title for action message in representative section',
+      },
+      description: {
+        id: 'an.application:inReview.action.representative.description',
+        defaultMessage:
+          'Það er nauðsynlegt að forsvarsmaður fari yfir tilkynningu áður en Sjúkratryggingar Íslands getur tekið afstöðu til bótaskyldu.',
+        description: 'Description for action message in representative section',
+      },
+      actionButtonTitle: {
+        id: 'an.application:inReview.action.representative.actionButtonTitle',
+        defaultMessage: 'Skoða tilkynningu',
+        description:
+          'Action button title for action message in representative section',
+      },
+    }),
+  },
 }

@@ -17,19 +17,22 @@ type StatesMap = {
 
 const statesMap: StatesMap = {
   application: {
-    [States.DELIVERY_OF_DOCUMENTS]: ReviewSectionState.received,
+    [States.NEEDS_DOCUMENT_AND_REVIEW]: ReviewSectionState.received,
   },
   documents: {
-    [States.DELIVERY_OF_DOCUMENTS]: ReviewSectionState.missingDocuments,
-    [States.DOCUMENTS_HAVE_BEEN_DELIVERED]: ReviewSectionState.received,
+    [States.NEEDS_DOCUMENT_AND_REVIEW]: ReviewSectionState.missing,
+    [States.NEEDS_REVIEW]: ReviewSectionState.received,
+    [States.NEEDS_DOCUMENT]: ReviewSectionState.missing,
   },
   representative: {
-    [States.DELIVERY_OF_DOCUMENTS]: ReviewSectionState.inProgress,
-    [States.DOCUMENTS_HAVE_BEEN_DELIVERED]: ReviewSectionState.inProgress,
+    [States.NEEDS_DOCUMENT_AND_REVIEW]: ReviewSectionState.missing,
+    [States.NEEDS_REVIEW]: ReviewSectionState.missing,
+    [States.NEEDS_DOCUMENT]: ReviewSectionState.approved,
   },
   sjukratrygging: {
-    [States.DELIVERY_OF_DOCUMENTS]: ReviewSectionState.pending,
-    [States.DOCUMENTS_HAVE_BEEN_DELIVERED]: ReviewSectionState.pending,
+    [States.NEEDS_DOCUMENT_AND_REVIEW]: ReviewSectionState.pending,
+    [States.NEEDS_REVIEW]: ReviewSectionState.pending,
+    [States.NEEDS_DOCUMENT]: ReviewSectionState.pending,
   },
 }
 
@@ -46,6 +49,7 @@ export const InReviewSteps: FC<FieldBaseProps> = ({
       state: statesMap['application'][application.state],
       title: formatMessage(inReview.application.title),
       description: formatMessage(inReview.application.summary),
+      hasActionMessage: false,
     },
     {
       state: statesMap['documents'][application.state],
@@ -54,16 +58,39 @@ export const InReviewSteps: FC<FieldBaseProps> = ({
         application.state === States.DELIVERY_OF_DOCUMENTS
           ? formatMessage(inReview.documents.summary)
           : formatMessage(inReview.documents.summaryApproved),
+      hasActionMessage:
+        application.state === States.NEEDS_DOCUMENT_AND_REVIEW ||
+        application.state === States.NEEDS_DOCUMENT,
+      action: {
+        title: formatMessage(inReview.action.documents.title),
+        description: formatMessage(inReview.action.documents.description),
+        fileNames: 'Áverkavottorð', // We need to get this from first form
+        actionButtonTitle: formatMessage(
+          inReview.action.documents.actionButtonTitle,
+        ),
+        hasActionButtonIcon: true,
+      },
     },
     {
       state: statesMap['representative'][application.state],
       title: formatMessage(inReview.representative.title),
       description: formatMessage(inReview.representative.summary),
+      hasActionMessage:
+        application.state === States.NEEDS_DOCUMENT_AND_REVIEW ||
+        application.state === States.NEEDS_REVIEW,
+      action: {
+        title: formatMessage(inReview.action.representative.title),
+        description: formatMessage(inReview.action.representative.description),
+        actionButtonTitle: formatMessage(
+          inReview.action.representative.actionButtonTitle,
+        ),
+      },
     },
     {
       state: statesMap['sjukratrygging'][application.state],
       title: formatMessage(inReview.sjukratrygging.title),
       description: formatMessage(inReview.sjukratrygging.summary),
+      hasActionMessage: false,
     },
   ]
 
@@ -77,7 +104,12 @@ export const InReviewSteps: FC<FieldBaseProps> = ({
       )}
       <Box marginTop={7} marginBottom={8}>
         {steps.map((step, index) => (
-          <ReviewSection key={index} application={application} {...step} />
+          <ReviewSection
+            key={index}
+            application={application}
+            refetch={refetch}
+            {...step}
+          />
         ))}
       </Box>
     </Box>

@@ -34,3 +34,7 @@ export const sectionNumberRequiresAction = style({
 export const sectionNumberComplete = style({
   background: theme.color.purple400,
 })
+
+export const boldFileNames = style({
+  fontWeight: 'bold',
+})
