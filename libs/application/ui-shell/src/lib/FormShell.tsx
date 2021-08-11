@@ -1,7 +1,10 @@
 import React, { FC, useEffect, useReducer } from 'react'
 import cn from 'classnames'
+import * as Sentry from '@sentry/react'
+
 import {
   Application,
+  coreMessages,
   Form,
   FormModes,
   Schema,
@@ -12,7 +15,7 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-import * as Sentry from '@sentry/react'
+import { useLocale } from '@island.is/localization'
 
 import Screen from '../components/Screen'
 import FormStepper from '../components/FormStepper'
@@ -24,8 +27,8 @@ import { ActionTypes } from '../reducer/ReducerTypes'
 import { useHistorySync } from '../hooks/useHistorySync'
 import { useApplicationTitle } from '../hooks/useApplicationTitle'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
-import { ErrorMessage } from '../components/ErrorMessage'
 import * as styles from './FormShell.treat'
+import { ErrorShell } from '../components/ErrorShell'
 
 export const FormShell: FC<{
   application: Application
@@ -33,6 +36,7 @@ export const FormShell: FC<{
   form: Form
   dataSchema: Schema
 }> = ({ application, nationalRegistryId, form, dataSchema }) => {
+  const { formatMessage } = useLocale()
   const { setInfo } = useHeaderInfo()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
@@ -105,7 +109,12 @@ export const FormShell: FC<{
                     scope.setExtra('applicationState', application.state)
                     scope.setExtra('currentScreen', currentScreen.id)
                   }}
-                  fallback={<ErrorMessage />}
+                  fallback={
+                    <ErrorShell
+                      title={formatMessage(coreMessages.globalErrorTitle)}
+                      subTitle={formatMessage(coreMessages.globalErrorMessage)}
+                    />
+                  }
                 >
                   <Screen
                     application={storedApplication}
