@@ -301,4 +301,15 @@ export class DrivingLicenseService {
       errorMessage: success ? null : errorMessage,
     }
   }
+
+  async getQualityPhoto(
+    nationalId: User['nationalId'],
+  ) {
+    const result = await this.drivingLicenseApi.apiOkuskirteiniKennitalaHasqualityphotoGet(
+      {
+        kennitala: nationalId
+      }
+    )
+    console.log(result)
+  }
 }
