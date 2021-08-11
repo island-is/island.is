@@ -4,7 +4,7 @@ import { FeatureToggles as ServerSideFeatureToggles } from '../../../../infra/sr
 export class ServerSideFlags implements ServerSideFlag {
   input: string
   processed = false
-  flagsOn: ServerSideFeatureToggles[]
+  flagsOn: ServerSideFeatureToggles[] = []
   constructor(flagsOn: string) {
     this.input = flagsOn
   }
