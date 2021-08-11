@@ -268,7 +268,7 @@ export function TabSettings() {
               id: 'settings.security.useBiometricsLabel',
             },
             {
-              biometricType,
+              biometricType: biometricType.text,
             },
           )}
           subtitle={
@@ -277,13 +277,13 @@ export function TabSettings() {
                   {
                     id: 'settings.security.useBiometricsDescription',
                   },
-                  { biometricType },
+                  { biometricType: biometricType.text },
                 )
               : intl.formatMessage(
                   {
                     id: 'onboarding.biometrics.notEnrolled',
                   },
-                  { biometricType },
+                  { biometricType: biometricType.text },
                 )
           }
           accessory={

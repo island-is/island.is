@@ -16,24 +16,43 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
+import iris from '../../assets/icons/iris-16.png'
+import finger from '../../assets/icons/finger-16.png'
 
-export function useBiometricType(type: AuthenticationType[]) {
+export function useBiometricType(type: AuthenticationType[] = []) {
   const intl = useIntl()
   if (type.includes(AuthenticationType.FACIAL_RECOGNITION)) {
     if (Platform.OS === 'ios') {
-      return intl.formatMessage({ id: 'onboarding.biometrics.type.faceId' })
+      return {
+        text: intl.formatMessage({ id: 'onboarding.biometrics.type.faceId' }),
+        icon: iris,
+      }
     } else {
-      return intl.formatMessage({
-        id: 'onboarding.biometrics.type.facialRecognition',
-      })
+      return {
+        text: intl.formatMessage({
+          id: 'onboarding.biometrics.type.facialRecognition',
+        }),
+        icon: iris,
+      }
     }
   } else if (type.includes(AuthenticationType.FINGERPRINT)) {
-    return intl.formatMessage({ id: 'onboarding.biometrics.type.fingerprint' })
+    return {
+      text: intl.formatMessage({
+        id: 'onboarding.biometrics.type.fingerprint',
+      }),
+      icon: finger,
+    }
   } else if (type.includes(AuthenticationType.IRIS)) {
-    return intl.formatMessage({ id: 'onboarding.biometrics.type.iris' })
+    return {
+      text: intl.formatMessage({ id: 'onboarding.biometrics.type.iris' }),
+      icon: iris,
+    }
   }
 
-  return ''
+  return {
+    text: '',
+    icon: undefined,
+  }
 }
 
 export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
@@ -44,6 +63,8 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
   const [isEnrolled, setIsEnrolled] = useState(props.isEnrolled)
   const biometricType = useBiometricType(props.supportedAuthenticationTypes)
   const intl = useIntl()
+
+  console.log(biometricType, 'biometricTypebiometricType')
 
   useEffect(() => {
     // check screen active states
@@ -82,12 +103,12 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
         isEnrolled ? (
           <FormattedMessage
             id="onboarding.biometrics.title"
-            values={{ biometricType }}
+            values={{ biometricType: biometricType.text }}
           />
         ) : (
           <FormattedMessage
             id="onboarding.biometrics.notEnrolled"
-            values={{ biometricType }}
+            values={{ biometricType: biometricType.text }}
           />
         )
       }
@@ -97,10 +118,11 @@ export const OnboardingBiometricsScreen: NavigationFunctionComponent<{
           testID={testIDs.ONBOARDING_BIOMETRICS_USE_BUTTON}
           title={intl.formatMessage(
             { id: 'onboarding.biometrics.useBiometricsButtonText' },
-            { biometricType },
+            { biometricType: biometricType.text },
           )}
           onPress={onBiometricsPress}
           disabled={!isEnrolled}
+          icon={biometricType.icon}
         />
       }
       buttonCancel={

@@ -11,6 +11,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
+import allow from '../../assets/icons/allow.png';
 
 async function requestUserPermission() {
   const authStatus = await messaging().requestPermission()
@@ -46,6 +47,7 @@ export const OnboardingNotificationsScreen: NavigationFunctionComponent = () => 
           })}
           onPress={onAllowPress}
           testID={testIDs.ONBOARDING_NOTIFICATIONS_ALLOW_BUTTON}
+          icon={allow}
         />
       }
       buttonCancel={

@@ -248,5 +248,6 @@ AppLockScreen.options = {
   layout: {
     backgroundColor: 'transparent',
     componentBackgroundColor: 'transparent',
+    orientation: ['portrait'],
   },
 }
