@@ -30,10 +30,9 @@ import { ApplicationEventService } from '../applicationEvent'
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
-  // @UseGuards(TokenGuaard)
+  @UseGuards(TokenGuaard)
   @Get('me')
   @ApiOkResponse({
-    // type: ApplicationModel,
     description:
       'Checks whether user has applied before and if it is the same month',
   })
