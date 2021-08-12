@@ -11,12 +11,6 @@ import {
 } from 'recharts'
 import { CustomizedAxisTick, RenderLegend, COLORS } from '../utils'
 
-const dataKeysName = {
-  sott: 'Umsóknir',
-  veitt: 'Veittir styrkir',
-  amount: 'Heildarupphæð styrkja',
-}
-
 interface GraphDataProps {
   title?: string
   data: string
@@ -26,7 +20,7 @@ interface GraphProps {
   graphData: GraphDataProps
 }
 export const SimpleBarChart = ({ graphData }: GraphProps) => {
-  const { title, data, datakeys } = graphData
+  const { data, datakeys } = graphData
   const parsedData = JSON.parse(data)
   const parsedDatakeys = JSON.parse(datakeys)
   return (
