@@ -213,6 +213,7 @@ export const regulationContentStyling = (wrapper: string) => {
     fontSize: '1em',
     fontWeight: typography.regular,
     lineHeight: '2em',
+    textTransform: 'uppercase',
   })
   global('.section__title:first-child', {
     marginTop: '0',
