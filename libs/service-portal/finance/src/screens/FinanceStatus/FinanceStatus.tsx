@@ -55,6 +55,10 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
     return amountFormat(chargeTypeTotal)
   }
 
+  console.log(
+    'financeStatusData.organizations',
+    financeStatusData.organizations,
+  )
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
@@ -131,9 +135,9 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                 <T.Table>
                   <ExpandHeader
                     data={[
-                      formatMessage(m.feeCategory),
-                      formatMessage(m.guardian),
-                      formatMessage(m.status),
+                      { value: formatMessage(m.feeCategory) },
+                      { value: formatMessage(m.guardian) },
+                      { value: formatMessage(m.status), align: 'right' },
                     ]}
                   />
                   <T.Body>
@@ -149,7 +153,11 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                     )}
                     <ExpandRow
                       last
-                      data={[formatMessage(m.total), '', getChargeTypeTotal()]}
+                      data={[
+                        { value: formatMessage(m.total) },
+                        { value: '' },
+                        { value: getChargeTypeTotal() },
+                      ]}
                     />
                   </T.Body>
                 </T.Table>

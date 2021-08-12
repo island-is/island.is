@@ -28,11 +28,11 @@ const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
       <T.Table>
         <ExpandHeader
           data={[
-            formatMessage(m.date),
-            formatMessage(m.effectiveDate),
-            formatMessage(m.guardian),
-            formatMessage(m.feeItem),
-            formatMessage(m.amount),
+            { value: formatMessage(m.date) },
+            { value: formatMessage(m.effectiveDate) },
+            { value: formatMessage(m.guardian) },
+            { value: formatMessage(m.feeItem) },
+            { value: formatMessage(m.amount), align: 'right' },
           ]}
         />
         <T.Body>
@@ -42,11 +42,11 @@ const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
               <ExpandRow
                 key={`${record.createTime}-${record.referenceToLevy}`}
                 data={[
-                  format(new Date(record.createDate), dateFormat.is),
-                  format(new Date(record.valueDate), dateFormat.is),
-                  record.collectingOrganization,
-                  record.itemCode,
-                  amountFormat(record.amount),
+                  { value: format(new Date(record.createDate), dateFormat.is) },
+                  { value: format(new Date(record.valueDate), dateFormat.is) },
+                  { value: record.collectingOrganization },
+                  { value: record.itemCode },
+                  { value: amountFormat(record.amount), align: 'right' },
                 ]}
               >
                 <FinanceTransactionsDetail

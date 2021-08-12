@@ -55,7 +55,7 @@ export const featureFlaggedModules: ModuleKeys[] = [
   'educationStudentAssessment',
   'endorsements',
   'icelandicNamesRegistry',
-  'finance',
+  // 'finance',
   'personalInformation',
   'licenses',
 ]

@@ -13,7 +13,7 @@ import { m } from '@island.is/service-portal/core'
 import * as styles from './ExpandableTable.treat'
 
 interface Props {
-  data: Array<string | number>
+  data: Array<{ value: string | number; align?: 'left' | 'right' | undefined }>
   last?: boolean
   loading?: boolean
   error?: ApolloError
@@ -58,13 +58,14 @@ const ExpandableLine: FC<Props> = ({
               background: fullClose || loading ? 'transparent' : 'blue100',
               borderColor: fullClose || loading ? 'blue200' : 'blue100',
               position: 'relative',
+              textAlign: item.align,
             }}
           >
             {!fullClose && i === 0 && !loading ? (
               <div className={styles.line} />
             ) : null}
             <Text variant={last ? 'eyebrow' : 'small'} as="span">
-              {item}
+              {item.value}
             </Text>
           </T.Data>
         ))}

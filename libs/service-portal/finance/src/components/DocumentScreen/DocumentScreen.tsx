@@ -167,7 +167,7 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
                       {formatMessage(m.performingOrganization)}
                     </Text>
                   </T.HeadData>
-                  <T.HeadData>
+                  <T.HeadData box={{ textAlign: 'right' }}>
                     <Text variant="eyebrow">{formatMessage(m.amount)}</Text>
                   </T.HeadData>
                   <T.HeadData>
@@ -195,7 +195,9 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
                         </Button>
                       </T.Data>
                       <T.Data>{listItem.sender}</T.Data>
-                      <T.Data>{amountFormat(listItem.amount)}</T.Data>
+                      <T.Data box={{ textAlign: 'right' }}>
+                        {amountFormat(listItem.amount)}
+                      </T.Data>
                       <T.Data>{listItem.note}</T.Data>
                     </T.Row>
                   ))}
