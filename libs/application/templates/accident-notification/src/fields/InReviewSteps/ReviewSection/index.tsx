@@ -44,6 +44,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   action,
   refetch,
 }) => {
+  console.log(application)
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -118,7 +119,9 @@ const ReviewSection: FC<ReviewSectionProps> = ({
                       },
                     },
                   })
+                  console.log(res)
 
+                  if (res) console.log(res)
                   if (res?.data) {
                     // Takes them to the next state (which loads the relevant form)
                     refetch?.()

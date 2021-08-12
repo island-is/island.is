@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/core'
-import { AlertMessage, Box } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { States } from '../../constants'
@@ -96,12 +96,13 @@ export const InReviewSteps: FC<FieldBaseProps> = ({
 
   return (
     <Box marginBottom={10}>
-      {application.state === States.DOCUMENTS_HAVE_BEEN_DELIVERED && (
+      {/* TODO: We need to do this through answers!
+       application.state === States.DOCUMENTS_HAVE_BEEN_DELIVERED && (
         <AlertMessage
           type="success"
           title={formatMessage(inReview.infoMessages.applicationUpdated)}
         />
-      )}
+      ) */}
       <Box marginTop={7} marginBottom={8}>
         {steps.map((step, index) => (
           <ReviewSection

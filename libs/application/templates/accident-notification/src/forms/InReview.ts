@@ -1,15 +1,12 @@
 import {
   buildCustomField,
-  buildFileUploadField,
   buildForm,
-  buildMultiField,
   buildSection,
   Form,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
 import { States } from '../constants'
-import { attachments, inReview, overview } from '../lib/messages'
-import { AttachmentsEnum } from '../types'
+import { inReview } from '../lib/messages'
 
 export const InReview: Form = buildForm({
   id: 'ParentalLeaveInReview',
@@ -31,7 +28,7 @@ export const InReview: Form = buildForm({
               : inReview.general.titleInReview,
           component: 'InReviewSteps',
         }),
-        buildCustomField({
+        /* buildCustomField({
           id: 'overview',
           title: overview.general.sectionTitle,
           component: 'FormOverview',
@@ -67,7 +64,7 @@ export const InReview: Form = buildForm({
               ? inReview.general.titleApproved
               : inReview.general.titleInReview,
           component: 'InReviewSteps',
-        }),
+        }), */
       ],
     }),
   ],
