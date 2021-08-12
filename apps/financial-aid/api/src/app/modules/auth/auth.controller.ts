@@ -37,8 +37,7 @@ const { samlEntryPointOsk, samlEntryPointVeita } = environment.auth
 const REDIRECT_COOKIE_NAME = 'financial-aid.redirect'
 
 const defaultCookieOptions: CookieOptions = {
-  // secure: environment.production
-  secure: true,
+  secure: environment.production,
   httpOnly: true,
   sameSite: 'lax',
 }
