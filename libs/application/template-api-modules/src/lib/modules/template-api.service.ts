@@ -61,7 +61,8 @@ export class TemplateAPIService {
       | FundingGovernmentProjectsService
       | PartyLetterService
       | DrivingLicenseSubmissionService
-      | PartyApplicationService,
+      | PartyApplicationService
+      | PayableDummyTemplateService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -146,6 +147,11 @@ export class TemplateAPIService {
       case ApplicationTypes.PARTY_APPLICATION:
         return this.tryRunningActionOnService(
           this.partyApplicationService,
+          action,
+        )
+      case ApplicationTypes.PAYABLE_DUMMY_TEMPLATE:
+        return this.tryRunningActionOnService(
+          this.payableDummyTemplateService,
           action,
         )
     }
