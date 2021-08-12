@@ -2,10 +2,10 @@ import { ServerSideFlag } from './types'
 import { FeatureToggles as ServerSideFeatureToggles } from '../../../../infra/src/dsl/features'
 
 export class ServerSideFlags implements ServerSideFlag {
-  input: string
+  input?: string
   processed = false
   flagsOn: ServerSideFeatureToggles[] = []
-  constructor(flagsOn: string) {
+  constructor(flagsOn?: string) {
     this.input = flagsOn
   }
   isOn(flag: ServerSideFeatureToggles): boolean {
