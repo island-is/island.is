@@ -26,11 +26,6 @@ export const overview = {
       defaultMessage: 'Fylgiskjöl',
       description: 'Attachments',
     },
-    submit: {
-      id: 'an.application:overview.labels.submit',
-      defaultMessage: 'Staðfesta',
-      description: 'Submit button text',
-    },
     workMachine: {
       id: 'an.application:overview.labels.workMachine',
       defaultMessage: 'Upplýsingar um vinnuvél sem tengist slysi',

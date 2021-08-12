@@ -1,20 +1,19 @@
-import { Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/core'
+import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../types'
 import {
-  ParentalLeaveService,
-  ReferenceTemplateService,
+  ChildrenResidenceChangeService,
   DocumentProviderOnboardingService,
+  DrivingLicenseSubmissionService,
+  FundingGovernmentProjectsService,
   HealthInsuranceService,
   InstitutionCollaborationService,
-  ChildrenResidenceChangeService,
   LoginServiceService,
-  FundingGovernmentProjectsService,
-  PartyLetterService,
-  DrivingLicenseSubmissionService,
+  ParentalLeaveService,
   PartyApplicationService,
+  PartyLetterService,
   PayableDummyTemplateService,
-  AccidentNotificationService,
+  ReferenceTemplateService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -48,7 +47,6 @@ export class TemplateAPIService {
     private readonly drivingLicenseSubmissionService: DrivingLicenseSubmissionService,
     private readonly partyApplicationService: PartyApplicationService,
     private readonly payableDummyTemplateService: PayableDummyTemplateService,
-    private readonly accidentNotificationService: AccidentNotificationService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -63,9 +61,7 @@ export class TemplateAPIService {
       | FundingGovernmentProjectsService
       | PartyLetterService
       | DrivingLicenseSubmissionService
-      | PartyApplicationService
-      | PayableDummyTemplateService
-      | AccidentNotificationService,
+      | PartyApplicationService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -150,16 +146,6 @@ export class TemplateAPIService {
       case ApplicationTypes.PARTY_APPLICATION:
         return this.tryRunningActionOnService(
           this.partyApplicationService,
-          action,
-        )
-      case ApplicationTypes.PAYABLE_DUMMY_TEMPLATE:
-        return this.tryRunningActionOnService(
-          this.payableDummyTemplateService,
-          action,
-        )
-      case ApplicationTypes.ACCIDENT_NOTIFICATION:
-        return this.tryRunningActionOnService(
-          this.accidentNotificationService,
           action,
         )
     }

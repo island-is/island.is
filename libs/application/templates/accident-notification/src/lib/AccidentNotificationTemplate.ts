@@ -11,7 +11,6 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { States } from '../constants'
-import { ApiActions } from '../shared'
 import { application } from './messages'
 // import { AccidentNotificationSchema } from './dataSchema'
 
@@ -81,9 +80,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           name: States.NEEDS_DOCUMENT_AND_REVIEW,
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -161,20 +157,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               read: 'all',
             },
           ],
-        },
-      },
-      [AccidentNotificationStates.submitted]: {
-        meta: {
-          name: application.general.name.defaultMessage,
-          progress: 0.6,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true, // Only on dev
-            whenToPrune: 12 * 3600 * 1000,
-          },
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
         },
       },
     },

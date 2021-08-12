@@ -10,10 +10,8 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
-  buildSubmitField,
   buildSubSection,
   buildTextField,
-  DefaultEvents,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -34,14 +32,14 @@ import {
   fishingCompanyInfo,
   fishingLocationAndPurpose,
   hindrances,
+  injuredPersonInformation,
+  juridicalPerson,
   locationAndPurpose,
   overview,
+  powerOfAttorney,
   rescueSquadInfo,
   schoolInfo,
   sportsClubInfo,
-  juridicalPerson,
-  injuredPersonInformation,
-  powerOfAttorney,
   whoIsTheNotificationFor,
   workMachine,
 } from '../lib/messages'
@@ -61,6 +59,7 @@ import {
   WorkAccidentTypeEnum,
 } from '../types'
 import {
+  getAccidentTypeOptions,
   isAboardShip,
   isAgricultureAccident,
   isFishermanAccident,
@@ -68,13 +67,12 @@ import {
   isHomeActivitiesAccident,
   isLocatedOnShipOther,
   isProfessionalAthleteAccident,
+  isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
   isRepresentativeOfCompanyOrInstitute,
   isRescueWorkAccident,
   isStudiesAccident,
-  isReportingOnBehalfOfEmployee,
   isWorkAccident,
-  getAccidentTypeOptions,
 } from '../utils'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
@@ -1490,33 +1488,15 @@ export const AccidentNotificationForm: Form = buildForm({
       id: 'overview.section',
       title: overview.general.sectionTitle,
       children: [
-        buildMultiField({
-          id: 'overview.multifield',
+        buildCustomField({
+          id: 'overview',
           title: overview.general.sectionTitle,
-          children: [
-            buildCustomField({
-              id: 'overview',
-              title: overview.general.sectionTitle,
-              component: 'FormOverview',
-            }),
-            buildSubmitField({
-              id: 'overview.submit',
-              title: '',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: overview.labels.submit,
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
+          component: 'FormOverview',
         }),
       ],
     }),
 
     buildSection({
-      id: 'conclusion.section',
       title: conclusion.general.title,
       children: [
         buildCustomField({
@@ -1525,6 +1505,13 @@ export const AccidentNotificationForm: Form = buildForm({
           component: 'FormConclusion',
         }),
       ],
+    }),
+
+    // TODO remove before release, just there to continue with last screen
+    buildDescriptionField({
+      id: '',
+      description: '',
+      title: '',
     }),
   ],
 })
