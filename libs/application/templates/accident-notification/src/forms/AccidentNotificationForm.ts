@@ -77,6 +77,8 @@ import {
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
 
+const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
+
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
   title: application.general.name,
@@ -435,9 +437,10 @@ export const AccidentNotificationForm: Form = buildForm({
               description: powerOfAttorney.upload.uploadDescription,
               children: [
                 buildFileUploadField({
-                  id: 'powerOfAttorney.upload',
+                  id: 'attachments.powerOfAttorneyFile',
                   title: '',
                   introduction: '',
+                  uploadAccept: UPLOAD_ACCEPT,
                   uploadHeader: powerOfAttorney.upload.uploadHeader,
                   uploadButtonLabel: powerOfAttorney.upload.uploadButtonLabel,
                 }),
@@ -497,6 +500,7 @@ export const AccidentNotificationForm: Form = buildForm({
             buildFileUploadField({
               id: 'attachments.deathCertificateFile',
               title: attachments.general.uploadHeader,
+              uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.general.uploadHeader,
               uploadDescription: attachments.general.uploadDescription,
               uploadButtonLabel: attachments.general.uploadButtonLabel,
@@ -1091,6 +1095,7 @@ export const AccidentNotificationForm: Form = buildForm({
             buildFileUploadField({
               id: 'attachments.injuryCertificateFile',
               title: attachments.general.uploadHeader,
+              uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.general.uploadHeader,
               uploadDescription: attachments.general.uploadDescription,
               uploadButtonLabel: attachments.general.uploadButtonLabel,

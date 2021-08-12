@@ -1,9 +1,9 @@
 import {
   ServicePortalModule,
   ServicePortalPath,
+  m,
 } from '@island.is/service-portal/core'
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
 
 export const familyModule: ServicePortalModule = {
   name: 'Fjölskyldan',
@@ -16,18 +16,12 @@ export const familyModule: ServicePortalModule = {
         lazy(() => import('./screens/UserInfoOverview/UserInfoOverview')),
     },
     {
-      name: defineMessage({
-        id: 'service.portal:user-info',
-        defaultMessage: 'Nánari upplýsingar',
-      }),
+      name: m.userInfo,
       path: ServicePortalPath.UserInfo,
       render: () => lazy(() => import('./screens/UserInfo/UserInfo')),
     },
     {
-      name: defineMessage({
-        id: 'service.portal:family',
-        defaultMessage: 'Fjölskyldan',
-      }),
+      name: m.family,
       path: ServicePortalPath.FamilyRoot,
       render: () =>
         lazy(() => import('./screens/FamilyOverview/FamilyOverview')),
