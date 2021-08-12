@@ -97,7 +97,7 @@ export const application: Form = buildForm({
     }),
     buildSection({
       id: 'photoStep',
-      title: m.applicationEligibilityTitle,
+      title: 'Gæðamerkt mynd',
       children: [
         buildMultiField({
           id: 'info',
