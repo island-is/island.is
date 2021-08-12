@@ -66,12 +66,13 @@ export const Webreader: FC<WebReaderProps> = ({
       el.type = 'text/javascript'
       document.body.appendChild(el)
       window.rsConf = { general: { usePost: true } }
-    } else if (typeof rspkr !== 'undefined') {
+    } else if (typeof rspkr !== 'undefined' && rspkr.ui) {
       // https://wrdev.readspeaker.com/get-started/implementation/dynamic-loading
-      // When a parent component, with the webreader, has been umnmounted
+      // When a parent component, with the webreader, has been unmounted
       // the readspeaker will still remain initialized
       // but in order for functionality to be added to the new button
       // we need to call 'addClickEvents'
+      rspkr.init()
       rspkr.ui.addClickEvents()
     }
   }, [])

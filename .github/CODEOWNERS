@@ -49,6 +49,7 @@
 /libs/service-portal/education-student-assessment/                                            @island-is/kosmos-kaos @island-is/sendiradid
 /libs/contentful-extensions/mideind-translation/                                              @island-is/kosmos-kaos
 /libs/contentful-extensions/parent-slug/                                                      @island-is/kosmos-kaos
+/libs/clients/driving-license/                                                                @island-is/kosmos-kaos
 /libs/application/templates/driving-license/                                                  @island-is/kosmos-kaos
 /libs/application/templates/driving-assessment-approval/                                      @island-is/kosmos-kaos
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission   @island-is/kosmos-kaos
@@ -59,8 +60,6 @@
 /libs/clients/auth-public-api/                                                                @island-is/aranja-core
 /libs/clients/middlewares/                                                                    @island-is/aranja-core
 /libs/localization/                                                                           @island-is/aranja-core
-/libs/utils/api/                                                                              @island-is/aranja-core
-/libs/utils/shared/                                                                           @island-is/aranja-core
 /libs/service-portal/settings/access-control                                                  @island-is/aranja-core @island-is/vice-versa
 
 /apps/application-system/                                                                     @island-is/aranja-applications
@@ -103,10 +102,17 @@
 /libs/application/templates/login-service/                                                    @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/               @island-is/sendiradid
 /libs/clients/documents/                                                                      @island-is/sendiradid
+/libs/clients/payment-schedule/                                                               @island-is/sendiradid
 /libs/application/templates/funding-government-projects/                                      @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/ @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/   @island-is/sendiradid
 /libs/application/templates/public-debt-payment-plan/                                         @island-is/sendiradid
 /libs/application/templates/complaints-to-althingi-ombudsman/                                 @island-is/sendiradid
+/libs/application/templates/accident-notification/                                            @island-is/sendiradid
+/libs/health-insurance/                                                                       @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/health-insurance/            @island-is/sendiradid
+/libs/api/domains/health-insurance/                                                           @island-is/sendiradid
+/libs/application/templates/health-insurance/                                                 @island-is/sendiradid
 
 /apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos
 /apps/web/screens/Organization/                                                               @island-is/stefna
@@ -141,11 +147,7 @@ infra/                                                                          
 /libs/clients/document-provider/                                                              @island-is/advania @island-is/core
 
 /apps/skilavottord/                                                                           @island-is/deloitte
-/libs/application/templates/health-insurance/                                                 @island-is/deloitte
-/libs/application/template-api-modules/src/lib/modules/templates/health-insurance/            @island-is/deloitte
 /libs/skilavottord/                                                                           @island-is/deloitte
-/libs/api/domains/health-insurance/                                                           @island-is/deloitte
-/libs/health-insurance/                                                                       @island-is/deloitte
 
 /apps/services/auth-api/                                                                      @island-is/fuglar
 /apps/services/auth-admin-api/                                                                @island-is/fuglar

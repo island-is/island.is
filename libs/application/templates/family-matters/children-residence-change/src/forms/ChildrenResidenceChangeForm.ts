@@ -11,18 +11,19 @@ import {
   buildSubmitField,
   DefaultEvents,
   buildRadioField,
-  Comparators,
 } from '@island.is/application/core'
-import { isRunningOnEnvironment } from '@island.is/utils/shared'
-import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
+import {
+  Answers,
+  DataProviderTypes,
+} from '@island.is/application/templates/children-residence-change'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import { selectDurationInputs } from '../fields/Duration'
 import { confirmContractIds } from '../fields/Overview'
 import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 import { ExternalData } from '@island.is/application/templates/family-matters-core/types'
-import { Answers } from '../types'
 import { hasChildren } from '../lib/utils'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 const soleCustodyField = () => {
   return buildCustomField({
@@ -47,6 +48,9 @@ const noChildrenFoundField = () => {
     },
   })
 }
+
+// TODO: Added by Kolibri - 2021-07-05 - Revisit mockdata implementation to prevent
+// Continue and Back button from being displayed on production
 
 const shouldUseMocks = (answers: Answers): boolean => {
   if (answers.useMocks && answers.useMocks === 'yes') {

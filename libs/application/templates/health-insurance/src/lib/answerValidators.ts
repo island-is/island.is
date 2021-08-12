@@ -5,7 +5,7 @@ import {
   buildValidationError,
 } from '@island.is/application/core'
 import { Status, FormerInsurance, Applicant } from '../types'
-import { NO, YES, StatusTypes } from '../constants'
+import { NO, YES, StatusTypes } from '../shared'
 import {
   requireConfirmationOfResidency,
   requireWaitingPeriod,

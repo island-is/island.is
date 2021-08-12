@@ -1,24 +1,18 @@
 import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Case,
   CaseCustodyProvisions,
   CaseType,
-  IntegratedCourts,
 } from '@island.is/judicial-system/types'
 import {
-  BlueBox,
   CaseFileList,
   FormContentContainer,
   InfoCard,
   PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Box, Button, Input, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import * as styles from './Overview.treat'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   capitalize,
   formatDate,
@@ -27,6 +21,8 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 
 interface Props {
   workingCase: Case
@@ -39,6 +35,7 @@ interface Props {
   setIsDraftingConclusion: React.Dispatch<
     React.SetStateAction<boolean | undefined>
   >
+  isCreatingCourtCase: boolean
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
@@ -51,9 +48,10 @@ const OverviewForm: React.FC<Props> = (props) => {
     courtCaseNumberEM,
     setCourtCaseNumberEM,
     setIsDraftingConclusion,
+    isCreatingCourtCase,
   } = props
-  const { updateCase, isCreatingCourtCase } = useCase()
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
 
   return (
     <FormContentContainer>
@@ -67,79 +65,16 @@ const OverviewForm: React.FC<Props> = (props) => {
         </Text>
       </Box>
       <Box component="section" marginBottom={6}>
-        <Box marginBottom={2}>
-          <Text as="h2" variant="h3">
-            Málsnúmer héraðsdóms
-          </Text>
-        </Box>
-        <Box marginBottom={2}>
-          <Text>
-            Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer
-            sem er þegar til í Auði. Athugið að gögn verða sjálfkrafa vistuð á
-            það málsnúmer sem slegið er inn.
-          </Text>
-        </Box>
-        <BlueBox>
-          <div className={styles.createCourtCaseContainer}>
-            <Box display="flex">
-              {workingCase.court &&
-                IntegratedCourts.includes(workingCase.court.id) && (
-                  <div className={styles.createCourtCaseButton}>
-                    <Button
-                      size="small"
-                      onClick={() => handleCreateCourtCase(workingCase)}
-                      loading={isCreatingCourtCase}
-                      disabled={Boolean(workingCase.courtCaseNumber)}
-                      fluid
-                    >
-                      Stofna nýtt mál
-                    </Button>
-                  </div>
-                )}
-              <div className={styles.createCourtCaseInput}>
-                <Input
-                  data-testid="courtCaseNumber"
-                  name="courtCaseNumber"
-                  label="Mál nr."
-                  placeholder="R-X/ÁÁÁÁ"
-                  size="sm"
-                  backgroundColor="white"
-                  value={workingCase.courtCaseNumber ?? ''}
-                  icon={
-                    workingCase.courtCaseNumber && createCourtCaseSuccess
-                      ? 'checkmark'
-                      : undefined
-                  }
-                  errorMessage={courtCaseNumberEM}
-                  hasError={!isCreatingCourtCase && courtCaseNumberEM !== ''}
-                  onChange={(event) => {
-                    setCreateCourtCaseSuccess(false)
-                    removeTabsValidateAndSet(
-                      'courtCaseNumber',
-                      event,
-                      ['empty'],
-                      workingCase,
-                      setWorkingCase,
-                      courtCaseNumberEM,
-                      setCourtCaseNumberEM,
-                    )
-                  }}
-                  onBlur={(event) => {
-                    validateAndSendToServer(
-                      'courtCaseNumber',
-                      event.target.value,
-                      ['empty'],
-                      workingCase,
-                      updateCase,
-                      setCourtCaseNumberEM,
-                    )
-                  }}
-                  required
-                />
-              </div>
-            </Box>
-          </div>
-        </BlueBox>
+        <CourtCaseNumber
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          courtCaseNumberEM={courtCaseNumberEM}
+          setCourtCaseNumberEM={setCourtCaseNumberEM}
+          createCourtCaseSuccess={createCourtCaseSuccess}
+          setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
+          handleCreateCourtCase={handleCreateCourtCase}
+          isCreatingCourtCase={isCreatingCourtCase}
+        />
       </Box>
       <Box component="section" marginBottom={5}>
         <InfoCard
@@ -151,7 +86,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               }`,
             },
             {
-              title: 'Ósk um fyrirtökudag og tíma',
+              title: formatMessage(requestCourtDate.heading),
               value: `${capitalize(
                 formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',
               )} eftir kl. ${formatDate(

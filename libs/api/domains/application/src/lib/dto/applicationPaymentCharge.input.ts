@@ -7,5 +7,9 @@ export class ApplicationPaymentChargeInput {
   @IsString()
   applicationId!: string
 
+  @Field()
+  @IsString()
+  chargeItemCode!: string
+
   // TODO: charge parameters for other types of payments
 }

@@ -12,8 +12,14 @@ import { State } from 'xstate'
 import * as z from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
+import { useQuery, gql } from '@apollo/client'
+import { NestApplicationContext } from '@nestjs/core'
 
-type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.PAYMENT }
+type Events =
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.PAYMENT }
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.REJECT }
 
 enum States {
   DRAFT = 'draft',
@@ -29,6 +35,7 @@ const dataSchema = z.object({
   juristiction: z.string(),
   healthDeclaration: z.object({
     usesContactGlasses: z.enum(['yes', 'no']),
+    hasReducedPeripheralVision: z.enum(['yes', 'no']),
     hasEpilepsy: z.enum(['yes', 'no']),
     hasHeartDisease: z.enum(['yes', 'no']),
     hasMentalIllness: z.enum(['yes', 'no']),
@@ -88,6 +95,9 @@ const template: ApplicationTemplate<
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
+          onExit: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
           roles: [
             {
               id: 'applicant',
@@ -103,25 +113,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          '*': { target: States.PAYMENT_PENDING },
           [DefaultEvents.SUBMIT]: { target: States.DONE },
-        },
-      },
-      [States.PAYMENT_PENDING]: {
-        meta: {
-          name: 'Greiða',
-          progress: 1,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: 'applicant',
-              formLoader: () =>
-                import('../forms/paymentPending').then((val) =>
-                  Promise.resolve(val.PaymentPending),
-                ),
-              read: 'all',
-            },
-          ],
         },
       },
       [States.DONE]: {
