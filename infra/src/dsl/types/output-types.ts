@@ -68,8 +68,8 @@ export interface ServiceHelm {
   }
 
   initContainer?: {
-    secrets?: { [key: string]: string }
-    env?: { [key: string]: string }
+    secrets: { [key: string]: string }
+    env: { [key: string]: string }
     containers: ContainerRunHelm[]
   }
 
@@ -88,8 +88,8 @@ export interface ServiceHelm {
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
 
-  env?: ContainerEnvironmentVariables
-  secrets?: ContainerSecrets
+  env: ContainerEnvironmentVariables
+  secrets: ContainerSecrets
   enabled: boolean
   namespace: string
   image: {

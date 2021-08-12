@@ -1,7 +1,10 @@
-import { ServerSideFlags, ServerSideFlagsOnTheClientSide } from './server-side'
-import { ServerSideFlag } from './types'
+import {
+  ServerSideFeatures,
+  ServerSideFlagsOnTheClientSide,
+} from './server-side'
+import { ServerSideFeature } from './types'
 
-export const ServerSideFlagClient: ServerSideFlag =
+export const ServerSideFlagClient: ServerSideFeature =
   typeof window === 'undefined'
     ? new ServerSideFlagsOnTheClientSide()
-    : new ServerSideFlags(process.env.SSF_ON)
+    : new ServerSideFeatures(process.env.SSF_ON)

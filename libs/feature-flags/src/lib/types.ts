@@ -17,6 +17,6 @@ export interface FeatureFlagClientProps {
 }
 
 /// This is an interface to query the status of feature flags specific to the server side
-export interface ServerSideFlag {
-  isOn(flag: ServerSideFeatureNames): boolean
+export interface ServerSideFeature {
+  isOn(feature: ServerSideFeatureNames): boolean
 }
