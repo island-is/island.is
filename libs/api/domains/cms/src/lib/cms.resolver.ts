@@ -74,6 +74,8 @@ import { Auction } from './models/auction.model'
 import { GetAuctionInput } from './dto/getAuction.input'
 import { Frontpage } from './models/frontpage.model'
 import { GetFrontpageInput } from './dto/getFrontpage.input'
+import { OpenDataPage } from './models/openDataPage.model'
+import { GetOpenDataPageInput } from './dto/getOpenDataPage.input'
 import { ProjectPage } from './models/projectPage.model'
 import { GetProjectPageInput } from './dto/getProjectPage.input'
 
@@ -166,6 +168,14 @@ export class CmsResolver {
     @Args('input') input: GetErrorPageInput,
   ): Promise<ErrorPage | null> {
     return this.cmsContentfulService.getErrorPage(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => OpenDataPage)
+  getOpenDataPage(
+    @Args('input') input: GetOpenDataPageInput,
+  ): Promise<OpenDataPage | null> {
+    return this.cmsContentfulService.getOpenDataPage(input)
   }
 
   @Directive(cacheControlDirective())

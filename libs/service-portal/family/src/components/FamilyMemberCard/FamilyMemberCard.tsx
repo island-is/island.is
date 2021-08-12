@@ -4,6 +4,7 @@ import {
   getNameAbbreviation,
   formatNationalId,
   ServicePortalPath,
+  m,
 } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
@@ -78,11 +79,7 @@ export const FamilyMemberCard: FC<Props> = ({
           </Box>
           {nationalId && (
             <Text fontWeight="light">
-              {formatMessage({
-                id: 'service.portal:natreg',
-                defaultMessage: 'Kennitala',
-              })}
-              : {formatNationalId(nationalId)}
+              {formatMessage(m.natreg)}: {formatNationalId(nationalId)}
             </Text>
           )}
         </div>

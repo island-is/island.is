@@ -20,7 +20,7 @@ import { EndorseList } from '../../graphql/mutations'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
 import { useVoterRegion } from '../../hooks/temporaryVoterRegistry'
 import { useHasEndorsed } from '../../hooks/useHasEndorsed'
-import { EndorsementListTags } from '../../constants'
+import { constituencyMapper, EndorsementListTags } from '../../constants'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const endorsementListId = (application.externalData?.createEndorsementList
@@ -30,10 +30,12 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
 
   const { formatMessage } = useLocale()
   const [agreed, setAgreed] = useState(false)
+  const [endorsedNow, setEndorsedNow] = useState(false)
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
   const { hasEndorsed, loading, refetch } = useHasEndorsed()
-
-  const constituency = application.answers.constituency
+  const constituency =
+    constituencyMapper[application.answers.constituency as EndorsementListTags]
+      .region_name
   const { data: userData } = useQuery(GetFullName)
   const isClosed = useIsClosed(endorsementListId)
   const { isInVoterRegistry, isInConstituency } = useVoterRegion(
@@ -50,6 +52,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
       },
     })
     if (success) {
+      setEndorsedNow(true)
       refetch()
     }
   }
@@ -64,8 +67,8 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <Box>
-      {!loading && hasEndorsed ? (
-        <EndorsementApproved />
+      {!loading && (hasEndorsed || endorsedNow) ? (
+        <EndorsementApproved showAsWarning={hasEndorsed && !endorsedNow} />
       ) : (
         <Box>
           <Box marginBottom={2}>
@@ -83,7 +86,6 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
           {alertBannerDescription && (
             <Box marginY={5}>
               <AlertBanner
-                title={formatMessage(m.endorsementDisclaimer.alertMessageTitle)}
                 description={alertBannerDescription}
                 variant="warning"
               />
@@ -121,10 +123,17 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
               )}
             />
           </Box>
-          <Box marginBottom={5}>
+          <Box marginBottom={4}>
             <FieldDescription
               description={formatMessage(
                 m.endorsementDisclaimer.descriptionPt2,
+              )}
+            />
+          </Box>
+          <Box marginBottom={5}>
+            <FieldDescription
+              description={formatMessage(
+                m.endorsementDisclaimer.descriptionPt3,
               )}
             />
           </Box>
