@@ -12,6 +12,12 @@ export type CompanyInfo = {
   }
 }
 
+export type FileType = {
+  url?: string | undefined
+  name: string
+  key: string
+}
+
 export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
   UserProfile = 'UserProfileProvider',
