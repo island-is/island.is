@@ -18,4 +18,7 @@ export class UserModel implements User {
 
   @Field()
   readonly service!: 'osk' | 'veita'
+
+  @Field()
+  readonly hasAppliedForPeriod?: boolean
 }
