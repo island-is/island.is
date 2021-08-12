@@ -1,6 +1,7 @@
 export * from './lib/types'
 export * from './lib/formatters'
 export * from './lib/const'
+export * from './lib/taxCalculator'
 export type {
   Application,
   CreateApplication,
@@ -9,4 +10,6 @@ export type {
   NavigationProps,
   User,
   KeyMapping,
+  GetSignedUrl,
+  SignedUrl,
 } from './lib/types'

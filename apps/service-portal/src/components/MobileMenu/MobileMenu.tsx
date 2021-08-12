@@ -88,6 +88,7 @@ const MobileMenu: FC<{}> = () => {
                     key={index}
                     nav={navRoot}
                     variant={rootIndex === 0 ? 'blue' : 'blueberry'}
+                    alwaysExpanded
                     onItemClick={handleLinkClick}
                   />
                 ),

@@ -207,6 +207,21 @@ export const regulationContentStyling = (wrapper: string) => {
     fontWeight: typography.headingsFontWeight,
   })
 
+  global('.section__title', {
+    marginTop: '2em',
+    textAlign: 'center',
+    fontSize: '1em',
+    fontWeight: typography.regular,
+    lineHeight: '2em',
+  })
+  global('.section__title:first-child', {
+    marginTop: '0',
+  })
+  global('em.section__name', {
+    display: 'block',
+    fontStyle: 'inherit',
+  })
+
   global('.chapter__title', {
     marginTop: '2em',
     textAlign: 'center',
@@ -214,9 +229,15 @@ export const regulationContentStyling = (wrapper: string) => {
     fontWeight: typography.regular,
     lineHeight: '2em',
   })
-  global('.chapter__title:first-child', {
-    marginTop: '0',
-  })
+  global(
+    `
+    .chapter__title:first-child,
+    .section__title + .chapter__title
+    `,
+    {
+      marginTop: '0',
+    },
+  )
   global('em.chapter__name', {
     display: 'block',
     fontStyle: 'inherit',
@@ -234,6 +255,7 @@ export const regulationContentStyling = (wrapper: string) => {
   global(
     `
     .article__title:first-child,
+    .section__title + .chapter__title,
     .chapter__title + .article__title
     `,
     {

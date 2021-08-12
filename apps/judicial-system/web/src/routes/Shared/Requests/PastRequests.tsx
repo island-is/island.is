@@ -102,18 +102,27 @@ const PastRequests: React.FC<Props> = (props) => {
         disableSortBy: true,
         Cell: (row: {
           row: {
-            original: { state: CaseState; isValidToDateInThePast: boolean }
+            original: {
+              state: CaseState
+              isValidToDateInThePast: boolean
+              type: CaseType
+            }
           }
         }) => {
+          const isInvestigationCase =
+            row.row.original.type !== CaseType.CUSTODY &&
+            row.row.original.type !== CaseType.TRAVEL_BAN
+
+          const tagVariant = mapCaseStateToTagVariant(
+            row.row.original.state,
+            isCourtRole,
+            isInvestigationCase,
+            row.row.original.isValidToDateInThePast,
+          )
+
           return (
-            <Tag outlined disabled>
-              {
-                mapCaseStateToTagVariant(
-                  row.row.original.state,
-                  isCourtRole,
-                  row.row.original.isValidToDateInThePast,
-                ).text
-              }
+            <Tag variant={tagVariant.color} outlined disabled>
+              {tagVariant.text}
             </Tag>
           )
         },

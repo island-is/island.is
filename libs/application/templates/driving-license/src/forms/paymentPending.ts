@@ -13,7 +13,7 @@ export const PaymentPending: Form = buildForm({
   mode: FormModes.PENDING,
   children: [
     buildCustomField({
-      component: 'ExamplePaymentPendingField',
+      component: '../fields/ExamplePaymentPendingField',
       id: 'paymentPendingField',
       title: '',
     }),
