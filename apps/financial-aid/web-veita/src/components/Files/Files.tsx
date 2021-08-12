@@ -29,6 +29,7 @@ const Files: React.FC<Props> = ({ heading, className, filesArray }) => {
                 key={'file-' + index}
                 href={item.name}
                 target="_blank"
+                rel="noreferrer noopener"
                 className={styles.filesLink}
                 download
               >
