@@ -31,19 +31,22 @@ Run Ósk or Veita client:
 
 Go to localhost:4200
 
-## Code owners and maintainers
+## To test authentication locally:
 
-- [Kolibri](https://github.com/orgs/island-is/teams/kolibri-robin-hood)
-
-To test authentication locally:
+Install https://github.com/cameronhunter/local-ssl-proxy:
 
 - `npm install -g local-ssl-proxy`
-  downloads https://github.com/cameronhunter/local-ssl-proxy
-- change
+
+- change defaultcookie in financial-aid/api/src/app/modules/auth/auth.controller.ts:
+
   const defaultCookieOptions: CookieOptions = {
   secure: true,
   }
-  in file island.is/apps/financial-aid/api/src/app/modules/auth/auth.controller.ts
-- add .env to web project change port
+
+- add .env to web project and change port
 - start project
-- 'local-ssl-proxy --source 4200 --target 4202'
+- `local-ssl-proxy --source 4200 --target 4202`
+
+## Code owners and maintainers
+
+- [Kolibri](https://github.com/orgs/island-is/teams/kolibri-robin-hood)
