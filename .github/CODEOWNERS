@@ -109,6 +109,11 @@
 /libs/application/templates/public-debt-payment-plan/                                         @island-is/sendiradid
 /libs/application/templates/complaints-to-althingi-ombudsman/                                 @island-is/sendiradid
 /libs/application/templates/accident-notification/                                            @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/accident-notification/       @island-is/sendiradid
+/libs/health-insurance/                                                                       @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/health-insurance/            @island-is/sendiradid
+/libs/api/domains/health-insurance/                                                           @island-is/sendiradid
+/libs/application/templates/health-insurance/                                                 @island-is/sendiradid
 
 /apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos
 /apps/web/screens/Organization/                                                               @island-is/stefna
@@ -143,11 +148,7 @@ infra/                                                                          
 /libs/clients/document-provider/                                                              @island-is/advania @island-is/core
 
 /apps/skilavottord/                                                                           @island-is/deloitte
-/libs/application/templates/health-insurance/                                                 @island-is/deloitte
-/libs/application/template-api-modules/src/lib/modules/templates/health-insurance/            @island-is/deloitte
 /libs/skilavottord/                                                                           @island-is/deloitte
-/libs/api/domains/health-insurance/                                                           @island-is/deloitte
-/libs/health-insurance/                                                                       @island-is/deloitte
 
 /apps/services/auth-api/                                                                      @island-is/fuglar
 /apps/services/auth-admin-api/                                                                @island-is/fuglar

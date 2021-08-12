@@ -1,6 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
-import { Box, Stack, Text, Hyphen, Hidden } from '@island.is/island-ui/core'
+import { Box, Stack, Text, Hyphen } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
 import { useMeasure } from 'react-use'
 
