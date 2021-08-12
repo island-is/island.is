@@ -10,7 +10,8 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import React, { FC } from 'react'
-import { NO, YES } from '../../constants'
+import { YES } from '../../constants'
+import { AccidentNotification } from '../../lib/dataSchema'
 import {
   accidentDetails,
   accidentType,
@@ -23,12 +24,6 @@ import {
   sportsClubInfo,
 } from '../../lib/messages'
 import {
-  AccidentTypeEnum,
-  AttachmentsEnum,
-  WhoIsTheNotificationForEnum,
-  WorkAccidentTypeEnum,
-} from '../../types'
-import {
   getWorkplaceData,
   isMachineRelatedAccident,
   isProfessionalAthleteAccident,
@@ -38,59 +33,10 @@ import {
 import { FileValueLine, ValueLine } from './ValueLine'
 
 export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
-  console.log(application)
-  const answers = {
-    accidentDetails: {
-      timeOfAccident: '1415',
-      dateOfAccident: '2020-09-25T14:34:32.999Z',
-      descriptionOfAccident: 'Description of accident',
-    },
-    applicant: {
-      name: 'Sigrún Tinna',
-      nationalId: '2811901234',
-      address: 'Flétturimi 11',
-      city: 'Reykjavík',
-      email: 'sigrun@sendiradid.is',
-      phoneNumber: '6612056',
-    },
-    whoIsTheNotificationFor: {
-      answer: WhoIsTheNotificationForEnum.ME,
-    },
-    locationAndPurpose: {
-      location: 'Reykjavík',
-      purpose: 'Some purpose',
-    },
-    isRepresentativeOfCompanyOrInstitue: NO,
-    workAccident: {
-      type: WorkAccidentTypeEnum.GENERAL,
-    },
-    attachments: {
-      injuryCertificate: AttachmentsEnum.SENDCERTIFICATELATER,
-      injuryCertificateFile: [],
-      deathCertificateFile: [],
-      powerOfAttorneyFile: [],
-    },
-    injuredPersonInformation: {
-      name: '',
-      nationalId: '',
-      email: '',
-      phoneNumber: '',
-    },
-    juridicalPerson: {
-      companyName: '',
-      companyNationalId: '',
-    },
-    accidentType: {
-      radioButton: AccidentTypeEnum.WORK,
-    },
-    workMachine: {
-      desriptionOfMachine: '',
-    },
-  } // application.answers as AccidentNotification
+  const answers = application.answers as AccidentNotification
   const { formatMessage } = useLocale()
 
   const { timeOfAccident, dateOfAccident } = answers.accidentDetails
-
   const time = `${timeOfAccident.slice(0, 2)}:${timeOfAccident.slice(2, 4)}`
   const date = format(parseISO(dateOfAccident), 'dd.MM.yy', { locale: is })
 

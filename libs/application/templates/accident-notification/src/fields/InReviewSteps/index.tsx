@@ -4,7 +4,8 @@ import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { States } from '../../constants'
 import { inReview } from '../../lib/messages'
-import ReviewSection, { ReviewSectionState } from './ReviewSection'
+import { ReviewSectionState } from '../../types'
+import ReviewSection from './ReviewSection'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
@@ -91,7 +92,7 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
 
   return (
     <Box marginBottom={10}>
-      {/* TODO: We need to do this through answers!
+      {/* TODO: We need to do this some other way!
        application.state === States.DOCUMENTS_HAVE_BEEN_DELIVERED && (
         <AlertMessage
           type="success"

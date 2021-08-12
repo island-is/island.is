@@ -16,11 +16,6 @@ import { application } from './messages'
 
 const AccidentNotificationSchema = z.object({})
 
-const AccidentNotificationStates = {
-  draft: 'draft',
-  submitted: 'submitted',
-}
-
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',

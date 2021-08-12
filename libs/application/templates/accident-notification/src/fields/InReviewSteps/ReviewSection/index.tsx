@@ -4,17 +4,9 @@ import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import React, { FC } from 'react'
+import { ReviewSectionState } from '../../../types'
 import * as styles from './ReviewSection.treat'
 import { ReviewTag } from './ReviewTag'
-
-export enum ReviewSectionState {
-  inProgress = 'In progress',
-  received = 'Received',
-  missing = 'Missing documents',
-  pending = 'Pending',
-  approved = 'Approved',
-  objected = 'Objected',
-}
 
 type ActionProps = {
   title: string
@@ -46,6 +38,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
+      // TODO: Add error handling
       onError: (e) => console.log(e.message),
     },
   )
@@ -115,9 +108,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
                       },
                     },
                   })
-                  console.log(res)
 
-                  if (res) console.log(res)
                   if (res?.data) {
                     // Takes them to the next state (which loads the relevant form)
                     refetch?.()
