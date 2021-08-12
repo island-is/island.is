@@ -37,7 +37,6 @@ const FinanceStatusDetailTable: FC<Props> = ({
               { value: formatMessage(m.cost), align: 'right' },
               { value: formatMessage(m.payments), align: 'right' },
               { value: formatMessage(m.status), align: 'right' },
-              { value: formatMessage(m.chargeType), align: 'right' },
             ].map((item, i) => (
               <T.HeadData
                 box={{ textAlign: item.align as 'right' | undefined }}

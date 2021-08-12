@@ -55,10 +55,6 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
     return amountFormat(chargeTypeTotal)
   }
 
-  console.log(
-    'financeStatusData.organizations',
-    financeStatusData.organizations,
-  )
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
