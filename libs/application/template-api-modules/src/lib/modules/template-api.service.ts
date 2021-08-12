@@ -1,19 +1,19 @@
-import { ApplicationTypes } from '@island.is/application/core'
 import { Injectable } from '@nestjs/common'
+import { ApplicationTypes } from '@island.is/application/core'
 import { TemplateApiModuleActionProps } from '../types'
 import {
-  ChildrenResidenceChangeService,
+  ParentalLeaveService,
+  ReferenceTemplateService,
   DocumentProviderOnboardingService,
-  DrivingLicenseSubmissionService,
-  FundingGovernmentProjectsService,
   HealthInsuranceService,
   InstitutionCollaborationService,
+  ChildrenResidenceChangeService,
   LoginServiceService,
-  ParentalLeaveService,
-  PartyApplicationService,
+  FundingGovernmentProjectsService,
   PartyLetterService,
+  DrivingLicenseSubmissionService,
+  PartyApplicationService,
   PayableDummyTemplateService,
-  ReferenceTemplateService,
 } from './templates'
 
 interface ApplicationApiAction {
