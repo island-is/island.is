@@ -84,8 +84,12 @@ export const ApplicationsOverview = () => {
 
   if (currentNavigationItem) {
     return (
-      <AdminLayout className={styles.adminPadding}>
-        <Box className={`contentUp delay-25`} key={currentNavigationItem.label}>
+      <AdminLayout>
+        <Box
+          className={`contentUp delay-25`}
+          marginTop={15}
+          key={currentNavigationItem.label}
+        >
           <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
             {currentNavigationItem.label}
           </Text>
