@@ -1,1 +1,1 @@
-export type FeatureToggles = 'do-not-remove-for-testing-only'
+export type FeatureNames = 'do-not-remove-for-testing-only'

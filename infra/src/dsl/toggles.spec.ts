@@ -23,7 +23,7 @@ describe('Server-side toggles', () => {
     .env({
       B: 'A',
     })
-    .toggles({
+    .features({
       'do-not-remove-for-testing-only': {
         env: {
           A: 'B',
@@ -33,7 +33,7 @@ describe('Server-side toggles', () => {
     })
     .initContainer({
       containers: [{ command: 'go' }],
-      toggles: {
+      features: {
         'do-not-remove-for-testing-only': {
           env: {
             C: 'D',

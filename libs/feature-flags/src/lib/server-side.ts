@@ -1,21 +1,21 @@
 import { ServerSideFlag } from './types'
-import { FeatureToggles as ServerSideFeatureToggles } from '../../../../infra/src/dsl/features'
+import { FeatureNames as ServerSideFeatureNames } from '../../../../infra/src/dsl/features'
 
 export class ServerSideFlags implements ServerSideFlag {
   input?: string
   processed = false
-  flagsOn: ServerSideFeatureToggles[] = []
+  flagsOn: ServerSideFeatureNames[] = []
   constructor(flagsOn?: string) {
     this.input = flagsOn
   }
-  isOn(flag: ServerSideFeatureToggles): boolean {
+  isOn(flag: ServerSideFeatureNames): boolean {
     if (!this.processed) {
       if (typeof this.input === 'undefined') {
         throw new Error('Server-side feature flags input is missing or corrupt')
       } else {
         this.flagsOn = this.input
           .split(',')
-          .map((item) => item.trim() as ServerSideFeatureToggles)
+          .map((item) => item.trim() as ServerSideFeatureNames)
         this.processed = true
       }
     }
@@ -24,7 +24,7 @@ export class ServerSideFlags implements ServerSideFlag {
 }
 
 export class ServerSideFlagsOnTheClientSide implements ServerSideFlag {
-  isOn(flag: ServerSideFeatureToggles): boolean {
+  isOn(flag: ServerSideFeatureNames): boolean {
     throw new Error('Using server-side flags in the browser is not supported')
   }
 }

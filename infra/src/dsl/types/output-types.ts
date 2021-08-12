@@ -1,6 +1,6 @@
 import { Hash, ReplicaCount, Service, ValueType } from './input-types'
 import { UberChartType } from './charts'
-import { FeatureToggles } from '../features'
+import { FeatureNames } from '../features'
 
 // Output types
 export type ContainerRunHelm = {
@@ -134,7 +134,7 @@ export type SerializeErrors = {
 export type SerializeMethod = (
   service: Service,
   uberChart: UberChartType,
-  featuresOn?: FeatureToggles[],
+  featuresOn?: FeatureNames[],
 ) => SerializeSuccess | SerializeErrors
 
 export type ValueFile = { [name: string]: ServiceHelm }

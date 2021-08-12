@@ -10,7 +10,7 @@ import {
   ExtraValues,
   EnvironmentVariableValue,
   PostgresInfo,
-  Toggle,
+  Feature,
 } from './types/input-types'
 import {
   ContainerEnvironmentVariables,
@@ -20,7 +20,7 @@ import {
   ServiceHelm,
 } from './types/output-types'
 import { EnvironmentConfig, UberChartType } from './types/charts'
-import { FeatureToggles } from './features'
+import { FeatureNames } from './features'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -123,9 +123,11 @@ export const serializeService: SerializeMethod = (
     result.secrets = serviceDef.secrets
   }
 
-  const activeToggles = Object.entries(serviceDef.toggles!).filter(([_, v]) =>
-    uberChart.env.featuresOn.includes(_ as FeatureToggles),
-  ) as [FeatureToggles, Toggle][]
+  const activeToggles = Object.entries(
+    serviceDef.features,
+  ).filter(([feature]) =>
+    uberChart.env.featuresOn.includes(feature as FeatureNames),
+  ) as [FeatureNames, Feature][]
   const toggleEnvs = activeToggles.map(([name, v]) => {
     return {
       name,
@@ -210,12 +212,12 @@ export const serializeService: SerializeMethod = (
         allErrors = allErrors.concat(envErros)
         allErrors = allErrors.concat(secretErrors)
       }
-      if (serviceDef.initContainers.toggles) {
+      if (serviceDef.initContainers.features) {
         const activeToggles = Object.entries(
-          serviceDef.initContainers.toggles,
+          serviceDef.initContainers.features,
         ).filter(([_, v]) =>
-          uberChart.env.featuresOn.includes(_ as FeatureToggles),
-        ) as [FeatureToggles, Toggle][]
+          uberChart.env.featuresOn.includes(_ as FeatureNames),
+        ) as [FeatureNames, Feature][]
         const toggleEnvs = activeToggles.map(([name, v]) => {
           return {
             name,
