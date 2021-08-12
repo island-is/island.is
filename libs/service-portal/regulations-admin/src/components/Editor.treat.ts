@@ -199,7 +199,20 @@ export const classes: EditorClasses = {
     selectors: {
       '&[data-updating]::before': {
         pointerEvents: 'auto',
-        opacity: 0.67,
+        opacity: 0.85,
+        animationDuration: '667ms',
+        animationDelay: '667ms',
+        animationIterationCount: 'infinite',
+        animationDirection: 'alternate',
+        animationFillMode: 'both',
+        '@keyframes': {
+          from: {
+            opacity: 0.85,
+          },
+          to: {
+            opacity: 0.55,
+          },
+        },
       },
       '&[data-needs-updating]::before': {
         pointerEvents: 'auto',
