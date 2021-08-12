@@ -52,6 +52,12 @@ export const application: Form = buildForm({
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
+              id: 'qualityPhoto',
+              type: 'QualityPhotoProvider',
+              title: "Test",
+              subTitle: "TEST",
+            }),
+            buildDataProviderItem({
               id: 'eligibility',
               type: 'EligibilityProvider',
               title: m.infoFromLicenseRegistry,

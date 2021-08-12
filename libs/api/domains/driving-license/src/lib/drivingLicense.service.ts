@@ -16,6 +16,7 @@ import {
   ApplicationEligibility,
   DrivingLicenseCategory,
   NeedsHealhCertificate,
+  QualityPhotoResult,
 } from './drivingLicense.type'
 import {
   AkstursmatDto,
@@ -210,7 +211,6 @@ export class DrivingLicenseService {
     type: DrivingLicenseType['id'],
   ): Promise<ApplicationEligibility> {
     const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
-
     const hasFinishedSchoolResult: HefurLokidOkugerdiDto = await this.drivingLicenseApi.apiOkuskirteiniKennitalaFinishedokugerdiGet(
       {
         kennitala: nationalId,
@@ -304,12 +304,22 @@ export class DrivingLicenseService {
 
   async getQualityPhoto(
     nationalId: User['nationalId'],
-  ) {
+  ): Promise<QualityPhotoResult> {
     const result = await this.drivingLicenseApi.apiOkuskirteiniKennitalaHasqualityphotoGet(
       {
-        kennitala: nationalId
-      }
+        kennitala: nationalId,
+      },
     )
-    console.log(result)
+
+    const image = await this.drivingLicenseApi.apiOkuskirteiniKennitalaGetqualityphotoGet(
+      {
+        kennitala: nationalId,
+      },
+    )
+
+    return {
+      success: result > 0,
+      errorMessage: null,
+    }
   }
 }
