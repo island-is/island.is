@@ -14,14 +14,13 @@ import {
   Tag,
   Hidden,
 } from '@island.is/island-ui/core'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 import SvgLogin from '../../components/Login/svgLogin'
 import { LoginPageTexts } from '../../components/Login/LoginTexts.types'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
+import { webLoginButtonSelect } from '@island.is/plausible'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import * as styles from './Login.treat'
 
@@ -48,9 +47,6 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
     'Samræmd könnunarpróf',
   ])
 
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
-
   const newListItemsArray = Array.isArray(newListItems) ? newListItems : []
   const oldListItemsArray = Array.isArray(oldListItems) ? oldListItems : []
 
@@ -60,6 +56,29 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
     oldHalf,
     oldListItemsArray.length,
   )
+
+  const minarsidurLink = '/minarsidur/postholf'
+
+  const trackAndNavigateNew = (e) => {
+    e.preventDefault()
+
+    // If the plausible script is not loaded (For example in case of adBlocker) the user will be navigated directly to /minarsidur.
+    if (window?.plausible) {
+      // In case the script is there, but the event is not firing (different adBlock settings) then the user is navigated without Plausible callback.
+      const id = window.setTimeout(() => {
+        window.location.assign(minarsidurLink)
+      }, 500)
+
+      // The plausible custom event.
+      webLoginButtonSelect('New', () => {
+        window.clearTimeout(id)
+        window.location.assign(minarsidurLink)
+      })
+    } else {
+      window.location.assign(minarsidurLink)
+    }
+  }
+
   return (
     <ContentBlock>
       <Box paddingX={[0, 4, 4, 12]} paddingY={[2, 2, 10]} id="main-content">
@@ -83,7 +102,8 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                 <a
                   tabIndex={-1}
                   className={styles.btnLink}
-                  href={`/minarsidur${isMobile ? '/postholf' : ''}`}
+                  href={minarsidurLink}
+                  onClick={trackAndNavigateNew}
                 >
                   <Button as="span">
                     {n('nyjuSidurLink', 'Fara á nýju mínar síður')}
@@ -94,6 +114,7 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                   color="blue400"
                   underline="normal"
                   underlineVisibility="always"
+                  onClick={() => webLoginButtonSelect('Old')}
                   newTab
                   className={styles.link}
                 >

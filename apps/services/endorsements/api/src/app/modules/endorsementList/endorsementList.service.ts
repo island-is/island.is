@@ -54,7 +54,7 @@ export class EndorsementListService {
       include: [
         {
           model: EndorsementList,
-          attributes: ['id', 'title', 'description', 'tags'],
+          attributes: ['id', 'title', 'description', 'tags', 'closedDate'],
         },
       ],
     })

@@ -10,6 +10,7 @@ import {
   DelegationProvider,
   DelegationType,
 } from '@island.is/clients/auth-public-api'
+import { Identity } from '@island.is/api/domains/identity'
 
 import { DelegationScope } from './delegationScope.model'
 
@@ -32,17 +33,11 @@ export abstract class Delegation {
   @Field(() => ID)
   id?: string
 
-  @Field()
-  toNationalId!: string
+  @Field(() => Identity)
+  from!: Identity
 
-  @Field()
-  fromNationalId!: string
-
-  @Field()
-  fromName!: string
-
-  @Field()
-  toName!: string
+  @Field(() => Identity)
+  to!: Identity
 
   @Field(() => DelegationType)
   type!: DelegationType

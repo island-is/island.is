@@ -57,7 +57,6 @@ export class ApplicationResolver {
       user,
       locale,
     )
-
     return {
       fulfilled: status.fulfilled,
     }
@@ -68,7 +67,11 @@ export class ApplicationResolver {
     @Args('input') input: ApplicationPaymentChargeInput,
     @CurrentUser() user: User,
   ): Promise<CreatePaymentResponseDto> {
-    return this.applicationService.createCharge(input.applicationId, user)
+    return this.applicationService.createCharge(
+      input.applicationId,
+      user,
+      input.chargeItemCode,
+    )
   }
 
   @Query(() => [Application], { nullable: true })

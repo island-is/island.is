@@ -55,6 +55,8 @@ import {
 import { Auction, mapAuction } from './models/auction.model'
 import { mapFrontpage, Frontpage } from './models/frontpage.model'
 import { GetFrontpageInput } from './dto/getFrontpage.input'
+import { OpenDataPage, mapOpenDataPage } from './models/openDataPage.model'
+import { GetOpenDataPageInput } from './dto/getOpenDataPage.input'
 import { mapProjectPage, ProjectPage } from './models/projectPage.model'
 import { IProjectPage } from './generated/contentfulTypes'
 
@@ -298,7 +300,10 @@ export class CmsContentfulService {
     return (result.items as types.IAuction[]).map(mapAuction)[0]
   }
 
-  async getProjectPage(slug: string, lang: string): Promise<ProjectPage> {
+  async getProjectPage(
+    slug: string,
+    lang: string,
+  ): Promise<ProjectPage | null> {
     const params = {
       ['content_type']: 'projectPage',
       'fields.slug': slug,
@@ -308,7 +313,9 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IProjectPageFields>(lang, params)
       .catch(errorHandler('getProjectPage'))
 
-    return mapProjectPage(result.items[0] as IProjectPage)
+    return result.items.length
+      ? mapProjectPage(result.items[0] as IProjectPage)
+      : null
   }
 
   async getArticle(slug: string, lang: string): Promise<Article | null> {
@@ -630,5 +637,21 @@ export class CmsContentfulService {
       .catch(errorHandler('getSubpageHeader'))
 
     return (result.items as types.ISubpageHeader[]).map(mapSubpageHeader)[0]
+  }
+
+  async getOpenDataPage({ lang }: GetOpenDataPageInput): Promise<OpenDataPage> {
+    const params = {
+      ['content_type']: 'openDataPage',
+      include: 10,
+      order: '-sys.createdAt',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOpenDataPageFields>(lang, params)
+      .catch(errorHandler('getOpenDataPage'))
+
+    return (
+      (result.items as types.IOpenDataPage[]).map(mapOpenDataPage)[0] ?? null
+    )
   }
 }

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
+import { IntlService } from '@island.is/api/domains/translations'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -45,6 +46,7 @@ export class CaseService {
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private intlService: IntlService,
   ) {}
 
   private async uploadSignedRulingPdfToCourt(
@@ -309,12 +311,15 @@ export class CaseService {
     return getRulingPdfAsString(existingCase)
   }
 
-  getRequestPdf(existingCase: Case): Promise<string> {
+  async getRequestPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the request for case ${existingCase.id} as a pdf document`,
     )
-
-    return getRequestPdfAsString(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+    return getRequestPdfAsString(existingCase, intl.formatMessage)
   }
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
@@ -391,16 +396,20 @@ export class CaseService {
     return this.caseModel.create({
       type: existingCase.type,
       policeCaseNumber: existingCase.policeCaseNumber,
+      description: existingCase.description,
       accusedNationalId: existingCase.accusedNationalId,
       accusedName: existingCase.accusedName,
       accusedAddress: existingCase.accusedAddress,
       accusedGender: existingCase.accusedGender,
       courtId: existingCase.courtId,
       lawsBroken: existingCase.lawsBroken,
+      legalBasis: existingCase.legalBasis,
       custodyProvisions: existingCase.custodyProvisions,
       requestedCustodyRestrictions: existingCase.requestedCustodyRestrictions,
       caseFacts: existingCase.caseFacts,
       legalArguments: existingCase.legalArguments,
+      requestProsecutorOnlySession: existingCase.requestProsecutorOnlySession,
+      prosecutorOnlySessionRequest: existingCase.prosecutorOnlySessionRequest,
       prosecutorId: user.id,
       parentCaseId: existingCase.id,
     })
@@ -411,7 +420,12 @@ export class CaseService {
 
     const existingCase = await this.findById(id)
 
-    const pdf = await getRequestPdfAsBuffer(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    const pdf = await getRequestPdfAsBuffer(existingCase, intl.formatMessage)
 
     try {
       const streamId = await this.courtService.uploadStream(

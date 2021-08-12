@@ -1,8 +1,5 @@
 import { Inject } from '@nestjs/common'
 import { Base64 } from 'js-base64'
-import axios from 'axios'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import {
@@ -31,8 +28,6 @@ export class FinanceService extends RESTDataSource {
   constructor(
     @Inject(FINANCE_OPTIONS)
     private readonly options: FinanceServiceOptions,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
   ) {
     super()
     this.baseURL = `${this.options.xroadBaseUrl}/r1/${this.options.xroadApiPath}`
@@ -146,34 +141,5 @@ export class FinanceService extends RESTDataSource {
       },
     )
     return response
-  }
-
-  async getExcelDocument(
-    sheetHeaders: (string | number)[],
-    sheetData: (string | number)[][],
-  ): Promise<any> {
-    const excelData = {
-      headers: sheetHeaders,
-      data: sheetData,
-    }
-
-    try {
-      const response = await axios
-        .post(
-          `${this.options.downloadServiceBaseUrl}/download/v1/xlsx`,
-          excelData,
-        )
-        .then((res) => res.data)
-      return response
-    } catch (e) {
-      const errMsg = 'Failed to create xlsx sheet'
-      const description = e
-
-      this.logger.error(errMsg, {
-        message: description,
-      })
-
-      throw new Error(`${errMsg}: ${description}`)
-    }
   }
 }

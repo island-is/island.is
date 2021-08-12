@@ -8,6 +8,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import Overview from './Overview'
+import { LocaleProvider } from '@island.is/localization'
 
 describe('/domari-krafa with an ID', () => {
   test('should display the string "Ekki er farið fram á takmarkanir á gæslu" in custody restrictions if there are no custody restrictions', async () => {
@@ -24,7 +25,11 @@ describe('/domari-krafa with an ID', () => {
         addTypename={false}
       >
         <UserProvider>
-          <Overview />
+          <LocaleProvider locale="is" messages={{}}>
+            <LocaleProvider locale="is" messages={{}}>
+              <Overview />
+            </LocaleProvider>
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -49,7 +54,9 @@ describe('/domari-krafa with an ID', () => {
         addTypename={false}
       >
         <UserProvider>
-          <Overview />
+          <LocaleProvider locale="is" messages={{}}>
+            <Overview />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -73,7 +80,9 @@ describe('/domari-krafa with an ID', () => {
         addTypename={false}
       >
         <UserProvider>
-          <Overview />
+          <LocaleProvider locale="is" messages={{}}>
+            <Overview />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -96,7 +105,9 @@ describe('/domari-krafa with an ID', () => {
         addTypename={false}
       >
         <UserProvider>
-          <Overview />
+          <LocaleProvider locale="is" messages={{}}>
+            <Overview />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -118,7 +129,9 @@ describe('/domari-krafa with an ID', () => {
         addTypename={false}
       >
         <UserProvider>
-          <Overview />
+          <LocaleProvider locale="is" messages={{}}>
+            <Overview />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )
@@ -140,7 +153,9 @@ describe('/domari-krafa with an ID', () => {
         addTypename={false}
       >
         <UserProvider authenticated={true}>
-          <Overview />
+          <LocaleProvider locale="is" messages={{}}>
+            <Overview />
+          </LocaleProvider>
         </UserProvider>
       </MockedProvider>,
     )

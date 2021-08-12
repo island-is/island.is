@@ -1,101 +1,153 @@
-import React, { useState } from 'react'
-import { MockPaymentPlan } from '../../PaymentPlan/useMockPaymentPlan'
+import { PaymentScheduleDistribution } from '@island.is/api/schema'
 import {
-  Accordion,
-  AccordionItem,
   Box,
-  Text,
-  Table as T,
-  LoadingIcon,
   Button,
+  LoadingDots,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import format from 'date-fns/format'
+import React, { useState } from 'react'
+import { paymentPlanTable } from '../../../lib/messages'
 
 interface Props {
   isLoading: boolean
-  data: MockPaymentPlan | null
+  data: PaymentScheduleDistribution
+  totalAmount: number
 }
+
+const formatIsk = (value: number): string =>
+  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
 const TableRow = ({
   dueDate,
   payment,
-  remaining,
+  accumulated,
+  totalAmount,
 }: {
   dueDate: string
   payment: number
-  remaining: number
-}) => (
-  <T.Row>
-    <T.Data>{dueDate}</T.Data>
-    <T.Data>{payment.toLocaleString('is-IS')} kr.</T.Data>
-    <T.Data>{remaining.toLocaleString('is-IS')} kr.</T.Data>
-  </T.Row>
-)
+  accumulated: number
+  totalAmount: number
+}) => {
+  const remaining = totalAmount > accumulated ? totalAmount - accumulated : 0
+  return (
+    <T.Row>
+      <T.Data>{format(new Date(dueDate), 'dd.MM.yyyy')}</T.Data>
+      <T.Data>{formatIsk(remaining)}</T.Data>
+      <T.Data>{formatIsk(payment)}</T.Data>
+      <T.Data>
+        <Text variant="h5">{formatIsk(payment)}</Text>
+      </T.Data>
+    </T.Row>
+  )
+}
 
-export const PaymentPlanTable = ({ isLoading, data }: Props) => {
+export const PaymentPlanTable = ({ isLoading, data, totalAmount }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const { formatMessage } = useLocale()
 
-  const handleExpandTable = () => setIsExpanded(true)
+  const handleExpandTable = () => setIsExpanded(!isExpanded)
 
   return (
-    <Box marginTop={5}>
-      <AccordionItem
-        id="payment-plan-table"
-        label="Greiðsluáætlun skuldar"
-        visibleContent={
-          <Text>Hér er hægt að sjá heildargreiðsluáætlun skuldar</Text>
-        }
-        startExpanded
-      >
-        {isLoading && (
-          <Box display="flex" alignItems="center" justifyContent="center">
-            <LoadingIcon animate size={50} />
-          </Box>
-        )}
-        {!isLoading && data !== null && (
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData>Gjalddagi</T.HeadData>
-                <T.HeadData>Innborgun</T.HeadData>
-                <T.HeadData>Eftirstöðvar</T.HeadData>
-              </T.Row>
-            </T.Head>
-            <T.Body>
-              {!isExpanded && data.schedule.length > 6 ? (
-                <>
-                  {data.schedule.slice(0, 2).map((line, index) => (
-                    <TableRow key={index} {...line} />
+    <>
+      {isLoading && (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          marginTop={2}
+        >
+          <LoadingDots large color="gradient" />
+        </Box>
+      )}
+      {!isLoading && (
+        <T.Table>
+          <T.Head>
+            <T.Row>
+              <T.HeadData>
+                {formatMessage(paymentPlanTable.table.head.dueDate)}
+              </T.HeadData>
+              <T.HeadData>
+                {formatMessage(paymentPlanTable.table.head.remaining)}
+              </T.HeadData>
+              <T.HeadData>
+                {formatMessage(paymentPlanTable.table.head.payment)}
+              </T.HeadData>
+              <T.HeadData>
+                {formatMessage(paymentPlanTable.table.head.totalPayment)}
+              </T.HeadData>
+            </T.Row>
+          </T.Head>
+          <T.Body>
+            {!isExpanded && data.payments.length > 6 ? (
+              <>
+                {data.payments.slice(0, 2).map((line, index) => (
+                  <TableRow key={index} totalAmount={totalAmount} {...line} />
+                ))}
+                {data.payments.length > 2 && (
+                  <T.Row>
+                    <T.Data colSpan={4} box={{ background: 'blue100' }}>
+                      <Box display="flex" justifyContent="center" marginY={1}>
+                        <Button
+                          variant="ghost"
+                          onClick={handleExpandTable}
+                          size="small"
+                        >
+                          {formatMessage(
+                            paymentPlanTable.table.labels.seeAllDates,
+                          )}
+                        </Button>
+                      </Box>
+                    </T.Data>
+                  </T.Row>
+                )}
+                {data.payments
+                  .slice(data.payments.length - 2, data.payments.length)
+                  .map((line, index) => (
+                    <TableRow key={index} totalAmount={totalAmount} {...line} />
                   ))}
-                  {data.schedule.length > 2 && (
-                    <T.Row>
-                      <T.Data colSpan={3}>
-                        <Box display="flex" justifyContent="center" marginY={1}>
-                          <Button
-                            variant="ghost"
-                            onClick={handleExpandTable}
-                            size="small"
-                          >
-                            Sjá alla gjalddaga
-                          </Button>
-                        </Box>
-                      </T.Data>
-                    </T.Row>
-                  )}
-                  {data.schedule
-                    .slice(data.schedule.length - 2, data.schedule.length)
-                    .map((line, index) => (
-                      <TableRow key={index} {...line} />
-                    ))}
-                </>
-              ) : (
-                data.schedule.map((line, index) => (
-                  <TableRow key={index} {...line} />
-                ))
-              )}
-            </T.Body>
-          </T.Table>
-        )}
-      </AccordionItem>
-    </Box>
+              </>
+            ) : (
+              data.payments.map((line, index) => (
+                <TableRow key={index} totalAmount={totalAmount} {...line} />
+              ))
+            )}
+            <T.Row>
+              <T.Data>
+                <Text variant="h5">
+                  {formatMessage(paymentPlanTable.table.labels.totalAmount)}
+                </Text>
+              </T.Data>
+              <T.Data />
+              <T.Data />
+              <T.Data>
+                <Text variant="h4" color="blue400">
+                  {formatIsk(totalAmount)}
+                </Text>
+              </T.Data>
+            </T.Row>
+            {isExpanded && data.payments.length > 6 && (
+              <T.Row>
+                <T.Data colSpan={4} box={{ background: 'blue100' }}>
+                  <Box display="flex" justifyContent="center" marginY={1}>
+                    <Button
+                      variant="ghost"
+                      onClick={handleExpandTable}
+                      size="small"
+                    >
+                      {formatMessage(
+                        paymentPlanTable.table.labels.seeLessDates,
+                      )}
+                    </Button>
+                  </Box>
+                </T.Data>
+              </T.Row>
+            )}
+          </T.Body>
+        </T.Table>
+      )}
+    </>
   )
 }
