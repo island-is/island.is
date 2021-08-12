@@ -89,7 +89,7 @@ const Edit = () => {
   const stepName = assertStep(params.step)
 
   const { state, stepNav, actions } = useDraftingState(id, stepName)
-  const { loading, error, savingStatus, draft } = state
+  const { loading, error, savingStatus, draft, inputHasError } = state
 
   const step = stepData[stepName]
 
@@ -111,7 +111,12 @@ const Edit = () => {
       </Box>
 
       {draft ? (
-        <step.Component actions={actions} new={id === 'new'} draft={draft} />
+        <step.Component
+          actions={actions}
+          new={id === 'new'}
+          draft={draft}
+          inputHasError={inputHasError}
+        />
       ) : (
         <SkeletonLoader height={120} />
       )}
