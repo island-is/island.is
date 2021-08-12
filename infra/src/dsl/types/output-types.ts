@@ -68,8 +68,8 @@ export interface ServiceHelm {
   }
 
   initContainer?: {
-    secrets: { [key: string]: string }
-    env: { [key: string]: string }
+    secrets: ContainerSecrets
+    env: ContainerEnvironmentVariables
     containers: ContainerRunHelm[]
   }
 

@@ -23,8 +23,10 @@ export class ServerSideFeatures implements ServerSideFeature {
   }
 }
 
-export class ServerSideFlagsOnTheClientSide implements ServerSideFeature {
-  isOn(flag: ServerSideFeatureNames): boolean {
-    throw new Error('Using server-side flags in the browser is not supported')
+export class ServerSideFeaturesOnTheClientSide implements ServerSideFeature {
+  isOn(feature: ServerSideFeatureNames): boolean {
+    throw new Error(
+      'Using server-side features in the browser is not supported',
+    )
   }
 }

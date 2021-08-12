@@ -1,10 +1,10 @@
 import {
   ServerSideFeatures,
-  ServerSideFlagsOnTheClientSide,
+  ServerSideFeaturesOnTheClientSide,
 } from './server-side'
 import { ServerSideFeature } from './types'
 
-export const ServerSideFlagClient: ServerSideFeature =
+export const ServerSideFeatureClient: ServerSideFeature =
   typeof window === 'undefined'
-    ? new ServerSideFlagsOnTheClientSide()
+    ? new ServerSideFeaturesOnTheClientSide()
     : new ServerSideFeatures(process.env.SSF_ON)

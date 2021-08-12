@@ -1,6 +1,6 @@
 import {
   ServerSideFeatures,
-  ServerSideFlagsOnTheClientSide,
+  ServerSideFeaturesOnTheClientSide,
 } from './server-side'
 
 describe('Server-side feature flags', () => {
@@ -15,7 +15,12 @@ describe('Server-side feature flags', () => {
   })
 
   it('should throw an error when used in the browser', () => {
-    const flags = new ServerSideFlagsOnTheClientSide()
+    const flags = new ServerSideFeaturesOnTheClientSide()
+    expect(() => flags.isOn('do-not-remove-for-testing-only')).toThrowError()
+  })
+
+  it('should throw an error when no flags info provided', () => {
+    const flags = new ServerSideFeatures()
     expect(() => flags.isOn('do-not-remove-for-testing-only')).toThrowError()
   })
 })
