@@ -30,6 +30,11 @@ export const rescueSquadInfo = {
       defaultMessage: 'Kennitala björgunarsveitar',
       description: 'National ID of rescue squad',
     },
+    companyName: {
+      id: 'an.application:rescueSquadInfo.labels.companyName',
+      defaultMessage: 'Nafn björgunarsveitar',
+      description: 'Name of rescue squad',
+    },
     name: {
       id: 'an.application:rescueSquadInfo.labels.name',
       defaultMessage: 'Fullt nafn',

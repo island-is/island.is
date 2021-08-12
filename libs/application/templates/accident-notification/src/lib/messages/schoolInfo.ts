@@ -29,6 +29,11 @@ export const schoolInfo = {
       defaultMessage: 'Kennitala skóla',
       description: 'National ID of school',
     },
+    companyName: {
+      id: 'an.application:schoolInfo.labels.companyName',
+      defaultMessage: 'Nafn skóla',
+      description: 'Name of school',
+    },
     name: {
       id: 'an.application:schoolInfo.labels.name',
       defaultMessage: 'Fullt nafn',

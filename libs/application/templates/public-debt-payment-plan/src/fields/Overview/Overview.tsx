@@ -1,78 +1,147 @@
-import { PaymentScheduleDebts } from '@island.is/api/schema'
+import {
+  PaymentScheduleDebts,
+  PaymentScheduleEmployer,
+} from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import React from 'react'
-import { PaymentPlanExternalData } from '../../lib/dataSchema'
+import { overview } from '../../lib/messages'
+import { AMOUNT, MONTHS, YES } from '../../shared/constants'
+import {
+  PaymentPlanBuildIndex,
+  PaymentPlanExternalData,
+  paymentPlanIndexKeyMapper,
+  PaymentPlanKeys,
+  PublicDebtPaymentPlan,
+} from '../../types'
+import { DistributionTable } from './DistributionTabel'
 
-export const Overview = ({ application }: FieldBaseProps) => {
+export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
+  const { formatMessage } = useLocale()
+
   const externalData = application.externalData as PaymentPlanExternalData
-  const debts = externalData.paymentPlanPrerequisites?.data
-    ?.debts as PaymentScheduleDebts[]
+  const paymentPrerequisites = externalData.paymentPlanPrerequisites?.data
+  const answers = application.answers as PublicDebtPaymentPlan
 
-  const editAction = () => {
-    // TODO: Write better function. What will happen on edit?
-    console.log('this is edit action')
+  // Debts & payment plans
+  const debts = paymentPrerequisites?.debts as PaymentScheduleDebts[]
+  const paymentPlans = answers?.paymentPlans
+
+  // Applicant
+  const nationalRegistry = externalData.nationalRegistry?.data
+  const applicant = answers?.applicant
+
+  // Employer
+  const employerInfo = paymentPrerequisites?.employer as PaymentScheduleEmployer
+  const employer = answers?.employer
+
+  const editAction = (screen: string) => {
+    if (goToScreen) {
+      goToScreen(screen)
+    }
   }
 
-  // TODO: Add text to messages.
-  // TODO: Add edit functionality.
   return (
     <>
-      <ReviewGroup isEditable editAction={editAction}>
+      <ReviewGroup isEditable editAction={() => editAction('applicantSection')}>
         <GridRow>
           <GridColumn span={['6/12', '5/12']}>
-            <Box>
-              <Label>Nafn</Label>
-              <Text>Fjármundur Skuldason</Text>
-            </Box>
-            <Box>
-              <Label marginTop={2}>Sími</Label>
-              <Text>8486525</Text>
-            </Box>
+            {nationalRegistry?.fullName && (
+              <Box>
+                <Label>{formatMessage(overview.name)}</Label>
+                <Text>{nationalRegistry?.fullName}</Text>
+              </Box>
+            )}
+            {applicant?.phoneNumber && (
+              <Box>
+                <Label marginTop={2}>
+                  {formatMessage(overview.phoneNumber)}
+                </Label>
+                <Text>{applicant?.phoneNumber}</Text>
+              </Box>
+            )}
           </GridColumn>
           <GridColumn span={['6/12', '5/12']}>
-            <Box>
-              <Label>Heimilisfang</Label>
-              <Text>Skuldagötu 2, 110 Reykjavík</Text>
-            </Box>
-            <Box>
-              <Label marginTop={2}>Netfang</Label>
-              <Text>Fjarmundurskuldason@simnet.is</Text>
-            </Box>
+            {nationalRegistry?.address?.streetAddress &&
+              nationalRegistry?.address?.postalCode &&
+              nationalRegistry?.address?.city && (
+                <Box>
+                  <Label>{formatMessage(overview.address)}</Label>
+                  <Text>{`${nationalRegistry?.address?.streetAddress}, ${nationalRegistry?.address?.postalCode} ${nationalRegistry?.address?.city}`}</Text>
+                </Box>
+              )}
+            {applicant?.email && (
+              <Box>
+                <Label marginTop={2}>{formatMessage(overview.email)}</Label>
+                <Text>{applicant?.email}</Text>
+              </Box>
+            )}
           </GridColumn>
         </GridRow>
       </ReviewGroup>
-      <ReviewGroup isEditable editAction={editAction}>
+      <ReviewGroup
+        isEditable
+        editAction={() => editAction('employerMultiField')}
+      >
         <GridRow>
-          <GridColumn span={['6/12', '5/12']}>
-            <Box>
-              <Label>Vinnuveitandi</Label>
-              <Text>Krónan ehf.</Text>
-            </Box>
-          </GridColumn>
-          <GridColumn span={['6/12', '5/12']}>
-            <Box>
-              <Label>Kennitala vinnuveitanda</Label>
-              <Text>711298-2239</Text>
-            </Box>
-          </GridColumn>
+          {employer?.isCorrectInfo === YES && (
+            <GridColumn span={['6/12', '5/12']}>
+              <Box>
+                <Label>{formatMessage(overview.employer)}</Label>
+                <Text>{employerInfo.name}</Text>
+              </Box>
+            </GridColumn>
+          )}
+          {employerInfo?.nationalId && (
+            <GridColumn span={['6/12', '5/12']}>
+              <Box>
+                <Label>{formatMessage(overview.employerSsn)}</Label>
+                <Text>
+                  {employer?.isCorrectInfo === YES
+                    ? employerInfo?.nationalId
+                    : employer?.correctedNationalId}
+                </Text>
+              </Box>
+            </GridColumn>
+          )}
         </GridRow>
       </ReviewGroup>
       {debts?.map((payment, index) => {
+        const paymentIndex = paymentPlanIndexKeyMapper[
+          index as PaymentPlanBuildIndex
+        ] as PaymentPlanKeys
+        const currentPaymentPlan = paymentPlans[paymentIndex]
+        if (!currentPaymentPlan) return null
+        const monthAmount =
+          currentPaymentPlan.paymentMode === AMOUNT
+            ? currentPaymentPlan.amountPerMonth === undefined
+              ? null
+              : currentPaymentPlan.amountPerMonth
+            : null
+        const monthCount =
+          currentPaymentPlan.paymentMode === MONTHS
+            ? currentPaymentPlan.numberOfMonths === undefined
+              ? null
+              : currentPaymentPlan.numberOfMonths
+            : null
         return (
-          <ReviewGroup isEditable editAction={editAction}>
+          <ReviewGroup
+            isEditable
+            editAction={() => editAction(`paymentPlans.${paymentIndex}`)}
+            key={index}
+          >
             <Box paddingBottom={[2, 4]}>
               <Label>{payment.paymentSchedule}</Label>
-              <Text>Mánaðarlegar greiðslur</Text>
+              <Text>{formatMessage(overview.monthlyPayments)}</Text>
             </Box>
-            {/* TODO: Add actual service
-             (isLoading || paymentPlanResults) && (
-              <PaymentPlanTable
-                isLoading={isLoading}
-                data={paymentPlanResults}
-              />
-            ) */}
+            <DistributionTable
+              monthAmount={monthAmount}
+              monthCount={monthCount}
+              totalAmount={payment.totalAmount}
+              scheduleType={payment.type}
+            />
           </ReviewGroup>
         )
       })}

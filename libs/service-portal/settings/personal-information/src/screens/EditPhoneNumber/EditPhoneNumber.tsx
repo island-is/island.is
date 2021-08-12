@@ -12,6 +12,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
+  m,
 } from '@island.is/service-portal/core'
 import {
   useCreateUserProfile,
@@ -104,12 +105,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
         natReg={userInfo.profile.nationalId}
         renderBackButton={() => (
           <Link to={ServicePortalPath.SettingsPersonalInformation}>
-            <Button variant="ghost">
-              {formatMessage({
-                id: 'service.portal:go-back',
-                defaultMessage: 'Til baka',
-              })}
-            </Button>
+            <Button variant="ghost">{formatMessage(m.goBack)}</Button>
           </Link>
         )}
         submitButtonText={defineMessage({

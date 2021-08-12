@@ -2,7 +2,7 @@ import { FormValue } from '@island.is/application/core'
 import { AccidentTypeEnum } from '../types'
 import { isHomeActivitiesAccident } from './isHomeActivitiesAccident'
 describe('isHomeActivitiesAccident', () => {
-  const homeActivitesAccident: FormValue = {
+  const homeActivitiesAccident: FormValue = {
     accidentType: { radioButton: AccidentTypeEnum.HOMEACTIVITIES },
   }
 
@@ -13,7 +13,7 @@ describe('isHomeActivitiesAccident', () => {
   const emptyObject = {}
 
   it('should return true for home activity accidents', () => {
-    expect(isHomeActivitiesAccident(homeActivitesAccident)).toEqual(true)
+    expect(isHomeActivitiesAccident(homeActivitiesAccident)).toEqual(true)
   })
   it('should return false for accidents other than home activity accidents', () => {
     expect(isHomeActivitiesAccident(someOtherAccident)).toEqual(false)
