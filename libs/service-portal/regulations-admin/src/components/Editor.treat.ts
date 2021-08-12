@@ -151,14 +151,59 @@ export const classes: EditorClasses = {
     },
   }),
 
+  diffNowBtn: style({
+    display: 'block',
+
+    position: 'sticky',
+    top: '10rem',
+    zIndex: 10,
+
+    margin: '0 auto',
+    marginTop: '10rem',
+    marginBottom: '-13rem',
+    paddingLeft: spacing[2],
+    paddingRight: spacing[2],
+
+    height: '3rem',
+
+    border: '1px solid black',
+
+    fontSize: '1.2rem',
+    lineHeight: '3rem',
+
+    background: color.dark400,
+
+    ':hover': {
+      borderColor: color.blue400,
+    },
+  }),
+
   result: style({
     pointerEvents: 'auto',
     marginLeft: 'auto',
-    transition: 'opacity 500ms ease-in-out',
+
+    '::before': {
+      content: '""',
+      zIndex: 10,
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      pointerEvents: 'none',
+      opacity: 0,
+      background: 'inherit',
+      transition: 'opacity 500ms ease-in-out',
+    },
 
     selectors: {
-      '&[data-updating]': {
-        opacity: 0.33,
+      '&[data-updating]::before': {
+        pointerEvents: 'auto',
+        opacity: 0.67,
+      },
+      '&[data-needs-updating]::before': {
+        pointerEvents: 'auto',
+        opacity: 0.85,
       },
     },
   }),
@@ -363,20 +408,27 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     marginTop: '2.25rem',
   })
 
-  global('.chapter__title, .article__title', {
+  global('.section__title, .chapter__title, .article__title', {
     marginTop: '3rem',
     marginBottom: '.333rem',
     fontSize: '1.2em',
     fontWeight: typography.headingsFontWeight,
     fontStyle: 'normal',
     textAlign: 'center',
-    backgroundColor: 'rgba(102,0,255, 0.06)',
+    backgroundColor: 'rgba(51,0,255, 0.07)',
+  })
+  global('.section__title', {
+    fontSize: '1.25em',
+    backgroundColor: 'rgba(153,0,153, 0.07)',
   })
   global('.article__title', {
     marginTop: '0',
     marginBottom: '.75rem',
     fontSize: '1.1em',
-    backgroundColor: 'rgba(0,102,255, 0.06)',
+    backgroundColor: 'rgba(0,102,255, 0.07)',
+  })
+  global('.section__title::before', {
+    content: '"Hluti"',
   })
   global('.chapter__title::before', {
     content: '"Kafli"',
@@ -411,6 +463,8 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
 
   global(
     `
+    .section__title em,
+    .section__title i,
     .chapter__title em,
     .chapter__title i,
     .article__title em,

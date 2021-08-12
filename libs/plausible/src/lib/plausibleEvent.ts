@@ -13,7 +13,10 @@ export const plausibleCustomEvent = (event: BaseEvent) => {
     const eventName = event.featureName
       ? `${event.featureName} ${event.eventName}`
       : event.eventName
-    plausible(eventName, { props: event.params })
+    plausible(eventName, {
+      props: event.params,
+      ...(event.callback && { callback: event.callback }),
+    })
   }
 }
 

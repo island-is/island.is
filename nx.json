@@ -26,13 +26,15 @@
           "schemas/openapi-generator",
           "schemas/build-graphql-schema",
           "schemas/codegen"
-        ]
+        ],
+        "cacheDirectory": ".cache/nx"
       }
     },
     "docker-test": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": []
+        "cacheableOperations": [],
+        "cacheDirectory": ".cache/nx"
       }
     }
   },
@@ -137,6 +139,9 @@
     "api-domains-payment": {
       "tags": []
     },
+    "api-domains-payment-schedule": {
+      "tags": []
+    },
     "api-domains-regulations": {
       "tags": []
     },
@@ -187,6 +192,9 @@
       "tags": []
     },
     "application-template-loader": {
+      "tags": []
+    },
+    "application-templates-accident-notification": {
       "tags": []
     },
     "application-templates-children-residence-change": {
@@ -312,6 +320,9 @@
       "tags": []
     },
     "clients-payment": {
+      "tags": []
+    },
+    "clients-payment-schedule": {
       "tags": []
     },
     "clients-regulations": {

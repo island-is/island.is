@@ -15,7 +15,6 @@ const devConfig = {
     xroadPath:
       process.env.DRIVING_LICENSE_XROAD_PATH ??
       'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
-    replaceInPath: null,
   },
   education: {
     xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
@@ -122,8 +121,7 @@ const devConfig = {
   paymentDomain: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     xRoadProviderId:
-      process.env.PAYMENT_XROAD_PROVIDER_ID ??
-      'IS-DEV/GOV/10021/FJS-DEV-Public',
+      process.env.PAYMENT_XROAD_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
     xRoadClientId: process.env.XROAD_CLIENT_ID,
     username: process.env.PAYMENT_USER,
     password: process.env.PAYMENT_PASSWORD,
@@ -145,6 +143,15 @@ const devConfig = {
   audit: {
     defaultNamespace: '@island.is/api',
   },
+  paymentSchedule: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId:
+      process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID ??
+      'IS-DEV/GOV/10021/FJS-Public',
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+    username: process.env.PAYMENT_SCHEDULE_USER,
+    password: process.env.PAYMENT_SCHEDULE_PASSWORD,
+  },
 }
 
 const prodConfig = {
@@ -162,10 +169,6 @@ const prodConfig = {
   drivingLicense: {
     secret: process.env.DRIVING_LICENSE_SECRET,
     xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH,
-    replaceInPath: {
-      from: process.env.DRIVING_LICENSE_PATH_REPLACEMENT_FROM,
-      to: process.env.DRIVING_LICENSE_PATH_REPLACEMENT_TO,
-    },
   },
   education: {
     xroadLicenseServiceId: process.env.XROAD_MMS_LICENSE_SERVICE_ID,
@@ -281,6 +284,13 @@ const prodConfig = {
     defaultNamespace: '@island.is/api',
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'api',
+  },
+  paymentSchedule: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId: process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID,
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+    username: process.env.PAYMENT_SCHEDULE_USER,
+    password: process.env.PAYMENT_SCHEDULE_PASSWORD,
   },
 }
 
