@@ -54,8 +54,8 @@ export const application: Form = buildForm({
             buildDataProviderItem({
               id: 'qualityPhoto',
               type: 'QualityPhotoProvider',
-              title: "Test",
-              subTitle: "TEST",
+              title: '',
+              subTitle: '',
             }),
             buildDataProviderItem({
               id: 'eligibility',
@@ -90,6 +90,23 @@ export const application: Form = buildForm({
               title: m.eligibilityRequirementTitle,
               component: 'EligibilitySummary',
               id: 'eligsummary',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'photoStep',
+      title: m.applicationEligibilityTitle,
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: "Er til gæða mynd?",
+          children: [
+            buildCustomField({
+              title: m.eligibilityRequirementTitle,
+              component: 'QualityPhoto',
+              id: 'qphoto',
             }),
           ],
         }),

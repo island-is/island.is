@@ -61,8 +61,6 @@ const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
     (eligibility as unknown) as ApplicationEligibility,
   )
 
-  console.log(steps)
-
   return (
     <Box marginBottom={10}>
       <Box

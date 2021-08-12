@@ -100,5 +100,6 @@ export enum NeedsHealhCertificate {
 
 export interface QualityPhotoResult {
   success: boolean
+  qualityPhoto: string | null
   errorMessage: string | null
 }

@@ -4,4 +4,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 export class QualityPhoto {
   @Field()
   success!: boolean
+
+  @Field()
+  qualityPhoto!: string | null
 }
