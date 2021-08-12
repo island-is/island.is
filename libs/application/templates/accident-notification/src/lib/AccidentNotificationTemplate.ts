@@ -45,7 +45,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   ],
   dataSchema: AccidentNotificationSchema,
   stateMachineConfig: {
-    initial: States.NEEDS_DOCUMENT_AND_REVIEW,
+    initial: States.DRAFT,
     states: {
       [States.DRAFT]: {
         meta: {
@@ -81,6 +81,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           name: States.NEEDS_DOCUMENT_AND_REVIEW,
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -89,6 +92,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                   Promise.resolve(val.InReview),
                 ),
               read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -138,7 +142,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: {
-            target: States.IN_FINAL_REVIEW,
+            target: States.NEEDS_DOCUMENT,
           },
         },
       },
@@ -157,9 +161,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
               read: 'all',
             },
           ],
-        },
-        on: {
-          [DefaultEvents.APPROVE]: { target: States.APPROVED },
         },
       },
       [AccidentNotificationStates.submitted]: {
