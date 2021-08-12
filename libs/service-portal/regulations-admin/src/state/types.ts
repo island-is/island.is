@@ -81,6 +81,7 @@ export type DraftingState = {
   loading?: boolean
   error?: Error
   draft?: RegDraftForm
+  inputHasError?: boolean
 }
 
 // -----------------------------
@@ -111,6 +112,7 @@ export type Action =
   | { type: 'LOADING_DRAFT_ERROR'; error: Error }
   | { type: 'SAVING_STATUS' }
   | { type: 'SAVING_STATUS_DONE'; error?: Error }
+  | { type: 'MISSING_REQUIRED_PROPS'; inputHasError?: boolean }
   | {
       type: 'UPDATE_LAWCHAPTER_PROP'
       action?: 'add' | 'delete'
@@ -118,7 +120,7 @@ export type Action =
     }
   | {
       type: 'UPDATE_MULTIPLE_PROPS'
-      multiData: Pick<RegDraftForm, 'type' | 'ministry' | 'signatureDate'>
+      multiData: Partial<RegDraftForm>
     }
   | ({ type: 'UPDATE_PROP' } & NameValuePair<
       Pick<RegDraftForm, RegDraftFormSimpleProps>

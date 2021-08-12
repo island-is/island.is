@@ -70,8 +70,8 @@ const Wrap = (props: WrapProps) => (
 
 export const EditMeta: StepComponent = (props) => {
   const t = useIntl().formatMessage
-  const { draft, actions } = props
-  const textRef = useRef(() => draft.text)
+  const { draft, actions, inputHasError } = props
+  // const textRef = useRef(() => draft.text)
 
   const {
     data: getDraftRegulationsMinistriesData,
@@ -108,6 +108,9 @@ export const EditMeta: StepComponent = (props) => {
           placeholder={t(msg.ministry)}
           value={findValueOption(ministryOptions, draft.ministry.value)}
           options={ministryOptions}
+          required
+          errorMessage={t(msg.requiredFieldError)}
+          hasError={inputHasError && !draft.ministry.value}
           onChange={(option) =>
             actions.updateState({
               name: 'ministry',
@@ -132,12 +135,15 @@ export const EditMeta: StepComponent = (props) => {
       <Wrap>
         <Select
           name="type-select"
-          placeholder="Tegund reglugerðar"
+          placeholder={t(msg.type)}
           size="sm"
           isSearchable={false}
-          label="Tegund"
+          label={t(msg.type)}
           options={regulationTypes}
           value={findValueOption(regulationTypes, draft.type.value)}
+          required
+          errorMessage={t(msg.requiredFieldError)}
+          hasError={inputHasError && !draft.type.value}
           onChange={(typeOption) =>
             actions.updateState({
               name: 'type',
@@ -148,10 +154,13 @@ export const EditMeta: StepComponent = (props) => {
       </Wrap>
       <Wrap>
         <DatePicker
-          label="Undirritunardagur"
+          label={t(msg.signatureDate)}
           size="sm"
-          placeholderText="Undirritunardagur"
+          placeholderText={t(msg.signatureDate)}
           selected={draft.signatureDate?.value}
+          required
+          errorMessage={t(msg.requiredFieldError)}
+          hasError={inputHasError && !draft.signatureDate?.value}
           handleChange={(date: Date) =>
             actions.updateState({
               name: 'signatureDate',
@@ -162,11 +171,14 @@ export const EditMeta: StepComponent = (props) => {
       </Wrap>
       <Wrap>
         <DatePicker
-          label="Gildistökudagur"
+          label={t(msg.effectiveDate)}
           size="sm"
-          placeholderText="Gildistökudagur"
+          placeholderText={t(msg.effectiveDate)}
           selected={draft.effectiveDate?.value}
-          minDate={draft.idealPublishDate?.value}
+          minDate={draft.idealPublishDate?.value || null}
+          required
+          errorMessage={t(msg.requiredFieldError)}
+          hasError={inputHasError && !draft.effectiveDate?.value}
           handleChange={(date: Date) =>
             actions.updateState({
               name: 'effectiveDate',

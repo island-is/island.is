@@ -20,6 +20,8 @@ import { HTMLText } from '@island.is/regulations'
 import { StepComponent } from '../state/useDraftingState'
 import { RegDraftFormSimpleProps } from '../state/types'
 import { getMinDate, getNextWorkday } from '../utils'
+import { Appendixes, AppendixStateItem } from './Appendixes'
+import { RegulationDraftId } from '@island.is/regulations/admin'
 
 type WrapProps = {
   legend?: string
@@ -44,11 +46,14 @@ const Wrap = (props: WrapProps) => (
 
 export const EditBasics: StepComponent = (props) => {
   const t = useIntl().formatMessage
-  const { draft, actions } = props
+  const { draft, actions, inputHasError } = props
 
   const [titleValue, setTitleValue] = useState(draft.title?.value)
   const [dateValue, setDateValue] = useState(draft.idealPublishDate?.value)
   const [fastTrack, setFastTrack] = useState(false)
+  const [appendixes, setAppendixes] = useState(
+    [] as readonly AppendixStateItem[],
+  )
 
   const textRef = useRef(() => draft.text.value)
   const notesRef = useRef(() => draft.draftingNotes?.value)
@@ -77,6 +82,7 @@ export const EditBasics: StepComponent = (props) => {
   const fastTrackDate = fastTrack ? getNextWorkday(new Date()) : null
   const selectedDate = dateValue ? new Date(dateValue) : null
 
+  console.log('appendixes', appendixes)
   return (
     <>
       <Wrap>
@@ -85,6 +91,9 @@ export const EditBasics: StepComponent = (props) => {
           name="title"
           value={titleValue}
           onChange={(e) => setTitleValue(e.target.value)}
+          required
+          errorMessage={t(msg.requiredFieldError)}
+          hasError={!!(inputHasError && !draft.title?.value)}
         />
       </Wrap>
 
@@ -96,6 +105,10 @@ export const EditBasics: StepComponent = (props) => {
           isImpact={false}
           draftId={draft.id}
           valueRef={textRef}
+          error={
+            inputHasError &&
+            !textRef.current().replace(/(<(?!\/)[^>]+>)+(<\/[^>]+>)+/, '')
+          }
           onChange={() =>
             onAnyInputChange({
               name: 'text',
@@ -112,6 +125,9 @@ export const EditBasics: StepComponent = (props) => {
           minDate={getMinDate()}
           selected={fastTrackDate || selectedDate}
           handleChange={(date: Date) => setDateValue(getNextWorkday(date))} // Auto selects next workday (Excludes weekends and holidays).
+          required
+          hasError={inputHasError && !(fastTrackDate || selectedDate)}
+          errorMessage={t(msg.requiredFieldError)}
           // excludeDates={[]} --> Do we want to exclude holidays and weekends from the calendar?
         />
         <Box marginTop={1}>
@@ -129,6 +145,15 @@ export const EditBasics: StepComponent = (props) => {
           draft.fastTrack should alaways be a derived value, based on idealPublishDate
           ...and **POSSIBLY** only when the draftingStatus is "draft" ??? Needs customer input... Not important to resolve right away.
         */}
+        <Box marginTop={5}>
+          <Appendixes
+            appendixes={appendixes}
+            onChange={(appendixCallback) =>
+              setAppendixes(appendixCallback(appendixes))
+            }
+            draftId={draft.id}
+          />
+        </Box>
         <Box marginTop={6}>
           <AccordionCard
             id="drafting-notes"
