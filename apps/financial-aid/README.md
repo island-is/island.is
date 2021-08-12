@@ -34,3 +34,16 @@ Go to localhost:4200
 ## Code owners and maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri-robin-hood)
+
+To test authentication locally:
+
+- `npm install -g local-ssl-proxy`
+  downloads https://github.com/cameronhunter/local-ssl-proxy
+- change
+  const defaultCookieOptions: CookieOptions = {
+  secure: true,
+  }
+  in file island.is/apps/financial-aid/api/src/app/modules/auth/auth.controller.ts
+- add .env to web project change port
+- start project
+- 'local-ssl-proxy --source 4200 --target 4202'
