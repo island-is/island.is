@@ -101,7 +101,7 @@ export const application: Form = buildForm({
       children: [
         buildMultiField({
           id: 'info',
-          title: "Er til gæða mynd?",
+          title: 'Er til gæða mynd?',
           children: [
             buildCustomField({
               title: m.eligibilityRequirementTitle,

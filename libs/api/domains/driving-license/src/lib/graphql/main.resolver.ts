@@ -18,7 +18,7 @@ import {
   Juristiction,
   DrivingLicenseDeprevationType,
   DrivingLicenseRemarkType,
-  QualityPhoto
+  QualityPhoto,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
 
@@ -124,11 +124,7 @@ export class MainResolver {
   }
 
   @Query(() => QualityPhoto)
-  qualityPhoto(
-    @CurrentUser() user: User,
-  ) {
-    return this.drivingLicenseService.getQualityPhoto(
-      user.nationalId,
-    )
+  qualityPhoto(@CurrentUser() user: User) {
+    return this.drivingLicenseService.getQualityPhoto(user.nationalId)
   }
 }

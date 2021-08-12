@@ -310,11 +310,17 @@ export class DrivingLicenseService {
         kennitala: nationalId,
       },
     )
-    const image = await this.drivingLicenseApi.apiOkuskirteiniKennitalaGetqualityphotoGet(
-      {
-        kennitala: nationalId,
-      },
-    )
+    var image
+    if (result > 0) {
+      image = await this.drivingLicenseApi.apiOkuskirteiniKennitalaGetqualityphotoGet(
+        {
+          kennitala: nationalId,
+        },
+      )
+    } else {
+      image = null
+    }
+
     return {
       success: result > 0,
       qualityPhoto: image,

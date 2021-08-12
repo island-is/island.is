@@ -37,7 +37,11 @@ const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
       ></Box>
       <Box marginTop={7} marginBottom={8}>
         {img}
-        {photo.data.success ? <Text>Það er til gæðamerkt mynd</Text> : <Text>Það er ekki til gæðamerkt mynd</Text>}
+        {photo.data.success ? (
+          <Text>Það er til gæðamerkt mynd</Text>
+        ) : (
+          <Text>Það er ekki til gæðamerkt mynd</Text>
+        )}
       </Box>
     </Box>
   )
