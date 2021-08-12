@@ -42,7 +42,7 @@ interface GraphProps {
 }
 
 export const SimplePieChart = ({ graphData }: GraphProps) => {
-  const { title, data, datakeys } = graphData
+  const { data, datakeys } = graphData
   const parsedData = JSON.parse(data)
   const { datakey } = JSON.parse(datakeys)
 
