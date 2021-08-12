@@ -151,14 +151,59 @@ export const classes: EditorClasses = {
     },
   }),
 
+  diffNowBtn: style({
+    display: 'block',
+
+    position: 'sticky',
+    top: '10rem',
+    zIndex: 10,
+
+    margin: '0 auto',
+    marginTop: '10rem',
+    marginBottom: '-13rem',
+    paddingLeft: spacing[2],
+    paddingRight: spacing[2],
+
+    height: '3rem',
+
+    border: '1px solid black',
+
+    fontSize: '1.2rem',
+    lineHeight: '3rem',
+
+    background: color.dark400,
+
+    ':hover': {
+      borderColor: color.blue400,
+    },
+  }),
+
   result: style({
     pointerEvents: 'auto',
     marginLeft: 'auto',
-    transition: 'opacity 500ms ease-in-out',
+
+    '::before': {
+      content: '""',
+      zIndex: 10,
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      pointerEvents: 'none',
+      opacity: 0,
+      background: 'inherit',
+      transition: 'opacity 500ms ease-in-out',
+    },
 
     selectors: {
-      '&[data-updating]': {
-        opacity: 0.33,
+      '&[data-updating]::before': {
+        pointerEvents: 'auto',
+        opacity: 0.67,
+      },
+      '&[data-needs-updating]::before': {
+        pointerEvents: 'auto',
+        opacity: 0.85,
       },
     },
   }),
