@@ -72,7 +72,7 @@ const OpenDataSubPage: Screen = () => {
                 </Text>
                 <Box display="flex" alignItems="center">
                   <Box display="inlineFlex" flexGrow={1}>
-                    <Text color="blueberry600">Tæknisjóður</Text>
+                    <Text color="blueberry600">Tækniþróunarsjóður</Text>
                   </Box>
                 </Box>
               </Box>
@@ -124,7 +124,7 @@ const OpenDataSubPage: Screen = () => {
                 />
                 <Text variant="eyebrow">Sjóðir Rannís</Text>
               </Inline>
-              <Text variant="h3">Tæknisjóður</Text>
+              <Text variant="h3">Tækniþróunarsjóður</Text>
             </Box>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
@@ -148,7 +148,7 @@ const OpenDataSubPage: Screen = () => {
               <GridColumn span={'12/12'}>
                 {data.map((item, index) => (
                   <Box marginBottom={3} key={index}>
-                    <ChartsCard data={item} />
+                    <ChartsCard data={item} subPage />
                   </Box>
                 ))}
               </GridColumn>
