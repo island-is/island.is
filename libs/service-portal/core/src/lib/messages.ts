@@ -119,7 +119,7 @@ export const m = defineMessages({
   },
   transactionsLabel: {
     id: 'service.portal:transactions-label',
-    defaultMessage: 'Veldu tegund færslu',
+    defaultMessage: 'Veldu gjaldflokk',
   },
   chooseDate: {
     id: 'service.portal:choose-date',

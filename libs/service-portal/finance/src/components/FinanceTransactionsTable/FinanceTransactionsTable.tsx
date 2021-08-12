@@ -29,9 +29,10 @@ const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
         <ExpandHeader
           data={[
             { value: formatMessage(m.date) },
-            { value: formatMessage(m.effectiveDate) },
-            { value: formatMessage(m.guardian) },
+            { value: formatMessage(m.chargeType) },
             { value: formatMessage(m.feeItem) },
+            { value: formatMessage(m.feeBase) },
+            { value: formatMessage(m.period) },
             { value: formatMessage(m.amount), align: 'right' },
           ]}
         />
@@ -43,29 +44,26 @@ const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
                 key={`${record.createTime}-${record.referenceToLevy}`}
                 data={[
                   { value: format(new Date(record.createDate), dateFormat.is) },
-                  { value: format(new Date(record.valueDate), dateFormat.is) },
-                  { value: record.collectingOrganization },
+                  { value: record.chargeType },
                   { value: record.itemCode },
+                  { value: record.chargeItemSubject },
+                  { value: record.period },
                   { value: amountFormat(record.amount), align: 'right' },
                 ]}
               >
                 <FinanceTransactionsDetail
                   data={[
                     {
+                      title: formatMessage(m.effectiveDate),
+                      value: format(new Date(record.valueDate), dateFormat.is),
+                    },
+                    {
                       title: formatMessage(m.performingOrganization),
                       value: record.performingOrganization,
                     },
                     {
-                      title: formatMessage(m.feeBase),
-                      value: record.chargeItemSubject,
-                    },
-                    {
-                      title: formatMessage(m.period),
-                      value: record.period,
-                    },
-                    {
-                      title: formatMessage(m.chargeType),
-                      value: record.chargeType,
+                      title: formatMessage(m.guardian),
+                      value: record.collectingOrganization,
                     },
                     {
                       title: formatMessage(m.recordCategory),

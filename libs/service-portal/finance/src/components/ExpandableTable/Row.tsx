@@ -58,14 +58,19 @@ const ExpandableLine: FC<Props> = ({
               background: fullClose || loading ? 'transparent' : 'blue100',
               borderColor: fullClose || loading ? 'blue200' : 'blue100',
               position: 'relative',
-              textAlign: item.align,
             }}
           >
             {!fullClose && i === 0 && !loading ? (
               <div className={styles.line} />
             ) : null}
             <Text variant={last ? 'eyebrow' : 'small'} as="span">
-              {item.value}
+              <div
+                className={
+                  item.align === 'right' ? styles.financeTd : undefined
+                }
+              >
+                {item.value}
+              </div>
             </Text>
           </T.Data>
         ))}
