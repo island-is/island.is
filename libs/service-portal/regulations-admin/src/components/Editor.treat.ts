@@ -415,17 +415,17 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     fontWeight: typography.headingsFontWeight,
     fontStyle: 'normal',
     textAlign: 'center',
-    backgroundColor: 'rgba(102,0,255, 0.06)',
+    backgroundColor: 'rgba(51,0,255, 0.07)',
+  })
+  global('.section__title', {
+    fontSize: '1.25em',
+    backgroundColor: 'rgba(153,0,153, 0.07)',
   })
   global('.article__title', {
     marginTop: '0',
     marginBottom: '.75rem',
     fontSize: '1.1em',
-    backgroundColor: 'rgba(0,102,255, 0.06)',
-  })
-  global('.section__title', {
-    fontSize: '1.25em',
-    backgroundColor: 'rgba(153,0,255, 0.06)',
+    backgroundColor: 'rgba(0,102,255, 0.07)',
   })
   global('.section__title::before', {
     content: '"Hluti"',
