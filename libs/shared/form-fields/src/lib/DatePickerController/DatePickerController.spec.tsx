@@ -18,7 +18,7 @@ describe('DatePickerController', () => {
         <DatePickerController id="id" label="date" />
       </Wrapper>,
     )
-    expect(getByDisplayValue('10/02/2020')).toBeInTheDocument()
+    expect(getByDisplayValue('02/10/2020')).toBeInTheDocument()
   })
 
   it('should render an error message', () => {
@@ -27,7 +27,7 @@ describe('DatePickerController', () => {
         <DatePickerController id="id" label="date" error="error indeed" />
       </Wrapper>,
     )
-    expect(getByDisplayValue('10/02/2020')).toBeInTheDocument()
+    expect(getByDisplayValue('02/10/2020')).toBeInTheDocument()
 
     expect(getByText('error indeed')).toBeInTheDocument()
   })
@@ -56,7 +56,7 @@ describe('DatePickerController', () => {
       </Wrapper>,
     )
     expect(queryByDisplayValue('great placeholder')).not.toBeInTheDocument()
-    expect(getByDisplayValue('10/02/2020')).toBeInTheDocument()
+    expect(getByDisplayValue('02/10/2020')).toBeInTheDocument()
   })
 
   it('should change date value on date select', () => {
@@ -65,8 +65,8 @@ describe('DatePickerController', () => {
         <DatePickerController id="id" label="date" />
       </Wrapper>,
     )
-    fireEvent.click(getByDisplayValue('10/02/2020'))
+    fireEvent.click(getByDisplayValue('02/10/2020'))
     fireEvent.click(getByText('15'))
-    expect(getByDisplayValue('10/15/2020')).toBeInTheDocument()
+    expect(getByDisplayValue('15/10/2020')).toBeInTheDocument()
   })
 })
