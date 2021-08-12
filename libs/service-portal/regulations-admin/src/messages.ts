@@ -227,6 +227,10 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-legend-changedtitle',
     defaultMessage: 'Uppfærður texti reglugerðar',
   },
+  requiredFieldError: {
+    id: 'ap.regulations-admin:required-field-missing-error',
+    defaultMessage: 'Þessi reitur má ekki vera tómur',
+  },
 })
 
 export const warningMessages = defineMessages({

@@ -1,5 +1,5 @@
 import { useMutation, gql } from '@apollo/client'
-import { HTMLText, LawChapterSlug } from '@island.is/regulations'
+import { HTMLText, LawChapterSlug, PlainText } from '@island.is/regulations'
 import { useRegulationDraftQuery } from '@island.is/service-portal/graphql'
 import { useAuth } from '@island.is/auth/react'
 import { ServicePortalPath } from '@island.is/service-portal/core'
@@ -61,10 +61,9 @@ export const steps: Record<Step, StepNav> = {
 const makeDraftForm = (
   draft: RegulationDraft,
   dirty?: boolean,
-  guessed?: boolean,
 ): RegDraftForm => {
-  const f = <T>(value: T): DraftField<T> => ({ value, dirty, guessed })
-  const fHtml = (value: HTMLText): HtmlDraftField => ({ value, dirty, guessed })
+  const f = <T>(value: T): DraftField<T> => ({ value, dirty })
+  const fHtml = (value: HTMLText): HtmlDraftField => ({ value, dirty })
 
   const form: RegDraftForm = {
     id: draft.id,
@@ -196,6 +195,14 @@ const actionHandlers: {
     prop.value = value
   },
 
+  MISSING_REQUIRED_PROPS: (state) => {
+    if (!state.draft) {
+      return
+    }
+
+    state.inputHasError = true
+  },
+
   UPDATE_MULTIPLE_PROPS: (state, { multiData }) => {
     if (!state.draft) {
       return
@@ -205,6 +212,8 @@ const actionHandlers: {
       ...state.draft,
       ...multiData,
     }
+
+    state.inputHasError = false
   },
 
   UPDATE_LAWCHAPTER_PROP: (state, { action, value }) => {
@@ -338,15 +347,51 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
         stepNav.next &&
         (isEditor || stepNav.next !== 'review')
           ? () => {
-              if (state.draft?.text.value && state.draft?.title.value) {
-                const guessableValues = getAllGuessableValues(
-                  state.draft?.text.value,
-                  state.draft?.title.value,
-                )
-                dispatch({
-                  type: 'UPDATE_MULTIPLE_PROPS',
-                  multiData: guessableValues,
-                })
+              // BASICS
+              if (stepName === 'basics') {
+                const requiredFieldsBasics =
+                  state?.draft?.title.value &&
+                  state?.draft?.text.value &&
+                  state?.draft?.idealPublishDate.value
+
+                if (!requiredFieldsBasics) {
+                  dispatch({
+                    type: 'MISSING_REQUIRED_PROPS',
+                    inputHasError: true,
+                  })
+                  return // Prevent the user going forward
+                } else {
+                  const guessableValues = getAllGuessableValues(
+                    state.draft?.text.value as HTMLText,
+                    state.draft?.title.value as PlainText,
+                  )
+                  dispatch({
+                    type: 'UPDATE_MULTIPLE_PROPS',
+                    multiData: guessableValues, // Includes { inputHasError: false }
+                  })
+                }
+              }
+
+              // META
+              if (stepName === 'meta') {
+                const requiredFieldsMeta =
+                  state?.draft?.ministry.value &&
+                  state?.draft?.type.value &&
+                  state?.draft?.signatureDate.value &&
+                  state?.draft?.effectiveDate.value
+                // TODO: VALIDATE
+                if (!requiredFieldsMeta) {
+                  dispatch({
+                    type: 'MISSING_REQUIRED_PROPS',
+                    inputHasError: true,
+                  })
+                  return // Prevent the user going forward
+                } else {
+                  dispatch({
+                    type: 'MISSING_REQUIRED_PROPS',
+                    inputHasError: false,
+                  })
+                }
               }
 
               history.replace(
@@ -469,4 +514,5 @@ export type StepComponent = (props: {
   draft: RegDraftForm
   new?: boolean
   actions: ReturnType<typeof useDraftingState>['actions'] // FIXME: Ick! Ack!
+  inputHasError?: boolean
 }) => ReturnType<FC>

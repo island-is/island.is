@@ -1,4 +1,4 @@
-import s from './Appendixes.module.scss'
+// import s from './Appendixes.module.scss'
 
 import { EditorInput } from './EditorInput'
 import React, { MutableRefObject, useState } from 'react'
@@ -70,21 +70,17 @@ const Appendix = (props: AppendixProps) => {
   const labelRemove = t(msg.appendix_remove, { idx: idx + 1 })
 
   return (
-    <section className={s.appendix}>
-      <h2 className={s.appendix__legend}>
+    <section>
+      <h2>
         {t(msg.appendix_legend, { idx: idx + 1 })}
-        <button
-          className={s.appendix__toggler}
-          onClick={() => setIsOpen(!isOpen)}
-        >
+        <button onClick={() => setIsOpen(!isOpen)}>
           {t(isOpen ? msg.appendix_close : msg.appendix_open)}
         </button>
       </h2>
       {isOpen && (
         <>
-          <div className={s.appendix__title}>
+          <div>
             <textarea
-              className={s.appendix__title__input}
               onChange={(e) => {
                 changeAppendixTitle(idx, e.currentTarget.value)
                 onTextChange && onTextChange(idx)
@@ -108,10 +104,9 @@ const Appendix = (props: AppendixProps) => {
             isImpact={props.isImpact}
           />
           {(buttons || isRemovable) && (
-            <div className={s.appendix__ctrls}>
+            <div>
               {idx > 0 && (
                 <button
-                  className={s.appendix__moveup}
                   onClick={() => moveAppendixUp(idx)}
                   title={labelShiftUp}
                 >
@@ -119,11 +114,7 @@ const Appendix = (props: AppendixProps) => {
                 </button>
               )}{' '}
               {isRemovable && (
-                <button
-                  className={s.appendix__remove}
-                  onClick={() => removeAppendix(idx)}
-                  title={labelRemove}
-                >
+                <button onClick={() => removeAppendix(idx)} title={labelRemove}>
                   {labelRemove}
                 </button>
               )}
@@ -181,7 +172,7 @@ export const Appendixes = (props: AppendixesProps) => {
   const isBrowser = useIsBrowserSide()
 
   return (
-    <section className={s.wrapper}>
+    <section>
       {props.appendixes.map((appendix, i) => (
         <Appendix
           key={appendix.key}
@@ -195,9 +186,7 @@ export const Appendixes = (props: AppendixesProps) => {
           isImpact={props.isImpact}
         />
       ))}
-      <button className={s.addAppendix} onClick={addAppendix}>
-        {t(msg.appendix_add)}
-      </button>
+      <button onClick={addAppendix}>{t(msg.appendix_add)}</button>
     </section>
   )
 }
