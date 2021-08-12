@@ -30,7 +30,6 @@ import { FeatureToggles } from './features'
 export const serializeService: SerializeMethod = (
   service: Service,
   uberChart: UberChartType,
-  featuresOn: FeatureToggles[] = [],
 ) => {
   let allErrors: string[] = []
   const serviceDef = service.serviceDef
@@ -125,7 +124,7 @@ export const serializeService: SerializeMethod = (
   }
 
   const activeToggles = Object.entries(serviceDef.toggles!).filter(([_, v]) =>
-    featuresOn.includes(_ as FeatureToggles),
+    uberChart.env.featuresOn.includes(_ as FeatureToggles),
   ) as [FeatureToggles, Toggle][]
   const toggleEnvs = activeToggles.map(([name, v]) => {
     return {
@@ -146,7 +145,7 @@ export const serializeService: SerializeMethod = (
       (acc, toggle) => ({ ...acc, ...toggle.vars.envs }),
       {} as ContainerEnvironmentVariables,
     ),
-    SSF_ON: featuresOn.join(','),
+    SSF_ON: uberChart.env.featuresOn.join(','),
   }
 
   result.secrets = {
@@ -180,7 +179,7 @@ export const serializeService: SerializeMethod = (
           serviceDef.initContainers.containers,
         ),
         env: {
-          SSF_ON: featuresOn.join(','),
+          SSF_ON: uberChart.env.featuresOn.join(','),
         },
       }
       if (typeof serviceDef.initContainers.envs !== 'undefined') {
@@ -214,10 +213,9 @@ export const serializeService: SerializeMethod = (
       if (serviceDef.initContainers.toggles) {
         const activeToggles = Object.entries(
           serviceDef.initContainers.toggles,
-        ).filter(([_, v]) => featuresOn.includes(_ as FeatureToggles)) as [
-          FeatureToggles,
-          Toggle,
-        ][]
+        ).filter(([_, v]) =>
+          uberChart.env.featuresOn.includes(_ as FeatureToggles),
+        ) as [FeatureToggles, Toggle][]
         const toggleEnvs = activeToggles.map(([name, v]) => {
           return {
             name,

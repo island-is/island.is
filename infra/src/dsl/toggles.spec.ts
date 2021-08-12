@@ -8,6 +8,7 @@ const Staging: EnvironmentConfig = {
   auroraHost: 'a',
   domain: 'staging01.devland.is',
   type: 'staging',
+  featuresOn: [],
   defaultMaxReplicas: 3,
   releaseName: 'web',
   awsAccountId: '111111',
@@ -43,9 +44,13 @@ describe('Server-side toggles', () => {
         },
       },
     })
-  const result = serializeService(sut, new UberChart(Staging), [
-    'do-not-remove-for-testing-only',
-  ]) as SerializeSuccess
+  const result = serializeService(
+    sut,
+    new UberChart({
+      ...Staging,
+      featuresOn: ['do-not-remove-for-testing-only'],
+    }),
+  ) as SerializeSuccess
 
   it('env variables present when feature toggled', () => {
     expect(result.serviceDef.env!['A']).toBe('B')
