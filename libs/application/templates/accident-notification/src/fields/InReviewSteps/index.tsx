@@ -51,7 +51,8 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
       state: statesMap['documents'][application.state],
       title: formatMessage(inReview.documents.title),
       description:
-        application.state === States.DELIVERY_OF_DOCUMENTS
+        application.state === States.NEEDS_DOCUMENT_AND_REVIEW ||
+        application.state === States.NEEDS_DOCUMENT
           ? formatMessage(inReview.documents.summary)
           : formatMessage(inReview.documents.summaryApproved),
       hasActionMessage:

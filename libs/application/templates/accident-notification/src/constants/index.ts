@@ -10,8 +10,6 @@ export enum States {
   APPROVED = 'approved',
   SUBMITTED = 'submitted',
 
-  DELIVERY_OF_DOCUMENTS = 'deliveryOfDocuments',
-  DOCUMENTS_HAVE_BEEN_DELIVERED = 'documentsHaveBeenDelivered',
   NEEDS_DOCUMENT = 'needsDocument',
   NEEDS_REVIEW = 'needsReview',
   NEEDS_DOCUMENT_AND_REVIEW = 'needsDocumentAndReview',
