@@ -57,6 +57,7 @@ export const GetCurrentUserQuery = gql`
   query currentUserQuery {
     currentUser {
       name
+      hasAppliedForPeriod
     }
   }
 `

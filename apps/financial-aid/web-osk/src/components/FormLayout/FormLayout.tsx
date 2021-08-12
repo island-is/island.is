@@ -4,11 +4,16 @@ import {
   GridContainer,
   FormStepper,
   Button,
+  Text,
 } from '@island.is/island-ui/core'
 
 import * as styles from './FormLayout.treat'
 
-import { LogoHfj } from '@island.is/financial-aid-web/osk/src/components'
+import {
+  LogoHfj,
+  Login,
+  HasApplied,
+} from '@island.is/financial-aid-web/osk/src/components'
 import { useRouter } from 'next/router'
 
 import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
@@ -46,7 +51,7 @@ const FormLayout: React.FC<PageProps> = ({
       background="purple100"
       className={styles.processContainer}
     >
-      {isAuthenticated ? (
+      {isAuthenticated && !user?.hasAppliedForPeriod && (
         <GridContainer className={styles.gridContainer}>
           <div className={styles.gridRowContainer}>
             <Box
@@ -57,37 +62,26 @@ const FormLayout: React.FC<PageProps> = ({
             >
               {children}
             </Box>
-
             <Box className={styles.sidebarContent}>
               <Box paddingLeft={[0, 0, 0, 3]}>
-                <FormStepper
-                  sections={sections}
-                  activeSection={activeSection}
-                  activeSubSection={activeSubSection}
-                />
+                {activeSection != undefined && (
+                  <FormStepper
+                    sections={sections}
+                    activeSection={activeSection}
+                    activeSubSection={activeSubSection}
+                  />
+                )}
               </Box>
 
               <LogoHfj className={styles.logo} />
             </Box>
           </div>
         </GridContainer>
-      ) : (
-        <GridContainer className={styles.gridContainer}>
-          <p>Heyrðu mig nú, þú verður að logga inn</p>
-          <Button
-            onClick={() => {
-              router.push('/api/auth/login?nationalId=0000000000')
-            }}
-            data-testid="logout-button"
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="primary"
-          >
-            Login
-          </Button>
-        </GridContainer>
       )}
+
+      {!isAuthenticated && <Login />}
+
+      {user?.hasAppliedForPeriod && <HasApplied />}
     </Box>
   ) : null
 }

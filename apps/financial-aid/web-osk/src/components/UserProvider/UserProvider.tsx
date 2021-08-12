@@ -17,15 +17,17 @@ export const CurrentUserQuery = gql`
       nationalId
       name
       phoneNumber
+      hasAppliedForPeriod
     }
   }
 `
 
 const UserProvider: React.FC = ({ children }) => {
+  const [user, setUser] = useState<User>()
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(Cookies.get(CSRF_COOKIE_NAME)),
   )
-  const [user, setUser] = useState<User>()
 
   const { data } = useQuery(CurrentUserQuery, { fetchPolicy: 'no-cache' })
   const loggedInUser = data?.currentUser
