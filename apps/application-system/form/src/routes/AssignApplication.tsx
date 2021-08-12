@@ -45,10 +45,8 @@ export const AssignApplication = () => {
   useEffect(() => {
     const init = async () => {
       if (isMissingToken) {
-        Sentry.captureException(
-          new Error(
-            `Missing token, cannot assign the application ${location.search}`,
-          ),
+        Sentry.captureMessage(
+          `Missing token, cannot assign the application ${location.search}`,
         )
 
         return
