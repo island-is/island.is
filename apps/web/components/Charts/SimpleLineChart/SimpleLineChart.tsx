@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   LineChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -9,7 +8,6 @@ import {
   Legend,
   ResponsiveContainer,
   Line,
-  Label,
 } from 'recharts'
 import { Box, Text } from '@island.is/island-ui/core'
 import { CustomizedAxisTick, RenderLegend, COLORS } from '../utils'
