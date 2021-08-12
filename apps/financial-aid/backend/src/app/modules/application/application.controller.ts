@@ -7,6 +7,7 @@ import {
   Param,
   Put,
   NotFoundException,
+  Query,
 } from '@nestjs/common'
 
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
@@ -16,16 +17,36 @@ import { ApplicationModel } from './models'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
-import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
+import {
+  CurrentHttpUser,
+  JwtAuthGuard,
+  TokenGuaard,
+} from '@island.is/financial-aid/auth'
 import type { User } from '@island.is/financial-aid/shared'
 import { ApplicationEventService } from '../applicationEvent'
 
-@UseGuards(JwtAuthGuard)
 @Controller('api')
 @ApiTags('applications')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
+  // @UseGuards(TokenGuaard)
+  @Get('me')
+  @ApiOkResponse({
+    // type: ApplicationModel,
+    description:
+      'Checks whether user has applied before and if it is the same month',
+  })
+  async getHasUserAppliedForCurrentMonth(
+    @Query('nationalId') nationalId: string,
+  ) {
+    const hasApplied = await this.applicationService.hasUserAppliedForCurrentMonth(
+      nationalId,
+    )
+    return hasApplied
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('applications')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -36,6 +57,7 @@ export class ApplicationController {
     return this.applicationService.getAll()
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('applications/:id')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -51,6 +73,7 @@ export class ApplicationController {
     return application
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put('applications/:id')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -72,6 +95,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('application')
   @ApiCreatedResponse({
     type: ApplicationModel,
