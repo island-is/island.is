@@ -780,12 +780,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
+    // If the applicant is its own employer, we need to give it the `ASSIGNEE` role to be able to continue the process
+    if (id === application.applicant && application.assignees.includes(id)) {
+      return Roles.ASSIGNEE
+    }
+
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
+
     if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
+
     return undefined
   },
   answerValidators,
