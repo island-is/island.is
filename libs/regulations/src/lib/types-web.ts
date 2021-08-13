@@ -114,7 +114,7 @@ export type RegulationAppendix = {
   text: HTMLText
 }
 
-// Single Regulation
+/** Single Regulation with up-to-date text */
 export type Regulation = {
   /** Publication name (NNNN/YYYY) of the regulation */
   name: RegName
