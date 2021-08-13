@@ -20,7 +20,7 @@ import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
-  TokenGuaard,
+  TokenGuard,
 } from '@island.is/financial-aid/auth'
 import type { User } from '@island.is/financial-aid/shared'
 import { ApplicationEventService } from '../applicationEvent'
@@ -30,7 +30,7 @@ import { ApplicationEventService } from '../applicationEvent'
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
-  @UseGuards(TokenGuaard)
+  @UseGuards(TokenGuard)
   @Get('me')
   @ApiOkResponse({
     description:
