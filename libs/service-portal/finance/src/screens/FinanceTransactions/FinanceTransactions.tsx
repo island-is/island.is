@@ -11,6 +11,7 @@ import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/
 import {
   CustomerChargeType,
   CustomerRecords,
+  CustomerRecordsDetails,
 } from './FinanceTransactionsData.types'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { m } from '@island.is/service-portal/core'
@@ -27,8 +28,10 @@ import {
   Select,
   AlertBanner,
   Hidden,
+  Input,
 } from '@island.is/island-ui/core'
 import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
+import { simpleFilter } from '../../utils/transactionFilter'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
@@ -39,6 +42,7 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const [fromDate, setFromDate] = useState<string>()
   const [toDate, setToDate] = useState<string>()
+  const [q, setQ] = useState<string>('')
   const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>([])
 
   const { data: customerChartypeData } = useQuery<Query>(
@@ -75,7 +79,8 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   }
 
   const recordsData: CustomerRecords = data?.getCustomerRecords || {}
-  const recordsDataArray = recordsData?.records || []
+  const recordsDataArray =
+    (recordsData?.records && simpleFilter(recordsData?.records, q)) || []
 
   const allChargeTypes = { label: 'Allar færslur', value: ALL_CHARGE_TYPES }
   const chargeTypeSelect = (chargeTypeData?.chargeType || []).map((item) => ({
@@ -131,6 +136,7 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
                 backgroundColor="blue"
                 placeholder={formatMessage(m.transactions)}
                 label={formatMessage(m.transactionsLabel)}
+                defaultValue={allChargeTypes}
                 size="sm"
                 options={[allChargeTypes, ...chargeTypeSelect]}
                 onChange={(sel) => onDropdownSelect(sel)}
@@ -167,6 +173,15 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
               />
             </GridColumn>
           </GridRow>
+          <Box marginTop={3}>
+            <Input
+              label="Leit"
+              name="Search1"
+              placeholder="Sláðu inn leitarorð"
+              size="sm"
+              onChange={(e) => setQ(e.target.value)}
+            />
+          </Box>
         </Box>
         <Box marginTop={2}>
           {error && (
