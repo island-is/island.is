@@ -33,6 +33,7 @@ export class AccidentNotificationService {
       !utils.isHomeActivitiesAccident(application.answers) &&
       !utils.isRepresentativeOfCompanyOrInstitute(application.answers)
 
+    // Send confirmation email to applicant
     await this.sharedTemplateAPIService.sendEmail(
       (props) =>
         generateConfirmationEmail(
@@ -44,6 +45,7 @@ export class AccidentNotificationService {
       application,
     )
 
+    // Request representative review when applicable
     if (shouldRequestReview) {
       await this.sharedTemplateAPIService.assignApplicationThroughEmail(
         generateAssignReviewerEmail,
