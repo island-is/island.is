@@ -3,6 +3,8 @@ import React, { createContext, useEffect, useState } from 'react'
 import { CSRF_COOKIE_NAME, User } from '@island.is/financial-aid/shared'
 import Cookies from 'js-cookie'
 
+import { CurrentUserQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+
 interface UserProvider {
   isAuthenticated?: boolean
   user?: User
@@ -10,17 +12,6 @@ interface UserProvider {
 }
 
 export const UserContext = createContext<UserProvider>({})
-
-export const CurrentUserQuery = gql`
-  query CurrentUserQuery {
-    currentUser {
-      nationalId
-      name
-      phoneNumber
-      hasAppliedForPeriod
-    }
-  }
-`
 
 const UserProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<User>()

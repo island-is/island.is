@@ -71,14 +71,13 @@ export const CreateSignedUrlMutation = gql`
   }
 `
 
-// export const GetApplicationQuery = gql`
-//   query GetApplicationQuery {
-//     applications {
-//       id
-//       nationalId
-//       name
-//       phoneNumber
-//       email
-//     }
-//   }
-// `
+export const CurrentUserQuery = gql`
+  query CurrentUserQuery {
+    currentUser {
+      nationalId
+      name
+      phoneNumber
+      hasAppliedForPeriod
+    }
+  }
+`

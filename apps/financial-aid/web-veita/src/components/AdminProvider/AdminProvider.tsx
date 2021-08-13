@@ -3,6 +3,8 @@ import React, { createContext, useEffect, useState } from 'react'
 import { CSRF_COOKIE_NAME, User } from '@island.is/financial-aid/shared'
 import Cookies from 'js-cookie'
 
+import { CurrentUserQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+
 interface AdminProvider {
   isAuthenticated?: boolean
   admin?: User
@@ -10,16 +12,6 @@ interface AdminProvider {
 }
 
 export const AdminContext = createContext<AdminProvider>({})
-
-export const CurrentUserQuery = gql`
-  query CurrentUserQuery {
-    currentUser {
-      nationalId
-      name
-      phoneNumber
-    }
-  }
-`
 
 const AdminProvider: React.FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
