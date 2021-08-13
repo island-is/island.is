@@ -399,13 +399,15 @@ export const application: Form = buildForm({
               label: m.overviewTeacher,
               value: ({ answers: { teacher } }) => teacher as string,
             }),
-            buildDividerField({}),
+            buildDividerField({
+              condition: (answers) => answers.willBringQualityPhoto === "yes" || Object.values(answers.healthDeclaration).includes('yes')
+            }),
             buildDescriptionField({
               id: 'myndagogn',
               title: '',
               titleVariant: 'h4',
               description: m.qualityPhotoAcknowledgement,
-              condition: (answers) => answers.willBringQualityPhoto === "no",
+              condition: (answers) => answers.willBringQualityPhoto === "yes",
             }),
             buildDescriptionField({
               id: 'vottungogn',
