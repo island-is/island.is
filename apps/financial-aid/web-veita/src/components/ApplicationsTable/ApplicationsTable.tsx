@@ -23,13 +23,13 @@ interface PageProps {
   sortBy: sortByProps
 }
 
-const ApplicationsTable: React.FC<PageProps> = ({
+const ApplicationsTable = ({
   applications,
   headers,
   className,
   setSortBy,
   sortBy,
-}) => {
+}: PageProps) => {
   const router = useRouter()
 
   if (applications && applications.length > 0) {

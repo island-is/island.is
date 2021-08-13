@@ -16,12 +16,7 @@ interface PageProps {
   sortBy: sortByProps
 }
 
-const TableHeaders: React.FC<PageProps> = ({
-  index,
-  header,
-  setSortBy,
-  sortBy,
-}) => {
+const TableHeaders = ({ index, header, setSortBy, sortBy }: PageProps) => {
   if (header.filterBy) {
     return (
       <th key={'headers-' + index}>

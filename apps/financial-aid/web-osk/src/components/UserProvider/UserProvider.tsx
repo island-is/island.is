@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { CSRF_COOKIE_NAME, User } from '@island.is/financial-aid/shared'
 import Cookies from 'js-cookie'
 
@@ -11,9 +11,13 @@ interface UserProvider {
   setUser?: React.Dispatch<React.SetStateAction<User | undefined>>
 }
 
+interface Props {
+  children: ReactNode
+}
+
 export const UserContext = createContext<UserProvider>({})
 
-const UserProvider: React.FC = ({ children }) => {
+const UserProvider = ({ children }: Props) => {
   const [user, setUser] = useState<User>()
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(

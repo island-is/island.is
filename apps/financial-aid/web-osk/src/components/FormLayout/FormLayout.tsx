@@ -1,11 +1,5 @@
 import React, { ReactNode, useContext, useEffect } from 'react'
-import {
-  Box,
-  GridContainer,
-  FormStepper,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridContainer, FormStepper } from '@island.is/island-ui/core'
 
 import * as styles from './FormLayout.treat'
 
@@ -14,27 +8,21 @@ import {
   Login,
   HasApplied,
 } from '@island.is/financial-aid-web/osk/src/components'
-import { useRouter } from 'next/router'
 
 import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
-interface PageProps {
+interface Props {
   children: ReactNode
   activeSection?: number
   activeSubSection?: number
 }
 
-const FormLayout: React.FC<PageProps> = ({
-  children,
-  activeSection,
-  activeSubSection,
-}) => {
-  const router = useRouter()
-  const { isAuthenticated, setUser, user } = useContext(UserContext)
+const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
+  const { isAuthenticated, user } = useContext(UserContext)
 
-  const { form, updateForm } = useContext(FormContext)
+  const { form } = useContext(FormContext)
   const sections = useNavigationTree(Boolean(form?.hasIncome))
 
   useEffect(() => {

@@ -33,12 +33,12 @@ interface InputType {
   type: ApplicationState | undefined
 }
 
-const StateModal: React.FC<Props> = ({
+const StateModal = ({
   isVisible,
   onVisiblityChange,
   onStateChange,
   application,
-}) => {
+}: Props) => {
   const [inputType, setInputType] = useState<InputType>({
     show: false,
     type: undefined,

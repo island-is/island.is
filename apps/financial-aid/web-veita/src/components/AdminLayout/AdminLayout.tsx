@@ -8,7 +8,7 @@ interface PageProps {
   children: ReactNode
 }
 
-const AdminLayout: React.FC<PageProps> = ({ children }) => {
+const AdminLayout = ({ children }: PageProps) => {
   useEffect(() => {
     document.title = 'Sveita • Umsóknir um fjárhagsaðstoð'
   }, [])

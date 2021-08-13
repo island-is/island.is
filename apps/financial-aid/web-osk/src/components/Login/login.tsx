@@ -1,14 +1,9 @@
-import React, { ReactNode, useContext, useEffect } from 'react'
-import {
-  Box,
-  GridContainer,
-  FormStepper,
-  Button,
-} from '@island.is/island-ui/core'
+import React from 'react'
+import { GridContainer, Button } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 
-const Login: React.FC = () => {
+const Login = () => {
   const router = useRouter()
 
   return (
@@ -37,7 +32,21 @@ const Login: React.FC = () => {
         type="button"
         variant="primary"
       >
-        Plat notandi
+        Plat notandi (Árnason)
+      </Button>
+      <br />
+      <br />
+      <Button
+        onClick={() => {
+          router.push('/api/auth/login?nationalId=0000000001')
+        }}
+        data-testid="logout-button"
+        preTextIconType="filled"
+        size="small"
+        type="button"
+        variant="primary"
+      >
+        Plat notandi (Margrétdóttir)
       </Button>
     </GridContainer>
   )
