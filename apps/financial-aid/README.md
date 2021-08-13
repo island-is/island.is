@@ -43,7 +43,7 @@ Install https://github.com/cameronhunter/local-ssl-proxy:
   secure: true,
   }
 
-- add .env to web project and change port
+- add .env to web project and change port to 4202
 - start project
 - `local-ssl-proxy --source 4200 --target 4202`
 
