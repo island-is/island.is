@@ -1,9 +1,7 @@
 #!/bin/bash
 
-# This script runs psql in a container using credentials from envs inside a pod.
-# It attaches to he active k8s namespace in your shell.
+# This script runs psql console or SQL queries as arguments in a container using credentials from envs inside a pod.
 
-# WARNING: The script attaches to the first listed pod in the namespace which might not be what you want.
 
 set -euo pipefail
 
