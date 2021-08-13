@@ -39,8 +39,6 @@ export type RegulationMinistry = {
   name: string
   /** Short, URL-friendly token to use for search filters, etc.  */
   slug: MinistrySlug
-  /** False if this ministry is not current */
-  current: boolean
 }
 
 export type RegulationMinistryListItem = RegulationMinistry & {
