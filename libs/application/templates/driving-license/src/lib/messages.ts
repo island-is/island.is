@@ -301,10 +301,40 @@ export const m = defineMessages({
     defaultMessage: 'Gögn höfð meðferðis til Sýslumanns',
     description: 'Will bring along data to the sheriff',
   },
+  applicationQualityPhotoTitle: {
+    id: 'dl.application.applicationQualityPhotoTitle',
+    defaultMessage: 'Gæðamerkt mynd',
+    description: 'title for quality photo section',
+  },
+  qualityPhotoTitle: {
+    id: 'dl.application.qualityPhotoTitle',
+    defaultMessage: 'Ljósmynd í ökuskírteini',
+    description: 'title for quality photo section',
+  },
+  qualityPhotoSubTitle: {
+    id: 'dl.application.qualityPhotoSubTitle',
+    defaultMessage: 'Hér er núverandi ljósmynd í ökuskírteinaskrá',
+    description: 'sub title for quality photo section',
+  },
+  qualityPhotoWarningTitle: {
+    id: 'dl.application.qualityPhotoWarningTitle',
+    defaultMessage: 'Ljósmynd í ökuskírteina ekki gæðamerkt',
+    description: 'title for quality photo warning',
+  },
+  qualityPhotoWarningDescription: {
+    id: 'dl.application.qualityPhotoWarningDescription',
+    defaultMessage: 'Núverandi ljósmynd þín í ökuskírteinaskrá stenst ekki gæðakröfur og þarf því að koma með nýja ljósmynd.',
+    description: 'Description for quality photo warning',
+  },
   qualityPhotoAcknowledgement: {
     id: 'dl.application:qualityPhoto.acknowledgement',
-    defaultMessage: 'Ég kem með nýja ljósmynd',
+    defaultMessage: 'Ég kem með nýja ljósmynd til sýslumanns',
     description: 'I will bring a new photo',
+  },
+  qualityPhotoNoAcknowledgement: {
+    id: 'dl.application:qualityPhoto.noacknowledgement',
+    defaultMessage: 'Ég staðfesti að nota núverandi mynd',
+    description: 'I want to use current photo',
   },
   qualityPhotoInstructions: {
     id: 'dl.application:qualityPhoto.instructions',

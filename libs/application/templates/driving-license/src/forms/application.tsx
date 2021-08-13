@@ -19,7 +19,11 @@ import {
   DefaultEvents,
   StaticText,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile, QualityPhotoData } from '../types/schema'
+import {
+  NationalRegistryUser,
+  UserProfile,
+  QualityPhotoData,
+} from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
@@ -98,13 +102,16 @@ export const application: Form = buildForm({
     }),
     buildSection({
       id: 'photoStep',
-      title: 'Gæðamerkt mynd',
+      title: m.applicationQualityPhotoTitle,
       children: [
         buildMultiField({
           id: 'info',
-          title: 'Ljósmynd í ökuskírteini',
+          title: m.qualityPhotoTitle,
           condition: (_, externalData) => {
-            return (externalData.qualityPhoto as QualityPhotoData).data.success === true
+            return (
+              (externalData.qualityPhoto as QualityPhotoData).data.success ===
+              true
+            )
           },
           children: [
             buildCustomField({
@@ -119,17 +126,20 @@ export const application: Form = buildForm({
               width: 'half',
               disabled: false,
               options: [
-                { value: 'no', label: 'Ég staðfesti að nota núverandi mynd'},
-                { value: 'yes', label: 'Ég kem með nýja ljósmynd til sýslumanns' },
+                { value: 'no', label: m.qualityPhotoNoAcknowledgement },
+                { value: 'yes', label: m.qualityPhotoAcknowledgement },
               ],
             }),
           ],
         }),
         buildMultiField({
           id: 'info',
-          title: 'Ljósmynd í ökuskírteini',
+          title: m.qualityPhotoTitle,
           condition: (_, externalData) => {
-            return (externalData.qualityPhoto as QualityPhotoData).data.success === false
+            return (
+              (externalData.qualityPhoto as QualityPhotoData).data.success ===
+              false
+            )
           },
           children: [
             buildCustomField({
@@ -144,7 +154,7 @@ export const application: Form = buildForm({
               options: [
                 {
                   value: 'yes',
-                  label: 'Ég kem með nýja ljósmynd til sýslumanns',
+                  label: m.qualityPhotoAcknowledgement,
                 },
               ],
             }),
