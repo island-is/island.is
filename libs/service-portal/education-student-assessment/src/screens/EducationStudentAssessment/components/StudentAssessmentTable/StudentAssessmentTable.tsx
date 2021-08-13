@@ -83,7 +83,6 @@ const StudentAssessmentTable = () => {
       },
     },
   )
-  console.log(data)
 
   if (queryLoading) {
     return <LoadingTemplate />
