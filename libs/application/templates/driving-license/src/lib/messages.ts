@@ -339,9 +339,9 @@ export const m = defineMessages({
   qualityPhotoInstructions: {
     id: 'dl.application:qualityPhoto.instructions',
     defaultMessage: `
-      Ljósmynd af umsækjanda sem er tekin beint að framan og sýnir höfuð (án höfuðfats)
-      og herðar og lýsing andlits er jöfn. Athuga að glampi ekki á gleraugu og skyggi á
-      augu. Ljósmyndin þarf að ver á ljósmyndapappír, 35x45mm að stærð.
+    Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats) 
+    og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi 
+    á augu. Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
     `,
     description: 'Description of photo requirements',
   },
