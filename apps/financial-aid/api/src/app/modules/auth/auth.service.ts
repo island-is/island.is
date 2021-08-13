@@ -24,16 +24,6 @@ export class AuthService {
     return await res.json()
   }
 
-  async checkUserHistory(nationalId: string): Promise<boolean> {
-    const res = await fetch(
-      `${environment.backend.url}/api/me/?nationalId=${nationalId}`,
-      {
-        headers: { authorization: `Bearer ${environment.auth.secretToken}` },
-      },
-    )
-    return await res.json()
-  }
-
   fakeUser(nationalId: string) {
     const fakeUsers: { [key: string]: User } = {
       '0000000000': {

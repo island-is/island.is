@@ -88,11 +88,6 @@ export class AuthController {
       const fakeUser = this.authService.fakeUser(nationalId)
 
       if (fakeUser) {
-        if (service === 'osk') {
-          let hasApplied = await this.authService.checkUserHistory(nationalId)
-          fakeUser.hasAppliedForPeriod = hasApplied
-        }
-
         return this.logInUser(fakeUser, res)
       }
     }
@@ -147,19 +142,12 @@ export class AuthController {
       return res.redirect('/?villa=innskraning-ogild')
     }
 
-    let hasApplied = false
-
-    if (service === 'osk') {
-      hasApplied = await this.authService.checkUserHistory(islandUser.kennitala)
-    }
-
     const user: User = {
       nationalId: islandUser.kennitala,
       name: islandUser.fullname,
       phoneNumber: islandUser.mobile,
       folder: uuid(),
       service: service,
-      hasAppliedForPeriod: hasApplied,
     }
 
     return this.logInUser(user, res)
