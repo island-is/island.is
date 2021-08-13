@@ -24,13 +24,11 @@ export const demoRegulationsYears: RegulationYears = [
 
 export const demoRegulationsMinistries: RegulationMinistryList = [
   {
-    current: true,
     name: 'Forsætisráðuneyti',
     order: 1,
     slug: 'fsrn' as MinistrySlug,
   },
   {
-    current: true,
     name: 'Atvinnuvega- og nýsköpunarráðuneyti',
     order: 2,
     slug: 'avnsrn' as MinistrySlug,
@@ -47,11 +45,13 @@ export const demoRegulations: RegulationSearchResults = {
       name: '0244/2021' as RegName,
       title: 'Reglugerð fyrir hafnir Hafnasjóðs Dalvíkurbyggðar.',
       publishedDate: '2021-03-05' as ISODate,
+      ministry: demoRegulationsMinistries[0],
     },
     {
       name: '0245/2021' as RegName,
       title: 'Reglugerð um (1.) breytingu á reglugerð nr. 101/2021.',
       publishedDate: '2021-03-04' as ISODate,
+      ministry: demoRegulationsMinistries[1],
     },
   ],
 }
@@ -77,7 +77,6 @@ export const demoRegulation: Regulation = {
   ministry: {
     name: 'Samgöngu- og sveitarstjórnarráðuneyti',
     slug: 'ssvrn' as MinistrySlug,
-    current: false,
   },
   lawChapters: [],
 
