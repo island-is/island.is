@@ -24,13 +24,11 @@ export const demoRegulationsYears: RegulationYears = [
 
 export const demoRegulationsMinistries: RegulationMinistryList = [
   {
-    current: true,
     name: 'Forsætisráðuneyti',
     order: 1,
     slug: 'fsrn' as MinistrySlug,
   },
   {
-    current: true,
     name: 'Atvinnuvega- og nýsköpunarráðuneyti',
     order: 2,
     slug: 'avnsrn' as MinistrySlug,
@@ -79,7 +77,6 @@ export const demoRegulation: Regulation = {
   ministry: {
     name: 'Samgöngu- og sveitarstjórnarráðuneyti',
     slug: 'ssvrn' as MinistrySlug,
-    current: false,
   },
   lawChapters: [],
 
