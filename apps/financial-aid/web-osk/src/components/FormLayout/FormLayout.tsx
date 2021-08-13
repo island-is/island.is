@@ -33,13 +33,22 @@ const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
     }
   }, [activeSection])
 
-  return children ? (
+  if (isAuthenticated === false) {
+    return <Login />
+  }
+  if (!user) {
+    return null
+  }
+
+  return (
     <Box
       paddingY={[3, 3, 3, 6]}
       background="purple100"
       className={styles.processContainer}
     >
-      {isAuthenticated && !user?.hasAppliedForPeriod && (
+      {user.hasAppliedForPeriod ? (
+        <HasApplied />
+      ) : (
         <GridContainer className={styles.gridContainer}>
           <div className={styles.gridRowContainer}>
             <Box
@@ -66,12 +75,8 @@ const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
           </div>
         </GridContainer>
       )}
-
-      {!isAuthenticated && <Login />}
-
-      {user?.hasAppliedForPeriod && <HasApplied />}
     </Box>
-  ) : null
+  )
 }
 
 export default FormLayout
