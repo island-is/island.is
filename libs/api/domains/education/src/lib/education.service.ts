@@ -122,6 +122,9 @@ export class EducationService {
   }
 
   private mapGradeType(grade: GradeTypeResult) {
+    if (!grade) {
+      return undefined
+    }
     return {
       label: grade.heiti,
       serialGrade: this.mapGrade(grade.radeinkunn),
@@ -130,6 +133,9 @@ export class EducationService {
   }
 
   private mapCourseGrade(grade: Grade) {
+    if (!grade) {
+      return undefined
+    }
     return {
       label: grade.heiti,
       competence: grade.haefnieinkunn,
