@@ -7,6 +7,7 @@ export interface Period {
   endDate: string
   ratio: string
   duration: string
+  days: string
   percentage: string
 }
 

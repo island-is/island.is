@@ -70,8 +70,28 @@ const Duration: FC<FieldBaseProps> = ({
     currentEndDateAnswer,
   )
   const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
+  const [durationInDays, setDurationInDays] = useState<number>(
+    monthsToDays(monthsToUse),
+  )
   const [percent, setPercent] = useState<number>(percentageForPeriod)
   const { getEndDate, loading } = useGetOrRequestEndDates(application)
+
+  const monthsToEndDate = async (duration: number) => {
+    const days = monthsToDays(duration)
+
+    const endDateResult = await getEndDate({
+      startDate: currentStartDateAnswer,
+      length: days,
+    })
+
+    const date = new Date(endDateResult.date)
+
+    setChosenEndDate(date.toISOString())
+    setPercent(endDateResult.percentage)
+    setDurationInDays(endDateResult.days)
+
+    return date
+  }
 
   const handleChange = async (months: number) => {
     clearErrors(id)
@@ -82,23 +102,22 @@ const Duration: FC<FieldBaseProps> = ({
     months: number,
     onChange: (...event: any[]) => void,
   ) => {
-    const days = monthsToDays(months)
-
-    const endDateResult = await getEndDate({
-      startDate: currentStartDateAnswer,
-      length: days,
-    })
-
-    const date = new Date(endDateResult.date)
+    const date = await monthsToEndDate(months)
 
     onChange(format(date, df))
-    setChosenEndDate(date.toISOString())
-    setPercent(endDateResult.percentage)
   }
 
   useEffect(() => {
     setFieldLoadingState?.(loading)
   }, [loading])
+
+  useEffect(() => {
+    const init = async () => {
+      await monthsToEndDate(DEFAULT_PERIOD_LENGTH)
+    }
+
+    init()
+  }, [])
 
   return (
     <Box>
@@ -221,6 +240,13 @@ const Duration: FC<FieldBaseProps> = ({
         type="hidden"
         value={chosenDuration}
         name={`periods[${currentIndex}].duration`}
+      />
+
+      <input
+        ref={register}
+        type="hidden"
+        value={durationInDays}
+        name={`periods[${currentIndex}].days`}
       />
 
       <input

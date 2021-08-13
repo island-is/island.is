@@ -11,7 +11,7 @@ export const useGetOrRequestEndDates = (application: Application) => {
   const lazyGetLength = useLazyParentalLeavePeriodLength()
   const [loading, setLoading] = useState(false)
   const [loadedEndDates, setLoadedEndDates] = useState<
-    Map<string, { date: number; percentage: number }>
+    Map<string, { date: number; percentage: number; days: number }>
   >(new Map())
 
   /**
@@ -101,6 +101,7 @@ export const useGetOrRequestEndDates = (application: Application) => {
         loadedEndDates.set(id, {
           date: lazyEndDate,
           percentage: computedPercentage,
+          days: startToEndDatesLength,
         }),
       )
       setLoading(false)
@@ -108,6 +109,7 @@ export const useGetOrRequestEndDates = (application: Application) => {
       return {
         date: lazyEndDate,
         percentage: computedPercentage,
+        days: startToEndDatesLength,
       }
     },
     [],

@@ -160,7 +160,11 @@ export const ScreenFooter: FC<FooterProps> = ({
           </Box>
           <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
             {showGoBack && (
-              <Button variant="ghost" onClick={goBack}>
+              <Button
+                variant="ghost"
+                onClick={goBack}
+                disabled={!canProceed || loading}
+              >
                 {formatMessage(coreMessages.buttonBack)}
               </Button>
             )}
@@ -172,6 +176,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                 variant="ghost"
                 icon="arrowBack"
                 onClick={goBack}
+                disabled={!canProceed || loading}
               />
             )}
           </Box>
