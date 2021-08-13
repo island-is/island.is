@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import { Box, Text, Hyphen } from '@island.is/island-ui/core'
@@ -8,6 +8,7 @@ import {
   SimpleLineChart,
   SimplePieChart,
 } from '../'
+import { ExportCSVButton } from '@island.is/web/components'
 
 import * as styles from './ChartsCard.treat'
 
@@ -27,14 +28,12 @@ interface ChartCardDataProps {
 
 export interface ChartsCardsProps {
   data: ChartCardDataProps
-  blue?: boolean
+  subPage?: boolean
 }
 
-export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
+export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
   const { graphTitle, graphDescription, organization, graph } = data
   const [ref, { width }] = useMeasure()
-
-  const shouldStack = width < 360
 
   let children = null
   switch (graph.type) {
@@ -58,61 +57,72 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
     <Box
       ref={ref}
       display="flex"
-      style={{ flexDirection: 'column' }}
+      flexDirection="column"
       flexGrow={1}
-      flexDirection={shouldStack ? 'columnReverse' : 'row'}
       alignItems="stretch"
       justifyContent="flexStart"
     >
       <Box
-        style={{
-          width: '100%',
-          minHeight: '156px',
-          borderTopLeftRadius: '8px',
-          borderTopRightRadius: '8px',
-          paddingBottom: '24px',
-        }}
-        background={blue ? 'blue100' : 'purple100'}
+        className={cn(styles.outerWrapper, {
+          [styles.pie]: graph.type === 'Pie',
+        })}
+        background={subPage ? 'blue100' : 'purple100'}
       >
-        <Box padding={[2, 2, 4]}>
-          {organization && (
-            <Text variant="eyebrow" color="dark400">
-              {organization}
+        <Box
+          className={styles.innerWrapper}
+          paddingBottom={4}
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="spaceBetween"
+        >
+          <Box padding={[2, 2, 4]}>
+            {organization && (
+              <Text variant="eyebrow" color="dark400">
+                {organization}
+              </Text>
+            )}
+            <Text variant="h3" color="dark400">
+              <Hyphen>{graphTitle}</Hyphen>
             </Text>
+            {graphDescription && (
+              <Text color="dark400">{graphDescription}</Text>
+            )}
+          </Box>
+
+          {subPage && (
+            <Box padding={[2, 2, 4]}>
+              <ExportCSVButton data={graph.data} title={graph.title} />
+            </Box>
           )}
-          <Text variant="h3" color="dark400">
-            <Hyphen>{graphTitle}</Hyphen>
-          </Text>
-          {graphDescription && <Text color="dark400">{graphDescription}</Text>}
         </Box>
       </Box>
       <Box
         display="flex"
         justifyContent="center"
         alignItems="center"
-        style={{ width: '100%', height: '100%' }}
+        className={cn(styles.graphWrapper, {
+          [styles.pie]: graph.type === 'Pie',
+        })}
       >
-        <Box justifyContent="center" style={{ width: '80%', height: '80%' }}>
+        <Box justifyContent="center" className={styles.graphParent}>
           {children}
         </Box>
       </Box>
     </Box>
   )
-
   return <FrameWrapper>{items}</FrameWrapper>
 }
 
 const FrameWrapper = ({ children }) => {
   return (
     <Box
-      className={cn(styles.card)}
-      position="relative"
-      borderRadius="large"
-      overflow="visible"
-      background="transparent"
-      outline="none"
+      className={styles.frameWrapper}
       borderColor="purple100"
       borderWidth="standard"
+      borderRadius="large"
+      display="flex"
+      flexDirection="column"
     >
       {children}
     </Box>

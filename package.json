@@ -181,7 +181,7 @@
     "kennitala": "1.2.4",
     "libphonenumber-js": "1.7.53",
     "lodash": "4.17.21",
-    "lottie-web": "5.7.5",
+    "lottie-web": "5.7.13",
     "markdown-to-jsx": "7.1.1",
     "memoizee": "0.4.15",
     "miragejs": "0.1.40",
@@ -450,6 +450,11 @@
     "glob-parent": "5.1.2",
     "trim-newlines": "3.0.1",
     "normalize-url": "4.5.1",
-    "dicer": "0.3.0"
+    "dicer": "0.3.0",
+    "xmldom": "github:xmldom/xmldom#0.7.0",
+    "tar": "6.1.2",
+    "@npmcli/git": "2.0.8",
+    "url-parse": "1.5.2",
+    "path-parse": "1.0.7"
   }
 }

@@ -19,14 +19,9 @@ export const workMachine = {
     },
   }),
   labels: defineMessages({
-    registrationNumber: {
-      id: 'an.application:labels.registrationNumber',
-      defaultMessage: 'Númer vinnuvélar',
-      description: 'Registration number of machine',
-    },
     desriptionOfMachine: {
       id: 'an.application:labels.desriptionOfMachine',
-      defaultMessage: 'Aðrar upplýsingar um vinnuvél',
+      defaultMessage: 'Upplýsingar um vinnuvél',
       description: 'Desription of machine',
     },
   }),

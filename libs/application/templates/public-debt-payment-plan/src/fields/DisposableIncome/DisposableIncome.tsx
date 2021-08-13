@@ -2,8 +2,8 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
-import { PaymentPlanExternalData } from '../../lib/dataSchema'
 import { employer } from '../../lib/messages'
+import { PaymentPlanExternalData } from '../../types'
 
 const InfoBox = ({ title, text }: { title: string | number; text: string }) => (
   <Box

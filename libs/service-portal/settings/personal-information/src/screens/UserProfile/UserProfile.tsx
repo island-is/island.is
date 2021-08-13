@@ -7,7 +7,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
 import { useUserProfile } from '@island.is/service-portal/graphql'
-import { UserInfoLine } from '@island.is/service-portal/core'
+import { UserInfoLine, m } from '@island.is/service-portal/core'
 import { FamilyMemberCard } from '@island.is/service-portal/family'
 
 const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
@@ -19,10 +19,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
     <>
       <Box marginBottom={5}>
         <Text variant="h1" as="h1">
-          {formatMessage({
-            id: 'service.portal:personalInformation',
-            defaultMessage: 'Persónuupplýsingar',
-          })}
+          {formatMessage(m.personalInformation)}
         </Text>
       </Box>
       <Box marginBottom={[2, 3]}>
@@ -30,10 +27,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <Stack space={1}>
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:email',
-            defaultMessage: 'Netfang',
-          })}
+          label={m.email}
           labelColumnSpan={['8/12', '3/12']}
           editColumnSpan={['1/1', '2/12']}
           valueColumnSpan={['1/1', '7/12']}
@@ -64,10 +58,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           }}
         />
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:tel',
-            defaultMessage: 'Símanúmer',
-          })}
+          label={m.telNumber}
           renderContent={() => (
             <Box display="flex" alignItems="center">
               <Box marginRight={2}>{userProfile?.mobilePhoneNumber || ''}</Box>
@@ -100,10 +91,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           }}
         />
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:language',
-            defaultMessage: 'Tungumál',
-          })}
+          label={m.language}
           content={
             userProfile
               ? userProfile.locale === 'is'
