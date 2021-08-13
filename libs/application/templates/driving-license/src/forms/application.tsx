@@ -400,21 +400,33 @@ export const application: Form = buildForm({
               value: ({ answers: { teacher } }) => teacher as string,
             }),
             buildDividerField({
-              condition: (answers) => answers.willBringQualityPhoto === "yes" || Object.values(answers.healthDeclaration).includes('yes')
+              condition: (answers) => {
+                try {
+                  return answers.willBringQualityPhoto === "yes" || Object.values(answers?.healthDeclaration).includes('yes')
+                } catch (error) {
+                  return false
+                }
+              }
             }),
             buildDescriptionField({
               id: 'myndagogn',
               title: '',
               titleVariant: 'h4',
               description: m.qualityPhotoAcknowledgement,
-              condition: (answers) => answers.willBringQualityPhoto === "yes",
+              condition: (answers) => answers.willBringQualityPhoto === "yes" ?? null,
             }),
             buildDescriptionField({
               id: 'vottungogn',
               title: '',
               titleVariant: 'h4',
               description: m.overviewBringCertificateData,
-              condition: (answers) => Object.values(answers.healthDeclaration).includes('yes'),
+              condition: (answers) => {
+                try {
+                  return Object.values(answers?.healthDeclaration).includes('yes')
+                } catch (error) {
+                  return false
+                }
+              }
             }),
             buildDividerField({}),
             buildKeyValueField({
