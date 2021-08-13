@@ -1,6 +1,10 @@
 import { CustomerRecordsDetails } from '../screens/FinanceTransactions/FinanceTransactionsData.types'
+import { DocumentsListItemTypes } from '../components/DocumentScreen/DocumentScreen.types'
 
-export const simpleFilter = (data: CustomerRecordsDetails[], query: string) => {
+export const transactionFilter = (
+  data: CustomerRecordsDetails[],
+  query: string,
+) => {
   const filteredArray = data.filter((item) => {
     if (!query) return true
     if (
@@ -17,6 +21,20 @@ export const simpleFilter = (data: CustomerRecordsDetails[], query: string) => {
         .includes(query.toLowerCase()) ||
       item?.subCategory?.toLowerCase().includes(query.toLowerCase()) ||
       item?.reference?.toLowerCase().includes(query.toLowerCase())
+    ) {
+      return true
+    }
+  })
+  return filteredArray
+}
+
+export const billsFilter = (data: DocumentsListItemTypes[], query: string) => {
+  const filteredArray = data.filter((item) => {
+    if (!query) return true
+    if (
+      item?.note?.toLowerCase().includes(query.toLowerCase()) ||
+      item?.sender?.toLowerCase().includes(query.toLowerCase()) ||
+      item?.type?.toLowerCase().includes(query.toLowerCase())
     ) {
       return true
     }

@@ -16,12 +16,14 @@ import {
   AlertBanner,
   SkeletonLoader,
   Pagination,
+  Input,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
 import amountFormat from '../../utils/amountFormat'
 import { showPdfDocument } from '@island.is/service-portal/graphql'
+import { billsFilter } from '../../utils/simpleFilter'
 
 const ITEMS_ON_PAGE = 20
 
@@ -54,13 +56,16 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
   const [page, setPage] = useState(1)
   const [fromDate, setFromDate] = useState<string>()
   const [toDate, setToDate] = useState<string>()
+  const [q, setQ] = useState<string>('')
 
   const [loadDocumentsList, { data, loading, called, error }] = useLazyQuery(
     getFinanceDocumentsListQuery,
   )
 
   const billsDataArray: DocumentsListItemTypes[] =
-    data?.getDocumentsList?.documentsList || []
+    (data?.getDocumentsList?.documentsList &&
+      billsFilter(data?.getDocumentsList?.documentsList, q)) ||
+    []
 
   const totalPages =
     billsDataArray.length > ITEMS_ON_PAGE
@@ -125,6 +130,15 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
               />
             </GridColumn>
           </GridRow>
+          <Box marginTop={3}>
+            <Input
+              label="Leit"
+              name="Search1"
+              placeholder="Sláðu inn leitarorð"
+              size="sm"
+              onChange={(e) => setQ(e.target.value)}
+            />
+          </Box>
         </Box>
         <Box marginTop={2}>
           {error && (

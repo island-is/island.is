@@ -31,7 +31,7 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
-import { simpleFilter } from '../../utils/transactionFilter'
+import { transactionFilter } from '../../utils/simpleFilter'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
@@ -80,7 +80,7 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const recordsData: CustomerRecords = data?.getCustomerRecords || {}
   const recordsDataArray =
-    (recordsData?.records && simpleFilter(recordsData?.records, q)) || []
+    (recordsData?.records && transactionFilter(recordsData?.records, q)) || []
 
   const allChargeTypes = { label: 'Allar færslur', value: ALL_CHARGE_TYPES }
   const chargeTypeSelect = (chargeTypeData?.chargeType || []).map((item) => ({
