@@ -1,11 +1,9 @@
 import React, { FC } from 'react'
 
-import { useLocale } from '@island.is/localization'
-import format from 'date-fns/format'
-
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text } from '@island.is/island-ui/core'
-import { MessageDescriptor } from '@formatjs/intl'
+import { Box, Text} from '@island.is/island-ui/core'
+import {
+    FieldBaseProps,
+  } from '@island.is/application/core'
 
 interface QualityPhotoData {
   data: {
@@ -13,6 +11,7 @@ interface QualityPhotoData {
     success: boolean
   }
 }
+
 
 const Photo = ({ data }: QualityPhotoData) => {
   const { qualityPhoto, success } = data
@@ -35,13 +34,9 @@ const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
         display={['block', 'block', 'block', 'flex']}
         justifyContent="spaceBetween"
       ></Box>
-      <Box marginTop={7} marginBottom={8}>
-        {img}
-        {photo.data.success ? (
-          <Text>Það er til gæðamerkt mynd</Text>
-        ) : (
-          <Text>Það er ekki til gæðamerkt mynd</Text>
-        )}
+      <Box marginBottom={8}>
+        {photo.data.success && <Text>Hér er núverandi ljósmynd í ökuskírteinaskrá</Text>}
+        <Box marginTop={4} style={{ width: '191px', height: '242px' }}>{img}</Box>
       </Box>
     </Box>
   )

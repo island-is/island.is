@@ -13,12 +13,13 @@ import {
   buildCustomField,
   buildSelectField,
   buildDividerField,
+  buildRadioField,
   Form,
   FormModes,
   DefaultEvents,
   StaticText,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '../types/schema'
+import { NationalRegistryUser, UserProfile, QualityPhotoData } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
@@ -101,12 +102,51 @@ export const application: Form = buildForm({
       children: [
         buildMultiField({
           id: 'info',
-          title: 'Er til gæða mynd?',
+          title: 'Ljósmynd í ökuskírteini',
+          condition: (_, externalData) => {
+            return (externalData.qualityPhoto as QualityPhotoData).data.success === true
+          },
           children: [
             buildCustomField({
               title: m.eligibilityRequirementTitle,
               component: 'QualityPhoto',
               id: 'qphoto',
+            }),
+            buildRadioField({
+              id: 'willBringQualityPhoto',
+              title: '',
+              largeButtons: true,
+              width: 'half',
+              disabled: false,
+              options: [
+                { value: 'no', label: 'Ég staðfesti að nota núverandi mynd'},
+                { value: 'yes', label: 'Ég kem með nýja ljósmynd til sýslumanns' },
+              ],
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'info',
+          title: 'Ljósmynd í ökuskírteini',
+          condition: (_, externalData) => {
+            return (externalData.qualityPhoto as QualityPhotoData).data.success === false
+          },
+          children: [
+            buildCustomField({
+              title: m.eligibilityRequirementTitle,
+              component: 'QualityPhoto',
+              id: 'qphoto',
+            }),
+            buildCheckboxField({
+              id: 'willBringQualityPhoto',
+              title: '',
+              defaultValue: [],
+              options: [
+                {
+                  value: 'yes',
+                  label: 'Ég kem með nýja ljósmynd til sýslumanns',
+                },
+              ],
             }),
           ],
         }),
