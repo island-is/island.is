@@ -17,6 +17,7 @@ import {
   DrivingLicenseCategory,
   NeedsHealhCertificate,
   QualityPhotoResult,
+  NeedsQualityPhoto
 } from './drivingLicense.type'
 import {
   AkstursmatDto,
@@ -274,6 +275,10 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
     input: NewDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
+    // TODO: insert the following into body
+    // needsToPresentQualityPhoto: input.needsToPresentQualityPhoto
+            // ? NeedsQualityPhoto.TRUE
+            // : NeedsQualityPhoto.FALSE,
     const response: unknown = await this.drivingLicenseApi.apiOkuskirteiniApplicationsNewCategoryPost(
       {
         category: DrivingLicenseCategory.B,

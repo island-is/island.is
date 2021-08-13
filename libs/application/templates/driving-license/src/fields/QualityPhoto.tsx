@@ -35,7 +35,7 @@ const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <Box marginBottom={4}>
-      {/* {photo.data.success ? (
+      {photo.data.success ? (
         <Box marginBottom={8}>
           <Text>
             {formatText(m.qualityPhotoSubTitle, application, formatMessage)}
@@ -44,7 +44,7 @@ const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
             {img}
           </Box>
         </Box>
-      ) : ( */}
+      ) : (
         <Box marginTop={2}>
           <ContentBlock>
             <AlertMessage
@@ -71,7 +71,7 @@ const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
             </Text>
           </Box>
         </Box>
-      {/* )} */}
+      )}
     </Box>
   )
 }

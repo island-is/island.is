@@ -109,7 +109,7 @@ export const application: Form = buildForm({
           title: m.qualityPhotoTitle,
           condition: (_, externalData) => {
             return (
-              (externalData.qualityPhoto as QualityPhotoData).data.success ===
+              (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
               true
             )
           },
@@ -137,7 +137,7 @@ export const application: Form = buildForm({
           title: m.qualityPhotoTitle,
           condition: (_, externalData) => {
             return (
-              (externalData.qualityPhoto as QualityPhotoData).data.success ===
+              (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
               false
             )
           },
@@ -401,28 +401,27 @@ export const application: Form = buildForm({
             }),
             buildDividerField({}),
             buildCheckboxField({
-              id: 'willBringAlongData',
-              title: m.overviewBringData,
-              options: (app) => {
-                const options = [
-                  {
-                    value: 'picture',
-                    label: m.qualityPhotoAcknowledgement,
-                  },
-                ]
-                if (
-                  Object.values(app.answers.healthDeclaration).includes('yes')
-                ) {
-                  return [
-                    {
-                      value: 'certificate',
-                      label: m.overviewBringCertificateData,
-                    },
-                    ...options,
-                  ]
+              id: 'willBringAlongData.certificate',
+              title:  m.overviewBringData,
+              defaultValue: [],
+              options: [
+                {
+                  value: 'certificate',
+                  label: m.overviewBringCertificateData,
                 }
-                return options
-              },
+              ],
+              condition: (answers) => Object.values(answers.healthDeclaration).includes('yes'),
+            }),
+            buildCheckboxField({
+              id: 'willBringAlongData.photo',
+              title: '',
+              options: [
+                {
+                  value: 'yes',
+                  label: m.qualityPhotoAcknowledgement,
+                },
+              ],
+              condition: (answers) => answers.willBringQualityPhoto === "no",
             }),
             buildDividerField({}),
             buildKeyValueField({

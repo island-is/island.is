@@ -46,6 +46,7 @@ export interface PenaltyPointStatus {
 export interface NewDrivingLicenseInput {
   juristictionId: number
   needsToPresentHealthCertificate: boolean
+  needsToPresentQualityPhoto: boolean
 }
 
 export interface NewDrivingLicenseResult {
@@ -94,6 +95,11 @@ export enum DrivingLicenseCategory {
 }
 
 export enum NeedsHealhCertificate {
+  TRUE = 1,
+  FALSE = 0,
+}
+
+export enum NeedsQualityPhoto {
   TRUE = 1,
   FALSE = 0,
 }
