@@ -400,28 +400,19 @@ export const application: Form = buildForm({
               value: ({ answers: { teacher } }) => teacher as string,
             }),
             buildDividerField({}),
-            buildCheckboxField({
-              id: 'willBringAlongData.certificate',
-              title:  m.overviewBringData,
-              defaultValue: [],
-              options: [
-                {
-                  value: 'certificate',
-                  label: m.overviewBringCertificateData,
-                }
-              ],
-              condition: (answers) => Object.values(answers.healthDeclaration).includes('yes'),
-            }),
-            buildCheckboxField({
-              id: 'willBringAlongData.photo',
+            buildDescriptionField({
+              id: 'myndagogn',
               title: '',
-              options: [
-                {
-                  value: 'yes',
-                  label: m.qualityPhotoAcknowledgement,
-                },
-              ],
+              titleVariant: 'h4',
+              description: m.qualityPhotoAcknowledgement,
               condition: (answers) => answers.willBringQualityPhoto === "no",
+            }),
+            buildDescriptionField({
+              id: 'vottungogn',
+              title: '',
+              titleVariant: 'h4',
+              description: m.overviewBringCertificateData,
+              condition: (answers) => Object.values(answers.healthDeclaration).includes('yes'),
             }),
             buildDividerField({}),
             buildKeyValueField({
