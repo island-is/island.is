@@ -1,25 +1,9 @@
-import React, { useState, useContext } from 'react'
-import {
-  Text,
-  Icon,
-  Box,
-  Checkbox,
-  GridContainer,
-} from '@island.is/island-ui/core'
-
-import {
-  FormContentContainer,
-  FormFooter,
-  FormLayout,
-  LogoHfj,
-} from '@island.is/financial-aid-web/osk/src/components'
-import * as styles from './hasApplied.treat'
-import { useRouter } from 'next/router'
+import React, { useContext } from 'react'
+import { Text, GridContainer } from '@island.is/island-ui/core'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
 const HasApplied = () => {
-  const router = useRouter()
   const { user } = useContext(UserContext)
 
   return (
