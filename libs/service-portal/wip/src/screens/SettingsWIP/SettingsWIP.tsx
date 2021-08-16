@@ -2,6 +2,7 @@ import React from 'react'
 import {
   InfoScreen,
   ServicePortalModuleComponent,
+  m,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useNamespaces } from '@island.is/localization'
@@ -21,10 +22,7 @@ export const SettingsWIP: ServicePortalModuleComponent = () => {
         stillingar á næstunni.`,
       })}
       list={{
-        title: defineMessage({
-          id: 'service.portal:incoming',
-          defaultMessage: 'Á döfinni',
-        }),
+        title: m.incoming,
         items: [
           defineMessage({
             id: 'sp.family:settings-inc-1',
