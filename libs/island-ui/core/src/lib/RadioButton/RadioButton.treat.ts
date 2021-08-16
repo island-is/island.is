@@ -125,4 +125,5 @@ export const tooltipLargeContainer = style({
 
 export const toolTipLargeContainerWithIllustration = style({
   marginLeft: 0,
+  paddingLeft: theme.spacing[2],
 })

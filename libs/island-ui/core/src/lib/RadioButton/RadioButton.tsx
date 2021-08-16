@@ -122,7 +122,7 @@ export const RadioButton = ({
         {tooltip && (
           <div
             className={cn(styles.tooltipContainer, {
-              [styles.tooltipLargeContainer]: large,
+              [styles.tooltipLargeContainer]: large && !Illustration,
               [styles.toolTipLargeContainerWithIllustration]:
                 large && Illustration,
             })}

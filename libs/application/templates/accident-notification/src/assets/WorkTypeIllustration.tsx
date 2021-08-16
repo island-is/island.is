@@ -1,6 +1,6 @@
-import React, { FC } from 'react'
+import React from 'react'
 
-export const WorkTypeIllustration: FC = () => (
+export const WorkTypeIllustration = () => (
   <svg
     width="105"
     height="111"
