@@ -78,6 +78,17 @@ export const GetMunicipalityQuery = gql`
   }
 `
 
+export const GetApplicationEventQuery = gql`
+  query GetApplicationEventQuery($input: ApplicationEventInput!) {
+    applicationEvents(input: $input) {
+      id
+      applicationId
+      comment
+      state
+    }
+  }
+`
+
 export const GetCurrentUserQuery = gql`
   query currentUserQuery {
     currentUser {

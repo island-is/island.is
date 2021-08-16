@@ -20,7 +20,7 @@ import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')
-@ApiTags('applicationEvents')
+@ApiTags('applicationsEvents')
 export class ApplicationEventController {
   constructor(
     private readonly applicationEventService: ApplicationEventService,
