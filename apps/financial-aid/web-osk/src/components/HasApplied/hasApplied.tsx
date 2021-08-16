@@ -9,7 +9,7 @@ const HasApplied = () => {
   return (
     <GridContainer>
       <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
-        Abbabbab {user?.name} <br />
+        Abbabbab {user?.name ?? ''} <br />
         þú hefur þegar sótt um fyrir þennan mánuð
       </Text>
 
