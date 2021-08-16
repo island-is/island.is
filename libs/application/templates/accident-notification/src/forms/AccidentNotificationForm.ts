@@ -16,7 +16,7 @@ import {
   FormModes,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
-import { NO, YES } from '../constants'
+import { NO, UPLOAD_ACCEPT, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import {
   accidentDetails,
@@ -76,8 +76,6 @@ import {
 } from '../utils'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
-
-const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
