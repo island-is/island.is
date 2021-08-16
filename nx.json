@@ -671,6 +671,13 @@
     "system-e2e": {
       "tags": []
     },
+    "unemployment": {
+      "tags": []
+    },
+    "unemployment-e2e": {
+      "tags": [],
+      "implicitDependencies": ["unemployment"]
+    },
     "web": {
       "tags": []
     },
