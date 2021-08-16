@@ -180,6 +180,7 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
               placeholder="Sláðu inn leitarorð"
               size="sm"
               onChange={(e) => setQ(e.target.value)}
+              value={q}
             />
           </Box>
         </Box>

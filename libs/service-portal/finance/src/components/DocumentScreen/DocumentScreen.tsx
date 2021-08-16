@@ -64,7 +64,7 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
 
   const billsDataArray: DocumentsListItemTypes[] =
     (data?.getDocumentsList?.documentsList &&
-      billsFilter(data?.getDocumentsList?.documentsList, q)) ||
+      billsFilter(data.getDocumentsList.documentsList, q)) ||
     []
 
   const totalPages =
@@ -137,6 +137,7 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
               placeholder="Sláðu inn leitarorð"
               size="sm"
               onChange={(e) => setQ(e.target.value)}
+              value={q}
             />
           </Box>
         </Box>

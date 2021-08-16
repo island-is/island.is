@@ -4,7 +4,7 @@ import { Text } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
 
 interface Props {
-  data: Array<{ value: string; align?: 'left' | 'right' | undefined }>
+  data: Array<{ value: string; align?: 'left' | 'right' }>
 }
 
 const ExpandableLine: FC<Props> = ({ data }) => {
