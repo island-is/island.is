@@ -20,10 +20,14 @@ import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
+  RolesGuard,
+  RolesRules,
   TokenGuard,
 } from '@island.is/financial-aid/auth'
 import type { User } from '@island.is/financial-aid/shared'
-import { ApplicationEventService } from '../applicationEvent'
+
+// Allows only staff
+const staffRule = 'veita'
 
 @Controller('api')
 @ApiTags('applications')
@@ -45,7 +49,8 @@ export class ApplicationController {
     return hasApplied
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(staffRule)
   @Get('applications')
   @ApiOkResponse({
     type: ApplicationModel,

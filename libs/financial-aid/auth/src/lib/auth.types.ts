@@ -4,3 +4,5 @@ export type Credentials = {
   user: User
   csrfToken: string
 }
+
+export type RolesRule = 'osk' | 'veita'
