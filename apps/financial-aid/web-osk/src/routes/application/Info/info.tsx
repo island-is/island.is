@@ -114,6 +114,7 @@ const ApplicationInfo = () => {
       <FormFooter
         onPrevButtonClick={() => logOut()}
         previousIsDestructive={true}
+        prevButtonText="Hætta við"
         nextButtonText="Staðfesta"
         nextButtonIcon="checkmark"
         onNextButtonClick={() => errorCheck()}

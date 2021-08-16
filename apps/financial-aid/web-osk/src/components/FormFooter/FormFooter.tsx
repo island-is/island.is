@@ -9,6 +9,7 @@ interface Props {
   hidePreviousButton?: boolean
   onPrevButtonClick?: () => void
   previousIsDestructive?: boolean
+  prevButtonText?: string
   previousUrl?: string
   previousIsDisabled?: boolean
   nextUrl?: string
@@ -54,7 +55,7 @@ const FormFooter = (props: Props) => {
                     }
                   }}
                 >
-                  {props.previousIsDestructive ? 'Hætta við' : 'Til baka'}
+                  {props.prevButtonText ? props.prevButtonText : 'Til baka'}
                 </Button>
               </Box>
 

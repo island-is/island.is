@@ -15,4 +15,14 @@ export class UserService {
     )
     return await res.json()
   }
+
+  // async getApplicationId(nationalId: string): Promise<boolean> {
+  //   // const res = await fetch(
+  //   //   `${environment.backend.url}/api/me/?nationalId=${nationalId}`,
+  //   //   {
+  //   //     headers: { authorization: `Bearer ${environment.auth.secretToken}` },
+  //   //   },
+  //   // )
+  //   return 'bla'
+  // }
 }

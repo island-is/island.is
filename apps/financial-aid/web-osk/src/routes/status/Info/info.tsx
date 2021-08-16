@@ -9,13 +9,29 @@ import {
 
 import { useRouter } from 'next/router'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+import { useQuery } from '@apollo/client'
+import { GetApplicationEventQuery } from '@island.is/financial-aid-web/oskgraphql'
+import { ApplicationEvent } from '@island.is/financial-aid/shared'
+
+interface ApplicationEventData {
+  applicationEvents: ApplicationEvent[]
+}
 
 const Info = () => {
   const router = useRouter()
 
   const { user } = useContext(UserContext)
 
-  console.log(user)
+  // const { data, error, loading } = useQuery<ApplicationEventData>(
+  //   GetApplicationEventQuery,
+  //   {
+  //     variables: { input: { id: '0000000000' } },
+  //     fetchPolicy: 'no-cache',
+  //     errorPolicy: 'all',
+  //   },
+  // )
+
+  // console.log(user)
 
   return (
     <StatusLayout>

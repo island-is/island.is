@@ -138,6 +138,7 @@ export interface User {
   folder: string
   service: 'osk' | 'veita'
   hasAppliedForPeriod?: boolean
+  applicationId?: string
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }

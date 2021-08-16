@@ -420,6 +420,7 @@ const SummaryForm = () => {
           setIsVisible(!isVisible)
         }}
         previousIsDestructive={true}
+        prevButtonText="Hætta við"
         nextButtonText="Senda umsókn"
         onNextButtonClick={handleNextButtonClick}
       />

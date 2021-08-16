@@ -16,7 +16,7 @@ import { ApplicationEventModel } from './models'
 
 import { CreateApplicationEventDto } from './dto'
 
-import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
+import { JwtAuthGuard } from '@island.is/financial-aid/auth'
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')

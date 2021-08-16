@@ -42,13 +42,12 @@ export const GetMunicipalityQuery = gql`
 `
 
 export const GetApplicationEventQuery = gql`
-  query GetApplicationEventQuery {
-    applicationEvents {
+  query GetApplicationEventQuery($input: ApplicationEventInput!) {
+    applicationEvents(input: $input) {
       id
-      created
       applicationId
-      state
       comment
+      state
     }
   }
 `
