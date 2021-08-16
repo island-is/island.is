@@ -9,18 +9,14 @@ export const transactionFilter = (
     if (!query) return true
     if (
       item.accountReference.toLowerCase().includes(query.toLowerCase()) ||
-      item?.actionCategory?.toLowerCase().includes(query.toLowerCase()) ||
-      item?.category?.toLowerCase().includes(query.toLowerCase()) ||
-      item?.chargeItemSubject?.toLowerCase().includes(query.toLowerCase()) ||
-      item?.collectingOrganization
-        ?.toLowerCase()
-        .includes(query.toLowerCase()) ||
-      item?.itemCode?.toLowerCase().includes(query.toLowerCase()) ||
-      item?.performingOrganization
-        ?.toLowerCase()
-        .includes(query.toLowerCase()) ||
-      item?.subCategory?.toLowerCase().includes(query.toLowerCase()) ||
-      item?.reference?.toLowerCase().includes(query.toLowerCase())
+      item.actionCategory?.toLowerCase().includes(query.toLowerCase()) ||
+      item.category.toLowerCase().includes(query.toLowerCase()) ||
+      item.chargeItemSubject.toLowerCase().includes(query.toLowerCase()) ||
+      item.collectingOrganization.toLowerCase().includes(query.toLowerCase()) ||
+      item.itemCode.toLowerCase().includes(query.toLowerCase()) ||
+      item.performingOrganization.toLowerCase().includes(query.toLowerCase()) ||
+      item.subCategory.toLowerCase().includes(query.toLowerCase()) ||
+      item.reference.toLowerCase().includes(query.toLowerCase())
     ) {
       return true
     }
@@ -32,9 +28,9 @@ export const billsFilter = (data: DocumentsListItemTypes[], query: string) => {
   const filteredArray = data.filter((item) => {
     if (!query) return true
     if (
-      item?.note?.toLowerCase().includes(query.toLowerCase()) ||
-      item?.sender?.toLowerCase().includes(query.toLowerCase()) ||
-      item?.type?.toLowerCase().includes(query.toLowerCase())
+      item.note?.toLowerCase().includes(query.toLowerCase()) ||
+      item.sender.toLowerCase().includes(query.toLowerCase()) ||
+      item.type.toLowerCase().includes(query.toLowerCase())
     ) {
       return true
     }

@@ -152,7 +152,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                       data={[
                         { value: formatMessage(m.total) },
                         { value: '' },
-                        { value: getChargeTypeTotal() },
+                        { value: getChargeTypeTotal(), align: 'right' },
                       ]}
                     />
                   </T.Body>
