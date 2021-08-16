@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { User } from '@island.is/financial-aid/shared'
+import { StaffRoles, User } from '@island.is/financial-aid/shared'
 
 @ObjectType()
 export class UserModel implements User {
@@ -21,4 +21,10 @@ export class UserModel implements User {
 
   @Field()
   readonly hasAppliedForPeriod?: boolean
+
+  @Field()
+  readonly municipalityId?: 'hfj'
+
+  @Field(() => String)
+  readonly role?: StaffRoles
 }

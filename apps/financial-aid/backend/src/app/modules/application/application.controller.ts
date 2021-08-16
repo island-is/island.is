@@ -24,7 +24,7 @@ import {
   RolesRules,
   TokenGuard,
 } from '@island.is/financial-aid/auth'
-import type { User } from '@island.is/financial-aid/shared'
+import type { User, StaffRoles } from '@island.is/financial-aid/shared'
 
 // Allows only staff
 const staffRule = 'veita'

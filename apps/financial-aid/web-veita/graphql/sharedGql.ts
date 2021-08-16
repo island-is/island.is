@@ -91,6 +91,8 @@ export const CurrentUserQuery = gql`
       nationalId
       name
       phoneNumber
+      role
+      municipalityId
     }
   }
 `

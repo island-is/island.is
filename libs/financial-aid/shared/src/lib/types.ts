@@ -22,6 +22,11 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum StaffRoles {
+  ADMIN = 'ADMIN',
+  MODERATOR = 'MODERATOR',
+}
+
 export interface Application {
   id: string
   created: string
@@ -138,6 +143,8 @@ export interface User {
   folder: string
   service: 'osk' | 'veita'
   hasAppliedForPeriod?: boolean
+  municipalityId?: 'hfj'
+  role?: StaffRoles
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }

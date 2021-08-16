@@ -3,6 +3,7 @@ import fetch from 'isomorphic-fetch'
 import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
+import { StaffRoles } from '@island.is/financial-aid/shared'
 
 @Injectable()
 export class UserService {
@@ -14,5 +15,11 @@ export class UserService {
       },
     )
     return await res.json()
+  }
+
+  async checkStaffRole(nationalId: string): Promise<StaffRoles> {
+    const mockRole = StaffRoles.MODERATOR
+
+    return Promise.resolve(mockRole)
   }
 }
