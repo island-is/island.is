@@ -1,12 +1,5 @@
-import React, { useContext, useState } from 'react'
-import {
-  Text,
-  ActionCard,
-  Box,
-  BulletList,
-  Bullet,
-  Button,
-} from '@island.is/island-ui/core'
+import React, { useContext } from 'react'
+import { Text, LoadingDots } from '@island.is/island-ui/core'
 
 import {
   Estimation,
@@ -17,7 +10,6 @@ import {
 
 import * as styles from './aidAmountCalculation.treat'
 
-import { useRouter } from 'next/router'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import { Application } from '@island.is/financial-aid/shared'
 import { GetApplicationQuery } from '@island.is/financial-aid-web/oskgraphql'
@@ -42,21 +34,24 @@ const AidAmountCalculations = () => {
   return (
     <StatusLayout>
       <FormContentContainer>
-        <Estimation
-          homeCircumstances={data?.application.homeCircumstances}
-          usePersonalTaxCredit={data?.application.usePersonalTaxCredit}
-          aboutText={
-            <Text marginBottom={[2, 2, 3]}>
-              Athugaðu að þessi útreikningur er{' '}
-              <span className={styles.taxReturn}>
-                eingöngu til viðmiðunar og getur tekið breytingum.
-              </span>{' '}
-              Þú færð skilaboð þegar frekari útreikningur liggur fyrir.
-              Niðurstaða umsóknar þinnar ætti að liggja fyrir innan X virkra
-              daga.
-            </Text>
-          }
-        />
+        {data && (
+          <Estimation
+            homeCircumstances={data?.application.homeCircumstances}
+            usePersonalTaxCredit={data?.application.usePersonalTaxCredit}
+            aboutText={
+              <Text marginBottom={[2, 2, 3]}>
+                Athugaðu að þessi útreikningur er{' '}
+                <span className={styles.taxReturn}>
+                  eingöngu til viðmiðunar og getur tekið breytingum.
+                </span>{' '}
+                Þú færð skilaboð þegar frekari útreikningur liggur fyrir.
+                Niðurstaða umsóknar þinnar ætti að liggja fyrir innan X virkra
+                daga.
+              </Text>
+            }
+          />
+        )}
+        {loading && <LoadingDots />}
       </FormContentContainer>
       <FormFooter
         previousUrl="/stada"
