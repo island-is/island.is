@@ -2,7 +2,6 @@ import React, { useContext } from 'react'
 import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 import { UserContext } from '../util/UserProvider'
 
-
 function Header() {
   const { user, logOut } = useContext(UserContext)
 

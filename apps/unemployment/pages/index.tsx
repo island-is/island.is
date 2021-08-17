@@ -1,5 +1,4 @@
 import React from 'react'
-import PersonalInformation from '../components/forms/personal-information'
 import Test from '../components/test'
 
 import styles from './index.module.scss'
