@@ -5,7 +5,8 @@ import PersonalInformation from '../../components/forms/personal-information'
 import { UserContext } from './../../components/util/UserProvider'
 import { ApplicationService } from './../../services/application.service'
 import { ApplicationData } from './../../entities/application-data'
-import { InitialInfo } from 'apps/unemployment/entities/initial-info'
+import { InitialInfo } from './../../entities/initial-info'
+import { UserService } from './../../services/user.service'
 
         
 const Index: React.FC = () => {
@@ -13,33 +14,32 @@ const Index: React.FC = () => {
     const stepQuery = query.step
     const [step, setStep] = useState(1)
     const router = useRouter()
-    const { user, logOut } = useContext(UserContext)
+    const { user } = useContext(UserContext)
     const [applicationData, setApplicationData] = useState<ApplicationData>()
   
     /** Load the client and set the step from query if there is one */
     useEffect(() => {
-      async function loadApplication() {
-        let application = await getApplication()
+        let application = getApplication()
         if (!application) {
             application = new ApplicationData()
             application.initialInfo = new InitialInfo()
-            application.initialInfo.name = user?.name
+            application.initialInfo.name = UserService.getUser().name
+            console.log("kdkdadg")
             console.log(application)
+            console.log(user?.name)
         }
         console.log("application")
         console.log(application)
         setApplicationData(application)
-      }
-      console.log(stepQuery)
-      if (+stepQuery === UnemploymentStep.PersonalInformation) {
-        console.log("Persónuupplýsingar")
+      
+        if (+stepQuery === UnemploymentStep.PersonalInformation) {
+          console.log("Persónuupplýsingar")
+        }
         
-      }
-      loadApplication()
 //      document.title = ""
-    }, [stepQuery])
+    }, [stepQuery, user])
   
-    const getApplication = async () => {
+    const getApplication = () => {
         return ApplicationService.getApplication()
     }
   
@@ -64,21 +64,28 @@ const Index: React.FC = () => {
     }
   
     const handleSaved = (application: any) => {
+      console.log("saved")
+      console.log(application)
         getApplication()
         handleNext()      
     }
   
-    switch (step) {
-      case UnemploymentStep.PersonalInformation:
-        return <PersonalInformation defaultValues={applicationData} onSubmit={handleSaved} ></PersonalInformation>
-
-     
-      default: {
-        return (
-          <div></div>
-        )
+    if (applicationData)
+    {
+      switch (step) {
+        case UnemploymentStep.PersonalInformation:
+          return <PersonalInformation defaultValues={applicationData} onSubmit={handleSaved} ></PersonalInformation>
+        default: {
+          return (
+            <div></div>
+          )
+        }
       }
     }
+    return <div></div>
+      
+    
+    
   }
   
   export default Index
