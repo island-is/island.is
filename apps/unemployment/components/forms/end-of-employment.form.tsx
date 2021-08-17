@@ -102,23 +102,6 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
                   )
                 }}
               />
-{/* 
-            <Controller
-                name="endOfEmployment.howUnemploymentCameAbout"
-                defaultValue={defaultValues.endOfEmployment?.howUnemploymentCameAbout}
-                render={({ onChange, value }) => (
-            <Select
-              backgroundColor="white"
-              icon="chevronDown"
-              isSearchable
-              label="Hvað lýsir þínum starfslokum best"
-              name="endOfEmployment.howUnemploymentCameAbout"
-              noOptionsMessage="Ekkert valið"
-              options={circumStances.map((x) => ({label: x, value: x}))}
-              placeholder="Veldu ástæðu"
-              value={value}
-              size="md" />)}
-              /> */}
             </Stack>
 
             <Stack space={2}>
@@ -141,23 +124,6 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
                   )
                 }}
               />
-
-
-            {/* <Controller
-                name="endOfEmployment.reasonForUnemployment"
-                defaultValue={defaultValues.endOfEmployment?.reasonForUnemployment}
-                render={({ onChange, value }) => (
-            <Select
-              backgroundColor="white"
-              icon="chevronDown"
-              isSearchable
-              label="Hvað lýsir starfslokum þínum best"
-              name="endOfEmployment.reasonForUnemployment"
-              noOptionsMessage="Ekkert valið"
-              options={reasons.map((x) => ({label: x, value: x}))}
-              placeholder="Veldu ástæðu"
-              size="md" />)}
-              /> */}
             </Stack>
         </Box>
         <Box paddingTop={2}>
