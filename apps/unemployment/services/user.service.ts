@@ -2,7 +2,7 @@ import { User } from "../entities/user";
 
 export class UserService {
     // TODO: Remove static and make injectable
-    public static getUser() : User {
+    public getUser() : User {
         return { name: "Guðrún Jónsdóttir", 
         nationalId: "1706941119",
         address: "Lindargata 3",

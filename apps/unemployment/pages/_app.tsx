@@ -4,19 +4,18 @@ import Head from 'next/head'
 import { ReactComponent as NxLogo } from '../public/nx-logo-white.svg'
 import './styles.css'
 import Header from '../components/layout/header'
+import ContentWrapper from '../components/layout/content-wrapper'
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Welcome to unemployment!</title>
+        <title>Atvinnuleysisbætur</title>
       </Head>
-      <div className="app">
-        <Header></Header>
-        <main>
-          <Component {...pageProps} />
-        </main>
-      </div>
+      <ContentWrapper>
+      <Header></Header>
+        <Component {...pageProps} />
+      </ContentWrapper>      
     </>
   )
 }
