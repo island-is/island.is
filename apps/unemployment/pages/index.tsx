@@ -1,19 +1,38 @@
 import React from 'react'
-import Test from '../components/test'
-
-import styles from './index.module.scss'
+import {
+  Stack,
+  Box,
+  Typography,
+  DatePicker,
+  Divider,
+  Input,
+  Button,
+  Text
+} from '@island.is/island-ui/core'
+import { useRouter } from 'next/router'
 
 export function Index() {
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./index.scss file.
-   */
+  const router = useRouter()
+  
+  const login = () => {
+    // TODO: Check where the user is in the application
+    router.push('/application/1')
+  }
+
   return (
-    <div className={styles.page}>
-      {/* <PersonalInformation></PersonalInformation> */}
-      <Test></Test>
-      </div>
+    <Box>
+      <Text>Velkomin/n á vef atvinnuleysisbóta.</Text>
+      <Text>Vinsamlegast skráðu þig inn rafrænt til að halda áfram</Text>
+      <Input
+        name="simi"
+        placeholder="Símanúmer"
+        />
+      <Box>
+          <Button onClick={login} width="fluid">
+            Innskrá
+          </Button>
+        </Box>
+      </Box>
   )
 }
 
