@@ -16,20 +16,12 @@ import {
 
 import { useRouter } from 'next/router'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
-import { useQuery } from '@apollo/client'
-import { GetApplicationEventQuery } from '@island.is/financial-aid-web/oskgraphql'
-import {
-  ApplicationEvent,
-  translateMonth,
-} from '@island.is/financial-aid/shared'
+
+import { translateMonth } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
 
 // import * as styles from '@island.is/financial-aid/shared/src/styles.css'
-
-interface ApplicationEventData {
-  applicationEvents: ApplicationEvent[]
-}
 
 const MainPage = () => {
   const router = useRouter()
@@ -41,25 +33,16 @@ const MainPage = () => {
   const currentMonth = parseInt(format(new Date(), 'MM'))
   const currentYear = format(new Date(), 'yyyy')
 
-  const { data, error, loading } = useQuery<ApplicationEventData>(
-    GetApplicationEventQuery,
-    {
-      variables: { input: { id: user?.activeApplication } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
-
   const mainInfo = [
     {
       heading: 'Staða umsóknar',
-      text: 'Umsókn móttekin og er í vinnslu',
+      text: `Umsókn móttekin og er xx`,
       label: 'Sjá nánar',
       link: 'timalina',
     },
     {
       heading: 'Áætluð aðstoð',
-      text: '98.900 kr. til greiðslu 1. eða 2. júní 2021',
+      text: 'xx.xxx kr. til greiðslu 1. eða 2. mánuður',
       label: 'Sjá nánar',
       link: 'utreikningur',
     },
@@ -94,7 +77,6 @@ const MainPage = () => {
                     label: item.label,
                     onClick: () => {
                       router.push('/stada/' + item.link)
-                      // setAccordionIndex(index + 1)
                     },
                   }}
                 />
