@@ -9,7 +9,7 @@ function Header() {
     <IslandUIHeader
       logoRender={(logo) => <a href={'/'}>{logo}</a>}
       logoutText={'Útskrá'}
-      userLogo={'👑'}
+      userLogo={''}
       language={'IS'}
       switchLanguage={() => {
         return true

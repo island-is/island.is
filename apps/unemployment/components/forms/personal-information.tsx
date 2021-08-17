@@ -41,7 +41,7 @@ const PersonalInformation: React.FC<PropTypes> = ({
           <Stack space={4}>
             <Stack space={2}>
               <Controller
-                name="eriod.from"
+                name="from"
                 defaultValue=""
                 render={({ onChange, value }) => (
                   <DatePicker

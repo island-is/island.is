@@ -1,5 +1,4 @@
 import React from 'react'
-import PersonalInformation from '../components/forms/personal-information'
 import Test from '../components/test'
 
 import styles from './index.module.scss'
@@ -14,7 +13,7 @@ export function Index() {
     <div className={styles.page}>
       {/* <PersonalInformation></PersonalInformation> */}
       <Test></Test>
-    </div>
+      </div>
   )
 }
 
