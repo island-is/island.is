@@ -1,4 +1,5 @@
 import { range } from 'lodash'
+import { CalculationConstants } from '../entities/directorate-of-labour-constants'
 import { education } from '../utils/mock-db-education'
 import { jobs } from '../utils/mock-db-jobs'
 import { mockAsync } from '../utils/service-utils'
@@ -110,5 +111,16 @@ export class DirectorateOfLabourService {
 
   public getReasonForUnEmployment: () => Promise<string[]> = async () => {
     return mockAsync(['Uppsögn vegna samdráttar', 'Gjaldþrot atvinnurekanda'])
+  }
+
+  public getUnemploymentConstants: () => Promise<CalculationConstants> = async () => {
+    return mockAsync({
+      BaseAmount: 307.43, // GrU
+      MaximumSalaryConnectedConnected: 472.835, // MaxTekjTeng
+      PercentOfSalary: 0.7, // PrTekjTeng
+      PercentOfParentalLeaveOnBaseUnemploymentBenefits: 0.06, //PrBbGr
+      PercentOfParentalLeaveOnPayConnectedBenefits: 0.04, // PrBbTekjuTeng
+      MaximumUnaffectedSalary: 71262, // FriTekjMark
+    })
   }
 }
