@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import {
   Stack,
   Box,
-  Typography,
+  Text,
   DatePicker,
   Divider,
   Input,
@@ -10,6 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useForm, FormProvider, Controller } from 'react-hook-form'
 import { ApplicationData } from './../../entities/application-data'
+import ValidationUtils from './../../utils/validation.utils'
 
 interface PropTypes {
   onSubmit: (data) => void
@@ -24,8 +25,10 @@ const PersonalInformation: React.FC<PropTypes> = ({
 //  const [applicationData, setApplicationData] = useState<ApplicationData>(new ApplicationData)
 
   const submit = () => {
-    console.log("submitted")
-    hookFormData.handleSubmit(onSubmit)
+    const application = new ApplicationData();
+    application.initialInfo = hookFormData.getValues()
+
+    onSubmit(hookFormData.getValues())
   }
 
   useEffect(() => {
@@ -44,38 +47,44 @@ const PersonalInformation: React.FC<PropTypes> = ({
           flexDirection="column"
           justifyContent="spaceBetween"
           height="full"
-          onSubmit={submit}
         >
             <Stack space={2}>
-              <Typography variant="h5">Persónuupplýsingar</Typography>
+              <Text>Samskipti</Text>
               <Divider weight="alternate" />
               <Controller
-                name="initialInfo.name"
-                defaultValue={defaultValues.initialInfo.name}
+                name="initialInfo.email"
+                defaultValue={defaultValues.initialInfo.email}
                 render={({ onChange, value }) => (
                   <Input
-                    name="initialInfo.name"
-                    placeholder="Fullt nafn"
+                    name="initialInfo.email"
+                    placeholder="Netfang"
                     value={value}
                     onChange={onChange}
-                    readOnly={true}
-                    
+                    label="Netfang"
+                    required={true}
+                    errorMessage="Nauðsynlegt er að fylla út netfang"
+                    hasError={!ValidationUtils.validateEmail(value)}
                   />
                 )}
               />
             </Stack>
 
             <Stack space={2}>
-            <Controller
-                name="fromDate"
-                defaultValue=""
+              
+              <Divider weight="alternate" />
+              <Controller
+                name="initialInfo.mobile"
+                defaultValue={defaultValues.initialInfo.mobile}
                 render={({ onChange, value }) => (
-                  <DatePicker
-                    label="Frá"
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    selected={value}
-                    handleChange={onChange}
+                  <Input
+                    name="initialInfo.mobile"
+                    placeholder="Farsími"
+                    value={value}
+                    onChange={onChange}
+                    label="Farsími"
+                    required={true}
+                    errorMessage="Nauðsynlegt er að fylla út farsímanúmer"
+                    hasError={!ValidationUtils.validatePhoneNumber(value)}
                   />
                 )}
               />
@@ -83,7 +92,7 @@ const PersonalInformation: React.FC<PropTypes> = ({
         </Box>
         <Box paddingTop={2}>
               <Button onClick={submit} width="fluid">
-                Beita síu
+                Næsta skref
               </Button>
             </Box>
       </FormProvider>

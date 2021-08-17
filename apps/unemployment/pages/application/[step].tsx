@@ -21,22 +21,10 @@ const Index: React.FC = () => {
     useEffect(() => {
         let application = getApplication()
         if (!application) {
-            application = new ApplicationData()
-            application.initialInfo = new InitialInfo()
-            application.initialInfo.name = UserService.getUser().name
-            console.log("kdkdadg")
-            console.log(application)
-            console.log(user?.name)
+            application = ApplicationData.getFromUser(UserService.getUser())
         }
-        console.log("application")
-        console.log(application)
         setApplicationData(application)
-      
-        if (+stepQuery === UnemploymentStep.PersonalInformation) {
-          console.log("Persónuupplýsingar")
-        }
-        
-//      document.title = ""
+        document.title = "Samskipti"
     }, [stepQuery, user])
   
     const getApplication = () => {
@@ -75,12 +63,15 @@ const Index: React.FC = () => {
       switch (step) {
         case UnemploymentStep.PersonalInformation:
           return <PersonalInformation defaultValues={applicationData} onSubmit={handleSaved} ></PersonalInformation>
+        case UnemploymentStep.Income:
+          return <div>2</div>
         default: {
           return (
             <div></div>
           )
         }
       }
+      
     }
     return <div></div>
       
