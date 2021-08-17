@@ -15,7 +15,6 @@ export function Index() {
       {/* <PersonalInformation></PersonalInformation> */}
       <Test></Test>
       </div>
-
   )
 }
 

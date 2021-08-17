@@ -5,10 +5,11 @@ import { ReactComponent as NxLogo } from '../public/nx-logo-white.svg'
 import './styles.css'
 import Header from '../components/layout/header'
 import ContentWrapper from '../components/layout/content-wrapper'
+import UserProvider from '../components/util/UserProvider'
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <UserProvider devLoggedIn>
       <Head>
         <title>Atvinnuleysisbætur</title>
       </Head>
@@ -16,7 +17,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <Header></Header>
         <Component {...pageProps} />
       </ContentWrapper>      
-    </>
+    </UserProvider>
   )
 }
 

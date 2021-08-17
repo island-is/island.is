@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Header as IslandUIHeader } from '@island.is/island-ui/core'
+import { UserContext } from '../util/UserProvider'
 
 
 function Header() {
+  const { user, logOut } = useContext(UserContext)
+
   return (
     <IslandUIHeader
       logoRender={(logo) => <a href={'/'}>{logo}</a>}
@@ -12,11 +15,9 @@ function Header() {
       switchLanguage={() => {
         return true
       }}
-      userName={'Guðrún Jónsdóttir'}
+      userName={user?.name}
       authenticated={true}
-      onLogout={() => {
-        return true
-      }}
+      onLogout={logOut}
     />
   )
 }

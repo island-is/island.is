@@ -1,11 +1,11 @@
 export interface User {
-    nationalId: string
-    name: string
-    address: string
-    postalCode: string
-    email: string
-    gsm: string
-    phone: string
-    numberOfChildren: number
-    city: string
+  nationalId: string
+  name: string
+  address: string
+  postalCode: string
+  gsm: string
+  email: string
+  numberOfChildren: number
+  city: string
+  phone?: string
 }
