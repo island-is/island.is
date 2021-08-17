@@ -1,4 +1,4 @@
-export interface TaxInfo {
+export interface ApplicationResult {
   name: string
   nationalId: string
   address: string
