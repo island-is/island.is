@@ -8,7 +8,8 @@ export class UserService {
         address: "Lindargata 3",
         city: "Reykjavík",
         postalCode: "101",
-        email: "gj@island.is"
+        email: "gj@island.is",
+        numberOfChildren: 1
     } as User
     }
 }
