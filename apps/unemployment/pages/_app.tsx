@@ -1,9 +1,9 @@
 import React from 'react'
 import { AppProps } from 'next/app'
 import Head from 'next/head'
-import { ReactComponent as NxLogo } from '../public/nx-logo-white.svg'
 import './styles.css'
 import Header from '../components/layout/header'
+import ContentWrapper from '../components/layout/content-wrapper'
 import UserProvider from '../components/util/UserProvider'
 import ServicesProvider from '../components/util/ServicesProvider'
 
@@ -12,15 +12,12 @@ function CustomApp({ Component, pageProps }: AppProps) {
     <UserProvider devLoggedIn>
       <ServicesProvider>
         <Head>
-          <title>Welcome to unemployment!</title>
+          <title>Atvinnuleysisbætur</title>
         </Head>
-        <div className="app">
-          <Header />
-          <main>
-            <Component {...pageProps} />
-            <div>Hér er header</div>
-          </main>
-        </div>
+        <ContentWrapper>
+          <Header></Header>
+          <Component {...pageProps} />
+        </ContentWrapper>
       </ServicesProvider>
     </UserProvider>
   )
