@@ -50,7 +50,7 @@ class ValidationUtils {
   }
 
   public static validatePhoneNumber(input: string): boolean {
-    if (input.length === 8) {
+    if (input.length === 7) {
       return true
     }
     return false

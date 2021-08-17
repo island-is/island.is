@@ -1,3 +1,4 @@
+import { EndOfEmployment } from './end-of-employment'
 import { ApplicationStatus } from './enums/application-status.enum'
 import { InitialInfo } from './initial-info'
 import { User } from './user'
@@ -6,6 +7,7 @@ export class ApplicationData {
   initialInfo: InitialInfo
   status: ApplicationStatus
   stepCompleted: number
+  endOfEmployment: EndOfEmployment
 
   static getFromUser(user: User) {
     console.log(user)

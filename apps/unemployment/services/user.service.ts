@@ -8,7 +8,7 @@ export const MockUser: User = {
   postalCode: '101',
   email: 'gj@island.is',
   numberOfChildren: 1,
-  gsm: '123-4567',
+  gsm: '1234567',
 }
 
 export class UserService {
