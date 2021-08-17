@@ -1,4 +1,6 @@
+import { ApplicationData } from '../entities/application-data'
 import { ApplicationResult } from '../entities/application-result'
+import { ApplicationStatus } from '../entities/enums/application-status.enum'
 
 export class ApplicationService {
   // TODO: Remove static and make injectable
@@ -31,27 +33,20 @@ export class ApplicationService {
     } as ApplicationResult
   }
 
-  public static saveApplication(application: any) {
-    // TODO: Receive application object and write to localstorage
-    const dummyApplication = {
-      name: 'Guðrún Jónsdóttir'
-    }
-
-    localStorage.setItem('application', JSON.stringify(dummyApplication))
+  public static saveApplication(application: ApplicationData) : void {
+    localStorage.setItem('application-data', JSON.stringify(application))
   }
 
-  public static getApplication() {
-    // TODO: Remove local storage
-    const application = localStorage.getItem('application')
-    console.log(application)
+  public static getApplication() : ApplicationData {
+    const application = localStorage.getItem('application-data')
     if (!application) {
       return null
     }
-    console.log(JSON.parse(application))
-    return JSON.parse(application)
+    return JSON.parse(application) as ApplicationData
   }
 
-  public submit() {
-    return true
+  public submit(application: ApplicationData) : void {
+    application.status = ApplicationStatus.submitted
+    ApplicationService.saveApplication(application)
   }
 }

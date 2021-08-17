@@ -6,26 +6,22 @@ import {
   DatePicker,
   Divider,
   Input,
-  Button,
-  Checkbox,
 } from '@island.is/island-ui/core'
 import { useForm, FormProvider, Controller } from 'react-hook-form'
+import { ApplicationData } from './../../entities/application-data'
 
 interface PropTypes {
   onSubmit: (data) => void
-  defaultValues: any
+  defaultValues: ApplicationData
 }
 
 const PersonalInformation: React.FC<PropTypes> = ({
   onSubmit,
   defaultValues,
 }: PropTypes) => {
-  const hookFormData = useForm<any>({
-    mode: 'onBlur',
-    reValidateMode: 'onBlur',
-    defaultValues: null,
-    shouldUnregister: false,
-  })
+  const hookFormData = useForm<ApplicationData>()
+
+  console.log(defaultValues)
 
   return (
     <Stack space={3}>
@@ -38,10 +34,28 @@ const PersonalInformation: React.FC<PropTypes> = ({
           height="full"
           onSubmit={hookFormData.handleSubmit(onSubmit)}
         >
-          <Stack space={4}>
             <Stack space={2}>
+              <Typography variant="h5">Persónuupplýsingar</Typography>
+              <Divider weight="alternate" />
               <Controller
-                name="from"
+                name="initialInfo.name"
+                defaultValue={defaultValues.initialInfo.name}
+                
+                render={({ onChange, value }) => (
+                  <Input
+                    name="initialInfo.name"
+                    placeholder="Fullt nafn"
+                    value={value}
+                    onChange={onChange}
+                    readOnly={true}
+                  />
+                )}
+              />
+            </Stack>
+
+            <Stack space={2}>
+            <Controller
+                name="fromDate"
                 defaultValue=""
                 render={({ onChange, value }) => (
                   <DatePicker
@@ -53,74 +67,7 @@ const PersonalInformation: React.FC<PropTypes> = ({
                   />
                 )}
               />
-              <Controller
-                name="period.to"
-                defaultValue=""
-                render={({ onChange, value }) => (
-                  <DatePicker
-                    label="Til"
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    selected={value}
-                    handleChange={onChange}
-                  />
-                )}
-              />
             </Stack>
-            <Stack space={2}>
-              <Typography variant="h5">Notandi</Typography>
-              <Divider weight="alternate" />
-              <Controller
-                name="postalCode"
-                defaultValue=""
-                render={({ onChange, value }) => (
-                  <Input
-                    name="postalCode"
-                    placeholder="Póstnúmer"
-                    value={value}
-                    onChange={onChange}
-                  />
-                )}
-              />
-              <Controller
-                name="age.from"
-                defaultValue=""
-                render={({ onChange, value }) => (
-                  <Input
-                    name="age.from"
-                    placeholder="Aldur frá"
-                    value={value}
-                    onChange={onChange}
-                  />
-                )}
-              />
-              <Controller
-                name="age.to"
-                defaultValue=""
-                render={({ onChange, value }) => (
-                  <Input
-                    name="age.to"
-                    placeholder="Aldur til"
-                    value={value}
-                    onChange={onChange}
-                  />
-                )}
-              />
-              <Checkbox
-                name="gender"
-                options={[
-                  { value: 'kk', label: 'kk' },
-                  { value: 'kvk', label: 'kvk' },
-                  { value: 'hvk', label: 'hvk' },
-                ]}
-              />
-            </Stack>
-            <Box paddingTop={2}>
-              <Button htmlType="submit" width="fluid">
-                Beita síu
-              </Button>
-            </Box>
-          </Stack>
         </Box>
       </FormProvider>
     </Stack>
