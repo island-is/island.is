@@ -11,7 +11,7 @@
 // # Picka parent gildi úr div í li
 // ```
 // <!-- Óklárað -->
-// <div.*[\n\r]*.*/span>(.*)(?:(.*)</div>|(.*[\n\r]?[.^d]*))?.*(?:[\n\r]*.*</li>|[\n\r]*.*[\n\r]*.*</li>)
+// <div.*[\n\r]*.*/span>(.*)(?:(.*)</div>|(.*[\n\r]?[.^d]*))</div>
 // ```
 
 export const jobs = [
