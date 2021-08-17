@@ -10,4 +10,5 @@ export class InitialInfo {
   mobile: string
   phone?: string
   communicationSecret: string
+  childrenUnderCare: { name: string; nationalId: string; id?: number }
 }

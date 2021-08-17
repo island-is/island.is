@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
+import { Stack, Box, Input, Button } from '@island.is/island-ui/core'
 import {
-  Stack,
-  Box,
-  Text,
-  DatePicker,
-  Divider,
-  Input,
-  Button,
-} from '@island.is/island-ui/core'
-import { useForm, FormProvider, Controller } from 'react-hook-form'
+  useForm,
+  FormProvider,
+  Controller,
+  useFieldArray,
+} from 'react-hook-form'
 import { ApplicationData } from './../../entities/application-data'
 import ValidationUtils from './../../utils/validation.utils'
 
@@ -22,7 +19,6 @@ const ChildrenUnderCare: React.FC<PropTypes> = ({
   defaultValues,
 }: PropTypes) => {
   const hookFormData = useForm<ApplicationData>()
-  //  const [applicationData, setApplicationData] = useState<ApplicationData>(new ApplicationData)
 
   const submit = () => {
     const application = new ApplicationData()
@@ -32,11 +28,16 @@ const ChildrenUnderCare: React.FC<PropTypes> = ({
   }
 
   useEffect(() => {
-    // setApplicationData(defaultValues)
     console.log(defaultValues)
   }, [defaultValues])
 
-  // console.log(defaultValues)
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control: hookFormData.control,
+      name: 'initialInfo.childrenUnderCare', // unique name for your Field Array
+      // keyName: 'nationalId', //, default to "id", you can change the key name
+    },
+  )
 
   return (
     <Stack space={3}>
@@ -49,41 +50,66 @@ const ChildrenUnderCare: React.FC<PropTypes> = ({
           height="full"
         >
           <Stack space={2}>
-            <Controller
-              name="initialInfo.email"
-              defaultValue={defaultValues.initialInfo.email}
-              render={({ onChange, value }) => (
-                <Input
-                  name="initialInfo.email"
-                  placeholder="Netfang"
-                  value={value}
-                  onChange={onChange}
-                  label="Netfang"
-                  required={true}
-                  errorMessage="Nauðsynlegt er að fylla út netfang"
-                  hasError={!ValidationUtils.validateEmail(value)}
+            {fields.map((field, index) => (
+              <div
+                key={field.id}
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  flexDirection: 'row',
+                  gap: 16,
+                  paddingTop: (index != 0 && 8) || 0,
+                }}
+              >
+                <Controller
+                  name={`initialInfo.childrenUnderCare.${index}.name`}
+                  defaultValue={field.name}
+                  render={({ onChange, value }) => (
+                    <div style={{ minWidth: '320px', flexGrow: 1 }}>
+                      <Input
+                        name={`initialInfo.childrenUnderCare.${index}.name`}
+                        placeholder="Nafn"
+                        value={value}
+                        onChange={onChange}
+                        label="Nafn"
+                        // errorMessage="Nafn getur ekki innihaldið tölustafi"
+                        // hasError={!ValidationUtils.validatenam(value)}
+                      />
+                    </div>
+                  )}
                 />
-              )}
-            />
-          </Stack>
-
-          <Stack space={2}>
-            <Divider weight="alternate" />
-            <Controller
-              name="initialInfo.mobile"
-              defaultValue={defaultValues.initialInfo.mobile}
-              render={({ onChange, value }) => (
-                <Input
-                  name="initialInfo.mobile"
-                  placeholder="Farsími"
-                  value={value}
-                  onChange={onChange}
-                  label="Farsími"
-                  required={true}
-                  errorMessage="Nauðsynlegt er að fylla út farsímanúmer"
-                  hasError={!ValidationUtils.validatePhoneNumber(value)}
+                <Controller
+                  name={`initialInfo.childrenUnderCare.${index}.nationalId`}
+                  defaultValue={field.nationalId}
+                  render={({ onChange, value }) => (
+                    <div style={{ minWidth: '320px', flexGrow: 1 }}>
+                      <Input
+                        name={`initialInfo.childrenUnderCare.${index}.nationalId`}
+                        placeholder="Kennitala"
+                        value={value}
+                        onChange={onChange}
+                        label="Kennitala"
+                        errorMessage="Kennitala er röng"
+                        hasError={!ValidationUtils.validateNationalId(value)}
+                      />
+                    </div>
+                  )}
                 />
-              )}
+              </div>
+            ))}
+            <Button
+              circle
+              colorScheme="default"
+              icon="add"
+              iconType="filled"
+              onClick={() => {
+                append({ name: '', nationalId: '', id: fields.length })
+              }}
+              preTextIconType="filled"
+              size="default"
+              title="Add Child"
+              type="button"
+              variant="primary"
             />
           </Stack>
         </Box>
