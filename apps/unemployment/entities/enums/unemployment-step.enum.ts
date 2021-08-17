@@ -1,5 +1,6 @@
 export enum UnemploymentStep {
-    PersonalInformation = 1,
-    Income = 2,
-    TaxInformation = 3,
-  }
+  PersonalInformation = 1,
+  EndOfEmployment = 2,
+  Income = 3,
+  TaxInformation = 4,
+}

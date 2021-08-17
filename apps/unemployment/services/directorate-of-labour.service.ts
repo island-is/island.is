@@ -107,4 +107,8 @@ export class DirectorateOfLabourService {
       'Lífsj. Makalífeyrir',
     ])
   }
+
+  public getReasonForUnEmployment: () => Promise<string[]> = async () => {
+    return mockAsync(['Uppsögn vegna samdráttar', 'Gjaldþrot atvinnurekanda'])
+  }
 }
