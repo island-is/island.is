@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Stack,
   Box,
@@ -6,6 +6,7 @@ import {
   DatePicker,
   Divider,
   Input,
+  Button,
 } from '@island.is/island-ui/core'
 import { useForm, FormProvider, Controller } from 'react-hook-form'
 import { ApplicationData } from './../../entities/application-data'
@@ -20,8 +21,19 @@ const PersonalInformation: React.FC<PropTypes> = ({
   defaultValues,
 }: PropTypes) => {
   const hookFormData = useForm<ApplicationData>()
+//  const [applicationData, setApplicationData] = useState<ApplicationData>(new ApplicationData)
 
-  console.log(defaultValues)
+  const submit = () => {
+    console.log("submitted")
+    hookFormData.handleSubmit(onSubmit)
+  }
+
+  useEffect(() => {
+   // setApplicationData(defaultValues)
+    console.log(defaultValues)
+  }, [defaultValues])
+
+  // console.log(defaultValues)
 
   return (
     <Stack space={3}>
@@ -32,7 +44,7 @@ const PersonalInformation: React.FC<PropTypes> = ({
           flexDirection="column"
           justifyContent="spaceBetween"
           height="full"
-          onSubmit={hookFormData.handleSubmit(onSubmit)}
+          onSubmit={submit}
         >
             <Stack space={2}>
               <Typography variant="h5">Persónuupplýsingar</Typography>
@@ -40,7 +52,6 @@ const PersonalInformation: React.FC<PropTypes> = ({
               <Controller
                 name="initialInfo.name"
                 defaultValue={defaultValues.initialInfo.name}
-                
                 render={({ onChange, value }) => (
                   <Input
                     name="initialInfo.name"
@@ -48,6 +59,7 @@ const PersonalInformation: React.FC<PropTypes> = ({
                     value={value}
                     onChange={onChange}
                     readOnly={true}
+                    
                   />
                 )}
               />
@@ -69,6 +81,11 @@ const PersonalInformation: React.FC<PropTypes> = ({
               />
             </Stack>
         </Box>
+        <Box paddingTop={2}>
+              <Button onClick={submit} width="fluid">
+                Beita síu
+              </Button>
+            </Box>
       </FormProvider>
     </Stack>
   )
