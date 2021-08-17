@@ -9,3 +9,18 @@ export interface User {
   city: string
   phone?: string
 }
+
+// TODO: Endurskoða extend-ið, líklega óþarfa upplýsingar
+export interface TaxPayerInformation extends Pick<User, 'nationalId' | 'name'> {
+  lastPersonalTaxCreditPercentageUsed: number
+  workingSituation: string
+  monthlyIncome: number
+  ageOrDisabilityBenefitsFromSocialInsuranceAdministration: number
+  ageOrDisabilityBenefitsFromPensionFunds: number
+  personalPensionFundPaymentPercentage: number
+  unionPaymentPercentage: number
+  percentageOfWork: number
+  pensionFundPaymentPercentage: number
+  isOnMaternityOrPaternityLeave: boolean
+  numberOfChildrenInCare: number
+}
