@@ -109,6 +109,10 @@ export class DirectorateOfLabourService {
     ])
   }
 
+  public getReasonForUnEmployment: () => Promise<string[]> = async () => {
+    return mockAsync(['Uppsögn vegna samdráttar', 'Gjaldþrot atvinnurekanda'])
+  }
+
   public getUnemploymentConstants: () => Promise<CalculationConstants> = async () => {
     return mockAsync({
       BaseAmount: 307.43, // GrU
