@@ -3,7 +3,6 @@ import {
   Stack,
   Box,
   Text,
-  DatePicker,
   Divider,
   Input,
   Button,
@@ -11,13 +10,17 @@ import {
 import { useForm, FormProvider, Controller } from 'react-hook-form'
 import { ApplicationData } from './../../entities/application-data'
 import ValidationUtils from './../../utils/validation.utils'
+import { ApplicationService } from './../../services/application.service'
+import { UnemploymentStep } from './../../entities/enums/unemployment-step.enum'
+import { InitialInfo } from './../../entities/initial-info'
 
 interface PropTypes {
   onSubmit: (data) => void
   defaultValues: ApplicationData
+  onBack: () => void
 }
 
-const PersonalInformation: React.FC<PropTypes> = ({
+const PersonalInformationForm: React.FC<PropTypes> = ({
   onSubmit,
   defaultValues,
 }: PropTypes) => {
@@ -25,9 +28,14 @@ const PersonalInformation: React.FC<PropTypes> = ({
 //  const [applicationData, setApplicationData] = useState<ApplicationData>(new ApplicationData)
 
   const submit = () => {
-    const application = new ApplicationData();
-    application.initialInfo = hookFormData.getValues()
-
+    const application = defaultValues;
+    if (!application.initialInfo) {
+      application.initialInfo = new InitialInfo()
+    }
+    application.initialInfo.email = hookFormData.getValues().initialInfo.email
+    application.initialInfo.mobile = hookFormData.getValues().initialInfo.mobile
+    application.stepCompleted = UnemploymentStep.PersonalInformation
+    ApplicationService.saveApplication(application)
     onSubmit(hookFormData.getValues())
   }
 
@@ -36,7 +44,7 @@ const PersonalInformation: React.FC<PropTypes> = ({
     console.log(defaultValues)
   }, [defaultValues])
 
-  // console.log(defaultValues)
+  
 
   return (
     <Stack space={3}>
@@ -56,6 +64,7 @@ const PersonalInformation: React.FC<PropTypes> = ({
                 defaultValue={defaultValues.initialInfo.email}
                 render={({ onChange, value }) => (
                   <Input
+                    data-cy="email"
                     name="initialInfo.email"
                     placeholder="Netfang"
                     value={value}
@@ -77,6 +86,7 @@ const PersonalInformation: React.FC<PropTypes> = ({
                 defaultValue={defaultValues.initialInfo.mobile}
                 render={({ onChange, value }) => (
                   <Input
+                    data-cy="mobile"
                     name="initialInfo.mobile"
                     placeholder="Farsími"
                     value={value}
@@ -91,6 +101,7 @@ const PersonalInformation: React.FC<PropTypes> = ({
             </Stack>
         </Box>
         <Box paddingTop={2}>
+             
               <Button onClick={submit} width="fluid">
                 Næsta skref
               </Button>
@@ -100,4 +111,4 @@ const PersonalInformation: React.FC<PropTypes> = ({
   )
 }
 
-export default PersonalInformation
+export default PersonalInformationForm
