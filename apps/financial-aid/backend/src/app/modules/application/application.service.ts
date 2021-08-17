@@ -19,19 +19,19 @@ export class ApplicationService {
     private readonly applicationEventService: ApplicationEventService,
   ) {}
 
-  async hasUserAppliedForCurrentMonth(nationalId: string): Promise<boolean> {
+  async hasUserAppliedForCurrentMonth(
+    nationalId: string,
+  ): Promise<ApplicationModel | null> {
     const date = new Date()
 
     const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
 
-    return Boolean(
-      await this.applicationModel.findOne({
-        where: {
-          nationalId,
-          created: { [Op.gte]: firstDateOfMonth },
-        },
-      }),
-    )
+    return this.applicationModel.findOne({
+      where: {
+        nationalId,
+        created: { [Op.gte]: firstDateOfMonth },
+      },
+    })
   }
 
   getAll(): Promise<ApplicationModel[]> {

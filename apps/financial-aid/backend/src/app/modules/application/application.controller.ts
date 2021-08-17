@@ -23,7 +23,6 @@ import {
   TokenGuard,
 } from '@island.is/financial-aid/auth'
 import type { User } from '@island.is/financial-aid/shared'
-import { ApplicationEventService } from '../applicationEvent'
 
 @Controller('api')
 @ApiTags('applications')
@@ -33,6 +32,7 @@ export class ApplicationController {
   @UseGuards(TokenGuard)
   @Get('me')
   @ApiOkResponse({
+    // type: ApplicationModel,
     description:
       'Checks whether user has applied before and if it is the same month',
   })

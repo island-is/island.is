@@ -1,3 +1,3 @@
-import Info from '@island.is/financial-aid-web/osk/src/routes/status/Info/info'
+import MainPage from '@island.is/financial-aid-web/osk/src/routes/status/MainPage/mainPage'
 
-export default Info
+export default MainPage

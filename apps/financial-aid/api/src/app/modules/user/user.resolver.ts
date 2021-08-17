@@ -10,8 +10,11 @@ import {
 } from '@island.is/financial-aid/auth'
 
 import { UserModel } from './user.model'
-import { boolean } from 'yargs'
+
 import { UserService } from './user.service'
+
+import { ApplicationModel } from '../application'
+import { boolean } from 'yargs'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => UserModel)
@@ -31,8 +34,24 @@ export class UserResolver {
     return user as UserModel
   }
 
-  @ResolveField('hasAppliedForPeriod', () => boolean)
+  @ResolveField('hasAppliedForPeriod', () => boolean, { nullable: true })
   async hasAppliedForPeriod(@Parent() user: User): Promise<boolean> {
-    return await this.userService.checkUserHistory(user.nationalId)
+    const app = await this.userService.checkUserHistory(user.nationalId)
+    console.log(app, 'app')
+
+    if (app != null) {
+      return true
+    }
+    return false
+  }
+
+  @ResolveField('activeApplication')
+  async activeApplication(@Parent() user: User): Promise<string | undefined> {
+    const app = await this.userService.checkUserHistory(user.nationalId)
+
+    if (app != null) {
+      return app?.id
+    }
+    return undefined
   }
 }

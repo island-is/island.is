@@ -39,7 +39,6 @@ const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
   if (!user) {
     return null
   }
-
   return (
     <Box
       paddingY={[3, 3, 3, 6]}

@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext, useEffect } from 'react'
-import { Box, GridContainer, FormStepper } from '@island.is/island-ui/core'
+import { Box, GridContainer, Text } from '@island.is/island-ui/core'
 
 import * as styles from './StatusLayout.treat'
 
@@ -9,7 +9,6 @@ import {
   HasApplied,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import useNavigationTree from '@island.is/financial-aid-web/osk/src/utils/useNavigationTree'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
@@ -21,7 +20,6 @@ const StatusLayout = ({ children }: Props) => {
   const { isAuthenticated, user } = useContext(UserContext)
 
   const { form } = useContext(FormContext)
-  const sections = useNavigationTree(Boolean(form?.hasIncome))
 
   useEffect(() => {
     document.title = 'Fjárhagsaðstoð – Staða'
@@ -54,6 +52,12 @@ const StatusLayout = ({ children }: Props) => {
               {children}
             </Box>
             <Box className={styles.sidebarContent}>
+              <Box>
+                <div className={`tags approve`}>bla</div>
+                <Text as="h3" variant="h3" marginBottom={[1, 1, 2]}>
+                  Umsókn um fjárhagsaðstoð hjá Hafnarfjarðarbæ
+                </Text>
+              </Box>
               <LogoHfj className={styles.logo} />
             </Box>
           </div>

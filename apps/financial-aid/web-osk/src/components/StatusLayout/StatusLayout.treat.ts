@@ -25,7 +25,6 @@ export const gridContainer = style({
 export const gridRowContainer = style({
   display: 'grid',
   gridTemplateColumns: 'repeat(1, 1fr)',
-  gridTemplateRows: 'max-content auto',
   height: '100%',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
@@ -58,17 +57,7 @@ export const sidebarContent = style({
   height: '100%',
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      order: -1,
-      marginLeft: `0px`,
-      marginBottom: `-8px`,
-      overflowX: 'scroll',
-      overflowY: 'hidden',
-      scrollbarWidth: 'none',
-      selectors: {
-        [`&::-webkit-scrollbar`]: {
-          display: 'none',
-        },
-      },
+      display: 'none',
     },
   },
 })

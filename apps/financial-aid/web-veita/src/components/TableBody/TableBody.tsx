@@ -5,7 +5,11 @@ import Link from 'next/link'
 import * as styles from './TableBody.treat'
 
 import cn from 'classnames'
-import { Application, getState } from '@island.is/financial-aid/shared'
+import {
+  Application,
+  getState,
+  translateMonth,
+} from '@island.is/financial-aid/shared'
 import format from 'date-fns/format'
 
 import {
@@ -15,7 +19,6 @@ import {
 
 import {
   calcDifferenceInDate,
-  translateMonth,
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 

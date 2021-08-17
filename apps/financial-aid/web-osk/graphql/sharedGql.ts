@@ -1,16 +1,10 @@
 import { gql } from '@apollo/client'
 
 export const GetApplicationQuery = gql`
-  query GetApplicationQuery {
-    applications {
-      id
-      nationalId
-      name
-      phoneNumber
-      email
-      modified
-      created
-      state
+  query GetApplicantyQuery($input: ApplicationInput!) {
+    application(input: $input) {
+      homeCircumstances
+      usePersonalTaxCredit
     }
   }
 `
@@ -77,6 +71,7 @@ export const CurrentUserQuery = gql`
       name
       phoneNumber
       hasAppliedForPeriod
+      activeApplication
     }
   }
 `

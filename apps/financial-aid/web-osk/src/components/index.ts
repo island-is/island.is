@@ -10,3 +10,4 @@ export { default as RadioButtonContainer } from './RadioButtonContainer/RadioBut
 export { default as CancelModal } from './CancelModal/CancelModal'
 export { default as Login } from './Login/login'
 export { default as HasApplied } from './HasApplied/hasApplied'
+export { default as Estimation } from './Estimation/Estimation'

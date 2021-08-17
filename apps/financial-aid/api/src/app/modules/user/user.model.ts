@@ -21,4 +21,7 @@ export class UserModel implements User {
 
   @Field()
   readonly hasAppliedForPeriod?: boolean
+
+  @Field()
+  readonly activeApplication?: string
 }

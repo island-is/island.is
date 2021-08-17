@@ -38,6 +38,25 @@ export const formatPhoneNumber = (phoneNumber: string) =>
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
+export const translateMonth = (month: number) => {
+  const months = [
+    'Janúar',
+    'Febrúar',
+    'Mars',
+    'Apríl',
+    'Maí',
+    'Júní',
+    'Júlí',
+    'Ágúst',
+    'September',
+    'Október',
+    'Nóvember',
+    'Desember',
+  ]
+
+  return months[month - 1]
+}
+
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,
   aid: {
