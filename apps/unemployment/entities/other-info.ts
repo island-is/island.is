@@ -1,7 +1,5 @@
-import { ServiceOffice } from "./common";
-
 export interface OtherInformation {
-    fullTimeJob: boolean;
-    workArea?: ServiceOffice[];
-    canStart: Date;
+  fullTimeJob: boolean
+  workArea?: string
+  canStart: Date
 }

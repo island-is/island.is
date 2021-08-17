@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   Stack,
   Box,
@@ -22,7 +22,7 @@ const EndOfEmployment: React.FC<PropTypes> = ({
   defaultValues,
 }: PropTypes) => {
   const hookFormData = useForm<ApplicationData>()
-
+  const context = useContext(servicesPor)
 
   const submit = () => {
     const application = defaultValues
@@ -55,7 +55,7 @@ const EndOfEmployment: React.FC<PropTypes> = ({
                 defaultValue={defaultValues?.initialInfo?.dateFrom ? defaultValues?.initialInfo?.dateFrom : new Date()}
                 render={({ onChange, value }) => (
                   <DatePicker
-                    label="Frá"
+                    label="Frá hvaða dag hefur þú verið atvinnulaus"
                     placeholderText="Veldu dagsetningu"
                     locale="is"
                     selected={value}
@@ -75,4 +75,4 @@ const EndOfEmployment: React.FC<PropTypes> = ({
   )
 }
 
-export default PersonalInformation
+export default EndOfEmployment

@@ -1,10 +1,6 @@
 import React from 'react'
 import {
-  Stack,
   Box,
-  Typography,
-  DatePicker,
-  Divider,
   Input,
   Button,
   Text
@@ -24,8 +20,9 @@ export function Index() {
       <Text>Velkomin/n á vef atvinnuleysisbóta.</Text>
       <Text>Vinsamlegast skráðu þig inn rafrænt til að halda áfram</Text>
       <Input
-        name="simi"
+        name="tel"
         placeholder="Símanúmer"
+        data-cy="tel"
         />
       <Box>
           <Button onClick={login} width="fluid">

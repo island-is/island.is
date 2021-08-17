@@ -7,7 +7,7 @@ interface Props {
 
 const Steps: React.FC<Props> = ({step}) => {
     // TODO: List up steps and set the active step
-    return <div className="step active"></div>
+    return <div className="step active">Steps</div>
 }
 
 export default Steps
