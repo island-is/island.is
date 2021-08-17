@@ -1,13 +1,14 @@
 import { UnemploymentStep } from './../../entities/enums/unemployment-step.enum'
 import { useRouter } from 'next/router'
 import React, { useState, useEffect, useContext } from 'react'
-import PersonalInformation from '../../components/forms/personal-information'
+import PersonalInformationForm from '../../components/forms/personal-information.form'
 import { UserContext } from './../../components/util/UserProvider'
 import { ApplicationService } from './../../services/application.service'
 import { ApplicationData } from './../../entities/application-data'
 import { InitialInfo } from './../../entities/initial-info'
 import { UserService } from './../../services/user.service'
 import ChildrenUnderCare from '../../components/forms/children-under-care'
+import EndOfEmploymentForm from './../../components/forms/end-of-employment.form'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -66,11 +67,20 @@ const Index: React.FC = () => {
     switch (step) {
       case UnemploymentStep.PersonalInformation:
         return (
-          <PersonalInformation
+          <PersonalInformationForm
+            onBack={handleBack}
             defaultValues={applicationData}
             onSubmit={handleSaved}
-          ></PersonalInformation>
+          ></PersonalInformationForm>
         )
+        case UnemploymentStep.EndOfEmployment:
+          return (
+            <EndOfEmploymentForm
+              onBack={handleBack}
+              defaultValues={applicationData}
+              onSubmit={handleSaved}
+            ></EndOfEmploymentForm>
+          )
       case UnemploymentStep.Income:
         return <div>2</div>
       case UnemploymentStep.ChildrenUnderCare:

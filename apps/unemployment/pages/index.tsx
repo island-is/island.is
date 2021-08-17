@@ -6,13 +6,21 @@ import {
   Text
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
+import { ApplicationService } from '../services/application.service'
 
 export function Index() {
   const router = useRouter()
   
   const login = () => {
-    // TODO: Check where the user is in the application
-    router.push('/application/1')
+    // Check where the user is in the application
+    const application = ApplicationService.getApplication()
+    if (application && application.stepCompleted > 0) {
+      router.push('/application/' + (+application.stepCompleted + 1).toString())  
+    }
+    else {
+      // User is starting their application
+      router.push('/application/1')
+    }
   }
 
   return (
