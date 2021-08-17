@@ -12,7 +12,7 @@ export function Index() {
    */
   return (
     <div className={styles.page}>
-      <PersonalInformation></PersonalInformation>
+      {/* <PersonalInformation></PersonalInformation> */}
       <Test></Test>
       <h2>Resources &amp; Tools</h2>
       <p>Thank you for using and showing some ♥ for Nx.</p>
