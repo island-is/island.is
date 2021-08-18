@@ -10,8 +10,8 @@ import {
 } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 import * as styles from './confirmation.treat'
@@ -53,7 +53,7 @@ const Confirmation = () => {
 
   return (
     <FormLayout activeSection={navigation?.activeSectionIndex}>
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
           Staðfesting
         </Text>
@@ -100,7 +100,7 @@ const Confirmation = () => {
             })}
           </BulletList>
         </Box>
-      </FormContentContainer>
+      </ContentContainer>
     </FormLayout>
   )
 }

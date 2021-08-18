@@ -1,13 +1,13 @@
 import React from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
-import * as styles from './FormContentContainer.treat'
+import * as styles from './ContentContainer.treat'
 
 interface Props {
   children: React.ReactNode
 }
 
-const FormContentContainer = ({ children }: Props) => {
+const ContentContainer = ({ children }: Props) => {
   return <div className={styles.formContainer}>{children}</div>
 }
 
-export default FormContentContainer
+export default ContentContainer

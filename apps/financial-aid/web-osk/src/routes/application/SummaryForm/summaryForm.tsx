@@ -9,8 +9,8 @@ import {
 } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
   CancelModal,
   Estimation,
@@ -113,7 +113,7 @@ const SummaryForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Yfirlit umsóknar
         </Text>
@@ -288,9 +288,9 @@ const SummaryForm = () => {
             setIsVisible(isVisibleBoolean)
           }}
         />
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         onPrevButtonClick={() => {
           setIsVisible(!isVisible)
         }}

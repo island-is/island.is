@@ -2,8 +2,8 @@ import React from 'react'
 import { Text, InputFileUpload, Box } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   StatusLayout,
   FileUploadContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -11,7 +11,7 @@ import {
 const FileUpload = () => {
   return (
     <StatusLayout>
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
           Senda inn gögn
         </Text>
@@ -31,8 +31,8 @@ const FileUpload = () => {
             onRetry={() => {}}
           />
         </FileUploadContainer>
-      </FormContentContainer>
-      <FormFooter
+      </ContentContainer>
+      <Footer
         previousUrl="/stada"
         prevButtonText="Til baka"
         nextButtonText="Senda gögn"

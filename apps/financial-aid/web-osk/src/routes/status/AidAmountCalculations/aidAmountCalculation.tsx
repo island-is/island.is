@@ -3,8 +3,8 @@ import { Text, LoadingDots } from '@island.is/island-ui/core'
 
 import {
   Estimation,
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   StatusLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 
@@ -33,7 +33,7 @@ const AidAmountCalculations = () => {
 
   return (
     <StatusLayout>
-      <FormContentContainer>
+      <ContentContainer>
         {data && (
           <Estimation
             homeCircumstances={data?.application.homeCircumstances}
@@ -52,8 +52,8 @@ const AidAmountCalculations = () => {
           />
         )}
         {loading && <LoadingDots />}
-      </FormContentContainer>
-      <FormFooter
+      </ContentContainer>
+      <Footer
         previousUrl="/stada"
         prevButtonText="Til baka"
         hideNextButton={true}

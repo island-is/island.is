@@ -3,8 +3,8 @@ import { Text, InputFileUpload } from '@island.is/island-ui/core'
 
 import {
   FileUploadContainer,
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
@@ -48,7 +48,7 @@ const IncomeFilesForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Tekjugögn
         </Text>
@@ -72,9 +72,9 @@ const IncomeFilesForm = () => {
             onRetry={onRetry}
           />
         </FileUploadContainer>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         previousUrl={navigation?.prevUrl}
         nextButtonText={
           files.length > 0 ? 'Halda áfram' : 'Skila gögnum seinna'

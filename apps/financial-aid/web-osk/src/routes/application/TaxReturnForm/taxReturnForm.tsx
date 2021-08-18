@@ -8,8 +8,8 @@ import {
 
 import {
   FileUploadContainer,
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
@@ -54,7 +54,7 @@ const TaxReturnForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Skattframtal
         </Text>
@@ -108,9 +108,9 @@ const TaxReturnForm = () => {
             onRetry={onRetry}
           />
         </FileUploadContainer>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         previousUrl={navigation?.prevUrl}
         nextButtonText="Halda áfram"
         onNextButtonClick={() => errorCheck()}

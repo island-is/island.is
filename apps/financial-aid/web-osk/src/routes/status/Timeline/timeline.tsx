@@ -2,8 +2,8 @@ import React, { useContext } from 'react'
 import { Text, FormStepper } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   StatusLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { ApplicationEvent, getState } from '@island.is/financial-aid/shared'
@@ -30,7 +30,7 @@ const Timeline = () => {
 
   return (
     <StatusLayout>
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
           Staða umsóknar
         </Text>
@@ -46,8 +46,8 @@ const Timeline = () => {
             })}
           />
         )}
-      </FormContentContainer>
-      <FormFooter
+      </ContentContainer>
+      <Footer
         previousUrl="/stada"
         prevButtonText="Til baka"
         hideNextButton={true}

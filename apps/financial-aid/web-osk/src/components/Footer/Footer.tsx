@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Button, Icon, Text, ButtonProps } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
-import * as styles from './FormFooter.treat'
+import * as styles from './Footer.treat'
 import cn from 'classnames'
 
 interface Props {
@@ -22,14 +22,14 @@ interface Props {
   infoBoxText?: string
 }
 
-const FormFooter = (props: Props) => {
+const Footer = (props: Props) => {
   const router = useRouter()
 
   return (
     <>
       <Box className={styles.dividerContainer} />
 
-      <div className={styles.footerContainer}>
+      <div className={styles.container}>
         <Box
           display="flex"
           justifyContent="spaceBetween"
@@ -128,4 +128,4 @@ const FormFooter = (props: Props) => {
   )
 }
 
-export default FormFooter
+export default Footer

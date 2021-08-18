@@ -9,8 +9,8 @@ import {
 } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   StatusLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 
@@ -57,7 +57,7 @@ const MainPage = () => {
 
   return (
     <StatusLayout>
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[1, 1, 2]}>
           Aðstoðin þín
         </Text>
@@ -118,8 +118,8 @@ const MainPage = () => {
             </Bullet>
           </BulletList>
         </Box>
-      </FormContentContainer>
-      <FormFooter
+      </ContentContainer>
+      <Footer
         onPrevButtonClick={() => {}}
         prevButtonText="Skrá sig út"
         previousIsDestructive={true}
