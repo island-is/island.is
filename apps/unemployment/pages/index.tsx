@@ -39,7 +39,7 @@ export function Index() {
             />
           </Column>
           <Column>
-            <Button onClick={login} variant="primary">
+            <Button onClick={login} variant="primary" data-cy="login-btn">
               Innskrá
             </Button>
           </Column>
