@@ -21,9 +21,11 @@ const Steps: React.FC<Props> = ({ step }) => {
                 name: 'Samskipti'
             }, {
                 name: 'Atvinnulok'
-            }, {
-                name: 'Fylgigögn'
-            }, {
+            }, 
+            // {
+            //     name: 'Fylgigögn'
+            // }, 
+            {
                 name: 'Börn'
             }, {
                 name: 'Uppgjör'

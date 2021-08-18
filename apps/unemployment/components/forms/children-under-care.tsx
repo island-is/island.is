@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react'
-import { Stack, Box, Input, Button } from '@island.is/island-ui/core'
+import { Stack, Box, Input, Button, Columns, Column, Text } from '@island.is/island-ui/core'
 import {
   useForm,
   FormProvider,
@@ -49,86 +49,101 @@ const ChildrenUnderCare: React.FC<PropTypes> = ({
   )
 
   return (
-    <Stack space={3}>
-      <FormProvider {...hookFormData}>
-        <Box
-          component="form"
-          display="flex"
-          flexDirection="column"
-          justifyContent="spaceBetween"
-          height="full"
-          onSubmit={submit}
-        >
-          <Stack space={2}>
-            {fields.map((field, index) => (
-              <div
-                key={field.id}
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  flexDirection: 'row',
-                  gap: 16,
-                  paddingTop: (index != 0 && 8) || 0,
-                }}
-              >
-                <Controller
-                  name={`childrenUnderCare.${index}.name`}
-                  defaultValue={field.name}
-                  render={({ onChange, value }) => (
-                    <div style={{ minWidth: '320px', flexGrow: 1 }}>
-                      <Input
-                        name={`childrenUnderCare.${index}.name`}
-                        placeholder="Nafn"
-                        value={value}
-                        onChange={onChange}
-                        label="Nafn"
+    <Box paddingY={10}>
+
+      <Stack space={3}>
+        <FormProvider {...hookFormData}>
+          <Box
+            component="form"
+            display="flex"
+            flexDirection="column"
+            justifyContent="spaceBetween"
+            height="full"
+            onSubmit={submit}
+          >
+            <Stack space={2}>
+            <Text variant="h1" marginBottom={3}>Börn á framfæri</Text>
+
+              {fields.map((field, index) => (
+                <div
+                  key={field.id}
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    flexDirection: 'row',
+                    gap: 16,
+                    paddingTop: (index != 0 && 8) || 0,
+                  }}
+                >
+                  <Controller
+                    name={`childrenUnderCare.${index}.name`}
+                    defaultValue={field.name}
+                    render={({ onChange, value }) => (
+                      <div style={{ minWidth: '320px', flexGrow: 1 }}>
+                        <Input
+                          name={`childrenUnderCare.${index}.name`}
+                          placeholder="Nafn"
+                          value={value}
+                          onChange={onChange}
+                          label="Nafn"
                         // errorMessage="Nafn getur ekki innihaldið tölustafi"
                         // hasError={!ValidationUtils.validatenam(value)}
-                      />
-                    </div>
-                  )}
-                />
-                <Controller
-                  name={`childrenUnderCare.${index}.nationalId`}
-                  defaultValue={field.nationalId}
-                  render={({ onChange, value }) => (
-                    <div style={{ minWidth: '320px', flexGrow: 1 }}>
-                      <Input
-                        name={`childrenUnderCare.${index}.nationalId`}
-                        placeholder="Kennitala"
-                        value={value}
-                        onChange={onChange}
-                        label="Kennitala"
-                        errorMessage="Kennitala er röng"
-                        hasError={!ValidationUtils.validateNationalId(value)}
-                      />
-                    </div>
-                  )}
-                />
-              </div>
-            ))}
-            <Button
-              circle
-              colorScheme="default"
-              icon="add"
-              iconType="filled"
-              onClick={() => {
-                append({ name: '', nationalId: '', id: fields.length })
-              }}
-              preTextIconType="filled"
-              size="default"
-              title="Add Child"
-              type="button"
-              variant="primary"
-            />
-          </Stack>
-        </Box>
-        <Box paddingTop={2}>
-          <Button onClick={onBack}>Til baka</Button>
-          <Button onClick={submit}>Næsta skref</Button>
-        </Box>
-      </FormProvider>
-    </Stack>
+                        />
+                      </div>
+                    )}
+                  />
+                  <Controller
+                    name={`childrenUnderCare.${index}.nationalId`}
+                    defaultValue={field.nationalId}
+                    render={({ onChange, value }) => (
+                      <div style={{ minWidth: '320px', flexGrow: 1 }}>
+                        <Input
+                          name={`childrenUnderCare.${index}.nationalId`}
+                          placeholder="Kennitala"
+                          value={value}
+                          onChange={onChange}
+                          label="Kennitala"
+                          errorMessage="Kennitala er röng"
+                          hasError={!ValidationUtils.validateNationalId(value)}
+                        />
+                      </div>
+                    )}
+                  />
+                </div>
+              ))}
+              <Button
+                circle
+                colorScheme="default"
+                icon="add"
+                iconType="filled"
+                onClick={() => {
+                  append({ name: '', nationalId: '', id: fields.length })
+                }}
+                preTextIconType="filled"
+                size="default"
+                title="Add Child"
+                type="button"
+                variant="primary"
+              />
+            </Stack>
+          </Box>
+
+          <Box width="half" paddingTop={5} >
+            <Columns space={5}>
+              <Column>
+                <Button onClick={onBack} variant="ghost">Til baka</Button>
+
+              </Column>
+              <Column>
+                <Button onClick={submit}>Næsta skref</Button>
+
+              </Column>
+            </Columns>
+          </Box>
+        </FormProvider>
+      </Stack>
+    </Box>
+
   )
 }
 
