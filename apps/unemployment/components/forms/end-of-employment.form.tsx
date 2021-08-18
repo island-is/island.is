@@ -30,7 +30,9 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
   const hookFormData = useForm<ApplicationData>()
   const context = useContext(ServiceContext)
   const [reasons, setReasons] = useState<string[]>([])
-  const [circumStances, setCircumstances] = useState<string[]>([])
+  const [circumStances, setCircumstances] = useState<
+    { value: string; label: string }[]
+  >([])
 
   const submit = () => {
     const application = defaultValues
@@ -49,10 +51,16 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
   useEffect(() => {
     async function loadReasons() {
       if (reasons.length === 0) {
-        setReasons(await context.directorateOfLabourService.getReasonForUnEmployment())
+        setReasons(
+          await context.directorateOfLabourService.getReasonForUnEmployment(),
+        )
       }
       if (circumStances.length === 0) {
-        setCircumstances(await context.directorateOfLabourService.getCircumstancesForUnEmployment())
+        setCircumstances(
+          (
+            await context.directorateOfLabourService.getCircumstancesForUnEmployment()
+          ).map((x) => ({ label: x, value: x })),
+        )
       }
     }
     loadReasons()
