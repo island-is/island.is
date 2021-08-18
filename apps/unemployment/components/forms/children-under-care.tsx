@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
+import { Stack, Box, Input, Button } from '@island.is/island-ui/core'
 import {
-  Stack,
-  Box,
-  Text,
-  DatePicker,
-  Divider,
-  Input,
-  Button,
-} from '@island.is/island-ui/core'
-import { useForm, FormProvider, Controller } from 'react-hook-form'
+  useForm,
+  FormProvider,
+  Controller,
+  useFieldArray,
+} from 'react-hook-form'
 import { ApplicationData } from './../../entities/application-data'
 import ValidationUtils from './../../utils/validation.utils'
+import { UnemploymentStep } from '../../entities/enums/unemployment-step.enum'
+import { ApplicationService } from '../../services/application.service'
 
 interface PropTypes {
+  onBack: () => void
   onSubmit: (data) => void
   defaultValues: ApplicationData
 }
@@ -20,23 +20,35 @@ interface PropTypes {
 const ChildrenUnderCare: React.FC<PropTypes> = ({
   onSubmit,
   defaultValues,
+  onBack,
 }: PropTypes) => {
-  const hookFormData = useForm<ApplicationData>()
-  //  const [applicationData, setApplicationData] = useState<ApplicationData>(new ApplicationData)
+  const hookFormData = useForm<ApplicationData>({
+    defaultValues: defaultValues,
+  })
 
   const submit = () => {
-    const application = new ApplicationData()
-    application.initialInfo = hookFormData.getValues().initialInfo
-
+    // console.log('SAVING WITH HookFormData: ', hookFormData.getValues())
+    const application = defaultValues
+    if (!application.childrenUnderCare) {
+      application.childrenUnderCare = hookFormData.getValues().childrenUnderCare
+    }
+    // console.log('SAVING WITH application: ', application)
+    application.stepCompleted = UnemploymentStep.ChildrenUnderCare
+    ApplicationService.saveApplication(application)
     onSubmit(hookFormData.getValues())
   }
 
   useEffect(() => {
-    // setApplicationData(defaultValues)
     console.log(defaultValues)
   }, [defaultValues])
 
-  // console.log(defaultValues)
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control: hookFormData.control,
+      name: 'childrenUnderCare', // unique name for your Field Array
+      // keyName: 'nationalId', //, default to "id", you can change the key name
+    },
+  )
 
   return (
     <Stack space={3}>
@@ -47,47 +59,74 @@ const ChildrenUnderCare: React.FC<PropTypes> = ({
           flexDirection="column"
           justifyContent="spaceBetween"
           height="full"
+          onSubmit={submit}
         >
           <Stack space={2}>
-            <Controller
-              name="initialInfo.email"
-              defaultValue={defaultValues.initialInfo.email}
-              render={({ onChange, value }) => (
-                <Input
-                  name="initialInfo.email"
-                  placeholder="Netfang"
-                  value={value}
-                  onChange={onChange}
-                  label="Netfang"
-                  required={true}
-                  errorMessage="Nauðsynlegt er að fylla út netfang"
-                  hasError={!ValidationUtils.validateEmail(value)}
+            {fields.map((field, index) => (
+              <div
+                key={field.id}
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  flexDirection: 'row',
+                  gap: 16,
+                  paddingTop: (index != 0 && 8) || 0,
+                }}
+              >
+                <Controller
+                  name={`childrenUnderCare.${index}.name`}
+                  defaultValue={field.name}
+                  render={({ onChange, value }) => (
+                    <div style={{ minWidth: '320px', flexGrow: 1 }}>
+                      <Input
+                        name={`childrenUnderCare.${index}.name`}
+                        placeholder="Nafn"
+                        value={value}
+                        onChange={onChange}
+                        label="Nafn"
+                        // errorMessage="Nafn getur ekki innihaldið tölustafi"
+                        // hasError={!ValidationUtils.validatenam(value)}
+                      />
+                    </div>
+                  )}
                 />
-              )}
-            />
-          </Stack>
-
-          <Stack space={2}>
-            <Divider weight="alternate" />
-            <Controller
-              name="initialInfo.mobile"
-              defaultValue={defaultValues.initialInfo.mobile}
-              render={({ onChange, value }) => (
-                <Input
-                  name="initialInfo.mobile"
-                  placeholder="Farsími"
-                  value={value}
-                  onChange={onChange}
-                  label="Farsími"
-                  required={true}
-                  errorMessage="Nauðsynlegt er að fylla út farsímanúmer"
-                  hasError={!ValidationUtils.validatePhoneNumber(value)}
+                <Controller
+                  name={`childrenUnderCare.${index}.nationalId`}
+                  defaultValue={field.nationalId}
+                  render={({ onChange, value }) => (
+                    <div style={{ minWidth: '320px', flexGrow: 1 }}>
+                      <Input
+                        name={`childrenUnderCare.${index}.nationalId`}
+                        placeholder="Kennitala"
+                        value={value}
+                        onChange={onChange}
+                        label="Kennitala"
+                        errorMessage="Kennitala er röng"
+                        hasError={!ValidationUtils.validateNationalId(value)}
+                      />
+                    </div>
+                  )}
                 />
-              )}
+              </div>
+            ))}
+            <Button
+              circle
+              colorScheme="default"
+              icon="add"
+              iconType="filled"
+              onClick={() => {
+                append({ name: '', nationalId: '', id: fields.length })
+              }}
+              preTextIconType="filled"
+              size="default"
+              title="Add Child"
+              type="button"
+              variant="primary"
             />
           </Stack>
         </Box>
         <Box paddingTop={2}>
+          <Button onClick={onBack}>Til baka</Button>
           <Button onClick={submit}>Næsta skref</Button>
         </Box>
       </FormProvider>
