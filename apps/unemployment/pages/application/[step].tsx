@@ -11,7 +11,7 @@ import ChildrenUnderCare from '../../components/forms/children-under-care'
 import EndOfEmploymentForm from './../../components/forms/end-of-employment.form'
 import { stepState } from "../../utils/state";
 import { useRecoilState } from "recoil";
-import Calculations from './../../components/windows/calculations'
+//import Calculations from './../../components/windows/calculations'
 import { assign, cloneDeep } from 'lodash'
 
 const Index: React.FC = () => {
@@ -86,8 +86,8 @@ const Index: React.FC = () => {
             onSubmit={handleSaved}
           />
         )
-      case UnemploymentStep.Calculation:
-        return <Calculations defaultValues={applicationData}></Calculations>
+      // case UnemploymentStep.Calculation:
+      //   return <Calculations defaultValues={applicationData}></Calculations>
       default: {
         return (
           <PersonalInformationForm
