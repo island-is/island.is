@@ -9,6 +9,8 @@ import { InitialInfo } from './../../entities/initial-info'
 import { UserService } from './../../services/user.service'
 import ChildrenUnderCare from '../../components/forms/children-under-care'
 import EndOfEmploymentForm from './../../components/forms/end-of-employment.form'
+import { stepState } from "../../utils/state";
+import { useRecoilState } from "recoil";
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -17,9 +19,11 @@ const Index: React.FC = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const [applicationData, setApplicationData] = useState<ApplicationData>()
+  const [, setSteps] = useRecoilState(stepState);
 
   /** Load the client and set the step from query if there is one */
   useEffect(() => {
+    setSteps(step)
     let application = getApplication()
     if (!application) {
       application = ApplicationData.getFromUser(UserService.getUser())
@@ -64,6 +68,7 @@ const Index: React.FC = () => {
   }
 
   if (applicationData) {
+    
     switch (step) {
       case UnemploymentStep.PersonalInformation:
         return (
