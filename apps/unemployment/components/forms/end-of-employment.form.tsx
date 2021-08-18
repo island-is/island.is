@@ -121,7 +121,7 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
                         placeholder="Veldu ástæðu"
                         value={circumStances.find(
                           (option) =>
-                            option.value ==
+                            option.value ===
                             defaultValues?.endOfEmployment?.howUnemploymentCameAbout
                         )}
                         onChange={onChange}
@@ -151,7 +151,7 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
                         placeholder="Veldu ástæðu"
                         defaultValue={reasons
                           .map((x) => ({ label: x, value: x }))
-                          .find((option) => option.value === value.value)}
+                          .find((option) => option.value === defaultValues?.endOfEmployment?.reasonForUnemployment)}
                         onChange={onChange}
                       />
                     )
