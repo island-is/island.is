@@ -144,7 +144,7 @@ export interface User {
   service: 'osk' | 'veita'
   hasAppliedForPeriod?: boolean
   municipalityId?: 'hfj'
-  role?: StaffRoles
+  // role?: StaffRoles
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }

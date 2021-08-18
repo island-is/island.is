@@ -28,6 +28,8 @@ import type { User, StaffRoles } from '@island.is/financial-aid/shared'
 
 // Allows only staff
 const staffRule = 'veita'
+// Allows only staff
+const municipalityRule = 'hfj'
 
 @Controller('api')
 @ApiTags('applications')
