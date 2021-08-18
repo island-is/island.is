@@ -9,6 +9,8 @@ import { InitialInfo } from './../../entities/initial-info'
 import { UserService } from './../../services/user.service'
 import ChildrenUnderCare from '../../components/forms/children-under-care'
 import EndOfEmploymentForm from './../../components/forms/end-of-employment.form'
+import { stepState } from "../../utils/state";
+import { useRecoilState } from "recoil";
 import Calculations from './../../components/windows/calculations'
 import { assign, cloneDeep } from 'lodash'
 
@@ -19,9 +21,12 @@ const Index: React.FC = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const [applicationData, setApplicationData] = useState<ApplicationData>()
+  const [, setSteps] = useRecoilState(stepState);
 
   /** Load the client and set the step from query if there is one */
   useEffect(() => {
+  
+
     let application = ApplicationService.getApplication()
     if (!application) {
       application = ApplicationData.getFromUser(UserService.getUser())
@@ -36,6 +41,7 @@ const Index: React.FC = () => {
 
   const handleNext = () => {
     setStep(step + 1)
+    setSteps(step + 1)
   }
 
   const handleStepChange = (step: UnemploymentStep) => {
@@ -44,20 +50,17 @@ const Index: React.FC = () => {
 
   const handleBack = () => {
     setStep(step - 1)
+    setSteps(step - 1)
   }
 
   const handleSaved = (application: any) => {
-    if (step === UnemploymentStep.ChildrenUnderCare) {
-      setStep(UnemploymentStep.Calculation)
-      return
-    }
     console.log('saved')
     console.log(application)
     setApplicationData(cloneDeep(assign(applicationData, application)))
     handleNext()
   }
-
   if (applicationData) {
+    
     switch (step) {
       case UnemploymentStep.PersonalInformation:
         return (
