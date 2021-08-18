@@ -4,4 +4,5 @@ export enum UnemploymentStep {
   ChildrenUnderCare = 3,
   Income = 4,
   TaxInformation = 5,
+  Calculation = 6,
 }

@@ -9,6 +9,7 @@ import { InitialInfo } from './../../entities/initial-info'
 import { UserService } from './../../services/user.service'
 import ChildrenUnderCare from '../../components/forms/children-under-care'
 import EndOfEmploymentForm from './../../components/forms/end-of-employment.form'
+import Calculations from './../../components/windows/calculations'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -57,6 +58,10 @@ const Index: React.FC = () => {
   }
 
   const handleSaved = (application: any) => {
+    if (step === UnemploymentStep.ChildrenUnderCare) {
+      setStep(UnemploymentStep.Calculation)
+      return
+    }
     console.log('saved')
     console.log(application)
     getApplication()
@@ -81,8 +86,6 @@ const Index: React.FC = () => {
               onSubmit={handleSaved}
             ></EndOfEmploymentForm>
           )
-      case UnemploymentStep.Income:
-        return <div>2</div>
       case UnemploymentStep.ChildrenUnderCare:
         return (
           <ChildrenUnderCare
@@ -90,6 +93,8 @@ const Index: React.FC = () => {
             onSubmit={handleSaved}
           />
         )
+      case UnemploymentStep.Calculation:
+        return <Calculations defaultValues={applicationData}></Calculations>
       default: {
         return <div></div>
       }
