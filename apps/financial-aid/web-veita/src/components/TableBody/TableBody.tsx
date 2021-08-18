@@ -71,7 +71,7 @@ const TableBody = ({ application, index }: PageProps) => {
         >
           <Text>
             {translateMonth(
-              parseInt(format(new Date(application.created), 'M')),
+              parseInt(format(new Date(application.created), 'MM')),
             )}
           </Text>
         </td>

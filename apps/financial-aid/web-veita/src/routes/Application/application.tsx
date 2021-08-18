@@ -27,6 +27,7 @@ import {
   getState,
   Municipality,
   aidCalculator,
+  translateMonth,
   calculateAidFinalAmount,
 } from '@island.is/financial-aid/shared'
 
@@ -35,7 +36,6 @@ import format from 'date-fns/format'
 import {
   calcDifferenceInDate,
   calcAge,
-  translateMonth,
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
