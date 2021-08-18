@@ -1,5 +1,4 @@
-export class InitialInfo {
-  dateFrom: Date
+export class PersonalInfo {
   name: string
   address: string
   postalCode: string

@@ -5,20 +5,19 @@ import PersonalInformationForm from '../../components/forms/personal-information
 import { UserContext } from './../../components/util/UserProvider'
 import { ApplicationService } from './../../services/application.service'
 import { ApplicationData } from './../../entities/application-data'
-import { InitialInfo } from './../../entities/initial-info'
 import { UserService } from './../../services/user.service'
 import ChildrenUnderCare from '../../components/forms/children-under-care'
 import EndOfEmploymentForm from './../../components/forms/end-of-employment.form'
 import { stepState } from "../../utils/state";
 import { useRecoilState } from "recoil";
-//import Calculations from './../../components/windows/calculations'
 import { assign, cloneDeep } from 'lodash'
+import Calculations from './../../components/windows/calculations'
+import ApplicationReceived from './../../components/windows/application-received'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
   const stepQuery = parseInt(query.step as string)
   const [step, setStep] = useState(1)
-  const router = useRouter()
   const { user } = useContext(UserContext)
   const [applicationData, setApplicationData] = useState<ApplicationData>()
   const [, setSteps] = useRecoilState(stepState);
@@ -44,18 +43,12 @@ const Index: React.FC = () => {
     setSteps(step + 1)
   }
 
-  const handleStepChange = (step: UnemploymentStep) => {
-    setStep(step)
-  }
-
   const handleBack = () => {
     setStep(step - 1)
     setSteps(step - 1)
   }
 
   const handleSaved = (application: any) => {
-    console.log('saved')
-    console.log(application)
     setApplicationData(cloneDeep(assign(applicationData, application)))
     handleNext()
   }
@@ -86,8 +79,10 @@ const Index: React.FC = () => {
             onSubmit={handleSaved}
           />
         )
-      // case UnemploymentStep.Calculation:
-      //   return <Calculations defaultValues={applicationData}></Calculations>
+      case UnemploymentStep.Calculation:
+        return <Calculations defaultValues={applicationData} onSubmit={handleSaved}></Calculations>
+      case UnemploymentStep.ApplicationSent:
+        return <ApplicationReceived defaultValues={applicationData}></ApplicationReceived>
       default: {
         return (
           <PersonalInformationForm

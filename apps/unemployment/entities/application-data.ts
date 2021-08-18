@@ -1,10 +1,10 @@
 import { EndOfEmployment } from './end-of-employment'
 import { ApplicationStatus } from './enums/application-status.enum'
-import { InitialInfo } from './initial-info'
+import { PersonalInfo } from './personal-info'
 import { User } from './user'
 
 export class ApplicationData {
-  initialInfo: InitialInfo
+  initialInfo: PersonalInfo
   status: ApplicationStatus
   stepCompleted: number
   endOfEmployment: EndOfEmployment
@@ -13,7 +13,7 @@ export class ApplicationData {
   static getFromUser(user: User) {
     console.log(user)
     const obj = new ApplicationData()
-    obj.initialInfo = new InitialInfo()
+    obj.initialInfo = new PersonalInfo()
     obj.initialInfo.city = 'kdkdk'
     obj.initialInfo.address = user.address
     obj.initialInfo.city = user.city

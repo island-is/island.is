@@ -13,6 +13,7 @@ export interface CalculationParameters {
 }
 
 export function makeCalculations(params: CalculationParameters) {
+  console.log(params.DateOfCurrentUnemploymentInterval)
   const constants = {
     BaseUnemploymentBenefitAmount: 307430, // GrU
     MaximumUnemploymentBenefitSalaryConnected: 472835, // MaxTekjTeng
@@ -65,6 +66,9 @@ export function makeCalculations(params: CalculationParameters) {
   } else {
     NumberOfMonthsWithBenefitSalaryConnected = 3
   }
+
+  console.log(params.DateOfCurrentUnemploymentInterval)
+  console.log(params.DateOfFirstUnemploymentPayment)
 
   MonthsBetween =
     params.DateOfCurrentUnemploymentInterval.getMonth() -
