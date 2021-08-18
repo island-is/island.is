@@ -75,8 +75,6 @@ const Index: React.FC = () => {
               onSubmit={handleSaved}
             ></EndOfEmploymentForm>
           )
-      case UnemploymentStep.Income:
-        return <div>2</div>
       case UnemploymentStep.ChildrenUnderCare:
         return (
           <ChildrenUnderCare
@@ -88,7 +86,13 @@ const Index: React.FC = () => {
       case UnemploymentStep.Calculation:
         return <Calculations defaultValues={applicationData}></Calculations>
       default: {
-        return <div></div>
+        return (
+          <PersonalInformationForm
+            onBack={handleBack}
+            defaultValues={applicationData}
+            onSubmit={handleSaved}
+          ></PersonalInformationForm>
+        )
       }
     }
   }
