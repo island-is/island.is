@@ -29,10 +29,7 @@ const ChildrenUnderCare: React.FC<PropTypes> = ({
   const submit = () => {
     // console.log('SAVING WITH HookFormData: ', hookFormData.getValues())
     const application = defaultValues
-    if (!application.childrenUnderCare) {
-      console.log(hookFormData.getValues().childrenUnderCare)
-      application.childrenUnderCare = hookFormData.getValues().childrenUnderCare
-    }
+    application.childrenUnderCare = hookFormData.getValues().childrenUnderCare
     // console.log('SAVING WITH application: ', application)
     application.stepCompleted = UnemploymentStep.ChildrenUnderCare
     ApplicationService.saveApplication(application)

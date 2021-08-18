@@ -4,11 +4,26 @@
 
 .calculations {
   display: flex;
+  gap: 1em;
 }
 
 .calculations__box {
   display: flex;
-  padding: 20px 20px
+  padding: 20px 20px;
+  flex-direction: column;
+  border: solid 1px gray;
+}
 
+.calculation__box__month {
+  font-weight: 500;
+  padding: 2px;
+}
+
+.calculation__box__value {
+  padding: 2px;
+}
+
+.calculation__button__wrapper {
+  display: block;
 }
 
