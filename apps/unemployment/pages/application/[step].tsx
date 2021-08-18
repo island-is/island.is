@@ -25,7 +25,7 @@ const Index: React.FC = () => {
 
   /** Load the client and set the step from query if there is one */
   useEffect(() => {
-  
+    setSteps(stepQuery)
 
     let application = ApplicationService.getApplication()
     if (!application) {

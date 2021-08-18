@@ -11,16 +11,15 @@ import { useRouter } from 'next/router'
 const ContentWrapper: React.FC = ({ children }) => {
   const router = useRouter()
   return (
-    <div style={{ height: '80vh' }}>
       <GridContainer>
         <GridRow>
           {router?.pathname !== "/" ? (
             <>
-              <GridColumn span={['12/12', '12/12', '7/12', '8/12', '9/12']}>
+              <GridColumn span={['12/12', '12/12', '8/12', '8/12', '8/12']}>
                 {children}
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '5/12', '4/12', '3/12']} >
-                <Box marginLeft={10} marginTop={2}>
+              <GridColumn span={['12/12', '12/12', '4/12', '4/12', '4/12']}>
+                <Box paddingLeft={8} paddingTop={2} paddingBottom={2} height="full"  background="blue100">
                   <Steps />
                 </Box>
               </GridColumn>
@@ -32,7 +31,6 @@ const ContentWrapper: React.FC = ({ children }) => {
             )}
         </GridRow>
       </GridContainer>
-    </div>
   )
 }
 

@@ -26,7 +26,7 @@ export function Index() {
   }
 
   return (
-    <Box paddingY={30}>
+    <Box paddingY={30} height="full">
       <Text variant="h1" marginBottom={3}>Velkomin/n á vef atvinnuleysisbóta.</Text>
       <Text marginBottom={6}>Vinsamlegast skráðu þig inn rafrænt til að halda áfram</Text>
       <Box width="half">
