@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Stack, Box, Input, Button } from '@island.is/island-ui/core'
 import {
   useForm,
@@ -8,8 +8,11 @@ import {
 } from 'react-hook-form'
 import { ApplicationData } from './../../entities/application-data'
 import ValidationUtils from './../../utils/validation.utils'
+import { UnemploymentStep } from '../../entities/enums/unemployment-step.enum'
+import { ApplicationService } from '../../services/application.service'
 
 interface PropTypes {
+  onBack: () => void
   onSubmit: (data) => void
   defaultValues: ApplicationData
 }
@@ -17,13 +20,21 @@ interface PropTypes {
 const ChildrenUnderCare: React.FC<PropTypes> = ({
   onSubmit,
   defaultValues,
+  onBack,
 }: PropTypes) => {
-  const hookFormData = useForm<ApplicationData>()
+  const hookFormData = useForm<ApplicationData>({
+    defaultValues: defaultValues,
+  })
 
   const submit = () => {
-    const application = new ApplicationData()
-    application.initialInfo = hookFormData.getValues().initialInfo
-
+    // console.log('SAVING WITH HookFormData: ', hookFormData.getValues())
+    const application = defaultValues
+    if (!application.childrenUnderCare) {
+      application.childrenUnderCare = hookFormData.getValues().childrenUnderCare
+    }
+    // console.log('SAVING WITH application: ', application)
+    application.stepCompleted = UnemploymentStep.ChildrenUnderCare
+    ApplicationService.saveApplication(application)
     onSubmit(hookFormData.getValues())
   }
 
@@ -34,7 +45,7 @@ const ChildrenUnderCare: React.FC<PropTypes> = ({
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
       control: hookFormData.control,
-      name: 'initialInfo.childrenUnderCare', // unique name for your Field Array
+      name: 'childrenUnderCare', // unique name for your Field Array
       // keyName: 'nationalId', //, default to "id", you can change the key name
     },
   )
@@ -48,6 +59,7 @@ const ChildrenUnderCare: React.FC<PropTypes> = ({
           flexDirection="column"
           justifyContent="spaceBetween"
           height="full"
+          onSubmit={submit}
         >
           <Stack space={2}>
             {fields.map((field, index) => (
@@ -62,12 +74,12 @@ const ChildrenUnderCare: React.FC<PropTypes> = ({
                 }}
               >
                 <Controller
-                  name={`initialInfo.childrenUnderCare.${index}.name`}
+                  name={`childrenUnderCare.${index}.name`}
                   defaultValue={field.name}
                   render={({ onChange, value }) => (
                     <div style={{ minWidth: '320px', flexGrow: 1 }}>
                       <Input
-                        name={`initialInfo.childrenUnderCare.${index}.name`}
+                        name={`childrenUnderCare.${index}.name`}
                         placeholder="Nafn"
                         value={value}
                         onChange={onChange}
@@ -79,12 +91,12 @@ const ChildrenUnderCare: React.FC<PropTypes> = ({
                   )}
                 />
                 <Controller
-                  name={`initialInfo.childrenUnderCare.${index}.nationalId`}
+                  name={`childrenUnderCare.${index}.nationalId`}
                   defaultValue={field.nationalId}
                   render={({ onChange, value }) => (
                     <div style={{ minWidth: '320px', flexGrow: 1 }}>
                       <Input
-                        name={`initialInfo.childrenUnderCare.${index}.nationalId`}
+                        name={`childrenUnderCare.${index}.nationalId`}
                         placeholder="Kennitala"
                         value={value}
                         onChange={onChange}
@@ -114,6 +126,7 @@ const ChildrenUnderCare: React.FC<PropTypes> = ({
           </Stack>
         </Box>
         <Box paddingTop={2}>
+          <Button onClick={onBack}>Til baka</Button>
           <Button onClick={submit}>Næsta skref</Button>
         </Box>
       </FormProvider>
