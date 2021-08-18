@@ -5,7 +5,6 @@ import PersonalInformationForm from '../../components/forms/personal-information
 import { UserContext } from './../../components/util/UserProvider'
 import { ApplicationService } from './../../services/application.service'
 import { ApplicationData } from './../../entities/application-data'
-import { InitialInfo } from './../../entities/initial-info'
 import { UserService } from './../../services/user.service'
 import ChildrenUnderCare from '../../components/forms/children-under-care'
 import EndOfEmploymentForm from './../../components/forms/end-of-employment.form'

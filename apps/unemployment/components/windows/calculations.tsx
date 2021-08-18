@@ -14,8 +14,7 @@ import { IcelandicRevenueService } from './../../services/icelandic-revenue-serv
 
 interface PropTypes {
     defaultValues: ApplicationData
-
-  }
+}
 
 
 const Calculations: React.FC<PropTypes> = ({
