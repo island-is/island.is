@@ -107,7 +107,7 @@ const PersonalInformationForm: React.FC<PropTypes> = ({
           </Box>
           <br/>
           <Box paddingTop={2}>
-            <Button onClick={submit} width="fluid">
+            <Button onClick={submit} width="fluid" data-cy="personalinfo-next-step-btn">
               Næsta skref
               </Button>
           </Box>
