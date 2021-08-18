@@ -28,6 +28,11 @@ import type { User, StaffRoles } from '@island.is/financial-aid/shared'
 
 // Allows only staff
 const staffRule = 'veita'
+
+const test = {
+  service: 'veita',
+  muni: 'hfj',
+}
 // Allows only staff
 const municipalityRule = 'hfj'
 

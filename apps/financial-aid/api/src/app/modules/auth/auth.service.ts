@@ -47,6 +47,13 @@ export class AuthService {
         folder: uuid(),
         service: 'veita',
       },
+      '0000000003': {
+        nationalId: '0000000003',
+        name: 'Klára Frillason',
+        phoneNumber: '9999999',
+        folder: uuid(),
+        service: 'veita',
+      },
     }
 
     if (nationalId in fakeUsers) {
