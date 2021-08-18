@@ -47,7 +47,7 @@ const PersonalInformationForm: React.FC<PropTypes> = ({
 
 
   return (
-    <Box paddingY={30}>
+    <Box paddingY={10}>
       <Stack space={3}>
         <FormProvider {...hookFormData}>
           <Box

@@ -12,6 +12,7 @@ interface Props {
 
 const Steps: React.FC<Props> = ({ step }) => {
     // TODO: List up steps and set the active step
+    console.log(step)
     const [steps,] = useRecoilState(stepState);
     console.log(steps)
     return <div className="step active">
@@ -20,9 +21,11 @@ const Steps: React.FC<Props> = ({ step }) => {
                 name: 'Samskipti'
             }, {
                 name: 'Atvinnulok'
-            }, {
-                name: 'Fylgigögn'
-            }, {
+            }, 
+            // {
+            //     name: 'Fylgigögn'
+            // }, 
+            {
                 name: 'Börn'
             }, {
                 name: 'Uppgjör'
