@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useMemo } from 'react'
+import React, { ReactNode, useMemo } from 'react'
 import { Text, Box, LoadingDots, Divider } from '@island.is/island-ui/core'
 
 import {
@@ -23,7 +23,6 @@ interface Props {
   aboutText: ReactNode
   homeCircumstances?: HomeCircumstances
   usePersonalTaxCredit?: boolean
-  // disbursementMonth: string TODO
 }
 
 const Estimation = ({
@@ -108,7 +107,7 @@ const Estimation = ({
         <>
           {calculations.map((item, index) => {
             return (
-              <>
+              <span key={`calculations-` + index}>
                 <Divider />
                 <Box
                   display="flex"
@@ -122,7 +121,7 @@ const Estimation = ({
                   <Text variant="small">{item.title}</Text>
                   <Text>{item.calculation}</Text>
                 </Box>
-              </>
+              </span>
             )
           })}
 

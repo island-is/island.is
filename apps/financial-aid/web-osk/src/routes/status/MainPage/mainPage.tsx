@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useMemo } from 'react'
 import {
   Text,
   ActionCard,
@@ -17,7 +17,11 @@ import {
 import { useRouter } from 'next/router'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
-import { getState, translateMonth } from '@island.is/financial-aid/shared'
+import {
+  ApplicationState,
+  getState,
+  translateMonth,
+} from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
 
@@ -28,7 +32,7 @@ const MainPage = () => {
 
   const currentState = useMemo(() => {
     if (user?.activeApplication) {
-      return getState[user.activeApplication.state].toLowerCase()
+      return user.activeApplication.state
     }
   }, [user])
 
@@ -38,7 +42,9 @@ const MainPage = () => {
   const mainInfo = [
     {
       heading: 'Staða umsóknar',
-      text: `Umsókn móttekin og staðan er ${currentState}`,
+      text: `Umsókn móttekin og staðan er ${
+        currentState && getState[currentState].toLowerCase()
+      }`,
       label: 'Sjá nánar',
       link: 'timalina',
     },
@@ -48,13 +54,23 @@ const MainPage = () => {
       label: 'Sjá nánar',
       link: 'utreikningur',
     },
-    {
-      heading: 'Senda inn gögn',
-      text:
-        'Þú getur alltaf sent okkur gögn sem þú telur hjálpa umsókninni, t.d. launagögn',
-      label: 'Hlaða upp gögnum',
-      link: 'gogn',
-    },
+    currentState === ApplicationState.DATANEEDED
+      ? {
+          heading: 'Vantar gögn',
+          text:
+            'Við þurfum að fá gögn frá þér áður en við getum haldið áfram með umsóknina.',
+          label: 'Hlaða upp gögnum',
+          link: 'gogn',
+          bg: true,
+        }
+      : {
+          heading: 'Senda inn gögn',
+          text:
+            'Þú getur alltaf sent okkur gögn sem þú telur hjálpa umsókninni, t.d. launagögn',
+          label: 'Hlaða upp gögnum',
+          link: 'gogn',
+          bg: false,
+        },
   ]
 
   return (
@@ -80,6 +96,7 @@ const MainPage = () => {
                     router.push('/stada/' + item.link)
                   },
                 }}
+                backgroundColor={item.bg ? 'blue' : 'white'}
               />
             </Box>
           )

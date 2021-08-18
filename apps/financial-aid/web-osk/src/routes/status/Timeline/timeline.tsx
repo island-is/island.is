@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Text, FormStepper } from '@island.is/island-ui/core'
+import { Text, FormStepper, LoadingDots } from '@island.is/island-ui/core'
 
 import {
   ContentContainer,
@@ -12,6 +12,8 @@ import { UserContext } from '@island.is/financial-aid-web/osk/src/components/Use
 import { useQuery } from '@apollo/client'
 import { GetApplicationEventQuery } from '@island.is/financial-aid-web/oskgraphql'
 
+import format from 'date-fns/format'
+
 interface ApplicationEventData {
   applicationEvents: ApplicationEvent[]
 }
@@ -22,7 +24,7 @@ const Timeline = () => {
   const { data, error, loading } = useQuery<ApplicationEventData>(
     GetApplicationEventQuery,
     {
-      variables: { input: { id: user?.activeApplication } },
+      variables: { input: { id: user?.activeApplication?.id } },
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
@@ -42,10 +44,16 @@ const Timeline = () => {
           <FormStepper
             activeSection={data?.applicationEvents.length - 1}
             sections={data?.applicationEvents.map((event) => {
-              return { name: getState[event.state] }
+              return {
+                name: `${getState[event.state]} – ${format(
+                  new Date(event.created),
+                  'dd.MM.yyyy',
+                )}  `,
+              }
             })}
           />
         )}
+        {loading && <LoadingDots />}
       </ContentContainer>
       <Footer
         previousUrl="/stada"
