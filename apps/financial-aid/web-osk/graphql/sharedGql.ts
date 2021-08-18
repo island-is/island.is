@@ -71,7 +71,12 @@ export const CurrentUserQuery = gql`
       name
       phoneNumber
       hasAppliedForPeriod
-      activeApplication
+      activeApplication {
+        id
+        state
+        homeCircumstances
+        usePersonalTaxCredit
+      }
     }
   }
 `

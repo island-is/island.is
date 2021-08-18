@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import {
   Text,
   ActionCard,
@@ -17,18 +17,20 @@ import {
 import { useRouter } from 'next/router'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
-import { translateMonth } from '@island.is/financial-aid/shared'
+import { getState, translateMonth } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
-
-// import * as styles from '@island.is/financial-aid/shared/src/styles.css'
 
 const MainPage = () => {
   const router = useRouter()
 
   const { user } = useContext(UserContext)
 
-  const [accordionIndex, setAccordionIndex] = useState(0)
+  const currentState = useMemo(() => {
+    if (user?.activeApplication) {
+      return getState[user.activeApplication.state].toLowerCase()
+    }
+  }, [user])
 
   const currentMonth = parseInt(format(new Date(), 'MM'))
   const currentYear = format(new Date(), 'yyyy')
@@ -36,7 +38,7 @@ const MainPage = () => {
   const mainInfo = [
     {
       heading: 'Staða umsóknar',
-      text: `Umsókn móttekin og er xx`,
+      text: `Umsókn móttekin og staðan er ${currentState}`,
       label: 'Sjá nánar',
       link: 'timalina',
     },
@@ -68,20 +70,18 @@ const MainPage = () => {
 
         {mainInfo.map((item, index) => {
           return (
-            <>
-              <Box marginBottom={[2, 2, 3]}>
-                <ActionCard
-                  heading={item.heading}
-                  text={item.text}
-                  cta={{
-                    label: item.label,
-                    onClick: () => {
-                      router.push('/stada/' + item.link)
-                    },
-                  }}
-                />
-              </Box>
-            </>
+            <Box marginBottom={[2, 2, 3]} key={'actionCards-' + index}>
+              <ActionCard
+                heading={item.heading}
+                text={item.text}
+                cta={{
+                  label: item.label,
+                  onClick: () => {
+                    router.push('/stada/' + item.link)
+                  },
+                }}
+              />
+            </Box>
           )
         })}
 

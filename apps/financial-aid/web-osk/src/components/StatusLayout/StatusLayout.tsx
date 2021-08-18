@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useEffect } from 'react'
+import React, { ReactNode, useContext, useEffect, useMemo } from 'react'
 import { Box, GridContainer, Text } from '@island.is/island-ui/core'
 
 import * as styles from './StatusLayout.treat'
@@ -10,7 +10,7 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
-import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import { ApplicationState, getState } from '@island.is/financial-aid/shared'
 
 interface Props {
   children: ReactNode
@@ -19,7 +19,11 @@ interface Props {
 const StatusLayout = ({ children }: Props) => {
   const { isAuthenticated, user } = useContext(UserContext)
 
-  const { form } = useContext(FormContext)
+  const currentState = useMemo(() => {
+    if (user?.activeApplication) {
+      return getState[user.activeApplication.state]
+    }
+  }, [user])
 
   useEffect(() => {
     document.title = 'Fjárhagsaðstoð – Staða'
@@ -53,7 +57,7 @@ const StatusLayout = ({ children }: Props) => {
             </Box>
             <Box className={styles.sidebarContent}>
               <Box>
-                <div className={`tags approve`}>bla</div>
+                <div className={`tags approve`}>Staða: {currentState}</div>
                 <Text as="h3" variant="h3" marginBottom={[1, 1, 2]}>
                   Umsókn um fjárhagsaðstoð hjá Hafnarfjarðarbæ
                 </Text>

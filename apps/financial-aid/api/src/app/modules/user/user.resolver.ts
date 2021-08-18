@@ -37,21 +37,18 @@ export class UserResolver {
   @ResolveField('hasAppliedForPeriod', () => boolean, { nullable: true })
   async hasAppliedForPeriod(@Parent() user: User): Promise<boolean> {
     const app = await this.userService.checkUserHistory(user.nationalId)
-    console.log(app, 'app')
-
     if (app != null) {
       return true
     }
     return false
   }
 
-  @ResolveField('activeApplication')
-  async activeApplication(@Parent() user: User): Promise<string | undefined> {
+  @ResolveField('activeApplication', () => ApplicationModel)
+  async activeApplication(
+    @Parent() user: User,
+  ): Promise<ApplicationModel | null> {
     const app = await this.userService.checkUserHistory(user.nationalId)
 
-    if (app != null) {
-      return app?.id
-    }
-    return undefined
+    return app
   }
 }
