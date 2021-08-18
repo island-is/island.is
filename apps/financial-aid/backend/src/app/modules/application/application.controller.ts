@@ -32,17 +32,17 @@ export class ApplicationController {
   @UseGuards(TokenGuard)
   @Get('me')
   @ApiOkResponse({
-    // type: ApplicationModel,
+    type: ApplicationModel,
     description:
       'Checks whether user has applied before and if it is the same month',
   })
   async getHasUserAppliedForCurrentMonth(
     @Query('nationalId') nationalId: string,
   ) {
-    const hasApplied = await this.applicationService.hasUserAppliedForCurrentMonth(
+    const application = await this.applicationService.hasUserAppliedForCurrentMonth(
       nationalId,
     )
-    return hasApplied
+    return application
   }
 
   @UseGuards(JwtAuthGuard)

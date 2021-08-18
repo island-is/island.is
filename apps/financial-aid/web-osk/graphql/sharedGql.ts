@@ -47,15 +47,6 @@ export const GetApplicationEventQuery = gql`
   }
 `
 
-export const GetCurrentUserQuery = gql`
-  query currentUserQuery {
-    currentUser {
-      name
-      hasAppliedForPeriod
-    }
-  }
-`
-
 export const CreateSignedUrlMutation = gql`
   mutation getSignedUrl($input: GetSignedUrlInput!) {
     getSignedUrl(input: $input) {
@@ -71,13 +62,22 @@ export const CurrentUserQuery = gql`
       nationalId
       name
       phoneNumber
-      hasAppliedForPeriod
-      activeApplication {
-        id
-        state
-        homeCircumstances
-        usePersonalTaxCredit
-      }
     }
   }
 `
+// export const CurrentUserQuery = gql`
+//   query CurrentUserQuery {
+//     currentUser {
+//       nationalId
+//       name
+//       phoneNumber
+//       hasAppliedForPeriod
+//       activeApplication {
+//         id
+//         state
+//         homeCircumstances
+//         usePersonalTaxCredit
+//       }
+//     }
+//   }
+// `

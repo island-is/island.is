@@ -48,7 +48,6 @@ export class UserResolver {
     @Parent() user: User,
   ): Promise<ApplicationModel | null> {
     const app = await this.userService.checkUserHistory(user.nationalId)
-
     return app
   }
 }
