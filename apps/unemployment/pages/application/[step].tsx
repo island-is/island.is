@@ -10,6 +10,7 @@ import { UserService } from './../../services/user.service'
 import ChildrenUnderCare from '../../components/forms/children-under-care'
 import EndOfEmploymentForm from './../../components/forms/end-of-employment.form'
 import Calculations from './../../components/windows/calculations'
+import { assign, cloneDeep } from 'lodash'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -21,7 +22,7 @@ const Index: React.FC = () => {
 
   /** Load the client and set the step from query if there is one */
   useEffect(() => {
-    let application = getApplication()
+    let application = ApplicationService.getApplication()
     if (!application) {
       application = ApplicationData.getFromUser(UserService.getUser())
     }
@@ -32,14 +33,6 @@ const Index: React.FC = () => {
       setStep(stepQuery)
     }
   }, [stepQuery, user])
-
-  const getApplication = () => {
-    return ApplicationService.getApplication()
-  }
-
-  const changesMade = () => {
-    getApplication()
-  }
 
   const handleNext = () => {
     setStep(step + 1)
@@ -53,10 +46,6 @@ const Index: React.FC = () => {
     setStep(step - 1)
   }
 
-  const handleCancel = () => {
-    router.push('/clients')
-  }
-
   const handleSaved = (application: any) => {
     if (step === UnemploymentStep.ChildrenUnderCare) {
       setStep(UnemploymentStep.Calculation)
@@ -64,7 +53,7 @@ const Index: React.FC = () => {
     }
     console.log('saved')
     console.log(application)
-    getApplication()
+    setApplicationData(cloneDeep(assign(applicationData, application)))
     handleNext()
   }
 
@@ -86,9 +75,12 @@ const Index: React.FC = () => {
               onSubmit={handleSaved}
             ></EndOfEmploymentForm>
           )
+      case UnemploymentStep.Income:
+        return <div>2</div>
       case UnemploymentStep.ChildrenUnderCare:
         return (
           <ChildrenUnderCare
+            onBack={handleBack}
             defaultValues={applicationData}
             onSubmit={handleSaved}
           />
