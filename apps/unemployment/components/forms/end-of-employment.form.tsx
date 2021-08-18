@@ -4,7 +4,7 @@ import {
   Box,
   Select,
   Button,
-  DatePicker
+  DatePicker,
 } from '@island.is/island-ui/core'
 import { useForm, FormProvider, Controller } from 'react-hook-form'
 import { ApplicationData } from './../../entities/application-data'
@@ -27,14 +27,16 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
   const hookFormData = useForm<ApplicationData>()
   const context = useContext(ServiceContext)
   const [reasons, setReasons] = useState<string[]>([])
-  const [circumStances, setCircumstances] = useState<string[]>([])
+  const [circumStances, setCircumstances] = useState<
+    { value: string; label: string }[]
+  >([])
 
   const submit = () => {
     const application = defaultValues
-    if (!application.endOfEmployment){
+    if (!application.endOfEmployment) {
       application.endOfEmployment = new EndOfEmployment()
     }
-    
+
     application.endOfEmployment.dateFrom = hookFormData.getValues().endOfEmployment.dateFrom
     application.endOfEmployment.howUnemploymentCameAbout = hookFormData.getValues().endOfEmployment.howUnemploymentCameAbout
     application.endOfEmployment.reasonForUnemployment = hookFormData.getValues().endOfEmployment.reasonForUnemployment
@@ -46,14 +48,35 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
   useEffect(() => {
     async function loadReasons() {
       if (reasons.length === 0) {
-        setReasons(await context.directorateOfLabourService.getReasonForUnEmployment())
+        setReasons(
+          await context.directorateOfLabourService.getReasonForUnEmployment(),
+        )
       }
       if (circumStances.length === 0) {
-        setCircumstances(await context.directorateOfLabourService.getCircumstancesForUnEmployment())
+        setCircumstances(
+          (
+            await context.directorateOfLabourService.getCircumstancesForUnEmployment()
+          ).map((x) => ({ label: x, value: x })),
+        )
       }
     }
     loadReasons()
-   }, [defaultValues])
+  }, [defaultValues])
+
+  console.log('Def EndOfEMpl..: ', defaultValues?.endOfEmployment)
+  console.log(
+    'Def val..: ',
+    defaultValues?.endOfEmployment?.howUnemploymentCameAbout?.value,
+  )
+  console.log('circ..: ', circumStances)
+  console.log(
+    'defVal..: ',
+    circumStances.find(
+      (option) =>
+        option.value ==
+        defaultValues?.endOfEmployment?.howUnemploymentCameAbout?.value,
+    ),
+  )
 
   return (
     <Stack space={3}>
@@ -66,74 +89,83 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
           height="full"
           onSubmit={submit}
         >
-           <Stack space={2}>
+          <Stack space={2}>
             <Controller
-                name="endOfEmployment.dateFrom"
-                defaultValue={defaultValues?.initialInfo?.dateFrom ? defaultValues?.initialInfo?.dateFrom : new Date()}
-                render={({ onChange, value }) => (
-                  <DatePicker
-                    label="Frá hvaða dag hefur þú verið atvinnulaus"
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    selected={value}
-                    handleChange={onChange}
+              name="endOfEmployment.dateFrom"
+              defaultValue={
+                defaultValues?.initialInfo?.dateFrom
+                  ? defaultValues?.initialInfo?.dateFrom
+                  : new Date()
+              }
+              render={({ onChange, value }) => (
+                <DatePicker
+                  label="Frá hvaða dag hefur þú verið atvinnulaus"
+                  placeholderText="Veldu dagsetningu"
+                  locale="is"
+                  selected={value}
+                  handleChange={onChange}
+                />
+              )}
+            />
+          </Stack>
+
+          <Stack space={2}>
+            <Controller
+              name="endOfEmployment.howUnemploymentCameAbout"
+              defaultValue={
+                defaultValues?.endOfEmployment?.howUnemploymentCameAbout?.value
+              }
+              render={({ onChange, value }) => {
+                return (
+                  <Select
+                    label="Hvað lýsir best þínum aðstæðum"
+                    name="endOfEmployment.howUnemploymentCameAbout"
+                    options={circumStances}
+                    placeholder="Veldu ástæðu"
+                    value={circumStances.find(
+                      (option) =>
+                        option.value ==
+                        defaultValues?.endOfEmployment?.howUnemploymentCameAbout
+                          ?.value,
+                    )}
+                    onChange={onChange}
                   />
-                )}
-              />
-            </Stack>
+                )
+              }}
+            />
+          </Stack>
 
-            <Stack space={2}>
-
+          <Stack space={2}>
             <Controller
-                name="endOfEmployment.howUnemploymentCameAbout"
-                defaultValue=""
-                render={({ onChange, value }) => {
-                  return (
-                    <Select
-                      label="Hvað lýsir best þínum aðstæðum"
-                      name="endOfEmployment.howUnemploymentCameAbout"
-                      options={circumStances.map((x) => ({label: x, value: x}))}
-                      placeholder="Veldu ástæðu"
-                      value={circumStances.map((x) => ({label: x, value: x})).find(
-                        (option) => option === value,
-                      )}
-                      onChange={onChange}
-                    />
-                  )
-                }}
-              />
-            </Stack>
-
-            <Stack space={2}>
-
-            <Controller
-                name="endOfEmployment.reasonForUnemployment"
-                defaultValue=""
-                render={({ onChange, value }) => {
-                  return (
-                    <Select
-                      label="Hvað lýsir starfslokum þínum best"
-                      name="endOfEmployment.reasonForUnemployment"
-                      options={reasons.map((x) => ({label: x, value: x}))}
-                      placeholder="Veldu ástæðu"
-                      value={reasons.map((x) => ({label: x, value: x})).find(
-                        (option) => option === value,
-                      )}
-                      onChange={onChange}
-                    />
-                  )
-                }}
-              />
-            </Stack>
+              name="endOfEmployment.reasonForUnemployment"
+              defaultValue={
+                defaultValues?.endOfEmployment?.reasonForUnemployment
+              }
+              render={({ onChange, value }) => {
+                return (
+                  <Select
+                    label="Hvað lýsir starfslokum þínum best"
+                    name="endOfEmployment.reasonForUnemployment"
+                    options={reasons.map((x) => ({ label: x, value: x }))}
+                    placeholder="Veldu ástæðu"
+                    defaultValue={reasons
+                      .map((x) => ({ label: x, value: x }))
+                      .find((option) => option.value === value.value)}
+                    onChange={onChange}
+                  />
+                )
+              }}
+            />
+          </Stack>
         </Box>
         <Box paddingTop={2}>
-              <Button onClick={onBack} width="fluid">
-                  Til baka
-              </Button>
-              <Button onClick={submit} width="fluid">
-                Næsta skref
-              </Button>
-            </Box>
+          <Button onClick={onBack} width="fluid">
+            Til baka
+          </Button>
+          <Button onClick={submit} width="fluid">
+            Næsta skref
+          </Button>
+        </Box>
       </FormProvider>
     </Stack>
   )
