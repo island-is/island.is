@@ -85,7 +85,11 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
               <Box width="half">
                 <Controller
                   name="endOfEmployment.dateFrom"
-                  defaultValue={defaultValues?.initialInfo?.dateFrom ? defaultValues?.initialInfo?.dateFrom : new Date()}
+                  defaultValue={
+                    defaultValues?.endOfEmployment?.dateFrom
+                      ? defaultValues?.endOfEmployment?.dateFrom
+                      : new Date()
+                  }
                   render={({ onChange, value }) => (
                     <DatePicker
                       label="Frá hvaða dag hefur þú verið atvinnulaus"
@@ -105,16 +109,20 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
 
                 <Controller
                   name="endOfEmployment.howUnemploymentCameAbout"
-                  defaultValue=""
+                  defaultValue={
+                    defaultValues?.endOfEmployment?.howUnemploymentCameAbout
+                  }
                   render={({ onChange, value }) => {
                     return (
                       <Select
                         label="Hvað lýsir best þínum aðstæðum"
                         name="endOfEmployment.howUnemploymentCameAbout"
-                        options={circumStances.map((x) => ({ label: x, value: x }))}
+                        options={circumStances}
                         placeholder="Veldu ástæðu"
-                        value={circumStances.map((x) => ({ label: x, value: x })).find(
-                          (option) => option === value,
+                        value={circumStances.find(
+                          (option) =>
+                            option.value ==
+                            defaultValues?.endOfEmployment?.howUnemploymentCameAbout
                         )}
                         onChange={onChange}
                       />
@@ -131,7 +139,9 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
 
                 <Controller
                   name="endOfEmployment.reasonForUnemployment"
-                  defaultValue=""
+                  defaultValue={
+                    defaultValues?.endOfEmployment?.reasonForUnemployment
+                  }
                   render={({ onChange, value }) => {
                     return (
                       <Select
@@ -139,9 +149,9 @@ const EndOfEmploymentForm: React.FC<PropTypes> = ({
                         name="endOfEmployment.reasonForUnemployment"
                         options={reasons.map((x) => ({ label: x, value: x }))}
                         placeholder="Veldu ástæðu"
-                        value={reasons.map((x) => ({ label: x, value: x })).find(
-                          (option) => option === value,
-                        )}
+                        defaultValue={reasons
+                          .map((x) => ({ label: x, value: x }))
+                          .find((option) => option.value === value.value)}
                         onChange={onChange}
                       />
                     )
