@@ -7,7 +7,7 @@ export interface CalculationParameters {
   PartialJobPayment: number,  // HlStTekjur
   PercentageOfPartialJob: number, // ProsHlSt
   SocialSecurityBenefits: number, // LifGrTR
-  PersionPayment: number, // LifGrLifSj
+  PensionPayment: number, // LifGrLifSj
   CapitalGainsPayment: number,  // FjarmTekj
 //  PrivatePensionPayment: number,  // GrSereign
 
@@ -21,7 +21,7 @@ export function makeCalculations(params: CalculationParameters) {
     PercentPerChildWithBaseUnemploymentBenefits: 0.06, //PrBbGr
     PercentPerChildWithSalaryConnectedBenefits: 0.04, // PrBbTekjuTeng
     MaximumAllowedEarningsWithoutBenefitCut: 71262, // FriTekjMark
-    DateUntilSalaryConnectedBenefitsIsSixMonths : "2021-09-30",  // 2021-09-30  -- ath
+    DateUntilSalaryConnectedBenefitsIsSixMonths : new Date(2021,9,30),  // 2021-09-30  -- ath
   }
   
   // Calculations
@@ -31,8 +31,9 @@ export function makeCalculations(params: CalculationParameters) {
   NumberOfMonthsWithBenefitSalaryConnected = 0, // FjManTekjTRett
   UnemploymentBenefitAmout = 0,  // UpphBota
   BenefitAmountForChildren = 0,  // GrBarna
+  MonthsBetween = 0,
   BenefitDeduction = 0   // Skerding
-  ;
+   ;
  
   if ( params.JobPercentage == 100 ) {
     BenefitRate = 1;
@@ -55,17 +56,40 @@ export function makeCalculations(params: CalculationParameters) {
     AmountSalaryConnectedBenefits = params.FormerSalary*constants.PercentOfSalaryConnected;
   };
 
-  if( 1 == 1 ) { // params.DateOfFirstUnemploymentPayment.toISOString <= constants.DateUntilSalaryConnectedBenefitsIsSixMonths ) {
+  if( params.DateOfFirstUnemploymentPayment.valueOf <= constants.DateUntilSalaryConnectedBenefitsIsSixMonths.valueOf ) {
     NumberOfMonthsWithBenefitSalaryConnected = 6;
   } else {
     NumberOfMonthsWithBenefitSalaryConnected = 3;
   }
 
-  if( AmountSalaryConnectedBenefits == constants.BaseUnemploymentBenefitAmount
-      //  || DagsGrMan - DagsByrAtvL > FjManTekjTRett
-     ) {
-  UnemploymentBenefitAmout = constants.BaseUnemploymentBenefitAmount;
-  BenefitAmountForChildren = params.NumberOfChildren * constants.BaseUnemploymentBenefitAmount * constants.PercentPerChildWithBaseUnemploymentBenefits;
-     }
+  MonthsBetween = params.DateOfCurrentUnemploymentInterval.getMonth() - params.DateOfFirstUnemploymentPayment.getMonth() +
+                  ( 12 * ( params.DateOfCurrentUnemploymentInterval.getFullYear() - params.DateOfFirstUnemploymentPayment.getFullYear() ));
+  if( AmountSalaryConnectedBenefits == constants.BaseUnemploymentBenefitAmount || MonthsBetween > NumberOfMonthsWithBenefitSalaryConnected ) {
+    UnemploymentBenefitAmout = constants.BaseUnemploymentBenefitAmount;
+    BenefitAmountForChildren = params.NumberOfChildren * constants.BaseUnemploymentBenefitAmount * constants.PercentPerChildWithBaseUnemploymentBenefits;
+  } else if ( params.DateOfCurrentUnemploymentInterval.valueOf > params.DateOfFirstUnemploymentPayment.valueOf ||
+              params.DateOfCurrentUnemploymentInterval.valueOf < params.DateOfFirstUnemploymentPayment.valueOf ) {
+    UnemploymentBenefitAmout = AmountSalaryConnectedBenefits;
+    BenefitAmountForChildren = params.NumberOfChildren * constants.BaseUnemploymentBenefitAmount * constants.PercentPerChildWithSalaryConnectedBenefits;
+  } else {
+    UnemploymentBenefitAmout = ( constants.BaseUnemploymentBenefitAmount + AmountSalaryConnectedBenefits ) / 2;
+    BenefitAmountForChildren = params.NumberOfChildren * constants.BaseUnemploymentBenefitAmount * 
+                              ( constants.PercentPerChildWithBaseUnemploymentBenefits + constants.PercentPerChildWithSalaryConnectedBenefits ) / 2;
+  }
 
+  UnemploymentBenefitAmout = UnemploymentBenefitAmout * BenefitRate;
+  UnemploymentBenefitAmout = UnemploymentBenefitAmout * ( 1 - (params.PercentageOfPartialJob/100.0));
+  
+  BenefitDeduction = ( ( UnemploymentBenefitAmout + params.PartialJobPayment + params.SocialSecurityBenefits + params.PensionPayment + params.CapitalGainsPayment ) - 
+                       ( constants.BaseUnemploymentBenefitAmount + constants.MaximumAllowedEarningsWithoutBenefitCut) ) / 2;
+
+  if ( BenefitDeduction > 0.0 ) {
+    UnemploymentBenefitAmout = UnemploymentBenefitAmout - BenefitDeduction;
+  }
+
+  if ( UnemploymentBenefitAmout <= 0.0 ) {
+    UnemploymentBenefitAmout = 0.0;
+  }
+
+  return UnemploymentBenefitAmout;
 }
