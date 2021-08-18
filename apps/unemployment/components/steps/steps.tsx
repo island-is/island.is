@@ -13,7 +13,7 @@ interface Props {
 const Steps: React.FC<Props> = ({ step }) => {
     // TODO: List up steps and set the active step
     const [steps,] = useRecoilState(stepState);
-
+    console.log(steps)
     return <div className="step active">
         <FormStepper theme="blue"
             sections={[{
@@ -44,7 +44,7 @@ const Steps: React.FC<Props> = ({ step }) => {
             },
             {
                 name: 'Sundurliðun'
-            }]} activeSection={steps - 1} />
+            }]} activeSection={steps - 1 } />
     </div>
 }
 

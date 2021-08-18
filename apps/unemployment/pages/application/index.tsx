@@ -8,7 +8,7 @@ const Index = () => {
               <li className="nav__container">
                 <Link href="/application/1">
                   <a>
-                    Skref
+                    Sæktu um atvinnuleysisbætur hér
                   </a>
                 </Link>
               </li>

@@ -8,6 +8,7 @@ export class ApplicationData {
   status: ApplicationStatus
   stepCompleted: number
   endOfEmployment: EndOfEmployment
+  childrenUnderCare: { name: string; nationalId: string; id?: number }[]
 
   static getFromUser(user: User) {
     console.log(user)

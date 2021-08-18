@@ -11,6 +11,8 @@ import ChildrenUnderCare from '../../components/forms/children-under-care'
 import EndOfEmploymentForm from './../../components/forms/end-of-employment.form'
 import { stepState } from "../../utils/state";
 import { useRecoilState } from "recoil";
+import Calculations from './../../components/windows/calculations'
+import { assign, cloneDeep } from 'lodash'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -23,8 +25,9 @@ const Index: React.FC = () => {
 
   /** Load the client and set the step from query if there is one */
   useEffect(() => {
-    setSteps(step)
-    let application = getApplication()
+  
+
+    let application = ApplicationService.getApplication()
     if (!application) {
       application = ApplicationData.getFromUser(UserService.getUser())
     }
@@ -36,16 +39,9 @@ const Index: React.FC = () => {
     }
   }, [stepQuery, user])
 
-  const getApplication = () => {
-    return ApplicationService.getApplication()
-  }
-
-  const changesMade = () => {
-    getApplication()
-  }
-
   const handleNext = () => {
     setStep(step + 1)
+    setSteps(step + 1)
   }
 
   const handleStepChange = (step: UnemploymentStep) => {
@@ -54,19 +50,15 @@ const Index: React.FC = () => {
 
   const handleBack = () => {
     setStep(step - 1)
-  }
-
-  const handleCancel = () => {
-    router.push('/clients')
+    setSteps(step - 1)
   }
 
   const handleSaved = (application: any) => {
     console.log('saved')
     console.log(application)
-    getApplication()
+    setApplicationData(cloneDeep(assign(applicationData, application)))
     handleNext()
   }
-
   if (applicationData) {
     
     switch (step) {
@@ -86,17 +78,24 @@ const Index: React.FC = () => {
               onSubmit={handleSaved}
             ></EndOfEmploymentForm>
           )
-      case UnemploymentStep.Income:
-        return <div>2</div>
       case UnemploymentStep.ChildrenUnderCare:
         return (
           <ChildrenUnderCare
+            onBack={handleBack}
             defaultValues={applicationData}
             onSubmit={handleSaved}
           />
         )
+      case UnemploymentStep.Calculation:
+        return <Calculations defaultValues={applicationData}></Calculations>
       default: {
-        return <div></div>
+        return (
+          <PersonalInformationForm
+            onBack={handleBack}
+            defaultValues={applicationData}
+            onSubmit={handleSaved}
+          ></PersonalInformationForm>
+        )
       }
     }
   }
