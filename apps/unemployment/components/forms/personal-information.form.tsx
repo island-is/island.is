@@ -25,7 +25,7 @@ const PersonalInformationForm: React.FC<PropTypes> = ({
   defaultValues,
 }: PropTypes) => {
   const hookFormData = useForm<ApplicationData>()
-//  const [applicationData, setApplicationData] = useState<ApplicationData>(new ApplicationData)
+  //  const [applicationData, setApplicationData] = useState<ApplicationData>(new ApplicationData)
 
   const submit = () => {
     const application = defaultValues;
@@ -40,74 +40,81 @@ const PersonalInformationForm: React.FC<PropTypes> = ({
   }
 
   useEffect(() => {
-   // setApplicationData(defaultValues)
+    // setApplicationData(defaultValues)
     console.log(defaultValues)
   }, [defaultValues])
 
-  
+
 
   return (
-    <Stack space={3}>
-      <FormProvider {...hookFormData}>
-        <Box
-          component="form"
-          display="flex"
-          flexDirection="column"
-          justifyContent="spaceBetween"
-          height="full"
-        >
+    <Box paddingY={30}>
+      <Stack space={3}>
+        <FormProvider {...hookFormData}>
+          <Box
+            component="form"
+            display="flex"
+            flexDirection="column"
+            justifyContent="spaceBetween"
+            height="full"
+          >
             <Stack space={2}>
-              <Text>Samskipti</Text>
-              <Divider weight="alternate" />
-              <Controller
-                name="initialInfo.email"
-                defaultValue={defaultValues.initialInfo.email}
-                render={({ onChange, value }) => (
-                  <Input
-                    data-cy="email"
-                    name="initialInfo.email"
-                    placeholder="Netfang"
-                    value={value}
-                    onChange={onChange}
-                    label="Netfang"
-                    required={true}
-                    errorMessage="Nauðsynlegt er að fylla út netfang"
-                    hasError={!ValidationUtils.validateEmail(value)}
-                  />
-                )}
-              />
+              <Text variant="h1" marginBottom={3}>Samskipti</Text>
+              <Box width="half">
+
+                <Controller
+                  name="initialInfo.email"
+                  defaultValue={defaultValues.initialInfo.email}
+                  render={({ onChange, value }) => (
+                    <Input
+                      data-cy="email"
+                      name="initialInfo.email"
+                      placeholder="Netfang"
+                      value={value}
+                      onChange={onChange}
+                      label="Netfang"
+                      required={true}
+                      errorMessage="Nauðsynlegt er að fylla út netfang"
+                      hasError={!ValidationUtils.validateEmail(value)}
+                    />
+                  )}
+                />
+              </Box>
             </Stack>
 
             <Stack space={2}>
-              
-              <Divider weight="alternate" />
-              <Controller
-                name="initialInfo.mobile"
-                defaultValue={defaultValues.initialInfo.mobile}
-                render={({ onChange, value }) => (
-                  <Input
-                    data-cy="mobile"
-                    name="initialInfo.mobile"
-                    placeholder="Farsími"
-                    value={value}
-                    onChange={onChange}
-                    label="Farsími"
-                    required={true}
-                    errorMessage="Nauðsynlegt er að fylla út farsímanúmer"
-                    hasError={!ValidationUtils.validatePhoneNumber(value)}
-                  />
-                )}
-              />
+              <br />
+              <Box width="half">
+
+                <Controller
+                  name="initialInfo.mobile"
+                  defaultValue={defaultValues.initialInfo.mobile}
+                  render={({ onChange, value }) => (
+                    <Input
+                      data-cy="mobile"
+                      name="initialInfo.mobile"
+                      placeholder="Farsími"
+                      value={value}
+                      onChange={onChange}
+                      label="Farsími"
+                      required={true}
+                      errorMessage="Nauðsynlegt er að fylla út farsímanúmer"
+                      hasError={!ValidationUtils.validatePhoneNumber(value)}
+                    />
+                  )}
+                />
+              </Box>
             </Stack>
-        </Box>
-        <Box paddingTop={2}>
-             
-              <Button onClick={submit} width="fluid">
-                Næsta skref
+          </Box>
+          <br/>
+          <Box paddingTop={2}>
+            <Button onClick={submit} width="fluid" data-cy="personalinfo-next-step-btn">
+              Næsta skref
               </Button>
-            </Box>
-      </FormProvider>
-    </Stack>
+          </Box>
+        </FormProvider>
+      </Stack>
+    </Box>
+
   )
 }
 
