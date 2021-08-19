@@ -22,11 +22,18 @@ import {
 import {
   NationalRegistryUser,
   UserProfile,
-  QualityPhotoData,
+  // QualityPhotoData,
 } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
+
+type QualityPhotoData =  {
+  data: {
+    qualityPhoto: string
+    success: boolean
+  }
+}
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',

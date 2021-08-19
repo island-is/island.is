@@ -76,4 +76,4 @@ const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
   )
 }
 
-export { QualityPhoto }
+export default QualityPhoto
