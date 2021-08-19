@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+
 import {
   FieldBaseProps,
   FileUploadField,
@@ -9,13 +10,17 @@ import {
   FieldDescription,
   FileUploadController,
 } from '@island.is/shared/form-fields'
-
 import { useLocale } from '@island.is/localization'
 
 interface Props extends FieldBaseProps {
   field: FileUploadField
 }
-const FileUploadFormField: FC<Props> = ({ application, field, error }) => {
+
+export const FileUploadFormField: FC<Props> = ({
+  application,
+  field,
+  error,
+}) => {
   const {
     id,
     introduction,
@@ -61,5 +66,3 @@ const FileUploadFormField: FC<Props> = ({ application, field, error }) => {
     </div>
   )
 }
-
-export default FileUploadFormField
