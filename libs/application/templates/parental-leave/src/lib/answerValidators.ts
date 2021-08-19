@@ -86,7 +86,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       application.answers,
     )
     const lastAnsweredPeriod = answeredPeriods?.[answeredPeriods.length - 1]
-    console.log('-lastAnsweredPeriod', lastAnsweredPeriod)
 
     if (newPeriodIndex < 0) {
       return

@@ -21,7 +21,7 @@ import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.mod
 import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
 import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
 
-const isRunningInDevelopment = process.env.NODE_ENV === 'xroad'
+const isRunningInDevelopment = process.env.NODE_ENV === 'development'
 const df = 'yyyy-MM-dd'
 
 enum PensionFundType {

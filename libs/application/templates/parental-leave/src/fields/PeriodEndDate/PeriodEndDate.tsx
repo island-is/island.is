@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
+import * as Sentry from '@sentry/react'
 
 import {
   FieldBaseProps,
@@ -68,33 +69,51 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
   const fieldId = `periods[${currentIndex}].endDate`
 
   const handleChange = async (date: string) => {
-    clearErrors(id)
+    try {
+      clearErrors(id)
 
-    const endDate = new Date(date).toISOString()
+      const endDate = new Date(date).toISOString()
 
-    const { length, percentage } = await getLength({
-      startDate: currentStartDateAnswer,
-      endDate,
-    })
-
-    if (length + daysAlreadyUsed > rights) {
-      return setError(fieldId, {
-        type: 'error',
-        message: formatMessage(errorMessages.exceedingLength, {
-          days: length + daysAlreadyUsed,
-          rights,
-        }),
+      const { length, percentage } = await getLength({
+        startDate: currentStartDateAnswer,
+        endDate,
       })
-    }
 
-    setPercent(percentage)
-    setDays(length)
-    setDuration(daysToMonths(length))
+      if (length + daysAlreadyUsed > rights) {
+        return setError(fieldId, {
+          type: 'error',
+          message: formatMessage(errorMessages.exceedingLength, {
+            days: length + daysAlreadyUsed,
+            rights,
+          }),
+        })
+      }
+
+      setPercent(percentage)
+      setDays(length)
+      setDuration(daysToMonths(length))
+    } catch (e) {
+      Sentry.captureException(e)
+    }
   }
+
+  useEffect(() => {
+    if (currentIndex < 0) {
+      Sentry.captureException(
+        new Error(
+          `Cannot render PeriodEndDate component with a currentIndex of -1, ${periods}`,
+        ),
+      )
+    }
+  }, [currentIndex])
 
   useEffect(() => {
     setFieldLoadingState?.(loading)
   }, [loading])
+
+  if (currentIndex < 0) {
+    return null
+  }
 
   return (
     <>
