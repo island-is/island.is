@@ -87,6 +87,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
     )
     const lastAnsweredPeriod = answeredPeriods?.[answeredPeriods.length - 1]
 
+    if (newPeriodIndex < 0) {
+      return
+    }
+
     if (isEmpty(period)) {
       let message = errorMessages.periodsStartDateRequired
       let field = 'startDate'
@@ -167,7 +171,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
       // We need a valid end date
       if (typeof endDate !== 'string' || !isValid(parseISO(endDate))) {
-        return buildError('The end date is not valid.', field)
+        return buildError(coreErrorMessages.defaultError, field)
       }
 
       // If the startDate is using the expected date of birth, we then calculate the minimum period required from the date of birth
