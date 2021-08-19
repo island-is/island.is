@@ -1,13 +1,12 @@
 import React from 'react'
+
 import { Button } from '../Button/Button'
-import { withDesign } from 'storybook-addon-designs'
 import { withFigma } from '../../utils/withFigma'
 import { DialogPrompt } from './DialogPrompt'
 
 export default {
   title: 'Components/DialogPrompt',
   component: DialogPrompt,
-  decorators: [withDesign],
   parameters: withFigma('DialogPrompt'),
 }
 
