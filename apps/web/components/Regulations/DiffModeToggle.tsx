@@ -19,7 +19,13 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
   const { linkToRegulation } = useRegulationLinkResolver()
 
   const { regulation } = props
-  const { timelineDate, effectiveDate, lastAmendDate, showingDiff } = regulation
+  const {
+    timelineDate,
+    effectiveDate,
+    lastAmendDate,
+    showingDiff,
+    history,
+  } = regulation
 
   const isDiffable =
     regulation.history.length > 0 && timelineDate !== effectiveDate
@@ -28,9 +34,13 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
     return null
   }
 
+  console.log({ showingDiff, history })
+
   const diffView = !!showingDiff
+  const showSecondaryButton =
+    !!showingDiff && showingDiff.to !== history[0].date
   const diffIsAgainstOriginal =
-    !!showingDiff && showingDiff.from === regulation.history[0].date
+    !!showingDiff && showingDiff.from === history[0].date
 
   return (
     <div className={s.wrapper}>
@@ -51,7 +61,7 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
         linkText={diffView ? txt('hideDiff') : txt('showDiff')}
         label={txt('showDiff')}
       />
-      {diffView && (
+      {showSecondaryButton && (
         <div className={s.totalToggler}>
           {diffIsAgainstOriginal ? (
             <Link
