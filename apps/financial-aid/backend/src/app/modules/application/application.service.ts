@@ -55,25 +55,21 @@ export class ApplicationService {
   }
 
   async getAllFilters(): Promise<ApplicationFilters> {
-    const promises = [
-      this.applicationModel.count({
-        where: { state: { [Op.eq]: ApplicationState.NEW } },
-      }),
-      this.applicationModel.count({
-        where: { state: { [Op.eq]: ApplicationState.INPROGRESS } },
-      }),
-      this.applicationModel.count({
-        where: { state: { [Op.eq]: ApplicationState.DATANEEDED } },
-      }),
-      this.applicationModel.count({
-        where: { state: { [Op.eq]: ApplicationState.REJECTED } },
-      }),
-      this.applicationModel.count({
-        where: { state: { [Op.eq]: ApplicationState.APPROVED } },
-      }),
+    const statesToCount = [
+      ApplicationState.NEW,
+      ApplicationState.INPROGRESS,
+      ApplicationState.DATANEEDED,
+      ApplicationState.REJECTED,
+      ApplicationState.APPROVED,
     ]
 
-    const filterCounts = await Promise.all(promises)
+    const countPromises = statesToCount.map((item) =>
+      this.applicationModel.count({
+        where: { state: { [Op.eq]: item } },
+      }),
+    )
+
+    const filterCounts = await Promise.all(countPromises)
 
     return {
       New: filterCounts[0],
