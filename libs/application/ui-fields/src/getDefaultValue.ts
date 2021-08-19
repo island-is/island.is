@@ -8,7 +8,7 @@ export const getDefaultValue = (field: BaseField, application: Application) => {
   }
 
   if (typeof defaultValue === 'function') {
-    return defaultValue(application)
+    return defaultValue(application, field)
   }
 
   return defaultValue
