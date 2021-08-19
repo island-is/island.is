@@ -45,7 +45,7 @@ export type RegulationDisplayProps = {
 
 export const RegulationDisplay = (props: RegulationDisplayProps) => {
   const router = useRouter()
-  const { regulation, texts } = props
+  const { regulation, texts, urlDate } = props
 
   const txt = useNamespace(texts)
   const { linkResolver } = useRegulationLinkResolver()
@@ -81,7 +81,11 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
       main={
         <>
           <div className={s.statusHeader}>
-            <DiffModeToggle regulation={regulation} texts={texts} />
+            <DiffModeToggle
+              regulation={regulation}
+              texts={texts}
+              urlDate={urlDate}
+            />
             <RegulationStatus
               regulation={regulation}
               urlDate={props.urlDate}
