@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Text } from '@island.is/island-ui/core'
 import * as styles from './ApplicationsTable.treat'
 import { useRouter } from 'next/router'
 
@@ -10,26 +10,15 @@ import {
   TableBody,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { Application } from '@island.is/financial-aid/shared'
-import {
-  sortByProps,
-  TableHeadersProps,
-} from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
+import { TableHeadersProps } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
 interface PageProps {
   applications: Application[]
   headers: TableHeadersProps[]
   className?: string
-  setSortBy(filter: string): void
-  sortBy: sortByProps
 }
 
-const ApplicationsTable = ({
-  applications,
-  headers,
-  className,
-  setSortBy,
-  sortBy,
-}: PageProps) => {
+const ApplicationsTable = ({ applications, headers, className }: PageProps) => {
   const router = useRouter()
 
   if (applications && applications.length > 0) {
@@ -44,12 +33,7 @@ const ApplicationsTable = ({
         <thead>
           <tr>
             {headers.map((item, index) => (
-              <TableHeaders
-                header={item}
-                index={index}
-                setSortBy={setSortBy}
-                sortBy={sortBy}
-              />
+              <TableHeaders header={item} index={index} />
             ))}
           </tr>
         </thead>
@@ -63,7 +47,7 @@ const ApplicationsTable = ({
     )
   }
 
-  return <div>Engar umsóknir</div>
+  return <Text>Engar umsóknir bíða þín, vel gert 👏</Text>
 }
 
 export default ApplicationsTable

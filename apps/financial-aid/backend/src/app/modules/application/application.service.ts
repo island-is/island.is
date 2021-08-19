@@ -35,7 +35,7 @@ export class ApplicationService {
   }
 
   getAll(): Promise<ApplicationModel[]> {
-    return this.applicationModel.findAll()
+    return this.applicationModel.findAll({ order: [['modified', 'DESC']] })
   }
 
   async findById(id: string): Promise<ApplicationModel | null> {

@@ -92,6 +92,18 @@ const StateModal = ({
     }
   }
 
+  const headingText = (inputType: InputType): string => {
+    if (inputType.show) {
+      switch (inputType.type) {
+        case ApplicationState.REJECTED:
+          return 'Synja umsókn'
+        case ApplicationState.APPROVED:
+          return 'Samþykkja umsókn'
+      }
+    }
+    return 'Stöðubreyting'
+  }
+
   return (
     <ModalBase
       baseId="changeStatus"
@@ -118,7 +130,7 @@ const StateModal = ({
             className={styles.modalHeadline}
           >
             <Text fontWeight="semiBold" color="white">
-              Stöðubreyting
+              {headingText(inputType)}
             </Text>
           </Box>
 
