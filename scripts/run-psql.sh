@@ -127,6 +127,11 @@ while getopts ':cpn:d:l:q:' arg; do
   esac
 done
 
+if [ -z "$CLUSTER_NAME" ]; then
+  echo "${RED}ERROR: -l [cluster] is required${RST}"
+  usage
+fi
+
 if [ -z "$NAMESPACE" ]; then
   echo "${RED}ERROR: -n [namespace] is required${RST}"
   usage
