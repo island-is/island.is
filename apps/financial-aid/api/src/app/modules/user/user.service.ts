@@ -8,7 +8,7 @@ import { environment } from '../../../environments'
 export class UserService {
   async checkHasAppliedForPeriod(nationalId: string): Promise<boolean> {
     const res = await fetch(
-      `${environment.backend.url}/api/me/?nationalId=${nationalId}`,
+      `${environment.backend.url}/api/hasAppliedForPeriod/?nationalId=${nationalId}`,
       {
         headers: { authorization: `Bearer ${environment.auth.secretToken}` },
       },

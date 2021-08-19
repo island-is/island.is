@@ -31,7 +31,7 @@ export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
   @UseGuards(TokenGuard)
-  @Get('me')
+  @Get('hasAppliedForPeriod')
   @ApiOkResponse({
     description:
       'Checks whether user has applied before and if it is the same month',
