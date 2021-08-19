@@ -335,8 +335,10 @@ components:
           nullable: true
         expectedDateOfBirth:
           type: string
+          nullable: true
         dateOfBirth:
           type: string
+          nullable: true
         email:
           type: string
           minLength: 1
