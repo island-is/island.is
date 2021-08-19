@@ -33,7 +33,7 @@
     "affected:dep-graph": "nx affected:dep-graph",
     "affected:docker": "nx affected --target=docker",
     "affected": "nx affected",
-    "security-audit": "bash -c 'yarn audit --level moderate ; [[ \"$?\" -lt  \"4\" ]]'",
+    "security-audit": "bash -c 'yarn audit --level moderate ; [[ \"$?\" -lt  \"8\" ]]'",
     "license-audit": "license-checker --failOn 'GPL; AGPL; UNLICENSED' --summary",
     "generate": "nx generate",
     "get-secrets": "./scripts/get-secrets.sh",
