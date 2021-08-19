@@ -1,11 +1,11 @@
 import { useQuery } from '@apollo/client'
-import React, { createContext, ReactNode, useState } from 'react'
+import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { ApplicationFilters } from '@island.is/financial-aid/shared'
 
 import { GetApplicationsFiltersQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 interface ApplicationFiltersData {
-  filters?: ApplicationFilters
+  applicationsFilters?: ApplicationFilters
 }
 
 interface ApplicationFiltersProvider {
@@ -45,20 +45,11 @@ const ApplicationFiltersProvider = ({ children }: PageProps) => {
     },
   )
 
-  console.log(data)
-
-  // useEffect(() => {
-  //   console.log('data is chaning', data)
-  //   // if (data?.applications) {
-  //   //   Object.keys(applicationFilters).forEach((name: string, index) => {
-  //   //     setApplicationFilters((preState) => ({
-  //   //       ...preState,
-  //   //       [name]: data.applications?.filter((el) => [name].includes(el?.state))
-  //   //         .length,
-  //   //     }))
-  //   //   })
-  //   // }
-  // }, [data])
+  useEffect(() => {
+    if (data?.applicationsFilters) {
+      setApplicationFilters(data.applicationsFilters)
+    }
+  }, [data])
 
   return (
     <ApplicationFiltersContext.Provider

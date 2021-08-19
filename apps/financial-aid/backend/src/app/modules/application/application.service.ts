@@ -55,45 +55,33 @@ export class ApplicationService {
   }
 
   async getAllFilters(): Promise<ApplicationFilters> {
-    const countNew = this.applicationModel.count({
-      where: { state: { [Op.eq]: ApplicationState.NEW } },
-    })
-
-    const countInProgress = this.applicationModel.count({
-      where: { state: { [Op.eq]: ApplicationState.INPROGRESS } },
-    })
-
-    const countDataNeeded = this.applicationModel.count({
-      where: { state: { [Op.eq]: ApplicationState.DATANEEDED } },
-    })
-
-    const countRejected = this.applicationModel.count({
-      where: { state: { [Op.eq]: ApplicationState.REJECTED } },
-    })
-
-    const countApproved = this.applicationModel.count({
-      where: { state: { [Op.eq]: ApplicationState.APPROVED } },
-    })
-
-    const filters = {
-      New: this.applicationModel.count({
+    const promises = [
+      this.applicationModel.count({
         where: { state: { [Op.eq]: ApplicationState.NEW } },
       }),
-      InProgress: this.applicationModel.count({
+      this.applicationModel.count({
         where: { state: { [Op.eq]: ApplicationState.INPROGRESS } },
       }),
-      DataNeeded: this.applicationModel.count({
+      this.applicationModel.count({
         where: { state: { [Op.eq]: ApplicationState.DATANEEDED } },
       }),
-      Rejected: this.applicationModel.count({
+      this.applicationModel.count({
         where: { state: { [Op.eq]: ApplicationState.REJECTED } },
       }),
-      Approved: this.applicationModel.count({
+      this.applicationModel.count({
         where: { state: { [Op.eq]: ApplicationState.APPROVED } },
       }),
-    }
+    ]
 
-    return
+    const filterCounts = await Promise.all(promises)
+
+    return {
+      New: filterCounts[0],
+      InProgress: filterCounts[1],
+      DataNeeded: filterCounts[2],
+      Rejected: filterCounts[3],
+      Approved: filterCounts[4],
+    }
   }
 
   async create(
