@@ -46,7 +46,7 @@ const TableBody = ({ application, index }: PageProps) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          <Box>
+          <Box display="flex">
             <div className={`tags ${getTagByState(application.state)}`}>
               {getState[application.state]}
             </div>
