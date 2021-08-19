@@ -2,39 +2,41 @@ import React, { FC, useMemo } from 'react'
 import HtmlParser from 'react-html-parser'
 
 import {
+  CheckboxField,
   FieldBaseProps,
   formatText,
   getValueViaPath,
-  RadioField,
   buildFieldOptions,
 } from '@island.is/application/core'
-import { useLocale } from '@island.is/localization'
 import { Text, Box } from '@island.is/island-ui/core'
 import {
-  RadioController,
+  CheckboxController,
   FieldDescription,
 } from '@island.is/shared/form-fields'
+import { useLocale } from '@island.is/localization'
 
-import { getDefaultValue } from '../getDefaultValue'
+import { getDefaultValue } from '../../getDefaultValue'
 
 interface Props extends FieldBaseProps {
-  field: RadioField
+  field: CheckboxField
 }
 
-const RadioFormField: FC<Props> = ({
+export const CheckboxFormField: FC<Props> = ({
+  error,
   showFieldName = false,
   field,
-  error,
   application,
 }) => {
   const {
-    disabled,
     id,
     title,
     description,
     options,
+    disabled,
+    large,
+    strong,
+    backgroundColor,
     width,
-    largeButtons,
   } = field
   const { formatMessage } = useLocale()
 
@@ -44,9 +46,9 @@ const RadioFormField: FC<Props> = ({
   )
 
   return (
-    <Box paddingTop={field.space}>
+    <div>
       {showFieldName && (
-        <Text variant="h4" as="h4">
+        <Text variant="h5">
           {formatText(title, application, formatMessage)}
         </Text>
       )}
@@ -57,33 +59,31 @@ const RadioFormField: FC<Props> = ({
         />
       )}
 
-      <Box marginTop={3}>
-        <RadioController
-          largeButtons={largeButtons}
+      <Box paddingTop={2}>
+        <CheckboxController
           id={id}
           disabled={disabled}
-          error={error}
+          large={large}
+          name={`${id}`}
           split={width === 'half' ? '1/2' : '1/1'}
-          name={id}
+          backgroundColor={backgroundColor}
           defaultValue={
             (getValueViaPath(application.answers, id) as string[]) ??
-            getDefaultValue(field, application) ??
-            ''
+            getDefaultValue(field, application)
           }
+          strong={strong}
+          error={error}
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: HtmlParser(formatText(label, application, formatMessage)),
             ...(tooltip && {
               tooltip: HtmlParser(
-                formatText(tooltip, application, formatMessage),
+                formatText(tooltip, application, formatMessage) as string,
               ),
             }),
           }))}
-          onSelect={field.onSelect}
         />
       </Box>
-    </Box>
+    </div>
   )
 }
-
-export default RadioFormField
