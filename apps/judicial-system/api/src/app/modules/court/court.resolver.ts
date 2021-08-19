@@ -3,7 +3,7 @@ import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { CaseType, User } from '@island.is/judicial-system/types'
+import type { CaseType, User } from '@island.is/judicial-system/types'
 import {
   AuditedAction,
   AuditTrailService,
