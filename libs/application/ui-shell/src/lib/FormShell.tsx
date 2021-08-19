@@ -1,7 +1,10 @@
 import React, { FC, useEffect, useReducer } from 'react'
 import cn from 'classnames'
+import * as Sentry from '@sentry/react'
+
 import {
   Application,
+  coreMessages,
   Form,
   FormModes,
   Schema,
@@ -12,6 +15,7 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 import Screen from '../components/Screen'
 import FormStepper from '../components/FormStepper'
@@ -20,11 +24,11 @@ import {
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import ErrorBoundary from '../components/ErrorBoundary'
 import { useHistorySync } from '../hooks/useHistorySync'
 import { useApplicationTitle } from '../hooks/useApplicationTitle'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import * as styles from './FormShell.treat'
+import { ErrorShell } from '../components/ErrorShell'
 
 export const FormShell: FC<{
   application: Application
@@ -32,6 +36,7 @@ export const FormShell: FC<{
   form: Form
   dataSchema: Schema
 }> = ({ application, nationalRegistryId, form, dataSchema }) => {
+  const { formatMessage } = useLocale()
   const { setInfo } = useHeaderInfo()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
@@ -97,9 +102,19 @@ export const FormShell: FC<{
                 borderRadius="large"
                 background="white"
               >
-                <ErrorBoundary
-                  application={application}
-                  currentScreen={currentScreen}
+                <Sentry.ErrorBoundary
+                  beforeCapture={(scope) => {
+                    scope.setTag('errorBoundaryLocation', 'FormShell')
+                    scope.setExtra('applicationType', application.typeId)
+                    scope.setExtra('applicationState', application.state)
+                    scope.setExtra('currentScreen', currentScreen.id)
+                  }}
+                  fallback={
+                    <ErrorShell
+                      title={formatMessage(coreMessages.globalErrorTitle)}
+                      subTitle={formatMessage(coreMessages.globalErrorMessage)}
+                    />
+                  }
                 >
                   <Screen
                     application={storedApplication}
@@ -134,7 +149,7 @@ export const FormShell: FC<{
                     screen={currentScreen}
                     mode={mode}
                   />
-                </ErrorBoundary>
+                </Sentry.ErrorBoundary>
               </Box>
             </GridColumn>
             <GridColumn

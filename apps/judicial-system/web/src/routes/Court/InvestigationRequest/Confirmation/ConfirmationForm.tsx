@@ -9,7 +9,11 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, CaseAppealDecision } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseAppealDecision,
+  User,
+} from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
@@ -19,12 +23,13 @@ import * as styles from './Confirmation.treat'
 
 interface Props {
   workingCase: Case
+  user: User
   isLoading: boolean
   handleNextButtonClick: () => void
 }
 
 const Confirmation: React.FC<Props> = (props) => {
-  const { workingCase, isLoading, handleNextButtonClick } = props
+  const { workingCase, user, isLoading, handleNextButtonClick } = props
   const { formatMessage } = useIntl()
 
   return (
@@ -166,9 +171,16 @@ const Confirmation: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
+          nextUrl={Constants.REQUEST_LIST_ROUTE}
           nextIsLoading={isLoading}
           nextButtonText="Staðfesta og hefja undirritun"
           onNextButtonClick={handleNextButtonClick}
+          hideNextButton={workingCase.judge?.id !== user?.id}
+          infoBoxText={
+            workingCase.judge?.id !== user?.id
+              ? 'Einungis skráður dómari getur undirritað úrskurð'
+              : undefined
+          }
         />
       </FormContentContainer>
     </>

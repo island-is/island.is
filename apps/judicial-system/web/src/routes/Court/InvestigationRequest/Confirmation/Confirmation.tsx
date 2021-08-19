@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
@@ -15,6 +15,7 @@ import { useRouter } from 'next/router'
 import ConfirmationForm from './ConfirmationForm'
 import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 const Confirmation = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -33,7 +34,8 @@ const Confirmation = () => {
     setRequestSignatureResponse,
   ] = useState<RequestSignatureResponse>()
 
-  const { requestSignature } = useCase()
+  const { user } = useContext(UserContext)
+  const { requestSignature, isRequestingSignature } = useCase()
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
@@ -86,7 +88,8 @@ const Confirmation = () => {
         <>
           <ConfirmationForm
             workingCase={workingCase}
-            isLoading={loading}
+            user={user}
+            isLoading={isRequestingSignature}
             handleNextButtonClick={handleNextButtonClick}
           />
           {modalVisible && (
