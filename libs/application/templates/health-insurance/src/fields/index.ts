@@ -7,6 +7,5 @@ export { default as ChildrenInfoMessage } from './ChildrenInfoMessage/ChildrenIn
 export { default as FormerCountryErrorMessage } from './FormerCountryErrorMessage/FormerCountryErrorMessage'
 export { default as ConfirmationScreen } from './ConfirmationScreen/ConfirmationScreen'
 export { default as TextWithTooltip } from './TextWithTooltip/TextWithTooltip'
-export { default as ErrorModal } from './ErrorModal/ErrorModal'
-export { default as InformationRetrieval } from './InformationRetrieval/InformationRetrieval'
 export { default as CitizenshipField } from './CitizenshipField/CitizenshipField'
+export { default as PrerequisiteSummary } from './PrerequisiteSummary/PrerequisiteSummary'

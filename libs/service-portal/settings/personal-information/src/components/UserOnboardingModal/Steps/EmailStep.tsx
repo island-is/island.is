@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { Button, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 import { EmailForm, EmailFormData } from '../../Forms/EmailForm'
 
 interface Props {
@@ -15,10 +16,7 @@ export const EmailStep: FC<Props> = ({ onBack, onSubmit, email }) => {
   return (
     <>
       <Text variant="h1" as="h1" marginBottom={3}>
-        {formatMessage({
-          id: 'service.portal:email',
-          defaultMessage: 'Netfang',
-        })}
+        {formatMessage(m.email)}
       </Text>
       <Text variant="intro" marginBottom={7}>
         {formatMessage({
@@ -33,18 +31,12 @@ export const EmailStep: FC<Props> = ({ onBack, onSubmit, email }) => {
         email={email}
         renderBackButton={() => (
           <Button variant="ghost" onClick={onBack}>
-            {formatMessage({
-              id: 'service.portal:go-back',
-              defaultMessage: 'Til baka',
-            })}
+            {formatMessage(m.goBack)}
           </Button>
         )}
         renderSubmitButton={() => (
           <Button variant="primary" type="submit" icon="arrowForward">
-            {formatMessage({
-              id: 'service.portal:next-step',
-              defaultMessage: 'Næsta skref',
-            })}
+            {formatMessage(m.nextStep)}
           </Button>
         )}
         onSubmit={onSubmit}

@@ -7,7 +7,7 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
-import { EmptyState } from '@island.is/service-portal/core'
+import { EmptyState, m } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -350,12 +350,7 @@ const StudentAssessmentTable = () => {
 
       {educationExamResult.length === 0 && (
         <Box marginTop={8}>
-          <EmptyState
-            title={defineMessage({
-              id: 'service.portal:education-no-data',
-              defaultMessage: 'Engin gögn fundust',
-            })}
-          />
+          <EmptyState title={m.noDataFound} />
         </Box>
       )}
     </>
