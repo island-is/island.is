@@ -26,7 +26,10 @@ describe('Basic serialization', () => {
     .serviceAccount()
     .command('node')
     .args('main.js')
-    .resources({ requests: { memory: '1MB', cpu: '100m' } })
+    .resources({
+      requests: { memory: '1MB', cpu: '100m' },
+      limits: { memory: '512MB', cpu: '500m' },
+    })
     .replicaCount({
       min: 1,
       max: 1,
@@ -70,6 +73,10 @@ describe('Basic serialization', () => {
         cpu: '100m',
         memory: '1MB',
       },
+      limits: {
+        cpu: '500m',
+        memory: '512MB',
+      },
     })
   })
   it('replica count', () => {
@@ -86,6 +93,7 @@ describe('Basic serialization', () => {
       DB_USER: 'api',
       DB_NAME: 'api',
       DB_HOST: 'a',
+      NODE_OPTIONS: '--max-old-space-size=464',
     })
   })
 
