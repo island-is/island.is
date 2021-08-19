@@ -143,6 +143,16 @@ export class ServiceBuilder<ServiceType> implements Service {
 
   resources(res: Resources) {
     this.serviceDef.resources = res
+    if (res.limits && res.limits.memory) {
+      if (this.serviceDef.env.NODE_OPTIONS) {
+        throw new Error('NODE_OPTIONS already set')
+      }
+      this.env({
+        NODE_OPTIONS: `--max-old-space-size=${
+          parseInt(res.limits.memory, 10) - 48
+        }`,
+      })
+    }
     return this
   }
 

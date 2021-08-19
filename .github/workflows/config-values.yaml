@@ -47,6 +47,9 @@ jobs:
         working-directory: infra
         run: yarn install --frozen-lock
 
+      - name: Prettier check
+        run: ./infra/scripts/ci/prettier-check.sh
+
       - name: Run unit tests
         run: ./infra/scripts/ci/test-unit.sh
 
