@@ -278,7 +278,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.EmployerApproval),
                 ),
               read: {
-                answers: ['periods', 'selectedChild', 'payments', 'firstPeriodStart'],
+                answers: [
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                  'firstPeriodStart',
+                ],
                 externalData: ['children'],
               },
               actions: [
