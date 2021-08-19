@@ -19,7 +19,6 @@ import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationPayment } from './application.model'
-import { ApplicationPaymentChargeResponse } from './dto/applicationPaymentCharge'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
