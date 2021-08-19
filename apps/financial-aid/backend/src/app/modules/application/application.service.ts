@@ -6,7 +6,11 @@ import { ApplicationModel } from './models'
 import { Op } from 'sequelize'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
-import { ApplicationFilters, User } from '@island.is/financial-aid/shared'
+import {
+  ApplicationFilters,
+  ApplicationState,
+  User,
+} from '@island.is/financial-aid/shared'
 import { FileService } from '../file'
 import { ApplicationEventService } from '../applicationEvent'
 
@@ -50,7 +54,45 @@ export class ApplicationService {
     return application
   }
 
-  getAllFilters(): Promise<ApplicationFilters> {
+  async getAllFilters(): Promise<ApplicationFilters> {
+    const countNew = this.applicationModel.count({
+      where: { state: { [Op.eq]: ApplicationState.NEW } },
+    })
+
+    const countInProgress = this.applicationModel.count({
+      where: { state: { [Op.eq]: ApplicationState.INPROGRESS } },
+    })
+
+    const countDataNeeded = this.applicationModel.count({
+      where: { state: { [Op.eq]: ApplicationState.DATANEEDED } },
+    })
+
+    const countRejected = this.applicationModel.count({
+      where: { state: { [Op.eq]: ApplicationState.REJECTED } },
+    })
+
+    const countApproved = this.applicationModel.count({
+      where: { state: { [Op.eq]: ApplicationState.APPROVED } },
+    })
+
+    const filters = {
+      New: this.applicationModel.count({
+        where: { state: { [Op.eq]: ApplicationState.NEW } },
+      }),
+      InProgress: this.applicationModel.count({
+        where: { state: { [Op.eq]: ApplicationState.INPROGRESS } },
+      }),
+      DataNeeded: this.applicationModel.count({
+        where: { state: { [Op.eq]: ApplicationState.DATANEEDED } },
+      }),
+      Rejected: this.applicationModel.count({
+        where: { state: { [Op.eq]: ApplicationState.REJECTED } },
+      }),
+      Approved: this.applicationModel.count({
+        where: { state: { [Op.eq]: ApplicationState.APPROVED } },
+      }),
+    }
+
     return
   }
 
