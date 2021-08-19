@@ -3,12 +3,14 @@ import React, { ReactNode, useEffect } from 'react'
 import { Nav } from '@island.is/financial-aid-web/veita/src/components/Nav'
 
 import * as styles from './AdminLayout.treat'
+import cn from 'classnames'
 
 interface PageProps {
   children: ReactNode
+  className?: string
 }
 
-const AdminLayout: React.FC<PageProps> = ({ children }) => {
+const AdminLayout: React.FC<PageProps> = ({ children, className }) => {
   useEffect(() => {
     document.title = 'Sveita • Umsóknir um fjárhagsaðstoð'
   }, [])
@@ -16,8 +18,15 @@ const AdminLayout: React.FC<PageProps> = ({ children }) => {
   return (
     <>
       <Nav />
-      <div className={` wrapper ${styles.gridWrapper}`}>
-        <div className={styles.childContainer}>{children}</div>
+      <div className={` wrapper ${styles.gridWrapper} `}>
+        <div
+          className={cn({
+            [`${styles.childContainer}`]: true,
+            [`${className}`]: true,
+          })}
+        >
+          {children}
+        </div>
       </div>
     </>
   )
