@@ -15,7 +15,7 @@ import * as styles from './Header.treat'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
-const Header: React.FC = () => {
+const Header = () => {
   const router = useRouter()
   const { isAuthenticated, setUser, user } = useContext(UserContext)
 

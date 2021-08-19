@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { ApplicationModel } from './models'
 
+import { Op } from 'sequelize'
+
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import { User } from '@island.is/financial-aid/shared'
 import { FileService } from '../file'
@@ -16,6 +18,21 @@ export class ApplicationService {
     private readonly fileService: FileService,
     private readonly applicationEventService: ApplicationEventService,
   ) {}
+
+  async hasAppliedForPeriod(nationalId: string): Promise<boolean> {
+    const date = new Date()
+
+    const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
+
+    return Boolean(
+      await this.applicationModel.findOne({
+        where: {
+          nationalId,
+          created: { [Op.gte]: firstDateOfMonth },
+        },
+      }),
+    )
+  }
 
   getAll(): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({ order: [['modified', 'DESC']] })

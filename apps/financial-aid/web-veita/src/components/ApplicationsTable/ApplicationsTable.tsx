@@ -18,11 +18,7 @@ interface PageProps {
   className?: string
 }
 
-const ApplicationsTable: React.FC<PageProps> = ({
-  applications,
-  headers,
-  className,
-}) => {
+const ApplicationsTable = ({ applications, headers, className }: PageProps) => {
   const router = useRouter()
 
   if (applications && applications.length > 0) {
