@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from 'react'
 import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
 
@@ -8,14 +9,19 @@ import { Condition } from './Condition'
 import { Application } from './Application'
 
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
+
 export type SetBeforeSubmitCallback = (
   callback: BeforeSubmitCallback | null,
 ) => void
 
+export type SetFieldLoadingState = Dispatch<SetStateAction<boolean>>
+
 export type StaticTextObject = MessageDescriptor & {
   values?: RecordObject<any>
 }
+
 export type StaticText = StaticTextObject | string
+
 export type FormatMessage = (
   descriptor: StaticText,
   values?: RecordObject<any>,
@@ -24,6 +30,7 @@ export type FormatMessage = (
 export type FormText =
   | StaticText
   | ((application: Application) => StaticText | null | undefined)
+
 export type FormTextArray =
   | StaticText[]
   | ((application: Application) => (StaticText | null | undefined)[])
@@ -128,6 +135,7 @@ export interface FieldBaseProps {
   goToScreen?: (id: string) => void
   refetch?: () => void
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
+  setFieldLoadingState?: SetFieldLoadingState
 }
 
 export type RepeaterProps = {
