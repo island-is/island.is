@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Icon, Box } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 
 import * as styles from './TableHeaders.treat'
 

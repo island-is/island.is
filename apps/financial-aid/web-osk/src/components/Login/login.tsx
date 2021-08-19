@@ -6,11 +6,13 @@ import { useRouter } from 'next/router'
 const Login = () => {
   const router = useRouter()
 
+  const apiLoginRoute = '/api/auth/login'
+
   return (
     <GridContainer>
       <Button
         onClick={() => {
-          router.push('/api/auth/login')
+          router.push(apiLoginRoute)
         }}
         data-testid="logout-button"
         preTextIconType="filled"
@@ -24,7 +26,7 @@ const Login = () => {
       <br />
       <Button
         onClick={() => {
-          router.push('/api/auth/login?nationalId=0000000000')
+          router.push(`${apiLoginRoute}?nationalId=0000000000`)
         }}
         data-testid="logout-button"
         preTextIconType="filled"
@@ -38,7 +40,7 @@ const Login = () => {
       <br />
       <Button
         onClick={() => {
-          router.push('/api/auth/login?nationalId=0000000001')
+          router.push(`${apiLoginRoute}?nationalId=0000000001`)
         }}
         data-testid="logout-button"
         preTextIconType="filled"
