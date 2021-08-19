@@ -1,13 +1,10 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
-import { withFigma } from '../../utils/withFigma'
+
 import { ActionCard } from './ActionCard'
 
 export default {
   title: 'Cards/ActionCard',
   component: ActionCard,
-  decorators: [withDesign],
-  parameters: withFigma('ActionCard'),
 }
 
 export const Default = () => (

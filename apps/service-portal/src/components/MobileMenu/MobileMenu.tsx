@@ -13,6 +13,7 @@ import { ISLAND_IS_URL } from '@island.is/service-portal/constants'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useAuth } from '@island.is/auth/react'
 import { Features, useFeatureFlag } from '@island.is/feature-flags'
+import { m } from '@island.is/service-portal/core'
 
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { ActionType } from '../../store/actions'
@@ -56,10 +57,7 @@ const MobileMenu: FC<{}> = () => {
           <GridColumn span="4/6">
             <a href={ISLAND_IS_URL}>
               <Button variant="utility" fluid>
-                {formatMessage({
-                  id: 'service.portal:go-to-island-is',
-                  defaultMessage: 'Fara á ytrivef island.is',
-                })}
+                {formatMessage(m.goToIslandIs)}
               </Button>
             </a>
           </GridColumn>
@@ -88,6 +86,7 @@ const MobileMenu: FC<{}> = () => {
                     key={index}
                     nav={navRoot}
                     variant={rootIndex === 0 ? 'blue' : 'blueberry'}
+                    alwaysExpanded
                     onItemClick={handleLinkClick}
                   />
                 ),
@@ -111,13 +110,7 @@ const MobileMenu: FC<{}> = () => {
           </Stack>
           {rootIndex === 1 && (
             <Text variant="small" color="blueberry600" marginTop={3}>
-              {formatMessage({
-                id: 'service.portal:incoming-services-footer-mobile',
-                defaultMessage: `
-                  Þessi virkni er enn í boði á eldri Mínum síðum.
-                  Unnið er að því að færa þessar þjónustur.
-                `,
-              })}
+              {formatMessage(m.incomingServicesFooterMobile)}
             </Text>
           )}
         </Box>

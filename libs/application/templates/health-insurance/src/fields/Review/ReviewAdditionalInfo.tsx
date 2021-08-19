@@ -15,7 +15,7 @@ import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { NO, YES } from '../../constants'
+import { NO, YES } from '../../shared'
 
 interface Props extends ReviewFieldProps {
   additionalInfo: AdditionalInfoType
