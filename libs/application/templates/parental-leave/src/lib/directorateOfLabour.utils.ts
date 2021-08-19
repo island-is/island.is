@@ -123,10 +123,10 @@ export const calculateRemainingNumberOfDays = (
     const matchesCurrentDateOfBirth = !a.dateOfBirth
       ? false
       : isSameDay(new Date(a.dateOfBirth), new Date(dateOfBirth))
-    const matchesCurrentExpectedDateOfBirth = isSameDay(
-      new Date(a.expectedDateOfBirth),
-      new Date(dateOfBirth),
-    )
+
+    const matchesCurrentExpectedDateOfBirth = !a.expectedDateOfBirth
+      ? false
+      : isSameDay(new Date(a.expectedDateOfBirth), new Date(dateOfBirth))
 
     return matchesCurrentDateOfBirth || matchesCurrentExpectedDateOfBirth
   })

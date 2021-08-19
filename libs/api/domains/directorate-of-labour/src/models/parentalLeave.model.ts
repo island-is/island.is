@@ -19,7 +19,8 @@ export class ParentalLeave {
   otherParentId?: string | null
 
   @Field(() => String)
-  expectedDateOfBirth!: string
+  @IsOptional()
+  expectedDateOfBirth?: string
 
   @Field(() => String)
   @IsOptional()

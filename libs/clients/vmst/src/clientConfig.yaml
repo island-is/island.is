@@ -315,7 +315,6 @@ components:
       required:
         - applicationId
         - applicant
-        - expectedDateOfBirth
         - email
         - phoneNumber
         - paymentInfo
@@ -336,7 +335,6 @@ components:
           nullable: true
         expectedDateOfBirth:
           type: string
-          minLength: 1
         dateOfBirth:
           type: string
         email:
