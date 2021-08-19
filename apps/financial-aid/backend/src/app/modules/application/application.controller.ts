@@ -22,7 +22,7 @@ import {
   JwtAuthGuard,
   TokenGuard,
 } from '@island.is/financial-aid/auth'
-import type { User } from '@island.is/financial-aid/shared'
+import type { User, ApplicationFilters } from '@island.is/financial-aid/shared'
 import { ApplicationEventService } from '../applicationEvent'
 
 @Controller('api')
@@ -70,6 +70,15 @@ export class ApplicationController {
     }
 
     return application
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('applicationsFilters')
+  @ApiOkResponse({
+    description: 'Gets all existing applications filters',
+  })
+  getAllFilters(): Promise<ApplicationFilters> {
+    return this.applicationService.getAllFilters()
   }
 
   @UseGuards(JwtAuthGuard)

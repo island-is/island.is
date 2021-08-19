@@ -6,7 +6,7 @@ import { ApplicationModel } from './models'
 import { Op } from 'sequelize'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
-import { User } from '@island.is/financial-aid/shared'
+import { ApplicationFilters, User } from '@island.is/financial-aid/shared'
 import { FileService } from '../file'
 import { ApplicationEventService } from '../applicationEvent'
 
@@ -48,6 +48,10 @@ export class ApplicationService {
     application.setDataValue('files', files)
 
     return application
+  }
+
+  getAllFilters(): Promise<ApplicationFilters> {
+    return
   }
 
   async create(
