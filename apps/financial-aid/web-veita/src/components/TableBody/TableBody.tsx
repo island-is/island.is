@@ -26,7 +26,7 @@ interface PageProps {
 
 const TableBody = ({ application, index }: PageProps) => {
   return (
-    <Link href={'application/' + application.id} key={'key-' + index}>
+    <Link href={'application/' + application.id}>
       <tr className={styles.link}>
         <td
           className={cn({
