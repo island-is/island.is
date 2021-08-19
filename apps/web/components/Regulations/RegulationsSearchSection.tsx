@@ -42,28 +42,17 @@ const emptyOption = (label?: string): Option => ({
   label: label ? `– ${label} –` : '—',
 })
 
-/** Looks through a list of `Option`s for one with a matching
- * `value` and returns a copy of it with its label trimmed for nicer
- * display by `react-select`
+/** Looks through a list of `Option`s for one with a matching `value`
  *
  * If a match is not found it returns `null` because that's the
  * magic value that tricks `react-select` to show the "placeholder" value
  */
-const findValueOption = (
-  options: ReadonlyArray<Option>,
-  value?: string,
-): Option | null => {
-  if (!value) {
-    return null
-  }
-  const opt = options.find((opt) => opt.value === value)
-  return (
-    (opt && {
-      value: opt.value,
-      label: opt.label.trim(),
-    }) ||
-    null
-  )
+const findValueOption = (options: ReadonlyArray<Option>, value?: string) => {
+  // NOTE: The returned option MUST NOT be a copy (with trimmed value,
+  // even if it would look nicer) because react-select seems to do an
+  // internal `===` comparison against the options list, and thus copies
+  // will fail to appear selected in the dropdown list.
+  return (value && options.find((opt) => opt.value === value)) || null
 }
 
 const yearToOption = (year: number | string): Option => {
