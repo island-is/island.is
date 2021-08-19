@@ -23,7 +23,7 @@ interface GraphProps {
 }
 
 export const MixedChart = ({ graphData }: GraphProps) => {
-  const { title, data, datakeys } = graphData
+  const { data, datakeys } = graphData
   const parsedData = JSON.parse(data)
   const parsedDatakeys = JSON.parse(datakeys)[0]
   const stackIds = parsedDatakeys.bars.map((e) => e.stackId)
