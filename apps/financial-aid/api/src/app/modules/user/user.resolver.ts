@@ -33,6 +33,6 @@ export class UserResolver {
 
   @ResolveField('hasAppliedForPeriod', () => boolean)
   async hasAppliedForPeriod(@Parent() user: User): Promise<boolean> {
-    return await this.userService.checkUserHistory(user.nationalId)
+    return await this.userService.checkHasAppliedForPeriod(user.nationalId)
   }
 }

@@ -6,7 +6,7 @@ import { environment } from '../../../environments'
 
 @Injectable()
 export class UserService {
-  async checkUserHistory(nationalId: string): Promise<boolean> {
+  async checkHasAppliedForPeriod(nationalId: string): Promise<boolean> {
     const res = await fetch(
       `${environment.backend.url}/api/me/?nationalId=${nationalId}`,
       {

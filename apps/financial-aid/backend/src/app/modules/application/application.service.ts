@@ -19,7 +19,7 @@ export class ApplicationService {
     private readonly applicationEventService: ApplicationEventService,
   ) {}
 
-  async hasUserAppliedForCurrentMonth(nationalId: string): Promise<boolean> {
+  async hasAppliedForPeriod(nationalId: string): Promise<boolean> {
     const date = new Date()
 
     const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
