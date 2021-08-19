@@ -1,6 +1,5 @@
 import React from 'react'
 import { Logo } from './Logo'
-import { color } from '@storybook/addon-knobs'
 import { Box } from '../Box/Box'
 
 export default {
@@ -10,27 +9,43 @@ export default {
 
 export const Default = () => <Logo />
 
-export const Solid = () => (
-  <Logo width={200} solid solidColor={color('Logo color', '#fff')} />
-)
+export const Solid = (args) => <Logo {...args} />
 
-export const IconOnly = () => <Logo width={30} iconOnly />
-
-export const SolidIconOnly = () => (
-  <Box background="dark400">
-    <Logo width={200} iconOnly solid solidColor={color('Logo color', '#fff')} />
-  </Box>
-)
+Solid.args = {
+  width: 200,
+  solid: true,
+  solidColor: '#fff',
+}
 
 Solid.decorators = [
-  (story: any) => (
+  (Story) => (
     <div
       style={{
-        backgroundColor: color('Background color', '#000'),
+        backgroundColor: '#000',
         padding: 20,
       }}
     >
-      {story()}
+      {Story()}
     </div>
   ),
 ]
+
+export const IconOnly = (args) => <Logo {...args} />
+
+IconOnly.args = {
+  width: 30,
+  iconOnly: true,
+}
+
+export const SolidIconOnly = (args) => (
+  <Box background="dark400">
+    <Logo {...args} />
+  </Box>
+)
+
+SolidIconOnly.args = {
+  width: 200,
+  iconOnly: true,
+  solid: true,
+  solidColor: '#fff',
+}

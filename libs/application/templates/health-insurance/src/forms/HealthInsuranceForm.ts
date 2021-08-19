@@ -1,8 +1,6 @@
 import {
   buildCustomField,
-  buildDataProviderItem,
   buildDividerField,
-  buildExternalDataProvider,
   buildFileUploadField,
   buildForm,
   buildDescriptionField,
@@ -16,18 +14,16 @@ import {
   Comparators,
   Application,
   FormValue,
-  ExternalData,
   buildAsyncSelectField,
 } from '@island.is/application/core'
 import { m } from './messages'
-import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../constants'
+import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../shared'
 import { CountryDataResult } from '../types'
 import { Address } from '@island.is/api/schema'
 import Logo from '../assets/Logo'
 import {
   requireConfirmationOfResidency,
   requireWaitingPeriod,
-  shouldShowModal,
 } from '../healthInsuranceUtils'
 
 export const HealthInsuranceForm: Form = buildForm({
@@ -40,87 +36,6 @@ export const HealthInsuranceForm: Form = buildForm({
       id: 'applicantInfoSection',
       title: m.applicantInfoSection,
       children: [
-        buildExternalDataProvider({
-          title: m.externalDataTitle,
-          id: 'approveExternalData',
-          subTitle: m.externalDataSubtitle,
-          checkboxLabel: m.externalDataCheckbox,
-          dataProviders: [
-            buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: m.nationalRegistryTitle,
-              subTitle: m.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'directorateOfLabor',
-              type: undefined,
-              title: m.directorateOfLaborTitle,
-              subTitle: m.directorateOfLaborSubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'internalRevenue',
-              type: undefined,
-              title: m.internalRevenueTitle,
-              subTitle: m.internalRevenueSubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'insuranceAdministration',
-              type: undefined,
-              title: m.socialInsuranceAdministrationTitle,
-              subTitle: m.socialInsuranceAdministrationSubtitle,
-            }),
-            buildDataProviderItem({
-              id: 'moreInfo',
-              type: undefined,
-              title: '',
-              subTitle: m.dataProvidersMoreInfo,
-            }),
-            buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              id: 'applications',
-              type: 'ApplicationsProvider',
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              id: 'healthInsurance',
-              type: 'HealthInsuranceProvider',
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              id: 'pendingApplications',
-              type: 'PendingApplications',
-              title: '',
-              subTitle: '',
-            }),
-          ],
-        }),
-        buildMultiField({
-          id: 'informationRetrieval',
-          title: m.externalDataTitle,
-          children: [
-            buildCustomField({
-              id: 'informationRetrieval',
-              component: 'InformationRetrieval',
-              title: '',
-            }),
-            buildCustomField({
-              id: 'errorModal',
-              component: 'ErrorModal',
-              title: '',
-            }),
-          ],
-          condition: (formValue: FormValue, externalData: ExternalData) => {
-            return shouldShowModal(externalData)
-          },
-        }),
         buildMultiField({
           id: 'contactInfoSection',
           title: m.contactInfoTitle,

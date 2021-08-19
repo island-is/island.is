@@ -310,7 +310,7 @@ export class CaseService {
     return existingCase
   }
 
-  create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {
+  async create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {
     this.logger.debug('Creating a new case')
 
     return this.caseModel.create({
@@ -431,7 +431,7 @@ export class CaseService {
     }
   }
 
-  extend(existingCase: Case, user: TUser): Promise<Case> {
+  async extend(existingCase: Case, user: TUser): Promise<Case> {
     this.logger.debug(`Extending case ${existingCase.id}`)
 
     return this.caseModel.create({
@@ -441,12 +441,16 @@ export class CaseService {
       accusedNameList: existingCase.accusedNameList,
       accusedAddressList: existingCase.accusedAddressList,
       accusedGenderList: existingCase.accusedGenderList,
+      description: existingCase.description,
       courtId: existingCase.courtId,
       lawsBroken: existingCase.lawsBroken,
+      legalBasis: existingCase.legalBasis,
       custodyProvisions: existingCase.custodyProvisions,
       requestedCustodyRestrictions: existingCase.requestedCustodyRestrictions,
       caseFacts: existingCase.caseFacts,
       legalArguments: existingCase.legalArguments,
+      requestProsecutorOnlySession: existingCase.requestProsecutorOnlySession,
+      prosecutorOnlySessionRequest: existingCase.prosecutorOnlySessionRequest,
       prosecutorId: user.id,
       parentCaseId: existingCase.id,
     })

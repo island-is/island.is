@@ -1,6 +1,5 @@
 import React from 'react'
 import { Box, Text, ActionCard, Stack } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { useMutation, useQuery } from '@apollo/client'
@@ -20,7 +19,7 @@ export type UserEndorsement = Pick<
 >
 export type RegionsEndorsementList = Pick<
   EndorsementList,
-  'id' | 'title' | 'description' | 'meta'
+  'id' | 'title' | 'description' | 'meta' | 'closedDate'
 > & { tags: EndorsementListOpenTagsEnum[] }
 
 export type UserVoterRegion = Pick<
@@ -68,6 +67,7 @@ const GET_REGION_ENDORSEMENTS = gql`
       description
       tags
       meta
+      closedDate
     }
   }
 `
@@ -176,16 +176,41 @@ const Endorsements = () => {
   const signedLists = endorsements.map(
     ({ endorsementList }) => endorsementList?.id,
   )
+
+  // all endorsement lists that are not signed and still open
   const endorsementLists = allEndorsementLists.filter(
-    ({ id }) => !signedLists.includes(id),
+    ({ id, closedDate }) => !signedLists.includes(id) && closedDate === null,
+  )
+
+  // party-application lists
+  const applicationLists = endorsementLists.filter(
+    (list) =>
+      getEndorsementListTagNames(list.tags).join(' ') !==
+      getEndorsementListTagNames([
+        EndorsementListOpenTagsEnum.PartyLetter2021,
+      ]).join(' '),
+  )
+
+  // party-letter application lists
+  const partyLetterLists = endorsementLists.filter(
+    (list) =>
+      getEndorsementListTagNames(list.tags).join(' ') ===
+      getEndorsementListTagNames([
+        EndorsementListOpenTagsEnum.PartyLetter2021,
+      ]).join(' '),
   )
 
   return (
     <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={m.endorsement.introTitle}
-        intro={m.endorsement.intro}
-      />
+      <Stack space={2}>
+        <Text variant="h1" as="h1">
+          {formatMessage(m.endorsement.introTitle)}
+        </Text>
+
+        <Text as="p" variant="intro">
+          {formatMessage(m.endorsement.intro)}
+        </Text>
+      </Stack>
       {endorsements && endorsements.length > 0 && (
         <>
           <Text variant="h3" marginTop={4} marginBottom={2}>
@@ -193,6 +218,9 @@ const Endorsements = () => {
           </Text>
           <Stack space={4}>
             {endorsements.map((endorsement) => {
+              const tagLabel = getEndorsementListTagNames(
+                endorsement.endorsementList?.tags ?? [],
+              ).join(' ')
               return (
                 <ActionCard
                   key={endorsement.id}
@@ -200,13 +228,18 @@ const Endorsements = () => {
                   eyebrow={formatDate(endorsement.created, 'dd.MM.yyyy')}
                   heading={`${endorsement.endorsementList?.title} (${endorsement.endorsementList?.description})`}
                   tag={{
-                    label: getEndorsementListTagNames(
-                      endorsement.endorsementList?.tags ?? [],
-                    ).join(' '),
+                    label: tagLabel,
                     variant: 'darkerBlue',
                     outlined: false,
                   }}
-                  text="Kjördæmi"
+                  text={
+                    tagLabel !==
+                    getEndorsementListTagNames([
+                      EndorsementListOpenTagsEnum.PartyLetter2021,
+                    ]).join(' ')
+                      ? userVoterRegion?.regionName ?? ''
+                      : ''
+                  }
                   cta={{
                     label: formatMessage(
                       m.endorsement.actionCardButtonUnendorse,
@@ -219,7 +252,7 @@ const Endorsements = () => {
                           input: { listId: endorsement.endorsementList?.id },
                         },
                       }),
-                    disabled: !!endorsement.endorsementList?.closedDate,
+                    disabled: endorsement.endorsementList?.closedDate !== null,
                   }}
                 />
               )
@@ -227,38 +260,86 @@ const Endorsements = () => {
           </Stack>
         </>
       )}
-      <Text variant="h3" marginTop={8} marginBottom={2}>
-        {formatMessage(m.endorsement.availableEndorsements)}
-      </Text>
-      <Stack space={4}>
-        {endorsementLists.map((endorsementList) => (
-          <ActionCard
-            key={endorsementList.id}
-            heading={endorsementList.title}
-            eyebrow={getEndorsementListTagNames(endorsementList.tags).join(' ')}
-            tag={{
-              label: getEndorsementListTagNames(endorsementList.tags).join(' '),
-              variant: 'blue',
-              outlined: false,
-            }}
-            text={endorsementList.description ?? ''}
-            cta={{
-              label: formatMessage(m.endorsement.actionCardButtonEndorse),
-              variant: 'text',
-              icon: undefined,
-              onClick: () => {
-                window.open(
-                  `${baseUrlForm}/${
-                    getSlugFromType(
-                      endorsementList.meta.applicationTypeId,
-                    ) as string
-                  }/${endorsementList.meta.applicationId}`,
-                )
-              },
-            }}
-          />
-        ))}
-      </Stack>
+      {applicationLists && applicationLists.length > 0 && (
+        <>
+          <Text variant="h3" marginTop={8} marginBottom={2}>
+            {formatMessage(m.endorsement.availablePartyApplicationEndorsements)}
+          </Text>
+          <Stack space={4}>
+            {applicationLists.map((endorsementList) => (
+              <ActionCard
+                key={endorsementList.id}
+                heading={endorsementList.title}
+                eyebrow={getEndorsementListTagNames(endorsementList.tags).join(
+                  ' ',
+                )}
+                tag={{
+                  label: getEndorsementListTagNames(endorsementList.tags).join(
+                    ' ',
+                  ),
+                  variant: 'blue',
+                  outlined: false,
+                }}
+                text={endorsementList.description ?? ''}
+                cta={{
+                  label: formatMessage(m.endorsement.actionCardButtonEndorse),
+                  variant: 'text',
+                  icon: undefined,
+                  onClick: () => {
+                    window.open(
+                      `${baseUrlForm}/${
+                        getSlugFromType(
+                          endorsementList.meta.applicationTypeId,
+                        ) as string
+                      }/${endorsementList.meta.applicationId}`,
+                    )
+                  },
+                }}
+              />
+            ))}
+          </Stack>
+        </>
+      )}
+      {partyLetterLists && partyLetterLists.length > 0 && (
+        <>
+          <Text variant="h3" marginTop={8} marginBottom={2}>
+            {formatMessage(m.endorsement.availablePartyLetterEndorsements)}
+          </Text>
+          <Stack space={4}>
+            {partyLetterLists.map((endorsementList) => (
+              <ActionCard
+                key={endorsementList.id}
+                heading={endorsementList.title}
+                eyebrow={getEndorsementListTagNames(endorsementList.tags).join(
+                  ' ',
+                )}
+                tag={{
+                  label: getEndorsementListTagNames(endorsementList.tags).join(
+                    ' ',
+                  ),
+                  variant: 'blue',
+                  outlined: false,
+                }}
+                text={endorsementList.description ?? ''}
+                cta={{
+                  label: formatMessage(m.endorsement.actionCardButtonEndorse),
+                  variant: 'text',
+                  icon: undefined,
+                  onClick: () => {
+                    window.open(
+                      `${baseUrlForm}/${
+                        getSlugFromType(
+                          endorsementList.meta.applicationTypeId,
+                        ) as string
+                      }/${endorsementList.meta.applicationId}`,
+                    )
+                  },
+                }}
+              />
+            ))}
+          </Stack>
+        </>
+      )}
     </Box>
   )
 }

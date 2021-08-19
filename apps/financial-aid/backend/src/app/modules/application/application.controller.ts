@@ -18,6 +18,7 @@ import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
 import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
 import type { User } from '@island.is/financial-aid/shared'
+import { ApplicationEventService } from '../applicationEvent'
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')

@@ -14,6 +14,7 @@ import {
   formatNationalId,
   ServicePortalModuleComponent,
   UserInfoLine,
+  m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -67,10 +68,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <Stack space={1}>
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:display-name',
-            defaultMessage: 'Birtingarnafn',
-          })}
+          label={m.displayName}
           content={userInfo.profile.name}
           editLink={{
             external: true,
@@ -83,17 +81,11 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }}
         />
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:natreg',
-            defaultMessage: 'Kennitala',
-          })}
+          label={m.natreg}
           content={formatNationalId(userInfo.profile.nationalId)}
         />
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:legal-residence',
-            defaultMessage: 'Lögheimili',
-          })}
+          label={m.legalResidence}
           content={
             error
               ? formatMessage(dataNotFoundMessage)
@@ -111,10 +103,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }}
         />
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:birth-place',
-            defaultMessage: 'Fæðingarstaður',
-          })}
+          label={m.birthPlace}
           content={
             error
               ? formatMessage(dataNotFoundMessage)
@@ -123,19 +112,13 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
         />
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:citizenship',
-            defaultMessage: 'Ríkisfang',
-          })}
+          label={m.citizenship}
           content={
             userInfo.profile.nat === 'IS' ? 'Ísland' : userInfo.profile.nat
           }
         />
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:gender',
-            defaultMessage: 'Kyn',
-          })}
+          label={m.gender}
           content={
             error
               ? formatMessage(dataNotFoundMessage)
@@ -150,10 +133,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
         />
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:marital-status',
-            defaultMessage: 'Hjúskaparstaða',
-          })}
+          label={m.maritalStatus}
           content={
             error
               ? formatMessage(dataNotFoundMessage)
@@ -168,10 +148,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
         />
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:religion',
-            defaultMessage: 'Trúfélag / lífsskoðunarfélag',
-          })}
+          label={defineMessage(m.religion)}
           content={
             error
               ? formatMessage(dataNotFoundMessage)

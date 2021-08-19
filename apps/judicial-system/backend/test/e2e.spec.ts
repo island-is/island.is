@@ -153,7 +153,10 @@ function forDb(aCase: CCase) {
 
 function remainingCreateCaseData() {
   return {
-    description: 'Descriptioni',
+    description: 'Description',
+    accusedName: 'Accused Name',
+    accusedAddress: 'Accused Address',
+    accusedGender: CaseGender.OTHER,
     defenderName: 'Defender Name',
     defenderEmail: 'Defender Email',
     defenderPhoneNumber: '555-5555',
@@ -352,7 +355,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.created).toBe(caseTwo.created)
   expect(caseOne.modified).toBe(caseTwo.modified)
   expect(caseOne.type).toBe(caseTwo.type)
-  expect(caseOne.decision ?? null).toBe(caseTwo.decision ?? null)
+  expect(caseOne.description ?? null).toBe(caseTwo.description ?? null)
   expect(caseOne.state).toBe(caseTwo.state)
   expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
   expect(caseOne.accused ?? null).toStrictEqual(caseTwo.accused ?? null)
@@ -1018,15 +1021,19 @@ describe('Case', () => {
           created: apiCase.created ?? 'FAILURE',
           modified: apiCase.modified ?? 'FAILURE',
           type: dbCase.type,
+          description: dbCase.description,
           state: CaseState.NEW,
           policeCaseNumber: dbCase.policeCaseNumber,
           accused: dbCase.accused,
           courtId: dbCase.courtId,
           lawsBroken: dbCase.lawsBroken,
+          legalBasis: dbCase.legalBasis,
           custodyProvisions: dbCase.custodyProvisions,
           requestedCustodyRestrictions: dbCase.requestedCustodyRestrictions,
           caseFacts: dbCase.caseFacts,
           legalArguments: dbCase.legalArguments,
+          requestProsecutorOnlySession: dbCase.requestProsecutorOnlySession,
+          prosecutorOnlySessionRequest: dbCase.prosecutorOnlySessionRequest,
           prosecutorId: prosecutor.id,
           parentCaseId: dbCase.id,
         } as CCase)

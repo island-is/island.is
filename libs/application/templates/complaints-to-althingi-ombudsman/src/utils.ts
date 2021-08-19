@@ -18,8 +18,8 @@ export const isGovernmentComplainee = (answers: Answer) => {
 
 export const getComplaintType = (answers: Answer) => {
   return (answers as {
-    complaintInformation: { complaintType: OmbudsmanComplaintTypeEnum }
-  }).complaintInformation?.complaintType
+    complaintType: OmbudsmanComplaintTypeEnum
+  })?.complaintType
 }
 
 export const getDateAYearBack = () => {
