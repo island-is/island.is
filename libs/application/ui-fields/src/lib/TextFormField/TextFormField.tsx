@@ -1,4 +1,6 @@
 import React, { FC } from 'react'
+import { useFormContext } from 'react-hook-form'
+
 import {
   FieldBaseProps,
   formatText,
@@ -9,14 +11,15 @@ import {
   InputController,
   FieldDescription,
 } from '@island.is/shared/form-fields'
-import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { getDefaultValue } from '../getDefaultValue'
+
+import { getDefaultValue } from '../../getDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: TextField
 }
-const TextFormField: FC<Props> = ({
+
+export const TextFormField: FC<Props> = ({
   autoFocus,
   application,
   error,
@@ -84,5 +87,3 @@ const TextFormField: FC<Props> = ({
     </div>
   )
 }
-
-export default TextFormField
