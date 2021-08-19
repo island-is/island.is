@@ -6,7 +6,7 @@ import type {
   BoxProps,
 } from '@island.is/island-ui/core/types'
 
-import { Answer, Application } from '../types/Application'
+import { Application } from '../types/Application'
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
@@ -62,8 +62,8 @@ export function buildCheckboxField(data: {
     disabled = false,
     width = 'full',
     strong = false,
-    large,
-    backgroundColor,
+    large = true,
+    backgroundColor = 'blue',
     defaultValue,
   } = data
   return {
@@ -110,7 +110,7 @@ export function buildDateField(data: {
     disabled = false,
     width = 'full',
     placeholder,
-    backgroundColor,
+    backgroundColor = 'blue',
   } = data
   return {
     children: undefined,
@@ -232,7 +232,7 @@ export function buildSelectField(data: {
     disabled = false,
     width = 'full',
     onSelect,
-    backgroundColor,
+    backgroundColor = 'blue',
   } = data
   return {
     children: undefined,
@@ -279,7 +279,7 @@ export function buildAsyncSelectField(data: {
     disabled = false,
     width = 'full',
     onSelect,
-    backgroundColor,
+    backgroundColor = 'blue',
     isSearchable,
   } = data
 
@@ -325,7 +325,7 @@ export function buildTextField(data: {
     id,
     title,
     description,
-    backgroundColor,
+    backgroundColor = 'blue',
     placeholder,
     disabled = false,
     width = 'full',
