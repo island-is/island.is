@@ -31,11 +31,6 @@ export interface TableHeadersProps {
   title: string
 }
 
-export interface sortByProps {
-  selected: 'modified' | 'state'
-  sorted: 'asc' | 'dsc'
-}
-
 export const ApplicationsOverview = () => {
   const router = useRouter()
 
@@ -51,36 +46,17 @@ export const ApplicationsOverview = () => {
     (i) => i.link === router.pathname,
   )
 
-  const [sortBy, setSortBy] = useState<sortByProps>({
-    selected: 'modified',
-    sorted: 'asc',
-  })
-
   const [applications, setApplications] = useState<Application[]>()
-
-  const sortApplications = (a: Application, b: Application): number => {
-    return a[sortBy.selected] > b[sortBy.selected]
-      ? -1
-      : a[sortBy.selected] < b[sortBy.selected]
-      ? 1
-      : 0
-  }
 
   useEffect(() => {
     if (data?.applications) {
       setApplications(
-        data.applications
-          .filter((item) =>
-            currentNavigationItem?.applicationState.includes(item?.state),
-          )
-          .sort((a, b) =>
-            sortBy.sorted === 'asc'
-              ? sortApplications(a, b)
-              : sortApplications(b, a),
-          ),
+        data.applications.filter((item) =>
+          currentNavigationItem?.applicationState.includes(item?.state),
+        ),
       )
     }
-  }, [data, router, sortBy])
+  }, [data, router])
 
   if (currentNavigationItem) {
     return (
@@ -99,19 +75,6 @@ export const ApplicationsOverview = () => {
           <ApplicationsTable
             className={`contentUp delay-50`}
             headers={currentNavigationItem.headers}
-            setSortBy={(filter) => {
-              if (filter !== 'modified' && filter !== 'state') return
-
-              if (filter === sortBy.selected) {
-                setSortBy({
-                  ...sortBy,
-                  sorted: sortBy.sorted === 'asc' ? 'dsc' : 'asc',
-                })
-              } else {
-                setSortBy({ sorted: 'asc', selected: filter })
-              }
-            }}
-            sortBy={sortBy}
             applications={applications}
           />
         )}

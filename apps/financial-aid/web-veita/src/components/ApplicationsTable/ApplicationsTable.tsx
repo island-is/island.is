@@ -10,25 +10,18 @@ import {
   TableBody,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { Application } from '@island.is/financial-aid/shared'
-import {
-  sortByProps,
-  TableHeadersProps,
-} from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
+import { TableHeadersProps } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
 interface PageProps {
   applications: Application[]
   headers: TableHeadersProps[]
   className?: string
-  setSortBy(filter: string): void
-  sortBy: sortByProps
 }
 
 const ApplicationsTable: React.FC<PageProps> = ({
   applications,
   headers,
   className,
-  setSortBy,
-  sortBy,
 }) => {
   const router = useRouter()
 
@@ -44,12 +37,7 @@ const ApplicationsTable: React.FC<PageProps> = ({
         <thead>
           <tr>
             {headers.map((item, index) => (
-              <TableHeaders
-                header={item}
-                index={index}
-                setSortBy={setSortBy}
-                sortBy={sortBy}
-              />
+              <TableHeaders header={item} index={index} />
             ))}
           </tr>
         </thead>
