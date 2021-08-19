@@ -5,11 +5,12 @@ interface LogoProps {
   className?: string
 }
 
-const LogoHfj: React.FC<LogoProps> = ({ className }) => {
+const LogoHfj = ({ className }: LogoProps) => {
   return (
     <a
       href="https://www.hafnarfjordur.is/"
       target="_blank"
+      rel="noopener noreferrer"
       className={cn({ [`${className}`]: true })}
     >
       <svg

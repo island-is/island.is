@@ -15,6 +15,5 @@ const { audience: audienceUrl } = environment.auth
       useFactory: () => new (require('@island.is/login'))({ audienceUrl }),
     },
   ],
-  exports: [AuthService],
 })
 export class AuthModule {}

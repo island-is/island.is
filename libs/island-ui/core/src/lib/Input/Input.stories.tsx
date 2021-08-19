@@ -1,12 +1,11 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
+
 import { withFigma } from '../../utils/withFigma'
 import { Input } from './Input'
 
 export default {
   title: 'Form/Input',
   component: Input,
-  decorators: [withDesign],
   parameters: withFigma('Input'),
 }
 
