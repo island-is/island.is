@@ -5,6 +5,8 @@ export const wrapper = style({
   float: 'right',
   textAlign: 'right',
   marginLeft: spacing[2],
+  position: 'relative',
+  zIndex: 1,
 })
 
 export const toggler = style({
