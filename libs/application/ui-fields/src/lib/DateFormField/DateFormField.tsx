@@ -1,4 +1,5 @@
 import React, { FC, useMemo } from 'react'
+
 import {
   FieldBaseProps,
   DateField,
@@ -17,7 +18,7 @@ interface Props extends FieldBaseProps {
   field: DateField
 }
 
-const DateFormField: FC<Props> = ({ application, error, field }) => {
+export const DateFormField: FC<Props> = ({ application, error, field }) => {
   const {
     id,
     disabled,
@@ -103,5 +104,3 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
     </div>
   )
 }
-
-export default DateFormField
