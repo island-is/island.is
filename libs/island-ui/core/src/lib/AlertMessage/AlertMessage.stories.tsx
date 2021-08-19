@@ -1,5 +1,4 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { ContentBlock } from '../ContentBlock/ContentBlock'
@@ -11,7 +10,6 @@ import { GridColumn } from '../Grid/GridColumn/GridColumn'
 export default {
   title: 'Alerts/AlertMessage',
   component: AlertMessage,
-  decorators: [withDesign],
   parameters: withFigma('AlertMessage'),
 }
 
