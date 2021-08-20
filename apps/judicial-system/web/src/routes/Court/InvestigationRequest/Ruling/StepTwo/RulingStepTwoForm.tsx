@@ -366,6 +366,35 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                       backgroundColor="white"
                     />
                   </GridColumn>
+                  <GridColumn span="5/12">
+                    <RadioButton
+                      name="prosecutor-appeal-decision"
+                      id="prosecutor-not-applicable"
+                      label="Á ekki við"
+                      value={CaseAppealDecision.NOT_APPLICABLE}
+                      checked={
+                        workingCase.prosecutorAppealDecision ===
+                        CaseAppealDecision.NOT_APPLICABLE
+                      }
+                      onChange={() => {
+                        setWorkingCase({
+                          ...workingCase,
+                          prosecutorAppealDecision:
+                            CaseAppealDecision.NOT_APPLICABLE,
+                        })
+
+                        updateCase(
+                          workingCase.id,
+                          parseString(
+                            'prosecutorAppealDecision',
+                            CaseAppealDecision.NOT_APPLICABLE,
+                          ),
+                        )
+                      }}
+                      large
+                      backgroundColor="white"
+                    />
+                  </GridColumn>
                 </GridRow>
               </Box>
               <Box>
