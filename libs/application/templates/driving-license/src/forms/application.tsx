@@ -423,7 +423,6 @@ export const application: Form = buildForm({
               id: 'willBringAlongData.photo',
               title: '',
               defaultValue: [],
-              backgroundColor: 'white', 
               options: [
                 {
                   value: 'yes',
@@ -436,7 +435,6 @@ export const application: Form = buildForm({
               id: 'willBringAlongData.certificate',
               title: '',
               defaultValue: [],
-              backgroundColor: 'white', 
               options: [
                 {
                   value: 'yes',
