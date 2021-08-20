@@ -488,7 +488,7 @@ export class CaseController {
       return existingCase.childCase
     }
 
-    const extendedCase = this.caseService.extend(existingCase, user)
+    const extendedCase = await this.caseService.extend(existingCase, user)
 
     return this.caseService.findById(extendedCase.id)
   }
