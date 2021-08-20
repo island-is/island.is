@@ -8,6 +8,9 @@ export const wrapper = style({
 export const td = style({
   width: 'max-content',
 })
+export const alignTd = style({
+  marginLeft: 'auto',
+})
 
 export const buttonTd = style({
   width: 'max-content',
