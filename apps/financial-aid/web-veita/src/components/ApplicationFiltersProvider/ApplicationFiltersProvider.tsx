@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client'
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { ApplicationFilters } from '@island.is/financial-aid/shared'
 
-import { GetApplicationsFiltersQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import { GetApplicationFiltersQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 interface ApplicationFiltersData {
   applicationFilters?: ApplicationFilters
@@ -38,7 +38,7 @@ const ApplicationFiltersProvider = ({ children }: PageProps) => {
   ] = useState<ApplicationFilters>(initialState)
 
   const { data, error, loading } = useQuery<ApplicationFiltersData>(
-    GetApplicationsFiltersQuery,
+    GetApplicationFiltersQuery,
     {
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',

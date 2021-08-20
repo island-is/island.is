@@ -60,8 +60,8 @@ export const GetApplicationsQuery = gql`
   }
 `
 
-export const GetApplicationsFiltersQuery = gql`
-  query GetApplicationsFiltersQuery {
+export const GetApplicationFiltersQuery = gql`
+  query GetApplicationFiltersQuery {
     applicationFilters {
       New
       InProgress
