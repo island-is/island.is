@@ -36,6 +36,28 @@ export const useRoutes = () => {
     if (userInfo === null || modulesPending) return
     arrangeRoutes(userInfo, dispatch, Object.values(modules), client)
   }, [userInfo, dispatch, modules, client])
+
+  useEffect(() => {
+    if (!modulesPending) {
+      Promise.all(
+        Object.values(modules)
+          .filter((module) => module.dynamicRoutes)
+          .map((module) => {
+            return module.dynamicRoutes({
+              userInfo,
+              client,
+            })
+          }),
+      ).then((dynamicRoutes) => {
+        if (dynamicRoutes.length > 0) {
+          dispatch({
+            type: ActionType.UpdateFulfilledRoutes,
+            payload: flatten(dynamicRoutes),
+          })
+        }
+      })
+    }
+  }, [modulesPending])
 }
 
 export default useRoutes
