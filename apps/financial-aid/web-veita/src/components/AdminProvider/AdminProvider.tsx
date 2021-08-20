@@ -1,7 +1,9 @@
 import { gql, useQuery } from '@apollo/client'
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { CSRF_COOKIE_NAME, User } from '@island.is/financial-aid/shared'
 import Cookies from 'js-cookie'
+
+import { CurrentUserQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 interface AdminProvider {
   isAuthenticated?: boolean
@@ -9,19 +11,13 @@ interface AdminProvider {
   setAdmin?: React.Dispatch<React.SetStateAction<User | undefined>>
 }
 
+interface PageProps {
+  children: ReactNode
+}
+
 export const AdminContext = createContext<AdminProvider>({})
 
-export const CurrentUserQuery = gql`
-  query CurrentUserQuery {
-    currentUser {
-      nationalId
-      name
-      phoneNumber
-    }
-  }
-`
-
-const AdminProvider: React.FC = ({ children }) => {
+const AdminProvider = ({ children }: PageProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(Cookies.get(CSRF_COOKIE_NAME)),
   )

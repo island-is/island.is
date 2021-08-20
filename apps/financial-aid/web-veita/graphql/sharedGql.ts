@@ -85,3 +85,12 @@ export const GetCurrentUserQuery = gql`
     }
   }
 `
+export const CurrentUserQuery = gql`
+  query CurrentUserQuery {
+    currentUser {
+      nationalId
+      name
+      phoneNumber
+    }
+  }
+`

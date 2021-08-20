@@ -33,7 +33,7 @@ import { AuthService } from './auth.service'
 
 const { samlEntryPointOsk, samlEntryPointVeita } = environment.auth
 
-const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
+const REDIRECT_COOKIE_NAME = 'financial-aid.redirect'
 
 const defaultCookieOptions: CookieOptions = {
   secure: environment.production,
@@ -76,7 +76,7 @@ export class AuthController {
   ) {}
 
   @Get('login')
-  login(
+  async login(
     @Res() res: Response,
     @Query('service', new DefaultValuePipe('osk')) service: 'osk' | 'veita',
     @Query('nationalId') nationalId: string,
