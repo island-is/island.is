@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -10,11 +10,14 @@ import {
 } from '@island.is/financial-aid/auth'
 
 import { UserModel } from './user.model'
+import { boolean } from 'yargs'
+import { UserService } from './user.service'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => UserModel)
 export class UserResolver {
   constructor(
+    private readonly userService: UserService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -26,5 +29,10 @@ export class UserResolver {
     this.logger.debug('Getting current user')
 
     return user as UserModel
+  }
+
+  @ResolveField('hasAppliedForPeriod', () => boolean)
+  async hasAppliedForPeriod(@Parent() user: User): Promise<boolean> {
+    return await this.userService.checkHasAppliedForPeriod(user.nationalId)
   }
 }
