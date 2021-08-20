@@ -2,7 +2,8 @@ import * as s from './RegulationDisplay.treat'
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import { ISODate, RegulationMaybeDiff } from './Regulations.types'
+import { ISODate, prettyName } from '@island.is/regulations'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import {
   Button,
@@ -13,17 +14,20 @@ import {
 } from '@island.is/island-ui/core'
 import { Sticky } from '@island.is/web/components'
 import { RegulationLayout } from './RegulationLayout'
-import { prettyName, useRegulationLinkResolver } from './regulationUtils'
+import { useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationStatus } from './RegulationStatus'
 import { Appendixes } from './Appendixes'
-import { HTMLDump } from './HTMLDump'
+import { HTMLBox } from '@island.is/regulations/react'
 import { CommentsBox } from './CommentsBox'
 import { RegulationInfoBox } from './RegulationInfoBox'
 import { RegulationEffectsBox } from './RegulationEffectsBox'
 import { RegulationChangelog } from './RegulationChangelog'
 import { AffectingRegulations } from './AffectingRegulations'
 import { RegulationTimeline } from './RegulationTimeline'
+import { MinistryTransfer } from './MinistryTansfer'
+import { Link } from '@island.is/island-ui/core'
+import { DiffModeToggle } from './DiffModeToggle'
 
 const getKey = (regulation: RegulationMaybeDiff): string => {
   const { name, timelineDate, showingDiff } = regulation
@@ -41,28 +45,30 @@ export type RegulationDisplayProps = {
 
 export const RegulationDisplay = (props: RegulationDisplayProps) => {
   const router = useRouter()
-  const { regulation, texts } = props
+  const { regulation, texts, urlDate } = props
 
   const txt = useNamespace(texts)
-  const { linkToRegulation, linkResolver } = useRegulationLinkResolver()
+  const { linkResolver } = useRegulationLinkResolver()
 
   const name = prettyName(regulation.name)
 
-  const diffView = !!regulation.showingDiff
+  const { timelineDate, lastAmendDate, repealedDate } = regulation
 
-  const timelineDate = regulation.timelineDate || ''
-  const effectiveDate = regulation.effectiveDate
-  const lastAmendDate = regulation.lastAmendDate || ''
+  const isRepealed = !!repealedDate
+  const isCurrent =
+    (!isRepealed && !timelineDate) || timelineDate === lastAmendDate
+  const isUpcoming =
+    !isRepealed &&
+    !isCurrent &&
+    timelineDate &&
+    lastAmendDate &&
+    timelineDate > lastAmendDate
 
-  const isDiffable =
-    regulation.history.length > 0 && timelineDate !== effectiveDate
-
-  const isCurrent = !timelineDate || timelineDate === lastAmendDate
-  const isUpcoming = !isCurrent && timelineDate > lastAmendDate
-
-  const waterMarkClass = isCurrent
-    ? undefined
-    : s.oudatedWarning + (isUpcoming ? ' ' + s.upcomingWarning : '')
+  const waterMarkClass = isRepealed
+    ? s.repealedWarning
+    : !isCurrent
+    ? s.oudatedWarning + (isUpcoming ? ' ' + s.upcomingWarning : '')
+    : undefined
 
   const key = getKey(regulation)
 
@@ -74,45 +80,45 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
       texts={props.texts}
       main={
         <>
-          {isDiffable && (
-            <ToggleSwitchLink
-              className={s.diffToggler}
-              checked={diffView}
-              href={linkToRegulation(regulation.name, {
-                diff: !diffView,
-                ...(props.urlDate
-                  ? { on: props.urlDate }
-                  : timelineDate
-                  ? { d: timelineDate }
-                  : undefined),
-              })}
-              linkText={diffView ? txt('hideDiff') : txt('showDiff')}
-              label={txt('showDiff')}
+          <div className={s.statusHeader}>
+            <DiffModeToggle
+              regulation={regulation}
+              texts={texts}
+              urlDate={urlDate}
             />
-          )}
-          <RegulationStatus
-            regulation={regulation}
-            urlDate={props.urlDate}
-            texts={texts}
-          />
-          <AffectingRegulations regulation={regulation} texts={texts} />
+            <RegulationStatus
+              regulation={regulation}
+              urlDate={props.urlDate}
+              texts={texts}
+            />
+            <AffectingRegulations regulation={regulation} texts={texts} />
+          </div>
+          <MinistryTransfer regulation={regulation} texts={texts} />
 
           <div className={waterMarkClass}>
             <Text marginTop={[2, 3, 4, 5]} marginBottom={1}>
               <strong>{name}</strong>
             </Text>
             <Text as="h1" variant="h3" marginBottom={[2, 4]}>
-              {/* FIXME: Handle diffing of title (see `./Appendixes.tsx` for an example) */}
-              {regulation.title}
+              {regulation.showingDiff ? (
+                <HTMLBox
+                  component="span"
+                  className={s.bodyText}
+                  html={regulation.title}
+                />
+              ) : (
+                regulation.title
+              )}
             </Text>
 
-            <HTMLDump className={s.bodyText} html={regulation.text} />
+            <HTMLBox className={s.bodyText} html={regulation.text} />
 
             <Appendixes
               key={key}
               legend={txt('appendixesTitle')}
               genericTitle={txt('appendixGenericTitle')}
               appendixes={regulation.appendixes}
+              diffing={!!regulation.showingDiff}
             />
 
             <CommentsBox
@@ -143,15 +149,16 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
             </Hidden>
 
             <RegulationInfoBox regulation={regulation} texts={texts} />
-            <Hidden print={true}>
-              <RegulationEffectsBox regulation={regulation} texts={texts} />
-            </Hidden>
 
             <Hidden print={true}>
               {showTimeline ? (
                 <RegulationTimeline regulation={regulation} texts={texts} />
               ) : (
-                <RegulationChangelog regulation={regulation} texts={texts} />
+                <RegulationChangelog
+                  key={regulation.name}
+                  regulation={regulation}
+                  texts={texts}
+                />
               )}
               <button
                 onClick={() => setShowTimeline(!showTimeline)}
@@ -161,6 +168,8 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
                 }))(showTimeline ? 'Birta tímalínu' : 'Birta breytinga logg')}
                 style={{ width: '100%', padding: '1em', cursor: 'pointer' }}
               />
+
+              <RegulationEffectsBox regulation={regulation} texts={texts} />
             </Hidden>
           </Stack>
         </Sticky>
