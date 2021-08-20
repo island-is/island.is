@@ -188,12 +188,14 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
                           href={linkToRegulation(reg.name)}
                           heading={prettyName(reg.name)}
                           text={reg.title}
-                          tags={[
-                            {
-                              label: reg.ministry.name ?? reg.ministry,
-                              disabled: true,
-                            },
-                          ]}
+                          tags={
+                            reg.ministry && [
+                              {
+                                label: reg.ministry.name ?? reg.ministry,
+                                disabled: true,
+                              },
+                            ]
+                          }
                         />
                       </GridColumn>
                     ))}
