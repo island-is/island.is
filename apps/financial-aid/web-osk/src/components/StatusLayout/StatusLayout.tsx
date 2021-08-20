@@ -21,7 +21,7 @@ const StatusLayout = ({ children }: Props) => {
 
   const currentState = useMemo(() => {
     if (user?.activeApplication) {
-      return getState[user.activeApplication.state]
+      return getState[user.activeApplication[0].state]
     }
   }, [user])
 
@@ -42,7 +42,7 @@ const StatusLayout = ({ children }: Props) => {
       background="purple100"
       className={styles.processContainer}
     >
-      {!user.hasAppliedForPeriod ? (
+      {user.activeApplication?.length === 0 ? (
         <div>Þú hefur ekki sótt um?</div>
       ) : (
         <GridContainer className={styles.gridContainer}>

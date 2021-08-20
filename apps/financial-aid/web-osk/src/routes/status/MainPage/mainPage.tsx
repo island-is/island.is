@@ -32,7 +32,13 @@ const MainPage = () => {
 
   const currentState = useMemo(() => {
     if (user?.activeApplication) {
-      return user.activeApplication.state
+      return user.activeApplication[0].state
+    }
+  }, [user])
+
+  const activeApplicationID = useMemo(() => {
+    if (user?.activeApplication) {
+      return user.activeApplication[0].id
     }
   }, [user])
 
@@ -46,7 +52,7 @@ const MainPage = () => {
         currentState && getState[currentState].toLowerCase()
       }`,
       label: 'Sjá nánar',
-      link: 'timalina',
+      link: `${activeApplicationID}`,
     },
     {
       heading: 'Áætluð aðstoð',

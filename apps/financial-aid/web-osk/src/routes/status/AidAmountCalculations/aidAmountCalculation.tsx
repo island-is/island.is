@@ -20,8 +20,10 @@ const AidAmountCalculations = () => {
       <ContentContainer>
         {user?.activeApplication && (
           <Estimation
-            homeCircumstances={user.activeApplication.homeCircumstances}
-            usePersonalTaxCredit={user.activeApplication.usePersonalTaxCredit}
+            homeCircumstances={user.activeApplication[0].homeCircumstances}
+            usePersonalTaxCredit={
+              user.activeApplication[0].usePersonalTaxCredit
+            }
             aboutText={
               <Text marginBottom={[2, 2, 3]}>
                 Athugaðu að þessi útreikningur er{' '}

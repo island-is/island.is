@@ -13,18 +13,19 @@ import { useQuery } from '@apollo/client'
 import { GetApplicationEventQuery } from '@island.is/financial-aid-web/oskgraphql'
 
 import format from 'date-fns/format'
+import { useRouter } from 'next/router'
 
 interface ApplicationEventData {
   applicationEvents: ApplicationEvent[]
 }
 
 const Timeline = () => {
-  const { user } = useContext(UserContext)
+  const router = useRouter()
 
   const { data, error, loading } = useQuery<ApplicationEventData>(
     GetApplicationEventQuery,
     {
-      variables: { input: { id: user?.activeApplication?.id } },
+      variables: { input: { id: router.query.id } },
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },

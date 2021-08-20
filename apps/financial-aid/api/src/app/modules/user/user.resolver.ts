@@ -13,7 +13,6 @@ import { UserModel } from './user.model'
 import { UserService } from './user.service'
 
 import { ActiveApplicationModel } from '../application'
-import { boolean } from 'yargs'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => UserModel)

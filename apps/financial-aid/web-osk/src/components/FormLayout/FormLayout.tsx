@@ -46,7 +46,7 @@ const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
       background="purple100"
       className={styles.processContainer}
     >
-      {user.hasAppliedForPeriod ? (
+      {user.activeApplication?.length !== 0 ? (
         <HasApplied />
       ) : (
         <GridContainer className={styles.gridContainer}>
