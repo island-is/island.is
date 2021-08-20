@@ -408,17 +408,40 @@ export const application: Form = buildForm({
               }
             }),
             buildDescriptionField({
-              id: 'myndagogn',
-              title: '',
+              id: 'bringalong',
+              title: m.overviewBringAlongTitle,
               titleVariant: 'h4',
-              description: m.qualityPhotoAcknowledgement,
+              description: '',
+              condition: (answers) => {
+                try {
+                  return answers.willBringQualityPhoto === "yes" || Object.values(answers?.healthDeclaration).includes('yes')
+                } catch (error) {
+                  return false
+                }
+              }
+            }),
+            buildCheckboxField({
+              id: 'willBringAlongData.photo',
+              title: '',
+              defaultValue: [],
+              options: [
+                {
+                  value: 'yes',
+                  label: m.qualityPhotoAcknowledgement,
+                },
+              ],
               condition: (answers) => answers.willBringQualityPhoto === "yes" ?? null,
             }),
-            buildDescriptionField({
-              id: 'vottungogn',
+            buildCheckboxField({
+              id: 'willBringAlongData.certificate',
               title: '',
-              titleVariant: 'h4',
-              description: m.overviewBringCertificateData,
+              defaultValue: [],
+              options: [
+                {
+                  value: 'yes',
+                  label: m.overviewBringCertificateData,
+                },
+              ],
               condition: (answers) => {
                 try {
                   return Object.values(answers?.healthDeclaration).includes('yes')

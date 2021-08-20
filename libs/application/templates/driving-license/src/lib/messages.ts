@@ -345,7 +345,11 @@ export const m = defineMessages({
     `,
     description: 'Description of photo requirements',
   },
-
+  overviewBringAlongTitle: {
+    id: 'dl.application:overview.overviewBringAlongTitle',
+    defaultMessage: 'Gögn höfð meðferðis til sýslumanns',
+    description: `Data to bring along`,
+  },
   overviewBringCertificateData: {
     id: 'dl.application:overview.bringCertificateData',
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
