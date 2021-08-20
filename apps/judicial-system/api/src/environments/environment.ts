@@ -32,6 +32,9 @@ const devConfig = {
   features: {
     hidden: '',
   },
+  events: {
+    url: process.env.EVENT_URL,
+  },
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -116,6 +119,9 @@ const prodConfig = {
   },
   features: {
     hidden: process.env.HIDDEN_FEATURES,
+  },
+  events: {
+    url: process.env.EVENT_URL,
   },
 }
 

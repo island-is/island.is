@@ -24,7 +24,7 @@ interface PageProps {
   index: number
 }
 
-const TableBody: React.FC<PageProps> = ({ application, index }) => {
+const TableBody = ({ application, index }: PageProps) => {
   return (
     <Link href={'application/' + application.id} key={'key-' + index}>
       <tr className={styles.link}>

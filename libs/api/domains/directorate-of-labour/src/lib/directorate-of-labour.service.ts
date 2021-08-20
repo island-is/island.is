@@ -100,14 +100,14 @@ export class DirectorateOfLabourService {
       .catch(this.handleError.bind(this))
   }
 
-  async getParentalLeavesPeriodsLength(
+  async getParentalLeavesPeriodLength(
     nationalId: string,
     startDate: string,
     endDate: string,
     percentage: string,
   ) {
     return await this.directorateOfLabourRepository
-      .getParentalLeavesPeriodsLength(
+      .getParentalLeavesPeriodLength(
         nationalId,
         new Date(startDate),
         new Date(endDate),

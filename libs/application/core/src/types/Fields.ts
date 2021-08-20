@@ -107,6 +107,7 @@ export interface DateField extends BaseField {
   minDate?: MaybeWithApplicationAndField<Date>
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
+  onChange?(date: string): void
 }
 
 export interface DescriptionField extends BaseField {
