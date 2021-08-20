@@ -20,11 +20,11 @@ export const ApplicationFiltersContext = createContext<ApplicationFiltersProvide
 )
 
 export const initialState = {
-  new: 0,
-  inProgress: 0,
-  dataNeeded: 0,
-  rejected: 0,
-  approved: 0,
+  New: 0,
+  InProgress: 0,
+  DataNeeded: 0,
+  Rejected: 0,
+  Approved: 0,
 }
 
 interface PageProps {

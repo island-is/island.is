@@ -72,11 +72,11 @@ export class ApplicationService {
     const filterCounts = await Promise.all(countPromises)
 
     return {
-      new: filterCounts[0],
-      inProgress: filterCounts[1],
-      dataNeeded: filterCounts[2],
-      rejected: filterCounts[3],
-      approved: filterCounts[4],
+      New: filterCounts[0],
+      InProgress: filterCounts[1],
+      DataNeeded: filterCounts[2],
+      Rejected: filterCounts[3],
+      Approved: filterCounts[4],
     }
   }
 

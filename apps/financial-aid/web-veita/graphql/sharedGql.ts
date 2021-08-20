@@ -63,11 +63,11 @@ export const GetApplicationsQuery = gql`
 export const GetApplicationFiltersQuery = gql`
   query GetApplicationFiltersQuery {
     applicationFilters {
-      new
-      inProgress
-      dataNeeded
-      rejected
-      approved
+      New
+      InProgress
+      DataNeeded
+      Rejected
+      Approved
     }
   }
 `
