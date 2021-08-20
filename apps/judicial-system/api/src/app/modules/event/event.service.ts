@@ -41,7 +41,7 @@ export class EventService {
     }`
     const prosecutionText = `${
       theCase.prosecutor?.institution
-        ? `${theCase.prosecutor?.institution}/`
+        ? `${theCase.prosecutor?.institution?.name}/`
         : ''
     }${theCase.policeCaseNumber}`
     const courtText = theCase.court
