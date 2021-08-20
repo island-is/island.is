@@ -17,7 +17,7 @@ import {
   DrivingLicenseCategory,
   NeedsHealhCertificate,
   QualityPhotoResult,
-  NeedsQualityPhoto
+  NeedsQualityPhoto,
 } from './drivingLicense.type'
 import {
   AkstursmatDto,
@@ -277,8 +277,8 @@ export class DrivingLicenseService {
   ): Promise<NewDrivingLicenseResult> {
     // TODO: insert the following into body
     // needsToPresentQualityPhoto: input.needsToPresentQualityPhoto
-            // ? NeedsQualityPhoto.TRUE
-            // : NeedsQualityPhoto.FALSE,
+    // ? NeedsQualityPhoto.TRUE
+    // : NeedsQualityPhoto.FALSE,
     const response: unknown = await this.drivingLicenseApi.apiOkuskirteiniApplicationsNewCategoryPost(
       {
         category: DrivingLicenseCategory.B,
@@ -315,16 +315,14 @@ export class DrivingLicenseService {
         kennitala: nationalId,
       },
     )
-    var image
-    if (result > 0) {
-      image = await this.drivingLicenseApi.apiOkuskirteiniKennitalaGetqualityphotoGet(
-        {
-          kennitala: nationalId,
-        },
-      )
-    } else {
-      image = null
-    }
+    const image =
+      result > 0
+        ? await this.drivingLicenseApi.apiOkuskirteiniKennitalaGetqualityphotoGet(
+            {
+              kennitala: nationalId,
+            },
+          )
+        : null
 
     return {
       success: result > 0,

@@ -22,18 +22,11 @@ import {
 import {
   NationalRegistryUser,
   UserProfile,
-  // QualityPhotoData,
 } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
-
-type QualityPhotoData =  {
-  data: {
-    qualityPhoto: string
-    success: boolean
-  }
-}
+import { QualityPhotoData } from '../utils'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -129,7 +122,6 @@ export const application: Form = buildForm({
             buildRadioField({
               id: 'willBringQualityPhoto',
               title: '',
-              largeButtons: true,
               width: 'half',
               disabled: false,
               options: [
