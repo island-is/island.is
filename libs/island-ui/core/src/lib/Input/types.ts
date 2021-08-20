@@ -44,9 +44,10 @@ export interface InputComponentProps {
   icon?: IconType
   iconType?: Type
   /**
-   * While true hover state will not show and focus state will be allways on
+   * While true hover state will not show and focus state will be always on
    */
   fixedFocusState?: boolean
+  autoComplete?: 'on' | 'off'
 }
 
 export interface InputProps extends InputComponentProps {
