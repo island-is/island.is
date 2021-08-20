@@ -48,6 +48,7 @@ interface CCase extends TCase {
   registrarId: string
   registrar: CUser
   parentCaseId: string
+  parentCase: CCase
 }
 
 let app: INestApplication
@@ -289,6 +290,9 @@ function caseToCCase(dbCase: Case) {
       theCase.prosecutorPostponedAppealDate.toISOString(),
     judge: theCase.judge && userToCUser(theCase.judge),
     registrar: theCase.registrar && userToCUser(theCase.registrar),
+    parentCase: theCase.parentCase
+      ? caseToCCase(theCase.parentCase)
+      : theCase.parentCase,
   } as unknown) as CCase
 }
 
@@ -450,7 +454,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.registrarId ?? null).toBe(caseTwo.registrarId ?? null)
   expectUsersToMatch(caseOne.registrar, caseTwo.registrar)
   expect(caseOne.parentCaseId ?? null).toBe(caseTwo.parentCaseId ?? null)
-  expect(caseOne.parentCase ?? null).toStrictEqual(caseTwo.parentCase ?? null)
+  if (caseOne.parentCase || caseTwo.parentCase) {
+    expectCasesToMatch(caseOne.parentCase, caseTwo.parentCase)
+  }
 }
 
 describe('Institution', () => {
@@ -640,11 +646,35 @@ describe('Case', () => {
           modified: apiCase.modified ?? 'FAILURE',
           state: CaseState.NEW,
           prosecutorId: prosecutor.id,
+          prosecutor,
+          court,
         })
 
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
+          include: [
+            {
+              model: Institution,
+              as: 'court',
+            },
+            {
+              model: User,
+              as: 'prosecutor',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            { model: Institution, as: 'sharedWithProsecutorsOffice' },
+            {
+              model: User,
+              as: 'judge',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            {
+              model: User,
+              as: 'registrar',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+          ],
         })
       })
       .then((value) => {
@@ -672,11 +702,34 @@ describe('Case', () => {
           modified: apiCase.modified ?? 'FAILURE',
           state: CaseState.NEW,
           prosecutorId: prosecutor.id,
+          prosecutor,
         })
 
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
+          include: [
+            {
+              model: Institution,
+              as: 'court',
+            },
+            {
+              model: User,
+              as: 'prosecutor',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            { model: Institution, as: 'sharedWithProsecutorsOffice' },
+            {
+              model: User,
+              as: 'judge',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            {
+              model: User,
+              as: 'registrar',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+          ],
         })
       })
       .then((value) => {
@@ -711,11 +764,36 @@ describe('Case', () => {
           modified: apiCase.modified,
           type: dbCase.type,
           state: dbCase.state ?? 'FAILURE',
+          court,
+          prosecutor,
+          sharedWithProsecutorsOffice,
         } as CCase)
 
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
+          include: [
+            {
+              model: Institution,
+              as: 'court',
+            },
+            {
+              model: User,
+              as: 'prosecutor',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            { model: Institution, as: 'sharedWithProsecutorsOffice' },
+            {
+              model: User,
+              as: 'judge',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            {
+              model: User,
+              as: 'registrar',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+          ],
         })
       })
       .then((newValue) => {
@@ -750,11 +828,34 @@ describe('Case', () => {
           ...dbCase,
           modified: apiCase.modified,
           ...judgeCaseData,
+          judge,
         } as CCase)
 
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
+          include: [
+            {
+              model: Institution,
+              as: 'court',
+            },
+            {
+              model: User,
+              as: 'prosecutor',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            { model: Institution, as: 'sharedWithProsecutorsOffice' },
+            {
+              model: User,
+              as: 'judge',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            {
+              model: User,
+              as: 'registrar',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+          ],
         })
       })
       .then((newValue) => {
@@ -794,6 +895,10 @@ describe('Case', () => {
           ...dbCase,
           modified: apiCase.modified,
           state: CaseState.ACCEPTED,
+          court,
+          prosecutor,
+          sharedWithProsecutorsOffice,
+          judge,
         })
 
         // Check the data in the database
@@ -992,6 +1097,7 @@ describe('Case', () => {
           accusedAddress: dbCase.accusedAddress,
           accusedGender: dbCase.accusedGender,
           courtId: dbCase.courtId,
+          court,
           lawsBroken: dbCase.lawsBroken,
           legalBasis: dbCase.legalBasis,
           custodyProvisions: dbCase.custodyProvisions,
@@ -1001,7 +1107,9 @@ describe('Case', () => {
           requestProsecutorOnlySession: dbCase.requestProsecutorOnlySession,
           prosecutorOnlySessionRequest: dbCase.prosecutorOnlySessionRequest,
           prosecutorId: prosecutor.id,
+          prosecutor,
           parentCaseId: dbCase.id,
+          parentCase: dbCase,
         } as CCase)
       })
   })
