@@ -23,11 +23,11 @@ export enum ApplicationState {
 }
 
 export interface ApplicationFilters {
-  New: number
-  InProgress: number
-  DataNeeded: number
-  Rejected: number
-  Approved: number
+  new: number
+  inProgress: number
+  dataNeeded: number
+  rejected: number
+  approved: number
 }
 
 export interface Application {

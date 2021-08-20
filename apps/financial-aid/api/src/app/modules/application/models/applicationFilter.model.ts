@@ -5,17 +5,17 @@ import { ApplicationFilters } from '@island.is/financial-aid/shared'
 @ObjectType()
 export class ApplicationFiltersModel implements ApplicationFilters {
   @Field()
-  readonly New!: number
+  readonly new!: number
 
   @Field()
-  readonly InProgress!: number
+  readonly inProgress!: number
 
   @Field()
-  readonly DataNeeded!: number
+  readonly dataNeeded!: number
 
   @Field()
-  readonly Rejected!: number
+  readonly rejected!: number
 
   @Field()
-  readonly Approved!: number
+  readonly approved!: number
 }
