@@ -21,11 +21,11 @@ export class FileService {
     private readonly logger: Logger,
   ) {}
 
-  createFile(createFile: CreateFileDto): Promise<ApplicationFileModel> {
+  async createFile(createFile: CreateFileDto): Promise<ApplicationFileModel> {
     return this.fileModel.create(createFile)
   }
 
-  getAllApplicationFiles(
+  async getAllApplicationFiles(
     applicationId: string,
   ): Promise<ApplicationFileModel[]> {
     this.logger.debug(`Getting all files for case ${applicationId}`)
@@ -39,12 +39,27 @@ export class FileService {
   createSignedUrl(folder: string, fileName: string): SignedUrlModel {
     const key = `${folder}/${fileName}`
 
-    const fileUrl = `${environment.files.fileBaseUrl}/${key}`
+    const fileUrl = `${environment.files.fileBaseUrlOsk}/${key}`
 
     const signedUrl = this.cloudFrontService.createPresignedPost(fileUrl)
 
     return {
       key,
+      url: signedUrl,
+    }
+  }
+
+  async createSignedUrlForFileId(id: string): Promise<SignedUrlModel> {
+    const file = await this.fileModel.findOne({
+      where: { id },
+    })
+
+    const fileUrl = `${environment.files.fileBaseUrlVeita}/${file.key}`
+
+    const signedUrl = this.cloudFrontService.createPresignedPost(fileUrl)
+
+    return {
+      key: file.key,
       url: signedUrl,
     }
   }

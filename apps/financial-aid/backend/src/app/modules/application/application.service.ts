@@ -34,7 +34,7 @@ export class ApplicationService {
     )
   }
 
-  getAll(): Promise<ApplicationModel[]> {
+  async getAll(): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({ order: [['modified', 'DESC']] })
   }
 

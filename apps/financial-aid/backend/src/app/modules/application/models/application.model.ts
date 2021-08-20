@@ -16,6 +16,7 @@ import {
   HomeCircumstances,
   Employment,
   ApplicationState,
+  Application,
 } from '@island.is/financial-aid/shared'
 import { ApplicationFileModel } from '../../file/models'
 
@@ -23,7 +24,7 @@ import { ApplicationFileModel } from '../../file/models'
   tableName: 'applications',
   timestamps: true,
 })
-export class ApplicationModel extends Model<ApplicationModel> {
+export class ApplicationModel extends Model<Application> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

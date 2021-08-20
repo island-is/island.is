@@ -25,7 +25,8 @@ const prodConfig = {
   files: {
     cloudFrontPublicKeyId: process.env.CLOUDFRONT_PUBLIC_KEY_ID,
     cloudFrontPrivateKey: process.env.CLOUDFRONT_PRIVATE_KEY,
-    fileBaseUrl: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
+    fileBaseUrlOsk: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
+    fileBaseUrlVeita: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },
@@ -40,7 +41,8 @@ const devConfig = {
   files: {
     cloudFrontPublicKeyId: process.env.CLOUDFRONT_PUBLIC_KEY_ID ?? '',
     cloudFrontPrivateKey: process.env.CLOUDFRONT_PRIVATE_KEY ?? '',
-    fileBaseUrl: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
+    fileBaseUrlOsk: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
+    fileBaseUrlVeita: 'https://fjarhagsadstod.dev.sveitarfelog.net/files',
     postTimeToLiveMinutes: 5,
     getTimeToLiveMinutes: 5,
   },

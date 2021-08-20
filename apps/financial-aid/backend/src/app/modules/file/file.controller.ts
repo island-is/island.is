@@ -25,4 +25,13 @@ export class FileController {
   ): SignedUrlModel {
     return this.fileService.createSignedUrl(user.folder, getSignedUrl.fileName)
   }
+
+  @Get('url/:id')
+  @ApiCreatedResponse({
+    type: SignedUrlModel,
+    description: 'Creates a new signed url',
+  })
+  async createSignedUrlForId(@Param('id') id: string): Promise<SignedUrlModel> {
+    return this.fileService.createSignedUrlForFileId(id)
+  }
 }

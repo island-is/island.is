@@ -12,17 +12,17 @@ export class ApplicationEventService {
     private readonly applicationEventModel: typeof ApplicationEventModel,
   ) {}
 
-  getAll(): Promise<ApplicationEventModel[]> {
+  async getAll(): Promise<ApplicationEventModel[]> {
     return this.applicationEventModel.findAll()
   }
 
-  findById(id: string): Promise<ApplicationEventModel | null> {
+  async findById(id: string): Promise<ApplicationEventModel | null> {
     return this.applicationEventModel.findOne({
       where: { id },
     })
   }
 
-  create(
+  async create(
     applicationEvent: CreateApplicationEventDto,
   ): Promise<ApplicationEventModel> {
     // this.logger.debug('Creating a new application event')
