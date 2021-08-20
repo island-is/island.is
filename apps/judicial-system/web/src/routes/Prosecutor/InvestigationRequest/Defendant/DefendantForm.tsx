@@ -203,10 +203,10 @@ const DefendantForm: React.FC<Props> = (props) => {
               return (
                 <Box marginBottom={4} key={index}>
                   <DefendantInfo
-                    key={index}
                     workingCase={workingCase}
                     setWorkingCase={setWorkingCase}
                     accused={accused}
+                    index={index}
                   />
                 </Box>
               )

@@ -6,22 +6,20 @@ import { Accused, Case, CaseGender } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
-import {
-  removeTabsValidateAndSet,
-  setAndSendToServer,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as styles from './DefendantInfo.treat'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   accused: Accused
+  index: number
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, accused } = props
+  const { workingCase, setWorkingCase, accused, index } = props
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 
@@ -39,6 +37,15 @@ const DefendantInfo: React.FC<Props> = (props) => {
     setAccusedAddressErrorMessage,
   ] = useState<string>('')
 
+  const updateAccused = () => {
+    const accusedWithoutTypename = workingCase.accused.map(
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      ({ __typename, ...keepAttrs }) => keepAttrs,
+    )
+
+    updateCase(workingCase.id, parseString('accused', accusedWithoutTypename))
+  }
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <BlueBox>
@@ -54,19 +61,19 @@ const DefendantInfo: React.FC<Props> = (props) => {
           <Box className={styles.genderColumn}>
             <RadioButton
               name="accusedGender"
-              id="genderMale"
+              id={`genderMale${index}`}
               label={formatMessage(core.male)}
               value={CaseGender.MALE}
               checked={accused.gender === CaseGender.MALE}
-              onChange={() =>
-                setAndSendToServer(
-                  'accusedGender',
-                  CaseGender.MALE,
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }
+              onChange={() => {
+                const accusedCopy = workingCase.accused
+
+                accusedCopy[accusedCopy.indexOf(accused)].gender =
+                  CaseGender.MALE
+
+                setWorkingCase({ ...workingCase, accused: accusedCopy })
+                updateAccused()
+              }}
               large
               backgroundColor="white"
             />
@@ -74,19 +81,19 @@ const DefendantInfo: React.FC<Props> = (props) => {
           <Box className={styles.genderColumn}>
             <RadioButton
               name="accusedGender"
-              id="genderFemale"
+              id={`genderFemale${index}`}
               label={formatMessage(core.female)}
               value={CaseGender.FEMALE}
               checked={accused.gender === CaseGender.FEMALE}
-              onChange={() =>
-                setAndSendToServer(
-                  'accusedGender',
-                  CaseGender.FEMALE,
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }
+              onChange={() => {
+                const accusedCopy = workingCase.accused
+
+                accusedCopy[accusedCopy.indexOf(accused)].gender =
+                  CaseGender.FEMALE
+
+                setWorkingCase({ ...workingCase, accused: accusedCopy })
+                updateAccused()
+              }}
               large
               backgroundColor="white"
             />
@@ -94,19 +101,19 @@ const DefendantInfo: React.FC<Props> = (props) => {
           <Box className={styles.genderColumn}>
             <RadioButton
               name="accusedGender"
-              id="genderOther"
+              id={`genderOther${index}`}
               label={formatMessage(core.otherGender)}
               value={CaseGender.OTHER}
               checked={accused.gender === CaseGender.OTHER}
-              onChange={() =>
-                setAndSendToServer(
-                  'accusedGender',
-                  CaseGender.OTHER,
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }
+              onChange={() => {
+                const accusedCopy = workingCase.accused
+
+                accusedCopy[accusedCopy.indexOf(accused)].gender =
+                  CaseGender.OTHER
+
+                setWorkingCase({ ...workingCase, accused: accusedCopy })
+                updateAccused()
+              }}
               large
               backgroundColor="white"
             />
@@ -116,27 +123,28 @@ const DefendantInfo: React.FC<Props> = (props) => {
           <InputMask
             mask="999999-9999"
             maskPlaceholder={null}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'accusedNationalId',
-                event,
-                ['empty', 'national-id'],
-                workingCase,
-                setWorkingCase,
-                nationalIdErrorMessage,
-                setNationalIdErrorMessage,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'accusedNationalId',
-                event.target.value,
-                ['empty', 'national-id'],
-                workingCase,
-                updateCase,
-                setNationalIdErrorMessage,
-              )
-            }
+            onChange={(event) => {
+              const accusedCopy = workingCase.accused
+
+              accusedCopy[accusedCopy.indexOf(accused)].nationalId =
+                event.target.value
+
+              setWorkingCase({ ...workingCase, accused: accusedCopy })
+            }}
+            onBlur={(event) => {
+              if (!validate(event.target.value, 'empty').isValid) {
+                setNationalIdErrorMessage(
+                  validate(event.target.value, 'empty').errorMessage,
+                )
+              } else if (!validate(event.target.value, 'national-id').isValid) {
+                setNationalIdErrorMessage(
+                  validate(event.target.value, 'national-id').errorMessage,
+                )
+              } else {
+                setNationalIdErrorMessage('')
+                updateAccused()
+              }
+            }}
           >
             <Input
               data-testid="nationalId"
@@ -159,27 +167,24 @@ const DefendantInfo: React.FC<Props> = (props) => {
             defaultValue={accused.name}
             errorMessage={accusedNameErrorMessage}
             hasError={accusedNameErrorMessage !== ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'accusedName',
-                event,
-                ['empty'],
-                workingCase,
-                setWorkingCase,
-                accusedNameErrorMessage,
-                setAccusedNameErrorMessage,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'accusedName',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setAccusedNameErrorMessage,
-              )
-            }
+            onChange={(event) => {
+              const accusedCopy = workingCase.accused
+
+              accusedCopy[accusedCopy.indexOf(accused)].name =
+                event.target.value
+
+              setWorkingCase({ ...workingCase, accused: accusedCopy })
+            }}
+            onBlur={(event) => {
+              if (validate(event.target.value, 'empty').isValid) {
+                setAccusedNameErrorMessage('')
+                updateAccused()
+              } else {
+                setAccusedNameErrorMessage(
+                  validate(event.target.value, 'empty').errorMessage,
+                )
+              }
+            }}
             required
           />
         </Box>
@@ -194,27 +199,24 @@ const DefendantInfo: React.FC<Props> = (props) => {
             Boolean(accusedAddressErrorMessage) &&
             accusedAddressErrorMessage !== ''
           }
-          onChange={(event) =>
-            removeTabsValidateAndSet(
-              'accusedAddress',
-              event,
-              ['empty'],
-              workingCase,
-              setWorkingCase,
-              accusedAddressErrorMessage,
-              setAccusedAddressErrorMessage,
-            )
-          }
-          onBlur={(event) =>
-            validateAndSendToServer(
-              'accusedAddress',
-              event.target.value,
-              ['empty'],
-              workingCase,
-              updateCase,
-              setAccusedAddressErrorMessage,
-            )
-          }
+          onChange={(event) => {
+            const accusedCopy = workingCase.accused
+
+            accusedCopy[accusedCopy.indexOf(accused)].address =
+              event.target.value
+
+            setWorkingCase({ ...workingCase, accused: accusedCopy })
+          }}
+          onBlur={(event) => {
+            if (validate(event.target.value, 'empty').isValid) {
+              setAccusedAddressErrorMessage('')
+              updateAccused()
+            } else {
+              setAccusedAddressErrorMessage(
+                validate(event.target.value, 'empty').errorMessage,
+              )
+            }
+          }}
           required
         />
       </BlueBox>

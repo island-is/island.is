@@ -1,4 +1,4 @@
-import { CaseTransition } from '@island.is/judicial-system/types'
+import { Accused, CaseTransition } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
 import setHours from 'date-fns/setHours'
 import setMinutes from 'date-fns/setMinutes'
@@ -15,9 +15,10 @@ export const parseArray = (property: string, array: string[]) => {
   }
 }
 
+// TODO: Refactor: Rename to parseUpdate and remove parseBoolean in favour of this function
 export const parseString = (
   property: string,
-  value: string | Date | boolean,
+  value: string | Date | boolean | Accused[],
 ) => {
   try {
     const json = JSON.parse(`{"${property}": ${JSON.stringify(value)}}`)

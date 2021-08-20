@@ -74,6 +74,7 @@ export interface Accused {
   name?: string
   address?: string
   gender?: CaseGender
+  __typename?: string
 }
 
 export enum CaseType {
