@@ -16,7 +16,7 @@ import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/na
 
 import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
-const Nav: React.FC = () => {
+const Nav = () => {
   const router = useRouter()
 
   const logOut = useLogOut()
