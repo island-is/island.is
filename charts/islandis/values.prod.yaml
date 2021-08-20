@@ -992,7 +992,7 @@ web:
     API_URL: http://web-api
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
-    DISABLE_REGULATIONS_PAGE: 'true'
+    DISABLE_REGULATIONS_PAGE: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     NODE_OPTIONS: '--max-old-space-size=464'
     TRACKING_DOMAIN: island.is
@@ -1084,4 +1084,3 @@ xroad-collector:
       eks.amazonaws.com/role-arn: arn:aws:iam::251502586493:role/xroad-collector
     create: true
     name: xroad-collector
-
