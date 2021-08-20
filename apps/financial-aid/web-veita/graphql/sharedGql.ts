@@ -62,7 +62,7 @@ export const GetApplicationsQuery = gql`
 
 export const GetApplicationsFiltersQuery = gql`
   query GetApplicationsFiltersQuery {
-    applicationsFilters {
+    applicationFilters {
       New
       InProgress
       DataNeeded

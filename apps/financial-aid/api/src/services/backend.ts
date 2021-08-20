@@ -33,8 +33,8 @@ class BackendAPI extends RESTDataSource {
     return this.get(`applications/${id}`)
   }
 
-  getApplicationsFilters(): Promise<ApplicationFilters> {
-    return this.get('applicationsFilters')
+  getApplicationFilters(): Promise<ApplicationFilters> {
+    return this.get('applicationFilters')
   }
 
   getMunicipality(id: string): Promise<Municipality> {

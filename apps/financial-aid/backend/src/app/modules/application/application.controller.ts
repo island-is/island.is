@@ -71,7 +71,7 @@ export class ApplicationController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('applicationsFilters')
+  @Get('applicationFilters')
   @ApiOkResponse({
     description: 'Gets all existing applications filters',
   })

@@ -5,7 +5,7 @@ import { ApplicationFilters } from '@island.is/financial-aid/shared'
 import { GetApplicationsFiltersQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
 interface ApplicationFiltersData {
-  applicationsFilters?: ApplicationFilters
+  applicationFilters?: ApplicationFilters
 }
 
 interface ApplicationFiltersProvider {
@@ -46,8 +46,8 @@ const ApplicationFiltersProvider = ({ children }: PageProps) => {
   )
 
   useEffect(() => {
-    if (data?.applicationsFilters) {
-      setApplicationFilters(data.applicationsFilters)
+    if (data?.applicationFilters) {
+      setApplicationFilters(data.applicationFilters)
     }
   }, [data])
 

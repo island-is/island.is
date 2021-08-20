@@ -71,11 +71,11 @@ export class ApplicationResolver {
   }
 
   @Query(() => ApplicationFiltersModel, { nullable: false })
-  applicationsFilters(
+  applicationFilters(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<ApplicationFilters> {
     this.logger.debug('Getting all applications filters')
 
-    return backendApi.getApplicationsFilters()
+    return backendApi.getApplicationFilters()
   }
 }
