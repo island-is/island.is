@@ -47,7 +47,8 @@ const dataSchema = z.object({
   }),
   teacher: z.string().nonempty(),
   willBringQualityPhoto: z.enum(['yes', 'no']),
-  willBringAlongData: z.array(z.enum(['certificate', 'picture'])).nonempty(),
+  certificate: z.enum(['yes', 'no']),
+  picture: z.enum(['yes', 'no']),
 })
 
 const template: ApplicationTemplate<
