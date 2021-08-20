@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { Application } from '@island.is/financial-aid/shared'
 
 import { GetApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
@@ -33,7 +33,11 @@ export const initialState = {
   Approved: 0,
 }
 
-const NavigationStatisticsProvider: React.FC = ({ children }) => {
+interface PageProps {
+  children: ReactNode
+}
+
+const NavigationStatisticsProvider = ({ children }: PageProps) => {
   const [statistics, setStatistics] = useState<Statistics>(initialState)
 
   const { data, error, loading } = useQuery<ApplicationsProvider>(

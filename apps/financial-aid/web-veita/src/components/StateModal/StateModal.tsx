@@ -33,12 +33,12 @@ interface InputType {
   type: ApplicationState | undefined
 }
 
-const StateModal: React.FC<Props> = ({
+const StateModal = ({
   isVisible,
   onVisiblityChange,
   onStateChange,
   application,
-}) => {
+}: Props) => {
   const [inputType, setInputType] = useState<InputType>({
     show: false,
     type: undefined,
@@ -90,6 +90,18 @@ const StateModal: React.FC<Props> = ({
     }
   }
 
+  const headingText = (inputType: InputType): string => {
+    if (inputType.show) {
+      switch (inputType.type) {
+        case ApplicationState.REJECTED:
+          return 'Synja umsókn'
+        case ApplicationState.APPROVED:
+          return 'Samþykkja umsókn'
+      }
+    }
+    return 'Stöðubreyting'
+  }
+
   return (
     <ModalBase
       baseId="changeStatus"
@@ -116,7 +128,7 @@ const StateModal: React.FC<Props> = ({
             className={styles.modalHeadline}
           >
             <Text fontWeight="semiBold" color="white">
-              Stöðubreyting
+              {headingText(inputType)}
             </Text>
           </Box>
 
