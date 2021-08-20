@@ -207,18 +207,22 @@ const PkPassVerify = ({ licenseType }: PkPassProps) => {
   const [verifyPkPass, { loading }] = useMutation(verifyPkPassMutation)
 
   const onClick = async () => {
-    setValid(undefined);
-    setError(undefined);
+    setValid(undefined)
+    setError(undefined)
     const response = await verifyPkPass({
       variables: { locale, input: { licenseType, data: text } },
     })
 
     if (!response.errors) {
-      setValid(response?.data?.verifyPkPass?.valid ?? false);
+      setValid(response?.data?.verifyPkPass?.valid ?? false)
 
       if (response?.data?.verifyPkPass?.error) {
-        const errorObject = response?.data?.verifyPkPass?.error;
-        setError(`Villa "${errorObject?.status}": "${errorObject?.message}". ${JSON.stringify(errorObject.data)}`)
+        const errorObject = response?.data?.verifyPkPass?.error
+        setError(
+          `Villa "${errorObject?.status}": "${
+            errorObject?.message
+          }". ${JSON.stringify(errorObject.data)}`,
+        )
       }
 
       setPkpass(response?.data?.verifyPkPass?.data ?? null)
@@ -232,9 +236,7 @@ const PkPassVerify = ({ licenseType }: PkPassProps) => {
       <textarea onChange={(e) => setText(e.target?.value ?? '')} value={text} />
       <Button onClick={onClick}>Staðfesta pkpass</Button>
       {loading && <SkeletonLoader width="100%" height={158} />}
-      {typeof valid === 'boolean' && (
-        <p>{valid ? 'GILT' : 'ÓGILT'}</p>
-      )}
+      {typeof valid === 'boolean' && <p>{valid ? 'GILT' : 'ÓGILT'}</p>}
       {pkpass && <p>{pkpass}</p>}
       {error && <p>{error}</p>}
     </>
