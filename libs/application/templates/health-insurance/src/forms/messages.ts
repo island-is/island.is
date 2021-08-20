@@ -24,9 +24,9 @@ export const m = defineMessages({
   nationalRegistrySubTitle: {
     id: 'hi.application:externalData.nationalRegistry.subtitle',
     defaultMessage:
-      'Þjóðskrá skráir grunnupplýsingar um alla einstaklinga sem búa eða hafa búið á Íslandi og íslenska ríkisborgara sem búa erlendis, sem og allar breytingar á högum þeirra.',
+      'Upplýsingar um nafn, kennitölu og heimilisfang <br>Upplýsingar um börn og maka <br>Upplýsingar um síðasta búsetuland <br>Upplýsingar um hvernær viðkomandi var skráður í landið',
     description:
-      'Registers Iceland is the Icelandic State’s base registry. It records certain basic information on all persons who are or have been domiciled in Iceland and Icelandic citizens residing abroad, as well as any changes to their status.',
+      'Info about name, national id and address <br>Information about children and spouse <br>Information about the last country of residence <br>Information on when the person was registered in the country.',
   },
   directorateOfLaborTitle: {
     id: 'hi.application:externalData.directorateOfLabor.title',
@@ -36,9 +36,9 @@ export const m = defineMessages({
   directorateOfLaborSubTitle: {
     id: 'hi.application:externalData.directorateOfLabor.subtitle',
     defaultMessage:
-      'Vinnumálastofnun fer m.a. með yfirstjórn vinnumiðlunar í landinu og daglega afgreiðslu Atvinnuleysistryggingasjóðs,  Fæðingarorlofssjóðs, Ábyrgðarsjóðs launa auk fjölmargra annara vinnumarkaðstengdra verkefna.',
+      'Upplýsingar um atvinnuleysisbætur <br>Upplýsingar um atvinnuleysisbætur erlendis (U2 vottorð) <br>Upplýsingar um brottför frá öðru landi til Íslands: Réttur til atvinnuleysisbóta (U1 vottorð)',
     description:
-      'The Directorate of Labour bears overall responsibility for public labour exchanges and handles day-to-day operations of the Unemployment Insurance Fund, the Maternity and Paternity Leave Fund and the Wage Guarantee Fund.',
+      'Information on unemployment benefits <br>Information on unemployment benefits abroad (U2 certificate) <br>Information on departure from another country to Iceland: Entitlement to unemployment benefits (U1 certificate)',
   },
   internalRevenueTitle: {
     id: 'hi.application:externalData.internalRevenue.title',
@@ -48,9 +48,14 @@ export const m = defineMessages({
   internalRevenueSubTitle: {
     id: 'hi.application:externalData.internalRevenue.subtitle',
     defaultMessage:
-      'Skatturinn annast álagningu skatta, tolla og annarra gjalda auk þess að viðhafa eftirlit með réttmæti skattskila. Skatturinn gegnir margþættu tollgæsluhlutverki á landamærum og veitir samfélaginu vernd gegn ólögmætum inn- og útflutningi vöru.',
+      'Upplýsingar um skattgreiðslur (mán/ár)<br>Nafn atvinnurekanda',
     description:
-      'Handles the collection of taxes and duties as well as oversees the legitimacy of tax returns. The Directorate of Internal Revenue also plays a multifaceted customs role at the border and provides society with protection against illegal import and export of goods.',
+      'Information on tax payments (month/year) <br> Name of employer',
+  },
+  prerequisiteStartApplication: {
+    id: 'hi.application:externalData.prerequisiteStartApplication',
+    defaultMessage: 'Hefja umsókn',
+    description: 'Start application',
   },
   socialInsuranceAdministrationTitle: {
     id: 'hi.application:externalData.insuranceAdministration.title',
@@ -60,16 +65,16 @@ export const m = defineMessages({
   socialInsuranceAdministrationSubtitle: {
     id: 'hi.application:externalData.insuranceAdministration.subTitle',
     defaultMessage:
-      'Hlutverk TR er að framfylgja lögum um almannatryggingar, lögum um félagslega aðstoð og lögum um málefni langveikra barna auk þess að sinna öðrum verkefnum sem stofnuninni eru falin hverju sinni.',
+      'Upplýsingar um örorkumat (stöðu) <br>Upplýsingar um greiðslur vegna örorku (stöðu)',
     description:
-      "Handles the public pension system, as well as child's pension, spouse's pension, disability grant, age-related disability supplement, guaranteed income and household supplement.",
+      'Information on disability assessment (status) <br> Information on disability payments (status)',
   },
   dataProvidersMoreInfo: {
     id: 'hi.application:externalData.moreInfo',
     defaultMessage:
-      'Nánari útlistun á hvaða upplýsinga er aflað frá ofangreindum stofnunum og hvaða upplýsingum verður miðlað áfram er að finna undir <a href="https://www.sjukra.is/personuvernd" target="_blank" style="color:#0061ff">Persónuverndarsíðu SÍ</a>',
+      'Nánari upplýsingar um vinnslu persónuupplýsinga hjá Sjúkratryggingum Íslands <a href="https://www.sjukra.is/personuvernd" target="_blank" style="color:#0061ff">Persónuverndarsíðu SÍ</a>',
     description:
-      'Further details on what information is obtained from the above institutions and what personal data will be passed on can be found on IHI’s <a href="https://www.sjukra.is/english/privacy" target="_blank" style="color:#0061ff">Privacy page</a>',
+      'Further information on the processing of personal information by Sjúkratryggingar Íslands <a href="https://www.sjukra.is/personuvernd" target="_blank" style="color:#0061ff"> SÍ Privacy Page </a>',
   },
   confirmationOfResidencyTitle: {
     id: 'hi.application:confirmationOfResidency.title',
@@ -445,6 +450,16 @@ export const m = defineMessages({
     defaultMessage: 'Lesa meira',
     description: 'Read more',
   },
+  requiresActionTagLabel: {
+    id: 'hi.application:requiresActionTagLabel',
+    defaultMessage: 'Þarfnast aðgerðar',
+    description: 'Requires action',
+  },
+  completeTagLabel: {
+    id: 'hi.application:completeTagLabel',
+    defaultMessage: 'Uppfletting í lagi',
+    description: 'Complete',
+  },
   registerYourselfTitle: {
     id: 'hi.application:registerYourself.title',
     defaultMessage: 'Skrá lögheimili á Íslandi',
@@ -462,6 +477,11 @@ export const m = defineMessages({
     defaultMessage: 'Leiðbeiningar',
     description: 'How to register',
   },
+  registerYourselfButtonLink: {
+    id: 'hi.application:registerYourself.buttonLink',
+    defaultMessage: 'https://island.is/logheimili-upplysingar-innflytjendur',
+    description: 'https://island.is/en/legal-domicile-immigrant',
+  },
   activeDraftApplicationTitle: {
     id: 'hi.application:activeDraftApplication.title',
     defaultMessage: 'Opna ókláraða umsókn',
@@ -477,6 +497,57 @@ export const m = defineMessages({
     id: 'hi.application:activeDraftApplication.buttonText',
     defaultMessage: 'Opna umsókn',
     description: 'Open draft',
+  },
+  prerequisiteCheckScreenTitle: {
+    id: 'hi.application:prerequisiteCheckScreenTitle',
+    defaultMessage: 'Öll gögn hafa verið sótt',
+    description: 'All data has been gathered',
+  },
+  prerequisiteNationalRegistryTitle: {
+    id: 'hi.application:prerequisiteNationalRegistry.title',
+    defaultMessage: 'Uppfletting lögheimilis',
+    description: 'Legal residence lookup',
+  },
+  prerequisiteNationalRegistryDescription: {
+    id: 'hi.application:prerequisiteNationalRegistry.description',
+    defaultMessage: 'Athugað hvort notandi sé með skráð lögheimili á Íslandi',
+    description:
+      'Check whether the user has a registered legal residence in Iceland',
+  },
+  prerequisiteActiveDraftApplicationTitle: {
+    id: 'hi.application:prerequisiteActiveDraftApplication.title',
+    defaultMessage: 'Uppfletting umsókna í umsóknarkerfi Island.is',
+    description: 'Search for previous applications in Island.is',
+  },
+  prerequisiteActiveDraftApplicationDescription: {
+    id: 'hi.application:prerequisiteActiveDraftApplication.description',
+    defaultMessage:
+      'Athugað hvort notandi sé þegar með umsókn í umsóknarkerfi Island.is',
+    description:
+      'Search for previous applications in the application system at Island.is',
+  },
+  prerequisiteHealthInsuranceTitle: {
+    id: 'hi.application:prerequisiteHealthInsurance.title',
+    defaultMessage: 'Uppfletting sjúkratryggingar',
+    description: 'Checking health insurance',
+  },
+  prerequisiteHealthInsuranceDescription: {
+    id: 'hi.application:prerequisiteHealthInsurance.description',
+    defaultMessage: 'Athugað hvort notandi sé þegar með sjúkratryggingu',
+    description: 'Check if the user already has health insurance',
+  },
+  prerequisitePendingApplicationTitle: {
+    id: 'hi.application:prerequisitePendingApplication.title',
+    defaultMessage: 'Uppfletting umsókna í Sjúkratryggingum ríkisins.',
+    description:
+      'Search for previous applications in Sjúkratryggingar ríkisins',
+  },
+  prerequisitePendingApplicationDescription: {
+    id: 'hi.application:prerequisitePendingApplication.description',
+    defaultMessage:
+      'Athugað hvort notandi sé þegar með umsókn hjá Sjúkratryggingum ríkisins.',
+    description:
+      'Check whether the user already has an application with Sjúkratryggingar ríkisins',
   },
   pendingApplicationTitle: {
     id: 'hi.application:activeApplication.title',
@@ -495,6 +566,11 @@ export const m = defineMessages({
     defaultMessage: 'Hafa samband',
     description: 'Contact info',
   },
+  pendingApplicationButtonLink: {
+    id: 'hi.application:oldPendingApplication.buttonLink',
+    defaultMessage: 'https://www.sjukra.is/um-okkur/thjonustuleidir/',
+    description: 'https://www.sjukra.is/english',
+  },
   alreadyInsuredTitle: {
     id: 'hi.application:alreadyInsured.title',
     defaultMessage: 'Þú ert nú þegar sjúkratryggður',
@@ -512,17 +588,41 @@ export const m = defineMessages({
     defaultMessage: 'Opna vefsíðu',
     description: 'A button to go to sjukra website',
   },
+  alreadyInsuredButtonLink: {
+    id: 'hi.application:alreadyInsured.buttonLink',
+    defaultMessage: 'https://www.sjukra.is',
+    description: 'https://www.sjukra.is/english',
+  },
   externalDataCheckbox: {
     id: 'hi.application:externalDataCheckbox',
-    defaultMessage:
-      'Ég staðfesti að hafa lesið þessar upplýsingar um vinnslu persónuupplýsinga í tengslum við þessa umsókn',
-    description:
-      'I confirm that I have read these terms for processing of my personal data regarding this application',
+    defaultMessage: 'Ég skil að ofangreindra gagna verður aflað',
+    description: 'I understand that the above data will be collected',
   },
   externalDataSubtitle: {
     id: 'hi.application:externalDataSubtitle',
     defaultMessage:
-      'Unnið verður með persónugreinanleg gögn frá eftirfarandi stofnunum',
-    description: 'Personal data from the following sources will be processed',
+      'Unnið verður með persónugreinanleg gögn frá eftirfarandi stofnunum við vinnslu umsóknarinnar',
+    description:
+      'Personally identifiable data from the following institutions will be processed during the processing of the application',
+  },
+  prerequisitesFormTitle: {
+    id: 'hi.application:PrerequisitesFormTitle',
+    defaultMessage: 'Skilyrði',
+    description: 'Conditions',
+  },
+  externalDataSuccessDescription: {
+    id: 'hi.application:externalDataSuccessTitle',
+    defaultMessage: 'Öll gögn hafa verið sótt og er hægt að hefja umsókn',
+    description: 'All data has been fetched and the application can be started',
+  },
+  externalDataSuccessSubmitFieldTitle: {
+    id: 'hi.application:externalDataSuccessTitle',
+    defaultMessage: 'Hefja umsókn',
+    description: 'Start application',
+  },
+  unexpectedError: {
+    id: 'hi.application:unexpectedError',
+    defaultMessage: 'Villa kom upp',
+    description: 'Unexpected error',
   },
 })

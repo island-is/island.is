@@ -1,15 +1,16 @@
-import React, { ReactNode, useContext } from 'react'
+import React from 'react'
 import cn from 'classnames'
 
 interface LogoProps {
   className?: string
 }
 
-const LogoHfj: React.FC<LogoProps> = ({ className }) => {
+const LogoHfj = ({ className }: LogoProps) => {
   return (
     <a
       href="https://www.hafnarfjordur.is/"
       target="_blank"
+      rel="noopener noreferrer"
       className={cn({ [`${className}`]: true })}
     >
       <svg

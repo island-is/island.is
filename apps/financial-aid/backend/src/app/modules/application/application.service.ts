@@ -3,32 +3,79 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { ApplicationModel } from './models'
 
+import { Op } from 'sequelize'
+
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
-import { User, Application } from '@island.is/financial-aid/shared'
+import { User } from '@island.is/financial-aid/shared'
+import { FileService } from '../file'
+import { ApplicationEventService } from '../applicationEvent'
 
 @Injectable()
 export class ApplicationService {
   constructor(
     @InjectModel(ApplicationModel)
     private readonly applicationModel: typeof ApplicationModel,
+    private readonly fileService: FileService,
+    private readonly applicationEventService: ApplicationEventService,
   ) {}
 
-  getAll(): Promise<ApplicationModel[]> {
-    return this.applicationModel.findAll()
+  async hasAppliedForPeriod(nationalId: string): Promise<boolean> {
+    const date = new Date()
+
+    const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
+
+    return Boolean(
+      await this.applicationModel.findOne({
+        where: {
+          nationalId,
+          created: { [Op.gte]: firstDateOfMonth },
+        },
+      }),
+    )
   }
 
-  findById(id: string): Promise<ApplicationModel | null> {
-    return this.applicationModel.findOne({
+  getAll(): Promise<ApplicationModel[]> {
+    return this.applicationModel.findAll({ order: [['modified', 'DESC']] })
+  }
+
+  async findById(id: string): Promise<ApplicationModel | null> {
+    const application = await this.applicationModel.findOne({
       where: { id },
     })
+
+    const files = await this.fileService.getAllApplicationFiles(id)
+
+    application.setDataValue('files', files)
+
+    return application
   }
 
-  create(
+  async create(
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    // this.logger.debug('Creating a new case')
-    return this.applicationModel.create(application)
+    const appModel = await this.applicationModel.create(application)
+
+    //Create applicationEvent
+    const eventModel = await this.applicationEventService.create({
+      applicationId: appModel.id,
+      state: appModel.state,
+      comment: null,
+    })
+
+    //Create file
+    if (application.files) {
+      const fileModel = await application.files.map((f) => {
+        this.fileService.createFile({
+          applicationId: appModel.id,
+          name: f.name,
+          key: f.key,
+          size: f.size,
+        })
+      })
+    }
+
+    return appModel
   }
 
   async update(
@@ -44,6 +91,13 @@ export class ApplicationService {
     ] = await this.applicationModel.update(update, {
       where: { id },
       returning: true,
+    })
+
+    //Create applicationEvent
+    const eventModel = await this.applicationEventService.create({
+      applicationId: id,
+      state: update.state,
+      comment: update.rejection,
     })
 
     return { numberOfAffectedRows, updatedApplication }

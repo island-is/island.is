@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import { Text, Box, Tiles, Inline, Tag } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
 import * as styles from './NavigationScreen.treat'
 import { Link } from 'react-router-dom'
 import Card from './Card/Card'
@@ -32,10 +33,7 @@ export const NavigationScreen: FC<Props> = ({ title, items, inProgress }) => {
           </Text>
           {inProgress && (
             <Tag variant="blue" outlined>
-              {formatMessage({
-                id: 'service.portal:in-progress',
-                defaultMessage: 'Í vinnslu',
-              })}
+              {formatMessage(m.inProgress)}
             </Tag>
           )}
         </Inline>

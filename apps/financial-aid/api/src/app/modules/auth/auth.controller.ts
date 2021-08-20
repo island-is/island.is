@@ -13,7 +13,6 @@ import {
   Query,
   Req,
   DefaultValuePipe,
-  ParseIntPipe,
 } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -32,9 +31,9 @@ import { environment } from '../../../environments'
 import { Cookie } from './auth.types'
 import { AuthService } from './auth.service'
 
-const { samlEntryPoint } = environment.auth
+const { samlEntryPointOsk, samlEntryPointVeita } = environment.auth
 
-const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
+const REDIRECT_COOKIE_NAME = 'financial-aid.redirect'
 
 const defaultCookieOptions: CookieOptions = {
   secure: environment.production,
@@ -68,28 +67,29 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly sharedAuthService: SharedAuthService,
-    @Inject('IslandisLogin')
-    private readonly loginIS: IslandisLogin,
+    @Inject('IslandisLoginOsk')
+    private readonly loginOsk: IslandisLogin,
+    @Inject('IslandisLoginVeita')
+    private readonly loginVeita: IslandisLogin,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
   @Get('login')
-  login(
+  async login(
     @Res() res: Response,
-    @Query('returnUrl', new DefaultValuePipe('/umsokn')) returnUrl: string,
+    @Query('service', new DefaultValuePipe('osk')) service: 'osk' | 'veita',
     @Query('nationalId') nationalId: string,
   ) {
-    this.logger.debug(`Received login request with return url ${returnUrl}`)
+    this.logger.debug(`Received login request for the service ${service}`)
 
     // Local development
     if (environment.auth.allowFakeUsers && nationalId) {
       this.logger.debug(`Logging in as ${nationalId} in development mode`)
-
       const fakeUser = this.authService.fakeUser(nationalId)
 
       if (fakeUser) {
-        return this.logInUser(fakeUser, res, returnUrl)
+        return this.logInUser(fakeUser, res)
       }
     }
 
@@ -98,10 +98,13 @@ export class AuthController {
     const authId = uuid()
     const electronicIdOnly = '&qaa=4'
 
+    const samlEntryPoint =
+      service === 'osk' ? samlEntryPointOsk : samlEntryPointVeita
+
     return res
       .cookie(
         REDIRECT_COOKIE.name,
-        { authId, returnUrl },
+        { authId, service },
         { ...REDIRECT_COOKIE.options, maxAge: COOKIE_EXPIRES_IN_MILLISECONDS },
       )
       .redirect(`${samlEntryPoint}&authId=${authId}${electronicIdOnly}`)
@@ -117,10 +120,13 @@ export class AuthController {
 
     let islandUser: VerifyUser | undefined = undefined
 
-    const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
+    const { authId, service } = req.cookies[REDIRECT_COOKIE_NAME] || {}
 
     try {
-      const verifyResult = await this.loginIS.verify(token)
+      const verifyResult =
+        service === 'osk'
+          ? await this.loginOsk.verify(token)
+          : await this.loginVeita.verify(token)
 
       if (verifyResult.user && verifyResult.user.authId === authId) {
         islandUser = verifyResult.user
@@ -144,9 +150,11 @@ export class AuthController {
       nationalId: islandUser.kennitala,
       name: islandUser.fullname,
       phoneNumber: islandUser.mobile,
+      folder: uuid(),
+      service: service,
     }
 
-    return this.logInUser(user, res, returnUrl)
+    return this.logInUser(user, res)
   }
 
   @Get('logout')
@@ -159,10 +167,12 @@ export class AuthController {
     return res.json({ logout: true })
   }
 
-  private logInUser(user: User, res: Response, returnUrl: string) {
+  private logInUser(user: User, res: Response) {
     const csrfToken = new Entropy({ bits: 128 }).string()
 
     const jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
+
+    const returnUrl = user.service === 'osk' ? '/umsokn' : '/nymal'
 
     res
       .cookie(CSRF_COOKIE.name, csrfToken, {

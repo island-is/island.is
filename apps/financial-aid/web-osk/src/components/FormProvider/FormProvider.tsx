@@ -1,6 +1,7 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, ReactNode, useEffect, useState } from 'react'
 
 import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
+import { UploadFile } from '@island.is/island-ui/core'
 
 export interface Form {
   customAddress?: boolean
@@ -13,7 +14,8 @@ export interface Form {
   employment?: Employment
   employmentCustom?: string
   hasIncome?: boolean
-  incomeFiles?: any
+  incomeFiles: UploadFile[]
+  taxReturnFiles: UploadFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string
@@ -25,16 +27,24 @@ export interface Form {
   formComment?: string
 }
 
-export const initialState = { submitted: false, incomeFiles: [] }
+export const initialState = {
+  submitted: false,
+  incomeFiles: [],
+  taxReturnFiles: [],
+}
 
 interface FormProvider {
-  form?: Form
+  form: Form
   updateForm?: any
 }
 
-export const FormContext = createContext<FormProvider>({})
+interface Props {
+  children: ReactNode
+}
 
-const FormProvider: React.FC = ({ children }) => {
+export const FormContext = createContext<FormProvider>({ form: initialState })
+
+const FormProvider = ({ children }: Props) => {
   const getSessionStorageOrDefault = (key: any) => {
     const stored = sessionStorage.getItem(key)
     if (!stored) {

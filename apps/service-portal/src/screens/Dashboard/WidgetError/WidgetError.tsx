@@ -3,6 +3,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import * as Sentry from '@sentry/react'
+import { m } from '@island.is/service-portal/core'
 
 interface Props {
   name: string | MessageDescriptor
@@ -39,15 +40,8 @@ const WidgetError: FC<Props> = ({ name }) => {
   return (
     <Box padding={8}>
       <Text variant="h2" as="h2">
-        {formatMessage({
-          id: 'service.portal:could-not-fetch',
-          defaultMessage: 'Tókst ekki að sækja',
-        })}{' '}
-        {formatMessage(name)},
-        {formatMessage({
-          id: 'service.portal:something-went-wrong',
-          defaultMessage: ' eitthvað fór úrskeiðis',
-        })}
+        {formatMessage(m.couldNotFetch)} {formatMessage(name)},
+        {formatMessage(m.somethingWrong)}
       </Text>
     </Box>
   )

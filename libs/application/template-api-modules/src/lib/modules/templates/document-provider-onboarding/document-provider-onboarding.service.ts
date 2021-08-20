@@ -17,14 +17,18 @@ interface Contact {
   email: string
   phoneNumber: string
 }
+
 interface Applicant extends Contact {
   nationalId: string
   address: string
 }
+
 interface Helpdesk {
   email: string
   phoneNumber: string
 }
+
+const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 
 @Injectable()
 export class DocumentProviderOnboardingService {
@@ -37,8 +41,10 @@ export class DocumentProviderOnboardingService {
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignReviewerEmail,
       application,
+      ONE_DAY_IN_SECONDS_EXPIRES,
     )
   }
+
   async applicationApproved({
     application,
     authorization,
@@ -82,6 +88,7 @@ export class DocumentProviderOnboardingService {
       application,
     )
   }
+
   async applicationRejected({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.sendEmail(
       generateApplicationRejectedEmail,
