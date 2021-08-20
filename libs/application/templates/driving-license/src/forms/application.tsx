@@ -128,6 +128,19 @@ export const application: Form = buildForm({
                 { value: 'yes', label: m.qualityPhotoAcknowledgement },
               ],
             }),
+            buildDescriptionField({
+              id: 'photdesc',
+              title: m.qualityPhotoInstructions,
+              titleVariant: 'h5',
+              description: '',
+              condition: (answers) => {
+                try {
+                  return answers.willBringQualityPhoto === "yes"
+                } catch (error) {
+                  return false
+                }
+              }
+            }),
           ],
         }),
         buildMultiField({
