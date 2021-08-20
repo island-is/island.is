@@ -131,9 +131,9 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                 <T.Table>
                   <ExpandHeader
                     data={[
-                      formatMessage(m.feeCategory),
-                      formatMessage(m.guardian),
-                      formatMessage(m.status),
+                      { value: formatMessage(m.feeCategory) },
+                      { value: formatMessage(m.guardian) },
+                      { value: formatMessage(m.status), align: 'right' },
                     ]}
                   />
                   <T.Body>
@@ -149,7 +149,11 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                     )}
                     <ExpandRow
                       last
-                      data={[formatMessage(m.total), '', getChargeTypeTotal()]}
+                      data={[
+                        { value: formatMessage(m.total) },
+                        { value: '' },
+                        { value: getChargeTypeTotal(), align: 'right' },
+                      ]}
                     />
                   </T.Body>
                 </T.Table>
