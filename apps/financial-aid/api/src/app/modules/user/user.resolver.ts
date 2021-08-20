@@ -10,12 +10,9 @@ import {
 } from '@island.is/financial-aid/auth'
 
 import { UserModel } from './user.model'
-import { boolean } from 'yargs'
 import { UserService } from './user.service'
 
-import { UserService } from './user.service'
-
-import { ApplicationModel } from '../application'
+import { ActiveApplicationModel } from '../application'
 import { boolean } from 'yargs'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -36,19 +33,21 @@ export class UserResolver {
     return user as UserModel
   }
 
-  @ResolveField('hasAppliedForPeriod', () => boolean, { nullable: true })
-  async hasAppliedForPeriod(@Parent() user: User): Promise<boolean> {
-    const app = await this.userService.checkHasAppliedForPeriod(user.nationalId)
-    if (app != null) {
-      return true
-    }
-    return false
-  }
+  // @ResolveField('hasAppliedForPeriod', () => boolean, { nullable: true })
+  // async hasAppliedForPeriod(@Parent() user: User): Promise<boolean> {
+  //   console.log('here is apsssssp')
+  //   const app = await this.userService.checkHasAppliedForPeriod(user.nationalId)
+  //   console.log(app, 'here is app')
+  //   if (app != null) {
+  //     return true
+  //   }
+  //   return false
+  // }
 
-  @ResolveField('activeApplication', () => ApplicationModel)
+  @ResolveField('activeApplication', () => [ActiveApplicationModel])
   async activeApplication(
     @Parent() user: User,
-  ): Promise<ApplicationModel | null> {
+  ): Promise<ActiveApplicationModel[]> {
     const app = await this.userService.checkHasAppliedForPeriod(user.nationalId)
     return app
   }

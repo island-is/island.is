@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationModel } from './models'
+import { ActiveApplicationModel, ApplicationModel } from './models'
 
 import { Op } from 'sequelize'
 
@@ -21,12 +21,12 @@ export class ApplicationService {
 
   async hasAppliedForPeriod(
     nationalId: string,
-  ): Promise<ApplicationModel | null> {
+  ): Promise<ActiveApplicationModel[]> {
     const date = new Date()
 
     const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
 
-    return this.applicationModel.findOne({
+    return this.applicationModel.findAll({
       where: {
         nationalId,
         created: { [Op.gte]: firstDateOfMonth },

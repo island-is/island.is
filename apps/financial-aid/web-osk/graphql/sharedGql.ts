@@ -56,28 +56,27 @@ export const CreateSignedUrlMutation = gql`
   }
 `
 
-export const CurrentUserQuery = gql`
-  query CurrentUserQuery {
-    currentUser {
-      nationalId
-      name
-      phoneNumber
-    }
-  }
-`
 // export const CurrentUserQuery = gql`
 //   query CurrentUserQuery {
 //     currentUser {
 //       nationalId
 //       name
 //       phoneNumber
-//       hasAppliedForPeriod
-//       activeApplication {
-//         id
-//         state
-//         homeCircumstances
-//         usePersonalTaxCredit
-//       }
 //     }
 //   }
 // `
+export const CurrentUserQuery = gql`
+  query CurrentUserQuery {
+    currentUser {
+      nationalId
+      name
+      phoneNumber
+      activeApplication {
+        id
+        state
+        homeCircumstances
+        usePersonalTaxCredit
+      }
+    }
+  }
+`

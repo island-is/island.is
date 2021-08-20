@@ -3,13 +3,13 @@ import fetch from 'isomorphic-fetch'
 import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
-import { ApplicationModel } from '../application'
+import { ActiveApplicationModel } from '../application'
 
 @Injectable()
 export class UserService {
   async checkHasAppliedForPeriod(
     nationalId: string,
-  ): Promise<ApplicationModel | null> {
+  ): Promise<ActiveApplicationModel[]> {
     const res = await fetch(
       `${environment.backend.url}/api/hasAppliedForPeriod/?nationalId=${nationalId}`,
       {
