@@ -1,4 +1,6 @@
 import React, { FC } from 'react'
+import Markdown from 'markdown-to-jsx'
+
 import {
   Application,
   formatText,
@@ -6,9 +8,8 @@ import {
 } from '@island.is/application/core'
 import { Text, Tooltip, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import Markdown from 'markdown-to-jsx'
 
-const DescriptionFormField: FC<{
+export const DescriptionFormField: FC<{
   application: Application
   field: DescriptionField
   showFieldName: boolean
@@ -39,5 +40,3 @@ const DescriptionFormField: FC<{
     </Box>
   )
 }
-
-export default DescriptionFormField

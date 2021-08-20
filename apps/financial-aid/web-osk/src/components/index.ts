@@ -7,3 +7,5 @@ export { default as FormContentContainer } from './FormContentContainer/FormCont
 export { default as LogoHfj } from './LogoHfj/index'
 export { default as RadioButtonContainer } from './RadioButtonContainer/RadioButtonContainer'
 export { default as CancelModal } from './CancelModal/CancelModal'
+export { default as Login } from './Login/login'
+export { default as HasApplied } from './HasApplied/hasApplied'
