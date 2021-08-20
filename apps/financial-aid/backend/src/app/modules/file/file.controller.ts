@@ -26,6 +26,7 @@ export class FileController {
     return this.fileService.createSignedUrl(user.folder, getSignedUrl.fileName)
   }
 
+  // TODO Only accessable to veita users.
   @Get('url/:id')
   @ApiCreatedResponse({
     type: SignedUrlModel,
