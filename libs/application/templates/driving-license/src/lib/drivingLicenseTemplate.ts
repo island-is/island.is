@@ -46,9 +46,9 @@ const dataSchema = z.object({
     hasOtherDiseases: z.enum(['yes', 'no']),
   }),
   teacher: z.string().nonempty(),
-  willBringQualityPhoto: z.enum(['yes', 'no']),
-  certificate: z.enum(['yes', 'no']),
-  picture: z.enum(['yes', 'no']),
+  willBringQualityPhoto: z.union([z.array(z.enum(['yes', 'no'])), z.enum(['yes', 'no'])]),
+  certificate: z.array(z.enum(['yes', 'no'])),
+  picture: z.array(z.enum(['yes', 'no'])),
 })
 
 const template: ApplicationTemplate<

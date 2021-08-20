@@ -148,7 +148,6 @@ export const application: Form = buildForm({
             buildCheckboxField({
               id: 'willBringQualityPhoto',
               title: '',
-              defaultValue: [],
               options: [
                 {
                   value: 'yes',
@@ -420,7 +419,7 @@ export const application: Form = buildForm({
               }
             }),
             buildCheckboxField({
-              id: 'willBringAlongData.photo',
+              id: 'picture',
               title: '',
               defaultValue: [],
               options: [
@@ -429,10 +428,12 @@ export const application: Form = buildForm({
                   label: m.qualityPhotoAcknowledgement,
                 },
               ],
-              condition: (answers) => answers.willBringQualityPhoto === "yes" ?? null,
-            }),
+              condition: (answers) => {
+                return answers.willBringQualityPhoto === "yes" ?? false},
+              }
+            ),
             buildCheckboxField({
-              id: 'willBringAlongData.certificate',
+              id: 'certificate',
               title: '',
               defaultValue: [],
               options: [
