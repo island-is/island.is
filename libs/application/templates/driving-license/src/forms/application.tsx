@@ -122,7 +122,6 @@ export const application: Form = buildForm({
             buildRadioField({
               id: 'willBringQualityPhoto',
               title: '',
-              width: 'half',
               disabled: false,
               options: [
                 { value: 'no', label: m.qualityPhotoNoAcknowledgement },
@@ -424,6 +423,7 @@ export const application: Form = buildForm({
               id: 'willBringAlongData.photo',
               title: '',
               defaultValue: [],
+              backgroundColor: 'white', 
               options: [
                 {
                   value: 'yes',
@@ -436,6 +436,7 @@ export const application: Form = buildForm({
               id: 'willBringAlongData.certificate',
               title: '',
               defaultValue: [],
+              backgroundColor: 'white', 
               options: [
                 {
                   value: 'yes',
