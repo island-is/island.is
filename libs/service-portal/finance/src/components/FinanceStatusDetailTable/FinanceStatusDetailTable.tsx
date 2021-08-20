@@ -8,7 +8,8 @@ import { Box, Text, Columns, Column, Button } from '@island.is/island-ui/core'
 import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
 import amountFormat from '../../utils/amountFormat'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { m } from '@island.is/service-portal/core'
+import cn from 'classnames'
 import * as styles from './FinanceStatusDetailTable.treat'
 
 interface Props {
@@ -27,20 +28,23 @@ const FinanceStatusDetailTable: FC<Props> = ({
         <T.Head>
           <T.Row>
             {[
-              formatMessage(m.feeBase),
-              formatMessage(m.yearAndSeason),
-              formatMessage(m.dueDate),
-              formatMessage(m.finalDueDate),
-              formatMessage(m.principal),
-              formatMessage(m.interest),
-              formatMessage(m.cost),
-              formatMessage(m.payments),
-              formatMessage(m.status),
-              formatMessage(m.chargeType),
+              { value: formatMessage(m.feeBase) },
+              { value: formatMessage(m.yearAndSeason) },
+              { value: formatMessage(m.dueDate) },
+              { value: formatMessage(m.finalDueDate) },
+              { value: formatMessage(m.principal), align: 'right' },
+              { value: formatMessage(m.interest), align: 'right' },
+              { value: formatMessage(m.cost), align: 'right' },
+              { value: formatMessage(m.payments), align: 'right' },
+              { value: formatMessage(m.status), align: 'right' },
             ].map((item, i) => (
-              <T.HeadData key={i} text={{ truncate: true }}>
+              <T.HeadData
+                box={{ textAlign: item.align as 'right' | undefined }}
+                key={i}
+                text={{ truncate: true }}
+              >
                 <Text fontWeight="semiBold" variant="small">
-                  {item}
+                  {item.value}
                 </Text>
               </T.HeadData>
             ))}
@@ -92,19 +96,21 @@ const FinanceStatusDetailTable: FC<Props> = ({
           {financeStatusDetails?.chargeItemSubjects?.map((row, i) => (
             <T.Row key={i}>
               {[
-                row.chargeItemSubject,
-                row.timePeriod,
-                row.dueDate,
-                row.finalDueDate,
-                amountFormat(row.principal),
-                amountFormat(row.interest),
-                amountFormat(row.cost),
-                amountFormat(row.paid),
-                amountFormat(row.totals),
+                { value: row.chargeItemSubject },
+                { value: row.timePeriod },
+                { value: row.dueDate },
+                { value: row.finalDueDate },
+                { value: amountFormat(row.principal), align: 'right' },
+                { value: amountFormat(row.interest), align: 'right' },
+                { value: amountFormat(row.cost), align: 'right' },
+                { value: amountFormat(row.paid), align: 'right' },
+                { value: amountFormat(row.totals), align: 'right' },
               ].map((item, ii) => (
                 <T.Data key={ii}>
-                  <div className={styles.td}>
-                    <Text variant="small">{item}</Text>
+                  <div
+                    className={cn(styles.td, { [styles.alignTd]: item.align })}
+                  >
+                    <Text variant="small">{item.value}</Text>
                   </div>
                 </T.Data>
               ))}

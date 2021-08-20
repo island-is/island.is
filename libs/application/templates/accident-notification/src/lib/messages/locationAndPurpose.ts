@@ -17,18 +17,8 @@ export const locationAndPurpose = {
   labels: defineMessages({
     location: {
       id: 'an.application:locationAndPurpose.labels.descriptionField',
-      defaultMessage: 'Staðsetning / póstfang',
-      description: `Location / email`,
-    },
-    postalCode: {
-      id: 'an.application:locationAndPurpose.labels.postalCode',
-      defaultMessage: 'Póstnúmer',
-      description: 'Postal code',
-    },
-    city: {
-      id: 'an.application:locationAndPurpose.labels.city',
-      defaultMessage: 'Sveitarfélag',
-      description: 'City',
+      defaultMessage: 'Staðsetning / póstnúmer',
+      description: `Location / postal code`,
     },
     purpose: {
       id: 'an.application:locationAndPurpose.labels.purpose',

@@ -7,11 +7,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { defineMessage } from 'react-intl'
 import { useAuth } from '@island.is/auth/react'
 import { LEGACY_MY_PAGES_URL } from '@island.is/service-portal/constants'
 import { useQuery, gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
+import { m } from '@island.is/service-portal/core'
 
 import * as styles from './Greeting.treat'
 
@@ -23,21 +23,6 @@ const NationalRegistryUserQuery = gql`
     }
   }
 `
-
-const maleGreeting = defineMessage({
-  id: 'service.portal:welcome-male',
-  defaultMessage: 'Velkominn á mínar síður á island.is',
-})
-
-const femaleGreeting = defineMessage({
-  id: 'service.portal:welcome-female',
-  defaultMessage: 'Velkomin á mínar síður á island.is',
-})
-
-const nonBinaryGreeting = defineMessage({
-  id: 'service.portal:welcome-nonbinary',
-  defaultMessage: 'Velkomið á mínar síður á island.is',
-})
 
 const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()
@@ -68,9 +53,9 @@ const Greeting: FC<{}> = () => {
             fontWeight="semiBold"
             color="purple400"
           >
-            {isMale && formatMessage(maleGreeting)}
-            {isFemale && formatMessage(femaleGreeting)}
-            {isNonBinary && formatMessage(nonBinaryGreeting)}
+            {isMale && formatMessage(m.maleGreeting)}
+            {isFemale && formatMessage(m.femaleGreeting)}
+            {isNonBinary && formatMessage(m.nonBinaryGreeting)}
             {!knownGender &&
               (isEveningGreeting
                 ? formatMessage({
@@ -87,21 +72,11 @@ const Greeting: FC<{}> = () => {
           <Text variant="h1" as="h1" marginBottom={1}>
             {userInfo?.profile.name}
           </Text>
-          <Text marginBottom={2}>
-            {formatMessage({
-              id: 'service.portal:greeting-intro',
-              defaultMessage: `
-              Síðan er í þróun með þarfir notanda að leiðarljósi. Ef þú finnur ekki þá þjónustu sem var á eldri Mínum síðum getur þú fundið þær upplýsingar á Eldri útgáfa.
-              `,
-            })}
-          </Text>
+          <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
           <div>
             <a href={LEGACY_MY_PAGES_URL} target="_blank">
               <Button variant="text" icon="open" iconType="outline">
-                {formatMessage({
-                  id: 'service.portal:older-version',
-                  defaultMessage: 'Eldri útgáfa',
-                })}
+                {formatMessage(m.olderVersion)}
               </Button>
             </a>
           </div>

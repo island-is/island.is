@@ -15,6 +15,7 @@ import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import UserMenuTrigger from '../UserMenuTrigger/UserMenuTrigger'
 import { BetaTag } from '../Logo/BetaTag'
+import { m } from '@island.is/service-portal/core'
 
 export const Header: FC<{}> = () => {
   const { formatMessage } = useLocale()
@@ -62,10 +63,7 @@ export const Header: FC<{}> = () => {
                       icon={mobileMenuState === 'open' ? 'close' : 'menu'}
                       onClick={handleMobileMenuTriggerClick}
                     >
-                      {formatMessage({
-                        id: 'service.portal:menu',
-                        defaultMessage: 'Valmynd',
-                      })}
+                      {formatMessage(m.menu)}
                     </Button>
                   </Box>
                 </Hidden>

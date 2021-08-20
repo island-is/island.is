@@ -1,7 +1,7 @@
 import React from 'react'
 import flatten from 'lodash/flatten'
 import { gql, useQuery } from '@apollo/client'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
 import {
@@ -16,7 +16,6 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../lib/messages'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
@@ -132,9 +131,9 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                 <T.Table>
                   <ExpandHeader
                     data={[
-                      formatMessage(m.feeCategory),
-                      formatMessage(m.guardian),
-                      formatMessage(m.status),
+                      { value: formatMessage(m.feeCategory) },
+                      { value: formatMessage(m.guardian) },
+                      { value: formatMessage(m.status), align: 'right' },
                     ]}
                   />
                   <T.Body>
@@ -150,7 +149,11 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                     )}
                     <ExpandRow
                       last
-                      data={[formatMessage(m.total), '', getChargeTypeTotal()]}
+                      data={[
+                        { value: formatMessage(m.total) },
+                        { value: '' },
+                        { value: getChargeTypeTotal(), align: 'right' },
+                      ]}
                     />
                   </T.Body>
                 </T.Table>
