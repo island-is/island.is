@@ -29,6 +29,7 @@ import {
   aidCalculator,
   translateMonth,
   calculateAidFinalAmount,
+  formatPhoneNumber,
 } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
@@ -180,8 +181,7 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Sími',
-        content:
-          insertAt(application.phoneNumber.replace('-', ''), '-', 3) || '-',
+        content: formatPhoneNumber(application.phoneNumber),
         link: 'tel:' + application.phoneNumber,
       },
       {

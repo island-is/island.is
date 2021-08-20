@@ -33,12 +33,13 @@ const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
     }
   }, [activeSection])
 
-  if (isAuthenticated === false) {
+  if (!isAuthenticated) {
     return <Login />
   }
   if (!user) {
     return null
   }
+
   return (
     <Box
       paddingY={[3, 3, 3, 6]}

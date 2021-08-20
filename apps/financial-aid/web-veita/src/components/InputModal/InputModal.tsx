@@ -24,6 +24,17 @@ const InputModal = ({ onShowInputChange, type, onSaveState }: Props) => {
 
   const [comment, setComment] = useState<string>()
 
+  const submitButtonText = (
+    type: ApplicationState | undefined,
+  ): string | undefined => {
+    switch (type) {
+      case ApplicationState.REJECTED:
+        return 'Synja'
+      case ApplicationState.APPROVED:
+        return 'Samþykkja'
+    }
+  }
+
   return (
     <Box display="block" width="full" padding={4}>
       {type === ApplicationState.APPROVED && (
@@ -43,7 +54,7 @@ const InputModal = ({ onShowInputChange, type, onSaveState }: Props) => {
           Hætta við
         </Button>
         <Button onClick={(e) => onSaveState(e, amount, comment)}>
-          Samþykkja
+          {submitButtonText(type)}
         </Button>
       </Box>
     </Box>

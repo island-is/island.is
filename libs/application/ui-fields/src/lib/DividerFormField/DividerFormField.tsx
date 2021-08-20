@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+
 import {
   DividerField,
   formatText,
@@ -7,7 +8,7 @@ import {
 import { Box, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-const DividerFormField: FC<{
+export const DividerFormField: FC<{
   field: DividerField
   application: Application
 }> = ({ field, application }) => {
@@ -28,5 +29,3 @@ const DividerFormField: FC<{
     </Box>
   )
 }
-
-export default DividerFormField

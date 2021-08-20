@@ -10,6 +10,8 @@ import {
 } from '@island.is/financial-aid/auth'
 
 import { UserModel } from './user.model'
+import { boolean } from 'yargs'
+import { UserService } from './user.service'
 
 import { UserService } from './user.service'
 
@@ -36,7 +38,7 @@ export class UserResolver {
 
   @ResolveField('hasAppliedForPeriod', () => boolean, { nullable: true })
   async hasAppliedForPeriod(@Parent() user: User): Promise<boolean> {
-    const app = await this.userService.checkUserHistory(user.nationalId)
+    const app = await this.userService.checkHasAppliedForPeriod(user.nationalId)
     if (app != null) {
       return true
     }
@@ -47,7 +49,7 @@ export class UserResolver {
   async activeApplication(
     @Parent() user: User,
   ): Promise<ApplicationModel | null> {
-    const app = await this.userService.checkUserHistory(user.nationalId)
+    const app = await this.userService.checkHasAppliedForPeriod(user.nationalId)
     return app
   }
 }

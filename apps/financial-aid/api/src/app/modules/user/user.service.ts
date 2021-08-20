@@ -7,23 +7,15 @@ import { ApplicationModel } from '../application'
 
 @Injectable()
 export class UserService {
-  async checkUserHistory(nationalId: string): Promise<ApplicationModel | null> {
+  async checkHasAppliedForPeriod(
+    nationalId: string,
+  ): Promise<ApplicationModel | null> {
     const res = await fetch(
-      `${environment.backend.url}/api/me/?nationalId=${nationalId}`,
+      `${environment.backend.url}/api/hasAppliedForPeriod/?nationalId=${nationalId}`,
       {
         headers: { authorization: `Bearer ${environment.auth.secretToken}` },
       },
     )
     return await res.json()
   }
-
-  // async getApplicationId(nationalId: string): Promise<boolean> {
-  //   // const res = await fetch(
-  //   //   `${environment.backend.url}/api/me/?nationalId=${nationalId}`,
-  //   //   {
-  //   //     headers: { authorization: `Bearer ${environment.auth.secretToken}` },
-  //   //   },
-  //   // )
-  //   return 'bla'
-  // }
 }

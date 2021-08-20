@@ -19,7 +19,7 @@ export class ApplicationService {
     private readonly applicationEventService: ApplicationEventService,
   ) {}
 
-  async hasUserAppliedForCurrentMonth(
+  async hasAppliedForPeriod(
     nationalId: string,
   ): Promise<ApplicationModel | null> {
     const date = new Date()
@@ -35,7 +35,7 @@ export class ApplicationService {
   }
 
   getAll(): Promise<ApplicationModel[]> {
-    return this.applicationModel.findAll()
+    return this.applicationModel.findAll({ order: [['modified', 'DESC']] })
   }
 
   async findById(id: string): Promise<ApplicationModel | null> {

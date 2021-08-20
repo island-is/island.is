@@ -7,6 +7,12 @@ export const tableContainer = style({
   marginLeft: -theme.spacing[2],
 })
 
+export const emptyTableContainer = style({
+  marginBottom: theme.spacing[2],
+  marginRight: -theme.spacing[2],
+  marginLeft: -theme.spacing[2],
+})
+
 export const tablePadding = style({
   paddingRight: theme.spacing[9],
   paddingTop: theme.spacing[2],

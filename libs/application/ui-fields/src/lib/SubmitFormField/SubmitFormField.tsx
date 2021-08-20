@@ -1,4 +1,5 @@
 import React, { FC, useMemo } from 'react'
+
 import {
   SubmitField,
   FieldBaseProps,
@@ -12,7 +13,7 @@ interface Props extends FieldBaseProps {
   field: SubmitField
 }
 
-const SubmitFormField: FC<Props> = ({ application, field, error }) => {
+export const SubmitFormField: FC<Props> = ({ application, field, error }) => {
   const { id, title, actions, placement } = field
   const { formatMessage } = useLocale()
   const actionsAsOptions = useMemo(() => {
@@ -23,9 +24,11 @@ const SubmitFormField: FC<Props> = ({ application, field, error }) => {
       }
     })
   }, [actions, formatMessage])
+
   if (placement === 'footer') {
     return null
   }
+
   return (
     <Box
       background="blue100"
@@ -41,5 +44,3 @@ const SubmitFormField: FC<Props> = ({ application, field, error }) => {
     </Box>
   )
 }
-
-export default SubmitFormField
