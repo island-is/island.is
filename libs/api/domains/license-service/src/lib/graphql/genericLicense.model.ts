@@ -93,10 +93,34 @@ export class GenericUserLicense {
   })
   payload?: Payload
 }
+
 @ObjectType()
 export class GenericPkPass {
   @Field(() => String)
   pkpassUrl!: string
+}
+
+@ObjectType()
+export class GenericPkPassVerificationError {
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'pkpass verification error code, depandant on origination service, "0" for unknown error',
+  })
+  status?: string
+
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'pkpass verification error message, depandant on origination service',
+  })
+  message?: string
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Optional data related to the error',
+  })
+  data?: string
 }
 
 @ObjectType()
@@ -106,6 +130,12 @@ export class GenericPkPassVerification {
     description: 'Optional data related to the pkpass verification',
   })
   data?: string
+
+  @Field(() => GenericPkPassVerificationError, {
+    nullable: true,
+    description: 'Optional error related to the pkpass verification',
+  })
+  error?: GenericPkPassVerificationError
 
   @Field({ description: 'Is the pkpass valid?' })
   valid!: boolean

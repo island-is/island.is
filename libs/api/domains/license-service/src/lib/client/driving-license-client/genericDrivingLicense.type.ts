@@ -89,7 +89,13 @@ export interface PkPassServiceVerifyDriversLicenseResponse {
   status: number
 }
 
+export interface PkPassVerifyError {
+  statusCode: number
+  serviceError?: PkPassServiceErrorResponse
+}
+
 export interface PkPassVerifyResult {
   valid: boolean
+  error?: PkPassVerifyError
   nationalId?: string
 }

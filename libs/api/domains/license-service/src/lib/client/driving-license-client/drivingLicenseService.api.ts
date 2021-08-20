@@ -1,4 +1,5 @@
 import fetch, { Response } from 'node-fetch'
+import FormData from 'form-data'
 import * as kennitala from 'kennitala'
 import format from 'date-fns/format'
 import { Cache as CacheManager } from 'cache-manager'
@@ -22,6 +23,7 @@ import {
   GenericLicenseUserdataExternal,
   GenericUserLicenseStatus,
   PkPassVerification,
+  PkPassVerificationError,
 } from '../../licenceService.type'
 import { Config } from '../../licenseService.module'
 
@@ -372,14 +374,18 @@ export class GenericDrivingLicenseApi
     let res: Response | null = null
 
     try {
+      const formData = new FormData()
+      formData.append('pdf417Text', pdf417Text)
+
+      const authHeaders = {
+        apiKey: this.pkpassApiKey,
+        accessToken: `smart ${accessToken}`,
+      }
+
       res = await fetch(`${this.pkpassApiUrl}/verifyDriversLicense`, {
         method: 'POST',
-        headers: {
-          apiKey: this.pkpassApiKey,
-          accessToken: `smart ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ pdf417Text }),
+        headers: { ...authHeaders, ...formData.getHeaders() },
+        body: formData.getBuffer().toString(),
       })
     } catch (e) {
       this.logger.warn('Unable to verify pkpass drivers license', {
@@ -407,7 +413,14 @@ export class GenericDrivingLicenseApi
           ...responseErrors,
         },
       )
-      return null
+
+      return {
+        valid: false,
+        error: {
+          statusCode: res.status,
+          serviceError: responseErrors,
+        },
+      }
     }
 
     let json: unknown
@@ -457,6 +470,24 @@ export class GenericDrivingLicenseApi
       return null
     }
 
+    let error: PkPassVerificationError | undefined
+
+    if (result.error) {
+      let data = ''
+
+      try {
+        data = JSON.stringify(result.error.serviceError?.data)
+      } catch {
+        // noop
+      }
+
+      error = {
+        status: (result.error.statusCode || 0).toString(),
+        message: result.error.serviceError?.message ?? 'Unknown error',
+        data,
+      }
+    }
+
     let response:
       | Record<string, string | null | GenericDrivingLicenseResponse['mynd']>
       | undefined = undefined
@@ -478,6 +509,7 @@ export class GenericDrivingLicenseApi
     return {
       valid: result.valid,
       data: response ? JSON.stringify(response) : undefined,
+      error,
     }
   }
 }

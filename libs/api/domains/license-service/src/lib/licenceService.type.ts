@@ -101,9 +101,18 @@ export type GenericUserLicense = {
   payload?: GenericUserLicensePayload
 }
 
+export type PkPassVerificationError = {
+  status: string
+  message: string
+  // data is used to pass along the error from originator, e.g. SmartSolution
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any
+}
+
 export type PkPassVerification = {
   valid: boolean
   data?: string
+  error?: PkPassVerificationError
 }
 
 /**

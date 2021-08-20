@@ -97,6 +97,11 @@ const verifyPkPassMutation = gql`
     verifyPkPass(input: $input) {
       data
       valid
+      error {
+        status
+        message
+        data
+      }
     }
   }
 `
@@ -193,20 +198,30 @@ const PkPass = ({ licenseType }: PkPassProps) => {
 }
 
 const PkPassVerify = ({ licenseType }: PkPassProps) => {
-  console.log('licenseType :>> ', licenseType)
   const [pkpass, setPkpass] = useState<string | null>(null)
   const [text, setText] = useState<string>('')
+  const [error, setError] = useState<string | undefined>()
+  const [valid, setValid] = useState<boolean | undefined>()
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const [verifyPkPass, { loading }] = useMutation(verifyPkPassMutation)
 
   const onClick = async () => {
+    setValid(undefined);
+    setError(undefined);
     const response = await verifyPkPass({
       variables: { locale, input: { licenseType, data: text } },
     })
 
     if (!response.errors) {
-      setPkpass(response?.data?.generatePkPass?.data ?? null)
+      setValid(response?.data?.verifyPkPass?.valid ?? false);
+
+      if (response?.data?.verifyPkPass?.error) {
+        const errorObject = response?.data?.verifyPkPass?.error;
+        setError(`Villa "${errorObject?.status}": "${errorObject?.message}". ${JSON.stringify(errorObject.data)}`)
+      }
+
+      setPkpass(response?.data?.verifyPkPass?.data ?? null)
     } else {
       setPkpass(JSON.stringify(response.errors))
     }
@@ -217,7 +232,11 @@ const PkPassVerify = ({ licenseType }: PkPassProps) => {
       <textarea onChange={(e) => setText(e.target?.value ?? '')} value={text} />
       <Button onClick={onClick}>Staðfesta pkpass</Button>
       {loading && <SkeletonLoader width="100%" height={158} />}
+      {typeof valid === 'boolean' && (
+        <p>{valid ? 'GILT' : 'ÓGILT'}</p>
+      )}
       {pkpass && <p>{pkpass}</p>}
+      {error && <p>{error}</p>}
     </>
   )
 }
