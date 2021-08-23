@@ -7,7 +7,7 @@ import { Box, Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { inReview } from '../../../lib/messages'
-import { ReviewSectionState } from './index'
+import { ReviewSectionState } from '../../../types'
 
 type ReviedTagProps = {
   application: Application
