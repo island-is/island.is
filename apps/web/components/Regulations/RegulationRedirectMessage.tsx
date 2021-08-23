@@ -1,9 +1,10 @@
 import React from 'react'
 import { Button, Link, Stack, Text } from '@island.is/island-ui/core'
 import { RegulationLayout } from './RegulationLayout'
-import { prettyName, useRegulationLinkResolver } from './regulationUtils'
+import { prettyName } from '@island.is/regulations'
+import { RegulationRedirect } from '@island.is/regulations/web'
+import { useRegulationLinkResolver } from './regulationUtils'
 
-import { RegulationRedirect } from './Regulations.types'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useRouter } from 'next/router'

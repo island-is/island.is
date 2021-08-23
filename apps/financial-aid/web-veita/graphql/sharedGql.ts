@@ -60,6 +60,18 @@ export const GetApplicationsQuery = gql`
   }
 `
 
+export const GetApplicationFiltersQuery = gql`
+  query GetApplicationFiltersQuery {
+    applicationFilters {
+      New
+      InProgress
+      DataNeeded
+      Rejected
+      Approved
+    }
+  }
+`
+
 export const CreateApplicationQuery = gql`
   mutation createApplication($input: CreateApplicationInput!) {
     createApplication(input: $input) {
