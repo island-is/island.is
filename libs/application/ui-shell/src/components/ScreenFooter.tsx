@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/core'
 
 import * as styles from './ScreenFooter.treat'
+
 interface FooterProps {
   application: Application
   mode?: FormModes

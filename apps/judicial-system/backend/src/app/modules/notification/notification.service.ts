@@ -666,7 +666,7 @@ export class NotificationService {
 
   /* API */
 
-  getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
+  async getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
     this.logger.debug(`Getting all notifications for case ${existingCase.id}`)
 
     return this.notificationModel.findAll({

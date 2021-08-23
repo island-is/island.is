@@ -56,6 +56,7 @@ module.exports = {
     '<rootDir>/libs/message-queue',
     '<rootDir>/libs/nova-sms',
     '<rootDir>/libs/plausible',
+    '<rootDir>/libs/regulations',
     '<rootDir>/libs/vmst-client',
     '<rootDir>/libs/air-discount-scheme/consts',
     '<rootDir>/libs/air-discount-scheme/types',
