@@ -23,7 +23,7 @@ export const serviceSetup = (services: {
       DISABLE_REGULATIONS_PAGE: {
         dev: 'false',
         staging: 'false',
-        prod: 'true',
+        prod: 'false',
       },
     })
     .secrets({

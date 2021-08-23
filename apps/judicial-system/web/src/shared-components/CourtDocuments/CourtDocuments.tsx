@@ -81,6 +81,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
           label="Heiti dómskjals"
           placeholder="Skrá inn heiti á skjali hér"
           size="sm"
+          autoComplete="off"
           value={nextDocumentToUpload}
           onChange={(evt) => setNextDocumentToUpload(evt.target.value)}
           ref={additionalCourtDocumentRef}

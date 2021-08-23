@@ -80,6 +80,10 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       title: primaryLink.text,
       href: primaryLink.url,
       active: primaryLink.url === `/s/${organizationPage.slug}/thjonusta`,
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+      })),
     }),
   )
 

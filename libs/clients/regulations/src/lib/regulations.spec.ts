@@ -2,8 +2,8 @@ import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
 import { startMocking } from '@island.is/shared/mocking'
 import { RegulationsService, REGULATIONS_OPTIONS } from './regulations'
-import { Regulation, RegName, RegulationViewTypes } from './regulations.types'
-import { demoRegulation, demoRegName } from './regulations.mocks'
+import { Regulation, RegulationViewTypes } from '@island.is/regulations/web'
+import { demoRegulation } from './regulations.mocks'
 
 // MOCK START
 enum expectedResult {

@@ -14,7 +14,6 @@ interface PageProps {
 const TableHeaders = ({ index, header }: PageProps) => {
   return (
     <th
-      key={'headers-' + index}
       className={cn({
         [`${styles.tablePadding}`]: true,
         [`${styles.firstChildPadding}`]: index === 0,
