@@ -7,7 +7,7 @@ import { LogoHfj } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './Nav.treat'
 import cn from 'classnames'
-import { NavigationStatisticsContext } from '@island.is/financial-aid-web/veita/src/components/NavigationStatisticsProvider/NavigationStatisticsProvider'
+import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
 import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
 import { ApplicationState } from '@island.is/financial-aid/shared'
@@ -16,12 +16,12 @@ import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/na
 
 import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
-const Nav: React.FC = () => {
+const Nav = () => {
   const router = useRouter()
 
   const logOut = useLogOut()
 
-  const { statistics } = useContext(NavigationStatisticsContext)
+  const { applicationFilters } = useContext(ApplicationFiltersContext)
 
   return (
     <nav className={styles.container}>
@@ -59,8 +59,8 @@ const Nav: React.FC = () => {
                   <Text fontWeight="semiBold" color="dark300">
                     {item.applicationState
                       .map((state: ApplicationState) => {
-                        if (statistics) {
-                          return statistics[state]
+                        if (applicationFilters) {
+                          return applicationFilters[state]
                         }
                       })
                       .reduce((a?: number, b?: number) => {

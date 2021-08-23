@@ -60,6 +60,18 @@ export const GetApplicationsQuery = gql`
   }
 `
 
+export const GetApplicationFiltersQuery = gql`
+  query GetApplicationFiltersQuery {
+    applicationFilters {
+      New
+      InProgress
+      DataNeeded
+      Rejected
+      Approved
+    }
+  }
+`
+
 export const CreateApplicationQuery = gql`
   mutation createApplication($input: CreateApplicationInput!) {
     createApplication(input: $input) {
@@ -82,6 +94,15 @@ export const GetCurrentUserQuery = gql`
   query currentUserQuery {
     currentUser {
       name
+    }
+  }
+`
+export const CurrentUserQuery = gql`
+  query CurrentUserQuery {
+    currentUser {
+      nationalId
+      name
+      phoneNumber
     }
   }
 `

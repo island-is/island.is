@@ -164,11 +164,7 @@ export class AuthController {
     const user = await this.authService.findUser(authUser.nationalId)
 
     if (!user || !this.authService.validateUser(user)) {
-      this.logger.error('Unknown user', {
-        extra: {
-          authUser,
-        },
-      })
+      this.logger.error('Blocking login attempt from an unknown user')
 
       return res.redirect('/?villa=innskraning-ekki-notandi')
     }
