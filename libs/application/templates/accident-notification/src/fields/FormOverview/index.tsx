@@ -1,36 +1,36 @@
-import React, { FC } from 'react'
 import {
   FieldBaseProps,
   formatText,
   FormValue,
 } from '@island.is/application/core'
-import { AccidentNotification } from '../../lib/dataSchema'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
-import { FileValueLine, ValueLine } from './ValueLine'
+import { useLocale } from '@island.is/localization'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import parseISO from 'date-fns/parseISO'
+import React, { FC } from 'react'
+import { YES } from '../../constants'
+import { AccidentNotification } from '../../lib/dataSchema'
 import {
   accidentDetails,
   accidentType,
   applicantInformation,
+  application as applicationMessages,
   injuredPersonInformation,
   juridicalPerson,
   locationAndPurpose,
-  application as applicationMessages,
   overview,
   sportsClubInfo,
 } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
-import is from 'date-fns/locale/is'
-import { YES } from '../../constants'
 import {
   getWorkplaceData,
+  isMachineRelatedAccident,
+  isProfessionalAthleteAccident,
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
-  isProfessionalAthleteAccident,
-  isMachineRelatedAccident,
 } from '../../utils'
+import { FileValueLine, ValueLine } from './ValueLine'
 
 export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
   const answers = application.answers as AccidentNotification

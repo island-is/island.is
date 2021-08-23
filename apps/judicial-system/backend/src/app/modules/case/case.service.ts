@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { IntlService } from '@island.is/api/domains/translations'
+import { IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -190,7 +190,7 @@ export class CaseService {
     await Promise.all(promises)
   }
 
-  private async findById(id: string): Promise<Case> {
+  async findById(id: string): Promise<Case> {
     this.logger.debug(`Finding case ${id}`)
 
     return this.caseModel.findOne({
