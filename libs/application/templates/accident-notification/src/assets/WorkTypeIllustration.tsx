@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const WorkTypeIllustration = () => (
+export const WorkTypeIllustration: React.FC = () => (
   <svg
     width="105"
     height="111"
