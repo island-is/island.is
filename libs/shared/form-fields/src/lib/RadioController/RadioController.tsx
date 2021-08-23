@@ -16,6 +16,7 @@ interface Option {
   tooltip?: React.ReactNode
   excludeOthers?: boolean
 }
+
 interface Props {
   defaultValue?: any
   disabled?: boolean
@@ -28,6 +29,7 @@ interface Props {
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string) => void
 }
+
 export const RadioController: FC<Props> = ({
   defaultValue,
   disabled = false,

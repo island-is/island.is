@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
+import * as Sentry from '@sentry/react'
 
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
@@ -14,13 +15,12 @@ import {
   getApplicationUIFields,
 } from '@island.is/application/template-loader'
 import { useApplicationNamespaces, useLocale } from '@island.is/localization'
-import { Box, LoadingDots } from '@island.is/island-ui/core'
 
 import { RefetchProvider } from '../context/RefetchContext'
 import { FieldProvider, useFields } from '../context/FieldContext'
+import { LoadingShell } from '../components/LoadingShell'
 import { FormShell } from './FormShell'
-import { NotFound } from './NotFound'
-import * as styles from './FormShell.treat'
+import { ErrorShell } from '../components/ErrorShell'
 
 const ApplicationLoader: FC<{
   applicationId: string
@@ -44,21 +44,11 @@ const ApplicationLoader: FC<{
   const application = data?.applicationApplication
 
   if (loading) {
-    return (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        width="full"
-        className={styles.root}
-      >
-        <LoadingDots large />
-      </Box>
-    )
+    return <LoadingShell />
   }
 
   if (!applicationId || error) {
-    return <NotFound />
+    return <ErrorShell />
   }
 
   return (
@@ -134,17 +124,7 @@ const ShellWrapper: FC<{
   ])
 
   if (!form || !dataSchema) {
-    return (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        width="full"
-        className={styles.root}
-      >
-        <LoadingDots large />
-      </Box>
-    )
+    return <LoadingShell />
   }
 
   return (
@@ -160,11 +140,29 @@ const ShellWrapper: FC<{
 export const ApplicationForm: FC<{
   applicationId: string
   nationalRegistryId: string
-}> = ({ applicationId, nationalRegistryId }) => (
-  <FieldProvider>
-    <ApplicationLoader
-      applicationId={applicationId}
-      nationalRegistryId={nationalRegistryId}
-    />
-  </FieldProvider>
-)
+}> = ({ applicationId, nationalRegistryId }) => {
+  const { formatMessage } = useLocale()
+
+  return (
+    <Sentry.ErrorBoundary
+      beforeCapture={(scope) => {
+        scope.setTag('errorBoundaryLocation', 'ApplicationForm')
+        scope.setExtra('applicationId', applicationId)
+        scope.setExtra('nationalRegistryId', nationalRegistryId)
+      }}
+      fallback={
+        <ErrorShell
+          title={formatMessage(coreMessages.globalErrorTitle)}
+          subTitle={formatMessage(coreMessages.globalErrorMessage)}
+        />
+      }
+    >
+      <FieldProvider>
+        <ApplicationLoader
+          applicationId={applicationId}
+          nationalRegistryId={nationalRegistryId}
+        />
+      </FieldProvider>
+    </Sentry.ErrorBoundary>
+  )
+}

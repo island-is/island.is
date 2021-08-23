@@ -145,6 +145,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
               <Input
                 data-testid="defenderName"
                 name="defenderName"
+                autoComplete="off"
                 label={formatMessage(accused.sections.defenderInfo.name.label)}
                 placeholder={formatMessage(
                   accused.sections.defenderInfo.name.placeholder,
@@ -158,6 +159,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
               <Input
                 data-testid="defenderEmail"
                 name="defenderEmail"
+                autoComplete="off"
                 label={formatMessage(accused.sections.defenderInfo.email.label)}
                 placeholder={formatMessage(
                   accused.sections.defenderInfo.email.placeholder,
@@ -179,6 +181,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 <Input
                   data-testid="defenderPhoneNumber"
                   name="defenderPhoneNumber"
+                  autoComplete="off"
                   label={formatMessage(
                     accused.sections.defenderInfo.phoneNumber.label,
                   )}
@@ -233,6 +236,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
               <Input
                 data-testid="leadInvestigator"
                 name="leadInvestigator"
+                autoComplete="off"
                 label={formatMessage(accused.sections.leadInvestigator.label)}
                 placeholder={formatMessage(
                   accused.sections.leadInvestigator.placeholder,

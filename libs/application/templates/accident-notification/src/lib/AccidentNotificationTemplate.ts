@@ -11,6 +11,7 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { States } from '../constants'
+import { ApiActions } from '../shared'
 import { application } from './messages'
 // import { AccidentNotificationSchema } from './dataSchema'
 
@@ -49,6 +50,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: 3600 * 1000,
+          },
+          onExit: {
+            apiModuleAction: ApiActions.submitApplication,
           },
           roles: [
             {
