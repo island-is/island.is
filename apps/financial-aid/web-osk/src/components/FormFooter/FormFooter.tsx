@@ -4,6 +4,7 @@ import { Box, Button, Icon, Text, ButtonProps } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import * as styles from './FormFooter.treat'
 import cn from 'classnames'
+
 interface Props {
   hidePreviousButton?: boolean
   onPrevButtonClick?: () => void
@@ -20,7 +21,7 @@ interface Props {
   infoBoxText?: string
 }
 
-const FormFooter: React.FC<Props> = (props: Props) => {
+const FormFooter = (props: Props) => {
   const router = useRouter()
 
   return (

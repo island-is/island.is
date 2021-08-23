@@ -24,9 +24,9 @@ interface PageProps {
   index: number
 }
 
-const TableBody: React.FC<PageProps> = ({ application, index }) => {
+const TableBody = ({ application, index }: PageProps) => {
   return (
-    <Link href={'application/' + application.id} key={'key-' + index}>
+    <Link href={'application/' + application.id}>
       <tr className={styles.link}>
         <td
           className={cn({
@@ -46,7 +46,7 @@ const TableBody: React.FC<PageProps> = ({ application, index }) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          <Box>
+          <Box display="flex">
             <div className={`tags ${getTagByState(application.state)}`}>
               {getState[application.state]}
             </div>

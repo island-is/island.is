@@ -7,8 +7,8 @@ export const navigationItems = [
     applicationState: [ApplicationState.NEW],
     headers: [
       { title: 'Nafn' },
-      { title: 'Staða', filterBy: 'state' },
-      { title: 'Tími án umsjár', filterBy: 'modified' },
+      { title: 'Staða' },
+      { title: 'Tími án umsjár' },
       { title: 'Tímabil' },
     ],
   },
@@ -21,8 +21,8 @@ export const navigationItems = [
     ],
     headers: [
       { title: 'Nafn' },
-      { title: 'Staða', filterBy: 'state' },
-      { title: 'Síðast uppfært', filterBy: 'modified' },
+      { title: 'Staða' },
+      { title: 'Síðast uppfært' },
       { title: 'Tímabil' },
     ],
   },
@@ -32,8 +32,8 @@ export const navigationItems = [
     applicationState: [ApplicationState.APPROVED, ApplicationState.REJECTED],
     headers: [
       { title: 'Nafn' },
-      { title: 'Staða', filterBy: 'state' },
-      { title: 'Úrlausnartími', filterBy: 'modified' },
+      { title: 'Staða' },
+      { title: 'Úrlausnartími' },
       { title: 'Tímabil' },
     ],
   },
