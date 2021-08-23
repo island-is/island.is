@@ -6,11 +6,12 @@ import {
   Inject,
   MethodNotAllowedException,
 } from '@nestjs/common'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AccessGroup } from './access.enum'
 import { ACCESS_GROUP_KEY } from './access.decorator'
 import { environment } from '../../../environments'
 import { EndorsementListService } from '../../modules/endorsementList/endorsementList.service'
+import type { Logger } from '@island.is/logging'
 
 /**
  * This exists to limit access to trusted individuals
