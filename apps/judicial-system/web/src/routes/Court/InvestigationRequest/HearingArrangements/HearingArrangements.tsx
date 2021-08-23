@@ -27,7 +27,7 @@ const HearingArrangements = () => {
 
   const router = useRouter()
   const id = router.query.id
-  const { sendNotification, isSendingNotification, updateCase } = useCase()
+  const { sendNotification, isSendingNotification, autofill } = useCase()
   const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -46,20 +46,15 @@ const HearingArrangements = () => {
 
   useEffect(() => {
     if (!workingCase && data?.case) {
-      let theCase = data.case
+      const theCase = data.case
 
-      if (!theCase.courtDate && theCase.requestedCourtDate) {
-        updateCase(
-          theCase.id,
-          parseString('courtDate', theCase.requestedCourtDate),
-        )
-
-        theCase = { ...theCase, courtDate: theCase.requestedCourtDate }
+      if (theCase.requestedCourtDate) {
+        autofill('courtDate', theCase.requestedCourtDate, data.case)
       }
 
       setWorkingCase(theCase)
     }
-  }, [workingCase, setWorkingCase, data, updateCase])
+  }, [workingCase, setWorkingCase, data, autofill])
 
   const handleNextButtonClick = async () => {
     if (workingCase) {
