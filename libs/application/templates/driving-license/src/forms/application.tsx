@@ -107,7 +107,7 @@ export const application: Form = buildForm({
           condition: (_, externalData) => {
             return (
               (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
-              false
+              true
             )
           },
           children: [
@@ -145,7 +145,7 @@ export const application: Form = buildForm({
           condition: (_, externalData) => {
             return (
               (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
-              true
+              false
             )
           },
           children: [
