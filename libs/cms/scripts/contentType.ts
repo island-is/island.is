@@ -174,9 +174,7 @@ async function main() {
 
   // 8. We run prettier on all new files so it looks good
   try {
-    await execShellCommand(
-      'prettier --write ./libs/api/domains/cms/src/lib/models/**.ts',
-    )
+    await execShellCommand('prettier --write ./libs/cms/src/lib/models/**.ts')
   } catch (e) {
     logger.error('prettier has an error', { message: e.message })
   }
@@ -192,7 +190,7 @@ async function main() {
     }
     ${
       generatedFiles.find((type) => type === contentType.sys.id)
-        ? `• We created/updated the model libs/api/domains/cms/src/lib/models/${contentType.sys.id}.models.ts for your contentType.`
+        ? `• We created/updated the model libs/cms/src/lib/models/${contentType.sys.id}.models.ts for your contentType.`
         : ''
     }
     ${

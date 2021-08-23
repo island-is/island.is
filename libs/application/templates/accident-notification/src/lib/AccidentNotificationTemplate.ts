@@ -50,6 +50,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 3600 * 1000,
           },
+          /* onExit: {
+            apiModuleAction: ApiActions.submitApplication,
+          }, */
           roles: [
             {
               id: Roles.APPLICANT,
@@ -154,20 +157,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           ],
         },
       },
-      /* [AccidentNotificationStates.submitted]: {
-        meta: {
-          name: application.general.name.defaultMessage,
-          progress: 0.6,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true, // Only on dev
-            whenToPrune: 12 * 3600 * 1000,
-          },
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
-        },
-      }, */
     },
   },
   mapUserToRole(

@@ -4,6 +4,7 @@ import {
   Case,
   CaseState,
   CaseTransition,
+  NotificationType,
 } from '@island.is/judicial-system/types'
 import {
   CaseData,
@@ -23,7 +24,7 @@ const Overview = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { transitionCase, isTransitioningCase, sendNotification } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -31,7 +32,7 @@ const Overview = () => {
   })
 
   useDebounce(
-    () => {
+    async () => {
       if (
         workingCase &&
         workingCase?.courtCaseNumber &&
@@ -39,7 +40,15 @@ const Overview = () => {
         !isTransitioningCase
       ) {
         // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
-        transitionCase(workingCase, CaseTransition.RECEIVE, setWorkingCase)
+        const received = await transitionCase(
+          workingCase,
+          CaseTransition.RECEIVE,
+          setWorkingCase,
+        )
+
+        if (received) {
+          sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
+        }
       }
     },
     500,

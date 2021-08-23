@@ -77,7 +77,7 @@ export const generateFile = (
     ${mapper}
   `
 
-  const path = `libs/api/domains/cms/src/lib/models/${id}.model.ts`
+  const path = `libs/cms/src/lib/models/${id}.model.ts`
 
   if (!args.overwrite && existsSync(path)) {
     // We don't overwrite models that already exists unless we specify the overwrite boolean as true
