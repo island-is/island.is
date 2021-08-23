@@ -7,11 +7,13 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
   QueryGetSupportQnAsArgs,
+  QueryGetSupportQnAsInOrganizationArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_QUERY,
   GET_SUPPORT_QNAS,
+  GET_SUPPORT_QNAS_IN_ORGANIZATION,
 } from '../../queries'
 import { Screen } from '../../../types'
 import {
@@ -43,17 +45,24 @@ import * as sharedStyles from '../shared/styles.treat'
 interface HomeProps {
   organization?: Organization
   namespace: Query['getNamespace']
-  supportQNAs: Query['getSupportQNAs']
+  supportQNAs: Query['getSupportQNAs'] | Query['getSupportQNAsInOrganization']
 }
 
-function generateCategories(supportQNAs: Query['getSupportQNAs']) {
+function generateCategories(
+  supportQNAs: Query['getSupportQNAs'] | Query['getSupportQNAsInOrganization'],
+) {
   const categorykeys = []
   const categories = []
   for (const supportQNA of supportQNAs) {
     const categorykey = `${supportQNA.category.title}.${supportQNA.category.slug}`
     if (!categorykeys.includes(categorykey)) {
       categorykeys.push(categorykey)
-      categories.push(supportQNA.category)
+      categories.push({
+        title: supportQNA.category.title,
+        slug: supportQNA.category.slug,
+        description: supportQNA.category.description,
+        organizationSlug: supportQNA.organization.slug,
+      })
     }
   }
 
@@ -99,7 +108,7 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
             </GridRow>
             <GridRow>
               {freshdeskCategories.map(
-                ({ title, slug, description }, index) => {
+                ({ title, slug, description, organizationSlug }, index) => {
                   return (
                     <GridColumn
                       key={index}
@@ -111,11 +120,9 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
                         description={description}
                         link={
                           {
-                            href: `/thjonustuvefur/${
-                              organization?.slug
-                                ? organization.slug + '/'
-                                : 'a/'
-                            }${asSlug(slug)}`,
+                            href: `/thjonustuvefur/${organizationSlug}/${asSlug(
+                              slug,
+                            )}`,
                           } as LinkResolverResponse
                         }
                       />
@@ -157,7 +164,7 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
                     },
                   }}
                   items={freshdeskCategories.map(
-                    ({ title, slug, description }, index) => {
+                    ({ title, slug, description, organizationSlug }, index) => {
                       return (
                         <Card
                           key={index}
@@ -165,11 +172,9 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
                           description={description}
                           link={
                             {
-                              href: `/thjonustuvefur/${
-                                organization?.slug
-                                  ? organization.slug + '/'
-                                  : 'a/'
-                              }${asSlug(slug)}`,
+                              href: `/thjonustuvefur/${organizationSlug}/${asSlug(
+                                slug,
+                              )}`,
                             } as LinkResolverResponse
                           }
                         />
@@ -227,6 +232,7 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
 
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug as string
+  console.log('SLUG:', slug)
 
   const [organization, namespace, supportQNAs] = await Promise.all([
     !!slug &&
@@ -254,20 +260,34 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
-    apolloClient.query<Query, QueryGetSupportQnAsArgs>({
-      query: GET_SUPPORT_QNAS,
-      variables: {
-        input: {
-          lang: locale,
-        },
-      },
-    }),
+    slug
+      ? apolloClient.query<Query, QueryGetSupportQnAsInOrganizationArgs>({
+          query: GET_SUPPORT_QNAS_IN_ORGANIZATION,
+          variables: {
+            input: {
+              lang: locale,
+              slug: slug,
+            },
+          },
+        })
+      : apolloClient.query<Query, QueryGetSupportQnAsArgs>({
+          query: GET_SUPPORT_QNAS,
+          variables: {
+            input: {
+              lang: locale,
+            },
+          },
+        }),
   ])
+
+  const supportData = slug
+    ? supportQNAs?.data?.getSupportQNAsInOrganization
+    : supportQNAs?.data?.getSupportQNAs
 
   return {
     organization: organization?.data?.getOrganization,
     namespace,
-    supportQNAs: supportQNAs?.data?.getSupportQNAs,
+    supportQNAs: supportData,
   }
 }
 

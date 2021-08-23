@@ -67,6 +67,7 @@ import {
 import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
 import { GetSupportFormInOrganizationInput } from './dto/getSupportFormInOrganization.input'
 import { mapSupportForm, SupportForm } from './models/supportForm.model'
+import { GetSupportQNAsInOrganizationInput } from './dto/getSupportQNAsInOrganization.input'
 
 const makePage = (
   page: number,
@@ -650,11 +651,29 @@ export class CmsContentfulService {
   async getSupportQNAs({ lang }: GetSupportQNAsInput): Promise<SupportQNA[]> {
     const params = {
       ['content_type']: 'supportQNA',
+      limit: 1000,
     }
 
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.ISupportQnaFields>(lang, params)
       .catch(errorHandler('getSupportQNAs'))
+
+    return (result.items as types.ISupportQna[]).map(mapSupportQNA)
+  }
+
+  async getSupportQNAsInOrganization({
+    lang,
+    slug,
+  }: GetSupportQNAsInOrganizationInput): Promise<SupportQNA[]> {
+    const params = {
+      ['content_type']: 'supportQNA',
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ISupportQnaFields>(lang, params)
+      .catch(errorHandler('getSupportQNAsInOrganization'))
 
     return (result.items as types.ISupportQna[]).map(mapSupportQNA)
   }

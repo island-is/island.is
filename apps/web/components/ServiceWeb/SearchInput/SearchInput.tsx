@@ -1,10 +1,13 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
+import { useRouter } from 'next/router'
+
 import {
   AsyncSearch,
   AsyncSearchOption,
   AsyncSearchProps,
 } from '@island.is/island-ui/core'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const DEBOUNCE_TIMER = 600
 
@@ -24,6 +27,8 @@ export const SearchInput = ({
   const timerRef = useRef(null)
   const [isBusy, setIsBusy] = useState<boolean>(false)
   const [searchTerms, setSearchTerms] = useState<string>('')
+  const { linkResolver } = useLinkResolver()
+  const Router = useRouter()
 
   useMemo(() => {
     clearTimeout(timerRef.current)
@@ -56,6 +61,12 @@ export const SearchInput = ({
       }}
       inputValue={searchTerms}
       onInputValueChange={(value) => setSearchTerms(value)}
+      onSubmit={(value) => {
+        Router.push({
+          pathname: linkResolver('helpdesksearch').href,
+          query: { q: value },
+        })
+      }}
     />
   )
 }
