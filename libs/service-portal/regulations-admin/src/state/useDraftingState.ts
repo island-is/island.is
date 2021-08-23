@@ -7,7 +7,7 @@ import { FC, Reducer, useEffect, useMemo, useReducer } from 'react'
 import { produce, setAutoFreeze } from 'immer'
 import { useHistory, generatePath } from 'react-router-dom'
 import { Step } from '../types'
-import { getAllGuessableValues } from '../utils'
+import { getAllGuessableValues, getInputFieldsWithErrors } from '../utils'
 import { mockSave } from '../_mockData'
 import { RegulationsAdminScope } from '@island.is/auth/scopes'
 import {
@@ -193,14 +193,7 @@ const actionHandlers: {
     const prop = state.draft[name]
     // @ts-expect-error  (FML! type matching of name and value is guaranteed, but TS can't tell)
     prop.value = value
-  },
-
-  MISSING_REQUIRED_PROPS: (state) => {
-    if (!state.draft) {
-      return
-    }
-
-    state.inputHasError = true
+    prop.error = !prop.value ? 'empty' : undefined
   },
 
   UPDATE_MULTIPLE_PROPS: (state, { multiData }) => {
@@ -212,8 +205,6 @@ const actionHandlers: {
       ...state.draft,
       ...multiData,
     }
-
-    state.inputHasError = false
   },
 
   UPDATE_LAWCHAPTER_PROP: (state, { action, value }) => {
@@ -349,15 +340,21 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
           ? () => {
               // BASICS
               if (stepName === 'basics') {
-                const requiredFieldsBasics =
-                  state?.draft?.title.value &&
-                  state?.draft?.text.value &&
-                  state?.draft?.idealPublishDate.value
+                const basicsRequired = [
+                  'title',
+                  'text',
+                  'idealPublishDate',
+                ] as RegDraftFormSimpleProps[]
 
-                if (!requiredFieldsBasics) {
+                const errorFields = getInputFieldsWithErrors(
+                  basicsRequired,
+                  state.draft,
+                )
+
+                if (errorFields) {
                   dispatch({
-                    type: 'MISSING_REQUIRED_PROPS',
-                    inputHasError: true,
+                    type: 'UPDATE_MULTIPLE_PROPS',
+                    multiData: errorFields,
                   })
                   return // Prevent the user going forward
                 } else {
@@ -367,30 +364,31 @@ export const useDraftingState = (draftId: DraftIdFromParam, stepName: Step) => {
                   )
                   dispatch({
                     type: 'UPDATE_MULTIPLE_PROPS',
-                    multiData: guessableValues, // Includes { inputHasError: false }
+                    multiData: guessableValues,
                   })
                 }
               }
 
               // META
               if (stepName === 'meta') {
-                const requiredFieldsMeta =
-                  state?.draft?.ministry.value &&
-                  state?.draft?.type.value &&
-                  state?.draft?.signatureDate.value &&
-                  state?.draft?.effectiveDate.value
-                // TODO: VALIDATE
-                if (!requiredFieldsMeta) {
+                const metaRequired = [
+                  'ministry',
+                  'type',
+                  'signatureDate',
+                  'effectiveDate',
+                ] as RegDraftFormSimpleProps[]
+
+                const errorFields = getInputFieldsWithErrors(
+                  metaRequired,
+                  state.draft,
+                )
+
+                if (errorFields) {
                   dispatch({
-                    type: 'MISSING_REQUIRED_PROPS',
-                    inputHasError: true,
+                    type: 'UPDATE_MULTIPLE_PROPS',
+                    multiData: errorFields,
                   })
                   return // Prevent the user going forward
-                } else {
-                  dispatch({
-                    type: 'MISSING_REQUIRED_PROPS',
-                    inputHasError: false,
-                  })
                 }
               }
 
@@ -514,5 +512,4 @@ export type StepComponent = (props: {
   draft: RegDraftForm
   new?: boolean
   actions: ReturnType<typeof useDraftingState>['actions'] // FIXME: Ick! Ack!
-  inputHasError?: boolean
 }) => ReturnType<FC>

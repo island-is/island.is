@@ -21,7 +21,7 @@ import { StepComponent } from '../state/useDraftingState'
 import { RegDraftFormSimpleProps } from '../state/types'
 import { getMinDate, getNextWorkday } from '../utils'
 import { Appendixes, AppendixStateItem } from './Appendixes'
-import { RegulationDraftId } from '@island.is/regulations/admin'
+// import { RegulationDraftId } from '@island.is/regulations/admin'
 
 type WrapProps = {
   legend?: string
@@ -46,10 +46,8 @@ const Wrap = (props: WrapProps) => (
 
 export const EditBasics: StepComponent = (props) => {
   const t = useIntl().formatMessage
-  const { draft, actions, inputHasError } = props
+  const { draft, actions } = props
 
-  const [titleValue, setTitleValue] = useState(draft.title?.value)
-  const [dateValue, setDateValue] = useState(draft.idealPublishDate?.value)
   const [fastTrack, setFastTrack] = useState(false)
   const [appendixes, setAppendixes] = useState(
     [] as readonly AppendixStateItem[],
@@ -65,22 +63,10 @@ export const EditBasics: StepComponent = (props) => {
     [actions],
   )
 
-  useEffect(() => {
-    onAnyInputChange({
-      name: 'title',
-      value: titleValue,
-    })
-  }, [titleValue, onAnyInputChange])
-
-  useEffect(() => {
-    onAnyInputChange({
-      name: 'idealPublishDate',
-      value: dateValue as Date,
-    })
-  }, [dateValue, onAnyInputChange])
-
   const fastTrackDate = fastTrack ? getNextWorkday(new Date()) : null
-  const selectedDate = dateValue ? new Date(dateValue) : null
+  const selectedDate = draft.idealPublishDate?.value
+    ? new Date(draft.idealPublishDate.value)
+    : null
 
   console.log('appendixes', appendixes)
   return (
@@ -89,11 +75,16 @@ export const EditBasics: StepComponent = (props) => {
         <Input
           label={t(msg.title)}
           name="title"
-          value={titleValue}
-          onChange={(e) => setTitleValue(e.target.value)}
+          value={draft.title?.value}
+          onChange={(e) =>
+            onAnyInputChange({
+              name: 'title',
+              value: e.target.value,
+            })
+          }
           required
           errorMessage={t(msg.requiredFieldError)}
-          hasError={!!(inputHasError && !draft.title?.value)}
+          hasError={!!draft.title?.error}
         />
       </Wrap>
 
@@ -105,10 +96,7 @@ export const EditBasics: StepComponent = (props) => {
           isImpact={false}
           draftId={draft.id}
           valueRef={textRef}
-          error={
-            inputHasError &&
-            !textRef.current().replace(/(<(?!\/)[^>]+>)+(<\/[^>]+>)+/, '')
-          }
+          error={!!draft.text?.error}
           onChange={() =>
             onAnyInputChange({
               name: 'text',
@@ -124,9 +112,14 @@ export const EditBasics: StepComponent = (props) => {
           placeholderText={t(msg.idealPublishDate_soon)}
           minDate={getMinDate()}
           selected={fastTrackDate || selectedDate}
-          handleChange={(date: Date) => setDateValue(getNextWorkday(date))} // Auto selects next workday (Excludes weekends and holidays).
+          handleChange={(date: Date) =>
+            onAnyInputChange({
+              name: 'idealPublishDate',
+              value: getNextWorkday(date),
+            })
+          } // Auto selects next workday (Excludes weekends and holidays).
           required
-          hasError={inputHasError && !(fastTrackDate || selectedDate)}
+          hasError={!!draft.idealPublishDate?.error && !fastTrackDate}
           errorMessage={t(msg.requiredFieldError)}
           // excludeDates={[]} --> Do we want to exclude holidays and weekends from the calendar?
         />
