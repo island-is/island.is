@@ -34,14 +34,14 @@ import {
   fishingCompanyInfo,
   fishingLocationAndPurpose,
   hindrances,
+  injuredPersonInformation,
+  juridicalPerson,
   locationAndPurpose,
   overview,
+  powerOfAttorney,
   rescueSquadInfo,
   schoolInfo,
   sportsClubInfo,
-  juridicalPerson,
-  injuredPersonInformation,
-  powerOfAttorney,
   whoIsTheNotificationFor,
   workMachine,
 } from '../lib/messages'
@@ -61,6 +61,7 @@ import {
   WorkAccidentTypeEnum,
 } from '../types'
 import {
+  getAccidentTypeOptions,
   isAboardShip,
   isAgricultureAccident,
   isFishermanAccident,
@@ -68,13 +69,12 @@ import {
   isHomeActivitiesAccident,
   isLocatedOnShipOther,
   isProfessionalAthleteAccident,
+  isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
   isRepresentativeOfCompanyOrInstitute,
   isRescueWorkAccident,
   isStudiesAccident,
-  isReportingOnBehalfOfEmployee,
   isWorkAccident,
-  getAccidentTypeOptions,
 } from '../utils'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'

@@ -7,19 +7,14 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
-import { ApiActions } from '../shared'
+import { States } from '../constants'
 import { application } from './messages'
 // import { AccidentNotificationSchema } from './dataSchema'
 
 const AccidentNotificationSchema = z.object({})
-
-const AccidentNotificationStates = {
-  draft: 'draft',
-  representativeApproval: 'representativeApproval',
-  submitted: 'submitted',
-}
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -29,6 +24,7 @@ enum Roles {
 type AccidentNotificationEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.EDIT }
 
 const AccidentNotificationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -43,9 +39,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   ],
   dataSchema: AccidentNotificationSchema,
   stateMachineConfig: {
-    initial: AccidentNotificationStates.draft,
+    initial: States.DRAFT,
     states: {
-      [AccidentNotificationStates.draft]: {
+      [States.DRAFT]: {
         meta: {
           name: application.general.name.defaultMessage,
           progress: 0.2,
@@ -54,9 +50,12 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 3600 * 1000,
           },
+          /* onExit: {
+            apiModuleAction: ApiActions.submitApplication,
+          }, */
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/AccidentNotificationForm').then((val) =>
                   Promise.resolve(val.AccidentNotificationForm),
@@ -70,36 +69,92 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: AccidentNotificationStates.representativeApproval,
+            target: States.NEEDS_DOCUMENT_AND_REVIEW,
           },
         },
       },
-      [AccidentNotificationStates.representativeApproval]: {
+      [States.NEEDS_DOCUMENT_AND_REVIEW]: {
         meta: {
-          name: application.general.name.defaultMessage,
-          progress: 0.6,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true, // Only on dev
-            whenToPrune: 12 * 3600 * 1000,
-          },
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
+          name: States.NEEDS_DOCUMENT_AND_REVIEW,
+          progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: {
+            target: States.NEEDS_DOCUMENT,
           },
         },
       },
-      [AccidentNotificationStates.submitted]: {
+      [States.NEEDS_DOCUMENT]: {
         meta: {
-          name: application.general.name.defaultMessage,
+          name: States.NEEDS_DOCUMENT,
           progress: 0.6,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true, // Only on dev
-            whenToPrune: 12 * 3600 * 1000,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: {
+            target: States.NEEDS_REVIEW,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
+        },
+      },
+      [States.NEEDS_REVIEW]: {
+        meta: {
+          name: States.NEEDS_REVIEW,
+          progress: 0.6,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: {
+            target: States.NEEDS_DOCUMENT,
           },
+        },
+      },
+      [States.IN_FINAL_REVIEW]: {
+        meta: {
+          name: States.IN_FINAL_REVIEW,
+          progress: 0.8,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
     },
