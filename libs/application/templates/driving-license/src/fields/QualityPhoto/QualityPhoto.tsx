@@ -5,9 +5,11 @@ import {
   Text,
   ContentBlock,
   AlertMessage,
+  BulletList,
+  Bullet,
 } from '@island.is/island-ui/core'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
-import { m } from '../lib/messages'
+import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
 interface QualityPhotoData {
@@ -29,14 +31,15 @@ const Photo = ({ data }: QualityPhotoData) => {
 
 const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
   const { qualityPhoto } = application.externalData
+  const { answers } = application
   const { formatMessage } = useLocale()
   const photo = (qualityPhoto as unknown) as QualityPhotoData
   const img = Photo(photo)
-
+  console.log(answers)
   return (
     <Box marginBottom={4}>
       {photo.data.success ? (
-        <Box marginBottom={8}>
+        <Box>
           <Text>
             {formatText(m.qualityPhotoSubTitle, application, formatMessage)}
           </Text>
@@ -61,19 +64,10 @@ const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
               )}
             />
           </ContentBlock>
-          <Box marginTop={6}>
-            <Text>
-              {formatText(
-                m.qualityPhotoInstructions,
-                application,
-                formatMessage,
-              )}
-            </Text>
-          </Box>
         </Box>
       )}
     </Box>
   )
 }
 
-export default QualityPhoto
+export { QualityPhoto }

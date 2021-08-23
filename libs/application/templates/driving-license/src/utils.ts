@@ -12,8 +12,7 @@ export const buildEntitlementOption = (
   }
 }
 
-
-export type QualityPhotoData =  {
+export type QualityPhotoData = {
   data: {
     qualityPhoto: string
     success: boolean

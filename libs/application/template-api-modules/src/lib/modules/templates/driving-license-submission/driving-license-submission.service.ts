@@ -58,7 +58,7 @@ export class DrivingLicenseSubmissionService {
         .newDrivingLicense(nationalId, {
           juristictionId: juristictionId as number,
           needsToPresentHealthCertificate: needsHealthCert,
-          needsToPresentQualityPhoto: needsQualityPhoto
+          needsToPresentQualityPhoto: needsQualityPhoto,
         })
         .catch((e) => {
           return {

@@ -19,10 +19,7 @@ import {
   DefaultEvents,
   StaticText,
 } from '@island.is/application/core'
-import {
-  NationalRegistryUser,
-  UserProfile,
-} from '../types/schema'
+import { NationalRegistryUser, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
@@ -110,7 +107,7 @@ export const application: Form = buildForm({
           condition: (_, externalData) => {
             return (
               (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
-              true
+              false
             )
           },
           children: [
@@ -128,18 +125,17 @@ export const application: Form = buildForm({
                 { value: 'yes', label: m.qualityPhotoAcknowledgement },
               ],
             }),
-            buildDescriptionField({
+            buildCustomField({
               id: 'photdesc',
-              title: m.qualityPhotoInstructions,
-              titleVariant: 'h5',
-              description: '',
+              title: '',
+              component: 'Bullets',
               condition: (answers) => {
                 try {
-                  return answers.willBringQualityPhoto === "yes"
+                  return answers.willBringQualityPhoto === 'yes'
                 } catch (error) {
                   return false
                 }
-              }
+              },
             }),
           ],
         }),
@@ -149,7 +145,7 @@ export const application: Form = buildForm({
           condition: (_, externalData) => {
             return (
               (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
-              false
+              true
             )
           },
           children: [
@@ -157,6 +153,11 @@ export const application: Form = buildForm({
               title: m.eligibilityRequirementTitle,
               component: 'QualityPhoto',
               id: 'qphoto',
+            }),
+            buildCustomField({
+              id: 'photodescription',
+              title: '',
+              component: 'Bullets',
             }),
             buildCheckboxField({
               id: 'willBringQualityPhoto',
@@ -412,11 +413,14 @@ export const application: Form = buildForm({
             buildDividerField({
               condition: (answers) => {
                 try {
-                  return answers.willBringQualityPhoto === "yes" || Object.values(answers?.healthDeclaration).includes('yes')
+                  return (
+                    answers.willBringQualityPhoto === 'yes' ||
+                    Object.values(answers?.healthDeclaration).includes('yes')
+                  )
                 } catch (error) {
                   return false
                 }
-              }
+              },
             }),
             buildDescriptionField({
               id: 'bringalong',
@@ -425,11 +429,14 @@ export const application: Form = buildForm({
               description: '',
               condition: (answers) => {
                 try {
-                  return answers.willBringQualityPhoto === "yes" || Object.values(answers?.healthDeclaration).includes('yes')
+                  return (
+                    answers.willBringQualityPhoto === 'yes' ||
+                    Object.values(answers?.healthDeclaration).includes('yes')
+                  )
                 } catch (error) {
                   return false
                 }
-              }
+              },
             }),
             buildCheckboxField({
               id: 'picture',
@@ -442,9 +449,9 @@ export const application: Form = buildForm({
                 },
               ],
               condition: (answers) => {
-                return answers.willBringQualityPhoto === "yes" ?? false},
-              }
-            ),
+                return answers.willBringQualityPhoto === 'yes' ?? false
+              },
+            }),
             buildCheckboxField({
               id: 'certificate',
               title: '',
@@ -457,11 +464,13 @@ export const application: Form = buildForm({
               ],
               condition: (answers) => {
                 try {
-                  return Object.values(answers?.healthDeclaration).includes('yes')
+                  return Object.values(answers?.healthDeclaration).includes(
+                    'yes',
+                  )
                 } catch (error) {
                   return false
                 }
-              }
+              },
             }),
             buildDividerField({}),
             buildKeyValueField({
