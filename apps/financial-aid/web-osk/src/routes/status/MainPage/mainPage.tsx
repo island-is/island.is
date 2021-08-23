@@ -24,11 +24,13 @@ import {
 } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
 const MainPage = () => {
   const router = useRouter()
 
   const { user } = useContext(UserContext)
+  const logOut = useLogOut()
 
   const currentState = useMemo(() => {
     if (user?.activeApplication) {
@@ -143,7 +145,9 @@ const MainPage = () => {
         </Box>
       </ContentContainer>
       <Footer
-        onPrevButtonClick={() => {}}
+        onPrevButtonClick={() => {
+          logOut()
+        }}
         prevButtonText="Skrá sig út"
         previousIsDestructive={true}
         hideNextButton={true}
