@@ -1,7 +1,29 @@
 import React from 'react'
 import * as styles from './charts.treat'
 import cn from 'classnames'
-import { LegendProps } from 'recharts'
+import { LegendProps, TooltipProps } from 'recharts'
+
+export const CustomTooltip = ({ payload, active, label }: TooltipProps<string, number> ) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className={cn(styles.tooltip)}>
+        <p>{label}</p>
+        {payload.map((item, index) => 
+          <li className={cn(styles.list)} key={`item-${index}`}>
+            <div
+              className={cn(styles.dot)}
+              style={{
+                border: '3px solid ' + item.color,
+              }}
+            />
+            {item.name} : {item.value}
+          </li>)}
+      </div>
+    );
+  }
+
+  return null;
+}
 
 export const CustomizedAxisTick = (props) => {
   const { x, y, className, payload } = props
