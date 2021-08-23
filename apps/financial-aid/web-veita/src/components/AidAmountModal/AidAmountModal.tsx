@@ -2,7 +2,6 @@ import React from 'react'
 import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
 
 import * as styles from './AidAmountModal.treat'
-import cn from 'classnames'
 
 import format from 'date-fns/format'
 
@@ -19,12 +18,12 @@ interface Props {
   onVisiblityChange: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const AidAmountModal: React.FC<Props> = ({
+const AidAmountModal = ({
   aidAmount,
   usePersonalTaxCredit,
   isVisible,
   onVisiblityChange,
-}) => {
+}: Props) => {
   const currentYear = format(new Date(), 'yyyy')
 
   const calculation = [

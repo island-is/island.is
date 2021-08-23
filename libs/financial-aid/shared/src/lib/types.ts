@@ -137,6 +137,7 @@ export interface User {
   phoneNumber: string
   folder: string
   service: 'osk' | 'veita'
+  hasAppliedForPeriod?: boolean
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }

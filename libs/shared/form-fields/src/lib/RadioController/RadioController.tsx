@@ -17,6 +17,7 @@ interface Option {
   excludeOthers?: boolean
   illustration?: React.FC
 }
+
 interface Props {
   defaultValue?: any
   disabled?: boolean
@@ -29,6 +30,7 @@ interface Props {
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string) => void
 }
+
 export const RadioController: FC<Props> = ({
   defaultValue,
   disabled = false,
