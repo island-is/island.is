@@ -1,24 +1,16 @@
-import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks'
-import { withDesign } from 'storybook-addon-designs'
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs'
 
-import { withFigma, DescriptionFigma } from '../../utils/withFigma'
+import { DescriptionFigma } from '../../utils/withFigma'
 import { Inline } from '../Inline/Inline'
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { Tooltip } from './Tooltip'
 
-<Meta
-  title="Components/Tooltip"
-  component={Tooltip}
-  decorators={[withDesign]}
-  parameters={withFigma('Tooltip')}
-/>
+<Meta title="Components/Tooltip" component={Tooltip} />
 
 # Tooltip
 
 <DescriptionFigma name="Tooltip" />
-
-<br />
 
 export const tooltipText =
   'Check out this cool tooltip. It has some text in it that you can read for more details.'

@@ -5,6 +5,7 @@ import {
   FieldBaseProps,
   getErrorViaPath,
   RecordObject,
+  SetFieldLoadingState,
   SetBeforeSubmitCallback,
 } from '@island.is/application/core'
 
@@ -14,6 +15,7 @@ import { FieldDef } from '../types'
 const FormField: FC<{
   application: Application
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
+  setFieldLoadingState?: SetFieldLoadingState
   autoFocus?: boolean
   field: FieldDef
   showFieldName?: boolean
@@ -23,6 +25,7 @@ const FormField: FC<{
 }> = ({
   application,
   setBeforeSubmitCallback,
+  setFieldLoadingState,
   autoFocus,
   errors,
   field,
@@ -41,6 +44,7 @@ const FormField: FC<{
   const fieldProps: FieldBaseProps = {
     application,
     setBeforeSubmitCallback,
+    setFieldLoadingState,
     autoFocus,
     error,
     errors,

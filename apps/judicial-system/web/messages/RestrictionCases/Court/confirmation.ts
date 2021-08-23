@@ -5,7 +5,7 @@ export const rcConfirmation = {
     accusedAppealDecision: defineMessages({
       disclaimer: {
         id:
-          'judicial.system:restriction_cases.confirmation.accused_appeal_decision.disclaimer',
+          'judicial.system.restriction_cases:confirmation.accused_appeal_decision.disclaimer',
         defaultMessage:
           'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
         description:
@@ -15,7 +15,7 @@ export const rcConfirmation = {
     custodyRestrictions: defineMessages({
       disclaimer: {
         id:
-          'judicial.system:restriction_cases.ruling_step_two.custody_restrictions.disclaimer',
+          'judicial.system.restriction_cases:ruling_step_two.custody_restrictions.disclaimer',
         defaultMessage:
           'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd {caseType} undir dómara.',
         description:
@@ -25,7 +25,7 @@ export const rcConfirmation = {
   },
   modal: defineMessages({
     text: {
-      id: 'judicial.system:restriction_cases.confirmation.modal.text',
+      id: 'judicial.system.restriction_cases:confirmation.modal.text',
       defaultMessage:
         'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi. \n\nÞú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
       description:

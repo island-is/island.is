@@ -605,6 +605,7 @@ export const RulingStepTwo: React.FC = () => {
                         name="courtEndTime"
                         label="Þinghaldi lauk (kk:mm)"
                         placeholder="Veldu tíma"
+                        autoComplete="off"
                         defaultValue={formatDate(
                           workingCase.courtEndTime,
                           TIME_FORMAT,

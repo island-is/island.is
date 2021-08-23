@@ -69,6 +69,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                 name="courtCaseNumber"
                 label="Mál nr."
                 placeholder="R-X/ÁÁÁÁ"
+                autoComplete="off"
                 size="sm"
                 backgroundColor="white"
                 value={workingCase.courtCaseNumber ?? ''}

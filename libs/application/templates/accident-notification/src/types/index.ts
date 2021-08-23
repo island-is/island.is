@@ -106,3 +106,12 @@ export enum PowerOfAttorneyUploadEnum {
   UPLOADLATER = 'uploadLater',
   FORCHILDINCUSTODY = 'forChildInCustody',
 }
+
+export enum ReviewSectionState {
+  inProgress = 'In progress',
+  received = 'Received',
+  missing = 'Missing documents',
+  pending = 'Pending',
+  approved = 'Approved',
+  objected = 'Objected',
+}

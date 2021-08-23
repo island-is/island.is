@@ -26,6 +26,9 @@ import {
   section,
   attachments,
   courtAction,
+  shared,
+  preexistingComplaint,
+  confirmation,
 } from '../lib/messages'
 import {
   ComplainedForTypes,
@@ -442,8 +445,8 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               id: 'appeals',
               title: complaintInformation.appealsHeader,
               options: [
-                { label: complaintInformation.yes, value: YES },
-                { label: complaintInformation.no, value: NO },
+                { label: shared.general.yes, value: YES },
+                { label: shared.general.no, value: NO },
               ],
             }),
           ],
@@ -452,8 +455,31 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
     }),
     buildSection({
       id: 'courtAction',
-      title: section.courtAction,
+      title: preexistingComplaint.general.sectionTitle,
       children: [
+        buildMultiField({
+          id: 'preexistingComplaint.multifield',
+          title: preexistingComplaint.general.title,
+          description: preexistingComplaint.general.description,
+          children: [
+            buildRadioField({
+              id: 'preexistingComplaint',
+              title: '',
+              width: 'half',
+              options: [
+                { value: YES, label: shared.general.yes },
+                { value: NO, label: shared.general.no },
+              ],
+            }),
+            buildCustomField({
+              id: 'preexistingComplaint.preexistingComplaintAlertMessage',
+              title: preexistingComplaint.alertMessage.title,
+              component: 'FieldAlertMessage',
+              description: preexistingComplaint.alertMessage.description,
+              condition: (answers) => answers.preexistingComplaint === YES,
+            }),
+          ],
+        }),
         buildMultiField({
           id: 'courtAction.question',
           title: courtAction.title,
@@ -462,9 +488,10 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             buildRadioField({
               id: 'courtActionAnswer',
               title: '',
+              width: 'half',
               options: [
-                { value: YES, label: courtAction.yes },
-                { value: NO, label: courtAction.no },
+                { value: YES, label: shared.general.yes },
+                { value: NO, label: shared.general.no },
               ],
             }),
           ],
@@ -492,6 +519,17 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           id: 'overview',
           title: 'Kvörtun og undirritun',
           component: 'ComplaintOverview',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'successfulSubmissionSection',
+      title: confirmation.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'successfulSubmission',
+          title: confirmation.general.sectionTitle,
+          component: 'ConfirmationScreen',
         }),
       ],
     }),

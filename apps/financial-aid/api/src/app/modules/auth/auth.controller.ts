@@ -13,7 +13,6 @@ import {
   Query,
   Req,
   DefaultValuePipe,
-  ParseIntPipe,
 } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -34,7 +33,7 @@ import { AuthService } from './auth.service'
 
 const { samlEntryPointOsk, samlEntryPointVeita } = environment.auth
 
-const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
+const REDIRECT_COOKIE_NAME = 'financial-aid.redirect'
 
 const defaultCookieOptions: CookieOptions = {
   secure: environment.production,
@@ -68,14 +67,16 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly sharedAuthService: SharedAuthService,
-    @Inject('IslandisLogin')
-    private readonly loginIS: IslandisLogin,
+    @Inject('IslandisLoginOsk')
+    private readonly loginOsk: IslandisLogin,
+    @Inject('IslandisLoginVeita')
+    private readonly loginVeita: IslandisLogin,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
   @Get('login')
-  login(
+  async login(
     @Res() res: Response,
     @Query('service', new DefaultValuePipe('osk')) service: 'osk' | 'veita',
     @Query('nationalId') nationalId: string,
@@ -122,7 +123,10 @@ export class AuthController {
     const { authId, service } = req.cookies[REDIRECT_COOKIE_NAME] || {}
 
     try {
-      const verifyResult = await this.loginIS.verify(token)
+      const verifyResult =
+        service === 'osk'
+          ? await this.loginOsk.verify(token)
+          : await this.loginVeita.verify(token)
 
       if (verifyResult.user && verifyResult.user.authId === authId) {
         islandUser = verifyResult.user

@@ -3,7 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { SmsModule } from '@island.is/nova-sms'
 import { EmailModule } from '@island.is/email-service'
-import { TranslationsModule } from '@island.is/api/domains/translations'
+import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
 import { UserModule } from '../user'
@@ -21,7 +21,7 @@ import { NotificationController } from './notification.controller'
     CaseModule,
     CourtModule,
     SequelizeModule.forFeature([Notification]),
-    TranslationsModule,
+    CmsTranslationsModule,
   ],
   controllers: [NotificationController],
   providers: [NotificationService],
