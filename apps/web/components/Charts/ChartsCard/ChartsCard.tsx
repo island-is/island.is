@@ -23,31 +23,41 @@ interface ChartCardDataProps {
   graphTitle?: string
   graphDescription?: string
   organization?: string
-  graph?: GraphDataProps
+  data?: string
+  datakeys?: string
+  type?: string
 }
 
 export interface ChartsCardsProps {
-  data: ChartCardDataProps
+  chart: ChartCardDataProps
   subPage?: boolean
 }
 
-export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
-  const { graphTitle, graphDescription, organization, graph } = data
+export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
+  const {
+    graphTitle,
+    graphDescription,
+    organization,
+    type,
+    data,
+    datakeys,
+  } = chart
   const [ref, { width }] = useMeasure()
+  const graphData = { title: graphTitle, data: data, datakeys: datakeys }
 
   let children = null
-  switch (graph.type) {
+  switch (type) {
     case 'Mixed':
-      children = <MixedChart graphData={graph} />
+      children = <MixedChart graphData={graphData} />
       break
     case 'Line':
-      children = <SimpleLineChart graphData={graph} />
+      children = <SimpleLineChart graphData={graphData} />
       break
     case 'Bar':
-      children = <SimpleBarChart graphData={graph} />
+      children = <SimpleBarChart graphData={graphData} />
       break
     case 'Pie':
-      children = <SimplePieChart graphData={graph} />
+      children = <SimplePieChart graphData={graphData} />
       break
     default:
       break
@@ -64,7 +74,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
     >
       <Box
         className={cn(styles.outerWrapper, {
-          [styles.pie]: graph.type === 'Pie',
+          [styles.pie]: type === 'Pie',
         })}
         background={subPage ? 'blue100' : 'purple100'}
       >
@@ -92,7 +102,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
 
           {subPage && (
             <Box padding={[2, 2, 4]}>
-              <ExportCSVButton data={graph.data} title={graph.title} />
+              <ExportCSVButton data={data} title={graphTitle} />
             </Box>
           )}
         </Box>
@@ -102,7 +112,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, subPage }) => {
         justifyContent="center"
         alignItems="center"
         className={cn(styles.graphWrapper, {
-          [styles.pie]: graph.type === 'Pie',
+          [styles.pie]: type === 'Pie',
         })}
       >
         <Box justifyContent="center" className={styles.graphParent}>

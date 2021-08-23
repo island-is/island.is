@@ -1056,8 +1056,28 @@ export interface IGraphCardFields {
   /** Organization */
   organization?: string | undefined
 
+  /** Organization Logo */
+
+  organizationLogo?: Asset | undefined
+
   /** Graph */
   graph?: IGraph | undefined
+
+  /** Type */
+
+  type?: 'Mixed' | 'Bar' | 'Line' | 'Pie' | undefined
+
+  /** Data */
+
+  data: Record<string, any>
+
+  /** Datakeys */
+
+  datakeys: Record<string, any>
+
+  /** DiaplyAsCard */
+
+  displayAsCard: boolean
 }
 
 export interface IGraphCard extends Entry<IGraphCardFields> {
@@ -1894,7 +1914,7 @@ export interface IOpenDataPageFields {
   pageDescription?: string | undefined
 
   /** Page Header Graph */
-  pageHeaderGraph?: IGraph | undefined
+  pageHeaderGraph?: IGraphCard | undefined
 
   /** Link */
   link?: string | undefined
