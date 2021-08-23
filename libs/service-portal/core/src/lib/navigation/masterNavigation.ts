@@ -174,6 +174,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.financeEmployeeClaims,
             path: ServicePortalPath.FinanceEmployeeClaims,
           },
+          {
+            name: m.financeLocalTax,
+            path: ServicePortalPath.FinanceLocalTax,
+          },
         ],
         icon: {
           type: 'outline',

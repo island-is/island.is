@@ -40,6 +40,11 @@ export const financeModule: ServicePortalModule = {
         path: ServicePortalPath.FinanceEmployeeClaims,
         render: () => lazy(() => import('./screens/FinanceEmployeeClaims')),
       },
+      {
+        name: m.financeLocalTax,
+        path: ServicePortalPath.FinanceLocalTax,
+        render: () => lazy(() => import('./screens/FinanceLocalTax')),
+      },
     ]
     // try {
     //   const res = await client.query<Query>({
