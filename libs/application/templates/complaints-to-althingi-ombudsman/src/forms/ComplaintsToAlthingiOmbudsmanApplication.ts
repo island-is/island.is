@@ -68,6 +68,12 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               title: dataProvider.userProfileTitle,
               subTitle: dataProvider.userProfileSubTitle,
             }),
+            buildDataProviderItem({
+              id: 'notification',
+              type: undefined,
+              title: dataProvider.notificationTitle,
+              subTitle: dataProvider.notificationSubTitle,
+            }),
           ],
         }),
       ],
