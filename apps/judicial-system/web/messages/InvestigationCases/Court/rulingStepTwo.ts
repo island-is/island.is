@@ -5,7 +5,7 @@ export const icRulingStepTwo = {
     accusedAppealDecision: defineMessages({
       disclaimer: {
         id:
-          'judicial.system:investigation_cases.ruling_step_two.accused_appeal_decision.disclaimer',
+          'judicial.system.investigation_cases:ruling_step_two.accused_appeal_decision.disclaimer',
         defaultMessage:
           'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
         description:
