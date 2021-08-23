@@ -54,7 +54,7 @@ import {
 } from '@island.is/application/template-loader'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
-import { IntlService } from '@island.is/api/domains/translations'
+import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { ApplicationService } from './application.service'

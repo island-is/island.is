@@ -17,7 +17,11 @@ import { IsBoolean, IsArray, IsOptional } from 'class-validator'
 import type { Locale } from '@island.is/shared/types'
 
 import { LicenseServiceService } from '../licenseService.service'
-import { GenericPkPass, GenericUserLicense } from './genericLicense.model'
+import {
+  GenericPkPass,
+  GenericPkPassVerification,
+  GenericUserLicense,
+} from './genericLicense.model'
 import {
   GenericLicenseType,
   GenericLicenseTypeType,
@@ -56,6 +60,15 @@ export class GetGenericLicenseInput {
 export class GeneratePkPassInput {
   @Field(() => String)
   licenseType!: GenericLicenseType
+}
+
+@InputType()
+export class VerifyPkPassInput {
+  @Field(() => String)
+  licenseType!: GenericLicenseType
+
+  @Field(() => String)
+  data!: string
 }
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -115,5 +128,22 @@ export class MainResolver {
     return {
       pkpassUrl,
     }
+  }
+
+  @Mutation(() => GenericPkPassVerification)
+  async verifyPkPass(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: VerifyPkPassInput,
+  ): Promise<GenericPkPassVerification> {
+    const verification = await this.licenseServiceService.verifyPkPass(
+      user.nationalId,
+      locale,
+      input.licenseType,
+      input.data,
+    )
+
+    return verification
   }
 }
