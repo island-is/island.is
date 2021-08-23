@@ -37,6 +37,7 @@ export interface Option {
   subLabel?: string
   tooltip?: FormText
   excludeOthers?: boolean
+  illustration?: React.FC
 }
 
 interface SelectOption {
