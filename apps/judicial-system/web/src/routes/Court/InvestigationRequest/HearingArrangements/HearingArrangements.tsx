@@ -49,7 +49,7 @@ const HearingArrangements = () => {
       const theCase = data.case
 
       if (theCase.requestedCourtDate) {
-        autofill('courtDate', theCase.requestedCourtDate, data.case)
+        autofill('courtDate', theCase.requestedCourtDate, theCase)
       }
 
       setWorkingCase(theCase)
