@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import debounce from 'lodash/debounce'
 import {
   Case,
   CaseState,
