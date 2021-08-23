@@ -2,6 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const informationToComplainer = {
   general: defineMessages({
+    sectionTitle: {
+      id: `ctao.application:section.informationToComplainer.sectionTitle`,
+      defaultMessage: 'Takk fyrir umsóknina',
+      description: 'Thank you for the application',
+    },
     pageTitle: {
       id: `ctao.application:section.informationToComplainer.pageTitle`,
       defaultMessage: 'Upplýsingar',
