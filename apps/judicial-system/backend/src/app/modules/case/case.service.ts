@@ -190,7 +190,7 @@ export class CaseService {
     await Promise.all(promises)
   }
 
-  private async findById(id: string): Promise<Case> {
+  async findById(id: string): Promise<Case> {
     this.logger.debug(`Finding case ${id}`)
 
     return this.caseModel.findOne({

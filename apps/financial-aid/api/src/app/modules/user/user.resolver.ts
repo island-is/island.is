@@ -10,7 +10,6 @@ import {
 } from '@island.is/financial-aid/auth'
 
 import { UserModel } from './user.model'
-import { boolean } from 'yargs'
 import { UserService } from './user.service'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -31,7 +30,7 @@ export class UserResolver {
     return user as UserModel
   }
 
-  @ResolveField('hasAppliedForPeriod', () => boolean)
+  @ResolveField('hasAppliedForPeriod', () => Boolean)
   async hasAppliedForPeriod(@Parent() user: User): Promise<boolean> {
     return await this.userService.checkHasAppliedForPeriod(user.nationalId)
   }
