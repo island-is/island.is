@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useQuery, useLazyQuery } from '@apollo/client'
+import sub from 'date-fns/sub'
 import { Query } from '@island.is/api/schema'
 import {
   GET_CUSTOMER_CHARGETYPE,
@@ -40,8 +41,8 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
 
-  const [fromDate, setFromDate] = useState<string>()
-  const [toDate, setToDate] = useState<string>()
+  const [fromDate, setFromDate] = useState<Date>()
+  const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
   const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>([])
 
@@ -61,13 +62,21 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
         variables: {
           input: {
             chargeTypeID: dropdownSelect,
-            dayFrom: fromDate,
-            dayTo: toDate,
+            dayFrom: format(fromDate, 'yyyy-MM-dd'),
+            dayTo: format(toDate, 'yyyy-MM-dd'),
           },
         },
       })
     }
   }, [toDate, fromDate, dropdownSelect])
+
+  useEffect(() => {
+    const backInTheDay = sub(new Date(), {
+      months: 3,
+    })
+    setFromDate(backInTheDay)
+    setToDate(new Date())
+  }, [])
 
   function onDropdownSelect(selection: any) {
     const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
@@ -145,10 +154,8 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
             <GridColumn span={['1/1', '4/12']}>
               <DatePicker
                 backgroundColor="blue"
-                handleChange={(d) => {
-                  const date = format(d, 'yyyy-MM-dd')
-                  setFromDate(date)
-                }}
+                handleChange={(d) => setFromDate(d)}
+                selected={fromDate}
                 icon="calendar"
                 iconType="outline"
                 size="sm"
@@ -160,10 +167,8 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
             <GridColumn span={['1/1', '4/12']}>
               <DatePicker
                 backgroundColor="blue"
-                handleChange={(d) => {
-                  const date = format(d, 'yyyy-MM-dd')
-                  setToDate(date)
-                }}
+                handleChange={(d) => setToDate(d)}
+                selected={toDate}
                 icon="calendar"
                 iconType="outline"
                 size="sm"
