@@ -83,7 +83,7 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
     '//images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
 
   const searchTitle = 'Getum við aðstoðað?'
-  const freshdeskCategories = generateCategories(supportQNAs)
+  const supportCategories = generateCategories(supportQNAs)
 
   return (
     <>
@@ -107,7 +107,7 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
               </GridColumn>
             </GridRow>
             <GridRow>
-              {freshdeskCategories.map(
+              {supportCategories.map(
                 ({ title, slug, description, organizationSlug }, index) => {
                   return (
                     <GridColumn
@@ -163,7 +163,7 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
                       slideWidthOffset: 400,
                     },
                   }}
-                  items={freshdeskCategories.map(
+                  items={supportCategories.map(
                     ({ title, slug, description, organizationSlug }, index) => {
                       return (
                         <Card
