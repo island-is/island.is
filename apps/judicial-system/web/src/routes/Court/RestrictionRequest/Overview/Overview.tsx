@@ -10,6 +10,7 @@ import {
   Case,
   CaseState,
   CaseTransition,
+  NotificationType,
 } from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
@@ -22,6 +23,7 @@ import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import OverviewForm from './OverviewForm'
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import { useDebounce } from 'react-use'
 
 export const JudgeOverview: React.FC = () => {
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
@@ -39,12 +41,37 @@ export const JudgeOverview: React.FC = () => {
     isCreatingCourtCase,
     transitionCase,
     isTransitioningCase,
+    sendNotification,
   } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
+
+  useDebounce(
+    async () => {
+      if (
+        workingCase &&
+        workingCase?.courtCaseNumber &&
+        workingCase?.state === CaseState.SUBMITTED &&
+        !isTransitioningCase
+      ) {
+        // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
+        const received = await transitionCase(
+          workingCase,
+          CaseTransition.RECEIVE,
+          setWorkingCase,
+        )
+
+        if (received) {
+          sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
+        }
+      }
+    },
+    500,
+    [workingCase?.courtCaseNumber],
+  )
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -55,22 +82,6 @@ export const JudgeOverview: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
-  useEffect(() => {
-    if (
-      workingCase?.courtCaseNumber &&
-      workingCase?.state === CaseState.SUBMITTED &&
-      !isTransitioningCase
-    ) {
-      transitionCase(workingCase, CaseTransition.RECEIVE, setWorkingCase)
-    }
-  }, [
-    workingCase,
-    workingCase?.courtCaseNumber,
-    isTransitioningCase,
-    transitionCase,
-  ])
 
   const handleCreateCourtCase = async (workingCase: Case) => {
     await createCourtCase(workingCase, setWorkingCase, setCourtCaseNumberEM)
