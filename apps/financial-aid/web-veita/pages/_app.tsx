@@ -6,7 +6,7 @@ import { client } from '@island.is/financial-aid-web/veita/graphql'
 import { withHealthchecks } from '@island.is/financial-aid-web/veita/units/Healthchecks/withHealthchecks'
 
 import {
-  NavigationStatisticsProvider,
+  ApplicationFiltersProvider,
   AdminProvider,
 } from '@island.is/financial-aid-web/veita/src/components'
 
@@ -19,7 +19,7 @@ class FinancialAidApplication extends App<AppProps> {
     return (
       <ApolloProvider client={client}>
         <AdminProvider>
-          <NavigationStatisticsProvider>
+          <ApplicationFiltersProvider>
             <Component {...pageProps} />
             <style jsx global>{`
               @font-face {
@@ -79,7 +79,7 @@ class FinancialAidApplication extends App<AppProps> {
                     format('woff');
               }
             `}</style>
-          </NavigationStatisticsProvider>
+          </ApplicationFiltersProvider>
         </AdminProvider>
       </ApolloProvider>
     )
