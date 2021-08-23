@@ -37,7 +37,7 @@ import {
 } from '../shared/constants'
 import {
   getComplaintType,
-  getDateAYearBack,
+  isDecisionDateOlderThanYear,
   isGovernmentComplainee,
 } from '../utils'
 
@@ -386,18 +386,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   ? complaintDescription.general.decisionInfo
                   : '',
               children: [
-                buildDateField({
-                  id: 'complaintDescription.decisionDate',
-                  title: complaintDescription.labels.decisionDateTitle,
-                  placeholder:
-                    complaintDescription.labels.decisionDatePlaceholder,
-                  backgroundColor: 'blue',
-                  width: 'half',
-                  minDate: getDateAYearBack(),
-                  condition: (answers) =>
-                    getComplaintType(answers) ===
-                    OmbudsmanComplaintTypeEnum.DECISION,
-                }),
                 buildTextField({
                   id: 'complaintDescription.complaineeName',
                   backgroundColor: 'blue',
@@ -422,12 +410,25 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   variant: 'textarea',
                   required: true,
                 }),
+                buildDateField({
+                  id: 'complaintDescription.decisionDate',
+                  title: complaintDescription.labels.decisionDateTitle,
+                  placeholder:
+                    complaintDescription.labels.decisionDatePlaceholder,
+                  backgroundColor: 'blue',
+                  width: 'half',
+                  condition: (answers) =>
+                    getComplaintType(answers) ===
+                    OmbudsmanComplaintTypeEnum.DECISION,
+                }),
                 buildCustomField(
                   {
                     id: 'complaintDescriptionAlert',
                     title: complaintDescription.general.alertTitle,
                     component: 'FieldAlertMessage',
                     description: complaintDescription.general.alertMessage,
+                    condition: (answers) =>
+                      isDecisionDateOlderThanYear(answers),
                   },
                   { spaceTop: 2 },
                 ),
