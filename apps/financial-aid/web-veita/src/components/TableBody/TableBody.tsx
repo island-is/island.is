@@ -29,7 +29,7 @@ interface PageProps {
 
 const TableBody = ({ application, index }: PageProps) => {
   return (
-    <Link href={'application/' + application.id} key={'key-' + index}>
+    <Link href={'application/' + application.id}>
       <tr className={styles.link}>
         <td
           className={cn({
@@ -49,7 +49,7 @@ const TableBody = ({ application, index }: PageProps) => {
             [`${styles.tablePadding} `]: true,
           })}
         >
-          <Box>
+          <Box display="flex">
             <div className={`tags ${getTagByState(application.state)}`}>
               {getState[application.state]}
             </div>

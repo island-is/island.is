@@ -6,7 +6,11 @@ import { ActiveApplicationModel, ApplicationModel } from './models'
 import { Op } from 'sequelize'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
-import { User } from '@island.is/financial-aid/shared'
+import {
+  ApplicationFilters,
+  ApplicationState,
+  User,
+} from '@island.is/financial-aid/shared'
 import { FileService } from '../file'
 import { ApplicationEventService } from '../applicationEvent'
 
@@ -48,6 +52,32 @@ export class ApplicationService {
     application.setDataValue('files', files)
 
     return application
+  }
+
+  async getAllFilters(): Promise<ApplicationFilters> {
+    const statesToCount = [
+      ApplicationState.NEW,
+      ApplicationState.INPROGRESS,
+      ApplicationState.DATANEEDED,
+      ApplicationState.REJECTED,
+      ApplicationState.APPROVED,
+    ]
+
+    const countPromises = statesToCount.map((item) =>
+      this.applicationModel.count({
+        where: { state: { [Op.eq]: item } },
+      }),
+    )
+
+    const filterCounts = await Promise.all(countPromises)
+
+    return {
+      New: filterCounts[0],
+      InProgress: filterCounts[1],
+      DataNeeded: filterCounts[2],
+      Rejected: filterCounts[3],
+      Approved: filterCounts[4],
+    }
   }
 
   async create(

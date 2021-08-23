@@ -11,6 +11,7 @@ import {
   SignedUrl,
   ApplicationEvent,
   CreateApplicationEvent,
+  ApplicationFilters,
 } from '@island.is/financial-aid/shared'
 
 import { environment } from '../environments'
@@ -30,6 +31,10 @@ class BackendAPI extends RESTDataSource {
 
   getApplication(id: string): Promise<Application> {
     return this.get(`applications/${id}`)
+  }
+
+  getApplicationFilters(): Promise<ApplicationFilters> {
+    return this.get('applicationFilters')
   }
 
   getMunicipality(id: string): Promise<Municipality> {
