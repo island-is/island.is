@@ -671,6 +671,9 @@
     "system-e2e": {
       "tags": []
     },
+    "utils-architecture-schema": {
+      "tags": []
+    },
     "web": {
       "tags": []
     },

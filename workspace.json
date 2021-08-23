@@ -8436,6 +8436,57 @@
           }
         }
       }
+    },
+    "utils-architecture-schema": {
+      "root": "apps/utils/architecture-schema",
+      "sourceRoot": "apps/utils/architecture-schema/src",
+      "projectType": "application",
+      "prefix": "utils-architecture-schema",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/utils/architecture-schema",
+            "main": "apps/utils/architecture-schema/src/main.ts",
+            "tsConfig": "apps/utils/architecture-schema/tsconfig.app.json",
+            "assets": ["apps/utils/architecture-schema/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/utils/architecture-schema/src/environments/environment.ts",
+                  "with": "apps/utils/architecture-schema/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "utils-architecture-schema:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/utils/architecture-schema/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/utils/architecture-schema"],
+          "options": {
+            "jestConfig": "apps/utils/architecture-schema/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }
