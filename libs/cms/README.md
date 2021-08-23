@@ -1,4 +1,4 @@
-# CMS API
+# CMS
 
 ## About
 
