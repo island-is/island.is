@@ -5,13 +5,7 @@ import { useRouter } from 'next/router'
 import { ISODate, prettyName } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import {
-  Button,
-  Stack,
-  Text,
-  ToggleSwitchLink,
-  Hidden,
-} from '@island.is/island-ui/core'
+import { Button, Stack, Text, Hidden } from '@island.is/island-ui/core'
 import { Sticky } from '@island.is/web/components'
 import { RegulationLayout } from './RegulationLayout'
 import { useRegulationLinkResolver } from './regulationUtils'
@@ -25,8 +19,6 @@ import { RegulationEffectsBox } from './RegulationEffectsBox'
 import { RegulationChangelog } from './RegulationChangelog'
 import { AffectingRegulations } from './AffectingRegulations'
 import { RegulationTimeline } from './RegulationTimeline'
-import { MinistryTransfer } from './MinistryTansfer'
-import { Link } from '@island.is/island-ui/core'
 import { DiffModeToggle } from './DiffModeToggle'
 
 const getKey = (regulation: RegulationMaybeDiff): string => {
@@ -93,7 +85,6 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
             />
             <AffectingRegulations regulation={regulation} texts={texts} />
           </div>
-          <MinistryTransfer regulation={regulation} texts={texts} />
 
           <div className={waterMarkClass}>
             <Text marginTop={[2, 3, 4, 5]} marginBottom={1}>
