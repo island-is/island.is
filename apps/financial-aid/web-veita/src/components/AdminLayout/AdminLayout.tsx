@@ -10,7 +10,7 @@ interface PageProps {
   className?: string
 }
 
-const AdminLayout: React.FC<PageProps> = ({ children, className }) => {
+const AdminLayout = ({ children, className }: PageProps) => {
   useEffect(() => {
     document.title = 'Sveita • Umsóknir um fjárhagsaðstoð'
   }, [])

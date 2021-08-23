@@ -18,11 +18,7 @@ interface PageProps {
   className?: string
 }
 
-const ApplicationsTable: React.FC<PageProps> = ({
-  applications,
-  headers,
-  className,
-}) => {
+const ApplicationsTable = ({ applications, headers, className }: PageProps) => {
   const router = useRouter()
 
   if (applications && applications.length > 0) {
@@ -37,14 +33,22 @@ const ApplicationsTable: React.FC<PageProps> = ({
         <thead>
           <tr>
             {headers.map((item, index) => (
-              <TableHeaders header={item} index={index} />
+              <TableHeaders
+                header={item}
+                index={index}
+                key={'tableHeaders-' + index}
+              />
             ))}
           </tr>
         </thead>
 
         <tbody className={styles.tableBody}>
           {applications.map((item: Application, index: number) => (
-            <TableBody application={item} index={index} />
+            <TableBody
+              application={item}
+              index={index}
+              key={'tableBody-' + index}
+            />
           ))}
         </tbody>
       </table>

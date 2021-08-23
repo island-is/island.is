@@ -18,11 +18,7 @@ interface Props {
   ): void
 }
 
-const InputModal: React.FC<Props> = ({
-  onShowInputChange,
-  type,
-  onSaveState,
-}) => {
+const InputModal = ({ onShowInputChange, type, onSaveState }: Props) => {
   const maximumInputLength = 6
   const [amount, setAmount] = useState<number>(0)
 

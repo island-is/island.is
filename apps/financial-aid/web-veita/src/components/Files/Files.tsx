@@ -12,7 +12,7 @@ interface Props {
   filesArray?: ApplicationFile[]
 }
 
-const Files: React.FC<Props> = ({ heading, className, filesArray }) => {
+const Files = ({ heading, className, filesArray }: Props) => {
   return (
     <Box className={cn({ [`${className}`]: true })} marginBottom={2}>
       {' '}

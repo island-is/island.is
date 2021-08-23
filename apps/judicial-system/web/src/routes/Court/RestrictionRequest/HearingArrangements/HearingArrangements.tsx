@@ -302,6 +302,7 @@ export const HearingArrangements: React.FC = () => {
                     data-testid="courtroom"
                     name="courtroom"
                     label="Dómsalur"
+                    autoComplete="off"
                     defaultValue={workingCase.courtRoom}
                     placeholder="Skráðu inn dómsal"
                     onChange={(event) =>
@@ -343,6 +344,7 @@ export const HearingArrangements: React.FC = () => {
                   <Input
                     name="defenderName"
                     label="Nafn verjanda"
+                    autoComplete="off"
                     defaultValue={workingCase.defenderName}
                     placeholder="Fullt nafn"
                     onChange={(event) =>
@@ -369,6 +371,7 @@ export const HearingArrangements: React.FC = () => {
                   <Input
                     name="defenderEmail"
                     label="Netfang verjanda"
+                    autoComplete="off"
                     defaultValue={workingCase.defenderEmail}
                     placeholder="Netfang"
                     errorMessage={defenderEmailErrorMessage}
@@ -424,6 +427,7 @@ export const HearingArrangements: React.FC = () => {
                   <Input
                     name="defenderPhoneNumber"
                     label="Símanúmer verjanda"
+                    autoComplete="off"
                     defaultValue={workingCase.defenderPhoneNumber}
                     placeholder="Símanúmer"
                     errorMessage={defenderPhoneNumberErrorMessage}

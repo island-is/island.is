@@ -21,6 +21,7 @@ import {
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
+  formatProsecutorReceivedByCourtSmsNotification,
 } from './formatters'
 
 describe('formatCustodyProvisions', () => {
@@ -1470,5 +1471,24 @@ describe('stripHtmlTags', () => {
 
     // Assert
     expect(res).toBe('blablabla\n\nblabla')
+  })
+})
+
+describe('formatProsecutorReceivedByCourtSmsNotification', () => {
+  test('should format received by court notification', () => {
+    // Arranged
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtCaseNumber = 'R-898/2021'
+
+    // Act
+    const res = formatProsecutorReceivedByCourtSmsNotification(
+      court,
+      courtCaseNumber,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur móttekið kröfu sem þú sendir og úthlutað málsnúmerinu R-898/2021.',
+    )
   })
 })
