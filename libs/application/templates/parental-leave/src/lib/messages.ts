@@ -713,6 +713,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Breyta tilhögun fæðingarorlofs',
       description: 'Change the periods',
     },
+    limit: {
+      id: 'pl.application:periods.limit',
+      defaultMessage:
+        'Þú hefur náð þeim mörkum sem þú getur tekið fyrir fæðingarorlofinu þínu',
+      description:
+        'You reached the limit of days you can take for your parental leave',
+    },
   }),
 
   firstPeriodStart: defineMessages({
