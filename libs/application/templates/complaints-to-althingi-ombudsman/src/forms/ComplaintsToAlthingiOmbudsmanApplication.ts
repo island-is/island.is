@@ -28,6 +28,7 @@ import {
   courtAction,
   shared,
   preexistingComplaint,
+  confirmation,
 } from '../lib/messages'
 import {
   ComplainedForTypes,
@@ -518,6 +519,17 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           id: 'overview',
           title: 'Kvörtun og undirritun',
           component: 'ComplaintOverview',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'successfulSubmissionSection',
+      title: confirmation.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'successfulSubmission',
+          title: confirmation.general.sectionTitle,
+          component: 'ConfirmationScreen',
         }),
       ],
     }),

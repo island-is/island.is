@@ -202,6 +202,13 @@ export function formatCourtReadyForCourtSmsNotification(
   return `${submittedCaseText} tilbúin til afgreiðslu.${prosecutorText}${courtText}`
 }
 
+export function formatProsecutorReceivedByCourtSmsNotification(
+  court: string,
+  courtCaseNumber: string,
+): string {
+  return `${court} hefur móttekið kröfu sem þú sendir og úthlutað málsnúmerinu ${courtCaseNumber}.`
+}
+
 export function formatProsecutorCourtDateEmailNotification(
   type: CaseType,
   court: string,

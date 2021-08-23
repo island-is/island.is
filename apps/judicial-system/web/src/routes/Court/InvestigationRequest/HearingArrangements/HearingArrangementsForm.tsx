@@ -336,6 +336,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 label="Dómsalur"
                 defaultValue={workingCase.courtRoom}
                 placeholder="Skráðu inn dómsal"
+                autoComplete="off"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'courtRoom',
@@ -415,6 +416,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }`}
                 defaultValue={workingCase.defenderName}
                 placeholder="Fullt nafn"
+                autoComplete="off"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'defenderName',
@@ -443,6 +445,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }`}
                 defaultValue={workingCase.defenderEmail}
                 placeholder="Netfang"
+                autoComplete="off"
                 errorMessage={defenderEmailEM}
                 hasError={defenderEmailEM !== ''}
                 onChange={(event) =>
@@ -500,6 +503,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }`}
                 defaultValue={workingCase.defenderPhoneNumber}
                 placeholder="Símanúmer"
+                autoComplete="off"
                 errorMessage={defenderPhoneNumberEM}
                 hasError={defenderPhoneNumberEM !== ''}
               />
