@@ -1,7 +1,11 @@
-import { Application, BaseField } from '@island.is/application/core'
+import { Application, BaseField, FieldTypes } from '@island.is/application/core'
 
 export const getDefaultValue = (field: BaseField, application: Application) => {
-  const { defaultValue } = field
+  const { defaultValue, type } = field
+
+  if (type === FieldTypes.TEXT && !defaultValue) {
+    return ''
+  }
 
   if (!defaultValue) {
     return undefined
