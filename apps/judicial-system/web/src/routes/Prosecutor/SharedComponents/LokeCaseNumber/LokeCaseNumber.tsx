@@ -60,6 +60,7 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
         <Input
           data-testid="policeCaseNumber"
           name="policeCaseNumber"
+          autoComplete="off"
           label={formatMessage(policeCaseNumber.label)}
           placeholder={formatMessage(policeCaseNumber.placeholder)}
           defaultValue={workingCase.policeCaseNumber}
