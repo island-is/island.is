@@ -159,6 +159,7 @@ export const UserForm: React.FC<Props> = (props) => {
             name="name"
             label="Nafn"
             placeholder="Fullt nafn"
+            autoComplete="off"
             defaultValue={user.name}
             onChange={(event) =>
               storeAndRemoveErrorIfValid('name', event.target.value)
@@ -189,6 +190,7 @@ export const UserForm: React.FC<Props> = (props) => {
               name="nationalId"
               label="Kennitala"
               placeholder="Kennitala"
+              autoComplete="off"
               defaultValue={user.nationalId}
               required
               hasError={nationalIdErrorMessage !== undefined}
@@ -249,6 +251,7 @@ export const UserForm: React.FC<Props> = (props) => {
           <Input
             name="title"
             label="Titill"
+            autoComplete="off"
             defaultValue={user.title}
             onChange={(event) =>
               storeAndRemoveErrorIfValid('title', event.target.value)
@@ -278,6 +281,7 @@ export const UserForm: React.FC<Props> = (props) => {
               name="mobileNumber"
               label="Símanúmer"
               placeholder="Símanúmer"
+              autoComplete="off"
               defaultValue={user.mobileNumber}
               required
               hasError={mobileNumberErrorMessage !== undefined}
@@ -290,6 +294,7 @@ export const UserForm: React.FC<Props> = (props) => {
             name="email"
             label="Netfang"
             placeholder=""
+            autoComplete="off"
             defaultValue={user.email}
             onChange={(event) =>
               storeAndRemoveErrorIfValid('email', event.target.value)

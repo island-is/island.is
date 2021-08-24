@@ -138,6 +138,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           <Input
             data-testid="nationalId"
             name="accusedNationalId"
+            autoComplete="off"
             label={formatMessage(core.nationalId)}
             placeholder={formatMessage(core.nationalId)}
             defaultValue={workingCase.accusedNationalId}
@@ -151,6 +152,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
         <Input
           data-testid="accusedName"
           name="accusedName"
+          autoComplete="off"
           label={formatMessage(core.fullName)}
           placeholder={formatMessage(core.fullName)}
           defaultValue={workingCase.accusedName}
@@ -183,6 +185,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
       <Input
         data-testid="accusedAddress"
         name="accusedAddress"
+        autoComplete="off"
         label={formatMessage(core.addressOrResidence)}
         placeholder={formatMessage(core.addressOrResidence)}
         defaultValue={workingCase.accusedAddress}
