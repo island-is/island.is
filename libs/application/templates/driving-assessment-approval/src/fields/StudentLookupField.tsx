@@ -1,10 +1,16 @@
 import React, { FC } from 'react'
 import { useQuery, gql } from '@apollo/client'
-import { useWatch } from 'react-hook-form'
-import { CustomField, FieldBaseProps } from '@island.is/application/core'
+import { useFormContext, useWatch } from 'react-hook-form'
+import {
+  CustomField,
+  FieldBaseProps,
+  formatText,
+} from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import * as kennitala from 'kennitala'
 import { m } from '../lib/messages'
+import { get } from 'lodash'
 
 const QUERY = gql`
   query studentInfo($nationalId: String!) {
@@ -20,10 +26,15 @@ interface Props extends FieldBaseProps {
   field: CustomField
 }
 
-export const StudentLookupField: FC<Props> = ({ error }) => {
+export const StudentLookupField: FC<Props> = ({ error, application }) => {
   const studentNationalId = useWatch({
     name: 'student.nationalId',
+    // FYI the watch value is not queried unless the value changes after rendering.
+    // see react hook form's docs for useWatch for further info.
+    defaultValue: get(application.answers, 'student.nationalId'),
   })
+
+  const { formatMessage } = useLocale()
 
   const { data = {}, error: queryError, loading } = useQuery(QUERY, {
     skip:
@@ -53,7 +64,9 @@ export const StudentLookupField: FC<Props> = ({ error }) => {
 
       {result.student ? (
         <Box>
-          <Text variant="h4">{m.student}</Text>
+          <Text variant="h4">
+            {formatText(m.student, application, formatMessage)}
+          </Text>
           <Text>{result.student.name}</Text>
         </Box>
       ) : (
