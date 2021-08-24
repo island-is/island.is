@@ -157,6 +157,7 @@ const Form = () => {
       </ContentContainer>
 
       <Footer
+        prevButtonText="Til baka"
         previousUrl={navigation?.prevUrl}
         nextUrl={navigation?.nextUrl}
         nextButtonText={

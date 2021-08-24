@@ -130,6 +130,7 @@ const HomeCircumstancesForm = () => {
       </ContentContainer>
 
       <Footer
+        prevButtonText="Til baka"
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />

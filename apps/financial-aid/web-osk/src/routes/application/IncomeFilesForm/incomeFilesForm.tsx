@@ -75,6 +75,7 @@ const IncomeFilesForm = () => {
       </ContentContainer>
 
       <Footer
+        prevButtonText="Til baka"
         previousUrl={navigation?.prevUrl}
         nextButtonText={
           files.length > 0 ? 'Halda áfram' : 'Skila gögnum seinna'

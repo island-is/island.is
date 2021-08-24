@@ -114,6 +114,7 @@ const AddressForm = () => {
       </ContentContainer>
 
       <Footer
+        prevButtonText="Til baka"
         previousUrl={navigation?.prevUrl ?? '/'}
         onNextButtonClick={() => {
           if (form?.customAddress !== undefined) {
