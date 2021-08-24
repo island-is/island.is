@@ -58,10 +58,6 @@ class BackendAPI extends RESTDataSource {
     return this.post('/file/url', getSignedUrl)
   }
 
-  getApplicationsEvents(): Promise<ApplicationEvent[]> {
-    return this.get('applicationsEvents')
-  }
-
   getApplicationEvents(id: string): Promise<ApplicationEvent[]> {
     return this.get(`applicationEvents/${id}`)
   }

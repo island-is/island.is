@@ -24,15 +24,6 @@ export class ApplicationEventResolver {
   ) {}
 
   @Query(() => [ApplicationEventModel], { nullable: false })
-  applicationsEvents(
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationEvent[]> {
-    this.logger.debug('Getting all application events')
-
-    return backendApi.getApplicationsEvents()
-  }
-
-  @Query(() => [ApplicationEventModel], { nullable: false })
   applicationEvents(
     @Args('input', { type: () => ApplicationEventInput })
     input: ApplicationEventInput,
