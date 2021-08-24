@@ -74,6 +74,7 @@ import {
   isWorkAccident,
   getAccidentTypeOptions,
 } from '../utils'
+import { isHealthInsured } from '../utils/isHealthInsured'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
 
@@ -990,11 +991,17 @@ export const AccidentNotificationForm: Form = buildForm({
           title: accidentDetails.general.sectionTitle,
           description: accidentDetails.general.description,
           children: [
-            buildDateField({
+            /* buildDateField({
               id: 'accidentDetails.dateOfAccident',
               title: accidentDetails.labels.date,
               placeholder: accidentDetails.placeholder.date,
               backgroundColor: 'blue',
+              width: 'half',
+            }),*/
+            buildCustomField({
+              id: 'accidentDetails.dateOfAccident',
+              title: accidentDetails.labels.date,
+              component: 'DateOfAccident',
               width: 'half',
             }),
             buildTextField({
@@ -1004,6 +1011,14 @@ export const AccidentNotificationForm: Form = buildForm({
               backgroundColor: 'blue',
               width: 'half',
               format: '##:##',
+            }),
+            buildCustomField({
+              id: 'notHealthInsured.notHealthInsuredAlertMessage',
+              title: 'notHealthInsured',
+              component: 'FieldAlertMessage',
+              description: 'yournontehelahtinsursed',
+              width: 'full',
+              condition: (formValue) => !isHealthInsured(formValue),
             }),
             buildTextField({
               id: 'accidentDetails.descriptionOfAccident',
