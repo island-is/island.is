@@ -36,6 +36,7 @@ import { transactionFilter } from '../../utils/simpleFilter'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
+const allChargeTypes = { label: 'Allar færslur', value: ALL_CHARGE_TYPES }
 
 const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-transactions')
@@ -44,10 +45,17 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
-  const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>([])
+  const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>()
 
   const { data: customerChartypeData } = useQuery<Query>(
     GET_CUSTOMER_CHARGETYPE,
+    {
+      onCompleted: () => {
+        if (customerChartypeData?.getCustomerChargeType?.chargeType) {
+          onDropdownSelect(allChargeTypes)
+        }
+      },
+    },
   )
   const chargeTypeData: CustomerChargeType =
     customerChartypeData?.getCustomerChargeType || {}
@@ -90,8 +98,6 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   const recordsData: CustomerRecords = data?.getCustomerRecords || {}
   const recordsDataArray =
     (recordsData?.records && transactionFilter(recordsData?.records, q)) || []
-
-  const allChargeTypes = { label: 'Allar færslur', value: ALL_CHARGE_TYPES }
   const chargeTypeSelect = (chargeTypeData?.chargeType || []).map((item) => ({
     label: item.name,
     value: item.id,
