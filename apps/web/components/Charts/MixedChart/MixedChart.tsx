@@ -11,7 +11,7 @@ import {
   Line,
 } from 'recharts'
 
-import { CustomizedAxisTick, RenderLegend, COLORS } from '../utils'
+import { CustomizedAxisTick, RenderLegend, COLORS, CustomTooltip } from '../utils'
 
 interface GraphDataProps {
   title?: string
@@ -50,9 +50,9 @@ export const MixedChart = ({ graphData }: GraphProps) => {
           padding={{ left: 30 }}
           tickLine={false}
         />
-        <YAxis yAxisId="left" stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
-        <YAxis yAxisId="right" hide />
-        <Tooltip />
+        <YAxis yAxisId="left" tick={<CustomizedAxisTick />} />
+        <YAxis yAxisId="right" hide/>
+        <Tooltip content={<CustomTooltip/>}/>
         <Legend iconType="circle" align="right" content={RenderLegend} />
         {parsedDatakeys.bars.map((item, index) => (
           <Bar

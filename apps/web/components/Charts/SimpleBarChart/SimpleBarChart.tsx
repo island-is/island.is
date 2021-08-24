@@ -9,7 +9,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { CustomizedAxisTick, RenderLegend, COLORS } from '../utils'
+import { CustomizedAxisTick, RenderLegend, COLORS, CustomTooltip } from '../utils'
 
 interface GraphDataProps {
   title?: string
@@ -45,7 +45,7 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
           tickLine={false}
         />
         <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
-        <Tooltip />
+        <Tooltip content={<CustomTooltip />}/>
         <Legend iconType="circle" align="right" content={RenderLegend} />
         {parsedDatakeys.bars.map((item, index) => (
           <Bar

@@ -7,12 +7,12 @@ export const area = {
     data:
       '[{"name":"HB","Veittir styrkir":655,"Umsóknir":3669},{"name":"Annað","Veittir styrkir":66,"Umsóknir":442},{"name":"RN","Veittir styrkir":18,"Umsóknir":128},{"name":"SL","Veittir styrkir":17,"Umsóknir":115},{"name":"VF","Veittir styrkir":10,"Umsóknir":67},{"name":"AL","Veittir styrkir":7,"Umsóknir":47},{"name":"VL","Veittir styrkir":6,"Umsóknir":35},{"name":"NV","Veittir styrkir":3,"Umsóknir":29}]',
     datakeys:
-      '{"xAxis":"name","bars":[{"datakey":"Umsóknir","stackId":"a","color":"#C3ABD9"},{"datakey":"Veittir styrkir","stackId":"a","color":"#6A2EA0"}]}',
+      '{"xAxis":"name","bars":[{"datakey":"Umsóknir","stackId":"a","color":"#99C0FF"},{"datakey":"Veittir styrkir","stackId":"a","color":"#0061FF"}]}',
     type: 'Bar',
   },
 }
 export const gender = {
-  graphTitle: 'Sótt og veitt eftir kyni',
+  graphTitle: 'Kyn á verkefnisstjóra',
   graphDescription: 'Umsóknir og veittir styrkir eftir kyni',
   organization: 'Rannís',
   graph: {
@@ -21,7 +21,7 @@ export const gender = {
     data:
       '[{"fund_year":2010,"Karlmaður veittir styrkir":16,"Kona veittir styrkir":6,"Óskilgreint veittir styrkir":1,"Karlmaður umsóknir":88,"Kona umsóknir":16,"Óskilgreint umsóknir":5},{"fund_year":2011,"Karlmaður veittir styrkir":30,"Kona veittir styrkir":15,"Óskilgreint veittir styrkir":1,"Karlmaður umsóknir":169,"Kona umsóknir":48,"Óskilgreint umsóknir":6},{"fund_year":2012,"Karlmaður veittir styrkir":38,"Kona veittir styrkir":14,"Óskilgreint veittir styrkir":1,"Karlmaður umsóknir":144,"Kona umsóknir":41,"Óskilgreint umsóknir":3},{"fund_year":2013,"Karlmaður veittir styrkir":41,"Kona veittir styrkir":19,"Óskilgreint veittir styrkir":1,"Karlmaður umsóknir":237,"Kona umsóknir":86,"Óskilgreint umsóknir":3},{"fund_year":2014,"Karlmaður veittir styrkir":40,"Kona veittir styrkir":16,"Karlmaður umsóknir":175,"Kona umsóknir":57,"Óskilgreint umsóknir":2},{"fund_year":2015,"Karlmaður veittir styrkir":69,"Kona veittir styrkir":18,"Karlmaður umsóknir":211,"Kona umsóknir":54,"Óskilgreint umsóknir":3},{"fund_year":2016,"Karlmaður veittir styrkir":75,"Kona veittir styrkir":31,"Karlmaður umsóknir":364,"Kona umsóknir":128},{"fund_year":2017,"Karlmaður veittir styrkir":64,"Kona veittir styrkir":37,"Karlmaður umsóknir":367,"Kona umsóknir":141},{"fund_year":2018,"Karlmaður veittir styrkir":54,"Kona veittir styrkir":30,"Karlmaður umsóknir":410,"Kona umsóknir":189,"Óskilgreint umsóknir":1},{"fund_year":2019,"Karlmaður veittir styrkir":54,"Kona veittir styrkir":22,"Karlmaður umsóknir":433,"Kona umsóknir":196,"Óskilgreint umsóknir":1},{"fund_year":2020,"Karlmaður veittir styrkir":66,"Kona veittir styrkir":23,"Karlmaður umsóknir":602,"Kona umsóknir":278,"Óskilgreint umsóknir":2},{"fund_year":2021,"Karlmaður umsóknir":48,"Kona umsóknir":24}]',
     datakeys:
-      '[{"bars":[{"datakey":"Karlmaður umsóknir","color":"#99C0FF","stackId":"a"},{"datakey":"Kona umsóknir","color":"#0061FF","stackId":"b"},{"datakey":"Óskilgreint umsóknir","color":"#99F4EA","stackId":"c"}],"lines":[{"datakey":"Karlmaður veittir styrkir","color":"#99C0FF"},{"datakey":"Kona veittir styrkir","color":"#0061FF"},{"datakey":"Óskilgreint veittir styrkir","color":"#99F4EA"}],"xAxis":"fund_year","yAxis":{"left":true}}]',
+      '[{"bars":[{"datakey":"Karlmaður umsóknir","color":"#C3ABD9","stackId":"a"},{"datakey":"Kona umsóknir","color":"#6A2EA0","stackId":"b"},{"datakey":"Óskilgreint umsóknir","color":"#421C63","stackId":"c"}],"lines":[{"datakey":"Karlmaður veittir styrkir","color":"#FFF9C2"},{"datakey":"Kona veittir styrkir","color":"#FFF066"},{"datakey":"Óskilgreint veittir styrkir","color":"#E6CF00"}],"xAxis":"fund_year","yAxis":{"left":true}}]',
   },
 }
 export const applications = {
