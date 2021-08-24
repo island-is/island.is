@@ -44,7 +44,7 @@ const MainPage = () => {
     }
   }, [user])
 
-  const currentMonth = parseInt(format(new Date(), 'MM'))
+  const currentMonth = format(new Date(), 'MM')
   const currentYear = format(new Date(), 'yyyy')
 
   const mainInfo = [

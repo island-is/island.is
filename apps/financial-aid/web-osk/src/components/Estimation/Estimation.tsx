@@ -31,7 +31,7 @@ const Estimation = ({
   usePersonalTaxCredit,
 }: Props) => {
   const currentYear = format(new Date(), 'yyyy')
-  const currentMonth = parseInt(format(new Date(), 'MM')) + 1
+  const currentMonth = format(new Date(), 'MM')
 
   const { data, error, loading } = useQuery<MunicipalityData>(
     GetMunicipalityQuery,

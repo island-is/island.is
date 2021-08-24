@@ -38,7 +38,7 @@ const StatusLayout = ({ children }: Props) => {
       background="purple100"
       className={styles.processContainer}
     >
-      {user.currentApplication ? (
+      {!user.currentApplication ? (
         <div>Þú hefur ekki sótt um?</div>
       ) : (
         <GridContainer className={styles.gridContainer}>

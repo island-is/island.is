@@ -43,7 +43,7 @@ export const formatPhoneNumber = (phoneNumber: string) => {
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
-export const translateMonth = (month: number) => {
+export const translateMonth = (month: string) => {
   const months = [
     'Janúar',
     'Febrúar',
@@ -59,7 +59,7 @@ export const translateMonth = (month: number) => {
     'Desember',
   ]
 
-  return months[month - 1]
+  return months[parseInt(month)]
 }
 
 export const aidCalculator = (
