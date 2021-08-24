@@ -64,6 +64,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   useNavigationOptions(componentId)
   const [hasPermission, setHasPermission] = useState<boolean>()
   const [active, setActive] = useState(false)
+  const [visible, setVisible] = useState(false);
   const intl = useIntl()
 
   useEffect(() => {
@@ -76,10 +77,12 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
 
   useNavigationComponentDidAppear(() => {
     setActive(true)
+    setVisible(true);
   })
 
   useNavigationComponentDidDisappear(() => {
     setActive(false)
+    setVisible(false);
   })
 
   useNavigationButtonPress(({ buttonId }) => {
@@ -103,7 +106,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
 
   return (
     <View style={{ flex: 1, backgroundColor: '#000' }}>
-      {hasPermission === true && (
+      {hasPermission === true && visible && (
         <BarCodeScanner
           onBarCodeScanned={active ? handleBarCodeScanned : undefined}
           style={StyleSheet.absoluteFillObject}

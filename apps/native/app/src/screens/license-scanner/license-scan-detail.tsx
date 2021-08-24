@@ -30,8 +30,10 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<{
     client.mutate({
       mutation: VERIFY_PKPASS_MUTATION,
       variables: {
-        licenseType: 'DriversLicense',
-        data,
+        input: {
+          licenseType: 'DriversLicense',
+          data,
+        }
       }
     })
     .then((res) => {
@@ -40,17 +42,23 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<{
         setErrorMessage('Unknown error');
         setLoading(false);
       } else {
-        const { data } = res.data.verifyPkPass;
-        try {
-          const { name, nationalId, photo } = JSON.parse(data);
-          setNationalId(nationalId);
-          setName(name)
-          setPhoto(photo);
-        } catch (err) {
-          // whoops
+        const { data, valid } = res.data.verifyPkPass;
+        if (!valid) {
+          setError(true);
+          setErrorMessage('Villa við að sannreyna ökuskírteinið. Uppfærið skírteinið og reynið aftur.');
+          setLoading(false);
+        } else {
+          try {
+            const { name, nationalId, photo } = JSON.parse(data);
+            setNationalId(nationalId);
+            setName(name)
+            setPhoto(photo);
+          } catch (err) {
+            // whoops
+          }
+          setError(false);
+          setLoading(false);
         }
-        setError(false);
-        setLoading(false);
       }
     }).catch(() => {
       setError(true);

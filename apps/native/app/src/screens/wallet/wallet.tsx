@@ -11,6 +11,7 @@ import {
   Animated,
   FlatList,
   Image,
+  View,
   Platform,
   RefreshControl,
   SafeAreaView,
@@ -23,8 +24,14 @@ import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
-import { GenericUserLicenseStatus, IGenericUserLicense } from '../../graphql/fragments/license.fragment'
-import { ListGenericLicensesResponse, LIST_GENERIC_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
+import {
+  GenericUserLicenseStatus,
+  IGenericUserLicense,
+} from '../../graphql/fragments/license.fragment'
+import {
+  ListGenericLicensesResponse,
+  LIST_GENERIC_LICENSES_QUERY,
+} from '../../graphql/queries/list-licenses.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { navigateTo } from '../../lib/deep-linking'
@@ -45,12 +52,14 @@ const {
         text: intl.formatMessage({ id: 'wallet.screenTitle' }),
       },
       rightButtons: initialized ? getRightButtons({ theme } as any) : [],
-      leftButtons: [{
-        id: ButtonRegistry.ScanLicenseButton,
-        testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
-        icon: require('../../assets/icons/navbar-scan.png'),
-        color: theme.color.blue400
-      }],
+      leftButtons: [
+        {
+          id: ButtonRegistry.ScanLicenseButton,
+          testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
+          icon: require('../../assets/icons/navbar-scan.png'),
+          color: theme.color.blue400,
+        },
+      ],
     },
     bottomTab: {
       iconColor: theme.color.blue400,
@@ -89,7 +98,11 @@ const WalletItem = React.memo(({ item }: { item: IGenericUserLicense }) => {
           title={item.license.type}
           type={item.license.type as LicenseType}
           date={new Date(Number(item.fetch.updated))}
-          status={item.license.status === GenericUserLicenseStatus.HasLicense ? LicenseStatus.VALID : LicenseStatus.NOT_VALID}
+          status={
+            item.license.status === GenericUserLicenseStatus.HasLicense
+              ? LicenseStatus.VALID
+              : LicenseStatus.NOT_VALID
+          }
           agencyLogo={agencyLogo}
         />
       </SafeAreaView>
@@ -102,11 +115,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const theme = useTheme()
   const { dismiss, dismissed } = usePreferencesStore()
-  const res = useQuery<ListGenericLicensesResponse>(LIST_GENERIC_LICENSES_QUERY, { client, fetchPolicy: 'network-only' })
+  const res = useQuery<ListGenericLicensesResponse>(
+    LIST_GENERIC_LICENSES_QUERY,
+    { client, fetchPolicy: 'network-only' },
+  )
   const [licenseItems, setLicenseItems] = useState<any>([])
   const flatListRef = useRef<FlatList>(null)
   const alertVisible = !dismissed.includes('howToUseCertificates')
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const isSkeleton = res.loading && !res.data
   const loadingTimeout = useRef<number>()
   const intl = useIntl()
@@ -123,7 +139,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       if (!res.error) {
         setLicenseItems(res.data?.genericLicenses || [])
       }
-      setLoading(false)
     }
   }, [res.loading, res.error])
 
@@ -142,94 +157,48 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     }
   }, [licenseItems.length])
 
-  useEffect(() => {
-    if (res.loading) {
+  const onRefresh = useCallback(() => {
+    try {
+      if (loadingTimeout.current) {
+        clearTimeout(loadingTimeout.current)
+      }
       setLoading(true)
-    } else {
+      res
+        .refetch()
+        .then(() => {
+          console.log('done')
+          loadingTimeout.current = setTimeout(() => {
+            setLoading(false)
+          }, 1331)
+        })
+        .catch(() => {
+          setLoading(false)
+        })
+    } catch (err) {
       setLoading(false)
     }
-  }, [res])
+  }, [])
 
-  const renderLicenseItem = useCallback(
-    ({ item }) => <WalletItem item={item} />,
-    [],
-  )
+  const renderItem = useCallback(({ item }) => {
+    if (item.type === 'skeleton') {
+      return (
+        <Skeleton
+          active
+          backgroundColor={theme.color.blue100}
+          overlayColor={theme.color.blue200}
+          overlayOpacity={1}
+          height={111}
+          style={{
+            borderRadius: 16,
+            marginBottom: 16,
+          }}
+        />
+      )
+    }
 
-  const renderSkeletonItem = useCallback(
-    () => (
-      <Skeleton
-        active
-        backgroundColor={theme.color.blue100}
-        overlayColor={theme.color.blue200}
-        overlayOpacity={1}
-        height={111}
-        style={{
-          borderRadius: 16,
-          marginBottom: 16,
-        }}
-      />
-    ),
-    [],
-  )
-
-  const keyExtractor = useCallback((item: IGenericUserLicense) => item.license.type, [])
-
-  return (
-    <>
-      <BottomTabsIndicator index={2} total={3} />
-      {licenseItems.length > 0 ? (
-        <>
-          {Platform.OS === 'ios' && (
-            <Alert
-              visible={alertVisible}
-              type="info"
-              message={intl.formatMessage({ id: 'wallet.alertMessage' })}
-              onClose={() => dismiss('howToUseCertificates')}
-            />
-          )}
-          <Animated.FlatList
-            ref={flatListRef}
-            testID={testIDs.SCREEN_HOME}
-            style={{
-              paddingTop: 16,
-              paddingHorizontal: 16,
-              zIndex: 9,
-            }}
-            contentInset={{
-              bottom: 32,
-            }}
-            refreshControl={
-              <RefreshControl
-                refreshing={loading}
-                onRefresh={() => {
-                  try {
-                    if (loadingTimeout.current) {
-                      clearTimeout(loadingTimeout.current)
-                    }
-                    setLoading(true)
-                    res.refetch().then(() => {
-                      loadingTimeout.current = setTimeout(() => {
-                        setLoading(false)
-                      }, 331)
-                    }).catch(() => {
-                      setLoading(false);
-                    })
-                  } catch (err) {
-                    setLoading(false)
-                  }
-                }}
-              />
-            }
-            data={
-              isSkeleton
-                ? Array.from({ length: 5 }).map((_, id) => ({ id }))
-                : licenseItems
-            }
-            keyExtractor={keyExtractor}
-            renderItem={isSkeleton ? renderSkeletonItem : renderLicenseItem}
-          />
-        </>
-      ) : (
+    if (item.type === 'empty') {
+      return (
+        <View style={{ marginTop: 80 }}>
         <EmptyList
           title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
           description={intl.formatMessage({
@@ -237,7 +206,61 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           })}
           image={<Image source={illustrationSrc} height={198} width={146} />}
         />
-      )}
+        </View>
+      )
+    }
+
+    return <WalletItem item={item} />
+  }, [])
+
+  const keyExtractor = useCallback(
+    (item: any) => item?.license?.type ?? item?.id,
+    [],
+  )
+
+  const emptyItems = [{ id: '0', type: 'empty' }]
+  const skeletonItems = Array.from({ length: 5 }).map((_, id) => ({
+    id,
+    type: 'skeleton',
+  }))
+
+  const isEmpty =
+    licenseItems.length === 0 || licenseItems?.[0]?.fetch?.status === 'Error'
+
+  return (
+    <>
+      <BottomTabsIndicator index={2} total={3} />
+      <>
+        {Platform.OS === 'ios' && (
+          <Alert
+            visible={alertVisible}
+            type="info"
+            message={intl.formatMessage({ id: 'wallet.alertMessage' })}
+            onClose={() => dismiss('howToUseCertificates')}
+          />
+        )}
+        <Animated.FlatList
+          ref={flatListRef}
+          testID={testIDs.SCREEN_HOME}
+          style={{
+            paddingTop: 16,
+            paddingHorizontal: 16,
+            zIndex: 9,
+          }}
+          contentInset={{
+            bottom: 32,
+          }}
+          // contentContainerStyle={{ flexGrow: 1 }}
+          refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+          }
+          data={
+            isSkeleton ? skeletonItems : isEmpty ? emptyItems : licenseItems
+          }
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+        />
+      </>
     </>
   )
 }
