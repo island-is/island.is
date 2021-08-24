@@ -35,7 +35,7 @@ const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const photo = (qualityPhoto as unknown) as QualityPhotoData
   const img = Photo(photo)
-  console.log(answers)
+
   return (
     <Box marginBottom={4}>
       {photo.data.success ? (
