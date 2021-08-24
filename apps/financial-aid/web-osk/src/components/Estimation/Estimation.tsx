@@ -48,44 +48,40 @@ const Estimation = ({
     }
   }, [data])
 
-  const calculations = [
-    {
-      title: 'Grunnupphæð',
-      calculation: `${aidAmount?.toLocaleString('de-DE')} kr.`,
-    },
-    {
-      title: 'Skattur',
-      calculation: `- 
-      ${
-        aidAmount &&
-        calulateTaxOfAmount(aidAmount, currentYear).toLocaleString('de-DE')
-      } kr.`,
-    },
-    {
-      title: 'Persónuafsláttur',
-      calculation: `+  
-      ${
-        aidAmount &&
-        calulatePersonalTaxAllowanceUsed(
-          aidAmount,
-          Boolean(usePersonalTaxCredit),
-          currentYear,
-        ).toLocaleString('de-DE')
-      } kr.`,
-    },
-    {
-      title: 'Áætluð aðstoð (hámark)',
-      calculation: `    ${
-        aidAmount !== undefined
-          ? calculateAidFinalAmount(
+  const calculations = aidAmount
+    ? [
+        {
+          title: 'Grunnupphæð',
+          calculation: `${aidAmount?.toLocaleString('de-DE')} kr.`,
+        },
+        {
+          title: 'Skattur',
+          calculation: `- 
+      ${calulateTaxOfAmount(aidAmount, currentYear).toLocaleString(
+        'de-DE',
+      )} kr.`,
+        },
+        {
+          title: 'Persónuafsláttur',
+          calculation: `+  
+      ${calulatePersonalTaxAllowanceUsed(
+        aidAmount,
+        Boolean(usePersonalTaxCredit),
+        currentYear,
+      ).toLocaleString('de-DE')} kr.`,
+        },
+        {
+          title: 'Áætluð aðstoð (hámark)',
+          calculation: `${
+            calculateAidFinalAmount(
               aidAmount,
               Boolean(usePersonalTaxCredit),
               currentYear,
             ).toLocaleString('de-DE') + ' kr.'
-          : 'Abbabb.. mistókst að reikna'
-      }`,
-    },
-  ]
+          }`,
+        },
+      ]
+    : []
 
   return (
     <>
