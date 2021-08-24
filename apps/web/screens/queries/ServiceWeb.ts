@@ -122,6 +122,7 @@ export const GET_SUPPORT_SEARCH_RESULTS_QUERY = gql`
           }
           organization {
             slug
+            title
             logo {
               url
             }

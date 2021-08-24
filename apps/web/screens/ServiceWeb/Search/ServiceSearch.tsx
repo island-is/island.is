@@ -2,9 +2,13 @@
 import React, { useRef } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import NextLink from 'next/link'
 import { Screen } from '../../../types'
-import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
+import {
+  Card,
+  CardTagsProps,
+  ServiceWebHeader,
+} from '@island.is/web/components'
+import cn from 'classnames'
 import {
   Box,
   Text,
@@ -19,7 +23,6 @@ import {
   GET_NAMESPACE_QUERY,
   GET_SUPPORT_SEARCH_RESULTS_QUERY,
 } from '../../queries'
-import { SidebarLayout } from '../../Layouts/SidebarLayout'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -28,18 +31,16 @@ import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   SearchableContentTypes,
-  SearchableTags,
   SupportQna,
   GetSupportSearchResultsQuery,
 } from '../../../graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import * as styles from './ServiceSearch.treat'
+import * as sharedStyles from '../shared/styles.treat'
+import ContactBanner from '../ContactBanner/ContactBanner'
+import { SearchInput } from '@island.is/web/components/ServiceWeb/SearchInput/SearchInput'
 
 const PERPAGE = 10
-
-type SearchQueryFilters = {
-  category: string
-  type: string
-}
 
 interface CategoryProps {
   q: string
@@ -60,17 +61,11 @@ const ServiceSearch: Screen<CategoryProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  const filters: SearchQueryFilters = {
-    category: Router.query.category as string,
-    type: Router.query.type as string,
-  }
-
   const searchResultsItems = (searchResults.items as Array<SupportQna>).map(
     (item) => ({
       title: item.question,
       parentTitle: item.organization?.title,
       description: item.organization?.description,
-      //      link: `${linkResolver('helpdesk').href}/${item.organization.slug}/${item.category.slug}?q=${item.slug}`,
       link: {
         href:
           linkResolver('helpdeskcategory', [
@@ -78,21 +73,12 @@ const ServiceSearch: Screen<CategoryProps> = ({
             item.category.slug,
           ]).href + `?&q=${item.slug}`,
       },
-      categorySlug: item.category?.slug,
-      category: item.category,
-      labels: ['Spurning'],
+      categorySlug: item.category.slug,
+      category: item.category.title,
+      labels: [item.category.title],
     }),
   )
 
-  const byCategory = (item) => {
-    if (!item.category && filters.category === 'uncategorized') {
-      return true
-    }
-
-    return !filters.category || filters.category === item.categorySlug
-  }
-
-  const filteredItems = searchResultsItems.filter(byCategory)
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
@@ -101,22 +87,26 @@ const ServiceSearch: Screen<CategoryProps> = ({
       <Head>
         <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
       </Head>
-      <SidebarLayout sidebarContent={<Stack space={3}></Stack>}>
+      <ServiceWebHeader logoTitle={'Þjónustuvefur - Leit'} />
+      <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
+
+      <Box
+        margin={[3, 3, 10]}
+        className={styles.searchResultContent}
+        width="half"
+      >
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs
             items={[
               {
-                title: 'Ísland.is',
-                href: '/',
+                title: 'Þjónustuvefur',
+                href: linkResolver('helpdesk').href,
+              },
+              {
+                title: 'Leit',
+                href: linkResolver('helpdesksearch').href,
               },
             ]}
-            renderLink={(link) => {
-              return (
-                <NextLink {...linkResolver('homepage')} passHref>
-                  {link}
-                </NextLink>
-              )
-            }}
           />
 
           <SearchInput
@@ -126,9 +116,10 @@ const ServiceSearch: Screen<CategoryProps> = ({
             quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
             activeLocale={activeLocale}
             initialInputValue={q}
+            autosuggest={false}
           />
 
-          {filteredItems.length === 0 ? (
+          {searchResultsItems.length === 0 ? (
             <>
               <Text variant="intro" as="p">
                 {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}{' '}
@@ -146,15 +137,12 @@ const ServiceSearch: Screen<CategoryProps> = ({
                 {totalSearchResults === 1
                   ? n('searchResult', 'leitarniðurstaða')
                   : n('searchResults', 'leitarniðurstöður')}{' '}
-                {(filters.category || filters.type) && (
-                  <>{n('inCategory', 'í flokki')}</>
-                )}
               </Text>
             </Box>
           )}
         </Stack>
         <Stack space={2}>
-          {filteredItems.map(({ labels, parentTitle, ...rest }, index) => {
+          {searchResultsItems.map(({ labels, parentTitle, ...rest }, index) => {
             const tags: Array<CardTagsProps> = []
 
             labels.forEach((label) => {
@@ -189,7 +177,10 @@ const ServiceSearch: Screen<CategoryProps> = ({
             </Box>
           )}
         </Stack>
-      </SidebarLayout>
+      </Box>
+      <Box marginY={[10, 10, 20]} marginX={[3, 3, 10]}>
+        <ContactBanner />
+      </Box>
     </>
   )
 }
@@ -198,16 +189,7 @@ const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
 ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || ''
-  const category = single(query.category) || ''
   const page = Number(single(query.page)) || 1
-
-  let tags = {}
-  let countTag = {}
-  if (category) {
-    tags = { tags: [{ key: category, type: 'category' as SearchableTags }] }
-  } else {
-    countTag = { countTag: 'category' as SearchableTags }
-  }
 
   const types = ['webQNA' as SearchableContentTypes]
 
@@ -224,8 +206,6 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
           language: locale as ContentLanguage,
           queryString,
           types,
-          ...tags,
-          ...countTag,
           size: PERPAGE,
           page,
         },
@@ -250,8 +230,6 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
   if (searchResults.items.length === 0 && page > 1) {
     throw new CustomNextError(404)
   }
-
-  console.log({ searchResults })
 
   return {
     q: queryString,
