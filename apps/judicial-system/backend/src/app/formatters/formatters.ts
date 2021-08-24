@@ -207,7 +207,7 @@ export function formatProsecutorReceivedByCourtSmsNotification(
   court: string,
   courtCaseNumber: string,
 ): string {
-  return `${court} hefur móttekið kröfu sem þú sendir og úthlutað málsnúmerinu ${courtCaseNumber}.`
+  return `${court} hefur móttekið kröfu sem þú sendir og úthlutað málsnúmerinu ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.`
 }
 
 export function formatProsecutorCourtDateEmailNotification(
