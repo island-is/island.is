@@ -78,6 +78,7 @@ import {
 } from '../utils'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
+import { WorkTypeIllustration } from '../assets/WorkTypeIllustration'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
@@ -549,18 +550,22 @@ export const AccidentNotificationForm: Form = buildForm({
                     {
                       value: WorkAccidentTypeEnum.GENERAL,
                       label: accidentType.workAccidentType.generalWorkAccident,
+                      illustration: WorkTypeIllustration,
                     },
                     {
                       value: WorkAccidentTypeEnum.FISHERMAN,
                       label: accidentType.workAccidentType.fishermanAccident,
+                      illustration: WorkTypeIllustration,
                     },
                     {
                       value: WorkAccidentTypeEnum.PROFESSIONALATHLETE,
                       label: accidentType.workAccidentType.professionalAthlete,
+                      illustration: WorkTypeIllustration,
                     },
                     {
                       value: WorkAccidentTypeEnum.AGRICULTURE,
                       label: accidentType.workAccidentType.agricultureAccident,
+                      illustration: WorkTypeIllustration,
                     },
                   ],
                 }),

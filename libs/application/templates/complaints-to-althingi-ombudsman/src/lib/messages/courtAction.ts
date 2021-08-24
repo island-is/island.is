@@ -13,14 +13,4 @@ export const courtAction = defineMessages({
 		Ef málið hefur verið lagt fyrir dómstóla er líklegt að umboðsmaður geti ekki tekið það til skoðunar.`,
     description: 'Description of the court action section',
   },
-  yes: {
-    id: 'ctao.application.courtAction.values.yes',
-    defaultMessage: 'Já',
-    description: 'Label for court action radio',
-  },
-  no: {
-    id: 'ctao.application.courtAction.values.no',
-    defaultMessage: 'Nei',
-    description: 'Label for court action radio',
-  },
 })
