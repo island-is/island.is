@@ -34,14 +34,14 @@ import {
   fishingCompanyInfo,
   fishingLocationAndPurpose,
   hindrances,
+  injuredPersonInformation,
+  juridicalPerson,
   locationAndPurpose,
   overview,
+  powerOfAttorney,
   rescueSquadInfo,
   schoolInfo,
   sportsClubInfo,
-  juridicalPerson,
-  injuredPersonInformation,
-  powerOfAttorney,
   whoIsTheNotificationFor,
   workMachine,
 } from '../lib/messages'
@@ -61,6 +61,7 @@ import {
   WorkAccidentTypeEnum,
 } from '../types'
 import {
+  getAccidentTypeOptions,
   isAboardShip,
   isAgricultureAccident,
   isFishermanAccident,
@@ -68,16 +69,16 @@ import {
   isHomeActivitiesAccident,
   isLocatedOnShipOther,
   isProfessionalAthleteAccident,
+  isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
   isRepresentativeOfCompanyOrInstitute,
   isRescueWorkAccident,
   isStudiesAccident,
-  isReportingOnBehalfOfEmployee,
   isWorkAccident,
-  getAccidentTypeOptions,
 } from '../utils'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
+import { WorkTypeIllustration } from '../assets/WorkTypeIllustration'
 
 const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
 
@@ -551,18 +552,22 @@ export const AccidentNotificationForm: Form = buildForm({
                     {
                       value: WorkAccidentTypeEnum.GENERAL,
                       label: accidentType.workAccidentType.generalWorkAccident,
+                      illustration: WorkTypeIllustration,
                     },
                     {
                       value: WorkAccidentTypeEnum.FISHERMAN,
                       label: accidentType.workAccidentType.fishermanAccident,
+                      illustration: WorkTypeIllustration,
                     },
                     {
                       value: WorkAccidentTypeEnum.PROFESSIONALATHLETE,
                       label: accidentType.workAccidentType.professionalAthlete,
+                      illustration: WorkTypeIllustration,
                     },
                     {
                       value: WorkAccidentTypeEnum.AGRICULTURE,
                       label: accidentType.workAccidentType.agricultureAccident,
+                      illustration: WorkTypeIllustration,
                     },
                   ],
                 }),
