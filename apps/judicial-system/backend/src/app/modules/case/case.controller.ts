@@ -210,19 +210,23 @@ export class CaseController {
   @UseGuards(TokenGuaard)
   @Post('internal/case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
-  internalCreate(@Body() caseToCreate: CreateCaseDto): Promise<Case> {
-    return this.caseService.create(caseToCreate)
+  async internalCreate(@Body() caseToCreate: CreateCaseDto): Promise<Case> {
+    const createdCase = await this.caseService.create(caseToCreate)
+
+    return this.caseService.findById(createdCase.id)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
-  create(
+  async create(
     @CurrentHttpUser() user: User,
     @Body() caseToCreate: CreateCaseDto,
   ): Promise<Case> {
-    return this.caseService.create(caseToCreate, user)
+    const createdCase = await this.caseService.create(caseToCreate, user)
+
+    return this.caseService.findById(createdCase.id)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -280,7 +284,7 @@ export class CaseController {
       this.caseService.uploadRequestPdfToCourt(id)
     }
 
-    return updatedCase
+    return this.caseService.findById(updatedCase.id)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -323,7 +327,7 @@ export class CaseController {
       )
     }
 
-    return updatedCase
+    return this.caseService.findById(updatedCase.id)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -342,13 +346,11 @@ export class CaseController {
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  async getById(
+  getById(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<Case> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
-
-    return existingCase
+    return this.caseService.findByIdAndUser(id, user, false)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -486,6 +488,8 @@ export class CaseController {
       return existingCase.childCase
     }
 
-    return this.caseService.extend(existingCase, user)
+    const extendedCase = await this.caseService.extend(existingCase, user)
+
+    return this.caseService.findById(extendedCase.id)
   }
 }

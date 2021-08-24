@@ -48,6 +48,7 @@ interface CCase extends TCase {
   registrarId: string
   registrar: CUser
   parentCaseId: string
+  parentCase: CCase
 }
 
 let app: INestApplication
@@ -121,7 +122,7 @@ const minimalCaseData = {
 
 function remainingCreateCaseData() {
   return {
-    description: 'Descriptioni',
+    description: 'Description',
     accusedName: 'Accused Name',
     accusedAddress: 'Accused Address',
     accusedGender: CaseGender.OTHER,
@@ -289,6 +290,9 @@ function caseToCCase(dbCase: Case) {
       theCase.prosecutorPostponedAppealDate.toISOString(),
     judge: theCase.judge && userToCUser(theCase.judge),
     registrar: theCase.registrar && userToCUser(theCase.registrar),
+    parentCase: theCase.parentCase
+      ? caseToCCase(theCase.parentCase)
+      : theCase.parentCase,
   } as unknown) as CCase
 }
 
@@ -323,7 +327,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.created).toBe(caseTwo.created)
   expect(caseOne.modified).toBe(caseTwo.modified)
   expect(caseOne.type).toBe(caseTwo.type)
-  expect(caseOne.decision ?? null).toBe(caseTwo.decision ?? null)
+  expect(caseOne.description ?? null).toBe(caseTwo.description ?? null)
   expect(caseOne.state).toBe(caseTwo.state)
   expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
   expect(caseOne.accusedNationalId).toBe(caseTwo.accusedNationalId)
@@ -450,7 +454,37 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.registrarId ?? null).toBe(caseTwo.registrarId ?? null)
   expectUsersToMatch(caseOne.registrar, caseTwo.registrar)
   expect(caseOne.parentCaseId ?? null).toBe(caseTwo.parentCaseId ?? null)
-  expect(caseOne.parentCase ?? null).toStrictEqual(caseTwo.parentCase ?? null)
+  if (caseOne.parentCase || caseTwo.parentCase) {
+    expectCasesToMatch(caseOne.parentCase, caseTwo.parentCase)
+  }
+}
+
+function getCase(id: string): Case | PromiseLike<Case> {
+  return Case.findOne({
+    where: { id },
+    include: [
+      {
+        model: Institution,
+        as: 'court',
+      },
+      {
+        model: User,
+        as: 'prosecutor',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      { model: Institution, as: 'sharedWithProsecutorsOffice' },
+      {
+        model: User,
+        as: 'judge',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'registrar',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+    ],
+  })
 }
 
 describe('Institution', () => {
@@ -640,12 +674,12 @@ describe('Case', () => {
           modified: apiCase.modified ?? 'FAILURE',
           state: CaseState.NEW,
           prosecutorId: prosecutor.id,
+          prosecutor,
+          court,
         })
 
         // Check the data in the database
-        return Case.findOne({
-          where: { id: apiCase.id },
-        })
+        return getCase(apiCase.id)
       })
       .then((value) => {
         expectCasesToMatch(caseToCCase(value), apiCase)
@@ -672,12 +706,11 @@ describe('Case', () => {
           modified: apiCase.modified ?? 'FAILURE',
           state: CaseState.NEW,
           prosecutorId: prosecutor.id,
+          prosecutor,
         })
 
         // Check the data in the database
-        return Case.findOne({
-          where: { id: apiCase.id },
-        })
+        return getCase(apiCase.id)
       })
       .then((value) => {
         expectCasesToMatch(caseToCCase(value), apiCase)
@@ -711,12 +744,13 @@ describe('Case', () => {
           modified: apiCase.modified,
           type: dbCase.type,
           state: dbCase.state ?? 'FAILURE',
+          court,
+          prosecutor,
+          sharedWithProsecutorsOffice,
         } as CCase)
 
         // Check the data in the database
-        return Case.findOne({
-          where: { id: apiCase.id },
-        })
+        return getCase(apiCase.id)
       })
       .then((newValue) => {
         expectCasesToMatch(caseToCCase(newValue), apiCase)
@@ -750,12 +784,11 @@ describe('Case', () => {
           ...dbCase,
           modified: apiCase.modified,
           ...judgeCaseData,
+          judge,
         } as CCase)
 
         // Check the data in the database
-        return Case.findOne({
-          where: { id: apiCase.id },
-        })
+        return getCase(apiCase.id)
       })
       .then((newValue) => {
         expectCasesToMatch(caseToCCase(newValue), apiCase)
@@ -794,34 +827,14 @@ describe('Case', () => {
           ...dbCase,
           modified: apiCase.modified,
           state: CaseState.ACCEPTED,
+          court,
+          prosecutor,
+          sharedWithProsecutorsOffice,
+          judge,
         })
 
         // Check the data in the database
-        return Case.findOne({
-          where: { id: apiCase.id },
-          include: [
-            {
-              model: Institution,
-              as: 'court',
-            },
-            {
-              model: User,
-              as: 'prosecutor',
-              include: [{ model: Institution, as: 'institution' }],
-            },
-            { model: Institution, as: 'sharedWithProsecutorsOffice' },
-            {
-              model: User,
-              as: 'judge',
-              include: [{ model: Institution, as: 'institution' }],
-            },
-            {
-              model: User,
-              as: 'registrar',
-              include: [{ model: Institution, as: 'institution' }],
-            },
-          ],
-        })
+        return getCase(apiCase.id)
       })
       .then((value) => {
         expectCasesToMatch(caseToCCase(value), {
@@ -919,31 +932,7 @@ describe('Case', () => {
         expect(response.body.message).toBeUndefined()
 
         // Check the data in the database
-        return Case.findOne({
-          where: { id: dbCase.id },
-          include: [
-            {
-              model: Institution,
-              as: 'court',
-            },
-            {
-              model: User,
-              as: 'prosecutor',
-              include: [{ model: Institution, as: 'institution' }],
-            },
-            { model: Institution, as: 'sharedWithProsecutorsOffice' },
-            {
-              model: User,
-              as: 'judge',
-              include: [{ model: Institution, as: 'institution' }],
-            },
-            {
-              model: User,
-              as: 'registrar',
-              include: [{ model: Institution, as: 'institution' }],
-            },
-          ],
-        })
+        return getCase(dbCase.id)
       })
       .then((value) => {
         const updatedDbCase = caseToCCase(value)
@@ -984,6 +973,7 @@ describe('Case', () => {
           created: apiCase.created ?? 'FAILURE',
           modified: apiCase.modified ?? 'FAILURE',
           type: dbCase.type,
+          description: dbCase.description,
           state: CaseState.NEW,
           policeCaseNumber: dbCase.policeCaseNumber,
           accusedNationalId: dbCase.accusedNationalId,
@@ -991,13 +981,19 @@ describe('Case', () => {
           accusedAddress: dbCase.accusedAddress,
           accusedGender: dbCase.accusedGender,
           courtId: dbCase.courtId,
+          court,
           lawsBroken: dbCase.lawsBroken,
+          legalBasis: dbCase.legalBasis,
           custodyProvisions: dbCase.custodyProvisions,
           requestedCustodyRestrictions: dbCase.requestedCustodyRestrictions,
           caseFacts: dbCase.caseFacts,
           legalArguments: dbCase.legalArguments,
+          requestProsecutorOnlySession: dbCase.requestProsecutorOnlySession,
+          prosecutorOnlySessionRequest: dbCase.prosecutorOnlySessionRequest,
           prosecutorId: prosecutor.id,
+          prosecutor,
           parentCaseId: dbCase.id,
+          parentCase: dbCase,
         } as CCase)
       })
   })

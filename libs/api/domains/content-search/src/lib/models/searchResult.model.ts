@@ -1,4 +1,5 @@
 import { createUnionType, Field, Int, ObjectType } from '@nestjs/graphql'
+
 import {
   AboutPage,
   Article,
@@ -8,7 +9,8 @@ import {
   SubArticle,
   OrganizationSubpage,
   SupportQNA,
-} from '@island.is/api/domains/cms'
+} from '@island.is/cms'
+
 import { TagCount } from './tagCount'
 import { TypeCount } from './typeCount'
 

@@ -84,11 +84,11 @@ export class DirectorateOfLabourResolver {
   }
 
   @Query(() => ParentalLeavePeriodLength)
-  async getParentalLeavesPeriodsLength(
+  async getParentalLeavesPeriodLength(
     @Args('input') input: GetParentalLeavesPeriodLengthInput,
     @CurrentUser() user: User,
   ) {
-    return this.directorateOfLabourService.getParentalLeavesPeriodsLength(
+    return this.directorateOfLabourService.getParentalLeavesPeriodLength(
       user.nationalId,
       input.startDate,
       input.endDate,

@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 import { MessageDescriptor } from 'react-intl'
 
 interface Props {
@@ -13,10 +14,7 @@ const ModuleLoadingScreen: FC<Props> = ({ name }) => {
   return (
     <Box padding={8}>
       <Text variant="h2" as="h2">
-        {formatMessage({
-          id: 'service.portal:fetching',
-          defaultMessage: 'Sæki',
-        })}
+        {formatMessage(m.fetching)}
         {formatMessage(name)}
       </Text>
     </Box>

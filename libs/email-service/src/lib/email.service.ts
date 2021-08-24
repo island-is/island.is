@@ -75,7 +75,6 @@ export class EmailService {
   }
 
   async sendEmail(message: Message): Promise<string> {
-    this.logger.debug(`Sending email.`)
     let messageId = ''
 
     try {
@@ -96,7 +95,7 @@ export class EmailService {
 
       messageId = `${info.messageId}`
 
-      this.logger.debug(`Message sent: ${messageId}`)
+      this.logger.info(`Message sent: ${messageId}`)
 
       if (this.options.useNodemailerApp) {
         this.logger.debug(

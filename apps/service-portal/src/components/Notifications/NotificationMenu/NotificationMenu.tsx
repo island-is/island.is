@@ -6,6 +6,7 @@ import NotificationCard from './NotificationCard/NotificationCard'
 import { MenuState } from '../../../store/actions'
 import { Menu } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 
 interface Props {
   state: MenuState
@@ -22,10 +23,7 @@ const NotificationMenu: FC<Props> = ({ state, onClose, onRouteChange }) => {
       <Menu isOpen={state === 'open'} onCloseMenu={onClose}>
         <Box className={styles.menu}>
           <Text variant="h3" as="h3">
-            {formatMessage({
-              id: 'service.portal:messages',
-              defaultMessage: 'Skilaboð',
-            })}
+            {formatMessage(m.messages)}
           </Text>
           <Box className={styles.messages}>
             {notifications.sections.map((section, index) => (
@@ -33,10 +31,7 @@ const NotificationMenu: FC<Props> = ({ state, onClose, onRouteChange }) => {
                 <Stack space={1}>
                   <Box marginBottom={1} textAlign="right">
                     <Text variant="eyebrow" as="span" color="dark300">
-                      {formatMessage({
-                        id: 'service.portal:today',
-                        defaultMessage: 'Í dag',
-                      })}
+                      {formatMessage(m.today)}
                     </Text>
                   </Box>
                   {section.cards.map((card) => (

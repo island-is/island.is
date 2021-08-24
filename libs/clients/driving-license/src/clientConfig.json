@@ -10,7 +10,7 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/Okuskirteini/{kennitala}": {
+    "/api/okuskirteini/{kennitala}": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Create medferd for digital licence created",
@@ -98,7 +98,7 @@
         }
       }
     },
-    "/api/Okuskirteini/new": {
+    "/api/okuskirteini/new": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Create a new licence",
@@ -160,7 +160,7 @@
         }
       }
     },
-    "/api/Okuskirteini/tegundirsviptinga": {
+    "/api/okuskirteini/tegundirsviptinga": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get for types of driver licence deprivations",
@@ -224,7 +224,7 @@
         }
       }
     },
-    "/api/Okuskirteini/tegundirrettinda": {
+    "/api/okuskirteini/tegundirrettinda": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get types of categories",
@@ -288,7 +288,7 @@
         }
       }
     },
-    "/api/Okuskirteini/punktastada/{kennitala}": {
+    "/api/okuskirteini/punktastada/{kennitala}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get traffic violation points for person",
@@ -346,7 +346,7 @@
         }
       }
     },
-    "/api/Okuskirteini/tegundirathugasemda": {
+    "/api/okuskirteini/tegundirathugasemda": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get types of remarks",
@@ -410,7 +410,7 @@
         }
       }
     },
-    "/api/Okuskirteini/svipting/{kennitala}": {
+    "/api/okuskirteini/svipting/{kennitala}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get for current licence revoke",
@@ -468,7 +468,7 @@
         }
       }
     },
-    "/api/Okuskirteini/{kennitala}/all": {
+    "/api/okuskirteini/{kennitala}/all": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get for all persons driver licences",
@@ -541,7 +541,7 @@
         }
       }
     },
-    "/api/Okuskirteini/embaetti": {
+    "/api/okuskirteini/embaetti": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get for all districts",
@@ -605,7 +605,7 @@
         }
       }
     },
-    "/api/Okuskirteini/hasteachingrights/{kennitala}": {
+    "/api/okuskirteini/hasteachingrights/{kennitala}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check if person has rights to be a driving teacher",
@@ -668,7 +668,7 @@
         }
       }
     },
-    "/api/Okuskirteini/{kennitala}/canapplyfor/{category}/full": {
+    "/api/okuskirteini/{kennitala}/canapplyfor/{category}/full": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check if person can apply for full drivers license for a specific category",
@@ -740,7 +740,7 @@
         }
       }
     },
-    "/api/Okuskirteini/{kennitala}/hasqualityphoto": {
+    "/api/okuskirteini/{kennitala}/hasqualityphoto": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check if person has quality marked photo",
@@ -803,7 +803,7 @@
         }
       }
     },
-    "/api/Okuskirteini/{kennitala}/hasqualitysignature": {
+    "/api/okuskirteini/{kennitala}/hasqualitysignature": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check if person has quality marked photo",
@@ -866,7 +866,7 @@
         }
       }
     },
-    "/api/Okuskirteini/{kennitala}/getqualityphoto": {
+    "/api/okuskirteini/{kennitala}/getqualityphoto": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get quality marked photo for person",
@@ -929,7 +929,7 @@
         }
       }
     },
-    "/api/Okuskirteini/{kennitala}/getqualitysignature": {
+    "/api/okuskirteini/{kennitala}/getqualitysignature": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get quality marked photo for person",
@@ -992,7 +992,7 @@
         }
       }
     },
-    "/api/Okuskirteini/applications/new/{category}": {
+    "/api/okuskirteini/applications/new/{category}": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Apply for drivers license for a category",
@@ -1095,7 +1095,7 @@
         }
       }
     },
-    "/api/Okuskirteini/{kennitala}/finishedokugerdi": {
+    "/api/okuskirteini/{kennitala}/finishedokugerdi": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Has person finised \"ökugerði\"",
@@ -1152,7 +1152,7 @@
         }
       }
     },
-    "/api/Okuskirteini/new/drivingassesment": {
+    "/api/okuskirteini/new/drivingassesment": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Create a new driver assessment",
@@ -1214,7 +1214,7 @@
         }
       }
     },
-    "/api/Okuskirteini/saekjaakstursmat/{kennitala}": {
+    "/api/okuskirteini/saekjaakstursmat/{kennitala}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check if person has driving assessment",
@@ -1265,6 +1265,70 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AkstursmatDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/okuskirteini/okukennarar": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get driving teacherse",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OkukennariDto"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OkukennariDto"
+                  }
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OkukennariDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OkukennariDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OkukennariDto"
+                  }
                 }
               }
             }
@@ -1400,6 +1464,23 @@
         },
         "additionalProperties": false,
         "description": "Entity for picture"
+      },
+      "OkukennariDto": {
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "description": "Public identity number",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "description": "Name",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Driving teacher data transfer object"
       },
       "Okuskirteini": {
         "type": "object",
@@ -1553,6 +1634,21 @@
             "type": "integer",
             "description": "Does person need to present health certificate",
             "format": "int32"
+          },
+          "bringsNewPhoto": {
+            "type": "integer",
+            "description": "Applicant will bring new photo for license",
+            "format": "int32"
+          },
+          "sendLicenseInMail": {
+            "type": "integer",
+            "description": "Applicant has asked to send license in mail",
+            "format": "int32"
+          },
+          "sendToAddress": {
+            "type": "string",
+            "description": "Address to send license to",
+            "nullable": true
           }
         },
         "additionalProperties": false,

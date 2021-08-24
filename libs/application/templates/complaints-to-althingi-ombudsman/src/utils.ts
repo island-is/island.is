@@ -1,5 +1,5 @@
 import { Answer } from '@island.is/application/core'
-import { courtAction } from './lib/messages'
+import { shared } from './lib/messages'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
@@ -18,8 +18,8 @@ export const isGovernmentComplainee = (answers: Answer) => {
 
 export const getComplaintType = (answers: Answer) => {
   return (answers as {
-    complaintInformation: { complaintType: OmbudsmanComplaintTypeEnum }
-  }).complaintInformation?.complaintType
+    complaintType: OmbudsmanComplaintTypeEnum
+  })?.complaintType
 }
 
 export const getDateAYearBack = () => {
@@ -30,8 +30,8 @@ export const getDateAYearBack = () => {
 }
 
 export const yesNoMessageMapper = {
-  [YES]: courtAction.yes,
-  [NO]: courtAction.no,
+  [YES]: shared.general.yes,
+  [NO]: shared.general.no,
 }
 
 export const mapComplainedForToMessage = {

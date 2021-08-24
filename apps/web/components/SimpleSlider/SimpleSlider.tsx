@@ -8,7 +8,14 @@ import React, {
 } from 'react'
 import cn from 'classnames'
 import { useWindowSize } from 'react-use'
-import { Box, Button, Hidden, Inline, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Hidden,
+  Inline,
+  Text,
+  Logo,
+} from '@island.is/island-ui/core'
 
 import * as styles from './SimpleSlider.treat'
 
@@ -26,6 +33,8 @@ interface SimpleSliderProps {
   breakpoints?: SlideState['breakpoints']
   slideWidthOffset?: SlideState['slideWidthOffset']
   items: ReactNode[]
+  carouselController?: boolean
+  logo?: boolean
 }
 
 interface SlideState {
@@ -45,6 +54,8 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
   breakpoints = {},
   title,
   titleColor,
+  carouselController,
+  logo,
 }) => {
   const start = useRef(0)
   const touchDirection = useRef(null)
@@ -114,7 +125,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
     switch (direction) {
       case 'next':
         current = slideState.current + 1
-        if (current > numberOfSlides - 1) {
+        if (current > numberOfSlides - slideState.slideCount) {
           return false
         }
         break
@@ -162,7 +173,6 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
 
   const atStart = slideState.current === 0
   const atEnd = slideState.current === items.length - 1
-
   return (
     <Box
       ref={containerRef}
@@ -173,27 +183,30 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
     >
       {!!title && (
         <Box paddingBottom={4}>
-          <Text variant="h3" color={titleColor}>
-            {title}
-          </Text>
+          <Inline space={2}>
+            {logo && <Logo width={24} iconOnly />}
+            <Text variant="h3">{title}</Text>
+          </Inline>
         </Box>
       )}
       <Box className={styles.nav}>
-        <Hidden above="sm">
-          <Inline space={2}>
-            {items.map((x, index) => {
-              return (
-                <button
-                  key={index}
-                  className={cn(styles.dot, {
-                    [styles.dotActive]: index === slideState.current,
-                  })}
-                  onClick={() => goTo(index)}
-                />
-              )
-            })}
-          </Inline>
-        </Hidden>
+        {!carouselController && (
+          <Hidden above="sm">
+            <Inline space={2}>
+              {items.map((x, index) => {
+                return (
+                  <button
+                    key={index}
+                    className={cn(styles.dot, {
+                      [styles.dotActive]: index === slideState.current,
+                    })}
+                    onClick={() => goTo(index)}
+                  />
+                )
+              })}
+            </Inline>
+          </Hidden>
+        )}
         <Hidden below="md">
           <Inline space={2}>
             <Button
@@ -239,6 +252,25 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
               </Box>
             )
           })}
+        </Box>
+      )}
+      {carouselController && (
+        <Box display={'flex'} justifyContent="flexEnd" marginTop={[3, 3, 4]}>
+          <Inline space={2}>
+            {items.map((x, index) => {
+              if (index <= numberOfSlides - slideState.slideCount) {
+                return (
+                  <button
+                    key={index}
+                    className={cn(styles.dot, {
+                      [styles.dotActive]: index === slideState.current,
+                    })}
+                    onClick={() => goTo(index)}
+                  />
+                )
+              }
+            })}
+          </Inline>
         </Box>
       )}
     </Box>
