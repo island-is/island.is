@@ -420,6 +420,7 @@ endorsement-system-api:
     max: 3
     min: 2
   secrets:
+    ACCESS_GROUP_DMR: /k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
     DB_PASS: /k8s/services-endorsements-api/DB_PASSWORD
     SOFFIA_HOST_URL: /k8s/endorsement-system-api/SOFFIA_HOST_URL

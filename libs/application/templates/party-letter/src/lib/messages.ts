@@ -268,7 +268,7 @@ export const m: MessageDir = {
     },
     submitButton: {
       id: 'ple.application:overview.submit.button',
-      defaultMessage: 'Skila lista',
+      defaultMessage: 'Loka söfnun',
       description: 'Overview submit button',
     },
     finalTitle: {
