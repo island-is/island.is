@@ -1963,6 +1963,42 @@ export interface IOpenDataPage extends Entry<IOpenDataPageFields> {
   }
 }
 
+export interface IOpenDataSubpageFields {
+  /** Page title */
+  pageTitle?: string | undefined
+
+  /** Fund Title */
+  fundTitle?: string | undefined
+
+  /** Graph Cards */
+  graphCards?: IGraphCard[] | undefined
+
+  /** Statistics Cards */
+  statisticsCards?: IStatisticsCard[] | undefined
+
+  /** Fund Description */
+  fundDescription?: Document | undefined
+}
+
+/** Organization dashboard */
+
+export interface IOpenDataSubpage extends Entry<IOpenDataSubpageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'openDataSubpage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IOrganizationFields {
   /** Title */
   title: string
@@ -3837,6 +3873,7 @@ export type CONTENT_TYPE =
   | 'numberBulletSection'
   | 'oneColumnText'
   | 'openDataPage'
+  | 'openDataSubpage'
   | 'organization'
   | 'organizationPage'
   | 'organizationSubpage'
