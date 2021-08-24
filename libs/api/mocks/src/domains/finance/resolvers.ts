@@ -27,9 +27,6 @@ export const resolvers: Resolvers = {
     getFinanceDocument: () => {
       return store.financeDocuments
     },
-    getAnnualStatusDocument: () => {
-      return store.financeDocuments
-    },
     getCustomerTapControl: () => {
       return store.tapControl
     },
