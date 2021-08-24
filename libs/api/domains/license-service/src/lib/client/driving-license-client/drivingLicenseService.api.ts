@@ -493,7 +493,8 @@ export class GenericDrivingLicenseApi
       | undefined = undefined
 
     if (result.nationalId) {
-      const licenses = await this.requestFromXroadApi(result.nationalId)
+      const nationalId = result.nationalId.replace('-', '');
+      const licenses = await this.requestFromXroadApi(nationalId)
 
       const name = licenses?.[0]?.nafn ?? null
       const photo = licenses?.[0]?.mynd ?? null
