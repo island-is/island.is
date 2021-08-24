@@ -56,15 +56,6 @@ export const CreateSignedUrlMutation = gql`
   }
 `
 
-// export const CurrentUserQuery = gql`
-//   query CurrentUserQuery {
-//     currentUser {
-//       nationalId
-//       name
-//       phoneNumber
-//     }
-//   }
-// `
 export const CurrentUserQuery = gql`
   query CurrentUserQuery {
     currentUser {
