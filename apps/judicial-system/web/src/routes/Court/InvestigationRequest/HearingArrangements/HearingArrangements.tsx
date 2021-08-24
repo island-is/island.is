@@ -19,7 +19,6 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 const HearingArrangements = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -98,12 +97,11 @@ const HearingArrangements = () => {
             <Modal
               title={formatMessage(icHearingArrangements.modal.heading)}
               text={formatMessage(icHearingArrangements.modal.text, {
-                defenderTypeNomative: workingCase.defenderIsSpokesperson
-                  ? 'talsmaður'
-                  : 'verjandi',
-                defenderTypeAccusative: workingCase.defenderIsSpokesperson
-                  ? 'talsmanninn'
-                  : 'verjandann',
+                announcementSuffix: !workingCase.defenderEmail
+                  ? '.'
+                  : workingCase.defenderIsSpokesperson
+                  ? ` og talsmann.`
+                  : ` og verjanda.`,
               })}
               handlePrimaryButtonClick={() => {
                 router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${id}`)
