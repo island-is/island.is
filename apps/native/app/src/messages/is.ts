@@ -159,6 +159,21 @@ export const is = {
   'licenseScanner.noCameraAccess': 'Myndavél ekki aðgengileg',
   'licenseScannerDetail.driverLicenseNumber': 'Númer ökuskírteinis',
 
+  // license scan detail
+  'licenseScanDetail.errorUnknown': 'Óþekkt villa',
+  'licenseScanDetail.errorNetwork': 'Net villa',
+  'licenseScanDetail.errorTryToRefresh': 'Villa við að sannreyna ökuskírteinið. Uppfærið skírteinið og reynið aftur.',
+
+   // license scan results
+   'licenseScannerResult.loading': 'Hleð upplýsingum',
+   'licenseScannerResult.error': 'Villa við skönnun',
+   'licenseScannerResult.valid': 'Í gildi',
+   'licenseScannerResult.title': 'Ökuskírteini (IS)',
+   'licenseScannerResult.errorMessage': 'Villuskilaboð',
+   'licenseScannerResult.name': 'Nafn',
+   'licenseScannerResult.nationalId': 'Kennitala',
+   'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
+
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
 

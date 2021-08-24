@@ -9,6 +9,7 @@ import { client } from '../../graphql/client'
 import { VERIFY_PKPASS_MUTATION } from '../../graphql/queries/verify-pkpass.mutation'
 import { StackRegistry } from '../../utils/component-registry'
 import { ScanResultCard } from './scan-result-card'
+import { useIntl } from 'react-intl'
 
 export const LicenseScanDetailScreen: NavigationFunctionComponent<{
   data: string
@@ -19,6 +20,7 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<{
   const [name, setName] = useState<string>();
   const [nationalId, setNationalId] = useState<string>();
   const [photo, setPhoto] = useState<string>();
+  const intl = useIntl()
 
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === 'LICENSE_SCANNER_DONE') {
@@ -39,13 +41,13 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<{
     .then((res) => {
       if (res.errors) {
         setError(true);
-        setErrorMessage('Unknown error');
+        setErrorMessage(intl.formatMessage({ id: 'licenseScanDetail.errorUnknown'}));
         setLoading(false);
       } else {
         const { data, valid } = res.data.verifyPkPass;
         if (!valid) {
           setError(true);
-          setErrorMessage('Villa við að sannreyna ökuskírteinið. Uppfærið skírteinið og reynið aftur.');
+          setErrorMessage(intl.formatMessage({ id: 'licenseScanDetail.errorTryToRefresh'}));
           setLoading(false);
         } else {
           try {
@@ -62,7 +64,7 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<{
       }
     }).catch(() => {
       setError(true);
-      setErrorMessage('Network error');
+      setErrorMessage(intl.formatMessage({ id: 'licenseScanDetail.errorNetwork'}));
       setLoading(false);
     })
   }, [data]);

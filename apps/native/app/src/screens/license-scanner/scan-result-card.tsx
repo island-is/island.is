@@ -7,6 +7,7 @@ import agencyLogo from '../../assets/temp/agency-logo.png'
 import danger from '../../../../island-ui/src/assets/card/danger.png'
 import success from '../../../../island-ui/src/assets/card/is-verified.png'
 import background from '../../../../island-ui/src/assets/card/okuskyrteini.png'
+import { useIntl } from 'react-intl'
 
 const Host = styled.View`
   border-radius: 16px;
@@ -43,6 +44,7 @@ const SubtitleText = styled.Text`
     fontWeight: '600',
     fontSize: 13,
     lineHeight: 15,
+    color: '#000',
   })}
 `
 
@@ -55,6 +57,7 @@ const Title = styled.Text`
 
   ${font({
     fontWeight: '600',
+    color: '#000',
   })}
 `
 
@@ -83,6 +86,7 @@ const Value = styled.Text`
     fontWeight: '600',
     fontSize: 13,
     lineHeight: 15,
+    color: '#000',
   })}
 `
 
@@ -142,13 +146,14 @@ export function ScanResultCard(props: ScanResultCardProps) {
     licenseNumber,
     photo,
   } = props
+  const intl = useIntl()
 
   return (
     <Host>
       <Background source={background} resizeMode="stretch" />
       <Header>
         <Detail>
-          <Title>Ökuskírteini (IS)</Title>
+          <Title>{intl.formatMessage({ id: 'licenseScannerResult.title' })}</Title>
           <Subtitle>
             <SubtitleIcon>
               {loading ? (
@@ -166,10 +171,10 @@ export function ScanResultCard(props: ScanResultCardProps) {
             </SubtitleIcon>
             <SubtitleText>
               {loading
-                ? 'Hleð upplýsingum'
+                ? intl.formatMessage({ id: 'licenseScannerResult.loading' })
                 : error
-                ? 'Villa við skönnun'
-                : 'Í gildi'}
+                ? intl.formatMessage({ id: 'licenseScannerResult.error' })
+                : intl.formatMessage({ id: 'licenseScannerResult.valid' })}
             </SubtitleText>
           </Subtitle>
         </Detail>
@@ -179,7 +184,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
         <Content>
           <Left>
             <LabelGroup>
-              <Label>Villuskilaboð</Label>
+              <Label>{intl.formatMessage({ id: 'licenseScannerResult.errorMessage' })}</Label>
               <Value>{errorMessage}</Value>
             </LabelGroup>
           </Left>
@@ -188,7 +193,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
         <Content>
           <Left>
             <LabelGroup>
-              <Label>Nafn</Label>
+              <Label>{intl.formatMessage({ id: 'licenseScannerResult.name' })}</Label>
               {loading ? (
                 <Placeholder style={{ width: 120 }} />
               ) : (
@@ -198,7 +203,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
               )}
             </LabelGroup>
             <LabelGroup>
-              <Label>Kennitala</Label>
+              <Label>{intl.formatMessage({ id: 'licenseScannerResult.nationalId' })}</Label>
               {loading ? (
                 <Placeholder style={{ width: 120 }} />
               ) : (
@@ -208,7 +213,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
               )}
             </LabelGroup>
             <LabelGroup>
-              <Label>Númer</Label>
+              <Label>{intl.formatMessage({ id: 'licenseScannerResult.driverLicenseNumber' })}</Label>
               {loading ? (
                 <Placeholder style={{ width: 80 }} />
               ) : (

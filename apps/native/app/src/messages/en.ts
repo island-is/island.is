@@ -157,6 +157,21 @@ export const en: TranslatedMessages = {
   'licenseScanner.noCameraAccess': 'Camera not available',
   'licenseScannerDetail.driverLicenseNumber': 'Driver license number',
 
+  // license scan detail
+  'licenseScanDetail.errorUnknown': 'Unknown error',
+  'licenseScanDetail.errorNetwork': 'Network error',
+  'licenseScanDetail.errorTryToRefresh': 'Failed to validate driving license. Try to refresh the barcode and scan again',
+
+  // license scan results
+  'licenseScannerResult.loading': 'Loading data',
+  'licenseScannerResult.error': 'Error in scanning',
+  'licenseScannerResult.valid': 'Is vaild',
+  'licenseScannerResult.title': 'Driver license (IS)',
+  'licenseScannerResult.errorMessage': 'Error message',
+  'licenseScannerResult.name': 'Name',
+  'licenseScannerResult.nationalId': 'Social ID',
+  'licenseScannerResult.driverLicenseNumber': 'Driver license number',
+
   // notifications
   'notifications.screenTitle': 'Notifications',
 
