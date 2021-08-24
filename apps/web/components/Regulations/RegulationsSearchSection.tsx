@@ -196,6 +196,7 @@ export const RegulationsSearchSection = (
       query: cleanQuery(newFilters),
     })
   }
+
   const clearSearch = () => {
     setFilterValue('')
     router.replace({
@@ -327,7 +328,10 @@ export const RegulationsSearchSection = (
                         )}
                         checked={!!filters.iR}
                         onChange={() =>
-                          doSearch('iR', !filters.iR ? 'true' : '')
+                          doSearch({
+                            iR: !filters.iR ? 'true' : '',
+                            rn: undefined,
+                          })
                         }
                       />
                     </GridColumn>
@@ -349,7 +353,7 @@ export const RegulationsSearchSection = (
                         value={findValueOption(ministryOptions, filters.rn)}
                         options={ministryOptions}
                         onChange={(option) =>
-                          doSearch('rn', getRSValue(option))
+                          doSearch({ rn: getRSValue(option), iR: undefined })
                         }
                         size="sm"
                       />
