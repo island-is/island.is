@@ -97,12 +97,11 @@ const HearingArrangements = () => {
             <Modal
               title={formatMessage(icHearingArrangements.modal.heading)}
               text={formatMessage(icHearingArrangements.modal.text, {
-                defenderTypeNomative: workingCase.defenderIsSpokesperson
-                  ? 'talsmaður'
-                  : 'verjandi',
-                defenderTypeAccusative: workingCase.defenderIsSpokesperson
-                  ? 'talsmanninn'
-                  : 'verjandann',
+                announcementSuffix: !workingCase.defenderEmail
+                  ? '.'
+                  : workingCase.defenderIsSpokesperson
+                  ? ` og talsmann.`
+                  : ` og verjanda.`,
               })}
               handlePrimaryButtonClick={() => {
                 router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${id}`)
