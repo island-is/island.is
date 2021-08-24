@@ -54,7 +54,7 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<{
             const { name, nationalId, photo } = JSON.parse(data);
             setNationalId(nationalId);
             setName(name)
-            setPhoto(photo);
+            setPhoto(photo.mynd);
           } catch (err) {
             // whoops
           }
