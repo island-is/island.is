@@ -145,8 +145,8 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
               <Text>{fundDescription}</Text>
             </Box>
             <GridRow>
-              {statisticsCards.map((card) => (
-                <GridColumn span={['12/12', '12/12', '6/12']}>
+              {statisticsCards.map((card, index) => (
+                <GridColumn span={['12/12', '12/12', '6/12']} key={index}>
                   <Box marginBottom={3}>
                     <StatisticsCard
                       title={card.title}
