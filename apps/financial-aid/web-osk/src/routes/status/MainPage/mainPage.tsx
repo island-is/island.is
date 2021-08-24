@@ -119,7 +119,9 @@ const MainPage = () => {
               <Button
                 colorScheme="default"
                 iconType="filled"
-                onClick={() => console.log('ddd')}
+                onClick={() => {
+                  /*TODO on click event */
+                }}
                 preTextIconType="filled"
                 size="default"
                 type="button"
@@ -132,7 +134,9 @@ const MainPage = () => {
               <Button
                 colorScheme="default"
                 iconType="filled"
-                onClick={() => console.log('ddd')}
+                onClick={() => {
+                  /*TODO on click event */
+                }}
                 preTextIconType="filled"
                 size="default"
                 type="button"
