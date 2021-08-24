@@ -65,17 +65,14 @@ export const financeModule: ServicePortalModule = {
 
       const data = res?.data?.getCustomerTapControl
 
-      // Show customer records:
       if (data?.RecordsTap) {
         routes.push({ ...dynamicModules[0], enabled: true })
       }
 
-      // Show employee claims:
       if (data?.employeeClaimsTap) {
         routes.push({ ...dynamicModules[1], enabled: true })
       }
 
-      // Show local tax screen:
       if (data?.localTaxTap) {
         routes.push({ ...dynamicModules[2], enabled: true })
       }
