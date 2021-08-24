@@ -4,7 +4,7 @@ export const GET_OPEN_DATA_SUBPAGE_QUERY = gql`
   query GetOpenDataSubpage($input: GetOpenDataSubpageInput!) {
     getOpenDataSubpage(input: $input) {
       pageTitle
-      funTitle
+      fundTitle
       fundDescription
       statisticsCards {
         title
