@@ -18,6 +18,9 @@ const devConfig = {
   audit: {
     defaultNamespace: '@island.is/services-endorsements-api',
   },
+  accessGroups: {
+    DMR: process.env.ACCESS_GROUP_DMR ?? '',
+  },
 }
 
 const prodConfig = {
@@ -41,6 +44,9 @@ const prodConfig = {
     groupName: process.env.AUDIT_GROUP_NAME, // used in cloudwatch
     serviceName: 'services-endorsements-api', // used in cloudwatch
     defaultNamespace: '@island.is/services-endorsements-api',
+  },
+  accessGroups: {
+    DMR: process.env.ACCESS_GROUP_DMR ?? '',
   },
 }
 

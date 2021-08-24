@@ -5,7 +5,7 @@ export const rcRulingStepTwo = {
     accusedAppealDecision: defineMessages({
       disclaimer: {
         id:
-          'judicial.system:restriction_cases.ruling_step_two.accused_appeal_decision.disclaimer',
+          'judicial.system.restriction_cases:ruling_step_two.accused_appeal_decision.disclaimer',
         defaultMessage:
           'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
         description:
@@ -15,7 +15,7 @@ export const rcRulingStepTwo = {
     custodyRestrictions: defineMessages({
       disclaimer: {
         id:
-          'judicial.system:restriction_cases.ruling_step_two.custody_restrictions.disclaimer',
+          'judicial.system.restriction_cases:ruling_step_two.custody_restrictions.disclaimer',
         defaultMessage:
           'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd {caseType} undir dómara.',
         description:

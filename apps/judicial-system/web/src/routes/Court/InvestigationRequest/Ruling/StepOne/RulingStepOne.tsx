@@ -41,7 +41,7 @@ const RulingStepOne = () => {
 
       setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, data])
+  }, [workingCase, setWorkingCase, data, autofill])
 
   return (
     <PageLayout
