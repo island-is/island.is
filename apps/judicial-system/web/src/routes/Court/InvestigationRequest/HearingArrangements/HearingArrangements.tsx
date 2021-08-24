@@ -19,7 +19,6 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 const HearingArrangements = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
