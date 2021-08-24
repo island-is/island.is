@@ -12,7 +12,7 @@ const BankInfoForm = () => {
         </Text>
       </ContentContainer>
 
-      <Footer previousUrl="/umsokn/netfang" />
+      <Footer prevButtonText="Til baka" previousUrl="/umsokn/netfang" />
     </FormLayout>
   )
 }

@@ -6,6 +6,7 @@ import {
   ContentContainer,
   Footer,
   FormLayout,
+  Files,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
@@ -48,31 +49,12 @@ const IncomeFilesForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <ContentContainer>
-        <Text as="h1" variant="h2" marginBottom={2}>
-          Tekjugögn
-        </Text>
-
-        <Text marginBottom={[3, 3, 4]}>
-          Við þurfum að sjá gögn um tekjur í þessum og síðasta mánuði. Þú getur
-          smellt mynd af launaseðlum eða öðrum tekjugögnum, nálgast gögn í
-          heimabankanum eða hjá þeirri stofnun sem þú fékkst tekjur frá.
-        </Text>
-
-        <FileUploadContainer>
-          <InputFileUpload
-            fileList={files}
-            header="Dragðu gögn hingað"
-            description="Tekið er við öllum hefðbundnum skráargerðum"
-            buttonLabel="Bættu við gögnum"
-            showFileSize={true}
-            errorMessage={uploadErrorMessage}
-            onChange={onChange}
-            onRemove={onRemove}
-            onRetry={onRetry}
-          />
-        </FileUploadContainer>
-      </ContentContainer>
+      <Files
+        headline="Tekjugögn"
+        about="Við þurfum að sjá gögn um tekjur í þessum og síðasta mánuði. Þú getur
+        smellt mynd af launaseðlum eða öðrum tekjugögnum, nálgast gögn í
+        heimabankanum eða hjá þeirri stofnun sem þú fékkst tekjur frá."
+      />
 
       <Footer
         prevButtonText="Til baka"
