@@ -19,6 +19,7 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 const HearingArrangements = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -26,7 +27,7 @@ const HearingArrangements = () => {
 
   const router = useRouter()
   const id = router.query.id
-  const { sendNotification, isSendingNotification } = useCase()
+  const { sendNotification, isSendingNotification, autofill } = useCase()
   const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -45,9 +46,15 @@ const HearingArrangements = () => {
 
   useEffect(() => {
     if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
+      const theCase = data.case
+
+      if (theCase.requestedCourtDate) {
+        autofill('courtDate', theCase.requestedCourtDate, theCase)
+      }
+
+      setWorkingCase(theCase)
     }
-  }, [workingCase, setWorkingCase, data])
+  }, [workingCase, setWorkingCase, data, autofill])
 
   const handleNextButtonClick = async () => {
     if (workingCase) {
