@@ -230,7 +230,7 @@ export const transformApplicationToParentalLeaveDTO = (
     expectedDateOfBirth: selectedChild.expectedDateOfBirth,
     // TODO: get true date of birth, not expected
     // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
-    dateOfBirth: selectedChild.expectedDateOfBirth,
+    dateOfBirth: '',
     email,
     phoneNumber,
     paymentInfo: {
@@ -238,7 +238,8 @@ export const transformApplicationToParentalLeaveDTO = (
       personalAllowance: getPersonalAllowance(application),
       personalAllowanceFromSpouse: getPersonalAllowance(application, true),
       union: {
-        id: union,
+        // If a union is not selected then use the default 'no union' value
+        id: union ?? apiConstants.unions.noUnion,
         name: '',
       } as Union,
       pensionFund: getPensionFund(application),

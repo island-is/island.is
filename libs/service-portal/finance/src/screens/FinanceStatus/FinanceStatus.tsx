@@ -1,7 +1,7 @@
 import React from 'react'
 import flatten from 'lodash/flatten'
 import { gql, useQuery } from '@apollo/client'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { Query } from '@island.is/api/schema'
 import {
@@ -16,21 +16,15 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../lib/messages'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
 import { ExpandHeader, ExpandRow } from '../../components/ExpandableTable'
 import amountFormat from '../../utils/amountFormat'
-import { greidsluStadaHeaders } from '../../utils/dataHeaders'
-import {
-  exportGreidslustadaCSV,
-  exportGreidslustadaXSLX,
-} from '../../utils/filesGreidslustada'
+import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
-import { downloadXlsxDocument } from '@island.is/service-portal/graphql'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -41,7 +35,6 @@ const GetFinanceStatusQuery = gql`
 const FinanceStatus: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
-  const { downloadSheet } = downloadXlsxDocument()
 
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
@@ -124,12 +117,11 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                   </Column>
                   <Column width="content">
                     <DropdownExport
-                      onGetCSV={() => exportGreidslustadaCSV(financeStatusData)}
+                      onGetCSV={() =>
+                        exportGreidslustadaFile(financeStatusData, 'csv')
+                      }
                       onGetExcel={() =>
-                        downloadSheet({
-                          headers: greidsluStadaHeaders,
-                          data: exportGreidslustadaXSLX(financeStatusData),
-                        })
+                        exportGreidslustadaFile(financeStatusData, 'xlsx')
                       }
                     />
                   </Column>
@@ -139,9 +131,9 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                 <T.Table>
                   <ExpandHeader
                     data={[
-                      formatMessage(m.feeCategory),
-                      formatMessage(m.guardian),
-                      formatMessage(m.status),
+                      { value: formatMessage(m.feeCategory) },
+                      { value: formatMessage(m.guardian) },
+                      { value: formatMessage(m.status), align: 'right' },
                     ]}
                   />
                   <T.Body>
@@ -157,7 +149,11 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                     )}
                     <ExpandRow
                       last
-                      data={[formatMessage(m.total), '', getChargeTypeTotal()]}
+                      data={[
+                        { value: formatMessage(m.total) },
+                        { value: '' },
+                        { value: getChargeTypeTotal(), align: 'right' },
+                      ]}
                     />
                   </T.Body>
                 </T.Table>

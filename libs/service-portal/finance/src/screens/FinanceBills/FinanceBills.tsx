@@ -1,5 +1,6 @@
 import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
 const FinanceBills = () => {
@@ -7,10 +8,7 @@ const FinanceBills = () => {
   const { formatMessage } = useLocale()
   return (
     <DocumentScreen
-      title={formatMessage({
-        id: 'service.portal:finance-bills',
-        defaultMessage: 'Greiðsluseðlar og Greiðslukvittanir',
-      })}
+      title={formatMessage(m.financeBills)}
       intro={formatMessage({
         id: 'sp.finance-bills:intro',
         defaultMessage:

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
@@ -10,9 +11,10 @@ import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/
 import {
   CustomerChargeType,
   CustomerRecords,
+  CustomerRecordsDetails,
 } from './FinanceTransactionsData.types'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import { m } from '../../lib/messages'
+import { m } from '@island.is/service-portal/core'
 import {
   Box,
   Text,
@@ -26,24 +28,21 @@ import {
   Select,
   AlertBanner,
   Hidden,
+  Input,
 } from '@island.is/island-ui/core'
-import { greidsluStadaHeaders } from '../../utils/dataHeaders'
-import {
-  exportHreyfingarCSV,
-  exportHreyfingarXSLX,
-} from '../../utils/filesHreyfingar'
-import { downloadXlsxDocument } from '@island.is/service-portal/graphql'
+import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
+import { transactionFilter } from '../../utils/simpleFilter'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
 
-const FinanceTransactions = () => {
+const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
-  const { downloadSheet } = downloadXlsxDocument()
 
   const [fromDate, setFromDate] = useState<string>()
   const [toDate, setToDate] = useState<string>()
+  const [q, setQ] = useState<string>('')
   const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>([])
 
   const { data: customerChartypeData } = useQuery<Query>(
@@ -80,7 +79,8 @@ const FinanceTransactions = () => {
   }
 
   const recordsData: CustomerRecords = data?.getCustomerRecords || {}
-  const recordsDataArray = recordsData?.records || []
+  const recordsDataArray =
+    (recordsData?.records && transactionFilter(recordsData?.records, q)) || []
 
   const allChargeTypes = { label: 'Allar færslur', value: ALL_CHARGE_TYPES }
   const chargeTypeSelect = (chargeTypeData?.chargeType || []).map((item) => ({
@@ -116,12 +116,11 @@ const FinanceTransactions = () => {
                   <Columns space="p2" align="right">
                     <Column width="content">
                       <DropdownExport
-                        onGetCSV={() => exportHreyfingarCSV(recordsDataArray)}
+                        onGetCSV={() =>
+                          exportHreyfingarFile(recordsDataArray, 'csv')
+                        }
                         onGetExcel={() =>
-                          downloadSheet({
-                            headers: greidsluStadaHeaders,
-                            data: exportHreyfingarXSLX(recordsDataArray),
-                          })
+                          exportHreyfingarFile(recordsDataArray, 'xlsx')
                         }
                       />
                     </Column>
@@ -137,6 +136,7 @@ const FinanceTransactions = () => {
                 backgroundColor="blue"
                 placeholder={formatMessage(m.transactions)}
                 label={formatMessage(m.transactionsLabel)}
+                defaultValue={allChargeTypes}
                 size="sm"
                 options={[allChargeTypes, ...chargeTypeSelect]}
                 onChange={(sel) => onDropdownSelect(sel)}
@@ -173,6 +173,16 @@ const FinanceTransactions = () => {
               />
             </GridColumn>
           </GridRow>
+          <Box marginTop={3}>
+            <Input
+              label="Leit"
+              name="Search1"
+              placeholder="Sláðu inn leitarorð"
+              size="sm"
+              onChange={(e) => setQ(e.target.value)}
+              value={q}
+            />
+          </Box>
         </Box>
         <Box marginTop={2}>
           {error && (

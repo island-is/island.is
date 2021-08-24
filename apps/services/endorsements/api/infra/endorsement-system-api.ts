@@ -30,11 +30,13 @@ export const serviceSetup = (services: {
       ),
     })
     .secrets({
+      ACCESS_GROUP_DMR:
+        '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS',
       SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL',
       SOFFIA_SOAP_URL: '/k8s/endorsement-system-api/SOFFIA_SOAP_URL',
       SOFFIA_USER: settings.SOFFIA_USER,
       SOFFIA_PASS: settings.SOFFIA_PASS,
     })
-    .grantNamespaces('islandis')
+    .grantNamespaces('islandis', 'application-system')
     .liveness('/liveness')
     .readiness('/liveness')

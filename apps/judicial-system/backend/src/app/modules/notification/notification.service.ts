@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
+import { IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
@@ -31,6 +32,7 @@ import {
   formatDefenderRevokedEmailNotification,
   getRequestPdfAsBuffer,
   getCustodyNoticePdfAsString,
+  formatProsecutorReceivedByCourtSmsNotification,
 } from '../../formatters'
 import { Case } from '../case'
 import { CourtService } from '../court'
@@ -58,6 +60,7 @@ export class NotificationService {
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private intlService: IntlService,
   ) {}
 
   private async existsRevokableNotification(
@@ -186,7 +189,7 @@ export class NotificationService {
 
   /* HEADS_UP notifications */
 
-  private async sendHeadsUpSmsNotificationToCourt(
+  private sendHeadsUpSmsNotificationToCourt(
     existingCase: Case,
   ): Promise<Recipient> {
     const smsText = formatCourtHeadsUpSmsNotification(
@@ -196,7 +199,7 @@ export class NotificationService {
       existingCase.requestedCourtDate,
     )
 
-    return await this.sendSms(
+    return this.sendSms(
       environment.notifications.courtsMobileNumbers[existingCase.courtId],
       smsText,
     )
@@ -232,7 +235,11 @@ export class NotificationService {
   private async sendReadyForCourtEmailNotificationToProsecutor(
     existingCase: Case,
   ): Promise<Recipient> {
-    const pdf = await getRequestPdfAsString(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+    const pdf = await getRequestPdfAsString(existingCase, intl.formatMessage)
 
     const subject = `Krafa í máli ${existingCase.policeCaseNumber}`
     const html = 'Sjá viðhengi'
@@ -260,7 +267,11 @@ export class NotificationService {
   }
 
   private async uploadRequestPdfToCourt(existingCase: Case): Promise<void> {
-    const pdf = await getRequestPdfAsBuffer(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+    const pdf = await getRequestPdfAsBuffer(existingCase, intl.formatMessage)
 
     try {
       const streamId = await this.courtService.uploadStream(
@@ -315,6 +326,34 @@ export class NotificationService {
     )
   }
 
+  /* RECEIVED_BY_COURT notifications */
+
+  private sendReceivedByCourtSmsNotificationToProsecutor(
+    existingCase: Case,
+  ): Promise<Recipient> {
+    const smsText = formatProsecutorReceivedByCourtSmsNotification(
+      existingCase.type,
+      existingCase.court?.name,
+      existingCase.courtCaseNumber,
+    )
+
+    return this.sendSms(existingCase.prosecutor?.mobileNumber, smsText)
+  }
+
+  private async sendReceivedByCourtNotifications(
+    existingCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const recipient = await this.sendReceivedByCourtSmsNotificationToProsecutor(
+      existingCase,
+    )
+
+    return this.recordNotification(
+      existingCase.id,
+      NotificationType.RECEIVED_BY_COURT,
+      [recipient],
+    )
+  }
+
   /* COURT_DATE notifications */
 
   private sendCourtDateEmailNotificationToProsecutor(
@@ -326,8 +365,11 @@ export class NotificationService {
       existingCase.court?.name,
       existingCase.courtDate,
       existingCase.courtRoom,
+      existingCase.judge?.name,
+      existingCase.registrar?.name,
       existingCase.defenderName,
       existingCase.defenderIsSpokesperson,
+      existingCase.sessionArrangements,
     )
 
     return this.sendEmail(
@@ -384,7 +426,11 @@ export class NotificationService {
     let attachments: Attachment[]
 
     if (existingCase.sendRequestToDefender) {
-      const pdf = await getRequestPdfAsString(existingCase)
+      const intl = await this.intlService.useIntl(
+        ['judicial.system.backend'],
+        'is',
+      )
+      const pdf = await getRequestPdfAsString(existingCase, intl.formatMessage)
 
       attachments = [
         {
@@ -535,7 +581,7 @@ export class NotificationService {
 
   /* REVOKED notifications */
 
-  private async sendRevokedSmsNotificationToCourt(
+  private sendRevokedSmsNotificationToCourt(
     existingCase: Case,
   ): Promise<Recipient> {
     const smsText = formatCourtRevokedSmsNotification(
@@ -545,7 +591,7 @@ export class NotificationService {
       existingCase.courtDate,
     )
 
-    return await this.sendSms(
+    return this.sendSms(
       environment.notifications.courtsMobileNumbers[existingCase.courtId],
       smsText,
     )
@@ -652,7 +698,7 @@ export class NotificationService {
 
   /* API */
 
-  getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
+  async getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
     this.logger.debug(`Getting all notifications for case ${existingCase.id}`)
 
     return this.notificationModel.findAll({
@@ -674,6 +720,8 @@ export class NotificationService {
         return this.sendHeadsUpNotifications(existingCase)
       case NotificationType.READY_FOR_COURT:
         return this.sendReadyForCourtNotifications(existingCase)
+      case NotificationType.RECEIVED_BY_COURT:
+        return this.sendReceivedByCourtNotifications(existingCase)
       case NotificationType.COURT_DATE:
         return this.sendCourtDateNotifications(existingCase)
       case NotificationType.RULING:

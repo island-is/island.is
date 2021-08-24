@@ -4,7 +4,6 @@ import {
   ArticleCategory,
   ArticleGroup,
   ArticleSubgroup,
-  Author,
   Featured,
   Frontpage,
   FrontpageSlider,
@@ -147,11 +146,6 @@ export const alertBanner = factory<AlertBanner>({
   showAlertBanner: () => faker.random.boolean(),
 })
 
-export const author = factory<Author>({
-  id: () => faker.random.uuid(),
-  name: () => faker.name.findName(),
-})
-
 export const articleSubgroup = factory<ArticleSubgroup>({
   title: () => title(),
   slug: slugify('title'),
@@ -173,7 +167,6 @@ export const news = factory<News>({
   subtitle: () => faker.lorem.sentence(),
   image: () => image(),
   content: () => slice.list(3),
-  author: () => author(),
   genericTags: () => [],
 })
 

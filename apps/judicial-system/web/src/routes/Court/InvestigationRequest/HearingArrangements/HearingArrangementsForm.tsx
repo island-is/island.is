@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
+import { useIntl } from 'react-intl'
 
 import {
   AlertMessage,
@@ -41,6 +42,7 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './HearingArrangements.treat'
 
@@ -65,6 +67,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
   const [courtDateIsValid, setCourtDateIsValid] = useState(true)
   const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
 
   const validations: FormSettings = {
     judge: {
@@ -162,7 +165,11 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Dómari{' '}
-              <Tooltip text="Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð." />
+              <Tooltip
+                text={formatMessage(
+                  icHearingArrangements.sections.setJudge.tooltip,
+                )}
+              />
             </Text>
           </Box>
           <Select
@@ -181,7 +188,11 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               Dómritari{' '}
-              <Tooltip text="Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti." />
+              <Tooltip
+                text={formatMessage(
+                  icHearingArrangements.sections.setRegistrar.tooltip,
+                )}
+              />
             </Text>
           </Box>
           <Select
@@ -201,8 +212,14 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Fyrirtaka{' '}
-              <Tooltip text="Hér er hægt að merkja hvaða aðilar málsins mæta í fyrirtöku eða hvort fyrirtakan fari fram rafrænt." />
+              {`${formatMessage(
+                icHearingArrangements.sections.sessionArrangements.heading,
+              )} `}
+              <Tooltip
+                text={formatMessage(
+                  icHearingArrangements.sections.sessionArrangements.tooltip,
+                )}
+              />
             </Text>
           </Box>
           <BlueBox>
@@ -210,7 +227,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="session-arrangements-all-present"
                 id="session-arrangements-all-present"
-                label="Fulltrúar málsaðila mæta"
+                label={formatMessage(
+                  icHearingArrangements.sections.sessionArrangements.options
+                    .allPresent,
+                )}
                 checked={
                   workingCase.sessionArrangements ===
                   SessionArrangements.ALL_PRESENT
@@ -232,7 +252,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="session-arrangements-prosecutor-present"
                 id="session-arrangements-prosecutor-present"
-                label="Fulltrúi ákæruvalds mætir"
+                label={formatMessage(
+                  icHearingArrangements.sections.sessionArrangements.options
+                    .prosecutorPresent,
+                )}
                 checked={
                   workingCase.sessionArrangements ===
                   SessionArrangements.PROSECUTOR_PRESENT
@@ -253,7 +276,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             <RadioButton
               name="session-arrangements-remote-session"
               id="session-arrangements-remote-session"
-              label="Rafræn fyrirtaka"
+              label={formatMessage(
+                icHearingArrangements.sections.sessionArrangements.options
+                  .remoteSession,
+              )}
               checked={
                 workingCase.sessionArrangements ===
                 SessionArrangements.REMOTE_SESSION
@@ -310,6 +336,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 label="Dómsalur"
                 defaultValue={workingCase.courtRoom}
                 placeholder="Skráðu inn dómsal"
+                autoComplete="off"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'courtRoom',
@@ -389,6 +416,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }`}
                 defaultValue={workingCase.defenderName}
                 placeholder="Fullt nafn"
+                autoComplete="off"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'defenderName',
@@ -417,6 +445,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }`}
                 defaultValue={workingCase.defenderEmail}
                 placeholder="Netfang"
+                autoComplete="off"
                 errorMessage={defenderEmailEM}
                 hasError={defenderEmailEM !== ''}
                 onChange={(event) =>
@@ -474,6 +503,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }`}
                 defaultValue={workingCase.defenderPhoneNumber}
                 placeholder="Símanúmer"
+                autoComplete="off"
                 errorMessage={defenderPhoneNumberEM}
                 hasError={defenderPhoneNumberEM !== ''}
               />

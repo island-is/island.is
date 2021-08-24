@@ -1,20 +1,16 @@
+import { PaymentScheduleConditions } from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
+import { Box, ModalBase, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import React from 'react'
-import {
-  Button,
-  Box,
-  ModalBase,
-  Text,
-  Stack,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
+import { errorModal } from '../../lib/messages'
+import { PaymentPlanExternalData } from '../../types'
 import * as styles from './PrerequisitesErrorModal.treat'
-import { Prerequisites } from '../../dataProviders/tempAPITypes'
 
 export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
-  const prerequisites = application.externalData.paymentPlanPrerequisites
-    .data as Prerequisites
+  const { formatMessage } = useLocale()
+  const prerequisites = (application.externalData as PaymentPlanExternalData)
+    .paymentPlanPrerequisites?.data?.conditions as PaymentScheduleConditions
 
   return (
     <ModalBase
@@ -26,17 +22,25 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
     >
       <Box background="white" padding={5}>
         <Text variant="h2">
-          {!prerequisites.maxDebtOk ? prerequisites.maxDebtText : ''}
-          {!prerequisites.taxReturnsOk ? prerequisites.taxReturnsText : ''}
-          {!prerequisites.vatOk ? prerequisites.vatText : ''}
-          {!prerequisites.citOk ? prerequisites.citText : ''}
-          {!prerequisites.accommodationTaxOk
-            ? prerequisites.accommodationTaxText
+          {prerequisites.maxDebt ? formatMessage(errorModal.maxDebt) : ''}
+          {!prerequisites.taxReturns
+            ? formatMessage(errorModal.taxReturns)
             : ''}
-          {!prerequisites.withholdingTaxOk
-            ? prerequisites.withholdingTaxText
+          {!prerequisites.vatReturns
+            ? formatMessage(errorModal.vatReturns)
             : ''}
-          {!prerequisites.wageReturnsOk ? prerequisites.wageReturnsText : ''}
+          {!prerequisites.citReturns
+            ? formatMessage(errorModal.citReturns)
+            : ''}
+          {!prerequisites.accommodationTaxReturns
+            ? formatMessage(errorModal.accommodationTaxReturns)
+            : ''}
+          {!prerequisites.withholdingTaxReturns
+            ? formatMessage(errorModal.withholdingTaxReturns)
+            : ''}
+          {!prerequisites.wageReturns
+            ? formatMessage(errorModal.wageReturns)
+            : ''}
         </Text>
       </Box>
     </ModalBase>

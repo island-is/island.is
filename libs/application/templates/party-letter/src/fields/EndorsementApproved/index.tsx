@@ -21,14 +21,6 @@ const EndorsementApproved = () => {
             {formatMessage(m.endorsementApproved.myPagesButton)}
           </Link>
         </Button>
-
-        <Box>
-          <Button variant="text" icon="arrowForward" iconType="filled">
-            <Link href={formatMessage(m.endorsementApproved.partyListUrl)}>
-              {formatMessage(m.endorsementApproved.partyListButton)}
-            </Link>
-          </Button>
-        </Box>
       </Box>
     </Box>
   )

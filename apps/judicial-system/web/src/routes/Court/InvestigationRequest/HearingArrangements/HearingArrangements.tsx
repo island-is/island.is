@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Modal,
   PageLayout,
@@ -17,6 +18,7 @@ import HearingArrangementsForm from './HearingArrangementsForm'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
 
 const HearingArrangements = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -24,7 +26,8 @@ const HearingArrangements = () => {
 
   const router = useRouter()
   const id = router.query.id
-  const { sendNotification, isSendingNotification } = useCase()
+  const { sendNotification, isSendingNotification, autofill } = useCase()
+  const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -42,9 +45,15 @@ const HearingArrangements = () => {
 
   useEffect(() => {
     if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
+      const theCase = data.case
+
+      if (theCase.requestedCourtDate) {
+        autofill('courtDate', theCase.requestedCourtDate, theCase)
+      }
+
+      setWorkingCase(theCase)
     }
-  }, [workingCase, setWorkingCase, data])
+  }, [workingCase, setWorkingCase, data, autofill])
 
   const handleNextButtonClick = async () => {
     if (workingCase) {
@@ -86,14 +95,14 @@ const HearingArrangements = () => {
           />
           {modalVisible && (
             <Modal
-              title="Tilkynning um fyrirtökutíma hefur verið send"
-              text={`Tilkynning um fyrirtöku hefur verið send á saksóknara. Hafi ${
-                workingCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-              } verið skráður og báðir aðilar boðaðir í fyrirtöku hefur tilkynning auk þess verið send á ${
-                workingCase.defenderIsSpokesperson
-                  ? 'talsmanninn'
-                  : 'verjandann'
-              }.`}
+              title={formatMessage(icHearingArrangements.modal.heading)}
+              text={formatMessage(icHearingArrangements.modal.text, {
+                announcementSuffix: !workingCase.defenderEmail
+                  ? '.'
+                  : workingCase.defenderIsSpokesperson
+                  ? ` og talsmann.`
+                  : ` og verjanda.`,
+              })}
               handlePrimaryButtonClick={() => {
                 router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${id}`)
               }}

@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { SigningModule } from '@island.is/dokobit-signing'
 import { EmailModule } from '@island.is/email-service'
+import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
 import { UserModule } from '../user'
@@ -18,6 +19,7 @@ import { CaseService } from './case.service'
     UserModule,
     CourtModule,
     SequelizeModule.forFeature([Case]),
+    CmsTranslationsModule,
   ],
   providers: [CaseService],
   controllers: [CaseController],

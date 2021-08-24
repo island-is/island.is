@@ -64,7 +64,9 @@ const Layout: FC = ({ children }) => {
             </Columns>
           </Box>
         </ContentBlock>
-        <Footer {...footerProps} />
+        <Hidden print={true}>
+          <Footer {...footerProps} />
+        </Hidden>
       </Box>
     </>
   )

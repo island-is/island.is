@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Box,
   GridColumn,
@@ -7,7 +9,6 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
 import {
   FormFooter,
   PageLayout,
@@ -56,6 +57,7 @@ import {
   useCase,
   useDateTime,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { rcRulingStepTwo } from '@island.is/judicial-system-web/messages'
 import * as style from './RulingStepTwo.treat'
 
 export const RulingStepTwo: React.FC = () => {
@@ -68,6 +70,7 @@ export const RulingStepTwo: React.FC = () => {
   ] = useState<string>('')
 
   const { updateCase, autofill } = useCase()
+  const { formatMessage } = useIntl()
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -172,8 +175,9 @@ export const RulingStepTwo: React.FC = () => {
               </Box>
               <Box marginBottom={3}>
                 <Text variant="h4" fontWeight="light">
-                  Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra
-                  úrskurð þennan til Landsréttar innan þriggja sólarhringa.
+                  {formatMessage(
+                    rcRulingStepTwo.sections.accusedAppealDecision.disclaimer,
+                  )}
                 </Text>
               </Box>
               <Box marginBottom={3}>
@@ -549,13 +553,16 @@ export const RulingStepTwo: React.FC = () => {
                 workingCase.decision ===
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
                 <Text variant="h4" fontWeight="light">
-                  {`Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
-                atriði er lúta að framkvæmd ${
-                  workingCase.type === CaseType.CUSTODY &&
-                  workingCase.decision === CaseDecision.ACCEPTING
-                    ? 'gæsluvarðhaldsins'
-                    : 'farbannsins'
-                } undir dómara.`}
+                  {formatMessage(
+                    rcRulingStepTwo.sections.custodyRestrictions.disclaimer,
+                    {
+                      caseType:
+                        workingCase.type === CaseType.CUSTODY &&
+                        workingCase.decision === CaseDecision.ACCEPTING
+                          ? 'gæsluvarðhaldsins'
+                          : 'farbannsins',
+                    },
+                  )}
                 </Text>
               )}
             </Box>
@@ -598,6 +605,7 @@ export const RulingStepTwo: React.FC = () => {
                         name="courtEndTime"
                         label="Þinghaldi lauk (kk:mm)"
                         placeholder="Veldu tíma"
+                        autoComplete="off"
                         defaultValue={formatDate(
                           workingCase.courtEndTime,
                           TIME_FORMAT,

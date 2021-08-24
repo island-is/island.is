@@ -74,9 +74,13 @@ const AuthDelegationQuery = gql`
     authDelegation(input: $input) {
       id
       type
-      toName
-      toNationalId
-      fromNationalId
+      to {
+        nationalId
+        name
+      }
+      from {
+        nationalId
+      }
       ... on AuthCustomDelegation {
         scopes {
           id
@@ -93,7 +97,9 @@ const UpdateAuthDelegationMutation = gql`
   mutation UpdateAuthDelegationMutation($input: UpdateAuthDelegationInput!) {
     updateAuthDelegation(input: $input) {
       id
-      fromNationalId
+      from {
+        nationalId
+      }
       ... on AuthCustomDelegation {
         scopes {
           id
@@ -201,7 +207,7 @@ function Access() {
   return (
     <Box>
       <IntroHeader
-        title={authDelegation?.toName || ''}
+        title={authDelegation?.to.name || ''}
         intro={defineMessage({
           id: 'service.portal.settings.accessControl:access-intro',
           defaultMessage:
@@ -308,60 +314,63 @@ function Access() {
             </Inline>
           </Box>
 
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData>
-                  <Text variant="small" color="blue600">
-                    {formatMessage({
-                      id: 'service.portal.settings.accessControl:access-access',
-                      defaultMessage: 'Aðgangur',
-                    })}
-                  </Text>
-                </T.HeadData>
-                <T.HeadData>
-                  <Text variant="small" color="blue600">
-                    {formatMessage({
-                      id:
-                        'service.portal.settings.accessControl:access-explanation',
-                      defaultMessage: 'Útskýring',
-                    })}
-                  </Text>
-                </T.HeadData>
-                <T.HeadData>
-                  <Text variant="small" color="blue600">
-                    {formatMessage({
-                      id:
-                        'service.portal.settings.accessControl:access-valid-to',
-                      defaultMessage: 'Í gildi til',
-                    })}
-                  </Text>
-                </T.HeadData>
-              </T.Row>
-            </T.Head>
-            <T.Body>
-              {!loading &&
-                Object.keys(groupedApiScopes).map((key, index) => {
-                  const apiScopes = groupedApiScopes[key]
-                  const accessItems: Scope[] = key.startsWith(GROUP_PREFIX)
-                    ? [
-                        {
-                          ...apiScopes[0].group,
-                          model: `${GROUP_PREFIX}.${index}`,
-                        } as ApiScopeGroup,
-                        ...apiScopes,
-                      ]
-                    : apiScopes
-                  return (
-                    <AccessItem
-                      apiScopes={accessItems}
-                      authDelegation={authDelegation}
-                      key={index}
-                    />
-                  )
-                })}
-            </T.Body>
-          </T.Table>
+          <div className={styles.tempTableDatePickerFix}>
+            <T.Table>
+              <T.Head>
+                <T.Row>
+                  <T.HeadData>
+                    <Text variant="small" color="blue600">
+                      {formatMessage({
+                        id:
+                          'service.portal.settings.accessControl:access-access',
+                        defaultMessage: 'Aðgangur',
+                      })}
+                    </Text>
+                  </T.HeadData>
+                  <T.HeadData>
+                    <Text variant="small" color="blue600">
+                      {formatMessage({
+                        id:
+                          'service.portal.settings.accessControl:access-explanation',
+                        defaultMessage: 'Útskýring',
+                      })}
+                    </Text>
+                  </T.HeadData>
+                  <T.HeadData>
+                    <Text variant="small" color="blue600">
+                      {formatMessage({
+                        id:
+                          'service.portal.settings.accessControl:access-valid-to',
+                        defaultMessage: 'Í gildi til',
+                      })}
+                    </Text>
+                  </T.HeadData>
+                </T.Row>
+              </T.Head>
+              <T.Body>
+                {!loading &&
+                  Object.keys(groupedApiScopes).map((key, index) => {
+                    const apiScopes = groupedApiScopes[key]
+                    const accessItems: Scope[] = key.startsWith(GROUP_PREFIX)
+                      ? [
+                          {
+                            ...apiScopes[0].group,
+                            model: `${GROUP_PREFIX}.${index}`,
+                          } as ApiScopeGroup,
+                          ...apiScopes,
+                        ]
+                      : apiScopes
+                    return (
+                      <AccessItem
+                        apiScopes={accessItems}
+                        authDelegation={authDelegation}
+                        key={index}
+                      />
+                    )
+                  })}
+              </T.Body>
+            </T.Table>
+          </div>
           {loading && (
             <Box marginTop={3}>
               <Stack space={3}>
