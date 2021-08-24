@@ -985,7 +985,6 @@ web:
     API_URL: http://web-api
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
-    DISABLE_REGULATIONS_PAGE: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     NODE_OPTIONS: '--max-old-space-size=464'
     TRACKING_DOMAIN: beta.staging01.devland.is
@@ -1073,4 +1072,3 @@ xroad-collector:
       eks.amazonaws.com/role-arn: arn:aws:iam::261174024191:role/xroad-collector
     create: true
     name: xroad-collector
-
