@@ -24,8 +24,6 @@ import { Application } from '@island.is/application/core'
 import { SmsService } from '@island.is/nova-sms'
 import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -39,7 +37,6 @@ export class ChildrenResidenceChangeService {
   s3: S3
 
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
@@ -134,10 +131,7 @@ export class ChildrenResidenceChangeService {
 
     const response = await this.syslumennService
       .uploadData(participants, attachment, extraData)
-      .catch(async (e) => {
-        this.logger.error('Could not upload crc application to starfskerfi', {
-          e,
-        })
+      .catch(async () => {
         await this.sharedTemplateAPIService.sendEmailWithAttachment(
           generateSyslumennNotificationEmail,
           (application as unknown) as Application,
