@@ -8,6 +8,7 @@ import {
   formatGender,
   formatNationalId,
   capitalize,
+  formatDate,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -52,15 +53,6 @@ function constructRestrictionRequestPdf(
     .font('Helvetica')
     .fontSize(18)
     .text(
-      formatMessage(m.caseNumber, {
-        caseNumber: existingCase.policeCaseNumber,
-      }),
-      {
-        align: 'center',
-      },
-    )
-    .fontSize(16)
-    .text(
       formatMessage(m.district, {
         district:
           existingCase.prosecutor?.institution?.name ??
@@ -70,12 +62,24 @@ function constructRestrictionRequestPdf(
         align: 'center',
       },
     )
+    .fontSize(16)
+    .text(
+      `${formatDate(existingCase.created, 'PPP')} - ${formatMessage(
+        m.caseNumber,
+        {
+          caseNumber: existingCase.policeCaseNumber,
+        },
+      )}`,
+      {
+        align: 'center',
+      },
+    )
     .lineGap(40)
     .text(formatMessage(m.court, { court: existingCase.court?.name }), {
       align: 'center',
     })
     .font('Helvetica-Bold')
-    .fontSize(18)
+    .fontSize(14)
     .lineGap(8)
     .text(formatMessage(m.baseInfo.heading))
     .font('Helvetica')
@@ -87,11 +91,6 @@ function constructRestrictionRequestPdf(
       )}`,
     )
     .text(`${formatMessage(m.baseInfo.fullName)} ${existingCase.accusedName}`)
-    .text(
-      `${formatMessage(m.baseInfo.gender)} ${formatGender(
-        existingCase.accusedGender,
-      )}`,
-    )
     .text(`${formatMessage(m.baseInfo.address)} ${existingCase.accusedAddress}`)
     .text(
       formatMessage(m.baseInfo.defender, {
