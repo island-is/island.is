@@ -16,16 +16,16 @@ We already have a method to roll out [feature flags](../feature-flags.md) to use
 
 Using these features you can deploy the code all the way to production without having to provide secret or env. variables values for the env where the feature is not turned on.
 
-## Turning the features on and off
+Curretntly the feature-specific configuration that can be specified is environment variables and secrets. For an example please see [this file](../../../infra/src/dsl/toggles.spec.ts).
 
-Curretntly the feature-specific configuration that can be specified is environment variables and secrets. For an example please see [this file](../../../infra/src/dsl/toggles.spec.ts)
+### Turning the features on and off
 
-The features are turned off by default and need to be turned on explicitly in the environment configuration using the field `featuresOn`.
+The features are turned off by default and need to be turned on explicitly in the [environment configuration](../../../infra/src/environments.ts) using the field `featuresOn`.
 
-## Using the features in the code
+### Using the features in the code
 
 The only usage of the features is to check whether a flag is "on". To do that, use the `ServerSideFeatureClient` object [exported in the feature flags library](../../../src/libs/feature-flags/src/lib/server-side-clients.ts).
 
-## Cleaning up
+### Cleaning up
 
 After the feature is in use on prod, please remove all references to it in the code.
