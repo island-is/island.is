@@ -67,12 +67,14 @@ export const getTextStyles = ({
   strikethrough,
 }: GetTextStylesProps) =>
   cn(base, {
+    /* eslint-disable @typescript-eslint/no-non-null-assertion */
     [variantStyles[variant!]]: variant,
     [colors[color!]]: color,
     [fontWeightStyles[fontWeight!]]: fontWeight,
     [lineHeightStyles[lineHeight!]]: lineHeight,
     [defaultFontWeights[variant!]]: variant && !fontWeight,
     [defaultLineHeights[variant!]]: variant && !lineHeight,
+    /* eslint-enable @typescript-eslint/no-non-null-assertion */
     [truncateStyle]: truncate,
     [strikethroughStyle]: strikethrough,
   })
