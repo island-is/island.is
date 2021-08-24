@@ -3,14 +3,10 @@ import { Box, GridContainer, Text } from '@island.is/island-ui/core'
 
 import * as styles from './StatusLayout.treat'
 
-import {
-  LogoHfj,
-  Login,
-  HasApplied,
-} from '@island.is/financial-aid-web/osk/src/components'
+import { LogoHfj, Login } from '@island.is/financial-aid-web/osk/src/components'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
-import { ApplicationState, getState } from '@island.is/financial-aid/shared'
+import { getState } from '@island.is/financial-aid/shared'
 
 interface Props {
   children: ReactNode
