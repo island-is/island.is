@@ -22,12 +22,12 @@ const dynamicModules = [
     render: () => lazy(() => import('./screens/FinanceEmployeeClaims')),
     enabled: false,
   },
-  {
-    name: m.financeLocalTax,
-    path: ServicePortalPath.FinanceLocalTax,
-    render: () => lazy(() => import('./screens/FinanceLocalTax')),
-    enabled: false,
-  },
+  // {
+  //   name: m.financeLocalTax,
+  //   path: ServicePortalPath.FinanceLocalTax,
+  //   render: () => lazy(() => import('./screens/FinanceLocalTax')),
+  //   enabled: false,
+  // },
 ]
 
 export const financeModule: ServicePortalModule = {
@@ -73,9 +73,9 @@ export const financeModule: ServicePortalModule = {
         routes.push({ ...dynamicModules[1], enabled: true })
       }
 
-      if (data?.localTaxTap) {
-        routes.push({ ...dynamicModules[2], enabled: true })
-      }
+      // if (data?.localTaxTap) {
+      //   routes.push({ ...dynamicModules[2], enabled: true })
+      // }
     } catch (error) {
       Sentry.captureException(error)
     }
