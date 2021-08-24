@@ -694,20 +694,79 @@ describe('formatReadyForCourtSmsNotification', () => {
 })
 
 describe('formatProsecutorReceivedByCourtSmsNotification', () => {
-  test('should format received by court notification', () => {
+  test('should format received by court notification for custody', () => {
     // Arranged
+    const type = CaseType.CUSTODY
     const court = 'Héraðsdómur Reykjavíkur'
     const courtCaseNumber = 'R-898/2021'
 
     // Act
     const res = formatProsecutorReceivedByCourtSmsNotification(
+      type,
       court,
       courtCaseNumber,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur móttekið kröfu sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
+      'Héraðsdómur Reykjavíkur hefur móttekið kröfu um gæsluvarðhald sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
+    )
+  })
+
+  test('should format received by court notification for travel ban', () => {
+    // Arranged
+    const type = CaseType.TRAVEL_BAN
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtCaseNumber = 'R-898/2021'
+
+    // Act
+    const res = formatProsecutorReceivedByCourtSmsNotification(
+      type,
+      court,
+      courtCaseNumber,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur móttekið kröfu um farbann sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
+    )
+  })
+
+  test('should format received by court notification for investigation', () => {
+    // Arranged
+    const type = CaseType.SEARCH_WARRANT
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtCaseNumber = 'R-898/2021'
+
+    // Act
+    const res = formatProsecutorReceivedByCourtSmsNotification(
+      type,
+      court,
+      courtCaseNumber,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur móttekið kröfu um rannsóknarheimild (húsleit) sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
+    )
+  })
+
+  test('should format received by court notification for investigation of type OTHER', () => {
+    // Arranged
+    const type = CaseType.OTHER
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtCaseNumber = 'R-898/2021'
+
+    // Act
+    const res = formatProsecutorReceivedByCourtSmsNotification(
+      type,
+      court,
+      courtCaseNumber,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur móttekið kröfu um rannsóknarheimild sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
     )
   })
 })
