@@ -23,7 +23,7 @@ export class ApplicationService {
     private readonly applicationEventService: ApplicationEventService,
   ) {}
 
-  async hasAppliedForPeriod(
+  async hasCurrentApplication(
     nationalId: string,
   ): Promise<CurrentApplicationModel | null> {
     const date = new Date()

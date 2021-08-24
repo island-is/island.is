@@ -7,11 +7,11 @@ import { CurrentApplicationModel } from '../application'
 
 @Injectable()
 export class UserService {
-  async checkHasAppliedForPeriod(
+  async checkHasCurrentApplication(
     nationalId: string,
   ): Promise<CurrentApplicationModel | null> {
     const res = await fetch(
-      `${environment.backend.url}/api/hasAppliedForPeriod/?nationalId=${nationalId}`,
+      `${environment.backend.url}/api/hasCurrentApplication/?nationalId=${nationalId}`,
       {
         headers: { authorization: `Bearer ${environment.auth.secretToken}` },
       },
