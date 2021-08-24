@@ -308,7 +308,7 @@ export const m = defineMessages({
   },
   qualityPhotoTitle: {
     id: 'dl.application.qualityPhotoTitle',
-    defaultMessage: 'Ljósmynd í ökuskírteini',
+    defaultMessage: 'Ljósmynd í ökuskírteinaskrá',
     description: 'title for quality photo section',
   },
   qualityPhotoSubTitle: {
@@ -318,7 +318,7 @@ export const m = defineMessages({
   },
   qualityPhotoWarningTitle: {
     id: 'dl.application.qualityPhotoWarningTitle',
-    defaultMessage: 'Ljósmynd í ökuskírteina ekki gæðamerkt',
+    defaultMessage: 'Ljósmynd í ökuskírteinaskrá ekki gæðamerkt',
     description: 'title for quality photo warning',
   },
   qualityPhotoWarningDescription: {
