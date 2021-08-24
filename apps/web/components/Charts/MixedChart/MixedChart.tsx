@@ -34,6 +34,7 @@ export const MixedChart = ({ graphData }: GraphProps) => {
   const parsedDatakeys = JSON.parse(datakeys)[0]
   const stackIds = parsedDatakeys.bars.map((e) => e.stackId)
   const shouldStack = new Set(stackIds).size !== stackIds.length
+  const rightPadding = parsedDatakeys.yAxis?.right ? 70 : 0
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -43,12 +44,12 @@ export const MixedChart = ({ graphData }: GraphProps) => {
         data={parsedData}
         margin={{
           top: 30,
-          right: 0,
+          right: rightPadding,
           left: 20,
           bottom: 5,
         }}
       >
-        <CartesianGrid strokeDasharray="1" vertical={false} color="#CCDFFF" />
+        <CartesianGrid strokeDasharray="0" vertical={false} stroke="#CCDFFF" />
         <XAxis
           dataKey={parsedDatakeys.xAxis}
           stroke="#CCDFFF"

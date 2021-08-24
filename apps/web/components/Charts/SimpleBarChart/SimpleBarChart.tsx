@@ -31,7 +31,7 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
-        width={250}
+        width={20}
         height={150}
         data={parsedData}
         margin={{
@@ -41,7 +41,7 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
           bottom: 5,
         }}
       >
-        <CartesianGrid strokeDasharray="1" vertical={false} color="#CCDFFF" />
+        <CartesianGrid strokeDasharray="0" vertical={false} stroke="#CCDFFF" />
         <XAxis
           dataKey={parsedDatakeys.xAxis}
           stroke="#CCDFFF"

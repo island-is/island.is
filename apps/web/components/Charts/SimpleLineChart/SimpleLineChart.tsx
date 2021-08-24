@@ -45,11 +45,7 @@ export const SimpleLineChart = ({ graphData }: SimpleLineChartGraphProps) => {
               bottom: 10,
             }}
           >
-            <CartesianGrid
-              strokeDasharray="1"
-              vertical={false}
-              stroke="#CCDFFF"
-            />
+            <CartesianGrid strokeDasharray="0" vertical={false} stroke="#CCDFFF" />
             <XAxis
               dataKey={parsedDatakeys.xAxis}
               stroke="#CCDFFF"
