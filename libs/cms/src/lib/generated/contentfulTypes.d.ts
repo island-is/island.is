@@ -1977,7 +1977,7 @@ export interface IOpenDataSubpageFields {
   statisticsCards?: IStatisticsCard[] | undefined
 
   /** Fund Description */
-  fundDescription?: Document | undefined
+  fundDescription?: string | undefined
 }
 
 /** Organization dashboard */

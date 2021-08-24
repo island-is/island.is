@@ -57,6 +57,11 @@ import { mapFrontpage, Frontpage } from './models/frontpage.model'
 import { GetFrontpageInput } from './dto/getFrontpage.input'
 import { OpenDataPage, mapOpenDataPage } from './models/openDataPage.model'
 import { GetOpenDataPageInput } from './dto/getOpenDataPage.input'
+import {
+  OpenDataSubpage,
+  mapOpenDataSubpage,
+} from './models/openDataSubpage.model'
+import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
 import { mapProjectPage, ProjectPage } from './models/projectPage.model'
 import { IProjectPage } from './generated/contentfulTypes'
 
@@ -652,6 +657,25 @@ export class CmsContentfulService {
 
     return (
       (result.items as types.IOpenDataPage[]).map(mapOpenDataPage)[0] ?? null
+    )
+  }
+  
+  async getOpenDataSubpage({
+    lang,
+  }: GetOpenDataSubpageInput): Promise<OpenDataSubpage> {
+    const params = {
+      ['content_type']: 'openDataSubpage',
+      include: 10,
+      order: '-sys.createdAt',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOpenDataSubpageFields>(lang, params)
+      .catch(errorHandler('getOpenDataSubpage'))
+
+    return (
+      (result.items as types.IOpenDataSubpage[]).map(mapOpenDataSubpage)[0] ??
+      null
     )
   }
 }
