@@ -11,7 +11,7 @@ import {
   Line,
 } from 'recharts'
 
-import { CustomizedAxisTick, RenderLegend, COLORS, CustomTooltip } from '../utils'
+import { CustomizedAxisTick, RenderLegend, COLORS, CustomTooltip, CustomizedRightAxisTick } from '../utils'
 
 interface GraphDataProps {
   title?: string
@@ -30,7 +30,7 @@ export const MixedChart = ({ graphData }: GraphProps) => {
   const shouldStack = new Set(stackIds).size !== stackIds.length
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height="100%" >
       <ComposedChart
         width={250}
         height={150}
@@ -50,8 +50,8 @@ export const MixedChart = ({ graphData }: GraphProps) => {
           padding={{ left: 30 }}
           tickLine={false}
         />
-        <YAxis yAxisId="left" tick={<CustomizedAxisTick />} />
-        <YAxis yAxisId="right" hide/>
+        <YAxis yAxisId="left" stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
+        <YAxis yAxisId="right" orientation="right" stroke="#CCDFFF" tick={<CustomizedRightAxisTick />}/>
         <Tooltip content={<CustomTooltip/>}/>
         <Legend iconType="circle" align="right" content={RenderLegend} />
         {parsedDatakeys.bars.map((item, index) => (

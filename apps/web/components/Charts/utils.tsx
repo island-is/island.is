@@ -42,6 +42,22 @@ export const CustomizedAxisTick = (props) => {
     </g>
   )
 }
+
+export const CustomizedRightAxisTick = (props) => {
+  const { x, y, payload } = props
+  return (
+    <g transform={`translate(${x},${y-10})`}>
+      <text
+        dy={16}
+        textAnchor="start"
+        fill="#00003C"
+
+      >
+        {payload.value}
+      </text>
+    </g>
+  )
+}
 interface CustomLegendProps extends LegendProps {
   title?: string
 }
