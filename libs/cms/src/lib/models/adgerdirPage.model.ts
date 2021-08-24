@@ -69,7 +69,7 @@ export const mapAdgerdirPage = ({
     sys?.id && fields?.content
       ? mapDocument(fields.content, sys.id + ':content')
       : [],
-  processEntry: fields.processEntry
+  processEntry: fields?.processEntry
     ? mapProcessEntry(fields.processEntry)
     : null,
 })
