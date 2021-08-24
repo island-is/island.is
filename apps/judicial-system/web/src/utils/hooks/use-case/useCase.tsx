@@ -33,6 +33,7 @@ type autofillProperties = Pick<
   | 'prosecutorOnlySessionRequest'
   | 'otherRestrictions'
   | 'conclusion'
+  | 'courtDate'
 >
 
 interface CreateCaseMutationResponse {
