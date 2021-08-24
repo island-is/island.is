@@ -35,7 +35,7 @@ export const MixedChart = ({ graphData }: GraphProps) => {
   const stackIds = parsedDatakeys.bars.map((e) => e.stackId)
   const shouldStack = new Set(stackIds).size !== stackIds.length
   const rightPadding = parsedDatakeys.yAxis?.right ? 70 : 0
-
+  console.log(parsedDatakeys.yAxis?.showRight)
   return (
     <ResponsiveContainer width="100%" height="100%">
       <ComposedChart
@@ -63,6 +63,7 @@ export const MixedChart = ({ graphData }: GraphProps) => {
           orientation="right"
           stroke="#CCDFFF"
           tick={<CustomizedRightAxisTick />}
+          hide={!parsedDatakeys.yAxis?.showRight}
         />
         <Tooltip content={<CustomTooltip />} />
         <Legend iconType="circle" align="right" content={RenderLegend} />
