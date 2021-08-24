@@ -7,21 +7,25 @@ import { CurrentApplicationModel } from '../application'
 
 @Injectable()
 export class UserService {
-  async checkHasCurrentApplication(
+  async getCurrentApplication(
     nationalId: string,
   ): Promise<CurrentApplicationModel | null> {
     const res = await fetch(
-      `${environment.backend.url}/api/hasCurrentApplication/?nationalId=${nationalId}`,
+      `${environment.backend.url}/api/getCurrentApplication/?nationalId=${nationalId}`,
       {
         headers: { authorization: `Bearer ${environment.auth.secretToken}` },
       },
-    )
+    ).then((res) => {
+      {
+        if (!res.ok) {
+          throw new Error('failed to check if user has application')
+        }
+        return res
+      }
+    })
 
-    const text = await res.text()
-
-    if (text.length) {
-      return JSON.parse(text)
-    }
-    return null
+    return await res.json().catch(() => {
+      return null
+    })
   }
 }

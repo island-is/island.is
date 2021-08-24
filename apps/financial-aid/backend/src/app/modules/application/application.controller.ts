@@ -30,16 +30,17 @@ export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
   @UseGuards(TokenGuard)
-  @Get('hasCurrentApplication')
+  @Get('getCurrentApplication')
   @ApiOkResponse({
     type: CurrentApplicationModel,
     description:
       'Checks whether user has applied before and if it is the same month',
   })
   async getCurrentApplication(@Query('nationalId') nationalId: string) {
-    const application = await this.applicationService.hasCurrentApplication(
+    const application = await this.applicationService.getCurrentApplication(
       nationalId,
     )
+
     return application
   }
 
