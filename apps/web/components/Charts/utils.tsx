@@ -3,12 +3,16 @@ import * as styles from './charts.treat'
 import cn from 'classnames'
 import { LegendProps, TooltipProps } from 'recharts'
 
-export const CustomTooltip = ({ payload, active, label }: TooltipProps<string, number> ) => {
+export const CustomTooltip = ({
+  payload,
+  active,
+  label,
+}: TooltipProps<string, number>) => {
   if (active && payload && payload.length) {
     return (
       <div className={cn(styles.tooltip)}>
         <p>{label}</p>
-        {payload.map((item, index) => 
+        {payload.map((item, index) => (
           <li className={cn(styles.list)} key={`item-${index}`}>
             <div
               className={cn(styles.dot)}
@@ -17,12 +21,13 @@ export const CustomTooltip = ({ payload, active, label }: TooltipProps<string, n
               }}
             />
             {item.name} : {item.value}
-          </li>)}
+          </li>
+        ))}
       </div>
-    );
+    )
   }
 
-  return null;
+  return null
 }
 
 export const CustomizedAxisTick = (props) => {
@@ -46,13 +51,8 @@ export const CustomizedAxisTick = (props) => {
 export const CustomizedRightAxisTick = (props) => {
   const { x, y, payload } = props
   return (
-    <g transform={`translate(${x},${y-10})`}>
-      <text
-        dy={16}
-        textAnchor="start"
-        fill="#00003C"
-
-      >
+    <g transform={`translate(${x},${y - 10})`}>
+      <text dy={16} textAnchor="start" fill="#00003C">
         {payload.value}
       </text>
     </g>

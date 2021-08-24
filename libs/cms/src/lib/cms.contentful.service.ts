@@ -659,7 +659,7 @@ export class CmsContentfulService {
       (result.items as types.IOpenDataPage[]).map(mapOpenDataPage)[0] ?? null
     )
   }
-  
+
   async getOpenDataSubpage({
     lang,
   }: GetOpenDataSubpageInput): Promise<OpenDataSubpage> {

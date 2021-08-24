@@ -145,16 +145,16 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
               <Text>{fundDescription}</Text>
             </Box>
             <GridRow>
-              {statisticsCards.map((card) =>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <Box marginBottom={3}>
-                  <StatisticsCard
-                    title={card.title}
-                    description={card.statistic}
-                  />
-                </Box>
-              </GridColumn>
-              )}
+              {statisticsCards.map((card) => (
+                <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <Box marginBottom={3}>
+                    <StatisticsCard
+                      title={card.title}
+                      description={card.statistic}
+                    />
+                  </Box>
+                </GridColumn>
+              ))}
             </GridRow>
             <GridRow>
               <GridColumn span={'12/12'}>
@@ -176,7 +176,7 @@ OpenDataSubPage.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getOpenDataSubpage: page },
-    }
+    },
   ] = await Promise.all([
     apolloClient.query<GetOpenDataSubpageQuery, QueryGetOpenDataSubpageArgs>({
       query: GET_OPEN_DATA_SUBPAGE_QUERY,
@@ -187,7 +187,6 @@ OpenDataSubPage.getInitialProps = async ({ apolloClient, locale }) => {
       },
     }),
   ])
-
 
   return {
     page,

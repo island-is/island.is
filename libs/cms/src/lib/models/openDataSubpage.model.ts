@@ -22,10 +22,8 @@ export class OpenDataSubpage {
   @Field(() => [StatisticsCard])
   statisticsCards?: Array<StatisticsCard>
 
-
   @Field(() => [GraphCard])
   graphCards?: Array<GraphCard>
-
 }
 
 export const mapOpenDataSubpage = ({
@@ -37,9 +35,7 @@ export const mapOpenDataSubpage = ({
   pageTitle: fields.pageTitle ?? '',
   fundTitle: fields.fundTitle ?? '',
   fundDescription: fields.fundDescription ?? '',
-  statisticsCards: (fields.statisticsCards ?? []).map(
-    mapStatisticsCard,
-  ),
+  statisticsCards: (fields.statisticsCards ?? []).map(mapStatisticsCard),
 
   graphCards: (fields.graphCards ?? []).map(mapGraphCard),
 })

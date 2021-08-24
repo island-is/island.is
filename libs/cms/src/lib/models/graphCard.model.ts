@@ -44,7 +44,7 @@ export const mapGraphCard = ({ fields }: IGraphCard): GraphCard => {
     type: fields?.type ?? '',
     displayAsCard: fields.displayAsCard ?? true,
     organizationLogo: fields.organizationLogo
-    ? mapImage(fields.organizationLogo)
-    : null,
+      ? mapImage(fields.organizationLogo)
+      : null,
   }
 }
