@@ -1,14 +1,5 @@
 import { gql } from '@apollo/client'
 
-export const GetApplicationQuery = gql`
-  query GetApplicantyQuery($input: ApplicationInput!) {
-    application(input: $input) {
-      homeCircumstances
-      usePersonalTaxCredit
-    }
-  }
-`
-
 export const CreateApplicationQuery = gql`
   mutation createApplication($input: CreateApplicationInput!) {
     createApplication(input: $input) {
