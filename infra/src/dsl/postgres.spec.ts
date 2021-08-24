@@ -29,7 +29,7 @@ describe('Postgres', () => {
         DB_USER: 'service_portal_api',
         DB_NAME: 'service_portal_api',
         DB_HOST: 'a',
-        SSF_ON: '',
+        SERVERSIDE_FEATURES_ON: '',
       })
     })
   })

@@ -1,4 +1,4 @@
-import { FeatureNames as FeatureNames } from '../features'
+import { FeatureNames } from '../features'
 import { EnvironmentConfig } from './charts'
 
 export type OpsEnv = 'dev' | 'staging' | 'prod'

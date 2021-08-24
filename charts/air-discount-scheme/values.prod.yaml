@@ -6,7 +6,7 @@ air-discount-scheme-api:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=ads.prod'
-    SSF_ON: ''
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -59,7 +59,7 @@ air-discount-scheme-backend:
     DB_USER: 'air_discount_scheme_backend'
     ENVIRONMENT: 'prod'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379'
-    SSF_ON: ''
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -94,7 +94,7 @@ air-discount-scheme-backend:
       DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
       DB_NAME: 'air_discount_scheme_backend'
       DB_USER: 'air_discount_scheme_backend'
-      SSF_ON: ''
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
@@ -117,7 +117,7 @@ air-discount-scheme-web:
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
-    SSF_ON: ''
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:

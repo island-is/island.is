@@ -10,9 +10,7 @@ import {
   Resources,
   ReplicaCount,
   PostgresInfo,
-  OpsEnv,
   HealthProbe,
-  Feature,
   Features,
 } from './types/input-types'
 

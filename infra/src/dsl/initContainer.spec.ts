@@ -74,7 +74,7 @@ describe('Init-container definitions', () => {
         DB_USER: 'api',
         DB_NAME: 'api',
         DB_HOST: 'a',
-        SSF_ON: '',
+        SERVERSIDE_FEATURES_ON: '',
       },
       secrets: { S1: '/as/dfadf', DB_PASS: '/k8s/api/DB_PASSWORD' },
     })

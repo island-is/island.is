@@ -51,7 +51,7 @@ export const serializeService: SerializeMethod = (
       }`,
     },
     env: {
-      SSF_ON: uberChart.env.featuresOn.join(','),
+      SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
     },
     secrets: {},
     healthCheck: {
@@ -153,7 +153,7 @@ export const serializeService: SerializeMethod = (
           serviceDef.initContainers.containers,
         ),
         env: {
-          SSF_ON: uberChart.env.featuresOn.join(','),
+          SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
         },
         secrets: {},
       }

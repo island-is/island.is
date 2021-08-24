@@ -57,7 +57,7 @@ describe('Server-side toggles', () => {
   })
 
   it('should be added to the ON list', () => {
-    expect(result.serviceDef.env!['SSF_ON']).toBe(
+    expect(result.serviceDef.env!['SERVERSIDE_FEATURES_ON']).toBe(
       'do-not-remove-for-testing-only',
     )
   })
@@ -67,7 +67,7 @@ describe('Server-side toggles', () => {
       sut,
       new UberChart(Staging),
     ) as SerializeSuccess
-    expect(result.serviceDef.env!['SSF_ON']).toBe('')
+    expect(result.serviceDef.env!['SERVERSIDE_FEATURES_ON']).toBe('')
   })
 
   it('env variables missing when feature not toggled', () => {
@@ -99,9 +99,9 @@ describe('Server-side toggles', () => {
   })
 
   it('should be added to the ON list for the init container', () => {
-    expect(result.serviceDef.initContainer!.env!['SSF_ON']).toBe(
-      'do-not-remove-for-testing-only',
-    )
+    expect(
+      result.serviceDef.initContainer!.env!['SERVERSIDE_FEATURES_ON'],
+    ).toBe('do-not-remove-for-testing-only')
   })
 
   it('should have ON list for the init container emtpy when nothing is toggled', () => {
@@ -109,6 +109,8 @@ describe('Server-side toggles', () => {
       sut,
       new UberChart(Staging),
     ) as SerializeSuccess
-    expect(result.serviceDef.initContainer!.env!['SSF_ON']).toBe('')
+    expect(
+      result.serviceDef.initContainer!.env!['SERVERSIDE_FEATURES_ON'],
+    ).toBe('')
   })
 })
