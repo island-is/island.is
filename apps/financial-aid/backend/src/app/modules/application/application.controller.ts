@@ -22,7 +22,7 @@ import {
   JwtAuthGuard,
   TokenGuard,
 } from '@island.is/financial-aid/auth'
-import type { User } from '@island.is/financial-aid/shared'
+import type { User, ApplicationFilters } from '@island.is/financial-aid/shared'
 import { ApplicationEventService } from '../applicationEvent'
 
 @Controller('api')
@@ -31,15 +31,13 @@ export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
   @UseGuards(TokenGuard)
-  @Get('me')
+  @Get('hasAppliedForPeriod')
   @ApiOkResponse({
     description:
       'Checks whether user has applied before and if it is the same month',
   })
-  async getHasUserAppliedForCurrentMonth(
-    @Query('nationalId') nationalId: string,
-  ) {
-    const hasApplied = await this.applicationService.hasUserAppliedForCurrentMonth(
+  async getHasAppliedForPeriod(@Query('nationalId') nationalId: string) {
+    const hasApplied = await this.applicationService.hasAppliedForPeriod(
       nationalId,
     )
     return hasApplied
@@ -70,6 +68,15 @@ export class ApplicationController {
     }
 
     return application
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('applicationFilters')
+  @ApiOkResponse({
+    description: 'Gets all existing applications filters',
+  })
+  getAllFilters(): Promise<ApplicationFilters> {
+    return this.applicationService.getAllFilters()
   }
 
   @UseGuards(JwtAuthGuard)

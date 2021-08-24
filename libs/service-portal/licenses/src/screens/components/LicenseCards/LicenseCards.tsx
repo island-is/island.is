@@ -37,6 +37,7 @@ const GenericLicensesQuery = gql`
           id
         }
         pkpass
+        pkpassVerify
         timeout
         status
       }
@@ -87,6 +88,20 @@ const generatePkPassMutation = gql`
   mutation generatePkPassMutation($input: GeneratePkPassInput!) {
     generatePkPass(input: $input) {
       pkpassUrl
+    }
+  }
+`
+
+const verifyPkPassMutation = gql`
+  mutation verifyPkPassMutation($input: VerifyPkPassInput!) {
+    verifyPkPass(input: $input) {
+      data
+      valid
+      error {
+        status
+        message
+        data
+      }
     }
   }
 `
@@ -182,6 +197,52 @@ const PkPass = ({ licenseType }: PkPassProps) => {
   )
 }
 
+const PkPassVerify = ({ licenseType }: PkPassProps) => {
+  const [pkpass, setPkpass] = useState<string | null>(null)
+  const [text, setText] = useState<string>('')
+  const [error, setError] = useState<string | undefined>()
+  const [valid, setValid] = useState<boolean | undefined>()
+  const { data: userProfile } = useUserProfile()
+  const locale = (userProfile?.locale as Locale) ?? 'is'
+  const [verifyPkPass, { loading }] = useMutation(verifyPkPassMutation)
+
+  const onClick = async () => {
+    setValid(undefined)
+    setError(undefined)
+    const response = await verifyPkPass({
+      variables: { locale, input: { licenseType, data: text } },
+    })
+
+    if (!response.errors) {
+      setValid(response?.data?.verifyPkPass?.valid ?? false)
+
+      if (response?.data?.verifyPkPass?.error) {
+        const errorObject = response?.data?.verifyPkPass?.error
+        setError(
+          `Villa "${errorObject?.status}": "${
+            errorObject?.message
+          }". ${JSON.stringify(errorObject.data)}`,
+        )
+      }
+
+      setPkpass(response?.data?.verifyPkPass?.data ?? null)
+    } else {
+      setPkpass(JSON.stringify(response.errors))
+    }
+  }
+
+  return (
+    <>
+      <textarea onChange={(e) => setText(e.target?.value ?? '')} value={text} />
+      <Button onClick={onClick}>Staðfesta pkpass</Button>
+      {loading && <SkeletonLoader width="100%" height={158} />}
+      {typeof valid === 'boolean' && <p>{valid ? 'GILT' : 'ÓGILT'}</p>}
+      {pkpass && <p>{pkpass}</p>}
+      {error && <p>{error}</p>}
+    </>
+  )
+}
+
 const LicenseCards = () => {
   const [showLicense, setShowLicense] = useState<boolean>(false)
   const { data: userProfile } = useUserProfile()
@@ -249,6 +310,15 @@ const LicenseCards = () => {
               <PkPass licenseType={license.license.type} />
             )}
             {!license.license.pkpass && <p>Skírteini hefur ekki pkpass</p>}
+          </>
+          <>
+            <h2>PKPASS staðfesting</h2>
+            {license.license.pkpassVerify && (
+              <PkPassVerify licenseType={license.license.type} />
+            )}
+            {!license.license.pkpassVerify && (
+              <p>Skírteini hefur ekki staðfestingu á pkpass</p>
+            )}
           </>
         </Box>
       ))}

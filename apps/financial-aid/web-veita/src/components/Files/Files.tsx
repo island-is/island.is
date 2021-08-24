@@ -21,13 +21,15 @@ const Files = ({ heading, className, filesArray }: Props) => {
       </Text>
       {filesArray && (
         <>
-          {filesArray.map((item) => {
+          {filesArray.map((item, index) => {
             let sizeInKilo = Math.floor(item.size / 1000)
 
             return (
               <a
+                key={'file-' + index}
                 href={item.name}
                 target="_blank"
+                rel="noreferrer noopener"
                 className={styles.filesLink}
                 download
               >
