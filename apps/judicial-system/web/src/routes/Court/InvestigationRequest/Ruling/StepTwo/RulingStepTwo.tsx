@@ -30,11 +30,8 @@ const RulingStepTwo = () => {
 
   useEffect(() => {
     if (!workingCase && data?.case) {
-      if (
-        data.case.decision === CaseDecision.ACCEPTING &&
-        data.case.prosecutorDemands
-      ) {
-        autofill('conclusion', data.case.prosecutorDemands, data.case)
+      if (data.case.decision === CaseDecision.ACCEPTING && data.case.demands) {
+        autofill('conclusion', data.case.demands, data.case)
       }
       setWorkingCase(data.case)
     }
