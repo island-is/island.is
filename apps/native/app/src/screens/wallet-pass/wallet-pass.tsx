@@ -71,6 +71,11 @@ const LoadingOverlay = styled.View`
   width: 100%;
   height: 100%;
 `;
+
+const Spacer = styled.View`
+  height: 150px;
+`;
+
 const {
   useNavigationOptions,
   getNavigationOptions,
@@ -241,7 +246,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             <FieldRender data={fields} />
           )}
         </SafeAreaView>
-        <View style={{ height: 60 }} />
+        <Spacer />
       </Information>
       <SafeAreaView
         style={{
