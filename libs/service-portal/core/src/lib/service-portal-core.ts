@@ -129,7 +129,7 @@ export interface ServicePortalModule {
   /**
    * Dynamic routes that might have a slow response time will be loaded after inital routes.
    */
-  dynamicRoutes: (
+  dynamicRoutes?: (
     props: ServicePortalModuleProps,
   ) => Promise<ServicePortalRoute[]>
   /**
