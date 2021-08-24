@@ -144,6 +144,7 @@ const DefendantForm: React.FC<Props> = (props) => {
               defaultValue={workingCase.description}
               errorMessage={petitionDescriptionEM}
               hasError={petitionDescriptionEM !== ''}
+              autoComplete="off"
               onChange={(event) => {
                 removeTabsValidateAndSet(
                   'description',

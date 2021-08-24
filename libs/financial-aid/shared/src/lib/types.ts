@@ -27,6 +27,14 @@ export enum StaffRoles {
   MODERATOR = 'MODERATOR',
 }
 
+export interface ApplicationFilters {
+  New: number
+  InProgress: number
+  DataNeeded: number
+  Rejected: number
+  Approved: number
+}
+
 export interface Application {
   id: string
   created: string
@@ -144,7 +152,6 @@ export interface User {
   service: 'osk' | 'veita'
   hasAppliedForPeriod?: boolean
   municipalityId?: 'hfj'
-  // role?: StaffRoles
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }

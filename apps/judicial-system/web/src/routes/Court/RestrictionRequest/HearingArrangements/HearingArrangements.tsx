@@ -67,7 +67,12 @@ export const HearingArrangements: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { updateCase, sendNotification, isSendingNotification } = useCase()
+  const {
+    updateCase,
+    sendNotification,
+    isSendingNotification,
+    autofill,
+  } = useCase()
   const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -117,20 +122,15 @@ export const HearingArrangements: React.FC = () => {
 
   useEffect(() => {
     if (!workingCase && data?.case) {
-      let theCase = data.case
+      const theCase = data.case
 
-      if (!theCase.courtDate && theCase.requestedCourtDate) {
-        updateCase(
-          theCase.id,
-          parseString('courtDate', theCase.requestedCourtDate),
-        )
-
-        theCase = { ...theCase, courtDate: theCase.requestedCourtDate }
+      if (theCase.requestedCourtDate) {
+        autofill('courtDate', theCase.requestedCourtDate, theCase)
       }
 
       setWorkingCase(theCase)
     }
-  }, [setWorkingCase, workingCase, updateCase, data])
+  }, [setWorkingCase, workingCase, autofill, data])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -302,6 +302,7 @@ export const HearingArrangements: React.FC = () => {
                     data-testid="courtroom"
                     name="courtroom"
                     label="Dómsalur"
+                    autoComplete="off"
                     defaultValue={workingCase.courtRoom}
                     placeholder="Skráðu inn dómsal"
                     onChange={(event) =>
@@ -343,6 +344,7 @@ export const HearingArrangements: React.FC = () => {
                   <Input
                     name="defenderName"
                     label="Nafn verjanda"
+                    autoComplete="off"
                     defaultValue={workingCase.defenderName}
                     placeholder="Fullt nafn"
                     onChange={(event) =>
@@ -369,6 +371,7 @@ export const HearingArrangements: React.FC = () => {
                   <Input
                     name="defenderEmail"
                     label="Netfang verjanda"
+                    autoComplete="off"
                     defaultValue={workingCase.defenderEmail}
                     placeholder="Netfang"
                     errorMessage={defenderEmailErrorMessage}
@@ -424,6 +427,7 @@ export const HearingArrangements: React.FC = () => {
                   <Input
                     name="defenderPhoneNumber"
                     label="Símanúmer verjanda"
+                    autoComplete="off"
                     defaultValue={workingCase.defenderPhoneNumber}
                     placeholder="Símanúmer"
                     errorMessage={defenderPhoneNumberErrorMessage}

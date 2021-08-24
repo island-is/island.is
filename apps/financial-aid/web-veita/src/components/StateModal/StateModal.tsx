@@ -13,7 +13,7 @@ import {
 
 import { UpdateApplicationMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
-import { NavigationStatisticsContext } from '@island.is/financial-aid-web/veita/src/components/NavigationStatisticsProvider/NavigationStatisticsProvider'
+import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
 import { Application, ApplicationState } from '@island.is/financial-aid/shared'
 
@@ -44,7 +44,9 @@ const StateModal = ({
     type: undefined,
   })
 
-  const { statistics, setStatistics } = useContext(NavigationStatisticsContext)
+  const { applicationFilters, setApplicationFilters } = useContext(
+    ApplicationFiltersContext,
+  )
 
   const [
     updateApplicationMutation,
@@ -75,11 +77,11 @@ const StateModal = ({
     onVisiblityChange(!isVisible)
     onStateChange(state)
 
-    if (statistics && setStatistics) {
-      setStatistics((preState) => ({
+    if (applicationFilters && setApplicationFilters) {
+      setApplicationFilters((preState) => ({
         ...preState,
-        [prevState]: statistics[prevState] - 1,
-        [state]: statistics[state] + 1,
+        [prevState]: applicationFilters[prevState] - 1,
+        [state]: applicationFilters[state] + 1,
       }))
     }
   }
@@ -88,6 +90,18 @@ const StateModal = ({
     if (!inputType.show) {
       onVisiblityChange(false)
     }
+  }
+
+  const headingText = (inputType: InputType): string => {
+    if (inputType.show) {
+      switch (inputType.type) {
+        case ApplicationState.REJECTED:
+          return 'Synja umsókn'
+        case ApplicationState.APPROVED:
+          return 'Samþykkja umsókn'
+      }
+    }
+    return 'Stöðubreyting'
   }
 
   return (
@@ -116,7 +130,7 @@ const StateModal = ({
             className={styles.modalHeadline}
           >
             <Text fontWeight="semiBold" color="white">
-              Stöðubreyting
+              {headingText(inputType)}
             </Text>
           </Box>
 

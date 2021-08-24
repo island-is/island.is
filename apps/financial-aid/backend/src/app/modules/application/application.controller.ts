@@ -20,21 +20,10 @@ import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
-  RolesGuard,
-  RolesRules,
   TokenGuard,
 } from '@island.is/financial-aid/auth'
-import type { User, StaffRoles } from '@island.is/financial-aid/shared'
-
-// Allows only staff
-const staffRule = 'veita'
-
-const test = {
-  service: 'veita',
-  muni: 'hfj',
-}
-// Allows only staff
-const municipalityRule = 'hfj'
+import type { User, ApplicationFilters } from '@island.is/financial-aid/shared'
+import { ApplicationEventService } from '../applicationEvent'
 
 @Controller('api')
 @ApiTags('applications')
@@ -42,22 +31,19 @@ export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
   @UseGuards(TokenGuard)
-  @Get('me')
+  @Get('hasAppliedForPeriod')
   @ApiOkResponse({
     description:
       'Checks whether user has applied before and if it is the same month',
   })
-  async getHasUserAppliedForCurrentMonth(
-    @Query('nationalId') nationalId: string,
-  ) {
-    const hasApplied = await this.applicationService.hasUserAppliedForCurrentMonth(
+  async getHasAppliedForPeriod(@Query('nationalId') nationalId: string) {
+    const hasApplied = await this.applicationService.hasAppliedForPeriod(
       nationalId,
     )
     return hasApplied
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(staffRule)
+  @UseGuards(JwtAuthGuard)
   @Get('applications')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -82,6 +68,15 @@ export class ApplicationController {
     }
 
     return application
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('applicationFilters')
+  @ApiOkResponse({
+    description: 'Gets all existing applications filters',
+  })
+  getAllFilters(): Promise<ApplicationFilters> {
+    return this.applicationService.getAllFilters()
   }
 
   @UseGuards(JwtAuthGuard)

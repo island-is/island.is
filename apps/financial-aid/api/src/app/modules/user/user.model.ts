@@ -24,7 +24,4 @@ export class UserModel implements User {
 
   @Field()
   readonly municipalityId?: 'hfj'
-
-  @Field(() => String)
-  readonly role?: StaffRoles
 }

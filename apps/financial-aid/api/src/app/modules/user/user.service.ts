@@ -3,13 +3,12 @@ import fetch from 'isomorphic-fetch'
 import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
-import { StaffRoles } from '@island.is/financial-aid/shared'
 
 @Injectable()
 export class UserService {
-  async checkUserHistory(nationalId: string): Promise<boolean> {
+  async checkHasAppliedForPeriod(nationalId: string): Promise<boolean> {
     const res = await fetch(
-      `${environment.backend.url}/api/me/?nationalId=${nationalId}`,
+      `${environment.backend.url}/api/hasAppliedForPeriod/?nationalId=${nationalId}`,
       {
         headers: { authorization: `Bearer ${environment.auth.secretToken}` },
       },
@@ -17,9 +16,9 @@ export class UserService {
     return await res.json()
   }
 
-  async checkStaffRole(nationalId: string): Promise<StaffRoles> {
-    const mockRole = StaffRoles.MODERATOR
+  // async checkStaffRole(nationalId: string): Promise<StaffRoles> {
+  //   const mockRole = StaffRoles.MODERATOR
 
-    return Promise.resolve(mockRole)
-  }
+  //   return Promise.resolve(mockRole)
+  // }
 }
