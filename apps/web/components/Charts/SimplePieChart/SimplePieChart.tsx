@@ -52,9 +52,9 @@ export const SimplePieChart = ({ graphData }: GraphProps) => {
       <PieChart width={10} height={10}>
         <Pie
           dataKey={datakey}
-          isAnimationActive={true}
+          isAnimationActive={false}
           data={parsedData}
-          labelLine={true}
+          labelLine={false}
           label={renderCustomizedLabel}
           cx='50%'
           cy='50%'

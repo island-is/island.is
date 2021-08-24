@@ -91,7 +91,7 @@ export const renderCustomizedLabel = ({ cx, cy, midAngle, outerRadius, innerRadi
   const y = cy + radius * Math.sin(-midAngle * RADIAN)
 
   return (
-    <text x={x} y={y} fill="black" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+    <text x={x} y={y} fill="#00003C" textAnchor={x > outerRadius ? 'middle' : 'end'} dominantBaseline="central">
       {`${(percent * 100).toFixed(0)}%`}
     </text>
   )
