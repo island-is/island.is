@@ -1,6 +1,9 @@
 import { useStore } from '../../store/stateProvider'
 import { useEffect } from 'react'
-import { ServicePortalModule } from '@island.is/service-portal/core'
+import {
+  ServicePortalModule,
+  ServicePortalRoute,
+} from '@island.is/service-portal/core'
 import { Action, ActionType } from '../../store/actions'
 import { useModuleProps } from '../useModuleProps/useModuleProps'
 import { User } from 'oidc-client'
@@ -43,16 +46,18 @@ export const useRoutes = () => {
         Object.values(modules)
           .filter((module) => module.dynamicRoutes)
           .map((module) => {
-            return module.dynamicRoutes({
-              userInfo,
-              client,
-            })
+            if (module.dynamicRoutes) {
+              return module.dynamicRoutes({
+                userInfo,
+                client,
+              })
+            }
           }),
       ).then((dynamicRoutes) => {
         if (dynamicRoutes.length > 0) {
           dispatch({
             type: ActionType.UpdateFulfilledRoutes,
-            payload: flatten(dynamicRoutes),
+            payload: flatten(dynamicRoutes) as ServicePortalRoute[],
           })
         }
       })
