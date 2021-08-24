@@ -215,22 +215,12 @@ export function formatProsecutorCourtDateEmailNotification(
   court: string,
   courtDate: Date,
   courtRoom: string,
+  judgeName: string,
+  registrarName: string,
   defenderName: string,
   defenderIsSpokesperson: boolean,
   sessionArrangements: SessionArrangements = SessionArrangements.ALL_PRESENT, // Defaults to ALL_PRESENT when not specified
 ): string {
-  const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
-  const courtRoomText =
-    sessionArrangements === SessionArrangements.REMOTE_SESSION
-      ? 'Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila.'
-      : `Dómsalur: ${courtRoom}.`
-  const defenderText = defenderName
-    ? `${
-        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
-      } sakbornings: ${defenderName}`
-    : `${
-        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
-      } sakbornings hefur ekki verið skráður`
   const scheduledCaseText =
     type === CaseType.CUSTODY
       ? 'gæsluvarðhaldskröfu'
@@ -239,8 +229,26 @@ export function formatProsecutorCourtDateEmailNotification(
       : type === CaseType.OTHER
       ? 'kröfu um rannsóknarheimild'
       : `kröfu um rannsóknarheimild (${caseTypes[type]})`
+  const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
+  const courtRoomText =
+    sessionArrangements === SessionArrangements.REMOTE_SESSION
+      ? 'Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila'
+      : `Dómsalur: ${courtRoom}`
+  const judgeText = judgeName
+    ? `Dómari: ${judgeName}`
+    : 'Dómari hefur ekki verið skráður'
+  const registrarText = registrarName
+    ? `Dómritari: ${registrarName}`
+    : 'Dómritari hefur ekki verið skráður'
+  const defenderText = defenderName
+    ? `${
+        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+      } sakbornings: ${defenderName}`
+    : `${
+        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+      } sakbornings hefur ekki verið skráður`
 
-  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />${courtRoomText}<br /><br />${defenderText}.`
+  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />${courtRoomText}.<br /><br />${judgeText}.<br /><br />${registrarText}.<br /><br />${defenderText}.`
 }
 
 export function formatPrisonCourtDateEmailNotification(

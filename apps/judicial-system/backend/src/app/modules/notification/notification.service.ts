@@ -364,6 +364,8 @@ export class NotificationService {
       existingCase.court?.name,
       existingCase.courtDate,
       existingCase.courtRoom,
+      existingCase.judge?.name,
+      existingCase.registrar?.name,
       existingCase.defenderName,
       existingCase.defenderIsSpokesperson,
       existingCase.sessionArrangements,
