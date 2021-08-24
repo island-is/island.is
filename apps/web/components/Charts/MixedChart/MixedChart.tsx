@@ -69,7 +69,7 @@ export const MixedChart = ({ graphData }: GraphProps) => {
             }
           />
         ))}
-        {parsedDatakeys.yAxis?.left &&
+        {parsedDatakeys.yAxis?.right &&
           parsedDatakeys.lines.map((item, index) => (
             <Line
               key={item.datakey}
