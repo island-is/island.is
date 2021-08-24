@@ -92,7 +92,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: {
-            target: States.NEEDS_DOCUMENT,
+            target: States.ADD_DOCUMENTS,
           },
         },
       },
@@ -137,6 +137,28 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.EDIT]: {
             target: States.NEEDS_DOCUMENT,
+          },
+        },
+      },
+      [States.ADD_DOCUMENTS]: {
+        meta: {
+          name: States.ADD_DOCUMENTS,
+          progress: 0.6,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/AddDocuments').then((val) =>
+                  Promise.resolve(val.AddDocuments),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: {
+            target: States.NEEDS_REVIEW,
           },
         },
       },

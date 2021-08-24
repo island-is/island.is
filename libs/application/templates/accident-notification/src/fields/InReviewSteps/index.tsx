@@ -39,6 +39,7 @@ const statesMap: StatesMap = {
 
 export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
   const { formatMessage } = useLocale()
+  console.log(application)
 
   const steps = [
     {

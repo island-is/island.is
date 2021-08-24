@@ -180,29 +180,33 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
         </>
       )}
 
-      <Text variant="h4" paddingTop={6} paddingBottom={3}>
-        {formatText(
-          locationAndPurpose.general.title,
-          application,
-          formatMessage,
-        )}
-      </Text>
-      <ReviewGroup isLast editAction={() => null}>
-        <GridRow>
-          <GridColumn span="12/12">
-            <ValueLine
-              label={locationAndPurpose.labels.location}
-              value={answers.locationAndPurpose.location}
-            />
-          </GridColumn>
-          <GridColumn span="12/12">
-            <ValueLine
-              label={locationAndPurpose.labels.purpose}
-              value={answers.locationAndPurpose.purpose}
-            />
-          </GridColumn>
-        </GridRow>
-      </ReviewGroup>
+      {answers.locationAndPurpose && (
+        <>
+          <Text variant="h4" paddingTop={6} paddingBottom={3}>
+            {formatText(
+              locationAndPurpose.general.title,
+              application,
+              formatMessage,
+            )}
+          </Text>
+          <ReviewGroup isLast editAction={() => null}>
+            <GridRow>
+              <GridColumn span="12/12">
+                <ValueLine
+                  label={locationAndPurpose.labels.location}
+                  value={answers.locationAndPurpose.location}
+                />
+              </GridColumn>
+              <GridColumn span="12/12">
+                <ValueLine
+                  label={locationAndPurpose.labels.purpose}
+                  value={answers.locationAndPurpose.purpose}
+                />
+              </GridColumn>
+            </GridRow>
+          </ReviewGroup>
+        </>
+      )}
 
       {workplaceData && !isReportingOnBehalfOfEmployee(answers as FormValue) && (
         <>

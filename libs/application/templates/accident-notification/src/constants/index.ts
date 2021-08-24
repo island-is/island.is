@@ -16,4 +16,6 @@ export enum States {
   NEEDS_REVIEW = 'needsReview',
   NEEDS_DOCUMENT_AND_REVIEW = 'needsDocumentAndReview',
   IN_FINAL_REVIEW = 'inFinalReview',
+
+  ADD_DOCUMENTS = 'addDocuments',
 }
