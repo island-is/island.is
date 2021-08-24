@@ -185,12 +185,6 @@ export function formatCourtReadyForCourtSmsNotification(
   prosecutorName: string,
   court: string,
 ) {
-  // Prosecutor
-  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
-
-  // Court
-  const courtText = ` Dómstóll: ${court ?? 'Ekki skráður'}.`
-
   const submittedCaseText =
     type === CaseType.CUSTODY
       ? 'Gæsluvarðhaldskrafa'
@@ -199,15 +193,25 @@ export function formatCourtReadyForCourtSmsNotification(
       : type === CaseType.OTHER
       ? 'Krafa um rannsóknarheimild'
       : `Krafa um rannsóknarheimild (${caseTypes[type]})`
+  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
+  const courtText = ` Dómstóll: ${court ?? 'Ekki skráður'}.`
 
   return `${submittedCaseText} tilbúin til afgreiðslu.${prosecutorText}${courtText}`
 }
 
 export function formatProsecutorReceivedByCourtSmsNotification(
+  type: CaseType,
   court: string,
   courtCaseNumber: string,
 ): string {
-  return `${court} hefur móttekið kröfu sem þú sendir og úthlutað málsnúmerinu ${courtCaseNumber}.`
+  const receivedCaseText =
+    type === CaseType.CUSTODY || type === CaseType.TRAVEL_BAN
+      ? `${caseTypes[type]}`
+      : type === CaseType.OTHER
+      ? 'rannsóknarheimild'
+      : `rannsóknarheimild (${caseTypes[type]})`
+
+  return `${court} hefur móttekið kröfu um ${receivedCaseText} sem þú sendir og úthlutað málsnúmerinu ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.`
 }
 
 export function formatProsecutorCourtDateEmailNotification(
