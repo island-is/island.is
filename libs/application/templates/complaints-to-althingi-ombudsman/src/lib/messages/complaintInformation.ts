@@ -49,14 +49,4 @@ export const complaintInformation = defineMessages({
     defaultMessage: 'Kæruleiðir',
     description: 'The title of the appeals section',
   },
-  yes: {
-    id: 'ctao.application.appeals.values.yes',
-    defaultMessage: 'Já',
-    description: 'Label for appeals radio',
-  },
-  no: {
-    id: 'ctao.application.appeals.values.no',
-    defaultMessage: 'Nei',
-    description: 'Label for appeals radio',
-  },
 })

@@ -26,7 +26,7 @@ const HearingArrangements = () => {
 
   const router = useRouter()
   const id = router.query.id
-  const { sendNotification, isSendingNotification } = useCase()
+  const { sendNotification, isSendingNotification, autofill } = useCase()
   const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -45,9 +45,15 @@ const HearingArrangements = () => {
 
   useEffect(() => {
     if (!workingCase && data?.case) {
-      setWorkingCase(data.case)
+      const theCase = data.case
+
+      if (theCase.requestedCourtDate) {
+        autofill('courtDate', theCase.requestedCourtDate, theCase)
+      }
+
+      setWorkingCase(theCase)
     }
-  }, [workingCase, setWorkingCase, data])
+  }, [workingCase, setWorkingCase, data, autofill])
 
   const handleNextButtonClick = async () => {
     if (workingCase) {
@@ -91,12 +97,11 @@ const HearingArrangements = () => {
             <Modal
               title={formatMessage(icHearingArrangements.modal.heading)}
               text={formatMessage(icHearingArrangements.modal.text, {
-                defenderTypeNomative: workingCase.defenderIsSpokesperson
-                  ? 'talsmaður'
-                  : 'verjandi',
-                defenderTypeAccusative: workingCase.defenderIsSpokesperson
-                  ? 'talsmanninn'
-                  : 'verjandann',
+                announcementSuffix: !workingCase.defenderEmail
+                  ? '.'
+                  : workingCase.defenderIsSpokesperson
+                  ? ` og talsmann.`
+                  : ` og verjanda.`,
               })}
               handlePrimaryButtonClick={() => {
                 router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${id}`)

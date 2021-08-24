@@ -1,4 +1,3 @@
-import { ChargeType } from './deptCharge.enum'
 import { ScheduleType } from './schedule.enum'
 
 export interface DebtSchedulesResponse {
@@ -16,7 +15,7 @@ export interface DebtSchedules {
 }
 
 export interface ScheduleCharge {
-  id: ChargeType
+  id: string
   name: string
   principal: number
   intrest: number
