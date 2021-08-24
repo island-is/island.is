@@ -39,7 +39,11 @@ const FinanceStatusDetailTable: FC<Props> = ({
               { value: formatMessage(m.status), align: 'right' },
             ].map((item, i) => (
               <T.HeadData
-                box={{ textAlign: item.align as 'right' | undefined }}
+                box={{
+                  textAlign: item.align as 'right' | undefined,
+                  paddingRight: 2,
+                  paddingLeft: 2,
+                }}
                 key={i}
                 text={{ truncate: true }}
               >
@@ -106,7 +110,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 { value: amountFormat(row.paid), align: 'right' },
                 { value: amountFormat(row.totals), align: 'right' },
               ].map((item, ii) => (
-                <T.Data key={ii}>
+                <T.Data box={{ paddingRight: 2, paddingLeft: 2 }} key={ii}>
                   <div
                     className={cn(styles.td, { [styles.alignTd]: item.align })}
                   >
