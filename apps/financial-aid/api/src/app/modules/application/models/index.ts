@@ -1,3 +1,3 @@
 export { ApplicationModel } from './application.model'
-export { ActiveApplicationModel } from './activeApplication.model'
+export { CurrentApplicationModel } from './currentApplication.model'
 export { ApplicationFiltersModel } from './applicationFilter.model'

@@ -33,14 +33,14 @@ const MainPage = () => {
   const logOut = useLogOut()
 
   const currentState = useMemo(() => {
-    if (user?.activeApplication) {
-      return user.activeApplication[0].state
+    if (user?.currentApplication) {
+      return user.currentApplication.state
     }
   }, [user])
 
-  const activeApplicationID = useMemo(() => {
-    if (user?.activeApplication) {
-      return user.activeApplication[0].id
+  const currentApplicationID = useMemo(() => {
+    if (user?.currentApplication) {
+      return user.currentApplication.id
     }
   }, [user])
 
@@ -54,7 +54,7 @@ const MainPage = () => {
         currentState && getState[currentState].toLowerCase()
       }`,
       label: 'Sjá nánar',
-      link: `${activeApplicationID}`,
+      link: `${currentApplicationID}`,
     },
     {
       heading: 'Áætluð aðstoð',

@@ -71,7 +71,7 @@ export const CurrentUserQuery = gql`
       nationalId
       name
       phoneNumber
-      activeApplication {
+      currentApplication {
         id
         state
         homeCircumstances

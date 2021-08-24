@@ -58,7 +58,7 @@ export interface Application {
   rejection?: string
 }
 
-export interface ActiveApplication {
+export interface CurrentApplication {
   id: string
   homeCircumstances: HomeCircumstances
   usePersonalTaxCredit: boolean
@@ -152,7 +152,7 @@ export interface User {
   phoneNumber: string
   folder: string
   service: 'osk' | 'veita'
-  activeApplication?: ActiveApplication[]
+  currentApplication?: CurrentApplication
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }

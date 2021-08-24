@@ -12,7 +12,7 @@ import {
 import { UserModel } from './user.model'
 import { UserService } from './user.service'
 
-import { ActiveApplicationModel } from '../application'
+import { CurrentApplicationModel } from '../application'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => UserModel)
@@ -32,21 +32,10 @@ export class UserResolver {
     return user as UserModel
   }
 
-  // @ResolveField('hasAppliedForPeriod', () => boolean, { nullable: true })
-  // async hasAppliedForPeriod(@Parent() user: User): Promise<boolean> {
-  //   console.log('here is apsssssp')
-  //   const app = await this.userService.checkHasAppliedForPeriod(user.nationalId)
-  //   console.log(app, 'here is app')
-  //   if (app != null) {
-  //     return true
-  //   }
-  //   return false
-  // }
-
-  @ResolveField('activeApplication', () => [ActiveApplicationModel])
-  async activeApplication(
+  @ResolveField('currentApplication', () => CurrentApplicationModel)
+  async currentApplication(
     @Parent() user: User,
-  ): Promise<ActiveApplicationModel[]> {
+  ): Promise<CurrentApplicationModel | null> {
     const app = await this.userService.checkHasAppliedForPeriod(user.nationalId)
     return app
   }

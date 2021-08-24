@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 import { User } from '@island.is/financial-aid/shared'
-import { ActiveApplicationModel } from '../application'
+import { CurrentApplicationModel } from '../application'
 
 @ObjectType()
 export class UserModel implements User {
@@ -20,9 +20,6 @@ export class UserModel implements User {
   @Field()
   readonly service!: 'osk' | 'veita'
 
-  @Field({ nullable: true })
-  readonly hasAppliedForPeriod?: boolean
-
-  @Field(() => [ActiveApplicationModel], { nullable: true })
-  readonly activeApplication?: ActiveApplicationModel[]
+  @Field(() => CurrentApplicationModel, { nullable: true })
+  readonly currentApplication?: CurrentApplicationModel
 }

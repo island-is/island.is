@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Text, FormStepper, LoadingDots } from '@island.is/island-ui/core'
 
 import {
@@ -7,7 +7,6 @@ import {
   StatusLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { ApplicationEvent, getState } from '@island.is/financial-aid/shared'
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
 import { useQuery } from '@apollo/client'
 import { GetApplicationEventQuery } from '@island.is/financial-aid-web/oskgraphql'
@@ -22,7 +21,7 @@ interface ApplicationEventData {
 const Timeline = () => {
   const router = useRouter()
 
-  const { data, error, loading } = useQuery<ApplicationEventData>(
+  const { data, loading } = useQuery<ApplicationEventData>(
     GetApplicationEventQuery,
     {
       variables: { input: { id: router.query.id } },

@@ -21,14 +21,11 @@ interface Props {
 const History = ({ className }: Props) => {
   const router = useRouter()
 
-  const { data, error, loading } = useQuery<ApplicationEventData>(
-    GetApplicationEventQuery,
-    {
-      variables: { input: { id: router.query.id } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const { data } = useQuery<ApplicationEventData>(GetApplicationEventQuery, {
+    variables: { input: { id: router.query.id } },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   return (
     <Box

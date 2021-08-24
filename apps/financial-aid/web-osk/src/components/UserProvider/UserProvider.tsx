@@ -19,7 +19,7 @@ export const UserContext = createContext<UserProvider>({})
 
 const UserProvider = ({ children }: Props) => {
   const [user, setUser] = useState<User>()
-  console.log(user)
+  console.log({ user })
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(Cookies.get(CSRF_COOKIE_NAME)),

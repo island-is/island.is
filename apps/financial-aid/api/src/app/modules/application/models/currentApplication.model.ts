@@ -3,11 +3,11 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import {
   HomeCircumstances,
   ApplicationState,
-  ActiveApplication,
+  CurrentApplication,
 } from '@island.is/financial-aid/shared'
 
 @ObjectType()
-export class ActiveApplicationModel implements ActiveApplication {
+export class CurrentApplicationModel implements CurrentApplication {
   @Field(() => ID)
   readonly id!: string
 

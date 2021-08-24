@@ -13,7 +13,7 @@ import {
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 
 import { ApplicationService } from './application.service'
-import { ActiveApplicationModel, ApplicationModel } from './models'
+import { CurrentApplicationModel, ApplicationModel } from './models'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
@@ -32,7 +32,7 @@ export class ApplicationController {
   @UseGuards(TokenGuard)
   @Get('hasAppliedForPeriod')
   @ApiOkResponse({
-    type: ActiveApplicationModel,
+    type: CurrentApplicationModel,
     description:
       'Checks whether user has applied before and if it is the same month',
   })
@@ -40,7 +40,6 @@ export class ApplicationController {
     const application = await this.applicationService.hasAppliedForPeriod(
       nationalId,
     )
-
     return application
   }
 
