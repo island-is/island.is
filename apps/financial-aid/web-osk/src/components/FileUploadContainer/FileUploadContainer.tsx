@@ -1,7 +1,6 @@
-import React, { ReactNode, useContext } from 'react'
-import { Text, GridContainer, Box } from '@island.is/island-ui/core'
+import React, { ReactNode } from 'react'
+import { Text, Box } from '@island.is/island-ui/core'
 
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 import * as styles from './FileUploadContainer.treat'
 import cn from 'classnames'
 
