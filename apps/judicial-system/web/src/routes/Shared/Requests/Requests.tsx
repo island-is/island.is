@@ -145,9 +145,25 @@ export const Requests: React.FC = () => {
         caseToOpen.type === CaseType.CUSTODY ||
         caseToOpen.type === CaseType.TRAVEL_BAN
       ) {
-        router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
+        if (
+          caseToOpen.state === CaseState.RECEIVED ||
+          caseToOpen.state === CaseState.SUBMITTED
+        ) {
+          router.push(`${Constants.STEP_SIX_ROUTE}/${caseToOpen.id}`)
+        } else {
+          router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
+        }
       } else {
-        router.push(`${Constants.IC_DEFENDANT_ROUTE}/${caseToOpen.id}`)
+        if (
+          caseToOpen.state === CaseState.RECEIVED ||
+          caseToOpen.state === CaseState.SUBMITTED
+        ) {
+          router.push(
+            `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${caseToOpen.id}`,
+          )
+        } else {
+          router.push(`${Constants.IC_DEFENDANT_ROUTE}/${caseToOpen.id}`)
+        }
       }
     }
   }

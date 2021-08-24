@@ -11,14 +11,14 @@ export const icRequestedHearingArrangements = {
   modal: defineMessages({
     heading: {
       id:
-        'judicial.system:investigation_cases.requested_hearing_arrangements.modal.heading',
+        'judicial.system.investigation_cases:requested_hearing_arrangements.modal.heading',
       defaultMessage: 'Viltu senda tilkynningu?',
       description:
         'Notaður sem titill fyrir "viltu senda tilkynningu" tilkynningagluggan á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
     },
     text: {
       id:
-        'judicial.system:investigation_cases.requested_hearing_arrangements.modal.text',
+        'judicial.system.investigation_cases:requested_hearing_arrangements.modal.text',
       defaultMessage:
         'Með því að senda tilkynningu á dómara og dómritara á vakt um að krafa um rannsóknarheimild sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir.',
       description:

@@ -32,6 +32,8 @@ type autofillProperties = Pick<
   | 'isolationToDate'
   | 'prosecutorOnlySessionRequest'
   | 'otherRestrictions'
+  | 'conclusion'
+  | 'courtDate'
 >
 
 interface CreateCaseMutationResponse {
@@ -215,16 +217,20 @@ const useCase = () => {
       id: string,
       notificationType: NotificationType,
     ): Promise<boolean> => {
-      const { data } = await sendNotificationMutation({
-        variables: {
-          input: {
-            caseId: id,
-            type: notificationType,
+      try {
+        const { data } = await sendNotificationMutation({
+          variables: {
+            input: {
+              caseId: id,
+              type: notificationType,
+            },
           },
-        },
-      })
+        })
 
-      return Boolean(data?.sendNotification?.notificationSent)
+        return Boolean(data?.sendNotification?.notificationSent)
+      } catch (e) {
+        return false
+      }
     },
     [sendNotificationMutation],
   )

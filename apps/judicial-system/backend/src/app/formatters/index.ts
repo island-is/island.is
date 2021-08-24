@@ -1,6 +1,7 @@
 export {
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
+  formatProsecutorReceivedByCourtSmsNotification,
   formatProsecutorCourtDateEmailNotification,
   formatPrisonCourtDateEmailNotification,
   formatDefenderCourtDateEmailNotification,
