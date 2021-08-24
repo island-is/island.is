@@ -16,12 +16,14 @@ interface SearchInputProps {
   size?: AsyncSearchProps['size']
   logoTitle?: string
   logoUrl?: string
+  colored?: boolean
 }
 
 export const SearchInput = ({
   title = '',
   logoTitle = '',
   logoUrl,
+  colored = false,
   size = 'large',
 }: SearchInputProps) => {
   const timerRef = useRef(null)
@@ -30,17 +32,17 @@ export const SearchInput = ({
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
 
-  useMemo(() => {
-    clearTimeout(timerRef.current)
+  //useMemo(() => {
+  //  clearTimeout(timerRef.current)
 
-    if (searchTerms) {
-      console.log('first search!', searchTerms)
-    } else {
-      timerRef.current = setTimeout(() => {
-        console.log('doing new search!', searchTerms)
-      }, DEBOUNCE_TIMER)
-    }
-  }, [searchTerms])
+  //  if (searchTerms) {
+  //    console.log('first search!', searchTerms)
+  //  } else {
+  //    timerRef.current = setTimeout(() => {
+  //      console.log('doing new search!', searchTerms)
+  //    }, DEBOUNCE_TIMER)
+  //  }
+  //}, [searchTerms])
 
   const options =
     [].map(({ title }, index) => {
@@ -53,12 +55,10 @@ export const SearchInput = ({
   return (
     <AsyncSearch
       size={size}
+      colored={colored}
       key="island-helpdesk"
       placeholder="Leitaðu á þjónustuvefnum"
       options={options}
-      onChange={(value) => {
-        console.log('onChange', value)
-      }}
       inputValue={searchTerms}
       onInputValueChange={(value) => setSearchTerms(value)}
       onSubmit={(value) => {

@@ -90,11 +90,7 @@ const ServiceSearch: Screen<CategoryProps> = ({
       <ServiceWebHeader logoTitle={'Þjónustuvefur - Leit'} />
       <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
 
-      <Box
-        margin={[3, 3, 10]}
-        className={styles.searchResultContent}
-        width="half"
-      >
+      <Box margin={[3, 3, 10]} width="half">
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs
             items={[
@@ -112,11 +108,9 @@ const ServiceSearch: Screen<CategoryProps> = ({
           <SearchInput
             id="search_input_search_page"
             ref={searchRef}
+            colored={true}
             size="large"
-            quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
-            activeLocale={activeLocale}
             initialInputValue={q}
-            autosuggest={false}
           />
 
           {searchResultsItems.length === 0 ? (
@@ -141,6 +135,12 @@ const ServiceSearch: Screen<CategoryProps> = ({
             </Box>
           )}
         </Stack>
+      </Box>
+      <Box
+        margin={[3, 3, 10]}
+        className={styles.searchResultContent}
+        width="half"
+      >
         <Stack space={2}>
           {searchResultsItems.map(({ labels, parentTitle, ...rest }, index) => {
             const tags: Array<CardTagsProps> = []

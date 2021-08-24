@@ -84,6 +84,8 @@ import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.in
 import { SupportForm } from './models/supportForm.model'
 import { GetSupportFormInOrganizationInput } from './dto/getSupportFormInOrganization.input'
 import { GetSupportQNAsInOrganizationInput } from './dto/getSupportQNAsInOrganization.input'
+import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
+import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
 
 const { cacheTime } = environment
 
@@ -451,6 +453,22 @@ export class CmsResolver {
     @Args('input') input: GetSupportCategoryInput,
   ): Promise<SupportCategory> {
     return this.cmsContentfulService.getSupportCategory(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [SupportCategory])
+  getSupportCategories(
+    @Args('input') input: GetSupportCategoriesInput,
+  ): Promise<SupportCategory[]> {
+    return this.cmsContentfulService.getSupportCategories(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [SupportCategory])
+  getSupportCategoriesInOrganization(
+    @Args('input') input: GetSupportCategoriesInOrganizationInput,
+  ): Promise<SupportCategory[]> {
+    return this.cmsContentfulService.getSupportCategoriesInOrganization(input)
   }
 
   @Directive(cacheControlDirective())

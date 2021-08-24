@@ -2959,6 +2959,9 @@ export interface ISupportCategoryFields {
 
   /** slug */
   slug: string
+
+  /** organization */
+  organization: IOrganization
 }
 
 /** Category for the helpdesk questions, used for grouping QNAs */

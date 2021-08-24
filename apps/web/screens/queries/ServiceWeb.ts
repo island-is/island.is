@@ -92,6 +92,34 @@ export const GET_SUPPORT_CATEGORY = gql`
   }
 `
 
+export const GET_SUPPORT_CATEGORIES = gql`
+  query GET_SUPPORT_CATEGORIES($input: GetSupportCategoriesInput!) {
+    getSupportCategories(input: $input) {
+      title
+      description
+      slug
+      organization {
+        slug
+      }
+    }
+  }
+`
+
+export const GET_SUPPORT_CATEGORIES_IN_ORGANIZATION = gql`
+  query GET_SUPPORT_CATEGORIES_IN_ORGANIZATION(
+    $input: GetSupportCategoriesInOrganizationInput!
+  ) {
+    getSupportCategoriesInOrganization(input: $input) {
+      title
+      description
+      slug
+      organization {
+        slug
+      }
+    }
+  }
+`
+
 export const GET_SUPPORT_FORM_IN_ORGANIZATION = gql`
   query GET_SUPPORT_FORM_IN_ORGANIZATION(
     $input: GetSupportFormInOrganizationInput!

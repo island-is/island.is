@@ -12,8 +12,8 @@ import {
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_QUERY,
-  GET_SUPPORT_QNAS,
-  GET_SUPPORT_QNAS_IN_ORGANIZATION,
+  GET_SUPPORT_CATEGORIES,
+  GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
 } from '../../queries'
 import { Screen } from '../../../types'
 import {
@@ -38,38 +38,18 @@ import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import ContactBanner from '../ContactBanner/ContactBanner'
 
-import { asSlug } from '../utils'
 import * as styles from './Home.treat'
 import * as sharedStyles from '../shared/styles.treat'
 
 interface HomeProps {
   organization?: Organization
   namespace: Query['getNamespace']
-  supportQNAs: Query['getSupportQNAs'] | Query['getSupportQNAsInOrganization']
+  supportCategories:
+    | Query['getSupportCategories']
+    | Query['getSupportCategoriesInOrganization']
 }
 
-function generateCategories(
-  supportQNAs: Query['getSupportQNAs'] | Query['getSupportQNAsInOrganization'],
-) {
-  const categorykeys = []
-  const categories = []
-  for (const supportQNA of supportQNAs) {
-    const categorykey = `${supportQNA.category.title}.${supportQNA.category.slug}`
-    if (!categorykeys.includes(categorykey)) {
-      categorykeys.push(categorykey)
-      categories.push({
-        title: supportQNA.category.title,
-        slug: supportQNA.category.slug,
-        description: supportQNA.category.description,
-        organizationSlug: supportQNA.organization.slug,
-      })
-    }
-  }
-
-  return categories
-}
-
-const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
+const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
   // const linkResolver = useLinkResolver()
   const { width } = useWindowSize()
 
@@ -83,7 +63,6 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
     '//images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
 
   const searchTitle = 'Getum við aðstoðað?'
-  const supportCategories = generateCategories(supportQNAs)
 
   return (
     <>
@@ -108,7 +87,7 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
             </GridRow>
             <GridRow>
               {supportCategories.map(
-                ({ title, slug, description, organizationSlug }, index) => {
+                ({ title, slug, description, organization }, index) => {
                   return (
                     <GridColumn
                       key={index}
@@ -120,9 +99,7 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
                         description={description}
                         link={
                           {
-                            href: `/thjonustuvefur/${organizationSlug}/${asSlug(
-                              slug,
-                            )}`,
+                            href: `/thjonustuvefur/${organization.slug}/${slug}`,
                           } as LinkResolverResponse
                         }
                       />
@@ -164,7 +141,7 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
                     },
                   }}
                   items={supportCategories.map(
-                    ({ title, slug, description, organizationSlug }, index) => {
+                    ({ title, slug, description, organization }, index) => {
                       return (
                         <Card
                           key={index}
@@ -172,9 +149,7 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
                           description={description}
                           link={
                             {
-                              href: `/thjonustuvefur/${organizationSlug}/${asSlug(
-                                slug,
-                              )}`,
+                              href: `/thjonustuvefur/${organization.slug}/${slug}`,
                             } as LinkResolverResponse
                           }
                         />
@@ -232,9 +207,8 @@ const Home: Screen<HomeProps> = ({ organization, supportQNAs }) => {
 
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug as string
-  console.log('SLUG:', slug)
 
-  const [organization, namespace, supportQNAs] = await Promise.all([
+  const [organization, namespace, supportCategories] = await Promise.all([
     !!slug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
         query: GET_ORGANIZATION_QUERY,
@@ -262,7 +236,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
       ),
     slug
       ? apolloClient.query<Query, QueryGetSupportQnAsInOrganizationArgs>({
-          query: GET_SUPPORT_QNAS_IN_ORGANIZATION,
+          query: GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
           variables: {
             input: {
               lang: locale,
@@ -271,7 +245,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         })
       : apolloClient.query<Query, QueryGetSupportQnAsArgs>({
-          query: GET_SUPPORT_QNAS,
+          query: GET_SUPPORT_CATEGORIES,
           variables: {
             input: {
               lang: locale,
@@ -280,14 +254,19 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
         }),
   ])
 
-  const supportData = slug
-    ? supportQNAs?.data?.getSupportQNAsInOrganization
-    : supportQNAs?.data?.getSupportQNAs
+  let processedCategories = slug
+    ? supportCategories?.data?.getSupportCategoriesInOrganization
+    : supportCategories?.data?.getSupportCategories
+
+  // filter out categories that don't belong to an organization
+  processedCategories = processedCategories.filter(
+    (item) => !!item.organization,
+  )
 
   return {
     organization: organization?.data?.getOrganization,
     namespace,
-    supportQNAs: supportData,
+    supportCategories: processedCategories,
   }
 }
 
