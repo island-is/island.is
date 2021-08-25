@@ -16,7 +16,7 @@ export class SupportQNA {
   id!: string
 
   @Field()
-  question!: string
+  title!: string
 
   @Field(() => [SliceUnion])
   answer: Array<typeof SliceUnion> = []
@@ -36,7 +36,7 @@ export class SupportQNA {
 
 export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
   id: sys.id,
-  question: fields.question,
+  title: fields.question,
   answer: fields.answer ? mapDocument(fields.answer, sys.id) : [],
   slug: fields.slug,
   organization: fields.organization

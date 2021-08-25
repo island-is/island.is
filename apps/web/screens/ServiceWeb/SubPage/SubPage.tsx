@@ -121,7 +121,7 @@ const SubPage: Screen<SubPageProps> = ({
                     {question && (
                       <>
                         <Text marginTop={10} variant="h2" as="h2">
-                          {question.question}
+                          {question.title}
                         </Text>
 
                         <Box>

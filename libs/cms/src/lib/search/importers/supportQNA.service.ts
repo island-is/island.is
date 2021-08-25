@@ -3,7 +3,7 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import isCircular from 'is-circular'
-import { ISupportQna, ISupportQnaFields } from '../../generated/contentfulTypes'
+import { ISupportQna } from '../../generated/contentfulTypes'
 import { mapSupportQNA, SupportQNA } from '../../models/supportQNA.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import {
@@ -58,14 +58,14 @@ export class SupportQNASyncService implements CmsSyncProvider<ISupportQna> {
 
           return {
             _id: mapped.id,
-            title: mapped.question,
+            title: mapped.title,
             content: searchableContent,
             contentWordCount: searchableContent.split(/\s+/).length,
             processEntryCount: numberOfProcessEntries(mapped.answer),
             ...numberOfLinks(mapped.answer),
             type: 'webQNA',
             termPool: createTerms([
-              mapped.question,
+              mapped.title,
               mapped.category?.title ?? '',
               mapped.organization?.title ?? '',
             ]),

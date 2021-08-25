@@ -5,7 +5,7 @@ export const GET_SUPPORT_QNAS = gql`
   query GetSupportQNAs($input: GetSupportQNAsInput!) {
     getSupportQNAs(input: $input) {
       id
-      question
+      title
       answer {
         ...AllSlices
       }
@@ -34,7 +34,7 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
   query GetSupportQNAsInCategory($input: GetSupportQNAsInCategoryInput!) {
     getSupportQNAsInCategory(input: $input) {
       id
-      question
+      title
       slug
       subCategory {
         title
@@ -111,7 +111,7 @@ export const GET_SUPPORT_SEARCH_RESULTS_QUERY = gql`
       items {
         ... on SupportQNA {
           id
-          question
+          title
           slug
           category {
             title

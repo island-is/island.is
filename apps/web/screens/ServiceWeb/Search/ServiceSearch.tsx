@@ -63,7 +63,7 @@ const ServiceSearch: Screen<CategoryProps> = ({
 
   const searchResultsItems = (searchResults.items as Array<SupportQna>).map(
     (item) => ({
-      title: item.question,
+      title: item.title,
       parentTitle: item.organization?.title,
       description: item.organization?.description,
       link: {
