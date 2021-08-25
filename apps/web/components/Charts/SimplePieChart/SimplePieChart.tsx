@@ -9,7 +9,7 @@ import {
 } from 'recharts'
 import * as styles from './SimplePieChart.treat'
 import cn from 'classnames'
-import { COLORS } from '../utils'
+import { COLORS, renderCustomizedLabel } from '../utils'
 
 interface CustomTooltipProps extends TooltipProps<string, number> {
   sum: number
@@ -52,14 +52,13 @@ export const SimplePieChart = ({ graphData }: GraphProps) => {
       <PieChart width={10} height={10}>
         <Pie
           dataKey={datakey}
-          isAnimationActive={true}
+          isAnimationActive={false}
           data={parsedData}
+          labelLine={false}
+          label={renderCustomizedLabel}
           cx="50%"
           cy="50%"
           outerRadius={136}
-          fill="#8884d8"
-          label={false}
-          labelLine={false}
           startAngle={90}
           endAngle={-270}
         >

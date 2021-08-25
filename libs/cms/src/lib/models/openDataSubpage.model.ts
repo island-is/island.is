@@ -1,9 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IOpenDataPage } from '../generated/contentfulTypes'
 import * as types from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
 import { GraphCard, mapGraphCard } from './graphCard.model'
 import { StatisticsCard, mapStatisticsCard } from './statisticsCard.model'
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class OpenDataSubpage {
@@ -24,6 +24,9 @@ export class OpenDataSubpage {
 
   @Field(() => [GraphCard])
   graphCards?: Array<GraphCard>
+
+  @Field(() => Image, { nullable: true })
+  organizationLogo?: Image | null
 }
 
 export const mapOpenDataSubpage = ({
@@ -36,6 +39,8 @@ export const mapOpenDataSubpage = ({
   fundTitle: fields.fundTitle ?? '',
   fundDescription: fields.fundDescription ?? '',
   statisticsCards: (fields.statisticsCards ?? []).map(mapStatisticsCard),
-
   graphCards: (fields.graphCards ?? []).map(mapGraphCard),
+  organizationLogo: fields.organizationLogo
+    ? mapImage(fields.organizationLogo)
+    : null,
 })

@@ -38,6 +38,7 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
     fundDescription,
     statisticsCards,
     graphCards,
+    organizationLogo,
   } = page
   const data = [area, gender, category, applications]
   return (
@@ -59,19 +60,27 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
               </Link>
             </Box>
             <Box
-              padding={[2, 2, 4]}
+              padding={[2, 2, 2]}
               background="purple100"
               borderRadius="large"
               marginBottom={3}
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
             >
-              <Text variant="eyebrow" color="purple600">
-                Þjónustuaðili
-              </Text>
-              <Box display="flex" alignItems="center">
-                <Box display="inlineFlex" flexGrow={1}>
-                  <Text variant="h3" color="purple600">
-                    Rannís
-                  </Text>
+              {organizationLogo && (
+                <img src={organizationLogo.url} width={80} />
+              )}
+              <Box padding={1}>
+                <Text variant="eyebrow" color="purple600">
+                  Þjónustuaðili
+                </Text>
+                <Box display="flex" alignItems="center">
+                  <Box display="inlineFlex" flexGrow={1}>
+                    <Text variant="h3" color="purple600">
+                      Rannís
+                    </Text>
+                  </Box>
                 </Box>
               </Box>
             </Box>

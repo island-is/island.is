@@ -46,7 +46,7 @@ export const SimpleLineChart = ({ graphData }: SimpleLineChartGraphProps) => {
             }}
           >
             <CartesianGrid
-              strokeDasharray="1"
+              strokeDasharray="0"
               vertical={false}
               stroke="#CCDFFF"
             />
