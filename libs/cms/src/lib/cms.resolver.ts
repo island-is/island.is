@@ -85,7 +85,6 @@ import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
 import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
 import { SupportForm } from './models/supportForm.model'
 import { GetSupportFormInOrganizationInput } from './dto/getSupportFormInOrganization.input'
-import { GetSupportQNAsInOrganizationInput } from './dto/getSupportQNAsInOrganization.input'
 import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
 
@@ -447,14 +446,6 @@ export class CmsResolver {
     @Args('input') input: GetSupportQNAsInCategoryInput,
   ): Promise<SupportQNA[]> {
     return this.cmsContentfulService.getSupportQNAsInCategory(input)
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => [SupportQNA])
-  getSupportQNAsInOrganization(
-    @Args('input') input: GetSupportQNAsInOrganizationInput,
-  ): Promise<SupportQNA[]> {
-    return this.cmsContentfulService.getSupportQNAsInOrganization(input)
   }
 
   @Directive(cacheControlDirective())

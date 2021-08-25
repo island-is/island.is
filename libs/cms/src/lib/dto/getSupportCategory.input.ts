@@ -5,7 +5,7 @@ import { IsString } from 'class-validator'
 export class GetSupportCategoryInput {
   @Field(() => String)
   @IsString()
-  lang: string = 'is-IS'
+  lang = 'is-IS'
 
   @Field(() => String)
   @IsString()

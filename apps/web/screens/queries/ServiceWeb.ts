@@ -30,37 +30,6 @@ export const GET_SUPPORT_QNAS = gql`
   ${slices}
 `
 
-export const GET_SUPPORT_QNAS_IN_ORGANIZATION = gql`
-  query GetSupportQNAsInOrganization(
-    $input: GetSupportQNAsInOrganizationInput!
-  ) {
-    getSupportQNAsInOrganization(input: $input) {
-      id
-      question
-      answer {
-        ...AllSlices
-      }
-      slug
-      organization {
-        id
-        title
-        slug
-      }
-      category {
-        title
-        description
-        slug
-      }
-      subCategory {
-        title
-        description
-        slug
-      }
-    }
-  }
-  ${slices}
-`
-
 export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
   query GetSupportQNAsInCategory($input: GetSupportQNAsInCategoryInput!) {
     getSupportQNAsInCategory(input: $input) {

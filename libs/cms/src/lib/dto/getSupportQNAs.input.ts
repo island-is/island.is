@@ -5,5 +5,5 @@ import { IsString } from 'class-validator'
 export class GetSupportQNAsInput {
   @Field(() => String)
   @IsString()
-  lang: string = 'is-IS'
+  lang = 'is-IS'
 }
