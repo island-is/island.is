@@ -46,7 +46,6 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
   } = chart
   const [ref, { width }] = useMeasure()
   const graphData = { title: graphTitle, data: data, datakeys: datakeys }
-  console.log(organizationLogo)
 
   let children = null
   switch (type) {
@@ -87,9 +86,12 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
           display="flex"
           flexDirection="row"
           alignItems="center"
-          justifyContent="spaceBetween"
+          padding={[2, 2, 2]}
         >
-          <Box padding={[2, 2, 4]}>
+          {organizationLogo && !subPage && (
+            <img src={organizationLogo.url} width={80} />
+          )}
+          <Box paddingLeft={1}>
             {organization && (
               <Text variant="eyebrow" color="dark400">
                 {organization}

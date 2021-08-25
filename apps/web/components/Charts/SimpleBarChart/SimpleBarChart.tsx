@@ -35,44 +35,48 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
         <Text variant="eyebrow">{parsedDatakeys.yAxis.label}</Text>
       )}
       <Box style={{ width: '100%', height: '90%' }}>
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart
-        width={20}
-        height={150}
-        data={parsedData}
-        margin={{
-          top: 30,
-          right: 0,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="0" vertical={false} stroke="#CCDFFF" />
-        <XAxis
-          dataKey={parsedDatakeys.xAxis}
-          stroke="#CCDFFF"
-          tick={<CustomizedAxisTick />}
-          padding={{ left: 30 }}
-          tickLine={false}
-        />
-        <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
-        <Tooltip content={<CustomTooltip />} />
-        <Legend iconType="circle" align="right" content={RenderLegend} />
-        {parsedDatakeys.bars.map((item, index) => (
-          <Bar
-            key={index}
-            dataKey={item.datakey}
-            fill={item.color ? item.color : COLORS[index % COLORS.length]}
-            stackId={item.stackId}
-            barSize={16}
-            radius={
-              index + 1 === parsedDatakeys.bars.length ? [20, 20, 0, 0] : 0
-            }
-          />
-        ))}
-      </BarChart>
-    </ResponsiveContainer>
-    </Box>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            width={20}
+            height={150}
+            data={parsedData}
+            margin={{
+              top: 30,
+              right: 0,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid
+              strokeDasharray="0"
+              vertical={false}
+              stroke="#CCDFFF"
+            />
+            <XAxis
+              dataKey={parsedDatakeys.xAxis}
+              stroke="#CCDFFF"
+              tick={<CustomizedAxisTick />}
+              padding={{ left: 30 }}
+              tickLine={false}
+            />
+            <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend iconType="circle" align="right" content={RenderLegend} />
+            {parsedDatakeys.bars.map((item, index) => (
+              <Bar
+                key={index}
+                dataKey={item.datakey}
+                fill={item.color ? item.color : COLORS[index % COLORS.length]}
+                stackId={item.stackId}
+                barSize={16}
+                radius={
+                  index + 1 === parsedDatakeys.bars.length ? [20, 20, 0, 0] : 0
+                }
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+      </Box>
     </Box>
   )
 }

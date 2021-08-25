@@ -27,6 +27,14 @@ export const GET_OPEN_DATA_SUBPAGE_QUERY = gql`
         datakeys
         displayAsCard
       }
+      organizationLogo {
+        id
+        url
+        title
+        contentType
+        width
+        height
+      }
     }
   }
 `

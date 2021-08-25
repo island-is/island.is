@@ -56,12 +56,11 @@ export const SimplePieChart = ({ graphData }: GraphProps) => {
           data={parsedData}
           labelLine={false}
           label={renderCustomizedLabel}
-          cx='50%'
-          cy='50%'
+          cx="50%"
+          cy="50%"
           outerRadius={136}
           startAngle={90}
           endAngle={-270}
-
         >
           {parsedData.map((entry, index) => (
             <Cell

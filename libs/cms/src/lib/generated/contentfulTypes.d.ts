@@ -1978,6 +1978,10 @@ export interface IOpenDataSubpageFields {
 
   /** Fund Description */
   fundDescription?: string | undefined
+
+  /** Organization Logo */
+
+  organizationLogo?: Asset | undefined
 }
 
 /** Organization dashboard */
