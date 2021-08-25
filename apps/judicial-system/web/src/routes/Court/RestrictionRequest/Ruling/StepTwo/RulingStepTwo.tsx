@@ -158,7 +158,7 @@ export const RulingStepTwo: React.FC = () => {
                   </Text>
                 </Box>
                 <Input
-                  name="prosecutorAppealAnnouncement"
+                  name="conclusion"
                   data-testid="conclusion"
                   label="Úrskurðarorð"
                   defaultValue={workingCase.conclusion}
