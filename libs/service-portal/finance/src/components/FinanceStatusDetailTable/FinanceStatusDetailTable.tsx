@@ -1,10 +1,17 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { Table as T } from '@island.is/island-ui/core'
 import {
   FinanceStatusOrganizationType,
   FinanceStatusDetailsType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
-import { Box, Text, Columns, Column, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Columns,
+  Column,
+  Button,
+  LoadingDots,
+} from '@island.is/island-ui/core'
 import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
 import amountFormat from '../../utils/amountFormat'
 import { useLocale } from '@island.is/localization'
@@ -22,8 +29,9 @@ const FinanceStatusDetailTable: FC<Props> = ({
   organization,
   financeStatusDetails,
 }) => {
-  const { showPdf } = showPdfDocument()
+  const { showPdf, loadingPDF, fetchingPdfId } = showPdfDocument()
   const { formatMessage } = useLocale()
+
   const headerArray = [
     { value: formatMessage(m.feeBase) },
     { value: formatMessage(m.yearAndSeason) },
@@ -73,13 +81,26 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 { value: amountFormat(row.totals), align: 'right' },
               ].map((item, ii) =>
                 ii === 0 && row.documentID ? (
-                  <T.Data box={{ paddingRight: 2, paddingLeft: 2 }}>
+                  <T.Data
+                    box={{
+                      paddingRight: 2,
+                      paddingLeft: 2,
+                      position: 'relative',
+                    }}
+                    key={ii}
+                  >
                     <Button
                       size="small"
                       variant="text"
                       onClick={() => showPdf(row.documentID as string)}
+                      disabled={loadingPDF && fetchingPdfId === row.documentID}
                     >
                       {item.value}
+                      {loadingPDF && fetchingPdfId === row.documentID && (
+                        <span className={styles.loadingDot}>
+                          <LoadingDots single />
+                        </span>
+                      )}
                     </Button>
                   </T.Data>
                 ) : (
