@@ -30,6 +30,8 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
   const { data, datakeys } = graphData
   const parsedData = JSON.parse(data)
   const parsedDatakeys = JSON.parse(datakeys)
+  const stackIds = parsedDatakeys.bars.map((e) => e.stackId)
+  const shouldStack = new Set(stackIds).size !== stackIds.length
   return (
     <Box width="full" height="full">
       <YAxisLabel label={parsedDatakeys.yAxis?.label} />
@@ -69,7 +71,9 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
                 stackId={item.stackId}
                 barSize={16}
                 radius={
-                  index + 1 === parsedDatakeys.bars.length ? [20, 20, 0, 0] : 0
+                  index === parsedDatakeys.bars.length - 1 || !shouldStack
+                    ? [20, 20, 0, 0]
+                    : 0
                 }
               />
             ))}

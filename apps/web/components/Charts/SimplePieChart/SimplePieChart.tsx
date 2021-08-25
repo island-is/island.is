@@ -6,10 +6,15 @@ import {
   Tooltip,
   ResponsiveContainer,
   TooltipProps,
+  Legend,
 } from 'recharts'
 import * as styles from './SimplePieChart.treat'
 import cn from 'classnames'
-import { COLORS, renderCustomizedLabel } from '../sharedChartComponents'
+import {
+  COLORS,
+  RenderLegend,
+  renderCustomizedLabel,
+} from '../sharedChartComponents'
 
 interface CustomTooltipProps extends TooltipProps<string, number> {
   sum: number
@@ -32,6 +37,7 @@ const CustomTooltip = (props: CustomTooltipProps) => {
   return null
 }
 
+
 interface GraphDataProps {
   title?: string
   data: string
@@ -42,14 +48,16 @@ interface GraphProps {
 }
 
 export const SimplePieChart = ({ graphData }: GraphProps) => {
-  const { data, datakeys } = graphData
+  const { title, data, datakeys } = graphData
   const parsedData = JSON.parse(data)
-  const { datakey } = JSON.parse(datakeys)
+  const { datakey, legendOn } = JSON.parse(datakeys)
+  
 
   const sum = parsedData.reduce((sum, item) => sum + item[datakey], 0)
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart width={10} height={10}>
+        {legendOn && <Legend iconType="circle" content={<RenderLegend />} />}
         <Pie
           dataKey={datakey}
           isAnimationActive={false}
