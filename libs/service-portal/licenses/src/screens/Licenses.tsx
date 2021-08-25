@@ -3,7 +3,7 @@ import { defineMessage } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { IntroHeader, m } from '@island.is/service-portal/core'
 import { LicenseCards } from './components/LicenseCards'
 
 function Licenses(): JSX.Element {
@@ -12,12 +12,9 @@ function Licenses(): JSX.Element {
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
-        title={defineMessage({
-          id: 'service.portal:licenses-title',
-          defaultMessage: 'Skilríki',
-        })}
+        title={m.licenses}
         intro={defineMessage({
-          id: 'service.portal:licenses-intro',
+          id: 'sp.licenses:licenses-intro',
           defaultMessage: 'Þín skilríki!',
         })}
         img="./assets/images/educationLicense.svg"

@@ -143,7 +143,7 @@ export const m: MessageDir = {
     },
     submitApplication: {
       id: 'pa.application:overview.submit.application',
-      defaultMessage: 'Skila meðmælum',
+      defaultMessage: 'Loka söfnun',
       description: 'Submit application',
     },
   }),
@@ -308,7 +308,8 @@ export const m: MessageDir = {
     },
     bulletLink2: {
       id: 'pa.application:application.approved.card.bulletLink2',
-      defaultMessage: 'https://www.stjornarradid.is/verkefni/kosningar/',
+      defaultMessage:
+        'https://www.stjornarradid.is/verkefni/kosningar/althingiskosningar/frambod-leidbeiningar/listabokstafir/',
       description: 'Link to kosning.is',
     },
     bulletLink2Title: {
@@ -347,7 +348,7 @@ export const m: MessageDir = {
       description: 'Label and placeholder for name input field',
     },
     descriptionPt1: {
-      id: 'ppale.application:collect.descripton.pt.one',
+      id: 'pa.application:collect.descripton.pt.one',
       defaultMessage:
         'Með því að mæla með úthlutun tiltekins listabókstafs til tilgreinds stjórnamálaflokks samþykkir þú að viðkomandi stjórnmálaflokkur, dómsmálaráðuneytið og Þjóðskrá Íslands fái aðgang að þeim upplýsingum sem skráðar eru. Þeir aðilar hafa ekki heimild til að miðla þeim upplýsingum frekar.',
       description: 'Disclaimer description, first paragraph',
@@ -457,7 +458,7 @@ export const m: MessageDir = {
     descriptionPt1: {
       id: 'pa.application:endorsement.disclaimer.description.pt1',
       defaultMessage:
-        'Yfirkjörstjórn og þau stjórnmálasamtök sem stofnað hafa söfnunina hafa aðgang að upplýsingum sem skráðar eru á meðmælendalistann, þ.e. nafni, kennitölu og heimilsfangi meðmælandans og að meðmælandi hafi mælt með tilkeknum framboðslista. Óheimilt er að miðla meðmælum eða þeim upplýsingum sem þar koma fram eða nota í öðrum tilgangi.',
+        'Yfirkjörstjórn og þau stjórnmálasamtök sem stofnað hafa söfnunina hafa aðgang að upplýsingum sem skráðar eru á meðmælendalistann, þ.e. nafni, kennitölu og heimilsfangi meðmælandans og að meðmælandi hafi mælt með tilteknum framboðslista. Óheimilt er að miðla meðmælum eða þeim upplýsingum sem þar koma fram eða nota í öðrum tilgangi.',
     },
     descriptionPt2: {
       id: 'pa.application:endorsement.disclaimer.description.pt2',
@@ -518,7 +519,7 @@ export const m: MessageDir = {
     },
     cardSubtitle: {
       id: 'pa.application:endorsement.approved.card.subtitle',
-      defaultMessage: 'Hægt er að skoða virk meðmæli á mínum síðum.',
+      defaultMessage: 'Hægt er að skoða virk meðmæli á Mínum Síðum.',
       description: 'Approved card subtitle',
     },
     myPagesButton: {
@@ -584,7 +585,7 @@ export const m: MessageDir = {
     description: {
       id: 'pa.application:supreme.court.description',
       defaultMessage:
-        'Meðfylgjandi meðmælum með framboðslista hefur verið skila. Hnappinn "hafna" er unnt að nota til að setja athugasemd um að meðmæli séu ófullnægjandi og þá opnast fyrir söfnun á ný. Hnappinn "samþykkja lista" er unnt að nota ef yfirkjörstjórn vill koma skilaboðum til stjórnmálasamtaka um að meðmæli séu fullnægjandi.',
+        'Meðfylgjandi meðmælum með framboðslista hefur verið skilað. Hnappinn "hafna" er unnt að nota til að setja athugasemd um að meðmæli séu ófullnægjandi og þá opnast fyrir söfnun á ný. Hnappinn "samþykkja lista" er unnt að nota ef yfirkjörstjórn vill koma skilaboðum til stjórnmálasamtaka um að meðmæli séu fullnægjandi.',
       description: 'Supreme court review description',
     },
     subtitle: {
@@ -665,8 +666,7 @@ export const m: MessageDir = {
     },
     approvedDescription: {
       id: 'pa.application:supreme.court.approved.description',
-      defaultMessage:
-        'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
+      defaultMessage: 'Skilaboðum hefur verið komið til stjórnmálasamtaka',
       description: 'Text after supreme court has submitted',
     },
   }),

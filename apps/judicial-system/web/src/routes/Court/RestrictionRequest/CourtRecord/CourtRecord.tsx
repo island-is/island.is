@@ -12,6 +12,7 @@ import {
   FormContentContainer,
   DateTime,
   HideableText,
+  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -24,6 +25,7 @@ import {
   AccusedPleaDecision,
   Case,
   CaseType,
+  NotificationType,
 } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
@@ -39,10 +41,15 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '../../../../utils/validate'
-import { accusedRights } from '@island.is/judicial-system-web/messages'
+import {
+  accusedRights,
+  rcCourtRecord,
+  rcHearingArrangements,
+} from '@island.is/judicial-system-web/messages'
 import * as styles from './CourtRecord.treat'
 
 export const CourtRecord: React.FC = () => {
+  const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [
     courtRecordStartDateIsValid,
@@ -62,7 +69,7 @@ export const CourtRecord: React.FC = () => {
   ] = useState('')
 
   const router = useRouter()
-  const { updateCase, autofill } = useCase()
+  const { updateCase, sendNotification, autofill } = useCase()
   const { formatMessage } = useIntl()
 
   const id = router.query.id
@@ -132,6 +139,25 @@ export const CourtRecord: React.FC = () => {
       setWorkingCase(theCase)
     }
   }, [workingCase, updateCase, setWorkingCase, data, autofill])
+
+  useEffect(() => {
+    const notifyCourtDate = async (id: string) => {
+      const notificationSent = await sendNotification(
+        id,
+        NotificationType.COURT_DATE,
+      )
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (notificationSent && !window.Cypress) {
+        setModalVisible(true)
+      }
+    }
+
+    if (workingCase?.id) {
+      notifyCourtDate(workingCase.id)
+    }
+  }, [sendNotification, workingCase?.courtDate, workingCase?.id])
 
   return (
     <PageLayout
@@ -273,10 +299,12 @@ export const CourtRecord: React.FC = () => {
             <Box component="section" marginBottom={8}>
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
-                  {`Réttindi ${formatAccusedByGender(
-                    workingCase.accusedGender,
-                    NounCases.GENITIVE,
-                  )} `}
+                  {`${formatMessage(accusedRights.title, {
+                    accusedType: formatAccusedByGender(
+                      workingCase.accusedGender,
+                      NounCases.GENITIVE,
+                    ),
+                  })} `}
                   <Text as="span" fontWeight="semiBold" color="red600">
                     *
                   </Text>
@@ -295,20 +323,28 @@ export const CourtRecord: React.FC = () => {
                       updateCase,
                     )
                   }
-                  tooltip={`Með því að fela forbókun um réttindi ${formatAccusedByGender(
-                    workingCase.accusedGender,
-                    NounCases.GENITIVE,
-                  )} birtist hún ekki í Þingbók málsins.`}
+                  tooltip={formatMessage(accusedRights.tooltip, {
+                    accusedType: formatAccusedByGender(
+                      workingCase.accusedGender,
+                      NounCases.GENITIVE,
+                    ),
+                  })}
                 />
               </Box>
               <BlueBox>
                 <div className={styles.accusedPleaDecision}>
                   <RadioButton
                     name="accusedPleaDecision"
-                    id="accused-plea-decision-accepting"
-                    label={`${capitalize(
-                      formatAccusedByGender(workingCase.accusedGender),
-                    )} hafnar kröfunni`}
+                    id="accused-plea-decision-rejecting"
+                    label={formatMessage(
+                      rcCourtRecord.sections.accusedAppealDecision.options
+                        .reject,
+                      {
+                        accusedType: capitalize(
+                          formatAccusedByGender(workingCase.accusedGender),
+                        ),
+                      },
+                    )}
                     checked={
                       workingCase.accusedPleaDecision ===
                       AccusedPleaDecision.REJECT
@@ -327,10 +363,16 @@ export const CourtRecord: React.FC = () => {
                   />
                   <RadioButton
                     name="accusedPleaDecision"
-                    id="accused-plea-decision-rejecting"
-                    label={`${capitalize(
-                      formatAccusedByGender(workingCase.accusedGender),
-                    )} samþykkir kröfuna`}
+                    id="accused-plea-decision-accepting"
+                    label={formatMessage(
+                      rcCourtRecord.sections.accusedAppealDecision.options
+                        .accept,
+                      {
+                        accusedType: capitalize(
+                          formatAccusedByGender(workingCase.accusedGender),
+                        ),
+                      },
+                    )}
                     checked={
                       workingCase.accusedPleaDecision ===
                       AccusedPleaDecision.ACCEPT
@@ -356,9 +398,9 @@ export const CourtRecord: React.FC = () => {
                     NounCases.GENITIVE,
                   )}`}
                   defaultValue={workingCase.accusedPleaAnnouncement}
-                  placeholder={`Hvað hafði ${formatAccusedByGender(
-                    workingCase.accusedGender,
-                  )} að segja um kröfuna? Mótmælti eða samþykkti?`}
+                  placeholder={formatMessage(
+                    rcCourtRecord.sections.accusedPleaAnnouncement.placeholder,
+                  )}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'accusedPleaAnnouncement',
@@ -445,6 +487,16 @@ export const CourtRecord: React.FC = () => {
               }
             />
           </FormContentContainer>
+          {modalVisible && (
+            <Modal
+              title={formatMessage(rcHearingArrangements.modal.heading)}
+              text={formatMessage(rcHearingArrangements.modal.text)}
+              handlePrimaryButtonClick={() => {
+                setModalVisible(false)
+              }}
+              primaryButtonText="Loka glugga"
+            />
+          )}
         </>
       ) : null}
     </PageLayout>

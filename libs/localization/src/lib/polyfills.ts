@@ -1,5 +1,8 @@
+import { shouldPolyfill as shouldPolyfillLocale } from '@formatjs/intl-locale/should-polyfill'
 import { shouldPolyfill as shouldPolyfillNumberFormat } from '@formatjs/intl-numberformat/should-polyfill'
+import { shouldPolyfill as shouldPolyfillDatetimeFormat } from '@formatjs/intl-datetimeformat/should-polyfill'
 import areIntlLocalesSupported from 'intl-locales-supported'
+
 import { Locale } from '@island.is/shared/types'
 
 interface PolyfilledIntl {
@@ -16,54 +19,58 @@ const localeDataModules = {
   numberFormat: {
     is: () =>
       import(
-        /* webpackChunkName: "intl-numberformat" */ '@formatjs/intl-numberformat/locale-data/is'
+        /* webpackChunkName: "intl" */ '@formatjs/intl-numberformat/locale-data/is'
       ),
     en: () =>
       import(
-        /* webpackChunkName: "intl-numberformat" */ '@formatjs/intl-numberformat/locale-data/en'
+        /* webpackChunkName: "intl" */ '@formatjs/intl-numberformat/locale-data/en'
       ),
   },
   dateTimeFormat: {
     is: () =>
       import(
-        /* webpackChunkName: "intl-datetimeformat" */ '@formatjs/intl-datetimeformat/locale-data/is'
+        /* webpackChunkName: "intl" */ '@formatjs/intl-datetimeformat/locale-data/is'
       ),
     en: () =>
       import(
-        /* webpackChunkName: "intl-datetimeformat" */ '@formatjs/intl-datetimeformat/locale-data/en'
+        /* webpackChunkName: "intl" */ '@formatjs/intl-datetimeformat/locale-data/en'
       ),
   },
 }
 
-const maybePolyfillNumberFormat = (locale: Locale) => {
-  // Polyfill Intl.NumberFormat if necessary
+const maybePolyfillLocale = async (locale: Locale) => {
+  if (!areIntlLocalesSupported(locale) || shouldPolyfillLocale()) {
+    return await import(
+      /* webpackChunkName: "intl" */ '@formatjs/intl-locale/polyfill-force'
+    )
+  }
+}
+
+const maybePolyfillNumberFormat = async (locale: Locale) => {
   if (!areIntlLocalesSupported(locale) || shouldPolyfillNumberFormat()) {
-    return import(
-      /* webpackChunkName: "intl-numberformat" */ '@formatjs/intl-numberformat/polyfill-force'
+    return await import(
+      /* webpackChunkName: "intl" */ '@formatjs/intl-numberformat/polyfill-force'
     )
   }
 }
 
-const maybePolyfillDateTimeFormat = (locale: Locale) => {
-  // Polyfill Intl.DateTimeFormat if necessary
-  if (!areIntlLocalesSupported(locale)) {
-    return import(
-      /* webpackChunkName: "intl-datetimeformat" */ '@formatjs/intl-datetimeformat/polyfill-force'
+const maybePolyfillDateTimeFormat = async (locale: Locale) => {
+  if (!areIntlLocalesSupported(locale) || shouldPolyfillDatetimeFormat()) {
+    return await import(
+      /* webpackChunkName: "intl" */ '@formatjs/intl-datetimeformat/polyfill-force'
     )
   }
 }
 
-/**
- * Dynamically polyfill Intl API & its locale data
- * @param locale locale to polyfill
- */
 export async function polyfill(locale: Locale) {
   await Promise.all([
+    maybePolyfillLocale(locale),
     maybePolyfillNumberFormat(locale),
     maybePolyfillDateTimeFormat(locale),
   ])
 
   const dataPolyfills = []
+
   if ((Intl as PolyfilledIntl).NumberFormat.polyfilled) {
     dataPolyfills.push(localeDataModules.numberFormat[locale]())
   }
@@ -71,9 +78,10 @@ export async function polyfill(locale: Locale) {
   if ((Intl as PolyfilledIntl).DateTimeFormat.polyfilled) {
     dataPolyfills.push(
       import(
-        /* webpackChunkName: "intl-datetimeformat" */ '@formatjs/intl-datetimeformat/add-all-tz'
+        /* webpackChunkName: "intl" */ '@formatjs/intl-datetimeformat/add-all-tz'
       ),
     )
+
     dataPolyfills.push(localeDataModules.dateTimeFormat[locale]())
   }
 

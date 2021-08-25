@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { IntlService } from '@island.is/api/domains/translations'
+import { IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -190,7 +190,7 @@ export class CaseService {
     await Promise.all(promises)
   }
 
-  private findById(id: string): Promise<Case> {
+  async findById(id: string): Promise<Case> {
     this.logger.debug(`Finding case ${id}`)
 
     return this.caseModel.findOne({
@@ -222,7 +222,7 @@ export class CaseService {
     })
   }
 
-  getAll(user: TUser): Promise<Case[]> {
+  async getAll(user: TUser): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
     return this.caseModel.findAll({
@@ -277,7 +277,7 @@ export class CaseService {
     return existingCase
   }
 
-  create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {
+  async create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {
     this.logger.debug('Creating a new case')
 
     return this.caseModel.create({
@@ -390,22 +390,26 @@ export class CaseService {
     }
   }
 
-  extend(existingCase: Case, user: TUser): Promise<Case> {
+  async extend(existingCase: Case, user: TUser): Promise<Case> {
     this.logger.debug(`Extending case ${existingCase.id}`)
 
     return this.caseModel.create({
       type: existingCase.type,
       policeCaseNumber: existingCase.policeCaseNumber,
+      description: existingCase.description,
       accusedNationalId: existingCase.accusedNationalId,
       accusedName: existingCase.accusedName,
       accusedAddress: existingCase.accusedAddress,
       accusedGender: existingCase.accusedGender,
       courtId: existingCase.courtId,
       lawsBroken: existingCase.lawsBroken,
+      legalBasis: existingCase.legalBasis,
       custodyProvisions: existingCase.custodyProvisions,
       requestedCustodyRestrictions: existingCase.requestedCustodyRestrictions,
       caseFacts: existingCase.caseFacts,
       legalArguments: existingCase.legalArguments,
+      requestProsecutorOnlySession: existingCase.requestProsecutorOnlySession,
+      prosecutorOnlySessionRequest: existingCase.prosecutorOnlySessionRequest,
       prosecutorId: user.id,
       parentCaseId: existingCase.id,
     })

@@ -11,6 +11,8 @@ import {
 import { PartyLetterRegistryApi } from './gen/fetch/party-letter'
 import { EndorsementListApi } from './gen/fetch/endorsements'
 
+const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
+
 const CREATE_ENDORSEMENT_LIST_QUERY = `
   mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
     endorsementSystemCreateEndorsementList(input: $input) {
@@ -92,6 +94,7 @@ export class PartyLetterService {
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
           generateAssignMinistryOfJusticeApplicationEmail,
           application,
+          ONE_DAY_IN_SECONDS_EXPIRES,
         )
       })
       .catch(() => {

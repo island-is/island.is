@@ -10,6 +10,12 @@ export const line = style({
   position: 'absolute',
 })
 
+export const financeTd = style({
+  width: 'max-content',
+  display: 'block',
+  marginLeft: 'auto',
+})
+
 export const loader = style({
   minHeight: 24,
   minWidth: 24,

@@ -10,6 +10,7 @@ import {
   Case,
   CaseState,
   CaseTransition,
+  NotificationType,
 } from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
@@ -24,8 +25,8 @@ import OverviewForm from './OverviewForm'
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 
 export const JudgeOverview: React.FC = () => {
-  const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
     false,
@@ -34,7 +35,13 @@ export const JudgeOverview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const { createCourtCase, transitionCase, isTransitioningCase } = useCase()
+  const {
+    createCourtCase,
+    isCreatingCourtCase,
+    transitionCase,
+    isTransitioningCase,
+    sendNotification,
+  } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -51,27 +58,31 @@ export const JudgeOverview: React.FC = () => {
     }
   }, [workingCase, setWorkingCase, data])
 
-  // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
-  useEffect(() => {
-    if (
-      workingCase?.courtCaseNumber &&
-      workingCase?.state === CaseState.SUBMITTED &&
-      !isTransitioningCase
-    ) {
-      transitionCase(workingCase, CaseTransition.RECEIVE, setWorkingCase)
+  const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
+    if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
+      // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
+      const received = await transitionCase(
+        { ...workingCase, courtCaseNumber },
+        CaseTransition.RECEIVE,
+        setWorkingCase,
+      )
+
+      if (received) {
+        sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
+      }
     }
-  }, [
-    workingCase,
-    workingCase?.courtCaseNumber,
-    isTransitioningCase,
-    transitionCase,
-  ])
+  }
 
   const handleCreateCourtCase = async (workingCase: Case) => {
-    await createCourtCase(workingCase, setWorkingCase, setCourtCaseNumberEM)
+    const courtCaseNumber = await createCourtCase(
+      workingCase,
+      setWorkingCase,
+      setCourtCaseNumberEM,
+    )
 
-    if (courtCaseNumberEM === '') {
+    if (courtCaseNumber !== '') {
       setCreateCourtCaseSuccess(true)
+      receiveCase(workingCase, courtCaseNumber)
     }
   }
 
@@ -98,6 +109,8 @@ export const JudgeOverview: React.FC = () => {
             courtCaseNumberEM={courtCaseNumberEM}
             setCourtCaseNumberEM={setCourtCaseNumberEM}
             setIsDraftingConclusion={setIsDraftingConclusion}
+            isCreatingCourtCase={isCreatingCourtCase}
+            receiveCase={receiveCase}
           />
           <FormContentContainer isFooter>
             <FormFooter

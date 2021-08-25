@@ -51,17 +51,10 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
   isLoading: boolean
   users: UserData
-  handleNextButtonClick: () => void
 }
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoading,
-    users,
-    handleNextButtonClick,
-  } = props
+  const { workingCase, setWorkingCase, isLoading, users } = props
   const [courtroomEM, setCourtroomEM] = useState('')
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
@@ -212,8 +205,14 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Fyrirtaka{' '}
-              <Tooltip text="Hér er hægt að merkja hvaða aðilar málsins mæta í fyrirtöku eða hvort fyrirtakan fari fram rafrænt." />
+              {`${formatMessage(
+                icHearingArrangements.sections.sessionArrangements.heading,
+              )} `}
+              <Tooltip
+                text={formatMessage(
+                  icHearingArrangements.sections.sessionArrangements.tooltip,
+                )}
+              />
             </Text>
           </Box>
           <BlueBox>
@@ -221,7 +220,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="session-arrangements-all-present"
                 id="session-arrangements-all-present"
-                label="Fulltrúar málsaðila mæta"
+                label={formatMessage(
+                  icHearingArrangements.sections.sessionArrangements.options
+                    .allPresent,
+                )}
                 checked={
                   workingCase.sessionArrangements ===
                   SessionArrangements.ALL_PRESENT
@@ -243,7 +245,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               <RadioButton
                 name="session-arrangements-prosecutor-present"
                 id="session-arrangements-prosecutor-present"
-                label="Fulltrúi ákæruvalds mætir"
+                label={formatMessage(
+                  icHearingArrangements.sections.sessionArrangements.options
+                    .prosecutorPresent,
+                )}
                 checked={
                   workingCase.sessionArrangements ===
                   SessionArrangements.PROSECUTOR_PRESENT
@@ -264,7 +269,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             <RadioButton
               name="session-arrangements-remote-session"
               id="session-arrangements-remote-session"
-              label="Rafræn fyrirtaka"
+              label={formatMessage(
+                icHearingArrangements.sections.sessionArrangements.options
+                  .remoteSession,
+              )}
               checked={
                 workingCase.sessionArrangements ===
                 SessionArrangements.REMOTE_SESSION
@@ -321,6 +329,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 label="Dómsalur"
                 defaultValue={workingCase.courtRoom}
                 placeholder="Skráðu inn dómsal"
+                autoComplete="off"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'courtRoom',
@@ -400,6 +409,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }`}
                 defaultValue={workingCase.defenderName}
                 placeholder="Fullt nafn"
+                autoComplete="off"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'defenderName',
@@ -428,6 +438,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }`}
                 defaultValue={workingCase.defenderEmail}
                 placeholder="Netfang"
+                autoComplete="off"
                 errorMessage={defenderEmailEM}
                 hasError={defenderEmailEM !== ''}
                 onChange={(event) =>
@@ -485,6 +496,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 }`}
                 defaultValue={workingCase.defenderPhoneNumber}
                 placeholder="Símanúmer"
+                autoComplete="off"
                 errorMessage={defenderPhoneNumberEM}
                 hasError={defenderPhoneNumberEM !== ''}
               />
@@ -495,10 +507,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextIsDisabled={!isValid || !courtDateIsValid}
           nextButtonText="Staðfesta og senda"
-          onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>
     </>

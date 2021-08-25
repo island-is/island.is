@@ -11,14 +11,13 @@ api:
     CONTACT_US_EMAIL: s@kogk.is
     CONTENTFUL_HOST: preview.contentful.com
     DOWNLOAD_SERVICE_BASE_PATH: https://api.dev01.devland.is
-    DRIVING_LICENSE_PATH_REPLACEMENT_FROM: ''
-    DRIVING_LICENSE_PATH_REPLACEMENT_TO: ''
     ELASTIC_NODE: https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com
     ENDORSEMENT_SYSTEM_BASE_API_URL: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_DOWNLOAD_BUCKET: island-is-dev-download-cache-api
     FILE_STORAGE_UPLOAD_BUCKET: island-is-dev-upload-api
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: >-
       http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local
+    NODE_OPTIONS: '--max-old-space-size=464'
     PARTY_LETTER_REGISTRY_BASE_API_URL: >-
       http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local
     SEND_FROM_EMAIL: development@island.is
@@ -142,8 +141,6 @@ application-system-api:
     DB_HOST: dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com
     DB_NAME: application_system_api
     DB_USER: application_system_api
-    DRIVING_LICENSE_PATH_REPLACEMENT_FROM: ''
-    DRIVING_LICENSE_PATH_REPLACEMENT_TO: ''
     EMAIL_REGION: eu-west-1
     ENDORSEMENTS_API_BASE_PATH: http://web-endorsement-system-api.endorsement-system.svc.cluster.local
     FILE_SERVICE_PRESIGN_BUCKET: island-is-dev-fs-presign-bucket
@@ -155,6 +152,7 @@ application-system-api:
     INSTITUTION_APPLICATION_RECIPIENT_NAME: Gunnar Ingi
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: gunnar.ingi@fjr.is
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: Gunnar Ingi
+    NODE_OPTIONS: '--max-old-space-size=464'
     NOVA_USERNAME: IslandIs_User_Development
     PARTY_LETTER_REGISTRY_API_BASE_PATH: >-
       http://web-party-letter-registry-api.party-letter-registry.svc.cluster.local
@@ -168,7 +166,7 @@ application-system-api:
     XROAD_HEALTH_INSURANCE_ID: IS-DEV/GOV/10007/SJUKRA-Protected
     XROAD_VMST_MEMBER_CODE: '10003'
   grantNamespaces:
-    - nginx-ingress-external
+    - nginx-ingress-internal
     - islandis
   grantNamespacesEnabled: true
   healthCheck:
@@ -182,6 +180,14 @@ application-system-api:
       timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: nginx-internal-alb
+      hosts:
+        - host: application-api-xrd.internal.dev01.devland.is
+          paths:
+            - /application-payment
   initContainer:
     containers:
       - args:
@@ -266,7 +272,7 @@ application-system-form:
     BASEPATH: /umsoknir
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: https://identity-server.dev01.devland.is
   grantNamespaces:
-    - nginx-ingress-external
+    - nginx-ingress-internal
     - islandis
   grantNamespacesEnabled: true
   healthCheck:
@@ -422,6 +428,7 @@ endorsement-system-api:
     max: 3
     min: 2
   secrets:
+    ACCESS_GROUP_DMR: /k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
     DB_PASS: /k8s/services-endorsements-api/DB_PASSWORD
     SOFFIA_HOST_URL: /k8s/endorsement-system-api/SOFFIA_HOST_URL
@@ -595,6 +602,7 @@ search-indexer-service:
     CONTENTFUL_SPACE: 8k0h54kbe6bj
     ELASTIC_INDEX: island-is
     ELASTIC_NODE: https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com
+    NODE_OPTIONS: '--max-old-space-size=976'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -742,6 +750,7 @@ service-portal-api:
     DB_NAME: service_portal_api
     DB_USER: service_portal_api
     EMAIL_REGION: eu-west-1
+    NODE_OPTIONS: '--max-old-space-size=464'
     SERVICE_PORTAL_BASE_URL: https://beta.dev01.devland.is/minarsidur
   grantNamespaces:
     - nginx-ingress-external
@@ -1016,6 +1025,7 @@ web:
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_REGULATIONS_PAGE: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
+    NODE_OPTIONS: '--max-old-space-size=464'
     TRACKING_DOMAIN: beta.dev01.devland.is
   grantNamespaces:
     - nginx-ingress-external

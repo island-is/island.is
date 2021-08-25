@@ -121,16 +121,6 @@ export const serviceSetup = (services: {
       PARTY_LETTER_REGISTRY_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesPartyLetterRegistryApi)}`,
       ),
-      DRIVING_LICENSE_PATH_REPLACEMENT_FROM: {
-        prod: '/RafraentOkuskirteini-v1/api/Okuskirteini/',
-        staging: '',
-        dev: '',
-      },
-      DRIVING_LICENSE_PATH_REPLACEMENT_TO: {
-        prod: '/RafraentOkuskirteini-v1/api/okuskirteini/',
-        staging: '',
-        dev: '',
-      },
     })
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -203,4 +193,15 @@ export const serviceSetup = (services: {
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '100m', memory: '256Mi' },
     })
-    .grantNamespaces('nginx-ingress-external', 'islandis')
+    .ingress({
+      primary: {
+        host: {
+          dev: 'application-api-xrd',
+          staging: 'application-api-xrd',
+          prod: 'application-api-xrd',
+        },
+        paths: ['/application-payment'],
+        public: false,
+      },
+    })
+    .grantNamespaces('nginx-ingress-internal', 'islandis')

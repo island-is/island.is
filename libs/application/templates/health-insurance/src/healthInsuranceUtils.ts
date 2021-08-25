@@ -1,7 +1,7 @@
 import { ExternalData } from '@island.is/application/core'
 import { Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
-import { EFTA, EU, NordicCountries } from './constants'
+import { EFTA, EU, NordicCountries } from './shared'
 
 const sortApplicationsByDateAscending = (applications: Applications[]) => {
   const sortedApplications = applications
@@ -49,7 +49,7 @@ export const hasPendingApplications = (externalData: ExternalData) => {
   return pendingApplications?.length > 0
 }
 
-export const hasIcelandicAddress = (externalData: ExternalData) => {
+export const hasNoIcelandicAddress = (externalData: ExternalData) => {
   const address = (externalData?.nationalRegistry?.data as {
     address?: Address
   })?.address
@@ -58,11 +58,11 @@ export const hasIcelandicAddress = (externalData: ExternalData) => {
   return !address || (address && !(address.streetAddress && address.postalCode))
 }
 
-export const shouldShowModal = (externalData: ExternalData) => {
+export const prerequisitesFailed = (externalData: ExternalData) => {
   return (
     hasHealthInsurance(externalData) ||
     hasPendingApplications(externalData) ||
-    hasIcelandicAddress(externalData) ||
+    hasNoIcelandicAddress(externalData) ||
     hasActiveDraftApplication(externalData)
   )
 }

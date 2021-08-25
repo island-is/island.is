@@ -1,6 +1,10 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Case, IntegratedCourts } from '@island.is/judicial-system/types'
+import {
+  Case,
+  IntegratedCourts,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import {
@@ -19,6 +23,8 @@ interface Props {
   createCourtCaseSuccess: boolean
   setCreateCourtCaseSuccess: React.Dispatch<React.SetStateAction<boolean>>
   handleCreateCourtCase: (wc: Case) => void
+  isCreatingCourtCase: boolean
+  receiveCase: (wc: Case, courtCaseNumber: string) => void
 }
 
 const CourtCaseNumber: React.FC<Props> = (props) => {
@@ -30,9 +36,18 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
     createCourtCaseSuccess,
     setCreateCourtCaseSuccess,
     handleCreateCourtCase,
+    isCreatingCourtCase,
+    receiveCase,
   } = props
-  const { updateCase, isCreatingCourtCase } = useCase()
+  const { updateCase } = useCase()
   const { formatMessage } = useIntl()
+
+  const updateAndReceiveCase = async (id: string, update: UpdateCase) => {
+    await updateCase(id, update)
+    if (update.courtCaseNumber) {
+      receiveCase(workingCase, update.courtCaseNumber)
+    }
+  }
 
   return (
     <>
@@ -67,6 +82,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                 name="courtCaseNumber"
                 label="Mál nr."
                 placeholder="R-X/ÁÁÁÁ"
+                autoComplete="off"
                 size="sm"
                 backgroundColor="white"
                 value={workingCase.courtCaseNumber ?? ''}
@@ -95,7 +111,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                     event.target.value,
                     ['empty'],
                     workingCase,
-                    updateCase,
+                    updateAndReceiveCase,
                     setCourtCaseNumberEM,
                   )
                 }}

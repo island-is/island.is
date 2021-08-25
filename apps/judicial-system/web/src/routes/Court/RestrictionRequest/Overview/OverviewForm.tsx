@@ -35,6 +35,8 @@ interface Props {
   setIsDraftingConclusion: React.Dispatch<
     React.SetStateAction<boolean | undefined>
   >
+  isCreatingCourtCase: boolean
+  receiveCase: (wc: Case, courtCaseNumber: string) => void
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
@@ -47,6 +49,8 @@ const OverviewForm: React.FC<Props> = (props) => {
     courtCaseNumberEM,
     setCourtCaseNumberEM,
     setIsDraftingConclusion,
+    isCreatingCourtCase,
+    receiveCase,
   } = props
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -71,6 +75,8 @@ const OverviewForm: React.FC<Props> = (props) => {
           createCourtCaseSuccess={createCourtCaseSuccess}
           setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
           handleCreateCourtCase={handleCreateCourtCase}
+          isCreatingCourtCase={isCreatingCourtCase}
+          receiveCase={receiveCase}
         />
       </Box>
       <Box component="section" marginBottom={5}>
