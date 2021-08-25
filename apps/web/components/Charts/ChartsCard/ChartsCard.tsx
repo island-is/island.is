@@ -8,7 +8,7 @@ import {
   SimpleLineChart,
   SimplePieChart,
 } from '../'
-import { ExportCSVButton } from '@island.is/web/components'
+import { ExportCSVButton, BackgroundImage } from '@island.is/web/components'
 
 import * as styles from './ChartsCard.treat'
 
@@ -23,6 +23,7 @@ interface ChartCardDataProps {
   graphTitle?: string
   graphDescription?: string
   organization?: string
+  organizationLogo?: any
   data?: string
   datakeys?: string
   type?: string
@@ -41,9 +42,11 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
     type,
     data,
     datakeys,
+    organizationLogo,
   } = chart
   const [ref, { width }] = useMeasure()
   const graphData = { title: graphTitle, data: data, datakeys: datakeys }
+  console.log(organizationLogo)
 
   let children = null
   switch (type) {

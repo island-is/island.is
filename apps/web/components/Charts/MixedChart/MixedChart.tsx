@@ -10,7 +10,6 @@ import {
   ResponsiveContainer,
   Line,
 } from 'recharts'
-
 import {
   CustomizedAxisTick,
   RenderLegend,
@@ -18,6 +17,7 @@ import {
   CustomTooltip,
   CustomizedRightAxisTick,
 } from '../utils'
+import { Box, Text } from '@island.is/island-ui/core'
 
 interface GraphDataProps {
   title?: string
@@ -35,8 +35,17 @@ export const MixedChart = ({ graphData }: GraphProps) => {
   const stackIds = parsedDatakeys.bars.map((e) => e.stackId)
   const shouldStack = new Set(stackIds).size !== stackIds.length
   const rightPadding = parsedDatakeys.yAxis?.right ? 70 : 0
-  console.log(parsedDatakeys.yAxis?.showRight)
   return (
+    <Box width="full" height="full" >
+      <Box display='flex' flexDirection='row' justifyContent='spaceBetween' style={{paddingRight: rightPadding}}>
+    {parsedDatakeys.yAxis?.label && (
+      <Text variant="eyebrow">{parsedDatakeys.yAxis.label}</Text>
+    )}
+    {parsedDatakeys.yAxis?.labelRight && (
+      <Text variant="eyebrow">{parsedDatakeys.yAxis.labelRight}</Text>
+    )}
+    </Box>
+    <Box style={{ width: '100%', height: '90%' }}>
     <ResponsiveContainer width="100%" height="100%">
       <ComposedChart
         width={250}
@@ -82,19 +91,21 @@ export const MixedChart = ({ graphData }: GraphProps) => {
             }
           />
         ))}
-        {parsedDatakeys.yAxis?.right &&
+        {
           parsedDatakeys.lines.map((item, index) => (
             <Line
               key={item.datakey}
               dataKey={item.datakey}
               stroke={item.color ? item.color : COLORS[index % COLORS.length]}
-              yAxisId="right"
+              yAxisId={parsedDatakeys.yAxis?.right ? "right" : "left" }
               strokeWidth={3}
               dot={{ r: 6, strokeWidth: 3 }}
             />
           ))}
       </ComposedChart>
     </ResponsiveContainer>
+  </Box>
+  </Box>
   )
 }
 

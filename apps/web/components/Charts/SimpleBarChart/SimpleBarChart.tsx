@@ -15,6 +15,7 @@ import {
   COLORS,
   CustomTooltip,
 } from '../utils'
+import { Box, Text } from '@island.is/island-ui/core'
 
 interface GraphDataProps {
   title?: string
@@ -29,6 +30,11 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
   const parsedData = JSON.parse(data)
   const parsedDatakeys = JSON.parse(datakeys)
   return (
+    <Box width="full" height="full">
+      {parsedDatakeys.yAxis?.label && (
+        <Text variant="eyebrow">{parsedDatakeys.yAxis.label}</Text>
+      )}
+      <Box style={{ width: '100%', height: '90%' }}>
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
         width={20}
@@ -66,6 +72,8 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
         ))}
       </BarChart>
     </ResponsiveContainer>
+    </Box>
+    </Box>
   )
 }
 
