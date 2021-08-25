@@ -32,15 +32,9 @@ const MainPage = () => {
   const { user } = useContext(UserContext)
   const logOut = useLogOut()
 
-  const currentState = useMemo(() => {
+  const currentApplication = useMemo(() => {
     if (user?.currentApplication) {
-      return user.currentApplication.state
-    }
-  }, [user])
-
-  const currentApplicationID = useMemo(() => {
-    if (user?.currentApplication) {
-      return user.currentApplication.id
+      return user.currentApplication
     }
   }, [user])
 
@@ -51,10 +45,10 @@ const MainPage = () => {
     {
       heading: 'Staða umsóknar',
       text: `Umsókn móttekin og staðan er ${
-        currentState && getState[currentState].toLowerCase()
+        currentApplication && getState[currentApplication.state].toLowerCase()
       }`,
       label: 'Sjá nánar',
-      link: `${currentApplicationID}`,
+      link: `${currentApplication && currentApplication.id}`,
     },
     {
       heading: 'Áætluð aðstoð',
@@ -62,7 +56,8 @@ const MainPage = () => {
       label: 'Sjá nánar',
       link: 'utreikningur',
     },
-    currentState === ApplicationState.DATANEEDED
+    currentApplication &&
+    currentApplication.state === ApplicationState.DATANEEDED
       ? {
           heading: 'Vantar gögn',
           text:
