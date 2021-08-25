@@ -5,7 +5,7 @@ import Link from 'next/link'
 import * as styles from './TableBody.treat'
 
 import cn from 'classnames'
-import { Application, getState } from '@island.is/financial-aid/shared'
+import { Application, getState, months } from '@island.is/financial-aid/shared'
 import format from 'date-fns/format'
 
 import {
@@ -15,7 +15,6 @@ import {
 
 import {
   calcDifferenceInDate,
-  translateMonth,
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
@@ -67,9 +66,7 @@ const TableBody = ({ application, index }: PageProps) => {
           })}
         >
           <Text>
-            {translateMonth(
-              parseInt(format(new Date(application.created), 'M')),
-            )}
+            {months[parseInt(format(new Date(application.created), 'MM'))]}
           </Text>
         </td>
       </tr>

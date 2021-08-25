@@ -2,8 +2,8 @@ import React, { useState, useContext } from 'react'
 import { Text, Input, Box } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -69,7 +69,7 @@ const EmploymentForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hvað lýsir stöðu þinni best?
         </Text>
@@ -121,9 +121,9 @@ const EmploymentForm = () => {
             }}
           />
         </Box>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
