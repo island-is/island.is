@@ -42,7 +42,7 @@ export const StatisticsCardsSection = ({
             },
             [theme.breakpoints.lg]: {
               gutterWidth: theme.spacing[3],
-              slideCount: 3,
+              slideCount: 2,
             },
             [theme.breakpoints.xl]: {
               gutterWidth: theme.spacing[3],
