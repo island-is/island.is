@@ -50,25 +50,15 @@ export class CaseService {
   ) {}
 
   private async uploadSignedRulingPdfToCourt(
-    existingCase: Case,
+    courtId: string,
+    courtCaseNumber: string,
     pdf: string,
   ): Promise<boolean> {
-    this.logger.debug(
-      `Uploading signed ruling pdf to court for case ${existingCase.id}`,
-    )
-
     const buffer = Buffer.from(pdf, 'binary')
 
     try {
-      const streamId = await this.courtService.uploadStream(
-        existingCase.courtId,
-        buffer,
-      )
-      await this.courtService.createThingbok(
-        existingCase.courtId,
-        existingCase.courtCaseNumber,
-        streamId,
-      )
+      const streamId = await this.courtService.uploadStream(courtId, buffer)
+      await this.courtService.createThingbok(courtId, courtCaseNumber, streamId)
 
       return true
     } catch (error) {
@@ -79,9 +69,9 @@ export class CaseService {
   }
 
   private async sendEmail(
-    recipientName: string,
-    recipientEmail: string,
-    courtCaseNumber: string,
+    recipientName: string | undefined,
+    recipientEmail: string | undefined,
+    courtCaseNumber: string | undefined,
     signedRulingPdf: string,
     body: string,
   ) {
@@ -97,8 +87,8 @@ export class CaseService {
         },
         to: [
           {
-            name: recipientName,
-            address: recipientEmail,
+            name: recipientName ?? '',
+            address: recipientEmail ?? '',
           },
         ],
         subject: `Úrskurður í máli ${courtCaseNumber}`,
@@ -125,9 +115,16 @@ export class CaseService {
       writeFile(`${existingCase.id}-ruling-signed.pdf`, signedRulingPdf)
     }
 
-    const uploaded = IntegratedCourts.includes(existingCase.courtId)
-      ? await this.uploadSignedRulingPdfToCourt(existingCase, signedRulingPdf)
-      : false
+    const uploaded =
+      existingCase.courtId &&
+      existingCase.courtCaseNumber &&
+      IntegratedCourts.includes(existingCase.courtId)
+        ? await this.uploadSignedRulingPdfToCourt(
+            existingCase.courtId,
+            existingCase.courtCaseNumber,
+            signedRulingPdf,
+          )
+        : false
 
     const promises = [
       this.sendEmail(
@@ -190,7 +187,7 @@ export class CaseService {
     await Promise.all(promises)
   }
 
-  async findById(id: string): Promise<Case> {
+  async findById(id: string): Promise<Case | null> {
     this.logger.debug(`Finding case ${id}`)
 
     return this.caseModel.findOne({
@@ -332,9 +329,9 @@ export class CaseService {
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
       return this.signingService.requestSignature(
-        existingCase.judge?.mobileNumber,
+        existingCase.judge?.mobileNumber ?? '',
         'Undirrita skjal - Öryggistala',
-        existingCase.judge?.name,
+        existingCase.judge?.name ?? '',
         'Ísland',
         'ruling.pdf',
         pdf,
@@ -418,7 +415,7 @@ export class CaseService {
   async uploadRequestPdfToCourt(id: string): Promise<void> {
     this.logger.debug(`Uploading request pdf to court for case ${id}`)
 
-    const existingCase = await this.findById(id)
+    const existingCase = (await this.findById(id)) as Case
 
     const intl = await this.intlService.useIntl(
       ['judicial.system.backend'],

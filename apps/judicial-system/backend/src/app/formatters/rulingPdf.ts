@@ -51,7 +51,9 @@ function constructRestrictionRulingPdf(
     .text('Þingbók', { align: 'center' })
     .font('Helvetica')
     .fontSize(18)
-    .text(existingCase.court?.name, { align: 'center' })
+    .text(existingCase.court?.name ?? 'Dómstóll ekki skráður', {
+      align: 'center',
+    })
     .fontSize(12)
     .lineGap(30)
     .text(
@@ -60,8 +62,8 @@ function constructRestrictionRulingPdf(
     )
     .text(
       `Þann ${formatDate(existingCase.courtStartDate, 'PPP')} heldur ${
-        existingCase.judge.name
-      } ${existingCase.judge.title} dómþing. Fyrir er tekið mál nr. ${
+        existingCase.judge?.name ?? '-'
+      } ${existingCase.judge?.title ?? '-'} dómþing. Fyrir er tekið mál nr. ${
         existingCase.courtCaseNumber
       }. Þinghald hefst kl. ${formatDate(existingCase.courtStartDate, 'p')}.`,
       {
@@ -77,7 +79,7 @@ function constructRestrictionRulingPdf(
     .text('Viðstaddir')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.courtAttendees, {
+    .text(existingCase.courtAttendees ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -88,7 +90,7 @@ function constructRestrictionRulingPdf(
     .text('Krafa')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.prosecutorDemands, {
+    .text(existingCase.prosecutorDemands ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -175,7 +177,7 @@ function constructRestrictionRulingPdf(
     .text('Málflutningur')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.litigationPresentations, {
+    .text(existingCase.litigationPresentations ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -190,7 +192,7 @@ function constructRestrictionRulingPdf(
     .text('Krafa')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.demands, {
+    .text(existingCase.demands ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -201,7 +203,7 @@ function constructRestrictionRulingPdf(
     .text('Málsatvik')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.courtCaseFacts, {
+    .text(existingCase.courtCaseFacts ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -212,7 +214,7 @@ function constructRestrictionRulingPdf(
     .text('Lagarök')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.courtLegalArguments, {
+    .text(existingCase.courtLegalArguments ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -225,7 +227,7 @@ function constructRestrictionRulingPdf(
     .text('Niðurstaða')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.ruling, {
+    .text(existingCase.ruling ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -462,7 +464,9 @@ function constructInvestigationRulingPdf(
     .text('Þingbók', { align: 'center' })
     .font('Helvetica')
     .fontSize(18)
-    .text(existingCase.court?.name, { align: 'center' })
+    .text(existingCase.court?.name ?? 'Dómstóll ekki skráður', {
+      align: 'center',
+    })
     .fontSize(12)
     .lineGap(30)
     .text(
@@ -471,8 +475,8 @@ function constructInvestigationRulingPdf(
     )
     .text(
       `Þann ${formatDate(existingCase.courtStartDate, 'PPP')} heldur ${
-        existingCase.judge.name
-      } ${existingCase.judge.title} dómþing. Fyrir er tekið mál nr. ${
+        existingCase.judge?.name ?? '-'
+      } ${existingCase.judge?.title ?? '-'} dómþing. Fyrir er tekið mál nr. ${
         existingCase.courtCaseNumber
       }. Þinghald hefst kl. ${formatDate(existingCase.courtStartDate, 'p')}.`,
       {
@@ -488,7 +492,7 @@ function constructInvestigationRulingPdf(
     .text('Viðstaddir')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.courtAttendees, {
+    .text(existingCase.courtAttendees ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -499,7 +503,7 @@ function constructInvestigationRulingPdf(
     .text('Krafa')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.prosecutorDemands, {
+    .text(existingCase.prosecutorDemands ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -577,7 +581,7 @@ function constructInvestigationRulingPdf(
     .text('Málflutningur')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.litigationPresentations, {
+    .text(existingCase.litigationPresentations ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -592,7 +596,7 @@ function constructInvestigationRulingPdf(
     .text('Krafa')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.demands, {
+    .text(existingCase.demands ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -603,7 +607,7 @@ function constructInvestigationRulingPdf(
     .text('Málsatvik')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.courtCaseFacts, {
+    .text(existingCase.courtCaseFacts ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -614,7 +618,7 @@ function constructInvestigationRulingPdf(
     .text('Lagarök')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.courtLegalArguments, {
+    .text(existingCase.courtLegalArguments ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -627,7 +631,7 @@ function constructInvestigationRulingPdf(
     .text('Niðurstaða')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.ruling, {
+    .text(existingCase.ruling ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -639,7 +643,7 @@ function constructInvestigationRulingPdf(
     .text('Úrskurðarorð', { align: 'center' })
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.conclusion, {
+    .text(existingCase.conclusion ?? 'Vantar', {
       lineGap: 6,
       paragraphGap: 0,
     })

@@ -7,12 +7,12 @@ export class CourtService {
   constructor(private readonly courtClientService: CourtClientService) {}
 
   createDocument(
-    courtId: string,
-    courtCaseNumber: string,
+    courtId: string | undefined,
+    courtCaseNumber: string | undefined,
     streamId: string,
   ): Promise<string> {
-    return this.courtClientService.createDocument(courtId, {
-      caseNumber: courtCaseNumber,
+    return this.courtClientService.createDocument(courtId ?? '', {
+      caseNumber: courtCaseNumber ?? '',
       subject: 'Krafa',
       fileName: 'Krafa.pdf',
       streamID: streamId,
@@ -29,8 +29,8 @@ export class CourtService {
     })
   }
 
-  uploadStream(courtId: string, pdf: Buffer): Promise<string> {
-    return this.courtClientService.uploadStream(courtId, {
+  uploadStream(courtId: string | undefined, pdf: Buffer): Promise<string> {
+    return this.courtClientService.uploadStream(courtId ?? '', {
       value: pdf,
       options: { filename: 'upload.pdf', contentType: 'application/pdf' },
     })
