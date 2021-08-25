@@ -735,12 +735,13 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     )
   })
 
-  test('should format defender court date notification for travel ban', () => {
+  test('should format spokesperson court date notification', () => {
     // Arrange
     const court = 'Héraðsdómur Norðurlands'
     const courtCaseNumber = 'R-77/2021'
     const courtDate = new Date('2020-12-19T10:19')
     const courtRoom = '101'
+    const defenderIsSpokesperson = true
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -748,11 +749,12 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       courtCaseNumber,
       courtDate,
       courtRoom,
+      defenderIsSpokesperson,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem talsmann sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
     )
   })
 })

@@ -240,8 +240,11 @@ export function formatDefenderCourtDateEmailNotification(
   courtCaseNumber: string,
   courtDate: Date,
   courtRoom: string,
+  defenderIsSpokesperson = false,
 ): string {
-  return `${court} hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram ${formatDate(
+  return `${court} hefur boðað þig í fyrirtöku sem ${
+    defenderIsSpokesperson ? 'talsmann' : 'verjanda'
+  } sakbornings.<br /><br />Fyrirtaka mun fara fram ${formatDate(
     courtDate,
     'PPPPp',
   )

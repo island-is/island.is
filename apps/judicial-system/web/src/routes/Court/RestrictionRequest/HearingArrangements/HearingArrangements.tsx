@@ -14,7 +14,6 @@ import {
 import {
   FormFooter,
   PageLayout,
-  Modal,
   CaseNumbers,
   BlueBox,
   FormContentContainer,
@@ -25,7 +24,6 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   Case,
   CaseState,
-  NotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -52,7 +50,6 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
 
 export const HearingArrangements: React.FC = () => {
-  const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
@@ -66,12 +63,7 @@ export const HearingArrangements: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const {
-    updateCase,
-    sendNotification,
-    isSendingNotification,
-    autofill,
-  } = useCase()
+  const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -439,38 +431,14 @@ export const HearingArrangements: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
+              nextUrl={`${Constants.COURT_RECORD_ROUTE}/${id}`}
               nextIsDisabled={
                 workingCase.state === CaseState.DRAFT ||
                 isStepIllegal ||
                 !courtDateIsValid
               }
-              nextIsLoading={isSendingNotification}
-              onNextButtonClick={async () => {
-                const notificationSent = await sendNotification(
-                  workingCase.id,
-                  NotificationType.COURT_DATE,
-                )
-
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                if (notificationSent && !window.Cypress) {
-                  setModalVisible(true)
-                } else {
-                  router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
-                }
-              }}
             />
           </FormContentContainer>
-          {modalVisible && (
-            <Modal
-              title={formatMessage(rcHearingArrangements.modal.heading)}
-              text={formatMessage(rcHearingArrangements.modal.text)}
-              handlePrimaryButtonClick={() => {
-                router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
-              }}
-              primaryButtonText="Loka glugga"
-            />
-          )}
         </>
       ) : null}
     </PageLayout>
