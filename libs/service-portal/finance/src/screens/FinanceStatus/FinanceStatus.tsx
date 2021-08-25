@@ -3,6 +3,7 @@ import flatten from 'lodash/flatten'
 import { gql, useQuery } from '@apollo/client'
 import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
 import { Table as T } from '@island.is/island-ui/core'
+import subYears from 'date-fns/subYears'
 import { Query } from '@island.is/api/schema'
 import {
   Box,
@@ -23,6 +24,7 @@ import {
 import { ExpandHeader, ExpandRow } from '../../components/ExpandableTable'
 import amountFormat from '../../utils/amountFormat'
 import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
+import { showAnnualStatusDocument } from '@island.is/service-portal/graphql'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
 
@@ -35,6 +37,7 @@ const GetFinanceStatusQuery = gql`
 const FinanceStatus: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
+  const { showAnnualStatusPdf } = showAnnualStatusDocument()
 
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
@@ -55,6 +58,8 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
     return amountFormat(chargeTypeTotal)
   }
 
+  const previousYear = subYears(new Date(), 1).getFullYear().toString()
+  const twoYearsAgo = subYears(new Date(), 2).getFullYear().toString()
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
@@ -123,6 +128,30 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                       onGetExcel={() =>
                         exportGreidslustadaFile(financeStatusData, 'xlsx')
                       }
+                      dropdownItems={[
+                        {
+                          title: formatMessage(
+                            {
+                              id: 'sp.finance-status:end-of-year',
+                              defaultMessage: 'Staða í lok árs {year}',
+                              description: 'A welcome message',
+                            },
+                            { year: previousYear },
+                          ),
+                          onClick: () => showAnnualStatusPdf(previousYear),
+                        },
+                        {
+                          title: formatMessage(
+                            {
+                              id: 'sp.finance-status:end-of-year',
+                              defaultMessage: 'Staða í lok árs {year}',
+                              description: 'A welcome message',
+                            },
+                            { year: twoYearsAgo },
+                          ),
+                          onClick: () => showAnnualStatusPdf(twoYearsAgo),
+                        },
+                      ]}
                     />
                   </Column>
                 </Columns>
