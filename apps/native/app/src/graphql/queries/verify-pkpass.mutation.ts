@@ -5,6 +5,11 @@ export const VERIFY_PKPASS_MUTATION = gql`
     verifyPkPass(input: $input) {
       data
       valid
+      error {
+        status
+        message
+        data
+      }
     }
   }
 `
@@ -13,5 +18,10 @@ export interface VerifyPkpassMutationResponse {
   generatePkPass: {
     data?: string
     valid: boolean
+    error?: {
+      status: string;
+      message: string;
+      data: any;
+    }
   }
 }
