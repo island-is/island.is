@@ -5,8 +5,4 @@ export type Credentials = {
   csrfToken: string
 }
 
-export type RolesFieldRule = {
-  muni: string
-}
-
 export type RolesRule = 'osk' | 'veita'
