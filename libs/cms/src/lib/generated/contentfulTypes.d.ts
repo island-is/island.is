@@ -1056,8 +1056,28 @@ export interface IGraphCardFields {
   /** Organization */
   organization?: string | undefined
 
+  /** Organization Logo */
+
+  organizationLogo?: Asset | undefined
+
   /** Graph */
   graph?: IGraph | undefined
+
+  /** Type */
+
+  type?: 'Mixed' | 'Bar' | 'Line' | 'Pie' | undefined
+
+  /** Data */
+
+  data: Record<string, any>
+
+  /** Datakeys */
+
+  datakeys: Record<string, any>
+
+  /** DiaplyAsCard */
+
+  displayAsCard: boolean
 }
 
 export interface IGraphCard extends Entry<IGraphCardFields> {
@@ -1894,7 +1914,7 @@ export interface IOpenDataPageFields {
   pageDescription?: string | undefined
 
   /** Page Header Graph */
-  pageHeaderGraph?: IGraph | undefined
+  pageHeaderGraph?: IGraphCard | undefined
 
   /** Link */
   link?: string | undefined
@@ -1936,6 +1956,46 @@ export interface IOpenDataPage extends Entry<IOpenDataPageFields> {
     contentType: {
       sys: {
         id: 'openDataPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOpenDataSubpageFields {
+  /** Page title */
+  pageTitle?: string | undefined
+
+  /** Fund Title */
+  fundTitle?: string | undefined
+
+  /** Graph Cards */
+  graphCards?: IGraphCard[] | undefined
+
+  /** Statistics Cards */
+  statisticsCards?: IStatisticsCard[] | undefined
+
+  /** Fund Description */
+  fundDescription?: string | undefined
+
+  /** Organization Logo */
+
+  organizationLogo?: Asset | undefined
+}
+
+/** Organization dashboard */
+
+export interface IOpenDataSubpage extends Entry<IOpenDataSubpageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'openDataSubpage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3945,6 +4005,7 @@ export type CONTENT_TYPE =
   | 'numberBulletSection'
   | 'oneColumnText'
   | 'openDataPage'
+  | 'openDataSubpage'
   | 'organization'
   | 'organizationPage'
   | 'organizationSubpage'

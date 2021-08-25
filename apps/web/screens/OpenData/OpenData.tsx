@@ -64,7 +64,6 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
     externalLinkSectionDescription,
     externalLinkSectionImage,
   } = page
-
   return (
     <Box id="main-content" position="relative" style={{ overflow: 'hidden' }}>
       <Box background="blue100">
@@ -141,10 +140,10 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
           </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '4/12', '4/12']}>
-              <ChartsCard data={graphCards[1]} />
+              <ChartsCard chart={graphCards[1]} />
             </GridColumn>
             <GridColumn span={['12/12', '8/12', '8/12']}>
-              <ChartsCard data={graphCards[0]} />
+              <ChartsCard chart={graphCards[0]} />
             </GridColumn>
           </GridRow>
         </GridContainer>
