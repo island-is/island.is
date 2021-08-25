@@ -91,7 +91,12 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
           {organizationLogo && !subPage && (
             <img src={organizationLogo.url} width={80} />
           )}
-          <Box display="flex" flexDirection="row" justifyContent="spaceBetween" width="full">
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            width="full"
+          >
             <Box paddingLeft={1}>
               {organization && (
                 <Text variant="eyebrow" color="dark400">

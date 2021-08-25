@@ -82,7 +82,7 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
                 </Box>
               </Box>
             </Box>
-              
+
             <Link
               href="https://www.rannis.is/sjodir/rannsoknir/taeknithrounarsjodur/"
               skipTab
