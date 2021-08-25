@@ -8,10 +8,10 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { environment } from '../../../environments'
 import { UserModule } from '../user'
 import { CourtModule } from '../court'
+import { FileModule } from '../file/file.module'
 import { Case } from './models'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
-
 @Module({
   imports: [
     SigningModule.register(environment.signingOptions),
@@ -20,6 +20,7 @@ import { CaseService } from './case.service'
     CourtModule,
     SequelizeModule.forFeature([Case]),
     CmsTranslationsModule,
+    FileModule,
   ],
   providers: [CaseService],
   controllers: [CaseController],

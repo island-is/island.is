@@ -27,11 +27,13 @@ import {
   getRequestPdfAsBuffer,
   getRequestPdfAsString,
   getRulingPdfAsString,
+  getCasefilesPdfAsString,
   writeFile,
 } from '../../formatters'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { CourtService } from '../court'
+import { FileService } from '../file/file.service'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
@@ -42,6 +44,7 @@ export class CaseService {
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
     private readonly courtService: CourtService,
+    private readonly fileService: FileService,
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
@@ -320,6 +323,17 @@ export class CaseService {
       'is',
     )
     return getRequestPdfAsString(existingCase, intl.formatMessage)
+  }
+
+  async getCasefilesPdf(existingCase: Case): Promise<string> {
+    this.logger.debug(
+      `Getting the casefiles for case ${existingCase.id} as a pdf document`,
+    )
+
+    const casefiles = await this.fileService.getAllCaseFiles(existingCase.id)
+    const casefileNames = casefiles.map((file) => file.name)
+
+    return getCasefilesPdfAsString(existingCase, casefileNames)
   }
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {

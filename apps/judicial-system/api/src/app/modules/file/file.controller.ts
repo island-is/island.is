@@ -124,4 +124,35 @@ export class FileController {
       throw error
     }
   }
+
+  @Get('casefiles')
+  @Header('Content-Type', 'application/pdf')
+  async getCasefilesPdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(`Getting the casefiles for case ${id} as a pdf document`)
+
+    try {
+      return this.auditTrailService.audit(
+        user.id,
+        AuditedAction.GET_CASEFILES_PDF,
+        this.getPdf(id, 'casefiles', req, res),
+        id,
+      )
+    } catch (error) {
+      this.logger.debug(
+        `Failed to get the casefiles for case ${id} as a pdf document`,
+        error,
+      )
+
+      if (error instanceof FileExeption) {
+        return res.status(error.status).json(error.message)
+      }
+
+      throw error
+    }
+  }
 }
