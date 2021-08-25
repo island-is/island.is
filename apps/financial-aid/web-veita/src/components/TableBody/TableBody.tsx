@@ -5,11 +5,7 @@ import Link from 'next/link'
 import * as styles from './TableBody.treat'
 
 import cn from 'classnames'
-import {
-  Application,
-  getState,
-  translateMonth,
-} from '@island.is/financial-aid/shared'
+import { Application, getState, months } from '@island.is/financial-aid/shared'
 import format from 'date-fns/format'
 
 import {
@@ -70,9 +66,7 @@ const TableBody = ({ application, index }: PageProps) => {
           })}
         >
           <Text>
-            {translateMonth(
-              parseInt(format(new Date(application.created), 'MM')),
-            )}
+            {months[parseInt(format(new Date(application.created), 'MM'))]}
           </Text>
         </td>
       </tr>

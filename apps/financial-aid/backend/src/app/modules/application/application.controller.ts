@@ -33,15 +33,10 @@ export class ApplicationController {
   @Get('getCurrentApplication')
   @ApiOkResponse({
     type: CurrentApplicationModel,
-    description:
-      'Checks whether user has applied before and if it is the same month',
+    description: 'Checks if user has a current application for this period',
   })
   async getCurrentApplication(@Query('nationalId') nationalId: string) {
-    const application = await this.applicationService.getCurrentApplication(
-      nationalId,
-    )
-
-    return application
+    return await this.applicationService.getCurrentApplication(nationalId)
   }
 
   @UseGuards(JwtAuthGuard)

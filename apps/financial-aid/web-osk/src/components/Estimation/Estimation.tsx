@@ -8,7 +8,7 @@ import {
   calulateTaxOfAmount,
   HomeCircumstances,
   Municipality,
-  translateMonth,
+  months,
 } from '@island.is/financial-aid/shared'
 import { useQuery } from '@apollo/client'
 import { GetMunicipalityQuery } from '@island.is/financial-aid-web/oskgraphql'
@@ -31,16 +31,13 @@ const Estimation = ({
   usePersonalTaxCredit,
 }: Props) => {
   const currentYear = format(new Date(), 'yyyy')
-  const currentMonth = format(new Date(), 'MM')
+  const currentMonth = parseInt(format(new Date(), 'MM'))
 
-  const { data, error, loading } = useQuery<MunicipalityData>(
-    GetMunicipalityQuery,
-    {
-      variables: { input: { id: 'hfj' } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const { data, loading } = useQuery<MunicipalityData>(GetMunicipalityQuery, {
+    variables: { input: { id: 'hfj' } },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   const aidAmount = useMemo(() => {
     if (data && homeCircumstances) {
@@ -93,7 +90,7 @@ const Estimation = ({
         </Box>
 
         <Text variant="small">
-          (til útgreiðslu í byrjun {translateMonth(currentMonth).toLowerCase()})
+          (til útgreiðslu í byrjun {months[currentMonth].toLowerCase()})
         </Text>
       </Box>
 

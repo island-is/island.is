@@ -36,8 +36,6 @@ export class UserResolver {
   async currentApplication(
     @Parent() user: User,
   ): Promise<CurrentApplicationModel | null> {
-    const app = await this.userService.getCurrentApplication(user.nationalId)
-
-    return app
+    return await this.userService.getCurrentApplication(user.nationalId)
   }
 }

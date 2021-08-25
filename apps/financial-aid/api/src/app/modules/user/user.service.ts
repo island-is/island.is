@@ -10,6 +10,7 @@ export class UserService {
   async getCurrentApplication(
     nationalId: string,
   ): Promise<CurrentApplicationModel | null> {
+    //Checks if user has a current application
     const res = await fetch(
       `${environment.backend.url}/api/getCurrentApplication/?nationalId=${nationalId}`,
       {
@@ -17,12 +18,14 @@ export class UserService {
       },
     ).then((res) => {
       {
+        //If failed to reach the backend throws error
         if (!res.ok) {
           throw new Error('failed to check if user has application')
         }
         return res
       }
     })
+    //If no application is found, returns null
 
     return await res.json().catch(() => {
       return null

@@ -20,7 +20,7 @@ import { UserContext } from '@island.is/financial-aid-web/osk/src/components/Use
 import {
   ApplicationState,
   getState,
-  translateMonth,
+  months,
 } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
@@ -44,7 +44,7 @@ const MainPage = () => {
     }
   }, [user])
 
-  const currentMonth = format(new Date(), 'MM')
+  const currentMonth = parseInt(format(new Date(), 'MM'))
   const currentYear = format(new Date(), 'yyyy')
 
   const mainInfo = [
@@ -88,7 +88,7 @@ const MainPage = () => {
           Aðstoðin þín
         </Text>
         <Text as="h2" variant="h3" color="blue400" marginBottom={[4, 4, 7]}>
-          Til útgreiðslu í {translateMonth(currentMonth).toLowerCase()} {` `}{' '}
+          Til útgreiðslu í {months[currentMonth].toLowerCase()} {` `}{' '}
           {currentYear}
         </Text>
 

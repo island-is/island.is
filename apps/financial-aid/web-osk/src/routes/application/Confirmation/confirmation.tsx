@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect } from 'react'
 import {
   Text,
-  Icon,
   Box,
   AlertMessage,
   BulletList,
@@ -11,10 +10,8 @@ import {
 
 import {
   ContentContainer,
-  Footer,
   FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
-import * as styles from './confirmation.treat'
 import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
@@ -22,9 +19,6 @@ import { NavigationProps } from '@island.is/financial-aid/shared'
 
 const Confirmation = () => {
   const router = useRouter()
-
-  const [accept, setAccept] = useState(false)
-  const [error, setError] = useState(false)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,

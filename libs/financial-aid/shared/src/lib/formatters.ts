@@ -43,24 +43,20 @@ export const formatPhoneNumber = (phoneNumber: string) => {
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
-export const translateMonth = (month: string) => {
-  const months = [
-    'Janúar',
-    'Febrúar',
-    'Mars',
-    'Apríl',
-    'Maí',
-    'Júní',
-    'Júlí',
-    'Ágúst',
-    'September',
-    'Október',
-    'Nóvember',
-    'Desember',
-  ]
-
-  return months[parseInt(month)]
-}
+export const months = [
+  'Janúar',
+  'Febrúar',
+  'Mars',
+  'Apríl',
+  'Maí',
+  'Júní',
+  'Júlí',
+  'Ágúst',
+  'September',
+  'Október',
+  'Nóvember',
+  'Desember',
+]
 
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,

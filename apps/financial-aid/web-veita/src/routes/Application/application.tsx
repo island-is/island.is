@@ -27,7 +27,7 @@ import {
   getState,
   Municipality,
   aidCalculator,
-  translateMonth,
+  months,
   calculateAidFinalAmount,
   formatPhoneNumber,
 } from '@island.is/financial-aid/shared'
@@ -122,7 +122,7 @@ const ApplicationProfile = () => {
       {
         title: 'Tímabil',
         content:
-          translateMonth(parseInt(format(new Date(application.created), 'M'))) +
+          months[parseInt(format(new Date(application.created), 'M'))] +
           format(new Date(application.created), ' y'),
       },
       {
