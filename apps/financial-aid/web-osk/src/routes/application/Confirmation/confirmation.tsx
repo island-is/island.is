@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect } from 'react'
 import {
   Text,
-  Icon,
   Box,
   AlertMessage,
   BulletList,
@@ -10,11 +9,9 @@ import {
 } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
   FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
-import * as styles from './confirmation.treat'
 import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
@@ -22,9 +19,6 @@ import { NavigationProps } from '@island.is/financial-aid/shared'
 
 const Confirmation = () => {
   const router = useRouter()
-
-  const [accept, setAccept] = useState(false)
-  const [error, setError] = useState(false)
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -53,7 +47,7 @@ const Confirmation = () => {
 
   return (
     <FormLayout activeSection={navigation?.activeSectionIndex}>
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
           Staðfesting
         </Text>
@@ -100,7 +94,7 @@ const Confirmation = () => {
             })}
           </BulletList>
         </Box>
-      </FormContentContainer>
+      </ContentContainer>
     </FormLayout>
   )
 }

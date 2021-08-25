@@ -378,6 +378,11 @@ download-service:
     allowPrivilegeEscalation: false
     privileged: false
 endorsement-system-api:
+  args:
+    - '--tls-min-v1.0'
+    - main.js
+  command:
+    - node
   enabled: true
   env:
     DB_HOST: prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com
