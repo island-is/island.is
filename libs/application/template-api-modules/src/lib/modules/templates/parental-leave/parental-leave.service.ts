@@ -137,6 +137,12 @@ export class ParentalLeaveService {
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0
+
+      // If a period doesn't have both startDate or endDate we skip it
+      if (!isFirstPeriod && (!period.startDate || !period.endDate)) {
+        continue
+      }
+
       const startDate = new Date(period.startDate)
       const endDate = new Date(period.endDate)
       const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
