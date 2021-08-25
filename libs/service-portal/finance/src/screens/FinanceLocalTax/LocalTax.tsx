@@ -3,21 +3,21 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
-const EmployeeClaims = () => {
-  useNamespaces('sp.employee-claims')
+const LocalTax = () => {
+  useNamespaces('sp.local-tax')
   const { formatMessage } = useLocale()
   return (
     <DocumentScreen
-      title={formatMessage(m.financeEmployeeClaims)}
+      title={formatMessage(m.financeLocalTax)}
       intro={formatMessage({
-        id: 'sp.employee-claims:intro',
+        id: 'sp.local-tax:intro',
         defaultMessage:
           'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
       })}
-      listPath="employeeClaims"
+      listPath="localTax"
       defaultDateRangeMonths={12}
     />
   )
 }
 
-export default EmployeeClaims
+export default LocalTax
