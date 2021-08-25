@@ -23,7 +23,6 @@ import { Screen } from '@island.is/web/types'
 import { StatisticsCard, ChartsCard } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
-import { area, gender, applications, category } from './data'
 
 interface OpenDataSubpageProps {
   page: GetOpenDataSubpageQuery['getOpenDataSubpage']
@@ -40,7 +39,6 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
     graphCards,
     organizationLogo,
   } = page
-  const data = [area, gender, category, applications]
   return (
     <Box id="main-content" style={{ overflow: 'hidden' }}>
       <GridContainer>

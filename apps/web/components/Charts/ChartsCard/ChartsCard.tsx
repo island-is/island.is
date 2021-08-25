@@ -8,7 +8,7 @@ import {
   SimpleLineChart,
   SimplePieChart,
 } from '../'
-import { ExportCSVButton, BackgroundImage } from '@island.is/web/components'
+import { ExportCSVButton } from '@island.is/web/components'
 
 import * as styles from './ChartsCard.treat'
 
