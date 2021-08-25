@@ -286,6 +286,9 @@
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
+      "@island.is/icelandic-names-registry-utils": [
+        "libs/icelandic-names-registry/utils/src/index.ts"
+      ],
       "@island.is/infra-express-server": [
         "libs/infra-express-server/src/index.ts"
       ],

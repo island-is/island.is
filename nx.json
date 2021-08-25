@@ -426,6 +426,9 @@
     "icelandic-names-registry-types": {
       "tags": []
     },
+    "icelandic-names-registry-utils": {
+      "tags": []
+    },
     "infra-express-server": {
       "tags": []
     },

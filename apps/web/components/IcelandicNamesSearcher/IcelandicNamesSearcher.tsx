@@ -24,12 +24,12 @@ import {
   ButtonProps,
   Icon,
   Input,
-  ResponsiveSpace,
   Link,
   Hidden,
   Tooltip,
 } from '@island.is/island-ui/core'
 
+import { sortByNames } from '@island.is/icelandic-names-registry-utils'
 import { alphabet } from './data'
 import {
   GetIcelandicNameBySearchQuery,
@@ -116,8 +116,6 @@ type NameType = Pick<
   | 'url'
 >
 
-const paddingTop = [3, 3, 3, 3, 0] as ResponsiveSpace
-
 export const IcelandicNamesSearcher = () => {
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [selectedLetter, setSelectedLetter] = useState<string>('')
@@ -152,15 +150,18 @@ export const IcelandicNamesSearcher = () => {
     initialToggledFiltersState,
   )
 
-  const filterFns = {
-    denied: (x: NameType) => x.status === 'Haf',
-    approved: (x: NameType) => x.status === 'Sam',
-    pending: (x: NameType) => x.status === 'Óaf',
-    females: (x: NameType) => ['ST', 'RST'].includes(x.type),
-    males: (x: NameType) => ['DR', 'RDR'].includes(x.type),
-    neutral: (x: NameType) => ['KH', 'RKH'].includes(x.type),
-    middleNames: (x: NameType) => x.type === 'MI',
-  }
+  const filterFns = useCallback(
+    () => ({
+      denied: (x: NameType) => x.status === 'Haf',
+      approved: (x: NameType) => x.status === 'Sam',
+      pending: (x: NameType) => x.status === 'Óaf',
+      females: (x: NameType) => ['ST', 'RST'].includes(x.type),
+      males: (x: NameType) => ['DR', 'RDR'].includes(x.type),
+      neutral: (x: NameType) => ['KH', 'RKH'].includes(x.type),
+      middleNames: (x: NameType) => x.type === 'MI',
+    }),
+    [],
+  )
 
   useMemo(() => {
     if (searchData?.getIcelandicNameBySearch) {
@@ -183,17 +184,17 @@ export const IcelandicNamesSearcher = () => {
       const filtered = data.filter((x) => {
         return filtersSelected
           .map((f) => {
-            const fn = filterFns[f]
+            const fn = filterFns()[f]
             if (!fn) return true
             return fn(x)
           })
           .some((x) => x)
       })
-      setFilteredNamesList(filtered)
+      setFilteredNamesList(sortByNames(filtered))
     } else {
-      setFilteredNamesList(data)
+      setFilteredNamesList(sortByNames(data))
     }
-  }, [tableData, filters])
+  }, [tableData, filters, filterFns])
 
   const doSearch = useCallback(() => {
     setHasSearched(true)
@@ -202,14 +203,17 @@ export const IcelandicNamesSearcher = () => {
     inputRef?.current?.focus()
   }, [search, inputRef, searchQuery])
 
-  const doSearchByInitialLetter = useCallback((letter: string) => {
-    setHasSearched(true)
-    setSearchQuery('')
-    searchByInitialLetter({
-      variables: { input: { initialLetter: letter } },
-    })
-    inputRef?.current?.focus()
-  }, [])
+  const doSearchByInitialLetter = useCallback(
+    (letter: string) => {
+      setHasSearched(true)
+      setSearchQuery('')
+      searchByInitialLetter({
+        variables: { input: { initialLetter: letter } },
+      })
+      inputRef?.current?.focus()
+    },
+    [searchByInitialLetter],
+  )
 
   const statusFilterSelected =
     filters.approved || filters.denied || filters.pending
