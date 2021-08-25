@@ -421,6 +421,7 @@ export class NotificationService {
       existingCase.courtCaseNumber,
       existingCase.courtDate,
       existingCase.courtRoom,
+      existingCase.defenderIsSpokesperson,
     )
 
     let attachments: Attachment[]

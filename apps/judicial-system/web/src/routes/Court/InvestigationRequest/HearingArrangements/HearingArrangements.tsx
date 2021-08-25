@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
-import {
-  Modal,
-  PageLayout,
-} from '@island.is/judicial-system-web/src/shared-components'
-import { Case, NotificationType } from '@island.is/judicial-system/types'
+import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
+import { Case } from '@island.is/judicial-system/types'
 import {
   CaseData,
   JudgeSubsections,
@@ -16,18 +12,14 @@ import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import HearingArrangementsForm from './HearingArrangementsForm'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
 
 const HearingArrangements = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [modalVisible, setModalVisible] = useState(false)
 
   const router = useRouter()
   const id = router.query.id
-  const { sendNotification, isSendingNotification, autofill } = useCase()
-  const { formatMessage } = useIntl()
+  const { autofill } = useCase()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -55,23 +47,6 @@ const HearingArrangements = () => {
     }
   }, [workingCase, setWorkingCase, data, autofill])
 
-  const handleNextButtonClick = async () => {
-    if (workingCase) {
-      const notificationSent = await sendNotification(
-        workingCase.id,
-        NotificationType.COURT_DATE,
-      )
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (notificationSent && !window.Cypress) {
-        setModalVisible(true)
-      } else {
-        router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${id}`)
-      }
-    }
-  }
-
   return (
     <PageLayout
       activeSection={
@@ -85,31 +60,12 @@ const HearingArrangements = () => {
       caseId={workingCase?.id}
     >
       {workingCase && users && (
-        <>
-          <HearingArrangementsForm
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            isLoading={loading || userLoading || isSendingNotification}
-            users={users}
-            handleNextButtonClick={handleNextButtonClick}
-          />
-          {modalVisible && (
-            <Modal
-              title={formatMessage(icHearingArrangements.modal.heading)}
-              text={formatMessage(icHearingArrangements.modal.text, {
-                announcementSuffix: !workingCase.defenderEmail
-                  ? '.'
-                  : workingCase.defenderIsSpokesperson
-                  ? ` og talsmann.`
-                  : ` og verjanda.`,
-              })}
-              handlePrimaryButtonClick={() => {
-                router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${id}`)
-              }}
-              primaryButtonText="Loka glugga"
-            />
-          )}
-        </>
+        <HearingArrangementsForm
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          isLoading={loading || userLoading}
+          users={users}
+        />
       )}
     </PageLayout>
   )
