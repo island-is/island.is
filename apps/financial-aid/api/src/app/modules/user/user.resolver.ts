@@ -3,7 +3,7 @@ import { Inject, UseGuards } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { StaffRoles, User } from '@island.is/financial-aid/shared'
+import type { User } from '@island.is/financial-aid/shared'
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
@@ -34,15 +34,4 @@ export class UserResolver {
   async hasAppliedForPeriod(@Parent() user: User): Promise<boolean> {
     return await this.userService.checkHasAppliedForPeriod(user.nationalId)
   }
-
-  //   @ResolveField('role', () => boolean)
-  //   async role(@Parent() user: User): Promise<StaffRoles> {
-  //     return await this.userService.checkStaffRole(user.nationalId)
-  //   }
-
-  //   @ResolveField('municipalityId', () => boolean)
-  //   async municipalityId(@Parent() user: User): Promise<string> {
-  //     return Promise.resolve('hfj')
-  //   }
-  // }
 }
