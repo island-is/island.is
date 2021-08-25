@@ -54,10 +54,12 @@ function custodyProvisionsCompare(
 export function formatCustodyProvisions(
   custodyProvisions: CaseCustodyProvisions[] | undefined,
 ): string {
-  return custodyProvisions
-    ?.sort((p1, p2) => custodyProvisionsCompare(p1, p2))
-    .reduce((s, l) => `${s}${laws[l]}\n`, '')
-    .slice(0, -1)
+  return (
+    custodyProvisions
+      ?.sort((p1, p2) => custodyProvisionsCompare(p1, p2))
+      .reduce((s, l) => `${s}${laws[l]}\n`, '')
+      .slice(0, -1) ?? ''
+  )
 }
 
 // This function is always called with case type CUSTODY or TRAVEL_BAN
