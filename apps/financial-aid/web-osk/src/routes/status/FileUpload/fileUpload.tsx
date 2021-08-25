@@ -17,11 +17,7 @@ const FileUpload = () => {
         about="Þú getur alltaf sent okkur gögn sem þú telur hjálpa umsókninni, t.d.
         launagögn"
       />
-      <Footer
-        previousUrl="/stada"
-        prevButtonText="Til baka"
-        nextButtonText="Senda gögn"
-      />
+      <Footer previousUrl="/stada" nextButtonText="Senda gögn" />
     </StatusLayout>
   )
 }

@@ -79,7 +79,6 @@ const EmailForm = () => {
       </ContentContainer>
 
       <Footer
-        prevButtonText="Til baka"
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />

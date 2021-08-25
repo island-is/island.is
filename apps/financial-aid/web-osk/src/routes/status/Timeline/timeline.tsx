@@ -55,11 +55,7 @@ const Timeline = () => {
         )}
         {loading && <LoadingDots />}
       </ContentContainer>
-      <Footer
-        previousUrl="/stada"
-        prevButtonText="Til baka"
-        hideNextButton={true}
-      />
+      <Footer previousUrl="/stada" hideNextButton={true} />
     </StatusLayout>
   )
 }

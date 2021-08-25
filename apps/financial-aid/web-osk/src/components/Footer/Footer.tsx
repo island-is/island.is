@@ -55,7 +55,7 @@ const Footer = (props: Props) => {
                     }
                   }}
                 >
-                  {props.prevButtonText}
+                  {props.prevButtonText ?? 'Til baka'}
                 </Button>
               </Box>
 

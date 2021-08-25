@@ -111,7 +111,6 @@ const TaxReturnForm = () => {
       </ContentContainer>
 
       <Footer
-        prevButtonText="Til baka"
         previousUrl={navigation?.prevUrl}
         nextButtonText="Halda áfram"
         onNextButtonClick={() => errorCheck()}

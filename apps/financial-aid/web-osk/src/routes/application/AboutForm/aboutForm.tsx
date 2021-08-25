@@ -93,11 +93,7 @@ const AboutForm = () => {
         </Box>
       </ContentContainer>
 
-      <Footer
-        prevButtonText="Til baka"
-        previousUrl={navigation?.prevUrl}
-        nextUrl={navigation?.nextUrl}
-      />
+      <Footer previousUrl={navigation?.prevUrl} nextUrl={navigation?.nextUrl} />
     </FormLayout>
   )
 }

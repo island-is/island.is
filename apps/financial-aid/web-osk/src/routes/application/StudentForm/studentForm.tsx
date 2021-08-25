@@ -127,7 +127,6 @@ const StudentForm = () => {
       </ContentContainer>
 
       <Footer
-        prevButtonText="Til baka"
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
