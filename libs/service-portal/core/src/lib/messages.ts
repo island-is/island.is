@@ -373,6 +373,10 @@ export const m = defineMessages({
     id: 'service.portal:finance-employee-claims',
     defaultMessage: 'Laungreiðendakröfur',
   },
+  financeLocalTax: {
+    id: 'service.portal:finance-local-tax',
+    defaultMessage: 'Útsvar',
+  },
   actions: {
     id: 'service.portal:actions',
     defaultMessage: 'Aðgerðir',
