@@ -2,8 +2,8 @@ import React, { useState, useContext } from 'react'
 import { Text, Input, Box } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 
@@ -48,7 +48,7 @@ const EmailForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Samskipti
         </Text>
@@ -76,9 +76,9 @@ const EmailForm = () => {
             hasError={hasError}
           />
         </Box>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />

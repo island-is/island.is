@@ -15,6 +15,7 @@ const EmployeeClaims = () => {
           'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
       })}
       listPath="employeeClaims"
+      defaultDateRangeMonths={12}
     />
   )
 }
