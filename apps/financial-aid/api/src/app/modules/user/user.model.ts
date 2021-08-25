@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { StaffRoles, User } from '@island.is/financial-aid/shared'
+import { User } from '@island.is/financial-aid/shared'
 
 @ObjectType()
 export class UserModel implements User {
