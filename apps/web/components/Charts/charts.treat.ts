@@ -50,3 +50,4 @@ export const tooltip = style({
   fontSize: '15px',
   lineHeight: '20px',
 })
+

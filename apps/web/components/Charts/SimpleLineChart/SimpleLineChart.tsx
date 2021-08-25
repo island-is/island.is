@@ -10,7 +10,7 @@ import {
   Line,
 } from 'recharts'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CustomizedAxisTick, RenderLegend, COLORS, YAxisLabel } from '../utils'
+import { CustomizedAxisTick, RenderLegend, COLORS, YAxisLabel } from '../sharedChartComponents'
 
 interface GraphDataProps {
   title?: string

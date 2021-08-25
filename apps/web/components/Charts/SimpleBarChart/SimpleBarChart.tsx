@@ -15,7 +15,7 @@ import {
   COLORS,
   CustomTooltip,
   YAxisLabel,
-} from '../utils'
+} from '../sharedChartComponents'
 import { Box } from '@island.is/island-ui/core'
 
 interface GraphDataProps {

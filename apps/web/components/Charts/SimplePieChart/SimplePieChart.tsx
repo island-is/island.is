@@ -9,7 +9,7 @@ import {
 } from 'recharts'
 import * as styles from './SimplePieChart.treat'
 import cn from 'classnames'
-import { COLORS, renderCustomizedLabel } from '../utils'
+import { COLORS, renderCustomizedLabel } from '../sharedChartComponents'
 
 interface CustomTooltipProps extends TooltipProps<string, number> {
   sum: number
