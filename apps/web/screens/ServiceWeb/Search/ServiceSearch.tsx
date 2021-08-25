@@ -38,7 +38,7 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './ServiceSearch.treat'
 import * as sharedStyles from '../shared/styles.treat'
 import ContactBanner from '../ContactBanner/ContactBanner'
-import { SearchInput } from '@island.is/web/components/ServiceWeb/SearchInput/SearchInput'
+import { ServiceWebSearchInput as SearchInput } from '@island.is/web/components/'
 
 const PERPAGE = 10
 
@@ -105,13 +105,7 @@ const ServiceSearch: Screen<CategoryProps> = ({
             ]}
           />
 
-          <SearchInput
-            id="search_input_search_page"
-            ref={searchRef}
-            colored={true}
-            size="large"
-            initialInputValue={q}
-          />
+          <SearchInput colored={true} size="large" initialInputValue={q} />
 
           {searchResultsItems.length === 0 ? (
             <>
