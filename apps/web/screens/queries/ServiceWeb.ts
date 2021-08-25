@@ -44,6 +44,7 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
       category {
         title
         description
+        slug
       }
       answer {
         ...AllSlices

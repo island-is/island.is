@@ -6,6 +6,7 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
+  QueryGetSupportCategoriesInOrganizationArgs,
   QueryGetSupportQnAsArgs,
 } from '@island.is/web/graphql/schema'
 import {
@@ -206,7 +207,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
           : {},
       ),
     slug
-      ? apolloClient.query<Query, QueryGetSupportQnAsInOrganizationArgs>({
+      ? apolloClient.query<Query, QueryGetSupportCategoriesInOrganizationArgs>({
           query: GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
           variables: {
             input: {

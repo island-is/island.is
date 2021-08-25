@@ -39,21 +39,18 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 interface SubPageProps {
   organization?: Organization
   namespace: Query['getNamespace']
-  organizationSlug: string
-  categorySlug: string
   supportQNAs: Query['getSupportQNAsInCategory']
   questionSlug: string
 }
 
 const SubPage: Screen<SubPageProps> = ({
-  organizationSlug,
-  categorySlug,
   organization,
   supportQNAs,
   questionSlug,
 }) => {
   const { linkResolver } = useLinkResolver()
   const organizationTitle = organization ? organization.title : 'Ísland.is'
+  const organizationSlug = organization.slug
   const question = supportQNAs.find(
     (supportQNA) => supportQNA.slug === questionSlug,
   )
@@ -63,10 +60,13 @@ const SubPage: Screen<SubPageProps> = ({
   // Already filtered by category, simply
   const categoryDescription = supportQNAs[0]?.category?.description ?? ''
   const categoryTitle = supportQNAs[0]?.category?.title
+  const categorySlug = supportQNAs[0]?.category?.slug
   const supportQNAsBySubCategory = groupBy(
     supportQNAs,
     (supportQNA) => supportQNA.subCategory.title,
   )
+
+  console.log({ categorySlug, organizationSlug })
 
   return (
     <>
@@ -88,24 +88,18 @@ const SubPage: Screen<SubPageProps> = ({
                           {
                             title: logoTitle,
                             typename: 'helpdesk',
-                            href: '/',
+                            href: `${
+                              linkResolver('helpdesk').href
+                            }/${organizationSlug}`,
                           },
                           {
-                            title: 'Skírteini',
+                            title: `${categoryTitle}`,
                             typename: 'helpdesk',
-                            href: '/',
+                            href: `${
+                              linkResolver('helpdesk').href
+                            }/${organizationSlug}/${categorySlug}`,
                           },
                         ]}
-                        renderLink={(link, { typename, slug }) => {
-                          return (
-                            <NextLink
-                              {...linkResolver(typename as LinkType, slug)}
-                              passHref
-                            >
-                              {link}
-                            </NextLink>
-                          )
-                        }}
                       />
                     </Box>
                   </GridColumn>
@@ -189,7 +183,7 @@ const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
 SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const slugs = query.slugs as string
-  const organizationSlug = slugs[0] || ''
+  const organizationSlug = slugs[0]
   const categorySlug = slugs[1]
   const questionSlug = single(query.q) ?? undefined
 
@@ -234,8 +228,6 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     namespace,
     organization: organization?.data?.getOrganization,
-    organizationSlug,
-    categorySlug,
     supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
     questionSlug,
   }
