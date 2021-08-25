@@ -21,7 +21,7 @@ const ContactBanner = () => {
           <Text variant="intro" marginBottom={[5, 10]}>
             {'Hvernig getum við aðstoðað?'}
           </Text>
-          <Link href={'/thjonustuvefur/hafa-samband'}>
+          <Link href={'/s/stafraent-island/hafa-samband'}>
             <Button type="button" variant="ghost" icon="arrowForward">
               Hafa samband
             </Button>

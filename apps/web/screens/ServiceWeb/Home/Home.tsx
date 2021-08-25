@@ -7,7 +7,6 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
   QueryGetSupportQnAsArgs,
-  QueryGetSupportQnAsInOrganizationArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -17,16 +16,13 @@ import {
 } from '../../queries'
 import { Screen } from '../../../types'
 import {
-  Accordion,
   Box,
   GridColumn,
   GridContainer,
   GridRow,
   Text,
-  TopicCard,
 } from '@island.is/island-ui/core'
 
-import { questions } from '../mock'
 import {
   Card,
   SimpleSlider,
@@ -169,31 +165,6 @@ const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12']}
             >
-              <Box
-                className={styles.faqs}
-                paddingX={[2, 2, 4, 15]}
-                paddingY={[2, 2, 4, 8]}
-              >
-                <Text variant="h3" as="h3">
-                  Algengar spurningar
-                </Text>
-
-                <Box marginTop={[2, 2, 4, 5]}>
-                  <Accordion
-                    dividers={false}
-                    dividerOnTop={false}
-                    dividerOnBottom={false}
-                  >
-                    {questions.map(({ title }, index) => {
-                      return (
-                        <TopicCard key={index} href="/">
-                          {title}
-                        </TopicCard>
-                      )
-                    })}
-                  </Accordion>
-                </Box>
-              </Box>
               <Box marginY={[10, 10, 20]}>
                 <ContactBanner />
               </Box>

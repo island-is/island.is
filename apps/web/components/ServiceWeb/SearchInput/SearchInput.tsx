@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -25,8 +25,6 @@ export const SearchInput = ({
   size = 'large',
   initialInputValue = '',
 }: SearchInputProps) => {
-  const timerRef = useRef(null)
-  const [isBusy, setIsBusy] = useState<boolean>(false)
   const [searchTerms, setSearchTerms] = useState<string>('')
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
