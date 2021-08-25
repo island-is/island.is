@@ -57,6 +57,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_LICENSE,
   name: 'Umsókn um ökuskilríki',
   dataSchema,
+  readyForProduction: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
