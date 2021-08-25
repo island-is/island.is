@@ -62,6 +62,7 @@ const SubPage: Screen<SubPageProps> = ({
 
   // Already filtered by category, simply
   const categoryDescription = supportQNAs[0]?.category?.description ?? ''
+  const categoryTitle = supportQNAs[0]?.category?.title
   const supportQNAsBySubCategory = groupBy(
     supportQNAs,
     (supportQNA) => supportQNA.subCategory.title,
@@ -112,7 +113,7 @@ const SubPage: Screen<SubPageProps> = ({
                 <GridRow>
                   <GridColumn span={['12/12', '12/12', '10/12']}>
                     <Text variant="h1" as="h1">
-                      {organizationTitle}
+                      {categoryTitle}
                     </Text>
                     <Text marginTop={2} variant="intro">
                       {categoryDescription}
