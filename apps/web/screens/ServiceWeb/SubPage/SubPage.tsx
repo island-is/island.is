@@ -149,13 +149,13 @@ const SubPage: Screen<SubPageProps> = ({
                                   <Box marginTop={3}>
                                     <Stack space={2}>
                                       {supportQNAsBySubCategory[subcat].map(
-                                        ({ question, slug }, index) => {
+                                        ({ title, slug }, index) => {
                                           return (
                                             <Box key={index}>
                                               <TopicCard
                                                 href={`/thjonustuvefur/${organizationSlug}/${categorySlug}?&q=${slug}`}
                                               >
-                                                {question}
+                                                {title}
                                               </TopicCard>
                                             </Box>
                                           )
