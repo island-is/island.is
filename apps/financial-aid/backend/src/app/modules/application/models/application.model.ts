@@ -5,12 +5,9 @@ import {
   Model,
   Table,
   UpdatedAt,
-  ForeignKey,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
-
-import { ApplicationEventModel } from '../../applicationEvent'
 
 import {
   HomeCircumstances,
