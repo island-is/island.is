@@ -10,6 +10,7 @@ import {
   DocumentTypes,
   DocumentsListTypes,
   TapsControlTypes,
+  AnnualStatusTypes,
 } from './finance.types'
 
 export const FINANCE_OPTIONS = 'FINANCE_OPTIONS'
@@ -124,6 +125,20 @@ export class FinanceService extends RESTDataSource {
   ): Promise<DocumentTypes> {
     const response = await this.get<DocumentTypes>(
       `/document?nationalID=${nationalID}&documentID=${documentID}`,
+      {},
+      {
+        cacheOptions: { ttl: this.options.ttl },
+      },
+    )
+    return response
+  }
+
+  async getAnnualStatusDocument(
+    nationalID: string,
+    year: string,
+  ): Promise<AnnualStatusTypes> {
+    const response = await this.get<AnnualStatusTypes>(
+      `/annualStatusDocument?nationalID=${nationalID}&year=${year}`,
       {},
       {
         cacheOptions: { ttl: this.options.ttl },
