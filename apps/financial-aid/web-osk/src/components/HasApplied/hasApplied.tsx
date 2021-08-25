@@ -1,10 +1,13 @@
 import React, { useContext } from 'react'
-import { Text, GridContainer } from '@island.is/island-ui/core'
+import { Text, GridContainer, Button } from '@island.is/island-ui/core'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
+import { useRouter } from 'next/router'
+
 const HasApplied = () => {
   const { user } = useContext(UserContext)
+  const router = useRouter()
 
   return (
     <GridContainer>
@@ -13,7 +16,13 @@ const HasApplied = () => {
         þú hefur þegar sótt um fyrir þennan mánuð
       </Text>
 
-      <Text>Kíktu á stöðu síðuna </Text>
+      <Button
+        onClick={() => {
+          router.push('/stada')
+        }}
+      >
+        Kíktu á stöðu síðuna{' '}
+      </Button>
     </GridContainer>
   )
 }

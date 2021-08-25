@@ -10,27 +10,31 @@ import {
   Line,
 } from 'recharts'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CustomizedAxisTick, RenderLegend, COLORS } from '../utils'
+import {
+  CustomizedAxisTick,
+  RenderLegend,
+  COLORS,
+  YAxisLabel,
+} from '../sharedChartComponents'
 
 interface GraphDataProps {
   title?: string
   data: string
   datakeys: string
+  graphTitle?: string
 }
 interface SimpleLineChartGraphProps {
   graphData: GraphDataProps
 }
 
 export const SimpleLineChart = ({ graphData }: SimpleLineChartGraphProps) => {
-  const { title, data, datakeys } = graphData
+  const { title, data, datakeys, graphTitle } = graphData
   const parsedData = JSON.parse(data)
   const parsedDatakeys = JSON.parse(datakeys)
 
   return (
     <Box width="full" height="full">
-      {parsedDatakeys.yAxis?.label && (
-        <Text variant="eyebrow">{parsedDatakeys.yAxis.label}</Text>
-      )}
+      <YAxisLabel label={parsedDatakeys.yAxis.label} />
       <Box style={{ width: '100%', height: '90%' }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
@@ -45,7 +49,7 @@ export const SimpleLineChart = ({ graphData }: SimpleLineChartGraphProps) => {
             }}
           >
             <CartesianGrid
-              strokeDasharray="1"
+              strokeDasharray="0"
               vertical={false}
               stroke="#CCDFFF"
             />
@@ -60,7 +64,7 @@ export const SimpleLineChart = ({ graphData }: SimpleLineChartGraphProps) => {
             <Tooltip />
             <Legend
               iconType="circle"
-              content={<RenderLegend title={title} />}
+              content={<RenderLegend title={title ?? graphTitle} />}
             />
             {parsedDatakeys.lines.map((item, index) => (
               <Line

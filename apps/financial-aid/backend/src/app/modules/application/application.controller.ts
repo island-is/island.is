@@ -13,7 +13,7 @@ import {
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 
 import { ApplicationService } from './application.service'
-import { ApplicationModel } from './models'
+import { CurrentApplicationModel, ApplicationModel } from './models'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
@@ -35,16 +35,13 @@ export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
   @UseGuards(TokenGuard)
-  @Get('hasAppliedForPeriod')
+  @Get('getCurrentApplication')
   @ApiOkResponse({
-    description:
-      'Checks whether user has applied before and if it is the same month',
+    type: CurrentApplicationModel,
+    description: 'Checks if user has a current application for this period',
   })
-  async getHasAppliedForPeriod(@Query('nationalId') nationalId: string) {
-    const hasApplied = await this.applicationService.hasAppliedForPeriod(
-      nationalId,
-    )
-    return hasApplied
+  async getCurrentApplication(@Query('nationalId') nationalId: string) {
+    return await this.applicationService.getCurrentApplication(nationalId)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -75,7 +72,8 @@ export class ApplicationController {
     return application
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(staffRule)
   @Get('applicationFilters')
   @ApiOkResponse({
     description: 'Gets all existing applications filters',
