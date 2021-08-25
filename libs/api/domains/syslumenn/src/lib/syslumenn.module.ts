@@ -6,6 +6,7 @@ import {
 } from './client/syslumenn.client'
 import { SyslumennResolver } from './syslumenn.resolver'
 import { SyslumennService } from './syslumenn.service'
+import https, { Agent } from 'https'
 
 export class SyslumennModule {
   static register(config: SyslumennClientConfig): DynamicModule {
@@ -13,7 +14,10 @@ export class SyslumennModule {
       module: SyslumennModule,
       imports: [
         HttpModule.register({
-          timeout: 10000,
+          httpsAgent: new https.Agent({
+            rejectUnauthorized: false,
+            timeout: 10000,
+          }),
         }),
       ],
       providers: [
