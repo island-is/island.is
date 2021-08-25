@@ -91,25 +91,27 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
           {organizationLogo && !subPage && (
             <img src={organizationLogo.url} width={80} />
           )}
-          <Box paddingLeft={1}>
-            {organization && (
-              <Text variant="eyebrow" color="dark400">
-                {organization}
+          <Box display="flex" flexDirection="row" justifyContent="spaceBetween" width="full">
+            <Box paddingLeft={1}>
+              {organization && (
+                <Text variant="eyebrow" color="dark400">
+                  {organization}
+                </Text>
+              )}
+              <Text variant="h3" color="dark400">
+                <Hyphen>{graphTitle}</Hyphen>
               </Text>
-            )}
-            <Text variant="h3" color="dark400">
-              <Hyphen>{graphTitle}</Hyphen>
-            </Text>
-            {graphDescription && (
-              <Text color="dark400">{graphDescription}</Text>
+              {graphDescription && (
+                <Text color="dark400">{graphDescription}</Text>
+              )}
+            </Box>
+
+            {subPage && (
+              <Box padding={[2, 2, 4]}>
+                <ExportCSVButton data={data} title={graphTitle} />
+              </Box>
             )}
           </Box>
-
-          {subPage && (
-            <Box padding={[2, 2, 4]}>
-              <ExportCSVButton data={data} title={graphTitle} />
-            </Box>
-          )}
         </Box>
       </Box>
       <Box
