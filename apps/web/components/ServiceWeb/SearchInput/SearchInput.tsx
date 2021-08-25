@@ -1,5 +1,4 @@
 import React, { useMemo, useRef, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import {
@@ -9,14 +8,13 @@ import {
 } from '@island.is/island-ui/core'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
-const DEBOUNCE_TIMER = 600
-
 interface SearchInputProps {
   title?: string
   size?: AsyncSearchProps['size']
   logoTitle?: string
   logoUrl?: string
   colored?: boolean
+  initialInputValue?: string
 }
 
 export const SearchInput = ({
@@ -25,24 +23,13 @@ export const SearchInput = ({
   logoUrl,
   colored = false,
   size = 'large',
+  initialInputValue = '',
 }: SearchInputProps) => {
   const timerRef = useRef(null)
   const [isBusy, setIsBusy] = useState<boolean>(false)
   const [searchTerms, setSearchTerms] = useState<string>('')
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
-
-  //useMemo(() => {
-  //  clearTimeout(timerRef.current)
-
-  //  if (searchTerms) {
-  //    console.log('first search!', searchTerms)
-  //  } else {
-  //    timerRef.current = setTimeout(() => {
-  //      console.log('doing new search!', searchTerms)
-  //    }, DEBOUNCE_TIMER)
-  //  }
-  //}, [searchTerms])
 
   const options =
     [].map(({ title }, index) => {
@@ -59,6 +46,7 @@ export const SearchInput = ({
       key="island-helpdesk"
       placeholder="Leitaðu á þjónustuvefnum"
       options={options}
+      initialInputValue={initialInputValue}
       inputValue={searchTerms}
       onInputValueChange={(value) => setSearchTerms(value)}
       onSubmit={(value) => {
