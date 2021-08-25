@@ -22,7 +22,6 @@ import {
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   Case,
   CaseState,
