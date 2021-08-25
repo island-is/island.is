@@ -15,10 +15,4 @@ export class UserService {
     )
     return await res.json()
   }
-
-  // async checkStaffRole(nationalId: string): Promise<StaffRoles> {
-  //   const mockRole = StaffRoles.MODERATOR
-
-  //   return Promise.resolve(mockRole)
-  // }
 }
