@@ -2,6 +2,7 @@ import React from 'react'
 import * as styles from './charts.treat'
 import cn from 'classnames'
 import { LegendProps, TooltipProps } from 'recharts'
+import { Box, Text } from '@island.is/island-ui/core'
 
 export const CustomTooltip = ({
   payload,
@@ -108,6 +109,29 @@ export const renderCustomizedLabel = ({
     >
       {`${(percent * 100).toFixed(0)}%`}
     </text>
+  )
+}
+
+interface yAxisLabelProps {
+  label?: string
+  labelRight?: string
+  rightPadding?: number
+}
+export const YAxisLabel = ({
+  label,
+  labelRight,
+  rightPadding = 0,
+}: yAxisLabelProps) => {
+  return (
+    <Box
+      display="flex"
+      flexDirection="row"
+      justifyContent="spaceBetween"
+      style={{ paddingRight: rightPadding }}
+    >
+      {label && <Text variant="eyebrow">{label}</Text>}
+      {labelRight && <Text variant="eyebrow">{labelRight}</Text>}
+    </Box>
   )
 }
 

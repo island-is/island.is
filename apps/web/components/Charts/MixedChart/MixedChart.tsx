@@ -16,8 +16,9 @@ import {
   COLORS,
   CustomTooltip,
   CustomizedRightAxisTick,
+  YAxisLabel,
 } from '../utils'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 
 interface GraphDataProps {
   title?: string
@@ -37,19 +38,11 @@ export const MixedChart = ({ graphData }: GraphProps) => {
   const rightPadding = parsedDatakeys.yAxis?.right ? 70 : 0
   return (
     <Box width="full" height="full">
-      <Box
-        display="flex"
-        flexDirection="row"
-        justifyContent="spaceBetween"
-        style={{ paddingRight: rightPadding }}
-      >
-        {parsedDatakeys.yAxis?.label && (
-          <Text variant="eyebrow">{parsedDatakeys.yAxis.label}</Text>
-        )}
-        {parsedDatakeys.yAxis?.labelRight && (
-          <Text variant="eyebrow">{parsedDatakeys.yAxis.labelRight}</Text>
-        )}
-      </Box>
+      <YAxisLabel
+        rightPadding={rightPadding}
+        label={parsedDatakeys.yAxis?.label}
+        labelRight={parsedDatakeys.yAxis?.labelRight}
+      />
       <Box style={{ width: '100%', height: '90%' }}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
@@ -98,7 +91,7 @@ export const MixedChart = ({ graphData }: GraphProps) => {
                 barSize={16}
                 yAxisId="left"
                 radius={
-                  index + 1 === parsedDatakeys.bars.length || !shouldStack
+                  index === parsedDatakeys.bars.length - 1 || !shouldStack
                     ? [20, 20, 0, 0]
                     : 0
                 }

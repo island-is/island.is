@@ -64,7 +64,6 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
     externalLinkSectionDescription,
     externalLinkSectionImage,
   } = page
-  console.log(graphCards)
   return (
     <Box id="main-content" position="relative" style={{ overflow: 'hidden' }}>
       <Box background="blue100">
