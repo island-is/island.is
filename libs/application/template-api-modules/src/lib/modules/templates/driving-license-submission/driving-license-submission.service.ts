@@ -5,18 +5,10 @@ import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
-import type { Item } from '@island.is/clients/payment'
+import { Item } from '@island.is/clients/payment'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
-}
-
-interface Payment {
-  chargeItemCode: string
-  chargeItemName: string
-  priceAmount: number
-  performingOrgID: string
-  chargeType: string
 }
 
 @Injectable()
@@ -88,14 +80,10 @@ export class DrivingLicenseSubmissionService {
     const studentNationalId = get(answers, 'student.nationalId')
     const teacherNationalId = application.applicant
 
-    const result = await this.drivingLicenseService
-      .newDrivingAssessment(studentNationalId as string, teacherNationalId)
-      .catch((e) => {
-        return {
-          success: false,
-          errorMessage: e.message,
-        }
-      })
+    const result = await this.drivingLicenseService.newDrivingAssessment(
+      studentNationalId as string,
+      teacherNationalId,
+    )
 
     if (result.success) {
       await this.sharedTemplateAPIService.sendEmail(
