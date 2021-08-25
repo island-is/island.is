@@ -6,7 +6,8 @@ export const menu = style({
   margin: 0,
   width: '100%',
   position: 'absolute',
-  backgroundColor: theme.color.white,
+  backgroundColor: theme.color.mint300,
+  border: '2px solid blue',
   maxHeight: 455,
   overflowY: 'auto',
   outline: 0,
@@ -17,6 +18,22 @@ export const menu = style({
   borderTopWidth: 0,
   borderBottomLeftRadius: 6,
   borderBottomRightRadius: 6,
+  selectors: {
+    [`&::-webkit-scrollbar`]: {
+      width: 8,
+      background: theme.color.white,
+    },
+    [`&::-webkit-scrollbar-track`]: {
+      width: 8,
+      background: theme.color.blue300,
+      borderRadius: theme.border.radius.standard,
+    },
+    // [`&::-webkit-scrollbar-thumb`]: {},
+    [`&::-webkit-scrollbar-thumb:hover`]: {
+      background: 'red',
+      color: 'red',
+    },
+  },
 })
 
 export const open = style({
