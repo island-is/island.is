@@ -58,7 +58,6 @@ const StatusLayout = ({ children }: Props) => {
             </Box>
             <Box className={styles.sidebarContent}>
               <Box>
-                <div className={`tags approve`}>Staða: {currentState}</div>
                 <Text as="h3" variant="h3" marginBottom={[1, 1, 2]}>
                   Umsókn um fjárhagsaðstoð hjá Hafnarfjarðarbæ
                 </Text>
