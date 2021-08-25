@@ -1,4 +1,5 @@
 import React, { FC, ReactNode, useState } from 'react'
+import cn from 'classnames'
 
 import {
   Box,
@@ -9,6 +10,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
+
+import * as styles from './ReviewGroup.treat'
 
 interface ReviewGroupProps {
   editChildren?: ReactNode
@@ -60,15 +63,15 @@ export const ReviewGroup: FC<ReviewGroupProps> = ({
           </Box>
         )}
 
-        {editable ? (
+        <Box className={cn({ [styles.hidden]: !editable })}>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
               {editChildren}
             </GridColumn>
           </GridRow>
-        ) : (
-          children
-        )}
+        </Box>
+
+        {!editable && children}
       </Box>
 
       {!isLast && <Divider />}

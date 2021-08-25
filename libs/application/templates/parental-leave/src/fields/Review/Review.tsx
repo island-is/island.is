@@ -52,7 +52,7 @@ interface ReviewScreenProps {
   editable?: boolean
 }
 
-const Review: FC<ReviewScreenProps> = ({
+export const Review: FC<ReviewScreenProps> = ({
   application,
   field,
   goToScreen,
@@ -164,6 +164,7 @@ const Review: FC<ReviewScreenProps> = ({
             <DataValue
               label={formatMessage(parentalLeaveFormMessages.applicant.email)}
               value={applicantEmail}
+              error={hasError('applicant.email')}
             />
           </GridColumn>
 
@@ -173,6 +174,7 @@ const Review: FC<ReviewScreenProps> = ({
                 parentalLeaveFormMessages.applicant.phoneNumber,
               )}
               value={applicantPhoneNumber}
+              error={hasError('applicant.phoneNumber')}
             />
           </GridColumn>
         </GridRow>
@@ -1023,5 +1025,3 @@ const Review: FC<ReviewScreenProps> = ({
     </>
   )
 }
-
-export default Review
