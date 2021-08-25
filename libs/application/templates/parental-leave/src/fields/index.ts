@@ -1,4 +1,4 @@
-export { default as Duration } from './Duration'
+export { Duration } from './Duration/Duration'
 export { default as FirstPeriodStart } from './FirstPeriodStart'
 export { default as PeriodsRepeater } from './PeriodsRepeater'
 export { default as PaymentSchedule } from './PaymentSchedule'

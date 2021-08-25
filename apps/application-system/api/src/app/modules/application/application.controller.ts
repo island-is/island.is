@@ -727,6 +727,7 @@ export class ApplicationController {
         authorization,
         onEnterStateAction,
       )
+
       updatedApplication = withUpdatedExternalData
 
       if (hasError) {

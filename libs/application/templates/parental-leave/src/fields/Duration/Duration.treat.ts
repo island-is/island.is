@@ -11,3 +11,10 @@ export const percentLabel = style({
 export const percentNumber = style({
   width: '8ch',
 })
+
+export const errorMessage = style({
+  color: theme.color.red600,
+  fontWeight: theme.typography.medium,
+  fontSize: 14,
+  marginTop: theme.spacing[1],
+})

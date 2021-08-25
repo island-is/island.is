@@ -30,7 +30,9 @@ export const ReviewGroup: FC<ReviewGroupProps> = ({
   const { formatMessage } = useLocale()
 
   const handleClick = () => {
-    if (!canCloseEdit) return
+    if (!canCloseEdit) {
+      return
+    }
 
     if (editAction) {
       editAction()

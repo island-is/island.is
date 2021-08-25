@@ -4,11 +4,13 @@ import addMonths from 'date-fns/addMonths'
 import formatISO from 'date-fns/formatISO'
 import parseISO from 'date-fns/parseISO'
 import format from 'date-fns/format'
+import * as Sentry from '@sentry/react'
 
 import {
   extractRepeaterIndexFromField,
   FieldBaseProps,
   getValueViaPath,
+  RecordObject,
 } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -18,7 +20,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
 import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
-import { parentalLeaveFormMessages } from '../../lib/messages'
+import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
 import { StartDateOptions } from '../../constants'
 import { monthsToDays } from '../../lib/directorateOfLabour.utils'
@@ -28,13 +30,14 @@ const df = 'yyyy-MM-dd'
 const DEFAULT_PERIOD_LENGTH = 1
 const DEFAULT_PERIOD_PERCENTAGE = 100
 
-const Duration: FC<FieldBaseProps> = ({
+export const Duration: FC<FieldBaseProps> = ({
   field,
   application,
   setFieldLoadingState,
+  errors,
 }) => {
   const { id } = field
-  const { register, clearErrors } = useFormContext()
+  const { register, setError, clearErrors } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
@@ -75,26 +78,36 @@ const Duration: FC<FieldBaseProps> = ({
   )
   const [percent, setPercent] = useState<number>(percentageForPeriod)
   const { getEndDate, loading } = useGetOrRequestEndDates(application)
+  const errorMessage = (errors?.component as RecordObject<string>)?.message
 
   const monthsToEndDate = async (duration: number) => {
-    const days = monthsToDays(duration)
+    try {
+      const days = monthsToDays(duration)
 
-    const endDateResult = await getEndDate({
-      startDate: currentStartDateAnswer,
-      length: days,
-    })
+      const endDateResult = await getEndDate({
+        startDate: currentStartDateAnswer,
+        length: days,
+      })
 
-    const date = new Date(endDateResult.date)
+      const date = new Date(endDateResult.date)
 
-    setChosenEndDate(date.toISOString())
-    setPercent(endDateResult.percentage)
-    setDurationInDays(endDateResult.days)
+      setChosenEndDate(date.toISOString())
+      setPercent(endDateResult.percentage)
+      setDurationInDays(endDateResult.days)
 
-    return date
+      return date
+    } catch (e) {
+      Sentry.captureException(e.message)
+
+      setError('component', {
+        type: 'error',
+        message: formatMessage(errorMessages.durationPeriods),
+      })
+    }
   }
 
   const handleChange = async (months: number) => {
-    clearErrors(id)
+    clearErrors([id, 'component'])
     setChosenDuration(months)
   }
 
@@ -104,7 +117,9 @@ const Duration: FC<FieldBaseProps> = ({
   ) => {
     const date = await monthsToEndDate(months)
 
-    onChange(format(date, df))
+    if (date) {
+      onChange(format(date, df))
+    }
   }
 
   useEffect(() => {
@@ -235,6 +250,16 @@ const Duration: FC<FieldBaseProps> = ({
         </Box>
       </Box>
 
+      {errorMessage && (
+        <Box
+          paddingTop={2}
+          className={styles.errorMessage}
+          aria-live="assertive"
+        >
+          {errorMessage}
+        </Box>
+      )}
+
       <input
         ref={register}
         type="hidden"
@@ -258,5 +283,3 @@ const Duration: FC<FieldBaseProps> = ({
     </Box>
   )
 }
-
-export default Duration
