@@ -157,7 +157,6 @@ export interface User {
   phoneNumber: string
   folder: string
   service: 'osk' | 'veita'
-  municipalityId?: 'hfj'
   currentApplication?: CurrentApplication
 }
 

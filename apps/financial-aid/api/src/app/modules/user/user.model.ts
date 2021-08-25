@@ -20,9 +20,6 @@ export class UserModel implements User {
   @Field()
   readonly service!: 'osk' | 'veita'
 
-  @Field()
-  readonly municipalityId?: 'hfj'
-
   @Field(() => CurrentApplicationModel, { nullable: true })
   readonly currentApplication?: CurrentApplicationModel
 }
