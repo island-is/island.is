@@ -40,10 +40,7 @@ export const getActiveSectionForTimeline: KeyMapping<
   Approved: 2,
 }
 
-export const getActiveSectionForMainPage: KeyMapping<
-  ApplicationState,
-  string
-> = {
+export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   New: 'InProgress',
   DataNeeded: 'InProgress',
   InProgress: 'InProgress',
