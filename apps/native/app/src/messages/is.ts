@@ -171,7 +171,7 @@ export const is = {
    'licenseScannerResult.title': 'Ökuskírteini (IS)',
    'licenseScannerResult.errorMessage': 'Villuskilaboð',
    'licenseScannerResult.name': 'Nafn',
-   'licenseScannerResult.nationalId': 'Kennitala',
+   'licenseScannerResult.birthDate': 'Fæðingardagur',
    'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
 
   // notifications

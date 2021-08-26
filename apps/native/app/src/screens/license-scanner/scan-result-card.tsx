@@ -136,6 +136,24 @@ interface ScanResultCardProps {
   photo?: string
 }
 
+function nationalIdToBirthDate(ssn?: string) {
+  const firstChar = ssn?.substr(0, 1);
+  if (['8', '9'].includes(firstChar ?? '8')) {
+    return null;
+  }
+  const lastChar = ssn?.substr(-1);
+  const decade = lastChar === '9' ? 1900 : 2000 + (Number(lastChar) * 100);
+  const year = decade + Number(ssn?.substr(4, 2));
+  const month = Number(ssn?.substr(2, 2));
+  const date = Number(ssn?.substr(0, 2));
+
+  return new Date(
+    year,
+    month - 1,
+    date
+  );
+}
+
 export function ScanResultCard(props: ScanResultCardProps) {
   const {
     error,
@@ -143,10 +161,10 @@ export function ScanResultCard(props: ScanResultCardProps) {
     loading,
     nationalId,
     name,
-    licenseNumber,
     photo,
   } = props
   const intl = useIntl()
+  const birthDate = nationalIdToBirthDate(nationalId);
 
   return (
     <Host>
@@ -203,25 +221,17 @@ export function ScanResultCard(props: ScanResultCardProps) {
               )}
             </LabelGroup>
             <LabelGroup>
-              <Label>{intl.formatMessage({ id: 'licenseScannerResult.nationalId' })}</Label>
+              <Label>{intl.formatMessage({ id: 'licenseScannerResult.birthDate' })}</Label>
               {loading ? (
                 <Placeholder style={{ width: 120 }} />
               ) : (
                 <Value>
-                  {nationalId?.substr(0, 6)}-{nationalId?.substr(-4)}
+                  {birthDate ? intl.formatDate(birthDate, { }) : `---`}
                 </Value>
               )}
             </LabelGroup>
-            <LabelGroup>
-              <Label>{intl.formatMessage({ id: 'licenseScannerResult.driverLicenseNumber' })}</Label>
-              {loading ? (
-                <Placeholder style={{ width: 80 }} />
-              ) : (
-                <Value>{licenseNumber ?? 'N/A'}</Value>
-              )}
-            </LabelGroup>
           </Left>
-          <Photo source={{ uri: photo }} />
+          <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
         </Content>
       )}
     </Host>
