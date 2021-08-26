@@ -127,6 +127,7 @@ const testCase1 = {
   prosecutorAppealDecision: CaseAppealDecision.APPEAL,
   prosecutorAppealAnnouncement: 'prosecutorAppealAnnouncement test',
   judge: null,
+  conclusion: null,
   files: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
