@@ -5,9 +5,9 @@ import { CaseType } from '@island.is/judicial-system/types'
 import {
   caseTypes,
   formatRequestedCustodyRestrictions,
-  formatGender,
   formatNationalId,
   capitalize,
+  formatDate,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -52,15 +52,6 @@ function constructRestrictionRequestPdf(
     .font('Helvetica')
     .fontSize(18)
     .text(
-      formatMessage(m.caseNumber, {
-        caseNumber: existingCase.policeCaseNumber,
-      }),
-      {
-        align: 'center',
-      },
-    )
-    .fontSize(16)
-    .text(
       formatMessage(m.district, {
         district:
           existingCase.prosecutor?.institution?.name ??
@@ -70,12 +61,24 @@ function constructRestrictionRequestPdf(
         align: 'center',
       },
     )
+    .fontSize(16)
+    .text(
+      `${formatDate(existingCase.created, 'PPP')} - ${formatMessage(
+        m.caseNumber,
+        {
+          caseNumber: existingCase.policeCaseNumber,
+        },
+      )}`,
+      {
+        align: 'center',
+      },
+    )
     .lineGap(40)
     .text(formatMessage(m.court, { court: existingCase.court?.name }), {
       align: 'center',
     })
     .font('Helvetica-Bold')
-    .fontSize(18)
+    .fontSize(14)
     .lineGap(8)
     .text(formatMessage(m.baseInfo.heading))
     .font('Helvetica')
@@ -87,11 +90,6 @@ function constructRestrictionRequestPdf(
       )}`,
     )
     .text(`${formatMessage(m.baseInfo.fullName)} ${existingCase.accusedName}`)
-    .text(
-      `${formatMessage(m.baseInfo.gender)} ${formatGender(
-        existingCase.accusedGender,
-      )}`,
-    )
     .text(`${formatMessage(m.baseInfo.address)} ${existingCase.accusedAddress}`)
     .text(
       formatMessage(m.baseInfo.defender, {
@@ -197,6 +195,7 @@ function constructRestrictionRequestPdf(
 
 function constructInvestigationRequestPdf(
   existingCase: Case,
+  formatMessage?: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -222,18 +221,32 @@ function constructInvestigationRequestPdf(
     .text('Krafa um rannsóknarheimild', { align: 'center' })
     .font('Helvetica')
     .fontSize(18)
-    .text(`LÖKE málsnúmer: ${existingCase.policeCaseNumber}`, {
-      align: 'center',
-    })
+    .text(
+      formatMessage(m.district, {
+        district:
+          existingCase.prosecutor?.institution?.name ??
+          formatMessage(m.noDistrict),
+      }),
+      {
+        align: 'center',
+      },
+    )
     .fontSize(16)
     .text(
-      `Embætti: ${existingCase.prosecutor?.institution?.name ?? 'Ekki skráð'}`,
+      `${formatDate(existingCase.created, 'PPP')} - ${formatMessage(
+        m.caseNumber,
+        {
+          caseNumber: existingCase.policeCaseNumber,
+        },
+      )}`,
       {
         align: 'center',
       },
     )
     .lineGap(40)
-    .text(`Dómstóll: ${existingCase.court?.name}`, { align: 'center' })
+    .text(formatMessage(m.court, { court: existingCase.court?.name }), {
+      align: 'center',
+    })
     .font('Helvetica-Bold')
     .fontSize(18)
     .lineGap(8)
@@ -243,7 +256,6 @@ function constructInvestigationRequestPdf(
     .lineGap(4)
     .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
     .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
     .text(
       `Verjandi sakbornings: ${
@@ -361,7 +373,7 @@ function constructRequestPdf(
   return existingCase.type === CaseType.CUSTODY ||
     existingCase.type === CaseType.TRAVEL_BAN
     ? constructRestrictionRequestPdf(existingCase, formatMessage)
-    : constructInvestigationRequestPdf(existingCase)
+    : constructInvestigationRequestPdf(existingCase, formatMessage)
 }
 
 export async function getRequestPdfAsString(

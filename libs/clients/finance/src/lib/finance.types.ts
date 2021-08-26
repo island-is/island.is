@@ -50,6 +50,10 @@ export type TapsControlTypes = {
   localTaxTap: boolean
 }
 
+export type AnnualStatusTypes = {
+  year: string
+}
+
 export type DocumentTypes = {
   docment: DocumentDataTypes
 }

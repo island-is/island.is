@@ -166,7 +166,7 @@ application-system-api:
     XROAD_HEALTH_INSURANCE_ID: IS-DEV/GOV/10007/SJUKRA-Protected
     XROAD_VMST_MEMBER_CODE: '10003'
   grantNamespaces:
-    - nginx-ingress-external
+    - nginx-ingress-internal
     - islandis
   grantNamespacesEnabled: true
   healthCheck:
@@ -180,6 +180,14 @@ application-system-api:
       timeoutSeconds: 3
   image:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: nginx-internal-alb
+      hosts:
+        - host: application-api-xrd.internal.dev01.devland.is
+          paths:
+            - /application-payment
   initContainer:
     containers:
       - args:
@@ -264,7 +272,7 @@ application-system-form:
     BASEPATH: /umsoknir
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: https://identity-server.dev01.devland.is
   grantNamespaces:
-    - nginx-ingress-external
+    - nginx-ingress-internal
     - islandis
   grantNamespacesEnabled: true
   healthCheck:
@@ -378,6 +386,11 @@ download-service:
   strategy:
     type: Recreate
 endorsement-system-api:
+  args:
+    - '--tls-min-v1.0'
+    - main.js
+  command:
+    - node
   enabled: true
   env:
     DB_HOST: dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com
@@ -420,6 +433,7 @@ endorsement-system-api:
     max: 3
     min: 2
   secrets:
+    ACCESS_GROUP_DMR: /k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
     DB_PASS: /k8s/services-endorsements-api/DB_PASSWORD
     SOFFIA_HOST_URL: /k8s/endorsement-system-api/SOFFIA_HOST_URL
