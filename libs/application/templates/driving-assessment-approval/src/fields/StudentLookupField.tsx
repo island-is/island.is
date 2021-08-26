@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useQuery, gql } from '@apollo/client'
-import { useFormContext, useWatch } from 'react-hook-form'
+import { useWatch } from 'react-hook-form'
 import {
   CustomField,
   FieldBaseProps,
