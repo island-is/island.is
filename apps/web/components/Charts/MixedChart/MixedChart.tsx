@@ -43,73 +43,71 @@ export const MixedChart = ({ graphData }: GraphProps) => {
         label={parsedDatakeys.yAxis?.label}
         labelRight={parsedDatakeys.yAxis?.labelRight}
       />
-      <Box style={{ width: '100%', height: '90%' }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart
-            width={250}
-            height={150}
-            data={parsedData}
-            margin={{
-              top: 30,
-              right: rightPadding,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <CartesianGrid
-              strokeDasharray="0"
-              vertical={false}
-              stroke="#CCDFFF"
-            />
-            <XAxis
-              dataKey={parsedDatakeys.xAxis}
-              stroke="#CCDFFF"
-              tick={<CustomizedAxisTick />}
-              padding={{ left: 30 }}
-              tickLine={false}
-            />
-            <YAxis
+      <ResponsiveContainer width="100%" height="100%">
+        <ComposedChart
+          width={250}
+          height={150}
+          data={parsedData}
+          margin={{
+            top: 30,
+            right: rightPadding,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid
+            strokeDasharray="0"
+            vertical={false}
+            stroke="#CCDFFF"
+          />
+          <XAxis
+            dataKey={parsedDatakeys.xAxis}
+            stroke="#CCDFFF"
+            tick={<CustomizedAxisTick />}
+            padding={{ left: 30 }}
+            tickLine={false}
+          />
+          <YAxis
+            yAxisId="left"
+            stroke="#CCDFFF"
+            tick={<CustomizedAxisTick />}
+          />
+          <YAxis
+            yAxisId="right"
+            orientation="right"
+            stroke="#CCDFFF"
+            tick={<CustomizedRightAxisTick />}
+            hide={!parsedDatakeys.yAxis?.showRight}
+          />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend iconType="circle" align="right" content={RenderLegend} />
+          {parsedDatakeys.bars.map((item, index) => (
+            <Bar
+              key={index}
+              dataKey={item.datakey}
+              fill={item.color}
+              stackId={item.stackId}
+              barSize={16}
               yAxisId="left"
-              stroke="#CCDFFF"
-              tick={<CustomizedAxisTick />}
+              radius={
+                index === parsedDatakeys.bars.length - 1 || !shouldStack
+                  ? [20, 20, 0, 0]
+                  : 0
+              }
             />
-            <YAxis
-              yAxisId="right"
-              orientation="right"
-              stroke="#CCDFFF"
-              tick={<CustomizedRightAxisTick />}
-              hide={!parsedDatakeys.yAxis?.showRight}
+          ))}
+          {parsedDatakeys.lines.map((item, index) => (
+            <Line
+              key={item.datakey}
+              dataKey={item.datakey}
+              stroke={item.color ? item.color : COLORS[index % COLORS.length]}
+              yAxisId={parsedDatakeys.yAxis?.right ? 'right' : 'left'}
+              strokeWidth={3}
+              dot={{ r: 6, strokeWidth: 3 }}
             />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend iconType="circle" align="right" content={RenderLegend} />
-            {parsedDatakeys.bars.map((item, index) => (
-              <Bar
-                key={index}
-                dataKey={item.datakey}
-                fill={item.color}
-                stackId={item.stackId}
-                barSize={16}
-                yAxisId="left"
-                radius={
-                  index === parsedDatakeys.bars.length - 1 || !shouldStack
-                    ? [20, 20, 0, 0]
-                    : 0
-                }
-              />
-            ))}
-            {parsedDatakeys.lines.map((item, index) => (
-              <Line
-                key={item.datakey}
-                dataKey={item.datakey}
-                stroke={item.color ? item.color : COLORS[index % COLORS.length]}
-                yAxisId={parsedDatakeys.yAxis?.right ? 'right' : 'left'}
-                strokeWidth={3}
-                dot={{ r: 6, strokeWidth: 3 }}
-              />
-            ))}
-          </ComposedChart>
-        </ResponsiveContainer>
-      </Box>
+          ))}
+        </ComposedChart>
+      </ResponsiveContainer>
     </Box>
   )
 }
