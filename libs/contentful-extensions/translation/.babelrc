@@ -11,7 +11,8 @@
       {
         "useBuiltIns": true
       }
-    ]
+    ],
+    "@nrwl/web/babel"
   ],
   "plugins": [
     [

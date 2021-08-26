@@ -1,0 +1,22 @@
+{
+  "extends": ["plugin:@nrwl/nx/react", "../../../.eslintrc.json"],
+  "rules": {},
+  "ignorePatterns": ["!**/*", "translation.d.ts"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "parserOptions": {
+        "project": ["apps/air-discount-scheme/web/tsconfig.*?.json"]
+      },
+      "rules": {}
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    }
+  ]
+}

@@ -1,5 +1,0 @@
-{
-  "extends": ["../../../.eslintrc.json", "plugin:cypress/recommended"],
-  "rules": {},
-  "ignorePatterns": ["!**/*"]
-}

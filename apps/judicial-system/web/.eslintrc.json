@@ -9,6 +9,13 @@
   "plugins": ["jsx-a11y"],
   "overrides": [
     {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "parserOptions": {
+        "project": ["apps/judicial-system/web/tsconfig.*?.json"]
+      },
+      "rules": {}
+    },
+    {
       "files": ["*.spec.ts", "*.spec.tsx"],
       "rules": {
         "@typescript-eslint/no-var-requires": "off"
