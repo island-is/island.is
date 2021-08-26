@@ -24,6 +24,7 @@ import {
   generateAssignEmployerApplicationEmail,
   generateOtherParentRejected,
   generateApplicationApprovedByEmployerEmail,
+  generateApplicationApprovedByEmployerToEmployerEmail,
 } from './emailGenerators'
 import {
   getEmployer,
@@ -302,6 +303,11 @@ export class ParentalLeaveService {
         // If self employed applicant was aware of the approval
         await this.sharedTemplateAPIService.sendEmail(
           generateApplicationApprovedByEmployerEmail,
+          application,
+        )
+
+        await this.sharedTemplateAPIService.sendEmail(
+          generateApplicationApprovedByEmployerToEmployerEmail,
           application,
         )
       }
