@@ -24,17 +24,20 @@ const documentIsPdf = (data: any) => {
 }
 
 export const showPdfDocument = () => {
-  const [loadFinanceDocument] = useLazyQuery(GET_FINANCE_DOCUMENT_DATA, {
-    fetchPolicy: 'no-cache',
-    onCompleted: (docData) => {
-      const pdfData = docData?.getFinanceDocument?.docment || null
-      if (pdfData && documentIsPdf(pdfData)) {
-        window.open(getPdfURL(pdfData.document))
-      } else {
-        console.warn('No PDF data')
-      }
+  const [loadFinanceDocument, { loading, variables }] = useLazyQuery(
+    GET_FINANCE_DOCUMENT_DATA,
+    {
+      fetchPolicy: 'no-cache',
+      onCompleted: (docData) => {
+        const pdfData = docData?.getFinanceDocument?.docment || null
+        if (pdfData && documentIsPdf(pdfData)) {
+          window.open(getPdfURL(pdfData.document))
+        } else {
+          console.warn('No PDF data')
+        }
+      },
     },
-  })
+  )
 
   const showPdf = (id: string) => {
     loadFinanceDocument({
@@ -48,11 +51,13 @@ export const showPdfDocument = () => {
 
   return {
     showPdf,
+    loadingPDF: loading,
+    fetchingPdfId: variables?.input?.documentID,
   }
 }
 
 export const showAnnualStatusDocument = () => {
-  const [loadAnnualStatusDocument] = useLazyQuery(
+  const [loadAnnualStatusDocument, { loading, variables }] = useLazyQuery(
     GET_ANNUAL_STATUS_DOCUMENT_DATA,
     {
       fetchPolicy: 'no-cache',
@@ -79,5 +84,7 @@ export const showAnnualStatusDocument = () => {
 
   return {
     showAnnualStatusPdf,
+    loadingAnnualPDF: loading,
+    fetchingYearPDF: variables?.input?.year,
   }
 }

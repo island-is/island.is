@@ -2,6 +2,7 @@ import {
   ServicePortalModule,
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
+import uniqBy from 'lodash/uniqBy'
 import { modules, ModuleKeys } from './modules'
 import { Action, ActionType, AsyncActionState, MenuState } from './actions'
 
@@ -51,7 +52,7 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
     case ActionType.UpdateFulfilledRoutes:
       return {
         ...state,
-        routes: [...action.payload, ...state.routes],
+        routes: uniqBy([...action.payload, ...state.routes], 'path'),
       }
     case ActionType.SetModulesList:
       return {

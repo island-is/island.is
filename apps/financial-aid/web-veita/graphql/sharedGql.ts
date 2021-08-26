@@ -106,3 +106,14 @@ export const CurrentUserQuery = gql`
     }
   }
 `
+
+export const GetApplicationEventQuery = gql`
+  query GetApplicationEventQuery($input: ApplicationEventInput!) {
+    applicationEvents(input: $input) {
+      id
+      applicationId
+      comment
+      state
+    }
+  }
+`
