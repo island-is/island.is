@@ -38,7 +38,7 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './ServiceSearch.treat'
 import * as sharedStyles from '../shared/styles.treat'
 import ContactBanner from '../ContactBanner/ContactBanner'
-import { ServiceWebSearchInput } from '@island.is/web/components/'
+import { ServiceWebSearchInput } from '@island.is/web/components'
 
 const PERPAGE = 10
 
