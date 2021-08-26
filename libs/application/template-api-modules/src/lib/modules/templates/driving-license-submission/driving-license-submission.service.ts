@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import get from 'lodash/get'
 import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { generateDrivingAssessmentApprovalEmail } from './emailGenerators'
-import { Item } from '@island.is/clients/payment'
+import type { Item } from '@island.is/clients/payment'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -77,7 +76,7 @@ export class DrivingLicenseSubmissionService {
     application,
   }: TemplateApiModuleActionProps) {
     const { answers } = application
-    const studentNationalId = get(answers, 'student.nationalId')
+    const studentNationalId = (answers.student as { nationalId: string }).nationalId
     const teacherNationalId = application.applicant
 
     const result = await this.drivingLicenseService.newDrivingAssessment(
