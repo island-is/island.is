@@ -29,7 +29,10 @@ export const getState: KeyMapping<ApplicationState, string> = {
   Approved: 'Samþykkt',
 }
 
-export const getActiveSection: KeyMapping<ApplicationState, number> = {
+export const getActiveSectionForTimeline: KeyMapping<
+  ApplicationState,
+  number
+> = {
   New: 0,
   DataNeeded: 1,
   InProgress: 1,

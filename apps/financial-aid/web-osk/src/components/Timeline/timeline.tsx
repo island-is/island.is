@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import {
   ApplicationEvent,
   ApplicationState,
-  getActiveSection,
+  getActiveSectionForTimeline,
 } from '@island.is/financial-aid/shared'
 import { GetApplicationEventQuery } from '@island.is/financial-aid-web/oskgraphql'
 import { useQuery } from '@apollo/client'
@@ -54,7 +54,7 @@ const Timeline = ({ state }: Props) => {
       </Text>
 
       <FormStepper
-        activeSection={getActiveSection[state]}
+        activeSection={getActiveSectionForTimeline[state]}
         sections={sections}
       />
     </Box>
