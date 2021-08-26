@@ -4,8 +4,8 @@ import { GridContainer, Button, Text } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 interface Props {
-  headline: string
-  about: string
+  headline?: string
+  about?: string
 }
 
 const Login = ({ headline, about }: Props) => {

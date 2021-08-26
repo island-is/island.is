@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import {
   ApplicationEvent,
   ApplicationState,
+  getActiveSection,
 } from '@island.is/financial-aid/shared'
 import { GetApplicationEventQuery } from '@island.is/financial-aid-web/oskgraphql'
 import { useQuery } from '@apollo/client'
@@ -19,21 +20,6 @@ interface ApplicationEventData {
 
 const Timeline = ({ state }: Props) => {
   const router = useRouter()
-
-  const activeSection = (state: ApplicationState) => {
-    switch (state) {
-      case ApplicationState.NEW:
-        return 0
-      case ApplicationState.INPROGRESS:
-        return 1
-      case ApplicationState.APPROVED:
-        return 2
-      case ApplicationState.REJECTED:
-        return 2
-      case ApplicationState.DATANEEDED:
-        return 1
-    }
-  }
 
   //Todo bæta við subsection
   const { data, loading } = useQuery<ApplicationEventData>(
@@ -67,7 +53,10 @@ const Timeline = ({ state }: Props) => {
         að senda okkur athugasemd ef þú telur eitthvað óljóst eða rangt.
       </Text>
 
-      <FormStepper activeSection={activeSection(state)} sections={sections} />
+      <FormStepper
+        activeSection={getActiveSection[state]}
+        sections={sections}
+      />
     </Box>
   )
 }
