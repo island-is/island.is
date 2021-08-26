@@ -30,12 +30,12 @@ interface ExpectedStudent {
 }
 
 export const StudentLookupField: FC<Props> = ({ error, application }) => {
-  const student = application.answers.student as unknown as ExpectedStudent
+  const student = (application.answers.student as unknown) as ExpectedStudent
   const studentNationalId = useWatch({
     name: 'student.nationalId',
     // FYI the watch value is not queried unless the value changes after rendering.
     // see react hook form's docs for useWatch for further info.
-    defaultValue: student.nationalId
+    defaultValue: student.nationalId,
   })
 
   const { formatMessage } = useLocale()
