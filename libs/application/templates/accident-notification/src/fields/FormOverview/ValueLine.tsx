@@ -31,17 +31,17 @@ export const FileValueLine: FC<FileValueLineProps> = ({ label, files }) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box marginTop={2} paddingBottom={!files || files.length ? 2 : 0}>
+    <Box marginTop={2} paddingBottom={!files || files.length === 0 ? 0 : 2}>
       <Text variant="h5" marginBottom={[2, 2, 3]}>
         {formatMessage(label)}
       </Text>
-      {!files || files.length ? (
+      {!files || files.length === 0 ? null : (
         <BulletList space={1} type="ul">
           {files?.map((file, index) => (
             <Bullet key={`${file.name}-${index}`}>{file.name}</Bullet>
           ))}
         </BulletList>
-      ) : null}
+      )}
     </Box>
   )
 }
