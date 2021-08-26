@@ -31,6 +31,14 @@ import {
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 
+interface VMSTError {
+  type: string
+  title: string
+  status: number
+  traceId: string
+  errors: Record<string, string[]>
+}
+
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
@@ -46,6 +54,16 @@ export class ParentalLeaveService {
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
   ) {}
+
+  private parseErrors(e: Error | VMSTError) {
+    if (e instanceof Error) {
+      return e.message
+    }
+
+    return {
+      message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
+    }
+  }
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.sendEmail(
@@ -309,7 +327,7 @@ export class ParentalLeaveService {
       return response
     } catch (e) {
       this.logger.error('Failed to send the parental leave application', e)
-      throw e
+      throw this.parseErrors(e)
     }
   }
 }
