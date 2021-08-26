@@ -16,7 +16,7 @@ import {
   StatusLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 
-import { getActiveSectionForMainPage } from '@island.is/financial-aid/shared'
+import { getActiveTypeForStatus } from '@island.is/financial-aid/shared'
 
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
@@ -41,17 +41,16 @@ const MainPage = () => {
 
         {currentApplication && (
           <>
-            {getActiveSectionForMainPage[currentApplication.state] === 1 && (
+            {getActiveTypeForStatus[currentApplication.state] ===
+              'InProgress' && (
               <InProgress currentApplication={currentApplication} />
             )}
 
-            {getActiveSectionForMainPage[currentApplication.state] === 2 && (
-              <Approved state={currentApplication.state} />
-            )}
+            {getActiveTypeForStatus[currentApplication.state] ===
+              'Approved' && <Approved state={currentApplication.state} />}
 
-            {getActiveSectionForMainPage[currentApplication.state] === 3 && (
-              <Rejected state={currentApplication.state} />
-            )}
+            {getActiveTypeForStatus[currentApplication.state] ===
+              'Rejected' && <Rejected state={currentApplication.state} />}
           </>
         )}
 

@@ -42,13 +42,13 @@ export const getActiveSectionForTimeline: KeyMapping<
 
 export const getActiveSectionForMainPage: KeyMapping<
   ApplicationState,
-  number
+  string
 > = {
-  New: 1,
-  DataNeeded: 1,
-  InProgress: 1,
-  Rejected: 3,
-  Approved: 2,
+  New: 'InProgress',
+  DataNeeded: 'InProgress',
+  InProgress: 'InProgress',
+  Rejected: 'Rejected',
+  Approved: 'Approved',
 }
 
 // export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
