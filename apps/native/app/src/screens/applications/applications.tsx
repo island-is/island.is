@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
-  Animated, AppState, AppStateStatus, FlatList, Image, Platform, TouchableOpacity, View
+  Animated, AppState, AppStateStatus, FlatList, Image, Platform, TouchableOpacity, View, SafeAreaView
 } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
 import {
@@ -28,10 +28,6 @@ import { openBrowser } from '../../lib/rn-island'
 import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { testIDs } from '../../utils/test-ids'
-
-interface IndexedApplication extends IArticleSearchResults {
-  fulltext: string
-}
 
 const {
   useNavigationOptions,
@@ -75,19 +71,32 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+  const SEARCH_QUERY_SIZE =  80;
+  const SEARCH_QUERY_TYPE =  'webArticle';
+  const QUERY_STRING_DEFAULT = 'Umsókn'; // change to *
 
   const ui = useUiStore()
   const flatListRef = useRef<FlatList>(null)
   const [searchLoading, setSearchLoading] = useState(false)
+  const [queryString, setQueryString] = useState(QUERY_STRING_DEFAULT)
   const keyboardRef = useRef(false)
   const intl = useIntl()
 
-  const res = useQuery(LIST_SEARCH_QUERY, { client })
+  const res = useQuery(LIST_SEARCH_QUERY, {
+    client,
+    variables: {
+      input: {
+        queryString: queryString,
+        types: [SEARCH_QUERY_TYPE],
+        tags: [],
+        size: SEARCH_QUERY_SIZE,
+        page: 1,
+      }
+    }
+  })
+
   const items = res?.data?.searchResults?.items || []
-  const [indexedItems, setIndexedItems] = useState<IndexedApplication[]>([])
-  const [applicationItems, setApplicationItems] = useState<IArticleSearchResults[]>(
-    items || [],
-  )
+
   const scrollY = useRef(new Animated.Value(0)).current
 
   const renderApplicationItem = useCallback(
@@ -159,35 +168,17 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     }
   }, [])
 
-  // when res data is loaded
-  useEffect(() => {
-    if (res.data && !res.loading) {
-      const items = res?.data?.searchResults?.items ?? []
-
-      const indexedItems = items.map((item: IArticleSearchResults) => {
-        return {
-          ...item,
-          fulltext: `${item.title.toLocaleLowerCase()}`,
-        }
-      })
-
-      setIndexedItems(indexedItems)
-    }
-  }, [res.data, res.loading])
-
   // search query updates
   useEffect(() => {
     setSearchLoading(false)
     const q = ui.applicationQuery.toLocaleLowerCase().trim()
 
     if (q !== '') {
-      setApplicationItems(
-        indexedItems.filter((item: IndexedApplication) => item.fulltext.includes(q)),
-      )
+      setQueryString(q)
     } else {
-      setApplicationItems([...indexedItems])
+      setQueryString(QUERY_STRING_DEFAULT)
     }
-  }, [ui.applicationQuery, indexedItems])
+  }, [ui.applicationQuery])
 
   const keyExtractor = useCallback((item: IArticleSearchResults) => item.id, [])
 
@@ -199,7 +190,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     return <ActivityIndicator />
   }
 
-  if (!isLoading && isEmpty) {
+  if (!isLoading && isEmpty && !isSearch) {
     return (
       <View style={{ flex: 1 }}>
         <BottomTabsIndicator index={3} total={4} />
@@ -215,47 +206,49 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   }
 
   return (
-    <View style={{ width: '100%', height: '100%', paddingHorizontal: 16 }}>
-      <Animated.FlatList
-        ref={flatListRef}
-        testID={testIDs.SCREEN_APPLICATIONS}
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          {
-            useNativeDriver: true,
-          },
-        )}
-        style={{ marginHorizontal: 0, flex: 1 }}
-        keyExtractor={keyExtractor}
-        keyboardDismissMode="on-drag"
-        stickyHeaderIndices={isSearch ? [0] : undefined}
-        contentInset={{
-          bottom: 32,
-        }}
-        ListHeaderComponent={
-          isSearch ? (
-            <SearchHeader
-              loadingText={intl.formatMessage({
-                id: 'applications.loadingText',
-              })}
-              resultText={
-                applicationItems.length === 0
-                  ? intl.formatMessage({ id: 'applications.noResultText' })
-                  : applicationItems.length === 1
-                  ? intl.formatMessage({ id: 'applications.singleResultText' })
-                  : intl.formatMessage({ id: 'applications.resultText' })
-              }
-              count={applicationItems.length}
-              loading={searchLoading}
-            />
-          ) : undefined
-        }
-        data={applicationItems}
-        renderItem={renderApplicationItem}
-      />
-      <TopLine scrollY={scrollY} />
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ width: '100%', height: '100%', paddingHorizontal: 16 }}>
+        <Animated.FlatList
+          ref={flatListRef}
+          testID={testIDs.SCREEN_APPLICATIONS}
+          scrollEventThrottle={16}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            {
+              useNativeDriver: true,
+            },
+          )}
+          style={{ marginHorizontal: 0, flex: 1 }}
+          keyExtractor={keyExtractor}
+          keyboardDismissMode="on-drag"
+          stickyHeaderIndices={isSearch ? [0] : undefined}
+          contentInset={{
+            bottom: 32,
+          }}
+          ListHeaderComponent={
+            isSearch ? (
+              <SearchHeader
+                loadingText={intl.formatMessage({
+                  id: 'applications.loadingText',
+                })}
+                resultText={
+                  items.length === 0
+                    ? intl.formatMessage({ id: 'applications.noResultText' })
+                    : items.length === 1
+                    ? intl.formatMessage({ id: 'applications.singleResultText' })
+                    : intl.formatMessage({ id: 'applications.resultText' })
+                }
+                count={items.length}
+                loading={searchLoading}
+              />
+            ) : undefined
+          }
+          data={items}
+          renderItem={renderApplicationItem}
+        />
+        <TopLine scrollY={scrollY} />
+      </View>
+    </SafeAreaView>
   )
 }
 
