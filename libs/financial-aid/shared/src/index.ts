@@ -9,7 +9,6 @@ export type {
   MunicipalitySettings,
   NavigationProps,
   User,
-  RolesRule,
   KeyMapping,
   GetSignedUrl,
   SignedUrl,
