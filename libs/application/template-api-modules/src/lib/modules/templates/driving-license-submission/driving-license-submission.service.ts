@@ -76,7 +76,8 @@ export class DrivingLicenseSubmissionService {
     application,
   }: TemplateApiModuleActionProps) {
     const { answers } = application
-    const studentNationalId = (answers.student as { nationalId: string }).nationalId
+    const studentNationalId = (answers.student as { nationalId: string })
+      .nationalId
     const teacherNationalId = application.applicant
 
     const result = await this.drivingLicenseService.newDrivingAssessment(
