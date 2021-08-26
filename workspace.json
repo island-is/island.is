@@ -2455,6 +2455,34 @@
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/party-application/src/lib/messages.ts'"
           }
         },
+        "dev/init": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run application-system-api:dev-services",
+              "yarn nx run application-system-api:migrate",
+              "yarn nx run services-party-letter-registry-api:migrate",
+              "yarn nx run services-temporary-voter-registry-api:migrate",
+              "yarn nx run services-endorsements-api:migrate"
+            ],
+            "parallel": false
+          }
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
+              "yarn start application-system-api &",
+              "yarn start application-system-form &",
+              "yarn start services-party-letter-registry-api &",
+              "yarn start services-temporary-voter-registry-api &",
+              "yarn start services-endorsements-api &",
+              "yarn start api &"
+            ],
+            "parallel": true
+          }
+        },
         "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -2512,6 +2540,34 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/party-letter/src/lib/messages.ts'"
+          }
+        },
+        "dev/init": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run application-system-api:dev-services",
+              "yarn nx run application-system-api:migrate",
+              "yarn nx run services-party-letter-registry-api:migrate",
+              "yarn nx run services-temporary-voter-registry-api:migrate",
+              "yarn nx run services-endorsements-api:migrate"
+            ],
+            "parallel": false
+          }
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
+              "yarn start application-system-api &",
+              "yarn start application-system-form &",
+              "yarn start services-party-letter-registry-api &",
+              "yarn start services-temporary-voter-registry-api &",
+              "yarn start services-endorsements-api &",
+              "yarn start api &"
+            ],
+            "parallel": true
           }
         },
         "schemas/codegen": {
