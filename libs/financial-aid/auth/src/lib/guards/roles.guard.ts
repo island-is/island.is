@@ -27,21 +27,10 @@ export class RolesGuard implements CanActivate {
     }
 
     // Pick the first matching rule
-    const rule = rolesRules.find((rule) =>
-      typeof rule === 'string' ? rule === user.service : rule === user.service,
-    )
+    const rule = rolesRules.find((rule) => {
+      return rule == user.service
+    })
 
-    // Deny if no rule matches the user's role
-    if (!rule) {
-      return false
-    }
-
-    // Allow if the rule is simple a user role
-    if (typeof rule === 'string') {
-      return true
-    }
-
-    // Deny if the rule type is unknown
-    return false
+    return Boolean(rule)
   }
 }
