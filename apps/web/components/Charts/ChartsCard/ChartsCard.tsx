@@ -67,6 +67,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
 
   const items = (
     <Box
+      ref={ref}
       display="flex"
       flexDirection="column"
       flexGrow={1}
@@ -125,7 +126,6 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
         className={cn(styles.graphWrapper, {
           [styles.pie]: type === 'Pie',
         })}
-        ref={ref}
       >
         <Box
           justifyContent="center"
@@ -137,13 +137,15 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
       </Box>
     </Box>
   )
-  return <FrameWrapper>{items}</FrameWrapper>
+  return <FrameWrapper width={width}>{items}</FrameWrapper>
 }
 
-const FrameWrapper = ({ children }) => {
+const FrameWrapper = ({ width, children }) => {
   return (
     <Box
-      className={styles.frameWrapper}
+      className={cn(styles.frameWrapper, {
+        [styles.scroll]: width < 840,
+      })}
       borderColor="purple100"
       borderWidth="standard"
       borderRadius="large"
