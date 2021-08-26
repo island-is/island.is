@@ -12,7 +12,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { Query, AuthCustomDelegation } from '@island.is/api/schema'
-import { EmptyState } from '@island.is/service-portal/core'
+import { EmptyImage } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 
 import { AccessCard } from '../AccessCard'
@@ -66,12 +66,9 @@ function Accesses(): JSX.Element {
             {loading ? (
               <SkeletonLoader width="100%" height={206} />
             ) : authDelegations.length === 0 ? (
-              <EmptyState
-                title={defineMessage({
-                  id: 'service.portal.settings.accessControl:home-no-data',
-                  defaultMessage: 'Engin gögn fundust',
-                })}
-              />
+              <Box marginTop={4}>
+                <EmptyImage width="100%" />
+              </Box>
             ) : (
               authDelegations.map((delegation) => (
                 <AccessCard
