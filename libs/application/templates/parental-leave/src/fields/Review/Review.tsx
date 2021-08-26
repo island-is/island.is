@@ -164,6 +164,7 @@ export const Review: FC<ReviewScreenProps> = ({
             <DataValue
               label={formatMessage(parentalLeaveFormMessages.applicant.email)}
               value={applicantEmail}
+              error={hasError('applicant.email')}
             />
           </GridColumn>
 
@@ -173,6 +174,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 parentalLeaveFormMessages.applicant.phoneNumber,
               )}
               value={applicantPhoneNumber}
+              error={hasError('applicant.phoneNumber')}
             />
           </GridColumn>
         </GridRow>

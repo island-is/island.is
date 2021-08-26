@@ -8,9 +8,10 @@ import * as styles from './DataValue.treat'
 interface DataValueProps {
   label: string
   value: ReactNode | string
+  error?: string
 }
 
-export const DataValue = ({ label, value }: DataValueProps) => (
+export const DataValue = ({ label, value, error }: DataValueProps) => (
   <Box className={styles.dataValue}>
     <Label>{label}</Label>
 
@@ -20,6 +21,12 @@ export const DataValue = ({ label, value }: DataValueProps) => (
       <Text>{value}</Text>
     ) : (
       value
+    )}
+
+    {error && (
+      <Box className={styles.errorMessage} aria-live="assertive">
+        {error}
+      </Box>
     )}
   </Box>
 )
