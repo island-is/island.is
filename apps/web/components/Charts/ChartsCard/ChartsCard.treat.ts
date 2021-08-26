@@ -15,6 +15,7 @@ export const frameWrapper = style({
 
 export const scroll = style({
   overflowX: 'scroll',
+  ['-webkit-scrollbar-width' as any]: 'none',
 })
 
 export const outerWrapper = style({

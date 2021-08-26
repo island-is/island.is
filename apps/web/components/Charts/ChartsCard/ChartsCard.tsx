@@ -88,9 +88,6 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
           alignItems="center"
           padding={[2, 2, 2]}
         >
-          {organizationLogo && !subPage && (
-            <img src={organizationLogo.url} width={80} />
-          )}
           <Box
             display="flex"
             flexDirection="row"
