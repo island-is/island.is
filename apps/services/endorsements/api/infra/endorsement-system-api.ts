@@ -13,6 +13,8 @@ export const serviceSetup = (services: {
   service('endorsement-system-api')
     .image('services-endorsements-api')
     .namespace('endorsement-system')
+    .command('node')
+    .args('--tls-min-v1.0', 'main.js')
     .postgres(postgresInfo)
     .initContainer({
       containers: [
