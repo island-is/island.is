@@ -5,39 +5,38 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { ApplicationEligibilityRequirement } from '@island.is/api/schema'
 
-export class EligibilityProvider extends BasicDataProvider {
-  type = 'EligibilityProvider'
+export class QualityPhotoProvider extends BasicDataProvider {
+  type = 'QualityPhotoProvider'
 
-  async provide(
-    application: Application,
-  ): Promise<ApplicationEligibilityRequirement> {
+  async provide(application: Application) {
     const query = `
-      query EligibilityQuery($drivingLicenseType: String!) {
-        drivingLicenseApplicationEligibility(type: $drivingLicenseType) {
-          isEligible
-          requirements {
-            key
-            requirementMet
-          }
+        query HasQualityPhoto {
+            qualityPhoto {
+            success
+            qualityPhoto
         }
       }
-    `
+      `
 
-    const res = await this.useGraphqlGateway(query, { drivingLicenseType: 'B' })
+    const res = await this.useGraphqlGateway(query)
+
     if (!res.ok) {
       return Promise.reject({
         reason: 'Náði ekki sambandi við vefþjónustu',
       })
     }
+
     const response = await res.json()
 
     if (response.errors) {
       return Promise.reject({ error: response.errors })
     }
 
-    return response.data.drivingLicenseApplicationEligibility
+    return {
+      success: response.data.qualityPhoto.success,
+      qualityPhoto: response.data.qualityPhoto.qualityPhoto,
+    }
   }
 
   onProvideError(): FailedDataProviderResult {
