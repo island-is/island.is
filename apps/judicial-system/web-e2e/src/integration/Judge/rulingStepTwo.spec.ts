@@ -14,6 +14,7 @@ describe('/domur/urskurdarord/:id', () => {
     cy.getByTestid('continueButton').should('be.disabled')
     cy.get('#prosecutor-appeal').check()
     cy.get('#accused-appeal').check()
+    cy.getByTestid('courtEndTime').type('11:22')
     cy.getByTestid('continueButton').should('not.be.disabled')
   })
 

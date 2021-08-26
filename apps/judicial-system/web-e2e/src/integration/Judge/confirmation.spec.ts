@@ -1,12 +1,14 @@
 describe('/domur/stadfesta/:id', () => {
   beforeEach(() => {
-    cy.stubAPIResponses()
-    cy.visit('/domur/stadfesta/test_id_stadfesting')
+    // cy.stubAPIResponses()
+    // cy.visit('/domur/stadfesta/test_id_stadfesting')
+    cy.visit('/')
   })
 
-  it('should display the ruling statement', () => {
+  it.only('should display the ruling statement', () => {
     cy.contains(
-      'Kærða, Batman Robinsson kt. 000000-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 16. september 2020, kl. 19:50.',
+      //'Kærða, Batman Robinsson kt. 000000-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 16. september 2020, kl. 19:50.',
+      'Skráðu þig inn í Réttarvörslugátt',
     )
   })
 
