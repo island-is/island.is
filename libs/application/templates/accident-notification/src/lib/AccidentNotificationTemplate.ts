@@ -94,6 +94,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: {
             target: States.ADD_DOCUMENTS,
           },
+          [DefaultEvents.SUBMIT]: {
+            target: States.OVERVIEW,
+          },
         },
       },
       [States.NEEDS_DOCUMENT]: {
@@ -114,7 +117,10 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: {
-            target: States.NEEDS_REVIEW,
+            target: States.ADD_DOCUMENTS,
+          },
+          [DefaultEvents.SUBMIT]: {
+            target: States.OVERVIEW,
           },
         },
       },
@@ -136,7 +142,10 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: {
-            target: States.NEEDS_DOCUMENT,
+            target: States.ADD_DOCUMENTS,
+          },
+          [DefaultEvents.SUBMIT]: {
+            target: States.OVERVIEW,
           },
         },
       },
@@ -153,12 +162,35 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                   Promise.resolve(val.AddDocuments),
                 ),
               read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.NEEDS_REVIEW,
+          },
+        },
+      },
+      [States.OVERVIEW]: {
+        meta: {
+          name: States.OVERVIEW,
+          progress: 0.6,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Overview').then((val) =>
+                  Promise.resolve(val.Overview),
+                ),
+              read: 'all',
             },
           ],
         },
         on: {
           [DefaultEvents.EDIT]: {
-            target: States.NEEDS_REVIEW,
+            target: States.ADD_DOCUMENTS,
           },
         },
       },

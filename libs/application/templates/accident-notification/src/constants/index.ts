@@ -18,4 +18,5 @@ export enum States {
   IN_FINAL_REVIEW = 'inFinalReview',
 
   ADD_DOCUMENTS = 'addDocuments',
+  OVERVIEW = 'overview',
 }
