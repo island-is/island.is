@@ -22,11 +22,6 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
-export enum StaffRoles {
-  ADMIN = 'ADMIN',
-  MODERATOR = 'MODERATOR',
-}
-
 export enum RolesRule {
   OSK = 'osk',
   VEITA = 'veita',
