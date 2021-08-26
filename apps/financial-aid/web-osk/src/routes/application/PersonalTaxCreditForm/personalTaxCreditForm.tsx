@@ -2,8 +2,8 @@ import React, { useState, useContext } from 'react'
 import { Text } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -54,7 +54,7 @@ const PersonalTaxCreditForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Viltu nota persónuafslátt?
         </Text>
@@ -106,9 +106,9 @@ const PersonalTaxCreditForm = () => {
           síðar. Uppsafnaður persónuafsláttur sem ekki er nýttur innan árs
           fellur niður við lok þess.
         </Text>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
