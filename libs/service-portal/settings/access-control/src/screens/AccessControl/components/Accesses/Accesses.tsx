@@ -1,7 +1,6 @@
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { useLocation, useHistory } from 'react-router-dom'
-import { defineMessage } from 'react-intl'
 
 import {
   Box,
