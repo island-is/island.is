@@ -1,7 +1,3 @@
-// import { AidtaxInfoListItem } from './veitaFinancialAidDefinitions'
-
-// import taxInfo from './taxInfo.json'
-
 export const taxInfoNumbers = {
   '2021': {
     taxPercentage: 31.45,
