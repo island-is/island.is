@@ -7,13 +7,13 @@ This application allows political parties to announce candidacy.
 To setup the docker environment run (this only needs to be run once):
 
 ```bash
-yarn nx run application-templates-party-application:init
+yarn nx run application-templates-party-application:dev/init
 ```
 
 To start all required services:
 
 ```bash
-yarn nx run application-templates-party-application:start
+yarn nx run application-templates-party-application:dev
 ```
 
 This template runs within the application system, make sure your setup fulfills requirements set by the [Application System](https://docs.devland.is/apps/application-system)
