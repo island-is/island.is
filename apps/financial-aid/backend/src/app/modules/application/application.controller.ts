@@ -24,10 +24,12 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/financial-aid/auth'
-import type { User, ApplicationFilters } from '@island.is/financial-aid/shared'
 
-// Allows only staff
-const staffRule = 'veita'
+import {
+  User,
+  ApplicationFilters,
+  RolesRule,
+} from '@island.is/financial-aid/shared'
 
 @Controller('api')
 @ApiTags('applications')
@@ -45,7 +47,7 @@ export class ApplicationController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(staffRule)
+  @RolesRules(RolesRule.VEITA)
   @Get('applications')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -73,7 +75,7 @@ export class ApplicationController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(staffRule)
+  @RolesRules(RolesRule.VEITA)
   @Get('applicationFilters')
   @ApiOkResponse({
     description: 'Gets all existing applications filters',
