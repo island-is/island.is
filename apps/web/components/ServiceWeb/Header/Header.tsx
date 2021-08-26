@@ -10,7 +10,6 @@ import {
   Hidden,
   Logo,
   Text,
-  AsyncSearch,
   ResponsiveSpace,
   Link,
 } from '@island.is/island-ui/core'

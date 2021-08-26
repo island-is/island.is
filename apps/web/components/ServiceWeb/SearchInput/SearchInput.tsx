@@ -18,9 +18,6 @@ interface SearchInputProps {
 }
 
 export const SearchInput = ({
-  title = '',
-  logoTitle = '',
-  logoUrl,
   colored = false,
   size = 'large',
   initialInputValue = '',
@@ -30,7 +27,7 @@ export const SearchInput = ({
   const Router = useRouter()
 
   const options =
-    [].map(({ title }, index) => {
+    [].map(({ title }) => {
       return {
         label: title,
         value: title,
@@ -56,5 +53,3 @@ export const SearchInput = ({
     />
   )
 }
-
-export default SearchInput
