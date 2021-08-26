@@ -2,6 +2,7 @@ import React, { useState, useEffect, FC } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
 import { dateFormat } from '@island.is/shared/constants'
 import format from 'date-fns/format'
+import sub from 'date-fns/sub'
 import { Table as T } from '@island.is/island-ui/core'
 import {
   Box,
@@ -17,6 +18,7 @@ import {
   SkeletonLoader,
   Pagination,
   Input,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
@@ -24,6 +26,7 @@ import { DocumentsListItemTypes } from './DocumentScreen.types'
 import amountFormat from '../../utils/amountFormat'
 import { showPdfDocument } from '@island.is/service-portal/graphql'
 import { billsFilter } from '../../utils/simpleFilter'
+import * as styles from './DocumentScreen.treat'
 
 const ITEMS_ON_PAGE = 20
 
@@ -31,6 +34,7 @@ interface Props {
   title: string
   intro: string
   listPath: string
+  defaultDateRangeMonths?: number
 }
 
 const getFinanceDocumentsListQuery = gql`
@@ -49,13 +53,18 @@ const getFinanceDocumentsListQuery = gql`
   }
 `
 
-const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
-  const { showPdf } = showPdfDocument()
+const DocumentScreen: FC<Props> = ({
+  title,
+  intro,
+  listPath,
+  defaultDateRangeMonths = 3,
+}) => {
+  const { showPdf, loadingPDF, fetchingPdfId } = showPdfDocument()
   const { formatMessage } = useLocale()
 
   const [page, setPage] = useState(1)
-  const [fromDate, setFromDate] = useState<string>()
-  const [toDate, setToDate] = useState<string>()
+  const [fromDate, setFromDate] = useState<Date>()
+  const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
 
   const [loadDocumentsList, { data, loading, called, error }] = useLazyQuery(
@@ -77,14 +86,22 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
       loadDocumentsList({
         variables: {
           input: {
-            dayFrom: fromDate,
-            dayTo: toDate,
+            dayFrom: format(fromDate, 'yyyy-MM-dd'),
+            dayTo: format(toDate, 'yyyy-MM-dd'),
             listPath: listPath,
           },
         },
       })
     }
   }, [toDate, fromDate])
+
+  useEffect(() => {
+    const backInTheDay = sub(new Date(), {
+      months: defaultDateRangeMonths,
+    })
+    setFromDate(backInTheDay)
+    setToDate(new Date())
+  }, [])
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -102,14 +119,12 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
             <GridColumn span={['1/1', '4/12']}>
               <DatePicker
                 backgroundColor="blue"
-                handleChange={(d) => {
-                  const date = format(d, 'yyyy-MM-dd')
-                  setFromDate(date)
-                }}
+                handleChange={(d) => setFromDate(d)}
                 icon="calendar"
                 iconType="outline"
                 size="sm"
                 label={formatMessage(m.dateFrom)}
+                selected={fromDate}
                 locale="is"
                 placeholderText={formatMessage(m.chooseDate)}
               />
@@ -117,14 +132,12 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
             <GridColumn span={['1/1', '4/12']}>
               <DatePicker
                 backgroundColor="blue"
-                handleChange={(d) => {
-                  const date = format(d, 'yyyy-MM-dd')
-                  setToDate(date)
-                }}
+                handleChange={(d) => setToDate(d)}
                 icon="calendar"
                 iconType="outline"
                 size="sm"
                 label={formatMessage(m.dateTo)}
+                selected={toDate}
                 locale="is"
                 placeholderText={formatMessage(m.chooseDate)}
               />
@@ -200,13 +213,19 @@ const DocumentScreen: FC<Props> = ({ title, intro, listPath }) => {
                       <T.Data>
                         {format(new Date(listItem.date), dateFormat.is)}
                       </T.Data>
-                      <T.Data>
+                      <T.Data box={{ position: 'relative' }}>
                         <Button
                           size="small"
                           variant="text"
                           onClick={() => showPdf(listItem.id)}
+                          disabled={loadingPDF && fetchingPdfId === listItem.id}
                         >
                           {listItem.type}
+                          {loadingPDF && fetchingPdfId === listItem.id && (
+                            <span className={styles.loadingDot}>
+                              <LoadingDots single />
+                            </span>
+                          )}
                         </Button>
                       </T.Data>
                       <T.Data>{listItem.sender}</T.Data>

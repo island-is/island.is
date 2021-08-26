@@ -127,7 +127,13 @@ export interface ServicePortalModule {
    */
   routes: (
     props: ServicePortalModuleProps,
-  ) => Promise<ServicePortalRoute[]> | ServicePortalRoute[]
+  ) => ServicePortalRoute[] | Promise<ServicePortalRoute[]>
+  /**
+   * Dynamic routes that might have a slow response time will be loaded after inital routes.
+   */
+  dynamicRoutes?: (
+    props: ServicePortalModuleProps,
+  ) => Promise<ServicePortalRoute[]>
   /**
    * Global components will always be rendered by default
    * These are usually utility components that prompt the user about certain

@@ -18,6 +18,7 @@ export const fileContainer = style({
   gridTemplateColumns: 'repeat(1, 1fr)',
   alignItems: 'flex-start',
   columnGap: theme.spacing[3],
+  marginBottom: theme.spacing[5],
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       gridTemplateColumns: 'repeat(8, 1fr)',
