@@ -12,7 +12,7 @@ import Logo from '../assets/Logo'
 import { overview } from '../lib/messages'
 
 export const Overview: Form = buildForm({
-  id: 'ParentalLeaveOverview',
+  id: 'AccidentNotificationOverview',
   title: 'Yfirlit',
   logo: Logo,
   children: [
