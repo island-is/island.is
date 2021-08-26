@@ -38,7 +38,7 @@ export const graphWrapper = style({
 
 export const graphParent = style({
   width: '90%',
-  height: '80%',
+  height: '420px',
 })
 
 export const pie = style({
