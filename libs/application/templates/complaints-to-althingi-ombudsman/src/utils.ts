@@ -30,6 +30,7 @@ const getDateAYearBack = () => {
 }
 
 export const isDecisionDateOlderThanYear = (answers: Answer) => {
+  // Checks if date exists and if it's older than a year
   const aYearBack = getDateAYearBack()
   const date = (answers as {
     complaintDescription: { decisionDate: string }
