@@ -2,9 +2,14 @@ import { style } from 'treat'
 
 export const headerGraphWrapper = style({
   height: '500px',
-  overflowX: 'scroll',
   
 })
+
+export const scroll = style({
+  overflowX: 'scroll',
+  ['-webkit-scrollbar-width' as any]: 'none',
+})
+
 
 export const headerGraphParent = style({
   width: '770px',
