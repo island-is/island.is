@@ -40,6 +40,17 @@ export const getActiveSectionForTimeline: KeyMapping<
   Approved: 2,
 }
 
+export const getActiveSectionForMainPage: KeyMapping<
+  ApplicationState,
+  number
+> = {
+  New: 1,
+  DataNeeded: 1,
+  InProgress: 1,
+  Rejected: 3,
+  Approved: 2,
+}
+
 // export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
 
 export const insertAt = (str: string, sub: string, pos: number) =>
