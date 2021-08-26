@@ -5,13 +5,16 @@ export const frameWrapper = style({
   width: '100%',
   minHeight: 124,
   boxSizing: 'border-box',
-  overflowX: 'scroll',
   position: 'relative',
   background: 'transparent',
   outline: 'none',
   ':hover': {
     textDecoration: 'none',
   },
+})
+
+export const scroll = style({
+  overflowX: 'scroll',
 })
 
 export const outerWrapper = style({
@@ -38,7 +41,7 @@ export const graphWrapper = style({
 
 export const graphParent = style({
   width: '90%',
-  height: '80%',
+  height: '420px',
 })
 
 export const pie = style({
