@@ -19,8 +19,8 @@ export class OpenDataPage {
   @Field()
   pageDescription!: string
 
-  @Field(() => Graph)
-  pageHeaderGraph?: Graph | null
+  @Field(() => GraphCard)
+  pageHeaderGraph?: GraphCard | null
 
   @Field()
   link?: string
@@ -59,7 +59,7 @@ export const mapOpenDataPage = ({
   pageTitle: fields.pageTitle ?? '',
   pageDescription: fields.pageDescription ?? '',
   pageHeaderGraph: fields.pageHeaderGraph
-    ? mapGraph(fields.pageHeaderGraph)
+    ? mapGraphCard(fields.pageHeaderGraph)
     : null,
   link: fields.link ?? '',
   linkTitle: fields.linkTitle ?? '',
