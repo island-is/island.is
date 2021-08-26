@@ -14,7 +14,7 @@ export const dividerContainer = style({
   gridColumn: '1/-1',
 })
 
-export const footerContainer = style({
+export const container = style({
   paddingTop: theme.spacing[3],
   paddingBottom: theme.spacing[3],
   paddingLeft: theme.spacing[3],

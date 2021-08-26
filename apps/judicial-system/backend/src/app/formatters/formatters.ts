@@ -15,6 +15,7 @@ import {
   CaseDecision,
   CaseGender,
   CaseType,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 function custodyProvisionsOrder(p: CaseCustodyProvisions) {
@@ -184,12 +185,6 @@ export function formatCourtReadyForCourtSmsNotification(
   prosecutorName: string,
   court: string,
 ) {
-  // Prosecutor
-  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
-
-  // Court
-  const courtText = ` Dómstóll: ${court ?? 'Ekki skráður'}.`
-
   const submittedCaseText =
     type === CaseType.CUSTODY
       ? 'Gæsluvarðhaldskrafa'
@@ -198,15 +193,25 @@ export function formatCourtReadyForCourtSmsNotification(
       : type === CaseType.OTHER
       ? 'Krafa um rannsóknarheimild'
       : `Krafa um rannsóknarheimild (${caseTypes[type]})`
+  const prosecutorText = ` Ákærandi: ${prosecutorName ?? 'Ekki skráður'}.`
+  const courtText = ` Dómstóll: ${court ?? 'Ekki skráður'}.`
 
   return `${submittedCaseText} tilbúin til afgreiðslu.${prosecutorText}${courtText}`
 }
 
 export function formatProsecutorReceivedByCourtSmsNotification(
+  type: CaseType,
   court: string,
   courtCaseNumber: string,
 ): string {
-  return `${court} hefur móttekið kröfu sem þú sendir og úthlutað málsnúmerinu ${courtCaseNumber}.`
+  const receivedCaseText =
+    type === CaseType.CUSTODY || type === CaseType.TRAVEL_BAN
+      ? `${caseTypes[type]}`
+      : type === CaseType.OTHER
+      ? 'rannsóknarheimild'
+      : `rannsóknarheimild (${caseTypes[type]})`
+
+  return `${court} hefur móttekið kröfu um ${receivedCaseText} sem þú sendir og úthlutað málsnúmerinu ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.`
 }
 
 export function formatProsecutorCourtDateEmailNotification(
@@ -214,18 +219,12 @@ export function formatProsecutorCourtDateEmailNotification(
   court: string,
   courtDate: Date,
   courtRoom: string,
+  judgeName: string,
+  registrarName: string,
   defenderName: string,
   defenderIsSpokesperson: boolean,
+  sessionArrangements: SessionArrangements = SessionArrangements.ALL_PRESENT, // Defaults to ALL_PRESENT when not specified
 ): string {
-  const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
-  const defenderText = defenderName
-    ? `${
-        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
-      } sakbornings: ${defenderName}`
-    : `${
-        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
-      } sakbornings hefur ekki verið skráður`
-
   const scheduledCaseText =
     type === CaseType.CUSTODY
       ? 'gæsluvarðhaldskröfu'
@@ -234,8 +233,26 @@ export function formatProsecutorCourtDateEmailNotification(
       : type === CaseType.OTHER
       ? 'kröfu um rannsóknarheimild'
       : `kröfu um rannsóknarheimild (${caseTypes[type]})`
+  const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
+  const courtRoomText =
+    sessionArrangements === SessionArrangements.REMOTE_SESSION
+      ? 'Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila'
+      : `Dómsalur: ${courtRoom}`
+  const judgeText = judgeName
+    ? `Dómari: ${judgeName}`
+    : 'Dómari hefur ekki verið skráður'
+  const registrarText = registrarName
+    ? `Dómritari: ${registrarName}`
+    : 'Dómritari hefur ekki verið skráður'
+  const defenderText = defenderName
+    ? `${
+        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+      } sakbornings: ${defenderName}`
+    : `${
+        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+      } sakbornings hefur ekki verið skráður`
 
-  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />${defenderText}.`
+  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />${courtRoomText}.<br /><br />${judgeText}.<br /><br />${registrarText}.<br /><br />${defenderText}.`
 }
 
 export function formatPrisonCourtDateEmailNotification(
@@ -281,8 +298,11 @@ export function formatDefenderCourtDateEmailNotification(
   courtCaseNumber: string,
   courtDate: Date,
   courtRoom: string,
+  defenderIsSpokesperson = false,
 ): string {
-  return `${court} hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram ${formatDate(
+  return `${court} hefur boðað þig í fyrirtöku sem ${
+    defenderIsSpokesperson ? 'talsmann' : 'verjanda'
+  } sakbornings.<br /><br />Fyrirtaka mun fara fram ${formatDate(
     courtDate,
     'PPPPp',
   )
