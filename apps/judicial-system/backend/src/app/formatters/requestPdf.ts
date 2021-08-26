@@ -106,7 +106,7 @@ function constructRestrictionRequestPdf(
     .text('Dómkröfur')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.demands ?? 'Vantar', {
+    .text(existingCase.demands ?? 'Dómkröfur ekki skráðar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -117,7 +117,7 @@ function constructRestrictionRequestPdf(
     .text('Lagaákvæði sem brot varða við')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.lawsBroken ?? 'Vantar', {
+    .text(existingCase.lawsBroken ?? 'Lagaákvæði ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -164,7 +164,7 @@ function constructRestrictionRequestPdf(
     .text(formatMessage(m.factsAndArguments.facts))
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.caseFacts ?? 'Vantar', {
+    .text(existingCase.caseFacts ?? 'Málsatvik ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -175,7 +175,7 @@ function constructRestrictionRequestPdf(
     .text(formatMessage(m.factsAndArguments.arguments))
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.legalArguments ?? 'Vantar', {
+    .text(existingCase.legalArguments ?? 'Lagarök ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -271,7 +271,7 @@ function constructInvestigationRequestPdf(
     .text('Dómkröfur')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.demands ?? 'Vantar', {
+    .text(existingCase.demands ?? 'Dómkröfur ekki skráðar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -282,7 +282,7 @@ function constructInvestigationRequestPdf(
     .text('Lagaákvæði sem brot varða við')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.lawsBroken ?? 'Vantar', {
+    .text(existingCase.lawsBroken ?? 'Lagaákvæði ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -293,7 +293,7 @@ function constructInvestigationRequestPdf(
     .text('Lagaákvæði sem krafan er byggð á')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.legalBasis ?? 'Vantar', {
+    .text(existingCase.legalBasis ?? 'Lagaákvæði ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -306,7 +306,7 @@ function constructInvestigationRequestPdf(
     .text('Málsatvik')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.caseFacts ?? 'Vantar', {
+    .text(existingCase.caseFacts ?? 'Málsatvik ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -317,7 +317,7 @@ function constructInvestigationRequestPdf(
     .text('Lagarök')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.legalArguments ?? 'Vantar', {
+    .text(existingCase.legalArguments ?? 'Lagarök ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })

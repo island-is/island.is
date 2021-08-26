@@ -28,7 +28,7 @@ import {
 describe('formatCustodyProvisions', () => {
   test('should format custody provisions when no provisions are selected', () => {
     // Arrange
-    const custodyProvisions = []
+    const custodyProvisions: CaseCustodyProvisions[] = []
 
     // Act
     const res = formatCustodyProvisions(custodyProvisions)
@@ -1284,8 +1284,6 @@ describe('formatPrisonRulingEmailNotification', () => {
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
     const courtEndTime = new Date('2020-12-20T13:32')
-    const defenderName = null
-    const defenderEmail = null
     const defenderIsSpokesperson = false
     const decision = CaseDecision.ACCEPTING
     const validToDate = new Date('2021-04-06T12:30')
@@ -1308,8 +1306,8 @@ describe('formatPrisonRulingEmailNotification', () => {
       court,
       prosecutorName,
       courtEndTime,
-      defenderName,
-      defenderEmail,
+      undefined,
+      undefined,
       defenderIsSpokesperson,
       decision,
       validToDate,
@@ -1338,7 +1336,6 @@ describe('formatPrisonRulingEmailNotification', () => {
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
     const courtEndTime = new Date('2020-12-20T13:32')
-    const defenderName = null
     const defenderEmail = 'shield@defend.is'
     const decision = CaseDecision.ACCEPTING
     const validToDate = new Date('2021-04-06T12:30')
@@ -1361,7 +1358,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       court,
       prosecutorName,
       courtEndTime,
-      defenderName,
+      undefined,
       defenderEmail,
       undefined,
       decision,
@@ -1391,7 +1388,6 @@ describe('formatPrisonRulingEmailNotification', () => {
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
     const courtEndTime = new Date('2020-12-20T13:32')
-    const defenderName = null
     const defenderEmail = 'shield@defend.is'
     const defenderIsSpokesperson = true
     const decision = CaseDecision.ACCEPTING
@@ -1416,7 +1412,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       court,
       prosecutorName,
       courtEndTime,
-      defenderName,
+      undefined,
       defenderEmail,
       defenderIsSpokesperson,
       decision,

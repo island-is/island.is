@@ -40,7 +40,7 @@ export async function getCustodyNoticePdfAsString(
     .text('Úrskurður um gæsluvarðhald', { align: 'center' })
     .font('Helvetica')
     .text(
-      `Málsnúmer ${existingCase.court?.name?.replace('dómur', 'dóms') ?? '-'} ${
+      `Málsnúmer ${existingCase.court?.name?.replace('dómur', 'dóms') ?? '?'} ${
         existingCase.courtCaseNumber
       }`,
       { align: 'center' },
@@ -76,7 +76,7 @@ export async function getCustodyNoticePdfAsString(
     .text(
       `Úrskurður kveðinn upp ${
         formatDate(existingCase.rulingDate, 'PPPp')?.replace(' kl.', ', kl.') ??
-        '-'
+        '?'
       }`,
     )
     .text(
@@ -84,7 +84,7 @@ export async function getCustodyNoticePdfAsString(
         formatDate(existingCase.validToDate, 'PPPp')?.replace(
           ' kl.',
           ', kl.',
-        ) ?? '-'
+        ) ?? '?'
       }`,
     )
     .text(' ')
