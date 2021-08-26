@@ -278,6 +278,7 @@ export class NotificationService {
       ['judicial.system.backend'],
       'is',
     )
+
     const pdf = await getRequestPdfAsBuffer(existingCase, intl.formatMessage)
 
     try {

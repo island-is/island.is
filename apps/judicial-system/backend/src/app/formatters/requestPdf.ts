@@ -5,7 +5,6 @@ import { CaseType } from '@island.is/judicial-system/types'
 import {
   caseTypes,
   formatRequestedCustodyRestrictions,
-  formatGender,
   formatNationalId,
   capitalize,
   formatDate,
@@ -196,6 +195,7 @@ function constructRestrictionRequestPdf(
 
 function constructInvestigationRequestPdf(
   existingCase: Case,
+  formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -221,18 +221,32 @@ function constructInvestigationRequestPdf(
     .text('Krafa um rannsóknarheimild', { align: 'center' })
     .font('Helvetica')
     .fontSize(18)
-    .text(`LÖKE málsnúmer: ${existingCase.policeCaseNumber}`, {
-      align: 'center',
-    })
+    .text(
+      formatMessage(m.district, {
+        district:
+          existingCase.prosecutor?.institution?.name ??
+          formatMessage(m.noDistrict),
+      }),
+      {
+        align: 'center',
+      },
+    )
     .fontSize(16)
     .text(
-      `Embætti: ${existingCase.prosecutor?.institution?.name ?? 'Ekki skráð'}`,
+      `${formatDate(existingCase.created, 'PPP')} - ${formatMessage(
+        m.caseNumber,
+        {
+          caseNumber: existingCase.policeCaseNumber,
+        },
+      )}`,
       {
         align: 'center',
       },
     )
     .lineGap(40)
-    .text(`Dómstóll: ${existingCase.court?.name}`, { align: 'center' })
+    .text(formatMessage(m.court, { court: existingCase.court?.name }), {
+      align: 'center',
+    })
     .font('Helvetica-Bold')
     .fontSize(18)
     .lineGap(8)
@@ -242,7 +256,6 @@ function constructInvestigationRequestPdf(
     .lineGap(4)
     .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
     .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
     .text(
       `Verjandi sakbornings: ${
@@ -360,7 +373,7 @@ function constructRequestPdf(
   return existingCase.type === CaseType.CUSTODY ||
     existingCase.type === CaseType.TRAVEL_BAN
     ? constructRestrictionRequestPdf(existingCase, formatMessage)
-    : constructInvestigationRequestPdf(existingCase)
+    : constructInvestigationRequestPdf(existingCase, formatMessage)
 }
 
 export async function getRequestPdfAsString(
