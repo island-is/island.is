@@ -118,7 +118,7 @@ const FinanceTransactions: ServicePortalModuleComponent = ({ userInfo }) => {
               {formatMessage({
                 id: 'sp.finance-transactions:intro',
                 defaultMessage:
-                  'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
+                  'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
               })}
             </Text>
           </Column>

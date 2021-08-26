@@ -5,6 +5,7 @@ import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
 import { Table as T } from '@island.is/island-ui/core'
 import subYears from 'date-fns/subYears'
 import { Query } from '@island.is/api/schema'
+import { defineMessage } from 'react-intl'
 import {
   Box,
   Text,
@@ -26,6 +27,7 @@ import amountFormat from '../../utils/amountFormat'
 import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
 import { showAnnualStatusDocument } from '@island.is/service-portal/graphql'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import DisabledItem from '../../components/DropdownExport/DisabledItem'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
 
 const GetFinanceStatusQuery = gql`
@@ -37,7 +39,11 @@ const GetFinanceStatusQuery = gql`
 const FinanceStatus: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
-  const { showAnnualStatusPdf } = showAnnualStatusDocument()
+  const {
+    showAnnualStatusPdf,
+    loadingAnnualPDF,
+    fetchingYearPDF,
+  } = showAnnualStatusDocument()
 
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
@@ -58,6 +64,12 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
     return amountFormat(chargeTypeTotal)
   }
 
+  const endOfYearMessage = defineMessage({
+    id: 'sp.finance-status:end-of-year',
+    defaultMessage: 'Staða í lok árs {year}',
+    description: 'A welcome message',
+  })
+
   const previousYear = subYears(new Date(), 1).getFullYear().toString()
   const twoYearsAgo = subYears(new Date(), 2).getFullYear().toString()
   return (
@@ -75,7 +87,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
               {formatMessage({
                 id: 'sp.finance-status:intro',
                 defaultMessage:
-                  'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
+                  'Hér er að finna sundurliðun skulda og inneigna við ríkissjóð og stofnanir á þeim degi sem skoðað er.',
               })}
             </Text>
           </Column>
@@ -130,26 +142,40 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                       }
                       dropdownItems={[
                         {
-                          title: formatMessage(
-                            {
-                              id: 'sp.finance-status:end-of-year',
-                              defaultMessage: 'Staða í lok árs {year}',
-                              description: 'A welcome message',
-                            },
-                            { year: previousYear },
-                          ),
+                          title: formatMessage(endOfYearMessage, {
+                            year: previousYear,
+                          }),
                           onClick: () => showAnnualStatusPdf(previousYear),
+                          render:
+                            loadingAnnualPDF && fetchingYearPDF === previousYear
+                              ? () => (
+                                  <DisabledItem
+                                    title={formatMessage(endOfYearMessage, {
+                                      year: previousYear,
+                                    })}
+                                    loading
+                                    key={previousYear}
+                                  />
+                                )
+                              : undefined,
                         },
                         {
-                          title: formatMessage(
-                            {
-                              id: 'sp.finance-status:end-of-year',
-                              defaultMessage: 'Staða í lok árs {year}',
-                              description: 'A welcome message',
-                            },
-                            { year: twoYearsAgo },
-                          ),
+                          title: formatMessage(endOfYearMessage, {
+                            year: twoYearsAgo,
+                          }),
                           onClick: () => showAnnualStatusPdf(twoYearsAgo),
+                          render:
+                            loadingAnnualPDF && fetchingYearPDF === twoYearsAgo
+                              ? () => (
+                                  <DisabledItem
+                                    title={formatMessage(endOfYearMessage, {
+                                      year: twoYearsAgo,
+                                    })}
+                                    loading
+                                    key={twoYearsAgo}
+                                  />
+                                )
+                              : undefined,
                         },
                       ]}
                     />
