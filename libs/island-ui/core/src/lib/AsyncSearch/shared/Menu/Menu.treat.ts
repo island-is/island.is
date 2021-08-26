@@ -7,7 +7,6 @@ export const menu = style({
   width: '100%',
   position: 'absolute',
   backgroundColor: theme.color.mint300,
-  border: '2px solid blue',
   maxHeight: 455,
   overflowY: 'auto',
   outline: 0,
@@ -21,17 +20,22 @@ export const menu = style({
   selectors: {
     [`&::-webkit-scrollbar`]: {
       width: 8,
-      background: theme.color.white,
-    },
-    [`&::-webkit-scrollbar-track`]: {
-      width: 8,
-      background: theme.color.blue300,
+      background: theme.color.red400,
       borderRadius: theme.border.radius.standard,
     },
-    // [`&::-webkit-scrollbar-thumb`]: {},
-    [`&::-webkit-scrollbar-thumb:hover`]: {
-      background: 'red',
-      color: 'red',
+    [`&::-webkit-scrollbar-button`]: {
+      display: 'none',
+    },
+    [`&::-webkit-scrollbar-track`]: {
+      background: theme.color.white,
+      borderRadius: theme.border.radius.standard,
+    },
+    [`&::-webkit-scrollbar-thumb`]: {
+      borderRadius: theme.border.radius.standard,
+      background: theme.color.blue300,
+    },
+    [`&::-webkit-scrollbar-corner`]: {
+      outline: '2px solid purple',
     },
   },
 })
