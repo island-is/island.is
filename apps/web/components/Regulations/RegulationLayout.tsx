@@ -1,18 +1,20 @@
-import { RegName } from './Regulations.types'
+import * as s from './RegulationDisplay.treat'
+
+import { RegName, prettyName } from '@island.is/regulations'
 import { RegulationPageTexts } from './RegulationTexts.types'
 
-import React from 'react'
+import React, { useRef } from 'react'
 import {
   Box,
   Breadcrumbs,
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
 } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
-import { prettyName, useRegulationLinkResolver } from './regulationUtils'
+import { useRegulationLinkResolver } from './regulationUtils'
+import { useIntersection } from 'react-use'
 
 export type RegulationLayoutProps = {
   name: RegName
@@ -24,9 +26,21 @@ export type RegulationLayoutProps = {
 export const RegulationLayout = (props: RegulationLayoutProps) => {
   const n = useNamespace(props.texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
+  const mainElmRef = useRef<HTMLDivElement>(null)
+  const isIntersecting =
+    (
+      useIntersection(mainElmRef, {
+        rootMargin: '0% 0% -100% 0%',
+        threshold: 0,
+      }) || {}
+    ).isIntersecting || undefined
 
   const breadCrumbs = (
-    <Box display={['none', 'none', 'block']} marginBottom={4}>
+    <Box
+      display={['none', 'none', 'block']}
+      marginBottom={4}
+      className={s.breadCrumbs}
+    >
       {/* Show when NOT a device */}
       <Breadcrumbs
         items={[
@@ -58,8 +72,10 @@ export const RegulationLayout = (props: RegulationLayoutProps) => {
                 offset={['0', '0', '0', '0', '1/12']}
                 order={1}
               >
-                {breadCrumbs}
-                {props.main}
+                <div ref={mainElmRef} className={isIntersecting && s.scrolled}>
+                  {breadCrumbs}
+                  {props.main}
+                </div>
               </GridColumn>
 
               <GridColumn

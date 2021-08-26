@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { Button, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 import {
   LanguageForm,
   LanguageFormData,
@@ -30,10 +31,7 @@ export const LanguageStep: FC<Props> = ({
   return (
     <>
       <Text variant="h1" as="h1" marginBottom={3}>
-        {formatMessage({
-          id: 'service.portal:hi',
-          defaultMessage: 'Hæ',
-        })}
+        {formatMessage(m.hi)}
         {`, ${userInfo?.profile.name}`}
       </Text>
       <Text variant="intro" marginBottom={7}>
@@ -57,10 +55,7 @@ export const LanguageStep: FC<Props> = ({
         )}
         renderSubmitButton={() => (
           <Button variant="primary" type="submit" icon="arrowForward">
-            {formatMessage({
-              id: 'service.portal:next-step',
-              defaultMessage: 'Næsta skref',
-            })}
+            {formatMessage(m.nextStep)}
           </Button>
         )}
         onSubmit={onSubmit}

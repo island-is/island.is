@@ -7,25 +7,39 @@ import {
   Param,
   Put,
   NotFoundException,
+  Query,
 } from '@nestjs/common'
 
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 
 import { ApplicationService } from './application.service'
-import { ApplicationModel } from './models'
+import { CurrentApplicationModel, ApplicationModel } from './models'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
-import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
-import type { User } from '@island.is/financial-aid/shared'
-import { ApplicationEventService } from '../applicationEvent'
+import {
+  CurrentHttpUser,
+  JwtAuthGuard,
+  TokenGuard,
+} from '@island.is/financial-aid/auth'
+import type { User, ApplicationFilters } from '@island.is/financial-aid/shared'
 
-@UseGuards(JwtAuthGuard)
 @Controller('api')
 @ApiTags('applications')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
+  @UseGuards(TokenGuard)
+  @Get('getCurrentApplication')
+  @ApiOkResponse({
+    type: CurrentApplicationModel,
+    description: 'Checks if user has a current application for this period',
+  })
+  async getCurrentApplication(@Query('nationalId') nationalId: string) {
+    return await this.applicationService.getCurrentApplication(nationalId)
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('applications')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -36,6 +50,7 @@ export class ApplicationController {
     return this.applicationService.getAll()
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('applications/:id')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -51,6 +66,16 @@ export class ApplicationController {
     return application
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('applicationFilters')
+  @ApiOkResponse({
+    description: 'Gets all existing applications filters',
+  })
+  getAllFilters(): Promise<ApplicationFilters> {
+    return this.applicationService.getAllFilters()
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Put('applications/:id')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -72,6 +97,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('application')
   @ApiCreatedResponse({
     type: ApplicationModel,

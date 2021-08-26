@@ -18,15 +18,22 @@ interface Props {
   ): void
 }
 
-const InputModal: React.FC<Props> = ({
-  onShowInputChange,
-  type,
-  onSaveState,
-}) => {
+const InputModal = ({ onShowInputChange, type, onSaveState }: Props) => {
   const maximumInputLength = 6
   const [amount, setAmount] = useState<number>(0)
 
   const [comment, setComment] = useState<string>()
+
+  const submitButtonText = (
+    type: ApplicationState | undefined,
+  ): string | undefined => {
+    switch (type) {
+      case ApplicationState.REJECTED:
+        return 'Synja'
+      case ApplicationState.APPROVED:
+        return 'Samþykkja'
+    }
+  }
 
   return (
     <Box display="block" width="full" padding={4}>
@@ -47,7 +54,7 @@ const InputModal: React.FC<Props> = ({
           Hætta við
         </Button>
         <Button onClick={(e) => onSaveState(e, amount, comment)}>
-          Samþykkja
+          {submitButtonText(type)}
         </Button>
       </Box>
     </Box>

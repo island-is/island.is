@@ -1,7 +1,7 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-import { Box, Text, Hyphen, Inline } from '@island.is/island-ui/core'
+import { Box, Text, Hyphen } from '@island.is/island-ui/core'
 import {
   MixedChart,
   SimpleBarChart,
@@ -23,33 +23,43 @@ interface ChartCardDataProps {
   graphTitle?: string
   graphDescription?: string
   organization?: string
-  graph?: GraphDataProps
+  organizationLogo?: any
+  data?: string
+  datakeys?: string
+  type?: string
 }
 
 export interface ChartsCardsProps {
-  data: ChartCardDataProps
-  blue?: boolean
+  chart: ChartCardDataProps
+  subPage?: boolean
 }
 
-export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
-  const { graphTitle, graphDescription, organization, graph } = data
+export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
+  const {
+    graphTitle,
+    graphDescription,
+    organization,
+    type,
+    data,
+    datakeys,
+    organizationLogo,
+  } = chart
   const [ref, { width }] = useMeasure()
-
-  const shouldStack = width < 360
+  const graphData = { title: graphTitle, data: data, datakeys: datakeys }
 
   let children = null
-  switch (graph.type) {
+  switch (type) {
     case 'Mixed':
-      children = <MixedChart graphData={graph} />
+      children = <MixedChart graphData={graphData} />
       break
     case 'Line':
-      children = <SimpleLineChart graphData={graph} />
+      children = <SimpleLineChart graphData={graphData} />
       break
     case 'Bar':
-      children = <SimpleBarChart graphData={graph} />
+      children = <SimpleBarChart graphData={graphData} />
       break
     case 'Pie':
-      children = <SimplePieChart graphData={graph} />
+      children = <SimplePieChart graphData={graphData} />
       break
     default:
       break
@@ -59,79 +69,82 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ data, blue }) => {
     <Box
       ref={ref}
       display="flex"
-      style={{ flexDirection: 'column' }}
+      flexDirection="column"
       flexGrow={1}
-      flexDirection={shouldStack ? 'columnReverse' : 'row'}
       alignItems="stretch"
       justifyContent="flexStart"
     >
       <Box
-        style={{
-          width: '100%',
-          minHeight: '156px',
-          borderTopLeftRadius: '8px',
-          borderTopRightRadius: '8px',
-        }}
-        background={blue ? 'blue100' : 'purple100'}
-        alignItems="center"
-        justifyContent="spaceBetween"
+        className={cn(styles.outerWrapper, {
+          [styles.pie]: type === 'Pie',
+        })}
+        background={subPage ? 'blue100' : 'purple100'}
       >
         <Box
-          style={{
-            minHeight: '156px',
-            borderTopLeftRadius: '8px',
-            borderTopRightRadius: '8px',
-            paddingBottom: '24px',
-          }}
+          className={styles.innerWrapper}
+          paddingBottom={4}
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          padding={[2, 2, 2]}
         >
-          <Box padding={[2, 2, 4]}>
-            {organization && (
-              <Text variant="eyebrow" color="dark400">
-                {organization}
+          {organizationLogo && !subPage && (
+            <img src={organizationLogo.url} width={80} />
+          )}
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            width="full"
+          >
+            <Box paddingLeft={1}>
+              {organization && (
+                <Text variant="eyebrow" color="dark400">
+                  {organization}
+                </Text>
+              )}
+              <Text variant="h3" color="dark400">
+                <Hyphen>{graphTitle}</Hyphen>
               </Text>
-            )}
-            <Text variant="h3" color="dark400">
-              <Hyphen>{graphTitle}</Hyphen>
-            </Text>
-            {graphDescription && (
-              <Text color="dark400">{graphDescription}</Text>
+              {graphDescription && (
+                <Text color="dark400">{graphDescription}</Text>
+              )}
+            </Box>
+
+            {subPage && (
+              <Box padding={[2, 2, 4]}>
+                <ExportCSVButton data={data} title={graphTitle} />
+              </Box>
             )}
           </Box>
         </Box>
-        {blue && (
-          <Box padding={[2, 2, 4]}>
-            <ExportCSVButton data={graph.data} />
-          </Box>
-        )}
       </Box>
-
       <Box
         display="flex"
         justifyContent="center"
         alignItems="center"
-        style={{ width: '100%', height: '100%' }}
+        className={cn(styles.graphWrapper, {
+          [styles.pie]: type === 'Pie',
+        })}
       >
-        <Box justifyContent="center" style={{ width: '80%', height: '408px' }}>
+        <Box justifyContent="center" className={styles.graphParent}>
           {children}
         </Box>
       </Box>
     </Box>
   )
-
   return <FrameWrapper>{items}</FrameWrapper>
 }
 
 const FrameWrapper = ({ children }) => {
   return (
     <Box
-      className={cn(styles.card)}
-      position="relative"
-      borderRadius="large"
-      overflow="visible"
-      background="transparent"
-      outline="none"
+      className={styles.frameWrapper}
       borderColor="purple100"
       borderWidth="standard"
+      borderRadius="large"
+      display="flex"
+      flexDirection="column"
     >
       {children}
     </Box>

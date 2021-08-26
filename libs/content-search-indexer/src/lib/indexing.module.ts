@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common'
+
 import { ElasticService } from '@island.is/content-search-toolkit'
-import { CmsSyncModule } from '@island.is/api/domains/cms'
+import { CmsSyncModule } from '@island.is/cms'
+
 import { IndexingController } from './indexing.controller'
 import { IndexingService } from './indexing.service'
 
