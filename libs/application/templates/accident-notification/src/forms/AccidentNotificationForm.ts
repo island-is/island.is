@@ -64,6 +64,7 @@ import {
   getAccidentTypeOptions,
   isAboardShip,
   isAgricultureAccident,
+  isDateOlderThanAYear,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
@@ -1012,6 +1013,19 @@ export const AccidentNotificationForm: Form = buildForm({
               width: 'half',
               format: '##:##',
             }),
+            /* TODO: Get information about home insurance from external provider? */
+            buildCustomField(
+              {
+                id: 'accidentDetails.dateAlert',
+                title: accidentDetails.general.insuranceAlertTitle,
+                description: accidentDetails.general.insuranceAlertText,
+                component: 'FieldAlertMessage',
+                condition: (answers) =>
+                  isDateOlderThanAYear(answers) &&
+                  isHomeActivitiesAccident(answers),
+              },
+              { type: 'warning', marginBottom: 1, marginTop: 3 },
+            ),
             buildTextField({
               id: 'accidentDetails.descriptionOfAccident',
               title: accidentDetails.labels.description,
