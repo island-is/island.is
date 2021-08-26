@@ -12,6 +12,8 @@ import {
 import { UserModel } from './user.model'
 import { UserService } from './user.service'
 
+import { CurrentApplicationModel } from '../application'
+
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => UserModel)
 export class UserResolver {
@@ -30,8 +32,10 @@ export class UserResolver {
     return user as UserModel
   }
 
-  @ResolveField('hasAppliedForPeriod', () => Boolean)
-  async hasAppliedForPeriod(@Parent() user: User): Promise<boolean> {
-    return await this.userService.checkHasAppliedForPeriod(user.nationalId)
+  @ResolveField('currentApplication', () => CurrentApplicationModel)
+  async currentApplication(
+    @Parent() user: User,
+  ): Promise<CurrentApplicationModel | null> {
+    return await this.userService.getCurrentApplication(user.nationalId)
   }
 }

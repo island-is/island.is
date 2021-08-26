@@ -271,6 +271,7 @@ export class NotificationService {
       ['judicial.system.backend'],
       'is',
     )
+
     const pdf = await getRequestPdfAsBuffer(existingCase, intl.formatMessage)
 
     try {
@@ -332,6 +333,7 @@ export class NotificationService {
     existingCase: Case,
   ): Promise<Recipient> {
     const smsText = formatProsecutorReceivedByCourtSmsNotification(
+      existingCase.type,
       existingCase.court?.name,
       existingCase.courtCaseNumber,
     )
@@ -364,8 +366,11 @@ export class NotificationService {
       existingCase.court?.name,
       existingCase.courtDate,
       existingCase.courtRoom,
+      existingCase.judge?.name,
+      existingCase.registrar?.name,
       existingCase.defenderName,
       existingCase.defenderIsSpokesperson,
+      existingCase.sessionArrangements,
     )
 
     return this.sendEmail(
@@ -417,6 +422,7 @@ export class NotificationService {
       existingCase.courtCaseNumber,
       existingCase.courtDate,
       existingCase.courtRoom,
+      existingCase.defenderIsSpokesperson,
     )
 
     let attachments: Attachment[]
