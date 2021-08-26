@@ -1,4 +1,4 @@
-import { DrivingLicenseType } from '../types/schema'
+import { DrivingLicenseType } from './types/schema'
 
 export const buildEntitlementOption = (
   entitlementTypes: DrivingLicenseType[],
@@ -9,5 +9,12 @@ export const buildEntitlementOption = (
   return {
     value: typeId,
     label: `<span><b>${typeId}</b> ${typeName}</span>`,
+  }
+}
+
+export type QualityPhotoData = {
+  data: {
+    qualityPhoto: string
+    success: boolean
   }
 }

@@ -544,7 +544,7 @@
     "/api/okuskirteini/embaetti": {
       "get": {
         "tags": ["Okuskirteini"],
-        "summary": "Get for all districts",
+        "summary": "Get for all districts!",
         "parameters": [
           {
             "name": "api-version",
