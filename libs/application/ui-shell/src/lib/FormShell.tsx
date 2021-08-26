@@ -125,8 +125,8 @@ export const FormShell: FC<{
                       dispatch({ type: ActionTypes.ANSWER, payload })
                     }
                     dataSchema={dataSchema}
-                    expandRepeater={() =>
-                      dispatch({ type: ActionTypes.EXPAND_REPEATER })
+                    expandRepeater={(payload) =>
+                      dispatch({ type: ActionTypes.EXPAND_REPEATER, payload })
                     }
                     answerAndGoToNextScreen={(payload) =>
                       dispatch({

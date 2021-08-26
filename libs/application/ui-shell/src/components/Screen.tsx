@@ -60,7 +60,7 @@ type ScreenProps = {
   answerAndGoToNextScreen(answers: FormValue): void
   answerQuestions(answers: FormValue): void
   dataSchema: Schema
-  expandRepeater(): void
+  expandRepeater(answers?: FormValue): void
   mode?: FormModes
   numberOfScreens: number
   prevScreen(): void

@@ -4,6 +4,7 @@ import {
   getValueViaPath,
   Application,
   RecordObject,
+  FormValue,
 } from '@island.is/application/core'
 
 import { useFields } from '../context/FieldContext'
@@ -15,7 +16,7 @@ const FormRepeater: FC<{
   application: Application
   repeater: RepeaterScreen
   errors: RecordObject
-  expandRepeater: () => void
+  expandRepeater: (answers?: FormValue) => void
   onRemoveRepeaterItem: (newRepeaterItems: RepeaterItems) => Promise<unknown>
 }> = ({
   application,

@@ -14,6 +14,9 @@ import {
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { useMutation } from '@apollo/client'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 type FieldProps = {
   field?: {
@@ -24,17 +27,41 @@ type FieldProps = {
 }
 type ScreenProps = RepeaterProps & FieldProps
 
-const PeriodsRepeater: FC<ScreenProps> = ({
+export const PeriodsRepeater: FC<ScreenProps> = ({
   removeRepeaterItem,
   application,
   expandRepeater,
   field,
 }) => {
+  const { formatMessage, locale } = useLocale()
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const { periods } = useApplicationAnswers(application)
   const showDescription = field?.props?.showDescription ?? true
   const dob = getExpectedDateOfBirth(application)
-  const { formatMessage } = useLocale()
   const rights = getAvailablePersonalRightsInDays(application)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)
+
+  const handleRepeater = async () => {
+    const cleanedPeriods = periods.filter(
+      (period) => period.startDate && period.endDate && period.ratio,
+    )
+
+    const { data, errors } = await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: { periods: cleanedPeriods },
+        },
+        locale,
+      },
+    })
+
+    if (!errors) {
+      const { answers } = data.updateApplication
+
+      expandRepeater(answers)
+    }
+  }
 
   if (!dob) {
     return null
@@ -77,7 +104,7 @@ const PeriodsRepeater: FC<ScreenProps> = ({
               size="small"
               icon="add"
               disabled={daysAlreadyUsed >= rights}
-              onClick={expandRepeater}
+              onClick={handleRepeater}
             >
               {formatMessage(parentalLeaveFormMessages.leavePlan.addAnother)}
             </Button>
@@ -94,5 +121,3 @@ const PeriodsRepeater: FC<ScreenProps> = ({
     </Box>
   )
 }
-
-export default PeriodsRepeater

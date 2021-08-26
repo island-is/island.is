@@ -1,6 +1,6 @@
 export { Duration } from './Duration/Duration'
 export { default as FirstPeriodStart } from './FirstPeriodStart'
-export { default as PeriodsRepeater } from './PeriodsRepeater'
+export { PeriodsRepeater } from './PeriodsRepeater/PeriodsRepeater'
 export { default as PaymentSchedule } from './PaymentSchedule'
 export { default as PaymentScheduleInformation } from './PaymentSchedule/InformationScreen'
 export { default as SalaryScreen } from './PaymentSchedule/SalaryScreen'

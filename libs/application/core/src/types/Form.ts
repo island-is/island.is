@@ -6,7 +6,7 @@ import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject } from '@island.is/application/core'
 
 import { Condition } from './Condition'
-import { Application } from './Application'
+import { Application, FormValue } from './Application'
 
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
 
@@ -140,7 +140,7 @@ export interface FieldBaseProps {
 
 export type RepeaterProps = {
   application: Application
-  expandRepeater: () => void
+  expandRepeater: (answers?: FormValue) => void
   error?: string
   repeater: Repeater
   removeRepeaterItem: (index: number) => void

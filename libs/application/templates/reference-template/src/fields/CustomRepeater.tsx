@@ -11,7 +11,7 @@ const CustomRepeater: FC<RepeaterProps> = ({ expandRepeater }) => {
         important as it initiates that subflow to generate more nested items.
       </Text>
 
-      <Button onClick={expandRepeater}>Expand repeater</Button>
+      <Button onClick={() => expandRepeater()}>Expand repeater</Button>
     </>
   )
 }

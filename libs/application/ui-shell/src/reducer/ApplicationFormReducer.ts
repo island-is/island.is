@@ -121,15 +121,27 @@ const answerAndGoNextScreen = (
   return { ...newState, activeScreen, historyReason: 'navigate' }
 }
 
-function expandRepeater(state: ApplicationUIState): ApplicationUIState {
-  const { activeScreen, form, screens, application } = state
+function expandRepeater(
+  state: ApplicationUIState,
+  updatedAnswers?: FormValue,
+): ApplicationUIState {
+  const updatedState = {
+    ...state,
+    application: {
+      ...state.application,
+      answers: updatedAnswers ?? state.application.answers,
+    },
+  }
+
+  const { activeScreen, form, screens, application } = updatedState
   const repeater = screens[activeScreen]
 
   if (!repeater || repeater.type !== FormItemTypes.REPEATER) {
-    return state
+    return updatedState
   }
 
   const { answers, externalData } = application
+
   const repeaterValues = getValueViaPath(
     answers ?? {},
     repeater.id,
@@ -144,11 +156,13 @@ function expandRepeater(state: ApplicationUIState): ApplicationUIState {
   const newScreens = convertFormToScreens(form, newAnswers, externalData)
 
   return {
-    ...state,
+    ...updatedState,
     screens: newScreens,
     activeScreen: moveToScreen(
       newScreens,
-      state.activeScreen + repeaterValues.length * repeater.children.length + 1,
+      updatedState.activeScreen +
+        repeaterValues.length * repeater.children.length +
+        1,
       true,
     ),
     historyReason: 'navigate',
@@ -207,7 +221,7 @@ export const ApplicationReducer = (
       return addNewAnswersToState(state, action.payload)
 
     case ActionTypes.EXPAND_REPEATER:
-      return expandRepeater(state)
+      return expandRepeater(state, action.payload)
 
     case ActionTypes.GO_TO_SCREEN:
       return goToSpecificScreen(state, action.payload)

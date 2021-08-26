@@ -14,7 +14,8 @@ const DataRepeater: FC<RepeaterProps> = ({ expandRepeater, application }) => {
       <Box marginY={3}>
         <DataTable application={application} />
       </Box>
-      <Button onClick={expandRepeater}>
+
+      <Button onClick={() => expandRepeater()}>
         {formatText(m.dataAdd, application, formatMessage)}
       </Button>
     </>
