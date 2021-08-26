@@ -7,6 +7,7 @@ import * as styles from './NavItem.treat'
 interface Props {
   path?: ServicePortalPath
   active: boolean
+  enabled?: boolean
   external?: boolean
   variant?: 'blue' | 'blueberry'
   onClick?: () => void
@@ -15,19 +16,26 @@ interface Props {
 const SubNavItemContent: FC<Props> = ({
   active,
   onClick,
+  enabled,
   variant = 'blue',
   children,
 }) => (
   <Box
     display="flex"
     alignItems="center"
-    cursor="pointer"
+    cursor={enabled === false ? undefined : 'pointer'}
     position="relative"
-    onClick={onClick}
+    onClick={enabled === false ? undefined : onClick}
   >
     <Text
       fontWeight={active ? 'semiBold' : 'regular'}
-      color={variant === 'blue' ? 'blue600' : 'blueberry600'}
+      color={
+        enabled === false
+          ? 'dark200'
+          : variant === 'blue'
+          ? 'blue600'
+          : 'blueberry600'
+      }
     >
       <span className={styles.subNavItem}>{children}</span>
     </Text>
@@ -40,9 +48,13 @@ const SubNavItem: FC<Props> = (props) => {
       <SubNavItemContent {...props} />
     </a>
   ) : props.path ? (
-    <Link to={props.path}>
+    props.enabled === false ? (
       <SubNavItemContent {...props} />
-    </Link>
+    ) : (
+      <Link to={props.path}>
+        <SubNavItemContent {...props} />
+      </Link>
+    )
   ) : (
     <SubNavItemContent {...props} />
   )

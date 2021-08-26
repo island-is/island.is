@@ -1,5 +1,5 @@
 import { Answer } from '@island.is/application/core'
-import { courtAction } from './lib/messages'
+import { shared } from './lib/messages'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
@@ -39,8 +39,8 @@ export const isDecisionDateOlderThanYear = (answers: Answer) => {
 }
 
 export const yesNoMessageMapper = {
-  [YES]: courtAction.yes,
-  [NO]: courtAction.no,
+  [YES]: shared.general.yes,
+  [NO]: shared.general.no,
 }
 
 export const mapComplainedForToMessage = {

@@ -23,10 +23,11 @@ import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.d
 import { Endorsement } from '../endorsement/models/endorsement.model'
 import { BypassAuth, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
-import { IsEndorsementListOwnerValidationPipe } from './pipes/isEndorsementListOwnerValidation.pipe'
 import { environment } from '../../../environments'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
+import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
+import { AccessGroup } from '../../guards/accessGuard/access.enum'
 
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
@@ -102,6 +103,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
   @Put(':listId/close')
+  @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
@@ -110,7 +112,6 @@ export class EndorsementListController {
       'listId',
       new ParseUUIDPipe({ version: '4' }),
       EndorsementListByIdPipe,
-      IsEndorsementListOwnerValidationPipe,
     )
     endorsementList: EndorsementList,
   ): Promise<EndorsementList> {
@@ -124,6 +125,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main)
   @Put(':listId/open')
+  @HasAccessGroup(AccessGroup.DMR)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })

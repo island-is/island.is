@@ -25,11 +25,13 @@ export class ApplicationEventResolver {
 
   @Query(() => [ApplicationEventModel], { nullable: false })
   applicationEvents(
+    @Args('input', { type: () => ApplicationEventInput })
+    input: ApplicationEventInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<ApplicationEvent[]> {
-    this.logger.debug('Getting all application events')
+    this.logger.debug(`Getting application event ${input.id}`)
 
-    return backendApi.getApplicationEvents()
+    return backendApi.getApplicationEvents(input.id)
   }
 
   @Mutation(() => ApplicationEventModel, { nullable: true })
