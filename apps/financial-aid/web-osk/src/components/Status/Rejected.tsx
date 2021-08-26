@@ -20,6 +20,7 @@ const Rejected = ({ state }: Props) => {
         neðan og skráðu þig inn á stöðusíðuna og sendu okkur athugasemd eða
         viðeigandi gögn ef þú telur að niðurstaðan sé röng.
       </Text>
+      {/* TODO: need rejction text here */}
     </>
   )
 }

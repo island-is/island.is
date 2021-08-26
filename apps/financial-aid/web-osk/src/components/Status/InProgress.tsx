@@ -23,14 +23,14 @@ interface Props {
 const InProgress = ({ currentApplication }: Props) => {
   const router = useRouter()
 
-  const currentMonth = parseInt(format(new Date(), 'MM'))
+  const nextMonth = parseInt(format(new Date(), 'MM'))
   const currentYear = format(new Date(), 'yyyy')
 
   return (
     <>
       <Text as="h2" variant="h3" color="blue400" marginBottom={[4, 4, 7]}>
         Umsókn {getState[currentApplication.state].toLowerCase()} til útgreiðslu
-        í {months[currentMonth].toLowerCase()} {` `} {currentYear}
+        í {months[nextMonth].toLowerCase()} {` `} {currentYear}
       </Text>
 
       {currentApplication.state === ApplicationState.DATANEEDED && (
