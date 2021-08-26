@@ -8,7 +8,7 @@ import { States } from '../../constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import { inReview } from '../../lib/messages'
 import { ReviewSectionState } from '../../types'
-import { handleSubmitError, returnMissingDocumentsList } from '../../utils'
+import { returnMissingDocumentsList } from '../../utils'
 import ReviewSection from './ReviewSection'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
@@ -49,7 +49,7 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => handleSubmitError(e.message, formatMessage),
+      onError: (e) => console.error(e.message),
     },
   )
 

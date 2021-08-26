@@ -36,7 +36,6 @@ import {
 } from '../../lib/messages'
 import {
   getWorkplaceData,
-  handleSubmitError,
   isMachineRelatedAccident,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfEmployee,
@@ -57,7 +56,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => handleSubmitError(e.message, formatMessage),
+      onError: (e) => console.error(e.message),
     },
   )
 

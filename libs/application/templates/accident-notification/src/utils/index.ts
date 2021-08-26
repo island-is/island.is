@@ -1,5 +1,4 @@
-import { coreMessages, MessageFormatter } from '@island.is/application/core'
-import { toast } from '@island.is/island-ui/core'
+import { MessageFormatter } from '@island.is/application/core'
 import {
   AttachmentsEnum,
   PowerOfAttorneyUploadEnum,
@@ -16,13 +15,6 @@ export const isValid24HFormatTime = (value: string) => {
   if (hours > 23) return false
   if (minutes > 59) return false
   return true
-}
-
-export function handleSubmitError(
-  error: string,
-  formatMessage: MessageFormatter,
-): void {
-  toast.error(formatMessage(coreMessages.updateOrSubmitError, { error }))
 }
 
 export const returnMissingDocumentsList = (

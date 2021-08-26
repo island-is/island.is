@@ -2,11 +2,9 @@ import { useMutation } from '@apollo/client'
 import { Application, DefaultEvents } from '@island.is/application/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import cn from 'classnames'
 import React, { FC } from 'react'
 import { ReviewSectionState } from '../../../types'
-import { handleSubmitError } from '../../../utils'
 import * as styles from './ReviewSection.treat'
 import { ReviewTag } from './ReviewTag'
 
@@ -38,11 +36,10 @@ const ReviewSection: FC<ReviewSectionProps> = ({
   action,
   refetch,
 }) => {
-  const { formatMessage } = useLocale()
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => handleSubmitError(e.message, formatMessage),
+      onError: (e) => console.error(e.message),
     },
   )
 
