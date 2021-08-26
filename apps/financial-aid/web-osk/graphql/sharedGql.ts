@@ -1,20 +1,5 @@
 import { gql } from '@apollo/client'
 
-export const GetApplicationQuery = gql`
-  query GetApplicationQuery {
-    applications {
-      id
-      nationalId
-      name
-      phoneNumber
-      email
-      modified
-      created
-      state
-    }
-  }
-`
-
 export const CreateApplicationQuery = gql`
   mutation createApplication($input: CreateApplicationInput!) {
     createApplication(input: $input) {
@@ -42,22 +27,13 @@ export const GetMunicipalityQuery = gql`
 `
 
 export const GetApplicationEventQuery = gql`
-  query GetApplicationEventQuery {
-    applicationEvents {
+  query GetApplicationEventQuery($input: ApplicationEventInput!) {
+    applicationEvents(input: $input) {
       id
-      created
       applicationId
-      state
       comment
-    }
-  }
-`
-
-export const GetCurrentUserQuery = gql`
-  query currentUserQuery {
-    currentUser {
-      name
-      hasAppliedForPeriod
+      state
+      created
     }
   }
 `
@@ -77,7 +53,12 @@ export const CurrentUserQuery = gql`
       nationalId
       name
       phoneNumber
-      hasAppliedForPeriod
+      currentApplication {
+        id
+        state
+        homeCircumstances
+        usePersonalTaxCredit
+      }
     }
   }
 `

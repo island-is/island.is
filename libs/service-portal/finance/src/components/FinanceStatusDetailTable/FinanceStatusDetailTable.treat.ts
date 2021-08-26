@@ -28,3 +28,12 @@ export const btnSpacer = style({
   marginLeft: theme.spacing[2],
   display: 'inline-flex',
 })
+
+export const loadingDot = style({
+  position: 'absolute',
+  margin: 'auto',
+  height: 16,
+  right: 0,
+  top: 0,
+  bottom: 0,
+})

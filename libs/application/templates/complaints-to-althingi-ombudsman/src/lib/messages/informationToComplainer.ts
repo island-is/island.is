@@ -28,5 +28,4 @@ export const informationToComplainer = {
       description: 'Third bullet item in definition of applicant',
     },
   }),
-  labels: defineMessages({}),
 }
