@@ -10,7 +10,6 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as kennitala from 'kennitala'
 import { m } from '../lib/messages'
-import { get } from 'lodash'
 
 const QUERY = gql`
   query studentInfo($nationalId: String!) {
@@ -26,12 +25,17 @@ interface Props extends FieldBaseProps {
   field: CustomField
 }
 
+interface ExpectedStudent {
+  nationalId: string
+}
+
 export const StudentLookupField: FC<Props> = ({ error, application }) => {
+  const student = application.answers.student as unknown as ExpectedStudent
   const studentNationalId = useWatch({
     name: 'student.nationalId',
     // FYI the watch value is not queried unless the value changes after rendering.
     // see react hook form's docs for useWatch for further info.
-    defaultValue: get(application.answers, 'student.nationalId'),
+    defaultValue: student.nationalId
   })
 
   const { formatMessage } = useLocale()
