@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Text, AsyncSearch, Hidden } from '@island.is/island-ui/core'
+import { Box, Text, Hidden } from '@island.is/island-ui/core'
 import { ServiceWebSearchInput } from '@island.is/web/components'
 
 import * as styles from './SearchSection.treat'
@@ -25,7 +25,7 @@ export const SearchSection = ({
       {!!logoUrl && (
         <Hidden below="lg">
           <Box marginBottom={6} className={styles.logo}>
-            <img src={logoUrl} />
+            <img alt={logoTitle} src={logoUrl} />
           </Box>
         </Hidden>
       )}

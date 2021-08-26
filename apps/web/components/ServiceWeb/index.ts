@@ -1,4 +1,4 @@
-export { SearchSection as ServiceWebSearchSection } from './SearchSection/SearchSection'
-export { Header as ServiceWebHeader } from './Header/Header'
+export { ServiceWebSearchSection } from './SearchSection'
+export { ServiceWebHeader } from './Header'
 export { ServiceWebSearchInput } from './SearchInput'
 export { renderHtml } from './utils/render-html'

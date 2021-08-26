@@ -14,7 +14,6 @@ import {
   InputFileUpload,
 } from '@island.is/island-ui/core'
 
-import { supportForms } from '../mock'
 import { Screen } from '../../../types'
 
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -40,11 +39,7 @@ interface ContactFormsProps {
   supportForms: Query['getSupportFormInOrganization']
 }
 
-const ContactForms: Screen<ContactFormsProps> = ({
-  organization,
-  namespace,
-  supportForms,
-}) => {
+const ContactForms: Screen<ContactFormsProps> = ({ supportForms }) => {
   const logoTitle = 'Þjónustuvefur Sýslumanna'
   const { linkResolver } = useLinkResolver()
   const [selectedForm, setSelectedForm] = useState(undefined)
@@ -227,7 +222,7 @@ const ContactForms: Screen<ContactFormsProps> = ({
 }
 
 ContactForms.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const slug = !!query.slug ? (query.slug as string) : 'stafraent-island'
+  const slug = query.slug ? (query.slug as string) : 'stafraent-island'
 
   console.log(slug)
 
