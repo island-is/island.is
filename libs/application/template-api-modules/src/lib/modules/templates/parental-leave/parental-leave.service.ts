@@ -306,6 +306,7 @@ export class ParentalLeaveService {
           application,
         )
 
+        // Also send confirmation to employer
         await this.sharedTemplateAPIService.sendEmail(
           generateApplicationApprovedByEmployerToEmployerEmail,
           application,
