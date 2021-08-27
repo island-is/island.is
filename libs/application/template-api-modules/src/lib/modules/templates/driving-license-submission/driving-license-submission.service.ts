@@ -36,6 +36,7 @@ export class DrivingLicenseSubmissionService {
     const { answers } = application
     const nationalId = application.applicant
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
+    const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const juristictionId = answers.juristiction
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
@@ -48,6 +49,7 @@ export class DrivingLicenseSubmissionService {
         .newDrivingLicense(nationalId, {
           juristictionId: juristictionId as number,
           needsToPresentHealthCertificate: needsHealthCert,
+          needsToPresentQualityPhoto: needsQualityPhoto,
         })
         .catch((e) => {
           return {
