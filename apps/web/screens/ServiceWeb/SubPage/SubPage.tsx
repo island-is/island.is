@@ -168,7 +168,7 @@ const SubPage: Screen<SubPageProps> = ({
                   </GridColumn>
                 </GridRow>
               </GridContainer>
-              <Box marginY={[10, 10, 20]}>
+              <Box marginTop={[10, 10, 20]}>
                 <ContactBanner />
               </Box>
             </GridColumn>
