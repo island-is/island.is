@@ -32,11 +32,31 @@ export const getState: KeyMapping<ApplicationState, string> = {
 export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`
 
-export const formatPhoneNumber = (phoneNumber: string) =>
-  insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
+export const formatPhoneNumber = (phoneNumber: string) => {
+  if (phoneNumber.length <= 10) {
+    return insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
+  }
+
+  return insertAt(phoneNumber.replace('-', ''), '-', 4) || '-'
+}
 
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
+
+export const months = [
+  'Janúar',
+  'Febrúar',
+  'Mars',
+  'Apríl',
+  'Maí',
+  'Júní',
+  'Júlí',
+  'Ágúst',
+  'September',
+  'Október',
+  'Nóvember',
+  'Desember',
+]
 
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,

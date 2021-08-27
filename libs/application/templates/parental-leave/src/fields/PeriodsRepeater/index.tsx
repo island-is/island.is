@@ -1,17 +1,19 @@
 import React, { FC } from 'react'
 
 import { RepeaterProps } from '@island.is/application/core'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Inline, Tooltip } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import { Timeline } from '../components/Timeline/Timeline'
 import {
   formatPeriods,
+  getAvailablePersonalRightsInDays,
   getExpectedDateOfBirth,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
+import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
 
 type FieldProps = {
   field?: {
@@ -31,6 +33,8 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   const showDescription = field?.props?.showDescription ?? true
   const dob = getExpectedDateOfBirth(application)
   const { formatMessage } = useLocale()
+  const rights = getAvailablePersonalRightsInDays(application)
+  const daysAlreadyUsed = useDaysAlreadyUsed(application)
 
   if (!dob) {
     return null
@@ -67,9 +71,25 @@ const PeriodsRepeater: FC<ScreenProps> = ({
       </Box>
 
       {editable && (
-        <Button size="small" icon="add" onClick={expandRepeater}>
-          {formatMessage(parentalLeaveFormMessages.leavePlan.addAnother)}
-        </Button>
+        <Box alignItems="center">
+          <Inline space={1} alignY="center">
+            <Button
+              size="small"
+              icon="add"
+              disabled={daysAlreadyUsed >= rights}
+              onClick={expandRepeater}
+            >
+              {formatMessage(parentalLeaveFormMessages.leavePlan.addAnother)}
+            </Button>
+
+            {daysAlreadyUsed >= rights && (
+              <Tooltip
+                placement="bottom"
+                text={formatMessage(parentalLeaveFormMessages.leavePlan.limit)}
+              />
+            )}
+          </Inline>
+        </Box>
       )}
     </Box>
   )

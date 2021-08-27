@@ -20,6 +20,7 @@ import {
 import {
   Case,
   CaseAppealDecision,
+  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
@@ -47,18 +48,17 @@ import {
 import {
   capitalize,
   formatAccusedByGender,
+  formatConclusion,
   formatDate,
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useRouter } from 'next/router'
 import {
   useCase,
   useDateTime,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rcRulingStepTwo } from '@island.is/judicial-system-web/messages'
-import * as style from './RulingStepTwo.treat'
 
 export const RulingStepTwo: React.FC = () => {
   const router = useRouter()
@@ -102,6 +102,27 @@ export const RulingStepTwo: React.FC = () => {
         )
       }
 
+      autofill(
+        'conclusion',
+        formatConclusion(
+          theCase.type,
+          theCase.accusedNationalId,
+          theCase.accusedName,
+          theCase.accusedGender,
+          theCase.decision,
+          new Date(theCase.validToDate),
+          theCase.custodyRestrictions?.includes(
+            CaseCustodyRestrictions.ISOLATION,
+          ),
+          theCase.parentCase !== undefined,
+          theCase.parentCase?.decision,
+          theCase.isolationToDate
+            ? new Date(theCase.isolationToDate)
+            : undefined,
+        ),
+        theCase,
+      )
+
       setWorkingCase(theCase)
     }
   }, [id, workingCase, setWorkingCase, data, autofill])
@@ -136,35 +157,34 @@ export const RulingStepTwo: React.FC = () => {
                     Úrskurðarorð
                   </Text>
                 </Box>
-                <BlueBox>
-                  <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
-                  <Input
-                    name="conclusion"
-                    label="Bæta texta við úrskurðarorð"
-                    placeholder="Hér er hægt að bæta texta við úrskurðarorð eftir þörfum"
-                    defaultValue={workingCase?.conclusion}
-                    onChange={(event) =>
-                      removeTabsValidateAndSet(
-                        'conclusion',
-                        event,
-                        [],
-                        workingCase,
-                        setWorkingCase,
-                      )
-                    }
-                    onBlur={(event) =>
-                      validateAndSendToServer(
-                        'conclusion',
-                        event.target.value,
-                        [],
-                        workingCase,
-                        updateCase,
-                      )
-                    }
-                    rows={7}
-                    textarea
-                  />
-                </BlueBox>
+                <Input
+                  name="conclusion"
+                  data-testid="conclusion"
+                  label="Úrskurðarorð"
+                  defaultValue={workingCase.conclusion}
+                  placeholder="Hver eru úrskurðarorðin"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'conclusion',
+                      event,
+                      [],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'conclusion',
+                      event.target.value,
+                      [],
+                      workingCase,
+                      updateCase,
+                    )
+                  }
+                  textarea
+                  required
+                  rows={7}
+                />
               </Box>
             </Box>
             <Box component="section" marginBottom={8}>
@@ -566,7 +586,7 @@ export const RulingStepTwo: React.FC = () => {
                 </Text>
               )}
             </Box>
-            <Box className={style.courtEndTimeContainer}>
+            <Box marginBottom={10}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
                   Þinghald
@@ -605,6 +625,7 @@ export const RulingStepTwo: React.FC = () => {
                         name="courtEndTime"
                         label="Þinghaldi lauk (kk:mm)"
                         placeholder="Veldu tíma"
+                        autoComplete="off"
                         defaultValue={formatDate(
                           workingCase.courtEndTime,
                           TIME_FORMAT,
@@ -626,6 +647,7 @@ export const RulingStepTwo: React.FC = () => {
               nextIsDisabled={
                 !workingCase.accusedAppealDecision ||
                 !workingCase.prosecutorAppealDecision ||
+                !workingCase.conclusion ||
                 !isValidCourtEndTime?.isValid
               }
             />
