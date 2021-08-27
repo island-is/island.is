@@ -87,7 +87,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
               {formatMessage({
                 id: 'sp.finance-status:intro',
                 defaultMessage:
-                  'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
+                  'Hér er að finna sundurliðun skulda og inneigna við ríkissjóð og stofnanir á þeim degi sem skoðað er.',
               })}
             </Text>
           </Column>

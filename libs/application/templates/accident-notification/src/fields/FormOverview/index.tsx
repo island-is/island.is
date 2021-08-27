@@ -1,16 +1,27 @@
+import { useMutation } from '@apollo/client'
 import {
+  DefaultEvents,
   FieldBaseProps,
   formatText,
   FormValue,
 } from '@island.is/application/core'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { ReviewGroup } from '@island.is/application/ui-components'
-import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import cn from 'classnames'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import React, { FC } from 'react'
-import { YES } from '../../constants'
+import { States, YES } from '../../constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import {
   accidentDetails,
@@ -29,12 +40,27 @@ import {
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
+  returnMissingDocumentsList,
 } from '../../utils'
+import * as styles from './FormOverview.treat'
 import { FileValueLine, ValueLine } from './ValueLine'
 
-export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
+export const FormOverview: FC<FieldBaseProps> = ({
+  application,
+  refetch,
+  goToScreen,
+}) => {
   const answers = application.answers as AccidentNotification
   const { formatMessage } = useLocale()
+
+  const [submitApplication, { loading: loadingSubmit }] = useMutation(
+    SUBMIT_APPLICATION,
+    {
+      onError: (e) => console.error(e.message),
+    },
+  )
+
+  const missingDocuments = returnMissingDocumentsList(answers, formatMessage)
 
   const { timeOfAccident, dateOfAccident } = answers.accidentDetails
   const time = `${timeOfAccident.slice(0, 2)}:${timeOfAccident.slice(2, 4)}`
@@ -53,6 +79,10 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
       ? answers.attachments.powerOfAttorneyFile
       : []),
   ]
+
+  const changeScreens = (screen: string) => {
+    if (goToScreen) goToScreen(screen)
+  }
 
   return (
     <Box component="section" paddingTop={2}>
@@ -180,29 +210,33 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
         </>
       )}
 
-      <Text variant="h4" paddingTop={6} paddingBottom={3}>
-        {formatText(
-          locationAndPurpose.general.title,
-          application,
-          formatMessage,
-        )}
-      </Text>
-      <ReviewGroup isLast editAction={() => null}>
-        <GridRow>
-          <GridColumn span="12/12">
-            <ValueLine
-              label={locationAndPurpose.labels.location}
-              value={answers.locationAndPurpose.location}
-            />
-          </GridColumn>
-          <GridColumn span="12/12">
-            <ValueLine
-              label={locationAndPurpose.labels.purpose}
-              value={answers.locationAndPurpose.purpose}
-            />
-          </GridColumn>
-        </GridRow>
-      </ReviewGroup>
+      {answers.locationAndPurpose && (
+        <>
+          <Text variant="h4" paddingTop={6} paddingBottom={3}>
+            {formatText(
+              locationAndPurpose.general.title,
+              application,
+              formatMessage,
+            )}
+          </Text>
+          <ReviewGroup isLast editAction={() => null}>
+            <GridRow>
+              <GridColumn span="12/12">
+                <ValueLine
+                  label={locationAndPurpose.labels.location}
+                  value={answers.locationAndPurpose.location}
+                />
+              </GridColumn>
+              <GridColumn span="12/12">
+                <ValueLine
+                  label={locationAndPurpose.labels.purpose}
+                  value={answers.locationAndPurpose.purpose}
+                />
+              </GridColumn>
+            </GridRow>
+          </ReviewGroup>
+        </>
+      )}
 
       {workplaceData && !isReportingOnBehalfOfEmployee(answers as FormValue) && (
         <>
@@ -314,11 +348,60 @@ export const FormOverview: FC<FieldBaseProps> = ({ application }) => {
               value={answers.accidentDetails.descriptionOfAccident}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '9/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12']}>
             <FileValueLine
               label={overview.labels.attachments}
               files={attachments}
             />
+            {missingDocuments.length !== 0 && (
+              <Box marginBottom={4}>
+                <AlertMessage
+                  type="warning"
+                  title={formatMessage(overview.alertMessage.title)}
+                  message={
+                    <Text variant="small">
+                      {formatMessage(overview.alertMessage.description)}
+                      <span className={cn(styles.boldFileNames)}>
+                        {missingDocuments}
+                      </span>
+                    </Text>
+                  }
+                />
+              </Box>
+            )}
+            {States.OVERVIEW === application.state ||
+            States.ADD_DOCUMENTS === application.state ? (
+              <Box display="flex" justifyContent="flexEnd">
+                <Button
+                  icon="attach"
+                  variant="utility"
+                  loading={loadingSubmit}
+                  disabled={loadingSubmit}
+                  onClick={
+                    States.OVERVIEW === application.state
+                      ? async () => {
+                          const res = await submitApplication({
+                            variables: {
+                              input: {
+                                id: application.id,
+                                event: DefaultEvents.EDIT,
+                                answers: application.answers,
+                              },
+                            },
+                          })
+
+                          if (res?.data) {
+                            // Takes them to the next state (which loads the relevant form)
+                            refetch?.()
+                          }
+                        }
+                      : () => changeScreens('attachments.multifield')
+                  }
+                >
+                  {formatMessage(overview.labels.missingDocumentsButton)}
+                </Button>
+              </Box>
+            ) : null}
           </GridColumn>
         </GridRow>
       </ReviewGroup>

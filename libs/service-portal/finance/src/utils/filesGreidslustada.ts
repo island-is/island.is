@@ -11,7 +11,7 @@ const getDataArray = (data: FinanceStatusDataType) =>
   data.organizations.map((org: FinanceStatusOrganizationType) =>
     org.chargeTypes.map((chargeType) => [
       chargeType.name,
-      chargeType.totals.toString(),
+      chargeType.totals,
       org.name,
       org.homepage,
       org.phone,

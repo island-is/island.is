@@ -44,7 +44,7 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
     datakeys,
     organizationLogo,
   } = chart
-  const [ref, { width }] = useMeasure()
+  const [ref, { width, height }] = useMeasure()
   const graphData = { title: graphTitle, data: data, datakeys: datakeys }
 
   let children = null
@@ -127,19 +127,25 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
           [styles.pie]: type === 'Pie',
         })}
       >
-        <Box justifyContent="center" className={styles.graphParent}>
+        <Box
+          justifyContent="center"
+          alignItems="center"
+          className={styles.graphParent}
+        >
           {children}
         </Box>
       </Box>
     </Box>
   )
-  return <FrameWrapper>{items}</FrameWrapper>
+  return <FrameWrapper width={width}>{items}</FrameWrapper>
 }
 
-const FrameWrapper = ({ children }) => {
+const FrameWrapper = ({ width, children }) => {
   return (
     <Box
-      className={styles.frameWrapper}
+      className={cn(styles.frameWrapper, {
+        [styles.scroll]: width < 840,
+      })}
       borderColor="purple100"
       borderWidth="standard"
       borderRadius="large"

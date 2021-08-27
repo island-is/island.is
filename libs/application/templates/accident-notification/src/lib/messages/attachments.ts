@@ -90,4 +90,26 @@ export const attachments = {
         'Label for alert message when send certificate later is selected',
     },
   }),
+  documentNames: defineMessages({
+    injuryCertificate: {
+      id: 'an.application:attachments.documentNames.injuryCertificate',
+      defaultMessage: 'Áverkavottorð',
+      description: 'Name of injury certificate for in review',
+    },
+    deathCertificate: {
+      id: 'an.application:attachments.documentNames.deathCertificate',
+      defaultMessage: 'Dánarvottorð',
+      description: 'Name of death certificate for in review',
+    },
+    policeReport: {
+      id: 'an.application:attachments.documentNames.policeReport',
+      defaultMessage: 'Lögregluskýrsla',
+      description: 'Name of police report for in review',
+    },
+    powerOfAttorneyDocument: {
+      id: 'an.application:attachments.documentNames.powerOfAttorney',
+      defaultMessage: 'Umboðsskjal',
+      description: 'Name of power of attorney document for in review',
+    },
+  }),
 }

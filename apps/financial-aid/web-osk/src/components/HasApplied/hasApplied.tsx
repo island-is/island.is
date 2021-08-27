@@ -18,7 +18,7 @@ const HasApplied = () => {
 
       <Button
         onClick={() => {
-          router.push('/stada')
+          router.push(`/${user?.currentApplication?.id}`)
         }}
       >
         Kíktu á stöðu síðuna{' '}

@@ -16,11 +16,12 @@ import {
   NounCases,
   formatAccusedByGender,
   caseTypes,
+  formatConclusion,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
-import { formatAppeal, formatConclusion } from './formatters'
+import { formatAppeal } from './formatters'
 import { setPageNumbers } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
