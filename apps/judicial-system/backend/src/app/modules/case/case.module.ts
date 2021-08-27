@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { SigningModule } from '@island.is/dokobit-signing'
@@ -20,7 +20,7 @@ import { CaseService } from './case.service'
     CourtModule,
     SequelizeModule.forFeature([Case]),
     CmsTranslationsModule,
-    FileModule,
+    forwardRef(() => FileModule),
   ],
   providers: [CaseService],
   controllers: [CaseController],

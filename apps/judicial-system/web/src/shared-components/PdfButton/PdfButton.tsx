@@ -5,7 +5,7 @@ import { api } from '@island.is/judicial-system-web/src/services'
 interface Props {
   caseId: string
   title: string
-  pdfType: 'ruling' | 'request' | 'casefiles'
+  pdfType: 'ruling' | 'request'
   disabled?: boolean
 }
 

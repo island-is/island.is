@@ -49,13 +49,24 @@ export class CaseService {
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
     private readonly courtService: CourtService,
-    private readonly fileService: FileService,
+    // private readonly fileService: FileService,
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private intlService: IntlService,
   ) {}
+
+  // private async getCasefilesPdf(existingCase: Case): Promise<string> {
+  //   this.logger.debug(
+  //     `Getting the casefiles for case ${existingCase.id} as a pdf document`,
+  //   )
+
+  //   const casefiles = await this.fileService.getAllCaseFiles(existingCase.id)
+  //   const casefileNames = casefiles.map((file) => file.name)
+
+  //   return getCasefilesPdfAsString(existingCase, casefileNames)
+  // }
 
   private async uploadSignedRulingPdfToCourt(
     existingCase: Case,
@@ -332,17 +343,6 @@ export class CaseService {
       'is',
     )
     return getRequestPdfAsString(existingCase, intl.formatMessage)
-  }
-
-  async getCasefilesPdf(existingCase: Case): Promise<string> {
-    this.logger.debug(
-      `Getting the casefiles for case ${existingCase.id} as a pdf document`,
-    )
-
-    const casefiles = await this.fileService.getAllCaseFiles(existingCase.id)
-    const casefileNames = casefiles.map((file) => file.name)
-
-    return getCasefilesPdfAsString(existingCase, casefileNames)
   }
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {

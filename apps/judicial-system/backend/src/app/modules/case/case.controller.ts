@@ -410,34 +410,6 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
-  @Get('case/:id/casefiles')
-  @Header('Content-Type', 'application/pdf')
-  @ApiOkResponse({
-    content: { 'application/pdf': {} },
-    description: 'Gets the casefiles for an existing case as a pdf document',
-  })
-  async getCasefilesPdf(
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
-    @Res() res: Response,
-  ) {
-    const existingCase = await this.caseService.findByIdAndUser(id, user, false)
-
-    const pdf = await this.caseService.getCasefilesPdf(existingCase)
-
-    const stream = new ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048,
-    })
-    stream.put(pdf, 'binary')
-
-    res.header('Content-length', pdf.length.toString())
-
-    return stream.pipe(res)
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(judgeRule)
   @Post('case/:id/signature')
   @ApiCreatedResponse({

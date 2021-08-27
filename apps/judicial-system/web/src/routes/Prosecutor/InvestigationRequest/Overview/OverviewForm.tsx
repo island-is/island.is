@@ -226,12 +226,6 @@ const OverviewForm: React.FC<Props> = (props) => {
             title="Opna PDF kröfu"
             pdfType="request"
           />
-
-          <PdfButton
-            caseId={workingCase.id}
-            title="Opna casefiles kröfu"
-            pdfType="casefiles"
-          />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>

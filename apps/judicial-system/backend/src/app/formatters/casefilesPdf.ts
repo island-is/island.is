@@ -3,12 +3,13 @@ import streamBuffers from 'stream-buffers'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
+import { CaseFile } from '../modules/file'
 import { setPageNumbers } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
 function constructCasefilesPdf(
   existingCase: Case,
-  files: string[]
+  files: CaseFile[],
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -50,9 +51,9 @@ function constructCasefilesPdf(
 
 export async function getCasefilesPdfAsString(
   existingCase: Case,
-  files: string[]
+  caseFiles: CaseFile[],
 ): Promise<string> {
-  const stream = constructCasefilesPdf(existingCase, files)
+  const stream = constructCasefilesPdf(existingCase, caseFiles)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {
@@ -70,8 +71,9 @@ export async function getCasefilesPdfAsString(
 
 export async function getCasefilesPdfAsBuffer(
   existingCase: Case,
+  caseFiles: CaseFile[],
 ): Promise<Buffer> {
-  const stream = constructCasefilesPdf(existingCase)
+  const stream = constructCasefilesPdf(existingCase, caseFiles)
 
   // wait for the writing to finish
   const pdf = await new Promise<Buffer>(function (resolve) {
