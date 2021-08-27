@@ -4,7 +4,7 @@ import { onError, ErrorResponse } from '@apollo/client/link/error'
 import {
   NotificationService,
   api,
-} from '@island.is/financial-aid-web/osk/src/services'
+} from '@island.is/financial-aid-web/veita/src/services'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {
