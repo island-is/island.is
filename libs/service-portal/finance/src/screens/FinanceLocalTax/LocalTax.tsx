@@ -11,8 +11,7 @@ const LocalTax = () => {
       title={formatMessage(m.financeLocalTax)}
       intro={formatMessage({
         id: 'sp.local-tax:intro',
-        defaultMessage:
-          'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
+        defaultMessage: 'Sýnir þá staðgreiðslu sem skilað er til sveitafélaga.',
       })}
       listPath="localTax"
       defaultDateRangeMonths={12}
