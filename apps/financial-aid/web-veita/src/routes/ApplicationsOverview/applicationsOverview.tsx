@@ -79,6 +79,13 @@ export const ApplicationsOverview = () => {
           />
         )}
 
+        {error && (
+          <div>
+            Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að
+            þessu upplýsingum?{' '}
+          </div>
+        )}
+
         {loading && <LoadingDots />}
       </AdminLayout>
     )
