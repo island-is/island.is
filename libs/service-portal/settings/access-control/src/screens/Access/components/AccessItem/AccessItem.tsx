@@ -87,9 +87,18 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
           paddingTop: isFirstItem ? 'p5' : 'p1',
         }
 
-        const existingScope = authDelegation.scopes.find(
-          (scope) => scope.name === item.name,
-        )
+        const existingScope =
+          item.__typename === 'AuthApiScopeGroup'
+            ? authDelegation.scopes.length === apiScopes.length - 1
+              ? { ...item, validTo: undefined }
+              : undefined
+            : authDelegation.scopes.find((scope) => scope.name === item.name)
+
+        const nameValue = getValues(`${item.model}.name`)
+        const isSelected =
+          nameValue === undefined
+            ? Boolean(existingScope?.name)
+            : nameValue.length > 0
 
         return (
           <T.Row key={index}>
@@ -121,10 +130,15 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
             <T.Data box={tdStyling}>
               <DatePickerController
                 id={`${item.model}.validTo`}
+                disabled={!isSelected}
                 size="sm"
                 label=""
                 minDate={new Date()}
-                defaultValue={existingScope?.validTo}
+                defaultValue={
+                  Boolean(existingScope?.name)
+                    ? existingScope?.validTo
+                    : undefined
+                }
                 locale={lang}
                 placeholder="-"
                 onChange={(value) => onChange(item, value)}
