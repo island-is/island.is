@@ -90,7 +90,7 @@ const ServiceSearch: Screen<CategoryProps> = ({
       <Head>
         <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
       </Head>
-      <ServiceWebHeader logoTitle={'Þjónustuvefur - Leit'} />
+      <ServiceWebHeader logoTitle={'Þjónustuvefur - Leit'} hideSearch />
       <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
