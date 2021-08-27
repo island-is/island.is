@@ -1,6 +1,7 @@
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { useLocation, useHistory } from 'react-router-dom'
+import * as kennitala from 'kennitala'
 
 import {
   Box,
@@ -10,7 +11,6 @@ import {
   Stack,
   Button,
 } from '@island.is/island-ui/core'
-import { formatNationalId } from '@island.is/island-ui/utils'
 import { Query, AuthCustomDelegation } from '@island.is/api/schema'
 import { EmptyImage } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
@@ -75,7 +75,7 @@ function Accesses(): JSX.Element {
                   key={delegation.id}
                   title={delegation.to.name}
                   validTo={delegation.validTo}
-                  description={formatNationalId(delegation.to.nationalId)}
+                  description={kennitala.format(delegation.to.nationalId)}
                   tags={delegation.scopes.map((scope) => scope.displayName)}
                   href={`${pathname}/${delegation.to.nationalId}`}
                   group="Ísland.is"
