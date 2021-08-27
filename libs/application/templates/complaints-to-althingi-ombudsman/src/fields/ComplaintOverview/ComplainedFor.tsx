@@ -14,15 +14,17 @@ type Props = {
   complainedForType: ComplainedForTypes
   complainedFor: ComplaintsToAlthingiOmbudsman['complainedForInformation']
   connection: string
+  onEdit: (id: string) => void
 }
 
 export const ComplainedFor: FC<Props> = ({
   complainedFor,
   connection,
   complainedForType,
+  onEdit,
 }) => (
   <>
-    <ReviewGroup>
+    <ReviewGroup isEditable editAction={() => onEdit('complainedFor')}>
       <ValueLine
         label={complaintOverview.labels.complainedFor}
         value={mapComplainedForToMessage[complainedForType]}
@@ -45,7 +47,10 @@ export const ComplainedFor: FC<Props> = ({
       )}
     </ReviewGroup>
     {complainedForType === ComplainedForTypes.SOMEONEELSE && (
-      <ReviewGroup>
+      <ReviewGroup
+        isEditable
+        editAction={() => onEdit('complainedForInformation')}
+      >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
