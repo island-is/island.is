@@ -8,6 +8,16 @@ module.exports = {
       { ...getGenericPartyLetterRegistry(), party_letter: 'A' },
       { ...getGenericPartyLetterRegistry(), party_letter: 'B' },
       { ...getGenericPartyLetterRegistry(), party_letter: 'C' },
+      {
+        party_letter: 'S',
+        party_name: 'Steini stuð',
+        owner: 2605923199,
+        managers: [
+          '2605923199'
+        ],
+        created: new Date(),
+        modified: new Date(),  
+      }
     ]
 
     await queryInterface.bulkInsert(

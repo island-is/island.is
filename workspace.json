@@ -7425,7 +7425,7 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "../../../../node_modules/.bin/sequelize-cli db:seed",
+            "command": "../../../../node_modules/.bin/sequelize-cli db:seed:all",
             "cwd": "apps/services/endorsements/api"
           }
         },
@@ -7536,7 +7536,7 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "../../../node_modules/.bin/sequelize-cli db:seed",
+            "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
             "cwd": "apps/services/party-letter-registry-api"
           }
         },
@@ -7733,7 +7733,7 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "../../../node_modules/.bin/sequelize-cli db:seed",
+            "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
             "cwd": "apps/services/temporary-voter-registry-api"
           }
         },

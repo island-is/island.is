@@ -40,6 +40,14 @@ module.exports = {
         national_id: '0101305069',
         version: 3,
       },
+      {
+        national_id: '2605923199',
+        region_number: 2,
+        region_name: 'Norðausturkjördæmi',
+        version: 3,
+        created: new Date(),
+        modified: new Date(),
+      }
     ]
 
     await queryInterface.bulkInsert('voter_registry', voterRegistry)
