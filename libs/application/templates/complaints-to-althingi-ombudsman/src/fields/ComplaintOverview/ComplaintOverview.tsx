@@ -14,15 +14,19 @@ import { ComplaintInformation } from './ComplaintInformation'
 import { yesNoMessageMapper } from '../../utils'
 import { OmbudsmanComplaintTypeEnum } from '../../shared'
 
-export const ComplaintOverview: FC<FieldBaseProps> = ({
+type Props = FieldBaseProps & { field: { props: { isEditable: boolean } } }
+
+export const ComplaintOverview: FC<Props> = ({
   application,
   goToScreen,
+  field,
 }) => {
-  const answers = (application as any).answers as ComplaintsToAlthingiOmbudsman
+  const answers = application.answers as ComplaintsToAlthingiOmbudsman
+  const { isEditable } = field.props
   const {
     appeals,
     complaintType,
-    information: { name, ssn, phone, email, address },
+    information: { name, phone, email, address },
     complaintDescription: { decisionDate },
     attachments: { documents },
   } = answers
@@ -45,20 +49,20 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
-              value="Nafn, kennitala, símanúmer, netfang" // TODO
+              value={complaintOverview.labels.nationalRegistryText}
               label={complaintOverview.labels.nationalRegistry}
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
-              value="Send verða til þín skilaboð um stöðu mála osfrv." // TODO
-              label="Samþykki fyrir tilkynningar" // TODO
+              value={complaintOverview.labels.notificationConsentText}
+              label={complaintOverview.labels.notificationConsentTitle}
             />
           </GridColumn>
         </GridRow>
       </ReviewGroup>
       <ReviewGroup
-        isEditable
+        isEditable={isEditable}
         editAction={() => changeScreens('information.aboutTheComplainer')}
       >
         <GridRow>
@@ -94,9 +98,13 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({
         complainedForType={answers.complainedFor.decision}
         complainedFor={answers.complainedForInformation}
         connection={answers.complainedForInformation?.connection ?? ''}
+        isEditable={isEditable}
         onEdit={changeScreens}
       />
-      <ReviewGroup isEditable editAction={() => changeScreens('complainee')}>
+      <ReviewGroup
+        isEditable={isEditable}
+        editAction={() => changeScreens('complainee')}
+      >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
@@ -122,9 +130,13 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({
         name={answers.complaintDescription.complaineeName}
         type={answers.complainee.type}
         description={answers.complaintDescription.complaintDescription}
+        isEditable={isEditable}
         onEdit={changeScreens}
       />
-      <ReviewGroup isEditable editAction={() => changeScreens('appeals')}>
+      <ReviewGroup
+        isEditable={isEditable}
+        editAction={() => changeScreens('appeals')}
+      >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
@@ -135,7 +147,7 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({
         </GridRow>
       </ReviewGroup>
       <ReviewGroup
-        isEditable
+        isEditable={isEditable}
         editAction={() => changeScreens('courtAction.question')}
       >
         <ValueLine
@@ -145,7 +157,7 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({
       </ReviewGroup>
       <ReviewGroup
         isLast
-        isEditable
+        isEditable={isEditable}
         editAction={() => changeScreens('attachments.documents')}
       >
         <ValueLine

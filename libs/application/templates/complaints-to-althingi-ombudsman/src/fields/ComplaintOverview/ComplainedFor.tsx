@@ -14,6 +14,7 @@ type Props = {
   complainedForType: ComplainedForTypes
   complainedFor: ComplaintsToAlthingiOmbudsman['complainedForInformation']
   connection: string
+  isEditable?: boolean
   onEdit: (id: string) => void
 }
 
@@ -21,10 +22,14 @@ export const ComplainedFor: FC<Props> = ({
   complainedFor,
   connection,
   complainedForType,
+  isEditable,
   onEdit,
 }) => (
   <>
-    <ReviewGroup isEditable editAction={() => onEdit('complainedFor')}>
+    <ReviewGroup
+      isEditable={isEditable}
+      editAction={() => onEdit('complainedFor')}
+    >
       <ValueLine
         label={complaintOverview.labels.complainedFor}
         value={mapComplainedForToMessage[complainedForType]}
@@ -38,9 +43,12 @@ export const ComplainedFor: FC<Props> = ({
           {complainedFor.powerOfAttorney && (
             <ValueLine
               label={complaintOverview.labels.powerOfAttorney}
-              value={complainedFor.powerOfAttorney
-                ?.map((x) => x.name)
-                .join(', ')}
+              value={
+                complainedFor.powerOfAttorney &&
+                complainedFor.powerOfAttorney.length > 0
+                  ? complainedFor.powerOfAttorney?.map((x) => x.name).join(', ')
+                  : complaintOverview.general.noAttachments
+              }
             />
           )}
         </>
@@ -48,7 +56,7 @@ export const ComplainedFor: FC<Props> = ({
     </ReviewGroup>
     {complainedForType === ComplainedForTypes.SOMEONEELSE && (
       <ReviewGroup
-        isEditable
+        isEditable={isEditable}
         editAction={() => onEdit('complainedForInformation')}
       >
         <GridRow>

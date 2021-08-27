@@ -12,6 +12,7 @@ type Props = {
   type: ComplaineeTypes
   name: string
   description: string
+  isEditable?: boolean
   onEdit: (id: string) => void
 }
 
@@ -19,6 +20,7 @@ export const ComplaintInformation: FC<Props> = ({
   type,
   name,
   description,
+  isEditable,
   onEdit,
 }) => {
   const complainee =
@@ -27,7 +29,7 @@ export const ComplaintInformation: FC<Props> = ({
       : complaineeMessages.labels.otherComplaint
   return (
     <ReviewGroup
-      isEditable
+      isEditable={isEditable}
       editAction={() => onEdit('section.complaintInformation')}
     >
       <GridRow>

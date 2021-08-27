@@ -524,11 +524,14 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       id: 'section.overview',
       title: section.complaintOverview,
       children: [
-        buildCustomField({
-          id: 'overview',
-          title: 'Kvörtun og undirritun',
-          component: 'ComplaintOverview',
-        }),
+        buildCustomField(
+          {
+            id: 'overview',
+            title: 'Kvörtun og undirritun',
+            component: 'ComplaintOverview',
+          },
+          { isEditable: true },
+        ),
       ],
     }),
     buildSection({
