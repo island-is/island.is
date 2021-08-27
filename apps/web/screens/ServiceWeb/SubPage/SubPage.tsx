@@ -106,16 +106,20 @@ const SubPage: Screen<SubPageProps> = ({
                 </GridRow>
                 <GridRow>
                   <GridColumn span={['12/12', '12/12', '10/12']}>
-                    <Text variant="h1" as="h1">
-                      {categoryTitle}
-                    </Text>
-                    <Text marginTop={2} variant="intro">
-                      {categoryDescription}
-                    </Text>
+                    {!question?.title && (
+                      <>
+                        <Text variant="h1" as="h1">
+                          {categoryTitle}
+                        </Text>
+                        <Text marginTop={2} variant="intro">
+                          {categoryDescription}
+                        </Text>
+                      </>
+                    )}
 
                     {question && (
                       <>
-                        <Text marginTop={10} variant="h2" as="h2">
+                        <Text variant="h2" as="h2">
                           {question.title}
                         </Text>
 
