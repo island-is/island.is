@@ -6,16 +6,16 @@ module.exports = {
       'application',
       [
         {
-          id: 'ec23d2ff-4798-43eb-b487-c0c37c2778b2',
-          applicant: '123456-7890',
-          state: 'draft',
-          attachments: JSON.stringify({}),
-          ['type_id']: 'example',
+          id: 'f00df00d-f00d-f00d-f00d-f00df00dd00d',
+          applicant: '2605923199',
+          state: 'collectEndorsements',
+          type_id: 'PartyApplication',
           answers: JSON.stringify({
-            question1: 'some answer',
-            question2: 'another answer',
+            constituency: 'partyApplicationNordausturkjordaemi2021',
+            approveDisclaimer: true
           }),
-        },
+          status: 'inprogress',
+        }
       ],
       {},
     )

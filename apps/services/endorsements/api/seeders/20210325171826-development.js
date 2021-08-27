@@ -10,7 +10,43 @@ module.exports = {
       '9c0b4106-4213-43be-a6b2-ff324f4ba0c4',
     ]
 
+    const fakeNationalIds = [
+      '0101302129', // Gervimaður Noregur
+      '0101302209', // Gervimaður Finnland
+      '0101302399', // Gervimaður Færeyjar
+      '0101302479', // Gervimaður Danmörk
+      '0101302559', // Gervimaður Svíþjóð
+      '0101302639', // Gervimaður Grænland
+      '0101302719', // Gervimaður Evrópa
+      '0101302989', // Gervimaður Ameríka
+      '0101303019', // Gervimaður Afríka
+      '0101303369', // Gervimaður Asía
+    ]
+
     const endorsementLists = [
+      {
+        id: 'f00df00d-f00d-f00d-f00d-f00df00df00d',
+        title: 'Steini endorsement list',
+        description: 'Endorsement list steini',
+        closed_date: null,
+        endorsement_meta: ['fullName', 'address'],
+        tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
+        validation_rules: JSON.stringify([
+          {
+            type: 'minAgeAtDate',
+            value: {
+              date: '2021-04-15T00:00:00Z',
+              age: 18,
+            },
+          },
+        ]),
+        owner: '2605923199',
+        meta: JSON.stringify({
+          applicationId: 'someId',
+        }),
+        created: new Date(),
+        modified: new Date(),
+      },
       {
         id: endorsementIds[0],
         title: faker.lorem.words(2),
@@ -171,6 +207,19 @@ module.exports = {
       created: new Date(),
       modified: new Date(),
     })
+
+    for(const nid of fakeNationalIds) {
+      endorsements.push({
+        id: faker.random.uuid(),
+        endorser: nid,
+        endorsement_list_id: 'f00d-f00d',
+        meta: JSON.stringify({
+          fullName: faker.fake('{{name.firstName}} {{name.firstName}}'),
+        }),
+        created: new Date(),
+        modified: new Date(),
+      })
+    }
 
     await queryInterface.bulkInsert('endorsement', endorsements)
   },
