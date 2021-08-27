@@ -1,12 +1,12 @@
-import { font, Skeleton } from '@island.is/island-ui-native'
 import React from 'react'
 import { ActivityIndicator } from 'react-native'
 import styled from 'styled-components/native'
-import agencyLogo from '../../assets/temp/agency-logo.png'
+import agencyLogo from '../../assets/card/agency-logo.png'
 
-import danger from '../../../../island-ui/src/assets/card/danger.png'
-import success from '../../../../island-ui/src/assets/card/is-verified.png'
-import background from '../../../../island-ui/src/assets/card/okuskyrteini.png'
+import danger from '../assets/card/danger.png'
+import success from '../assets/card/is-verified.png'
+import background from '../assets/card/okuskyrteini.png'
+import { font } from '../../utils/font'
 import { useIntl } from 'react-intl'
 
 const Host = styled.View`
@@ -137,41 +137,32 @@ interface ScanResultCardProps {
 }
 
 function nationalIdToBirthDate(ssn?: string) {
-  const firstChar = ssn?.substr(0, 1);
+  const firstChar = ssn?.substr(0, 1)
   if (['8', '9'].includes(firstChar ?? '8')) {
-    return null;
+    return null
   }
-  const lastChar = ssn?.substr(-1);
-  const decade = lastChar === '9' ? 1900 : 2000 + (Number(lastChar) * 100);
-  const year = decade + Number(ssn?.substr(4, 2));
-  const month = Number(ssn?.substr(2, 2));
-  const date = Number(ssn?.substr(0, 2));
+  const lastChar = ssn?.substr(-1)
+  const decade = lastChar === '9' ? 1900 : 2000 + Number(lastChar) * 100
+  const year = decade + Number(ssn?.substr(4, 2))
+  const month = Number(ssn?.substr(2, 2))
+  const date = Number(ssn?.substr(0, 2))
 
-  return new Date(
-    year,
-    month - 1,
-    date
-  );
+  return new Date(year, month - 1, date)
 }
 
 export function ScanResultCard(props: ScanResultCardProps) {
-  const {
-    error,
-    errorMessage,
-    loading,
-    nationalId,
-    name,
-    photo,
-  } = props
+  const { error, errorMessage, loading, nationalId, name, photo } = props
   const intl = useIntl()
-  const birthDate = nationalIdToBirthDate(nationalId);
+  const birthDate = nationalIdToBirthDate(nationalId)
 
   return (
     <Host>
       <Background source={background} resizeMode="stretch" />
       <Header>
         <Detail>
-          <Title>{intl.formatMessage({ id: 'licenseScannerResult.title' })}</Title>
+          <Title>
+            {intl.formatMessage({ id: 'licenseScannerResult.title' })}
+          </Title>
           <Subtitle>
             <SubtitleIcon>
               {loading ? (
@@ -202,7 +193,11 @@ export function ScanResultCard(props: ScanResultCardProps) {
         <Content>
           <Left>
             <LabelGroup>
-              <Label>{intl.formatMessage({ id: 'licenseScannerResult.errorMessage' })}</Label>
+              <Label>
+                {intl.formatMessage({
+                  id: 'licenseScannerResult.errorMessage',
+                })}
+              </Label>
               <Value>{errorMessage}</Value>
             </LabelGroup>
           </Left>
@@ -211,22 +206,24 @@ export function ScanResultCard(props: ScanResultCardProps) {
         <Content>
           <Left>
             <LabelGroup>
-              <Label>{intl.formatMessage({ id: 'licenseScannerResult.name' })}</Label>
+              <Label>
+                {intl.formatMessage({ id: 'licenseScannerResult.name' })}
+              </Label>
               {loading ? (
                 <Placeholder style={{ width: 120 }} />
               ) : (
-                <Value>
-                  {name}
-                </Value>
+                <Value>{name}</Value>
               )}
             </LabelGroup>
             <LabelGroup>
-              <Label>{intl.formatMessage({ id: 'licenseScannerResult.birthDate' })}</Label>
+              <Label>
+                {intl.formatMessage({ id: 'licenseScannerResult.birthDate' })}
+              </Label>
               {loading ? (
                 <Placeholder style={{ width: 120 }} />
               ) : (
                 <Value>
-                  {birthDate ? intl.formatDate(birthDate, { }) : `---`}
+                  {birthDate ? intl.formatDate(birthDate, {}) : `---`}
                 </Value>
               )}
             </LabelGroup>

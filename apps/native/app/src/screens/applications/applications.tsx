@@ -1,22 +1,32 @@
 import { useQuery } from '@apollo/client'
 import {
-  EmptyList, LinkCard, SearchHeader,
-  TopLine
+  EmptyList,
+  LinkCard,
+  SearchHeader,
+  TopLine,
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
-  Animated, AppState, AppStateStatus, FlatList, Image, Platform, TouchableOpacity, View, SafeAreaView
+  Animated,
+  AppState,
+  AppStateStatus,
+  FlatList,
+  Image,
+  Platform,
+  TouchableOpacity,
+  View,
+  SafeAreaView,
 } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
 import {
   Navigation,
-  NavigationFunctionComponent
+  NavigationFunctionComponent,
 } from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate
+  useNavigationSearchBarUpdate,
 } from 'react-native-navigation-hooks/dist'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
@@ -59,7 +69,7 @@ const {
           Platform.OS === 'android'
             ? {
                 name: ComponentRegistry.AndroidSearchBar,
-                passProps: { queryKey: 'applicationQuery' }
+                passProps: { queryKey: 'applicationQuery' },
               }
             : undefined,
       },
@@ -71,9 +81,9 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  const SEARCH_QUERY_SIZE =  80;
-  const SEARCH_QUERY_TYPE =  'webArticle';
-  const QUERY_STRING_DEFAULT = 'Umsókn'; // change to *
+  const SEARCH_QUERY_SIZE = 80
+  const SEARCH_QUERY_TYPE = 'webArticle'
+  const QUERY_STRING_DEFAULT = 'Umsókn' // change to *
 
   const ui = useUiStore()
   const flatListRef = useRef<FlatList>(null)
@@ -91,8 +101,8 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         tags: [],
         size: SEARCH_QUERY_SIZE,
         page: 1,
-      }
-    }
+      },
+    },
   })
 
   const items = res?.data?.searchResults?.items || []
@@ -235,7 +245,9 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
                   items.length === 0
                     ? intl.formatMessage({ id: 'applications.noResultText' })
                     : items.length === 1
-                    ? intl.formatMessage({ id: 'applications.singleResultText' })
+                    ? intl.formatMessage({
+                        id: 'applications.singleResultText',
+                      })
                     : intl.formatMessage({ id: 'applications.resultText' })
                 }
                 count={items.length}

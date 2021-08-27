@@ -5,6 +5,7 @@ import { Platform } from 'react-native'
 configure(() => {
   require('../../../../island-ui/src/lib/button/button.stories')
   require('../../../../island-ui/src/lib/badge/badge.stories')
+  require('../../../../island-ui/src/lib/bubble/bubble.stories')
   require('../../../../island-ui/src/lib/card/card.stories')
   require('../../../../island-ui/src/lib/alert/alert.stories')
   require('../../../../island-ui/src/lib/input/input.stories')
@@ -22,6 +23,7 @@ configure(() => {
   require('../../../../island-ui/src/lib/search-header/search-header.stories')
   require('../../../../island-ui/src/lib/skeleton/skeleton.stories')
   require('../../../../island-ui/src/lib/link/link.stories')
+  require('../../../../island-ui/src/lib/scan-result-card/scan-result-card.stories')
 }, module)
 
 export const StorybookUI = getStorybookUI({
