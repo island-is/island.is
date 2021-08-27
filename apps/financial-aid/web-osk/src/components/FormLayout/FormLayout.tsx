@@ -34,7 +34,7 @@ const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
   }, [activeSection])
 
   if (!isAuthenticated) {
-    return <Login />
+    return <Login headline="Skráðu þig inn" />
   }
   if (!user) {
     return null

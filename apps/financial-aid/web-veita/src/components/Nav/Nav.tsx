@@ -1,9 +1,12 @@
 import React, { useContext } from 'react'
-import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
+import { Logo, Text, Box } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import { LogoHfj } from '@island.is/financial-aid-web/veita/src/components'
+import {
+  LogoHfj,
+  Button,
+} from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './Nav.treat'
 import cn from 'classnames'

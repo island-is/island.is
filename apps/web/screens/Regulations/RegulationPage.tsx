@@ -10,7 +10,6 @@ import { RegulationPageTexts } from '../../components/Regulations/RegulationText
 import React from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import getConfig from 'next/config'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { RegulationRedirectMessage } from '../../components/Regulations/RegulationRedirectMessage'
 import { RegulationDisplay } from '../../components/Regulations/RegulationDisplay'
@@ -22,8 +21,6 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_REGULATION_QUERY } from '../queries'
 
-const { publicRuntimeConfig } = getConfig()
-
 // ---------------------------------------------------------------------------
 
 type RegulationPageProps = {
@@ -33,11 +30,6 @@ type RegulationPageProps = {
 }
 
 const RegulationPage: Screen<RegulationPageProps> = (props) => {
-  const { disableRegulationsPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-
   const { regulation, texts, urlDate } = props
 
   return 'redirectUrl' in regulation ? (
