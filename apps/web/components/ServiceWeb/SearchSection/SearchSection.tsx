@@ -24,8 +24,10 @@ export const SearchSection = ({
     >
       {!!logoUrl && (
         <Hidden below="lg">
-          <Box marginBottom={6} className={styles.logo}>
-            <img alt={logoTitle} src={logoUrl} />
+          <Box marginBottom={6} className={styles.logoWrapper}>
+            <Box className={styles.logo}>
+              <img className={styles.logoImg} alt={logoTitle} src={logoUrl} />
+            </Box>
           </Box>
         </Hidden>
       )}
