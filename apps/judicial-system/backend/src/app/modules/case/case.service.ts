@@ -33,15 +33,40 @@ import {
 import { Institution } from '../institution'
 import { User } from '../user'
 import { CourtService } from '../court'
-import { FileService } from '../file/file.service'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
+import { Includeable } from 'sequelize/types'
 
 interface Recipient {
   name: string
   address: string
 }
+
+const standardIncludes: Includeable[] = [
+  {
+    model: Institution,
+    as: 'court',
+  },
+  {
+    model: User,
+    as: 'prosecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  { model: Institution, as: 'sharedWithProsecutorsOffice' },
+  {
+    model: User,
+    as: 'judge',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'registrar',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  { model: Case, as: 'parentCase' },
+  { model: Case, as: 'childCase' },
+]
 
 @Injectable()
 export class CaseService {
@@ -49,7 +74,6 @@ export class CaseService {
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
     private readonly courtService: CourtService,
-    // private readonly fileService: FileService,
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
@@ -75,7 +99,8 @@ export class CaseService {
     this.logger.debug(
       `Uploading signed ruling pdf to court for case ${existingCase.id}`,
     )
-
+    console.log('=================================', existingCase.caseFiles)
+    return
     const buffer = Buffer.from(pdf, 'binary')
 
     try {
@@ -213,35 +238,17 @@ export class CaseService {
     await Promise.all(promises)
   }
 
-  async findById(id: string): Promise<Case> {
+  async findById(
+    id: string,
+    additionalIncludes: Includeable[] = [],
+  ): Promise<Case> {
     this.logger.debug(`Finding case ${id}`)
+
+    const include = standardIncludes.concat(additionalIncludes)
 
     return this.caseModel.findOne({
       where: { id },
-      include: [
-        {
-          model: Institution,
-          as: 'court',
-        },
-        {
-          model: User,
-          as: 'prosecutor',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        { model: Institution, as: 'sharedWithProsecutorsOffice' },
-        {
-          model: User,
-          as: 'judge',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'registrar',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        { model: Case, as: 'parentCase' },
-        { model: Case, as: 'childCase' },
-      ],
+      include,
     })
   }
 
@@ -251,30 +258,7 @@ export class CaseService {
     return this.caseModel.findAll({
       order: [['created', 'DESC']],
       where: getCasesQueryFilter(user),
-      include: [
-        {
-          model: Institution,
-          as: 'court',
-        },
-        {
-          model: User,
-          as: 'prosecutor',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        { model: Institution, as: 'sharedWithProsecutorsOffice' },
-        {
-          model: User,
-          as: 'judge',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'registrar',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        { model: Case, as: 'parentCase' },
-        { model: Case, as: 'childCase' },
-      ],
+      include: standardIncludes,
     })
   }
 
@@ -384,10 +368,11 @@ export class CaseService {
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
       try {
-        const signedPdf = await this.signingService.getSignedDocument(
-          'ruling.pdf',
-          documentToken,
-        )
+        const signedPdf = 'aa'
+        //  await this.signingService.getSignedDocument(
+        //   'ruling.pdf',
+        //   documentToken,
+        // )
 
         await this.sendRulingAsSignedPdf(existingCase, signedPdf)
       } catch (error) {
