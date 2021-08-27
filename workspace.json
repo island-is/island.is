@@ -5617,7 +5617,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "cypressConfig": "apps/judicial-system/web-e2e/cypress.json",
-            "command": "yarn e2e-ci -n judicial-system-web-e2e -d dist/apps/judicial-system/web"
+            "command": "yarn e2e-ci -n judicial-system-web-e2e -d -c dist/apps/judicial-system/web"
           }
         },
         "lint": {
