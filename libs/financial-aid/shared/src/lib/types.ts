@@ -27,6 +27,12 @@ export enum RolesRule {
   VEITA = 'veita',
 }
 
+export enum ReturnUrl {
+  UMSOKN = '/umsokn',
+  STADA = '/stada',
+  VEITA = '/nymal',
+}
+
 export interface ApplicationFilters {
   New: number
   InProgress: number
@@ -158,6 +164,7 @@ export interface User {
   folder: string
   service: RolesRule
   currentApplication?: CurrentApplication
+  returnUrl?: ReturnUrl
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }

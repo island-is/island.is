@@ -1,7 +1,9 @@
 import React from 'react'
-import { GridContainer, Button, Text } from '@island.is/island-ui/core'
+import { GridContainer, Button, Text, Box } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
+import * as styles from './login.treat'
+import { style } from 'treat/lib/types'
 
 interface Props {
   headline?: string
@@ -15,49 +17,53 @@ const Login = ({ headline, about }: Props) => {
 
   return (
     <GridContainer>
-      <Text as="h1" variant="h2" marginBottom={2} marginTop={10}>
-        {headline}
-      </Text>
+      <div className={styles.gridRowContainer}>
+        <Box className={styles.loginContainer}>
+          <Text as="h1" variant="h1" marginBottom={2} marginTop={10}>
+            {headline}
+          </Text>
 
-      <Text marginBottom={3}>{about}</Text>
+          <Text marginBottom={3}>{about}</Text>
 
-      <Button
-        onClick={() => {
-          router.push(apiLoginRoute)
-        }}
-        data-testid="logout-button"
-        preTextIconType="filled"
-        type="button"
-        variant="primary"
-      >
-        Innskráning
-      </Button>
-      <br />
-      <br />
-      <Button
-        onClick={() => {
-          router.push(`${apiLoginRoute}?nationalId=0000000000`)
-        }}
-        data-testid="logout-button"
-        preTextIconType="filled"
-        type="button"
-        variant="primary"
-      >
-        Plat notandi (Árnason)
-      </Button>
-      <br />
-      <br />
-      <Button
-        onClick={() => {
-          router.push(`${apiLoginRoute}?nationalId=0000000001`)
-        }}
-        data-testid="logout-button"
-        preTextIconType="filled"
-        type="button"
-        variant="primary"
-      >
-        Plat notandi (Margrétdóttir)
-      </Button>
+          <Button
+            onClick={() => {
+              router.push(apiLoginRoute)
+            }}
+            data-testid="logout-button"
+            preTextIconType="filled"
+            type="button"
+            variant="primary"
+          >
+            Innskráning
+          </Button>
+          <br />
+          <br />
+          <Button
+            onClick={() => {
+              router.push(`${apiLoginRoute}?nationalId=0000000000`)
+            }}
+            data-testid="logout-button"
+            preTextIconType="filled"
+            type="button"
+            variant="primary"
+          >
+            Plat notandi (Árnason)
+          </Button>
+          <br />
+          <br />
+          <Button
+            onClick={() => {
+              router.push(`${apiLoginRoute}?nationalId=0000000001`)
+            }}
+            data-testid="logout-button"
+            preTextIconType="filled"
+            type="button"
+            variant="primary"
+          >
+            Plat notandi (Margrétdóttir)
+          </Button>
+        </Box>
+      </div>
     </GridContainer>
   )
 }
