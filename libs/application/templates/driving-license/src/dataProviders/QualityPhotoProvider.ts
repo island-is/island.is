@@ -12,11 +12,11 @@ export class QualityPhotoProvider extends BasicDataProvider {
   async provide(application: Application) {
     const query = `
         query HasQualityPhoto {
-            qualityPhoto {
+          qualityPhoto {
             success
             qualityPhoto
+          }
         }
-      }
       `
 
     const res = await this.useGraphqlGateway(query)
@@ -35,7 +35,7 @@ export class QualityPhotoProvider extends BasicDataProvider {
 
     return {
       success: response.data.qualityPhoto.success,
-      qualityPhoto: response.data.qualityPhoto.qualityPhoto,
+      qualityPhoto: response.data.qualityPhoto?.qualityPhoto,
     }
   }
 
