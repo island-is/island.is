@@ -3,19 +3,25 @@ import { defineMessages } from 'react-intl'
 export const inReview = {
   general: defineMessages({
     formTitle: {
-      id: 'an.application:inReview.form.title',
+      id: 'an.application:inReview.general.formTitle',
       defaultMessage: 'Staða umsóknar',
       description: 'Parental Leave',
     },
     titleInReview: {
-      id: 'an.application:inReview.titleInReview',
+      id: 'an.application:inReview.general.titleInReview',
       defaultMessage: 'Umsókn þín er í skoðun',
       description: 'Your application is in review',
     },
     titleApproved: {
-      id: 'an.application:inReview.titleApproved',
+      id: 'an.application:inReview.general.titleApproved',
       defaultMessage: 'Umsókn þín er samþykkt',
       description: 'Your application is in approved',
+    },
+    viewApplicationButton: {
+      id: 'an.application:inReview.general.viewApplicationButton',
+      defaultMessage: 'Skoða tilkynningu',
+      description:
+        'A button to view application located in application state screen',
     },
   }),
   tags: defineMessages({
@@ -36,7 +42,7 @@ export const inReview = {
     },
     received: {
       id: 'an.application:inReview.tags.received',
-      defaultMessage: 'Móttekin',
+      defaultMessage: 'Móttekið',
       description: 'Received',
     },
     objected: {
