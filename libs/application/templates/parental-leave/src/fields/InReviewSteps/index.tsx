@@ -9,7 +9,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
 import ReviewSection, { ReviewSectionState } from './ReviewSection'
-import Review from '../Review'
+import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getExpectedDateOfBirth,

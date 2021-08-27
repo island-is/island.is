@@ -20,11 +20,11 @@ export const getCookie = (name: string): string | undefined => {
 }
 
 /*
-Credit: https://www.w3schools.com/js/js_cookies.asp
-
-Given a cookie key `name`, sets the expires value of
-the cookie to Jan 1st. 1970, making it invalid.
-*/
+  Credit: https://www.w3schools.com/js/js_cookies.asp
+  
+  Given a cookie key `name`, sets the expires value of
+  the cookie to Jan 1st. 1970, making it invalid.
+  */
 export const deleteCookie = (name: string): void => {
   if (getCookie(name)) {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`

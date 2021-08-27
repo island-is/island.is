@@ -21,8 +21,13 @@ import {
   CurrentHttpUser,
   JwtAuthGuard,
   TokenGuard,
+  RolesGuard,
+  RolesRules,
 } from '@island.is/financial-aid/auth'
-import type { User, ApplicationFilters } from '@island.is/financial-aid/shared'
+
+import type { User } from '@island.is/financial-aid/shared'
+
+import { ApplicationFilters, RolesRule } from '@island.is/financial-aid/shared'
 
 @Controller('api')
 @ApiTags('applications')
@@ -39,7 +44,8 @@ export class ApplicationController {
     return await this.applicationService.getCurrentApplication(nationalId)
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(RolesRule.VEITA)
   @Get('applications')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -66,7 +72,8 @@ export class ApplicationController {
     return application
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(RolesRule.VEITA)
   @Get('applicationFilters')
   @ApiOkResponse({
     description: 'Gets all existing applications filters',

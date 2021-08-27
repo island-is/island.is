@@ -36,6 +36,11 @@ import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
 
+interface Recipient {
+  name: string
+  address: string
+}
+
 @Injectable()
 export class CaseService {
   constructor(
@@ -79,8 +84,7 @@ export class CaseService {
   }
 
   private async sendEmail(
-    recipientName: string,
-    recipientEmail: string,
+    to: Recipient | Recipient[],
     courtCaseNumber: string,
     signedRulingPdf: string,
     body: string,
@@ -95,12 +99,7 @@ export class CaseService {
           name: environment.email.replyToName,
           address: environment.email.replyToEmail,
         },
-        to: [
-          {
-            name: recipientName,
-            address: recipientEmail,
-          },
-        ],
+        to,
         subject: `Úrskurður í máli ${courtCaseNumber}`,
         text: body,
         html: body,
@@ -131,29 +130,35 @@ export class CaseService {
 
     const promises = [
       this.sendEmail(
-        existingCase.prosecutor?.name,
-        existingCase.prosecutor?.email,
-        existingCase.courtCaseNumber,
-        signedRulingPdf,
-        'Sjá viðhengi',
-      ),
-      this.sendEmail(
-        existingCase.registrar?.name,
-        existingCase.registrar?.email,
-        existingCase.courtCaseNumber,
-        signedRulingPdf,
-        uploaded
-          ? `Meðfylgjandi skjal hefur einnig verið vistað undir möppunni Þingbækur í máli ${existingCase.courtCaseNumber} í Auði.`
-          : 'Ekki tókst að vista meðfylgjandi skjal í Auði.',
-      ),
-      this.sendEmail(
-        existingCase.judge?.name,
-        existingCase.judge?.email,
+        {
+          name: existingCase.prosecutor?.name,
+          address: existingCase.prosecutor?.email,
+        },
         existingCase.courtCaseNumber,
         signedRulingPdf,
         'Sjá viðhengi',
       ),
     ]
+
+    if (!uploaded) {
+      promises.push(
+        this.sendEmail(
+          [
+            {
+              name: existingCase.registrar?.name,
+              address: existingCase.registrar?.email,
+            },
+            {
+              name: existingCase.judge?.name,
+              address: existingCase.judge?.email,
+            },
+          ],
+          existingCase.courtCaseNumber,
+          signedRulingPdf,
+          'Ekki tókst að vista meðfylgjandi skjal í Auði.',
+        ),
+      )
+    }
 
     if (
       existingCase.defenderEmail &&
@@ -163,8 +168,10 @@ export class CaseService {
     ) {
       promises.push(
         this.sendEmail(
-          existingCase.defenderName,
-          existingCase.defenderEmail,
+          {
+            name: existingCase.defenderName,
+            address: existingCase.defenderEmail,
+          },
           existingCase.courtCaseNumber,
           signedRulingPdf,
           'Sjá viðhengi',
@@ -178,8 +185,10 @@ export class CaseService {
     ) {
       promises.push(
         this.sendEmail(
-          'Fangelsismálastofnun',
-          environment.notifications.prisonAdminEmail,
+          {
+            name: 'Fangelsismálastofnun',
+            address: environment.notifications.prisonAdminEmail,
+          },
           existingCase.courtCaseNumber,
           signedRulingPdf,
           'Sjá viðhengi',
