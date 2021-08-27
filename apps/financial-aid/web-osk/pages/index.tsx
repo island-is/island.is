@@ -9,7 +9,7 @@ const Index = () => {
 
   return (
     <div className="">
-      <Login />
+      <Login headline="Skráðu þig inn" />
     </div>
   )
 }
