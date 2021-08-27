@@ -16,6 +16,9 @@ import {
   Breadcrumbs,
   Pagination,
   Link,
+  GridContainer,
+  GridColumn,
+  GridRow,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
@@ -90,74 +93,99 @@ const ServiceSearch: Screen<CategoryProps> = ({
       <ServiceWebHeader logoTitle={'Þjónustuvefur - Leit'} />
       <div className={cn(sharedStyles.bg, sharedStyles.bgSmall)} />
 
-      <Box margin={[3, 3, 10]} width="half">
-        <Stack space={[3, 3, 4]}>
-          <Breadcrumbs
-            items={[
-              {
-                title: 'Þjónustuvefur',
-                href: linkResolver('helpdesk').href,
-              },
-              {
-                title: 'Leit',
-                href: linkResolver('helpdesksearch').href,
-              },
-            ]}
-          />
+      <GridContainer>
+        <GridRow marginTop={10} marginBottom={3}>
+          <GridColumn
+            offset={[null, null, null, '1/12']}
+            span={['12/12', '12/12', '12/12', '6/12', '4/12']}
+          >
+            <Stack space={[3, 3, 4]}>
+              <Breadcrumbs
+                items={[
+                  {
+                    title: 'Þjónustuvefur',
+                    href: linkResolver('helpdesk').href,
+                  },
+                  {
+                    title: 'Leit',
+                    href: linkResolver('helpdesksearch').href,
+                  },
+                ]}
+              />
 
-          <ServiceWebSearchInput
-            colored={true}
-            size="large"
-            initialInputValue={q}
-          />
+              <ServiceWebSearchInput
+                colored={true}
+                size="large"
+                initialInputValue={q}
+              />
 
-          {searchResultsItems.length === 0 ? (
-            <>
-              <Text variant="intro" as="p">
-                {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}{' '}
-                <strong>{q}</strong>
-              </Text>
+              {searchResultsItems.length === 0 ? (
+                <>
+                  <Text variant="intro" as="p">
+                    {n(
+                      'nothingFoundWhenSearchingFor',
+                      'Ekkert fannst við leit á',
+                    )}{' '}
+                    <strong>{q}</strong>
+                  </Text>
 
-              <Text variant="intro" as="p">
-                {n('nothingFoundExtendedExplanation')}
-              </Text>
-            </>
-          ) : (
-            <Box marginBottom={2}>
-              <Text variant="intro" as="p">
-                {totalSearchResults}{' '}
-                {totalSearchResults === 1
-                  ? n('searchResult', 'leitarniðurstaða')
-                  : n('searchResults', 'leitarniðurstöður')}{' '}
-              </Text>
-            </Box>
-          )}
-        </Stack>
-      </Box>
-      <Box
-        margin={[3, 3, 10]}
-        className={styles.searchResultContent}
-        width="half"
-      >
-        <Stack space={2}>
-          {searchResultsItems.map(({ labels, parentTitle, ...rest }, index) => {
-            const tags: Array<CardTagsProps> = []
+                  <Text variant="intro" as="p">
+                    {n('nothingFoundExtendedExplanation')}
+                  </Text>
+                </>
+              ) : (
+                <Box marginBottom={2}>
+                  <Text variant="intro" as="p">
+                    {totalSearchResults}{' '}
+                    {totalSearchResults === 1
+                      ? n('searchResult', 'leitarniðurstaða')
+                      : n('searchResults', 'leitarniðurstöður')}{' '}
+                  </Text>
+                </Box>
+              )}
+            </Stack>
+          </GridColumn>
+        </GridRow>
 
-            labels.forEach((label) => {
-              tags.push({
-                title: label,
-                tagProps: {
-                  outlined: true,
+        <GridRow marginBottom={9}>
+          <GridColumn
+            offset={[null, null, null, '1/12']}
+            span={['12/12', '12/12', '12/12', '10/12', '7/12']}
+          >
+            <Stack space={2}>
+              {searchResultsItems.map(
+                ({ labels, parentTitle, ...rest }, index) => {
+                  const tags: Array<CardTagsProps> = []
+
+                  labels.forEach((label) => {
+                    tags.push({
+                      title: label,
+                      tagProps: {
+                        outlined: true,
+                      },
+                    })
+                  })
+
+                  return (
+                    <Card
+                      key={index}
+                      tags={tags}
+                      subTitle={parentTitle}
+                      {...rest}
+                    />
+                  )
                 },
-              })
-            })
+              )}
+            </Stack>
+          </GridColumn>
+        </GridRow>
 
-            return (
-              <Card key={index} tags={tags} subTitle={parentTitle} {...rest} />
-            )
-          })}{' '}
-          {totalSearchResults > 0 && (
-            <Box paddingTop={8}>
+        {totalSearchResults > 0 && (
+          <GridRow marginBottom={10}>
+            <GridColumn
+              offset={[null, null, null, '1/12']}
+              span={['12/12', '12/12', '12/12', '10/12', '7/12']}
+            >
               <Pagination
                 page={page}
                 totalPages={totalPages}
@@ -172,13 +200,19 @@ const ServiceSearch: Screen<CategoryProps> = ({
                   </Link>
                 )}
               />
-            </Box>
-          )}
-        </Stack>
-      </Box>
-      <Box marginY={[10, 10, 20]} marginX={[3, 3, 10]}>
-        <ContactBanner />
-      </Box>
+            </GridColumn>
+          </GridRow>
+        )}
+
+        <GridRow marginTop={20} marginBottom={10}>
+          <GridColumn
+            offset={[null, null, null, '1/12']}
+            span={['12/12', '12/12', '12/12', '10/12']}
+          >
+            <ContactBanner />
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     </>
   )
 }
