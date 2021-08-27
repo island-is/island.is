@@ -17,7 +17,10 @@ interface QualityPhotoData extends FieldBaseProps {
   }
 }
 
-const Photo: FC<QualityPhotoData> = ({ data, application }: QualityPhotoData) => {
+const Photo: FC<QualityPhotoData> = ({
+  data,
+  application,
+}: QualityPhotoData) => {
   const { formatMessage } = useLocale()
   const { qualityPhoto } = data
 
@@ -31,7 +34,7 @@ const Photo: FC<QualityPhotoData> = ({ data, application }: QualityPhotoData) =>
     <img
       alt={formatText(m.qualityPhotoAltText, application, formatMessage) || ''}
       src={src}
-      id='myimage'
+      id="myimage"
     />
   )
 }

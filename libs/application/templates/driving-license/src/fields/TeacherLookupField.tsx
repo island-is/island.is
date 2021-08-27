@@ -30,7 +30,8 @@ interface ExpectedTeacher {
 }
 
 export const TeacherLookupField: FC<Props> = ({ error, application }) => {
-  const teacher = (application.externalData.teacher as unknown) as ExpectedTeacher
+  const teacher = (application.externalData
+    .teacher as unknown) as ExpectedTeacher
 
   const teacherNationalId = useWatch({
     name: 'teacher.nationalId',
