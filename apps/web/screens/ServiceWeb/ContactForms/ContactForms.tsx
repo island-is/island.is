@@ -32,6 +32,7 @@ import {
   GET_SUPPORT_FORM_IN_ORGANIZATION,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
+import { withMainLayout } from '@island.is/web/layouts/main'
 
 interface ContactFormsProps {
   organization?: Organization
@@ -275,4 +276,6 @@ ContactForms.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default ContactForms
+export default withMainLayout(ContactForms, {
+  showHeader: false,
+})
