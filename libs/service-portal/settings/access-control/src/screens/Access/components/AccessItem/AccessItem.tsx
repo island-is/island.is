@@ -54,9 +54,15 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
           `${apiScope.model}.name`,
           value.length > 0 ? [apiScope.name] : [],
         )
+        if (value.length === 0) {
+          setValue(`${apiScope.model}.validTo`, undefined)
+        }
       })
     } else {
       toggleCheckboxGroup()
+      if (value.length === 0) {
+        setValue(`${item.model}.validTo`, undefined)
+      }
     }
   }
 
