@@ -1,6 +1,7 @@
 export * from './accidentDetails'
 export * from './accidentLocation'
 export * from './accidentType'
+export * from './addDocuments'
 export * from './applicantInformation'
 export * from './application'
 export * from './attachments'

@@ -7,6 +7,7 @@ import {
   laws,
   formatGender,
   caseTypes,
+  formatConclusion,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -58,65 +59,6 @@ export function formatCustodyProvisions(
     ?.sort((p1, p2) => custodyProvisionsCompare(p1, p2))
     .reduce((s, l) => `${s}${laws[l]}\n`, '')
     .slice(0, -1)
-}
-
-// This function is always called with case type CUSTODY or TRAVEL_BAN
-export function formatConclusion(
-  type: CaseType,
-  accusedNationalId: string,
-  accusedName: string,
-  accusedGender: CaseGender,
-  decision: CaseDecision,
-  validToDate: Date,
-  isolation: boolean,
-  isExtension: boolean,
-  previousDecision: CaseDecision,
-  isolationToDate?: Date,
-): string {
-  const isolationEndsBeforeValidToDate =
-    isolationToDate && validToDate > isolationToDate
-
-  return decision === CaseDecision.REJECTING
-    ? `Kröfu um að ${formatAccusedByGender(
-        accusedGender,
-      )}, ${accusedName}, kt. ${formatNationalId(accusedNationalId)}, sæti${
-        isExtension && previousDecision === CaseDecision.ACCEPTING
-          ? ' áframhaldandi'
-          : ''
-      } ${type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'} er hafnað.`
-    : `${capitalize(
-        formatAccusedByGender(accusedGender),
-      )}, ${accusedName}, kt. ${formatNationalId(
-        accusedNationalId,
-      )}, skal sæta ${
-        decision === CaseDecision.ACCEPTING
-          ? `${
-              isExtension && previousDecision === CaseDecision.ACCEPTING
-                ? 'áframhaldandi '
-                : ''
-            }${type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'}`
-          : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            `${
-              isExtension &&
-              previousDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                ? 'áframhaldandi '
-                : ''
-            }farbanni`
-      }, þó ekki lengur en til ${formatDate(validToDate, 'PPPPp')
-        ?.replace('dagur,', 'dagsins')
-        ?.replace(' kl.', ', kl.')}.${
-        decision === CaseDecision.ACCEPTING && isolation
-          ? ` ${capitalize(
-              formatAccusedByGender(accusedGender),
-            )} skal sæta einangrun ${
-              isolationEndsBeforeValidToDate
-                ? `ekki lengur en til ${formatDate(isolationToDate, 'PPPPp')
-                    ?.replace('dagur,', 'dagsins')
-                    ?.replace(' kl.', ', kl.')}.`
-                : 'á meðan á gæsluvarðhaldinu stendur.'
-            }`
-          : ''
-      }`
 }
 
 export function formatAppeal(
@@ -298,8 +240,11 @@ export function formatDefenderCourtDateEmailNotification(
   courtCaseNumber: string,
   courtDate: Date,
   courtRoom: string,
+  defenderIsSpokesperson = false,
 ): string {
-  return `${court} hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram ${formatDate(
+  return `${court} hefur boðað þig í fyrirtöku sem ${
+    defenderIsSpokesperson ? 'talsmann' : 'verjanda'
+  } sakbornings.<br /><br />Fyrirtaka mun fara fram ${formatDate(
     courtDate,
     'PPPPp',
   )

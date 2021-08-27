@@ -75,7 +75,7 @@ export const icHearingArrangements = {
     text: {
       id: 'judicial.system.investigation_cases:hearing_arrangements.modal.text',
       defaultMessage:
-        'Tilkynning um fyrirtöku hefur verið send á saksóknara. Hafi {defenderTypeNomative} verið skráður og báðir aðilar boðaðir í fyrirtöku hefur tilkynning auk þess verið send á {defenderTypeAccusative}',
+        'Tilkynning um fyrirtöku hefur verið send á saksóknara{announcementSuffix}',
       description:
         'Notaður sem texti í "tilkynning um fyrirtökutíma hefur verið send" tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
     },

@@ -13,7 +13,7 @@ import {
 import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 
 import { ApplicationService } from './application.service'
-import { ApplicationModel } from './models'
+import { CurrentApplicationModel, ApplicationModel } from './models'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
@@ -21,9 +21,13 @@ import {
   CurrentHttpUser,
   JwtAuthGuard,
   TokenGuard,
+  RolesGuard,
+  RolesRules,
 } from '@island.is/financial-aid/auth'
-import type { User, ApplicationFilters } from '@island.is/financial-aid/shared'
-import { ApplicationEventService } from '../applicationEvent'
+
+import type { User } from '@island.is/financial-aid/shared'
+
+import { ApplicationFilters, RolesRule } from '@island.is/financial-aid/shared'
 
 @Controller('api')
 @ApiTags('applications')
@@ -31,19 +35,17 @@ export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
   @UseGuards(TokenGuard)
-  @Get('hasAppliedForPeriod')
+  @Get('getCurrentApplication')
   @ApiOkResponse({
-    description:
-      'Checks whether user has applied before and if it is the same month',
+    type: CurrentApplicationModel,
+    description: 'Checks if user has a current application for this period',
   })
-  async getHasAppliedForPeriod(@Query('nationalId') nationalId: string) {
-    const hasApplied = await this.applicationService.hasAppliedForPeriod(
-      nationalId,
-    )
-    return hasApplied
+  async getCurrentApplication(@Query('nationalId') nationalId: string) {
+    return await this.applicationService.getCurrentApplication(nationalId)
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(RolesRule.VEITA)
   @Get('applications')
   @ApiOkResponse({
     type: ApplicationModel,
@@ -70,7 +72,8 @@ export class ApplicationController {
     return application
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(RolesRule.VEITA)
   @Get('applicationFilters')
   @ApiOkResponse({
     description: 'Gets all existing applications filters',

@@ -76,6 +76,8 @@ import { Frontpage } from './models/frontpage.model'
 import { GetFrontpageInput } from './dto/getFrontpage.input'
 import { OpenDataPage } from './models/openDataPage.model'
 import { GetOpenDataPageInput } from './dto/getOpenDataPage.input'
+import { OpenDataSubpage } from './models/openDataSubpage.model'
+import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
 import { ProjectPage } from './models/projectPage.model'
 import { GetProjectPageInput } from './dto/getProjectPage.input'
 
@@ -176,6 +178,14 @@ export class CmsResolver {
     @Args('input') input: GetOpenDataPageInput,
   ): Promise<OpenDataPage | null> {
     return this.cmsContentfulService.getOpenDataPage(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => OpenDataSubpage)
+  getOpenDataSubpage(
+    @Args('input') input: GetOpenDataSubpageInput,
+  ): Promise<OpenDataSubpage | null> {
+    return this.cmsContentfulService.getOpenDataSubpage(input)
   }
 
   @Directive(cacheControlDirective())

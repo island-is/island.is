@@ -1,11 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import {
-  LoadingDots,
-  Text,
-  Box,
-  Button,
-  Divider,
-} from '@island.is/island-ui/core'
+import { LoadingDots, Text, Box, Divider } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 import * as styles from './application.treat'
@@ -27,6 +21,7 @@ import {
   getState,
   Municipality,
   aidCalculator,
+  months,
   calculateAidFinalAmount,
   formatPhoneNumber,
 } from '@island.is/financial-aid/shared'
@@ -36,7 +31,6 @@ import format from 'date-fns/format'
 import {
   calcDifferenceInDate,
   calcAge,
-  translateMonth,
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
@@ -50,6 +44,8 @@ import {
   AdminLayout,
   StateModal,
   AidAmountModal,
+  History,
+  Button,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
@@ -121,7 +117,7 @@ const ApplicationProfile = () => {
       {
         title: 'Tímabil',
         content:
-          translateMonth(parseInt(format(new Date(application.created), 'M'))) +
+          months[parseInt(format(new Date(application.created), 'M'))] +
           format(new Date(application.created), ' y'),
       },
       {
@@ -366,6 +362,8 @@ const ApplicationProfile = () => {
               className={`contentUp delay-125 ${styles.widtAlmostFull}`}
             />
           </>
+
+          <History />
         </Box>
 
         {application.state && (

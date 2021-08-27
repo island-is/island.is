@@ -271,6 +271,7 @@ export class NotificationService {
       ['judicial.system.backend'],
       'is',
     )
+
     const pdf = await getRequestPdfAsBuffer(existingCase, intl.formatMessage)
 
     try {
@@ -421,6 +422,7 @@ export class NotificationService {
       existingCase.courtCaseNumber,
       existingCase.courtDate,
       existingCase.courtRoom,
+      existingCase.defenderIsSpokesperson,
     )
 
     let attachments: Attachment[]
