@@ -26,6 +26,9 @@ import {
   section,
   attachments,
   courtAction,
+  shared,
+  preexistingComplaint,
+  confirmation,
 } from '../lib/messages'
 import {
   ComplainedForTypes,
@@ -36,7 +39,7 @@ import {
 } from '../shared/constants'
 import {
   getComplaintType,
-  getDateAYearBack,
+  isDecisionDateOlderThanYear,
   isGovernmentComplainee,
 } from '../utils'
 
@@ -67,6 +70,12 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               type: 'UserProfileProvider',
               title: dataProvider.userProfileTitle,
               subTitle: dataProvider.userProfileSubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'notification',
+              type: undefined,
+              title: dataProvider.notificationTitle,
+              subTitle: dataProvider.notificationSubTitle,
             }),
           ],
         }),
@@ -172,16 +181,16 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'complainedFor',
+      id: 'section.complainedFor',
       title: section.complainedFor,
       children: [
         buildMultiField({
-          id: 'complainedForDecision',
+          id: 'complainedFor',
           title: complainedFor.decision.title,
           description: complainedFor.decision.description,
           children: [
             buildRadioField({
-              id: 'complainedForDecision.radio',
+              id: 'complainedFor.decision',
               title: '',
               options: [
                 {
@@ -202,12 +211,11 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           id: 'complainedForInformation',
           title: complainedFor.information.title,
           condition: (formValue) => {
-            const radio = (formValue.complainedForDecision as FormValue)?.radio
+            const radio = (formValue.complainedFor as FormValue)?.decision
             return radio === ComplainedForTypes.SOMEONEELSE
           },
           children: [
-            // TODO: Add required fields to data schema.
-            // First find out what is suppose to be required
+            // TODO: find out what is suppose to be required
             buildTextField({
               id: 'complainedForInformation.name',
               title: information.aboutTheComplainer.name,
@@ -268,17 +276,37 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 component: 'FieldTitle',
               },
               {
-                marginTop: 4,
+                marginTop: 7,
+                marginBottom: 3,
               },
             ),
             buildTextField({
-              id: 'complainedForInformation.textarea',
+              id: 'complainedForInformation.connection',
               title: complainedFor.information.textareaTitle,
               placeholder: complainedFor.information.textareaPlaceholder,
               backgroundColor: 'blue',
               required: true,
               variant: 'textarea',
               rows: 6,
+            }),
+            buildCustomField(
+              {
+                id: 'complainedForInformation.titleField',
+                title: complainedFor.labels.powerOfAttorney,
+                component: 'FieldTitle',
+              },
+              {
+                marginTop: 7,
+                marginBottom: 3,
+              },
+            ),
+            buildFileUploadField({
+              id: 'complainedForInformation.powerOfAttorney',
+              title: '',
+              introduction: '',
+              uploadHeader: attachments.uploadHeader,
+              uploadDescription: attachments.uploadDescription,
+              uploadButtonLabel: attachments.uploadButtonLabel,
             }),
           ],
         }),
@@ -325,7 +353,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               title: complaintInformation.title,
               children: [
                 buildRadioField({
-                  id: 'complaintInformation.complaintType',
+                  id: 'complaintType',
                   title: '',
                   options: [
                     {
@@ -367,18 +395,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   ? complaintDescription.general.decisionInfo
                   : '',
               children: [
-                buildDateField({
-                  id: 'complaintDescription.decisionDate',
-                  title: complaintDescription.labels.decisionDateTitle,
-                  placeholder:
-                    complaintDescription.labels.decisionDatePlaceholder,
-                  backgroundColor: 'blue',
-                  width: 'half',
-                  minDate: getDateAYearBack(),
-                  condition: (answers) =>
-                    getComplaintType(answers) ===
-                    OmbudsmanComplaintTypeEnum.DECISION,
-                }),
                 buildTextField({
                   id: 'complaintDescription.complaineeName',
                   backgroundColor: 'blue',
@@ -403,15 +419,42 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   variant: 'textarea',
                   required: true,
                 }),
+                buildDateField({
+                  id: 'complaintDescription.decisionDate',
+                  title: complaintDescription.labels.decisionDateTitle,
+                  placeholder:
+                    complaintDescription.labels.decisionDatePlaceholder,
+                  backgroundColor: 'blue',
+                  width: 'half',
+                  condition: (answers) =>
+                    getComplaintType(answers) ===
+                    OmbudsmanComplaintTypeEnum.DECISION,
+                }),
                 buildCustomField(
                   {
                     id: 'complaintDescriptionAlert',
                     title: complaintDescription.general.alertTitle,
                     component: 'FieldAlertMessage',
                     description: complaintDescription.general.alertMessage,
+                    condition: (answers) =>
+                      isDecisionDateOlderThanYear(answers),
                   },
                   { spaceTop: 2 },
                 ),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'complaint.section.appeals',
+          title: complaintInformation.appealsSectionTitle,
+          children: [
+            buildRadioField({
+              id: 'appeals',
+              title: complaintInformation.appealsHeader,
+              options: [
+                { label: shared.general.yes, value: YES },
+                { label: shared.general.no, value: NO },
               ],
             }),
           ],
@@ -420,8 +463,31 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
     }),
     buildSection({
       id: 'courtAction',
-      title: section.courtAction,
+      title: preexistingComplaint.general.sectionTitle,
       children: [
+        buildMultiField({
+          id: 'preexistingComplaint.multifield',
+          title: preexistingComplaint.general.title,
+          description: preexistingComplaint.general.description,
+          children: [
+            buildRadioField({
+              id: 'preexistingComplaint',
+              title: '',
+              width: 'half',
+              options: [
+                { value: YES, label: shared.general.yes },
+                { value: NO, label: shared.general.no },
+              ],
+            }),
+            buildCustomField({
+              id: 'preexistingComplaint.preexistingComplaintAlertMessage',
+              title: preexistingComplaint.alertMessage.title,
+              component: 'FieldAlertMessage',
+              description: preexistingComplaint.alertMessage.description,
+              condition: (answers) => answers.preexistingComplaint === YES,
+            }),
+          ],
+        }),
         buildMultiField({
           id: 'courtAction.question',
           title: courtAction.title,
@@ -430,9 +496,10 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             buildRadioField({
               id: 'courtActionAnswer',
               title: '',
+              width: 'half',
               options: [
-                { value: YES, label: courtAction.yes },
-                { value: NO, label: courtAction.no },
+                { value: YES, label: shared.general.yes },
+                { value: NO, label: shared.general.no },
               ],
             }),
           ],
@@ -444,12 +511,34 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       title: section.attachments,
       children: [
         buildFileUploadField({
-          id: 'attachments.fileUpload',
+          id: 'attachments.documents',
           title: attachments.title,
           introduction: attachments.introduction,
-          uploadDescription: attachments.uploadDescription,
           uploadHeader: attachments.uploadHeader,
+          uploadDescription: attachments.uploadDescription,
           uploadButtonLabel: attachments.uploadButtonLabel,
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'section.overview',
+      title: section.complaintOverview,
+      children: [
+        buildCustomField({
+          id: 'overview',
+          title: 'Kvörtun og undirritun',
+          component: 'ComplaintOverview',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'successfulSubmissionSection',
+      title: confirmation.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'successfulSubmission',
+          title: confirmation.general.sectionTitle,
+          component: 'ConfirmationScreen',
         }),
       ],
     }),

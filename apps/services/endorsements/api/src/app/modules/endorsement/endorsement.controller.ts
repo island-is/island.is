@@ -22,13 +22,14 @@ import {
 import { environment } from '../../../environments'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementListById.pipe'
-import { IsEndorsementListOwnerValidationPipe } from '../endorsementList/pipes/isEndorsementListOwnerValidation.pipe'
 import { BulkEndorsementDto } from './dto/bulkEndorsement.dto'
 import { Endorsement } from './models/endorsement.model'
 import { EndorsementService } from './endorsement.service'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import type { User, Auth } from '@island.is/auth-nest-tools'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
+import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
+import { AccessGroup } from '../../guards/accessGuard/access.enum'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @Audit({
@@ -50,6 +51,7 @@ export class EndorsementController {
   @ApiParam({ name: 'listId', type: String })
   @Scopes(EndorsementsScope.main)
   @Get()
+  @HasAccessGroup(AccessGroup.Owner, AccessGroup.DMR)
   @Audit<Endorsement[]>({
     resources: (endorsement) => endorsement.map((e) => e.id),
     meta: (endorsement) => ({ count: endorsement.length }),
@@ -59,7 +61,6 @@ export class EndorsementController {
       'listId',
       new ParseUUIDPipe({ version: '4' }),
       EndorsementListByIdPipe,
-      IsEndorsementListOwnerValidationPipe,
     )
     endorsementList: EndorsementList,
   ): Promise<Endorsement[]> {
@@ -133,6 +134,7 @@ export class EndorsementController {
   })
   @Scopes(EndorsementsScope.main)
   @Post('/bulk')
+  @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementBulkCreate>({
     resources: (response) => response.succeeded.map((e) => e.id),
     meta: (response) => ({ count: response.succeeded.length }),
@@ -142,7 +144,6 @@ export class EndorsementController {
       'listId',
       new ParseUUIDPipe({ version: '4' }),
       EndorsementListByIdPipe,
-      IsEndorsementListOwnerValidationPipe,
     )
     endorsementList: EndorsementList,
     @Body() { nationalIds }: BulkEndorsementDto,

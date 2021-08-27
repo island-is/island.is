@@ -69,19 +69,35 @@ export const SignedVerdictOverview: React.FC = () => {
   }, [workingCase, setWorkingCase, data])
 
   const handleNextButtonClick = async () => {
-    if (workingCase?.childCase) {
-      router.push(`${Constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
-    } else {
-      const { data } = await extendCaseMutation({
-        variables: {
-          input: {
-            id: workingCase?.id,
-          },
-        },
-      })
+    if (workingCase) {
+      const isRestrictionCase =
+        workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.TRAVEL_BAN
 
-      if (data) {
-        router.push(`${Constants.STEP_ONE_ROUTE}/${data.extendCase.id}`)
+      if (workingCase.childCase) {
+        if (isRestrictionCase) {
+          router.push(`${Constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
+        } else {
+          router.push(
+            `${Constants.IC_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+          )
+        }
+      } else {
+        const { data } = await extendCaseMutation({
+          variables: {
+            input: {
+              id: workingCase.id,
+            },
+          },
+        })
+
+        if (data) {
+          if (isRestrictionCase) {
+            router.push(`${Constants.STEP_ONE_ROUTE}/${data.extendCase.id}`)
+          } else {
+            router.push(`${Constants.IC_DEFENDANT_ROUTE}/${data.extendCase.id}`)
+          }
+        }
       }
     }
   }
@@ -92,7 +108,11 @@ export const SignedVerdictOverview: React.FC = () => {
       return undefined
     } else if (workingCase.decision === CaseDecision.REJECTING) {
       return `Ekki hægt að framlengja ${
-        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+        workingCase.type === CaseType.CUSTODY
+          ? 'gæsluvarðhald'
+          : workingCase.type === CaseType.TRAVEL_BAN
+          ? 'farbann'
+          : 'heimild'
       } sem var hafnað.`
     } else if (
       workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -106,7 +126,11 @@ export const SignedVerdictOverview: React.FC = () => {
       // be after the already extended case as the custody end date may expire after
       // the case has been extended.
       return `Ekki hægt að framlengja ${
-        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+        workingCase.type === CaseType.CUSTODY
+          ? 'gæsluvarðhald'
+          : workingCase.type === CaseType.TRAVEL_BAN
+          ? 'farbann'
+          : 'heimild'
       } sem er lokið.`
     } else {
       return undefined
@@ -273,12 +297,14 @@ export const SignedVerdictOverview: React.FC = () => {
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
                 workingCase.decision === CaseDecision.REJECTING ||
                 workingCase.isValidToDateInThePast ||
-                Boolean(workingCase.childCase) ||
-                (workingCase.type !== CaseType.CUSTODY &&
-                  workingCase.type !== CaseType.TRAVEL_BAN)
+                Boolean(workingCase.childCase)
               }
               nextButtonText={`Framlengja ${
-                workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'
+                workingCase.type === CaseType.CUSTODY
+                  ? 'gæslu'
+                  : workingCase.type === CaseType.TRAVEL_BAN
+                  ? 'farbann'
+                  : 'heimild'
               }`}
               onNextButtonClick={() => handleNextButtonClick()}
               nextIsLoading={isCreatingExtension}

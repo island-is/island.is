@@ -16,11 +16,12 @@ import {
   NounCases,
   formatAccusedByGender,
   caseTypes,
+  formatConclusion,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
-import { formatAppeal, formatConclusion } from './formatters'
+import { formatAppeal } from './formatters'
 import { setPageNumbers } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
@@ -218,21 +219,6 @@ function constructRestrictionRulingPdf(
     })
     .text(' ')
 
-  if (existingCase.requestProsecutorOnlySession) {
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Beiðni um dómþing að varnaraðila fjarstöddum')
-      .font('Helvetica')
-      .fontSize(12)
-      .text(existingCase.prosecutorOnlySessionRequest, {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
-      .text(' ')
-  }
-
   doc
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -323,7 +309,10 @@ function constructRestrictionRulingPdf(
     )
     .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
 
-  if (existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL) {
+  if (
+    existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL &&
+    existingCase.accusedAppealAnnouncement
+  ) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
@@ -343,7 +332,10 @@ function constructRestrictionRulingPdf(
       })
   }
 
-  if (existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+  if (
+    existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL &&
+    existingCase.prosecutorAppealAnnouncement
+  ) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
@@ -629,21 +621,6 @@ function constructInvestigationRulingPdf(
     })
     .text(' ')
 
-  if (existingCase.requestProsecutorOnlySession) {
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(14)
-      .lineGap(8)
-      .text('Beiðni um dómþing að varnaraðila fjarstöddum')
-      .font('Helvetica')
-      .fontSize(12)
-      .text(existingCase.prosecutorOnlySessionRequest, {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
-      .text(' ')
-  }
-
   doc
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -712,7 +689,10 @@ function constructInvestigationRulingPdf(
 
   doc.text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
 
-  if (existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL) {
+  if (
+    existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL &&
+    existingCase.accusedAppealAnnouncement
+  ) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
@@ -727,7 +707,10 @@ function constructInvestigationRulingPdf(
       })
   }
 
-  if (existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+  if (
+    existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL &&
+    existingCase.prosecutorAppealAnnouncement
+  ) {
     doc
       .text(' ')
       .font('Helvetica-Bold')

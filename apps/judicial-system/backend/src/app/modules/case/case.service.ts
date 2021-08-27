@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
+import { IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -35,6 +36,11 @@ import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
 
+interface Recipient {
+  name: string
+  address: string
+}
+
 @Injectable()
 export class CaseService {
   constructor(
@@ -45,6 +51,7 @@ export class CaseService {
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private intlService: IntlService,
   ) {}
 
   private async uploadSignedRulingPdfToCourt(
@@ -77,8 +84,7 @@ export class CaseService {
   }
 
   private async sendEmail(
-    recipientName: string,
-    recipientEmail: string,
+    to: Recipient | Recipient[],
     courtCaseNumber: string,
     signedRulingPdf: string,
     body: string,
@@ -93,12 +99,7 @@ export class CaseService {
           name: environment.email.replyToName,
           address: environment.email.replyToEmail,
         },
-        to: [
-          {
-            name: recipientName,
-            address: recipientEmail,
-          },
-        ],
+        to,
         subject: `Úrskurður í máli ${courtCaseNumber}`,
         text: body,
         html: body,
@@ -129,29 +130,35 @@ export class CaseService {
 
     const promises = [
       this.sendEmail(
-        existingCase.prosecutor?.name,
-        existingCase.prosecutor?.email,
-        existingCase.courtCaseNumber,
-        signedRulingPdf,
-        'Sjá viðhengi',
-      ),
-      this.sendEmail(
-        existingCase.registrar?.name,
-        existingCase.registrar?.email,
-        existingCase.courtCaseNumber,
-        signedRulingPdf,
-        uploaded
-          ? `Meðfylgjandi skjal hefur einnig verið vistað undir möppunni Þingbækur í máli ${existingCase.courtCaseNumber} í Auði.`
-          : 'Ekki tókst að vista meðfylgjandi skjal í Auði.',
-      ),
-      this.sendEmail(
-        existingCase.judge?.name,
-        existingCase.judge?.email,
+        {
+          name: existingCase.prosecutor?.name,
+          address: existingCase.prosecutor?.email,
+        },
         existingCase.courtCaseNumber,
         signedRulingPdf,
         'Sjá viðhengi',
       ),
     ]
+
+    if (!uploaded) {
+      promises.push(
+        this.sendEmail(
+          [
+            {
+              name: existingCase.registrar?.name,
+              address: existingCase.registrar?.email,
+            },
+            {
+              name: existingCase.judge?.name,
+              address: existingCase.judge?.email,
+            },
+          ],
+          existingCase.courtCaseNumber,
+          signedRulingPdf,
+          'Ekki tókst að vista meðfylgjandi skjal í Auði.',
+        ),
+      )
+    }
 
     if (
       existingCase.defenderEmail &&
@@ -161,8 +168,10 @@ export class CaseService {
     ) {
       promises.push(
         this.sendEmail(
-          existingCase.defenderName,
-          existingCase.defenderEmail,
+          {
+            name: existingCase.defenderName,
+            address: existingCase.defenderEmail,
+          },
           existingCase.courtCaseNumber,
           signedRulingPdf,
           'Sjá viðhengi',
@@ -176,8 +185,10 @@ export class CaseService {
     ) {
       promises.push(
         this.sendEmail(
-          'Fangelsismálastofnun',
-          environment.notifications.prisonAdminEmail,
+          {
+            name: 'Fangelsismálastofnun',
+            address: environment.notifications.prisonAdminEmail,
+          },
           existingCase.courtCaseNumber,
           signedRulingPdf,
           'Sjá viðhengi',
@@ -188,7 +199,7 @@ export class CaseService {
     await Promise.all(promises)
   }
 
-  private findById(id: string): Promise<Case> {
+  async findById(id: string): Promise<Case> {
     this.logger.debug(`Finding case ${id}`)
 
     return this.caseModel.findOne({
@@ -220,7 +231,7 @@ export class CaseService {
     })
   }
 
-  getAll(user: TUser): Promise<Case[]> {
+  async getAll(user: TUser): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
     return this.caseModel.findAll({
@@ -275,7 +286,7 @@ export class CaseService {
     return existingCase
   }
 
-  create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {
+  async create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {
     this.logger.debug('Creating a new case')
 
     return this.caseModel.create({
@@ -309,12 +320,15 @@ export class CaseService {
     return getRulingPdfAsString(existingCase)
   }
 
-  getRequestPdf(existingCase: Case): Promise<string> {
+  async getRequestPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the request for case ${existingCase.id} as a pdf document`,
     )
-
-    return getRequestPdfAsString(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+    return getRequestPdfAsString(existingCase, intl.formatMessage)
   }
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
@@ -385,22 +399,26 @@ export class CaseService {
     }
   }
 
-  extend(existingCase: Case, user: TUser): Promise<Case> {
+  async extend(existingCase: Case, user: TUser): Promise<Case> {
     this.logger.debug(`Extending case ${existingCase.id}`)
 
     return this.caseModel.create({
       type: existingCase.type,
       policeCaseNumber: existingCase.policeCaseNumber,
+      description: existingCase.description,
       accusedNationalId: existingCase.accusedNationalId,
       accusedName: existingCase.accusedName,
       accusedAddress: existingCase.accusedAddress,
       accusedGender: existingCase.accusedGender,
       courtId: existingCase.courtId,
       lawsBroken: existingCase.lawsBroken,
+      legalBasis: existingCase.legalBasis,
       custodyProvisions: existingCase.custodyProvisions,
       requestedCustodyRestrictions: existingCase.requestedCustodyRestrictions,
       caseFacts: existingCase.caseFacts,
       legalArguments: existingCase.legalArguments,
+      requestProsecutorOnlySession: existingCase.requestProsecutorOnlySession,
+      prosecutorOnlySessionRequest: existingCase.prosecutorOnlySessionRequest,
       prosecutorId: user.id,
       parentCaseId: existingCase.id,
     })
@@ -411,7 +429,12 @@ export class CaseService {
 
     const existingCase = await this.findById(id)
 
-    const pdf = await getRequestPdfAsBuffer(existingCase)
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    const pdf = await getRequestPdfAsBuffer(existingCase, intl.formatMessage)
 
     try {
       const streamId = await this.courtService.uploadStream(

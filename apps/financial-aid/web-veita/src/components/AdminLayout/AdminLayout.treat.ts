@@ -17,11 +17,6 @@ export const gridWrapper = style({
 
 export const childContainer = style({
   gridColumn: '4/-1',
-  minHeight: `calc(100vh - ${theme.spacing[3]}px)`,
-  display: 'flex',
-  alignItems: 'flex-start',
-  justifyContent: 'center',
-  flexDirection: 'column',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       gridColumn: '5/-1',

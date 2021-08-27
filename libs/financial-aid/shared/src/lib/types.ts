@@ -17,8 +17,22 @@ export enum Employment {
 export enum ApplicationState {
   NEW = 'New',
   INPROGRESS = 'InProgress',
+  DATANEEDED = 'DataNeeded',
   REJECTED = 'Rejected',
   APPROVED = 'Approved',
+}
+
+export enum RolesRule {
+  OSK = 'osk',
+  VEITA = 'veita',
+}
+
+export interface ApplicationFilters {
+  New: number
+  InProgress: number
+  DataNeeded: number
+  Rejected: number
+  Approved: number
 }
 
 export interface Application {
@@ -42,7 +56,33 @@ export interface Application {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
-  state?: ApplicationState
+  state: ApplicationState
+  files?: ApplicationFile[]
+  amount?: number
+  comment?: string
+  rejection?: string
+}
+
+export interface CurrentApplication {
+  id: string
+  homeCircumstances: HomeCircumstances
+  usePersonalTaxCredit: boolean
+  state: ApplicationState
+}
+
+export interface ApplicationFile {
+  id: string
+  created: string
+  applicationId: string
+  name: string
+  key: string
+  size: number
+}
+
+export interface CreateApplicationFile {
+  name: string
+  key: string
+  size: number
 }
 
 export interface CreateApplication {
@@ -64,10 +104,28 @@ export interface CreateApplication {
   studentCustom?: string
   formComment?: string
   state?: ApplicationState
+  files: CreateApplicationFile[]
+  amount?: number
 }
 
 export interface UpdateApplication {
-  state?: ApplicationState
+  state: ApplicationState
+  amount?: number
+  rejection?: string
+}
+
+export interface CreateApplicationEvent {
+  applicationId: string
+  state: ApplicationState
+  comment?: string
+}
+
+export interface ApplicationEvent {
+  id: string
+  created: string
+  applicationId: string
+  comment?: string
+  state: ApplicationState
 }
 
 export interface Municipality {
@@ -97,9 +155,21 @@ export interface User {
   nationalId: string
   name: string
   phoneNumber: string
+  folder: string
+  service: RolesRule
+  currentApplication?: CurrentApplication
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
+
+export interface GetSignedUrl {
+  fileName: string
+}
+
+export interface SignedUrl {
+  url: string
+  key: string
+}
 
 // export type HomeCircumstances =
 //   | 'Unknown'

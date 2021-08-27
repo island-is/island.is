@@ -119,11 +119,17 @@ export const calculateRemainingNumberOfDays = (
     return 0
   }
 
-  const application = (applications ?? []).find(
-    (a) =>
-      isSameDay(new Date(a.dateOfBirth), new Date(dateOfBirth)) ||
-      isSameDay(new Date(a.expectedDateOfBirth), new Date(dateOfBirth)),
-  )
+  const application = (applications ?? []).find((a) => {
+    const matchesCurrentDateOfBirth = !a.dateOfBirth
+      ? false
+      : isSameDay(new Date(a.dateOfBirth), new Date(dateOfBirth))
+
+    const matchesCurrentExpectedDateOfBirth = !a.expectedDateOfBirth
+      ? false
+      : isSameDay(new Date(a.expectedDateOfBirth), new Date(dateOfBirth))
+
+    return matchesCurrentDateOfBirth || matchesCurrentExpectedDateOfBirth
+  })
 
   // No application found for the date of birth
   if (!application) {

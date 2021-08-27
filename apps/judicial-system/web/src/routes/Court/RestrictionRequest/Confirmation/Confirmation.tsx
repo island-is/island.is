@@ -1,5 +1,6 @@
-import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import React, { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   FormFooter,
   PoliceRequestAccordionItem,
@@ -10,10 +11,7 @@ import {
   FormContentContainer,
   CourtCaseFactsAndLegalArgumentsAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  getConclusion,
-  getAppealDecisionText,
-} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   formatDate,
   formatCustodyRestrictions,
@@ -40,6 +38,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { useRouter } from 'next/router'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import SigningModal from '@island.is/judicial-system-web/src/shared-components/SigningModal/SigningModal'
+import { rcConfirmation } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as style from './Confirmation.treat'
 
@@ -55,6 +54,7 @@ export const Confirmation: React.FC = () => {
 
   const { requestSignature, isRequestingSignature } = useCase()
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -167,12 +167,9 @@ export const Confirmation: React.FC = () => {
                 </Text>
               </Box>
               <Box marginBottom={3}>
-                {getConclusion(workingCase, true)}
-                {workingCase.conclusion && (
-                  <Box marginTop={1}>
-                    <Text variant="intro">{workingCase.conclusion}</Text>
-                  </Box>
-                )}
+                <Box marginTop={1}>
+                  <Text variant="intro">{workingCase.conclusion}</Text>
+                </Box>
               </Box>
             </Box>
             <Box component="section" marginBottom={7}>
@@ -195,8 +192,9 @@ export const Confirmation: React.FC = () => {
               </Box>
               <Box marginBottom={1}>
                 <Text>
-                  Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra
-                  úrskurð þennan til Landsréttar innan þriggja sólarhringa.
+                  {formatMessage(
+                    rcConfirmation.sections.accusedAppealDecision.disclaimer,
+                  )}
                 </Text>
               </Box>
               <Box marginBottom={1}>
@@ -263,9 +261,10 @@ export const Confirmation: React.FC = () => {
                     </Text>
                   </Box>
                   <Text>
-                    Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt
-                    að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir
-                    dómara.
+                    {formatMessage(
+                      rcConfirmation.sections.custodyRestrictions.disclaimer,
+                      { caseType: 'gæsluvarðhaldsins' },
+                    )}
                   </Text>
                 </Box>
               )}
@@ -297,8 +296,10 @@ export const Confirmation: React.FC = () => {
                   </Text>
                 </Box>
                 <Text>
-                  Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
-                  bera atriði er lúta að framkvæmd farbannsins undir dómara.
+                  {formatMessage(
+                    rcConfirmation.sections.custodyRestrictions.disclaimer,
+                    { caseType: 'farbannsins' },
+                  )}
                 </Text>
               </Box>
             )}

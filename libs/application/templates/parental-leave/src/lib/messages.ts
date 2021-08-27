@@ -713,6 +713,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Breyta tilhögun fæðingarorlofs',
       description: 'Change the periods',
     },
+    limit: {
+      id: 'pl.application:periods.limit',
+      defaultMessage:
+        'Þú hefur náð þeim mörkum sem þú getur tekið fyrir fæðingarorlofinu þínu',
+      description:
+        'You reached the limit of days you can take for your parental leave',
+    },
   }),
 
   firstPeriodStart: defineMessages({
@@ -1502,6 +1509,13 @@ export const errorMessages = defineMessages({
     id: 'pl.application:errors.required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'Error message when the attachment file is not provided.',
+  },
+  exceedingLength: {
+    id: 'pl.application:errors.exceeding.length',
+    defaultMessage:
+      'Fór yfir réttindi {days} dagar > {rights} dagar. Veldu fyrri lokadagsetningu.',
+    description:
+      'Exceeded rights {days} days > {rights} days. Select an earlier end date.',
   },
 })
 

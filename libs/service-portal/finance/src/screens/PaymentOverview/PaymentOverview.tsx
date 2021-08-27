@@ -2,6 +2,7 @@ import React from 'react'
 import {
   InfoScreen,
   ServicePortalModuleComponent,
+  m,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 
@@ -13,15 +14,12 @@ export const PaymentOverview: ServicePortalModuleComponent = () => {
         defaultMessage: 'Greiðslur',
       })}
       intro={defineMessage({
-        id: 'sp.assets:intro',
+        id: 'sp.payments:intro',
         defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir
         fjármál á næstunni.`,
       })}
       list={{
-        title: defineMessage({
-          id: 'service.portal:incoming',
-          defaultMessage: 'Á döfinni',
-        }),
+        title: m.incoming,
         items: [
           defineMessage({
             id: 'sp.assets:inc-1',

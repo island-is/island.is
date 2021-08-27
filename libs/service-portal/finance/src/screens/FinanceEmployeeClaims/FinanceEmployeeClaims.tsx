@@ -1,5 +1,6 @@
 import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
 const EmployeeClaims = () => {
@@ -7,16 +8,14 @@ const EmployeeClaims = () => {
   const { formatMessage } = useLocale()
   return (
     <DocumentScreen
-      title={formatMessage({
-        id: 'service.portal:finance-employee-claims',
-        defaultMessage: 'Laungreiðendakröfur',
-      })}
+      title={formatMessage(m.financeEmployeeClaims)}
       intro={formatMessage({
         id: 'sp.employee-claims:intro',
         defaultMessage:
-          'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
+          'Hér er að finna opinber gjöld utan staðgreiðslu sem dregin eru af starfsmönnum.',
       })}
       listPath="employeeClaims"
+      defaultDateRangeMonths={12}
     />
   )
 }

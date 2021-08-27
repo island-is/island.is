@@ -75,7 +75,6 @@ export class EmailService {
   }
 
   async sendEmail(message: Message): Promise<string> {
-    this.logger.debug(`Sending email.`)
     let messageId = ''
 
     try {
@@ -89,14 +88,14 @@ export class EmailService {
         } = await this.adapterService.buildCustomTemplate(message.template)
 
         message.html = html
-        message.attachments = attachments
+        message.attachments = (message.attachments ?? []).concat(attachments)
       }
 
       const info = await transporter.sendMail(message)
 
       messageId = `${info.messageId}`
 
-      this.logger.debug(`Message sent: ${messageId}`)
+      this.logger.info(`Message sent: ${messageId}`)
 
       if (this.options.useNodemailerApp) {
         this.logger.debug(

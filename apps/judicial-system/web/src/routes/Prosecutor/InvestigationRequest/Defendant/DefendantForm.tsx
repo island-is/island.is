@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
 import { Box, Input, Select, Text } from '@island.is/island-ui/core'
 import {
@@ -21,8 +22,9 @@ import {
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 import { theme } from '@island.is/island-ui/theme'
-import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { defendant } from '@island.is/judicial-system-web/messages'
+import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
@@ -62,6 +64,7 @@ const DefendantForm: React.FC<Props> = (props) => {
   }
   const [petitionDescriptionEM, setPetitionDescriptionEM] = useState<string>('')
   const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
   const { isValid } = useCaseFormHelper(
     workingCase,
     setWorkingCase,
@@ -73,7 +76,7 @@ const DefendantForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Rannsóknarheimild
+            {formatMessage(defendant.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
@@ -85,7 +88,7 @@ const DefendantForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Efni kröfu
+              {formatMessage(defendant.sections.investigationType.heading)}
             </Text>
           </Box>
           <BlueBox>
@@ -93,8 +96,12 @@ const DefendantForm: React.FC<Props> = (props) => {
               <Select
                 name="petition-type"
                 options={ICaseTypes as ReactSelectOption[]}
-                label="Tegund kröfu"
-                placeholder="Veldu tegund kröfu"
+                label={formatMessage(
+                  defendant.sections.investigationType.type.label,
+                )}
+                placeholder={formatMessage(
+                  defendant.sections.investigationType.type.placeholder,
+                )}
                 onChange={(selectedOption: ValueType<ReactSelectOption>) =>
                   setAndSendToServer(
                     'type',
@@ -128,11 +135,16 @@ const DefendantForm: React.FC<Props> = (props) => {
             <Input
               data-testid="petition-description"
               name="petition-description"
-              label="Efni kröfu"
-              placeholder="Skráðu efni kröfu"
+              label={formatMessage(
+                defendant.sections.investigationType.description.label,
+              )}
+              placeholder={formatMessage(
+                defendant.sections.investigationType.description.placeholder,
+              )}
               defaultValue={workingCase.description}
               errorMessage={petitionDescriptionEM}
               hasError={petitionDescriptionEM !== ''}
+              autoComplete="off"
               onChange={(event) => {
                 removeTabsValidateAndSet(
                   'description',
@@ -161,7 +173,7 @@ const DefendantForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={10}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Varnaraðili
+              {formatMessage(defendant.sections.defendantInfo.heading)}
             </Text>
           </Box>
           <DefendantInfo

@@ -48,7 +48,6 @@
         "libs/api/domains/application/src/index.ts"
       ],
       "@island.is/api/domains/auth": ["libs/api/domains/auth/src/index.ts"],
-      "@island.is/api/domains/cms": ["libs/api/domains/cms/src/index.ts"],
       "@island.is/api/domains/communications": [
         "libs/api/domains/communications/src/index.ts"
       ],
@@ -106,6 +105,9 @@
       "@island.is/api/domains/payment": [
         "libs/api/domains/payment/src/index.ts"
       ],
+      "@island.is/api/domains/payment-schedule": [
+        "libs/api/domains/payment-schedule/src/index.ts"
+      ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
@@ -115,9 +117,6 @@
       ],
       "@island.is/api/domains/temporary-voter-registry": [
         "libs/api/domains/temporary-voter-registry/src/index.ts"
-      ],
-      "@island.is/api/domains/translations": [
-        "libs/api/domains/translations/src/index.ts"
       ],
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
@@ -137,6 +136,9 @@
       ],
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
+      ],
+      "@island.is/application/templates/accident-notification": [
+        "libs/application/templates/accident-notification/src/index.ts"
       ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
@@ -222,6 +224,9 @@
         "libs/clients/document-provider/src/index.ts"
       ],
       "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
+      "@island.is/clients/driving-license": [
+        "libs/clients/driving-license/src/index.ts"
+      ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
@@ -234,6 +239,9 @@
         "libs/clients/national-registry/v2/src/index.ts"
       ],
       "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
+      "@island.is/clients/payment-schedule": [
+        "libs/clients/payment-schedule/src/index.ts"
+      ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
@@ -241,6 +249,8 @@
       "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
+      "@island.is/cms": ["libs/cms/src/index.ts"],
+      "@island.is/cms-translations": ["libs/cms-translations/src/index.ts"],
       "@island.is/content-search-index-manager": [
         "libs/content-search-index-manager/src/index.ts"
       ],
@@ -317,6 +327,8 @@
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
+      "@island.is/regulations": ["libs/regulations/src/index.ts"],
+      "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],
@@ -386,20 +398,20 @@
       "@island.is/service-portal/settings/personal-information": [
         "libs/service-portal/settings/personal-information/src/index.ts"
       ],
+      "@island.is/service-portal/wip": ["libs/service-portal/wip/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
       "@island.is/shared/table": ["libs/shared/table/src/index.ts"],
       "@island.is/shared/types": ["libs/shared/types/src/index.ts"],
+      "@island.is/shared/utils": ["libs/shared/utils/src/index.ts"],
+      "@island.is/shared/utils/server": ["libs/shared/utils/src/server.ts"],
       "@island.is/skilavottord-web/*": ["apps/skilavottord/web/*"],
       "@island.is/skilavottord/consts": [
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
-      "@island.is/utils/api": ["libs/utils/api/src/index.ts"],
-      "@island.is/utils/environment": ["libs/utils/environment/src/index.ts"],
-      "@island.is/utils/shared": ["libs/utils/shared/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }

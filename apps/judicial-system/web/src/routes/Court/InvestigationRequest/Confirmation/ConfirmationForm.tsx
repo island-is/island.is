@@ -1,4 +1,5 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   CaseNumbers,
@@ -8,21 +9,29 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, CaseAppealDecision } from '@island.is/judicial-system/types'
-import { formatDate, NounCases } from '@island.is/judicial-system/formatters'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './Confirmation.treat'
+import {
+  Case,
+  CaseAppealDecision,
+  User,
+} from '@island.is/judicial-system/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
+import { icConfirmation } from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as styles from './Confirmation.treat'
 
 interface Props {
   workingCase: Case
+  user: User
   isLoading: boolean
   handleNextButtonClick: () => void
 }
 
 const Confirmation: React.FC<Props> = (props) => {
-  const { workingCase, isLoading, handleNextButtonClick } = props
+  const { workingCase, user, isLoading, handleNextButtonClick } = props
+  const { formatMessage } = useIntl()
+
   return (
     <>
       <FormContentContainer>
@@ -103,8 +112,9 @@ const Confirmation: React.FC<Props> = (props) => {
           </Box>
           <Box marginBottom={1}>
             <Text>
-              Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð
-              þennan til Landsréttar innan þriggja sólarhringa.
+              {formatMessage(
+                icConfirmation.sections.accusedAppealDecision.disclaimer,
+              )}
             </Text>
           </Box>
           <Box marginBottom={1}>
@@ -161,9 +171,16 @@ const Confirmation: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
+          nextUrl={Constants.REQUEST_LIST_ROUTE}
           nextIsLoading={isLoading}
           nextButtonText="Staðfesta og hefja undirritun"
           onNextButtonClick={handleNextButtonClick}
+          hideNextButton={workingCase.judge?.id !== user?.id}
+          infoBoxText={
+            workingCase.judge?.id !== user?.id
+              ? 'Einungis skráður dómari getur undirritað úrskurð'
+              : undefined
+          }
         />
       </FormContentContainer>
     </>

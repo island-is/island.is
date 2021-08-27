@@ -1,54 +1,49 @@
-import React, { useContext } from 'react'
-import {
-  Logo,
-  Text,
-  Box,
-  Button,
-  GridContainer,
-  Link,
-} from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
+import React from 'react'
+import { Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './Files.treat'
 import cn from 'classnames'
 import { calcDifferenceInDate, getFileType } from '../../utils/formHelper'
+import { ApplicationFile } from '@island.is/financial-aid/shared'
 
 interface Props {
   heading?: string
-  filesArr?: [string]
+  className?: string
+  filesArray?: ApplicationFile[]
 }
 
-const Files: React.FC<Props> = ({ heading, filesArr }) => {
-  const router = useRouter()
-  // const { isAuthenticated, setUser, user } = useContext(UserContext)
-
+const Files = ({ heading, className, filesArray }: Props) => {
   return (
-    <Box>
+    <Box className={cn({ [`${className}`]: true })} marginBottom={2}>
       {' '}
-      <Text variant="eyebrow" marginBottom={1}>
+      <Text variant="eyebrow" marginBottom={2}>
         {heading}
       </Text>
-      {filesArr && (
+      {filesArray && (
         <>
-          {filesArr.map((item) => {
+          {filesArray.map((item, index) => {
+            let sizeInKilo = Math.floor(item.size / 1000)
+
             return (
               <a
-                href={item}
+                key={'file-' + index}
+                href={item.name}
                 target="_blank"
+                rel="noreferrer noopener"
                 className={styles.filesLink}
-                // download
+                download
               >
                 <div className={styles.container}>
                   <div className={styles.type}>
                     <Text color="dark300" fontWeight="semiBold" variant="small">
-                      {getFileType(item)}
+                      {getFileType(item.name)}
                     </Text>
                   </div>
                   <div className={styles.name}>
-                    <Text variant="small">{item}</Text>
+                    <Text variant="small">{item.name}</Text>
                   </div>
-                  <Text variant="small">Skjal • 184 KB</Text>
-                  <Text variant="small">45 mínútur</Text>
+                  <Text variant="small">{`Skjal • ${sizeInKilo} KB`}</Text>
+                  <Text variant="small"> {`${item.created}`}</Text>
                 </div>
               </a>
             )

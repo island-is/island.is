@@ -1,18 +1,15 @@
-import React, { useEffect, useState, useContext, useReducer } from 'react'
-import {
-  LoadingDots,
-  Text,
-  Box,
-  Button,
-  Divider,
-} from '@island.is/island-ui/core'
+import React, { useEffect, useState, useMemo } from 'react'
+import { LoadingDots, Text, Box, Divider } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 import * as styles from './application.treat'
-import cn from 'classnames'
 
 import { useQuery } from '@apollo/client'
-import { GetApplicantyQuery } from '../../../graphql/sharedGql'
+import {
+  GetApplicationQuery,
+  GetMunicipalityQuery,
+} from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+
 import {
   Application,
   getHomeCircumstances,
@@ -20,46 +17,143 @@ import {
   getEmploymentStatus,
   Employment,
   insertAt,
+  ApplicationState,
+  getState,
+  Municipality,
+  aidCalculator,
+  months,
+  calculateAidFinalAmount,
+  formatPhoneNumber,
 } from '@island.is/financial-aid/shared'
+
 import format from 'date-fns/format'
 
-import { calcDifferenceInDate, calcAge } from '../../utils/formHelper'
+import {
+  calcDifferenceInDate,
+  calcAge,
+  getTagByState,
+} from '@island.is/financial-aid-web/veita/src/utils/formHelper'
+
+import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 
 import {
   GeneratedProfile,
   GenerateName,
   Profile,
   Files,
-} from '../../components'
+  AdminLayout,
+  StateModal,
+  AidAmountModal,
+  History,
+  Button,
+} from '@island.is/financial-aid-web/veita/src/components'
+
+import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
 interface ApplicantData {
   application: Application
 }
 
+interface MunicipalityData {
+  municipality: Municipality
+}
+
 const ApplicationProfile = () => {
   const router = useRouter()
 
-  const { data, error, loading } = useQuery<ApplicantData>(GetApplicantyQuery, {
-    variables: { input: { id: router.query.id } },
+  const [isStateModalVisible, setStateModalVisible] = useState(false)
+
+  const [isAidModalVisible, setAidModalVisible] = useState(false)
+
+  const [prevUrl, setPrevUrl] = useState<NavigationElement | undefined>()
+
+  const findPrevUrl = (
+    state: ApplicationState,
+  ): React.SetStateAction<NavigationElement | undefined> => {
+    return navigationItems.find((i) => i.applicationState.includes(state))
+  }
+
+  const { data, error, loading } = useQuery<ApplicantData>(
+    GetApplicationQuery,
+    {
+      variables: { input: { id: router.query.id } },
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
+
+  const {
+    data: dataMunicipality,
+    loading: municipalityLoading,
+  } = useQuery<MunicipalityData>(GetMunicipalityQuery, {
+    variables: { input: { id: 'hfj' } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  if (data?.application) {
-    const applicationArr = [
+  const [application, setApplication] = useState<Application>()
+
+  const aidAmount = useMemo(() => {
+    if (application && dataMunicipality && application.homeCircumstances) {
+      return aidCalculator(
+        application.homeCircumstances,
+        dataMunicipality?.municipality.settings.aid,
+      )
+    }
+  }, [application, dataMunicipality])
+
+  useEffect(() => {
+    if (data?.application) {
+      setApplication(data.application)
+
+      setPrevUrl(findPrevUrl(data.application.state))
+    }
+  }, [data])
+
+  const currentYear = format(new Date(), 'yyyy')
+
+  if (application) {
+    const applicationInfo = [
       {
         title: 'Tímabil',
-        content: format(new Date(data.application.created), 'MM y'),
+        content:
+          months[parseInt(format(new Date(application.created), 'M'))] +
+          format(new Date(application.created), ' y'),
       },
       {
         title: 'Sótt um',
-        content: format(new Date(data.application.created), 'dd.MM.y  · kk:mm'),
+        content: format(new Date(application.created), 'dd.MM.y  · kk:mm'),
       },
       {
         title: 'Sótt um',
-        content: '198.900 kr.',
+        content: `${
+          aidAmount &&
+          calculateAidFinalAmount(
+            aidAmount,
+            application.usePersonalTaxCredit,
+            currentYear,
+          ).toLocaleString('de-DE')
+        } kr.`,
+        onclick: () => {
+          setAidModalVisible(!isAidModalVisible)
+        },
       },
     ]
+
+    if (application.state === ApplicationState.APPROVED) {
+      applicationInfo.push({
+        title: 'Veitt',
+        content: `${application.amount?.toLocaleString('de-DE')} kr.`,
+      })
+    }
+    if (application.state === ApplicationState.REJECTED) {
+      applicationInfo.push({
+        title: 'Aðstoð synjað',
+        content: application?.rejection
+          ? application?.rejection
+          : 'enginn ástæða gefin',
+      })
+    }
 
     const applicant = [
       {
@@ -68,16 +162,12 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Aldur',
-        content: calcAge(data.application.nationalId) + ' ára',
+        content: calcAge(application.nationalId) + ' ára',
       },
       {
         title: 'Kennitala',
         content:
-          insertAt(data.application.nationalId.replace('-', ''), '-', 6) || '-',
-      },
-      {
-        title: '',
-        content: '',
+          insertAt(application.nationalId.replace('-', ''), '-', 6) || '-',
       },
       {
         title: 'Netfang',
@@ -86,10 +176,8 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Sími',
-        content:
-          insertAt(data.application.phoneNumber.replace('-', ''), '-', 3) ||
-          '-',
-        link: 'tel:' + data.application.phoneNumber,
+        content: formatPhoneNumber(application.phoneNumber),
+        link: 'tel:' + application.phoneNumber,
       },
       {
         title: 'Bankareikningur',
@@ -103,6 +191,10 @@ const ApplicationProfile = () => {
       {
         title: 'Nota persónuafslátt',
         content: data?.application.usePersonalTaxCredit ? 'Já' : 'Nei',
+      },
+      {
+        title: 'Ríkisfang',
+        content: 'Ísland',
       },
     ]
 
@@ -127,132 +219,212 @@ const ApplicationProfile = () => {
         title: 'Búsetuform',
         content:
           getHomeCircumstances[
-            data.application.homeCircumstances as HomeCircumstances
+            application.homeCircumstances as HomeCircumstances
           ],
-        other: data.application.homeCircumstancesCustom,
+        other: application.homeCircumstancesCustom,
       },
       {
         title: 'Atvinna',
-        content: getEmploymentStatus[data.application.employment as Employment],
-        other: data.application.employmentCustom,
+        content: getEmploymentStatus[application.employment as Employment],
+        other: application.employmentCustom,
+      },
+      {
+        title: 'Lánshæft nám',
+        content: application.student ? 'Já' : 'Nei',
+        other: application.studentCustom,
       },
       {
         title: 'Hefur haft tekjur',
-        content: data.application.hasIncome ? 'Já' : 'Nei',
+        content: application.hasIncome ? 'Já' : 'Nei',
       },
       {
-        title: 'Ríkisfang',
-        content: 'Ísland',
+        title: 'Athugasemd',
+        other: application.formComment,
       },
     ]
 
-    const filesTest = ['/lokaprof2021.docx', '/hengill_ultra_reglur_2021.pdf']
-
     return (
-      <Box marginY={10}>
-        <Box>
-          <Button
-            colorScheme="default"
-            iconType="filled"
-            onClick={() => {
-              router.push('/')
-            }}
-            preTextIcon="arrowBack"
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="text"
-          >
-            Í vinnslu
-          </Button>
-        </Box>
-
+      <AdminLayout>
         <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="center"
-          width="full"
-          paddingY={3}
+          marginTop={10}
+          marginBottom={15}
+          className={`${styles.applicantWrapper}`}
         >
-          <Box display="flex" alignItems="center">
-            <Box marginRight={2}>
-              <GeneratedProfile size={48} />
+          <Box className={`contentUp   ${styles.widtAlmostFull} `}>
+            <Box
+              marginBottom={3}
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              width="full"
+            >
+              {prevUrl && (
+                <Button
+                  colorScheme="default"
+                  iconType="filled"
+                  onClick={() => {
+                    router.push(prevUrl.link)
+                  }}
+                  preTextIcon="arrowBack"
+                  preTextIconType="filled"
+                  size="small"
+                  type="button"
+                  variant="text"
+                >
+                  Til baka
+                </Button>
+              )}
+
+              {application.state && (
+                <div className={`tags ${getTagByState(application.state)}`}>
+                  {getState[application.state]}
+                </div>
+              )}
             </Box>
 
-            <Text as="h2" variant="h1">
-              {GenerateName(data.application.nationalId)}
-            </Text>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              width="full"
+              paddingY={3}
+            >
+              <Box display="flex" alignItems="center">
+                <Box marginRight={2}>
+                  <GeneratedProfile
+                    size={48}
+                    nationalId={application.nationalId}
+                  />
+                </Box>
+
+                <Text as="h2" variant="h1">
+                  {GenerateName(application.nationalId)}
+                </Text>
+              </Box>
+
+              <Button
+                colorScheme="default"
+                icon="pencil"
+                iconType="filled"
+                onClick={() => {
+                  setStateModalVisible(!isStateModalVisible)
+                }}
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="ghost"
+              >
+                Breyta stöðu
+              </Button>
+            </Box>
+
+            <Divider />
+
+            <Box display="flex" marginBottom={8} marginTop={4}>
+              <Box marginRight={1}>
+                <Text variant="small" fontWeight="semiBold" color="dark300">
+                  Aldur umsóknar
+                </Text>
+              </Box>
+              <Text variant="small">
+                {calcDifferenceInDate(application.created)}
+              </Text>
+            </Box>
           </Box>
 
-          <Button
-            colorScheme="default"
-            icon="pencil"
-            iconType="filled"
-            onClick={function noRefCheck() {}}
-            preTextIconType="filled"
-            size="default"
-            type="button"
-            variant="primary"
-          >
-            Ný umsókn
-          </Button>
+          <Profile
+            heading="Umsókn"
+            info={applicationInfo}
+            className={`contentUp delay-50`}
+          />
+          <Profile
+            heading="Umsækjandi"
+            info={applicant}
+            className={`contentUp delay-75`}
+          />
+          <Profile
+            heading="Aðrar upplýsingar"
+            info={applicantMoreInfo}
+            className={`contentUp delay-100`}
+          />
+          <>
+            <Box
+              marginBottom={[2, 2, 3]}
+              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+            >
+              <Text as="h2" variant="h3" color="dark300">
+                Gögn frá umsækjanda
+              </Text>
+            </Box>
+            <Files
+              heading="Skattframtal"
+              filesArray={application.files}
+              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+            />
+          </>
+
+          <History />
         </Box>
 
-        <Box width="full" marginBottom={4}>
-          <Divider />
-        </Box>
-        <Box display="flex" marginBottom={8}>
-          <Box marginRight={1}>
-            <Text variant="small" fontWeight="semiBold" color="dark300">
-              Aldur umsóknar
-            </Text>
-          </Box>
-          <Text variant="small">
-            {calcDifferenceInDate(data.application.created)}
-          </Text>
-        </Box>
+        {application.state && (
+          <StateModal
+            isVisible={isStateModalVisible}
+            onVisiblityChange={(isVisibleBoolean) => {
+              setStateModalVisible(isVisibleBoolean)
+            }}
+            onStateChange={(applicationState: ApplicationState) => {
+              setApplication({
+                ...application,
+                state: applicationState,
+              })
+            }}
+            application={application}
+          />
+        )}
 
-        <Profile heading="Umsókn" info={applicationArr} />
-        <Profile heading="Umsækjandi" info={applicant} />
-        <Profile heading="Aðrar upplýsingar" info={applicantMoreInfo} />
-
-        <>
-          <Text as="h2" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
-            Gögn frá umsækjanda
-          </Text>
-          <Files heading="Tekjugögn" filesArr={filesTest} />
-        </>
-      </Box>
+        {aidAmount && (
+          <AidAmountModal
+            aidAmount={aidAmount}
+            usePersonalTaxCredit={application.usePersonalTaxCredit}
+            isVisible={isAidModalVisible}
+            onVisiblityChange={(isVisibleBoolean) => {
+              setAidModalVisible(isVisibleBoolean)
+            }}
+          />
+        )}
+      </AdminLayout>
     )
   }
   if (loading) {
-    return <LoadingDots />
-  } else {
     return (
-      <div className="">
-        <Box>
-          <Button
-            colorScheme="default"
-            iconType="filled"
-            onClick={() => {
-              router.push('/')
-            }}
-            preTextIcon="arrowBack"
-            preTextIconType="filled"
-            size="small"
-            type="button"
-            variant="text"
-          >
-            Í vinnslu
-          </Button>
-        </Box>
-        <Text color="red400" fontWeight="semiBold" marginTop={4}>
-          Abbabab Notendi ekki fundinn, fara tilbaka og reyndu vinsamlegast
-          aftur{' '}
-        </Text>
-      </div>
+      <AdminLayout>
+        <LoadingDots />
+      </AdminLayout>
     )
   }
+  return (
+    <AdminLayout>
+      <Box>
+        <Button
+          colorScheme="default"
+          iconType="filled"
+          onClick={() => {
+            router.push('/')
+          }}
+          preTextIcon="arrowBack"
+          preTextIconType="filled"
+          size="small"
+          type="button"
+          variant="text"
+        >
+          Í vinnslu
+        </Button>
+      </Box>
+      <Text color="red400" fontWeight="semiBold" marginTop={4}>
+        Abbabab Notendi ekki fundinn, farðu tilbaka og reyndu vinsamlegast aftur{' '}
+      </Text>
+    </AdminLayout>
+  )
 }
 
 export default ApplicationProfile

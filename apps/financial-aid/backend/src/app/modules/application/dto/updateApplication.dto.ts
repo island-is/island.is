@@ -1,10 +1,4 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsOptional,
-  IsBoolean,
-  IsEnum,
-} from 'class-validator'
+import { IsNotEmpty, IsString, IsOptional, IsNumber } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -15,4 +9,14 @@ export class UpdateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly state: ApplicationState
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty()
+  readonly amount: number
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly rejection: string
 }

@@ -43,8 +43,14 @@ export const slices = gql`
     __typename
     id
     title
+    variant
     description
     inputLabel
+    fullNameLabel
+    questionLabel
+    yesLabel
+    noLabel
+    disclaimerLabel
     buttonText
     signupUrl
   }
@@ -416,6 +422,7 @@ export const slices = gql`
     title
     type
     accordionItems {
+      id
       title
       content {
         ...HtmlFields
@@ -454,6 +461,24 @@ export const slices = gql`
     }
   }
 
+  fragment EventSliceFields on EventSlice {
+    __typename
+    id
+    title
+    subtitle
+    date
+    link {
+      text
+      url
+    }
+    backgroundImage {
+      title
+      url
+      width
+      height
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -483,6 +508,7 @@ export const slices = gql`
     ...OneColumnTextFields
     ...AccordionSliceFields
     ...OverviewLinksField
+    ...EventSliceFields
   }
 
   fragment AllSlices on Slice {

@@ -1,4 +1,4 @@
-import { Args, Query, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -7,15 +7,20 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { DrivingLicenseService } from '../drivingLicense.service'
-import { DrivingLicense } from './drivingLicense.model'
-import { DrivingLicenseType } from './drivingLicenseType.model'
-import { PenaltyPointStatus } from './penaltyPointStatus.model'
-import { HasTeachingRights } from './hasTeachingRights.model'
-import { StudentInformationResult } from './studentInformationResult.model'
-import { ApplicationEligibility } from './applicationEligibility.model'
-import { Juristiction } from './juristiction.model'
+export * from '@island.is/nest/audit'
+import {
+  DrivingLicense,
+  DrivingLicenseType,
+  PenaltyPointStatus,
+  HasTeachingRights,
+  StudentInformationResult,
+  ApplicationEligibility,
+  Juristiction,
+  DrivingLicenseDeprevationType,
+  DrivingLicenseRemarkType,
+  QualityPhoto,
+} from './models'
 import { AuditService } from '@island.is/nest/audit'
-import { StudentInformation } from '../drivingLicense.type'
 
 const namespace = '@island.is/api/driving-license'
 
@@ -40,17 +45,17 @@ export class MainResolver {
     )
   }
 
-  @Query(() => [DrivingLicenseType])
+  @Query(() => [DrivingLicenseDeprevationType])
   drivingLicenseDeprivationTypes() {
     return this.drivingLicenseService.getDeprivationTypes()
   }
 
   @Query(() => [DrivingLicenseType])
   drivingLicenseEntitlementTypes() {
-    return this.drivingLicenseService.getEntitlementTypes()
+    return this.drivingLicenseService.getDrivingLicenseTypes()
   }
 
-  @Query(() => [DrivingLicenseType])
+  @Query(() => [DrivingLicenseRemarkType])
   drivingLicenseRemarkTypes() {
     return this.drivingLicenseService.getRemarkTypes()
   }
@@ -116,5 +121,10 @@ export class MainResolver {
   @Query(() => [Juristiction])
   drivingLicenseListOfJuristictions() {
     return this.drivingLicenseService.getListOfJuristictions()
+  }
+
+  @Query(() => QualityPhoto)
+  qualityPhoto(@CurrentUser() user: User) {
+    return this.drivingLicenseService.getQualityPhoto(user.nationalId)
   }
 }

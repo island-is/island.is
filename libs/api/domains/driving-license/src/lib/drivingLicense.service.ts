@@ -10,154 +10,220 @@ import {
   NewDrivingLicenseInput,
   NewDrivingLicenseResult,
   NewDrivingAssessmentResult,
+  DeprevationType,
+  RemarkType,
+  RequirementKey,
+  ApplicationEligibility,
+  DrivingLicenseCategory,
+  NeedsHealhCertificate,
+  QualityPhotoResult,
+  NeedsQualityPhoto,
 } from './drivingLicense.type'
-import { DrivingLicenseApi, DrivingLicenseResponse } from './client'
-import { DRIVING_ASSESSMENT_MAX_AGE } from './util/constants'
-import { RequirementKey } from './graphql/applicationEligibilityRequirement.model'
-import { ApplicationEligibility } from './graphql/applicationEligibility.model'
+import {
+  AkstursmatDto,
+  EmbaettiDto,
+  HefurLokidOkugerdiDto,
+  OkuskirteiniApi,
+  Rettindi,
+  TegSviptingaDto,
+  TegundAthugasemdaDto,
+  TegundRettindaDto,
+} from '@island.is/clients/driving-license'
+import {
+  DRIVING_ASSESSMENT_MAX_AGE,
+  DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE,
+  LICENSE_RESPONSE_API_VERSION,
+} from './util/constants'
 
 @Injectable()
 export class DrivingLicenseService {
-  constructor(private readonly drivingLicenseApi: DrivingLicenseApi) {}
+  constructor(private readonly drivingLicenseApi: OkuskirteiniApi) {}
 
-  async getDrivingLicense(
-    nationalId: User['nationalId'],
-  ): Promise<DrivingLicense | null> {
-    const drivingLicenses = await this.drivingLicenseApi.getDrivingLicenses(
-      nationalId,
-    )
+  private async getLicense(nationalId: string): Promise<DrivingLicense | null> {
+    const drivingLicense = await this.drivingLicenseApi.getCurrentLicense({
+      kennitala: nationalId,
+      // apiVersion header indicates that this method will return a single license, rather
+      // than an array
+      apiVersion: LICENSE_RESPONSE_API_VERSION,
+    })
 
-    if (drivingLicenses.length <= 0) {
+    if (!drivingLicense) {
       return null
     }
 
-    drivingLicenses.sort(
-      (a: DrivingLicenseResponse, b: DrivingLicenseResponse) =>
-        new Date(b.utgafuDagsetning).getTime() -
-        new Date(a.utgafuDagsetning).getTime(),
-    )
-    const activeDrivingLicense = {
-      ...drivingLicenses[0],
-    }
-
+    // Pretty sure none of these fallbacks can get triggered, since if the service
+    // finds a driver's license, it's going to have the values. - this is mostly to
+    // appease the type system, since the downstream type is actually wrong.
     return {
-      id: activeDrivingLicense.id,
-      name: activeDrivingLicense.nafn,
-      issued: activeDrivingLicense.utgafuDagsetning,
-      expires: activeDrivingLicense.gildirTil,
-      isProvisional: activeDrivingLicense.erBradabirgda,
-      eligibilities: activeDrivingLicense.rettindi.map((eligibility) => ({
-        id: eligibility.nr.trim(),
-        issued: eligibility.utgafuDags,
-        expires: eligibility.gildirTil,
-        comment: eligibility.aths,
-      })),
+      id: drivingLicense.id as number,
+      name: drivingLicense.nafn as string,
+      issued: drivingLicense.utgafuDagsetning,
+      expires: drivingLicense.gildirTil,
+      isProvisional: undefined,
+      eligibilities: (drivingLicense.rettindi as Rettindi[]).map(
+        (eligibility: Rettindi) => ({
+          id: eligibility?.nr?.trim() || '',
+          issued: eligibility.utgafuDags,
+          expires: eligibility.gildirTil,
+          comment: eligibility.aths as string,
+        }),
+      ),
     }
+  }
+
+  getDrivingLicense(
+    nationalId: User['nationalId'],
+  ): Promise<DrivingLicense | null> {
+    return this.getLicense(nationalId)
   }
 
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    const drivingLicenses = await this.drivingLicenseApi.getDrivingLicenses(
-      nationalId,
-    )
+    const drivingLicense = await this.getLicense(nationalId)
 
-    if (drivingLicenses.length <= 0) {
+    if (!drivingLicense) {
       return null
     }
 
-    drivingLicenses.sort(
-      (a: DrivingLicenseResponse, b: DrivingLicenseResponse) =>
-        new Date(b.utgafuDagsetning).getTime() -
-        new Date(a.utgafuDagsetning).getTime(),
-    )
+    const expiryDate = drivingLicense.expires
 
-    const activeDrivingLicense = {
-      ...drivingLicenses[0],
-    }
-
-    const expiryDate = new Date(activeDrivingLicense.gildirTil)
-
-    if (!activeDrivingLicense.erBradabirgda || expiryDate < new Date()) {
+    if (!expiryDate || expiryDate < new Date()) {
       return null
     }
 
     return {
-      name: activeDrivingLicense.nafn,
+      name: drivingLicense.name,
     }
   }
 
-  async getDeprivationTypes(): Promise<DrivingLicenseType[]> {
-    const types = await this.drivingLicenseApi.getDeprivationTypes()
-    return types.map((type) => ({
-      id: type.id.toString(),
-      name: type.heiti,
-    }))
+  async getDeprivationTypes(): Promise<DeprevationType[]> {
+    const types = await this.drivingLicenseApi.apiOkuskirteiniTegundirsviptingaGet(
+      {},
+    )
+
+    return types.map(
+      (type: TegSviptingaDto) =>
+        ({
+          id: type.id,
+          name: type.heiti,
+        } as DeprevationType),
+    )
   }
 
-  async getEntitlementTypes(): Promise<DrivingLicenseType[]> {
-    const types = await this.drivingLicenseApi.getEntitlementTypes()
-    return types.map((type) => ({
-      id: type.nr.trim(),
-      name: type.heiti || '',
-    }))
+  async getDrivingLicenseTypes(): Promise<DrivingLicenseType[]> {
+    const types = await this.drivingLicenseApi.apiOkuskirteiniTegundirrettindaGet(
+      {},
+    )
+
+    return types.map(
+      (type: TegundRettindaDto) =>
+        ({
+          id: type.nr,
+          name: type.heiti,
+        } as DrivingLicenseType),
+    )
   }
 
-  async getRemarkTypes(): Promise<DrivingLicenseType[]> {
-    const types = await this.drivingLicenseApi.getRemarkTypes()
-    return types.map((type) => ({
-      id: type.nr,
-      name: type.heiti,
-    }))
+  async getRemarkTypes(): Promise<RemarkType[]> {
+    const types = await this.drivingLicenseApi.apiOkuskirteiniTegundirathugasemdaGet(
+      {},
+    )
+
+    return types.map(
+      (type: TegundAthugasemdaDto) =>
+        ({
+          id: parseInt(type?.nr as string, 10),
+          remark: type.athugasemd,
+          name: type.heiti,
+          description: type.lysing,
+          // TODO: I have no idea what this even is
+          for: type.giltFyrir,
+        } as RemarkType),
+    )
   }
 
   async getPenaltyPointStatus(
     nationalId: User['nationalId'],
   ): Promise<PenaltyPointStatus> {
-    const status = await this.drivingLicenseApi.getPenaltyPointStatus(
-      nationalId,
+    const status = await this.drivingLicenseApi.apiOkuskirteiniPunktastadaKennitalaGet(
+      {
+        kennitala: nationalId,
+      },
     )
+
     return {
       nationalId,
-      isPenaltyPointsOk: status.iLagi,
+      // TODO: fix
+      // return type is wrong in open api doc
+      isPenaltyPointsOk: status.iLagi as boolean,
     }
   }
 
   async getTeachingRights(
     nationalId: User['nationalId'],
   ): Promise<TeachingRightsStatus> {
-    const status = await this.drivingLicenseApi.getTeachingRights(nationalId)
-
+    const statusStr = ((await this.drivingLicenseApi.apiOkuskirteiniHasteachingrightsKennitalaGet(
+      {
+        kennitala: nationalId,
+      },
+    )) as unknown) as string
+    // API says number, type says number, but deserialization happens with a text
+    // deserializer (runtime.TextApiResponse).
+    // Seems to be an outstanding bug? or I have no idea what I'm doing
+    // See https://github.com/OpenAPITools/openapi-generator/issues/2870
+    const status = parseInt(statusStr, 10)
     return {
       nationalId,
-      hasTeachingRights: status.value > 0,
+      hasTeachingRights: status > 0,
     }
   }
 
   async getListOfJuristictions(): Promise<Juristiction[]> {
-    const embaetti = await this.drivingLicenseApi.getListOfJuristictions()
+    const embaetti = await this.drivingLicenseApi.apiOkuskirteiniEmbaettiGet({})
 
-    return embaetti.map(({ nr, postnumer, nafn }) => ({
-      id: nr,
-      zip: postnumer,
-      name: nafn,
+    return embaetti.map(({ nr, postnumer, nafn }: EmbaettiDto) => ({
+      id: nr || 0,
+      zip: postnumer || 0,
+      name: nafn || '',
     }))
+  }
+
+  private async getDrivingAssessmentResult(
+    nationalId: string,
+  ): Promise<AkstursmatDto | null> {
+    try {
+      return await this.drivingLicenseApi.apiOkuskirteiniSaekjaakstursmatKennitalaGet(
+        {
+          kennitala: nationalId,
+        },
+      )
+    } catch (e) {
+      if (e.status === 404) {
+        return null
+      }
+
+      throw e
+    }
   }
 
   async getApplicationEligibility(
     nationalId: string,
     type: DrivingLicenseType['id'],
   ): Promise<ApplicationEligibility> {
-    const assessmentResult = await this.drivingLicenseApi.getDrivingAssessment(
-      nationalId,
+    const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
+    const hasFinishedSchoolResult: HefurLokidOkugerdiDto = await this.drivingLicenseApi.apiOkuskirteiniKennitalaFinishedokugerdiGet(
+      {
+        kennitala: nationalId,
+      },
     )
-    const hasFinishedSchoolResult = await this.drivingLicenseApi.hasFinishedSchool(
-      nationalId,
-    )
-    const canApplyResult = await this.drivingLicenseApi.canApplyFor(
-      nationalId,
-      type,
-    )
+
+    const canApplyResult = ((await this.drivingLicenseApi.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
+      {
+        kennitala: nationalId,
+        category: type,
+      },
+    )) as unknown) as string
 
     const requirements = [
       {
@@ -168,11 +234,11 @@ export class DrivingLicenseService {
       },
       {
         key: RequirementKey.drivingSchoolMissing,
-        requirementMet: !!hasFinishedSchoolResult.hefurLokidOkugerdi,
+        requirementMet: (hasFinishedSchoolResult.hefurLokidOkugerdi ?? 0) > 0,
       },
       {
         key: RequirementKey.deniedByService,
-        requirementMet: !!canApplyResult.value,
+        requirementMet: parseInt(canApplyResult, 10) > 0,
       },
     ]
 
@@ -191,10 +257,12 @@ export class DrivingLicenseService {
     studentNationalId: string,
     teacherNationalId: User['nationalId'],
   ): Promise<NewDrivingAssessmentResult> {
-    await this.drivingLicenseApi.newDrivingAssessment({
-      kennitala: studentNationalId,
-      kennitalaOkukennara: teacherNationalId,
-      dagsetningMats: new Date(),
+    await this.drivingLicenseApi.apiOkuskirteiniNewDrivingassesmentPost({
+      postNewDrivingAssessment: {
+        kennitala: studentNationalId,
+        kennitalaOkukennara: teacherNationalId,
+        dagsetningMats: new Date(),
+      },
     })
 
     return {
@@ -207,23 +275,59 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
     input: NewDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
-    const response = await this.drivingLicenseApi.newDrivingLicense({
-      authorityNumber: input.juristictionId,
-      needsToPresentHealthCertificate: input.needsToPresentHealthCertificate
-        ? 1
-        : 0,
-      personIdNumber: nationalId,
-    })
+    // TODO: insert the following into body
+    // needsToPresentQualityPhoto: input.needsToPresentQualityPhoto
+    // ? NeedsQualityPhoto.TRUE
+    // : NeedsQualityPhoto.FALSE,
+    const response: unknown = await this.drivingLicenseApi.apiOkuskirteiniApplicationsNewCategoryPost(
+      {
+        category: DrivingLicenseCategory.B,
+        postNewFinalLicense: {
+          authorityNumber: input.juristictionId,
+          needsToPresentHealthCertificate: input.needsToPresentHealthCertificate
+            ? NeedsHealhCertificate.TRUE
+            : NeedsHealhCertificate.FALSE,
+          personIdNumber: nationalId,
+        },
+      },
+    )
 
     // Service returns string on error, number on successful/not successful
-    const responseIsString = typeof response !== 'string'
-    const success = responseIsString && response === 1
+    const responseIsString = typeof response === 'string'
+    const success =
+      !responseIsString ||
+      response !== DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE
+    const errorMessage = responseIsString
+      ? (response as string)
+      : 'Result not 1 when creating license'
 
     return {
       success,
-      errorMessage: responseIsString
-        ? (response as string)
-        : 'Result not 1 when creating license',
+      errorMessage: success ? null : errorMessage,
+    }
+  }
+
+  async getQualityPhoto(
+    nationalId: User['nationalId'],
+  ): Promise<QualityPhotoResult> {
+    const result = await this.drivingLicenseApi.apiOkuskirteiniKennitalaHasqualityphotoGet(
+      {
+        kennitala: nationalId,
+      },
+    )
+    const image =
+      result > 0
+        ? await this.drivingLicenseApi.apiOkuskirteiniKennitalaGetqualityphotoGet(
+            {
+              kennitala: nationalId,
+            },
+          )
+        : null
+
+    return {
+      success: result > 0,
+      qualityPhoto: image,
+      errorMessage: null,
     }
   }
 }

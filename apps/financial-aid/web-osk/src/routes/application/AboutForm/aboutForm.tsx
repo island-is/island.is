@@ -2,8 +2,8 @@ import React from 'react'
 import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
 
@@ -24,7 +24,7 @@ const AboutForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={2}>
           Varðandi rétt til fjárhagsaðstoðar
         </Text>
@@ -37,7 +37,7 @@ const AboutForm = () => {
         <Box marginBottom={5}>
           <BulletList type={'ul'} space={2}>
             <Bullet>
-              Fjárhagsaðstoð sveitarfélaga er ætlað fólki sem er ekki með vinnu,
+              Fjárhagsaðstoð sveitarfélaga er ætluð fólki sem er ekki með vinnu,
               í óstyrkhæfu námi og hefur ekki rétt á örorkubótum.
             </Bullet>
             <Bullet>
@@ -91,12 +91,9 @@ const AboutForm = () => {
             </Bullet>
           </BulletList>
         </Box>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
-        previousUrl={navigation?.prevUrl}
-        nextUrl={navigation?.nextUrl}
-      />
+      <Footer previousUrl={navigation?.prevUrl} nextUrl={navigation?.nextUrl} />
     </FormLayout>
   )
 }

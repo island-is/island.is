@@ -73,6 +73,7 @@ export class DelegationsService {
     authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO[]> {
     try {
+      this.logger.info(`findAllWardsTo: -${auth.nationalId?.substring(6, 10)}`)
       const response = await this.personApi
         .withMiddleware(new AuthMiddleware(auth, authMiddlewareOptions))
         .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
@@ -177,7 +178,11 @@ export class DelegationsService {
     delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
     const person = await this.personApi
-      .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
+      .withMiddleware(
+        new AuthMiddleware(user, {
+          forwardUserInfo: authMiddlewareOptions.forwardUserInfo,
+        }),
+      )
       .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
         id: user.nationalId,
         xRoadClient: xRoadClient,

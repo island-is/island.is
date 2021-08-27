@@ -13,6 +13,8 @@ export const serviceSetup = (services: {
   service('endorsement-system-api')
     .image('services-endorsements-api')
     .namespace('endorsement-system')
+    .command('node')
+    .args('--tls-min-v1.0', 'main.js')
     .postgres(postgresInfo)
     .initContainer({
       containers: [
@@ -30,11 +32,13 @@ export const serviceSetup = (services: {
       ),
     })
     .secrets({
+      ACCESS_GROUP_DMR:
+        '/k8s/application-system/api/PARTY_LETTER_ASSIGNED_ADMINS',
       SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL',
       SOFFIA_SOAP_URL: '/k8s/endorsement-system-api/SOFFIA_SOAP_URL',
       SOFFIA_USER: settings.SOFFIA_USER,
       SOFFIA_PASS: settings.SOFFIA_PASS,
     })
-    .grantNamespaces('islandis')
+    .grantNamespaces('islandis', 'application-system')
     .liveness('/liveness')
     .readiness('/liveness')

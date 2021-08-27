@@ -1,9 +1,11 @@
 import React from 'react'
 import flatten from 'lodash/flatten'
 import { gql, useQuery } from '@apollo/client'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
 import { Table as T } from '@island.is/island-ui/core'
+import subYears from 'date-fns/subYears'
 import { Query } from '@island.is/api/schema'
+import { defineMessage } from 'react-intl'
 import {
   Box,
   Text,
@@ -16,21 +18,17 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../lib/messages'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
 import { ExpandHeader, ExpandRow } from '../../components/ExpandableTable'
 import amountFormat from '../../utils/amountFormat'
-import { greidsluStadaHeaders } from '../../utils/dataHeaders'
-import {
-  exportGreidslustadaCSV,
-  exportGreidslustadaXSLX,
-} from '../../utils/filesGreidslustada'
+import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
+import { showAnnualStatusDocument } from '@island.is/service-portal/graphql'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import DisabledItem from '../../components/DropdownExport/DisabledItem'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
-import { downloadXlsxDocument } from '@island.is/service-portal/graphql'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -41,7 +39,11 @@ const GetFinanceStatusQuery = gql`
 const FinanceStatus: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
-  const { downloadSheet } = downloadXlsxDocument()
+  const {
+    showAnnualStatusPdf,
+    loadingAnnualPDF,
+    fetchingYearPDF,
+  } = showAnnualStatusDocument()
 
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
@@ -62,6 +64,14 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
     return amountFormat(chargeTypeTotal)
   }
 
+  const endOfYearMessage = defineMessage({
+    id: 'sp.finance-status:end-of-year',
+    defaultMessage: 'Staða í lok árs {year}',
+    description: 'A welcome message',
+  })
+
+  const previousYear = subYears(new Date(), 1).getFullYear().toString()
+  const twoYearsAgo = subYears(new Date(), 2).getFullYear().toString()
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
@@ -77,7 +87,7 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
               {formatMessage({
                 id: 'sp.finance-status:intro',
                 defaultMessage:
-                  'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
+                  'Hér er að finna sundurliðun skulda og inneigna við ríkissjóð og stofnanir á þeim degi sem skoðað er.',
               })}
             </Text>
           </Column>
@@ -124,13 +134,50 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                   </Column>
                   <Column width="content">
                     <DropdownExport
-                      onGetCSV={() => exportGreidslustadaCSV(financeStatusData)}
-                      onGetExcel={() =>
-                        downloadSheet({
-                          headers: greidsluStadaHeaders,
-                          data: exportGreidslustadaXSLX(financeStatusData),
-                        })
+                      onGetCSV={() =>
+                        exportGreidslustadaFile(financeStatusData, 'csv')
                       }
+                      onGetExcel={() =>
+                        exportGreidslustadaFile(financeStatusData, 'xlsx')
+                      }
+                      dropdownItems={[
+                        {
+                          title: formatMessage(endOfYearMessage, {
+                            year: previousYear,
+                          }),
+                          onClick: () => showAnnualStatusPdf(previousYear),
+                          render:
+                            loadingAnnualPDF && fetchingYearPDF === previousYear
+                              ? () => (
+                                  <DisabledItem
+                                    title={formatMessage(endOfYearMessage, {
+                                      year: previousYear,
+                                    })}
+                                    loading
+                                    key={previousYear}
+                                  />
+                                )
+                              : undefined,
+                        },
+                        {
+                          title: formatMessage(endOfYearMessage, {
+                            year: twoYearsAgo,
+                          }),
+                          onClick: () => showAnnualStatusPdf(twoYearsAgo),
+                          render:
+                            loadingAnnualPDF && fetchingYearPDF === twoYearsAgo
+                              ? () => (
+                                  <DisabledItem
+                                    title={formatMessage(endOfYearMessage, {
+                                      year: twoYearsAgo,
+                                    })}
+                                    loading
+                                    key={twoYearsAgo}
+                                  />
+                                )
+                              : undefined,
+                        },
+                      ]}
                     />
                   </Column>
                 </Columns>
@@ -139,9 +186,9 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                 <T.Table>
                   <ExpandHeader
                     data={[
-                      formatMessage(m.feeCategory),
-                      formatMessage(m.guardian),
-                      formatMessage(m.status),
+                      { value: formatMessage(m.feeCategory) },
+                      { value: formatMessage(m.guardian) },
+                      { value: formatMessage(m.status), align: 'right' },
                     ]}
                   />
                   <T.Body>
@@ -157,7 +204,11 @@ const FinanceStatus: ServicePortalModuleComponent = () => {
                     )}
                     <ExpandRow
                       last
-                      data={[formatMessage(m.total), '', getChargeTypeTotal()]}
+                      data={[
+                        { value: formatMessage(m.total) },
+                        { value: '' },
+                        { value: getChargeTypeTotal(), align: 'right' },
+                      ]}
                     />
                   </T.Body>
                 </T.Table>

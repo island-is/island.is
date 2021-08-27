@@ -1,6 +1,4 @@
 import React, { FC, useState, useEffect } from 'react'
-import { boolean } from '@storybook/addon-knobs'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { Stack } from '../Stack/Stack'
@@ -11,7 +9,6 @@ import { AsyncSearch } from './AsyncSearch'
 export default {
   title: 'Components/AsyncSearch',
   component: AsyncSearch,
-  decorators: [withDesign],
   parameters: withFigma('AsyncSearch'),
 }
 
@@ -29,14 +26,10 @@ const items = [
 
 let timer: NodeJS.Timer | null = null
 
-export const Features: FC = () => {
+export const Features = ({ simulateAsync, colored, large }) => {
   const [options, setOptions] = useState(items)
   const [value, setValue] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
-
-  const simulateAsync = boolean('Simulate async', false)
-  const colored = boolean('Colored', false)
-  const large = boolean('Large', false)
 
   const update = (value: string) => {
     const newOpts = items.filter(
@@ -81,31 +74,32 @@ export const Features: FC = () => {
   )
 }
 
-export const OnSubmit: FC = () => {
-  return (
-    <Box padding={2}>
-      <Stack space={2}>
-        <AsyncSearch
-          filter
-          onSubmit={(inputValue, selectedOption) =>
-            window.alert('Submit ' + inputValue || selectedOption?.value + '!')
-          }
-          options={items}
-        />
-      </Stack>
-    </Box>
-  )
+Features.args = {
+  simulateAsync: false,
+  colored: false,
+  large: false,
 }
+
+export const OnSubmit: FC = () => (
+  <Box padding={2}>
+    <Stack space={2}>
+      <AsyncSearch
+        filter
+        onSubmit={(inputValue, selectedOption) =>
+          window.alert('Submit ' + inputValue || selectedOption?.value + '!')
+        }
+        options={items}
+      />
+    </Stack>
+  </Box>
+)
 
 interface ContainerProps {
   active?: boolean
   colored?: boolean
 }
 
-export const CustomItem: FC = () => {
-  const colored = boolean('Colored', false)
-  const large = boolean('Large', false)
-
+export const CustomItem = ({ colored, large }) => {
   const Container: React.FC<ContainerProps> = ({
     active,
     colored,
@@ -198,4 +192,9 @@ export const CustomItem: FC = () => {
       </Stack>
     </Box>
   )
+}
+
+CustomItem.args = {
+  colored: false,
+  large: false,
 }

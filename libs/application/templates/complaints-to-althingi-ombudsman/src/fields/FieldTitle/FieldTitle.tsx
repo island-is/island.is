@@ -7,6 +7,7 @@ type Props = FieldBaseProps & {
   field: {
     props: {
       marginTop?: ResponsiveSpace
+      marginBottom?: ResponsiveSpace
       required?: boolean
     }
   }
@@ -17,13 +18,13 @@ export const FieldTitle = ({ field, application }: Props) => {
   return (
     <>
       <Text
-        variant="h4"
+        variant="h2"
         marginTop={field.props.marginTop || 0}
-        marginBottom={field.description ? 1 : 0}
+        marginBottom={field.props.marginBottom || 0}
       >
         {formatText(field.title, application, formatMessage)}
         {field.props.required && (
-          <Text variant="h4" color="red400" as="span">
+          <Text variant="h2" color="red400" as="span">
             {' *'}
           </Text>
         )}
