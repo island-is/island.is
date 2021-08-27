@@ -158,6 +158,7 @@ export const Review: FC<ReviewScreenProps> = ({
             </GridColumn>
           </GridRow>
         }
+        triggerValidation
       >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -282,6 +283,7 @@ export const Review: FC<ReviewScreenProps> = ({
             )}
           </>
         }
+        triggerValidation
       >
         {otherParent === NO && (
           <RadioValue
@@ -479,6 +481,7 @@ export const Review: FC<ReviewScreenProps> = ({
             )}
           </>
         }
+        triggerValidation
       >
         <GridRow marginBottom={2}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -659,6 +662,7 @@ export const Review: FC<ReviewScreenProps> = ({
               )}
             </>
           }
+          triggerValidation
         >
           <GridRow marginBottom={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -817,6 +821,7 @@ export const Review: FC<ReviewScreenProps> = ({
               )}
             </>
           }
+          triggerValidation
         >
           <GridRow marginBottom={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -914,6 +919,7 @@ export const Review: FC<ReviewScreenProps> = ({
             )}
           </>
         }
+        triggerValidation
       >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
