@@ -23,20 +23,6 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmailTemplate
   const emailSubject = `Þú hefur samþykkt umsókn um fæðingarorlof (kt. starfsmanns ${application.applicant})`
   const subject = `Þú samþykktir umsókn um fæðingarorlof`
 
-  const formattedPeriods = periods.map((period) => {
-    const formattedPeriod = `${format(
-      new Date(period.startDate),
-      dateFormat.is,
-    )} til ${format(new Date(period.endDate), dateFormat.is)}`
-
-    return {
-      component: 'Copy',
-      context: {
-        copy: formattedPeriod,
-      },
-    }
-  }) as any[] // Typescript will complain that object is not of type ImageComponent | HeadingComponent | CopyComponent | ButtonComponent
-
   return {
     from: {
       name: email.sender,
@@ -85,7 +71,20 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmailTemplate
             }:`,
           },
         },
-        ...formattedPeriods,
+        {
+          component: 'Copy',
+          context: {
+            copy: periods
+              .map(
+                (period) =>
+                  `${format(
+                    new Date(period.startDate),
+                    dateFormat.is,
+                  )} til ${format(new Date(period.endDate), dateFormat.is)}`,
+              )
+              .join('<br/>'),
+          },
+        },
         { component: 'Copy', context: { copy: 'Með kveðju,' } },
         { component: 'Copy', context: { copy: 'Fæðingarorlofssjóður' } },
       ],
