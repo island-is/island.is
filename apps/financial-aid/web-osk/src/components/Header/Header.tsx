@@ -16,8 +16,7 @@ import { UserContext } from '@island.is/financial-aid-web/osk/src/components/Use
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/useLogOut'
 
 const Header = () => {
-  const router = useRouter()
-  const { isAuthenticated, setUser, user } = useContext(UserContext)
+  const { isAuthenticated, user } = useContext(UserContext)
 
   const logOut = useLogOut()
 
