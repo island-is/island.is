@@ -6,7 +6,6 @@ import {
   FormValue,
 } from '@island.is/application/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { ReviewGroup } from '@island.is/application/ui-components'
 import {
   AlertMessage,
   Box,
@@ -28,8 +27,6 @@ import {
   accidentType,
   applicantInformation,
   application as applicationMessages,
-  injuredPersonInformation,
-  juridicalPerson,
   locationAndPurpose,
   overview,
   sportsClubInfo,
@@ -39,13 +36,13 @@ import {
   isMachineRelatedAccident,
   isProfessionalAthleteAccident,
   isReportingOnBehalfOfEmployee,
-  isReportingOnBehalfOfInjured,
   returnMissingDocumentsList,
 } from '../../utils'
-import * as styles from './FormOverview.treat'
-import { FileValueLine, ValueLine } from './ValueLine'
+import * as styles from '../FormOverview/FormOverview.treat'
+import { FileValueLine, ValueLine } from '../FormOverview/ValueLine'
+import { ThirdPartyReviewGroup } from './ThirdPartyReviewGroup'
 
-export const FormOverview: FC<FieldBaseProps> = ({
+export const ThirdPartyFormOverview: FC<FieldBaseProps> = ({
   application,
   refetch,
   goToScreen,
@@ -53,8 +50,14 @@ export const FormOverview: FC<FieldBaseProps> = ({
   console.log(application)
   const answers = application.answers as AccidentNotification
   const { formatMessage } = useLocale()
-
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
+    SUBMIT_APPLICATION,
+    {
+      onError: (e) => console.error(e.message),
+    },
+  )
+
+  const [commentOnApplication, { loading: loadingCommentButton }] = useMutation(
     SUBMIT_APPLICATION,
     {
       onError: (e) => console.error(e.message),
@@ -88,17 +91,21 @@ export const FormOverview: FC<FieldBaseProps> = ({
   return (
     <Box component="section" paddingTop={2}>
       <Text>
-        {formatText(overview.general.description, application, formatMessage)}
-      </Text>
-
-      <Text variant="h4" paddingTop={10} paddingBottom={3}>
         {formatText(
-          applicantInformation.general.title,
+          overview.forThirdParty.description,
           application,
           formatMessage,
         )}
       </Text>
-      <ReviewGroup isLast editAction={() => null}>
+
+      <Text variant="h4" paddingTop={10} paddingBottom={3}>
+        {formatText(
+          applicantInformation.forThirdParty.title,
+          application,
+          formatMessage,
+        )}
+      </Text>
+      <ThirdPartyReviewGroup isEditable={false}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
@@ -141,75 +148,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
             </GridColumn>
           )}
         </GridRow>
-      </ReviewGroup>
-
-      {isReportingOnBehalfOfInjured(answers as FormValue) && (
-        <>
-          <Text variant="h4" paddingTop={6} paddingBottom={3}>
-            {formatText(
-              injuredPersonInformation.general.heading,
-              application,
-              formatMessage,
-            )}
-          </Text>
-          <ReviewGroup isLast editAction={() => null}>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
-                  label={injuredPersonInformation.labels.name}
-                  value={answers.injuredPersonInformation.name}
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
-                  label={injuredPersonInformation.labels.nationalId}
-                  value={answers.injuredPersonInformation.nationalId}
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
-                  label={injuredPersonInformation.labels.email}
-                  value={answers.injuredPersonInformation.email}
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
-                  label={injuredPersonInformation.labels.tel}
-                  value={answers.injuredPersonInformation.phoneNumber ?? ''}
-                />
-              </GridColumn>
-            </GridRow>
-          </ReviewGroup>
-        </>
-      )}
-
-      {isReportingOnBehalfOfEmployee(answers as FormValue) && (
-        <>
-          <Text variant="h4" paddingTop={6} paddingBottom={3}>
-            {formatText(
-              juridicalPerson.general.title,
-              application,
-              formatMessage,
-            )}
-          </Text>
-          <ReviewGroup isLast editAction={() => null}>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
-                  label={juridicalPerson.labels.companyName}
-                  value={answers.juridicalPerson.companyName}
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '6/12']}>
-                <ValueLine
-                  label={juridicalPerson.labels.companyNationalId}
-                  value={answers.juridicalPerson.companyNationalId}
-                />
-              </GridColumn>
-            </GridRow>
-          </ReviewGroup>
-        </>
-      )}
+      </ThirdPartyReviewGroup>
 
       {answers.locationAndPurpose && (
         <>
@@ -220,7 +159,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ThirdPartyReviewGroup isEditable={false}>
             <GridRow>
               <GridColumn span="12/12">
                 <ValueLine
@@ -235,7 +174,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
                 />
               </GridColumn>
             </GridRow>
-          </ReviewGroup>
+          </ThirdPartyReviewGroup>
         </>
       )}
 
@@ -248,7 +187,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
               formatMessage,
             )}
           </Text>
-          <ReviewGroup isLast editAction={() => null}>
+          <ThirdPartyReviewGroup isEditable={false}>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '6/12']}>
                 <ValueLine
@@ -276,7 +215,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   </GridColumn>
                 )}
             </GridRow>
-          </ReviewGroup>
+          </ThirdPartyReviewGroup>
 
           {answers.isRepresentativeOfCompanyOrInstitue?.toString() !== YES && (
             <>
@@ -287,7 +226,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   formatMessage,
                 )}
               </Text>
-              <ReviewGroup isLast editAction={() => null}>
+              <ThirdPartyReviewGroup isEditable={false}>
                 <GridRow>
                   <GridColumn span="12/12">
                     <ValueLine
@@ -308,7 +247,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
                     />
                   </GridColumn>
                 </GridRow>
-              </ReviewGroup>
+              </ThirdPartyReviewGroup>
             </>
           )}
         </>
@@ -321,7 +260,27 @@ export const FormOverview: FC<FieldBaseProps> = ({
           formatMessage,
         )}
       </Text>
-      <ReviewGroup isLast editAction={() => null}>
+      <ThirdPartyReviewGroup
+        editAction={
+          States.OVERVIEW === application.state
+            ? async () => {
+                const res = await commentOnApplication({
+                  variables: {
+                    input: {
+                      id: application.id,
+                      event: 'COMMENT',
+                    },
+                  },
+                })
+
+                if (res?.data) {
+                  // Takes them to the next state (which loads the relevant form)
+                  refetch?.()
+                }
+              }
+            : () => changeScreens('attachments.multifield')
+        }
+      >
         <GridRow>
           <GridColumn span="12/12">
             <ValueLine
@@ -405,7 +364,7 @@ export const FormOverview: FC<FieldBaseProps> = ({
             ) : null}
           </GridColumn>
         </GridRow>
-      </ReviewGroup>
+      </ThirdPartyReviewGroup>
     </Box>
   )
 }

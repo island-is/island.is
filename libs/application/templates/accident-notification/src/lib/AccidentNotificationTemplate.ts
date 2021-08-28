@@ -25,6 +25,8 @@ type AccidentNotificationEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.EDIT }
+  | { type: DefaultEvents.REJECT }
+  | { type: 'COMMENT' }
 
 const AccidentNotificationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -172,6 +174,29 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           },
         },
       },
+      [States.THIRD_PARTY_COMMENT]: {
+        meta: {
+          name: States.THIRD_PARTY_COMMENT,
+          progress: 0.6,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/ThirdPartyComment').then((val) =>
+                  Promise.resolve(val.ThirdPartyComment),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.NEEDS_REVIEW,
+          },
+        },
+      },
       [States.OVERVIEW]: {
         meta: {
           name: States.OVERVIEW,
@@ -181,16 +206,45 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
+                import('../forms/ThirdPartyOverview').then((val) =>
+                  Promise.resolve(val.ThirdPartyOverview),
+                ),
+              /* formLoader: () =>
                 import('../forms/Overview').then((val) =>
                   Promise.resolve(val.Overview),
+                ), */
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/ThirdPartyOverview').then((val) =>
+                  Promise.resolve(val.ThirdPartyOverview),
                 ),
               read: 'all',
             },
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: {
-            target: States.ADD_DOCUMENTS,
+          [DefaultEvents.SUBMIT]: {
+            target: States.NEEDS_REVIEW,
+          },
+          [DefaultEvents.EDIT]: [
+            {
+              target: States.ADD_DOCUMENTS,
+            },
+          ],
+          COMMENT: [
+            {
+              target: States.THIRD_PARTY_COMMENT,
+            },
+          ],
+          // TODO: Add rejected review state
+          [DefaultEvents.REJECT]: {
+            target: States.NEEDS_REVIEW,
+          },
+          [DefaultEvents.APPROVE]: {
+            target: States.IN_FINAL_REVIEW,
           },
         },
       },
@@ -219,6 +273,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     if (id === application.applicant) {
       return Roles.APPLICANT
+    }
+    if (application.assignees.includes(id)) {
+      return Roles.ASSIGNEE
     }
     return undefined
   },
