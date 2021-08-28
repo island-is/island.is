@@ -13,6 +13,7 @@ import {
   Query,
   Req,
   DefaultValuePipe,
+  Param,
 } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -23,6 +24,7 @@ import {
   ACCESS_TOKEN_COOKIE_NAME,
   COOKIE_EXPIRES_IN_MILLISECONDS,
   CSRF_COOKIE_NAME,
+  ReturnUrl,
 } from '@island.is/financial-aid/shared'
 
 import { SharedAuthService } from '@island.is/financial-aid/auth'
@@ -80,6 +82,7 @@ export class AuthController {
     @Res() res: Response,
     @Query('service', new DefaultValuePipe('osk')) service: 'osk' | 'veita',
     @Query('nationalId') nationalId: string,
+    @Query('applicationId') applicationId?: string,
   ) {
     this.logger.debug(`Received login request for the service ${service}`)
 
@@ -89,6 +92,10 @@ export class AuthController {
       const fakeUser = this.authService.fakeUser(nationalId)
 
       if (fakeUser) {
+        if (applicationId) {
+          fakeUser.returnUrl = ReturnUrl.STADA
+        }
+        console.log(fakeUser)
         return this.logInUser(fakeUser, res)
       }
     }
@@ -152,6 +159,7 @@ export class AuthController {
       phoneNumber: islandUser.mobile,
       folder: uuid(),
       service: service,
+      returnUrl: ReturnUrl.UMSOKN,
     }
 
     return this.logInUser(user, res)
@@ -172,7 +180,7 @@ export class AuthController {
 
     const jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
 
-    const returnUrl = user.service === 'osk' ? '/umsokn' : '/nymal'
+    // const returnUrl = ReturnUrl.UMSOKN : ReturnUrl.VEITA
 
     res
       .cookie(CSRF_COOKIE.name, csrfToken, {
@@ -183,6 +191,6 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge: COOKIE_EXPIRES_IN_MILLISECONDS,
       })
-      .redirect(returnUrl)
+      .redirect(user.returnUrl)
   }
 }

@@ -8,12 +8,15 @@ import { style } from 'treat/lib/types'
 interface Props {
   headline?: string
   about?: string
+  applicationId?: string
 }
 
 const Login = ({ headline, about }: Props) => {
   const router = useRouter()
 
-  const apiLoginRoute = '/api/auth/login'
+  const apiLoginRoute = router.query.id
+    ? `/api/auth/login?applicationId=${router.query.id}&nationalId=`
+    : '/api/auth/login?nationalId='
 
   return (
     <GridContainer>
@@ -40,7 +43,7 @@ const Login = ({ headline, about }: Props) => {
           <br />
           <Button
             onClick={() => {
-              router.push(`${apiLoginRoute}?nationalId=0000000000`)
+              router.push(`${apiLoginRoute}0000000000`)
             }}
             data-testid="logout-button"
             preTextIconType="filled"
@@ -53,7 +56,7 @@ const Login = ({ headline, about }: Props) => {
           <br />
           <Button
             onClick={() => {
-              router.push(`${apiLoginRoute}?nationalId=0000000001`)
+              router.push(`${apiLoginRoute}0000000001`)
             }}
             data-testid="logout-button"
             preTextIconType="filled"

@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { User, RolesRule } from '@island.is/financial-aid/shared'
+import { User, RolesRule, ReturnUrl } from '@island.is/financial-aid/shared'
 import { CurrentApplicationModel } from '../application'
 
 @ObjectType()
@@ -22,4 +22,7 @@ export class UserModel implements User {
 
   @Field(() => CurrentApplicationModel, { nullable: true })
   readonly currentApplication?: CurrentApplicationModel
+
+  @Field(() => String)
+  readonly returnUrl!: ReturnUrl
 }
