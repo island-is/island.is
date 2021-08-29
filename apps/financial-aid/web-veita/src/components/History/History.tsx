@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box, FormStepper } from '@island.is/island-ui/core'
+import { Text, Box, FormStepper, Icon } from '@island.is/island-ui/core'
 
 import * as styles from './History.treat'
 import cn from 'classnames'
@@ -37,7 +37,7 @@ const History = ({ className }: Props) => {
   return (
     <Box
       className={cn({
-        [`${styles.takeFullSpace}`]: true,
+        [`${styles.historyContainer}`]: true,
         [`${className}`]: true,
       })}
     >
@@ -73,11 +73,35 @@ const History = ({ className }: Props) => {
                     Umsækjandi <strong>inn umsókn </strong>
                   </Text>
 
-                  <Text>
-                    Umsækjandi hringdi og lét mig vita af því að síðustu gögnin
-                    sem vantaði munu berast í síðasta lagi á föstudag þannig að
-                    þá getum við farið að ganga frá þessu.
-                  </Text>
+                  {/* <Box paddingLeft={3} marginBottom={2}>
+                    {/* TODO: if comment then show */}
+                  {/*    <Text variant="small">
+                      {comment} f.ex
+                      Umsækjandi hringdi og lét mig vita af því að síðustu gögnin sem 
+                      vantaði munu berast í síðasta lagi á föstudag þannig að þá getum við 
+                      farið að ganga frá þessu.
+                    </Text> 
+                 
+                  </Box> */}
+
+                  {/* TODO: if sent meessage */}
+                  {/* <Box
+                    paddingLeft={3}
+                    marginBottom={2}
+                    className={styles.timelineMessages}
+                  >
+                 
+                    <Icon icon="chatbubble" type="outline" />{' '}
+                    <Text marginBottom={2}>
+                      „Hæhæ hér koma gögnin, afsakið þennan misskilning!
+                      Endilega heyrið í mér ef það vantar eitthvað fleira.“` “
+                    </Text>
+               
+                    <Icon icon="checkmark" />{' '}
+                    <Text fontWeight="semiBold">
+                      Skilaboð send á umsækjanda
+                    </Text>
+                  </Box> */}
 
                   <Text variant="small" color="dark300" marginBottom={5}>
                     {format(new Date(item.created), 'dd/MM/yyyy HH:MM')}

@@ -1,12 +1,18 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const takeFullSpace = style({
+export const historyContainer = style({
   gridColumn: '1/-1',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      gridColumn: 'span 6',
+    },
+  },
 })
 
 export const timelineContainer = style({
-  display: 'flex',
+  display: 'grid',
+  gridTemplateColumns: '16px auto',
   position: 'relative',
   '::before': {
     content: "''",
@@ -46,4 +52,9 @@ export const rejectedEvent = style({
   '::before': {
     backgroundColor: theme.color.red400,
   },
+})
+
+export const timelineMessages = style({
+  display: 'grid',
+  gridTemplateColumns: '40px auto',
 })
