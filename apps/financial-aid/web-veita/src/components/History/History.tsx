@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box, FormStepper, Icon } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './History.treat'
 import cn from 'classnames'
@@ -13,7 +13,6 @@ import {
   ApplicationState,
   getState,
 } from '@island.is/financial-aid/shared'
-import { Button } from '@island.is/financial-aid-web/veita/src/components'
 
 import format from 'date-fns/format'
 
@@ -44,12 +43,6 @@ const History = ({ className }: Props) => {
       <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
         Saga umsóknar
       </Text>
-
-      <Box marginBottom={3}>
-        <Button icon="open" iconType="outline">
-          Skrifa athugasemd
-        </Button>
-      </Box>
 
       {data?.applicationEvents && (
         <>
