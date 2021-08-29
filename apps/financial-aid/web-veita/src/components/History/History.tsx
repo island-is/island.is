@@ -8,7 +8,14 @@ import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import { GetApplicationEventQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
-import { ApplicationEvent, getState } from '@island.is/financial-aid/shared'
+import {
+  ApplicationEvent,
+  ApplicationState,
+  getState,
+} from '@island.is/financial-aid/shared'
+import { Button } from '@island.is/financial-aid-web/veita/src/components'
+
+import format from 'date-fns/format'
 
 interface ApplicationEventData {
   applicationEvents: ApplicationEvent[]
@@ -33,30 +40,53 @@ const History = ({ className }: Props) => {
         [`${styles.takeFullSpace}`]: true,
         [`${className}`]: true,
       })}
-      marginBottom={[2, 2, 3]}
     >
-      <Text as="h2" variant="h3" color="dark300">
-        Tímalína
+      <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
+        Saga umsóknar
       </Text>
 
+      <Box marginBottom={3}>
+        <Button icon="open" iconType="outline">
+          Skrifa athugasemd
+        </Button>
+      </Box>
+
       {data?.applicationEvents && (
-        <FormStepper
-          activeSection={data?.applicationEvents.length - 1}
-          sections={data?.applicationEvents.map((event) => {
-            if (event.comment) {
-              return {
-                name: getState[event.state],
-                children: [
-                  {
-                    type: 'SUB_SECTION',
-                    name: event.comment,
-                  },
-                ],
-              }
-            }
-            return { name: getState[event.state] }
+        <>
+          {data?.applicationEvents.map((item, index) => {
+            return (
+              <Box
+                className={cn({
+                  [`${styles.timelineContainer}`]: true,
+                  [`${styles.firstApplicationEvent}`]:
+                    index === data?.applicationEvents.length - 1,
+                  [`${styles.acceptedEvent}`]:
+                    item.state === ApplicationState.APPROVED,
+                  [`${styles.rejectedEvent}`]:
+                    item.state === ApplicationState.REJECTED,
+                })}
+              >
+                <Box paddingLeft={3}>
+                  <Text variant="h5">{getState[item.state]}</Text>
+                  <Text marginBottom={2}>
+                    {' '}
+                    Umsækjandi <strong>inn umsókn </strong>
+                  </Text>
+
+                  <Text>
+                    Umsækjandi hringdi og lét mig vita af því að síðustu gögnin
+                    sem vantaði munu berast í síðasta lagi á föstudag þannig að
+                    þá getum við farið að ganga frá þessu.
+                  </Text>
+
+                  <Text variant="small" color="dark300" marginBottom={5}>
+                    {format(new Date(item.created), 'dd/MM/yyyy HH:MM')}
+                  </Text>
+                </Box>
+              </Box>
+            )
           })}
-        />
+        </>
       )}
     </Box>
   )
