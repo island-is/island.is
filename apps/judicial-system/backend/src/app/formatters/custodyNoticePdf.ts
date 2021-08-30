@@ -31,6 +31,7 @@ export async function getCustodyNoticePdfAsString(
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
   doc
     .font('Helvetica-Bold')
     .fontSize(26)

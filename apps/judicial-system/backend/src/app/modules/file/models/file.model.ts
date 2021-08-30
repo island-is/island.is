@@ -10,7 +10,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { Case } from '../../case'
+import { Case } from '../../case/models/case.model'
 
 @Table({
   tableName: 'case_file',

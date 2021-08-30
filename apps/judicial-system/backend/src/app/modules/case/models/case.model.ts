@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   HasOne,
   Model,
   Table,
@@ -24,6 +25,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
+import { CaseFile } from '../../file/models/file.model'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 
@@ -781,4 +783,11 @@ export class Case extends Model<Case> {
   @HasOne(() => Case, 'parentCaseId')
   @ApiProperty({ type: Case })
   childCase?: Case
+
+  /**********
+   * The case's files
+   **********/
+  @HasMany(() => CaseFile, 'caseId')
+  @ApiProperty({ type: CaseFile, isArray: true })
+  caseFiles?: CaseFile[]
 }

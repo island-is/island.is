@@ -27,6 +27,7 @@ import {
   getRequestPdfAsBuffer,
   getRequestPdfAsString,
   getRulingPdfAsString,
+  getCasefilesPdfAsString,
   writeFile,
 } from '../../formatters'
 import { Institution } from '../institution'
@@ -35,11 +36,37 @@ import { CourtService } from '../court'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
+import { Includeable } from 'sequelize/types'
 
 interface Recipient {
   name: string
   address: string
 }
+
+const standardIncludes: Includeable[] = [
+  {
+    model: Institution,
+    as: 'court',
+  },
+  {
+    model: User,
+    as: 'prosecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  { model: Institution, as: 'sharedWithProsecutorsOffice' },
+  {
+    model: User,
+    as: 'judge',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'registrar',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  { model: Case, as: 'parentCase' },
+  { model: Case, as: 'childCase' },
+]
 
 @Injectable()
 export class CaseService {
@@ -55,19 +82,66 @@ export class CaseService {
   ) {}
 
   private async uploadSignedRulingPdfToCourt(
-    courtId: string,
-    courtCaseNumber: string,
+    existingCase: Case,
     pdf: string,
   ): Promise<boolean> {
+    // TODO: Find a better place for this
+    try {
+      if (existingCase.caseFiles && existingCase.caseFiles.length > 0) {
+        this.logger.debug(
+          `Uploading case files overview pdf to court for case ${existingCase.id}`,
+        )
+
+        const caseFilesPdf = await getCasefilesPdfAsString(existingCase)
+
+        if (!environment.production) {
+          writeFile(`${existingCase.id}-case-files.pdf`, caseFilesPdf)
+        }
+
+        const buffer = Buffer.from(pdf, 'binary')
+
+        const streamId = await this.courtService.uploadStream(
+          existingCase.courtId,
+          buffer,
+        )
+        await this.courtService.createDocument(
+          existingCase.courtId,
+          existingCase.courtCaseNumber,
+          streamId,
+          'Rannsóknargögn',
+        )
+      }
+    } catch (error) {
+      // Log and ignore this error. The overview is not that critical.
+      this.logger.error(
+        `Failed to upload case files overview pdf to court for case ${existingCase.id}`,
+        error,
+      )
+    }
+
+    this.logger.debug(
+      `Uploading signed ruling pdf to court for case ${existingCase.id}`,
+    )
+
     const buffer = Buffer.from(pdf, 'binary')
 
     try {
-      const streamId = await this.courtService.uploadStream(courtId, buffer)
-      await this.courtService.createThingbok(courtId, courtCaseNumber, streamId)
+      const streamId = await this.courtService.uploadStream(
+        existingCase.courtId,
+        buffer,
+      )
+      await this.courtService.createThingbok(
+        existingCase.courtId,
+        existingCase.courtCaseNumber,
+        streamId,
+      )
 
       return true
     } catch (error) {
-      this.logger.error('Failed to upload request to court', error)
+      this.logger.error(
+        `Failed to upload signed ruling pdf to court for case ${existingCase.id}`,
+        error,
+      )
 
       return false
     }
@@ -118,11 +192,7 @@ export class CaseService {
       existingCase.courtId &&
       existingCase.courtCaseNumber &&
       IntegratedCourts.includes(existingCase.courtId)
-        ? await this.uploadSignedRulingPdfToCourt(
-            existingCase.courtId,
-            existingCase.courtCaseNumber,
-            signedRulingPdf,
-          )
+        ? await this.uploadSignedRulingPdfToCourt(existingCase, signedRulingPdf)
         : false
 
     const promises = [
@@ -196,35 +266,17 @@ export class CaseService {
     await Promise.all(promises)
   }
 
-  async findById(id: string): Promise<Case | null> {
+  async findById(
+    id: string,
+    additionalIncludes: Includeable[] = [],
+  ): Promise<Case | null> {
     this.logger.debug(`Finding case ${id}`)
+
+    const include = standardIncludes.concat(additionalIncludes)
 
     return this.caseModel.findOne({
       where: { id },
-      include: [
-        {
-          model: Institution,
-          as: 'court',
-        },
-        {
-          model: User,
-          as: 'prosecutor',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        { model: Institution, as: 'sharedWithProsecutorsOffice' },
-        {
-          model: User,
-          as: 'judge',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'registrar',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        { model: Case, as: 'parentCase' },
-        { model: Case, as: 'childCase' },
-      ],
+      include,
     })
   }
 
@@ -234,30 +286,7 @@ export class CaseService {
     return this.caseModel.findAll({
       order: [['created', 'DESC']],
       where: getCasesQueryFilter(user),
-      include: [
-        {
-          model: Institution,
-          as: 'court',
-        },
-        {
-          model: User,
-          as: 'prosecutor',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        { model: Institution, as: 'sharedWithProsecutorsOffice' },
-        {
-          model: User,
-          as: 'judge',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: User,
-          as: 'registrar',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        { model: Case, as: 'parentCase' },
-        { model: Case, as: 'childCase' },
-      ],
+      include: standardIncludes,
     })
   }
 
@@ -265,8 +294,9 @@ export class CaseService {
     id: string,
     user: TUser,
     forUpdate = true,
+    additionalIncludes: Includeable[] = [],
   ): Promise<Case> {
-    const existingCase = await this.findById(id)
+    const existingCase = await this.findById(id, additionalIncludes)
 
     if (!existingCase) {
       throw new NotFoundException(`Case ${id} does not exist`)
@@ -438,13 +468,16 @@ export class CaseService {
         existingCase.courtId,
         pdf,
       )
-      await this.courtService.createDocument(
+      await this.courtService.createRequest(
         existingCase.courtId,
         existingCase.courtCaseNumber,
         streamId,
       )
     } catch (error) {
-      this.logger.error('Failed to upload request to court', error)
+      this.logger.error(
+        `Failed to upload request pdf to court for case ${id}`,
+        error,
+      )
     }
   }
 }
