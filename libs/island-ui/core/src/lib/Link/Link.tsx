@@ -58,9 +58,9 @@ export const Link: React.FC<LinkProps> = ({
 
   if (!href) {
     return (
-      <span className={classNames} {...linkProps}>
+      <button type="button" className={classNames} {...linkProps}>
         {children}
-      </span>
+      </button>
     )
   }
 

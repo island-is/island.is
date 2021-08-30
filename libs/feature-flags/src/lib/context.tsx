@@ -52,6 +52,35 @@ export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
   )
 }
 
+export interface MockedFeatureFlagProviderProps {
+  flags: string[] | Record<string, boolean | string>
+}
+
+export const MockedFeatureFlagProvider: FC<MockedFeatureFlagProviderProps> = ({
+  flags,
+  children,
+}) => {
+  const context = useMemo<FeatureFlagClient>(() => {
+    const cleanFlags = Array.isArray(flags)
+      ? flags.reduce((obj, flag) => {
+          obj[flag] = true
+          return obj
+        }, {})
+      : flags
+    return {
+      getValue: async (key, defaultValue) => {
+        return cleanFlags[key] ?? defaultValue
+      },
+    }
+  }, [flags])
+
+  return (
+    <FeatureFlagContext.Provider value={context}>
+      {children}
+    </FeatureFlagContext.Provider>
+  )
+}
+
 export const useFeatureFlagClient = () => {
   return useContext(FeatureFlagContext)
 }

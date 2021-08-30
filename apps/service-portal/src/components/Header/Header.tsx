@@ -7,13 +7,14 @@ import {
   Button,
   Logo,
   FocusableBox,
+  Inline,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.treat'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
+import { UserMenu } from '@island.is/shared/components'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
-import UserMenuTrigger from '../UserMenuTrigger/UserMenuTrigger'
 import { BetaTag } from '../Logo/BetaTag'
 import { m } from '@island.is/service-portal/core'
 
@@ -52,22 +53,18 @@ export const Header: FC<{}> = () => {
                   <BetaTag />
                 </FocusableBox>
               </Link>
-              <Box display="flex" alignItems="center" flexWrap="nowrap">
-                <Hidden below="lg">
-                  <UserMenuTrigger />
-                </Hidden>
+              <Inline space={2} alignY="center" flexWrap="nowrap">
+                <UserMenu />
                 <Hidden above="md">
-                  <Box marginLeft={[1, 1, 1, 2]}>
-                    <Button
-                      variant="utility"
-                      icon={mobileMenuState === 'open' ? 'close' : 'menu'}
-                      onClick={handleMobileMenuTriggerClick}
-                    >
-                      {formatMessage(m.menu)}
-                    </Button>
-                  </Box>
+                  <Button
+                    variant="utility"
+                    icon={mobileMenuState === 'open' ? 'close' : 'menu'}
+                    onClick={handleMobileMenuTriggerClick}
+                  >
+                    {formatMessage(m.menu)}
+                  </Button>
                 </Hidden>
-              </Box>
+              </Inline>
             </Box>
           </ContentBlock>
         </Box>

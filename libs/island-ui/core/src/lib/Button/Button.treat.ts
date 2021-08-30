@@ -183,31 +183,12 @@ export const circleSizes = styleMap({
   },
 })
 
-type PrimaryColors = (
+const primaryColors = (
   main: string,
   text: string,
   hover: string,
   disabled: string,
-  textDisabled?: string,
-) => Style
-
-type BorderedColors = (main: string, hover: string, disabled: string) => Style
-type UtilityColors = (
-  text: string,
-  border: string,
-  textHover: string,
-  borderHover: string,
-  textDisabled: string,
-  borderDisabled: string,
-  borderHoverWidth?: number,
-) => Style
-
-const primaryColors: PrimaryColors = (
-  main,
-  text,
-  hover,
-  disabled,
-  textDisabled = text,
+  textDisabled: string = text,
 ) => ({
   backgroundColor: main,
   color: text,
@@ -230,7 +211,7 @@ const primaryColors: PrimaryColors = (
     },
   },
 })
-const ghostColors: BorderedColors = (main, hover, disabled) => ({
+const ghostColors = (main: string, hover: string, disabled: string) => ({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 0 0 1px ${main}`,
   color: main,
@@ -253,7 +234,7 @@ const ghostColors: BorderedColors = (main, hover, disabled) => ({
     },
   },
 })
-const textColors: BorderedColors = (main, hover, disabled) => ({
+const textColors = (main: string, hover: string, disabled: string) => ({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 -1px 0 0 ${main}`,
   color: main,
@@ -276,14 +257,14 @@ const textColors: BorderedColors = (main, hover, disabled) => ({
     },
   },
 })
-const utilityColors: UtilityColors = (
-  text,
-  border,
-  textHover,
-  borderHover,
-  textDisabled,
-  borderDisabled,
-  borderHoverWidth = 1,
+const utilityColors = (
+  text: string,
+  border: string,
+  textHover: string,
+  borderHover: string,
+  textDisabled: string,
+  borderDisabled: string,
+  borderHoverWidth: number = 1,
 ) => ({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 0 0 1px ${border}`,
@@ -413,6 +394,12 @@ export const colors = {
       theme.color.blue400,
       theme.color.dark200,
       theme.color.blue100,
+    ),
+    primary: primaryColors(
+      theme.color.blue400,
+      theme.color.white,
+      theme.color.blueberry400,
+      theme.color.blue300,
     ),
   }),
 }

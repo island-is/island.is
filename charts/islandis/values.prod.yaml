@@ -300,6 +300,7 @@ application-system-form:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    SI_PUBLIC_CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

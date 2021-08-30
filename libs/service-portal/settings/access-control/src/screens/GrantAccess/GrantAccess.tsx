@@ -4,6 +4,7 @@ import { useForm, Controller, ValidationRules } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
+import { sharedMessages } from '@island.is/shared/translations'
 
 import {
   Box,
@@ -152,14 +153,8 @@ function GrantAccess() {
               }
               type="tel"
               format="######-####"
-              label={formatMessage({
-                id: 'global:nationalId',
-                defaultMessage: 'Kennitala',
-              })}
-              placeholder={formatMessage({
-                id: 'global:nationalId',
-                defaultMessage: 'Kennitala',
-              })}
+              label={formatMessage(sharedMessages.nationalId)}
+              placeholder={formatMessage(sharedMessages.nationalId)}
               onChange={(value) => {
                 requestDelegation(value)
               }}

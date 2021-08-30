@@ -1,5 +1,4 @@
 import React, { MouseEventHandler } from 'react'
-import { RequireAtLeastOne } from 'type-fest'
 
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
@@ -10,18 +9,13 @@ type ColorScheme = 'blue' | 'red'
 
 export type TopicCardSize = 'default' | 'small'
 
-interface TopicCardPropsBase {
+interface TopicCardProps {
   tag?: string
   colorScheme?: ColorScheme
   href?: string
   size?: TopicCardSize
   onClick?: MouseEventHandler
 }
-
-export type TopicCardProps = RequireAtLeastOne<
-  TopicCardPropsBase,
-  'href' | 'onClick'
->
 
 const colorSchemes = {
   blue: {
@@ -52,6 +46,7 @@ export const TopicCard: React.FC<TopicCardProps> = ({
       background={colorSchemes[colorScheme].backgroundColor}
       borderRadius="large"
       display="flex"
+      component={href || onClick ? undefined : 'span'}
       href={href}
       onClick={onClick}
       padding={size === 'default' ? [2, 2, 3] : [2, 2, 2]}
