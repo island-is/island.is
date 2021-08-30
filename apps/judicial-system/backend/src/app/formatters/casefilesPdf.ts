@@ -40,10 +40,9 @@ function constructCasefilesPdf(
     )
     .lineGap(8)
     .fontSize(12)
-    .list(
-      existingCase.caseFiles.map((file) => file.name),
-      { listType: 'numbered' },
-    )
+    .list(existingCase.caseFiles?.map((file) => file.name) ?? [], {
+      listType: 'numbered',
+    })
 
   setPageNumbers(doc)
 
