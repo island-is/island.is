@@ -42,6 +42,11 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingasöfnun',
     description: 'Information',
   },
+  externalDataComplete: {
+    id: 'dl.application:externalData.complete',
+    defaultMessage: 'Uppfletting í lagi',
+    description: 'Information',
+  },
   nationalRegistryTitle: {
     id: 'dl.application:nationalRegistry.title',
     defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',

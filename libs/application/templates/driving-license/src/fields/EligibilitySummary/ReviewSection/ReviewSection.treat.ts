@@ -34,4 +34,19 @@ export const sectionNumberRequiresAction = style({
 export const sectionNumberComplete = style({
   background: theme.color.mint600,
 })
- 
+
+export const container = style({
+  borderRadius: theme.border.radius.large,
+  transition: 'color 150ms ease, background-color 150ms ease',
+  outline: 0,
+  display: 'inline-flex',
+  alignItems: 'center',
+  height: 32,
+  padding: '0 8px',
+  whiteSpace: 'nowrap',
+  textDecoration: 'none',
+  maxWidth: '100%',
+  border: '1px solid transparent',
+  color: theme.color.mint600,
+  backgroundColor: theme.color.mint100,
+})
