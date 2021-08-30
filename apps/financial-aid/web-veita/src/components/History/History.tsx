@@ -49,6 +49,7 @@ const History = ({ className }: Props) => {
           {data?.applicationEvents.map((item, index) => {
             return (
               <Box
+                key={'timeline-' + index}
                 className={cn({
                   [`${styles.timelineContainer}`]: true,
                   [`${styles.firstApplicationEvent}`]:
