@@ -19,7 +19,7 @@ export class UserService {
     private readonly logger: Logger,
   ) {}
 
-  getAll(user: User): Promise<User[]> {
+  async getAll(user: User): Promise<User[]> {
     this.logger.debug('Getting all users')
 
     if (user.role === UserRole.ADMIN) {
@@ -38,7 +38,7 @@ export class UserService {
     })
   }
 
-  findById(id: string): Promise<User> {
+  async findById(id: string): Promise<User> {
     this.logger.debug(`Finding user ${id}`)
 
     return this.userModel.findOne({
@@ -76,7 +76,7 @@ export class UserService {
     })
   }
 
-  create(userToCreate: CreateUserDto): Promise<User> {
+  async create(userToCreate: CreateUserDto): Promise<User> {
     this.logger.debug('Creating a new user')
 
     return this.userModel.create(userToCreate)

@@ -35,7 +35,7 @@ export class Institution extends Model<Institution> {
 
   @Column({
     type: DataType.ENUM,
-    allowNull: true,
+    allowNull: false,
     values: Object.values(InstitutionType),
   })
   type: InstitutionType
