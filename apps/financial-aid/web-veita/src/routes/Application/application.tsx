@@ -365,7 +365,6 @@ const ApplicationProfile = () => {
           </>
 
           <CommentSection
-            applicationState={application.state}
             className={`contentUp delay-125 ${styles.widtAlmostFull}`}
           />
 

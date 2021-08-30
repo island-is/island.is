@@ -15,10 +15,9 @@ import {
 
 interface Props {
   className?: string
-  applicationState: ApplicationState
 }
 
-const CommentSection = ({ className, applicationState }: Props) => {
+const CommentSection = ({ className }: Props) => {
   const router = useRouter()
 
   const [showInput, setShowInput] = useState<boolean>(false)
