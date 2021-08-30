@@ -347,21 +347,22 @@ export const m = defineMessages({
     defaultMessage: `
     Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats) 
     og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi 
-    á augu. Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
+    á augu. Bakgrunnur þarf að vera einlitur og ekki virka truflandi á myndefni. 
+    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
     `,
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletOne: {
     id: 'dl.application:qualityPhoto.instructionsbulletone',
     defaultMessage: `
-    Ljósmynd af umsækjanda þarf að vera tekin beint að framan
+    Ljósmynd af umsækjanda þarf að vera tekin beint að framan.
     `,
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletTwo: {
     id: 'dl.application:qualityPhoto.instructionsbullettwo',
     defaultMessage: `
-    Sýna þarf höfuð (án höfuðfats) og herðar 
+    Sýna þarf höfuð (án höfuðfats) og herðar.
     `,
     description: 'Description of photo requirements',
   },
@@ -375,14 +376,21 @@ export const m = defineMessages({
   qualityPhotoInstructionsBulletFour: {
     id: 'dl.application:qualityPhoto.instructionsbulletfour',
     defaultMessage: `
-    Athuga þarf að ekki glampi á gleraugu og skyggi á augu
+    Athuga þarf að ekki glampi á gleraugu og skyggi á augu.
     `,
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletFive: {
     id: 'dl.application:qualityPhoto.instructionsbulletfive',
     defaultMessage: `
-    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð
+    Bakgrunnur þarf að vera einlitur og ekki virka truflandi á myndefni.
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoInstructionsBulletSix: {
+    id: 'dl.application:qualityPhoto.instructionsbulletfive',
+    defaultMessage: `
+    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
     `,
     description: 'Description of photo requirements',
   },
