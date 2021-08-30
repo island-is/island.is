@@ -10,7 +10,7 @@ interface Props {
 }
 
 const CommentSection = ({ className }: Props) => {
-  const [showInput, setShowInput] = useState<boolean>(true)
+  const [showInput, setShowInput] = useState<boolean>(false)
 
   return (
     <Box marginBottom={3} className={`${className} `}>
