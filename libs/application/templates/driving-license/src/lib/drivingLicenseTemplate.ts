@@ -46,8 +46,8 @@ const dataSchema = z.object({
     z.array(z.enum(['yes', 'no'])),
     z.enum(['yes', 'no']),
   ]),
-  certificate: z.array(z.enum(['yes', 'no'])),
-  picture: z.array(z.enum(['yes', 'no'])),
+  certificate: z.array(z.enum(['yes', 'no'])).nonempty(),
+  picture: z.array(z.enum(['yes', 'no'])).nonempty(),
 })
 
 const template: ApplicationTemplate<

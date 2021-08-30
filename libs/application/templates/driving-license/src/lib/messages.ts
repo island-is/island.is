@@ -352,7 +352,7 @@ export const m = defineMessages({
     defaultMessage: `
     Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats) 
     og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi 
-    á augu. Bakgrunnur þarf að vera einlitur og ekki virka truflandi á myndefni. 
+    á augu. Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni. 
     Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
     `,
     description: 'Description of photo requirements',
@@ -388,7 +388,7 @@ export const m = defineMessages({
   qualityPhotoInstructionsBulletFive: {
     id: 'dl.application:qualityPhoto.instructionsbulletfive',
     defaultMessage: `
-    Bakgrunnur þarf að vera einlitur og ekki virka truflandi á myndefni.
+    Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni.
     `,
     description: 'Description of photo requirements',
   },
