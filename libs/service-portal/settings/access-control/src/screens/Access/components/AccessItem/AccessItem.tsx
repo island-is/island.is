@@ -117,6 +117,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 id={`${item.model}.validTo`}
                 size="sm"
                 label=""
+                minDate={new Date()}
                 defaultValue={existingScope?.validTo}
                 locale={lang}
                 placeholder="-"

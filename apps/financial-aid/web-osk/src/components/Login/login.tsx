@@ -1,22 +1,32 @@
 import React from 'react'
-import { GridContainer, Button } from '@island.is/island-ui/core'
+import { GridContainer, Button, Text } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 
-const Login = () => {
+interface Props {
+  headline?: string
+  about?: string
+}
+
+const Login = ({ headline, about }: Props) => {
   const router = useRouter()
 
   const apiLoginRoute = '/api/auth/login'
 
   return (
     <GridContainer>
+      <Text as="h1" variant="h2" marginBottom={2} marginTop={10}>
+        {headline}
+      </Text>
+
+      <Text marginBottom={3}>{about}</Text>
+
       <Button
         onClick={() => {
           router.push(apiLoginRoute)
         }}
         data-testid="logout-button"
         preTextIconType="filled"
-        size="small"
         type="button"
         variant="primary"
       >
@@ -30,7 +40,6 @@ const Login = () => {
         }}
         data-testid="logout-button"
         preTextIconType="filled"
-        size="small"
         type="button"
         variant="primary"
       >
@@ -44,7 +53,6 @@ const Login = () => {
         }}
         data-testid="logout-button"
         preTextIconType="filled"
-        size="small"
         type="button"
         variant="primary"
       >

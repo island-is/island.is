@@ -18,7 +18,7 @@ import {
   FormModes,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
-import { NO, YES } from '../constants'
+import { NO, UPLOAD_ACCEPT, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import {
   accidentDetails,
@@ -64,6 +64,7 @@ import {
   getAccidentTypeOptions,
   isAboardShip,
   isAgricultureAccident,
+  isDateOlderThanAYear,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
@@ -79,8 +80,6 @@ import {
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
 import { WorkTypeIllustration } from '../assets/WorkTypeIllustration'
-
-const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
@@ -1012,6 +1011,19 @@ export const AccidentNotificationForm: Form = buildForm({
               width: 'half',
               format: '##:##',
             }),
+            /* TODO: Get information about home insurance from external provider? */
+            buildCustomField(
+              {
+                id: 'accidentDetails.dateAlert',
+                title: accidentDetails.general.insuranceAlertTitle,
+                description: accidentDetails.general.insuranceAlertText,
+                component: 'FieldAlertMessage',
+                condition: (answers) =>
+                  isDateOlderThanAYear(answers) &&
+                  isHomeActivitiesAccident(answers),
+              },
+              { type: 'warning', marginBottom: 1, marginTop: 3 },
+            ),
             buildTextField({
               id: 'accidentDetails.descriptionOfAccident',
               title: accidentDetails.labels.description,
