@@ -203,13 +203,13 @@ export class NotificationService {
         existingCase.courtId,
         requestPdf,
       )
-      await this.courtService.createDocument(
+      await this.courtService.createRequest(
         existingCase.courtId,
         existingCase.courtCaseNumber,
         streamId,
       )
     } catch (error) {
-      this.logger.error('Failed to upload request to court', error)
+      this.logger.error('Failed to upload request pdf to court', error)
     }
   }
 

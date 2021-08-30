@@ -3,13 +3,11 @@ import streamBuffers from 'stream-buffers'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
-import { CaseFile } from '../modules/file'
 import { setPageNumbers } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
 function constructCasefilesPdf(
   existingCase: Case,
-  files: CaseFile[],
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -35,12 +33,17 @@ function constructCasefilesPdf(
     .text('Rannsóknargögn', { align: 'center' })
     .font('Helvetica')
     .fontSize(18)
+    .lineGap(40)
     .text(
       `Mál nr. ${existingCase.courtCaseNumber} - LÖKE nr. ${existingCase.policeCaseNumber}`,
       { align: 'center' },
     )
-    .lineGap(40)
-    .list(files, { listType: 'numbered' })
+    .lineGap(8)
+    .fontSize(12)
+    .list(
+      existingCase.caseFiles.map((file) => file.name),
+      { listType: 'numbered' },
+    )
 
   setPageNumbers(doc)
 
@@ -51,9 +54,8 @@ function constructCasefilesPdf(
 
 export async function getCasefilesPdfAsString(
   existingCase: Case,
-  caseFiles: CaseFile[],
 ): Promise<string> {
-  const stream = constructCasefilesPdf(existingCase, caseFiles)
+  const stream = constructCasefilesPdf(existingCase)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {
@@ -71,9 +73,8 @@ export async function getCasefilesPdfAsString(
 
 export async function getCasefilesPdfAsBuffer(
   existingCase: Case,
-  caseFiles: CaseFile[],
 ): Promise<Buffer> {
-  const stream = constructCasefilesPdf(existingCase, caseFiles)
+  const stream = constructCasefilesPdf(existingCase)
 
   // wait for the writing to finish
   const pdf = await new Promise<Buffer>(function (resolve) {

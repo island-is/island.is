@@ -81,17 +81,6 @@ export class CaseService {
     private intlService: IntlService,
   ) {}
 
-  // private async getCasefilesPdf(existingCase: Case): Promise<string> {
-  //   this.logger.debug(
-  //     `Getting the casefiles for case ${existingCase.id} as a pdf document`,
-  //   )
-
-  //   const casefiles = await this.fileService.getAllCaseFiles(existingCase.id)
-  //   const casefileNames = casefiles.map((file) => file.name)
-
-  //   return getCasefilesPdfAsString(existingCase, casefileNames)
-  // }
-
   private async uploadSignedRulingPdfToCourt(
     existingCase: Case,
     pdf: string,
@@ -99,8 +88,41 @@ export class CaseService {
     this.logger.debug(
       `Uploading signed ruling pdf to court for case ${existingCase.id}`,
     )
-    console.log('=================================', existingCase.caseFiles)
-    return
+
+    // TODO: Find a better place for this
+    try {
+      if (existingCase.caseFiles.length > 0) {
+        this.logger.debug(
+          `Uploading case files overview pdf to court for case ${existingCase.id}`,
+        )
+
+        const caseFilesPdf = await getCasefilesPdfAsString(existingCase)
+
+        if (!environment.production) {
+          writeFile(`${existingCase.id}-case-files.pdf`, caseFilesPdf)
+        }
+
+        const buffer = Buffer.from(pdf, 'binary')
+
+        const streamId = await this.courtService.uploadStream(
+          existingCase.courtId,
+          buffer,
+        )
+        await this.courtService.createDocument(
+          existingCase.courtId,
+          existingCase.courtCaseNumber,
+          streamId,
+          'Rannsóknargögn',
+        )
+      }
+    } catch (error) {
+      // Log and ignore this error. The overview is not that critical.
+      this.logger.error(
+        'Failed to upload case files overview pdf to court',
+        error,
+      )
+    }
+
     const buffer = Buffer.from(pdf, 'binary')
 
     try {
@@ -116,7 +138,7 @@ export class CaseService {
 
       return true
     } catch (error) {
-      this.logger.error('Failed to upload request to court', error)
+      this.logger.error('Failed to upload signed ruling pdf to court', error)
 
       return false
     }
@@ -266,8 +288,9 @@ export class CaseService {
     id: string,
     user: TUser,
     forUpdate = true,
+    additionalIncludes: Includeable[] = [],
   ): Promise<Case> {
-    const existingCase = await this.findById(id)
+    const existingCase = await this.findById(id, additionalIncludes)
 
     if (!existingCase) {
       throw new NotFoundException(`Case ${id} does not exist`)
@@ -368,11 +391,10 @@ export class CaseService {
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
       try {
-        const signedPdf = 'aa'
-        //  await this.signingService.getSignedDocument(
-        //   'ruling.pdf',
-        //   documentToken,
-        // )
+        const signedPdf = await this.signingService.getSignedDocument(
+          'ruling.pdf',
+          documentToken,
+        )
 
         await this.sendRulingAsSignedPdf(existingCase, signedPdf)
       } catch (error) {
@@ -440,13 +462,13 @@ export class CaseService {
         existingCase.courtId,
         pdf,
       )
-      await this.courtService.createDocument(
+      await this.courtService.createRequest(
         existingCase.courtId,
         existingCase.courtCaseNumber,
         streamId,
       )
     } catch (error) {
-      this.logger.error('Failed to upload request to court', error)
+      this.logger.error('Failed to upload request pdf to court', error)
     }
   }
 }
