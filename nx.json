@@ -215,6 +215,9 @@
     "application-templates-funding-government-projects": {
       "tags": []
     },
+    "application-templates-general-petition": {
+      "tags": []
+    },
     "application-templates-health-insurance": {
       "tags": []
     },
@@ -237,9 +240,6 @@
       "tags": []
     },
     "application-templates-party-letter": {
-      "tags": []
-    },
-    "application-templates-general-petition": {
       "tags": []
     },
     "application-templates-passport": {

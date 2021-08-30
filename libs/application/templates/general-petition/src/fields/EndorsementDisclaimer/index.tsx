@@ -3,7 +3,7 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Text, Box, Button, Input } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { PartyLetter } from '../../lib/dataSchema'
+import { GeneralPetition } from '../../lib/dataSchema'
 import {
   CheckboxController,
   FieldDescription,
@@ -23,7 +23,7 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const [hasEndorsed, setHasEndorsed] = useState(false)
   const isClosed = useIsClosed(endorsementListId)
 
-  const answers = application.answers as PartyLetter
+  const answers = application.answers as GeneralPetition
   const endorsedBefore = useHasEndorsed(endorsementListId)
 
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
