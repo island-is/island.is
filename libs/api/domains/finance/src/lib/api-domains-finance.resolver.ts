@@ -3,6 +3,7 @@ import { GetFinancialOverviewInput } from './dto/getOverview.input'
 import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
 import { GetDocumentsListInput } from './dto/getDocumentsList.input'
 import { GetFinanceDocumentInput } from './dto/getFinanceDocument.input'
+import { GetAnnualStatusDocumentInput } from './dto/getAnnualStatusDocument.input'
 import { UseGuards } from '@nestjs/common'
 import graphqlTypeJson from 'graphql-type-json'
 import { CustomerChargeType } from './models/customerChargeType.model'
@@ -80,6 +81,17 @@ export class FinanceResolver {
     return this.FinanceService.getFinanceDocument(
       user.nationalId,
       input.documentID,
+    )
+  }
+
+  @Query(() => FinanceDocumentModel, { nullable: true })
+  async getAnnualStatusDocument(
+    @CurrentUser() user: User,
+    @Args('input') input: GetAnnualStatusDocumentInput,
+  ) {
+    return this.FinanceService.getAnnualStatusDocument(
+      user.nationalId,
+      input.year,
     )
   }
 

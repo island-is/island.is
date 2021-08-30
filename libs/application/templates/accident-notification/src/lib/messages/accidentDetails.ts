@@ -14,16 +14,17 @@ export const accidentDetails = {
       description:
         'Please state the date and time of the accident, the cause, cause and circumstances of the accident.',
     },
-    notInsuredAlertMessageTitle: {
-      id: 'an.application:accidentDetails.general.notInsuredAlertMessageTitle',
+    insuranceAlertTitle: {
+      id: 'an.application:accidentDetails.general.insuranceAlertTitle',
       defaultMessage: 'Athugið',
-      description: 'Title of the alert message',
+      description: 'Alert',
     },
-    notInsuredAlertMessageBody: {
-      id: 'an.application:accidentDetails.general.notInsuredAlertMessageBody',
+    insuranceAlertText: {
+      id: 'an.application:accidentDetails.general.insuranceAlertText',
       defaultMessage:
-        'Samkvæmt rafrænum upplýsingum Ríkisskattstjóra virðist þú ekki hafa fyllt út viðeigandi reit á skattframtali og ert því ekki slysatryggður við heimilisstörf á því tímabili er slysið átti sér stað.',
-      description: 'Body of the alert message',
+        'Samkvæmt rafrænum upplýsingum Ríkisskattstjóra virðist þú ekki hafa fyllt út viðeigandi reit á skattframtali og ert því ekki slysatryggður við heimilsstörf á því tímabili er slysið átti sér stað.',
+      description:
+        'According to electronic information from the Director of Internal Revenue, you do not appear to have filled in the appropriate field on your tax return and are therefore not insured against household related accidents during the period in which the accident took place.',
     },
   }),
   labels: defineMessages({

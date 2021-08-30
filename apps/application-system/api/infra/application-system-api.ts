@@ -193,4 +193,15 @@ export const serviceSetup = (services: {
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '100m', memory: '256Mi' },
     })
-    .grantNamespaces('nginx-ingress-external', 'islandis')
+    .ingress({
+      primary: {
+        host: {
+          dev: 'application-payment-callback-xrd',
+          staging: 'application-payment-callback-xrd',
+          prod: 'application-payment-callback-xrd',
+        },
+        paths: ['/application-payment'],
+        public: false,
+      },
+    })
+    .grantNamespaces('nginx-ingress-internal', 'islandis')

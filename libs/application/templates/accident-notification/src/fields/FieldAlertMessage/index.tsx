@@ -3,8 +3,7 @@ import {
   AlertMessageType,
   Button,
   Link,
-  ResponsiveProp,
-  Space,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
@@ -19,8 +18,8 @@ type FieldAlertMessageProps = {
         url: string
       }[]
       type: AlertMessageType
-      marginBottom: ResponsiveProp<Space>
-      marginTop: ResponsiveProp<Space>
+      marginBottom?: ResponsiveSpace
+      marginTop?: ResponsiveSpace
     }
   }
 }

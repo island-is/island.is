@@ -301,21 +301,91 @@ export const m = defineMessages({
     defaultMessage: 'Gögn höfð meðferðis til Sýslumanns',
     description: 'Will bring along data to the sheriff',
   },
+  applicationQualityPhotoTitle: {
+    id: 'dl.application.applicationQualityPhotoTitle',
+    defaultMessage: 'Gæðamerkt mynd',
+    description: 'title for quality photo section',
+  },
+  qualityPhotoTitle: {
+    id: 'dl.application.qualityPhotoTitle',
+    defaultMessage: 'Ljósmynd í ökuskírteinaskrá',
+    description: 'title for quality photo section',
+  },
+  qualityPhotoSubTitle: {
+    id: 'dl.application.qualityPhotoSubTitle',
+    defaultMessage: 'Hér er núverandi ljósmynd í ökuskírteinaskrá',
+    description: 'sub title for quality photo section',
+  },
+  qualityPhotoWarningTitle: {
+    id: 'dl.application.qualityPhotoWarningTitle',
+    defaultMessage: 'Ljósmynd í ökuskírteinaskrá ekki gæðamerkt',
+    description: 'title for quality photo warning',
+  },
+  qualityPhotoWarningDescription: {
+    id: 'dl.application.qualityPhotoWarningDescription',
+    defaultMessage:
+      'Núverandi ljósmynd þín í ökuskírteinaskrá stenst ekki gæðakröfur og þarf því að koma með nýja ljósmynd.',
+    description: 'Description for quality photo warning',
+  },
   qualityPhotoAcknowledgement: {
     id: 'dl.application:qualityPhoto.acknowledgement',
-    defaultMessage: 'Ég kem með nýja ljósmynd',
+    defaultMessage: 'Ég kem með nýja ljósmynd til sýslumanns',
     description: 'I will bring a new photo',
+  },
+  qualityPhotoNoAcknowledgement: {
+    id: 'dl.application:qualityPhoto.noacknowledgement',
+    defaultMessage: 'Ég staðfesti að nota núverandi mynd',
+    description: 'I want to use current photo',
   },
   qualityPhotoInstructions: {
     id: 'dl.application:qualityPhoto.instructions',
     defaultMessage: `
-      Ljósmynd af umsækjanda sem er tekin beint að framan og sýnir höfuð (án höfuðfats)
-      og herðar og lýsing andlits er jöfn. Athuga að glampi ekki á gleraugu og skyggi á
-      augu. Ljósmyndin þarf að ver á ljósmyndapappír, 35x45mm að stærð.
+    Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats) 
+    og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi 
+    á augu. Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
     `,
     description: 'Description of photo requirements',
   },
-
+  qualityPhotoInstructionsBulletOne: {
+    id: 'dl.application:qualityPhoto.instructionsbulletone',
+    defaultMessage: `
+    Ljósmynd af umsækjanda þarf að vera tekin beint að framan
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoInstructionsBulletTwo: {
+    id: 'dl.application:qualityPhoto.instructionsbullettwo',
+    defaultMessage: `
+    Sýna þarf höfuð (án höfuðfats) og herðar 
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoInstructionsBulletThree: {
+    id: 'dl.application:qualityPhoto.instructionsbulletthree',
+    defaultMessage: `
+    Lýsing andlits þarf að vera jöfn. 
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoInstructionsBulletFour: {
+    id: 'dl.application:qualityPhoto.instructionsbulletfour',
+    defaultMessage: `
+    Athuga þarf að ekki glampi á gleraugu og skyggi á augu
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoInstructionsBulletFive: {
+    id: 'dl.application:qualityPhoto.instructionsbulletfive',
+    defaultMessage: `
+    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð
+    `,
+    description: 'Description of photo requirements',
+  },
+  overviewBringAlongTitle: {
+    id: 'dl.application:overview.overviewBringAlongTitle',
+    defaultMessage: 'Gögn höfð meðferðis til sýslumanns',
+    description: `Data to bring along`,
+  },
   overviewBringCertificateData: {
     id: 'dl.application:overview.bringCertificateData',
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',

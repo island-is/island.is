@@ -24,6 +24,7 @@ import {
   generateAssignEmployerApplicationEmail,
   generateOtherParentRejected,
   generateApplicationApprovedByEmployerEmail,
+  generateApplicationApprovedByEmployerToEmployerEmail,
 } from './emailGenerators'
 import {
   getEmployer,
@@ -289,7 +290,9 @@ export class ParentalLeaveService {
       )
 
       if (!response.id) {
-        throw new Error(`Failed to send application: ${response.status}`)
+        throw new Error(
+          `Failed to send the parental leave application, no response.id from VMST API: ${response}`,
+        )
       }
 
       const employer = getEmployer(application)
@@ -302,11 +305,17 @@ export class ParentalLeaveService {
           generateApplicationApprovedByEmployerEmail,
           application,
         )
+
+        // Also send confirmation to employer
+        await this.sharedTemplateAPIService.sendEmail(
+          generateApplicationApprovedByEmployerToEmployerEmail,
+          application,
+        )
       }
 
       return response
     } catch (e) {
-      this.logger.error('Failed to send application', e)
+      this.logger.error('Failed to send the parental leave application', e)
       throw e
     }
   }

@@ -22,6 +22,19 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum RolesRule {
+  OSK = 'osk',
+  VEITA = 'veita',
+}
+
+export interface ApplicationFilters {
+  New: number
+  InProgress: number
+  DataNeeded: number
+  Rejected: number
+  Approved: number
+}
+
 export interface Application {
   id: string
   created: string
@@ -48,6 +61,13 @@ export interface Application {
   amount?: number
   comment?: string
   rejection?: string
+}
+
+export interface CurrentApplication {
+  id: string
+  homeCircumstances: HomeCircumstances
+  usePersonalTaxCredit: boolean
+  state: ApplicationState
 }
 
 export interface ApplicationFile {
@@ -136,7 +156,8 @@ export interface User {
   name: string
   phoneNumber: string
   folder: string
-  service: 'osk' | 'veita'
+  service: RolesRule
+  currentApplication?: CurrentApplication
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
