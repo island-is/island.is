@@ -7,6 +7,7 @@ import { Op } from 'sequelize'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import {
+  ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
   User,
@@ -89,7 +90,7 @@ export class ApplicationService {
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
       applicationId: appModel.id,
-      state: appModel.state,
+      eventType: ApplicationEventType[appModel.state],
     })
 
     //Create file
@@ -125,7 +126,7 @@ export class ApplicationService {
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
       applicationId: id,
-      state: update.state,
+      eventType: ApplicationEventType[update.state],
       comment: update.rejection,
       amount: update.amount,
     })

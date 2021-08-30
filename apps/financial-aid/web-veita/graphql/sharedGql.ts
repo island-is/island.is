@@ -120,8 +120,10 @@ export const GetApplicationEventQuery = gql`
     applicationEvents(input: $input) {
       id
       applicationId
+      eventType
       comment
-      state
+      staffComment
+      amount
       created
     }
   }
