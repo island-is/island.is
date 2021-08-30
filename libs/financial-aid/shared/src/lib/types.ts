@@ -124,8 +124,10 @@ export interface ApplicationEvent {
   id: string
   created: string
   applicationId: string
-  comment?: string
   state: ApplicationState
+  comment?: string
+  amount?: number
+  staffComment?: string
 }
 
 export interface Municipality {
