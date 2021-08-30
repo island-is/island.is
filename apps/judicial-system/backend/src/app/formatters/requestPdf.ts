@@ -224,7 +224,7 @@ function constructInvestigationRequestPdf(
     .font('Helvetica-Bold')
     .fontSize(18)
     .lineGap(8)
-    .text('Grunnupplýsingar')
+    .text(formatMessage(m.baseInfo.heading))
     .font('Helvetica')
     .fontSize(12)
     .lineGap(4)
