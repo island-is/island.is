@@ -46,6 +46,7 @@ import {
   AidAmountModal,
   History,
   Button,
+  CommentSection,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
@@ -362,6 +363,10 @@ const ApplicationProfile = () => {
               className={`contentUp delay-125 ${styles.widtAlmostFull}`}
             />
           </>
+
+          <CommentSection
+            className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+          />
 
           <History />
         </Box>

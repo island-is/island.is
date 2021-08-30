@@ -20,7 +20,9 @@ export class UserService {
       {
         //If failed to reach the backend throws error
         if (!res.ok) {
-          throw new Error('failed to check if user has application')
+          throw new Error(
+            `failed to check if user has application ${res.status}, ${res.statusText}`,
+          )
         }
         return res
       }

@@ -52,31 +52,18 @@ function constructRestrictionRequestPdf(
     .font('Helvetica')
     .fontSize(18)
     .text(
-      formatMessage(m.district, {
-        district:
-          existingCase.prosecutor?.institution?.name ??
-          formatMessage(m.noDistrict),
-      }),
-      {
-        align: 'center',
-      },
+      existingCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
+      { align: 'center' },
     )
     .fontSize(16)
     .text(
-      `${formatDate(existingCase.created, 'PPP')} - ${formatMessage(
-        m.caseNumber,
-        {
-          caseNumber: existingCase.policeCaseNumber,
-        },
-      )}`,
-      {
-        align: 'center',
-      },
+      `${formatDate(existingCase.created, 'PPP')} - Mál nr. ${
+        existingCase.policeCaseNumber
+      }`,
+      { align: 'center' },
     )
     .lineGap(40)
-    .text(formatMessage(m.court, { court: existingCase.court?.name }), {
-      align: 'center',
-    })
+    .text(`Dómstóll: ${existingCase.court?.name}`, { align: 'center' })
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -222,31 +209,18 @@ function constructInvestigationRequestPdf(
     .font('Helvetica')
     .fontSize(18)
     .text(
-      formatMessage(m.district, {
-        district:
-          existingCase.prosecutor?.institution?.name ??
-          formatMessage(m.noDistrict),
-      }),
-      {
-        align: 'center',
-      },
+      existingCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
+      { align: 'center' },
     )
     .fontSize(16)
     .text(
-      `${formatDate(existingCase.created, 'PPP')} - ${formatMessage(
-        m.caseNumber,
-        {
-          caseNumber: existingCase.policeCaseNumber,
-        },
-      )}`,
-      {
-        align: 'center',
-      },
+      `${formatDate(existingCase.created, 'PPP')} - Mál nr. ${
+        existingCase.policeCaseNumber
+      }`,
+      { align: 'center' },
     )
     .lineGap(40)
-    .text(formatMessage(m.court, { court: existingCase.court?.name }), {
-      align: 'center',
-    })
+    .text(`Dómstóll: ${existingCase.court?.name}`, { align: 'center' })
     .font('Helvetica-Bold')
     .fontSize(18)
     .lineGap(8)
