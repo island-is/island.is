@@ -6,7 +6,7 @@ import { CourtClientService } from '@island.is/judicial-system/court-client'
 export class CourtService {
   constructor(private readonly courtClientService: CourtClientService) {}
 
-  createDocument(
+  createRequest(
     courtId: string,
     courtCaseNumber: string,
     streamId: string,
@@ -17,6 +17,21 @@ export class CourtService {
       fileName: 'Krafa.pdf',
       streamID: streamId,
       caseFolder: 'Krafa og greinargerð',
+    })
+  }
+
+  createDocument(
+    courtId: string,
+    courtCaseNumber: string,
+    streamId: string,
+    subject: string,
+  ): Promise<string> {
+    return this.courtClientService.createDocument(courtId, {
+      caseNumber: courtCaseNumber,
+      subject,
+      fileName: `${subject}.pdf`,
+      streamID: streamId,
+      caseFolder: 'Gögn málsins',
     })
   }
 

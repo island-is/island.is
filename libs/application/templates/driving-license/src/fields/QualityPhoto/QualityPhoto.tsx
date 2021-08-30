@@ -5,33 +5,42 @@ import {
   Text,
   ContentBlock,
   AlertMessage,
-  BulletList,
-  Bullet,
 } from '@island.is/island-ui/core'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-interface QualityPhotoData {
+interface QualityPhotoData extends FieldBaseProps {
   data: {
     qualityPhoto: string
     success: boolean
   }
 }
 
-const Photo = ({ data }: QualityPhotoData) => {
+const Photo: FC<QualityPhotoData> = ({
+  data,
+  application,
+}: QualityPhotoData) => {
+  const { formatMessage } = useLocale()
   const { qualityPhoto } = data
-  if (qualityPhoto) {
-    const src =
-      'data:image/jpg;base64,' + qualityPhoto.substr(1, qualityPhoto.length - 2)
-    return <img src={src} id="myimage" />
+
+  if (!qualityPhoto) {
+    return null
   }
-  return null
+
+  const src =
+    'data:image/jpg;base64,' + qualityPhoto.substr(1, qualityPhoto.length - 2)
+  return (
+    <img
+      alt={formatText(m.qualityPhotoAltText, application, formatMessage) || ''}
+      src={src}
+      id="myimage"
+    />
+  )
 }
 
 const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
   const { qualityPhoto } = application.externalData
-  const { answers } = application
   const { formatMessage } = useLocale()
   const photo = (qualityPhoto as unknown) as QualityPhotoData
   const img = Photo(photo)
