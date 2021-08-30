@@ -991,13 +991,6 @@ export const AccidentNotificationForm: Form = buildForm({
           title: accidentDetails.general.sectionTitle,
           description: accidentDetails.general.description,
           children: [
-            /* buildDateField({
-              id: 'accidentDetails.dateOfAccident',
-              title: accidentDetails.labels.date,
-              placeholder: accidentDetails.placeholder.date,
-              backgroundColor: 'blue',
-              width: 'half',
-            }),*/
             buildCustomField({
               id: 'accidentDetails.dateOfAccident',
               title: accidentDetails.labels.date,
@@ -1012,14 +1005,17 @@ export const AccidentNotificationForm: Form = buildForm({
               width: 'half',
               format: '##:##',
             }),
-            buildCustomField({
-              id: 'notHealthInsured.notHealthInsuredAlertMessage',
-              title: 'notHealthInsured',
-              component: 'FieldAlertMessage',
-              description: 'yournontehelahtinsursed',
-              width: 'full',
-              condition: (formValue) => !isHealthInsured(formValue),
-            }),
+            buildCustomField(
+              {
+                id: 'accidentDetails.notHealthInsuredAlertMessage',
+                title: accidentDetails.general.notInsuredAlertMessageTitle,
+                component: 'FieldAlertMessage',
+                description: accidentDetails.general.notInsuredAlertMessageBody,
+                width: 'full',
+                condition: (formValue) => !isHealthInsured(formValue),
+              },
+              { type: 'warning', marginBottom: 0, marginTop: 2 },
+            ),
             buildTextField({
               id: 'accidentDetails.descriptionOfAccident',
               title: accidentDetails.labels.description,

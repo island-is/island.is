@@ -14,6 +14,17 @@ export const accidentDetails = {
       description:
         'Please state the date and time of the accident, the cause, cause and circumstances of the accident.',
     },
+    notInsuredAlertMessageTitle: {
+      id: 'an.application:accidentDetails.general.notInsuredAlertMessageTitle',
+      defaultMessage: 'Athugið',
+      description: 'Title of the alert message',
+    },
+    notInsuredAlertMessageBody: {
+      id: 'an.application:accidentDetails.general.notInsuredAlertMessageBody',
+      defaultMessage:
+        'Samkvæmt rafrænum upplýsingum Ríkisskattstjóra virðist þú ekki hafa fyllt út viðeigandi reit á skattframtali og ert því ekki slysatryggður við heimilisstörf á því tímabili er slysið átti sér stað.',
+      description: 'Body of the alert message',
+    },
   }),
   labels: defineMessages({
     date: {
@@ -35,7 +46,7 @@ export const accidentDetails = {
   placeholder: defineMessages({
     date: {
       id: 'an.application:accidentDetails.placeholder.date',
-      defaultMessage: 'Veldu dagsetning',
+      defaultMessage: 'Veldu dagsetningu',
       description: 'Choose a date',
     },
     time: {

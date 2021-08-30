@@ -36,22 +36,17 @@ export class HealthInsuranceResolver {
     @CurrentUser() user: AuthUser,
     @Args('input') input: IsHealthInsuredInput,
   ): Promise<boolean> {
-    //create a random boolean value
-    const isHealthInsured = Math.random() >= 0.5
-    console.log(input)
     return this.auditService.auditPromise(
       {
         user,
         namespace,
         action: 'healthInsuranceIsHealthInsured',
       },
-      //promisify false
-      Promise.resolve(isHealthInsured),
 
-      /*this.healthInsuranceService.isHealthInsured(
+      this.healthInsuranceService.isHealthInsured(
         user.nationalId,
         input.date?.getTime(),
-      )*/
+      ),
     )
   }
 

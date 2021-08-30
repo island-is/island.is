@@ -1,31 +1,28 @@
 import { IsHealthInsuredInput } from '@island.is/api/schema'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Box, DatePicker } from '@island.is/island-ui/core'
+import { FieldBaseProps } from '@island.is/application/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import React, { useState, FC, useEffect, useCallback } from 'react'
 import { useLazyIsHealthInsured } from '../../hooks/useLazyIsHealthInsured'
 import { NO, YES } from '../../constants'
-import { accidentDetails } from '../../lib/messages'
 import { AccidentNotification } from '../../lib/dataSchema'
-
-type BoolAnswer = typeof YES | typeof NO | undefined
+import { Controller, useFormContext } from 'react-hook-form'
+import { DatePickerController } from '@island.is/shared/form-fields'
+import { accidentDetails } from '../../lib/messages'
 
 export const DateOfAccident: FC<FieldBaseProps> = ({
   application,
+  field,
 }: FieldBaseProps) => {
-  const [isLoading, setIsLoading] = useState(false)
-
+  const { id } = field
   const answers = application.answers as AccidentNotification
+  const { register, setValue } = useFormContext()
 
-  const currentIsHealth = answers.accidentDetails?.isHealthInsured
-  const currentSelectedDate = answers.accidentDetails?.dateOfAccident
+  const isHealthInsured = answers?.accidentDetails?.isHealthInsured
 
-  const [stateFulIsHealthInsured, setIsHealthInsured] = useState<
-    BoolAnswer | undefined
-  >(currentIsHealth)
-  console.log('currentIsHealth', stateFulIsHealthInsured)
   const [dateOfAccident, setDateOfAccident] = useState<string | undefined>(
-    currentSelectedDate,
+    answers?.accidentDetails?.dateOfAccident,
   )
+
   const getIsHealthInsured = useLazyIsHealthInsured()
 
   const getIsHealhInsuredCallback = useCallback(
@@ -42,41 +39,58 @@ export const DateOfAccident: FC<FieldBaseProps> = ({
   )
 
   useEffect(() => {
-    console.log('useEffect')
     if (dateOfAccident !== undefined) {
-      setIsLoading(true)
       getIsHealhInsuredCallback({ date: dateOfAccident })
         .then((res) => {
-          console.log(res)
-          setIsLoading(false)
-          setIsHealthInsured(res?.healthInsuranceIsHealthInsured ? YES : NO)
+          setValue(
+            'accidentDetails.isHealthInsured',
+            res?.healthInsuranceIsHealthInsured ? YES : NO,
+          )
         })
         .catch((err) => {
           console.log(
             'An error occured fetching health insurance status: ',
             err,
           )
-          setIsLoading(false)
         })
     }
-  }, [application.answers, dateOfAccident, getIsHealhInsuredCallback])
+  }, [dateOfAccident, getIsHealhInsuredCallback, setValue])
 
-  const handleDateChange = (date: Date) => {
-    setDateOfAccident(date.toString())
+  const handleDateChange = (date: string) => {
+    setDateOfAccident(date)
   }
 
   return (
-    <div>
-      <Box paddingTop={2}>
-        <DatePicker
-          label="Date of accident"
-          id="accidentDetails.dateOfAccident"
-          placeholderText={accidentDetails.placeholder.date.defaultMessage}
-          required={true}
-          backgroundColor="blue"
-          handleChange={handleDateChange}
+    <Box paddingTop={2}>
+      <DatePickerController
+        label={accidentDetails.labels.date.defaultMessage}
+        placeholder={accidentDetails.placeholder.date.defaultMessage}
+        id={id}
+        backgroundColor="blue"
+        onChange={handleDateChange}
+      />
+
+      <Box hidden>
+        <Controller
+          name="reason"
+          defaultValue={application.answers.residenceChangeReason}
+          render={({ onChange }) => {
+            return (
+              <Input
+                id="accidentDetails.isHealthInsured"
+                name="accidentDetails.isHealthInsured"
+                defaultValue={'yes'}
+                value={isHealthInsured}
+                onChange={(e) => {
+                  onChange(e.target.value)
+                  setValue('accidentDetails.isHealthInsured', e.target.value)
+                }}
+                ref={register}
+              />
+            )
+          }}
         />
       </Box>
-    </div>
+    </Box>
   )
 }
