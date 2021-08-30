@@ -1,4 +1,5 @@
 import React, { FC, ReactNode, useState } from 'react'
+import cn from 'classnames'
 
 import {
   Box,
@@ -10,12 +11,15 @@ import {
 import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
 
+import * as styles from './ReviewGroup.treat'
+
 interface ReviewGroupProps {
   editChildren?: ReactNode
   editAction?(): void
   isEditable?: boolean
   isLast?: boolean
   canCloseEdit?: boolean
+  triggerValidation?: boolean
 }
 
 export const ReviewGroup: FC<ReviewGroupProps> = ({
@@ -25,18 +29,45 @@ export const ReviewGroup: FC<ReviewGroupProps> = ({
   isEditable = true,
   isLast,
   canCloseEdit = true,
+  triggerValidation = false,
 }) => {
   const [editable, setEditable] = useState(false)
   const { formatMessage } = useLocale()
 
   const handleClick = () => {
-    if (!canCloseEdit) return
+    if (!canCloseEdit) {
+      return
+    }
 
     if (editAction) {
       editAction()
     } else {
       setEditable(!editable)
     }
+  }
+
+  const renderEditSection = () => {
+    const layout = (
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          {editChildren}
+        </GridColumn>
+      </GridRow>
+    )
+
+    /**
+     * To be able to trigger the validation, we need the fields to be part
+     * of the DOM to be registered through the react-hook-form.
+     */
+    if (triggerValidation) {
+      return <Box className={cn({ [styles.hidden]: !editable })}>{layout}</Box>
+    }
+
+    if (!editable) {
+      return null
+    }
+
+    return layout
   }
 
   return (
@@ -58,15 +89,8 @@ export const ReviewGroup: FC<ReviewGroupProps> = ({
           </Box>
         )}
 
-        {editable ? (
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
-              {editChildren}
-            </GridColumn>
-          </GridRow>
-        ) : (
-          children
-        )}
+        {renderEditSection()}
+        {!editable && children}
       </Box>
 
       {!isLast && <Divider />}
