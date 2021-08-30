@@ -4,12 +4,9 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.renameColumn(
-          'application_events',
-          'state',
-          'type',
-          { transaction: t },
-        ),
+        queryInterface.renameColumn('application_events', 'state', 'type', {
+          transaction: t,
+        }),
       ]),
     )
   },
@@ -17,12 +14,9 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.renameColumn(
-          'application_events',
-          'type',
-          'state',
-          { transaction: t },
-        )
+        queryInterface.renameColumn('application_events', 'type', 'state', {
+          transaction: t,
+        }),
       ]),
     )
   },

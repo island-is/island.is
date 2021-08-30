@@ -22,7 +22,7 @@ module.exports = {
           'event_type',
           'type',
           { transaction: t },
-        )
+        ),
       ]),
     )
   },

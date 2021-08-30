@@ -24,7 +24,7 @@ module.exports = {
                 'DataNeeded',
                 'Rejected',
                 'Approved',
-                'StaffComment'
+                'StaffComment',
               ),
             }),
           ),
