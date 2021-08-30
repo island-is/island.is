@@ -5,8 +5,9 @@ describe('/domur/urskurdarord/:id', () => {
   })
 
   it('should display the case conclusion', () => {
-    cy.contains(
-      'Kærða, Batman Robinsson kt. 000000-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 16. september 2020, kl. 19:50.',
+    cy.getByTestid('conclusion').should(
+      'have.value',
+      'Kærða, Batman Robinsson, kt. 000000-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 16. september 2020, kl. 19:50.',
     )
   })
 
