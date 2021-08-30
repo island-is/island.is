@@ -21,6 +21,7 @@ export class DrivingLicenseApiModule {
               new Configuration({
                 fetchApi: createEnhancedFetch({
                   name: 'clients-driving-license',
+                  treat400ResponsesAsErrors: true,
                 }),
                 headers: {
                   'X-Road-Client': config.xroadClientId,
