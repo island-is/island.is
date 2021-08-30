@@ -1,0 +1,164 @@
+import {
+  ApplicationTemplate,
+  ApplicationTypes,
+  ApplicationContext,
+  ApplicationRole,
+  ApplicationStateSchema,
+  Application,
+  DefaultEvents,
+  DefaultStateLifeCycle,
+} from '@island.is/application/core'
+import { ApiModuleActions, States, Roles } from '../constants'
+import { GeneralPetitionSchema } from './dataSchema'
+import { assign } from 'xstate'
+
+type Events = { type: DefaultEvents.SUBMIT }
+
+const GeneralPetitionApplicationTemplate: ApplicationTemplate<
+  ApplicationContext,
+  ApplicationStateSchema<Events>,
+  Events
+> = {
+  type: ApplicationTypes.GENERAL_PETITION,
+  name: 'Undirskirftarlisti',
+  dataSchema: GeneralPetitionSchema,
+  readyForProduction: true,
+  stateMachineConfig: {
+    initial: States.DRAFT,
+    states: {
+      [States.DRAFT]: {
+        meta: {
+          name: 'draft',
+          progress: 0.25,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ApplicationForm').then((module) =>
+                  Promise.resolve(module.LetterApplicationForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.COLLECT_ENDORSEMENTS,
+          },
+        },
+      },
+      [States.COLLECT_ENDORSEMENTS]: {
+        meta: {
+          name: 'Safna meðmælum',
+          progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiModuleActions.CreateEndorsementList,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/CollectEndorsements').then((val) =>
+                  Promise.resolve(val.CollectEndorsements),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.SIGNATUREE,
+              formLoader: () =>
+                import('../forms/EndorsementForm').then((val) =>
+                  Promise.resolve(val.EndorsementForm),
+                ),
+              read: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.APPROVED,
+          },
+        },
+      },
+      [States.APPROVED]: {
+        meta: {
+          name: 'Approved',
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/LetterApplicationApproved').then((val) =>
+                  Promise.resolve(val.LetterApplicationApproved),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        type: 'final' as const,
+      },
+    },
+  },
+  stateMachineOptions: {
+    actions: {
+      assignToMinistryOfJustice: assign((context) => {
+        return {
+          ...context,
+          application: {
+            ...context.application,
+            assignees:
+              process.env.PARTY_LETTER_ASSIGNED_ADMINS?.split(',') ?? [],
+          },
+        }
+      }),
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
+    },
+  },
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (application.applicant === nationalId) {
+      return Roles.APPLICANT
+    } else if (application.state === States.COLLECT_ENDORSEMENTS) {
+      // everyone can be signaturee if they are not the applicant
+      return Roles.SIGNATUREE
+    } else {
+      return undefined
+    }
+  },
+}
+
+export default GeneralPetitionApplicationTemplate
