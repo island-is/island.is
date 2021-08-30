@@ -8,7 +8,10 @@ import cn from 'classnames'
 import * as styles from './CommentSection.treat'
 import { useMutation } from '@apollo/client'
 import { CreateApplicationEventQuery } from '@island.is/financial-aid-web/veitagraphql/sharedGql'
-import { ApplicationState } from '@island.is/financial-aid/shared'
+import {
+  ApplicationEventType,
+  ApplicationState,
+} from '@island.is/financial-aid/shared'
 
 interface Props {
   className?: string
@@ -33,11 +36,11 @@ const CommentSection = ({ className, applicationState }: Props) => {
           input: {
             applicationId: router.query.id,
             staffComment: staffComment,
-            state: applicationState,
+            eventType: ApplicationEventType.STAFFCOMMENT,
           },
         },
       })
-      console.log(data)
+
       if (data) {
         setComment(undefined)
         setShowInput(false)
@@ -67,7 +70,7 @@ const CommentSection = ({ className, applicationState }: Props) => {
         <Input
           backgroundColor="blue"
           label="Athugasemd"
-          name="Test5"
+          name="Athugasemd"
           rows={4}
           textarea
           onChange={(event) => {

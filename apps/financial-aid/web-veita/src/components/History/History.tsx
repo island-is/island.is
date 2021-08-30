@@ -10,8 +10,8 @@ import { useRouter } from 'next/router'
 import { GetApplicationEventQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import {
   ApplicationEvent,
-  ApplicationState,
-  getState,
+  ApplicationEventType,
+  getEventType,
 } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
@@ -55,28 +55,25 @@ const History = ({ className }: Props) => {
                   [`${styles.firstApplicationEvent}`]:
                     index === data?.applicationEvents.length - 1,
                   [`${styles.acceptedEvent}`]:
-                    item.state === ApplicationState.APPROVED,
+                    item.eventType === ApplicationEventType.APPROVED,
                   [`${styles.rejectedEvent}`]:
-                    item.state === ApplicationState.REJECTED,
+                    item.eventType === ApplicationEventType.REJECTED,
                 })}
               >
                 <Box paddingLeft={3}>
-                  <Text variant="h5">{getState[item.state]}</Text>
+                  <Text variant="h5">
+                    {getEventType[item.eventType].header}
+                  </Text>
                   <Text marginBottom={2}>
                     {' '}
-                    Umsækjandi <strong>inn umsókn </strong>
+                    XXX <strong>{getEventType[item.eventType].text} </strong>
                   </Text>
 
-                  {/* <Box paddingLeft={3} marginBottom={2}>
-                    {/* TODO: if comment then show */}
-                  {/*    <Text variant="small">
-                      {comment} f.ex
-                      Umsækjandi hringdi og lét mig vita af því að síðustu gögnin sem 
-                      vantaði munu berast í síðasta lagi á föstudag þannig að þá getum við 
-                      farið að ganga frá þessu.
-                    </Text> 
-                 
-                  </Box> */}
+                  {item.eventType === ApplicationEventType.STAFFCOMMENT && (
+                    <Box paddingLeft={3} marginBottom={2}>
+                      <Text variant="small">{item.staffComment}</Text>
+                    </Box>
+                  )}
 
                   {/* TODO: if sent meessage */}
                   {/* <Box
