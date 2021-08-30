@@ -4,7 +4,6 @@ import { Logo, Text, Box, Link } from '@island.is/island-ui/core'
 import { LogoHfj } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './login.treat'
-import cn from 'classnames'
 
 const Login = () => {
   useEffect(() => {
