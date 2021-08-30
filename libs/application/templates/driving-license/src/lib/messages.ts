@@ -416,7 +416,7 @@ export const m = defineMessages({
   },
   overviewDone: {
     id: 'dl.application:overview.done',
-    defaultMessage: 'Staðfesting',
+    defaultMessage: 'Umsókn móttekin',
     description: 'Confirmation',
   },
   overviewPaymentCharge: {
@@ -531,6 +531,26 @@ export const m = defineMessages({
     id: 'dl.application.congratulationsTitle',
     defaultMessage: 'Til hamingju',
     description: 'Congratulations',
+  },
+  congratulationsCertificateTitle: {
+    id: 'dl.application.congratulationsCertificateTitle',
+    defaultMessage: 'Læknisvottorð',
+    description: 'Health Certificate',
+  },
+  congratulationsQualityPictureTitle: {
+    id: 'dl.application.congratulationsQualityPictureTitle',
+    defaultMessage: 'Gæðamerkt ljósmynd',
+    description: 'Quality photo',
+  },
+  congratulationsCertificateDescription: {
+    id: 'dl.application.congratulationsCertificateDescription',
+    defaultMessage: 'Þörf er á læknisvottorði miðað við útfyllta heilbrigðisyfirlýsingu. Læknisvottorði þarf að skila til sýslumannsembættis. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
+    description: 'Health Certificate',
+  },
+  congratulationsQualityPictureDescription: {
+    id: 'dl.application.congratulationsQualityPictureDescription',
+    defaultMessage: 'Skila þarf gæðamerktri ljósmynd til sýslumanns',
+    description: 'Quality photo',
   },
   paymentPendingDescription: {
     id: 'dl.application.paymentPendingDescription',
