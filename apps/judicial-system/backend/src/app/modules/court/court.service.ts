@@ -31,7 +31,7 @@ export class CourtService {
       subject,
       fileName: `${subject}.pdf`,
       streamID: streamId,
-      caseFolder: 'Gögn málsisn',
+      caseFolder: 'Gögn málsins',
     })
   }
 
