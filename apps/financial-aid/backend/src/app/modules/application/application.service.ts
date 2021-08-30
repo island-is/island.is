@@ -90,7 +90,7 @@ export class ApplicationService {
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
       applicationId: appModel.id,
-      eventType: ApplicationEventType[appModel.state],
+      eventType: ApplicationEventType[appModel.state.toUpperCase()],
     })
 
     //Create file
@@ -126,7 +126,7 @@ export class ApplicationService {
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
       applicationId: id,
-      eventType: ApplicationEventType[update.state],
+      eventType: ApplicationEventType[update.state.toUpperCase()],
       comment: update.rejection,
       amount: update.amount,
     })
