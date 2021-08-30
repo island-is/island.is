@@ -9,5 +9,5 @@
   "videosFolder": "../../../dist/cypress/apps/judicial-system/web-e2e/videos",
   "screenshotsFolder": "../../../dist/cypress/apps/judicial-system/web-e2e/screenshots",
   "chromeWebSecurity": false,
-  "defaultCommandTimeout": 60000
+  "defaultCommandTimeout": 10000
 }
