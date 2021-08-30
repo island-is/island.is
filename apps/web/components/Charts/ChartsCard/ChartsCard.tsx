@@ -140,7 +140,7 @@ const FrameWrapper = ({ width, children }) => {
   return (
     <Box
       className={cn(styles.frameWrapper, {
-        [styles.scroll]: width < 840,
+        [styles.scroll]: width < 800,
       })}
       borderColor="purple100"
       borderWidth="standard"
