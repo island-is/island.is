@@ -26,7 +26,6 @@ export class EligibilityProvider extends BasicDataProvider {
     `
 
     const res = await this.useGraphqlGateway(query, { drivingLicenseType: 'B' })
-
     if (!res.ok) {
       return Promise.reject({
         reason: 'Náði ekki sambandi við vefþjónustu',
