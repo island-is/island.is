@@ -1,3 +1,7 @@
+// Treat
+export * from './treat/global.treat'
+export * from './utils/globalStyles'
+
 // Alerts
 export * from './lib/AlertMessage/AlertMessage'
 export * from './lib/AlertBanner/AlertBanner'
@@ -89,10 +93,6 @@ export * from './lib/DropdownMenu/DropdownMenu'
 
 // Context
 export * from './lib/context'
-
-// Treat
-export * from './treat/global.treat'
-export * from './utils/globalStyles'
 
 // Type exports:
 export type { BoxProps } from './lib/Box/types'
