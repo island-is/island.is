@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client'
 import {
   EmptyList,
   ListItem,
+  ListItemSkeleton,
   SearchHeader,
   TopLine,
 } from '@island.is/island-ui-native'
@@ -290,12 +291,28 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
     [readItems],
   )
 
+  const isFirstLoad = !res.data;
   const isSearch = ui.inboxQuery.length > 0
   const isLoading = res.loading
+  const isError = !!res.error
   const isEmpty = (res?.data?.listDocuments ?? []).length === 0
 
-  if (isLoading) {
-    return <ActivityIndicator />
+  if (isLoading && isFirstLoad && !isError) {
+    return (
+      <View style={{ flex: 1 }}>
+        <ListItemSkeleton />
+        <ListItemSkeleton />
+        <ListItemSkeleton />
+        <ListItemSkeleton />
+        <ListItemSkeleton />
+        <ListItemSkeleton />
+        <ListItemSkeleton />
+        <ListItemSkeleton />
+        <ListItemSkeleton />
+        <ListItemSkeleton />
+        <ListItemSkeleton />
+      </View>
+    )
   }
 
   if (!isLoading && isEmpty) {
