@@ -39,8 +39,8 @@ export const m = defineMessages({
   },
   externalDataSection: {
     id: 'dl.application:externalData.section',
-    defaultMessage: 'Ökuréttindi',
-    description: 'Driving license',
+    defaultMessage: 'Upplýsingasöfnun',
+    description: 'Information',
   },
   nationalRegistryTitle: {
     id: 'dl.application:nationalRegistry.title',
