@@ -46,6 +46,5 @@ export const graphParent = style({
 
 export const pie = style({
   width: '100%',
-  height: '100%',
+  height: 'fit-content',
 })
-

@@ -117,9 +117,12 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
               </Box>
             </GridColumn>
             <GridColumn span={['12/12', '7/12', '7/12']}>
-              <Box ref={ref} className={cn(styles.headerGraphWrapper, {
-        [styles.scroll]: width < 700,
-      })}>
+              <Box
+                ref={ref}
+                className={cn(styles.headerGraphWrapper, {
+                  [styles.scroll]: width < 700,
+                })}
+              >
                 <Box className={styles.headerGraphParent}>
                   <SimpleLineChart graphData={pageHeaderGraph} />
                 </Box>
@@ -226,4 +229,3 @@ OpenDataPage.getInitialProps = async ({ apolloClient, locale }) => {
 export default withMainLayout(OpenDataPage, {
   showHeader: false,
 })
-
