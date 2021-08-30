@@ -70,7 +70,7 @@ const CommentSection = ({ className, applicationState }: Props) => {
         <Input
           backgroundColor="blue"
           label="Athugasemd"
-          name="Athugasemd"
+          name="comment"
           rows={4}
           textarea
           onChange={(event) => {
