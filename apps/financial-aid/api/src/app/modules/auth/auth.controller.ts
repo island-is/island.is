@@ -13,7 +13,6 @@ import {
   Query,
   Req,
   DefaultValuePipe,
-  Param,
 } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -95,7 +94,7 @@ export class AuthController {
         if (applicationId) {
           fakeUser.returnUrl = ReturnUrl.STADA
         }
-        console.log(fakeUser)
+
         return this.logInUser(fakeUser, res)
       }
     }
