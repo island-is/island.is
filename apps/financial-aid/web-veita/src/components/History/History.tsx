@@ -52,8 +52,8 @@ const History = ({ className }: Props) => {
                 key={'timeline-' + index}
                 className={cn({
                   [`${styles.timelineContainer}`]: true,
-                  [`${styles.firstApplicationEvent}`]:
-                    index === data?.applicationEvents.length - 1,
+                  // [`${styles.firstApplicationEvent}`]:
+                  //   index === data?.applicationEvents.length - 1,
                   [`${styles.acceptedEvent}`]:
                     item.eventType === ApplicationEventType.APPROVED,
                   [`${styles.rejectedEvent}`]:
@@ -103,6 +103,34 @@ const History = ({ className }: Props) => {
           })}
         </>
       )}
+      <Box className={styles.fadeOutLineContainer}>
+        <svg
+          width="2"
+          height="100%"
+          viewBox="0 0 4 256"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={styles.fadeOutLine}
+        >
+          <path
+            d="M4 256L0 256L2.23802e-05 -3.49691e-07L4.00002 0L4 256Z"
+            fill="url(#paint0_linear)"
+          />
+          <defs>
+            <linearGradient
+              id="paint0_linear"
+              x1="2"
+              y1="256"
+              x2="2.00002"
+              y2="-1.74846e-07"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="white" />
+              <stop offset="1" stop-color="white" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </Box>
     </Box>
   )
 }

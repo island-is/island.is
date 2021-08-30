@@ -3,6 +3,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const historyContainer = style({
   gridColumn: '1/-1',
+  marginBottom: -theme.spacing[12],
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       gridColumn: 'span 6',
@@ -39,7 +40,7 @@ export const timelineContainer = style({
 
 export const firstApplicationEvent = style({
   '::after': {
-    height: 'calc(100% + 250px)',
+    height: 'calc(100% + 10px)',
   },
 })
 
@@ -57,4 +58,12 @@ export const rejectedEvent = style({
 export const timelineMessages = style({
   display: 'grid',
   gridTemplateColumns: '40px auto',
+})
+
+export const fadeOutLine = style({
+  backgroundColor: theme.color.purple200,
+})
+
+export const fadeOutLineContainer = style({
+  paddingLeft: '7px',
 })
