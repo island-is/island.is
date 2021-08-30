@@ -1,16 +1,49 @@
 import React, { useState } from 'react'
 
+import { useRouter } from 'next/router'
+
 import { Box, Button, Input } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
 import * as styles from './CommentSection.treat'
+import { useMutation } from '@apollo/client'
+import { CreateApplicationEventQuery } from '@island.is/financial-aid-web/veitagraphql/sharedGql'
+import { ApplicationState } from '@island.is/financial-aid/shared'
 
 interface Props {
   className?: string
+  applicationState: ApplicationState
 }
 
-const CommentSection = ({ className }: Props) => {
+const CommentSection = ({ className, applicationState }: Props) => {
+  const router = useRouter()
+
   const [showInput, setShowInput] = useState<boolean>(false)
+  const [comment, setComment] = useState<string>()
+
+  const [
+    createApplicationEventMutation,
+    { loading: isCreatingApplicationEvent },
+  ] = useMutation(CreateApplicationEventQuery)
+
+  const saveStaffComment = async (staffComment: string | undefined) => {
+    if (isCreatingApplicationEvent === false && staffComment) {
+      const { data } = await createApplicationEventMutation({
+        variables: {
+          input: {
+            applicationId: router.query.id,
+            staffComment: staffComment,
+            state: applicationState,
+          },
+        },
+      })
+      console.log(data)
+      if (data) {
+        setComment(undefined)
+        setShowInput(false)
+      }
+    }
+  }
 
   return (
     <Box marginBottom={3} className={`${className} `}>
@@ -37,6 +70,9 @@ const CommentSection = ({ className }: Props) => {
           name="Test5"
           rows={4}
           textarea
+          onChange={(event) => {
+            setComment(event.currentTarget.value)
+          }}
         />
         <Box marginTop={2} display="flex" justifyContent="flexEnd">
           <Button
@@ -44,7 +80,7 @@ const CommentSection = ({ className }: Props) => {
             size="small"
             iconType="outline"
             onClick={() => {
-              setShowInput(!showInput)
+              saveStaffComment(comment)
             }}
           >
             Vista athugasemd
