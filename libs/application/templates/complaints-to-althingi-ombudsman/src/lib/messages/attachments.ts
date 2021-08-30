@@ -10,7 +10,7 @@ export const attachments = defineMessages({
   },
   title: {
     id: 'ctao.application:section.attachments.title',
-    defaultMessage: 'Viðhengi',
+    defaultMessage: 'Rökstuðningur kvörtunar og önnur fylgiskjöl',
     description: 'Title of attachments',
   },
   uploadDescription: {
