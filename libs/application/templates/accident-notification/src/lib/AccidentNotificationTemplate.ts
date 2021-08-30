@@ -248,13 +248,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ThirdPartyOverview').then((val) =>
-                  Promise.resolve(val.ThirdPartyOverview),
-                ),
-              /* formLoader: () =>
                 import('../forms/Overview').then((val) =>
                   Promise.resolve(val.Overview),
-                ), */
+                ),
               read: 'all',
             },
             {
