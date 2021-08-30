@@ -39,6 +39,7 @@ import {
   TokenGuaard,
 } from '@island.is/judicial-system/auth'
 
+import { CaseFile } from '../file/models/file.model'
 import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
@@ -457,7 +458,19 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(
+      id,
+      user,
+      true,
+      [
+        {
+          model: CaseFile,
+          as: 'caseFiles',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+      ],
+    )
 
     if (user?.id !== existingCase.judgeId) {
       throw new ForbiddenException(

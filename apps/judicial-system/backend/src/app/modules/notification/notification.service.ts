@@ -58,9 +58,9 @@ export class NotificationService {
     private readonly courtService: CourtService,
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
+    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    private intlService: IntlService,
   ) {}
 
   private async existsRevokableNotification(
@@ -187,6 +187,32 @@ export class NotificationService {
     }
   }
 
+  private async uploadRequestPdfToCourt(existingCase: Case): Promise<void> {
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    const requestPdf = await getRequestPdfAsBuffer(
+      existingCase,
+      intl.formatMessage,
+    )
+
+    try {
+      const streamId = await this.courtService.uploadStream(
+        existingCase.courtId,
+        requestPdf,
+      )
+      await this.courtService.createRequest(
+        existingCase.courtId,
+        existingCase.courtCaseNumber,
+        streamId,
+      )
+    } catch (error) {
+      this.logger.error('Failed to upload request pdf to court', error)
+    }
+  }
+
   /* HEADS_UP notifications */
 
   private sendHeadsUpSmsNotificationToCourt(
@@ -264,29 +290,6 @@ export class NotificationService {
       html,
       attachments,
     )
-  }
-
-  private async uploadRequestPdfToCourt(existingCase: Case): Promise<void> {
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    const pdf = await getRequestPdfAsBuffer(existingCase, intl.formatMessage)
-
-    try {
-      const streamId = await this.courtService.uploadStream(
-        existingCase.courtId,
-        pdf,
-      )
-      await this.courtService.createDocument(
-        existingCase.courtId,
-        existingCase.courtCaseNumber,
-        streamId,
-      )
-    } catch (error) {
-      this.logger.error('Failed to upload request to court', error)
-    }
   }
 
   private async sendReadyForCourtNotifications(
