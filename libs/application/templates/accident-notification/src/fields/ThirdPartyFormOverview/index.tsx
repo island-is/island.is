@@ -47,7 +47,6 @@ export const ThirdPartyFormOverview: FC<FieldBaseProps> = ({
   refetch,
   goToScreen,
 }) => {
-  console.log(application)
   const answers = application.answers as AccidentNotification
   const { formatMessage } = useLocale()
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
@@ -57,12 +56,9 @@ export const ThirdPartyFormOverview: FC<FieldBaseProps> = ({
     },
   )
 
-  const [commentOnApplication, { loading: loadingCommentButton }] = useMutation(
-    SUBMIT_APPLICATION,
-    {
-      onError: (e) => console.error(e.message),
-    },
-  )
+  const [commentOnApplication] = useMutation(SUBMIT_APPLICATION, {
+    onError: (e) => console.error(e.message),
+  })
 
   const missingDocuments = returnMissingDocumentsList(answers, formatMessage)
 
@@ -269,6 +265,7 @@ export const ThirdPartyFormOverview: FC<FieldBaseProps> = ({
                     input: {
                       id: application.id,
                       event: 'COMMENT',
+                      answers: application.answers,
                     },
                   },
                 })
@@ -278,7 +275,7 @@ export const ThirdPartyFormOverview: FC<FieldBaseProps> = ({
                   refetch?.()
                 }
               }
-            : () => changeScreens('attachments.multifield')
+            : () => changeScreens('comment.multifield')
         }
       >
         <GridRow>
@@ -308,6 +305,18 @@ export const ThirdPartyFormOverview: FC<FieldBaseProps> = ({
               value={answers.accidentDetails.descriptionOfAccident}
             />
           </GridColumn>
+          {answers.comment?.description && (
+            <GridColumn span={'12/12'}>
+              <Box
+                background="roseTinted100"
+                padding={3}
+                borderRadius="standard"
+              >
+                <Text variant="eyebrow">Athugasemd</Text>
+                <Text>{answers.comment.description}</Text>
+              </Box>
+            </GridColumn>
+          )}
           <GridColumn span={['12/12', '12/12', '12/12']}>
             <FileValueLine
               label={overview.labels.attachments}
@@ -330,7 +339,8 @@ export const ThirdPartyFormOverview: FC<FieldBaseProps> = ({
               </Box>
             )}
             {States.OVERVIEW === application.state ||
-            States.ADD_DOCUMENTS === application.state ? (
+            States.ADD_DOCUMENTS === application.state ||
+            States.THIRD_PARTY_COMMENT ? (
               <Box display="flex" justifyContent="flexEnd">
                 <Button
                   icon="attach"
@@ -338,7 +348,8 @@ export const ThirdPartyFormOverview: FC<FieldBaseProps> = ({
                   loading={loadingSubmit}
                   disabled={loadingSubmit}
                   onClick={
-                    States.OVERVIEW === application.state
+                    States.OVERVIEW === application.state ||
+                    States.THIRD_PARTY_COMMENT === application.state
                       ? async () => {
                           const res = await submitApplication({
                             variables: {

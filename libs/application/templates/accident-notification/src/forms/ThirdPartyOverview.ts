@@ -9,7 +9,7 @@ import {
   Form,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
-import { overview } from '../lib/messages'
+import { overview, thirdPartyComment } from '../lib/messages'
 
 export const ThirdPartyOverview: Form = buildForm({
   id: 'AccidentNotificationThirdPartyOverview',
@@ -36,12 +36,12 @@ export const ThirdPartyOverview: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.REJECT,
-                  name: 'Andmæla tilkynningu',
+                  name: thirdPartyComment.buttons.reject,
                   type: 'reject',
                 },
                 {
                   event: DefaultEvents.APPROVE,
-                  name: 'Staðfesta tilkynningu',
+                  name: thirdPartyComment.buttons.approve,
                   type: 'primary',
                 },
               ],

@@ -7,7 +7,6 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { States } from '../constants'
@@ -79,7 +78,11 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         meta: {
           name: States.NEEDS_DOCUMENT_AND_REVIEW,
           progress: 0.4,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -105,7 +108,11 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         meta: {
           name: States.NEEDS_DOCUMENT,
           progress: 0.6,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -130,7 +137,11 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         meta: {
           name: States.NEEDS_REVIEW,
           progress: 0.6,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -155,7 +166,11 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         meta: {
           name: States.ADD_DOCUMENTS,
           progress: 0.6,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -178,8 +193,21 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         meta: {
           name: States.THIRD_PARTY_COMMENT,
           progress: 0.6,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
           roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ThirdPartyComment').then((val) =>
+                  Promise.resolve(val.ThirdPartyComment),
+                ),
+              read: 'all',
+              write: 'all',
+            },
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
@@ -192,8 +220,18 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
+          [DefaultEvents.EDIT]: {
+            target: States.ADD_DOCUMENTS,
+          },
+          COMMENT: {
+            target: States.THIRD_PARTY_COMMENT,
+          },
+          // TODO: Add rejected review state
+          [DefaultEvents.REJECT]: {
             target: States.NEEDS_REVIEW,
+          },
+          [DefaultEvents.APPROVE]: {
+            target: States.IN_FINAL_REVIEW,
           },
         },
       },
@@ -201,7 +239,11 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         meta: {
           name: States.OVERVIEW,
           progress: 0.6,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -229,16 +271,12 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: {
             target: States.NEEDS_REVIEW,
           },
-          [DefaultEvents.EDIT]: [
-            {
-              target: States.ADD_DOCUMENTS,
-            },
-          ],
-          COMMENT: [
-            {
-              target: States.THIRD_PARTY_COMMENT,
-            },
-          ],
+          [DefaultEvents.EDIT]: {
+            target: States.ADD_DOCUMENTS,
+          },
+          COMMENT: {
+            target: States.THIRD_PARTY_COMMENT,
+          },
           // TODO: Add rejected review state
           [DefaultEvents.REJECT]: {
             target: States.NEEDS_REVIEW,
@@ -252,7 +290,11 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         meta: {
           name: States.IN_FINAL_REVIEW,
           progress: 0.8,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

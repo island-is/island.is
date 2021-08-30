@@ -9,57 +9,30 @@ import {
   Form,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
-import { addDocuments, overview } from '../lib/messages'
+import { addDocuments, overview, thirdPartyComment } from '../lib/messages'
 
 export const ThirdPartyComment: Form = buildForm({
   id: 'ParentalLeaveThirdPartyComment',
   title: addDocuments.general.sectionTitle,
   logo: Logo,
   children: [
-    /* buildSection({
-      id: 'review',
+    buildSection({
+      id: 'comment.section',
       title: addDocuments.general.sectionTitle,
       children: [
         buildMultiField({
-          id: 'attachments.multifield',
-          title: addDocuments.general.heading,
-          description: addDocuments.general.description,
+          id: 'comment.multifield',
+          title: thirdPartyComment.general.name,
           children: [
-            buildFileUploadField({
-              id: 'attachments.injuryCertificateFile',
-              title: addDocuments.general.uploadTitle,
-              introduction: addDocuments.injuryCertificate.uploadIntroduction,
-              uploadAccept: UPLOAD_ACCEPT,
-              uploadHeader: addDocuments.injuryCertificate.uploadHeader,
-              uploadDescription: addDocuments.general.uploadDescription,
-              uploadButtonLabel: addDocuments.general.uploadButtonLabel,
-            }),
-            buildFileUploadField({
-              id: 'attachments.deathCertificateFile',
-              title: addDocuments.general.uploadTitle,
-              condition: (formValue) => formValue.wasTheAccidentFatal === YES,
-              introduction: addDocuments.deathCertificate.uploadIntroduction,
-              uploadAccept: UPLOAD_ACCEPT,
-              uploadHeader: addDocuments.deathCertificate.uploadHeader,
-              uploadDescription: addDocuments.general.uploadDescription,
-              uploadButtonLabel: addDocuments.general.uploadButtonLabel,
-            }),
-            buildFileUploadField({
-              id: 'attachments.powerOfAttorneyFile',
-              title: addDocuments.general.uploadTitle,
-              condition: (formValue) =>
-                formValue.whoIsTheNotificationFor ===
-                WhoIsTheNotificationForEnum.POWEROFATTORNEY,
-              introduction: addDocuments.powerOfAttorney.uploadIntroduction,
-              uploadAccept: UPLOAD_ACCEPT,
-              uploadHeader: addDocuments.powerOfAttorney.uploadHeader,
-              uploadDescription: addDocuments.general.uploadDescription,
-              uploadButtonLabel: addDocuments.general.uploadButtonLabel,
+            buildCustomField({
+              id: 'comment',
+              title: '',
+              component: 'ThirdPartyComment',
             }),
           ],
         }),
       ],
-    }), */
+    }),
     buildSection({
       id: 'overview.section',
       title: overview.general.sectionTitle,
@@ -80,12 +53,12 @@ export const ThirdPartyComment: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.REJECT,
-                  name: 'Andmæla tilkynningu',
+                  name: thirdPartyComment.buttons.reject,
                   type: 'reject',
                 },
                 {
                   event: DefaultEvents.APPROVE,
-                  name: 'Staðfesta tilkynningu',
+                  name: thirdPartyComment.buttons.approve,
                   type: 'primary',
                 },
               ],
