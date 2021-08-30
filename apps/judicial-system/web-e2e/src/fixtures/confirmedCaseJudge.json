@@ -28,9 +28,9 @@
         "id": "a1fd62db-18a6-4741-88eb-a7b7a7e05833",
         "name": "Áki Ákærandi",
         "title": "aðstoðarsaksóknari",
-        "institution": { 
+        "institution": {
           "name": "Lögreglan á Höfuðborgarsvæðinu"
-        }, 
+        },
         "__typename": "User"
       },
       "courtCaseNumber": null,
