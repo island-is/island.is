@@ -44,6 +44,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
       borderRadius="large"
       padding={4}
       marginBottom={2}
+      borderColor={state === ReviewSectionState.complete ? "mint600" : "red600"}
     >
       {/* Section Number */}
       <Box
