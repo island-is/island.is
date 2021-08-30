@@ -6,6 +6,7 @@ export enum Feature {
 export enum InstitutionType {
   PROSECUTORS_OFFICE = 'PROSECUTORS_OFFICE',
   COURT = 'COURT',
+  HIGH_COURT = 'HIGH_COURT',
 }
 
 export interface Institution {
