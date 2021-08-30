@@ -52,8 +52,6 @@ const History = ({ className }: Props) => {
                 key={'timeline-' + index}
                 className={cn({
                   [`${styles.timelineContainer}`]: true,
-                  // [`${styles.firstApplicationEvent}`]:
-                  //   index === data?.applicationEvents.length - 1,
                   [`${styles.acceptedEvent}`]:
                     item.eventType === ApplicationEventType.APPROVED,
                   [`${styles.rejectedEvent}`]:

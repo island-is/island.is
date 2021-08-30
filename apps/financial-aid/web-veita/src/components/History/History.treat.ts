@@ -38,12 +38,6 @@ export const timelineContainer = style({
   },
 })
 
-export const firstApplicationEvent = style({
-  '::after': {
-    height: 'calc(100% + 10px)',
-  },
-})
-
 export const acceptedEvent = style({
   '::before': {
     backgroundColor: theme.color.mint400,
