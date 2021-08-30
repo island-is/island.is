@@ -124,6 +124,7 @@ export const PeriodEndDate: FC<FieldBaseProps & FieldPeriodEndDateProps> = ({
           children: undefined,
           placeholder: parentalLeaveFormMessages.endDate.placeholder,
           onChange: handleChange,
+          backgroundColor: 'blue',
         }}
       />
 

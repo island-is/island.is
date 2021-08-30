@@ -39,7 +39,7 @@ import {
 } from '../shared/constants'
 import {
   getComplaintType,
-  getDateAYearBack,
+  isDecisionDateOlderThanYear,
   isGovernmentComplainee,
 } from '../utils'
 
@@ -70,6 +70,12 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               type: 'UserProfileProvider',
               title: dataProvider.userProfileTitle,
               subTitle: dataProvider.userProfileSubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'notification',
+              type: undefined,
+              title: dataProvider.notificationTitle,
+              subTitle: dataProvider.notificationSubTitle,
             }),
           ],
         }),
@@ -299,6 +305,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               title: '',
               introduction: '',
               uploadHeader: attachments.uploadHeader,
+              uploadDescription: attachments.uploadDescription,
               uploadButtonLabel: attachments.uploadButtonLabel,
             }),
           ],
@@ -388,18 +395,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   ? complaintDescription.general.decisionInfo
                   : '',
               children: [
-                buildDateField({
-                  id: 'complaintDescription.decisionDate',
-                  title: complaintDescription.labels.decisionDateTitle,
-                  placeholder:
-                    complaintDescription.labels.decisionDatePlaceholder,
-                  backgroundColor: 'blue',
-                  width: 'half',
-                  minDate: getDateAYearBack(),
-                  condition: (answers) =>
-                    getComplaintType(answers) ===
-                    OmbudsmanComplaintTypeEnum.DECISION,
-                }),
                 buildTextField({
                   id: 'complaintDescription.complaineeName',
                   backgroundColor: 'blue',
@@ -424,12 +419,25 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   variant: 'textarea',
                   required: true,
                 }),
+                buildDateField({
+                  id: 'complaintDescription.decisionDate',
+                  title: complaintDescription.labels.decisionDateTitle,
+                  placeholder:
+                    complaintDescription.labels.decisionDatePlaceholder,
+                  backgroundColor: 'blue',
+                  width: 'half',
+                  condition: (answers) =>
+                    getComplaintType(answers) ===
+                    OmbudsmanComplaintTypeEnum.DECISION,
+                }),
                 buildCustomField(
                   {
                     id: 'complaintDescriptionAlert',
                     title: complaintDescription.general.alertTitle,
                     component: 'FieldAlertMessage',
                     description: complaintDescription.general.alertMessage,
+                    condition: (answers) =>
+                      isDecisionDateOlderThanYear(answers),
                   },
                   { spaceTop: 2 },
                 ),
@@ -483,7 +491,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
         buildMultiField({
           id: 'courtAction.question',
           title: courtAction.title,
-          description: courtAction.description,
           children: [
             buildRadioField({
               id: 'courtActionAnswer',
@@ -493,6 +500,13 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 { value: YES, label: shared.general.yes },
                 { value: NO, label: shared.general.no },
               ],
+            }),
+            buildCustomField({
+              id: 'courtAction.alert',
+              title: courtAction.alertTitle,
+              description: courtAction.alertText,
+              component: 'FieldAlertMessage',
+              condition: (answers) => answers.courtActionAnswer === YES,
             }),
           ],
         }),
@@ -507,6 +521,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           title: attachments.title,
           introduction: attachments.introduction,
           uploadHeader: attachments.uploadHeader,
+          uploadDescription: attachments.uploadDescription,
           uploadButtonLabel: attachments.uploadButtonLabel,
         }),
       ],

@@ -13,6 +13,7 @@ import {
   buildCustomField,
   buildSelectField,
   buildDividerField,
+  buildRadioField,
   Form,
   FormModes,
   DefaultEvents,
@@ -22,6 +23,7 @@ import { NationalRegistryUser, UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
 import { Juristiction } from '../types/schema'
 import { format as formatKennitala } from 'kennitala'
+import { QualityPhotoData } from '../utils'
 
 export const application: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
@@ -50,6 +52,12 @@ export const application: Form = buildForm({
               type: 'UserProfileProvider',
               title: m.userProfileInformationTitle,
               subTitle: m.userProfileInformationSubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'qualityPhoto',
+              type: 'QualityPhotoProvider',
+              title: '',
+              subTitle: '',
             }),
             buildDataProviderItem({
               id: 'eligibility',
@@ -84,6 +92,82 @@ export const application: Form = buildForm({
               title: m.eligibilityRequirementTitle,
               component: 'EligibilitySummary',
               id: 'eligsummary',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'photoStep',
+      title: m.applicationQualityPhotoTitle,
+      children: [
+        buildMultiField({
+          id: 'info',
+          title: m.qualityPhotoTitle,
+          condition: (_, externalData) => {
+            return (
+              (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
+              true
+            )
+          },
+          children: [
+            buildCustomField({
+              title: m.eligibilityRequirementTitle,
+              component: 'QualityPhoto',
+              id: 'qphoto',
+            }),
+            buildRadioField({
+              id: 'willBringQualityPhoto',
+              title: '',
+              disabled: false,
+              options: [
+                { value: 'no', label: m.qualityPhotoNoAcknowledgement },
+                { value: 'yes', label: m.qualityPhotoAcknowledgement },
+              ],
+            }),
+            buildCustomField({
+              id: 'photdesc',
+              title: '',
+              component: 'Bullets',
+              condition: (answers) => {
+                try {
+                  return answers.willBringQualityPhoto === 'yes'
+                } catch (error) {
+                  return false
+                }
+              },
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'info',
+          title: m.qualityPhotoTitle,
+          condition: (_, externalData) => {
+            return (
+              (externalData.qualityPhoto as QualityPhotoData)?.data?.success ===
+              false
+            )
+          },
+          children: [
+            buildCustomField({
+              title: m.eligibilityRequirementTitle,
+              component: 'QualityPhoto',
+              id: 'qphoto',
+            }),
+            buildCustomField({
+              id: 'photodescription',
+              title: '',
+              component: 'Bullets',
+            }),
+            buildCheckboxField({
+              id: 'willBringQualityPhoto',
+              title: '',
+              options: [
+                {
+                  value: 'yes',
+                  label: m.qualityPhotoAcknowledgement,
+                },
+              ],
             }),
           ],
         }),
@@ -326,29 +410,66 @@ export const application: Form = buildForm({
               label: m.overviewTeacher,
               value: ({ answers: { teacher } }) => teacher as string,
             }),
-            buildDividerField({}),
-            buildCheckboxField({
-              id: 'willBringAlongData',
-              title: m.overviewBringData,
-              options: (app) => {
-                const options = [
-                  {
-                    value: 'picture',
-                    label: m.qualityPhotoAcknowledgement,
-                  },
-                ]
-                if (
-                  Object.values(app.answers.healthDeclaration).includes('yes')
-                ) {
-                  return [
-                    {
-                      value: 'certificate',
-                      label: m.overviewBringCertificateData,
-                    },
-                    ...options,
-                  ]
+            buildDividerField({
+              condition: (answers) => {
+                try {
+                  return (
+                    answers.willBringQualityPhoto === 'yes' ||
+                    Object.values(answers?.healthDeclaration).includes('yes')
+                  )
+                } catch (error) {
+                  return false
                 }
-                return options
+              },
+            }),
+            buildDescriptionField({
+              id: 'bringalong',
+              title: m.overviewBringAlongTitle,
+              titleVariant: 'h4',
+              description: '',
+              condition: (answers) => {
+                try {
+                  return (
+                    answers.willBringQualityPhoto === 'yes' ||
+                    Object.values(answers?.healthDeclaration).includes('yes')
+                  )
+                } catch (error) {
+                  return false
+                }
+              },
+            }),
+            buildCheckboxField({
+              id: 'picture',
+              title: '',
+              defaultValue: [],
+              options: [
+                {
+                  value: 'yes',
+                  label: m.qualityPhotoAcknowledgement,
+                },
+              ],
+              condition: (answers) => {
+                return answers.willBringQualityPhoto === 'yes' ?? false
+              },
+            }),
+            buildCheckboxField({
+              id: 'certificate',
+              title: '',
+              defaultValue: [],
+              options: [
+                {
+                  value: 'yes',
+                  label: m.overviewBringCertificateData,
+                },
+              ],
+              condition: (answers) => {
+                try {
+                  return Object.values(answers?.healthDeclaration).includes(
+                    'yes',
+                  )
+                } catch (error) {
+                  return false
+                }
               },
             }),
             buildDividerField({}),

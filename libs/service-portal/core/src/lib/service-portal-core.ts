@@ -125,9 +125,7 @@ export interface ServicePortalModule {
    * The service portal shell will define these as routes
    * within itself and use the provided render function to render out the component
    */
-  routes: (
-    props: ServicePortalModuleProps,
-  ) => ServicePortalRoute[] | Promise<ServicePortalRoute[]>
+  routes: (props: ServicePortalModuleProps) => ServicePortalRoute[]
   /**
    * Dynamic routes that might have a slow response time will be loaded after inital routes.
    */

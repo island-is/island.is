@@ -114,6 +114,7 @@ export const GetApplicationEventQuery = gql`
       applicationId
       comment
       state
+      created
     }
   }
 `
