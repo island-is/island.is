@@ -40,7 +40,7 @@ const CommentSection = ({ className }: Props) => {
         />
         <Box marginTop={2} display="flex" justifyContent="flexEnd">
           <Button
-            icon={showInput ? 'close' : 'open'}
+            icon="checkmark"
             size="small"
             iconType="outline"
             onClick={() => {
