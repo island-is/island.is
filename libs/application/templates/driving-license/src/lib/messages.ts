@@ -316,6 +316,11 @@ export const m = defineMessages({
     defaultMessage: 'Ljósmynd í ökuskírteinaskrá',
     description: 'title for quality photo section',
   },
+  qualityPhotoAltText: {
+    id: 'dl.application.qualityPhotoAltText',
+    defaultMessage: 'Þín mynd skv. ökuskírteinaskrá',
+    description: `Alt text for the user's quality photo`,
+  },
   qualityPhotoSubTitle: {
     id: 'dl.application.qualityPhotoSubTitle',
     defaultMessage: 'Hér er núverandi ljósmynd í ökuskírteinaskrá',
@@ -369,7 +374,7 @@ export const m = defineMessages({
   qualityPhotoInstructionsBulletThree: {
     id: 'dl.application:qualityPhoto.instructionsbulletthree',
     defaultMessage: `
-    Lýsing andlits þarf að vera jöfn. 
+    Lýsing andlits þarf að vera jöfn.
     `,
     description: 'Description of photo requirements',
   },

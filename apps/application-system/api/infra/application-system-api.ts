@@ -196,9 +196,9 @@ export const serviceSetup = (services: {
     .ingress({
       primary: {
         host: {
-          dev: 'application-api-xrd',
-          staging: 'application-api-xrd',
-          prod: 'application-api-xrd',
+          dev: 'application-payment-callback-xrd',
+          staging: 'application-payment-callback-xrd',
+          prod: 'application-payment-callback-xrd',
         },
         paths: ['/application-payment'],
         public: false,
