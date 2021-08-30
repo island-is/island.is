@@ -31,10 +31,33 @@ export const overview = {
       defaultMessage: 'Staðfesta',
       description: 'Submit button text',
     },
+    update: {
+      id: 'an.application:overview.labels.update',
+      defaultMessage: 'Uppfæra tilkynningu',
+      description: 'Update button text',
+    },
     workMachine: {
       id: 'an.application:overview.labels.workMachine',
       defaultMessage: 'Upplýsingar um vinnuvél sem tengist slysi',
       description: 'Label for work machine section in overview',
+    },
+    missingDocumentsButton: {
+      id: 'an.application:overview.labels.missingDocumentsButton',
+      defaultMessage: 'Bæta við skjölum',
+      description: 'Label for missing documents button in overview',
+    },
+  }),
+  alertMessage: defineMessages({
+    title: {
+      id: 'an.application:overview.alertMessage.title',
+      defaultMessage: 'Athugið!',
+      description: 'Title of alert message that appears on overview page',
+    },
+    description: {
+      id: 'an.application:overview.alertMessage.description',
+      defaultMessage:
+        'Áður en að Sjúkratryggingar Íslands fer yfir umsókn og tekur afstöðu til bótaskyldu þurfa eftirtalin fylgiskjöl að berast: ',
+      description: 'Description of alert message that appears on overview page',
     },
   }),
 }

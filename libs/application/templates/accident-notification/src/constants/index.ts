@@ -1,6 +1,8 @@
 export const YES = 'yes'
 export const NO = 'no'
 
+export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
+
 export enum States {
   PREREQUISITES = 'prerequisites',
 
@@ -14,4 +16,7 @@ export enum States {
   NEEDS_REVIEW = 'needsReview',
   NEEDS_DOCUMENT_AND_REVIEW = 'needsDocumentAndReview',
   IN_FINAL_REVIEW = 'inFinalReview',
+
+  ADD_DOCUMENTS = 'addDocuments',
+  OVERVIEW = 'overview',
 }

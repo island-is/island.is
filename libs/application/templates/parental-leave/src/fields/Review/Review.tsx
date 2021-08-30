@@ -52,7 +52,7 @@ interface ReviewScreenProps {
   editable?: boolean
 }
 
-const Review: FC<ReviewScreenProps> = ({
+export const Review: FC<ReviewScreenProps> = ({
   application,
   field,
   goToScreen,
@@ -65,6 +65,8 @@ const Review: FC<ReviewScreenProps> = ({
   const { formatMessage } = useLocale()
   const [
     {
+      applicantEmail,
+      applicantPhoneNumber,
       otherParent,
       otherParentName,
       otherParentEmail,
@@ -109,6 +111,76 @@ const Review: FC<ReviewScreenProps> = ({
 
   return (
     <>
+      <ReviewGroup
+        isEditable={editable}
+        canCloseEdit={groupHasNoErrors([
+          'applicant.email',
+          'applicant.phoneNumber',
+        ])}
+        editChildren={
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <InputController
+                id="applicant.email"
+                name="applicant.email"
+                defaultValue={applicantEmail}
+                type="email"
+                label={formatMessage(parentalLeaveFormMessages.applicant.email)}
+                onChange={(e) =>
+                  setStateful((prev) => ({
+                    ...prev,
+                    applicantEmail: e.target.value,
+                  }))
+                }
+                error={hasError('applicant.email')}
+              />
+            </GridColumn>
+
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <InputController
+                id="applicant.phoneNumber"
+                name="applicant.phoneNumber"
+                defaultValue={applicantPhoneNumber}
+                type="tel"
+                format="###-####"
+                placeholder="000-0000"
+                label={formatMessage(
+                  parentalLeaveFormMessages.applicant.phoneNumber,
+                )}
+                onChange={(e) =>
+                  setStateful((prev) => ({
+                    ...prev,
+                    applicantPhoneNumber: e.target.value,
+                  }))
+                }
+                error={hasError('applicant.phoneNumber')}
+              />
+            </GridColumn>
+          </GridRow>
+        }
+        triggerValidation
+      >
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(parentalLeaveFormMessages.applicant.email)}
+              value={applicantEmail}
+              error={hasError('applicant.email')}
+            />
+          </GridColumn>
+
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(
+                parentalLeaveFormMessages.applicant.phoneNumber,
+              )}
+              value={applicantPhoneNumber}
+              error={hasError('applicant.phoneNumber')}
+            />
+          </GridColumn>
+        </GridRow>
+      </ReviewGroup>
+
       <ReviewGroup
         isEditable={editable && isPrimaryParent}
         canCloseEdit={groupHasNoErrors([
@@ -184,18 +256,15 @@ const Review: FC<ReviewScreenProps> = ({
                       error={hasError('otherParentId')}
                     />
                   </GridColumn>
-                  {otherParentWillApprove && (
-                    <GridColumn
-                      span={['12/12', '12/12', '12/12', '12/12']}
-                    ></GridColumn>
-                  )}
                 </GridRow>
+
                 {otherParentWillApprove && (
                   <Box paddingTop={2}>
                     <InputController
                       id="otherParentEmail"
                       name="otherParentEmail"
                       defaultValue={otherParentEmail}
+                      type="email"
                       label={formatMessage(
                         parentalLeaveFormMessages.shared
                           .otherParentEmailSubSection,
@@ -214,6 +283,7 @@ const Review: FC<ReviewScreenProps> = ({
             )}
           </>
         }
+        triggerValidation
       >
         {otherParent === NO && (
           <RadioValue
@@ -411,6 +481,7 @@ const Review: FC<ReviewScreenProps> = ({
             )}
           </>
         }
+        triggerValidation
       >
         <GridRow marginBottom={2}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -591,6 +662,7 @@ const Review: FC<ReviewScreenProps> = ({
               )}
             </>
           }
+          triggerValidation
         >
           <GridRow marginBottom={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -749,6 +821,7 @@ const Review: FC<ReviewScreenProps> = ({
               )}
             </>
           }
+          triggerValidation
         >
           <GridRow marginBottom={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -846,6 +919,7 @@ const Review: FC<ReviewScreenProps> = ({
             )}
           </>
         }
+        triggerValidation
       >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -957,5 +1031,3 @@ const Review: FC<ReviewScreenProps> = ({
     </>
   )
 }
-
-export default Review

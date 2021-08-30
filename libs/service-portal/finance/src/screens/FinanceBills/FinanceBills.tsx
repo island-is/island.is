@@ -12,7 +12,7 @@ const FinanceBills = () => {
       intro={formatMessage({
         id: 'sp.finance-bills:intro',
         defaultMessage:
-          'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
+          'Hér er að finna greidda og ógreidda greiðsluseðla fyrir valið tímabil. Einnig greiðslukvittanir fyrir greiðslur nema þar sem greiðsluseðill hefur verið greiddur beint í banka.',
       })}
       listPath="billReceipt"
     />
