@@ -22,9 +22,12 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
   const { lang } = useLocale()
   const { setValue, getValues } = useFormContext()
 
+  const isApiScopeGroup = (item: Scope): boolean =>
+    item.__typename === 'AuthApiScopeGroup'
+
   const toggleCheckboxGroup = () => {
     const values = apiScopes
-      .filter((apiScope) => apiScope.__typename !== 'AuthApiScopeGroup')
+      .filter((apiScope) => !isApiScopeGroup(apiScope))
       .map((apiScope) => getValues(`${apiScope.model}.name`))
     setValue(
       `${apiScopes[0].model}.name`,
@@ -34,7 +37,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
 
   const toggleDatePickerGroup = () => {
     const values = apiScopes
-      .filter((apiScope) => apiScope.__typename !== 'AuthApiScopeGroup')
+      .filter((apiScope) => !isApiScopeGroup(apiScope))
       .map((apiScope) => getValues(`${apiScope.model}.validTo`))
     setValue(
       `${apiScopes[0].model}.validTo`,
@@ -48,7 +51,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
   }, [toggleCheckboxGroup, toggleDatePickerGroup])
 
   const onSelect = (item: Scope, value: string[]) => {
-    if (item.__typename === 'AuthApiScopeGroup') {
+    if (isApiScopeGroup(item)) {
       apiScopes.forEach((apiScope) => {
         setValue(
           `${apiScope.model}.name`,
@@ -67,7 +70,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
   }
 
   const onChange = (item: Scope, value: string) => {
-    if (item.__typename === 'AuthApiScopeGroup') {
+    if (isApiScopeGroup(item)) {
       apiScopes.forEach((apiScope) => {
         setValue(`${apiScope.model}.validTo`, value)
       })
@@ -87,18 +90,17 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
           paddingTop: isFirstItem ? 'p5' : 'p1',
         }
 
-        const existingScope =
-          item.__typename === 'AuthApiScopeGroup'
-            ? authDelegation.scopes.length === apiScopes.length - 1
-              ? { ...item, validTo: undefined }
-              : undefined
-            : authDelegation.scopes.find((scope) => scope.name === item.name)
+        const existingScope = isApiScopeGroup(item)
+          ? authDelegation.scopes.length === apiScopes.length - 1
+            ? { ...item, validTo: undefined }
+            : undefined
+          : authDelegation.scopes.find((scope) => scope.name === item.name)
 
-        const nameValue = getValues(`${item.model}.name`)
+        const checkboxValue = getValues(`${item.model}.name`)
         const isSelected =
-          nameValue === undefined
+          checkboxValue === undefined
             ? Boolean(existingScope?.name)
-            : nameValue.length > 0
+            : checkboxValue.length > 0
 
         return (
           <T.Row key={index}>
@@ -135,9 +137,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 label=""
                 minDate={new Date()}
                 defaultValue={
-                  Boolean(existingScope?.name)
-                    ? existingScope?.validTo
-                    : undefined
+                  existingScope?.name ? existingScope?.validTo : undefined
                 }
                 locale={lang}
                 placeholder="-"
