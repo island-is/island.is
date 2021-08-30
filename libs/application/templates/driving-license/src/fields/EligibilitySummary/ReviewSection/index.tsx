@@ -61,7 +61,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
       >
         {(state === ReviewSectionState.complete && (
           <Icon color="white" size="small" icon="checkmark" />
-        )) || <span className={styles.sectionNumberText}>{index}</span>}
+        )) || <Icon color="white" size="small" icon="warning" />}
       </Box>
 
       {/* Contents */}
@@ -90,7 +90,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
               )}
             </Tag>
           </Box>
-        )}
+        )} 
         {state === ReviewSectionState.requiresAction && (
           <Box pointerEvents="none">
             <Tag variant="red">

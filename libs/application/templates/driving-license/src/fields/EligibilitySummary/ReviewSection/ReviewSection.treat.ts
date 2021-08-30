@@ -27,10 +27,11 @@ export const sectionNumberInProgress = style({
 })
 
 export const sectionNumberRequiresAction = style({
-  background: theme.color.red100,
+  background: theme.color.red600,
   color: theme.color.red600,
 })
 
 export const sectionNumberComplete = style({
-  background: theme.color.purple400,
+  background: theme.color.mint600,
 })
+ 
