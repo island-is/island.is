@@ -49,7 +49,7 @@ export class FileService {
     }
   }
 
-  async findById(id: string): Promise<CaseFile> {
+  async findById(id: string): Promise<CaseFile | null> {
     return this.fileModel.findByPk(id)
   }
 

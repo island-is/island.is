@@ -85,13 +85,9 @@ export class CaseService {
     existingCase: Case,
     pdf: string,
   ): Promise<boolean> {
-    this.logger.debug(
-      `Uploading signed ruling pdf to court for case ${existingCase.id}`,
-    )
-
     // TODO: Find a better place for this
     try {
-      if (existingCase.caseFiles.length > 0) {
+      if (existingCase.caseFiles && existingCase.caseFiles.length > 0) {
         this.logger.debug(
           `Uploading case files overview pdf to court for case ${existingCase.id}`,
         )
@@ -118,10 +114,14 @@ export class CaseService {
     } catch (error) {
       // Log and ignore this error. The overview is not that critical.
       this.logger.error(
-        'Failed to upload case files overview pdf to court',
+        `Failed to upload case files overview pdf to court for case ${existingCase.id}`,
         error,
       )
     }
+
+    this.logger.debug(
+      `Uploading signed ruling pdf to court for case ${existingCase.id}`,
+    )
 
     const buffer = Buffer.from(pdf, 'binary')
 
@@ -138,7 +138,10 @@ export class CaseService {
 
       return true
     } catch (error) {
-      this.logger.error('Failed to upload signed ruling pdf to court', error)
+      this.logger.error(
+        `Failed to upload signed ruling pdf to court for case ${existingCase.id}`,
+        error,
+      )
 
       return false
     }
@@ -146,7 +149,7 @@ export class CaseService {
 
   private async sendEmail(
     to: Recipient | Recipient[],
-    courtCaseNumber: string,
+    courtCaseNumber: string | undefined,
     signedRulingPdf: string,
     body: string,
   ) {
@@ -185,15 +188,18 @@ export class CaseService {
       writeFile(`${existingCase.id}-ruling-signed.pdf`, signedRulingPdf)
     }
 
-    const uploaded = IntegratedCourts.includes(existingCase.courtId)
-      ? await this.uploadSignedRulingPdfToCourt(existingCase, signedRulingPdf)
-      : false
+    const uploaded =
+      existingCase.courtId &&
+      existingCase.courtCaseNumber &&
+      IntegratedCourts.includes(existingCase.courtId)
+        ? await this.uploadSignedRulingPdfToCourt(existingCase, signedRulingPdf)
+        : false
 
     const promises = [
       this.sendEmail(
         {
-          name: existingCase.prosecutor?.name,
-          address: existingCase.prosecutor?.email,
+          name: existingCase.prosecutor?.name ?? '',
+          address: existingCase.prosecutor?.email ?? '',
         },
         existingCase.courtCaseNumber,
         signedRulingPdf,
@@ -206,12 +212,12 @@ export class CaseService {
         this.sendEmail(
           [
             {
-              name: existingCase.registrar?.name,
-              address: existingCase.registrar?.email,
+              name: existingCase.registrar?.name ?? '',
+              address: existingCase.registrar?.email ?? '',
             },
             {
-              name: existingCase.judge?.name,
-              address: existingCase.judge?.email,
+              name: existingCase.judge?.name ?? '',
+              address: existingCase.judge?.email ?? '',
             },
           ],
           existingCase.courtCaseNumber,
@@ -230,7 +236,7 @@ export class CaseService {
       promises.push(
         this.sendEmail(
           {
-            name: existingCase.defenderName,
+            name: existingCase.defenderName ?? '',
             address: existingCase.defenderEmail,
           },
           existingCase.courtCaseNumber,
@@ -263,7 +269,7 @@ export class CaseService {
   async findById(
     id: string,
     additionalIncludes: Includeable[] = [],
-  ): Promise<Case> {
+  ): Promise<Case | null> {
     this.logger.debug(`Finding case ${id}`)
 
     const include = standardIncludes.concat(additionalIncludes)
@@ -362,9 +368,9 @@ export class CaseService {
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
       return this.signingService.requestSignature(
-        existingCase.judge?.mobileNumber,
+        existingCase.judge?.mobileNumber ?? '',
         'Undirrita skjal - Öryggistala',
-        existingCase.judge?.name,
+        existingCase.judge?.name ?? '',
         'Ísland',
         'ruling.pdf',
         pdf,
@@ -448,7 +454,7 @@ export class CaseService {
   async uploadRequestPdfToCourt(id: string): Promise<void> {
     this.logger.debug(`Uploading request pdf to court for case ${id}`)
 
-    const existingCase = await this.findById(id)
+    const existingCase = (await this.findById(id)) as Case
 
     const intl = await this.intlService.useIntl(
       ['judicial.system.backend'],
@@ -468,7 +474,10 @@ export class CaseService {
         streamId,
       )
     } catch (error) {
-      this.logger.error('Failed to upload request pdf to court', error)
+      this.logger.error(
+        `Failed to upload request pdf to court for case ${id}`,
+        error,
+      )
     }
   }
 }
