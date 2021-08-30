@@ -28,7 +28,6 @@ const Nav = () => {
 
   const { applicationFilters } = useContext(ApplicationFiltersContext)
   const { admin } = useContext(AdminContext)
-  console.log(admin)
 
   return (
     <nav className={styles.container}>
