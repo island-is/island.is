@@ -107,7 +107,6 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
                 <Text color="dark400">{graphDescription}</Text>
               )}
             </Box>
-
             {subPage && (
               <Box padding={[2, 2, 4]}>
                 <ExportCSVButton data={data} title={graphTitle} />

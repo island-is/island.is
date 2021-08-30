@@ -7,7 +7,6 @@ export const headerGraphWrapper = style({
 
 export const scroll = style({
   overflowX: 'scroll',
-  ['-webkit-scrollbar-width' as any]: 'none',
 })
 
 
