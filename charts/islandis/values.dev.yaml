@@ -185,7 +185,7 @@ application-system-api:
       annotations:
         kubernetes.io/ingress.class: nginx-internal-alb
       hosts:
-        - host: application-api-xrd.internal.dev01.devland.is
+        - host: application-payment-callback-xrd.internal.dev01.devland.is
           paths:
             - /application-payment
   initContainer:
