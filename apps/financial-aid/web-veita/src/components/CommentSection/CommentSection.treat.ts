@@ -8,5 +8,5 @@ export const inputFieldContainer = style({
   transition: 'max-height 250ms ease',
 })
 export const showInput = style({
-  maxHeight: '180px',
+  maxHeight: '250px',
 })

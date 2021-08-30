@@ -15,14 +15,14 @@ const CommentSection = ({ className }: Props) => {
   return (
     <Box marginBottom={3} className={`${className} `}>
       <Button
-        icon="open"
+        icon={showInput ? 'close' : 'open'}
         size="small"
         iconType="outline"
         onClick={() => {
           setShowInput(!showInput)
         }}
       >
-        Skrifa athugasemd
+        {showInput ? 'Loka' : 'Skrifa athugasemd'}
       </Button>
 
       <div
@@ -38,6 +38,18 @@ const CommentSection = ({ className }: Props) => {
           rows={4}
           textarea
         />
+        <Box marginTop={2} display="flex" justifyContent="flexEnd">
+          <Button
+            icon={showInput ? 'close' : 'open'}
+            size="small"
+            iconType="outline"
+            onClick={() => {
+              setShowInput(!showInput)
+            }}
+          >
+            Vista athugasemd
+          </Button>
+        </Box>
       </div>
     </Box>
   )
