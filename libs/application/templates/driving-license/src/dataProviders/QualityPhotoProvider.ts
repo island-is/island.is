@@ -1,6 +1,5 @@
 import {
   BasicDataProvider,
-  Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
@@ -9,7 +8,7 @@ import { m } from '../lib/messages'
 export class QualityPhotoProvider extends BasicDataProvider {
   type = 'QualityPhotoProvider'
 
-  async provide(application: Application) {
+  async provide() {
     const query = `
         query HasQualityPhoto {
           qualityPhoto {
@@ -34,7 +33,7 @@ export class QualityPhotoProvider extends BasicDataProvider {
     }
 
     return {
-      success: response.data.qualityPhoto.success,
+      success: !!response.data.qualityPhoto?.success,
       qualityPhoto: response.data.qualityPhoto?.qualityPhoto,
     }
   }

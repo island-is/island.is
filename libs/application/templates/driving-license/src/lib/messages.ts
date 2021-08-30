@@ -313,7 +313,7 @@ export const m = defineMessages({
   },
   qualityPhotoAltText: {
     id: 'dl.application.qualityPhotoAltText',
-    defaultMessage: 'Þín mynd skv ökuskírteinaskrá',
+    defaultMessage: 'Þín mynd skv. ökuskírteinaskrá',
     description: `Alt text for the user's quality photo`,
   },
   qualityPhotoSubTitle: {
@@ -361,7 +361,7 @@ export const m = defineMessages({
   qualityPhotoInstructionsBulletTwo: {
     id: 'dl.application:qualityPhoto.instructionsbullettwo',
     defaultMessage: `
-    Sýna þarf höfuð (án höfuðfats) og herðar
+    Sýna þarf höfuð (án höfuðfats) og herðar.
     `,
     description: 'Description of photo requirements',
   },
