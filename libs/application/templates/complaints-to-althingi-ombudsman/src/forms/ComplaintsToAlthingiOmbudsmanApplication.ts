@@ -9,8 +9,10 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildSubmitField,
   buildSubSection,
   buildTextField,
+  DefaultEvents,
   Form,
   FormModes,
   FormValue,
@@ -530,10 +532,27 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       id: 'section.overview',
       title: section.complaintOverview,
       children: [
-        buildCustomField({
-          id: 'overview',
+        buildMultiField({
+          id: 'overviewFields',
           title: 'Kvörtun og undirritun',
-          component: 'ComplaintOverview',
+          children: [
+            buildCustomField({
+              id: 'overview',
+              title: 'Kvörtun og undirritun',
+              component: 'ComplaintOverview',
+            }),
+            buildSubmitField({
+              id: 'overview.submit',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),

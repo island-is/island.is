@@ -1,3 +1,7 @@
+export enum ApiActions {
+  submitApplication = 'submitApplication',
+}
+
 export enum OmbudsmanComplaintTypeEnum {
   PROCEEDINGS = 'proceedings',
   DECISION = 'decision',
