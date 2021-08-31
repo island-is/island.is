@@ -3,7 +3,7 @@
     "target": "es2015",
     "module": "commonjs",
     "strict": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "rootDir": "./src",
     "experimentalDecorators": true,
     "esModuleInterop": true,
