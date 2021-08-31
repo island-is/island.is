@@ -68,12 +68,9 @@ export const LetterApplicationForm: Form = buildForm({
           largeButtons: true,
           width: 'half',
           options: (application: Application) => {
-            const nationalRegistry = application.externalData.nationalRegistry
-              .data as User
-
             return [
               {
-                label: nationalRegistry.fullName,
+                label: format(application.applicant),
                 subLabel: format(application.applicant),
                 value: application.applicant,
               },
@@ -198,7 +195,7 @@ export const LetterApplicationForm: Form = buildForm({
     }),
     buildSection({
       id: 'overview',
-      title: m.overview.titleSidebar,
+      title: m.overview.title,
       children: [
         buildMultiField({
           id: 'party',
