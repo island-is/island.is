@@ -16,8 +16,6 @@ describe('/krafa/fyrirtaka/:id', () => {
   })
 
   it('should require a valid requested court date time', () => {
-    cy.getByTestid('datepicker').last().click().clickOutside()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('datepicker').last().click()
     cy.getByTestid('datepickerIncreaseMonth').dblclick()
     cy.contains('15').click()
@@ -36,7 +34,7 @@ describe('/krafa/fyrirtaka/:id', () => {
     )
   })
 
-  it('should set the default prosecutor as the user who created the case', () => {
+  it.skip('should set the default prosecutor as the user who created the case', () => {
     cy.getByTestid('select-prosecutor').contains('Áki Ákærandi')
   })
 
