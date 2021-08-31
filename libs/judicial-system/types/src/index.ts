@@ -1,3 +1,4 @@
+export { Feature } from './lib/feature'
 export * from './lib/types'
 export type {
   Institution,

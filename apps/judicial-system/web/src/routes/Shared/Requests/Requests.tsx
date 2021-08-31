@@ -12,8 +12,8 @@ import {
   CaseType,
   Feature,
   NotificationType,
+  UserRole,
 } from '@island.is/judicial-system/types'
-import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
