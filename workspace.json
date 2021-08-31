@@ -6523,6 +6523,31 @@
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/education/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
+        },
+        "init": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn schemas",
+              "yarn dev-services services-user-profile",
+              "yarn dev-services services-search-indexer",
+              "npx nx run services-user-profile:migrate"
+            ],
+            "parallel": false
+          }
+        },
+        "start": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "kubectl port-forward svc/socat-xroad 8081:80 -n socat &",
+              "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
+              "yarn start api &",
+              "yarn start services-user-profile &",
+              "yarn start service-portal &"
+            ],
+            "parallel": true
+          }
         }
       }
     },
