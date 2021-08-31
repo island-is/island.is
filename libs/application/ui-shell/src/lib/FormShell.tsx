@@ -58,7 +58,11 @@ export const FormShell: FC<{
     sections,
     screens,
   } = state
-  const { mode = FormModes.APPLYING, renderLastScreenButton, renderLastScreenBackButton } = state.form
+  const {
+    mode = FormModes.APPLYING,
+    renderLastScreenButton,
+    renderLastScreenBackButton,
+  } = state.form
   const showProgressTag = mode !== FormModes.APPLYING
   const currentScreen = screens[activeScreen]
   const FormLogo = form.logo

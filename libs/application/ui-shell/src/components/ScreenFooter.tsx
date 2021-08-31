@@ -64,13 +64,14 @@ export const ScreenFooter: FC<FooterProps> = ({
   numberOfScreens,
   submitField,
   renderLastScreenButton,
-  renderLastScreenBackButton
+  renderLastScreenBackButton,
 }) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
-  const showGoBack = activeScreenIndex > 0 && (!isLastScreen || renderLastScreenBackButton)
+  const showGoBack =
+    activeScreenIndex > 0 && (!isLastScreen || renderLastScreenBackButton)
 
   if (
     (isLastScreen && !renderLastScreenButton) ||
