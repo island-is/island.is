@@ -15,6 +15,21 @@ export const complaintOverview = {
       defaultMessage: 'Upplýsingar úr Þjóðskrá',
       description: 'Label for national registry',
     },
+    nationalRegistryText: {
+      id: 'ctao.application:overview.label.nationalRegistryText',
+      defaultMessage: 'Nafn, kennitala, símanúmer, netfang',
+      description: 'Text for national registry',
+    },
+    notificationConsentTitle: {
+      id: 'ctao.application:overview.label.notificationConsentTitle',
+      defaultMessage: 'Samþykki fyrir tilkynningar',
+      description: 'Title for notification consent',
+    },
+    notificationConsentText: {
+      id: 'ctao.application:overview.label.notificationConsentText',
+      defaultMessage: 'Send verða til þín skilaboð um stöðu mála osfrv.',
+      description: 'Text for notification consent',
+    },
     complainedFor: {
       id: 'ctao.application:overview.label.complainedFor',
       defaultMessage: 'Kvartað fyrir',
@@ -47,7 +62,7 @@ export const complaintOverview = {
     },
     attachments: {
       id: 'ctao.application:overview.label.attachments',
-      defaultMessage: 'Fylgiskjöl',
+      defaultMessage: 'Rökstuðningur kvörtunar og önnur fylgiskjöl',
       description: 'Label for attachments',
     },
     complaintDescription: {

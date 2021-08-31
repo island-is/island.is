@@ -1,5 +1,6 @@
 export { AgreementDescription } from './AgreementDescription'
 export { FieldAlertMessage } from './FieldAlertMessage'
 export { FormConclusion } from './FormConclusion'
+export { DateOfAccident } from './DateOfAccident'
 export { FormOverview } from './FormOverview'
 export { InReviewSteps } from './InReviewSteps'

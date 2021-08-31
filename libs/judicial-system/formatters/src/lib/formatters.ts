@@ -356,17 +356,17 @@ export function formatProsecutorDemands(
 export function formatConclusion(
   type: CaseType,
   accusedNationalId: string,
-  accusedName: string,
-  accusedGender: CaseGender,
-  decision: CaseDecision,
-  validToDate: Date,
-  isolation: boolean,
-  isExtension: boolean,
+  accusedName?: string,
+  accusedGender?: CaseGender,
+  decision?: CaseDecision,
+  validToDate?: Date,
+  isolation?: boolean,
+  isExtension?: boolean,
   previousDecision?: CaseDecision,
   isolationToDate?: Date,
 ): string {
   const isolationEndsBeforeValidToDate =
-    isolationToDate && validToDate > isolationToDate
+    validToDate && isolationToDate && validToDate > isolationToDate
 
   return decision === CaseDecision.REJECTING
     ? `Kröfu um að ${formatAccusedByGender(
