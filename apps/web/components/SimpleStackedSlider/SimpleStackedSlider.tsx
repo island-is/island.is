@@ -1,4 +1,4 @@
-import React, { FC, Children, useRef, useState, useEffect } from 'react'
+import React, { FC, Children, useRef, useState } from 'react'
 import cn from 'classnames'
 import chunk from 'lodash/chunk'
 
@@ -14,39 +14,31 @@ import {
 
 import * as styles from './SimpleStackedSlider.treat'
 
+type Levels = number | 'auto'
+
 interface SimpleStackedSliderProps {
   span?: GridColumnProps['span']
-  levels?: number
+  levels?: Levels
   itemWidth?: number
 }
 
 export const SimpleStackedSlider: FC<SimpleStackedSliderProps> = ({
   children,
-  levels = 3,
+  levels = 'auto',
   itemWidth = 400,
   span = '4/12',
 }) => {
   const [activeDot, setActiveDot] = useState(0)
-  const [fullItemWidth, setFullItemWidth] = useState(0)
   const scrollRef = useRef(null)
   const itemRef = useRef(null)
 
   const items = Children.toArray(children)
 
-  const chunks = chunk(items, Math.round(items.length / levels))
+  const l =
+    levels === 'auto' || !(levels > 0) ? Math.ceil(items.length / 6) : levels
+
+  const chunks = chunk(items, Math.ceil(items.length / l))
   const rowLength = chunks[0].length
-
-  useEffect(() => {
-    if (itemRef.current) {
-      const style = window.getComputedStyle
-        ? getComputedStyle(itemRef.current, null)
-        : itemRef.current.currentStyle
-
-      setFullItemWidth(
-        itemRef.current.offsetWidth + parseInt(style.marginRight) || 0,
-      )
-    }
-  }, [itemRef])
 
   const renderedItems = (
     <GridContainer>
@@ -68,9 +60,9 @@ export const SimpleStackedSlider: FC<SimpleStackedSliderProps> = ({
 
   return (
     <>
-      <Hidden below="lg">{renderedItems}</Hidden>
+      <Hidden below="sm">{renderedItems}</Hidden>
 
-      <Hidden above="md">
+      <Hidden above="xs">
         <Box ref={scrollRef} className={styles.outer}>
           <GridContainer>
             <Box className={styles.inner}>
@@ -114,7 +106,7 @@ export const SimpleStackedSlider: FC<SimpleStackedSliderProps> = ({
                     onClick={() => {
                       setActiveDot(index)
                       scrollRef.current.scrollTo({
-                        left: index * fullItemWidth,
+                        left: index * (itemWidth + 12),
                         behavior: 'smooth',
                       })
                     }}

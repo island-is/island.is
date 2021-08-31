@@ -26,7 +26,7 @@ import {
 
 import {
   Card,
-  SimpleSlider,
+  SimpleStackedSlider,
   ServiceWebSearchSection,
   ServiceWebHeader,
 } from '@island.is/web/components'
@@ -109,54 +109,27 @@ const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
         </Box>
       ) : (
         <Box className={styles.categories}>
-          <GridContainer>
-            <GridRow>
-              <GridColumn span="12/12">
-                <SimpleSlider
-                  title={'Svör eftir flokkum'}
-                  titleColor={'white'}
-                  breakpoints={{
-                    0: {
-                      gutterWidth: theme.grid.gutter.mobile,
-                      slideCount: 1,
-                      slideWidthOffset: 100,
-                    },
-                    [theme.breakpoints.sm]: {
-                      gutterWidth: theme.grid.gutter.mobile,
-                      slideCount: 1,
-                      slideWidthOffset: 200,
-                    },
-                    [theme.breakpoints.md]: {
-                      gutterWidth: theme.spacing[3],
-                      slideCount: 1,
-                      slideWidthOffset: 300,
-                    },
-                    [theme.breakpoints.xl]: {
-                      gutterWidth: theme.spacing[3],
-                      slideCount: 1,
-                      slideWidthOffset: 400,
-                    },
-                  }}
-                  items={supportCategories.map(
-                    ({ title, slug, description, organization }, index) => {
-                      return (
-                        <Card
-                          key={index}
-                          title={title}
-                          description={description}
-                          link={
-                            {
-                              href: `/thjonustuvefur/${organization.slug}/${slug}`,
-                            } as LinkResolverResponse
-                          }
-                        />
-                      )
-                    },
-                  )}
-                />
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
+          <SimpleStackedSlider
+            itemWidth={280}
+            span={['12/12', '6/12', '6/12', '4/12']}
+          >
+            {supportCategories.map(
+              ({ title, slug, description, organization }, index) => {
+                return (
+                  <Card
+                    key={index}
+                    title={title}
+                    description={description}
+                    link={
+                      {
+                        href: `/thjonustuvefur/${organization.slug}/${slug}`,
+                      } as LinkResolverResponse
+                    }
+                  />
+                )
+              },
+            )}
+          </SimpleStackedSlider>
         </Box>
       )}
       <Box marginY={[7, 10, 10]}>
