@@ -1330,6 +1330,11 @@ export const employerFormMessages = defineMessages({
     description:
       'Your employee has applied for parental leave. Do you approve of his/her selected periods?',
   },
+  buttonReject: {
+    id: 'pl.application:employer.review.reject',
+    defaultMessage: 'Óska eftir breytingum',
+    description: 'Request changes',
+  },
 })
 
 export const inReviewFormMessages = defineMessages({
