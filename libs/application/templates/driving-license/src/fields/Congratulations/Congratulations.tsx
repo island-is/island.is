@@ -59,7 +59,7 @@ const Congratulations = ({
   application,
 }: PropTypes): JSX.Element => {
   // Change background from mint to purple
-  var x = document.getElementsByClassName(
+  const x = document.getElementsByClassName(
     'reset-style_3kK6X useBoxStyles-borderStyle_solid_3ucEZ FormShell-style_2K_FN FormShell-style_1yvHT',
   )[0]
   if (x)
