@@ -12,8 +12,7 @@ export const m: MessageDir = {
     },
     subtitle: {
       id: 'gpt.application:terms.subtitle',
-      defaultMessage:
-        'Eftirfarandi gildir um umsókn og  meðmælendasöfnun vegna listabókstafa',
+      defaultMessage: 'Eftirfarandi gildir um söfnun meðmæla',
       description: 'External data subtitle',
     },
     dmrTitle: {
@@ -24,7 +23,7 @@ export const m: MessageDir = {
     dmrSubtitle: {
       id: 'gpt.application:dmr.subtitle',
       defaultMessage:
-        'Vakin er athygli á lögum um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018. Stjórnmálasamtökum er óheimilt að miðla  meðmælendalistanum eða upplýsingum úr honum. ',
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vestibulum auctor ipsum. Sed at erat odio. In consectetur sem bibendum augue gravida consectetur. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aliquam fringilla sem a quam pellentesque, eu condimentum augue vestibulum. Integer porttitor ante nec tellus accumsan, vel cursus velit commodo. Cras pellentesque lacus non est interdum volutpat.',
       description: 'External data DRM subtitle',
     },
     nationalRegistryTitle: {
@@ -49,7 +48,7 @@ export const m: MessageDir = {
     },
     agree: {
       id: 'gpt.application:terms.checkbox',
-      defaultMessage: 'Ég veiti umboð',
+      defaultMessage: 'Ég samþýkki skilmála hér að ofan',
       description: 'Agree terms and conditions',
     },
   }),
@@ -172,7 +171,7 @@ export const m: MessageDir = {
   selectNationalId: defineMessages({
     title: {
       id: 'gpt.application:select.national.id.title',
-      defaultMessage: 'Kennitala framboðs',
+      defaultMessage: 'Veldu umsækjenda',
       description: 'Select national id title',
     },
   }),
@@ -214,6 +213,102 @@ export const m: MessageDir = {
       description: 'Description before listing upp unavailable party letters',
     },
   }),
+  email: defineMessages({
+    title: {
+      id: 'gpt.application:email.title',
+      defaultMessage: 'Vinsamlegast sláðu inn rétt netfang',
+      description: 'Overview title',
+    },
+    titleSidebar: {
+      id: 'gpt.application:email.titleSidebar',
+      defaultMessage: 'Netfang og staðfesting',
+      description: 'Overview title',
+    },
+    subtitle: {
+      id: 'gpt.application:email.subtitle',
+      defaultMessage: '',
+      description: 'Overview subtitle',
+    },
+    email: {
+      id: 'gpt.application:email.review.email',
+      defaultMessage: 'Netfang',
+      description: 'Registered email for party letter',
+    },
+    emailRepeated: {
+      id: 'gpt.application:email.review.emailRepeated',
+      defaultMessage: 'Netfang endurtekið',
+      description: 'Registered email for party letter',
+    },
+    confirmationCode: {
+      id: 'gpt.application:email.review.confirmationCode',
+      defaultMessage: 'Sláðu inn staðfestingarkóða',
+      description: 'Confirmation code',
+    },
+    confirmationCodeDescription: {
+      id: 'gpt.application:email.review.confirmationCodeDescription',
+      defaultMessage: 'Staðfestingarkóði sendur á netfangið þitt',
+      description: 'Confirmation code description',
+    },
+  }),
+  information: defineMessages({
+    title: {
+      id: 'gpt.application:information.title',
+      defaultMessage: 'Upplýsingar um lista',
+      description: 'Information about the list',
+    },
+    titleSidebar: {
+      id: 'gpt.application:information.titleSidebar',
+      defaultMessage: 'Upplýsingar',
+      description: 'Information',
+    },
+    listName: {
+      id: 'gpt.application:information.listName',
+      defaultMessage: 'Heiti undirskriftalista',
+      description: 'List name',
+    },
+    slogan: {
+      id: 'gpt.application:information.slogan',
+      defaultMessage: 'Slagorð',
+      description: 'Slogan',
+    },
+    aboutList: {
+      id: 'gpt.application:information.aboutList',
+      defaultMessage: 'Um undirskriftalista',
+      description: 'About list',
+    },
+    aboutListPlaceholder: {
+      id: 'gpt.application:information.aboutListPlaceholder',
+      defaultMessage: 'Texti sem birtist með undirskriftalista',
+      description: 'About list placeholder',
+    },
+    dateTitle: {
+      id: 'gpt.application:information.dateTitle',
+      defaultMessage: 'Tímabil lista',
+      description: 'Date period',
+    },
+    dateFromPlaceholder: {
+      id: 'gpt.application:information.dateFromPlaceholder',
+      defaultMessage: 'Frá',
+      description: 'Date from',
+    },
+    dateToPlaceholder: {
+      id: 'gpt.application:information.dateToPlaceholder',
+      defaultMessage: 'Til',
+      description: 'Date to',
+    },
+  }),
+  participants: defineMessages({
+    titleSidebar: {
+      id: 'gpt.application:participants.titleSidebar',
+      defaultMessage: 'Þátttakendur',
+      description: 'Participants',
+    },
+    title: {
+      id: 'gpt.application:participants.title',
+      defaultMessage: 'Veldu þátttakendur',
+      description: 'Select participants',
+    },
+  }),
   overview: defineMessages({
     title: {
       id: 'gpt.application:overview.title',
@@ -223,7 +318,7 @@ export const m: MessageDir = {
     subtitle: {
       id: 'gpt.application:overview.subtitle',
       defaultMessage:
-        'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplisýngar hafi verið gefnar upp.',
+        'Vinsamlegast farðu yfir upplýsingarnar hér að néðan og staðfestu að þær sé réttar',
       description: 'Overview subtitle',
     },
     reviewTitle: {
