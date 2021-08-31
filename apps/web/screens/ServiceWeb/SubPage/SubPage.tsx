@@ -66,8 +66,6 @@ const SubPage: Screen<SubPageProps> = ({
     (supportQNA) => supportQNA.subCategory.title,
   )
 
-  console.log({ categorySlug, organizationSlug })
-
   return (
     <>
       <ServiceWebHeader logoTitle={logoTitle} />
