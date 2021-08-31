@@ -16,6 +16,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Senda',
     description: 'Submit',
   },
+  reviewButtonSubmit: {
+    id: 'application.system:reviewButton.submit',
+    defaultMessage: 'Vista',
+    description: 'Save',
+  },
   buttonApprove: {
     id: 'application.system:button.approve',
     defaultMessage: 'Samþykkja',
