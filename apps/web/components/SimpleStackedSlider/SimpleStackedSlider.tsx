@@ -34,6 +34,10 @@ export const SimpleStackedSlider: FC<SimpleStackedSliderProps> = ({
 
   const items = Children.toArray(children)
 
+  if (!items?.length) {
+    return null
+  }
+
   const l =
     levels === 'auto' || !(levels > 0) ? Math.ceil(items.length / 6) : levels
 
