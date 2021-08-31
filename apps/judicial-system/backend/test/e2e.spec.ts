@@ -16,9 +16,9 @@ import {
   CaseType,
   UserRole,
   AccusedPleaDecision,
-  Institution as TInstitution,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+import type { Institution as TInstitution } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 

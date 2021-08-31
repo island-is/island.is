@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Case, Institution } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
+import type { Institution } from '@island.is/judicial-system/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'

@@ -1,9 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import {
-  Institution as TInstitution,
-  InstitutionType,
-} from '@island.is/judicial-system/types'
+import { InstitutionType } from '@island.is/judicial-system/types'
+import type { Institution as TInstitution } from '@island.is/judicial-system/types'
 
 @ObjectType()
 export class Institution implements TInstitution {

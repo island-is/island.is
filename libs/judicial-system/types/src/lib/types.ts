@@ -1,15 +1,4 @@
-export enum InstitutionType {
-  PROSECUTORS_OFFICE = 'PROSECUTORS_OFFICE',
-  COURT = 'COURT',
-}
-
-export interface Institution {
-  id: string
-  created: string
-  modified: string
-  type: InstitutionType
-  name: string
-}
+import { Institution } from './institution'
 
 export const IntegratedCourts = [
   'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf', // Héraðsdómur Reykjavíkur
