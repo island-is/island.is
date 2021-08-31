@@ -20,7 +20,7 @@ import { restrictionRequest as m } from '../messages/requestPdf'
 
 function constructRestrictionRequestPdf(
   existingCase: Case,
-  formatMessage?: FormatMessage,
+  formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -92,7 +92,7 @@ function constructRestrictionRequestPdf(
     .text('Dómkröfur')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.demands, {
+    .text(existingCase.demands ?? 'Dómkröfur ekki skráðar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -103,7 +103,7 @@ function constructRestrictionRequestPdf(
     .text('Lagaákvæði sem brot varða við')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.lawsBroken, {
+    .text(existingCase.lawsBroken ?? 'Lagaákvæði ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -150,7 +150,7 @@ function constructRestrictionRequestPdf(
     .text(formatMessage(m.factsAndArguments.facts))
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.caseFacts, {
+    .text(existingCase.caseFacts ?? 'Málsatvik ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -161,14 +161,14 @@ function constructRestrictionRequestPdf(
     .text(formatMessage(m.factsAndArguments.arguments))
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.legalArguments, {
+    .text(existingCase.legalArguments ?? 'Lagarök ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `${existingCase.prosecutor?.name ?? ''} ${
+      `${existingCase.prosecutor?.name ?? 'Saksóknari ekki skráður'} ${
         existingCase.prosecutor?.title ?? ''
       }`,
     )
@@ -182,7 +182,7 @@ function constructRestrictionRequestPdf(
 
 function constructInvestigationRequestPdf(
   existingCase: Case,
-  formatMessage?: FormatMessage,
+  formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -224,7 +224,7 @@ function constructInvestigationRequestPdf(
     .font('Helvetica-Bold')
     .fontSize(18)
     .lineGap(8)
-    .text('Grunnupplýsingar')
+    .text(formatMessage(m.baseInfo.heading))
     .font('Helvetica')
     .fontSize(12)
     .lineGap(4)
@@ -247,7 +247,7 @@ function constructInvestigationRequestPdf(
     .fontSize(12)
     .lineGap(4)
     .text(capitalize(caseTypes[existingCase.type]))
-    .text(existingCase.description, {
+    .text(existingCase.description ?? 'Efni kröfu ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -258,7 +258,7 @@ function constructInvestigationRequestPdf(
     .text('Dómkröfur')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.demands, {
+    .text(existingCase.demands ?? 'Dómkröfur ekki skráðar', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -269,7 +269,7 @@ function constructInvestigationRequestPdf(
     .text('Lagaákvæði sem brot varða við')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.lawsBroken, {
+    .text(existingCase.lawsBroken ?? 'Lagaákvæði ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -280,7 +280,7 @@ function constructInvestigationRequestPdf(
     .text('Lagaákvæði sem krafan er byggð á')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.legalBasis, {
+    .text(existingCase.legalBasis ?? 'Lagaákvæði ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -293,7 +293,7 @@ function constructInvestigationRequestPdf(
     .text('Málsatvik')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.caseFacts, {
+    .text(existingCase.caseFacts ?? 'Málsatvik ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -304,7 +304,7 @@ function constructInvestigationRequestPdf(
     .text('Lagarök')
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.legalArguments, {
+    .text(existingCase.legalArguments ?? 'Lagarök ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
@@ -328,7 +328,7 @@ function constructInvestigationRequestPdf(
   doc
     .font('Helvetica-Bold')
     .text(
-      `${existingCase.prosecutor?.name ?? ''} ${
+      `${existingCase.prosecutor?.name ?? 'Saksóknari ekki skráður'} ${
         existingCase.prosecutor?.title ?? ''
       }`,
     )
@@ -342,7 +342,7 @@ function constructInvestigationRequestPdf(
 
 function constructRequestPdf(
   existingCase: Case,
-  formatMessage?: FormatMessage,
+  formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
   return existingCase.type === CaseType.CUSTODY ||
     existingCase.type === CaseType.TRAVEL_BAN
@@ -352,7 +352,7 @@ function constructRequestPdf(
 
 export async function getRequestPdfAsString(
   existingCase: Case,
-  formatMessage?: FormatMessage,
+  formatMessage: FormatMessage,
 ): Promise<string> {
   const stream = constructRequestPdf(existingCase, formatMessage)
 

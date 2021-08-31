@@ -38,7 +38,7 @@ export class UserService {
     })
   }
 
-  async findById(id: string): Promise<User> {
+  async findById(id: string): Promise<User | null> {
     this.logger.debug(`Finding user ${id}`)
 
     return this.userModel.findOne({
@@ -47,7 +47,7 @@ export class UserService {
     })
   }
 
-  async findByNationalId(nationalId: string): Promise<User> {
+  async findByNationalId(nationalId: string): Promise<User | null> {
     this.logger.debug('Getting a user by national id')
 
     // First check if the user is an admin
