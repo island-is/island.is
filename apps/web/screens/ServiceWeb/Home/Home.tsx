@@ -31,8 +31,6 @@ import {
   ServiceWebHeader,
 } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
-import { theme } from '@island.is/island-ui/theme'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import ContactBanner from '../ContactBanner/ContactBanner'
 
 import * as styles from './Home.treat'
@@ -48,9 +46,6 @@ interface HomeProps {
 
 const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
   // const linkResolver = useLinkResolver()
-  const { width } = useWindowSize()
-
-  const isMobile = width < theme.breakpoints.md
 
   const logoTitle =
     organization?.shortTitle ?? organization?.title ?? 'Ísland.is'
@@ -72,66 +67,38 @@ const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
           title={searchTitle}
         />
       </Box>
-      {!isMobile ? (
-        <Box className={styles.categories}>
-          <GridContainer>
-            <GridRow>
-              <GridColumn span="12/12" paddingBottom={[2, 2, 3]}>
-                <Text variant="h3" color="white">
-                  Svör eftir flokkum
-                </Text>
-              </GridColumn>
-            </GridRow>
-            <GridRow>
-              {supportCategories.map(
-                ({ title, slug, description, organization }, index) => {
-                  return (
-                    <GridColumn
-                      key={index}
-                      span={['12/12', '6/12', '6/12', '4/12']}
-                      paddingBottom={[2, 2, 3]}
-                    >
-                      <Card
-                        title={title}
-                        description={description}
-                        link={
-                          {
-                            href: `/thjonustuvefur/${organization.slug}/${slug}`,
-                          } as LinkResolverResponse
-                        }
-                      />
-                    </GridColumn>
-                  )
-                },
-              )}
-            </GridRow>
-          </GridContainer>
-        </Box>
-      ) : (
-        <Box className={styles.categories}>
-          <SimpleStackedSlider
-            itemWidth={280}
-            span={['12/12', '6/12', '6/12', '4/12']}
-          >
-            {supportCategories.map(
-              ({ title, slug, description, organization }, index) => {
-                return (
-                  <Card
-                    key={index}
-                    title={title}
-                    description={description}
-                    link={
-                      {
-                        href: `/thjonustuvefur/${organization.slug}/${slug}`,
-                      } as LinkResolverResponse
-                    }
-                  />
-                )
-              },
-            )}
-          </SimpleStackedSlider>
-        </Box>
-      )}
+      <Box className={styles.categories}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span="12/12" paddingBottom={[2, 2, 3]}>
+              <Text variant="h3" color="white">
+                Svör eftir flokkum
+              </Text>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+        <SimpleStackedSlider
+          itemWidth={280}
+          span={['12/12', '6/12', '6/12', '4/12']}
+        >
+          {supportCategories.map(
+            ({ title, slug, description, organization }, index) => {
+              return (
+                <Card
+                  key={index}
+                  title={title}
+                  description={description}
+                  link={
+                    {
+                      href: `/thjonustuvefur/${organization.slug}/${slug}`,
+                    } as LinkResolverResponse
+                  }
+                />
+              )
+            },
+          )}
+        </SimpleStackedSlider>
+      </Box>
       <Box marginY={[7, 10, 10]}>
         <GridContainer>
           <GridRow>
@@ -151,7 +118,7 @@ const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
 }
 
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const slug = query.slug as string
+  const slug = query.slug ? (query.slug as string) : 'stafraent-island'
 
   const [organization, namespace, supportCategories] = await Promise.all([
     !!slug &&

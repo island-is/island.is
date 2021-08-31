@@ -19,7 +19,7 @@ export const SearchSection = ({
     <Box
       paddingX={[3, 3, 6]}
       paddingTop={[0, 0, 0, 10]}
-      paddingBottom={3}
+      paddingBottom={[15, 15, 3]}
       className={styles.container}
     >
       {!!logoUrl && (
