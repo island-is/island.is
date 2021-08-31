@@ -22,6 +22,7 @@ export interface UniqueWithinTagsInput {
 export class UniqueWithinTagsValidatorService implements ValidatorService {
   requiredMetaFields = [EndorsementMetaField.SIGNED_TAGS]
   validate(input: UniqueWithinTagsInput) {
+    console.log("HMMMM?")
     for (const tag of input.value.tags) {
       if (input.meta.signedTags.includes(tag)) {
         // we found existing tag, lets fail the validation

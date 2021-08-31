@@ -56,6 +56,9 @@ export class EndorsementValidatorService {
         meta,
       })
 
+      console.log("HOHOHOHO VALIDATIONS HOHOHOHOHOHOHOHO")
+      console.log({value, meta})
+
       // if any rule is invalid we fail the validation
       if (!isValid) {
         return false
