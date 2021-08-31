@@ -1522,7 +1522,7 @@ export const errorMessages = defineMessages({
     description: 'Rights exceeded, please, select an earlier end date.',
   },
   durationPeriods: {
-    id: 'pl.application:errors.exceeding.length',
+    id: 'pl.application:errors.duration.periods',
     defaultMessage:
       'Villa kom upp við útreikning á tímabilum, veldu annað tímabil eða hafðu samband við okkur til að fá stuðning.',
     description:
