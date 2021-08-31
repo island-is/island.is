@@ -9,27 +9,6 @@ import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
 import * as Sentry from '@sentry/react'
 import { lazy } from 'react'
 
-const dynamicModules = [
-  {
-    name: m.financeTransactions,
-    path: ServicePortalPath.FinanceTransactions,
-    render: () => lazy(() => import('./screens/FinanceTransactions')),
-    enabled: false,
-  },
-  {
-    name: m.financeEmployeeClaims,
-    path: ServicePortalPath.FinanceEmployeeClaims,
-    render: () => lazy(() => import('./screens/FinanceEmployeeClaims')),
-    enabled: false,
-  },
-  {
-    name: m.financeLocalTax,
-    path: ServicePortalPath.FinanceLocalTax,
-    render: () => lazy(() => import('./screens/FinanceLocalTax')),
-    enabled: false,
-  },
-]
-
 export const financeModule: ServicePortalModule = {
   name: 'Fjármál',
   widgets: () => [],
@@ -51,7 +30,6 @@ export const financeModule: ServicePortalModule = {
         path: ServicePortalPath.FinanceBills,
         render: () => lazy(() => import('./screens/FinanceBills')),
       },
-      ...dynamicModules,
     ]
     return routes
   },
@@ -66,15 +44,27 @@ export const financeModule: ServicePortalModule = {
       const data = res?.data?.getCustomerTapControl
 
       if (data?.RecordsTap) {
-        routes.push({ ...dynamicModules[0], enabled: true })
+        routes.push({
+          name: m.financeTransactions,
+          path: ServicePortalPath.FinanceTransactions,
+          render: () => lazy(() => import('./screens/FinanceTransactions')),
+        })
       }
 
       if (data?.employeeClaimsTap) {
-        routes.push({ ...dynamicModules[1], enabled: true })
+        routes.push({
+          name: m.financeEmployeeClaims,
+          path: ServicePortalPath.FinanceEmployeeClaims,
+          render: () => lazy(() => import('./screens/FinanceEmployeeClaims')),
+        })
       }
 
       if (data?.localTaxTap) {
-        routes.push({ ...dynamicModules[2], enabled: true })
+        routes.push({
+          name: m.financeLocalTax,
+          path: ServicePortalPath.FinanceLocalTax,
+          render: () => lazy(() => import('./screens/FinanceLocalTax')),
+        })
       }
     } catch (error) {
       Sentry.captureException(error)

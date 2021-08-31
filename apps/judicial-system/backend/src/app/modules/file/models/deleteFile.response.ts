@@ -4,5 +4,5 @@ import { DeleteFileResponse as TDeleteFileResponse } from '@island.is/judicial-s
 
 export class DeleteFileResponse implements TDeleteFileResponse {
   @ApiProperty()
-  success: boolean
+  success!: boolean
 }

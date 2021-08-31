@@ -27,26 +27,29 @@ function isStateHiddenFromRole(state: CaseState, role: UserRole): boolean {
 }
 
 function isProsecutorsOfficeHiddenFromUser(
-  prosecutorInstitutionId: string,
+  prosecutorInstitutionId: string | undefined,
   user: User,
   forUpdate: boolean,
-  sharedWithProsecutorsOfficeId: string,
+  sharedWithProsecutorsOfficeId: string | undefined,
 ): boolean {
   return (
     prosecutorsOfficeMustMatchUserInstitution(user.role) &&
-    prosecutorInstitutionId &&
-    prosecutorInstitutionId !== user.institution.id &&
+    Boolean(prosecutorInstitutionId) &&
+    prosecutorInstitutionId !== user.institution?.id &&
     (forUpdate ||
       !sharedWithProsecutorsOfficeId ||
-      sharedWithProsecutorsOfficeId !== user.institution.id)
+      sharedWithProsecutorsOfficeId !== user.institution?.id)
   )
 }
 
-function isCourtHiddenFromUser(courtId: string, user: User): boolean {
+function isCourtHiddenFromUser(
+  courtId: string | undefined,
+  user: User,
+): boolean {
   return (
     courtMustMatchUserIInstitution(user.role) &&
-    courtId &&
-    courtId !== user.institution.id
+    Boolean(courtId) &&
+    courtId !== user.institution?.id
   )
 }
 
@@ -80,16 +83,16 @@ export function getCasesQueryFilter(user: User): WhereOptions {
           [Op.or]: [
             { prosecutor_id: { [Op.is]: null } },
             {
-              '$prosecutor.institution_id$': user.institution.id,
+              '$prosecutor.institution_id$': user.institution?.id,
             },
-            { shared_with_prosecutors_office_id: user.institution.id },
+            { shared_with_prosecutors_office_id: user.institution?.id },
           ],
         }
       : {
           [Op.or]: [
             { court_id: { [Op.is]: null } },
             {
-              court_id: user.institution.id,
+              court_id: user.institution?.id,
             },
           ],
         }
