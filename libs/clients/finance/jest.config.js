@@ -2,9 +2,7 @@ module.exports = {
   displayName: 'clients-finance',
   preset: '../../../jest.preset.js',
   globals: {
-    'ts-jest': {
-      tsConfig: '<rootDir>/tsconfig.spec.json',
-    },
+    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
   },
   testEnvironment: 'node',
   transform: {

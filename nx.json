@@ -711,5 +711,13 @@
       "tags": [],
       "implicitDependencies": ["web"]
     }
+  },
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
   }
 }
