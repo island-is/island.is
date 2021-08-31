@@ -93,7 +93,13 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
         }
 
         const existingScope = isApiScopeGroup(item)
-          ? authDelegation.scopes.length === apiScopes.length - 1
+          ? apiScopes
+              .filter((scope) => !isApiScopeGroup(scope))
+              .every((scope) =>
+                authDelegation.scopes
+                  .map((scope) => scope.name)
+                  .includes(scope.name),
+              )
             ? { ...item, validTo: undefined }
             : undefined
           : authDelegation.scopes.find((scope) => scope.name === item.name)
@@ -135,7 +141,6 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
               <div className={cs(isSelected ? undefined : styles.hidden)}>
                 <DatePickerController
                   id={`${item.model}.validTo`}
-                  disabled={!isSelected}
                   size="sm"
                   label=""
                   minDate={new Date()}
