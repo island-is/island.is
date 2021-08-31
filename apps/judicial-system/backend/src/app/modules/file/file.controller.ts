@@ -75,7 +75,7 @@ export class FileController {
       existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
       existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
     ) {
-      return existingCase.rulingDate
+      return existingCase.rulingDate as Date // We should have date
     }
 
     // Otherwise, use the earliest postponed appeal date
