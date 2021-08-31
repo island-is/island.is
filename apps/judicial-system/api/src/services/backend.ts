@@ -7,7 +7,6 @@ import {
   CreateCase,
   CreateFile,
   CreatePresignedPost,
-  CreateUser,
   DeleteFileResponse,
   CaseFile,
   Notification,
@@ -19,10 +18,13 @@ import {
   SignedUrl,
   TransitionCase,
   UpdateCase,
-  UpdateUser,
-  User,
 } from '@island.is/judicial-system/types'
-import type { Institution } from '@island.is/judicial-system/types'
+import type {
+  Institution,
+  User,
+  CreateUser,
+  UpdateUser,
+} from '@island.is/judicial-system/types'
 
 import { environment } from '../environments'
 

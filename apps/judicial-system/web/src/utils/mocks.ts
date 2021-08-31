@@ -8,9 +8,9 @@ import {
   CaseType,
   InstitutionType,
   UpdateCase,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {

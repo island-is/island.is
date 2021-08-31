@@ -1,6 +1,7 @@
 import { Op, WhereOptions } from 'sequelize'
 
-import { CaseState, User, UserRole } from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../models'
 

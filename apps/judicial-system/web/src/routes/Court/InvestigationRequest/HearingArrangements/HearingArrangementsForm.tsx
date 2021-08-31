@@ -24,9 +24,9 @@ import {
   Case,
   CaseState,
   SessionArrangements,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import {
   ReactSelectOption,
   UserData,

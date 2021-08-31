@@ -16,11 +16,8 @@ import {
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
-import {
-  CaseType,
-  SessionArrangements,
-  User as TUser,
-} from '@island.is/judicial-system/types'
+import { CaseType, SessionArrangements } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import {

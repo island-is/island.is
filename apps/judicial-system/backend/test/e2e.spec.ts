@@ -10,7 +10,6 @@ import {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseGender,
-  User as TUser,
   CaseDecision,
   NotificationType,
   CaseType,
@@ -18,6 +17,7 @@ import {
   AccusedPleaDecision,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 import type { Institution as TInstitution } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'

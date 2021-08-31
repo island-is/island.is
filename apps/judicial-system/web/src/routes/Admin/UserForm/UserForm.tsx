@@ -13,12 +13,8 @@ import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  InstitutionType,
-  User,
-  UserRole,
-} from '@island.is/judicial-system/types'
-import type { Institution } from '@island.is/judicial-system/types'
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
+import type { Institution, User } from '@island.is/judicial-system/types'
 import { FormSettings } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { ReactSelectOption } from '../../../types'
 import { validate } from '../../../utils/validate'

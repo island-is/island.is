@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { User, UserRole } from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useMutation } from '@apollo/client'
 import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
