@@ -12,6 +12,8 @@ import {
   ApplicationEvent,
   CreateApplicationEvent,
   ApplicationFilters,
+  ApplicationFile,
+  CreateApplicationFile,
 } from '@island.is/financial-aid/shared'
 
 import { environment } from '../environments'
@@ -66,6 +68,12 @@ class BackendAPI extends RESTDataSource {
     createApplicationEvent: CreateApplicationEvent,
   ): Promise<ApplicationEvent> {
     return this.post('applicationEvent', createApplicationEvent)
+  }
+
+  createApplicationFile(
+    createApplicationFile: CreateApplicationFile,
+  ): Promise<ApplicationFile> {
+    return this.post('/file', createApplicationFile)
   }
 }
 

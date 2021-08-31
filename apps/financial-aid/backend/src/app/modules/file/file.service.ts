@@ -21,11 +21,11 @@ export class FileService {
     private readonly logger: Logger,
   ) {}
 
-  createFile(createFile: CreateFileDto): Promise<ApplicationFileModel> {
-    return this.fileModel.create(createFile)
+  async createFile(createFile: CreateFileDto): Promise<ApplicationFileModel> {
+    return await this.fileModel.create(createFile)
   }
 
-  getAllApplicationFiles(
+  async getAllApplicationFiles(
     applicationId: string,
   ): Promise<ApplicationFileModel[]> {
     this.logger.debug(`Getting all files for case ${applicationId}`)

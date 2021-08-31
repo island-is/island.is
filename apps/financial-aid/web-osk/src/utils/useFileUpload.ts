@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
-import { CreateSignedUrlMutation } from '@island.is/financial-aid-web/oskgraphql/sharedGql'
+import {
+  CreateSignedUrlMutation,
+  UploadFileMutation,
+} from '@island.is/financial-aid-web/oskgraphql/sharedGql'
 import { SignedUrl } from '@island.is/financial-aid/shared'
 
 export const useFileUpload = (formFiles: UploadFile[]) => {
@@ -9,6 +12,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const filesRef = useRef<UploadFile[]>(files)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
+  const [uploadFilesMutation] = useMutation(UploadFileMutation)
 
   const requests: { [Key: string]: XMLHttpRequest } = {}
 
@@ -84,6 +88,23 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     return signedUrl
   }
 
+  const uploadFiles = async (): Promise<void> => {
+    try {
+      const { data } = await uploadFilesMutation({
+        variables: { input: { files: files } },
+      })
+
+      console.log('Res', data)
+
+      return data
+    } catch (e) {
+      console.log('err', e)
+      setUploadErrorMessage('Næ ekki sambandi við vefþjón')
+    }
+
+    return undefined
+  }
+
   const uploadToCloudFront = (file: UploadFile, url: string) => {
     const request = new XMLHttpRequest()
     request.withCredentials = true
@@ -149,12 +170,8 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   }
 
   const deleteUrl = async (url: string) => {
-    let success = false
-
     try {
       await fetch(url, { method: 'DELETE' })
-
-      success = true
     } catch (e) {
       setUploadErrorMessage('Næ ekki að eyða skrá')
     }
@@ -184,5 +201,5 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     onChange([file as File], true)
   }
 
-  return { files, uploadErrorMessage, onChange, onRemove, onRetry }
+  return { files, uploadErrorMessage, onChange, onRemove, onRetry, uploadFiles }
 }

@@ -38,7 +38,7 @@ export class ApplicationService {
     })
   }
 
-  getAll(): Promise<ApplicationModel[]> {
+  async getAll(): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({ order: [['modified', 'DESC']] })
   }
 
@@ -87,7 +87,7 @@ export class ApplicationService {
     const appModel = await this.applicationModel.create(application)
 
     //Create applicationEvent
-    const eventModel = await this.applicationEventService.create({
+    await this.applicationEventService.create({
       applicationId: appModel.id,
       state: appModel.state,
       comment: null,
@@ -95,7 +95,7 @@ export class ApplicationService {
 
     //Create file
     if (application.files) {
-      const fileModel = await application.files.map((f) => {
+      application.files.map((f) => {
         this.fileService.createFile({
           applicationId: appModel.id,
           name: f.name,

@@ -16,6 +16,14 @@ export const CreateApplicationEventQuery = gql`
   }
 `
 
+export const UploadFileMutation = gql`
+  mutation uploadFiles($input: UploadFiles!) {
+    uploadFiles(input: $input) {
+      id
+    }
+  }
+`
+
 export const GetMunicipalityQuery = gql`
   query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
     municipality(input: $input) {
