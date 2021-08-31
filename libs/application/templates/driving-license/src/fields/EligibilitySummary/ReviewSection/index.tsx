@@ -44,7 +44,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
       borderRadius="large"
       padding={4}
       marginBottom={2}
-      borderColor={state === ReviewSectionState.complete ? "mint600" : "red600"}
+      borderColor={state === ReviewSectionState.complete ? 'mint600' : 'red600'}
     >
       {/* Section Number */}
       <Box
@@ -86,11 +86,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           <Box pointerEvents="none">
             <button type="button" className={styles.container}>
               <Text variant="eyebrow" as="span">
-                {formatText(
-                  m.externalDataComplete,
-                  application,
-                  formatMessage,
-                )}
+                {formatText(m.externalDataComplete, application, formatMessage)}
               </Text>
             </button>
           </Box>

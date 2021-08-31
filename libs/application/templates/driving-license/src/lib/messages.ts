@@ -544,7 +544,8 @@ export const m = defineMessages({
   },
   congratulationsCertificateDescription: {
     id: 'dl.application.congratulationsCertificateDescription',
-    defaultMessage: 'Þörf er á læknisvottorði miðað við útfyllta heilbrigðisyfirlýsingu. Læknisvottorði þarf að skila til sýslumannsembættis. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
+    defaultMessage:
+      'Þörf er á læknisvottorði miðað við útfyllta heilbrigðisyfirlýsingu. Læknisvottorði þarf að skila til sýslumannsembættis. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
     description: 'Health Certificate',
   },
   congratulationsQualityPictureDescription: {
