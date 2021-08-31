@@ -83,7 +83,9 @@ export const ReviewGroup: FC<ReviewGroupProps> = ({
               onClick={handleClick}
             >
               {formatMessage(
-                editable ? coreMessages.buttonSubmit : coreMessages.buttonEdit,
+                editable
+                  ? coreMessages.reviewButtonSubmit
+                  : coreMessages.buttonEdit,
               )}
             </Button>
           </Box>
