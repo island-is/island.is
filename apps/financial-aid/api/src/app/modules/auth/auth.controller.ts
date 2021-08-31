@@ -91,10 +91,6 @@ export class AuthController {
       const fakeUser = this.authService.fakeUser(nationalId)
 
       if (fakeUser) {
-        if (applicationId) {
-          fakeUser.returnUrl = ReturnUrl.STADA
-        }
-
         return this.logInUser(fakeUser, res)
       }
     }
@@ -179,7 +175,12 @@ export class AuthController {
 
     const jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
 
-    // const returnUrl = ReturnUrl.UMSOKN : ReturnUrl.VEITA
+    if (res.req?.query.service === 'veita') {
+      user.returnUrl = ReturnUrl.VEITA
+    }
+    if (res.req?.query.applicationId) {
+      user.returnUrl = ReturnUrl.STADA
+    }
 
     res
       .cookie(CSRF_COOKIE.name, csrfToken, {

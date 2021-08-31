@@ -16,7 +16,10 @@ const FileUpload = () => {
         about="Þú getur alltaf sent okkur gögn sem þú telur hjálpa umsókninni, t.d.
         launagögn"
       />
-      <Footer previousUrl={`/${router.query.id}`} nextButtonText="Senda gögn" />
+      <Footer
+        previousUrl={`/stada/${router.query.id}`}
+        nextButtonText="Senda gögn"
+      />
     </StatusLayout>
   )
 }
