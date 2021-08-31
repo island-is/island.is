@@ -9,7 +9,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import type { InstitutionType } from '@island.is/judicial-system/types'
+import { InstitutionType } from '@island.is/judicial-system/types'
 
 @Table({
   tableName: 'institution',
