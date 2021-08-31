@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
+import cs from 'classnames'
 
-import { Table as T, Text } from '@island.is/island-ui/core'
+import { Table as T, Text, Box } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
   CheckboxController,
@@ -10,6 +11,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import type { Scope } from '../../Access'
+import * as styles from './AccessItem.treat'
 
 type TableDataProps = React.ComponentProps<typeof T.Data>
 
@@ -130,19 +132,21 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
               </Text>
             </T.Data>
             <T.Data box={tdStyling}>
-              <DatePickerController
-                id={`${item.model}.validTo`}
-                disabled={!isSelected}
-                size="sm"
-                label=""
-                minDate={new Date()}
-                defaultValue={
-                  existingScope?.name ? existingScope?.validTo : undefined
-                }
-                locale={lang}
-                placeholder="-"
-                onChange={(value) => onChange(item, value)}
-              />
+              <div className={cs(isSelected ? undefined : styles.hidden)}>
+                <DatePickerController
+                  id={`${item.model}.validTo`}
+                  disabled={!isSelected}
+                  size="sm"
+                  label=""
+                  minDate={new Date()}
+                  defaultValue={
+                    existingScope?.name ? existingScope?.validTo : undefined
+                  }
+                  locale={lang}
+                  placeholder="-"
+                  onChange={(value) => onChange(item, value)}
+                />
+              </div>
             </T.Data>
           </T.Row>
         )
