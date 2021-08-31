@@ -524,7 +524,8 @@ export const m = defineMessages({
   },
   congratulationsTitleSuccess: {
     id: 'dl.application.congratulationsTitleSuccess',
-    defaultMessage: 'Umsókn þín um fullnaðarskírteini tókst.',
+    defaultMessage:
+      'Umsókn þín um fullnaðarskírteini tókst og verður tilbúið á afhendingarstað eftir 3 til 4 vikur. Skila þarf inn bráðabirgðaskírteini til sýslumanns við afhendingu fullnaðarskírteinis.',
     description: 'Your application for full driving license was successful.',
   },
   congratulationsTitle: {
@@ -545,12 +546,13 @@ export const m = defineMessages({
   congratulationsCertificateDescription: {
     id: 'dl.application.congratulationsCertificateDescription',
     defaultMessage:
-      'Þörf er á læknisvottorði miðað við útfyllta heilbrigðisyfirlýsingu. Læknisvottorði þarf að skila til sýslumannsembættis. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
+      'Þörf er á læknisvottorði frá heimilislækni miðað við útfyllta heilbrigðisyfirlýsingu. Læknisvottorði þarf að skila til sýslumannsembættis. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
     description: 'Health Certificate',
   },
   congratulationsQualityPictureDescription: {
     id: 'dl.application.congratulationsQualityPictureDescription',
-    defaultMessage: 'Skila þarf gæðamerktri ljósmynd til sýslumanns',
+    defaultMessage:
+      'Skila þarf gæðamerktri ljósmynd til sýslumanns. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
     description: 'Quality photo',
   },
   paymentPendingDescription: {

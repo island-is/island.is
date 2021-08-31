@@ -58,6 +58,14 @@ const Congratulations = ({
   field,
   application,
 }: PropTypes): JSX.Element => {
+  // Change background from mint to purple
+  var x = document.getElementsByClassName(
+    'reset-style_3kK6X useBoxStyles-borderStyle_solid_3ucEZ FormShell-style_2K_FN FormShell-style_1yvHT',
+  )[0]
+  if (x)
+    x.className =
+      'reset-style_3kK6X useBoxStyles-borderStyle_solid_3ucEZ FormShell-style_2K_FN FormShell-style_3Y9-g'
+
   const name = application.externalData.nationalRegistry?.data as name
   const { formatMessage } = useLocale()
   const { answers } = application
@@ -82,7 +90,7 @@ const Congratulations = ({
                 formatMessage,
               )} ${name.fullName}`}
               message={formatText(
-                m.paymentSuccessIfNotReadyFewWeeks,
+                m.congratulationsTitleSuccess,
                 application,
                 formatMessage,
               )}

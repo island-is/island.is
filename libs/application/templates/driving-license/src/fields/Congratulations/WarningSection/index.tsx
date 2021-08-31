@@ -64,7 +64,11 @@ const WarningSection: FC<WarningSectionProps> = ({
           <Text marginTop={1} variant="default">
             {formatText(description, application, formatMessage)}
           </Text>
-          {key === 'picture' && <Bullets application={application} />}
+          {key === 'picture' && (
+            <Box marginTop={2}>
+              <Bullets application={application} />{' '}
+            </Box>
+          )}
         </Box>
         <Box pointerEvents="none">
           <Tag variant="red">
