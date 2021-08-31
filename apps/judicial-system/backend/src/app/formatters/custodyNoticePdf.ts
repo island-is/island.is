@@ -111,7 +111,7 @@ export async function getCustodyNoticePdfAsString(
     })
     .font('Helvetica')
     .text(
-      existingCase.defenderName
+      existingCase.defenderName && !existingCase.defenderIsSpokesperson
         ? `${existingCase.defenderName}${
             existingCase.defenderPhoneNumber
               ? `, s. ${existingCase.defenderPhoneNumber}`
