@@ -48,6 +48,8 @@ const devConfig = {
     drivingLicense: {
       secret: process.env.DRIVING_LICENSE_SECRET,
       xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
+      xroadPath:
+        'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
       xroadBaseUrl: 'http://localhost:8081',
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
@@ -149,6 +151,7 @@ const prodConfig = {
       secret: process.env.DRIVING_LICENSE_SECRET,
       xroadClientId: process.env.XROAD_CLIENT_ID,
       xroadBaseUrl: process.env.XROAD_BASE_PATH,
+      xroadPath: process.env.DRIVING_LICENSE_XROAD_PATH,
     },
     paymentOptions: {
       arkBaseUrl: process.env.ARK_BASE_URL,
