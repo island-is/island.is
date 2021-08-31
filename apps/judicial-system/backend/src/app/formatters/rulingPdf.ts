@@ -4,7 +4,6 @@ import streamBuffers from 'stream-buffers'
 import {
   AccusedPleaDecision,
   CaseAppealDecision,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
@@ -16,7 +15,6 @@ import {
   NounCases,
   formatAccusedByGender,
   caseTypes,
-  formatConclusion,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
