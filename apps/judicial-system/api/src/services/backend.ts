@@ -9,11 +9,8 @@ import {
   CreatePresignedPost,
   DeleteFileResponse,
   CaseFile,
-  Notification,
   PresignedPost,
   RequestSignatureResponse,
-  SendNotification,
-  SendNotificationResponse,
   SignatureConfirmationResponse,
   SignedUrl,
   TransitionCase,
@@ -24,6 +21,9 @@ import type {
   User,
   CreateUser,
   UpdateUser,
+  Notification,
+  SendNotification,
+  SendNotificationResponse,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../environments'

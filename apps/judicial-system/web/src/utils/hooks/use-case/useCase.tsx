@@ -3,10 +3,12 @@ import { useMutation } from '@apollo/client'
 import {
   Case,
   CaseTransition,
-  NotificationType,
   RequestSignatureResponse,
-  SendNotificationResponse,
   UpdateCase,
+} from '@island.is/judicial-system/types'
+import type {
+  NotificationType,
+  SendNotificationResponse,
 } from '@island.is/judicial-system/types'
 import {
   parseString,

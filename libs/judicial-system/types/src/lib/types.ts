@@ -1,4 +1,5 @@
 import type { Institution } from './institution'
+import type { Notification } from './notification'
 import type { User } from './user'
 
 export enum CaseType {
@@ -168,24 +169,6 @@ export interface Case {
   files?: CaseFile[]
 }
 
-export enum NotificationType {
-  HEADS_UP = 'HEADS_UP',
-  READY_FOR_COURT = 'READY_FOR_COURT',
-  RECEIVED_BY_COURT = 'RECEIVED_BY_COURT',
-  COURT_DATE = 'COURT_DATE',
-  RULING = 'RULING',
-  REVOKED = 'REVOKED',
-}
-
-export interface Notification {
-  id: string
-  created: string
-  caseId: string
-  type: NotificationType
-  condition?: string
-  recipients?: string
-}
-
 export interface CreateCase {
   type: CaseType
   description?: string
@@ -269,14 +252,6 @@ export interface UpdateCase {
 export interface TransitionCase {
   modified: string
   transition: CaseTransition
-}
-
-export interface SendNotification {
-  type: NotificationType
-}
-
-export interface SendNotificationResponse {
-  notificationSent: boolean
 }
 
 export interface RequestSignatureResponse {
