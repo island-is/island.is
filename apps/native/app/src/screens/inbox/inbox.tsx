@@ -9,7 +9,6 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
-  ActivityIndicator,
   Animated,
   AppState,
   AppStateStatus,
@@ -291,7 +290,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
     [readItems],
   )
 
-  const isFirstLoad = !res.data;
+  const isFirstLoad = !res.data
   const isSearch = ui.inboxQuery.length > 0
   const isLoading = res.loading
   const isError = !!res.error

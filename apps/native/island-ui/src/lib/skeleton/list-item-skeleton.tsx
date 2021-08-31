@@ -37,7 +37,7 @@ const Content = styled.View`
 const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Title = styled.View`
@@ -46,10 +46,11 @@ const Title = styled.View`
 `
 
 const Date = styled.View`
-  width: 50px;
+  width: 65px;
 `
 
 const Message = styled.View`
+  width: 100%;
   padding-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
@@ -79,10 +80,11 @@ export function ListItemSkeleton() {
             <Skeleton active style={{ borderRadius: 4 }} height={17} />
           </Date>
         </Row>
-        <Skeleton active style={{ borderRadius: 4 }} height={17} />
-        <Message></Message>
+        <Message>
+          <Skeleton active style={{ borderRadius: 4 }} height={17} />
+        </Message>
       </Content>
-      <Divider style={{ height: StyleSheet.hairlineWidth}} />
+      <Divider style={{ height: StyleSheet.hairlineWidth }} />
     </Host>
   )
 }
