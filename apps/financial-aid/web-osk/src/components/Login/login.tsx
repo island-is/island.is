@@ -3,19 +3,18 @@ import { GridContainer, Button, Text, Box } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 import * as styles from './login.treat'
-import { style } from 'treat/lib/types'
 
 interface Props {
   headline?: string
   about?: string
-  applicationId?: string
+  statusPage?: boolean
 }
 
-const Login = ({ headline, about }: Props) => {
+const Login = ({ headline, about, statusPage = false }: Props) => {
   const router = useRouter()
 
-  const apiLoginRoute = router.query.id
-    ? `/api/auth/login?applicationId=${router.query.id}&nationalId=`
+  const apiLoginRoute = statusPage
+    ? `/api/auth/login?statusPage=true&nationalId=`
     : '/api/auth/login?nationalId='
 
   return (
