@@ -61,7 +61,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
         <Text>
           {workingCase.state !== CaseState.SUBMITTED &&
           workingCase.state !== CaseState.RECEIVED
-            ? 'Þessi krafa er enn í vinnslu hjá saksóknara. Hægt er að stofna nýtt mál eða tengja við mál í Auði um leið og gengið hefur verið frá kröfunni og hún send til dómstólsins.'
+            ? formatMessage(courtCaseNumber.explanationDisabled)
             : formatMessage(courtCaseNumber.explanation)}
         </Text>
       </Box>
