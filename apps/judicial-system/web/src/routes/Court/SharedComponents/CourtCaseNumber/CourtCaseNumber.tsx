@@ -1,11 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import {
-  Case,
-  CaseState,
-  IntegratedCourts,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
+import { Case, CaseState, UpdateCase } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import {

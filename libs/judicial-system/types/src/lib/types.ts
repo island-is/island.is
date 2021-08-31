@@ -1,10 +1,5 @@
 import { Institution } from './institution'
 
-export const IntegratedCourts = [
-  'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf', // Héraðsdómur Reykjavíkur
-  'c9a51c9a-c0e3-4c1f-a9a2-828a3af05d1d', // Héraðsdómur Reykjaness
-]
-
 export enum UserRole {
   PROSECUTOR = 'PROSECUTOR',
   REGISTRAR = 'REGISTRAR',

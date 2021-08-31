@@ -2,16 +2,16 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseState,
   CaseType,
-  IntegratedCourts,
   NotificationType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'

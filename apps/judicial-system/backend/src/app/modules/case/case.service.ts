@@ -15,9 +15,9 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   CaseType,
-  IntegratedCourts,
   SessionArrangements,
   User as TUser,
 } from '@island.is/judicial-system/types'
