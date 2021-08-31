@@ -2,6 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import {
   Case,
+  CaseState,
   IntegratedCourts,
   UpdateCase,
 } from '@island.is/judicial-system/types'
@@ -57,7 +58,12 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
         </Text>
       </Box>
       <Box marginBottom={2}>
-        <Text>{formatMessage(courtCaseNumber.explanation)}</Text>
+        <Text>
+          {workingCase.state !== CaseState.SUBMITTED &&
+          workingCase.state !== CaseState.RECEIVED
+            ? formatMessage(courtCaseNumber.explanationDisabled)
+            : formatMessage(courtCaseNumber.explanation)}
+        </Text>
       </Box>
       <BlueBox>
         <div className={styles.createCourtCaseContainer}>
@@ -69,7 +75,11 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                     size="small"
                     onClick={() => handleCreateCourtCase(workingCase)}
                     loading={isCreatingCourtCase}
-                    disabled={Boolean(workingCase.courtCaseNumber)}
+                    disabled={Boolean(
+                      (workingCase.state !== CaseState.SUBMITTED &&
+                        workingCase.state !== CaseState.RECEIVED) ||
+                        workingCase.courtCaseNumber,
+                    )}
                     fluid
                   >
                     Stofna nýtt mál
@@ -115,6 +125,10 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                     setCourtCaseNumberEM,
                   )
                 }}
+                disabled={
+                  workingCase.state !== CaseState.SUBMITTED &&
+                  workingCase.state !== CaseState.RECEIVED
+                }
                 required
               />
             </div>
