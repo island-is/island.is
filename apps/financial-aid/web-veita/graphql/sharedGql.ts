@@ -122,8 +122,6 @@ export const GetApplicationEventQuery = gql`
       applicationId
       eventType
       comment
-      staffComment
-      amount
       created
     }
   }

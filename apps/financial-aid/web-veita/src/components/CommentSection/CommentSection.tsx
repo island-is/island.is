@@ -34,7 +34,7 @@ const CommentSection = ({ className }: Props) => {
         variables: {
           input: {
             applicationId: router.query.id,
-            staffComment: staffComment,
+            comment: staffComment,
             eventType: ApplicationEventType.STAFFCOMMENT,
           },
         },

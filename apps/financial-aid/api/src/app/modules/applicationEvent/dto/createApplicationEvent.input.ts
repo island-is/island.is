@@ -20,12 +20,4 @@ export class CreateApplicationEventInput implements CreateApplicationEvent {
   @Allow()
   @Field(() => String)
   readonly eventType!: ApplicationEventType
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly amount?: number
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly staffComment?: string
 }

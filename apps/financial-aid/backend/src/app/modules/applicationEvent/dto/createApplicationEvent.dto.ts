@@ -19,14 +19,4 @@ export class CreateApplicationEventDto {
   @IsString()
   @ApiProperty()
   readonly comment?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty()
-  readonly amount?: number
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty()
-  readonly staffComment?: string
 }

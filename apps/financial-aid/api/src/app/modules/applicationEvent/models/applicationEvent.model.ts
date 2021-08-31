@@ -19,12 +19,6 @@ export class ApplicationEventModel implements ApplicationEvent {
   @Field({ nullable: true })
   readonly comment?: string
 
-  @Field({ nullable: true })
-  readonly amount?: number
-
-  @Field({ nullable: true })
-  readonly staffComment?: string
-
   @Field(() => String)
   readonly eventType!: ApplicationEventType
 }

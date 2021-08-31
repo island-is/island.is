@@ -30,6 +30,11 @@ export enum ApplicationEventType {
   APPROVED = 'Approved',
   STAFFCOMMENT = 'StaffComment',
 }
+// export const ApplicationEventType = { ...ApplicationState, ...EventType }
+// export type ApplicationEventType = typeof ApplicationEventType
+// export type ApplicationEventType = ApplicationState | EventType
+
+// export enum (ApplicationEventType & ApplicationState)
 
 export enum RolesRule {
   OSK = 'osk',
@@ -135,8 +140,6 @@ export interface ApplicationEvent {
   applicationId: string
   eventType: ApplicationEventType
   comment?: string
-  amount?: number
-  staffComment?: string
 }
 
 export interface Municipality {

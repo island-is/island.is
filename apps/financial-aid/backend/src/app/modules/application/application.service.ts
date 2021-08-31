@@ -127,8 +127,7 @@ export class ApplicationService {
     const eventModel = await this.applicationEventService.create({
       applicationId: id,
       eventType: ApplicationEventType[update.state.toUpperCase()],
-      comment: update.rejection,
-      amount: update.amount,
+      comment: update?.rejection || update?.amount?.toLocaleString('de-DE'),
     })
 
     return { numberOfAffectedRows, updatedApplication }

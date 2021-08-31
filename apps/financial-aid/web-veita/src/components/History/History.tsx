@@ -69,7 +69,7 @@ const History = ({ className }: Props) => {
 
                   {item.eventType === ApplicationEventType.STAFFCOMMENT && (
                     <Box paddingLeft={3} marginBottom={2}>
-                      <Text variant="small">{item.staffComment}</Text>
+                      <Text variant="small">{item.comment}</Text>
                     </Box>
                   )}
 
@@ -123,8 +123,8 @@ const History = ({ className }: Props) => {
               y2="-1.74846e-07"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stop-color="white" />
-              <stop offset="1" stop-color="white" stop-opacity="0" />
+              <stop stopColor="white" />
+              <stop offset="1" stopColor="white" stopOpacity="0" />
             </linearGradient>
           </defs>
         </svg>
