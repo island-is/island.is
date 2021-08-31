@@ -22,6 +22,6 @@ describe('/krafa/greinagerd/:id', () => {
     cy.get('[name=caseFacts]').type('lorem ipsum')
     cy.get('[name=legalArguments]').type('lorem ipsum')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', '/krafa/stadfesta/test_id')
+    cy.url().should('include', '/krafa/rannsoknargogn/test_id')
   })
 })
