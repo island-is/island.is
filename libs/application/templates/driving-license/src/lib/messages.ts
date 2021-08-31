@@ -311,6 +311,11 @@ export const m = defineMessages({
     defaultMessage: 'Ljósmynd í ökuskírteinaskrá',
     description: 'title for quality photo section',
   },
+  qualityPhotoAltText: {
+    id: 'dl.application.qualityPhotoAltText',
+    defaultMessage: 'Þín mynd skv. ökuskírteinaskrá',
+    description: `Alt text for the user's quality photo`,
+  },
   qualityPhotoSubTitle: {
     id: 'dl.application.qualityPhotoSubTitle',
     defaultMessage: 'Hér er núverandi ljósmynd í ökuskírteinaskrá',
@@ -340,8 +345,8 @@ export const m = defineMessages({
   qualityPhotoInstructions: {
     id: 'dl.application:qualityPhoto.instructions',
     defaultMessage: `
-    Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats) 
-    og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi 
+    Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats)
+    og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi
     á augu. Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
     `,
     description: 'Description of photo requirements',
@@ -356,14 +361,14 @@ export const m = defineMessages({
   qualityPhotoInstructionsBulletTwo: {
     id: 'dl.application:qualityPhoto.instructionsbullettwo',
     defaultMessage: `
-    Sýna þarf höfuð (án höfuðfats) og herðar 
+    Sýna þarf höfuð (án höfuðfats) og herðar.
     `,
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletThree: {
     id: 'dl.application:qualityPhoto.instructionsbulletthree',
     defaultMessage: `
-    Lýsing andlits þarf að vera jöfn. 
+    Lýsing andlits þarf að vera jöfn.
     `,
     description: 'Description of photo requirements',
   },

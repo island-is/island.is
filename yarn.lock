@@ -7069,10 +7069,10 @@
   dependencies:
     "@types/express" "*"
 
-"@types/pdfkit@0.10.6":
-  version "0.10.6"
-  resolved "https://registry.yarnpkg.com/@types/pdfkit/-/pdfkit-0.10.6.tgz#9ddde7e642e6c3f1245134456a03fbc4b67dc4b5"
-  integrity sha512-o6R2fO/fhg392YNYahiaNGZ8CNdSKMmf5W0LvyjJ/63mLQEPTgl6M9vb4zKoHaGpsP43VimuBz+xgVevsPy8jA==
+"@types/pdfkit@0.11.2":
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/@types/pdfkit/-/pdfkit-0.11.2.tgz#32ac956ccf27349f66ab77fbb4e5be3399508814"
+  integrity sha512-4FS1b4ZqSdE4vrHIxpiaPbOIvELlssavpknaRRrdrRH7IgRvO6nbGeI3PEiC7vJSDfxQ8GBZwGVybqgUX4oqww==
   dependencies:
     "@types/node" "*"
 

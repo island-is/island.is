@@ -5,7 +5,7 @@ import { SignatureConfirmationResponse as TSignatureConfirmationResponse } from 
 export class SignatureConfirmationResponse
   implements TSignatureConfirmationResponse {
   @ApiProperty()
-  documentSigned: boolean
+  documentSigned!: boolean
 
   @ApiProperty()
   code?: number
