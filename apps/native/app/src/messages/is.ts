@@ -151,6 +151,7 @@ export const is = {
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
+  'walletPass.lastUpdate': 'Síðast uppfært',
 
   // license scanner
   'licenseScanner.title': 'Ökuskírteina skanni',

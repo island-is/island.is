@@ -149,6 +149,7 @@ export const en: TranslatedMessages = {
 
   // wallet pass
   'walletPass.screenTitle': 'Pass',
+  'walletPass.lastUpdate': 'Last updated',
 
   // license scanner
   'licenseScanner.title': 'Scan driver license',
