@@ -1,5 +1,5 @@
 import React from 'react'
-import { RegulationDraft } from '@island.is/regulations/admin'
+import { RegulationDraft, DraftingStatus } from '@island.is/regulations/admin'
 
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -10,10 +10,9 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { DraftingStatus } from '@island.is/regulations/admin'
 // import { mockDraftlist, useMockQuery } from '../_mockData'
 import { homeMessages as msg, statusMsgs } from '../messages'
-import { ISODate } from '@island.is/regulations'
+import { ISODate, toISODate } from '@island.is/regulations'
 import { workingDaysUntil, useLocale } from '../utils'
 import { generatePath, useHistory } from 'react-router'
 import { ServicePortalPath } from '@island.is/service-portal/core'
@@ -54,11 +53,18 @@ export const TaskList = () => {
       return formatMessage(msg.publishSoon)
     }
     const target = workingDaysUntil(date)
-    // const fastTrack = target.workingDayCount === 0
-    return (
-      (target.today ? formatMessage(msg.publishToday) : formatDateFns(date)) +
-      (fastTrack ? ' ' + formatMessage(msg.publishFastTrack) : '')
-    )
+
+    const fastTrackMsg = fastTrack
+      ? ' ' + formatMessage(msg.publishFastTrack)
+      : ''
+    const formattedDate = formatDateFns(date, 'd. MMM')
+
+    if (target.today) {
+      const today = toISODate(new Date())
+      const overdueMsg = date < today ? `  (${formattedDate})` : ''
+      return formatMessage(msg.publishToday) + overdueMsg + fastTrackMsg
+    }
+    return formattedDate + fastTrackMsg
   }
 
   return (
