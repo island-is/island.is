@@ -7,6 +7,7 @@ import { Op } from 'sequelize'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import {
+  ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
   User,
@@ -89,8 +90,7 @@ export class ApplicationService {
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
       applicationId: appModel.id,
-      state: appModel.state,
-      comment: null,
+      eventType: ApplicationEventType[appModel.state.toUpperCase()],
     })
 
     //Create file
@@ -126,8 +126,8 @@ export class ApplicationService {
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
       applicationId: id,
-      state: update.state,
-      comment: update.rejection,
+      eventType: ApplicationEventType[update.state.toUpperCase()],
+      comment: update?.rejection || update?.amount?.toLocaleString('de-DE'),
     })
 
     return { numberOfAffectedRows, updatedApplication }

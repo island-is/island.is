@@ -26,18 +26,6 @@ export const GetMunicipalityQuery = gql`
   }
 `
 
-export const GetApplicationEventQuery = gql`
-  query GetApplicationEventQuery($input: ApplicationEventInput!) {
-    applicationEvents(input: $input) {
-      id
-      applicationId
-      comment
-      state
-      created
-    }
-  }
-`
-
 export const CreateSignedUrlMutation = gql`
   mutation getSignedUrl($input: GetSignedUrlInput!) {
     getSignedUrl(input: $input) {
