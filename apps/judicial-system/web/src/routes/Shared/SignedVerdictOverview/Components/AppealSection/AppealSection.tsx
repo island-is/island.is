@@ -78,7 +78,10 @@ const AppealSection: React.FC<Props> = (props) => {
                 genderedAccused: capitalize(
                   formatAccusedByGender(workingCase.accusedGender),
                 ),
-                courtEndTime: formatDate(workingCase.courtEndTime, 'p'),
+                courtEndTime: `${formatDate(
+                  workingCase.courtEndTime,
+                  'PP',
+                )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
               })}
               fluid
               light
@@ -94,7 +97,10 @@ const AppealSection: React.FC<Props> = (props) => {
                 genderedAccused: capitalize(
                   formatAccusedByGender(workingCase.accusedGender),
                 ),
-                courtEndTime: formatDate(workingCase.courtEndTime, 'p'),
+                courtEndTime: `${formatDate(
+                  workingCase.courtEndTime,
+                  'PP',
+                )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
               })}
               fluid
               light
