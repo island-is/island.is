@@ -12,9 +12,13 @@ interface Props {
 const Login = ({ headline, about }: Props) => {
   const router = useRouter()
 
-  const apiLoginRoute = router.query.id
+  const apiLoginRouteForFake = router.query.id
     ? `/api/auth/login?applicationId=${router.query.id}&nationalId=`
-    : '/api/auth/login?nationalId='
+    : '/api/auth/login?'
+
+  const apiLoginRouteForRealUsers = router.query.id
+    ? `/api/auth/login?applicationId=${router.query.id}`
+    : '/api/auth/login'
 
   return (
     <GridContainer>
@@ -28,7 +32,7 @@ const Login = ({ headline, about }: Props) => {
 
           <Button
             onClick={() => {
-              router.push(apiLoginRoute)
+              router.push(apiLoginRouteForRealUsers)
             }}
             data-testid="logout-button"
             preTextIconType="filled"
@@ -41,7 +45,7 @@ const Login = ({ headline, about }: Props) => {
           <br />
           <Button
             onClick={() => {
-              router.push(`${apiLoginRoute}0000000000`)
+              router.push(`${apiLoginRouteForFake}0000000000`)
             }}
             data-testid="logout-button"
             preTextIconType="filled"
@@ -54,7 +58,7 @@ const Login = ({ headline, about }: Props) => {
           <br />
           <Button
             onClick={() => {
-              router.push(`${apiLoginRoute}0000000001`)
+              router.push(`${apiLoginRouteForFake}0000000001`)
             }}
             data-testid="logout-button"
             preTextIconType="filled"
