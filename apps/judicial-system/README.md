@@ -140,7 +140,7 @@ yarn test judicial-system-web
 ##### e2e tests
 
 ```bash
-yarn nx e2e judicial-system-web-e2e --watch 
+yarn nx e2e judicial-system-web-e2e --watch
 ```
 
 ## Code owners and maintainers
