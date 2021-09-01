@@ -98,7 +98,7 @@ export class CaseService {
           writeFile(`${existingCase.id}-case-files.pdf`, caseFilesPdf)
         }
 
-        const buffer = Buffer.from(pdf, 'binary')
+        const buffer = Buffer.from(caseFilesPdf, 'binary')
 
         const streamId = await this.courtService.uploadStream(
           existingCase.courtId,
