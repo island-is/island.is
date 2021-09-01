@@ -19,4 +19,5 @@ export enum States {
 
   ADD_DOCUMENTS = 'addDocuments',
   OVERVIEW = 'overview',
+  THIRD_PARTY_COMMENT = 'thirdPartyComment',
 }
