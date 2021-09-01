@@ -95,14 +95,16 @@ export class ApplicationService {
 
     //Create file
     if (application.files) {
-      application.files.map(async (f) => {
-        await this.fileService.createFile({
+      const promises = application.files.map((f) => {
+        return this.fileService.createFile({
           applicationId: appModel.id,
           name: f.name,
           key: f.key,
           size: f.size,
         })
       })
+
+      await Promise.all(promises)
     }
 
     return appModel
