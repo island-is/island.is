@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Case } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { parseString, replaceTabs } from './formatters'
 import { validate, Validation } from './validate'
 import { useCase } from './hooks'

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import {
+import type {
   Case,
   RequestSignatureResponse,
 } from '@island.is/judicial-system/types'

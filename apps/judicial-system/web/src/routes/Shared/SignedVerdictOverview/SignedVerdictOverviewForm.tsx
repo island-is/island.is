@@ -22,13 +22,13 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
-  Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   capitalize,
@@ -42,7 +42,6 @@ import AppealSection from './Components/AppealSection/AppealSection'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
 
 interface Props {
   workingCase: Case

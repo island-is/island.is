@@ -22,10 +22,10 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   CaseState,
   CaseTransition,
-  IntegratedCourts,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'

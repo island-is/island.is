@@ -6,7 +6,7 @@ import {
   CreatePresignedPostMutation,
   DeleteFileMutation,
 } from '@island.is/judicial-system-web/graphql'
-import { Case, PresignedPost } from '@island.is/judicial-system/types'
+import type { Case, PresignedPost } from '@island.is/judicial-system/types'
 
 export const useS3Upload = (workingCase?: Case) => {
   const [files, setFiles] = useState<UploadFile[]>([])
