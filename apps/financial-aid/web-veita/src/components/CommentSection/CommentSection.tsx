@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 
-import { Box, Button, Input } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
 import * as styles from './CommentSection.treat'
+import { Button } from '..'
 
 interface Props {
   className?: string
