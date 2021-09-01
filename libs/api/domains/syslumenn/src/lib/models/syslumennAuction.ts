@@ -37,7 +37,9 @@ export class SyslumennAuction {
   respondent?: string
 }
 
-export const mapSyslumennAuction = (auction: ISyslumennAuction): SyslumennAuction => ({
+export const mapSyslumennAuction = (
+  auction: ISyslumennAuction,
+): SyslumennAuction => ({
   office: auction.embaetti,
   location: auction.starfsstod,
   auctionType: auction.tegund,

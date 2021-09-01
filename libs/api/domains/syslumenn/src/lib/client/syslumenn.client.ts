@@ -22,7 +22,7 @@ export class SyslumennClient {
     private httpService: HttpService,
     @Inject(SYSLUMENN_CLIENT_CONFIG)
     private clientConfig: SyslumennClientConfig,
-  ) { }
+  ) {}
 
   private async login() {
     const config = {
@@ -62,9 +62,9 @@ export class SyslumennClient {
       Authorization: `Bearer ${this.accessToken}`,
     }
 
-    const response: { data: ISyslumennAuction[] } = await this.httpService
-      .get(url, { headers: headers })
-      .toPromise()
+    const response: {
+      data: ISyslumennAuction[]
+    } = await this.httpService.get(url, { headers: headers }).toPromise()
 
     return response.data
   }

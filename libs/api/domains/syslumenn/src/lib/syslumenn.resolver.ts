@@ -10,7 +10,7 @@ const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 
 @Resolver()
 export class SyslumennResolver {
-  constructor(private syslumennService: SyslumennService) { }
+  constructor(private syslumennService: SyslumennService) {}
 
   @Directive(cacheControlDirective())
   @Query(() => [Homestay])
