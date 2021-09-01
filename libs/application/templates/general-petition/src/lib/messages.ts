@@ -362,8 +362,8 @@ export const m: MessageDir = {
       description: 'List participants',
     },
     submitButton: {
-      id: 'gpt.application:overview.submit.button',
-      defaultMessage: 'Loka söfnun',
+      id: 'gpt.application:overview.submit',
+      defaultMessage: 'Senda inn umsókn',
       description: 'Overview submit button',
     },
     finalTitle: {
@@ -376,6 +376,50 @@ export const m: MessageDir = {
       defaultMessage:
         'Þú munt fá skilaboð í tölvupósti þegar umsókn er í vinnslu',
       description: 'Subtitle after submit',
+    },
+  }),
+  listSubmitted: defineMessages({
+    title: {
+      id: 'gpt.application.list.submitted.title',
+      defaultMessage: 'Undirskriftalista hefur verið skilað',
+      description: 'Title for conlcusion',
+    },
+    approvedTitle: {
+      id: 'gpt.application.list.submitted.title',
+      defaultMessage: 'Undirskriftalista hefur verið skilað til Ísland.is',
+      description: 'Title for approved card',
+    },
+    approvedSubtitle: {
+      id: 'gpt.application.list.submitted.subtitle',
+      defaultMessage: 'Staðfesting á móttöku verður send í pósthólf á Mínum Síðum.',
+      description: 'Subtitle for approved card',
+    },
+    bulletListTitle: {
+      id: 'gpt.application.list.submitted.bulletListTitle',
+      defaultMessage: 'Vert að skoða',
+      description: 'Title for bullet point list',
+    },
+    bulletLink1: {
+      id: 'gpt.application.list.submitted.bulletLink1',
+      defaultMessage:
+        'https://www.stjornarradid.is/raduneyti/domsmalaraduneytid/',
+      description: 'Link to Vefur dómsmálaráðuneytis',
+    },
+    bulletLink1Title: {
+      id: 'gpt.application.list.submitted.bulletLink1Title',
+      defaultMessage: 'Vefur dómsmálaráðuneytis',
+      description: 'Link title',
+    },
+    bulletLink2: {
+      id: 'gpt.application.list.submitted.bulletLink2',
+      defaultMessage:
+        'https://www.stjornarradid.is/verkefni/kosningar/althingiskosningar/frambod-leidbeiningar/listabokstafir/',
+      description: 'Link to kosning.is',
+    },
+    bulletLink2Title: {
+      id: 'gpt.application.list.submitted.bulletLink2Title',
+      defaultMessage: 'kosning.is',
+      description: 'Link title',
     },
   }),
   validationMessages: defineMessages({

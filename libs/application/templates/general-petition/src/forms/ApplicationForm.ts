@@ -6,6 +6,7 @@ import {
   buildRadioField,
   buildDescriptionField,
   buildCustomField,
+  buildSubmitField,
   Form,
   FormModes,
   buildExternalDataProvider,
@@ -32,14 +33,9 @@ export const LetterApplicationForm: Form = buildForm({
           id: 'approveTermsAndConditions',
           title: m.externalDataSection.title,
           subTitle: m.externalDataSection.subtitle,
+          description: m.externalDataSection.dmrSubtitle,
           checkboxLabel: m.externalDataSection.agree,
           dataProviders: [
-            buildDataProviderItem({
-              id: 'dmr',
-              type: undefined,
-              title: '',
-              subTitle: m.externalDataSection.dmrSubtitle,
-            }),
             buildDataProviderItem({
               id: 'nationalRegistry',
               type: 'NationalRegistryProvider',
@@ -208,13 +204,24 @@ export const LetterApplicationForm: Form = buildForm({
               title: m.overview.title,
               actions: [
                 {
-                  event: DefaultEvents.SUBMIT,
+                  event: 'SUBMIT',
                   name: m.overview.submitButton,
                   type: 'primary',
                 },
               ],
             }),*/
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'reviewApplication',
+      title: '',
+      children: [
+        buildCustomField({
+          id: 'listSubmitted',
+          title: m.listSubmitted.title,
+          component: 'ListSubmitted',
         }),
       ],
     }),
