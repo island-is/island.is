@@ -22,31 +22,20 @@ export const regulationsAdminModule: ServicePortalModule = {
 
     return [
       {
+        // TODO: Figure out if (and then how) these names are ever used anywhere...
         name: 'Reglugerðir — skráning',
-        // name: defineMessage({
-        //   id: 'service.portal:regulations-admin-home',
-        //   defaultMessage: 'Reglugerðir — skráning',
-        // }),
         path: ServicePortalPath.RegulationsAdminRoot,
         enabled: mayCreate,
         render: () => lazy(() => import('./screens/Home')),
       },
       {
         name: 'Skrá nýja reglugerð',
-        // name: defineMessage({
-        //   id: 'service.portal:regulations-admin-edit',
-        //   defaultMessage: 'Reglugerðir — skráning',
-        // }),
         path: ServicePortalPath.RegulationsAdminEdit,
         enabled: mayCreate,
         render: () => lazy(() => import('./screens/Edit')),
       },
       {
         name: 'Ráðuneyti',
-        // name: defineMessage({
-        //   id: 'service.portal:regulations-admin-edit',
-        //   defaultMessage: 'Reglugerðir — skráning',
-        // }),
         path: ServicePortalPath.RegulationsAdminMinistries,
         enabled: mayManage,
         render: () => lazy(() => import('./screens/Ministries')),
