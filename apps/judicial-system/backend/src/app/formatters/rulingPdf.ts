@@ -4,7 +4,6 @@ import streamBuffers from 'stream-buffers'
 import {
   AccusedPleaDecision,
   CaseAppealDecision,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
@@ -16,7 +15,6 @@ import {
   NounCases,
   formatAccusedByGender,
   caseTypes,
-  formatConclusion,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -243,36 +241,10 @@ function constructRestrictionRulingPdf(
     .text('Úrskurðarorð', { align: 'center' })
     .font('Helvetica')
     .fontSize(12)
-    .text(
-      formatConclusion(
-        existingCase.type,
-        existingCase.accusedNationalId,
-        existingCase.accusedName,
-        existingCase.accusedGender,
-        existingCase.decision,
-        existingCase.validToDate,
-        existingCase.type === CaseType.CUSTODY &&
-          existingCase.custodyRestrictions?.includes(
-            CaseCustodyRestrictions.ISOLATION,
-          ),
-        existingCase.parentCase !== null,
-        existingCase.parentCase?.decision,
-        existingCase.isolationToDate,
-      ),
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
-
-  if (existingCase.conclusion) {
-    doc.text(' ').text(existingCase.conclusion, {
+    .text(existingCase.conclusion ?? 'Úrskurðarorð ekki skráð', {
       lineGap: 6,
       paragraphGap: 0,
     })
-  }
-
-  doc
     .text(' ')
     .font('Helvetica-Bold')
     .text(
@@ -654,8 +626,6 @@ function constructInvestigationRulingPdf(
       lineGap: 6,
       paragraphGap: 0,
     })
-
-  doc
     .text(' ')
     .font('Helvetica-Bold')
     .text(
