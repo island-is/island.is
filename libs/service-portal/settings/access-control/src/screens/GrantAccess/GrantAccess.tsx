@@ -47,14 +47,26 @@ const IdentityQuery = gql`
 `
 
 function GrantAccess() {
-  const { handleSubmit, control, errors, setValue, watch } = useForm()
-  const [createAuthDelegation, { loading }] = useMutation<Mutation>(
-    CreateAuthDelegationMutation,
+  const { handleSubmit, control, errors, watch } = useForm({ mode: 'onChange' })
+  const [
+    createAuthDelegation,
+    { loading: mutationLoading },
+  ] = useMutation<Mutation>(CreateAuthDelegationMutation, {
+    refetchQueries: [{ query: AuthDelegationsQuery }],
+  })
+  const [getIdentity, { data, loading: queryLoading }] = useLazyQuery<Query>(
+    IdentityQuery,
     {
-      refetchQueries: [{ query: AuthDelegationsQuery }],
+      onError: (error) => {
+        toast.error(
+          formatMessage({
+            id: 'service.portal.settings.accessControl:grant-identity-error',
+            defaultMessage: 'Enginn notandi fannst með þessa kennitölu.',
+          }),
+        )
+      },
     },
   )
-  const [getIdentity, { data }] = useLazyQuery<Query>(IdentityQuery)
   const { identity } = data || {}
   const { formatMessage } = useLocale()
   const history = useHistory()
@@ -140,7 +152,10 @@ function GrantAccess() {
                   },
                   validate: {
                     value: (value: number) => {
-                      if (!kennitala.isValid(value)) {
+                      if (
+                        value.toString().length === 10 &&
+                        !kennitala.isValid(value)
+                      ) {
                         return formatMessage({
                           id:
                             'service.portal.settings.accessControl:grant-invalid-ssn',
