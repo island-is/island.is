@@ -40,7 +40,7 @@ import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
 
 interface Recipient {
-  address: string
+  address?: string
   success: boolean
 }
 
@@ -58,14 +58,14 @@ export class NotificationService {
     private readonly courtService: CourtService,
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
+    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    private intlService: IntlService,
   ) {}
 
   private async existsRevokableNotification(
     caseId: string,
-    recipientAddress: string,
+    recipientAddress: string | undefined,
   ): Promise<boolean> {
     try {
       const notifications: Notification[] = await this.notificationModel.findAll(
@@ -98,14 +98,21 @@ export class NotificationService {
     }
   }
 
+  private getCourtMovileNumber(courtId: string | undefined) {
+    return (
+      (courtId && environment.notifications.courtsMobileNumbers[courtId]) ??
+      undefined
+    )
+  }
+
   private async sendSms(
-    mobileNumbers: string,
+    mobileNumbers: string | undefined,
     smsText: string,
   ): Promise<Recipient> {
     // Production or local development with judge mobile number
     if (environment.production || mobileNumbers) {
       try {
-        await this.smsService.sendSms(mobileNumbers.split(','), smsText)
+        await this.smsService.sendSms(mobileNumbers?.split(',') ?? '', smsText)
       } catch (error) {
         this.logger.error('Failed to send sms to court mobile number', error)
 
@@ -123,11 +130,11 @@ export class NotificationService {
   }
 
   private async sendEmail(
-    recipientName: string,
-    recipientEmail: string,
+    recipientName: string | undefined,
+    recipientEmail: string | undefined,
     subject: string,
     html: string,
-    attachments: Attachment[] = null,
+    attachments?: Attachment[],
   ): Promise<Recipient> {
     try {
       await this.emailService.sendEmail({
@@ -141,8 +148,8 @@ export class NotificationService {
         },
         to: [
           {
-            name: recipientName,
-            address: recipientEmail,
+            name: recipientName ?? '',
+            address: recipientEmail ?? '',
           },
         ],
         subject: subject,
@@ -169,7 +176,7 @@ export class NotificationService {
     caseId: string,
     type: NotificationType,
     recipients: Recipient[],
-    condition: string = undefined,
+    condition?: string,
   ): Promise<SendNotificationResponse> {
     const notification = await this.notificationModel.create({
       caseId,
@@ -181,9 +188,35 @@ export class NotificationService {
     return {
       notificationSent: recipients.reduce(
         (sent, recipient) => sent || recipient?.success,
-        false,
+        false as boolean,
       ),
       notification,
+    }
+  }
+
+  private async uploadRequestPdfToCourt(existingCase: Case): Promise<void> {
+    const intl = await this.intlService.useIntl(
+      ['judicial.system.backend'],
+      'is',
+    )
+
+    const requestPdf = await getRequestPdfAsBuffer(
+      existingCase,
+      intl.formatMessage,
+    )
+
+    try {
+      const streamId = await this.courtService.uploadStream(
+        existingCase.courtId,
+        requestPdf,
+      )
+      await this.courtService.createRequest(
+        existingCase.courtId,
+        existingCase.courtCaseNumber,
+        streamId,
+      )
+    } catch (error) {
+      this.logger.error('Failed to upload request pdf to court', error)
     }
   }
 
@@ -200,7 +233,7 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      environment.notifications.courtsMobileNumbers[existingCase.courtId],
+      this.getCourtMovileNumber(existingCase.courtId),
       smsText,
     )
   }
@@ -227,7 +260,7 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      environment.notifications.courtsMobileNumbers[existingCase.courtId],
+      this.getCourtMovileNumber(existingCase.courtId),
       smsText,
     )
   }
@@ -266,29 +299,6 @@ export class NotificationService {
     )
   }
 
-  private async uploadRequestPdfToCourt(existingCase: Case): Promise<void> {
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    const pdf = await getRequestPdfAsBuffer(existingCase, intl.formatMessage)
-
-    try {
-      const streamId = await this.courtService.uploadStream(
-        existingCase.courtId,
-        pdf,
-      )
-      await this.courtService.createDocument(
-        existingCase.courtId,
-        existingCase.courtCaseNumber,
-        streamId,
-      )
-    } catch (error) {
-      this.logger.error('Failed to upload request to court', error)
-    }
-  }
-
   private async sendReadyForCourtNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
@@ -306,6 +316,7 @@ export class NotificationService {
 
     // TODO: Find a better place for this
     if (
+      existingCase.courtId &&
       IntegratedCourts.includes(existingCase.courtId) &&
       existingCase.courtCaseNumber
     ) {
@@ -412,10 +423,6 @@ export class NotificationService {
   private async sendCourtDateEmailNotificationToDefender(
     existingCase: Case,
   ): Promise<Recipient> {
-    if (!existingCase.defenderEmail) {
-      return
-    }
-
     const subject = `Fyrirtaka í máli ${existingCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
       existingCase.court?.name,
@@ -425,7 +432,7 @@ export class NotificationService {
       existingCase.defenderIsSpokesperson,
     )
 
-    let attachments: Attachment[]
+    let attachments: Attachment[] | undefined
 
     if (existingCase.sendRequestToDefender) {
       const intl = await this.intlService.useIntl(
@@ -480,9 +487,10 @@ export class NotificationService {
     ]
 
     if (
-      existingCase.type === CaseType.CUSTODY ||
-      existingCase.type === CaseType.TRAVEL_BAN ||
-      existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+      (existingCase.type === CaseType.CUSTODY ||
+        existingCase.type === CaseType.TRAVEL_BAN ||
+        existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) &&
+      existingCase.defenderEmail
     ) {
       promises.push(this.sendCourtDateEmailNotificationToDefender(existingCase))
     }
@@ -530,7 +538,7 @@ export class NotificationService {
       existingCase.isolationToDate,
     )
 
-    let attachments: Attachment[]
+    let attachments: Attachment[] | undefined
 
     if (existingCase.state === CaseState.ACCEPTED) {
       const pdf = await getCustodyNoticePdfAsString(existingCase)
@@ -594,7 +602,7 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      environment.notifications.courtsMobileNumbers[existingCase.courtId],
+      this.getCourtMovileNumber(existingCase.courtId),
       smsText,
     )
   }
@@ -624,10 +632,6 @@ export class NotificationService {
   private sendRevokedEmailNotificationToDefender(
     existingCase: Case,
   ): Promise<Recipient> {
-    if (!existingCase.defenderEmail) {
-      return
-    }
-
     const subject = `${
       existingCase.type === CaseType.CUSTODY
         ? 'Gæsluvarðhaldskrafa'
@@ -656,7 +660,7 @@ export class NotificationService {
 
     const courtWasNotified = await this.existsRevokableNotification(
       existingCase.id,
-      environment.notifications.courtsMobileNumbers[existingCase.courtId],
+      this.getCourtMovileNumber(existingCase.courtId),
     )
 
     if (courtWasNotified) {
@@ -679,7 +683,7 @@ export class NotificationService {
       existingCase.defenderEmail,
     )
 
-    if (defenderWasNotified) {
+    if (defenderWasNotified && existingCase.defenderEmail) {
       promises.push(this.sendRevokedEmailNotificationToDefender(existingCase))
     }
 

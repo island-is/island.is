@@ -108,6 +108,7 @@ export const AccidentNotificationSchema = z.object({
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
   accidentDetails: z.object({
     dateOfAccident: z.string().min(1),
+    isHealthInsured: z.enum([YES, NO]),
     timeOfAccident: z
       .string()
       .refine((x) => (x ? isValid24HFormatTime(x) : false)),
