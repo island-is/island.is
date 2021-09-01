@@ -15,7 +15,7 @@ export class InstitutionService {
     private readonly logger: Logger,
   ) {}
 
-  getAll(): Promise<Institution[]> {
+  async getAll(): Promise<Institution[]> {
     this.logger.debug('Getting all institutions')
 
     return this.institutionModel.findAll({
