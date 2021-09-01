@@ -3,7 +3,11 @@ import fetch from 'isomorphic-fetch'
 import { Injectable } from '@nestjs/common'
 
 import { Case } from '@island.is/judicial-system/types'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  caseTypes,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../../environments'
 
@@ -13,6 +17,7 @@ const caseEvent = {
   OPEN: ':unlock: Krafa opnuð fyrir dómstól',
   SUBMIT: ':mailbox_with_mail: Krafa send til dómstóls',
   RECEIVE: ':eyes: Krafa móttekin',
+  HEARING_ARRANGED: ':mailbox_with_mail: Fyrirtökupóstur sendur',
   ACCEPT: ':white_check_mark: Krafa samþykkt',
   REJECT: ':negative_squared_cross_mark: Kröfu hafnað',
   DELETE: ':fire: Krafa dregin til baka',
@@ -24,6 +29,7 @@ export enum CaseEvent {
   OPEN = 'OPEN',
   SUBMIT = 'SUBMIT',
   RECEIVE = 'RECEIVE',
+  HEARING_ARRANGED = 'HEARING_ARRANGED',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
@@ -44,11 +50,19 @@ export class EventService {
         ? `${theCase.prosecutor?.institution?.name} `
         : ''
     }*${theCase.policeCaseNumber}*`
+
     const courtText = theCase.court
       ? `${theCase.court.name} ${
           theCase.courtCaseNumber ? ` *${theCase.courtCaseNumber}*` : ''
         }`
       : ''
+
+    const hearingArrangedText = `Dómari: ${theCase.judge?.name}\n>Dómritari:${
+      theCase.registrar ? theCase.registrar.name : 'Ekki skráður'
+    }\n>Fyrirtaka skráð ${formatDate(theCase.courtDate, 'PP')} kl. ${formatDate(
+      theCase.courtDate,
+      'p',
+    )}`
 
     fetch(`${environment.events.url}`, {
       method: 'POST',
@@ -60,7 +74,11 @@ export class EventService {
             // color: '#2eb886',
             text: {
               type: 'mrkdwn',
-              text: `*${caseEvent[event]}:*\n>${typeText}\n>${prosecutionText}\n>${courtText}`,
+              text: `*${caseEvent[event]}:*\n>${
+                event === CaseEvent.HEARING_ARRANGED
+                  ? hearingArrangedText
+                  : `${typeText}\n>${prosecutionText}\n>${courtText}`
+              }`,
             },
           },
         ],

@@ -98,7 +98,7 @@ export class NotificationService {
     }
   }
 
-  private getCourtMovileNumber(courtId: string | undefined) {
+  private getCourtMobileNumber(courtId: string | undefined) {
     return (
       (courtId && environment.notifications.courtsMobileNumbers[courtId]) ??
       undefined
@@ -233,7 +233,7 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      this.getCourtMovileNumber(existingCase.courtId),
+      this.getCourtMobileNumber(existingCase.courtId),
       smsText,
     )
   }
@@ -260,7 +260,7 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      this.getCourtMovileNumber(existingCase.courtId),
+      this.getCourtMobileNumber(existingCase.courtId),
       smsText,
     )
   }
@@ -599,7 +599,7 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      this.getCourtMovileNumber(existingCase.courtId),
+      this.getCourtMobileNumber(existingCase.courtId),
       smsText,
     )
   }
@@ -657,7 +657,7 @@ export class NotificationService {
 
     const courtWasNotified = await this.existsRevokableNotification(
       existingCase.id,
-      this.getCourtMovileNumber(existingCase.courtId),
+      this.getCourtMobileNumber(existingCase.courtId),
     )
 
     if (courtWasNotified) {
