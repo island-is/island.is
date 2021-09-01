@@ -32,7 +32,7 @@ export class AuthService {
         phoneNumber: '9999999',
         folder: uuid(),
         service: RolesRule.OSK,
-        returnUrl: ReturnUrl.UMSOKN,
+        returnUrl: ReturnUrl.APPLICATION,
       },
       '0000000001': {
         nationalId: '0000000001',
@@ -40,7 +40,7 @@ export class AuthService {
         phoneNumber: '9999999',
         folder: uuid(),
         service: RolesRule.OSK,
-        returnUrl: ReturnUrl.UMSOKN,
+        returnUrl: ReturnUrl.APPLICATION,
       },
       '0000000002': {
         nationalId: '0000000002',
@@ -48,7 +48,7 @@ export class AuthService {
         phoneNumber: '9999999',
         folder: uuid(),
         service: RolesRule.VEITA,
-        returnUrl: ReturnUrl.VEITA,
+        returnUrl: ReturnUrl.ADMIN,
       },
     }
 

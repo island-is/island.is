@@ -153,7 +153,7 @@ export class AuthController {
       phoneNumber: islandUser.mobile,
       folder: uuid(),
       service: service,
-      returnUrl: ReturnUrl.UMSOKN,
+      returnUrl: ReturnUrl.APPLICATION,
     }
 
     return this.logInUser(user, res)
@@ -175,15 +175,15 @@ export class AuthController {
     const jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
 
     if (res.req?.query.service === 'veita') {
-      user.returnUrl = ReturnUrl.VEITA
+      user.returnUrl = ReturnUrl.ADMIN
     }
     if (res.req?.query.applicationId) {
-      user.returnUrl = ReturnUrl.STADA
+      user.returnUrl = ReturnUrl.MYPAGE
     }
 
     const returnURl =
-      user.returnUrl === ReturnUrl.STADA
-        ? ReturnUrl.STADA + '/' + res.req?.query.applicationId
+      user.returnUrl === ReturnUrl.MYPAGE
+        ? ReturnUrl.MYPAGE + '/' + res.req?.query.applicationId
         : user.returnUrl
 
     res

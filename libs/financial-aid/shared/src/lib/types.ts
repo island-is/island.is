@@ -28,9 +28,9 @@ export enum RolesRule {
 }
 
 export enum ReturnUrl {
-  UMSOKN = '/umsokn',
-  STADA = '/stada',
-  VEITA = '/nymal',
+  APPLICATION = '/umsokn',
+  MYPAGE = '/stada',
+  ADMIN = '/nymal',
 }
 
 export interface ApplicationFilters {
