@@ -177,7 +177,7 @@ export class AuthController {
     if (res.req?.query.service === 'veita') {
       user.returnUrl = ReturnUrl.VEITA
     }
-    if (res.req?.query.statusPage) {
+    if (res.req?.query.applicationId) {
       user.returnUrl = ReturnUrl.STADA
     }
 

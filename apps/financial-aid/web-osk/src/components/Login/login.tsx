@@ -14,7 +14,7 @@ const Login = ({ headline, about, statusPage = false }: Props) => {
   const router = useRouter()
 
   const apiLoginRoute = statusPage
-    ? `/api/auth/login?statusPage=true&nationalId=`
+    ? `/api/auth/login?applicationId=${router.query.id}&nationalId=`
     : '/api/auth/login?nationalId='
 
   return (

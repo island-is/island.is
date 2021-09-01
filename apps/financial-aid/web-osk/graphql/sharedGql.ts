@@ -62,3 +62,17 @@ export const CurrentUserQuery = gql`
     }
   }
 `
+
+export const GetApplicationQuery = gql`
+  query GetApplicantyQuery($input: ApplicationInput!) {
+    application(input: $input) {
+      id
+      nationalId
+      homeCircumstances
+      usePersonalTaxCredit
+      state
+      amount
+      rejection
+    }
+  }
+`
