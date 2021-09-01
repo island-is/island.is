@@ -1,10 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { ISupportCategory } from '../generated/contentfulTypes'
 import { mapOrganization, Organization } from './organization.model'
 
 @ObjectType()
 export class SupportCategory {
+  @Field(() => ID)
+  id!: string
+
   @Field()
   title!: string
 
@@ -20,7 +23,9 @@ export class SupportCategory {
 
 export const mapSupportCategory = ({
   fields,
+  sys,
 }: ISupportCategory): SupportCategory => ({
+  id: sys.id,
   title: fields.title,
   description: fields.description ?? '',
   slug: fields.slug,

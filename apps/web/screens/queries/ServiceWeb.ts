@@ -81,6 +81,7 @@ export const GET_SUPPORT_CATEGORIES_IN_ORGANIZATION = gql`
     $input: GetSupportCategoriesInOrganizationInput!
   ) {
     getSupportCategoriesInOrganization(input: $input) {
+      id
       title
       description
       slug

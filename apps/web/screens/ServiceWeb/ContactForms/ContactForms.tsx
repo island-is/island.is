@@ -225,7 +225,7 @@ const ContactForms: Screen<ContactFormsProps> = ({ supportForms }) => {
 ContactForms.getInitialProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug ? (query.slug as string) : 'stafraent-island'
 
-  console.log(slug)
+  console.log('SLUG', slug)
 
   const [organization, namespace, supportForms] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationArgs>({
