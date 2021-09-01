@@ -41,7 +41,7 @@ const InProgress = ({ currentApplication }: Props) => {
             cta={{
               label: 'Hlaða upp gögnum',
               onClick: () => {
-                router.push(`stada/gogn`)
+                router.push(`stada/${router.query.id}/gogn`)
               },
             }}
             backgroundColor="blue"
