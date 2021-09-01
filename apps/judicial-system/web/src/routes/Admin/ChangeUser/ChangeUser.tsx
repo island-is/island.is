@@ -34,7 +34,7 @@ export const ChangeUser: React.FC = () => {
   )
 
   const {
-    courts,
+    allCourts,
     prosecutorsOffices,
     loading: institutionLoading,
     loaded: institutionLoaded,
@@ -78,7 +78,7 @@ export const ChangeUser: React.FC = () => {
       {userData?.user && institutionLoaded && (
         <UserForm
           user={userData?.user}
-          courts={courts}
+          allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
           onSave={saveUser}
           loading={saveLoading}

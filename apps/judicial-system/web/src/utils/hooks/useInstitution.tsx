@@ -11,11 +11,13 @@ interface InstitutionData {
 
 const institutions: {
   courts: Institution[]
+  allCourts: Institution[]
   defaultCourt: Institution | undefined
   prosecutorsOffices: Institution[]
   loaded: boolean
 } = {
   courts: [],
+  allCourts: [],
   defaultCourt: undefined,
   prosecutorsOffices: [],
   loaded: false,
@@ -31,6 +33,12 @@ const useInstitution = () => {
 
     institutions.courts = rawInstitutions.filter(
       (institution) => institution.type === InstitutionType.COURT,
+    )
+
+    institutions.allCourts = rawInstitutions.filter(
+      (institution) =>
+        institution.type === InstitutionType.COURT ||
+        institution.type === InstitutionType.HIGH_COURT,
     )
 
     institutions.defaultCourt = institutions.courts.find(
