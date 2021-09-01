@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { gql, useMutation, useLazyQuery } from '@apollo/client'
 import { useForm, Controller, ValidationRules } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
@@ -47,6 +47,7 @@ const IdentityQuery = gql`
 `
 
 function GrantAccess() {
+  const [name, setName] = useState('')
   const { handleSubmit, control, errors, watch } = useForm({ mode: 'onChange' })
   const [
     createAuthDelegation,
@@ -72,28 +73,30 @@ function GrantAccess() {
   const history = useHistory()
   const watchToNationalId = watch('toNationalId')
 
+  const loading = mutationLoading || queryLoading
+
   const requestDelegation = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const value = e.target.value.replace('-', '').trim()
     if (value.length === 10 && kennitala.isValid(value)) {
       if (kennitala.isCompany(value)) {
-        setValue('name', value)
+        setName(value)
       } else {
         getIdentity({ variables: { input: { nationalId: value } } })
       }
     } else {
-      setValue('name', '')
+      setName('')
     }
   }
 
   useEffect(() => {
     if (identity && identity.nationalId === watchToNationalId) {
-      setValue('name', identity.name)
+      setName(identity.name)
     }
-  }, [identity, setValue, watchToNationalId])
+  }, [identity, setName, watchToNationalId])
 
-  const onSubmit = handleSubmit(async ({ toNationalId, name }) => {
+  const onSubmit = handleSubmit(async ({ toNationalId }) => {
     try {
       const { data } = await createAuthDelegation({
         variables: { input: { name, toNationalId } },
@@ -135,7 +138,10 @@ function GrantAccess() {
               })}
             </Text>
           </GridColumn>
-          <GridColumn paddingBottom={2} span={['12/12', '12/12', '6/12']}>
+          <GridColumn
+            paddingBottom={2}
+            span={['12/12', '12/12', '8/12', '12/12', '8/12']}
+          >
             <InputController
               control={control}
               id="toNationalId"
@@ -176,52 +182,41 @@ function GrantAccess() {
                 id: 'global:nationalId',
                 defaultMessage: 'Kennitala',
               })}
+              error={errors.toNationalId?.message}
               onChange={(value) => {
                 requestDelegation(value)
               }}
             />
           </GridColumn>
-          <GridColumn paddingBottom={2} span={['12/12', '12/12', '6/12']}>
-            <Controller
-              control={control}
-              name="name"
-              defaultValue=""
-              render={({ onChange, value, name }) => (
-                <Input
-                  name={name}
-                  readOnly={true}
-                  label={formatMessage({
-                    id:
-                      'service.portal.settings.accessControl:grant-label-user',
-                    defaultMessage: 'Aðfangshafi',
-                  })}
-                  placeholder={formatMessage({
-                    id:
-                      'service.portal.settings.accessControl:grant-placeholder-user',
-                    defaultMessage: 'Nafn',
-                  })}
-                  value={value}
-                  hasError={errors.name}
-                  errorMessage={errors.name?.message}
-                  onChange={onChange}
-                />
-              )}
-            />
+        </GridRow>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '8/12', '12/12', '8/12']}>
+            <Box display="flex" justifyContent="flexEnd">
+              <Button
+                type="submit"
+                icon="arrowForward"
+                disabled={!name || loading}
+                loading={loading}
+              >
+                {name
+                  ? `${formatMessage({
+                      id:
+                        'service.portal.settings.accessControl:grant-form-pre-submit-active',
+                      defaultMessage: 'Veita',
+                    })} ${name} ${formatMessage({
+                      id:
+                        'service.portal.settings.accessControl:grant-form-post-submit-active',
+                      defaultMessage: 'aðgang',
+                    })}`
+                  : formatMessage({
+                      id:
+                        'service.portal.settings.accessControl:grant-form-submit-disabled',
+                      defaultMessage: 'Sláðu inn kennitölu aðgangshafa',
+                    })}
+              </Button>
+            </Box>
           </GridColumn>
         </GridRow>
-        <Box display="flex" justifyContent="flexEnd">
-          <Button
-            type="submit"
-            icon="arrowForward"
-            disabled={loading}
-            loading={loading}
-          >
-            {formatMessage({
-              id: 'service.portal.settings.accessControl:grant-form-submit',
-              defaultMessage: 'Áfram',
-            })}
-          </Button>
-        </Box>
       </form>
     </Box>
   )
