@@ -2,8 +2,8 @@ import React, { useEffect, useState, useCallback, useContext } from 'react'
 import { Text, RadioButton, Input, Box } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -45,7 +45,7 @@ const AddressForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hvar býrðu?
         </Text>
@@ -111,9 +111,9 @@ const AddressForm = () => {
             />
           </div>
         </div>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         previousUrl={navigation?.prevUrl ?? '/'}
         onNextButtonClick={() => {
           if (form?.customAddress !== undefined) {

@@ -3,7 +3,7 @@ import { defineMessage } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { IntroHeader, m } from '@island.is/service-portal/core'
 import { CareerCards } from './components/CareerCards'
 
 function EducationCareer(): JSX.Element {
@@ -12,13 +12,11 @@ function EducationCareer(): JSX.Element {
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
-        title={defineMessage({
-          id: 'service.portal:education-career-title',
-          defaultMessage: 'Námsferill',
-        })}
+        title={m.educationCareer}
         intro={defineMessage({
-          id: 'service.portal:education-career-intro',
+          id: 'sp.education-career:education-career-intro',
           defaultMessage: 'Hér getur þú fundið yfirlit yfir námsmat.',
+          description: 'education career intro',
         })}
         img="./assets/images/educationGrades.svg"
       />

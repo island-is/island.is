@@ -1,0 +1,116 @@
+import { Meta, Source } from '@storybook/addon-docs'
+import dedent from 'ts-dedent'
+
+import Cover from './assets/cover.png'
+import {
+  Box,
+  Text,
+  GridContainer,
+  GridRow,
+  GridColumn,
+  Link,
+  LinkContext,
+  Icon,
+} from './index'
+
+export const Item = ({ icon, heading, copy }) => (
+  <GridColumn span={['12/12', '12/12', '9/12']} paddingBottom={5}>
+    <Box display="flex" alignItems="center" marginBottom={2}>
+      <Icon type="outline" icon={icon} />
+      <Box paddingLeft={1}>
+        <Text variant="h3" as="h3">
+          {heading}
+        </Text>
+      </Box>
+    </Box>
+    <Text>{copy}</Text>
+  </GridColumn>
+)
+
+<Meta title="Welcome" />
+
+<LinkContext.Provider
+  value={{
+    linkRenderer: (href, children) => (
+      <Link
+        href={href}
+        color="blue600"
+        underline="normal"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <Text as="span" fontWeight="semiBold">
+          {children}
+        </Text>
+      </Link>
+    ),
+  }}
+>
+  <GridContainer id="page-welcome">
+    <GridRow>
+      <GridColumn
+        paddingTop={[0, 0, 6]}
+        paddingBottom={2}
+        span={['12/12', '12/12', '9/12']}
+      >
+        <img src={Cover} />
+      </GridColumn>
+      <GridColumn span={['12/12', '12/12', '9/12']}>
+        <Text variant="h1" as="h1" paddingBottom={2}>
+          Welcome to the Ísland.is UI library
+        </Text>
+        <Text>
+          This library is part of the Ísland.is design system and is a
+          collection of guides, components and units to help you build new
+          projects faster and easier.
+        </Text>
+        <Text paddingTop={2}>
+          This UI library is used by all the{' '}
+          <a href="https://github.com/island-is/island.is">digital portals</a>{' '}
+          of <a href="https://island.is/">Ísland.is</a>.
+        </Text>
+      </GridColumn>
+    </GridRow>
+    <Box marginTop={[4, 4, 6]} marginBottom={3}>
+      <GridRow>
+        <Item
+          icon="reader"
+          heading="Purpose"
+          copy={`The goal of the UI library is to have an unified library of
+            components than can be reused between the many Ísland.is projects.
+            It will ensure consistency in the look and feel, accessibility and
+            user experience.`}
+        />
+        <Item
+          icon="informationCircle"
+          heading="Usage"
+          copy={
+            <>
+              All components from the UI library are accessible with a single
+              import. You can import one or many, separated with comma,
+              depending your needs.
+              <Source
+                language="tsx"
+                code={dedent`import { Box } from '@island.is/island-ui/core'`}
+              />
+            </>
+          }
+        />
+        <Item
+          icon="warning"
+          heading="Issues and questions"
+          copy={
+            <>
+              Feel free to open a new issue on the{' '}
+              <a href="https://github.com/island-is/island.is/issues">
+                github repository
+              </a>{' '}
+              if you have a question or you think something is broken or looking
+              off.
+            </>
+          }
+        />
+      </GridRow>
+    </Box>
+  </GridContainer>
+</LinkContext.Provider>

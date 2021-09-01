@@ -133,6 +133,8 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
 
     formData.append('file', file as File)
 
+    request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
+
     request.send(formData)
   }
 

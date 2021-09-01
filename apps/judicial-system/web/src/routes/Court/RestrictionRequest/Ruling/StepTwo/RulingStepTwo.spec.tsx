@@ -1,3 +1,4 @@
+/* eslint-disable local-rules/disallow-kennitalas */
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
@@ -33,6 +34,10 @@ describe('/domari-krafa/urskurdarord', () => {
           ...mockJudgeQuery,
           ...mockUpdateCaseMutation(
             [
+              {
+                conclusion:
+                  'Kærði, Jon Harring, kt. string, skal sæta gæsluvarðhaldi, þó ekki lengur en til föstudagsins 25. september 2020, kl. 19:50.',
+              } as UpdateCase,
               {
                 accusedAppealDecision: CaseAppealDecision.APPEAL,
               } as UpdateCase,
@@ -96,7 +101,19 @@ describe('/domari-krafa/urskurdarord', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation(
+            [
+              {
+                conclusion:
+                  'Kærði, Jon Harring, kt. 111111-0000, skal sæta farbanni, þó ekki lengur en til fimmtudagsins 1. janúar 1970, kl. 00:00.',
+              } as UpdateCase,
+            ],
+            'test_id_3',
+          ),
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -115,7 +132,7 @@ describe('/domari-krafa/urskurdarord', () => {
     ).toHaveLength(0)
   })
 
-  test(`should have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is not ${CaseAppealDecision.APPEAL}`, async () => {
+  test(`should have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is not APPEAL`, async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -130,6 +147,10 @@ describe('/domari-krafa/urskurdarord', () => {
           ...mockJudgeQuery,
           ...mockUpdateCaseMutation(
             [
+              {
+                conclusion:
+                  'Kröfu um að kærði, Jon Harring, kt. 000000-0000, sæti gæsluvarðhaldi er hafnað.',
+              } as UpdateCase,
               {
                 accusedAppealDecision: CaseAppealDecision.POSTPONE,
               } as UpdateCase,
@@ -172,7 +193,7 @@ describe('/domari-krafa/urskurdarord', () => {
     ).toBeDisabled()
   })
 
-  test(`should not have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is ${CaseAppealDecision.APPEAL}`, async () => {
+  test(`should not have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is APPEAL`, async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -187,6 +208,10 @@ describe('/domari-krafa/urskurdarord', () => {
           ...mockJudgeQuery,
           ...mockUpdateCaseMutation(
             [
+              {
+                conclusion:
+                  'Kærða, Jon Harring, kt. string, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 16. september 2020, kl. 19:50. Kærða skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.',
+              } as UpdateCase,
               {
                 accusedAppealDecision: CaseAppealDecision.APPEAL,
               } as UpdateCase,
@@ -238,6 +263,10 @@ describe('/domari-krafa/urskurdarord', () => {
                   CaseCustodyRestrictions.MEDIA,
                 ],
               } as UpdateCase,
+              {
+                conclusion:
+                  'Kærða, Jon Harring, kt. string, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 16. september 2020, kl. 19:50. Kærða skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.',
+              } as UpdateCase,
             ],
             'test_id',
           ),
@@ -270,7 +299,25 @@ describe('/domari-krafa/urskurdarord', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation(
+            [
+              {
+                custodyRestrictions: [
+                  CaseCustodyRestrictions.ISOLATION,
+                  CaseCustodyRestrictions.MEDIA,
+                ],
+              } as UpdateCase,
+              {
+                conclusion:
+                  'Kærða, Jon Harring, kt. string, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 16. september 2020, kl. 19:50. Kærða skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.',
+              } as UpdateCase,
+            ],
+            'test_id',
+          ),
+        ]}
         addTypename={false}
       >
         <UserProvider>
@@ -301,7 +348,19 @@ describe('/domari-krafa/urskurdarord', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation(
+            [
+              {
+                conclusion:
+                  'Kærði, Jon Harring, kt. string, skal sæta farbanni, þó ekki lengur en til föstudagsins 25. september 2020, kl. 19:50.',
+              } as UpdateCase,
+            ],
+            'test_id_7',
+          ),
+        ]}
         addTypename={false}
       >
         <UserProvider>

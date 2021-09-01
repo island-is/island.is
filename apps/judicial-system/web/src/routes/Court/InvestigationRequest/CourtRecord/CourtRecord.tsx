@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { Case, SessionArrangements } from '@island.is/judicial-system/types'
+import {
+  Modal,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/shared-components'
+import {
+  Case,
+  NotificationType,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import {
   CaseData,
   JudgeSubsections,
@@ -11,10 +18,14 @@ import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useRouter } from 'next/router'
 import CourtRecordForm from './CourtRecordForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useIntl } from 'react-intl'
+import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
 
 const CourtRecord = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const { autofill } = useCase()
+  const [modalVisible, setModalVisible] = useState(false)
+  const { sendNotification, autofill } = useCase()
+  const { formatMessage } = useIntl()
 
   const router = useRouter()
   const id = router.query.id
@@ -73,7 +84,26 @@ const CourtRecord = () => {
       }
       setWorkingCase(data.case)
     }
-  }, [workingCase, setWorkingCase, data])
+  }, [workingCase, setWorkingCase, data, autofill])
+
+  useEffect(() => {
+    const notifyCourtDate = async (id: string) => {
+      const notificationSent = await sendNotification(
+        id,
+        NotificationType.COURT_DATE,
+      )
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (notificationSent && !window.Cypress) {
+        setModalVisible(true)
+      }
+    }
+
+    if (workingCase?.id) {
+      notifyCourtDate(workingCase.id)
+    }
+  }, [sendNotification, workingCase?.courtDate, workingCase?.id])
 
   return (
     <PageLayout
@@ -88,11 +118,32 @@ const CourtRecord = () => {
       caseId={workingCase?.id}
     >
       {workingCase && (
-        <CourtRecordForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          isLoading={loading}
-        />
+        <>
+          <CourtRecordForm
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            isLoading={loading}
+          />
+          {modalVisible && (
+            <Modal
+              title={formatMessage(icHearingArrangements.modal.heading)}
+              text={formatMessage(icHearingArrangements.modal.text, {
+                announcementSuffix:
+                  workingCase.sessionArrangements !==
+                    SessionArrangements.ALL_PRESENT ||
+                  !workingCase.defenderEmail
+                    ? '.'
+                    : workingCase.defenderIsSpokesperson
+                    ? ` og talsmann.`
+                    : ` og verjanda.`,
+              })}
+              handlePrimaryButtonClick={() => {
+                setModalVisible(false)
+              }}
+              primaryButtonText="Loka glugga"
+            />
+          )}
+        </>
       )}
     </PageLayout>
   )

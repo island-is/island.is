@@ -35,25 +35,6 @@ export const calcDifferenceInDate = (dateCreated: string | undefined) => {
   }
 }
 
-export const translateMonth = (month: number) => {
-  const months = [
-    'Janúar',
-    'Febrúar',
-    'Mars',
-    'Apríl',
-    'Maí',
-    'Júní',
-    'Júlí',
-    'Ágúst',
-    'September',
-    'Október',
-    'Nóvember',
-    'Desember',
-  ]
-
-  return months[month - 1]
-}
-
 export const calcAge = (ssn: string) => {
   const year = ssn.substring(4, 6)
   const significant = ssn.substring(9, 10)

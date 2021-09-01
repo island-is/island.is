@@ -1,5 +1,6 @@
 import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
 const FinanceBills = () => {
@@ -7,14 +8,11 @@ const FinanceBills = () => {
   const { formatMessage } = useLocale()
   return (
     <DocumentScreen
-      title={formatMessage({
-        id: 'service.portal:finance-bills',
-        defaultMessage: 'Greiðsluseðlar og Greiðslukvittanir',
-      })}
+      title={formatMessage(m.financeBills)}
       intro={formatMessage({
         id: 'sp.finance-bills:intro',
         defaultMessage:
-          'Hér er að finna gögn um fjárhagslega stöðu þína við hið opinbera. Hafið samband við viðeigandi stofnun fyrir frekari upplýsingar.',
+          'Hér er að finna greidda og ógreidda greiðsluseðla fyrir valið tímabil. Einnig greiðslukvittanir fyrir greiðslur nema þar sem greiðsluseðill hefur verið greiddur beint í banka.',
       })}
       listPath="billReceipt"
     />

@@ -20,6 +20,8 @@ import {
   RegulationViewTypes,
   RegulationYears,
 } from '@island.is/regulations/web'
+import pickBy from 'lodash/pickBy'
+import identity from 'lodash/identity'
 
 export const REGULATIONS_OPTIONS = 'REGULATIONS_OPTIONS'
 
@@ -106,10 +108,15 @@ export class RegulationsService extends RESTDataSource {
     year?: Year,
     yearTo?: Year,
     ch?: string,
+    iA?: boolean,
+    iR?: boolean,
+    page?: number,
   ): Promise<RegulationListItem[] | null> {
     const response = await this.get<RegulationListItem[] | null>(
       `search`,
-      { q, rn, year, yearTo, ch },
+      // Strip away empty params
+      // Object.fromEntries(Object.entries({ q, rn, year, yearTo, ch, iA, iR, page }).filter((val) => val))
+      pickBy({ q, rn, year, yearTo, ch, iA, iR, page }, identity),
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },

@@ -13,6 +13,8 @@ import { GetApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql
 
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 
+import * as styles from './applicationsOverview.treat'
+
 interface ApplicationsProvider {
   applications?: Application[]
 }
@@ -27,11 +29,6 @@ export interface NavigationElement {
 export interface TableHeadersProps {
   filterBy?: string
   title: string
-}
-
-export interface sortByProps {
-  selected: 'modified' | 'state'
-  sorted: 'asc' | 'dsc'
 }
 
 export const ApplicationsOverview = () => {
@@ -49,36 +46,27 @@ export const ApplicationsOverview = () => {
     (i) => i.link === router.pathname,
   )
 
-  const [sortBy, setSortBy] = useState<sortByProps>({
-    selected: 'modified',
-    sorted: 'asc',
-  })
-
   const [applications, setApplications] = useState<Application[]>()
 
   useEffect(() => {
     if (data?.applications) {
       setApplications(
-        data.applications
-          .filter((item) =>
-            currentNavigationItem?.applicationState.includes(item?.state),
-          )
-          .sort((a, b) =>
-            a[sortBy.selected] > b[sortBy.selected]
-              ? -1
-              : a[sortBy.selected] < b[sortBy.selected]
-              ? 1
-              : 0,
-          ),
+        data.applications.filter((item) =>
+          currentNavigationItem?.applicationState.includes(item?.state),
+        ),
       )
     }
-  }, [data, router, sortBy])
+  }, [data, router])
 
   if (currentNavigationItem) {
     return (
       <AdminLayout>
-        <Box className={`contentUp delay-25`} key={currentNavigationItem.label}>
-          <Text as="h1" variant="h1" marginBottom={[2, 2, 4]} marginTop={15}>
+        <Box
+          className={`contentUp delay-25`}
+          marginTop={15}
+          key={currentNavigationItem.label}
+        >
+          <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
             {currentNavigationItem.label}
           </Text>
         </Box>
@@ -87,14 +75,15 @@ export const ApplicationsOverview = () => {
           <ApplicationsTable
             className={`contentUp delay-50`}
             headers={currentNavigationItem.headers}
-            setSortBy={(filter) => {
-              if (filter === 'modified' || filter === 'state') {
-                setSortBy({ ...sortBy, selected: filter })
-              }
-            }}
-            sortBy={sortBy}
             applications={applications}
           />
+        )}
+
+        {error && (
+          <div>
+            Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að
+            þessu upplýsingum?{' '}
+          </div>
         )}
 
         {loading && <LoadingDots />}

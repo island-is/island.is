@@ -713,6 +713,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Breyta tilhögun fæðingarorlofs',
       description: 'Change the periods',
     },
+    limit: {
+      id: 'pl.application:periods.limit',
+      defaultMessage:
+        'Þú hefur náð þeim mörkum sem þú getur tekið fyrir fæðingarorlofinu þínu',
+      description:
+        'You reached the limit of days you can take for your parental leave',
+    },
   }),
 
   firstPeriodStart: defineMessages({
@@ -1502,6 +1509,19 @@ export const errorMessages = defineMessages({
     id: 'pl.application:errors.required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'Error message when the attachment file is not provided.',
+  },
+  exceedingLength: {
+    id: 'pl.application:errors.exceeding.length',
+    defaultMessage:
+      'Farið yfir réttindi, vinsamlegast veldu fyrri lokadagsetningu.',
+    description: 'Rights exceeded, please, select an earlier end date.',
+  },
+  durationPeriods: {
+    id: 'pl.application:errors.exceeding.length',
+    defaultMessage:
+      'Villa kom upp við útreikning á tímabilum, veldu annað tímabil eða hafðu samband við okkur til að fá stuðning.',
+    description:
+      'An error happened while calculating your periods, choose another period or contact us for support.',
   },
 })
 

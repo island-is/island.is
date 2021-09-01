@@ -15,3 +15,14 @@ export const Info = () => (
     info={{ title: 'Institution name', description: 'Application name' }}
   />
 )
+
+export const UserDropdown = () => (
+  <Header
+    info={{ title: 'Institution name', description: 'Application name' }}
+    authenticated
+    language="EN"
+    logoutText="Logout"
+    userName="John Doe"
+    userAsDropdown
+  />
+)

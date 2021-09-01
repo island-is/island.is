@@ -4,7 +4,7 @@ import { Application } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-import Timeline from '../components/Timeline'
+import { Timeline } from '../components/Timeline/Timeline'
 import {
   formatPeriods,
   getExpectedDateOfBirth,

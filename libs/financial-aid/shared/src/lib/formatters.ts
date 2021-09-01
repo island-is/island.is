@@ -29,14 +29,55 @@ export const getState: KeyMapping<ApplicationState, string> = {
   Approved: 'Samþykkt',
 }
 
+export const getActiveSectionForTimeline: KeyMapping<
+  ApplicationState,
+  number
+> = {
+  New: 0,
+  DataNeeded: 1,
+  InProgress: 1,
+  Rejected: 2,
+  Approved: 2,
+}
+
+export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
+  New: 'InProgress',
+  DataNeeded: 'InProgress',
+  InProgress: 'InProgress',
+  Rejected: 'Rejected',
+  Approved: 'Approved',
+}
+
+// export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
+
 export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`
 
-export const formatPhoneNumber = (phoneNumber: string) =>
-  insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
+export const formatPhoneNumber = (phoneNumber: string) => {
+  if (phoneNumber.length <= 10) {
+    return insertAt(phoneNumber.replace('-', ''), '-', 3) || '-'
+  }
+
+  return insertAt(phoneNumber.replace('-', ''), '-', 4) || '-'
+}
 
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
+
+export const months = [
+  'Janúar',
+  'Febrúar',
+  'Mars',
+  'Apríl',
+  'Maí',
+  'Júní',
+  'Júlí',
+  'Ágúst',
+  'September',
+  'Október',
+  'Nóvember',
+  'Desember',
+]
 
 export const aidCalculator = (
   homeCircumstances: HomeCircumstances,

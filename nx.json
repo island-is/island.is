@@ -82,9 +82,6 @@
     "api-domains-auth": {
       "tags": []
     },
-    "api-domains-cms": {
-      "tags": []
-    },
     "api-domains-communications": {
       "tags": []
     },
@@ -155,9 +152,6 @@
       "tags": []
     },
     "api-domains-temporary-voter-registry": {
-      "tags": []
-    },
-    "api-domains-translations": {
       "tags": []
     },
     "api-domains-user-profile": {
@@ -338,6 +332,12 @@
       "tags": []
     },
     "clients-zendesk": {
+      "tags": []
+    },
+    "cms": {
+      "tags": []
+    },
+    "cms-translations": {
       "tags": []
     },
     "content-search-index-manager": {

@@ -10,7 +10,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { Case } from '../../case'
+import { Case } from '../../case/models/case.model'
 
 @Table({
   tableName: 'case_file',
@@ -24,15 +24,15 @@ export class CaseFile extends Model<CaseFile> {
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
-  id: string
+  id!: string
 
   @CreatedAt
   @ApiProperty()
-  created: Date
+  created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  modified: Date
+  modified!: Date
 
   @ForeignKey(() => Case)
   @Column({
@@ -40,26 +40,26 @@ export class CaseFile extends Model<CaseFile> {
     allowNull: false,
   })
   @ApiProperty()
-  caseId: string
+  caseId!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  name: string
+  name!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  key: string
+  key!: string
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
   @ApiProperty()
-  size: number
+  size!: number
 }

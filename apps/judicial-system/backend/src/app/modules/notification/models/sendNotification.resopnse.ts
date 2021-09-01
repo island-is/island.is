@@ -6,7 +6,7 @@ import { Notification } from './notification.model'
 
 export class SendNotificationResponse implements TSendNotificationResponse {
   @ApiProperty()
-  notificationSent: boolean
+  notificationSent!: boolean
 
   @ApiProperty({ type: Notification })
   notification?: Notification

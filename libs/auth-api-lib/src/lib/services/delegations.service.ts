@@ -295,6 +295,33 @@ export class DelegationsService {
     return delegations.map((delegation) => delegation.toDTO())
   }
 
+  async findAllValidCustomFrom(nationalId: string): Promise<DelegationDTO[]> {
+    const now = new Date()
+
+    const result = await this.delegationModel.findAll({
+      where: {
+        fromNationalId: nationalId,
+      },
+      include: [
+        {
+          model: DelegationScope,
+          include: [ApiScope, IdentityResource],
+          where: {
+            [Op.and]: [
+              { validTo: { [Op.or]: [{ [Op.eq]: null }, { [Op.gt]: now }] } },
+            ],
+          },
+        },
+      ],
+    })
+
+    const filtered = result.filter(
+      (x) => x.delegationScopes !== null && x.delegationScopes!.length > 0,
+    )
+
+    return filtered.map((d) => d.toDTO())
+  }
+
   async deleteFrom(nationalId: string, id: string): Promise<number> {
     this.logger.debug(`Deleting Delegation for Id ${id}`)
 

@@ -1,31 +1,18 @@
 import * as s from './RegulationStatus.treat'
 
-import React, { ReactNode } from 'react'
-import { ISODate } from '@island.is/regulations'
+import React from 'react'
+import { ISODate, interpolate } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
-import { Hidden, Text } from '@island.is/island-ui/core'
-import cn from 'classnames'
-import { useDateUtils } from './regulationUtils'
+import { Hidden, Link, Text } from '@island.is/island-ui/core'
+import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-
-// ---------------------------------------------------------------------------
-
-type BallProps = {
-  type?: 'green' | 'red'
-  children?: ReactNode
-}
-const Ball = ({ type, children }: BallProps) => (
-  <span className={cn(s.ball, type === 'red' && s.ballRed)}>{children}</span>
-)
+import { Ball, BallColor } from './Ball'
 
 // ---------------------------------------------------------------------------
 
 export type RegulationStatusProps = {
-  regulation: Pick<
-    RegulationMaybeDiff,
-    'repealedDate' | 'timelineDate' | 'lastAmendDate' | 'effectiveDate'
-  >
+  regulation: RegulationMaybeDiff
   urlDate?: ISODate
   texts: RegulationPageTexts
 }
@@ -34,78 +21,135 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
   const { regulation, urlDate, texts } = props
   const { formatDate } = useDateUtils()
   const txt = useNamespace(texts)
+  const { linkToRegulation } = useRegulationLinkResolver()
 
-  const viewingOriginal = regulation.timelineDate === regulation.effectiveDate
+  const {
+    type,
+    name,
+    timelineDate,
+    lastAmendDate,
+    effectiveDate,
+    repealedDate,
+    history,
+  } = regulation
+
   const today = new Date().toISOString().substr(0, 10) as ISODate
+
+  const color: BallColor = repealedDate
+    ? 'red'
+    : type === 'amending'
+    ? 'yellow'
+    : !timelineDate || timelineDate === lastAmendDate
+    ? 'green'
+    : 'yellow'
+
+  const onDateText = urlDate && (
+    <small className={s.metaDate}>
+      {interpolate(
+        txt(urlDate > today ? 'statusOnDate_future' : 'statusOnDate_past'),
+        { date: formatDate(urlDate) },
+      )}
+    </small>
+  )
+
+  const getNextHistoryDate = () => {
+    const idx = (history || []).findIndex((item) => item.date === timelineDate)
+    const nextItem = idx > -1 && history[idx + 1]
+    return nextItem ? nextItem.date : today // fall back to `today`, because whatever, It should never happen...
+  }
+
+  const renderLinkToCurrent = () => {
+    const textKey = !repealedDate
+      ? 'statusLinkToCurrent'
+      : 'statusLinkToRepealed'
+    const labelKey = !repealedDate
+      ? 'statusLinkToCurrent_long'
+      : 'statusLinkToRepealed_long'
+    return (
+      <small className={s.linkToCurrent}>
+        <Link href={linkToRegulation(name)} aria-label={txt(labelKey)}>
+          {txt(textKey)}
+        </Link>
+      </small>
+    )
+  }
 
   return (
     <>
       <div className={s.printText}>
-        <Text>Prentað {formatDate(today)}</Text>
+        <Text>
+          {txt('printedDate')} {formatDate(today)}
+        </Text>
       </div>
       <Hidden print={true}>
-        {!regulation.repealedDate ? (
-          <Text>
-            {!regulation.timelineDate ||
-            regulation.timelineDate === regulation.lastAmendDate ? (
+        <Text>
+          <Ball type={color} />
+
+          {!timelineDate || timelineDate === lastAmendDate ? (
+            repealedDate ? (
               <>
-                <Ball type="green" />
-                Núgildandi reglugerð
-                {regulation.lastAmendDate ? (
-                  <>
-                    {' – '}
-                    <span className={s.metaDate}>
-                      uppfærð {formatDate(regulation.lastAmendDate)}
-                    </span>
-                  </>
-                ) : (
-                  ''
+                {txt('statusRepealed') + ' '}
+                {onDateText || (
+                  <small className={s.metaDate}>
+                    {interpolate(txt('statusRepealed_on'), {
+                      date: formatDate(repealedDate),
+                    })}
+                  </small>
                 )}
               </>
-            ) : viewingOriginal ? (
+            ) : !lastAmendDate ? (
               <>
-                <Ball type="red" />
-                Upprunaleg útgáfa reglugerðar
-                {' – '}
-                <span className={s.metaDate}>
-                  sem gók gildi þann {formatDate(regulation.timelineDate)}
-                </span>
-              </>
-            ) : regulation.timelineDate > today ? (
-              <>
-                <Ball type="red" />
-                Væntanleg útgáfa reglugerðar
-                {' – '}
-                <span className={s.metaDate}>
-                  sem mun taka gildi þann {formatDate(regulation.timelineDate)}
-                </span>
+                {txt(
+                  type === 'base'
+                    ? 'statusCurrentBase'
+                    : 'statusCurrentAmending',
+                ) + ' '}
+                {onDateText}
               </>
             ) : (
               <>
-                <Ball type="red" />
-                Úrelt útgáfa reglugerðar
-                {' – '}
-                {urlDate ? (
-                  <span className={s.metaDate}>
-                    eins og leit út þann {formatDate(urlDate)}
-                  </span>
-                ) : (
-                  <span className={s.metaDate}>
-                    sem tók gildi þann {formatDate(regulation.timelineDate)}
-                  </span>
-                )}
+                {txt('statusCurrentUpdated') + ' '}
+                {onDateText ||
+                  (lastAmendDate && (
+                    <small className={s.metaDate}>
+                      {interpolate(txt('statusCurrent_amended'), {
+                        date: formatDate(lastAmendDate),
+                      })}
+                    </small>
+                  ))}
               </>
-            )}
-          </Text>
-        ) : (
-          <Text>
-            <Ball type="red" />
-            Úrelt reglugerð{' – '}
-            <span className={s.metaDate}>
-              felld úr gildi {formatDate(regulation.repealedDate)}
-            </span>
-          </Text>
-        )}
+            )
+          ) : timelineDate > today ? (
+            <>
+              {txt('statusUpcoming') + ' '}
+              {onDateText || (
+                <small className={s.metaDate}>
+                  {interpolate(txt('statusUpcoming_on'), {
+                    date: formatDate(timelineDate),
+                  })}
+                </small>
+              )}{' '}
+              {renderLinkToCurrent()}
+            </>
+          ) : (
+            <>
+              {txt(
+                timelineDate === effectiveDate
+                  ? 'statusOriginal'
+                  : 'statusHistoric',
+              ) + ' '}
+              {onDateText || (
+                <small className={s.metaDate}>
+                  {interpolate(txt('statusHistoric_period'), {
+                    dateFrom: formatDate(timelineDate),
+                    dateTo: formatDate(getNextHistoryDate()),
+                  })}
+                </small>
+              )}{' '}
+              {renderLinkToCurrent()}
+            </>
+          )}
+        </Text>
       </Hidden>
     </>
   )

@@ -2,8 +2,16 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useDateUtils as _useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { ISODate, RegName, nameToSlug } from '@island.is/regulations'
 
-export type RegulationSearchKeys = 'q' | 'rn' | 'year' | 'yearTo' | 'ch' | 'all'
-export type RegulationSearchFilters = Record<RegulationSearchKeys, string>
+export type RegulationSearchKey =
+  | 'q'
+  | 'rn'
+  | 'year'
+  | 'yearTo'
+  | 'ch'
+  | 'iA'
+  | 'iR'
+  | 'page'
+export type RegulationSearchFilters = Record<RegulationSearchKey, string>
 
 // ---------------------------------------------------------------------------
 
@@ -35,7 +43,7 @@ export const useRegulationLinkResolver = () => {
         const date = 'd' in props ? '/d/' + props.d : '/on/' + props.on
         const diff = props.diff ? '/diff' : ''
         const earlierDate =
-          diff && 'earlierDate' in props ? '/' + props.earlierDate : ''
+          props.diff && 'earlierDate' in props ? '/' + props.earlierDate : ''
         return href + date + diff + earlierDate
       }
       if ('diff' in props && props.diff) {
@@ -62,7 +70,7 @@ export const useRegulationLinkResolver = () => {
     //   return linkType === 'regulation'
     // },
 
-    linkToRegulationSearch: <Keys extends RegulationSearchKeys>(
+    linkToRegulationSearch: <Keys extends RegulationSearchKey>(
       filters: Record<Keys, string>,
     ) =>
       utils.linkResolver('regulationshome').href +

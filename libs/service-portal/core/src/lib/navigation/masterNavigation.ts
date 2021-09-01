@@ -1,20 +1,14 @@
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
+import { m } from '../messages'
 import { ServicePortalPath } from './paths'
-import { defineMessage } from 'react-intl'
 
 export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
-    name: defineMessage({
-      id: 'service.portal:info',
-      defaultMessage: 'Upplýsingar',
-    }),
+    name: m.info,
     children: [
       // Yfirlit
       {
-        name: defineMessage({
-          id: 'service.portal:overview',
-          defaultMessage: 'Yfirlit',
-        }),
+        name: m.overview,
         systemRoute: true,
         path: ServicePortalPath.MinarSidurRoot,
         icon: {
@@ -25,14 +19,8 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Rafraen skjol
       {
-        heading: defineMessage({
-          id: 'service.portal:service',
-          defaultMessage: 'Þjónusta',
-        }),
-        name: defineMessage({
-          id: 'service.portal:documents',
-          defaultMessage: 'Pósthólf',
-        }),
+        heading: m.service,
+        name: m.documents,
         path: ServicePortalPath.ElectronicDocumentsRoot,
         icon: {
           type: 'outline',
@@ -42,10 +30,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Umsoknir
       {
-        name: defineMessage({
-          id: 'service.portal:applications',
-          defaultMessage: 'Umsóknir',
-        }),
+        name: m.applications,
         path: ServicePortalPath.ApplicationRoot,
         icon: {
           type: 'outline',
@@ -55,14 +40,8 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Min Gogn
       {
-        heading: defineMessage({
-          id: 'service.portal:my-info',
-          defaultMessage: 'Mín gögn',
-        }),
-        name: defineMessage({
-          id: 'service.portal:user-info',
-          defaultMessage: 'Mínar upplýsingar',
-        }),
+        heading: m.myInfo,
+        name: m.userInfo,
         path: ServicePortalPath.MyInfoRoot,
         icon: {
           type: 'outline',
@@ -70,27 +49,18 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         children: [
           {
-            name: defineMessage({
-              id: 'service.portal:detail-info',
-              defaultMessage: 'Nánari upplýsingar',
-            }),
+            name: m.detailInfo,
             navHide: true,
             path: ServicePortalPath.UserInfo,
           },
           {
-            name: defineMessage({
-              id: 'service.portal:family',
-              defaultMessage: 'Fjölskyldan',
-            }),
+            name: m.family,
             navHide: true,
             path: ServicePortalPath.FamilyRoot,
           },
           {
             // Medmaeli
-            name: defineMessage({
-              id: 'service.portal:endorsements',
-              defaultMessage: 'Meðmæli',
-            }),
+            name: m.endorsements,
             path: ServicePortalPath.Endorsements,
           },
         ],
@@ -98,10 +68,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Starfsleyfi
       {
-        name: defineMessage({
-          id: 'service.portal:educationLicense',
-          defaultMessage: 'Starfsleyfi',
-        }),
+        name: m.educationLicense,
         path: ServicePortalPath.EducationLicense,
         icon: {
           type: 'outline',
@@ -111,10 +78,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Menntun
       {
-        name: defineMessage({
-          id: 'service.portal:education',
-          defaultMessage: 'Menntun',
-        }),
+        name: m.education,
         path: ServicePortalPath.EducationRoot,
         icon: {
           type: 'outline',
@@ -123,10 +87,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       },
 
       {
-        name: defineMessage({
-          id: 'service.portal:document-provider',
-          defaultMessage: 'Skjalaveitur',
-        }),
+        name: m.documentProvider,
         path: ServicePortalPath.DocumentProviderRoot,
         icon: {
           type: 'outline',
@@ -175,10 +136,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Mannanafnaskrá
       {
-        name: defineMessage({
-          id: 'service.portal:icelandic-names-registry',
-          defaultMessage: 'Mannanafnaskrá',
-        }),
+        name: m.icelandicNamesRegistry,
         path: ServicePortalPath.IcelandicNamesRegistryRoot,
         icon: {
           type: 'outline',
@@ -187,10 +145,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       },
 
       {
-        name: defineMessage({
-          id: 'service.portal:licenses',
-          defaultMessage: 'Skilríki',
-        }),
+        name: m.licenses,
         path: ServicePortalPath.LicensesRoot,
         icon: {
           type: 'outline',
@@ -222,39 +177,28 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Fjarmal
       {
-        name: defineMessage({
-          id: 'service.portal:finance',
-          defaultMessage: 'Fjármál',
-        }),
+        name: m.finance,
         path: ServicePortalPath.FinanceStatus,
         children: [
           {
-            name: defineMessage({
-              id: 'service.portal:finance-status',
-              defaultMessage: 'Staða',
-            }),
+            name: m.financeStatus,
             path: ServicePortalPath.FinanceStatus,
           },
           {
-            name: defineMessage({
-              id: 'service.portal:finance-transactions',
-              defaultMessage: 'Hreyfingar',
-            }),
+            name: m.financeTransactions,
             path: ServicePortalPath.FinanceTransactions,
           },
           {
-            name: defineMessage({
-              id: 'service.portal:finance-bills',
-              defaultMessage: 'Greiðsluseðlar og Greiðslukvittanir',
-            }),
+            name: m.financeBills,
             path: ServicePortalPath.FinanceBills,
           },
           {
-            name: defineMessage({
-              id: 'service.portal:finance-employee-claims',
-              defaultMessage: 'Laungreiðendakröfur',
-            }),
+            name: m.financeEmployeeClaims,
             path: ServicePortalPath.FinanceEmployeeClaims,
+          },
+          {
+            name: m.financeLocalTax,
+            path: ServicePortalPath.FinanceLocalTax,
           },
         ],
         icon: {
@@ -265,10 +209,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Ökutæki
       {
-        name: defineMessage({
-          id: 'service.portal:vehicles',
-          defaultMessage: 'Ökutæki',
-        }),
+        name: m.vehicles,
         path: ServicePortalPath.AssetsVehicles,
         systemRoute: true,
         icon: {
@@ -280,22 +221,12 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   },
 
   {
-    name: defineMessage({
-      id: 'service.portal:actions',
-      defaultMessage: 'Aðgerðir',
-      description: 'Title of the actions category',
-    }),
+    name: m.actions,
     children: [
       // Fasteignir
       {
-        heading: defineMessage({
-          id: 'service.portal:coming-soon',
-          defaultMessage: 'Annað',
-        }),
-        name: defineMessage({
-          id: 'service.portal:real-estate',
-          defaultMessage: 'Fasteignir',
-        }),
+        heading: m.comingSoon,
+        name: m.realEstate,
         path: ServicePortalPath.AssetsRoot,
         systemRoute: true,
         icon: {
@@ -306,10 +237,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Fjármál
       {
-        name: defineMessage({
-          id: 'service.portal:finance',
-          defaultMessage: 'Fjármál',
-        }),
+        name: m.finance,
         path: ServicePortalPath.FinanceRoot,
         systemRoute: true,
         icon: {
@@ -320,10 +248,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Stillingar
       {
-        name: defineMessage({
-          id: 'service.portal:settings',
-          defaultMessage: 'Stillingar',
-        }),
+        name: m.settings,
         path: ServicePortalPath.SettingsRoot,
         systemRoute: true,
         icon: {
@@ -332,10 +257,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         children: [
           {
-            name: defineMessage({
-              id: 'service.portal:accessControl',
-              defaultMessage: 'Aðgangsstýring',
-            }),
+            name: m.accessControl,
             path: ServicePortalPath.SettingsAccessControl,
           },
         ],
@@ -343,10 +265,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Mín réttindi
       {
-        name: defineMessage({
-          id: 'service.portal:delegation',
-          defaultMessage: 'Mín réttindi',
-        }),
+        name: m.delegation,
         path: ServicePortalPath.MyLicensesRoot,
         icon: {
           type: 'outline',
@@ -354,17 +273,11 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         children: [
           {
-            name: defineMessage({
-              id: 'service.portal:parentalLeave',
-              defaultMessage: 'Fæðingarorlof',
-            }),
+            name: m.parentalLeave,
             path: ServicePortalPath.ParentalLeave,
           },
           {
-            name: defineMessage({
-              id: 'service.portal:drivingLicense',
-              defaultMessage: 'Ökuréttindi',
-            }),
+            name: m.drivingLicense,
             path: ServicePortalPath.DrivingLicense,
           },
         ],
