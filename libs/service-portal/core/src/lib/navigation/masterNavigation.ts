@@ -237,6 +237,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.accessControl,
             path: ServicePortalPath.SettingsAccessControl,
+            children: [
+              {
+                name: m.accessControlGrant,
+                path: ServicePortalPath.SettingsAccessControlGrant,
+              },
+              {
+                name: m.accessControlAccess,
+                path: ServicePortalPath.SettingsAccessControlAccess,
+              },
+            ],
           },
         ],
       },

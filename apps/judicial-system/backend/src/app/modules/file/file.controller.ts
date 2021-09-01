@@ -18,12 +18,12 @@ import {
   RolesRule,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
 import {
   UserRole,
   CaseState,
   CaseAppealDecision,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { Case, CaseService } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'

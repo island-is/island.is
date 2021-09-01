@@ -80,9 +80,10 @@ function constructRestrictionRequestPdf(
     .text(`${formatMessage(m.baseInfo.address)} ${existingCase.accusedAddress}`)
     .text(
       formatMessage(m.baseInfo.defender, {
-        defenderName: existingCase.defenderName
-          ? existingCase.defenderName
-          : formatMessage(m.baseInfo.noDefender),
+        defenderName:
+          existingCase.defenderName && !existingCase.defenderIsSpokesperson
+            ? existingCase.defenderName
+            : formatMessage(m.baseInfo.noDefender),
       }),
     )
     .text(' ')
@@ -232,11 +233,12 @@ function constructInvestigationRequestPdf(
     .text(`Fullt nafn: ${existingCase.accusedName}`)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
     .text(
-      `Verjandi sakbornings: ${
-        existingCase.defenderName
-          ? existingCase.defenderName
-          : 'Hefur ekki verið skráður'
-      }`,
+      formatMessage(m.baseInfo.defender, {
+        defenderName:
+          existingCase.defenderName && !existingCase.defenderIsSpokesperson
+            ? existingCase.defenderName
+            : formatMessage(m.baseInfo.noDefender),
+      }),
     )
     .text(' ')
     .font('Helvetica-Bold')
