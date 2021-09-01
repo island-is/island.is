@@ -7165,10 +7165,10 @@ react-native-dialogs@1.1.1:
   resolved "https://registry.yarnpkg.com/react-native-dialogs/-/react-native-dialogs-1.1.1.tgz#db68fee6f6f654a2ae6fd45d5a75fc23118e4b96"
   integrity sha512-JduVYRXvLTT4k4VfXuKt3HF2/fixsR1EDXkvNf8fJwxKZUs2kzs1E0EtgiAx4IgYMTOewLPVtzTVfiv0GWeHuA==
 
-react-native-flipper@0.95.0:
-  version "0.95.0"
-  resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.95.0.tgz#2c146bda9489e6104001bea04ba4eeb60df01a27"
-  integrity sha512-LpnsAXUKRRRuS00Zh/pEwo3WC45W06PK11KFYGKHu47B+tuh1LkdnpS9QRhTaPuZDMlGhnN0xtwUtwgYzpJCBA==
+react-native-flipper@0.104.0:
+  version "0.104.0"
+  resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.104.0.tgz#f380a6b1c17f3d30dcefcb7767735beec16ede76"
+  integrity sha512-zzW2HiD9I9KTW+g+nIull2qkVVj0ivIYMRes38E1r+syOKIrzV1BNKlA9glX1x31gcQFmFCv/ibDv61KnC6Q2A==
 
 react-native-interactable@2.0.1:
   version "2.0.1"
