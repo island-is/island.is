@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
 import { LocaleProvider } from '@island.is/localization'
-import { UpdateCase } from '@island.is/judicial-system/types'
+import type { UpdateCase } from '@island.is/judicial-system/types'
 import {
   mockCaseQueries,
   mockProsecutorQuery,

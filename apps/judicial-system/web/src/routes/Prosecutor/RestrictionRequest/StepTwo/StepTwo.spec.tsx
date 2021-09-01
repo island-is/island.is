@@ -5,7 +5,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import formatISO from 'date-fns/formatISO'
 
 import { LocaleProvider } from '@island.is/localization'
-import { UpdateCase } from '@island.is/judicial-system/types'
+import type { UpdateCase } from '@island.is/judicial-system/types'
 import {
   mockCaseQueries,
   mockInstitutionsQuery,

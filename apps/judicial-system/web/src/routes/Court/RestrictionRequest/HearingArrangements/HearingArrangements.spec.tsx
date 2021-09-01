@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { UpdateCase } from '@island.is/judicial-system/types'
+import type { UpdateCase } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
 import {
   mockCaseQueries,

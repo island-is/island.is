@@ -2,7 +2,7 @@ import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 
 import { Injectable } from '@nestjs/common'
 
-import {
+import type {
   Case,
   CreateCase,
   CreateFile,
@@ -15,8 +15,6 @@ import {
   SignedUrl,
   TransitionCase,
   UpdateCase,
-} from '@island.is/judicial-system/types'
-import type {
   Institution,
   User,
   CreateUser,

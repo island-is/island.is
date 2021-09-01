@@ -7,10 +7,8 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import {
-  AccusedPleaDecision,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { AccusedPleaDecision } from '@island.is/judicial-system/types'
+import type { UpdateCase } from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import CourtRecord from './CourtRecord'
 import { LocaleProvider } from '@island.is/localization'

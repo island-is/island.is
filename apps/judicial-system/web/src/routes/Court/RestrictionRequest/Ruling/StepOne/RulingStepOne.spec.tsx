@@ -7,8 +7,8 @@ import { LocaleProvider } from '@island.is/localization'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
+import type { UpdateCase } from '@island.is/judicial-system/types'
 import {
   mockCaseQueries,
   mockJudgeQuery,

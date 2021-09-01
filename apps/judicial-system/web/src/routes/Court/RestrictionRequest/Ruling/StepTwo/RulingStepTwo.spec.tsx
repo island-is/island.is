@@ -8,8 +8,8 @@ import userEvent from '@testing-library/user-event'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
+import type { UpdateCase } from '@island.is/judicial-system/types'
 import {
   mockCaseQueries,
   mockJudgeQuery,

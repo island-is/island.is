@@ -12,13 +12,12 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  Case,
   CaseState,
   CaseTransition,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
+import type { Case, User } from '@island.is/judicial-system/types'
 import { useQuery } from '@apollo/client'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'

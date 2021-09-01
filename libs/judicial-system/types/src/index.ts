@@ -10,18 +10,7 @@ export type {
   SendNotificationResponse,
 } from './lib/notification'
 
-export { UserRole } from './lib/user'
-export type { User, CreateUser, UpdateUser } from './lib/user'
-
-export * from './lib/types'
 export type {
-  Case,
-  CreateCase,
-  UpdateCase,
-  TransitionCase,
-  RequestSignatureResponse,
-  SignatureConfirmationResponse,
-  CreateCourtCase,
   PresignedPost,
   CreatePresignedPost,
   DeleteFile,
@@ -30,4 +19,29 @@ export type {
   SignedUrl,
   CaseFile,
   CreateFile,
-} from './lib/types'
+} from './lib/file'
+
+export { UserRole } from './lib/user'
+export type { User, CreateUser, UpdateUser } from './lib/user'
+
+export {
+  CaseType,
+  CaseState,
+  CaseTransition,
+  CaseCustodyProvisions,
+  CaseCustodyRestrictions,
+  CaseAppealDecision,
+  CaseGender,
+  CaseDecision,
+  AccusedPleaDecision,
+  SessionArrangements,
+} from './lib/case'
+export type {
+  Case,
+  CreateCase,
+  UpdateCase,
+  TransitionCase,
+  RequestSignatureResponse,
+  SignatureConfirmationResponse,
+  CreateCourtCase,
+} from './lib/case'

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { SignatureConfirmationResponse as TSignatureConfirmationResponse } from '@island.is/judicial-system/types'
+import type { SignatureConfirmationResponse as TSignatureConfirmationResponse } from '@island.is/judicial-system/types'
 
 export class SignatureConfirmationResponse
   implements TSignatureConfirmationResponse {

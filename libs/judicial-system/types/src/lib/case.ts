@@ -1,5 +1,6 @@
 import type { Institution } from './institution'
 import type { Notification } from './notification'
+import type { CaseFile } from './file'
 import type { User } from './user'
 
 export enum CaseType {
@@ -90,8 +91,6 @@ export enum SessionArrangements {
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
   REMOTE_SESSION = 'REMOTE_SESSION',
 }
-
-export type Gender = 'karl' | 'kona' | 'annað'
 
 export interface Case {
   id: string
@@ -269,45 +268,4 @@ export interface CreateCourtCase {
   type: CaseType
   policeCaseNumber: string
   isExtension: boolean
-}
-
-export interface PresignedPost {
-  url: string
-  fields: { [key: string]: string }
-}
-
-export interface CreatePresignedPost {
-  fileName: string
-}
-
-export interface DeleteFile {
-  id: string
-}
-
-export interface DeleteFileResponse {
-  success: boolean
-}
-
-export interface GetSignedUrl {
-  caseId: string
-  id: string
-}
-
-export interface SignedUrl {
-  url: string
-}
-
-export interface CaseFile {
-  id: string
-  created: string
-  modified: string
-  caseId: string
-  name: string
-  key: string
-  size: number
-}
-
-export interface CreateFile {
-  key: string
-  size: number
 }

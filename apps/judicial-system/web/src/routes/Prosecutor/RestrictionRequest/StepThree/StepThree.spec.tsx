@@ -4,10 +4,8 @@ import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
 import { LocaleProvider } from '@island.is/localization'
 
-import {
-  CaseCustodyProvisions,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
+import type { UpdateCase } from '@island.is/judicial-system/types'
 import {
   mockCaseQueries,
   mockProsecutorQuery,
