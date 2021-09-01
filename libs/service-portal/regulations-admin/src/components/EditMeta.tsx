@@ -92,7 +92,7 @@ export const EditMeta: StepComponent = (props) => {
       ministries?.map(
         (m: RegulationMinistry): Option => ({
           value: m.slug,
-          label: m.name + (m.current ? '' : ` ${t(msg.legacyMinistry)}`),
+          label: m.name,
         }),
       ) ?? [],
     ) as ReadonlyArray<Option>

@@ -109,12 +109,10 @@ export const mockMinistrylist: RegulationMinistryList = [
   {
     name: 'Forsætisráðuneyti',
     slug: 'fsr' as MinistrySlug,
-    current: true,
   },
   {
     name: 'Samgöngu- og sveitarstjórnarráðuneyti',
     slug: 'ssvrn' as MinistrySlug,
-    current: false,
   },
 ]
 

@@ -50,15 +50,15 @@ export const MinistryList = () => {
     <Box marginBottom={[4, 4, 6]}>
       <Stack space={2}>
         {regulationMinistries.map((item, i) => {
-          const { name, slug, current } = item
+          const { name, slug } = item
           return (
             <ActionCard
               key={slug + '-' + i}
               heading={name}
               tag={{
-                label: current ? 'Active' : 'Inactive',
+                label: 'Active',
                 outlined: true,
-                variant: current ? 'blueberry' : 'red',
+                variant: 'blueberry',
               }}
               // text={''}
               cta={{
