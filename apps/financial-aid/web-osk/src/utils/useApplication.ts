@@ -1,10 +1,7 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 
-import {
-  CreateApplicationQuery,
-  CreateApplicationEventQuery,
-} from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import { CreateApplicationQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import { User, ApplicationState } from '@island.is/financial-aid/shared'
 import { Form } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'

@@ -9,6 +9,9 @@ import {
 import { FormContext } from '@island.is/financial-aid-web/osksrc/components/FormProvider/FormProvider'
 import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFileUpload'
 import { UserContext } from '@island.is/financial-aid-web/osksrc/components/UserProvider/UserProvider'
+import { Application, ApplicationState } from '@island.is/financial-aid/shared'
+import { useMutation } from '@apollo/client'
+import { UpdateApplicationMutation } from '@island.is/financial-aid-web/oskgraphql/sharedGql'
 
 const FileUpload = () => {
   const { form } = useContext(FormContext)
@@ -23,6 +26,10 @@ const FileUpload = () => {
     }
   }, [user])
 
+  const [updateApplicationMutation] = useMutation<{ application: Application }>(
+    UpdateApplicationMutation,
+  )
+
   const proceed = async () => {
     if (form?.incomeFiles.length <= 0 || currentApplication === undefined) {
       setNextButtonText('Aint no files here')
@@ -30,7 +37,15 @@ const FileUpload = () => {
     }
 
     try {
-      await uploadFiles(currentApplication.id).then(() => {
+      await uploadFiles(currentApplication.id).then(async () => {
+        await updateApplicationMutation({
+          variables: {
+            input: {
+              id: currentApplication.id,
+              state: ApplicationState.INPROGRESS,
+            },
+          },
+        })
         setNextButtonText('Success 🙌🙌🙌')
       })
     } catch (e) {

@@ -70,3 +70,11 @@ export const CurrentUserQuery = gql`
     }
   }
 `
+
+export const UpdateApplicationMutation = gql`
+  mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
+    updateApplication(input: $input) {
+      id
+    }
+  }
+`
