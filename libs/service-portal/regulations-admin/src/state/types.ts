@@ -81,7 +81,6 @@ export type DraftingState = {
   loading?: boolean
   error?: Error
   draft?: RegDraftForm
-  inputHasError?: boolean
 }
 
 // -----------------------------
@@ -112,7 +111,6 @@ export type Action =
   | { type: 'LOADING_DRAFT_ERROR'; error: Error }
   | { type: 'SAVING_STATUS' }
   | { type: 'SAVING_STATUS_DONE'; error?: Error }
-  | { type: 'MISSING_REQUIRED_PROPS'; inputHasError?: boolean }
   | {
       type: 'UPDATE_LAWCHAPTER_PROP'
       action?: 'add' | 'delete'

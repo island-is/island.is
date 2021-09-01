@@ -9,6 +9,7 @@ import {
 import startOfTomorrow from 'date-fns/startOfTomorrow'
 import { startOfDay, addDays, set } from 'date-fns/esm'
 import { OptionTypeBase, ValueType } from 'react-select'
+import { RegDraftFormSimpleProps, RegDraftForm } from '../state/types'
 
 import { Option } from '@island.is/island-ui/core'
 
@@ -195,4 +196,23 @@ export const getAllGuessableValues = (text: HTMLText, title: string) => {
       guessed: true,
     },
   }
+}
+
+export const getInputFieldsWithErrors = (
+  inputs: RegDraftFormSimpleProps[],
+  draft: RegDraftForm | undefined,
+) => {
+  if (draft) {
+    const hasErrors = inputs.filter((x) => !draft[x].value)
+    if (hasErrors.length > 0) {
+      const errorUpdateArray = hasErrors.map((item) => ({
+        [item]: {
+          ...draft?.[item],
+          error: true,
+        },
+      }))
+      return Object.assign({}, ...errorUpdateArray)
+    }
+  }
+  return undefined
 }

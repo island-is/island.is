@@ -70,7 +70,7 @@ const Wrap = (props: WrapProps) => (
 
 export const EditMeta: StepComponent = (props) => {
   const t = useIntl().formatMessage
-  const { draft, actions, inputHasError } = props
+  const { draft, actions } = props
   // const textRef = useRef(() => draft.text)
 
   const {
@@ -110,7 +110,7 @@ export const EditMeta: StepComponent = (props) => {
           options={ministryOptions}
           required
           errorMessage={t(msg.requiredFieldError)}
-          hasError={inputHasError && !draft.ministry.value}
+          hasError={!!draft.ministry?.error}
           onChange={(option) =>
             actions.updateState({
               name: 'ministry',
@@ -143,7 +143,7 @@ export const EditMeta: StepComponent = (props) => {
           value={findValueOption(regulationTypes, draft.type.value)}
           required
           errorMessage={t(msg.requiredFieldError)}
-          hasError={inputHasError && !draft.type.value}
+          hasError={!!draft.type.error}
           onChange={(typeOption) =>
             actions.updateState({
               name: 'type',
@@ -160,7 +160,7 @@ export const EditMeta: StepComponent = (props) => {
           selected={draft.signatureDate?.value}
           required
           errorMessage={t(msg.requiredFieldError)}
-          hasError={inputHasError && !draft.signatureDate?.value}
+          hasError={!!draft.signatureDate?.error}
           handleChange={(date: Date) =>
             actions.updateState({
               name: 'signatureDate',
@@ -178,7 +178,7 @@ export const EditMeta: StepComponent = (props) => {
           minDate={draft.idealPublishDate?.value || null}
           required
           errorMessage={t(msg.requiredFieldError)}
-          hasError={inputHasError && !draft.effectiveDate?.value}
+          hasError={!!draft.effectiveDate.error}
           handleChange={(date: Date) =>
             actions.updateState({
               name: 'effectiveDate',
