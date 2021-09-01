@@ -5,8 +5,8 @@ describe('/krafa/fyrirtaka/:id', () => {
   })
 
   it('should require a valid arrest time', () => {
-    cy.getByTestid('datepicker').first().click()
-    cy.contains('15').click()
+    cy.getByTestid('datepicker').first().type('01.01.2020')
+    cy.clickOutside()
     cy.getByTestid('arrestDate-time').type('13:').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 12:34 eða 1:23')
     cy.getByTestid('arrestDate-time').clear().blur()
@@ -50,8 +50,8 @@ describe('/krafa/fyrirtaka/:id', () => {
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    cy.getByTestid('datepicker').first().click()
-    cy.contains('15').click()
+    cy.getByTestid('datepicker').first().type('01.01.2020')
+    cy.clickOutside()
     cy.getByTestid('arrestDate-time').clear().type('1333')
     cy.getByTestid('datepicker').last().click()
     cy.getByTestid('datepickerIncreaseMonth').dblclick()
