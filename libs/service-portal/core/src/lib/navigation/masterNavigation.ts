@@ -155,10 +155,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Stillingar
       {
-        name: defineMessage({
-          id: 'service.portal:regulations-admin',
-          defaultMessage: 'Reglugerðir - Admin',
-        }),
+        name: m.regulationAdmin,
         path: ServicePortalPath.RegulationsAdminRoot,
         icon: {
           type: 'outline',
@@ -166,10 +163,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         children: [
           {
-            name: defineMessage({
-              id: 'service.portal:regulations-ministries',
-              defaultMessage: 'Ráðuneyti',
-            }),
+            name: m.regulationAdminMinistries,
             path: ServicePortalPath.RegulationsAdminMinistries,
           },
         ],

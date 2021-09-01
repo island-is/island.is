@@ -377,6 +377,14 @@ export const m = defineMessages({
     id: 'service.portal:finance-local-tax',
     defaultMessage: 'Útsvar',
   },
+  regulationAdmin: {
+    id: 'service.portal:regulations-admin',
+    defaultMessage: 'Reglugerðir - Admin',
+  },
+  regulationAdminMinistries: {
+    id: 'service.portal:regulations-ministries',
+    defaultMessage: 'Ráðuneyti',
+  },
   actions: {
     id: 'service.portal:actions',
     defaultMessage: 'Aðgerðir',
