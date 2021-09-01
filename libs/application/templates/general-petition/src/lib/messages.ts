@@ -321,45 +321,45 @@ export const m: MessageDir = {
         'Vinsamlegast farðu yfir upplýsingarnar hér að néðan og staðfestu að þær sé réttar',
       description: 'Overview subtitle',
     },
-    reviewTitle: {
-      id: 'gpt.application:overview.review.title',
-      defaultMessage: 'Upplýsingar um listabókstaf',
+    overviewTitle: {
+      id: 'gpt.application:overview.overviewTitle',
+      defaultMessage: 'Upplýsingar um undirskriftalista',
       description: 'Overview review title',
     },
-    email: {
-      id: 'gpt.application:overview.review.email',
-      defaultMessage: 'Netfang',
-      description: 'Registered email for party letter',
+    applicant: {
+      id: 'gpt.application:overview.applicant',
+      defaultMessage: 'Umsækjandi',
+      description: 'Applicant',
     },
-    partyLetter: {
-      id: 'gpt.application:overview.partyletter',
-      defaultMessage: 'Listabókstafur',
-      description: 'Overview label for party letter',
+    listName: {
+      id: 'gpt.application:overview.listName',
+      defaultMessage: 'Heiti undirskriftalista',
+      description: 'List name',
     },
-    partyName: {
-      id: 'gpt.application:overview.partyname',
-      defaultMessage: 'Nafn flokks',
-      description: 'Overview label for party name',
+    aboutList: {
+      id: 'gpt.application:overview.aboutList',
+      defaultMessage: 'Um undirskriftalista',
+      description: 'About list',
     },
-    responsibleParty: {
-      id: 'gpt.application:overview.responsible.party',
-      defaultMessage: 'Ábyrgðarmaður',
-      description: 'Overview label for responsible party',
+    listPeriod: {
+      id: 'gpt.application:overview.listPeriod',
+      defaultMessage: 'Tímabil lista',
+      description: 'List period',
     },
-    endorsementsCount: {
-      id: 'gpt.application:overview.endorsements.count',
-      defaultMessage: 'Fjöldi meðmælenda',
-      description: 'Overview label for endorsements count',
+    listOnPaper: {
+      id: 'gpt.application:overview.lstOnPaper',
+      defaultMessage: 'Undirskriftalisti á pappir',
+      description: 'List on paper',
     },
-    warningCount: {
-      id: 'gpt.application:overview.warning.count',
-      defaultMessage: 'Fjöldi meðmælenda í vafa',
-      description: 'Overview label for endorsements count with warning',
+    ageInterval: {
+      id: 'gpt.application:overview.ageInterval',
+      defaultMessage: 'Aldursbil á lista',
+      description: 'Age interval of the list',
     },
-    includedPapers: {
-      id: 'gpt.application:overview.include.papers',
-      defaultMessage: 'Meðmælendur á pappír',
-      description: 'Overview label for include papers checkbox',
+    participants: {
+      id: 'gpt.application:overview.participants',
+      defaultMessage: 'Þátttakendur',
+      description: 'List participants',
     },
     submitButton: {
       id: 'gpt.application:overview.submit.button',

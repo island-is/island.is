@@ -5,6 +5,7 @@ import {
   buildSection,
   buildRadioField,
   buildDescriptionField,
+  buildCustomField,
   Form,
   FormModes,
   buildExternalDataProvider,
@@ -16,15 +17,6 @@ import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
 import { User } from '@island.is/api/domains/national-registry'
 import { format } from 'kennitala'
-
-export enum IDS {
-  PartySSD = 'ssd',
-  PartyLetter = 'partyLetter',
-  PartyName = 'partyName',
-  Endorsements = 'endorsements',
-  Warnings = 'warnings',
-  Documents = 'documents',
-}
 
 export const LetterApplicationForm: Form = buildForm({
   id: 'LetterApplicationDraft',
@@ -48,12 +40,12 @@ export const LetterApplicationForm: Form = buildForm({
               title: '',
               subTitle: m.externalDataSection.dmrSubtitle,
             }),
-            /*buildDataProviderItem({
+            buildDataProviderItem({
               id: 'nationalRegistry',
               type: 'NationalRegistryProvider',
-              title: m.externalDataSection.nationalRegistryTitle,
-              subTitle: m.externalDataSection.nationalRegistrySubtitle,
-            }),*/
+              title: '',
+              subTitle: '',
+            }),
           ],
         }),
       ],
@@ -63,14 +55,17 @@ export const LetterApplicationForm: Form = buildForm({
       title: m.selectNationalId.title,
       children: [
         buildRadioField({
-          id: IDS.PartySSD,
+          id: 'ssn',
           title: m.selectNationalId.title,
           largeButtons: true,
           width: 'half',
           options: (application: Application) => {
+            const nationalRegistry = application.externalData.nationalRegistry
+              .data as User
+
             return [
               {
-                label: format(application.applicant),
+                label: nationalRegistry.fullName,
                 subLabel: format(application.applicant),
                 value: application.applicant,
               },
@@ -97,7 +92,7 @@ export const LetterApplicationForm: Form = buildForm({
               defaultValue: () => '',
             }),
             buildTextField({
-              id: 'email_repeated',
+              id: 'emailCopy',
               title: m.email.emailRepeated,
               placeholder: m.email.email,
               variant: 'email',
@@ -113,7 +108,7 @@ export const LetterApplicationForm: Form = buildForm({
               description: m.email.confirmationCodeDescription,
             }),
             buildTextField({
-              id: 'confidmationCode',
+              id: 'confirmationCode',
               title: m.email.confirmationCode,
               backgroundColor: 'white',
               width: 'half',
@@ -194,20 +189,31 @@ export const LetterApplicationForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'overview',
+      id: 'reviewApplication',
       title: m.overview.title,
       children: [
         buildMultiField({
-          id: 'party',
+          id: 'overview',
           title: m.overview.title,
+          description: m.overview.subtitle,
           children: [
-            buildDescriptionField({
-              id: 'participantsInfo',
-              title: 'TODO!',
-              space: 'containerGutter',
-              titleVariant: 'h3',
-              description: '',
+            buildCustomField({
+              id: 'applicantInfoOverview',
+              title: '',
+              component: 'Overview',
             }),
+            /*buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: m.overview.title,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.overview.submitButton,
+                  type: 'primary',
+                },
+              ],
+            }),*/
           ],
         }),
       ],
