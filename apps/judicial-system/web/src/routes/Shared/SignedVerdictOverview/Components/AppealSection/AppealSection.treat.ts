@@ -3,7 +3,7 @@ import { style } from 'treat'
 
 export const appealContainer = style({
   height: 112,
-  marginBottom: theme.spacing[3],
+  marginBottom: theme.spacing[2],
 })
 
 export const appealInnerWrapper = style({
