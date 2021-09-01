@@ -55,11 +55,6 @@ export const MinistryList = () => {
             <ActionCard
               key={slug + '-' + i}
               heading={name}
-              tag={{
-                label: 'Active',
-                outlined: true,
-                variant: 'blueberry',
-              }}
               // text={''}
               cta={{
                 label: formatMessage(msg.cta),
