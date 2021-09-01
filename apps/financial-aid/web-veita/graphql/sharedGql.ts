@@ -98,8 +98,8 @@ export const GetCurrentUserQuery = gql`
   }
 `
 export const CurrentUserQuery = gql`
-  query CurrentUserQuery($input: UserInput) {
-    currentUser(input?: $input) {
+  query CurrentUserQuery {
+    currentUser {
       nationalId
       name
       phoneNumber

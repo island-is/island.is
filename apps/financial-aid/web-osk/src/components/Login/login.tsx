@@ -7,13 +7,12 @@ import * as styles from './login.treat'
 interface Props {
   headline?: string
   about?: string
-  statusPage?: boolean
 }
 
-const Login = ({ headline, about, statusPage = false }: Props) => {
+const Login = ({ headline, about }: Props) => {
   const router = useRouter()
 
-  const apiLoginRoute = statusPage
+  const apiLoginRoute = router.query.id
     ? `/api/auth/login?applicationId=${router.query.id}&nationalId=`
     : '/api/auth/login?nationalId='
 

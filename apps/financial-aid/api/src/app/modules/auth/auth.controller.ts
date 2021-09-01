@@ -81,7 +81,6 @@ export class AuthController {
     @Res() res: Response,
     @Query('service', new DefaultValuePipe('osk')) service: 'osk' | 'veita',
     @Query('nationalId') nationalId: string,
-    @Query('applicationId') applicationId: string,
   ) {
     this.logger.debug(`Received login request for the service ${service}`)
 

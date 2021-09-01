@@ -24,7 +24,6 @@ const StatusLayout = ({ children }: Props) => {
       <Login
         headline="Hver er staðan á umsókn minni um fjárhagsaðstoð?"
         about="Skráðu þig inn til að sjá stöðu, hlaða upp viðeigandi gögnum, hafa samband við okkur og annað slíkt sem tengist umsókninni þinni."
-        statusPage={true}
       />
     )
   }
