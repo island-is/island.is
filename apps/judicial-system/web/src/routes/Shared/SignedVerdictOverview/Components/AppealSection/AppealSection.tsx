@@ -11,6 +11,7 @@ import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
 import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
 import { useEffectOnce } from 'react-use'
 import ProsecutorAppealDatePicker from '../Prosecutor/ProsecutorAppealDatePicker'
+import { formatAccusedByGender } from '@island.is/judicial-system/formatters'
 
 interface Props {
   workingCase: Case
@@ -59,6 +60,24 @@ const AppealSection: React.FC<Props> = (props) => {
               fluid
               light
             />
+          </BlueBox>
+        </div>
+      )}
+      {workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
+        <div className={styles.appealContainer}>
+          <BlueBox>
+            <InfoBox
+              text="Sakborningur kærði úrskurðinn í þinghaldi"
+              fluid
+              light
+            />
+          </BlueBox>
+        </div>
+      )}
+      {workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL && (
+        <div className={styles.appealContainer}>
+          <BlueBox>
+            <InfoBox text="Sækjandi kærði úrskurðinn í þinghaldi" fluid light />
           </BlueBox>
         </div>
       )}

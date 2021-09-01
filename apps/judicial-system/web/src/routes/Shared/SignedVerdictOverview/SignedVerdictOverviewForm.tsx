@@ -42,6 +42,7 @@ import AppealSection from './Components/AppealSection/AppealSection'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ValueType } from 'react-select/src/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
 
 interface Props {
   workingCase: Case
@@ -288,7 +289,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         />
       </Box>
       {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
+        workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+        workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE ||
+        workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
         workingCase.rulingDate &&
         (user?.role === UserRole.JUDGE ||
           user?.role === UserRole.REGISTRAR) && (
