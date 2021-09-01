@@ -443,7 +443,6 @@ const Auctions: Screen<AuctionsProps> = ({
   })
 
   // TODO: Fix input focus bug, where after after initial load of the page and first key-up on the Input, the Input looses focus.
-  // TODO: Remove Auction details page, as it's now obsolete.
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
