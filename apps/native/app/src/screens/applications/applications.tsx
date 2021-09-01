@@ -3,7 +3,7 @@ import {
   EmptyList,
   LinkCard,
   SearchHeader,
-  TopLine,
+  TopLine
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -14,19 +14,17 @@ import {
   AppStateStatus,
   FlatList,
   Image,
-  Platform,
-  TouchableOpacity,
-  View,
-  SafeAreaView,
+  Platform, SafeAreaView, TouchableOpacity,
+  View
 } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
 import {
   Navigation,
-  NavigationFunctionComponent,
+  NavigationFunctionComponent
 } from 'react-native-navigation'
 import {
   useNavigationSearchBarCancelPress,
-  useNavigationSearchBarUpdate,
+  useNavigationSearchBarUpdate
 } from 'react-native-navigation-hooks/dist'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
@@ -197,7 +195,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const isEmpty = (res?.data?.searchResults?.items ?? []).length === 0
 
   if (isLoading) {
-    return <ActivityIndicator />
+    return <ActivityIndicator size="large" color="#0061FF" />
   }
 
   if (!isLoading && isEmpty && !isSearch) {

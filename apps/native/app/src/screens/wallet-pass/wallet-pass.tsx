@@ -237,7 +237,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       <Information contentInset={{ bottom: 162 }}>
         <SafeAreaView style={{ marginHorizontal: 16 }}>
           {!data?.payload?.data && licenseRes.loading ? (
-            <ActivityIndicator size="large" style={{ marginTop: 32 }} />
+            <ActivityIndicator size="large" color="#0061FF" style={{ marginTop: 32 }} />
           ) : (
             <FieldRender data={fields} />
           )}
@@ -294,7 +294,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       </SafeAreaView>
       {addingToWallet && (
         <LoadingOverlay>
-          <ActivityIndicator size="large" style={{ marginTop: 32 }} />
+          <ActivityIndicator size="large" color="#0061FF" style={{ marginTop: 32 }} />
         </LoadingOverlay>
       )}
     </View>

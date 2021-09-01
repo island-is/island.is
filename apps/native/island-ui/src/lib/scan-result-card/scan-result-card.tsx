@@ -167,7 +167,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
             <SubtitleIcon>
               {loading ? (
                 <ActivityIndicator
-                  color="#000"
+                  color="#0061FF"
                   animating
                   size="small"
                   style={{ transform: [{ scale: 0.8 }] }}
