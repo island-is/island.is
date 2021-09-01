@@ -25,7 +25,11 @@ import {
   QueryGetOrganizationPageArgs,
   QueryGetSyslumennAuctionsArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY, GET_SYSLUMENN_AUCTIONS_QUERY } from '../../queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+  GET_SYSLUMENN_AUCTIONS_QUERY,
+} from '../../queries'
 import { Screen } from '../../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -42,15 +46,15 @@ const { publicRuntimeConfig } = getConfig()
 
 interface AuctionsProps {
   organizationPage: Query['getOrganizationPage']
-  syslumennAuctions: Query['getSyslumennAuctions'],
+  syslumennAuctions: Query['getSyslumennAuctions']
   namespace: Query['getNamespace']
 }
 
 interface OfficeLocation {
-  filterLabel: string,
-  slugValue: string,
-  office: string,
-  location: string,
+  filterLabel: string
+  slugValue: string
+  office: string
+  location: string
 }
 
 const OFFICE_LOCATIONS: OfficeLocation[] = [
@@ -261,110 +265,113 @@ const OFFICE_LOCATIONS: OfficeLocation[] = [
   },
 ]
 
-const KNOWN_LOCATIONS: string[] = OFFICE_LOCATIONS.map(x => x.location)
+const KNOWN_LOCATIONS: string[] = OFFICE_LOCATIONS.map((x) => x.location)
 
 const LOT_TYPES = {
-  REAL_ESTATE: "Fasteign",
-  VEHICLE: "Ökutæki",
-  AIRCRAFT: "Loftfar",
-  SHIP: "Skip",
-  LIQUID_ASSETS: "Lausafjármunir",
-  SHAREHOLDING: "Hlutafjáreign",
-  SHAREHOLDING_PLC: "Hlutafjáreign í einkahlutafélagi",
-  SHAREHOLDING_LLC: "Hlutafjáreign í hlutafélagi",
-  STOCKS: "Verðbréf",
-  CLAIMS: "Kröfuréttindi",
-};
+  REAL_ESTATE: 'Fasteign',
+  VEHICLE: 'Ökutæki',
+  AIRCRAFT: 'Loftfar',
+  SHIP: 'Skip',
+  LIQUID_ASSETS: 'Lausafjármunir',
+  SHAREHOLDING: 'Hlutafjáreign',
+  SHAREHOLDING_PLC: 'Hlutafjáreign í einkahlutafélagi',
+  SHAREHOLDING_LLC: 'Hlutafjáreign í hlutafélagi',
+  STOCKS: 'Verðbréf',
+  CLAIMS: 'Kröfuréttindi',
+}
 
 const AUCTION_TYPES = {
-  START: "Byrjun uppboðs",
-  CONTINUATION: "Framhald uppboðs",
-};
+  START: 'Byrjun uppboðs',
+  CONTINUATION: 'Framhald uppboðs',
+}
 
 interface LotTypeOption {
-  filterLabel: string,
+  filterLabel: string
   value: string
   lotType: string
-  auctionType: string,
-
+  auctionType: string
 }
 
 const LOT_TYPES_OPTIONS: LotTypeOption[] = [
   {
-    filterLabel: "Allar tegundir",
-    value: "allar-tegundir",
+    filterLabel: 'Allar tegundir',
+    value: 'allar-tegundir',
     lotType: '',
     auctionType: '',
   },
   {
     filterLabel: `${LOT_TYPES.REAL_ESTATE} - ${AUCTION_TYPES.START}`,
-    value: "fasteign-byrjun",
+    value: 'fasteign-byrjun',
     lotType: LOT_TYPES.REAL_ESTATE,
     auctionType: AUCTION_TYPES.START,
   },
   {
     filterLabel: `${LOT_TYPES.REAL_ESTATE} - ${AUCTION_TYPES.CONTINUATION}`,
-    value: "fasteign-framhald",
+    value: 'fasteign-framhald',
     lotType: LOT_TYPES.REAL_ESTATE,
     auctionType: AUCTION_TYPES.CONTINUATION,
   },
   {
     filterLabel: LOT_TYPES.VEHICLE,
-    value: "okutaeki",
+    value: 'okutaeki',
     lotType: LOT_TYPES.VEHICLE,
     auctionType: '',
   },
   {
     filterLabel: LOT_TYPES.AIRCRAFT,
-    value: "loftfar",
+    value: 'loftfar',
     lotType: LOT_TYPES.AIRCRAFT,
-    auctionType: "...",
+    auctionType: '...',
   },
   {
     filterLabel: LOT_TYPES.SHIP,
-    value: "skip",
+    value: 'skip',
     lotType: LOT_TYPES.SHIP,
-    auctionType: "",
+    auctionType: '',
   },
   {
     filterLabel: LOT_TYPES.LIQUID_ASSETS,
-    value: "lausafjarmunir",
+    value: 'lausafjarmunir',
     lotType: LOT_TYPES.LIQUID_ASSETS,
-    auctionType: "",
+    auctionType: '',
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING,
-    value: "hlutafjareign",
+    value: 'hlutafjareign',
     lotType: LOT_TYPES.SHAREHOLDING,
-    auctionType: "",
+    auctionType: '',
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING_PLC,
-    value: "hlutafjareign-i-einkahlutafelagi",
+    value: 'hlutafjareign-i-einkahlutafelagi',
     lotType: LOT_TYPES.SHAREHOLDING_PLC,
-    auctionType: "",
+    auctionType: '',
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING_LLC,
-    value: "hlutafjareign-i-hlutafelagi",
+    value: 'hlutafjareign-i-hlutafelagi',
     lotType: LOT_TYPES.SHAREHOLDING_LLC,
-    auctionType: "",
+    auctionType: '',
   },
   {
     filterLabel: LOT_TYPES.STOCKS,
-    value: "verdbref",
+    value: 'verdbref',
     lotType: LOT_TYPES.STOCKS,
-    auctionType: "...",
+    auctionType: '...',
   },
   {
     filterLabel: LOT_TYPES.CLAIMS,
-    value: "krofurettindi",
+    value: 'krofurettindi',
     lotType: LOT_TYPES.CLAIMS,
-    auctionType: "",
+    auctionType: '',
   },
 ]
 
-const Auctions: Screen<AuctionsProps> = ({ organizationPage, syslumennAuctions, namespace }) => {
+const Auctions: Screen<AuctionsProps> = ({
+  organizationPage,
+  syslumennAuctions,
+  namespace,
+}) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
@@ -395,18 +402,30 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, syslumennAuctions, 
     OFFICE_LOCATIONS[0],
   )
   const setOfficeLocationBySlugValue = (slugValue: string) => {
-    const targetOfficeLocationList = OFFICE_LOCATIONS.filter(o => o.slugValue === slugValue)
-    const targetOfficeLocation = targetOfficeLocationList.length > 0 ? targetOfficeLocationList[0] : OFFICE_LOCATIONS[0]  // Fallback to first Office Location
+    const targetOfficeLocationList = OFFICE_LOCATIONS.filter(
+      (o) => o.slugValue === slugValue,
+    )
+    const targetOfficeLocation =
+      targetOfficeLocationList.length > 0
+        ? targetOfficeLocationList[0]
+        : OFFICE_LOCATIONS[0] // Fallback to first Office Location
     setOfficeLocation(targetOfficeLocation)
   }
 
   const [query, _setQuery] = useState('')
   const setQuery = (query: string) => _setQuery(query.toLowerCase())
 
-  const [lotTypeOption, setLotTypeOption] = useState<LotTypeOption>(LOT_TYPES_OPTIONS[0])
+  const [lotTypeOption, setLotTypeOption] = useState<LotTypeOption>(
+    LOT_TYPES_OPTIONS[0],
+  )
   const setLotTypeOptionByValue = (value: string) => {
-    const targetLotTypeOptionList = LOT_TYPES_OPTIONS.filter(o => o.value === value)
-    const targetLotTypeOption = targetLotTypeOptionList.length > 0 ? targetLotTypeOptionList[0] : LOT_TYPES_OPTIONS[0]  // Fallback to first Lot Type Option
+    const targetLotTypeOptionList = LOT_TYPES_OPTIONS.filter(
+      (o) => o.value === value,
+    )
+    const targetLotTypeOption =
+      targetLotTypeOptionList.length > 0
+        ? targetLotTypeOptionList[0]
+        : LOT_TYPES_OPTIONS[0] // Fallback to first Lot Type Option
     setLotTypeOption(targetLotTypeOption)
   }
 
@@ -429,38 +448,47 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, syslumennAuctions, 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
     // Find the target Office by looking up Office slugValue.
-    const targetOfficeLocationList = OFFICE_LOCATIONS.filter(o => o.slugValue === hashString)
-    const targetOfficeLocation = targetOfficeLocationList.length > 0 ? targetOfficeLocationList[0] : OFFICE_LOCATIONS[0]  // Fallback to first Office Location
+    const targetOfficeLocationList = OFFICE_LOCATIONS.filter(
+      (o) => o.slugValue === hashString,
+    )
+    const targetOfficeLocation =
+      targetOfficeLocationList.length > 0
+        ? targetOfficeLocationList[0]
+        : OFFICE_LOCATIONS[0] // Fallback to first Office Location
     setOfficeLocation(targetOfficeLocation)
   }, [Router, setOfficeLocation])
 
-  const filteredAuctions = syslumennAuctions.filter(
-    (auction) => {
-      return (
-          // Filter by office
-          officeLocation.office ? auction.office.toLowerCase() === officeLocation.office.toLowerCase() : true
-        ) && (
-          // Filter by location
-          officeLocation.location ? auction.location.toLowerCase() === officeLocation.location.toLowerCase() : true
-        ) && (
-          // Filter by lot type
-          lotTypeOption.lotType ? auction.lotType === lotTypeOption.lotType : true
-        ) && (
-          // Filter by auction type
-          lotTypeOption.auctionType ? auction.auctionType === lotTypeOption.auctionType : true
-        ) && (
-          // Filter by Date
-          date ? auction.auctionDate.startsWith(format(date, 'yyyy-MM-dd')) : true
-        ) && (
-            // Filter by search query
-            auction.lotName?.toLowerCase().includes(query) ||
-            auction.lotId?.toLowerCase().includes(query) ||
-            auction.lotItems?.toLowerCase().includes(query) ||
-            auction.office?.toLowerCase().includes(query) ||
-            auction.location?.toLowerCase().includes(query)
-          )
-      }
-  )
+  const filteredAuctions = syslumennAuctions.filter((auction) => {
+    return (
+      // Filter by office
+      (officeLocation.office
+        ? auction.office.toLowerCase() === officeLocation.office.toLowerCase()
+        : true) &&
+      // Filter by location
+      (officeLocation.location
+        ? auction.location.toLowerCase() ===
+          officeLocation.location.toLowerCase()
+        : true) &&
+      // Filter by lot type
+      (lotTypeOption.lotType
+        ? auction.lotType === lotTypeOption.lotType
+        : true) &&
+      // Filter by auction type
+      (lotTypeOption.auctionType
+        ? auction.auctionType === lotTypeOption.auctionType
+        : true) &&
+      // Filter by Date
+      (date
+        ? auction.auctionDate.startsWith(format(date, 'yyyy-MM-dd'))
+        : true) &&
+      // Filter by search query
+      (auction.lotName?.toLowerCase().includes(query) ||
+        auction.lotId?.toLowerCase().includes(query) ||
+        auction.lotItems?.toLowerCase().includes(query) ||
+        auction.office?.toLowerCase().includes(query) ||
+        auction.location?.toLowerCase().includes(query))
+    )
+  })
 
   return (
     <OrganizationWrapper
@@ -500,8 +528,14 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, syslumennAuctions, 
               isSearchable
               label={n('auctionFilterOffice', 'Embætti')}
               name="officeSelect"
-              options={OFFICE_LOCATIONS.map(x => ({ label: x.filterLabel, value: x.slugValue }))}
-              value={OFFICE_LOCATIONS.map(x => ({ label: x.filterLabel, value: x.slugValue })).find((x) => x.value === officeLocation.slugValue)}
+              options={OFFICE_LOCATIONS.map((x) => ({
+                label: x.filterLabel,
+                value: x.slugValue,
+              }))}
+              value={OFFICE_LOCATIONS.map((x) => ({
+                label: x.filterLabel,
+                value: x.slugValue,
+              })).find((x) => x.value === officeLocation.slugValue)}
               onChange={({ value }: Option) => {
                 setOfficeLocationBySlugValue(String(value))
                 Router.replace(`#${value}`)
@@ -521,9 +555,16 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, syslumennAuctions, 
               label={n('auctionFilterLotTypeLabel', 'Tegund uppboðs')}
               placeholder={n('auctionFilterLotTypePlaceholder', 'Veldu tegund')}
               name="officeSelect"
-              options={LOT_TYPES_OPTIONS.map(x => ({ label: x.filterLabel, value: x.value }))}
-              value={LOT_TYPES_OPTIONS.map(x => ({ label: x.filterLabel, value: x.value })).find((x) => x.value === lotTypeOption.value)}
-              onChange={({ value }: Option) => setLotTypeOptionByValue(String(value))
+              options={LOT_TYPES_OPTIONS.map((x) => ({
+                label: x.filterLabel,
+                value: x.value,
+              }))}
+              value={LOT_TYPES_OPTIONS.map((x) => ({
+                label: x.filterLabel,
+                value: x.value,
+              })).find((x) => x.value === lotTypeOption.value)}
+              onChange={({ value }: Option) =>
+                setLotTypeOptionByValue(String(value))
               }
             />
           </GridColumn>
@@ -543,7 +584,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, syslumennAuctions, 
           </GridColumn>
         </GridRow>
         <GridRow>
-        <GridColumn
+          <GridColumn
             paddingTop={[2, 2, 0]}
             paddingBottom={[4, 4, 6]}
             span="12/12"
@@ -578,7 +619,8 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, syslumennAuctions, 
             </Text>
           </Box>
         )}
-        {!loading && !error && (
+        {!loading &&
+          !error &&
           filteredAuctions.slice(0, showCount).map((auction) => {
             const auctionDate = new Date(auction.auctionDate)
 
@@ -598,34 +640,59 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, syslumennAuctions, 
                   justifyContent="spaceBetween"
                 >
                   <Text variant="eyebrow" color="purple400" paddingTop={1}>
-                    {format(auctionDate, 'd. MMMM yyyy')}  - kl. {auction.auctionTime} {auction.location && KNOWN_LOCATIONS.includes(auction.location) && (' - ' + auction.location)}
+                    {format(auctionDate, 'd. MMMM yyyy')} - kl.{' '}
+                    {auction.auctionTime}{' '}
+                    {auction.location &&
+                      KNOWN_LOCATIONS.includes(auction.location) &&
+                      ' - ' + auction.location}
                   </Text>
                   <Tag disabled>{auction.office}</Tag>
                 </Box>
                 <Box>
-                  <Text variant="h3">
-                    {auction.lotName}
-                  </Text>
+                  <Text variant="h3">{auction.lotName}</Text>
 
                   {/* Real Estate link */}
-                  {(auction.lotId && auction.lotType === LOT_TYPES.REAL_ESTATE && (
-                    <LotLink prefix={n('auctionRealEstateNumberPrefix', 'Fasteign nr. ')} linkText={auction.lotId} href={`https://www.skra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname=${auction.lotId}&submitbutton=Leita`} />
-                  ))}
+                  {auction.lotId &&
+                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
+                      <LotLink
+                        prefix={n(
+                          'auctionRealEstateNumberPrefix',
+                          'Fasteign nr. ',
+                        )}
+                        linkText={auction.lotId}
+                        href={`https://www.skra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname=${auction.lotId}&submitbutton=Leita`}
+                      />
+                    )}
 
                   {/* Vehicle link */}
-                  {(auction.lotId && auction.lotType === LOT_TYPES.VEHICLE && (
-                    <LotLink prefix={n('auctionVehicleNumberPrefix', 'Bílnúmer: ')} linkText={auction.lotId} href={`https://www.samgongustofa.is/umferd/okutaeki/okutaekjaskra/uppfletting?vq=${auction.lotId}`} />
-                  ))}
+                  {auction.lotId && auction.lotType === LOT_TYPES.VEHICLE && (
+                    <LotLink
+                      prefix={n('auctionVehicleNumberPrefix', 'Bílnúmer: ')}
+                      linkText={auction.lotId}
+                      href={`https://www.samgongustofa.is/umferd/okutaeki/okutaekjaskra/uppfletting?vq=${auction.lotId}`}
+                    />
+                  )}
 
                   {/* Aircraft link */}
-                  {(auction.lotId && auction.lotType === LOT_TYPES.AIRCRAFT && (
-                    <LotLink prefix={n('auctionAircraftNumberPrefix', 'Númer loftfars: ')} linkText={auction.lotId} href={`https://www.samgongustofa.is/flug/loftfor/loftfaraskra?aq=${auction.lotId}`} />
-                  ))}
+                  {auction.lotId && auction.lotType === LOT_TYPES.AIRCRAFT && (
+                    <LotLink
+                      prefix={n(
+                        'auctionAircraftNumberPrefix',
+                        'Númer loftfars: ',
+                      )}
+                      linkText={auction.lotId}
+                      href={`https://www.samgongustofa.is/flug/loftfor/loftfaraskra?aq=${auction.lotId}`}
+                    />
+                  )}
 
                   {/* Ship link */}
-                  {(auction.lotId && auction.lotType === LOT_TYPES.SHIP && (
-                    <LotLink prefix={n('auctionShipNumberPrefix', 'Númer skips: ')} linkText={auction.lotId} href={`https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq=${auction.lotId}`} />
-                  ))}
+                  {auction.lotId && auction.lotType === LOT_TYPES.SHIP && (
+                    <LotLink
+                      prefix={n('auctionShipNumberPrefix', 'Númer skips: ')}
+                      linkText={auction.lotId}
+                      href={`https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq=${auction.lotId}`}
+                    />
+                  )}
 
                   <Box
                     alignItems="flexEnd"
@@ -635,26 +702,35 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, syslumennAuctions, 
                     marginLeft="auto"
                   >
                     <Box>
-                      {(auction.lotItems && (
+                      {auction.lotItems && (
                         <DialogPrompt
                           baseId={auction.lotId}
                           title={auction.lotName}
-                          description={auction.lotItems.split('|').join("  •  ")}
+                          description={auction.lotItems
+                            .split('|')
+                            .join('  •  ')}
                           ariaLabel="Upplýsingar um innihald uppboðs."
-                          disclosureElement={<Button variant="text" size="small" icon="arrowForward">{n('auctionLotItemsLink', 'Nánar')}</Button>}
+                          disclosureElement={
+                            <Button
+                              variant="text"
+                              size="small"
+                              icon="arrowForward"
+                            >
+                              {n('auctionLotItemsLink', 'Nánar')}
+                            </Button>
+                          }
                         />
-                      ))}
+                      )}
                     </Box>
                     <Text variant="small">
-                      {auction.lotType} {auction.auctionType && (' - ' + auction.auctionType)}
+                      {auction.lotType}{' '}
+                      {auction.auctionType && ' - ' + auction.auctionType}
                     </Text>
                   </Box>
                 </Box>
-
               </Box>
             )
-          })
-        )}
+          })}
       </Box>
       <Box
         display="flex"
@@ -664,7 +740,8 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, syslumennAuctions, 
       >
         {showCount < filteredAuctions.length && (
           <Button onClick={() => setShowCount(showCount + 10)}>
-            {n('auctionSeeMore', 'Sjá fleiri')} ({filteredAuctions.length - showCount})
+            {n('auctionSeeMore', 'Sjá fleiri')} (
+            {filteredAuctions.length - showCount})
           </Button>
         )}
       </Box>
@@ -672,18 +749,33 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, syslumennAuctions, 
   )
 }
 
-const LotLink = ({ prefix, linkText, href }: { prefix: string; linkText: string; href: string }) => (
+const LotLink = ({
+  prefix,
+  linkText,
+  href,
+}: {
+  prefix: string
+  linkText: string
+  href: string
+}) => (
   <LinkContext.Provider
     value={{
-      linkRenderer: (href, children) => <a style={{
-        color: '#0061FF',
-        textDecoration: 'underline',
-      }} href={href} rel="noopener noreferrer" target="_blank">
-        {children}
-      </a>
+      linkRenderer: (href, children) => (
+        <a
+          style={{
+            color: '#0061FF',
+            textDecoration: 'underline',
+          }}
+          href={href}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {children}
+        </a>
+      ),
     }}
   >
-    <Text paddingTop={2} paddingBottom={1} >
+    <Text paddingTop={2} paddingBottom={1}>
       {prefix} <a href={href}>{linkText}</a>
     </Text>
   </LinkContext.Provider>
