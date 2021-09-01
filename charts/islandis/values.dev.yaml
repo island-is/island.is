@@ -185,7 +185,7 @@ application-system-api:
       annotations:
         kubernetes.io/ingress.class: nginx-internal-alb
       hosts:
-        - host: application-api-xrd.internal.dev01.devland.is
+        - host: application-payment-callback-xrd.internal.dev01.devland.is
           paths:
             - /application-payment
   initContainer:
@@ -224,6 +224,8 @@ application-system-api:
     DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: /k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER
     DOKOBIT_ACCESS_TOKEN: /k8s/application-system/api/DOKOBIT_ACCESS_TOKEN
     DOKOBIT_URL: /k8s/application-system-api/DOKOBIT_URL
+    DRIVING_LICENSE_SECRET: /k8s/application-system/api/DRIVING_LICENSE_SECRET
+    DRIVING_LICENSE_XROAD_PATH: /k8s/application-system/api/DRIVING_LICENSE_XROAD_PATH
     EMAIL_FROM: /k8s/application-system/api/EMAIL_FROM
     EMAIL_FROM_NAME: /k8s/application-system/api/EMAIL_FROM_NAME
     EMAIL_REPLY_TO: /k8s/application-system/api/EMAIL_REPLY_TO
@@ -1028,7 +1030,6 @@ web:
     API_URL: http://web-api
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
-    DISABLE_REGULATIONS_PAGE: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     NODE_OPTIONS: '--max-old-space-size=464'
     TRACKING_DOMAIN: beta.dev01.devland.is

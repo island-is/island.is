@@ -16,8 +16,6 @@ import React, { useEffect, useState, useRef } from 'react'
 import omit from 'lodash/omit'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import getConfig from 'next/config'
-import { CustomNextError } from '@island.is/web/units/errors'
 import { SubpageDetailsContent } from '@island.is/web/components'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import {
@@ -60,8 +58,6 @@ import {
 } from '../queries'
 import { RegulationsHomeIntro } from '../../components/Regulations/RegulationsHomeIntro'
 
-const { publicRuntimeConfig } = getConfig()
-
 // ---------------------------------------------------------------------------
 
 export type RegulationsHomeProps = {
@@ -76,11 +72,6 @@ export type RegulationsHomeProps = {
 }
 
 const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
-  const { disableRegulationsPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-
   const txt = useNamespace(props.texts)
   const anchor = useRef<HTMLDivElement>(null)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
@@ -177,7 +168,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
 
                 <GridRow>
                   {resultItems.length > 0 &&
-                    resultItems.map((reg, i) => (
+                    resultItems.map((reg) => (
                       <GridColumn
                         key={reg.name}
                         span={['1/1', '1/2', '1/2', '1/3']}

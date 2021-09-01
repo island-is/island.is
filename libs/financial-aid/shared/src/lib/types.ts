@@ -22,6 +22,11 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum RolesRule {
+  OSK = 'osk',
+  VEITA = 'veita',
+}
+
 export interface ApplicationFilters {
   New: number
   InProgress: number
@@ -151,7 +156,7 @@ export interface User {
   name: string
   phoneNumber: string
   folder: string
-  service: 'osk' | 'veita'
+  service: RolesRule
   currentApplication?: CurrentApplication
 }
 
