@@ -30,7 +30,7 @@ export const NewUser: React.FC = () => {
   }, [])
 
   const {
-    courts,
+    allCourts,
     prosecutorsOffices,
     loading: institutionLoading,
     loaded: institutionLoaded,
@@ -70,7 +70,7 @@ export const NewUser: React.FC = () => {
       {institutionLoaded && (
         <UserForm
           user={user}
-          courts={courts}
+          allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
           onSave={createUser}
           loading={createLoading}

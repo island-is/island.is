@@ -1,6 +1,6 @@
-import * as z from 'zod'
-import { error } from './messages/error'
 import * as kennitala from 'kennitala'
+import * as z from 'zod'
+import { NO, YES } from '../constants'
 import {
   AccidentTypeEnum,
   AgricultureAccidentLocationEnum,
@@ -17,7 +17,7 @@ import {
   WorkAccidentTypeEnum,
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
-import { NO, YES } from '../constants'
+import { error } from './messages/error'
 
 export enum OnBehalf {
   MYSELF = 'myself',
@@ -207,6 +207,9 @@ export const AccidentNotificationSchema = z.object({
       PowerOfAttorneyUploadEnum.UPLOADLATER,
       PowerOfAttorneyUploadEnum.UPLOADNOW,
     ]),
+  }),
+  comment: z.object({
+    description: z.string().optional(),
   }),
 })
 
