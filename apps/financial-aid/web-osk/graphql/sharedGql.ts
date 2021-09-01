@@ -52,7 +52,7 @@ export const CurrentUserQuery = gql`
 `
 
 export const GetApplicationQuery = gql`
-  query GetApplicantyQuery($input: ApplicationInput!) {
+  query GetApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
       id
       homeCircumstances
