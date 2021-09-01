@@ -49,14 +49,8 @@ export class DelegationResolver {
   }
 
   @Query(() => [Delegation], { name: 'authDelegations' })
-  async getDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    const delegations = await this.authService.getDelegations(user)
-    return delegations.filter(
-      (delegation) =>
-        delegation.scopes &&
-        delegation.scopes.length > 0 &&
-        (delegation.validTo === undefined || delegation.validTo >= new Date()),
-    )
+  getDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
+    return this.authService.getDelegations(user)
   }
 
   @Query(() => Delegation, { name: 'authDelegation', nullable: true })
