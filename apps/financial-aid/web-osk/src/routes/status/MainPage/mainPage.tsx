@@ -47,7 +47,7 @@ const MainPage = () => {
   )
   const currentApplication = useMemo(() => {
     if (data?.application) {
-      return data?.application
+      return data.application
     }
   }, [data])
 
