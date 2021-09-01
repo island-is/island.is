@@ -32,7 +32,7 @@ const FileUpload = () => {
 
   const proceed = async () => {
     if (form?.incomeFiles.length <= 0 || currentApplication === undefined) {
-      setNextButtonText('Aint no files here')
+      setNextButtonText('Engar skrár til staðar')
       return
     }
 
@@ -46,10 +46,10 @@ const FileUpload = () => {
             },
           },
         })
-        setNextButtonText('Success 🙌🙌🙌')
+        setNextButtonText('Skrám hefur verið hlaðið upp')
       })
     } catch (e) {
-      setNextButtonText('Fail 😭😭😭😭')
+      setNextButtonText('Ekki tókst að hlaða upp skrám')
     }
   }
 

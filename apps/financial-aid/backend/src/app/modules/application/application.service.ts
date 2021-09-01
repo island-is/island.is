@@ -95,8 +95,8 @@ export class ApplicationService {
 
     //Create file
     if (application.files) {
-      application.files.map((f) => {
-        this.fileService.createFile({
+      application.files.map(async (f) => {
+        await this.fileService.createFile({
           applicationId: appModel.id,
           name: f.name,
           key: f.key,
