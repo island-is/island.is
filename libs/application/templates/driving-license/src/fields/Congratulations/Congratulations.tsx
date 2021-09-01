@@ -58,7 +58,6 @@ const Congratulations = ({
   field,
   application,
 }: PropTypes): JSX.Element => {
-
   const name = application.externalData.nationalRegistry?.data as name
   const { formatMessage } = useLocale()
   const { answers } = application
