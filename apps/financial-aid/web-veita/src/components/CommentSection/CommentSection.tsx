@@ -2,16 +2,15 @@ import React, { useState } from 'react'
 
 import { useRouter } from 'next/router'
 
-import { Box, Button, Input } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
 import * as styles from './CommentSection.treat'
 import { useMutation } from '@apollo/client'
 import { CreateApplicationEventQuery } from '@island.is/financial-aid-web/veitagraphql/sharedGql'
-import {
-  ApplicationEventType,
-  ApplicationState,
-} from '@island.is/financial-aid/shared'
+import { ApplicationEventType } from '@island.is/financial-aid/shared'
+
+import { Button } from '@island.is/financial-aid-web/veita/src/components'
 
 interface Props {
   className?: string
@@ -29,7 +28,7 @@ const CommentSection = ({ className }: Props) => {
   ] = useMutation(CreateApplicationEventQuery)
 
   const saveStaffComment = async (staffComment: string | undefined) => {
-    if (isCreatingApplicationEvent === false && staffComment) {
+    if (staffComment) {
       const { data } = await createApplicationEventMutation({
         variables: {
           input: {
@@ -84,6 +83,7 @@ const CommentSection = ({ className }: Props) => {
             onClick={() => {
               saveStaffComment(comment)
             }}
+            disabled={isCreatingApplicationEvent}
           >
             Vista athugasemd
           </Button>
