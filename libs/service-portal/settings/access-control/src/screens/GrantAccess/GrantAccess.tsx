@@ -16,7 +16,11 @@ import {
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { Mutation, Query } from '@island.is/api/schema'
-import { IntroHeader, ServicePortalPath, m } from '@island.is/service-portal/core'
+import {
+  IntroHeader,
+  ServicePortalPath,
+  m,
+} from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
