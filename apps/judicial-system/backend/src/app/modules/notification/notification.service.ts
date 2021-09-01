@@ -524,7 +524,6 @@ export class NotificationService {
       existingCase.courtEndTime,
       existingCase.defenderName,
       existingCase.defenderEmail,
-      existingCase.defenderIsSpokesperson,
       existingCase.decision,
       existingCase.validToDate,
       existingCase.custodyRestrictions,
@@ -532,8 +531,6 @@ export class NotificationService {
       existingCase.prosecutorAppealDecision,
       existingCase.judge?.name,
       existingCase.judge?.title,
-      existingCase.parentCase !== null,
-      existingCase.parentCase?.decision,
       existingCase.conclusion,
       existingCase.isolationToDate,
     )

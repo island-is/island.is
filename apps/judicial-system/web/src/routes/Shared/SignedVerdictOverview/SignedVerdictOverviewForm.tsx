@@ -285,6 +285,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             name: workingCase.defenderName ?? '',
             email: workingCase.defenderEmail,
             phoneNumber: workingCase.defenderPhoneNumber,
+            defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
           }}
         />
       </Box>
