@@ -12,11 +12,11 @@ import {
   ApplicationEvent,
   CreateApplicationEvent,
   ApplicationFilters,
-  ApplicationFile,
-  CreateApplicationFile,
+  CreateFilesResponse,
 } from '@island.is/financial-aid/shared'
 
 import { environment } from '../environments'
+import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -70,10 +70,10 @@ class BackendAPI extends RESTDataSource {
     return this.post('applicationEvent', createApplicationEvent)
   }
 
-  createApplicationFile(
-    createApplicationFile: CreateApplicationFile,
-  ): Promise<ApplicationFile> {
-    return this.post('/file', createApplicationFile)
+  createApplicationFiles(
+    createApplicationFiles: CreateApplicationFilesInput,
+  ): Promise<CreateFilesResponse> {
+    return this.post('/file', createApplicationFiles)
   }
 }
 

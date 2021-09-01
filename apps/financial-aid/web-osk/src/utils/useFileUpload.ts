@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
 import {
   CreateSignedUrlMutation,
-  UploadFileMutation,
+  CreateApplicationFiles,
 } from '@island.is/financial-aid-web/oskgraphql/sharedGql'
 import { SignedUrl } from '@island.is/financial-aid/shared'
 
@@ -12,7 +12,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const filesRef = useRef<UploadFile[]>(files)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
-  const [uploadFilesMutation] = useMutation(UploadFileMutation)
+  const [createApplicationFiles] = useMutation(CreateApplicationFiles)
 
   const requests: { [Key: string]: XMLHttpRequest } = {}
 
@@ -88,21 +88,24 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     return signedUrl
   }
 
-  const uploadFiles = async (): Promise<void> => {
+  const uploadFiles = async (applicationId: string) => {
+    const formatFiles = files.map((f) => {
+      return {
+        applicationId: applicationId,
+        name: f.name ?? '',
+        key: f.key ?? '',
+        size: f.size ?? 0,
+      }
+    })
     try {
-      const { data } = await uploadFilesMutation({
-        variables: { input: { files: files } },
+      return await createApplicationFiles({
+        variables: {
+          input: { files: formatFiles },
+        },
       })
-
-      console.log('Res', data)
-
-      return data
     } catch (e) {
-      console.log('err', e)
-      setUploadErrorMessage('Næ ekki sambandi við vefþjón')
+      throw e
     }
-
-    return undefined
   }
 
   const uploadToCloudFront = (file: UploadFile, url: string) => {

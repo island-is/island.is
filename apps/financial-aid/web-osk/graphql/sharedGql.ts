@@ -16,10 +16,10 @@ export const CreateApplicationEventQuery = gql`
   }
 `
 
-export const UploadFileMutation = gql`
-  mutation uploadFiles($input: UploadFiles!) {
-    uploadFiles(input: $input) {
-      id
+export const CreateApplicationFiles = gql`
+  mutation createApplicationFiles($input: CreateApplicationFilesInput!) {
+    createApplicationFiles(input: $input) {
+      success
     }
   }
 `

@@ -6,9 +6,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { JwtGraphQlAuthGuard } from '@island.is/judicial-system/auth'
 
 import { BackendAPI } from '../../../services'
-import { CreateApplicationFileInput, GetSignedUrlInput } from './dto'
-import { ApplicationFileModel, SignedUrlModel } from './models'
-import { CreateApplicationFile } from '@island.is/financial-aid/shared'
+import { CreateApplicationFilesInput, GetSignedUrlInput } from './dto'
+import { SignedUrlModel, CreateFilesModel } from './models'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -28,13 +27,13 @@ export class FileResolver {
     return backendApi.getSignedUrl(input)
   }
 
-  @Mutation(() => ApplicationFileModel)
-  createApplicationFile(
-    @Args('input', { type: () => CreateApplicationFileInput })
-    input: CreateApplicationFile,
+  @Mutation(() => CreateFilesModel)
+  async createApplicationFiles(
+    @Args('input', { type: () => CreateApplicationFilesInput })
+    input: CreateApplicationFilesInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<ApplicationFileModel> {
+  ): Promise<CreateFilesModel> {
     this.logger.debug('Creating application files')
-    return backendApi.createApplicationFile(input)
+    return await backendApi.createApplicationFiles(input)
   }
 }

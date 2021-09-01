@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -8,22 +8,29 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osksrc/components/FormProvider/FormProvider'
 import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFileUpload'
+import { UserContext } from '@island.is/financial-aid-web/osksrc/components/UserProvider/UserProvider'
 
 const FileUpload = () => {
   const { form } = useContext(FormContext)
   const router = useRouter()
   const [nextButtonText, setNextButtonText] = useState('Senda gögn')
   const { uploadFiles } = useFileUpload(form.incomeFiles)
+  const { user } = useContext(UserContext)
+
+  const currentApplication = useMemo(() => {
+    if (user?.currentApplication) {
+      return user.currentApplication
+    }
+  }, [user])
 
   const proceed = async () => {
-    console.log(form)
-    if (form?.incomeFiles.length <= 0) {
+    if (form?.incomeFiles.length <= 0 || currentApplication === undefined) {
       setNextButtonText('Aint no files here')
       return
     }
 
     try {
-      await uploadFiles().then(() => {
+      await uploadFiles(currentApplication.id).then(() => {
         setNextButtonText('Success 🙌🙌🙌')
       })
     } catch (e) {
