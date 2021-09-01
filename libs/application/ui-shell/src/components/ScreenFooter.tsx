@@ -23,6 +23,7 @@ interface FooterProps {
   loading: boolean
   canProceed: boolean
   renderLastScreenButton?: boolean
+  renderLastScreenBackButton?: boolean
 }
 
 interface SubmitButton {
@@ -63,12 +64,14 @@ export const ScreenFooter: FC<FooterProps> = ({
   numberOfScreens,
   submitField,
   renderLastScreenButton,
+  renderLastScreenBackButton,
 }) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
-  const showGoBack = activeScreenIndex > 0 && !isLastScreen
+  const showGoBack =
+    activeScreenIndex > 0 && (!isLastScreen || renderLastScreenBackButton)
 
   if (
     (isLastScreen && !renderLastScreenButton) ||
