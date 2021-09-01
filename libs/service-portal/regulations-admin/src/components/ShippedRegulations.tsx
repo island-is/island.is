@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { RegulationDraft } from '@island.is/regulations/admin'
 import { ISODate, RegName } from '@island.is/regulations'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -50,7 +49,7 @@ export const ShippedRegulations = () => {
         {formatMessage(msg.shippedTitle)}
       </Text>
       <Stack space={1}>
-        {getShippedRegulations.map((shipped: RegulationDraft) => (
+        {getShippedRegulations.map((shipped) => (
           <TopicCard
             key={shipped.id}
             tag={formatDateFns(shipped.idealPublishDate as ISODate)}
