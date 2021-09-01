@@ -74,6 +74,8 @@ export interface CurrentApplication {
   homeCircumstances: HomeCircumstances
   usePersonalTaxCredit: boolean
   state: ApplicationState
+  amount?: number
+  rejection?: string
 }
 
 export interface ApplicationFile {

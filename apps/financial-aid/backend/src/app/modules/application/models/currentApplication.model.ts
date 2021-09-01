@@ -43,4 +43,18 @@ export class CurrentApplicationModel extends Model<CurrentApplicationModel> {
   })
   @ApiProperty({ enum: ApplicationState })
   state: ApplicationState
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  @ApiProperty()
+  amount: number
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  rejection: string
 }

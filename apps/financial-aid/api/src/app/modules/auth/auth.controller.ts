@@ -81,6 +81,7 @@ export class AuthController {
     @Res() res: Response,
     @Query('service', new DefaultValuePipe('osk')) service: 'osk' | 'veita',
     @Query('nationalId') nationalId: string,
+    @Query('applicationId') applicationId: string,
   ) {
     this.logger.debug(`Received login request for the service ${service}`)
 
@@ -181,6 +182,11 @@ export class AuthController {
       user.returnUrl = ReturnUrl.STADA
     }
 
+    const returnURl =
+      user.returnUrl === ReturnUrl.STADA
+        ? ReturnUrl.STADA + '/' + res.req?.query.applicationId
+        : user.returnUrl
+
     res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,
@@ -190,6 +196,6 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge: COOKIE_EXPIRES_IN_MILLISECONDS,
       })
-      .redirect(user.returnUrl)
+      .redirect(returnURl)
   }
 }

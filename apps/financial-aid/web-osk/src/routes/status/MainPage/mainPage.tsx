@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useContext, useMemo, useEffect, useState } from 'react'
 import {
   Text,
   Box,
@@ -16,9 +16,11 @@ import {
   Rejected,
   StatusLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
+import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
 
 import {
   Application,
+  CurrentApplication,
   getActiveTypeForStatus,
 } from '@island.is/financial-aid/shared'
 
@@ -43,7 +45,6 @@ const MainPage = () => {
       errorPolicy: 'all',
     },
   )
-
   const currentApplication = useMemo(() => {
     if (data?.application) {
       return data?.application

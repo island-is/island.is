@@ -58,6 +58,8 @@ export const CurrentUserQuery = gql`
         state
         homeCircumstances
         usePersonalTaxCredit
+        amount
+        rejection
       }
     }
   }
@@ -67,7 +69,6 @@ export const GetApplicationQuery = gql`
   query GetApplicantyQuery($input: ApplicationInput!) {
     application(input: $input) {
       id
-      nationalId
       homeCircumstances
       usePersonalTaxCredit
       state
