@@ -129,7 +129,7 @@ export const findValueOption = (
 }
 
 export const findSignatureInText = (textString: HTMLText) => {
-  var htmlDiv = document.createElement('div')
+  const htmlDiv = document.createElement('div')
   htmlDiv.innerHTML = textString
   const innertext = htmlDiv.querySelectorAll('.Dags')[0]
 
