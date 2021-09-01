@@ -495,7 +495,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(4)
+        expect(response.body.length).toBe(5)
       })
   })
 })
