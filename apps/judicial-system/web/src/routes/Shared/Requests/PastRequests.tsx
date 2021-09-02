@@ -2,12 +2,8 @@ import React, { useContext, useMemo } from 'react'
 import { Box, Text, Tag } from '@island.is/island-ui/core'
 
 import { mapCaseStateToTagVariant } from './utils'
-import {
-  Case,
-  CaseState,
-  CaseType,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import parseISO from 'date-fns/parseISO'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {

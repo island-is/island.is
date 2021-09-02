@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import {
+import { CaseType } from '@island.is/judicial-system/types'
+import type {
   Case,
   CaseCustodyProvisions,
-  CaseType,
 } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
@@ -36,6 +36,7 @@ interface Props {
     React.SetStateAction<boolean | undefined>
   >
   isCreatingCourtCase: boolean
+  receiveCase: (wc: Case, courtCaseNumber: string) => void
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
@@ -49,6 +50,7 @@ const OverviewForm: React.FC<Props> = (props) => {
     setCourtCaseNumberEM,
     setIsDraftingConclusion,
     isCreatingCourtCase,
+    receiveCase,
   } = props
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -74,6 +76,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
           handleCreateCourtCase={handleCreateCourtCase}
           isCreatingCourtCase={isCreatingCourtCase}
+          receiveCase={receiveCase}
         />
       </Box>
       <Box component="section" marginBottom={5}>

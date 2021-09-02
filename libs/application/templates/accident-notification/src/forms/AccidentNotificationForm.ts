@@ -10,13 +10,15 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildSubmitField,
   buildSubSection,
   buildTextField,
+  DefaultEvents,
   Form,
   FormModes,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
-import { NO, YES } from '../constants'
+import { NO, UPLOAD_ACCEPT, YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import {
   accidentDetails,
@@ -32,14 +34,14 @@ import {
   fishingCompanyInfo,
   fishingLocationAndPurpose,
   hindrances,
+  injuredPersonInformation,
+  juridicalPerson,
   locationAndPurpose,
   overview,
+  powerOfAttorney,
   rescueSquadInfo,
   schoolInfo,
   sportsClubInfo,
-  juridicalPerson,
-  injuredPersonInformation,
-  powerOfAttorney,
   whoIsTheNotificationFor,
   workMachine,
 } from '../lib/messages'
@@ -59,25 +61,26 @@ import {
   WorkAccidentTypeEnum,
 } from '../types'
 import {
+  getAccidentTypeOptions,
   isAboardShip,
   isAgricultureAccident,
+  isDateOlderThanAYear,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
   isHomeActivitiesAccident,
   isLocatedOnShipOther,
   isProfessionalAthleteAccident,
+  isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
   isRepresentativeOfCompanyOrInstitute,
   isRescueWorkAccident,
   isStudiesAccident,
-  isReportingOnBehalfOfEmployee,
   isWorkAccident,
-  getAccidentTypeOptions,
 } from '../utils'
+import { isHealthInsured } from '../utils/isHealthInsured'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
-
-const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
+import { WorkTypeIllustration } from '../assets/WorkTypeIllustration'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',
@@ -549,18 +552,22 @@ export const AccidentNotificationForm: Form = buildForm({
                     {
                       value: WorkAccidentTypeEnum.GENERAL,
                       label: accidentType.workAccidentType.generalWorkAccident,
+                      illustration: WorkTypeIllustration,
                     },
                     {
                       value: WorkAccidentTypeEnum.FISHERMAN,
                       label: accidentType.workAccidentType.fishermanAccident,
+                      illustration: WorkTypeIllustration,
                     },
                     {
                       value: WorkAccidentTypeEnum.PROFESSIONALATHLETE,
                       label: accidentType.workAccidentType.professionalAthlete,
+                      illustration: WorkTypeIllustration,
                     },
                     {
                       value: WorkAccidentTypeEnum.AGRICULTURE,
                       label: accidentType.workAccidentType.agricultureAccident,
+                      illustration: WorkTypeIllustration,
                     },
                   ],
                 }),
@@ -990,11 +997,10 @@ export const AccidentNotificationForm: Form = buildForm({
           title: accidentDetails.general.sectionTitle,
           description: accidentDetails.general.description,
           children: [
-            buildDateField({
+            buildCustomField({
               id: 'accidentDetails.dateOfAccident',
               title: accidentDetails.labels.date,
-              placeholder: accidentDetails.placeholder.date,
-              backgroundColor: 'blue',
+              component: 'DateOfAccident',
               width: 'half',
             }),
             buildTextField({
@@ -1005,6 +1011,17 @@ export const AccidentNotificationForm: Form = buildForm({
               width: 'half',
               format: '##:##',
             }),
+            buildCustomField(
+              {
+                id: 'accidentDetails.notHealthInsuredAlertMessage',
+                title: accidentDetails.general.insuranceAlertTitle,
+                component: 'FieldAlertMessage',
+                description: accidentDetails.general.insuranceAlertText,
+                width: 'full',
+                condition: (formValue) => !isHealthInsured(formValue),
+              },
+              { type: 'warning', marginBottom: 0, marginTop: 2 },
+            ),
             buildTextField({
               id: 'accidentDetails.descriptionOfAccident',
               title: accidentDetails.labels.description,
@@ -1488,15 +1505,33 @@ export const AccidentNotificationForm: Form = buildForm({
       id: 'overview.section',
       title: overview.general.sectionTitle,
       children: [
-        buildCustomField({
-          id: 'overview',
+        buildMultiField({
+          id: 'overview.multifield',
           title: overview.general.sectionTitle,
-          component: 'FormOverview',
+          children: [
+            buildCustomField({
+              id: 'overview',
+              title: overview.general.sectionTitle,
+              component: 'FormOverview',
+            }),
+            buildSubmitField({
+              id: 'overview.submit',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.labels.submit,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
 
     buildSection({
+      id: 'conclusion.section',
       title: conclusion.general.title,
       children: [
         buildCustomField({
@@ -1505,13 +1540,6 @@ export const AccidentNotificationForm: Form = buildForm({
           component: 'FormConclusion',
         }),
       ],
-    }),
-
-    // TODO remove before release, just there to continue with last screen
-    buildDescriptionField({
-      id: '',
-      description: '',
-      title: '',
     }),
   ],
 })

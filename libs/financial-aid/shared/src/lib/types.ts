@@ -22,6 +22,28 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum ApplicationEventType {
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  DATANEEDED = 'DataNeeded',
+  REJECTED = 'Rejected',
+  APPROVED = 'Approved',
+  STAFFCOMMENT = 'StaffComment',
+}
+
+export enum RolesRule {
+  OSK = 'osk',
+  VEITA = 'veita',
+}
+
+export interface ApplicationFilters {
+  New: number
+  InProgress: number
+  DataNeeded: number
+  Rejected: number
+  Approved: number
+}
+
 export interface Application {
   id: string
   created: string
@@ -48,6 +70,13 @@ export interface Application {
   amount?: number
   comment?: string
   rejection?: string
+}
+
+export interface CurrentApplication {
+  id: string
+  homeCircumstances: HomeCircumstances
+  usePersonalTaxCredit: boolean
+  state: ApplicationState
 }
 
 export interface ApplicationFile {
@@ -96,7 +125,7 @@ export interface UpdateApplication {
 
 export interface CreateApplicationEvent {
   applicationId: string
-  state: ApplicationState
+  eventType: ApplicationEventType
   comment?: string
 }
 
@@ -104,8 +133,8 @@ export interface ApplicationEvent {
   id: string
   created: string
   applicationId: string
+  eventType: ApplicationEventType
   comment?: string
-  state: ApplicationState
 }
 
 export interface Municipality {
@@ -136,7 +165,8 @@ export interface User {
   name: string
   phoneNumber: string
   folder: string
-  service: 'osk' | 'veita'
+  service: RolesRule
+  currentApplication?: CurrentApplication
 }
 
 export type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
@@ -148,6 +178,10 @@ export interface GetSignedUrl {
 export interface SignedUrl {
   url: string
   key: string
+}
+
+export interface CreateFilesResponse {
+  success: boolean
 }
 
 // export type HomeCircumstances =

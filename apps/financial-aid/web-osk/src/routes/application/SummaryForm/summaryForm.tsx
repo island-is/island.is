@@ -1,23 +1,19 @@
-import React, { useState, useContext, useMemo } from 'react'
+import React, { useState, useContext } from 'react'
 import {
   Text,
   Divider,
   Box,
   Button,
-  LoadingDots,
   Input,
   Icon,
 } from '@island.is/island-ui/core'
 
-import { useQuery } from '@apollo/client'
-
-import { GetMunicipalityQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
-
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
   CancelModal,
+  Estimation,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
@@ -28,16 +24,7 @@ import cn from 'classnames'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
 
-import format from 'date-fns/format'
-
 import {
-  calculateAidFinalAmount,
-  calulateTaxOfAmount,
-  calulatePersonalTaxAllowanceUsed,
-} from '@island.is/financial-aid-web/osk/src/utils/taxCalculator'
-
-import {
-  Municipality,
   NavigationProps,
   getHomeCircumstances,
   HomeCircumstances,
@@ -45,18 +32,11 @@ import {
   getEmploymentStatus,
   formatPhoneNumber,
   formatNationalId,
-  aidCalculator,
 } from '@island.is/financial-aid/shared'
 
 import useApplication from '@island.is/financial-aid-web/osk/src/utils/useApplication'
 
-interface MunicipalityData {
-  municipality: Municipality
-}
-
 const SummaryForm = () => {
-  const currentYear = format(new Date(), 'yyyy')
-
   const router = useRouter()
   const { form, updateForm } = useContext(FormContext)
 
@@ -67,15 +47,6 @@ const SummaryForm = () => {
   const { user } = useContext(UserContext)
 
   const [isVisible, setIsVisible] = useState(false)
-
-  const { data, error, loading } = useQuery<MunicipalityData>(
-    GetMunicipalityQuery,
-    {
-      variables: { input: { id: 'hfj' } },
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
 
   const [formError, setFormError] = useState({
     status: false,
@@ -101,15 +72,6 @@ const SummaryForm = () => {
       })
     }
   }
-
-  const aidAmount = useMemo(() => {
-    if (form && data && form.homeCircumstances) {
-      return aidCalculator(
-        form.homeCircumstances,
-        data?.municipality.settings.aid,
-      )
-    }
-  }, [form, data])
 
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
@@ -151,113 +113,26 @@ const SummaryForm = () => {
       activeSection={navigation?.activeSectionIndex}
       activeSubSection={navigation?.activeSubSectionIndex}
     >
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Yfirlit umsóknar
         </Text>
-        <Box
-          display="flex"
-          alignItems="center"
-          flexWrap="wrap"
-          marginBottom={1}
-        >
-          <Box marginRight={1}>
-            <Text as="h2" variant="h3" marginBottom={1}>
-              Áætluð aðstoð
+
+        <Estimation
+          usePersonalTaxCredit={form.usePersonalTaxCredit}
+          homeCircumstances={form.homeCircumstances}
+          aboutText={
+            <Text marginBottom={[2, 2, 3]}>
+              Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
+              <span className={styles.taxReturn}>
+                gerir ekki ráð fyrir tekjum eða gögnum úr skattframtali
+              </span>{' '}
+              sem geta haft áhrif á þína aðstoð. Þú færð skilaboð þegar frekari
+              útreikningur liggur fyrir.
             </Text>
-          </Box>
+          }
+        />
 
-          <Text variant="small">(til útgreiðslu í byrjun júní)</Text>
-        </Box>
-
-        <Text marginBottom={[2, 2, 3]}>
-          Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
-          <span className={styles.taxReturn}>
-            gerir ekki ráð fyrir tekjum eða gögnum úr skattframtali
-          </span>{' '}
-          sem geta haft áhrif á þína aðstoð. Þú færð skilaboð þegar frekari
-          útreikningur liggur fyrir.
-        </Text>
-        {data && (
-          <>
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              padding={2}
-            >
-              <Text variant="small">Full upphæð aðstoðar </Text>
-              <Text>{aidAmount?.toLocaleString('de-DE')} kr.</Text>
-            </Box>
-
-            <Divider />
-
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              padding={2}
-            >
-              <Text variant="small">Skattur</Text>
-              <Text>
-                -{' '}
-                {aidAmount &&
-                  calulateTaxOfAmount(aidAmount, currentYear).toLocaleString(
-                    'de-DE',
-                  )}{' '}
-                kr.
-              </Text>
-            </Box>
-
-            <Divider />
-
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              padding={2}
-            >
-              <Text variant="small">Persónuafsláttur</Text>
-              <Text>
-                +{' '}
-                {aidAmount &&
-                  calulatePersonalTaxAllowanceUsed(
-                    aidAmount,
-                    Boolean(form?.usePersonalTaxCredit),
-                    currentYear,
-                  ).toLocaleString('de-DE')}{' '}
-                kr.
-              </Text>
-            </Box>
-
-            <Divider />
-
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              padding={2}
-              background="blue100"
-            >
-              <Text variant="small">Áætluð aðstoð (hámark)</Text>
-              <Text>
-                {aidAmount !== undefined
-                  ? calculateAidFinalAmount(
-                      aidAmount,
-                      Boolean(form?.usePersonalTaxCredit),
-                      currentYear,
-                    ).toLocaleString('de-DE') + ' kr.'
-                  : 'Abbabb.. mistókst að reikna'}
-              </Text>
-            </Box>
-            <Divider />
-          </>
-        )}
-        {loading && (
-          <Box marginBottom={[4, 4, 5]} display="flex" justifyContent="center">
-            <LoadingDots large />
-          </Box>
-        )}
         <Box marginTop={[4, 4, 5]}>
           <Divider />
         </Box>
@@ -413,13 +288,14 @@ const SummaryForm = () => {
             setIsVisible(isVisibleBoolean)
           }}
         />
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         onPrevButtonClick={() => {
           setIsVisible(!isVisible)
         }}
         previousIsDestructive={true}
+        prevButtonText="Hætta við"
         nextButtonText="Senda umsókn"
         onNextButtonClick={handleNextButtonClick}
       />

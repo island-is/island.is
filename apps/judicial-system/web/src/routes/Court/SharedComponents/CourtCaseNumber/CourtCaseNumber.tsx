@@ -1,6 +1,8 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Case, IntegratedCourts } from '@island.is/judicial-system/types'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
+import { CaseState } from '@island.is/judicial-system/types'
+import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import {
@@ -20,6 +22,7 @@ interface Props {
   setCreateCourtCaseSuccess: React.Dispatch<React.SetStateAction<boolean>>
   handleCreateCourtCase: (wc: Case) => void
   isCreatingCourtCase: boolean
+  receiveCase: (wc: Case, courtCaseNumber: string) => void
 }
 
 const CourtCaseNumber: React.FC<Props> = (props) => {
@@ -32,9 +35,17 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
     setCreateCourtCaseSuccess,
     handleCreateCourtCase,
     isCreatingCourtCase,
+    receiveCase,
   } = props
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
+
+  const updateAndReceiveCase = async (id: string, update: UpdateCase) => {
+    await updateCase(id, update)
+    if (update.courtCaseNumber) {
+      receiveCase(workingCase, update.courtCaseNumber)
+    }
+  }
 
   return (
     <>
@@ -44,7 +55,12 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
         </Text>
       </Box>
       <Box marginBottom={2}>
-        <Text>{formatMessage(courtCaseNumber.explanation)}</Text>
+        <Text>
+          {workingCase.state !== CaseState.SUBMITTED &&
+          workingCase.state !== CaseState.RECEIVED
+            ? formatMessage(courtCaseNumber.explanationDisabled)
+            : formatMessage(courtCaseNumber.explanation)}
+        </Text>
       </Box>
       <BlueBox>
         <div className={styles.createCourtCaseContainer}>
@@ -56,7 +72,11 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                     size="small"
                     onClick={() => handleCreateCourtCase(workingCase)}
                     loading={isCreatingCourtCase}
-                    disabled={Boolean(workingCase.courtCaseNumber)}
+                    disabled={Boolean(
+                      (workingCase.state !== CaseState.SUBMITTED &&
+                        workingCase.state !== CaseState.RECEIVED) ||
+                        workingCase.courtCaseNumber,
+                    )}
                     fluid
                   >
                     Stofna nýtt mál
@@ -69,6 +89,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                 name="courtCaseNumber"
                 label="Mál nr."
                 placeholder="R-X/ÁÁÁÁ"
+                autoComplete="off"
                 size="sm"
                 backgroundColor="white"
                 value={workingCase.courtCaseNumber ?? ''}
@@ -97,10 +118,14 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                     event.target.value,
                     ['empty'],
                     workingCase,
-                    updateCase,
+                    updateAndReceiveCase,
                     setCourtCaseNumberEM,
                   )
                 }}
+                disabled={
+                  workingCase.state !== CaseState.SUBMITTED &&
+                  workingCase.state !== CaseState.RECEIVED
+                }
                 required
               />
             </div>

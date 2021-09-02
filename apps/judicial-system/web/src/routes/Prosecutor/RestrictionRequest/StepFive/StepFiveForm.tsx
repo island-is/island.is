@@ -8,7 +8,8 @@ import {
   Input,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   useCase,
@@ -35,6 +36,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
   const {
     files,
     uploadErrorMessage,
+    allFilesUploaded,
     onChange,
     onRemove,
     onRetry,
@@ -126,7 +128,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               ? Constants.STEP_SIX_ROUTE
               : Constants.IC_POLICE_CONFIRMATION_ROUTE
           }/${workingCase.id}`}
-          nextIsDisabled={false}
+          nextIsDisabled={!allFilesUploaded}
         />
       </FormContentContainer>
     </>

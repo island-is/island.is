@@ -1,11 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import {
-  LoadingDots,
-  Text,
-  Box,
-  Button,
-  Divider,
-} from '@island.is/island-ui/core'
+import { LoadingDots, Text, Box, Divider } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 import * as styles from './application.treat'
@@ -27,7 +21,9 @@ import {
   getState,
   Municipality,
   aidCalculator,
+  months,
   calculateAidFinalAmount,
+  formatPhoneNumber,
 } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
@@ -35,7 +31,6 @@ import format from 'date-fns/format'
 import {
   calcDifferenceInDate,
   calcAge,
-  translateMonth,
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
@@ -49,6 +44,9 @@ import {
   AdminLayout,
   StateModal,
   AidAmountModal,
+  History,
+  Button,
+  CommentSection,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
@@ -120,7 +118,7 @@ const ApplicationProfile = () => {
       {
         title: 'Tímabil',
         content:
-          translateMonth(parseInt(format(new Date(application.created), 'M'))) +
+          months[parseInt(format(new Date(application.created), 'M'))] +
           format(new Date(application.created), ' y'),
       },
       {
@@ -179,8 +177,7 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Sími',
-        content:
-          insertAt(application.phoneNumber.replace('-', ''), '-', 3) || '-',
+        content: formatPhoneNumber(application.phoneNumber),
         link: 'tel:' + application.phoneNumber,
       },
       {
@@ -366,6 +363,12 @@ const ApplicationProfile = () => {
               className={`contentUp delay-125 ${styles.widtAlmostFull}`}
             />
           </>
+
+          <CommentSection
+            className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+          />
+
+          <History />
         </Box>
 
         {application.state && (

@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { UserRole } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
@@ -19,7 +19,7 @@ export class UserService {
     private readonly logger: Logger,
   ) {}
 
-  getAll(user: User): Promise<User[]> {
+  async getAll(user: User): Promise<User[]> {
     this.logger.debug('Getting all users')
 
     if (user.role === UserRole.ADMIN) {
@@ -38,7 +38,7 @@ export class UserService {
     })
   }
 
-  findById(id: string): Promise<User> {
+  async findById(id: string): Promise<User | null> {
     this.logger.debug(`Finding user ${id}`)
 
     return this.userModel.findOne({
@@ -47,7 +47,7 @@ export class UserService {
     })
   }
 
-  async findByNationalId(nationalId: string): Promise<User> {
+  async findByNationalId(nationalId: string): Promise<User | null> {
     this.logger.debug('Getting a user by national id')
 
     // First check if the user is an admin
@@ -76,7 +76,7 @@ export class UserService {
     })
   }
 
-  create(userToCreate: CreateUserDto): Promise<User> {
+  async create(userToCreate: CreateUserDto): Promise<User> {
     this.logger.debug('Creating a new user')
 
     return this.userModel.create(userToCreate)

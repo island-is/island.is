@@ -1,13 +1,16 @@
 import React, { useContext } from 'react'
-import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
+import { Logo, Text, Box, Divider, Icon } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import { LogoHfj } from '@island.is/financial-aid-web/veita/src/components'
+import {
+  LogoHfj,
+  Button,
+} from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './Nav.treat'
 import cn from 'classnames'
-import { NavigationStatisticsContext } from '@island.is/financial-aid-web/veita/src/components/NavigationStatisticsProvider/NavigationStatisticsProvider'
+import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
 import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
 import { ApplicationState } from '@island.is/financial-aid/shared'
@@ -16,12 +19,15 @@ import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/na
 
 import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
-const Nav: React.FC = () => {
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+
+const Nav = () => {
   const router = useRouter()
 
   const logOut = useLogOut()
 
-  const { statistics } = useContext(NavigationStatisticsContext)
+  const { applicationFilters } = useContext(ApplicationFiltersContext)
+  const { admin } = useContext(AdminContext)
 
   return (
     <nav className={styles.container}>
@@ -59,8 +65,8 @@ const Nav: React.FC = () => {
                   <Text fontWeight="semiBold" color="dark300">
                     {item.applicationState
                       .map((state: ApplicationState) => {
-                        if (statistics) {
-                          return statistics[state]
+                        if (applicationFilters) {
+                          return applicationFilters[state]
                         }
                       })
                       .reduce((a?: number, b?: number) => {
@@ -78,18 +84,34 @@ const Nav: React.FC = () => {
       </div>
 
       <Box display="block" marginBottom={2} marginTop={4}>
-        <Button
-          colorScheme="default"
-          iconType="outline"
-          onClick={() => logOut()}
-          preTextIcon="logOut"
-          preTextIconType="outline"
-          size="default"
-          type="button"
-          variant="text"
-        >
-          Útskráning
-        </Button>
+        <Box marginBottom={3}>
+          <button
+            className={` ${styles.logOutButton} logOutButtonHover`}
+            onClick={() => logOut()}
+          >
+            <Icon
+              icon="logOut"
+              type="outline"
+              color="blue400"
+              className={styles.logOutButtonIcon}
+            />
+            <Text> Útskráning</Text>
+          </button>
+        </Box>
+        <Divider weight="purple200" />
+        {admin && (
+          <>
+            <Box display="flex" alignItems="center" paddingTop={3}>
+              <Icon
+                icon="person"
+                color="purple400"
+                size="small"
+                className={styles.personIcon}
+              />
+              <Text variant="small">{admin?.name}</Text>
+            </Box>
+          </>
+        )}
       </Box>
     </nav>
   )

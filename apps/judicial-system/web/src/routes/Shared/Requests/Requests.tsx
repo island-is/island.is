@@ -6,14 +6,14 @@ import {
   Logo,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  Case,
   CaseState,
   CaseTransition,
   CaseType,
   Feature,
   NotificationType,
+  UserRole,
 } from '@island.is/judicial-system/types'
-import { UserRole } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
@@ -145,9 +145,25 @@ export const Requests: React.FC = () => {
         caseToOpen.type === CaseType.CUSTODY ||
         caseToOpen.type === CaseType.TRAVEL_BAN
       ) {
-        router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
+        if (
+          caseToOpen.state === CaseState.RECEIVED ||
+          caseToOpen.state === CaseState.SUBMITTED
+        ) {
+          router.push(`${Constants.STEP_SIX_ROUTE}/${caseToOpen.id}`)
+        } else {
+          router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
+        }
       } else {
-        router.push(`${Constants.IC_DEFENDANT_ROUTE}/${caseToOpen.id}`)
+        if (
+          caseToOpen.state === CaseState.RECEIVED ||
+          caseToOpen.state === CaseState.SUBMITTED
+        ) {
+          router.push(
+            `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${caseToOpen.id}`,
+          )
+        } else {
+          router.push(`${Constants.IC_DEFENDANT_ROUTE}/${caseToOpen.id}`)
+        }
       }
     }
   }

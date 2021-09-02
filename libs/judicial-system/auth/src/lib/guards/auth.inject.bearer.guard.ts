@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 
-import { User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { cookieExtractor } from '../cookieExtractor'
 
