@@ -59,14 +59,8 @@ export const ExamplePaymentPendingField: FC<Props> = ({
               formatMessage,
             )}
           </Text>
-
-          <Box
-            backgroundPattern="dotted"
-            marginTop="gutter"
-            paddingTop="p5"
-            width="full"
-          >
-            &nbsp;
+          <Box marginTop={2}>
+            <img src="/assets/images/company.svg" alt="Skrautmynd" />
           </Box>
         </Box>
       )}
@@ -75,13 +69,8 @@ export const ExamplePaymentPendingField: FC<Props> = ({
           <Text variant="h3">
             {formatText(m.paymentApprovedContinue, application, formatMessage)}
           </Text>
-          <Box
-            backgroundPattern="dotted"
-            marginTop="gutter"
-            paddingTop="p5"
-            width="full"
-          >
-            &nbsp;
+          <Box marginTop={2}>
+            <img src="/assets/images/company.svg" alt="Skrautmynd" />
           </Box>
         </Box>
       )}
