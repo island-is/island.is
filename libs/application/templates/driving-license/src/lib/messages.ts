@@ -458,8 +458,7 @@ export const m = defineMessages({
   },
   errorDataProvider: {
     id: 'dl.application:error.dataProvider',
-    defaultMessage:
-      'Reyndu aftur síðar',
+    defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in driving license data provider',
   },
   examplePaymentPendingField: {

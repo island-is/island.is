@@ -53,7 +53,7 @@ export const RadioController: FC<Props> = ({
         <GridRow>
           {options.map((option, index) => (
             <GridColumn
-              span={['1/2', '1/1', split]}
+              span={['1/2', split]}
               paddingBottom={2}
               key={`option-${option.value}`}
             >
