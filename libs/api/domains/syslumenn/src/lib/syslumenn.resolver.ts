@@ -18,8 +18,7 @@ export class SyslumennResolver {
     return this.syslumennService.getHomestays(input.year)
   }
 
-  // Note: We need to be careful when caching the Auction data, as it's prone to changes only minutes before the auction takes place.
-  // TODO: Check if the CACHE_TIME in production. If it's only a few seconds, we should consider caching the data.
+  // Note: We don't cache the Auction data, as it's prone to changes only minutes before the auction takes place.
   @Query(() => [SyslumennAuction])
   getSyslumennAuctions(): Promise<SyslumennAuction[]> {
     return this.syslumennService.getSyslumennAuctions()
