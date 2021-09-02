@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { ISODate, prettyName } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import { Button, Stack, Text, Hidden } from '@island.is/island-ui/core'
+import { Button, Stack, Text, Hidden, Link } from '@island.is/island-ui/core'
 import { Sticky } from '@island.is/web/components'
 import { RegulationLayout } from './RegulationLayout'
 import { useRegulationLinkResolver } from './regulationUtils'
@@ -123,20 +123,17 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
         <Sticky>
           <Stack space={3}>
             <Hidden print={true}>
-              <Button
-                preTextIcon="arrowBack"
-                preTextIconType="filled"
-                size="small"
-                type="button"
-                variant="text"
-                onClick={() => {
-                  window.history.length > 2
-                    ? router.back()
-                    : router.push(linkResolver('regulationshome').href)
-                }}
-              >
-                {txt('goBack')}
-              </Button>
+              <Link href={linkResolver('regulationshome').href}>
+                <Button
+                  preTextIcon="arrowBack"
+                  preTextIconType="filled"
+                  size="small"
+                  type="button"
+                  variant="text"
+                >
+                  {txt('goHome')}
+                </Button>
+              </Link>
             </Hidden>
 
             <RegulationInfoBox regulation={regulation} texts={texts} />
