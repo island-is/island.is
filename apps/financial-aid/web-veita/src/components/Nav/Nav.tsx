@@ -3,10 +3,7 @@ import { Logo, Text, Box, Divider, Icon } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import {
-  LogoHfj,
-  Button,
-} from '@island.is/financial-aid-web/veita/src/components'
+import { LogoHfj } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './Nav.treat'
 import cn from 'classnames'

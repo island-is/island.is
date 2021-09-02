@@ -32,6 +32,12 @@ export const laws = defineMessages({
       'Einnig má úrskurða sakborning í gæsluvarðhald þótt skilyrði a–d-liðar 1. mgr. séu ekki fyrir hendi ef sterkur grunur leikur á að hann hafi framið afbrot sem að lögum getur varðað 10 ára fangelsi, enda sé brotið þess eðlis að ætla megi varðhald nauðsynlegt með tilliti til almannahagsmuna.',
     description: '2. mgr. 95. gr.',
   },
+  [CaseCustodyProvisions._97_3]: {
+    id: 'judicial.system.core:laws._97_3',
+    defaultMessage:
+      'Gæsluvarðhaldi lýkur með endanlegum dómi eða ef ákærði er sýknaður eða honum dæmd refsing sem er vægari en óskilorðsbundið fangelsi.',
+    description: '3. mgr. 97. gr.',
+  },
   [CaseCustodyProvisions._98_2]: {
     id: 'judicial.system.core:laws._98_2',
     defaultMessage:
@@ -49,5 +55,11 @@ export const laws = defineMessages({
     defaultMessage:
       'Nú eru skilyrði gæsluvarðhalds skv. 1. eða 2. mgr. 95. gr. fyrir hendi og getur dómari þá, í stað þess að úrskurða sakborning í gæsluvarðhald, mælt fyrir um vistun hans á sjúkrahúsi eða viðeigandi stofnun, bannað honum brottför af landinu ellegar lagt fyrir hann að halda sig á ákveðnum stað eða innan ákveðins svæðis.',
     description: '1. mgr. 100. gr.',
+  },
+  [CaseCustodyProvisions._115_1]: {
+    id: 'judicial.system.core:laws._115_1',
+    defaultMessage:
+      'Heimilt er að handtaka erlendan ríkisborgara á Íslandi og færa í gæsluvarðhald skv. lið a-h í 1. mgr. 115. gr. útlendingalaga.',
+    description: '1. mgr. 115. gr. útll.',
   },
 })

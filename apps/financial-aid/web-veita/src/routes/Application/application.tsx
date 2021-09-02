@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { LoadingDots, Text, Box, Divider } from '@island.is/island-ui/core'
+import {
+  LoadingDots,
+  Text,
+  Box,
+  Divider,
+  Button,
+} from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 import * as styles from './application.treat'
@@ -46,7 +52,6 @@ import {
   StateModal,
   AidAmountModal,
   History,
-  Button,
   CommentSection,
 } from '@island.is/financial-aid-web/veita/src/components'
 
