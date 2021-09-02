@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import {
-  Case,
   CaseAppealDecision,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'

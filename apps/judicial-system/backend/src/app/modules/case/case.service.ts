@@ -7,20 +7,17 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   DokobitError,
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
-import {
-  CaseType,
-  IntegratedCourts,
-  SessionArrangements,
-  User as TUser,
-} from '@island.is/judicial-system/types'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
+import { CaseType, SessionArrangements } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import {
