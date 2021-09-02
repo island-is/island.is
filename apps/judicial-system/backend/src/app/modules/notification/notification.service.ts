@@ -516,8 +516,6 @@ export class NotificationService {
   ): Promise<Recipient[]> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
     const html = formatPrisonRulingEmailNotification(
-      existingCase.accusedNationalId,
-      existingCase.accusedName,
       existingCase.accusedGender,
       existingCase.court?.name,
       existingCase.prosecutor?.name,
