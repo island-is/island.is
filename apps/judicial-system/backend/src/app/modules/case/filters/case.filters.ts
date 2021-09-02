@@ -1,16 +1,28 @@
 import { Op, WhereOptions } from 'sequelize'
 
-import { CaseState, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  InstitutionType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../models'
 
-function getBlockedStates(role: UserRole) {
+function getBlockedStates(role: UserRole, institutionType?: InstitutionType) {
   const blockedStates = [CaseState.DELETED]
 
-  if (role !== UserRole.PROSECUTOR) {
-    blockedStates.push(CaseState.NEW)
+  if (role === UserRole.PROSECUTOR) {
+    return blockedStates
   }
+
+  blockedStates.push(CaseState.NEW)
+
+  if (institutionType !== InstitutionType.HIGH_COURT) {
+    return blockedStates
+  }
+
+  blockedStates.push(CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED)
 
   return blockedStates
 }
@@ -23,8 +35,12 @@ function courtMustMatchUserIInstitution(role: UserRole): boolean {
   return role === UserRole.REGISTRAR || role === UserRole.JUDGE
 }
 
-function isStateHiddenFromRole(state: CaseState, role: UserRole): boolean {
-  return getBlockedStates(role).includes(state)
+function isStateHiddenFromRole(
+  state: CaseState,
+  role: UserRole,
+  institutionType?: InstitutionType,
+): boolean {
+  return getBlockedStates(role, institutionType).includes(state)
 }
 
 function isProsecutorsOfficeHiddenFromUser(
@@ -46,11 +62,13 @@ function isProsecutorsOfficeHiddenFromUser(
 function isCourtHiddenFromUser(
   courtId: string | undefined,
   user: User,
+  forUpdate: boolean,
 ): boolean {
   return (
     courtMustMatchUserIInstitution(user.role) &&
     Boolean(courtId) &&
-    courtId !== user.institution?.id
+    courtId !== user.institution?.id &&
+    (forUpdate || user.institution?.type !== InstitutionType.HIGH_COURT)
   )
 }
 
@@ -60,22 +78,26 @@ export function isCaseBlockedFromUser(
   forUpdate = true,
 ): boolean {
   return (
-    isStateHiddenFromRole(theCase.state, user.role) ||
+    isStateHiddenFromRole(theCase.state, user.role, user.institution?.type) ||
     isProsecutorsOfficeHiddenFromUser(
       theCase.prosecutor?.institutionId,
       user,
       forUpdate,
       theCase.sharedWithProsecutorsOfficeId,
     ) ||
-    isCourtHiddenFromUser(theCase.courtId, user)
+    isCourtHiddenFromUser(theCase.courtId, user, forUpdate)
   )
 }
 
 export function getCasesQueryFilter(user: User): WhereOptions {
   const blockStates = {
     [Op.not]: {
-      state: getBlockedStates(user.role),
+      state: getBlockedStates(user.role, user.institution?.type),
     },
+  }
+
+  if (user.institution?.type === InstitutionType.HIGH_COURT) {
+    return blockStates
   }
 
   const blockInstitutions =

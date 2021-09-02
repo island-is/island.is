@@ -1,6 +1,10 @@
 import { Op } from 'sequelize'
 
-import { CaseState, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  InstitutionType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './case.filters'
@@ -10,7 +14,10 @@ describe('isCaseBlockedFromUser', () => {
   it('deleted should be hidden from prosecutors', () => {
     // Arrange
     const theCase = { state: CaseState.DELETED } as Case
-    const user = { role: UserRole.PROSECUTOR } as User
+    const user = {
+      role: UserRole.PROSECUTOR,
+      institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+    } as User
 
     // Act
     const res = isCaseBlockedFromUser(theCase, user)
@@ -22,7 +29,10 @@ describe('isCaseBlockedFromUser', () => {
   it('deleted should be hidden from registrars', () => {
     // Arrange
     const theCase = { state: CaseState.DELETED } as Case
-    const user = { role: UserRole.REGISTRAR } as User
+    const user = {
+      role: UserRole.REGISTRAR,
+      institution: { type: InstitutionType.COURT },
+    } as User
 
     // Act
     const res = isCaseBlockedFromUser(theCase, user)
@@ -34,7 +44,10 @@ describe('isCaseBlockedFromUser', () => {
   it('new should be hidden from registrars', () => {
     // Arrange
     const theCase = { state: CaseState.NEW } as Case
-    const user = { role: UserRole.REGISTRAR } as User
+    const user = {
+      role: UserRole.REGISTRAR,
+      institution: { type: InstitutionType.COURT },
+    } as User
 
     // Act
     const res = isCaseBlockedFromUser(theCase, user)
@@ -46,7 +59,10 @@ describe('isCaseBlockedFromUser', () => {
   it('deleted should be hidden from judges', () => {
     // Arrange
     const theCase = { state: CaseState.DELETED } as Case
-    const user = { role: UserRole.JUDGE } as User
+    const user = {
+      role: UserRole.JUDGE,
+      institution: { type: InstitutionType.COURT },
+    } as User
 
     // Act
     const res = isCaseBlockedFromUser(theCase, user)
@@ -58,7 +74,100 @@ describe('isCaseBlockedFromUser', () => {
   it('new should be hidden from judges', () => {
     // Arrange
     const theCase = { state: CaseState.NEW } as Case
-    const user = { role: UserRole.JUDGE } as User
+    const user = {
+      role: UserRole.JUDGE,
+      institution: { type: InstitutionType.COURT },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
+  it('draft should be hidden from high court registrars', () => {
+    // Arrange
+    const theCase = { state: CaseState.DRAFT } as Case
+    const user = {
+      role: UserRole.REGISTRAR,
+      institution: { type: InstitutionType.HIGH_COURT },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
+  it('submitted should be hidden from high court registrars', () => {
+    // Arrange
+    const theCase = { state: CaseState.SUBMITTED } as Case
+    const user = {
+      role: UserRole.REGISTRAR,
+      institution: { type: InstitutionType.HIGH_COURT },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
+  it('received should be hidden from high court registrars', () => {
+    // Arrange
+    const theCase = { state: CaseState.RECEIVED } as Case
+    const user = {
+      role: UserRole.REGISTRAR,
+      institution: { type: InstitutionType.HIGH_COURT },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
+  it('draft should be hidden from high court judges', () => {
+    // Arrange
+    const theCase = { state: CaseState.DRAFT } as Case
+    const user = {
+      role: UserRole.JUDGE,
+      institution: { type: InstitutionType.HIGH_COURT },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
+  it('submitted should be hidden from high court judges', () => {
+    // Arrange
+    const theCase = { state: CaseState.SUBMITTED } as Case
+    const user = {
+      role: UserRole.JUDGE,
+      institution: { type: InstitutionType.HIGH_COURT },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
+  it('received should be hidden from high court judges', () => {
+    // Arrange
+    const theCase = { state: CaseState.RECEIVED } as Case
+    const user = {
+      role: UserRole.JUDGE,
+      institution: { type: InstitutionType.HIGH_COURT },
+    } as User
 
     // Act
     const res = isCaseBlockedFromUser(theCase, user)
@@ -75,7 +184,10 @@ describe('isCaseBlockedFromUser', () => {
     } as Case
     const user = {
       role: UserRole.PROSECUTOR,
-      institution: { id: 'Another Prosecutors Office' },
+      institution: {
+        id: 'Another Prosecutors Office',
+        type: InstitutionType.PROSECUTORS_OFFICE,
+      },
     } as User
 
     // Act
@@ -93,7 +205,10 @@ describe('isCaseBlockedFromUser', () => {
     } as Case
     const user = {
       role: UserRole.PROSECUTOR,
-      institution: { id: 'Prosecutors Office' },
+      institution: {
+        id: 'Prosecutors Office',
+        type: InstitutionType.PROSECUTORS_OFFICE,
+      },
     } as User
 
     // Act
@@ -112,7 +227,10 @@ describe('isCaseBlockedFromUser', () => {
     } as Case
     const user = {
       role: UserRole.PROSECUTOR,
-      institution: { id: 'Another Prosecutors Office' },
+      institution: {
+        id: 'Another Prosecutors Office',
+        type: InstitutionType.PROSECUTORS_OFFICE,
+      },
     } as User
 
     // Act
@@ -120,6 +238,28 @@ describe('isCaseBlockedFromUser', () => {
 
     // Assert
     expect(res).toBe(false)
+  })
+
+  it('other prosecutors office should not be able to update a shared case ', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.NEW,
+      prosecutor: { institutionId: 'Prosecutors Office' },
+      sharedWithProsecutorsOfficeId: 'Another Prosecutors Office',
+    } as Case
+    const user = {
+      role: UserRole.PROSECUTOR,
+      institution: {
+        id: 'Another Prosecutors Office',
+        type: InstitutionType.PROSECUTORS_OFFICE,
+      },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
   })
 
   it('other courts should be hidden from registrars', () => {
@@ -130,7 +270,7 @@ describe('isCaseBlockedFromUser', () => {
     } as Case
     const user = {
       role: UserRole.REGISTRAR,
-      institution: { id: 'Another Court' },
+      institution: { id: 'Another Court', type: InstitutionType.COURT },
     } as User
 
     // Act
@@ -148,7 +288,7 @@ describe('isCaseBlockedFromUser', () => {
     } as Case
     const user = {
       role: UserRole.REGISTRAR,
-      institution: { id: 'Court' },
+      institution: { id: 'Court', type: InstitutionType.COURT },
     } as User
 
     // Act
@@ -166,7 +306,7 @@ describe('isCaseBlockedFromUser', () => {
     } as Case
     const user = {
       role: UserRole.JUDGE,
-      institution: { id: 'Another Court' },
+      institution: { id: 'Another Court', type: InstitutionType.COURT },
     } as User
 
     // Act
@@ -184,7 +324,7 @@ describe('isCaseBlockedFromUser', () => {
     } as Case
     const user = {
       role: UserRole.JUDGE,
-      institution: { id: 'Court' },
+      institution: { id: 'Court', type: InstitutionType.COURT },
     } as User
 
     // Act
@@ -192,6 +332,78 @@ describe('isCaseBlockedFromUser', () => {
 
     // Assert
     expect(res).toBe(false)
+  })
+
+  it('all appealed cases of all courts should be visible to high court registrars', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.ACCEPTED,
+      courtId: 'Court',
+    } as Case
+    const user = {
+      role: UserRole.REGISTRAR,
+      institution: { id: 'High Court', type: InstitutionType.HIGH_COURT },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(res).toBe(false)
+  })
+
+  it('high court registrars should not be able to update cases', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.REJECTED,
+      courtId: 'Court',
+    } as Case
+    const user = {
+      role: UserRole.REGISTRAR,
+      institution: { id: 'High Court', type: InstitutionType.HIGH_COURT },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
+  it('all appealed cases of all courts should be visible to high court judges', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.REJECTED,
+      courtId: 'Court',
+    } as Case
+    const user = {
+      role: UserRole.JUDGE,
+      institution: { id: 'High Court', type: InstitutionType.HIGH_COURT },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(res).toBe(false)
+  })
+
+  it('high court judges should not be able to update cases', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.ACCEPTED,
+      courtId: 'Court',
+    } as Case
+    const user = {
+      role: UserRole.JUDGE,
+      institution: { id: 'High Court', type: InstitutionType.HIGH_COURT },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user)
+
+    // Assert
+    expect(res).toBe(true)
   })
 })
 
@@ -202,6 +414,7 @@ describe('getCasesQueryFilter', () => {
       role: UserRole.PROSECUTOR,
       institution: {
         id: 'Prosecutors Office Id',
+        type: InstitutionType.PROSECUTORS_OFFICE,
       },
     }
 
@@ -233,9 +446,7 @@ describe('getCasesQueryFilter', () => {
     // Arrange
     const user = {
       role: UserRole.REGISTRAR,
-      institution: {
-        id: 'Court Id',
-      },
+      institution: { id: 'Court Id', type: InstitutionType.COURT },
     }
 
     // Act
@@ -260,9 +471,7 @@ describe('getCasesQueryFilter', () => {
     // Arrange
     const user = {
       role: UserRole.JUDGE,
-      institution: {
-        id: 'Court Id',
-      },
+      institution: { id: 'Court Id', type: InstitutionType.COURT },
     }
 
     // Act
@@ -280,6 +489,54 @@ describe('getCasesQueryFilter', () => {
           [Op.or]: [{ court_id: { [Op.is]: null } }, { court_id: 'Court Id' }],
         },
       ],
+    })
+  })
+
+  it('should get high court registrar filter', () => {
+    // Arrange
+    const user = {
+      role: UserRole.REGISTRAR,
+      institution: { id: 'High Court Id', type: InstitutionType.HIGH_COURT },
+    }
+
+    // Act
+    const res = getCasesQueryFilter(user as User)
+
+    // Assert
+    expect(res).toStrictEqual({
+      [Op.not]: {
+        state: [
+          CaseState.DELETED,
+          CaseState.NEW,
+          CaseState.DRAFT,
+          CaseState.SUBMITTED,
+          CaseState.RECEIVED,
+        ],
+      },
+    })
+  })
+
+  it('should get high court judge filter', () => {
+    // Arrange
+    const user = {
+      role: UserRole.JUDGE,
+      institution: { id: 'High Court Id', type: InstitutionType.HIGH_COURT },
+    }
+
+    // Act
+    const res = getCasesQueryFilter(user as User)
+
+    // Assert
+    expect(res).toStrictEqual({
+      [Op.not]: {
+        state: [
+          CaseState.DELETED,
+          CaseState.NEW,
+          CaseState.DRAFT,
+          CaseState.SUBMITTED,
+          CaseState.RECEIVED,
+        ],
+      },
     })
   })
 })
