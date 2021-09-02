@@ -579,6 +579,12 @@ export const m = defineMessages({
     description:
       'The payment has been confirmed, choose "Continue" to finish the application.',
   },
+  paymentImage: {
+    id: 'dl.application.paymentApprovedContinue',
+    defaultMessage: `Skrautmynd`,
+    description:
+      'Company Image',
+  },
   chooseDistrictCommisioner: {
     id: 'dl.application.chooseDistrictCommisioner',
     defaultMessage:
