@@ -63,6 +63,13 @@ const {
   {
     topBar: {
       rightButtons: [],
+      largeTitle: {
+        visible: true,
+      },
+      scrollEdgeAppearance: {
+        active: true,
+        noBorder: true,
+      }
     },
     bottomTab: {
       testID: testIDs.TABBAR_TAB_HOME,
@@ -132,7 +139,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   return (
     <>
-      <BottomTabsIndicator index={1} total={3} />
       <Animated.FlatList
         ref={flatListRef}
         testID={testIDs.SCREEN_HOME}
@@ -155,6 +161,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         }
       />
       <TopLine scrollY={scrollY} />
+      <BottomTabsIndicator index={1} total={3} />
     </>
   )
 }

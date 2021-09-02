@@ -34,6 +34,8 @@ PODS:
     - React-Core
     - UMCore
     - UMImageLoaderInterface
+  - EXLinearGradient (9.2.0):
+    - UMCore
   - EXLocalAuthentication (11.0.2):
     - UMConstantsInterface
     - UMCore
@@ -557,6 +559,7 @@ DEPENDENCIES:
   - EXFileSystem (from `../../node_modules/expo-file-system/ios`)
   - EXHaptics (from `../../node_modules/expo-haptics/ios`)
   - EXImageLoader (from `../../node_modules/expo-image-loader/ios`)
+  - EXLinearGradient (from `../../node_modules/expo-linear-gradient/ios`)
   - EXLocalAuthentication (from `../../node_modules/expo-local-authentication/ios`)
   - EXNotifications (from `../../node_modules/expo-notifications/ios`)
   - EXPermissions (from `../../node_modules/expo-permissions/ios`)
@@ -694,6 +697,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/expo-haptics/ios"
   EXImageLoader:
     :path: "../../node_modules/expo-image-loader/ios"
+  EXLinearGradient:
+    :path: "../../node_modules/expo-linear-gradient/ios"
   EXLocalAuthentication:
     :path: "../../node_modules/expo-local-authentication/ios"
   EXNotifications:
@@ -826,6 +831,7 @@ SPEC CHECKSUMS:
   EXFileSystem: dcf2273f49431e5037347c733a2dc5d08e0d0a9e
   EXHaptics: 2de40c5f50a9e78da92c209db06db5134d8cac0b
   EXImageLoader: da941c9399e01ec28f2d5b270bdd21f2c8ca596c
+  EXLinearGradient: f9ea3259f096b27008860ca50764184225dc71c9
   EXLocalAuthentication: 4f625501ff104674734c3113fcb28e401f674ff2
   EXNotifications: c13e078d83ce01c7aeb8e3f44a48c13f50099291
   EXPermissions: 8f8c1c05580c4e02d4ee2c8dd74bfe173ff6a723

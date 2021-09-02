@@ -28,6 +28,7 @@
     "expo-file-system": "11.0.2",
     "expo-haptics": "10.0.0",
     "expo-image-loader": "2.1.1",
+    "expo-linear-gradient": "9.2.0",
     "expo-local-authentication": "11.0.2",
     "expo-notifications": "0.11.6",
     "react-intl": "5.20.4",

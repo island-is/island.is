@@ -81,6 +81,13 @@ const {
         visible: true,
         hideTopBarOnFocus: true,
       },
+      largeTitle: {
+        visible: true,
+      },
+      scrollEdgeAppearance: {
+        active: true,
+        noBorder: true,
+      },
       background: {
         component:
           Platform.OS === 'android'
@@ -326,8 +333,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   )
 
   return (
-    <View style={{ flex: 1 }}>
-      <BottomTabsIndicator index={0} total={3} />
+    <>
       <Animated.FlatList
         ref={flatListRef}
         scrollEventThrottle={16}
@@ -385,8 +391,9 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
           )
         }
       />
+      <BottomTabsIndicator index={0} total={3} />
       <TopLine scrollY={scrollY} />
-    </View>
+    </>
   )
 }
 
