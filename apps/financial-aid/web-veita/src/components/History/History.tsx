@@ -40,12 +40,12 @@ const History = ({ className }: Props) => {
         [`${className}`]: true,
       })}
     >
-      <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
-        Saga umsóknar
-      </Text>
-
-      {data?.applicationEvents && (
+      {data?.applicationEvents && data?.applicationEvents.length > 0 && (
         <>
+          <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
+            Saga umsóknar
+          </Text>
+
           {data?.applicationEvents.map((item, index) => {
             return (
               <Box
