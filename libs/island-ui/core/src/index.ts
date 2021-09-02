@@ -1,3 +1,8 @@
+// Note: We use build-time styles and need to override global/box styles with component styles on the same DOM element.
+//       This means that the order of styles matters. Unfortunately, mini-css-extract-plugin does not guarantee the
+//       order of css but in practice, the order of imports in this file can affect style ordering. That's why
+//       overridden styles, like global and box, need to come first.
+
 // Global
 export * from './treat/global.treat'
 export * from './utils/globalStyles'
