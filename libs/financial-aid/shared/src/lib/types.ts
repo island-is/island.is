@@ -188,6 +188,10 @@ export interface SignedUrl {
   key: string
 }
 
+export interface CreateFilesResponse {
+  success: boolean
+}
+
 // export type HomeCircumstances =
 //   | 'Unknown'
 //   | 'WithParents'
