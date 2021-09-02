@@ -36,6 +36,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
   const {
     files,
     uploadErrorMessage,
+    allFilesUploaded,
     onChange,
     onRemove,
     onRetry,
@@ -127,7 +128,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               ? Constants.STEP_SIX_ROUTE
               : Constants.IC_POLICE_CONFIRMATION_ROUTE
           }/${workingCase.id}`}
-          nextIsDisabled={false}
+          nextIsDisabled={!allFilesUploaded}
         />
       </FormContentContainer>
     </>
