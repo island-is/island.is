@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Text,
@@ -31,6 +31,7 @@ interface Props {
 export const StepFiveForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
+  const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
 
   const {
     files,
@@ -40,6 +41,12 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     onRetry,
   } = useS3Upload(workingCase)
   const { updateCase } = useCase()
+
+  useMemo(() => {
+    setAllFilesUploaded(
+      files.filter((file) => file.status === 'done').length === files.length,
+    )
+  }, [files])
 
   return (
     <>
@@ -126,7 +133,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               ? Constants.STEP_SIX_ROUTE
               : Constants.IC_POLICE_CONFIRMATION_ROUTE
           }/${workingCase.id}`}
-          nextIsDisabled={false}
+          nextIsDisabled={!allFilesUploaded}
         />
       </FormContentContainer>
     </>
