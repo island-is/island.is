@@ -54,7 +54,7 @@ module.exports = {
         version: 3,
       },
       {
-        national_id: '2605923199',
+        national_id: '0101302399',
         region_number: 2,
         region_name: 'Norðausturkjördæmi',
         version: 3,

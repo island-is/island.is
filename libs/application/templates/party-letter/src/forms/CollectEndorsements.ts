@@ -7,9 +7,15 @@ import {
   Form,
   FormModes,
   DefaultEvents,
+  Application,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
+
+interface EndorsementData {
+  id: string
+}
+
 
 export const CollectEndorsements: Form = buildForm({
   id: 'Collect endorsements',

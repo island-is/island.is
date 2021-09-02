@@ -7,6 +7,7 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useEndorsements } from '../../hooks/useFetchEndorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
+import { useEndorsementListExists } from '../../hooks/useEndorsementListExists';
 import { Endorsement } from '../../types/schema'
 import BulkUpload from '../BulkUpload'
 import orderBy from 'lodash/orderBy'
@@ -27,6 +28,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
     true,
   )
   const isClosedHook = useIsClosed(endorsementListId)
+  const endorsementListExistsHook = useEndorsementListExists(endorsementListId)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
 
@@ -60,6 +62,11 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   }
 
   return (
+    !endorsementListExistsHook ? (
+      <Box>
+        Yo it don't exist
+      </Box>
+    ) : (
     <Box marginBottom={8}>
       <Text marginBottom={3}>
         {formatMessage(m.endorsementList.linkDescription)}
@@ -134,6 +141,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
         )}
       </Box>
     </Box>
+    )
   )
 }
 

@@ -11,4 +11,4 @@ yarn nx run services-party-letter-registry-api:seed
 yarn nx run application-system-api:seed
 yarn nx run services-endorsements-api:seed
 
-#yarn nx run application-templates-party-application:dev
+yarn nx run application-templates-party-application:dev

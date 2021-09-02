@@ -117,16 +117,152 @@ module.exports = {
       "0101309999"
       ]
 
+    const moreFakeNationalIds = [
+      "0101290019",
+      "0101290289",
+      "0101290369",
+      "0101290449",
+      "0101290529",
+      "0101290609",
+      "0101290799",
+      "0101290879",
+      "0101290959",
+      "0101291099",
+      "0101291179",
+      "0101291259",
+      "0101291339",
+      "0101291419",
+      "0101291689",
+      "0101291769",
+      "0101291849",
+      "0101291929",
+      "0101292069",
+      "0101292149",
+      "0101292229",
+      "0101292309",
+      "0101292499",
+      "0101292579",
+      "0101292659",
+      "0101292739",
+      "0101292819",
+      "0101293039",
+      "0101293119",
+      "0101293389",
+      "0101293469",
+      "0101293549",
+      "0101293629",
+      "0101293709",
+      "0101293899",
+      "0101293979",
+      "0101294009",
+      "0101294199",
+      "0101294279",
+      "0101294359",
+      "0101294439",
+      "0101294519",
+      "0101294789",
+      "0101294869",
+      "0101294949",
+      "0101295089",
+      "0101295169",
+      "0101295249",
+      "0101295329",
+      "0101295409",
+      "0101295599",
+      "0101295679",
+      "0101295759",
+      "0101295839",
+      "0101295919",
+      "0101296059",
+      "0101296139",
+      "0101296219",
+      "0101296489",
+      "0101296569",
+      "0101296649",
+      "0101296729",
+      "0101296809",
+      "0101296999",
+      "0101297029",
+      "0101297109",
+      "0101297299",
+      "0101297379",
+      "0101297459",
+      "0101297539",
+      "0101297619",
+      "0101297889",
+      "0101297969",
+      "0101298189",
+      "0101298269",
+      "0101298349",
+      "0101298429",
+      "0101298509",
+      "0101298699",
+      "0101298779",
+      "0101298859",
+      "0101298939",
+      "0101299079",
+      "0101299159",
+      "0101299239",
+      "0101299319",
+      "0101299589",
+      "0101299669",
+      "0101299749",
+      "0101299829",
+      "0101299909"
+    ]
+
 
     const endorsementLists = [
       {
-        id: 'f00df00d-f00d-400d-a00d-f00df00df00d',
-        title: 'Steini endorsement list',
-        description: 'Endorsement list steini',
+        id: 'f00df00d-f00d-400d-a00d-f00db00df00d',
+        title: 'Steinaflokkur',
+        description: 'S',
         closed_date: null,
         endorsement_meta: ['fullName', 'address'],
-        tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
-        owner: '2605923199',
+        tags: ['partyApplicationNordvesturkjordaemi2021'],
+        owner: '0101302399',
+        meta: JSON.stringify({
+          applicationId: 'f00df00d-f00d-400d-a00d-f00db00df00d',
+        }),
+        created: new Date(),
+        modified: new Date(),
+      },
+      {
+        id: 'f00df00d-f00d-400d-a00d-f00db00da00d',
+        title: 'Steinaflokkur',
+        description: 'S',
+        closed_date: null,
+        endorsement_meta: ['fullName', 'address'],
+        tags: ['partyApplicationNordvesturkjordaemi2021'],
+        owner: '0101302399',
+        meta: JSON.stringify({
+          applicationId: 'f00df00d-f00d-400d-a00d-f00db00da00d',
+        }),
+        created: new Date(),
+        modified: new Date(),
+      },
+      {
+        id: 'f00df00d-f00d-400d-a00d-f00db00db00d',
+        title: 'Steinaflokkur',
+        description: 'S',
+        closed_date: null,
+        endorsement_meta: ['fullName', 'address'],
+        tags: ['partyApplicationNordvesturkjordaemi2021'],
+        owner: '0101302399',
+        meta: JSON.stringify({
+          applicationId: 'f00df00d-f00d-400d-a00d-f00db00db00d',
+        }),
+        created: new Date(),
+        modified: new Date(),
+      },
+      {
+        id: 'f00df00d-f00d-400d-a00d-f00df00df00d',
+        title: 'Donni list',
+        description: 'D',
+        closed_date: null,
+        endorsement_meta: ['fullName', 'address'],
+        tags: ['partyApplicationNordausturkjordaemi2021'],
+        owner: '0101302399',
         meta: JSON.stringify({
           applicationId: 'f00df00d-f00d-400d-a00d-f00df00df00d',
         }),
@@ -135,12 +271,12 @@ module.exports = {
       },
       {
         id: 'f00df00d-f00d-400d-a00d-f00df00da00d',
-        title: 'Steini endorsement list',
-        description: 'Endorsement list steini',
+        title: 'Donni list',
+        description: 'D',
         closed_date: null,
         endorsement_meta: ['fullName', 'address'],
-        tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
-        owner: '2605923199',
+        tags: ['partyApplicationNordausturkjordaemi2021'],
+        owner: '0101302399',
         meta: JSON.stringify({
           applicationId: 'f00df00d-f00d-400d-a00d-f00df00da00d',
         }),
@@ -149,12 +285,12 @@ module.exports = {
       },
       {
         id: 'f00df00d-f00d-400d-a00d-f00df00db00d',
-        title: 'Steini endorsement list',
-        description: 'Endorsement list steini',
+        title: 'Donni list',
+        description: 'D',
         closed_date: null,
         endorsement_meta: ['fullName', 'address'],
-        tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
-        owner: '2605923199',
+        tags: ['partyApplicationNordausturkjordaemi2021'],
+        owner: '0101302399',
         meta: JSON.stringify({
           applicationId: 'f00df00d-f00d-400d-a00d-f00df00db00d',
         }),
@@ -168,7 +304,7 @@ module.exports = {
         closed_date: null,
         endorsement_meta: ['fullName', 'address'],
         tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
-        owner: '2505923199',
+        owner: '0101307789',
         meta: JSON.stringify({
           applicationId: 'f00df00d-f00d-400d-a00d-b00df00db00d',
         }),
@@ -182,7 +318,7 @@ module.exports = {
         closed_date: null,
         endorsement_meta: ['fullName', 'address'],
         tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
-        owner: '2505923199',
+        owner: '0101307789',
         meta: JSON.stringify({
           applicationId: 'f00df00d-f00d-400d-a00d-a00df00db00d',
         }),
@@ -197,7 +333,7 @@ module.exports = {
         closed_date: null,
         endorsement_meta: ['fullName', 'address'],
         tags: ['partyApplicationNordausturkjordaemi2021', 'partyLetter2021'],
-        owner: '2205923199',
+        owner: '0101302209',
         meta: JSON.stringify({
           applicationId: 'f00df00d-f00d-400d-a00d-c00df00db00d',
         }),
@@ -214,11 +350,11 @@ module.exports = {
     for(const nid in fakeNationalIds) {
       let eli = 'f';
 
-      if(nid > 30 && nid < 61) {
+      if(nid > 20 && nid < 71) {
         eli = 'a'
       }
 
-      if(nid >= 61) {
+      if(nid >= 71) {
         eli = 'b'
       }
 
@@ -228,6 +364,34 @@ module.exports = {
         endorsement_list_id: `f00df00d-f00d-400d-a00d-f00df00d${eli}00d`,
         meta: JSON.stringify({
           fullName: `Gervimaður ${nid}`,
+          address: {
+            city: faker.fake('{{address.city}}'), 
+            postalCode: 600,
+            streetAddress: faker.fake('{{address.streetName}} {{address.streetSuffix}}')
+          }
+        }),
+        created: new Date(),
+        modified: new Date(),
+      })
+    }
+
+    for(const nid in moreFakeNationalIds) {
+      let eli = 'f';
+
+      if(nid > 5 && nid < 61) {
+        eli = 'a'
+      }
+
+      if(nid >= 61) {
+        eli = 'b'
+      }
+
+      endorsements.push({
+        id: faker.random.uuid(),
+        endorser: moreFakeNationalIds[nid],
+        endorsement_list_id: `f00df00d-f00d-400d-a00d-f00db00d${eli}00d`,
+        meta: JSON.stringify({
+          fullName: `Hervimaður ${nid}`,
           address: {
             city: faker.fake('{{address.city}}'), 
             postalCode: 600,

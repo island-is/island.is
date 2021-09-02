@@ -11,9 +11,9 @@ module.exports = {
       {
         party_letter: 'S',
         party_name: 'Steini stuð',
-        owner: 2605923199,
+        owner: 0101302399,
         managers: [
-          '2605923199'
+          '0101302399'
         ],
         created: new Date(),
         modified: new Date(),  

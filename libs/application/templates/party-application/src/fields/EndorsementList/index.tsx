@@ -15,6 +15,7 @@ import BulkUpload from '../BulkUpload'
 import { Endorsement } from '../../types/schema'
 import { useEndorsements } from '../../hooks/fetch-endorsements'
 import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
+import { useEndorsementListExists } from '../../hooks/useEndorsementListExists'
 import orderBy from 'lodash/orderBy'
 import { paginate, calculateTotalPages } from '../components/utils'
 import { constituencyMapper, EndorsementListTags } from '../../constants'
@@ -31,6 +32,7 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   >()
   const [showOnlyInvalidated, setShowOnlyInvalidated] = useState(false)
   const isClosedHook = useIsClosed(endorsementListId)
+  const endorsementListExistsHook = useEndorsementListExists(endorsementListId)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
   const { endorsements: endorsementsHook, refetch } = useEndorsements(
@@ -97,6 +99,11 @@ const EndorsementList: FC<FieldBaseProps> = ({ application }) => {
   }
 
   return (
+    !endorsementListExistsHook ?
+    <Box>
+      Meðmælalista hefur verið eytt
+    </Box> 
+    :
     <Box marginBottom={8}>
       <CopyLink
         linkUrl={window.location.href}
