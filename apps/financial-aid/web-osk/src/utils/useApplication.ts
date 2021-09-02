@@ -35,8 +35,6 @@ const useApplication = () => {
           .concat(formatFiles(form.incomeFiles, FileType.INCOME))
           .concat(formatFiles(form.otherFiles, FileType.OTHER))
 
-        console.log(files)
-
         const { data } = await createApplicationMutation({
           variables: {
             input: {
