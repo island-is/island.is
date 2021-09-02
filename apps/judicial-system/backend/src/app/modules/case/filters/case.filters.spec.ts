@@ -1,6 +1,7 @@
 import { Op } from 'sequelize'
 
 import {
+  CaseAppealDecision,
   CaseState,
   InstitutionType,
   UserRole,
@@ -339,6 +340,7 @@ describe('isCaseBlockedFromUser', () => {
     const theCase = {
       state: CaseState.ACCEPTED,
       courtId: 'Court',
+      accusedAppealDecision: CaseAppealDecision.APPEAL,
     } as Case
     const user = {
       role: UserRole.REGISTRAR,
@@ -352,11 +354,31 @@ describe('isCaseBlockedFromUser', () => {
     expect(res).toBe(false)
   })
 
+  it('all unappealed cases of all courts should be hidden from high court registrars', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.ACCEPTED,
+      courtId: 'Court',
+      accusedAppealDecision: CaseAppealDecision.POSTPONE,
+    } as Case
+    const user = {
+      role: UserRole.REGISTRAR,
+      institution: { id: 'High Court', type: InstitutionType.HIGH_COURT },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
   it('high court registrars should not be able to update cases', () => {
     // Arrange
     const theCase = {
       state: CaseState.REJECTED,
       courtId: 'Court',
+      accusedPostponedAppealDate: new Date(),
     } as Case
     const user = {
       role: UserRole.REGISTRAR,
@@ -375,6 +397,7 @@ describe('isCaseBlockedFromUser', () => {
     const theCase = {
       state: CaseState.REJECTED,
       courtId: 'Court',
+      prosecutorPostponedAppealDate: new Date(),
     } as Case
     const user = {
       role: UserRole.JUDGE,
@@ -388,11 +411,31 @@ describe('isCaseBlockedFromUser', () => {
     expect(res).toBe(false)
   })
 
+  it('all unappealed cases of all courts should be hidden from high court judges', () => {
+    // Arrange
+    const theCase = {
+      state: CaseState.REJECTED,
+      courtId: 'Court',
+      prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+    } as Case
+    const user = {
+      role: UserRole.JUDGE,
+      institution: { id: 'High Court', type: InstitutionType.HIGH_COURT },
+    } as User
+
+    // Act
+    const res = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(res).toBe(true)
+  })
+
   it('high court judges should not be able to update cases', () => {
     // Arrange
     const theCase = {
       state: CaseState.ACCEPTED,
       courtId: 'Court',
+      prosecutorAppealDecision: CaseAppealDecision.APPEAL,
     } as Case
     const user = {
       role: UserRole.JUDGE,
@@ -504,15 +547,27 @@ describe('getCasesQueryFilter', () => {
 
     // Assert
     expect(res).toStrictEqual({
-      [Op.not]: {
-        state: [
-          CaseState.DELETED,
-          CaseState.NEW,
-          CaseState.DRAFT,
-          CaseState.SUBMITTED,
-          CaseState.RECEIVED,
-        ],
-      },
+      [Op.and]: [
+        {
+          [Op.not]: {
+            state: [
+              CaseState.DELETED,
+              CaseState.NEW,
+              CaseState.DRAFT,
+              CaseState.SUBMITTED,
+              CaseState.RECEIVED,
+            ],
+          },
+        },
+        {
+          [Op.or]: {
+            accused_appeal_decision: CaseAppealDecision.APPEAL,
+            prosecutor_appeal_decision: CaseAppealDecision.APPEAL,
+            accused_postponed_appeal_date: { [Op.not]: null },
+            prosecutor_postponed_appeal_date: { [Op.not]: null },
+          },
+        },
+      ],
     })
   })
 
@@ -528,15 +583,27 @@ describe('getCasesQueryFilter', () => {
 
     // Assert
     expect(res).toStrictEqual({
-      [Op.not]: {
-        state: [
-          CaseState.DELETED,
-          CaseState.NEW,
-          CaseState.DRAFT,
-          CaseState.SUBMITTED,
-          CaseState.RECEIVED,
-        ],
-      },
+      [Op.and]: [
+        {
+          [Op.not]: {
+            state: [
+              CaseState.DELETED,
+              CaseState.NEW,
+              CaseState.DRAFT,
+              CaseState.SUBMITTED,
+              CaseState.RECEIVED,
+            ],
+          },
+        },
+        {
+          [Op.or]: {
+            accused_appeal_decision: CaseAppealDecision.APPEAL,
+            prosecutor_appeal_decision: CaseAppealDecision.APPEAL,
+            accused_postponed_appeal_date: { [Op.not]: null },
+            prosecutor_postponed_appeal_date: { [Op.not]: null },
+          },
+        },
+      ],
     })
   })
 })

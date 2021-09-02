@@ -1,11 +1,13 @@
 import { Op, WhereOptions } from 'sequelize'
 
 import {
+  CaseAppealDecision,
   CaseState,
+  hasCaseBeenAppealed,
   InstitutionType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
+import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models'
 
@@ -43,7 +45,7 @@ function isStateHiddenFromRole(
   return getBlockedStates(role, institutionType).includes(state)
 }
 
-function isProsecutorsOfficeHiddenFromUser(
+function isProsecutorsOfficeCaseHiddenFromUser(
   prosecutorInstitutionId: string | undefined,
   user: User,
   forUpdate: boolean,
@@ -59,16 +61,19 @@ function isProsecutorsOfficeHiddenFromUser(
   )
 }
 
-function isCourtHiddenFromUser(
+function isCourtCaseHiddenFromUser(
   courtId: string | undefined,
   user: User,
   forUpdate: boolean,
+  hasCaseBeenAppealed: boolean,
 ): boolean {
   return (
     courtMustMatchUserIInstitution(user.role) &&
     Boolean(courtId) &&
     courtId !== user.institution?.id &&
-    (forUpdate || user.institution?.type !== InstitutionType.HIGH_COURT)
+    (forUpdate ||
+      !hasCaseBeenAppealed ||
+      user.institution?.type !== InstitutionType.HIGH_COURT)
   )
 }
 
@@ -79,13 +84,18 @@ export function isCaseBlockedFromUser(
 ): boolean {
   return (
     isStateHiddenFromRole(theCase.state, user.role, user.institution?.type) ||
-    isProsecutorsOfficeHiddenFromUser(
+    isProsecutorsOfficeCaseHiddenFromUser(
       theCase.prosecutor?.institutionId,
       user,
       forUpdate,
       theCase.sharedWithProsecutorsOfficeId,
     ) ||
-    isCourtHiddenFromUser(theCase.courtId, user, forUpdate)
+    isCourtCaseHiddenFromUser(
+      theCase.courtId,
+      user,
+      forUpdate,
+      hasCaseBeenAppealed((theCase as unknown) as TCase),
+    )
   )
 }
 
@@ -96,27 +106,28 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     },
   }
 
-  if (user.institution?.type === InstitutionType.HIGH_COURT) {
-    return blockStates
-  }
-
   const blockInstitutions =
     user.role === UserRole.PROSECUTOR
       ? {
           [Op.or]: [
             { prosecutor_id: { [Op.is]: null } },
-            {
-              '$prosecutor.institution_id$': user.institution?.id,
-            },
+            { '$prosecutor.institution_id$': user.institution?.id },
             { shared_with_prosecutors_office_id: user.institution?.id },
           ],
+        }
+      : user.institution?.type === InstitutionType.HIGH_COURT
+      ? {
+          [Op.or]: {
+            accused_appeal_decision: CaseAppealDecision.APPEAL,
+            prosecutor_appeal_decision: CaseAppealDecision.APPEAL,
+            accused_postponed_appeal_date: { [Op.not]: null },
+            prosecutor_postponed_appeal_date: { [Op.not]: null },
+          },
         }
       : {
           [Op.or]: [
             { court_id: { [Op.is]: null } },
-            {
-              court_id: user.institution?.id,
-            },
+            { court_id: user.institution?.id },
           ],
         }
 
