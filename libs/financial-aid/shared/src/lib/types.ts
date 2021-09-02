@@ -184,13 +184,6 @@ export interface CreateFilesResponse {
   success: boolean
 }
 
-export const AllowedFakeUsers = [
-  '0000000000', // User with no current application
-  '0000000001', // User with an application which is in progress
-  '0000000002', // Veita user
-  '0000000003', // User with an application which needs data
-]
-
 // export type HomeCircumstances =
 //   | 'Unknown'
 //   | 'WithParents'
