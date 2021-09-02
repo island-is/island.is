@@ -16,6 +16,7 @@ export interface Form {
   hasIncome?: boolean
   incomeFiles: UploadFile[]
   taxReturnFiles: UploadFile[]
+  otherFiles: UploadFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string
@@ -31,6 +32,7 @@ export const initialState = {
   submitted: false,
   incomeFiles: [],
   taxReturnFiles: [],
+  otherFiles: [],
 }
 
 interface FormProvider {
