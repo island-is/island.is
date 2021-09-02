@@ -270,11 +270,14 @@ export interface CreateCourtCase {
   isExtension: boolean
 }
 
-export function isAppealed(theCase: Case): boolean {
+export const completedCaseStates = [CaseState.ACCEPTED, CaseState.REJECTED]
+
+export function hasCaseBeenAppealed(theCase: Case): boolean {
   return (
-    theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-    theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-    Boolean(theCase.accusedPostponedAppealDate) ||
-    Boolean(theCase.prosecutorPostponedAppealDate)
+    completedCaseStates.includes(theCase.state) &&
+    (theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+      theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+      Boolean(theCase.accusedPostponedAppealDate) ||
+      Boolean(theCase.prosecutorPostponedAppealDate))
   )
 }
