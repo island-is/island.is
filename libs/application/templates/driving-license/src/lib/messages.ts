@@ -582,8 +582,7 @@ export const m = defineMessages({
   paymentImage: {
     id: 'dl.application.paymentApprovedContinue',
     defaultMessage: `Skrautmynd`,
-    description:
-      'Company Image',
+    description: 'Company Image',
   },
   chooseDistrictCommisioner: {
     id: 'dl.application.chooseDistrictCommisioner',

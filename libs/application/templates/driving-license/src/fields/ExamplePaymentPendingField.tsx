@@ -60,11 +60,10 @@ export const ExamplePaymentPendingField: FC<Props> = ({
             )}
           </Text>
           <Box marginTop={4}>
-            <img src="/assets/images/company.svg" alt={formatText(
-              m.  paymentImage,
-              application,
-              formatMessage,
-            )} />
+            <img
+              src="/assets/images/company.svg"
+              alt={formatText(m.paymentImage, application, formatMessage)}
+            />
           </Box>
         </Box>
       )}
@@ -74,11 +73,10 @@ export const ExamplePaymentPendingField: FC<Props> = ({
             {formatText(m.paymentApprovedContinue, application, formatMessage)}
           </Text>
           <Box marginTop={4}>
-            <img src="/assets/images/company.svg" alt={formatText(
-              m.  paymentImage,
-              application,
-              formatMessage,
-            )} />
+            <img
+              src="/assets/images/company.svg"
+              alt={formatText(m.paymentImage, application, formatMessage)}
+            />
           </Box>
         </Box>
       )}
