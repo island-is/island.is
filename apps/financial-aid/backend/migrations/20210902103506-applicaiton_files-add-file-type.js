@@ -8,13 +8,9 @@ module.exports = {
           'application_files',
           'type',
           {
-            type: Sequelize.ENUM(
-              'Income',
-              'TaxReturn',
-              'Other',
-            ),
+            type: Sequelize.ENUM('Income', 'TaxReturn', 'Other'),
             allowNull: false,
-            defaultValue: 'Other'
+            defaultValue: 'Other',
           },
           { transaction: t },
         ),
