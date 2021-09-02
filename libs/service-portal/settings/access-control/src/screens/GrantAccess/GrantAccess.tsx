@@ -199,15 +199,14 @@ function GrantAccess() {
                 loading={loading}
               >
                 {name
-                  ? `${formatMessage({
-                      id:
-                        'service.portal.settings.accessControl:grant-form-pre-submit-active',
-                      defaultMessage: 'Veita',
-                    })} ${name} ${formatMessage({
-                      id:
-                        'service.portal.settings.accessControl:grant-form-post-submit-active',
-                      defaultMessage: 'aðgang',
-                    })}`
+                  ? formatMessage(
+                      {
+                        id:
+                          'service.portal.settings.accessControl:grant-form-submit-active',
+                        defaultMessage: 'Veita {name} aðgang',
+                      },
+                      { name },
+                    )
                   : formatMessage({
                       id:
                         'service.portal.settings.accessControl:grant-form-submit-disabled',
