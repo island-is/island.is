@@ -6,6 +6,37 @@ module.exports = {
       'application',
       [
         {
+          id: 'eeeeeeee-eeee-400d-a00d-eeeeeeeeeeee',
+          applicant: '0101304929',
+          state: 'collectEndorsements',
+          type_id: 'PartyApplication',
+          answers: JSON.stringify({
+            constituency: 'partyApplicationNordvesturkjordaemi2021',
+            approveDisclaimer: true
+          }),
+          status: 'inprogress',
+          external_data: JSON.stringify({
+            nationalRegistry: {
+              data: {}, 
+              date: "2021-08-27T14:04:57.959Z", 
+              status: "success"
+            }, 
+            partyLetterRegistry: {
+              data: {
+                partyName: "Donni list", 
+                partyLetter: "D"
+              }, 
+              date: "2021-08-27T14:04:58.617Z", 
+              status: "success"
+            }, 
+            createEndorsementList: {
+              data: {id: "eeeeeeee-eeee-400d-a00d-eeeeeeeeeeee"}, 
+              date: "2021-08-27T14:05:00.820Z", 
+              status: "success"
+            }
+          })
+        },
+        {
           id: 'f00df00d-f00d-400d-a00d-f00db00db00d',
           applicant: '0101302399',
           state: 'collectEndorsements',
