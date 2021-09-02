@@ -41,6 +41,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useRouter } from 'next/router'
 import format from 'date-fns/format'
 import { LottieOptions } from '@island.is/web/libs/react-lottie/types'
+import { theme } from "@island.is/island-ui/theme";
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -412,8 +413,10 @@ const Auctions: Screen<AuctionsProps> = ({
     setOfficeLocation(targetOfficeLocation)
   }
 
-  const [query, _setQuery] = useState('')
+  const [query, _setQuery] = useState(' ')
   const setQuery = (query: string) => _setQuery(query.toLowerCase())
+
+  useEffect(() => { setQuery('')}, [])
 
   const [lotTypeOption, setLotTypeOption] = useState<LotTypeOption>(
     LOT_TYPES_OPTIONS[0],
@@ -762,7 +765,7 @@ const LotLink = ({
       linkRenderer: (href, children) => (
         <a
           style={{
-            color: '#0061FF',
+            color: theme.color.blue400,
             textDecoration: 'underline',
           }}
           href={href}
