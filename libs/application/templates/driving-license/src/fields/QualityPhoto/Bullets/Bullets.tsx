@@ -48,6 +48,13 @@ const Bullets = ({ application }: BulletsData) => {
           formatMessage,
         )}
       </Bullet>
+      <Bullet>
+        {formatText(
+          m.qualityPhotoInstructionsBulletSix,
+          application,
+          formatMessage,
+        )}
+      </Bullet>
     </BulletList>
   )
 }
