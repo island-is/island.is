@@ -242,7 +242,7 @@ export interface UpdateCase {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
-  accusedPostponedAppealDate?: string | null
+  accusedPostponedAppealDate?: string
   prosecutorPostponedAppealDate?: string
   registrarId?: string
   judgeId?: string
@@ -268,4 +268,13 @@ export interface CreateCourtCase {
   type: CaseType
   policeCaseNumber: string
   isExtension: boolean
+}
+
+export function isAppealed(theCase: Case): boolean {
+  return (
+    theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+    theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+    Boolean(theCase.accusedPostponedAppealDate) ||
+    Boolean(theCase.prosecutorPostponedAppealDate)
+  )
 }

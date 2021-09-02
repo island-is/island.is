@@ -35,6 +35,7 @@ export {
   CaseDecision,
   AccusedPleaDecision,
   SessionArrangements,
+  isAppealed,
 } from './lib/case'
 export type {
   Case,
