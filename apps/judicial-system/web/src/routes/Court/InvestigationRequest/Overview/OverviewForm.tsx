@@ -9,11 +9,11 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  Case,
   CaseState,
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   capitalize,
@@ -160,6 +160,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
+              defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
             isRCase
           />

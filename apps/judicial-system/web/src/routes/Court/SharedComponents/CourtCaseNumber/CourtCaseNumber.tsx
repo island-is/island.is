@@ -1,11 +1,8 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import {
-  Case,
-  CaseState,
-  IntegratedCourts,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
+import { CaseState } from '@island.is/judicial-system/types'
+import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import {
@@ -61,7 +58,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
         <Text>
           {workingCase.state !== CaseState.SUBMITTED &&
           workingCase.state !== CaseState.RECEIVED
-            ? 'Þessi krafa er enn í vinnslu hjá saksóknara. Hægt er að stofna nýtt mál eða tengja við mál í Auði um leið og gengið hefur verið frá kröfunni og hún send til dómstólsins.'
+            ? formatMessage(courtCaseNumber.explanationDisabled)
             : formatMessage(courtCaseNumber.explanation)}
         </Text>
       </Box>

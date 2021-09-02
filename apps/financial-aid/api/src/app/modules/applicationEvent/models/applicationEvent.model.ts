@@ -2,7 +2,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import {
   ApplicationEvent,
-  ApplicationState,
+  ApplicationEventType,
 } from '@island.is/financial-aid/shared'
 
 @ObjectType()
@@ -20,5 +20,5 @@ export class ApplicationEventModel implements ApplicationEvent {
   readonly comment?: string
 
   @Field(() => String)
-  readonly state!: ApplicationState
+  readonly eventType!: ApplicationEventType
 }

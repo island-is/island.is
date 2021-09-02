@@ -77,6 +77,7 @@ import {
   isStudiesAccident,
   isWorkAccident,
 } from '../utils'
+import { isHealthInsured } from '../utils/isHealthInsured'
 import { isPowerOfAttorney } from '../utils/isPowerOfAttorney'
 import { isUploadNow } from '../utils/isUploadNow'
 import { WorkTypeIllustration } from '../assets/WorkTypeIllustration'
@@ -996,11 +997,10 @@ export const AccidentNotificationForm: Form = buildForm({
           title: accidentDetails.general.sectionTitle,
           description: accidentDetails.general.description,
           children: [
-            buildDateField({
+            buildCustomField({
               id: 'accidentDetails.dateOfAccident',
               title: accidentDetails.labels.date,
-              placeholder: accidentDetails.placeholder.date,
-              backgroundColor: 'blue',
+              component: 'DateOfAccident',
               width: 'half',
             }),
             buildTextField({
@@ -1011,18 +1011,16 @@ export const AccidentNotificationForm: Form = buildForm({
               width: 'half',
               format: '##:##',
             }),
-            /* TODO: Get information about home insurance from external provider? */
             buildCustomField(
               {
-                id: 'accidentDetails.dateAlert',
+                id: 'accidentDetails.notHealthInsuredAlertMessage',
                 title: accidentDetails.general.insuranceAlertTitle,
-                description: accidentDetails.general.insuranceAlertText,
                 component: 'FieldAlertMessage',
-                condition: (answers) =>
-                  isDateOlderThanAYear(answers) &&
-                  isHomeActivitiesAccident(answers),
+                description: accidentDetails.general.insuranceAlertText,
+                width: 'full',
+                condition: (formValue) => !isHealthInsured(formValue),
               },
-              { type: 'warning', marginBottom: 1, marginTop: 3 },
+              { type: 'warning', marginBottom: 0, marginTop: 2 },
             ),
             buildTextField({
               id: 'accidentDetails.descriptionOfAccident',

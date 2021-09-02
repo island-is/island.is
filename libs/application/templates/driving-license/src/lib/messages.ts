@@ -39,8 +39,13 @@ export const m = defineMessages({
   },
   externalDataSection: {
     id: 'dl.application:externalData.section',
-    defaultMessage: 'Ökuréttindi',
-    description: 'Driving license',
+    defaultMessage: 'Upplýsingasöfnun',
+    description: 'Information',
+  },
+  externalDataComplete: {
+    id: 'dl.application:externalData.complete',
+    defaultMessage: 'Uppfletting í lagi',
+    description: 'Information',
   },
   nationalRegistryTitle: {
     id: 'dl.application:nationalRegistry.title',
@@ -311,6 +316,11 @@ export const m = defineMessages({
     defaultMessage: 'Ljósmynd í ökuskírteinaskrá',
     description: 'title for quality photo section',
   },
+  qualityPhotoAltText: {
+    id: 'dl.application.qualityPhotoAltText',
+    defaultMessage: 'Þín mynd skv. ökuskírteinaskrá',
+    description: `Alt text for the user's quality photo`,
+  },
   qualityPhotoSubTitle: {
     id: 'dl.application.qualityPhotoSubTitle',
     defaultMessage: 'Hér er núverandi ljósmynd í ökuskírteinaskrá',
@@ -342,42 +352,50 @@ export const m = defineMessages({
     defaultMessage: `
     Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats) 
     og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi 
-    á augu. Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
+    á augu. Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni. 
+    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
     `,
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletOne: {
     id: 'dl.application:qualityPhoto.instructionsbulletone',
     defaultMessage: `
-    Ljósmynd af umsækjanda þarf að vera tekin beint að framan
+    Ljósmynd af umsækjanda þarf að vera tekin beint að framan.
     `,
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletTwo: {
     id: 'dl.application:qualityPhoto.instructionsbullettwo',
     defaultMessage: `
-    Sýna þarf höfuð (án höfuðfats) og herðar 
+    Sýna þarf höfuð (án höfuðfats) og herðar.
     `,
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletThree: {
     id: 'dl.application:qualityPhoto.instructionsbulletthree',
     defaultMessage: `
-    Lýsing andlits þarf að vera jöfn. 
+    Lýsing andlits þarf að vera jöfn.
     `,
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletFour: {
     id: 'dl.application:qualityPhoto.instructionsbulletfour',
     defaultMessage: `
-    Athuga þarf að ekki glampi á gleraugu og skyggi á augu
+    Athuga þarf að ekki glampi á gleraugu og skyggi á augu.
     `,
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletFive: {
     id: 'dl.application:qualityPhoto.instructionsbulletfive',
     defaultMessage: `
-    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð
+    Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni.
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoInstructionsBulletSix: {
+    id: 'dl.application:qualityPhoto.instructionsbulletfive',
+    defaultMessage: `
+    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
     `,
     description: 'Description of photo requirements',
   },
@@ -398,7 +416,7 @@ export const m = defineMessages({
   },
   overviewDone: {
     id: 'dl.application:overview.done',
-    defaultMessage: 'Staðfesting',
+    defaultMessage: 'Umsókn móttekin',
     description: 'Confirmation',
   },
   overviewPaymentCharge: {
@@ -506,13 +524,36 @@ export const m = defineMessages({
   },
   congratulationsTitleSuccess: {
     id: 'dl.application.congratulationsTitleSuccess',
-    defaultMessage: 'Umsókn þín um fullnaðarskírteini tókst.',
+    defaultMessage:
+      'Umsókn þín um fullnaðarskírteini tókst og verður tilbúið á afhendingarstað eftir 3 til 4 vikur. Skila þarf inn bráðabirgðaskírteini til sýslumanns við afhendingu fullnaðarskírteinis.',
     description: 'Your application for full driving license was successful.',
   },
   congratulationsTitle: {
     id: 'dl.application.congratulationsTitle',
     defaultMessage: 'Til hamingju',
     description: 'Congratulations',
+  },
+  congratulationsCertificateTitle: {
+    id: 'dl.application.congratulationsCertificateTitle',
+    defaultMessage: 'Læknisvottorð',
+    description: 'Health Certificate',
+  },
+  congratulationsQualityPictureTitle: {
+    id: 'dl.application.congratulationsQualityPictureTitle',
+    defaultMessage: 'Gæðamerkt ljósmynd',
+    description: 'Quality photo',
+  },
+  congratulationsCertificateDescription: {
+    id: 'dl.application.congratulationsCertificateDescription',
+    defaultMessage:
+      'Þörf er á læknisvottorði frá heimilislækni miðað við útfyllta heilbrigðisyfirlýsingu. Læknisvottorði þarf að skila til sýslumannsembættis. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
+    description: 'Health Certificate',
+  },
+  congratulationsQualityPictureDescription: {
+    id: 'dl.application.congratulationsQualityPictureDescription',
+    defaultMessage:
+      'Skila þarf gæðamerktri ljósmynd til sýslumanns. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
+    description: 'Quality photo',
   },
   paymentPendingDescription: {
     id: 'dl.application.paymentPendingDescription',

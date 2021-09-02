@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
-import { CreateSignedUrlMutation } from '@island.is/financial-aid-web/oskgraphql/sharedGql'
+import {
+  CreateSignedUrlMutation,
+  CreateApplicationFiles,
+} from '@island.is/financial-aid-web/oskgraphql/sharedGql'
 import { SignedUrl } from '@island.is/financial-aid/shared'
 
 export const useFileUpload = (formFiles: UploadFile[]) => {
@@ -9,6 +12,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const filesRef = useRef<UploadFile[]>(files)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
+  const [createApplicationFiles] = useMutation(CreateApplicationFiles)
 
   const requests: { [Key: string]: XMLHttpRequest } = {}
 
@@ -84,6 +88,26 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     return signedUrl
   }
 
+  const uploadFiles = async (applicationId: string) => {
+    const formatFiles = files.map((f) => {
+      return {
+        applicationId: applicationId,
+        name: f.name ?? '',
+        key: f.key ?? '',
+        size: f.size ?? 0,
+      }
+    })
+    try {
+      return await createApplicationFiles({
+        variables: {
+          input: { files: formatFiles },
+        },
+      })
+    } catch (e) {
+      throw e
+    }
+  }
+
   const uploadToCloudFront = (file: UploadFile, url: string) => {
     const request = new XMLHttpRequest()
     request.withCredentials = true
@@ -149,12 +173,8 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   }
 
   const deleteUrl = async (url: string) => {
-    let success = false
-
     try {
       await fetch(url, { method: 'DELETE' })
-
-      success = true
     } catch (e) {
       setUploadErrorMessage('Næ ekki að eyða skrá')
     }
@@ -184,5 +204,5 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     onChange([file as File], true)
   }
 
-  return { files, uploadErrorMessage, onChange, onRemove, onRetry }
+  return { files, uploadErrorMessage, onChange, onRemove, onRetry, uploadFiles }
 }

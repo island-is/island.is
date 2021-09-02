@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { DeleteFileResponse as TDeleteFileResponse } from '@island.is/judicial-system/types'
+import type { DeleteFileResponse as TDeleteFileResponse } from '@island.is/judicial-system/types'
 
 @ObjectType()
 export class DeleteFileResponse implements TDeleteFileResponse {

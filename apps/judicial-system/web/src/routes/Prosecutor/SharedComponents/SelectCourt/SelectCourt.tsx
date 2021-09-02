@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Select, Text } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { Case, Institution } from '@island.is/judicial-system/types'
+import type { Case, Institution } from '@island.is/judicial-system/types'
 import { ValueType } from 'react-select'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 

@@ -116,7 +116,7 @@ const DocumentScreen: FC<Props> = ({
         </Columns>
         <Box marginTop={[1, 1, 2, 2, 5]}>
           <GridRow>
-            <GridColumn span={['1/1', '4/12']}>
+            <GridColumn span={['1/1', '6/12', '6/12', '6/12', '4/12']}>
               <DatePicker
                 backgroundColor="blue"
                 handleChange={(d) => setFromDate(d)}
@@ -129,7 +129,10 @@ const DocumentScreen: FC<Props> = ({
                 placeholderText={formatMessage(m.chooseDate)}
               />
             </GridColumn>
-            <GridColumn span={['1/1', '4/12']}>
+            <GridColumn
+              paddingTop={[2, 0]}
+              span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+            >
               <DatePicker
                 backgroundColor="blue"
                 handleChange={(d) => setToDate(d)}
