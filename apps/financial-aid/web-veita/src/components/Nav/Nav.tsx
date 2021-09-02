@@ -67,10 +67,7 @@ const Nav = () => {
                         }
                       })
                       .reduce((a?: number, b?: number) => {
-                        if (a && b) {
-                          return a + b
-                        }
-                        return 0
+                        return (a || 0) + (b || 0)
                       })}
                   </Text>
                 </Box>
