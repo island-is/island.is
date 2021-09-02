@@ -5,12 +5,14 @@ import { useQuery } from '@apollo/client'
 
 import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
-  Case,
-  CaseCustodyProvisions,
   NotificationType,
   CaseState,
   CaseType,
   CaseTransition,
+} from '@island.is/judicial-system/types'
+import type {
+  Case,
+  CaseCustodyProvisions,
 } from '@island.is/judicial-system/types'
 import {
   formatDate,

@@ -22,13 +22,13 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
-  Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   capitalize,

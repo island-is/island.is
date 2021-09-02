@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch'
 
 import { Injectable } from '@nestjs/common'
 
-import { Case } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../../environments'

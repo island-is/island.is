@@ -22,6 +22,15 @@ export enum ApplicationState {
   APPROVED = 'Approved',
 }
 
+export enum ApplicationEventType {
+  NEW = 'New',
+  INPROGRESS = 'InProgress',
+  DATANEEDED = 'DataNeeded',
+  REJECTED = 'Rejected',
+  APPROVED = 'Approved',
+  STAFFCOMMENT = 'StaffComment',
+}
+
 export enum RolesRule {
   OSK = 'osk',
   VEITA = 'veita',
@@ -116,7 +125,7 @@ export interface UpdateApplication {
 
 export interface CreateApplicationEvent {
   applicationId: string
-  state: ApplicationState
+  eventType: ApplicationEventType
   comment?: string
 }
 
@@ -124,8 +133,8 @@ export interface ApplicationEvent {
   id: string
   created: string
   applicationId: string
+  eventType: ApplicationEventType
   comment?: string
-  state: ApplicationState
 }
 
 export interface Municipality {
@@ -169,6 +178,10 @@ export interface GetSignedUrl {
 export interface SignedUrl {
   url: string
   key: string
+}
+
+export interface CreateFilesResponse {
+  success: boolean
 }
 
 // export type HomeCircumstances =
