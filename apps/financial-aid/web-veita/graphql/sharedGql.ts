@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const GetApplicationQuery = gql`
-  query GetApplicationQuery($input: ApplicationInput!) {
+  query GetFinancialAidApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
       id
       nationalId
