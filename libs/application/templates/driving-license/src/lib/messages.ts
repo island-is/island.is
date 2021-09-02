@@ -459,7 +459,7 @@ export const m = defineMessages({
   errorDataProvider: {
     id: 'dl.application:error.dataProvider',
     defaultMessage:
-      'Villa kom upp við að sækja upplýsingar úr vefþjónustu. Reyndu aftur síðar',
+      'Reyndu aftur síðar',
     description: 'Unhandled error in driving license data provider',
   },
   examplePaymentPendingField: {
