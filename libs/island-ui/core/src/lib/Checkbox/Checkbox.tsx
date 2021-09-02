@@ -108,6 +108,11 @@ export const Checkbox = ({
           >
             {label}
           </Text>
+          <div className={styles.fixJumpingContentFromFontWeightToggle}>
+            <Text as="span" variant={labelVariant} fontWeight="semiBold">
+              {label}
+            </Text>
+          </div>
           {subLabel && large && (
             <Text
               as="span"
