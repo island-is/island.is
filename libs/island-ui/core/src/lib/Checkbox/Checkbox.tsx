@@ -108,7 +108,10 @@ export const Checkbox = ({
           >
             {label}
           </Text>
-          <div className={styles.fixJumpingContentFromFontWeightToggle}>
+          <div
+            aria-hidden="true"
+            className={styles.fixJumpingContentFromFontWeightToggle}
+          >
             <Text as="span" variant={labelVariant} fontWeight="semiBold">
               {label}
             </Text>
