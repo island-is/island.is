@@ -1,13 +1,39 @@
+// Based on libs/island-ui/core/src/lib/Input/Input.treat.ts
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import * as mixins from './EditorInput.mixins'
+import omit from 'lodash/omit'
 
-export const wrap = style({})
-export const label = style({})
+export const containerDisabled = style({})
+export const noLabel = style({})
 
-export const required = style({
+export const container = style({
+  ...omit(mixins.container, 'backgroundColor'),
+  boxSizing: 'border-box',
+  selectors: {
+    [`&:hover:not(${containerDisabled})`]: mixins.containerHover,
+  },
+})
+
+export const errorMessage = style(mixins.errorMessage)
+
+export const hasError = style({
+  ...mixins.inputErrorState,
+})
+
+export const label = style({
+  ...mixins.label,
+  selectors: {
+    [`${hasError} &`]: mixins.labelErrorState,
+  },
+})
+
+export const isRequiredStar = style({
   color: theme.color.red600,
 })
 
-export const errorWrap = style({
-  border: `1px solid ${theme.color.red600}`,
+export const hasFocus = style({
+  selectors: {
+    [`&${container}`]: mixins.containerFocus,
+  },
 })

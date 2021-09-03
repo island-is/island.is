@@ -1,12 +1,14 @@
 import * as s from './EditorInput.treat'
 import { classes } from './Editor.treat'
-import React, { MutableRefObject } from 'react'
-import { InputError } from '@island.is/island-ui/core'
+
+import React, { MutableRefObject, useState } from 'react'
+import { Box } from '@island.is/island-ui/core'
 import {
   Editor as RegulationsEditor,
   EditorProps,
 } from '@hugsmidjan/regulations-editor/Editor'
 import { HTMLText } from '@island.is/regulations'
+import cn from 'classnames'
 
 type EditorInputProps = Omit<EditorProps, 'valueRef' | 'name'> & {
   label: string
@@ -16,23 +18,56 @@ type EditorInputProps = Omit<EditorProps, 'valueRef' | 'name'> & {
   initialText?: HTMLText
   valueRef: MutableRefObject<() => HTMLText>
   draftId: string
+  onFocus?: () => void
+  onBlur?: () => void
 }
 
 export const EditorInput = (props: EditorInputProps) => {
+  const { error, label, draftId, onFocus, onBlur, ...editorProps } = props
+  const [hasFocus, setHasFocus] = useState(false)
+  const labelId = draftId + '-label'
+  const hasError = !!error || undefined
+  const errorId = hasError && draftId + '-error'
+
   return (
-    <div className={s.wrap}>
-      <h4 className={props.error ? s.required : s.label}>
-        {props.label}
-        <span className={s.required}> *</span>
-      </h4>
-      {props.error && <InputError errorMessage="Error with this input" />}
-      <div className={props.error ? s.errorWrap : undefined}>
+    <div>
+      <Box
+        background="white"
+        className={cn(s.container, {
+          [s.hasError]: hasError,
+          [s.hasFocus]: hasFocus,
+        })}
+      >
+        <h4 className={s.label} id={labelId}>
+          {label}
+          <span className={s.isRequiredStar}> *</span>
+        </h4>
         <RegulationsEditor
-          {...props}
+          {...editorProps}
           classes={classes}
-          name={'draft-' + props.draftId}
+          name={'draft-' + draftId}
+          onFocus={() => {
+            setHasFocus(true)
+            onFocus && onFocus()
+          }}
+          onBlur={() => {
+            setHasFocus(false)
+            onBlur && onBlur()
+          }}
+          aria-labelledBy={labelId}
+          aria-describedBy={errorId}
         />
-      </div>
+      </Box>
+      {hasError && (
+        <div
+          id={errorId}
+          className={s.errorMessage}
+          aria-live="assertive"
+          data-testid="inputErrorMessage"
+        >
+          {error}
+        </div>
+      )}
     </div>
   )
 }

@@ -91,12 +91,20 @@ export const classes: EditorClasses = {
     zIndex: 998,
 
     margin: 0,
-    boxShadow: '0 5px 10px -5px rgba(0,0,0, 0.25)',
+    padding: '0 3px',
+    boxShadow: '0 10px 10px -10px rgba(0,0,0, 0.25)',
   }),
 
   editor: style({
     position: 'relative',
     width: '100%',
+    caretColor: theme.color.blue400,
+    padding: spacing[3],
+    paddingTop: spacing[2],
+
+    ':focus': {
+      outline: 'none',
+    },
   }),
 
   comparisonpane: style({
@@ -114,6 +122,7 @@ export const classes: EditorClasses = {
     // …
   }),
 
+  // comparison pane headline
   headline: style({
     pointerEvents: 'auto',
     marginLeft: 'auto',
@@ -316,8 +325,12 @@ export const classes: EditorClasses = {
 
 // ---------------------------------------------------------------------------
 
-globalStyle(`${classes.toolbar}.tox .tox-menu`, {
+globalStyle(`${classes.toolbar} .tox .tox-menu`, {
   width: 'max-content',
+})
+globalStyle(`${classes.toolbar} .tox .tox-editor-header`, {
+  borderWidth: '.5px 0 1px 0',
+  borderTopStyle: 'dotted',
 })
 
 globalStyle(`${classes.warnings__item_high}::marker`, {
@@ -388,9 +401,9 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
 
   global('h1, h2, h3, h4, h5, h6', {
     position: 'relative',
-    margin: '0 -0.25em',
+    margin: '0 -0.5em',
     marginBottom: '0.75rem',
-    padding: '0.75rem 0.5em',
+    padding: '0.5em',
     backgroundColor: 'rgba(0,0,0, 0.1)',
   })
   global(
@@ -485,10 +498,16 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     `,
     {
       display: 'block',
-      margin: '0 1em',
+      width: 'max-content',
+      minWidth: '10rem',
+      maxWidth: '96%',
+      margin: 'auto',
+      marginTop: '.25rem',
+      padding: '0 1em',
       fontStyle: 'normal',
+      fontSize: '1rem',
       fontWeight: 'normal',
-      lineHeight: '2.25rem',
+      lineHeight: '2rem',
       // border: '1px dotted rgba(0,0,0, 0.3)',
       // borderWidth: '0 3px',
       backgroundColor: 'rgba(0,0,0, 0.04)',
