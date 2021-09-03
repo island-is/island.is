@@ -134,7 +134,7 @@ export type AppendixStateItem = {
   initialTitle?: PlainText
   baseTitle: PlainText
   initialText?: HTMLText
-  baseText: HTMLText
+  baseText?: HTMLText
   valueRef: MutableRefObject<() => HTMLText>
   elmRef?: MutableRefObject<HTMLElement | null>
 }
@@ -162,7 +162,6 @@ export const Appendixes = (props: AppendixesProps) => {
         key: NEW_PREFIX + domid(),
         title: '',
         baseTitle: '',
-        baseText: '' as HTMLText,
         valueRef: { current: () => '' as HTMLText },
         elmRef: { current: null },
       }),
