@@ -8,7 +8,7 @@ import {
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
   title: 'Samþykkt',
-  mode: FormModes.APPROVED,
+  mode: FormModes.APPLYING,
   children: [
     buildDescriptionField({
       id: 'approved',
