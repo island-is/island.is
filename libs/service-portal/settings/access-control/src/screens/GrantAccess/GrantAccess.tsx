@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import cn from 'classnames'
 import { gql, useMutation, useLazyQuery } from '@apollo/client'
 import { useForm, Controller, ValidationRules } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
@@ -9,6 +10,7 @@ import {
   Box,
   Input,
   Button,
+  Icon,
   Text,
   GridRow,
   GridColumn,
@@ -24,6 +26,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
+import * as styles from './GrantAccess.treat'
 
 const CreateAuthDelegationMutation = gql`
   mutation CreateAuthDelegationMutation($input: CreateAuthDelegationInput!) {
@@ -48,7 +51,9 @@ const IdentityQuery = gql`
 
 function GrantAccess() {
   const [name, setName] = useState('')
-  const { handleSubmit, control, errors, watch } = useForm({ mode: 'onChange' })
+  const { handleSubmit, control, errors, watch, reset } = useForm({
+    mode: 'onChange',
+  })
   const [
     createAuthDelegation,
     { loading: mutationLoading },
@@ -72,8 +77,7 @@ function GrantAccess() {
   const { formatMessage } = useLocale()
   const history = useHistory()
   const watchToNationalId = watch('toNationalId')
-
-  const loading = mutationLoading || queryLoading
+  const loading = queryLoading || mutationLoading
 
   const requestDelegation = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -117,6 +121,11 @@ function GrantAccess() {
     }
   })
 
+  const clearForm = () => {
+    setName('')
+    reset()
+  }
+
   return (
     <Box>
       <IntroHeader
@@ -131,89 +140,109 @@ function GrantAccess() {
       <form onSubmit={onSubmit}>
         <GridRow marginBottom={3}>
           <GridColumn paddingBottom={2} span="12/12">
-            <Text variant="h5">
+            <Text variant="h5" as="span">
               {formatMessage({
                 id: 'service.portal.settings.accessControl:grant-form-label',
                 defaultMessage: 'Sláðu inn upplýsingar aðgangshafa',
               })}
             </Text>
           </GridColumn>
-          <GridColumn
-            paddingBottom={2}
-            span={['12/12', '12/12', '8/12', '12/12', '8/12']}
-          >
-            <InputController
-              control={control}
-              id="toNationalId"
-              defaultValue=""
-              rules={
-                {
-                  required: {
-                    value: true,
-                    message: formatMessage({
-                      id:
-                        'service.portal.settings.accessControl:grant-required-ssn',
-                      defaultMessage: 'Skylda er að fylla út kennitölu',
-                    }),
-                  },
-                  validate: {
-                    value: (value: number) => {
-                      if (
-                        value.toString().length === 10 &&
-                        !kennitala.isValid(value)
-                      ) {
-                        return formatMessage({
+          <GridColumn span={['12/12', '12/12', '8/12']} paddingBottom={4}>
+            <div className={styles.inputWrapper}>
+              {name && (
+                <Input
+                  name="name"
+                  value={name}
+                  label={formatMessage({
+                    id:
+                      'service.portal.settings.accessControl:grant-form-access-holder',
+                    defaultMessage: 'Aðgangshafi',
+                  })}
+                  disabled
+                />
+              )}
+              <div className={name ? styles.hidden : undefined}>
+                <InputController
+                  control={control}
+                  id="toNationalId"
+                  defaultValue=""
+                  icon={name || queryLoading ? undefined : 'search'}
+                  rules={
+                    {
+                      required: {
+                        value: true,
+                        message: formatMessage({
                           id:
-                            'service.portal.settings.accessControl:grant-invalid-ssn',
-                          defaultMessage: 'Kennitalan er ekki gild kennitala',
-                        })
-                      }
-                    },
-                  },
-                } as ValidationRules
-              }
-              type="tel"
-              format="######-####"
-              label={formatMessage({
-                id: 'global:nationalId',
-                defaultMessage: 'Kennitala',
-              })}
-              placeholder={formatMessage({
-                id: 'global:nationalId',
-                defaultMessage: 'Kennitala',
-              })}
-              error={errors.toNationalId?.message}
-              onChange={(value) => {
-                requestDelegation(value)
-              }}
-            />
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '8/12', '12/12', '8/12']}>
-            <Box display="flex" justifyContent="flexEnd">
-              <Button
-                type="submit"
-                icon="arrowForward"
-                disabled={!name || loading}
-                loading={loading}
-              >
-                {name
-                  ? formatMessage(
-                      {
-                        id:
-                          'service.portal.settings.accessControl:grant-form-submit-active',
-                        defaultMessage: 'Veita {name} aðgang',
+                            'service.portal.settings.accessControl:grant-required-ssn',
+                          defaultMessage: 'Skylda er að fylla út kennitölu',
+                        }),
                       },
-                      { name },
-                    )
-                  : formatMessage({
-                      id:
-                        'service.portal.settings.accessControl:grant-form-submit-disabled',
-                      defaultMessage: 'Sláðu inn kennitölu aðgangshafa',
-                    })}
-              </Button>
-            </Box>
+                      validate: {
+                        value: (value: number) => {
+                          if (
+                            value.toString().length === 10 &&
+                            !kennitala.isValid(value)
+                          ) {
+                            return formatMessage({
+                              id:
+                                'service.portal.settings.accessControl:grant-invalid-ssn',
+                              defaultMessage:
+                                'Kennitalan er ekki gild kennitala',
+                            })
+                          }
+                        },
+                      },
+                    } as ValidationRules
+                  }
+                  type="tel"
+                  format="######-####"
+                  label={formatMessage({
+                    id: 'global:nationalId',
+                    defaultMessage: 'Kennitala',
+                  })}
+                  placeholder={formatMessage({
+                    id: 'global:nationalId',
+                    defaultMessage: 'Kennitala',
+                  })}
+                  error={errors.toNationalId?.message}
+                  onChange={(value) => {
+                    requestDelegation(value)
+                  }}
+                />
+              </div>
+              {queryLoading ? (
+                <span
+                  className={cn(styles.icon, styles.loadingIcon)}
+                  aria-hidden="false"
+                  aria-label="Loading"
+                >
+                  <Icon icon="reload" size="large" color="blue400" />
+                </span>
+              ) : name ? (
+                <button
+                  disabled={loading}
+                  onClick={clearForm}
+                  className={styles.icon}
+                >
+                  <Icon icon="close" size="large" color="blue400" />
+                </button>
+              ) : null}
+            </div>
+          </GridColumn>
+          <GridColumn span={['12/12', '12/12', '4/12']}>
+            <Button
+              size="large"
+              fluid
+              type="submit"
+              icon="arrowForward"
+              disabled={!name || loading}
+              loading={loading}
+            >
+              {formatMessage({
+                id: 'service.portal.settings.accessControl:grant-form-submit',
+                defaultMessage: 'Áfram',
+              })}
+            </Button>
           </GridColumn>
         </GridRow>
       </form>
