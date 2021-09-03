@@ -10,6 +10,7 @@ import {
   CaseTransition,
   CaseType,
   Feature,
+  InstitutionType,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -35,6 +36,8 @@ export const Requests: React.FC = () => {
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
   const isRegistrar = user?.role === UserRole.REGISTRAR
+  const isHighCourtJudge =
+    user?.institution?.type === InstitutionType.HIGH_COURT
 
   const { data, error, loading } = useQuery(CasesQuery, {
     fetchPolicy: 'no-cache',
@@ -211,30 +214,37 @@ export const Requests: React.FC = () => {
       )}
       {activeCases || pastCases ? (
         <>
-          <Box marginBottom={3} className={styles.activeRequestsTableCaption}>
-            {/**
-             * This should be a <caption> tag inside the table but
-             * Safari has a bug that doesn't allow that. See more
-             * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-             */}
-            <Text variant="h3" id="activeRequestsTableCaption">
-              Kröfur í vinnslu
-            </Text>
-          </Box>
-          {activeCases && activeCases.length > 0 ? (
-            <ActiveRequests
-              cases={activeCases}
-              onRowClick={handleRowClick}
-              onDeleteCase={deleteCase}
-            />
-          ) : (
-            <div className={styles.activeRequestsTableInfo}>
-              <AlertMessage
-                title="Engar kröfur í vinnslu."
-                message="Allar kröfur hafa verið afgreiddar."
-                type="info"
-              />
-            </div>
+          {!isHighCourtJudge && (
+            <>
+              <Box
+                marginBottom={3}
+                className={styles.activeRequestsTableCaption}
+              >
+                {/**
+                 * This should be a <caption> tag inside the table but
+                 * Safari has a bug that doesn't allow that. See more
+                 * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
+                 */}
+                <Text variant="h3" id="activeRequestsTableCaption">
+                  Kröfur í vinnslu
+                </Text>
+              </Box>
+              {activeCases && activeCases.length > 0 ? (
+                <ActiveRequests
+                  cases={activeCases}
+                  onRowClick={handleRowClick}
+                  onDeleteCase={deleteCase}
+                />
+              ) : (
+                <div className={styles.activeRequestsTableInfo}>
+                  <AlertMessage
+                    title="Engar kröfur í vinnslu."
+                    message="Allar kröfur hafa verið afgreiddar."
+                    type="info"
+                  />
+                </div>
+              )}
+            </>
           )}
           <Box marginBottom={3} className={styles.pastRequestsTableCaption}>
             {/**
@@ -243,11 +253,15 @@ export const Requests: React.FC = () => {
              * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
              */}
             <Text variant="h3" id="activeRequestsTableCaption">
-              Afgreiddar kröfur
+              {isHighCourtJudge ? 'Kærðir úrskurðir' : 'Afgreiddar kröfur'}
             </Text>
           </Box>
           {pastCases && pastCases.length > 0 ? (
-            <PastRequests cases={pastCases} onRowClick={handleRowClick} />
+            <PastRequests
+              cases={pastCases}
+              onRowClick={handleRowClick}
+              isHighcourtJudge={isHighCourtJudge}
+            />
           ) : (
             <div className={styles.activeRequestsTableInfo}>
               <AlertMessage
