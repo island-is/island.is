@@ -221,7 +221,11 @@ export class FileController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<SignedUrl> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+    const existingCase = await this.caseService.findByIdAndUser(
+      caseId,
+      user,
+      false,
+    )
 
     if (!this.doesUserHavePermissionToViewCaseFiles(user, existingCase)) {
       throw new ForbiddenException(

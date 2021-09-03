@@ -42,6 +42,7 @@ const AppealSection: React.FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
+  const isHighCourt = user?.institution?.type === InstitutionType.HIGH_COURT
 
   const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
 
@@ -56,137 +57,131 @@ const AppealSection: React.FC<Props> = (props) => {
           Ákvörðun um kæru
         </Text>
       </Box>
-      {user?.institution?.type === InstitutionType.HIGH_COURT ? (
-        'USER IS LANDSRETTUR'
-      ) : (
-        <>
-          {!workingCase.isAppealDeadlineExpired && workingCase.rulingDate && (
-            <Box marginBottom={2}>
-              <Text>{`Kærufrestur rennur út ${getAppealEndDate(
-                workingCase.rulingDate,
-              )}`}</Text>
-            </Box>
-          )}
-          {workingCase.isAppealDeadlineExpired && workingCase.rulingDate && (
-            <div className={styles.appealContainer}>
-              <BlueBox>
-                <InfoBox
-                  text={`Kærufrestur rann út ${getAppealEndDate(
-                    workingCase.rulingDate,
-                  )}`}
-                  fluid
-                  light
-                />
-              </BlueBox>
-            </div>
-          )}
-          {workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
-            <div className={styles.appealContainer}>
-              <BlueBox>
-                <InfoBox
-                  text={formatMessage(signedVerdictOverview.accusedAppealed, {
-                    genderedAccused: capitalize(
-                      formatAccusedByGender(workingCase.accusedGender),
-                    ),
-                    courtEndTime: `${formatDate(
-                      workingCase.courtEndTime,
-                      'PP',
-                    )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
-                  })}
-                  fluid
-                  light
-                />
-              </BlueBox>
-            </div>
-          )}
-          {workingCase.prosecutorAppealDecision ===
-            CaseAppealDecision.APPEAL && (
-            <div className={styles.appealContainer}>
-              <BlueBox>
-                <InfoBox
-                  text={formatMessage(
-                    signedVerdictOverview.prosecutorAppealed,
-                    {
-                      genderedAccused: capitalize(
-                        formatAccusedByGender(workingCase.accusedGender),
-                      ),
-                      courtEndTime: `${formatDate(
-                        workingCase.courtEndTime,
-                        'PP',
-                      )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
-                    },
-                  )}
-                  fluid
-                  light
-                />
-              </BlueBox>
-            </div>
-          )}
-          {workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE &&
-            (Boolean(workingCase.accusedPostponedAppealDate) ||
-              !workingCase.isAppealGracePeriodExpired) && (
-              <div className={styles.appealContainer}>
-                <BlueBox height={112}>
-                  <AnimatePresence>
-                    {!workingCase.accusedPostponedAppealDate &&
-                      !workingCase.isAppealGracePeriodExpired && (
-                        <AccusedAppealDatePicker
-                          workingCase={workingCase}
-                          setAccusedAppealDate={setAccusedAppealDate}
-                          isInitialMount={isInitialMount}
-                        />
-                      )}
-                  </AnimatePresence>
-                  <AnimatePresence>
-                    {workingCase.accusedPostponedAppealDate &&
-                      workingCase.accusedGender && (
-                        <AccusedAppealInfo
-                          workingCase={workingCase}
-                          withdrawAccusedAppealDate={
-                            workingCase.isAppealGracePeriodExpired
-                              ? undefined
-                              : withdrawAccusedAppealDate
-                          }
-                        />
-                      )}
-                  </AnimatePresence>
-                </BlueBox>
-              </div>
-            )}
-          {workingCase.prosecutorAppealDecision ===
-            CaseAppealDecision.POSTPONE &&
-            (Boolean(workingCase.prosecutorPostponedAppealDate) ||
-              !workingCase.isAppealGracePeriodExpired) && (
-              <div className={styles.appealContainer}>
-                <BlueBox height={112}>
-                  <AnimatePresence>
-                    {!workingCase.prosecutorPostponedAppealDate &&
-                      !workingCase.isAppealGracePeriodExpired && (
-                        <ProsecutorAppealDatePicker
-                          setProsecutorAppealDate={setProsecutorAppealDate}
-                          isInitialMount={isInitialMount}
-                        />
-                      )}
-                  </AnimatePresence>
-                  <AnimatePresence>
-                    {workingCase.prosecutorPostponedAppealDate && (
-                      <ProsecutorAppealInfo
-                        prosecutorPostponedAppealDate={
-                          workingCase.prosecutorPostponedAppealDate
-                        }
-                        withdrawProsecutorAppealDate={
-                          workingCase.isAppealGracePeriodExpired
-                            ? undefined
-                            : withdrawProsecutorAppealDate
-                        }
-                      />
-                    )}
-                  </AnimatePresence>
-                </BlueBox>
-              </div>
-            )}
-        </>
+
+      {!workingCase.isAppealDeadlineExpired &&
+        workingCase.rulingDate &&
+        !isHighCourt && (
+          <Box marginBottom={2}>
+            <Text>{`Kærufrestur rennur út ${getAppealEndDate(
+              workingCase.rulingDate,
+            )}`}</Text>
+          </Box>
+        )}
+      {workingCase.isAppealDeadlineExpired &&
+        workingCase.rulingDate &&
+        !isHighCourt && (
+          <div className={styles.appealContainer}>
+            <BlueBox>
+              <InfoBox
+                text={`Kærufrestur rann út ${getAppealEndDate(
+                  workingCase.rulingDate,
+                )}`}
+                fluid
+                light
+              />
+            </BlueBox>
+          </div>
+        )}
+      {workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
+        <div className={styles.appealContainer}>
+          <BlueBox>
+            <InfoBox
+              text={formatMessage(signedVerdictOverview.accusedAppealed, {
+                genderedAccused: capitalize(
+                  formatAccusedByGender(workingCase.accusedGender),
+                ),
+                courtEndTime: `${formatDate(
+                  workingCase.rulingDate,
+                  'PP',
+                )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
+              })}
+              fluid
+              light
+            />
+          </BlueBox>
+        </div>
       )}
+      {workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL && (
+        <div className={styles.appealContainer}>
+          <BlueBox>
+            <InfoBox
+              text={formatMessage(signedVerdictOverview.prosecutorAppealed, {
+                genderedAccused: capitalize(
+                  formatAccusedByGender(workingCase.accusedGender),
+                ),
+                courtEndTime: `${formatDate(
+                  workingCase.courtEndTime,
+                  'PP',
+                )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
+              })}
+              fluid
+              light
+            />
+          </BlueBox>
+        </div>
+      )}
+      {workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE &&
+        (Boolean(workingCase.accusedPostponedAppealDate) ||
+          !workingCase.isAppealGracePeriodExpired) && (
+          <div className={styles.appealContainer}>
+            <BlueBox height={112}>
+              <AnimatePresence>
+                {!workingCase.accusedPostponedAppealDate &&
+                  !workingCase.isAppealGracePeriodExpired && (
+                    <AccusedAppealDatePicker
+                      workingCase={workingCase}
+                      setAccusedAppealDate={setAccusedAppealDate}
+                      isInitialMount={isInitialMount}
+                    />
+                  )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {workingCase.accusedPostponedAppealDate &&
+                  workingCase.accusedGender && (
+                    <AccusedAppealInfo
+                      workingCase={workingCase}
+                      withdrawAccusedAppealDate={
+                        workingCase.isAppealGracePeriodExpired || isHighCourt
+                          ? undefined
+                          : withdrawAccusedAppealDate
+                      }
+                    />
+                  )}
+              </AnimatePresence>
+            </BlueBox>
+          </div>
+        )}
+      {workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE &&
+        (Boolean(workingCase.prosecutorPostponedAppealDate) ||
+          !workingCase.isAppealGracePeriodExpired) && (
+          <div className={styles.appealContainer}>
+            <BlueBox height={112}>
+              <AnimatePresence>
+                {!workingCase.prosecutorPostponedAppealDate &&
+                  !workingCase.isAppealGracePeriodExpired && (
+                    <ProsecutorAppealDatePicker
+                      setProsecutorAppealDate={setProsecutorAppealDate}
+                      isInitialMount={isInitialMount}
+                    />
+                  )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {workingCase.prosecutorPostponedAppealDate && (
+                  <ProsecutorAppealInfo
+                    prosecutorPostponedAppealDate={
+                      workingCase.prosecutorPostponedAppealDate
+                    }
+                    withdrawProsecutorAppealDate={
+                      workingCase.isAppealGracePeriodExpired || isHighCourt
+                        ? undefined
+                        : withdrawProsecutorAppealDate
+                    }
+                  />
+                )}
+              </AnimatePresence>
+            </BlueBox>
+          </div>
+        )}
     </>
   )
 }
