@@ -8,7 +8,8 @@ The client is generated from a copy of the openApi document.
 
 ## Client generation gotcha
 
-Note: There's a caveat/gotcha regarding the generation of the client. Since the document contains a list of acceptable content-types for the request body in
+_Note_: There's a caveat/gotcha regarding the generation of the client. Since
+the document contains a list of acceptable content-types for the request body in
 post requests, the client generation will just pick the first one, erronously
 injecting a content-type header into each generated request.
 
