@@ -36,6 +36,12 @@ export enum RolesRule {
   VEITA = 'veita',
 }
 
+export enum FileType {
+  TAXRETURN = 'TaxReturn',
+  INCOME = 'Income',
+  OTHER = 'Other',
+}
+
 export interface ApplicationFilters {
   New: number
   InProgress: number
@@ -86,12 +92,14 @@ export interface ApplicationFile {
   name: string
   key: string
   size: number
+  type: FileType
 }
 
 export interface CreateApplicationFile {
   name: string
   key: string
   size: number
+  type: FileType
 }
 
 export interface CreateApplication {
@@ -178,6 +186,10 @@ export interface GetSignedUrl {
 export interface SignedUrl {
   url: string
   key: string
+}
+
+export interface CreateFilesResponse {
+  success: boolean
 }
 
 // export type HomeCircumstances =
