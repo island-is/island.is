@@ -7,11 +7,11 @@ import React, {
 } from 'react'
 import {
   Box,
+  Button,
   DatePicker,
   Input,
   Text,
   Checkbox,
-  AccordionCard,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { EditorInput } from './EditorInput'
@@ -61,6 +61,10 @@ export const EditBasics: StepComponent = (props) => {
       actions.updateState({ ...data })
     },
     [actions],
+  )
+
+  const [showDraftingNotes, setShowDraftingNotes] = useState(
+    !!draft.draftingNotes.value,
   )
 
   const fastTrackDate = fastTrack ? getNextWorkday(new Date()) : null
@@ -148,34 +152,38 @@ export const EditBasics: StepComponent = (props) => {
             onChange={(e) => setFastTrack(e.target.checked)}
           />
         </Box>
-        <Box marginTop={6}>
-          <AccordionCard
-            id="drafting-notes"
-            label="Minnispunktar"
-            labelUse="p"
-            labelVariant="default"
-            iconVariant="small"
-            startExpanded={draft.draftingNotes.value !== ''}
+      </Box>
+
+      <Box marginBottom={6}>
+        {showDraftingNotes ? (
+          <EditorInput
+            label={t(msg.draftingNotes)}
+            initialText={draft.draftingNotes.value}
+            isImpact={false}
+            draftId={`${draft.id}-notes`}
+            valueRef={notesRef}
+            onChange={() =>
+              onAnyInputChange({
+                name: 'draftingNotes',
+                value: notesRef
+                  .current()
+                  .replace(/(<(?!\/)[^>]+>)+(<\/[^>]+>)+/, ''), // Replaces empty HTML with empty string ('')
+              })
+            }
+          />
+        ) : (
+          <Button
+            variant="text"
+            preTextIcon="add"
+            // size="large"
+            onClick={() => {
+              setShowDraftingNotes(true)
+            }}
           >
-            <EditorInput
-              label=""
-              baseText={'' as HTMLText}
-              initialText={draft.draftingNotes.value}
-              isImpact={false}
-              draftId={`${draft.id}-notes`}
-              valueRef={notesRef}
-              onChange={() =>
-                onAnyInputChange({
-                  name: 'draftingNotes',
-                  value: notesRef
-                    .current()
-                    .replace(/(<(?!\/)[^>]+>)+(<\/[^>]+>)+/, ''), // Replaces empty HTML with empty string ('')
-                })
-              }
-            />
-          </AccordionCard>
-        </Box>
-      </Wrap>
+            {t(msg.draftingNotes)}
+          </Button>
+        )}
+      </Box>
     </>
   )
 }
