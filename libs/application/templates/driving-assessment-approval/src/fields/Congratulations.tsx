@@ -12,28 +12,24 @@ interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
-export const Congratulations = ({
-  application,
-}: PropTypes): JSX.Element => {
+export const Congratulations = ({ application }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
 
-    return (
-      <Box paddingTop={2}>
-        <Box marginTop={2}>
-          <ContentBlock>
-            <AlertMessage
-              type="success"
-              title={`${formatText(
-                m.finalAssessmentTitle,
-                application,
-                formatMessage,
-              )}`}
-              message=''
-            />
-          </ContentBlock>
-        </Box>
+  return (
+    <Box paddingTop={2}>
+      <Box marginTop={2}>
+        <ContentBlock>
+          <AlertMessage
+            type="success"
+            title={`${formatText(
+              m.finalAssessmentTitle,
+              application,
+              formatMessage,
+            )}`}
+            message=""
+          />
+        </ContentBlock>
       </Box>
-    )
-
+    </Box>
+  )
 }
-
