@@ -1119,3 +1119,4 @@ xroad-collector:
     name: xroad-collector
   strategy:
     type: Recreate
+
