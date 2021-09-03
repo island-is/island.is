@@ -261,12 +261,12 @@ export const m = defineMessages({
   },
   drivingAssessmentConfirmationCheck: {
     id: 'dla.application:drivingAssessment.confirmationCheck',
-    defaultMessage: 'Ég staðfesti að umsækjandi hefur staðist akstursmat í samræmi við ákvæði í reglugerð um ökuskírteini og leiðbeiningar Samgöngustofu',
+    defaultMessage: 'Ég staðfesti að akstursmat hefur farið fram í samræmi við ákvæði í reglugerð um ökuskírteini og leiðbeiningar Samgöngustofu.',
     description: 'I confirm that the student has passed the driving assessment',
   },
   finalAssessmentTitle: {
     id: 'dla.application:',
-    defaultMessage: 'Akstursmat móttekið',
+    defaultMessage: 'Akstursmat hefur verið staðfest',
     description: 'Driving assessment received.',
   },
 })
