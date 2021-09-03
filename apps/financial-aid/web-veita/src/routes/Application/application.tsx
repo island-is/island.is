@@ -30,6 +30,7 @@ import {
   months,
   calculateAidFinalAmount,
   formatPhoneNumber,
+  FileType,
 } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
@@ -79,23 +80,20 @@ const ApplicationProfile = () => {
     return navigationItems.find((i) => i.applicationState.includes(state))
   }
 
-  const { data, error, loading } = useQuery<ApplicantData>(
-    GetApplicationQuery,
+  const { data, loading } = useQuery<ApplicantData>(GetApplicationQuery, {
+    variables: { input: { id: router.query.id } },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
+  const { data: dataMunicipality } = useQuery<MunicipalityData>(
+    GetMunicipalityQuery,
     {
-      variables: { input: { id: router.query.id } },
+      variables: { input: { id: 'hfj' } },
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
   )
-
-  const {
-    data: dataMunicipality,
-    loading: municipalityLoading,
-  } = useQuery<MunicipalityData>(GetMunicipalityQuery, {
-    variables: { input: { id: 'hfj' } },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
 
   const [application, setApplication] = useState<Application>()
 
@@ -364,7 +362,23 @@ const ApplicationProfile = () => {
             </Box>
             <Files
               heading="Skattframtal"
-              filesArray={application.files}
+              filesArray={application.files?.filter(
+                (f) => f.type === FileType.TAXRETURN,
+              )}
+              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+            />
+            <Files
+              heading="Tekjugögn"
+              filesArray={application.files?.filter(
+                (f) => f.type === FileType.INCOME,
+              )}
+              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+            />
+            <Files
+              heading="Innsend gögn"
+              filesArray={application.files?.filter(
+                (f) => f.type === FileType.OTHER,
+              )}
               className={`contentUp delay-125 ${styles.widtAlmostFull}`}
             />
           </>

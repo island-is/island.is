@@ -47,6 +47,13 @@ export class AuthService {
         folder: uuid(),
         service: RolesRule.VEITA,
       },
+      '0000000003': {
+        nationalId: '0000000003',
+        name: 'Lárhéðinn Frillason',
+        phoneNumber: '9999999',
+        folder: uuid(),
+        service: RolesRule.OSK,
+      },
     }
 
     if (nationalId in fakeUsers) {
