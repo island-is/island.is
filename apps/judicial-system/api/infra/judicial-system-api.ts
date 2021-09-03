@@ -57,7 +57,6 @@ export const serviceSetup = (services: {
       XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM',
       SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
-      EVENT_URL: '/k8s/judicial-system/EVENT_URL',
     })
     .liveness('/liveness')
     .readiness('/liveness')
