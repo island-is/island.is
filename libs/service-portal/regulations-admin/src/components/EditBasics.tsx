@@ -106,6 +106,16 @@ export const EditBasics: StepComponent = (props) => {
         />
       </Wrap>
 
+      <Box marginTop={5}>
+        <Appendixes
+          appendixes={appendixes}
+          onChange={(appendixCallback) =>
+            setAppendixes(appendixCallback(appendixes))
+          }
+          draftId={draft.id}
+        />
+      </Box>
+
       <Wrap>
         <DatePicker
           label={t(msg.idealPublishDate)}
@@ -123,14 +133,6 @@ export const EditBasics: StepComponent = (props) => {
           errorMessage={t(msg.requiredFieldError)}
           // excludeDates={[]} --> Do we want to exclude holidays and weekends from the calendar?
         />
-        <Box marginTop={1}>
-          <Checkbox
-            label={t(msg.applyForFastTrack)}
-            labelVariant="default"
-            checked={fastTrack}
-            onChange={(e) => setFastTrack(e.target.checked)}
-          />
-        </Box>
         {/*
           TODO: Add fast track toggler, but only make it shift the minDate to today
           Then let the up-stream state reducer decide if the selected date is indeed a fastTrack request
@@ -138,13 +140,12 @@ export const EditBasics: StepComponent = (props) => {
           draft.fastTrack should alaways be a derived value, based on idealPublishDate
           ...and **POSSIBLY** only when the draftingStatus is "draft" ??? Needs customer input... Not important to resolve right away.
         */}
-        <Box marginTop={5}>
-          <Appendixes
-            appendixes={appendixes}
-            onChange={(appendixCallback) =>
-              setAppendixes(appendixCallback(appendixes))
-            }
-            draftId={draft.id}
+        <Box marginTop={1}>
+          <Checkbox
+            label={t(msg.applyForFastTrack)}
+            labelVariant="default"
+            checked={fastTrack}
+            onChange={(e) => setFastTrack(e.target.checked)}
           />
         </Box>
         <Box marginTop={6}>
