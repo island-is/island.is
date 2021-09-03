@@ -32,6 +32,7 @@ yarn nx run clients-driving-license:schemas/external-openapi-generator
 ```
 
 ### Updating the client doc:
+
 ```sh
 curl -H 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' \
   http://XROADHOST/r1/IS-DEV/GOV/10005/Logreglan-Protected/getOpenAPI?serviceCode=RafraentOkuskirteini-v1 \
@@ -39,7 +40,7 @@ curl -H 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' \
   && yarn format --files libs/clients/driving-license/src/clientConfig.json
 ```
 
-*And then, most importantly: Make sure to maintain the request body types order (see above)*
+_And then, most importantly: Make sure to maintain the request body types order (see above)_
 
 ### Import into other NestJS modules
 
