@@ -7,9 +7,8 @@ import flatten from 'lodash/flatten'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   MMSApi,
-  LanguageGrade,
-  MathGrade,
-  BaseGrade,
+  Grade,
+  GradeTypeResult,
   GradeResult,
 } from '@island.is/clients/mms'
 import {
@@ -93,11 +92,9 @@ export class EducationService {
         }
 
         const examDates = flatten(
-          studentAssessment.einkunnir.map((einkunn) => [
-            einkunn.islenska?.dagsetning,
-            einkunn.enska?.dagsetning,
-            einkunn.staerdfraedi?.dagsetning,
-          ]),
+          studentAssessment.einkunnir.map((einkunn) =>
+            einkunn.namsgreinar.map((namsgrein) => namsgrein.dagsetning),
+          ),
         ).filter(Boolean) as string[]
 
         return {
@@ -114,38 +111,39 @@ export class EducationService {
   }
 
   private mapGrade(grade: GradeResult) {
+    if (!grade) {
+      return undefined
+    }
     return {
-      grade: grade.radeinkunn,
+      grade: grade.einkunn,
+      label: grade.heiti,
       weight: grade.vaegi,
     }
   }
 
-  private mapBaseGrade(grade: BaseGrade) {
+  private mapGradeType(grade: GradeTypeResult) {
+    if (!grade) {
+      return undefined
+    }
     return {
-      grade: grade.samtals.radeinkunn,
+      label: grade.heiti,
+      serialGrade: this.mapGrade(grade.radeinkunn),
+      elementaryGrade: this.mapGrade(grade.grunnskolaeinkunn),
+    }
+  }
+
+  private mapCourseGrade(grade: Grade) {
+    if (!grade) {
+      return undefined
+    }
+    return {
+      label: grade.heiti,
       competence: grade.haefnieinkunn,
       competenceStatus: grade.haefnieinkunnStada,
-      progressText: grade.framfaraTexti,
-    }
-  }
-
-  private mapLanguageGrade(grade: LanguageGrade) {
-    return {
-      ...this.mapBaseGrade(grade),
-      reading: this.mapGrade(grade.lesskilningur),
-      grammar: this.mapGrade(grade.malnotkun),
-    }
-  }
-
-  private mapMathGrade(grade: MathGrade) {
-    return {
-      ...this.mapBaseGrade(grade),
-      wordAndNumbers: grade.ordOgTalnadaemi,
-      calculation: this.mapGrade(grade.reikningurOgAdgerdir),
-      geometry: this.mapGrade(grade.rumfraedi),
-      ratiosAndPercentages: this.mapGrade(grade.hlutfollOgProsentur),
-      algebra: this.mapGrade(grade.algebra),
-      numberComprehension: this.mapGrade(grade.tolurOgTalnaskilningur),
+      gradeSum: this.mapGradeType(grade.samtals),
+      progressText: this.mapGrade(grade.framfaraTexti),
+      grades: grade.einkunnir.map((gradeType) => this.mapGradeType(gradeType)),
+      wordAndNumbers: this.mapGrade(grade.ordOgTalnadaemi),
     }
   }
 
@@ -158,11 +156,9 @@ export class EducationService {
       fullName: familyMember.Nafn,
       grades: studentAssessment.einkunnir.map((einkunn) => ({
         studentYear: einkunn.bekkur,
-        icelandicGrade:
-          einkunn.islenska && this.mapLanguageGrade(einkunn.islenska),
-        englishGrade: einkunn.enska && this.mapLanguageGrade(einkunn.enska),
-        mathGrade:
-          einkunn.staerdfraedi && this.mapMathGrade(einkunn.staerdfraedi),
+        courses: einkunn.namsgreinar.map((namsgrein) =>
+          this.mapCourseGrade(namsgrein),
+        ),
       })),
     }
   }

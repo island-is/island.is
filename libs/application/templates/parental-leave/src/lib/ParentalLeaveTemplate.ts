@@ -259,6 +259,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_APPROVAL]: {
@@ -278,7 +279,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.EmployerApproval),
                 ),
               read: {
-                answers: ['periods', 'selectedChild', 'payments'],
+                answers: [
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                  'firstPeriodStart',
+                ],
                 externalData: ['children'],
               },
               actions: [

@@ -1,10 +1,4 @@
 if (process.env.NODE_ENV === 'production') {
-  // if (!process.env.SAML_ENTRY_POINT) {
-  //   throw new Error('Missing SAML_ENTRY_POINT environment.')
-  // }
-  if (!process.env.AUTH_AUDIENCE) {
-    throw new Error('Missing AUTH_AUDIENCE environment.')
-  }
   if (!process.env.ALLOW_FAKE_USERS) {
     throw new Error('Missing ALLOW_FAKE_USERS environment.')
   }
@@ -17,18 +11,30 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.BACKEND_URL) {
     throw new Error('Missing BACKEND_URL environment.')
   }
+  if (!process.env.SAML_ENTRY_POINT_OSK) {
+    throw new Error('Missing SAML_ENTRY_POINT_OSK environment.')
+  }
+  if (!process.env.SAML_ENTRY_POINT_VEITA) {
+    throw new Error('Missing SAML_ENTRY_POINT_VEITA environment.')
+  }
+  if (!process.env.SAML_ENTRY_POINT_VEITA) {
+    throw new Error('Missing SAML_ENTRY_POINT_VEITA environment.')
+  }
+  if (!process.env.AUTH_AUDIENCE_OSK) {
+    throw new Error('Missing AUTH_AUDIENCE_OSK environment.')
+  }
+  if (!process.env.AUTH_AUDIENCE_VEITA) {
+    throw new Error('Missing AUTH_AUDIENCE_VEITA environment.')
+  }
 }
 
 const prodConfig = {
   production: true,
   auth: {
-    samlEntryPointOsk:
-      process.env.SAML_ENTRY_POINT_OSK ??
-      'https://innskraning.island.is/?id=financial-aid-osk.development',
-    samlEntryPointVeita:
-      process.env.SAML_ENTRY_POINT_VEITA ??
-      'https://innskraning.island.is/?id=financial-aid-veita.development',
-    audience: process.env.AUTH_AUDIENCE,
+    samlEntryPointOsk: process.env.SAML_ENTRY_POINT_OSK ?? '',
+    samlEntryPointVeita: process.env.SAML_ENTRY_POINT_VEITA ?? '',
+    audienceOsk: process.env.AUTH_AUDIENCE_OSK ?? '',
+    audienceVeita: process.env.AUTH_AUDIENCE_VEITA ?? '',
     allowFakeUsers: process.env.ALLOW_FAKE_USERS === 'true',
     jwtSecret: process.env.AUTH_JWT_SECRET!,
     secretToken: process.env.SECRET_TOKEN!,
@@ -45,7 +51,8 @@ const devConfig = {
       'https://innskraning.island.is/?id=financial-aid-osk.local',
     samlEntryPointVeita:
       'https://innskraning.island.is/?id=financial-aid-veita.local',
-    audience: 'localhost:4200',
+    audienceOsk: 'localhost:4200',
+    audienceVeita: 'localhost:4200',
     allowAuthBypass: true,
     allowFakeUsers: true,
     jwtSecret: 'jwt-secret',

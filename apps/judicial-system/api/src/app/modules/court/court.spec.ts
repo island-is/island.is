@@ -4,7 +4,8 @@ import { formatISO } from 'date-fns' // eslint-disable-line no-restricted-import
 import { Test } from '@nestjs/testing'
 
 import { LoggingModule } from '@island.is/logging'
-import { CaseType, User } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 

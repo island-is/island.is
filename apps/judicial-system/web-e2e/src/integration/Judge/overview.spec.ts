@@ -33,17 +33,14 @@ describe('/domur/krafa/:id', () => {
     )
     cy.getByTestid('lawsBroken').contains('Lorem ipsum')
     cy.getByTestid('custodyProvisions').contains('a-lið 1. mgr. 95. gr.')
-    cy.getByTestid('custodyRestrictions').contains(
-      'B - Einangrun, E - Fjölmiðlabann',
-    )
+    cy.getByTestid('custodyRestrictions')
+      .children()
+      .should('contain', 'B - Einangrun')
+      .should('contain', 'E - Fjölmiðlabann')
   })
 
   it('should have a button to a PDF of the case', () => {
-    cy.contains('a', 'Opna PDF kröfu').should(
-      'have.attr',
-      'href',
-      '/api/case/test_id_stadfesta/request',
-    )
+    cy.contains('button', 'Opna PDF kröfu')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {

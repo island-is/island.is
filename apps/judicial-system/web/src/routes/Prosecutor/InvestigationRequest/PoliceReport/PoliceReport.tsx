@@ -8,7 +8,7 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { Case } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import PoliceReportForm from './PoliceReportForm'
 
 const PoliceReport = () => {
