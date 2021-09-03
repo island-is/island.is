@@ -308,7 +308,7 @@ export const m = defineMessages({
   },
   applicationQualityPhotoTitle: {
     id: 'dl.application.applicationQualityPhotoTitle',
-    defaultMessage: 'Gæðamerkt mynd',
+    defaultMessage: 'Passamynd',
     description: 'title for quality photo section',
   },
   qualityPhotoTitle: {
@@ -540,7 +540,7 @@ export const m = defineMessages({
   },
   congratulationsQualityPictureTitle: {
     id: 'dl.application.congratulationsQualityPictureTitle',
-    defaultMessage: 'Gæðamerkt ljósmynd',
+    defaultMessage: 'Passamynd',
     description: 'Quality photo',
   },
   congratulationsCertificateDescription: {
@@ -552,7 +552,7 @@ export const m = defineMessages({
   congratulationsQualityPictureDescription: {
     id: 'dl.application.congratulationsQualityPictureDescription',
     defaultMessage:
-      'Skila þarf gæðamerktri ljósmynd til sýslumanns. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
+      'Skila þarf passamynd til sýslumanns. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
     description: 'Quality photo',
   },
   paymentPendingDescription: {
