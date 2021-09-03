@@ -14,7 +14,7 @@ import { Client } from './client.model'
 @Table({
   tableName: 'client_idp_restrictions',
 })
-export class ClientIdpRestrictions extends Model<ClientIdpRestrictions> {
+export class ClientIdpRestrictions extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

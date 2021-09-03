@@ -30,7 +30,10 @@
     "kennitala",
     "sequelize",
     "p-try",
-    "camelcase"
+    "camelcase",
+    "@apollo/federation",
+    "@apollo/gateway",
+    "ts-morph"
   ],
   "keepNames": true
 }

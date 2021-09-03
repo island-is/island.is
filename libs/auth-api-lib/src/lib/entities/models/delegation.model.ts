@@ -15,7 +15,7 @@ import { DelegationDTO, DelegationProvider, DelegationType } from '../../..'
   tableName: 'delegation',
   timestamps: false,
 })
-export class Delegation extends Model<Delegation> {
+export class Delegation extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

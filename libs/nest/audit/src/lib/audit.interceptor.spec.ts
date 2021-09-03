@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { mock } from 'jest-mock-extended'
-import { AuditService } from './audit.service'
 import { Test, TestingModule } from '@nestjs/testing'
+import { of, lastValueFrom } from 'rxjs'
+
+import { getCurrentUser } from '@island.is/auth-nest-tools'
+
+import { AuditService } from './audit.service'
 import { AuditInterceptor } from './audit.interceptor'
 import { Audit } from './audit.decorator'
-import { getCurrentUser } from '@island.is/auth-nest-tools'
-import { of } from 'rxjs'
 import MockInstance = jest.MockInstance
 
 jest.mock('@island.is/auth-nest-tools', () => ({
@@ -55,7 +57,7 @@ describe('AuditInterceptor', () => {
 
     // Act
     const observable = interceptor.intercept(context, next)
-    await observable.toPromise()
+    await lastValueFrom(observable)
 
     // Assert
     expect(auditService.auditPromise).toHaveBeenCalledWith(
@@ -78,7 +80,7 @@ describe('AuditInterceptor', () => {
 
     // Act
     const observable = interceptor.intercept(context, next)
-    await observable.toPromise()
+    await lastValueFrom(observable)
 
     // Assert
     expect(auditService.auditPromise).toHaveBeenCalledWith(
@@ -103,7 +105,7 @@ describe('AuditInterceptor', () => {
 
     // Act
     const observable = interceptor.intercept(context, next)
-    await observable.toPromise()
+    await lastValueFrom(observable)
 
     // Assert
     expect(auditService.auditPromise).toHaveBeenCalledWith(
@@ -132,7 +134,7 @@ describe('AuditInterceptor', () => {
 
     // Act
     const observable = interceptor.intercept(context, next)
-    await observable.toPromise()
+    await lastValueFrom(observable)
 
     // Assert
     expect(auditService.auditPromise).toHaveBeenCalledWith(
@@ -154,7 +156,7 @@ describe('AuditInterceptor', () => {
 
     // Act
     const observable = interceptor.intercept(context, next)
-    await observable.toPromise()
+    await lastValueFrom(observable)
 
     // Assert
     expect(auditService.auditPromise).toBeCalledTimes(0)

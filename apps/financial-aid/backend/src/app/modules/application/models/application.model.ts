@@ -28,7 +28,7 @@ import { StaffModel } from '../../staff'
   tableName: 'applications',
   timestamps: true,
 })
-export class ApplicationModel extends Model<Application> {
+export class ApplicationModel extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

@@ -12,7 +12,7 @@ import { VehicleModel } from '../../vehicle/model/vehicle.model'
 
 @ObjectType()
 @Table({ tableName: 'vehicle_owner' })
-export class VehicleOwnerModel extends Model<VehicleOwnerModel> {
+export class VehicleOwnerModel extends Model {
   @Field()
   @Column({
     type: DataType.STRING,

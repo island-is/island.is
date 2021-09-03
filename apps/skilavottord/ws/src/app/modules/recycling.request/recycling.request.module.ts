@@ -1,4 +1,5 @@
-import { Module, HttpModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
+import { HttpModule } from '@nestjs/axios'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { RecyclingRequestModel } from './model/recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'

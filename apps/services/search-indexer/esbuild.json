@@ -25,7 +25,10 @@
     "logform",
     "pg-native",
     "form-data",
-    "@elastic/elasticsearch"
+    "@elastic/elasticsearch",
+    "@apollo/federation",
+    "@apollo/gateway",
+    "ts-morph"
   ],
   "keepNames": true
 }

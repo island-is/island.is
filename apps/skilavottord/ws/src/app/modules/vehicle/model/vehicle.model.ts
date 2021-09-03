@@ -15,7 +15,7 @@ import { RecyclingRequestModel } from '../../recycling.request/model/recycling.r
 import { VehicleOwnerModel } from '../../vehicle.owner/model/vehicle.owner.model'
 @ObjectType()
 @Table({ tableName: 'vehicle' })
-export class VehicleModel extends Model<VehicleModel> {
+export class VehicleModel extends Model {
   @Field()
   @Column({
     type: DataType.STRING,

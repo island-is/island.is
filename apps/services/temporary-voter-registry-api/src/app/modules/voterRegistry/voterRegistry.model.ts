@@ -17,7 +17,7 @@ import { ApiProperty } from '@nestjs/swagger'
     },
   ],
 })
-export class VoterRegistry extends Model<VoterRegistry> {
+export class VoterRegistry extends Model {
   @ApiProperty()
   @Column({
     primaryKey: true,

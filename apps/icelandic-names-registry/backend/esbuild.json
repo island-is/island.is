@@ -25,7 +25,10 @@
     "logform",
     "pg-native",
     "form-data",
-    "csv-parse"
+    "csv-parse",
+    "@apollo/federation",
+    "@apollo/gateway",
+    "ts-morph"
   ],
   "keepNames": true
 }

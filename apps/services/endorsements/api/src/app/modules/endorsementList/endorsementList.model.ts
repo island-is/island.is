@@ -16,7 +16,7 @@ import { EndorsementMetadataDto } from './dto/endorsementMetadata.dto'
 @Table({
   tableName: 'endorsement_list',
 })
-export class EndorsementList extends Model<EndorsementList> {
+export class EndorsementList extends Model {
   @ApiProperty()
   @Column({
     type: DataType.UUID,

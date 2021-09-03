@@ -10,7 +10,7 @@ import {
 
 @ObjectType()
 @Table({ tableName: 'gdpr' })
-export class GdprModel extends Model<GdprModel> {
+export class GdprModel extends Model {
   @Field()
   @Column({
     type: DataType.STRING,

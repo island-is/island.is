@@ -18,7 +18,7 @@ import { AidModel } from '../../aid/models'
   tableName: 'municipality',
   timestamps: true,
 })
-export class MunicipalityModel extends Model<Municipality> {
+export class MunicipalityModel extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

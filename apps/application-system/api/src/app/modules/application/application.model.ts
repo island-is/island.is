@@ -21,7 +21,7 @@ import {
     },
   ],
 })
-export class Application extends Model<Application> {
+export class Application extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

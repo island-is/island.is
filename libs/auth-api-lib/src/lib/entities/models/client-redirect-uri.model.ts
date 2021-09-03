@@ -14,7 +14,7 @@ import { Client } from './client.model'
 @Table({
   tableName: 'client_redirect_uri',
 })
-export class ClientRedirectUri extends Model<ClientRedirectUri> {
+export class ClientRedirectUri extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

@@ -31,7 +31,10 @@
     "ioredis",
     "p-map",
     "lru-cache",
-    "pdfkit"
+    "pdfkit",
+    "@apollo/federation",
+    "@apollo/gateway",
+    "ts-morph"
   ],
   "keepNames": true
 }

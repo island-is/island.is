@@ -20,7 +20,7 @@ import { Application } from '../application/application.model'
     },
   ],
 })
-export class Payment extends Model<Application> {
+export class Payment extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

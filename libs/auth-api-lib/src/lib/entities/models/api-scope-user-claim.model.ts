@@ -14,7 +14,7 @@ import { ApiScope } from './api-scope.model'
 @Table({
   tableName: 'api_scope_user_claim',
 })
-export class ApiScopeUserClaim extends Model<ApiScopeUserClaim> {
+export class ApiScopeUserClaim extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

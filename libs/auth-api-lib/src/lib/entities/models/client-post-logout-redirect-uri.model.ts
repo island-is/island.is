@@ -14,7 +14,7 @@ import { Client } from './client.model'
 @Table({
   tableName: 'client_post_logout_redirect_uri',
 })
-export class ClientPostLogoutRedirectUri extends Model<ClientPostLogoutRedirectUri> {
+export class ClientPostLogoutRedirectUri extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

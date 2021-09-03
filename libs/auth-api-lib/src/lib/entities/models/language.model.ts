@@ -12,7 +12,7 @@ import { ApiProperty } from '@nestjs/swagger'
 @Table({
   tableName: 'language',
 })
-export class Language extends Model<Language> {
+export class Language extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

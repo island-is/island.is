@@ -33,6 +33,7 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
     appModule: AppModule,
     ...options,
   })
+
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
   await sequelize.sync({ force: true })

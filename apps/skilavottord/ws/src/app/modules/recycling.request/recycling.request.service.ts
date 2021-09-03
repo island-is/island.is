@@ -1,6 +1,9 @@
-import { Inject, Injectable, HttpService } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
 import { InjectModel } from '@nestjs/sequelize'
 import format from 'date-fns/format'
+import { lastValueFrom } from 'rxjs'
+
 import {
   RecyclingRequestModel,
   RecyclingRequestUnion,
@@ -52,9 +55,11 @@ export class RecyclingRequestService {
         'Content-Type': 'application/json',
       }
       // TODO: saved jToken and use it in next 7 days ( until it expires )
-      const authRes = await this.httpService
-        .post(restAuthUrl, jsonAuthBody, { headers: headerAuthRequest })
-        .toPromise()
+      const authRes = await lastValueFrom(
+        this.httpService.post(restAuthUrl, jsonAuthBody, {
+          headers: headerAuthRequest,
+        }),
+      )
 
       if (authRes.status > 299 || authRes.status < 200) {
         this.logger.error(authRes.statusText)
@@ -82,9 +87,11 @@ export class RecyclingRequestService {
       this.logger.info(`RestUrl: ${restDeRegUrl}`)
       this.logger.info(`RestHeader: ${headerDeRegRequest}`)
       this.logger.info(`RestBody: ${jsonDeRegBody}`)
-      const deRegRes = await this.httpService
-        .post(restDeRegUrl, jsonDeRegBody, { headers: headerDeRegRequest })
-        .toPromise()
+      const deRegRes = await lastValueFrom(
+        this.httpService.post(restDeRegUrl, jsonDeRegBody, {
+          headers: headerDeRegRequest,
+        }),
+      )
       if (deRegRes.status < 300 && deRegRes.status >= 200) {
         this.logger.info(
           `---- Finished deRegisterVehicle call on ${vehiclePermno} ----`,

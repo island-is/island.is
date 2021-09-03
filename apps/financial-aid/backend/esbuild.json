@@ -28,7 +28,10 @@
     "atob",
     "logform",
     "pg-native",
-    "form-data"
+    "form-data",
+    "@apollo/federation",
+    "@apollo/gateway",
+    "ts-morph"
   ],
   "keepNames": true
 }

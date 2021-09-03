@@ -16,21 +16,21 @@ import {
     },
   ],
 })
-export class PartyLetterRegistry extends Model<PartyLetterRegistry> {
+export class PartyLetterRegistry extends Model {
   @ApiProperty()
   @Column({
     type: DataType.CHAR(2),
     primaryKey: true,
     get() {
       // this adds a space cause of char 2 we remove added spaces here
-      const value: string = ((this as unknown) as Model<PartyLetterRegistry>).getDataValue(
+      const value: string = ((this as unknown) as Model).getDataValue(
         'partyLetter' as any,
       )
       return value.trim()
     },
     set(value: string) {
       // we want to ensure all inserted letters are uppercase
-      ;((this as unknown) as Model<PartyLetterRegistry>).setDataValue(
+      ;((this as unknown) as Model).setDataValue(
         'partyLetter' as any,
         value.toUpperCase(),
       )

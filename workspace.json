@@ -4216,7 +4216,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/financial-aid/backend/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/financial-aid/backend/tsconfig.app.json apps/financial-aid/backend/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/financial-aid/backend/tsconfig.app.json apps/financial-aid/backend/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -4949,7 +4949,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/icelandic-names-registry/backend/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/icelandic-names-registry/backend/tsconfig.app.json apps/icelandic-names-registry/backend/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/icelandic-names-registry/backend/tsconfig.app.json apps/icelandic-names-registry/backend/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -5562,7 +5562,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/judicial-system/backend/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/judicial-system/backend/tsconfig.app.json apps/judicial-system/backend/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/judicial-system/backend/tsconfig.app.json apps/judicial-system/backend/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -5905,7 +5905,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/judicial-system/xrd-api/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/judicial-system/xrd-api/tsconfig.app.json apps/judicial-system/xrd-api/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/judicial-system/xrd-api/tsconfig.app.json apps/judicial-system/xrd-api/src/buildOpenApi.ts"
           }
         },
         "docker-express": {}
@@ -6235,7 +6235,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/reference-backend/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/reference-backend/tsconfig.app.json apps/reference-backend/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/reference-backend/tsconfig.app.json apps/reference-backend/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -7477,7 +7477,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/auth-public-api/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/services/auth-public-api/tsconfig.app.json apps/services/auth-public-api/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth-public-api/tsconfig.app.json apps/services/auth-public-api/src/buildOpenApi.ts"
           }
         },
         "docker-express": {}
@@ -7561,7 +7561,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/documents/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/services/documents/tsconfig.app.json apps/services/documents/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/documents/tsconfig.app.json apps/services/documents/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -7697,7 +7697,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/endorsements/api/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/services/endorsements/api/tsconfig.app.json apps/services/endorsements/api/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/endorsements/api/tsconfig.app.json apps/services/endorsements/api/src/buildOpenApi.ts"
           }
         },
         "schemas/openapi-generator": {
@@ -7821,7 +7821,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/party-letter-registry-api/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/services/party-letter-registry-api/tsconfig.app.json apps/services/party-letter-registry-api/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/party-letter-registry-api/tsconfig.app.json apps/services/party-letter-registry-api/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -8018,7 +8018,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/temporary-voter-registry-api/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/services/temporary-voter-registry-api/tsconfig.app.json apps/services/temporary-voter-registry-api/src/buildOpenApi.ts"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/temporary-voter-registry-api/tsconfig.app.json apps/services/temporary-voter-registry-api/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -8711,7 +8711,7 @@
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.json scripts/build-graphql-schema.ts apps/skilavottord/ws/src/app/app.module"
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/skilavottord/ws/tsconfig.json scripts/build-graphql-schema.ts apps/skilavottord/ws/src/app/app.module"
           }
         },
         "migrate": {

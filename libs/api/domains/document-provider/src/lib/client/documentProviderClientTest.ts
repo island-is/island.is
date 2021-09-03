@@ -1,5 +1,7 @@
-import { HttpService, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
 import { AxiosRequestConfig } from 'axios'
+import { lastValueFrom } from 'rxjs'
 
 import { DocumentOauthConnection } from './documentProvider.connection'
 import type { DocumentProviderClientConfig } from './documentProviderClientConfig'
@@ -32,23 +34,6 @@ export class DocumentProviderClientTest {
     }
   }
 
-  private async getRequest<T>(requestRoute: string): Promise<T> {
-    await this.rehydrateToken()
-    const config: AxiosRequestConfig = {
-      headers: {
-        Authorization: `Bearer ${this.accessToken}`,
-      },
-    }
-
-    const response: {
-      data: T
-    } = await this.httpService
-      .get(`${this.clientConfig.basePath}${requestRoute}`, config)
-      .toPromise()
-
-    return response.data
-  }
-
   private async postRequest<T>(requestRoute: string): Promise<T> {
     await this.rehydrateToken()
     const config: AxiosRequestConfig = {
@@ -59,9 +44,13 @@ export class DocumentProviderClientTest {
 
     const response: {
       data: T
-    } = await this.httpService
-      .post(`${this.clientConfig.basePath}${requestRoute}`, null, config)
-      .toPromise()
+    } = await lastValueFrom(
+      this.httpService.post(
+        `${this.clientConfig.basePath}${requestRoute}`,
+        null,
+        config,
+      ),
+    )
 
     return response.data
   }

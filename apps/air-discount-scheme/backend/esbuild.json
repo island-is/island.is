@@ -28,7 +28,10 @@
     "pg-native",
     "form-data",
     "swagger-ui-express",
-    "swagger-ui-dist"
+    "swagger-ui-dist",
+    "@apollo/federation",
+    "@apollo/gateway",
+    "ts-morph"
   ],
   "keepNames": true
 }

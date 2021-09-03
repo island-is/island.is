@@ -1,5 +1,7 @@
 import { VehicleInformation } from './samgongustofa.model'
-import { Injectable, HttpService, Inject } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
+import { lastValueFrom } from 'rxjs'
 import * as xml2js from 'xml2js'
 import { environment } from '../../../../environments'
 import type { Logger } from '@island.is/logging'
@@ -45,9 +47,11 @@ export class SamgongustofaService {
       }
 
       this.logger.info('Start allVehiclesForPersidno Soap request.')
-      const allCarsResponse = await this.httpService
-        .post(soapUrl, xmlAllCarsBodyStr, { headers: headersRequest })
-        .toPromise()
+      const allCarsResponse = await lastValueFrom(
+        this.httpService.post(soapUrl, xmlAllCarsBodyStr, {
+          headers: headersRequest,
+        }),
+      )
       if (allCarsResponse.status != 200) {
         this.logger.error(allCarsResponse.statusText)
         throw new Error(allCarsResponse.statusText)
@@ -183,9 +187,11 @@ export class SamgongustofaService {
             </soapenv:Body>
           </soapenv:Envelope>`
 
-          const basicInforesponse = await this.httpService
-            .post(soapUrl, xmlBasicInfoBodyStr, { headers: headersRequest })
-            .toPromise()
+          const basicInforesponse = await lastValueFrom(
+            this.httpService.post(soapUrl, xmlBasicInfoBodyStr, {
+              headers: headersRequest,
+            }),
+          )
           if (basicInforesponse.status != 200) {
             this.logger.error(basicInforesponse.statusText)
             throw new Error(basicInforesponse.statusText)

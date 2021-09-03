@@ -17,7 +17,7 @@ import { IdentityResourcesDTO } from '../dto/identity-resources.dto'
 @Table({
   tableName: 'identity_resource',
 })
-export class IdentityResource extends Model<IdentityResource> {
+export class IdentityResource extends Model {
   // Common properties for all resources (no single table inheritance)
 
   @PrimaryKey

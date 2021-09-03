@@ -16,9 +16,7 @@ import {
 @Table({
   tableName: 'icelandic_names',
 })
-export class IcelandicName
-  extends Model<IcelandicName>
-  implements TIcelandicName {
+export class IcelandicName extends Model implements TIcelandicName {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,

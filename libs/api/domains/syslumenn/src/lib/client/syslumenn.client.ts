@@ -1,4 +1,7 @@
-import { HttpService, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
+import { lastValueFrom } from 'rxjs'
+
 import { IHomestay } from './models/homestay'
 import { ISyslumennAuction } from './models/syslumennAuction'
 import { ILogin } from './models/login'
@@ -31,9 +34,9 @@ export class SyslumennClient {
       lykilord: this.clientConfig.password,
     }
 
-    const response: { data: ILogin } = await this.httpService
-      .post(`${this.clientConfig.url}/v1/Innskraning`, config)
-      .toPromise()
+    const response: { data: ILogin } = await lastValueFrom(
+      this.httpService.post(`${this.clientConfig.url}/v1/Innskraning`, config),
+    )
 
     this.id = response.data.audkenni
     this.accessToken = response.data.accessToken
@@ -46,9 +49,9 @@ export class SyslumennClient {
       ? `${this.clientConfig.url}/v1/VirkarHeimagistingar/${this.id}/${year}`
       : `${this.clientConfig.url}/v1/VirkarHeimagistingar/${this.id}`
 
-    const response: { data: IHomestay[] } = await this.httpService
-      .get(url)
-      .toPromise()
+    const response: { data: IHomestay[] } = await lastValueFrom(
+      this.httpService.get(url),
+    )
 
     return response.data
   }
@@ -100,12 +103,11 @@ export class SyslumennClient {
 
     const response: {
       data: DataUploadResponse
-    } = await this.httpService
-      .post(url, request, { headers: headers })
-      .toPromise()
-      .catch((err) => {
-        throw err
-      })
+    } = await lastValueFrom(
+      this.httpService.post(url, request, { headers: headers }),
+    ).catch((err) => {
+      throw err
+    })
 
     return response.data
   }

@@ -1,4 +1,5 @@
-import { DynamicModule, HttpModule } from '@nestjs/common'
+import { DynamicModule } from '@nestjs/common'
+import { HttpModule } from '@nestjs/axios'
 import { Configuration, OrganisationsApi, ProvidersApi } from '../../gen/fetch'
 import { DocumentProviderResolver } from './document-provider.resolver'
 import { DocumentProviderService } from './document-provider.service'

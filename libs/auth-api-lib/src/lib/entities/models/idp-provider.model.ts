@@ -12,7 +12,7 @@ import { ApiProperty } from '@nestjs/swagger'
 @Table({
   tableName: 'idp_providers',
 })
-export class IdpProvider extends Model<IdpProvider> {
+export class IdpProvider extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

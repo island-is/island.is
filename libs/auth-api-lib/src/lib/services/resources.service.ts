@@ -54,8 +54,6 @@ export class ResourcesService {
     private apiResourceScope: typeof ApiResourceScope,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @Inject(Sequelize)
-    private sequelize: Sequelize,
   ) {}
 
   /** Get's all identity resources and total count of rows */

@@ -17,7 +17,7 @@ import { ApiProperty } from '@nestjs/swagger'
     },
   ],
 })
-export class Translation extends Model<Translation> {
+export class Translation extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

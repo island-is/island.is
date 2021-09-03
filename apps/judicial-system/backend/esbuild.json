@@ -29,7 +29,10 @@
     "logform",
     "pg-native",
     "form-data",
-    "sequelize-replace-enum-postgres"
+    "sequelize-replace-enum-postgres",
+    "@apollo/federation",
+    "@apollo/gateway",
+    "ts-morph"
   ],
   "keepNames": true
 }

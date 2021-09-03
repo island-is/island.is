@@ -49,7 +49,7 @@ export const financialStateMachine = createMachine({
 })
 
 @Table({ tableName: 'flight_leg' })
-export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
+export class FlightLeg extends Model implements TFlightLeg {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -156,7 +156,7 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
 }
 
 @Table({ tableName: 'flight' })
-export class Flight extends Model<Flight> implements TFlight {
+export class Flight extends Model implements TFlight {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

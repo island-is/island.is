@@ -1,8 +1,11 @@
 import { Base64 } from 'js-base64'
-import { Injectable, HttpService, Inject } from '@nestjs/common'
-import { environment } from '../../../../environments'
+import { Injectable, Inject } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
+import { lastValueFrom } from 'rxjs'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { environment } from '../../../../environments'
 
 @Injectable()
 export class FjarsyslaService {
@@ -31,9 +34,9 @@ export class FjarsyslaService {
           `${restUsername}:${restPassword}`,
         )}`,
       }
-      const response = await this.httpService
-        .post(restUrl, data, { headers: headersRequest })
-        .toPromise()
+      const response = await lastValueFrom(
+        this.httpService.post(restUrl, data, { headers: headersRequest }),
+      )
       if (!response) {
         this.logger.error(response.statusText)
         throw new Error(response.statusText)

@@ -46,7 +46,7 @@ export const RecyclingRequestUnion = createUnionType({
 
 @ObjectType()
 @Table({ tableName: 'recycling_request' })
-export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
+export class RecyclingRequestModel extends Model {
   @Field()
   @IsUUID(4)
   @Default(DataType.UUIDV4)

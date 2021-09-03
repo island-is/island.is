@@ -16,7 +16,7 @@ import {
     },
   ],
 })
-export class Resource extends Model<Resource> {
+export class Resource extends Model {
   @ApiProperty()
   @Column({
     type: DataType.UUID,

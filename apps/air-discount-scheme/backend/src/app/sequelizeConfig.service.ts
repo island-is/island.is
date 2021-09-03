@@ -49,7 +49,7 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
         idle: 10000,
       },
       logging: false,
-      autoLoadModels: true,
+      autoLoadModels: !process.env.INIT_SCHEMA,
       synchronize: false,
     }
   }

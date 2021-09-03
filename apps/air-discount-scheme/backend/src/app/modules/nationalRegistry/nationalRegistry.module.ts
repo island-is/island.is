@@ -1,4 +1,5 @@
-import { Module, HttpModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
+import { HttpModule } from '@nestjs/axios'
 import { Base64 } from 'js-base64'
 
 import { environment } from '../../../environments'

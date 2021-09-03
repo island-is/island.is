@@ -25,7 +25,10 @@
     "logform",
     "pg-native",
     "form-data",
-    "@island.is/login"
+    "@island.is/login",
+    "@apollo/federation",
+    "@apollo/gateway",
+    "ts-morph"
   ],
   "keepNames": true
 }

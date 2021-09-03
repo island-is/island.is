@@ -1,8 +1,11 @@
-import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
+import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
 import * as kennitala from 'kennitala'
+import { lastValueFrom } from 'rxjs'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   NationalRegistryGeneralLookupResponse,
   NationalRegistryFamilyLookupResponse,
@@ -213,9 +216,9 @@ export class NationalRegistryService {
 
     const response: {
       data: [NationalRegistryGeneralLookupResponse]
-    } = await this.httpService
-      .get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`)
-      .toPromise()
+    } = await lastValueFrom(
+      this.httpService.get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`),
+    )
 
     const user = this.createNationalRegistryUser(response.data[0])
     if (user) {
@@ -254,9 +257,9 @@ export class NationalRegistryService {
 
     const response: {
       data: [NationalRegistryFamilyLookupResponse]
-    } = await this.httpService
-      .get(`${this.baseUrl}/family-lookup?ssn=${nationalId}`)
-      .toPromise()
+    } = await lastValueFrom(
+      this.httpService.get(`${this.baseUrl}/family-lookup?ssn=${nationalId}`),
+    )
 
     const data = response.data[0]
     if (data.error) {

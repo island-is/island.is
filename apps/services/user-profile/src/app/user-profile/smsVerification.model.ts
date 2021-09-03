@@ -17,7 +17,7 @@ import { ApiProperty } from '@nestjs/swagger'
     },
   ],
 })
-export class SmsVerification extends Model<SmsVerification> {
+export class SmsVerification extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

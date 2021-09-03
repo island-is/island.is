@@ -12,7 +12,7 @@ import { RecyclingRequestModel } from '../../recycling.request/model/recycling.r
 
 @ObjectType()
 @Table({ tableName: 'recycling_partner' })
-export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
+export class RecyclingPartnerModel extends Model {
   @Field()
   @Column({
     type: DataType.STRING,

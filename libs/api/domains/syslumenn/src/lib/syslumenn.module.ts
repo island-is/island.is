@@ -1,4 +1,5 @@
-import { DynamicModule, HttpModule } from '@nestjs/common'
+import { DynamicModule } from '@nestjs/common'
+import { HttpModule } from '@nestjs/axios'
 import {
   SYSLUMENN_CLIENT_CONFIG,
   SyslumennClient,

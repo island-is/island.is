@@ -14,7 +14,7 @@ import { ApiResource } from './api-resource.model'
 @Table({
   tableName: 'api_resource_user_claim',
 })
-export class ApiResourceUserClaim extends Model<ApiResourceUserClaim> {
+export class ApiResourceUserClaim extends Model {
   @PrimaryKey
   @Column({
     type: DataType.UUID,

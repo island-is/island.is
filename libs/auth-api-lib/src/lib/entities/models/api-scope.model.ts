@@ -19,7 +19,7 @@ import { DelegationScope } from './delegation-scope.model'
 @Table({
   tableName: 'api_scope',
 })
-export class ApiScope extends Model<ApiScope> {
+export class ApiScope extends Model {
   // Common properties for all resources (no single table inheritance)
 
   @PrimaryKey
