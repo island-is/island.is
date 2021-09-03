@@ -18,14 +18,17 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
 import { FinanceService } from '@island.is/clients/finance'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
+@Audit({ namespace: '@island.is/api/finance' })
 export class FinanceResolver {
   constructor(private FinanceService: FinanceService) {}
 
   @Query(() => graphqlTypeJson)
+  @Audit()
   async getFinanceStatus(@CurrentUser() user: User) {
     return this.FinanceService.getFinanceStatus(
       user.nationalId,
@@ -34,6 +37,7 @@ export class FinanceResolver {
   }
 
   @Query(() => graphqlTypeJson)
+  @Audit()
   async getFinanceStatusDetails(
     @CurrentUser() user: User,
     @Args('input') input: GetFinancialOverviewInput,
@@ -47,6 +51,7 @@ export class FinanceResolver {
   }
 
   @Query(() => CustomerChargeType, { nullable: true })
+  @Audit()
   async getCustomerChargeType(@CurrentUser() user: User) {
     return this.FinanceService.getCustomerChargeType(
       user.nationalId,
@@ -55,6 +60,7 @@ export class FinanceResolver {
   }
 
   @Query(() => CustomerRecords, { nullable: true })
+  @Audit()
   async getCustomerRecords(
     @CurrentUser() user: User,
     @Args('input') input: GetCustomerRecordsInput,
@@ -69,6 +75,7 @@ export class FinanceResolver {
   }
 
   @Query(() => DocumentsListModel)
+  @Audit()
   async getDocumentsList(
     @CurrentUser() user: User,
     @Args('input') input: GetDocumentsListInput,
@@ -83,6 +90,7 @@ export class FinanceResolver {
   }
 
   @Query(() => FinanceDocumentModel, { nullable: true })
+  @Audit()
   async getFinanceDocument(
     @CurrentUser() user: User,
     @Args('input') input: GetFinanceDocumentInput,
@@ -95,6 +103,7 @@ export class FinanceResolver {
   }
 
   @Query(() => FinanceDocumentModel, { nullable: true })
+  @Audit()
   async getAnnualStatusDocument(
     @CurrentUser() user: User,
     @Args('input') input: GetAnnualStatusDocumentInput,
@@ -107,6 +116,7 @@ export class FinanceResolver {
   }
 
   @Query(() => CustomerTapsControlModel, { nullable: true })
+  @Audit()
   async getCustomerTapControl(@CurrentUser() user: User) {
     return this.FinanceService.getCustomerTapControl(
       user.nationalId,
