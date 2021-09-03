@@ -1,16 +1,9 @@
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import {
   Box,
   Button,
   DatePicker,
   Input,
-  Text,
   Checkbox,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
@@ -21,28 +14,6 @@ import { StepComponent } from '../state/useDraftingState'
 import { RegDraftFormSimpleProps } from '../state/types'
 import { getMinDate, getNextWorkday } from '../utils'
 import { Appendixes, AppendixStateItem } from './Appendixes'
-// import { RegulationDraftId } from '@island.is/regulations/admin'
-
-type WrapProps = {
-  legend?: string
-  children: ReactNode
-}
-const Wrap = (props: WrapProps) => (
-  <Box marginBottom={2} aria-label={props.legend}>
-    {props.legend && (
-      <Text
-        variant="small"
-        as="h4"
-        color="blue400"
-        fontWeight="medium"
-        marginBottom={1}
-      >
-        {props.legend}
-      </Text>
-    )}
-    {props.children}
-  </Box>
-)
 
 export const EditBasics: StepComponent = (props) => {
   const t = useIntl().formatMessage
@@ -75,7 +46,7 @@ export const EditBasics: StepComponent = (props) => {
   console.log('appendixes', appendixes)
   return (
     <>
-      <Wrap>
+      <Box marginBottom={3}>
         <Input
           label={t(msg.title)}
           name="title"
@@ -90,9 +61,9 @@ export const EditBasics: StepComponent = (props) => {
           errorMessage={t(msg.requiredFieldError)}
           hasError={!!draft.title?.error}
         />
-      </Wrap>
+      </Box>
 
-      <Wrap>
+      <Box marginBottom={6}>
         <EditorInput
           label={t(msg.text)}
           baseText={'' as HTMLText}
@@ -108,9 +79,9 @@ export const EditBasics: StepComponent = (props) => {
             })
           }
         />
-      </Wrap>
+      </Box>
 
-      <Box marginTop={5}>
+      <Box marginBottom={6}>
         <Appendixes
           appendixes={appendixes}
           onChange={(appendixCallback) =>
@@ -120,7 +91,7 @@ export const EditBasics: StepComponent = (props) => {
         />
       </Box>
 
-      <Wrap>
+      <Box marginBottom={6}>
         <DatePicker
           label={t(msg.idealPublishDate)}
           placeholderText={t(msg.idealPublishDate_soon)}
