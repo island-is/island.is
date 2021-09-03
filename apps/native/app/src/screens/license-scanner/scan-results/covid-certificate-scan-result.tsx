@@ -12,6 +12,7 @@ import pako from 'pako'
 // import { PublicKey } from '@fidm/x509'
 // import publicKeys from '../../../data/eudcc-public-keys.json'
 import { useState } from 'react'
+import { CovidResultCard } from '../covid-result-card';
 const cbor = require('cbor-js')
 
 // dateOfBirth: "2000-01-01"
@@ -36,7 +37,7 @@ const cbor = require('cbor-js')
 // version: "1.0.0"
 // __proto__: Object
 
-interface DecodedEudcc {
+export interface DecodedEudcc {
   valid: boolean
   issuer: string
   issuedAt: Date
@@ -347,12 +348,15 @@ export const CovidCertificateScanResult = ({ data }: any) => {
   console.log(decoded)
 
   return (
-    <ScanResultCard
+    <CovidResultCard
       loading={false}
-      error={false}
+      error={decoded?.valid}
       name={`${decoded?.givenName} ${decoded?.familyName}`}
-      birthDate={new Date()}
+      birthDate={new Date(decoded?.dateOfBirth!)}
       backgroundColor="blue"
+      vaccination={decoded?.vaccination}
+      test={decoded?.test}
+      recovery={decoded?.recovery}
     />
   )
 }

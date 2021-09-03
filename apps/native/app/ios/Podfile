@@ -94,7 +94,7 @@ target 'IslandApp' do
 
     # We need to make one crude patch to RCT-Folly - set `__IPHONE_10_0` to our iOS target + 1
     # https://github.com/facebook/flipper/issues/834 - 84 comments and still going...
-    # `sed -i -e  $'s/__IPHONE_10_0/__IPHONE_12_0/' Pods/RCT-Folly/folly/portability/Time.h`
+    `sed -i -e  $'s/__IPHONE_10_0/__IPHONE_12_0/' Pods/RCT-Folly/folly/portability/Time.h`
 
     # system('chmod +rw Pods/RCT-Folly/folly/synchronization/DistributedMutex-inl.h')
 
