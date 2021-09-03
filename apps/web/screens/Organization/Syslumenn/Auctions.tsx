@@ -41,7 +41,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useRouter } from 'next/router'
 import format from 'date-fns/format'
 import { LottieOptions } from '@island.is/web/libs/react-lottie/types'
-import { theme } from "@island.is/island-ui/theme";
+import { theme } from '@island.is/island-ui/theme'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -416,7 +416,9 @@ const Auctions: Screen<AuctionsProps> = ({
   const [query, _setQuery] = useState(' ')
   const setQuery = (query: string) => _setQuery(query.toLowerCase())
 
-  useEffect(() => { setQuery('')}, [])
+  useEffect(() => {
+    setQuery('')
+  }, [])
 
   const [lotTypeOption, setLotTypeOption] = useState<LotTypeOption>(
     LOT_TYPES_OPTIONS[0],

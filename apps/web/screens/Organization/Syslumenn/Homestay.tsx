@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Button,
@@ -80,7 +80,9 @@ const Homestay: Screen<HomestayProps> = ({
 
   const setQuery = (query: string) => _setQuery(query.toLowerCase())
 
-  useEffect(() => { setQuery('')}, [])
+  useEffect(() => {
+    setQuery('')
+  }, [])
 
   const filteredItems = homestays.filter(
     (homestay) =>
