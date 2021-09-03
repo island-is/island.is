@@ -6,12 +6,14 @@ import agencyLogo from '../../assets/temp/agency-logo.png'
 
 import danger from '../../../../island-ui/src/assets/card/danger.png'
 import success from '../../../../island-ui/src/assets/card/is-verified.png'
-import background from '../../../../island-ui/src/assets/card/okuskyrteini.png'
+import backgroundPink from '../../../../island-ui/src/assets/card/okuskirteini.png'
+import backgroundBlue from '../../../../island-ui/src/assets/card/skotvopnaleyfi.png'
 import { useIntl } from 'react-intl'
 
 const Host = styled.View`
   border-radius: 16px;
   margin-bottom: 32px;
+  overflow: hidden;
 `
 
 const Header = styled.View`
@@ -130,28 +132,11 @@ interface ScanResultCardProps {
   loading: boolean
   error?: boolean
   errorMessage?: string
-  nationalId?: string
+  birthDate?: Date;
   name?: string
   licenseNumber?: string
   photo?: string
-}
-
-function nationalIdToBirthDate(ssn?: string) {
-  const firstChar = ssn?.substr(0, 1);
-  if (['8', '9'].includes(firstChar ?? '8')) {
-    return null;
-  }
-  const lastChar = ssn?.substr(-1);
-  const decade = lastChar === '9' ? 1900 : 2000 + (Number(lastChar) * 100);
-  const year = decade + Number(ssn?.substr(4, 2));
-  const month = Number(ssn?.substr(2, 2));
-  const date = Number(ssn?.substr(0, 2));
-
-  return new Date(
-    year,
-    month - 1,
-    date
-  );
+  backgroundColor?: 'pink' | 'blue'
 }
 
 export function ScanResultCard(props: ScanResultCardProps) {
@@ -159,19 +144,22 @@ export function ScanResultCard(props: ScanResultCardProps) {
     error,
     errorMessage,
     loading,
-    nationalId,
+    birthDate,
     name,
     photo,
+    backgroundColor = 'pink',
   } = props
   const intl = useIntl()
-  const birthDate = nationalIdToBirthDate(nationalId);
-
+  const background =
+    backgroundColor === 'pink' ? backgroundPink : backgroundBlue
   return (
     <Host>
       <Background source={background} resizeMode="stretch" />
       <Header>
         <Detail>
-          <Title>{intl.formatMessage({ id: 'licenseScannerResult.title' })}</Title>
+          <Title>
+            {intl.formatMessage({ id: 'licenseScannerResult.title' })}
+          </Title>
           <Subtitle>
             <SubtitleIcon>
               {loading ? (
@@ -202,7 +190,11 @@ export function ScanResultCard(props: ScanResultCardProps) {
         <Content>
           <Left>
             <LabelGroup>
-              <Label>{intl.formatMessage({ id: 'licenseScannerResult.errorMessage' })}</Label>
+              <Label>
+                {intl.formatMessage({
+                  id: 'licenseScannerResult.errorMessage',
+                })}
+              </Label>
               <Value>{errorMessage}</Value>
             </LabelGroup>
           </Left>
@@ -211,27 +203,31 @@ export function ScanResultCard(props: ScanResultCardProps) {
         <Content>
           <Left>
             <LabelGroup>
-              <Label>{intl.formatMessage({ id: 'licenseScannerResult.name' })}</Label>
+              <Label>
+                {intl.formatMessage({ id: 'licenseScannerResult.name' })}
+              </Label>
               {loading ? (
                 <Placeholder style={{ width: 120 }} />
               ) : (
-                <Value>
-                  {name}
-                </Value>
+                <Value>{name}</Value>
               )}
             </LabelGroup>
             <LabelGroup>
-              <Label>{intl.formatMessage({ id: 'licenseScannerResult.birthDate' })}</Label>
+              <Label>
+                {intl.formatMessage({ id: 'licenseScannerResult.birthDate' })}
+              </Label>
               {loading ? (
                 <Placeholder style={{ width: 120 }} />
               ) : (
                 <Value>
-                  {birthDate ? intl.formatDate(birthDate, { }) : `---`}
+                  {birthDate ? intl.formatDate(birthDate, {}) : `---`}
                 </Value>
               )}
             </LabelGroup>
           </Left>
-          <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
+          {photo && (
+            <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
+          )}
         </Content>
       )}
     </Host>

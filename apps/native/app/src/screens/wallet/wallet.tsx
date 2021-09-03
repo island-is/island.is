@@ -140,7 +140,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         setLicenseItems(res.data?.genericLicenses || [])
       }
     }
-  }, [res.loading, res.error])
+  }, [res])
 
   // indexing list for spotlight search IOS
   useEffect(() => {
@@ -166,8 +166,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       res
         .refetch()
         .then(() => {
-          console.log('done')
-          loadingTimeout.current = setTimeout(() => {
+          (loadingTimeout as any).current = setTimeout(() => {
             setLoading(false)
           }, 1331)
         })
@@ -250,7 +249,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           contentInset={{
             bottom: 32,
           }}
-          // contentContainerStyle={{ flexGrow: 1 }}
           refreshControl={
             <RefreshControl refreshing={loading} onRefresh={onRefresh} />
           }

@@ -1,5 +1,5 @@
 import { dynamicColor, font } from '@island.is/island-ui-native'
-import { BarCodeScanner } from 'expo-barcode-scanner'
+import { BarCodeEvent, BarCodeScanner } from 'expo-barcode-scanner'
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -91,13 +91,14 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
     }
   })
 
-  const handleBarCodeScanned = ({ type, data }: any) => {
+  const handleBarCodeScanned = ({ type, data }: BarCodeEvent) => {
     impactAsync(ImpactFeedbackStyle.Heavy)
     setActive(false)
     Navigation.push(StackRegistry.LicenseScannerStack, {
       component: {
         name: ComponentRegistry.LicenseScanDetailScreen,
         passProps: {
+          type,
           data,
         },
       },

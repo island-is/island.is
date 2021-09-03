@@ -63,6 +63,7 @@ const {
       searchBar: {
         placeholder: intl.formatMessage({ id: 'inbox.searchPlaceholder' }),
         tintColor: theme.color.blue400,
+        backgroundColor: 'transparent',
       },
       rightButtons: initialized ? getRightButtons({ theme } as any) : [],
     },
@@ -272,7 +273,7 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      AppState.addEventListener('change', onAppStateBlur)
+      AppState.addEventListener('change', onAppStateBlur);
       return () => {
         AppState.removeEventListener('change', onAppStateBlur)
       }

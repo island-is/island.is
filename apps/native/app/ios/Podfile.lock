@@ -495,12 +495,12 @@ PODS:
     - IQKeyboardManagerSwift (= 6.5.4)
     - React
     - React-RCTText
-  - ReactNativeNavigation (7.16.0):
+  - ReactNativeNavigation (7.19.1):
     - React-Core
     - React-RCTImage
     - React-RCTText
-    - ReactNativeNavigation/Core (= 7.16.0)
-  - ReactNativeNavigation/Core (7.16.0):
+    - ReactNativeNavigation/Core (= 7.19.1)
+  - ReactNativeNavigation/Core (7.19.1):
     - React-Core
     - React-RCTImage
     - React-RCTText
@@ -909,7 +909,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 85187f19dd9c47a7c102f9994f9d14e4dc2110de
   ReactCommon: eafed38eec7b591c31751bfa7494801618460459
   ReactNativeKeyboardManager: 93ac3934a51f548c54ac02d61c90e33220bba086
-  ReactNativeNavigation: 5303d00327dab4e26f74c3164b23ba3119664e77
+  ReactNativeNavigation: ec13f7391c5b0e01803abaa73ed1d084359509eb
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNFBApp: 406bc9586c70ccf20504b4d3b54ac4341c98993f
   RNFBMessaging: 154dc7815e2b6c55941793630ffb3a55f03d77e6

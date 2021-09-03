@@ -5,7 +5,7 @@ import {
   WelcomeCard,
 } from '@island.is/island-ui-native'
 import React from 'react'
-import { SafeAreaView, TouchableOpacity } from 'react-native'
+import { SafeAreaView, TouchableOpacity, View } from 'react-native'
 import { useTheme } from 'styled-components/native'
 import illustration1 from '../../assets/illustrations/digital-services-m3.png'
 import illustration3 from '../../assets/illustrations/le-company-s2.png'
@@ -25,6 +25,7 @@ export const OnboardingModule = React.memo(() => {
   }
 
   return (
+    <>
     <SafeAreaView style={{ marginHorizontal: 16, marginTop: 16 }}>
       <Heading
         button={
@@ -74,5 +75,6 @@ export const OnboardingModule = React.memo(() => {
         />
       </ViewPager>
     </SafeAreaView>
+    </>
   )
 })

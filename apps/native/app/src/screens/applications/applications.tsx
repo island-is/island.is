@@ -45,6 +45,7 @@ const {
       searchBar: {
         placeholder: intl.formatMessage({ id: 'inbox.searchPlaceholder' }),
         tintColor: theme.color.blue400,
+        backgroundColor: 'transparent',
       },
       rightButtons: [],
     },
