@@ -161,7 +161,7 @@ function GrantAccess() {
                   disabled
                 />
               )}
-              <div className={name ? styles.hidden : undefined}>
+              <Box display={name ? 'none' : 'block'}>
                 <InputController
                   control={control}
                   id="toNationalId"
@@ -209,7 +209,7 @@ function GrantAccess() {
                     requestDelegation(value)
                   }}
                 />
-              </div>
+              </Box>
               {queryLoading ? (
                 <span
                   className={cn(styles.icon, styles.loadingIcon)}
