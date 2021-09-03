@@ -1,4 +1,4 @@
-import { User, UserRole } from '@island.is/judicial-system/types'
+import type { UserRole, User } from '@island.is/judicial-system/types'
 
 export type Credentials = {
   user: User

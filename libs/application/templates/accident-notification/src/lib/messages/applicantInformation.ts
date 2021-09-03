@@ -8,7 +8,7 @@ export const applicantInformation = {
       description: 'Accident notification to Sjúkratryggingar Íslands',
     },
     title: {
-      id: 'an.application:applicantInfogeneral.title',
+      id: 'an.application:applicantInfo.general.title',
       defaultMessage: 'Upplýsingar um þig',
       description: 'Information about you',
     },
@@ -54,6 +54,13 @@ export const applicantInformation = {
       id: 'an.application:applicantInfo.labels.tel',
       defaultMessage: 'Símanúmer',
       description: 'Telephone number',
+    },
+  }),
+  forThirdParty: defineMessages({
+    title: {
+      id: 'an.application:applicantInfo.forThirdParty.title',
+      defaultMessage: 'Upplýsingar um þann slasaða',
+      description: 'Information about the injured',
     },
   }),
 }

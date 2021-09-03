@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import {
+import { CaseType } from '@island.is/judicial-system/types'
+import type {
   Case,
   CaseCustodyProvisions,
-  CaseType,
 } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
