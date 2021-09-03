@@ -27,7 +27,10 @@ export class FinanceResolver {
 
   @Query(() => graphqlTypeJson)
   async getFinanceStatus(@CurrentUser() user: User) {
-    return this.FinanceService.getFinanceStatus(user.nationalId)
+    return this.FinanceService.getFinanceStatus(
+      user.nationalId,
+      user.authorization,
+    )
   }
 
   @Query(() => graphqlTypeJson)
@@ -39,12 +42,16 @@ export class FinanceResolver {
       user.nationalId,
       input.OrgID,
       input.chargeTypeID,
+      user.authorization,
     )
   }
 
   @Query(() => CustomerChargeType, { nullable: true })
   async getCustomerChargeType(@CurrentUser() user: User) {
-    return this.FinanceService.getCustomerChargeType(user.nationalId)
+    return this.FinanceService.getCustomerChargeType(
+      user.nationalId,
+      user.authorization,
+    )
   }
 
   @Query(() => CustomerRecords, { nullable: true })
@@ -57,6 +64,7 @@ export class FinanceResolver {
       input.chargeTypeID,
       input.dayFrom,
       input.dayTo,
+      user.authorization,
     )
   }
 
@@ -70,6 +78,7 @@ export class FinanceResolver {
       input.dayFrom,
       input.dayTo,
       input.listPath,
+      user.authorization,
     )
   }
 
@@ -81,6 +90,7 @@ export class FinanceResolver {
     return this.FinanceService.getFinanceDocument(
       user.nationalId,
       input.documentID,
+      user.authorization,
     )
   }
 
@@ -92,11 +102,15 @@ export class FinanceResolver {
     return this.FinanceService.getAnnualStatusDocument(
       user.nationalId,
       input.year,
+      user.authorization,
     )
   }
 
   @Query(() => CustomerTapsControlModel, { nullable: true })
   async getCustomerTapControl(@CurrentUser() user: User) {
-    return this.FinanceService.getCustomerTapControl(user.nationalId)
+    return this.FinanceService.getCustomerTapControl(
+      user.nationalId,
+      user.authorization,
+    )
   }
 }
