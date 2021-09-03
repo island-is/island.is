@@ -13,7 +13,7 @@ import cn from 'classnames'
 type EditorInputProps = Omit<EditorProps, 'valueRef' | 'name'> & {
   label: string
   // make EditorProps more strict with branded types
-  baseText: HTMLText
+  baseText?: HTMLText
   error?: boolean
   initialText?: HTMLText
   valueRef: MutableRefObject<() => HTMLText>
