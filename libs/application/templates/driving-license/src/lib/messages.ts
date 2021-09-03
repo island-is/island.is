@@ -431,7 +431,7 @@ export const m = defineMessages({
   },
   requirementUnmetDrivingAssessmentDescription: {
     id: 'dl.application:requirementunmet.drivingassessmentdescription',
-    defaultMessage: 'Ökukennari þarf að hafa staðfest akstursmat',
+    defaultMessage: 'Ef þú ert búinn að fara í akstursmat hjá ökukennara biddu hann um að staðfesta það rafrænt.',
     description: 'requirement unmet assessment',
   },
   requirementUnmetDrivingSchoolTitle: {
@@ -442,7 +442,7 @@ export const m = defineMessages({
   requirementUnmetDrivingSchoolDescription: {
     id: 'dl.application:requirementunmet.drivingschooldescription',
     defaultMessage:
-      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini',
+      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini.',
     description: 'requirement unmet driving school',
   },
   requirementUnmetDeniedByServiceTitle: {
@@ -453,7 +453,7 @@ export const m = defineMessages({
   requirementUnmetDeniedByServiceDescription: {
     id: 'dl.application:requirementunmet.deniedbyservicedescription',
     defaultMessage:
-      'Ökuskírteinaskrá þarf að heimila að þú megir sækja um fullnaðarskírteini',
+      'Umsækjandi um fullnaðarskírteini má ekki hafa fengið punkt í ökuferilsskrá á síðustu 12 mánuðum. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'requirement unmet api returned false',
   },
   errorDataProvider: {
