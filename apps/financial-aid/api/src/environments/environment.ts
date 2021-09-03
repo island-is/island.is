@@ -23,8 +23,8 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.AUTH_AUDIENCE_OSK) {
     throw new Error('Missing AUTH_AUDIENCE_OSK environment.')
   }
-  if (!process.env.audienceVeita) {
-    throw new Error('Missing audienceVeita environment.')
+  if (!process.env.AUTH_AUDIENCE_VEITA) {
+    throw new Error('Missing AUTH_AUDIENCE_VEITA environment.')
   }
 }
 
