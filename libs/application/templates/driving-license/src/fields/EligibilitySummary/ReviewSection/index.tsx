@@ -10,6 +10,7 @@ import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.treat'
 import { MessageDescriptor } from '@formatjs/intl'
+import { m } from '../../../lib/messages'
 
 export enum ReviewSectionState {
   inProgress = 'In progress',
@@ -43,6 +44,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
       borderRadius="large"
       padding={4}
       marginBottom={2}
+      borderColor={state === ReviewSectionState.complete ? 'mint600' : 'red600'}
     >
       {/* Section Number */}
       <Box
@@ -61,7 +63,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
       >
         {(state === ReviewSectionState.complete && (
           <Icon color="white" size="small" icon="checkmark" />
-        )) || <span className={styles.sectionNumberText}>{index}</span>}
+        )) || <Icon color="white" size="small" icon="warning" />}
       </Box>
 
       {/* Contents */}
@@ -80,15 +82,13 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           </Text>
         </Box>
 
-        {state === ReviewSectionState.inProgress && (
+        {state === ReviewSectionState.complete && (
           <Box pointerEvents="none">
-            <Tag variant="blue">
-              {formatText(
-                coreMessages.tagsInProgress,
-                application,
-                formatMessage,
-              )}
-            </Tag>
+            <button type="button" className={styles.container}>
+              <Text variant="eyebrow" as="span">
+                {formatText(m.externalDataComplete, application, formatMessage)}
+              </Text>
+            </button>
           </Box>
         )}
         {state === ReviewSectionState.requiresAction && (

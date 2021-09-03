@@ -60,6 +60,9 @@ const devConfig = {
       process.env.COURTS_CREDENTIALS ?? '{}',
     ) as CourtClientServiceOptions,
   },
+  events: {
+    url: process.env.EVENT_URL,
+  },
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -207,6 +210,9 @@ const prodConfig = {
     serviceOptions: JSON.parse(
       process.env.COURTS_CREDENTIALS ?? '{}',
     ) as CourtClientServiceOptions,
+  },
+  events: {
+    url: process.env.EVENT_URL,
   },
 }
 
