@@ -4,15 +4,23 @@ import { environment } from '../../../environments'
 import { AuthService } from './auth.service'
 import { AuthController } from './auth.controller'
 
-const { audience: audienceUrl } = environment.auth
-
 @Module({
   controllers: [AuthController],
   providers: [
     AuthService,
     {
-      provide: 'IslandisLogin',
-      useFactory: () => new (require('@island.is/login'))({ audienceUrl }),
+      provide: 'IslandisLoginOsk',
+      useFactory: () =>
+        new (require('@island.is/login'))({
+          audienceUrl: environment.auth.audienceOsk,
+        }),
+    },
+    {
+      provide: 'IslandisLoginVeita',
+      useFactory: () =>
+        new (require('@island.is/login'))({
+          audienceUrl: environment.auth.audienceVeita,
+        }),
     },
   ],
   exports: [AuthService],

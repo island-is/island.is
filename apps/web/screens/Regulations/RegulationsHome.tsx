@@ -1,18 +1,22 @@
 import {
+  Year,
+  getParams,
+  prettyName,
+  isPlural,
+  interpolate,
+} from '@island.is/regulations'
+import {
   RegulationLawChapterTree,
   RegulationMinistryList,
   RegulationSearchResults,
-  Year,
-} from '../../components/Regulations/Regulations.types'
+} from '@island.is/regulations/web'
 import { RegulationHomeTexts } from '../../components/Regulations/RegulationTexts.types'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import omit from 'lodash/omit'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import getConfig from 'next/config'
-import { CustomNextError } from '@island.is/web/units/errors'
 import { SubpageDetailsContent } from '@island.is/web/components'
-import { RegulationsHomeImg } from '../../components/Regulations/RegulationsHomeImg'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import {
   Box,
@@ -20,16 +24,14 @@ import {
   Button,
   CategoryCard,
   GridColumn,
+  GridColumnProps,
   GridContainer,
   GridRow,
-  Link,
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationsSearchSection } from '../../components/Regulations/RegulationsSearchSection'
 import {
-  getParams,
-  prettyName,
   RegulationSearchFilters,
   useRegulationLinkResolver,
 } from '../../components/Regulations/regulationUtils'
@@ -43,6 +45,8 @@ import {
   GetRegulationsMinistriesQuery,
   GetRegulationsLawChaptersQuery,
   QueryGetRegulationsLawChaptersArgs,
+  GetSubpageHeaderQuery,
+  QueryGetSubpageHeaderArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GET_REGULATIONS_SEARCH_QUERY,
@@ -50,15 +54,16 @@ import {
   GET_REGULATIONS_MINISTRIES_QUERY,
   GET_REGULATIONS_QUERY,
   GET_REGULATIONS_YEARS_QUERY,
+  GET_SUBPAGE_HEADER_QUERY,
 } from '../queries'
-
-const { publicRuntimeConfig } = getConfig()
+import { RegulationsHomeIntro } from '../../components/Regulations/RegulationsHomeIntro'
 
 // ---------------------------------------------------------------------------
 
-type RegulationsHomeProps = {
+export type RegulationsHomeProps = {
   regulations: RegulationSearchResults
   texts: RegulationHomeTexts
+  introText: GetSubpageHeaderQuery['getSubpageHeader']
   searchQuery: RegulationSearchFilters
   years: ReadonlyArray<number>
   ministries: RegulationMinistryList
@@ -67,192 +72,154 @@ type RegulationsHomeProps = {
 }
 
 const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
-  const { disableRegulationsPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-
-  const [showDetails, setShowDetails] = useState(false)
-
   const txt = useNamespace(props.texts)
+  const anchor = useRef<HTMLDivElement>(null)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
-  const totalItems = props.regulations?.data?.length ?? 0
-  const stepSize = 9
-  const [showCount, setShowCount] = useState(totalItems > 18 ? stepSize : 18)
+  const regulations = props.regulations
+  const totalItems = regulations.totalItems || 0
+  const stepSize = regulations.perPage || 18
+  const totalPages = regulations.totalPages || 1
+  const [currentPage, setCurrentPage] = useState(regulations.page || 1)
+
+  useEffect(() => {
+    setCurrentPage(regulations.page || 1)
+  }, [totalItems])
 
   const breadCrumbs = (
     <Box display={['none', 'none', 'block']}>
       {/* Show when NOT a device */}
       <Breadcrumbs
         items={[
-          {
-            title: 'Ísland.is',
-            href: linkResolver('homepage').href,
-          },
-          {
-            title: 'Reglugerðir',
-            href: linkResolver('regulationshome').href,
-          },
+          { title: 'Ísland.is', href: linkResolver('homepage').href },
+          { title: 'Reglugerðir', href: linkResolver('regulationshome').href },
         ]}
       />
     </Box>
   )
 
+  const resultTitleOffsets: GridColumnProps =
+    totalItems === 0
+      ? {
+          span: ['1/1', '1/1', '1/1', '10/12'],
+          offset: ['0', '0', '0', '1/12'],
+          paddingTop: [2, 2, 4],
+          paddingBottom: [4, 4, 8],
+        }
+      : {}
+
+  const resultItems = props.regulations?.data || []
+  const firstResultOrd = (currentPage - 1) * stepSize + 1
+  const lastResultOrd = firstResultOrd - 1 + resultItems.length
+  const hasPaging = totalItems > stepSize
+
   return (
     <SubpageLayout
       main={
         <>
-          <GridContainer>
-            <GridRow>
-              <GridColumn
-                offset={['0', '0', '0', '0', '1/12']}
-                span={['1/1', '1/1', '1/1', '9/12', '7/12']}
-                paddingTop={[0, 0, 0, 8]}
-                paddingBottom={[4, 4, 4, 4, 1]}
-              >
-                {breadCrumbs}
-                <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
-                  {txt('homeIntroLegend', 'Reglugerðasafn')}
-                </Text>
-
-                <Text marginBottom={1}>
-                  Reglugerðir eru gefnar út í{' '}
-                  <Link href="https://www.stjornartidindi.is/">
-                    B-deild Stjórnartíðinda
-                  </Link>{' '}
-                  og miðast réttaráhrif við þá birtingu.
-                </Text>
-                <Button
-                  variant="text"
-                  icon={showDetails ? 'chevronUp' : 'chevronDown'}
-                  onClick={() => setShowDetails(!showDetails)}
-                >
-                  Sjá nánar um safnið og fyrirvara
-                </Button>
-                {showDetails && (
-                  <>
-                    <Text marginBottom={1} marginTop={2}>
-                      Reglugerðasafn er heildarsafn gildandi reglugerða.
-                      Reglugerðasafns&shy;vefurinn var opnaður í júní 2001,
-                      önnur útgáfa hans í apríl 2015 og þriðja útgáfa í ....
-                      2021.
-                    </Text>
-                    <Text marginBottom={1}>
-                      Við þriðju útgáfu verður sú nýbreytni að breytingar
-                      reglugerð verða felldar inn og hægt að nálgast samfelldan
-                      texta reglugerða eins og hann er á hverjum tíma. Gera
-                      verður ráð fyrir að það taki nokkurn tíma þar til allar
-                      reglugerðir verði komnar í þann búning.
-                    </Text>
-
-                    <Text marginTop={2} marginBottom={1}>
-                      <strong>Fyrirvari 2021</strong>
-                    </Text>
-                    <Text marginBottom={1}>
-                      Reglugerðir eru birtar í{' '}
-                      <Link href="https://www.stjornartidindi.is/">
-                        B-deild Stjórnartíðinda
-                      </Link>{' '}
-                      skv. 3. gr. laga um Stjórnartíðindi og Lögbirtingablað,
-                      nr. 15/2005, sbr. reglugerð um útgáfu Stjórnartíðinda{' '}
-                      <Link href="/reglugerdir/nr/0958-2005">nr. 958/2005</Link>
-                      .
-                    </Text>
-                    <Text marginBottom={1}>
-                      Sé misræmi milli þess texta sem birtist hér í safninu og
-                      þess sem birtur er í útgáfu B-deildar Stjórnartíðinda skal
-                      sá síðarnefndi ráða.
-                    </Text>
-                  </>
-                )}
-              </GridColumn>
-
-              <GridColumn
-                span="3/12"
-                hiddenBelow="lg"
-                paddingTop={[0, 0, 0, 2]}
-                paddingBottom={0}
-              >
-                <RegulationsHomeImg />
-              </GridColumn>
-            </GridRow>
-            <GridRow>
-              <GridColumn span="12/12" paddingTop={2} paddingBottom={[4, 4, 4]}>
-                <RegulationsSearchSection
-                  searchFilters={props.searchQuery}
-                  lawChapters={props.lawChapters}
-                  ministries={props.ministries}
-                  years={props.years}
-                  texts={props.texts}
-                />
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
+          <RegulationsHomeIntro
+            document={props.introText}
+            breadCrumbs={breadCrumbs}
+            getText={txt}
+          />
+          <RegulationsSearchSection
+            searchFilters={props.searchQuery}
+            lawChapters={props.lawChapters}
+            ministries={props.ministries}
+            years={props.years}
+            texts={props.texts}
+            page={currentPage}
+            anchorRef={anchor}
+          />
         </>
       }
       details={
-        <SubpageDetailsContent
-          header=""
-          content={
-            <GridContainer>
-              <GridRow>
-                <GridColumn span={'12/12'} paddingTop={0} paddingBottom={0}>
-                  {props.doSearch ? (
-                    <Text>
-                      {totalItems === 0
-                        ? 'Engar reglugerðir fundust fyrir þessi leitarskilyrði.'
-                        : String(totalItems).substr(-1) === '1'
-                        ? totalItems + ' reglugerð fannst'
-                        : `${totalItems} reglugerðir fundust`}
-                    </Text>
-                  ) : (
-                    <Text>
-                      {txt('homeNewestRegulations', 'Nýjustu reglugerðirnar')}
-                    </Text>
-                  )}
-                </GridColumn>
-              </GridRow>
+        <>
+          <div ref={anchor}></div>
+          <SubpageDetailsContent
+            header=""
+            content={
+              <GridContainer>
+                <GridRow>
+                  <GridColumn span="1/1" {...resultTitleOffsets}>
+                    {!props.doSearch ? (
+                      <Text as="h2" variant="h3">
+                        {txt('homeNewestRegulations', 'Nýjustu reglugerðirnar')}
+                      </Text>
+                    ) : totalItems === 0 ? (
+                      <p>
+                        <strong>{txt('searchResultCountZero')}</strong>
+                      </p>
+                    ) : (
+                      <Text as="h2">
+                        {interpolate(
+                          txt(
+                            isPlural(totalItems)
+                              ? 'searchResultCountPlural'
+                              : 'searchResultCountSingular',
+                          ),
+                          { count: totalItems.toLocaleString('is') },
+                        )}
+                        {hasPaging &&
+                          `, birti ${firstResultOrd} – ${lastResultOrd}`}
+                      </Text>
+                    )}
+                  </GridColumn>
+                </GridRow>
 
-              <GridRow>
-                {props.regulations?.data?.length > 0 &&
-                  props.regulations.data.slice(0, showCount).map((reg, i) => (
-                    <GridColumn
-                      key={reg.name}
-                      span={['1/1', '1/2', '1/2', '1/3']}
-                      paddingTop={3}
-                      paddingBottom={4}
+                <GridRow>
+                  {resultItems.length > 0 &&
+                    resultItems.map((reg) => (
+                      <GridColumn
+                        key={reg.name}
+                        span={['1/1', '1/2', '1/2', '1/3']}
+                        paddingTop={3}
+                        paddingBottom={4}
+                      >
+                        <CategoryCard
+                          href={linkToRegulation(reg.name)}
+                          heading={prettyName(reg.name)}
+                          text={reg.title}
+                          tags={
+                            reg.ministry && [
+                              {
+                                label: reg.ministry.name ?? reg.ministry,
+                                disabled: true,
+                              },
+                            ]
+                          }
+                        />
+                      </GridColumn>
+                    ))}
+                </GridRow>
+                {hasPaging && (
+                  <Box marginTop={3}>
+                    <Box marginTop={0} marginBottom={2} textAlign="center">
+                      Síða {currentPage} af {totalPages}
+                    </Box>
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      marginTop={3}
+                      textAlign="center"
                     >
-                      <CategoryCard
-                        href={linkToRegulation(reg.name)}
-                        heading={prettyName(reg.name)}
-                        text={reg.title}
-                        tags={
-                          reg.ministry && [
-                            {
-                              label: reg.ministry.name ?? reg.ministry,
-                              disabled: true,
-                            },
-                          ]
-                        }
-                      />
-                    </GridColumn>
-                  ))}
-              </GridRow>
-              <Box
-                display="flex"
-                justifyContent="center"
-                marginTop={3}
-                textAlign="center"
-              >
-                {showCount < totalItems && (
-                  <Button onClick={() => setShowCount(showCount + stepSize)}>
-                    Sjá fleiri ({totalItems - showCount})
-                  </Button>
+                      {currentPage > 1 && (
+                        <Button onClick={() => setCurrentPage(currentPage - 1)}>
+                          {txt('homePrevPage', 'Fyrri síða')}
+                        </Button>
+                      )}
+                      &nbsp;&nbsp;
+                      {currentPage < totalPages && (
+                        <Button onClick={() => setCurrentPage(currentPage + 1)}>
+                          {txt('homeNextPage', 'Næsta síða')}
+                        </Button>
+                      )}
+                    </Box>
+                  </Box>
                 )}
-              </Box>
-            </GridContainer>
-          }
-        />
+              </GridContainer>
+            }
+          />
+        </>
       }
     />
   )
@@ -275,12 +242,17 @@ RegulationsHome.getInitialProps = async (ctx) => {
     'year',
     'yearTo',
     'ch',
-    'all',
+    'iA',
+    'iR',
+    'page',
   ])
-  const doSearch = Object.values(searchQuery).some((value) => !!value)
+  const doSearch = Object.values(omit(searchQuery, ['page'])).some(
+    (value) => !!value,
+  )
 
   const [
     texts,
+    introText,
     regulations,
     years,
     ministries,
@@ -291,6 +263,15 @@ RegulationsHome.getInitialProps = async (ctx) => {
       locale,
       'Regulations_Home',
     ),
+
+    apolloClient
+      .query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
+        query: GET_SUBPAGE_HEADER_QUERY,
+        variables: {
+          input: { id: 'regulations-intro', lang: locale },
+        },
+      })
+      .then((res) => res.data?.getSubpageHeader),
 
     doSearch
       ? apolloClient
@@ -303,6 +284,9 @@ RegulationsHome.getInitialProps = async (ctx) => {
                 year: assertReasonableYear(searchQuery.year),
                 yearTo: assertReasonableYear(searchQuery.yearTo),
                 ch: searchQuery.ch,
+                iA: searchQuery.iA === 'true',
+                iR: searchQuery.iR === 'true',
+                page: searchQuery.page ? parseInt(searchQuery.page) : 1,
               },
             },
           })
@@ -315,7 +299,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
             variables: {
               input: {
                 type: 'newest',
-                page: 1,
+                page: searchQuery.page ? parseInt(searchQuery.page) : 1,
               },
             },
           })
@@ -356,6 +340,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
   return {
     regulations,
     texts,
+    introText,
     searchQuery,
     years,
     ministries,

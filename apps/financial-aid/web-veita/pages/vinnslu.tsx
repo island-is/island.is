@@ -1,3 +1,3 @@
-import ApplicationOverview from '../src/routes/ApplicationOverview/applicationOverview'
+import ApplicationsOverview from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
 
-export default ApplicationOverview
+export default ApplicationsOverview

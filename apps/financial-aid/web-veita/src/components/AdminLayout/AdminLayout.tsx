@@ -1,25 +1,32 @@
-import React, { ReactNode, useContext } from 'react'
-import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
+import React, { ReactNode, useEffect } from 'react'
 
-import { Nav } from '../Nav'
+import { Nav } from '@island.is/financial-aid-web/veita/src/components/Nav'
 
 import * as styles from './AdminLayout.treat'
+import cn from 'classnames'
 
 interface PageProps {
   children: ReactNode
+  className?: string
 }
 
-const AdminLayout: React.FC<PageProps> = ({ children }) => {
-  const router = useRouter()
-  // const { isAuthenticated, setUser, user } = useContext(UserContext)
+const AdminLayout = ({ children, className }: PageProps) => {
+  useEffect(() => {
+    document.title = 'Sveita • Umsóknir um fjárhagsaðstoð'
+  }, [])
 
   return (
     <>
       <Nav />
-      <div className={` wrapper ${styles.gridWrapper}`}>
-        <div className={styles.childContainer}>{children}</div>
+      <div className={` wrapper ${styles.gridWrapper} `}>
+        <div
+          className={cn({
+            [`${styles.childContainer}`]: true,
+            [`${className}`]: true,
+          })}
+        >
+          {children}
+        </div>
       </div>
     </>
   )

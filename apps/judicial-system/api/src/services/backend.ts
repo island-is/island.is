@@ -2,26 +2,26 @@ import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 
 import { Injectable } from '@nestjs/common'
 
-import {
+import type {
   Case,
   CreateCase,
   CreateFile,
   CreatePresignedPost,
-  CreateUser,
   DeleteFileResponse,
   CaseFile,
-  Institution,
-  Notification,
   PresignedPost,
   RequestSignatureResponse,
-  SendNotification,
-  SendNotificationResponse,
   SignatureConfirmationResponse,
   SignedUrl,
   TransitionCase,
   UpdateCase,
-  UpdateUser,
+  Institution,
   User,
+  CreateUser,
+  UpdateUser,
+  Notification,
+  SendNotification,
+  SendNotificationResponse,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../environments'

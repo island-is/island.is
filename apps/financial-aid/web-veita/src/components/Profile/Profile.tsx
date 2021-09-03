@@ -1,54 +1,62 @@
-import React, { useContext } from 'react'
-import {
-  Logo,
-  Text,
-  Box,
-  Button,
-  GridContainer,
-  Link,
-} from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
+import React from 'react'
+import { Text, Box, Link, Button } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.treat'
 import cn from 'classnames'
 
 interface Props {
   heading: string
-  info: [
-    {
-      title: string
-      content: string
-      link: string
-      other: string
-    },
-  ]
+  info: {
+    title: string
+    content?: string
+    link?: string
+    onclick?: () => void
+    other?: string
+  }[]
+  className?: string
 }
 
-const Profile: React.FC<Props> = ({ heading, info }) => {
-  const router = useRouter()
-  // const { isAuthenticated, setUser, user } = useContext(UserContext)
-
+const Profile = ({ heading, info, className }: Props) => {
   return (
     <>
       {' '}
-      <Text as="h2" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
-        {heading}
-      </Text>
-      <div className={styles.container}>
-        {info.map((item) => {
+      <Box
+        className={cn({
+          [`${styles.headings}`]: true,
+          [`${className}`]: true,
+        })}
+        marginBottom={[2, 2, 3]}
+      >
+        <Text as="h2" variant="h3" color="dark300">
+          {heading}
+        </Text>
+      </Box>
+      <div
+        className={cn({
+          [`${styles.container}`]: true,
+          [`${className}`]: true,
+        })}
+      >
+        {info.map((item, index) => {
           return (
-            <Box>
+            <Box key={'profile-' + index}>
               <Text variant="eyebrow" marginBottom={1}>
                 {item.title}
               </Text>
 
-              {item.link ? (
-                <Link href={item.link} color="blue400">
+              {item.link && (
+                <Link href={item.link} color="blue400" onClick={item.onclick}>
                   {item.content}
                 </Link>
-              ) : (
-                <Text>{item.content}</Text>
               )}
+
+              {item.onclick && (
+                <button onClick={item.onclick} className={styles.button}>
+                  {item.content}
+                </button>
+              )}
+
+              {!item.link && !item.onclick && <Text>{item.content}</Text>}
 
               {item.other && (
                 <Box

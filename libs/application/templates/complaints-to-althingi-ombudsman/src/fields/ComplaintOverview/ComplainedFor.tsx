@@ -14,15 +14,22 @@ type Props = {
   complainedForType: ComplainedForTypes
   complainedFor: ComplaintsToAlthingiOmbudsman['complainedForInformation']
   connection: string
+  isEditable?: boolean
+  onEdit: (id: string) => void
 }
 
 export const ComplainedFor: FC<Props> = ({
   complainedFor,
   connection,
   complainedForType,
+  isEditable,
+  onEdit,
 }) => (
   <>
-    <ReviewGroup>
+    <ReviewGroup
+      isEditable={isEditable}
+      editAction={() => onEdit('complainedFor')}
+    >
       <ValueLine
         label={complaintOverview.labels.complainedFor}
         value={mapComplainedForToMessage[complainedForType]}
@@ -33,19 +40,33 @@ export const ComplainedFor: FC<Props> = ({
             label={complaintOverview.labels.complainedForConnection}
             value={connection}
           />
+          {complainedFor.powerOfAttorney && (
+            <ValueLine
+              label={complaintOverview.labels.powerOfAttorney}
+              value={
+                complainedFor.powerOfAttorney &&
+                complainedFor.powerOfAttorney.length > 0
+                  ? complainedFor.powerOfAttorney?.map((x) => x.name).join(', ')
+                  : complaintOverview.general.noAttachments
+              }
+            />
+          )}
         </>
       )}
     </ReviewGroup>
     {complainedForType === ComplainedForTypes.SOMEONEELSE && (
-      <ReviewGroup>
+      <ReviewGroup
+        isEditable={isEditable}
+        editAction={() => onEdit('complainedForInformation')}
+      >
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.name}
               label={complainedForMessages.labels.name}
             />
           </GridColumn>
-          <GridColumn span={'6/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.ssn}
               label={complainedForMessages.labels.ssn}
@@ -53,13 +74,13 @@ export const ComplainedFor: FC<Props> = ({
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.address}
               label={complainedForMessages.labels.address}
             />
           </GridColumn>
-          <GridColumn span={'6/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.city}
               label={complainedForMessages.labels.city}
@@ -67,13 +88,13 @@ export const ComplainedFor: FC<Props> = ({
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.postcode}
               label={complainedForMessages.labels.postcode}
             />
           </GridColumn>
-          <GridColumn span={'6/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.phone}
               label={complainedForMessages.labels.phone}
@@ -81,7 +102,7 @@ export const ComplainedFor: FC<Props> = ({
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span={'4/12'}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <ValueLine
               value={complainedFor.email}
               label={complainedForMessages.labels.email}

@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { User } from 'oidc-client'
 import { defineMessage } from 'react-intl'
 import { useQuery, gql } from '@apollo/client'
+import { m } from '@island.is/service-portal/core'
 
 import {
   Box,
@@ -27,21 +28,6 @@ interface Props {
   onClose: () => void
   onSubmit: () => void
 }
-
-const maleGreeting = defineMessage({
-  id: 'service.portal:welcome-male',
-  defaultMessage: 'Velkominn á mínar síður á island.is',
-})
-
-const femaleGreeting = defineMessage({
-  id: 'service.portal:welcome-female',
-  defaultMessage: 'Velkomin á mínar síður á island.is',
-})
-
-const nonBinaryGreeting = defineMessage({
-  id: 'service.portal:welcome-nonbinary',
-  defaultMessage: 'Velkomið á mínar síður á island.is',
-})
 
 export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
   const { formatMessage } = useLocale()
@@ -73,9 +59,9 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
             )}
           </Text>
           <Text variant="h1" as="h1" marginBottom={3}>
-            {hasMaleGreeting && formatMessage(maleGreeting)}
-            {hasFemaleGreeting && formatMessage(femaleGreeting)}
-            {hasNonBinaryGreeting && formatMessage(nonBinaryGreeting)}
+            {hasMaleGreeting && formatMessage(m.maleGreeting)}
+            {hasFemaleGreeting && formatMessage(m.femaleGreeting)}
+            {hasNonBinaryGreeting && formatMessage(m.nonBinaryGreeting)}
           </Text>
           <Text>
             {formatMessage({
@@ -100,18 +86,12 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
       >
         <Box marginBottom={[1, 0]}>
           <Button variant="ghost" onClick={onClose}>
-            {formatMessage({
-              id: 'service.portal:finish-later',
-              defaultMessage: 'Klára seinna',
-            })}
+            {formatMessage(m.finishLater)}
           </Button>
         </Box>
         <Box marginBottom={[1, 0]}>
           <Button variant="primary" onClick={onSubmit} icon="arrowForward">
-            {formatMessage({
-              id: 'service.portal:next-step',
-              defaultMessage: 'Næsta skref',
-            })}
+            {formatMessage(m.nextStep)}
           </Button>
         </Box>
       </Box>

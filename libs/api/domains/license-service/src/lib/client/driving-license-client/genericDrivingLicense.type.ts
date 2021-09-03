@@ -80,3 +80,22 @@ export interface PkPassServiceErrorResponse {
   status?: number
   data?: unknown
 }
+
+export interface PkPassServiceVerifyDriversLicenseResponse {
+  message: string
+  data?: {
+    kennitala?: string
+  }
+  status: number
+}
+
+export interface PkPassVerifyError {
+  statusCode: number
+  serviceError?: PkPassServiceErrorResponse
+}
+
+export interface PkPassVerifyResult {
+  valid: boolean
+  error?: PkPassVerifyError
+  nationalId?: string
+}

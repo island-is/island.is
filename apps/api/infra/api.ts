@@ -132,16 +132,6 @@ export const serviceSetup = (services: {
       PARTY_LETTER_REGISTRY_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesPartyLetterRegistryApi)}`,
       ),
-      DRIVING_LICENSE_PATH_REPLACEMENT_FROM: {
-        prod: '/RafraentOkuskirteini-v1/api/Okuskirteini/',
-        staging: '',
-        dev: '',
-      },
-      DRIVING_LICENSE_PATH_REPLACEMENT_TO: {
-        prod: '/RafraentOkuskirteini-v1/api/okuskirteini/',
-        staging: '',
-        dev: '',
-      },
     })
 
     .secrets({
@@ -197,6 +187,10 @@ export const serviceSetup = (services: {
       RSK_API_USERNAME: '/k8s/shared/api/RSK_API_USERNAME',
       RSK_API_PASSWORD: '/k8s/shared/api/RSK_API_PASSWORD',
       RSK_API_URL: '/k8s/shared/api/RSK_API_URL',
+      PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
+      PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
+      PAYMENT_SCHEDULE_XROAD_PROVIDER_ID:
+        '/k8s/api/PAYMENT_SCHEDULE_XROAD_PROVIDER_ID',
     })
 
     .ingress({

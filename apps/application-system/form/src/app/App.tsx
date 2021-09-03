@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import { initializeClient } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'
-import { HeaderInfoProvider, NotFound } from '@island.is/application/ui-shell'
+import { ErrorShell, HeaderInfoProvider } from '@island.is/application/ui-shell'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Authenticator } from '@island.is/auth/react'
 
@@ -32,7 +32,7 @@ export const App = () => (
                 <Route exact path="/:slug/:id" component={Application} />
 
                 <Route path="*">
-                  <NotFound />
+                  <ErrorShell />
                 </Route>
               </Switch>
             </Layout>
