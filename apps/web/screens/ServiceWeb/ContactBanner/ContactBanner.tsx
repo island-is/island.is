@@ -10,7 +10,13 @@ import Link from 'next/link'
 
 import img from '../../../assets/images/educationLicense.svg'
 
-const ContactBanner = () => {
+const ContactBanner = ({ slug }: { slug?: string }) => {
+  let link = '/s/stafraent-island/hafa-samband'
+
+  if (slug === 'syslumenn') {
+    link = '/thjonustuvefur/syslumenn/hafa-samband'
+  }
+
   return (
     <Box background="purple100" padding={[7, 10, 10]} borderRadius="large">
       <GridRow>
@@ -21,7 +27,7 @@ const ContactBanner = () => {
           <Text variant="intro" marginBottom={[5, 10]}>
             {'Hvernig getum við aðstoðað?'}
           </Text>
-          <Link href={'/s/stafraent-island/hafa-samband'}>
+          <Link href={link}>
             <Button type="button" variant="ghost" icon="arrowForward">
               Hafa samband
             </Button>

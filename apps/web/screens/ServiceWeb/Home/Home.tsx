@@ -42,9 +42,10 @@ interface HomeProps {
   supportCategories:
     | Query['getSupportCategories']
     | Query['getSupportCategoriesInOrganization']
+  slug: string
 }
 
-const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
+const Home: Screen<HomeProps> = ({ organization, supportCategories, slug }) => {
   // const linkResolver = useLinkResolver()
 
   const logoTitle =
@@ -107,7 +108,7 @@ const Home: Screen<HomeProps> = ({ organization, supportCategories }) => {
               span={['12/12', '12/12', '12/12', '10/12']}
             >
               <Box marginY={[10, 10, 20]}>
-                <ContactBanner />
+                <ContactBanner slug={slug} />
               </Box>
             </GridColumn>
           </GridRow>
@@ -179,6 +180,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     organization: organization?.data?.getOrganization,
     namespace,
     supportCategories: processedCategories,
+    slug,
   }
 }
 
