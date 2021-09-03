@@ -3,7 +3,7 @@ import { Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './Files.treat'
 import cn from 'classnames'
-import { calcDifferenceInDate, getFileType } from '../../utils/formHelper'
+import { getFileType } from '../../utils/formHelper'
 import { ApplicationFile } from '@island.is/financial-aid/shared'
 
 interface Props {
@@ -13,6 +13,9 @@ interface Props {
 }
 
 const Files = ({ heading, className, filesArray }: Props) => {
+  if (filesArray === undefined || filesArray.length === 0) {
+    return null
+  }
   return (
     <Box className={cn({ [`${className}`]: true })} marginBottom={2}>
       {' '}
