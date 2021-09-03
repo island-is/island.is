@@ -41,6 +41,7 @@ import {
 
 import { CaseFile } from '../file/models/file.model'
 import { UserService } from '../user'
+import { CaseEvent, EventService } from '../event'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
@@ -182,6 +183,7 @@ export class CaseController {
   constructor(
     private readonly caseService: CaseService,
     private readonly userService: UserService,
+    private readonly eventService: EventService,
   ) {}
 
   private async validateAssignedUser(
@@ -216,7 +218,11 @@ export class CaseController {
   ): Promise<Case | null> {
     const createdCase = await this.caseService.create(caseToCreate)
 
-    return this.caseService.findById(createdCase.id)
+    const resCase = await this.caseService.findById(createdCase.id)
+
+    this.eventService.postEvent(CaseEvent.CREATE_XRD, resCase as Case)
+
+    return resCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -229,7 +235,11 @@ export class CaseController {
   ): Promise<Case | null> {
     const createdCase = await this.caseService.create(caseToCreate, user)
 
-    return this.caseService.findById(createdCase.id)
+    const resCase = await this.caseService.findById(createdCase.id)
+
+    this.eventService.postEvent(CaseEvent.CREATE, resCase as Case)
+
+    return resCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -331,7 +341,14 @@ export class CaseController {
       )
     }
 
-    return this.caseService.findById(updatedCase.id)
+    const resCase = await this.caseService.findById(updatedCase.id)
+
+    this.eventService.postEvent(
+      (transition.transition as unknown) as CaseEvent,
+      resCase as Case,
+    )
+
+    return resCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -506,6 +523,10 @@ export class CaseController {
 
     const extendedCase = await this.caseService.extend(existingCase, user)
 
-    return this.caseService.findById(extendedCase.id)
+    const resCase = await this.caseService.findById(extendedCase.id)
+
+    this.eventService.postEvent(CaseEvent.EXTEND, resCase as Case)
+
+    return resCase
   }
 }
