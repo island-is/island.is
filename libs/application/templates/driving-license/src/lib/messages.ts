@@ -431,7 +431,8 @@ export const m = defineMessages({
   },
   requirementUnmetDrivingAssessmentDescription: {
     id: 'dl.application:requirementunmet.drivingassessmentdescription',
-    defaultMessage: 'Ef þú ert búinn að fara í akstursmat hjá ökukennara biddu hann um að staðfesta það rafrænt.',
+    defaultMessage:
+      'Ef þú ert búinn að fara í akstursmat hjá ökukennara biddu hann um að staðfesta það rafrænt.',
     description: 'requirement unmet assessment',
   },
   requirementUnmetDrivingSchoolTitle: {
