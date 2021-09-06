@@ -25,7 +25,15 @@ export class FileStorageService {
     }
 
     const fileId = uuid()
-    const key = `${fileId}_${kebabCase(filename)}`
+
+    // To make sure we dont format the file extension when its present. If its not present return the filename
+    const splitFileName = filename.split('.')
+    const fName =
+      splitFileName.length >= 2
+        ? splitFileName.slice(0, -1).join('.')
+        : filename
+    const fExt = splitFileName.length >= 2 ? `.${splitFileName.pop()}` : ''
+    const key = `${fileId}_${kebabCase(fName)}${fExt}`
 
     const params = {
       Bucket: this.config.uploadBucket,
