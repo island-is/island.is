@@ -46,8 +46,8 @@ const dataSchema = z.object({
     z.array(z.enum(['yes', 'no'])),
     z.enum(['yes', 'no']),
   ]),
-  certificate: z.array(z.enum(['yes', 'no'])),
-  picture: z.array(z.enum(['yes', 'no'])),
+  certificate: z.array(z.enum(['yes', 'no'])).nonempty(),
+  picture: z.array(z.enum(['yes', 'no'])).nonempty(),
 })
 
 const template: ApplicationTemplate<
@@ -56,7 +56,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
-  name: 'Umsókn um ökuskilríki',
+  name: 'Umsókn um fullnaðarskírteini',
   dataSchema,
   readyForProduction: true,
   stateMachineConfig: {
@@ -64,7 +64,7 @@ const template: ApplicationTemplate<
     states: {
       [States.DRAFT]: {
         meta: {
-          name: 'Umsókn um ökuskilríki',
+          name: 'Umsókn um fullnaðarskírteini',
           progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
           roles: [
