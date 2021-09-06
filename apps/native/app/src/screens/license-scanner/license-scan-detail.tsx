@@ -1,4 +1,4 @@
-import { BarCodeEvent } from 'expo-barcode-scanner'
+import { BarCodeEvent, Constants } from 'expo-barcode-scanner'
 import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import {
@@ -30,12 +30,12 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<BarCodeEvent> 
 
   useEffect(() => {
     try {
-      if (type === 'org.iso.PDF417') {
+      if (type === Constants.BarCodeType.pdf417) {
         const parsed = JSON.parse(data)
         if (parsed?.TGLJZW) {
           setScanResult(ScanResult.DRIVER_LICENSE)
         }
-      } else if (type === 'org.iso.QRCode') {
+      } else if (type === Constants.BarCodeType.qr) {
         if (data.startsWith('HC1')) {
           setScanResult(ScanResult.COVID_CERTIFICATE)
         }

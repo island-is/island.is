@@ -15,7 +15,7 @@ function nationalIdToBirthDate(ssn?: string) {
   const month = Number(ssn?.substr(2, 2))
   const date = Number(ssn?.substr(0, 2))
 
-  return [year, month, date].map((n) => n.toString().padStart(2, '0')).join('-')
+  return [date, month, year].map((n) => n.toString().padStart(2, '0')).join('-')
 }
 
 export const DriverLicenseScanResult = ({ data }: any) => {
@@ -40,6 +40,7 @@ export const DriverLicenseScanResult = ({ data }: any) => {
         },
       })
       .then((res) => {
+        console.log(res);
         if (res.errors) {
           setError(true)
           setErrorMessage(
@@ -57,6 +58,8 @@ export const DriverLicenseScanResult = ({ data }: any) => {
           } else {
             try {
               const { name, nationalId, photo, birthDate } = JSON.parse(data)
+              setError(false)
+              setErrorMessage(undefined);
               setNationalId(nationalId)
               setName(name)
               setBirthDate(birthDate ? birthDate.substr(0, 10) : nationalIdToBirthDate(nationalId));

@@ -125,7 +125,6 @@ const Background = styled.Image`
   width: 100%;
   height: 100%;
   background-color: #e2c4d1;
-  border-radius: 16px;
 `
 
 interface ScanResultCardProps {
@@ -161,7 +160,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
       <Background source={background} resizeMode="stretch" />
       <Header>
         <Detail>
-          <Title>Driver License (IS)</Title>
+          <Title>{intl.formatMessage({ id: 'licenseScannerResult.title' })}</Title>
           <Subtitle>
             <SubtitleIcon>
               {loading ? (
@@ -171,7 +170,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
                   size="small"
                   style={{ transform: [{ scale: 0.8 }] }}
                 />
-              ) : error || !valid ? (
+              ) : error ? (
                 <SubtitleImage source={danger} />
               ) : (
                 <SubtitleImage source={success} />
@@ -182,8 +181,6 @@ export function ScanResultCard(props: ScanResultCardProps) {
                 ? intl.formatMessage({ id: 'licenseScannerResult.loading' })
                 : error
                 ? intl.formatMessage({ id: 'licenseScannerResult.error' })
-                : !valid
-                ? 'Invalid or expired'
                 : intl.formatMessage({ id: 'licenseScannerResult.valid' })}
             </SubtitleText>
           </Subtitle>

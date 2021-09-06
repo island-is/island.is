@@ -130,11 +130,6 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
     defaultConfig {
         multiDexEnabled true
         applicationId "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
@@ -226,20 +221,21 @@ dependencies {
     implementation project(':react-native-web-view')
     implementation project(':react-native-sentry')
     implementation project(':react-native-custom-tabs')
+    implementation project(':react-native-randombytes')
     implementation project(':@react-native-firebase_app')
     implementation project(':@react-native-firebase_messaging')
     implementation project(':@react-native-firebase_perf')
 
     addUnimodulesDependencies([
       modulesPaths: ['../../../node_modules'],
-      exclude: [
-        'expo-image-loader',
-        'unimodules-barcode-scanner-interface',
-        'unimodules-camera-interface',
-        'unimodules-sensors-interface',
-        'unimodules-face-detector-interface',
-        'unimodules-task-manager-interface'
-      ]
+      // exclude: [
+        // 'expo-image-loader',
+        // 'unimodules-barcode-scanner-interface',
+        // 'unimodules-camera-interface',
+        // 'unimodules-sensors-interface',
+        // 'unimodules-face-detector-interface',
+        // 'unimodules-task-manager-interface'
+      // ]
     ])
 
     //noinspection GradleDynamicVersion
@@ -268,7 +264,7 @@ dependencies {
 // Run this once to be able to run the application with BUCK
 // puts all compile dependencies into folder libs for BUCK to use
 task copyDownloadableDepsToLibs(type: Copy) {
-    from configurations.compile
+    from configurations.implementation
     into 'libs'
 }
 

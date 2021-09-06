@@ -64,7 +64,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   useNavigationOptions(componentId)
   const [hasPermission, setHasPermission] = useState<boolean>()
   const [active, setActive] = useState(false)
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false)
   const intl = useIntl()
 
   useEffect(() => {
@@ -77,12 +77,12 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
 
   useNavigationComponentDidAppear(() => {
     setActive(true)
-    setVisible(true);
+    setVisible(true)
   })
 
   useNavigationComponentDidDisappear(() => {
     setActive(false)
-    setVisible(false);
+    setVisible(false)
   })
 
   useNavigationButtonPress(({ buttonId }) => {
@@ -124,7 +124,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
       >
         <Bubble>
           <BubbleText>
-            {typeof hasPermission === 'undefined'
+            {typeof hasPermission === 'undefined' || hasPermission === null
               ? intl.formatMessage({ id: 'licenseScanner.awaitingPermission' })
               : hasPermission === false
               ? intl.formatMessage({ id: 'licenseScanner.noCameraAccess' })

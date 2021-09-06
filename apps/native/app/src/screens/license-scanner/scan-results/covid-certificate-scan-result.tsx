@@ -22,8 +22,9 @@ export const CovidCertificateScanResult = ({ data }: any) => {
 
   return (
     <CovidResultCard
-      loading={false}
-      error={false}
+      loading={loading}
+      errorMessage={error}
+      error={!!error}
       valid={decoded?.valid!}
       name={`${decoded?.givenName} ${decoded?.familyName}`}
       birthDate={decoded?.dateOfBirth!}
