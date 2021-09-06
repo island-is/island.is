@@ -2,7 +2,7 @@ import * as s from './RegulationDisplay.treat'
 
 import React, { Fragment, memo } from 'react'
 import { Link } from '@island.is/island-ui/core'
-import { interpolate, prettyName, useDomid } from '@island.is/regulations'
+import { interpolate, prettyName } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import uniqBy from 'lodash/uniqBy'
@@ -16,9 +16,8 @@ export type AffectingRegulationsProps = {
 
 export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
   const { regulation, texts } = props
-  const { showingDiff, history } = regulation
+  const { showingDiff } = regulation
 
-  const domid = useDomid()
   const txt = useNamespace(texts)
   const { formatDate } = useDateUtils()
   const { linkToRegulation } = useRegulationLinkResolver()
