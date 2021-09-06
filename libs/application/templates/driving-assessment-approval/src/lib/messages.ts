@@ -148,7 +148,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   error: {
-    id: 'dla.application:outro.message',
+    id: 'dla.application:outro.error',
     defaultMessage: 'Ekki er víst að akstursmat hafi borist',
     description: 'Some description',
   },
@@ -245,7 +245,7 @@ export const m = defineMessages({
     description: 'Driving assessment',
   },
   drivingAssessmentConfirmation: {
-    id: 'dla.application:',
+    id: 'dla.application:confirmation',
     defaultMessage: 'Staðfesting akstursmats',
     description: 'Confirmation of driving assessment',
   },
