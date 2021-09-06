@@ -5,7 +5,7 @@ import {
   CreateSignedUrlMutation,
   CreateApplicationFiles,
 } from '@island.is/financial-aid-web/oskgraphql/sharedGql'
-import { SignedUrl } from '@island.is/financial-aid/shared'
+import { FileType, SignedUrl } from '@island.is/financial-aid/shared'
 
 export const useFileUpload = (formFiles: UploadFile[]) => {
   const [files, _setFiles] = useState<UploadFile[]>([])
@@ -88,13 +88,14 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     return signedUrl
   }
 
-  const uploadFiles = async (applicationId: string) => {
+  const uploadFiles = async (applicationId: string, type: FileType) => {
     const formatFiles = files.map((f) => {
       return {
         applicationId: applicationId,
         name: f.name ?? '',
         key: f.key ?? '',
         size: f.size ?? 0,
+        type: type,
       }
     })
     try {

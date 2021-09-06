@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { ApplicationFile } from '@island.is/financial-aid/shared'
+import { ApplicationFile, FileType } from '@island.is/financial-aid/shared'
 
 @ObjectType()
 export class ApplicationFileModel implements ApplicationFile {
@@ -21,4 +21,7 @@ export class ApplicationFileModel implements ApplicationFile {
 
   @Field()
   readonly size!: number
+
+  @Field(() => String)
+  readonly type!: FileType
 }

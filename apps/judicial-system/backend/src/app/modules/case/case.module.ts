@@ -8,6 +8,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { environment } from '../../../environments'
 import { UserModule } from '../user'
 import { CourtModule } from '../court'
+import { EventModule } from '../event'
 import { Case } from './models'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
@@ -20,6 +21,7 @@ import { CaseService } from './case.service'
     CourtModule,
     SequelizeModule.forFeature([Case]),
     CmsTranslationsModule,
+    EventModule,
   ],
   providers: [CaseService],
   controllers: [CaseController],
