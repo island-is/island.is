@@ -453,7 +453,7 @@ export async function parseEudcc(data: string | any): Promise<DecodedEudcc> {
     testType: messages[t.tt] ?? t.tt,
     testName: t.nm ?? '',
     testManufacturer: messages[t.ma] ?? t.ma,
-    testDate: new Date(t.sc.replace('T', ' ').replace('Z', '+00')),
+    testDate: new Date(t.sc),
     testResult: messages[t.tr] ?? t.tr,
     testCenter: t.tc,
     country: t.co,

@@ -5,7 +5,6 @@ import styled from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
 import danger from '../../../../island-ui/src/assets/card/danger.png'
 import success from '../../../../island-ui/src/assets/card/is-verified.png'
-import backgroundPink from '../../../../island-ui/src/assets/card/okuskirteini.png'
 import backgroundBlue from '../../../../island-ui/src/assets/card/covid.png'
 import { useIntl } from 'react-intl'
 
@@ -125,7 +124,7 @@ const Background = styled.Image`
   bottom: 0;
   width: 100%;
   height: 100%;
-  background-color: #e2c4d1;
+  background-color: rgba(0, 109, 193, 0.31);
 `
 
 interface ScanResultCardProps {
@@ -137,7 +136,6 @@ interface ScanResultCardProps {
   name?: string
   licenseNumber?: string
   photo?: string
-  backgroundColor?: 'pink' | 'blue'
   vaccination?: any
   test?: any
   recovery?: any
@@ -154,15 +152,12 @@ export function CovidResultCard(props: ScanResultCardProps) {
     vaccination,
     test,
     recovery,
-    backgroundColor = 'pink',
   } = props
   const intl = useIntl()
-  const background =
-    backgroundColor === 'pink' ? backgroundPink : backgroundBlue
 
   return (
     <Host>
-      <Background source={background} resizeMode="cover" />
+      <Background source={backgroundBlue} resizeMode="cover" />
       <Header>
         <Detail>
           <Title>Covid-19 Certification</Title>

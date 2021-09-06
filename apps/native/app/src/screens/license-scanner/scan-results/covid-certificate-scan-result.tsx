@@ -28,7 +28,6 @@ export const CovidCertificateScanResult = ({ data }: any) => {
       valid={decoded?.valid!}
       name={`${decoded?.givenName} ${decoded?.familyName}`}
       birthDate={decoded?.dateOfBirth!}
-      backgroundColor="blue"
       vaccination={decoded?.vaccinations?.[0]}
       test={decoded?.tests?.[0]}
       recovery={decoded?.recoveries?.[0]}
