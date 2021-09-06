@@ -12,7 +12,6 @@ import {
   FormContentContainer,
   DateTime,
   HideableText,
-  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -44,12 +43,10 @@ import { validate } from '../../../../utils/validate'
 import {
   accusedRights,
   rcCourtRecord,
-  rcHearingArrangements,
 } from '@island.is/judicial-system-web/messages'
 import * as styles from './CourtRecord.treat'
 
 export const CourtRecord: React.FC = () => {
-  const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [
     courtRecordStartDateIsValid,
@@ -150,7 +147,7 @@ export const CourtRecord: React.FC = () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       if (notificationSent && !window.Cypress) {
-        setModalVisible(true)
+        // setModalVisible(true)
       }
     }
 
@@ -487,16 +484,6 @@ export const CourtRecord: React.FC = () => {
               }
             />
           </FormContentContainer>
-          {modalVisible && (
-            <Modal
-              title={formatMessage(rcHearingArrangements.modal.heading)}
-              text={formatMessage(rcHearingArrangements.modal.text)}
-              handlePrimaryButtonClick={() => {
-                setModalVisible(false)
-              }}
-              primaryButtonText="Loka glugga"
-            />
-          )}
         </>
       ) : null}
     </PageLayout>
