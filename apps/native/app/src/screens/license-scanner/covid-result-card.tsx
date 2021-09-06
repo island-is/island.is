@@ -22,6 +22,12 @@ const Header = styled.View`
   padding: 24px;
 `
 
+const SubHeader = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding: 12px 24px;
+`
+
 const Subtitle = styled.View`
   flex-direction: row;
   align-items: center;
@@ -96,6 +102,7 @@ const Value = styled.Text`
 
 const LabelGroup = styled.View`
   margin-bottom: 16px;
+  width: 50%;
 `
 
 const Left = styled.View`
@@ -153,18 +160,12 @@ export function CovidResultCard(props: ScanResultCardProps) {
   const background =
     backgroundColor === 'pink' ? backgroundPink : backgroundBlue
 
-  console.log('test Date', test?.testDate)
   return (
     <Host>
       <Background source={background} resizeMode="cover" />
       <Header>
         <Detail>
-          <Title>
-            {test && `${test.disease} Test (${test.country})`}
-            {vaccination &&
-              `${vaccination.disease} Vaccination (${vaccination.country})`}
-            {recovery && `${recovery.disease} Recovery (${recovery.country})`}
-          </Title>
+          <Title>Covid-19 Certification</Title>
           <Subtitle>
             <SubtitleIcon>
               {loading ? (
@@ -231,130 +232,104 @@ export function CovidResultCard(props: ScanResultCardProps) {
             </LabelGroup>
           </Content>
           {test && (
-            <Content>
-              <LabelGroup>
-                <Label>Test Result</Label>
-                <Value>{test?.testResult}</Value>
-              </LabelGroup>
-              <LabelGroup>
-                <Label>Test Date</Label>
-                <Value>
-                  {test?.testDate ? intl.formatDate(test?.testDate, {}) : `---`}
-                </Value>
-              </LabelGroup>
-              <LabelGroup>
-                <Label>Test Manufacturer</Label>
-                <Value>{test?.testManufacturer}</Value>
-              </LabelGroup>
-              <LabelGroup>
-                <Label>Test Type</Label>
-                <Value>{test?.testType}</Value>
-              </LabelGroup>
-              <LabelGroup>
-                <Label>Issuer</Label>
-                <Value>{test?.issuer}</Value>
-              </LabelGroup>
-              <LabelGroup>
-                <Label>Test Center</Label>
-                <Value>{test?.testCenter}</Value>
-              </LabelGroup>
-            </Content>
+            <>
+              <SubHeader>
+                <Subtitle>
+                  <SubtitleText>{`${test.disease} - Test - (${test.country})`}</SubtitleText>
+                </Subtitle>
+              </SubHeader>
+              <Content>
+                <LabelGroup>
+                  <Label>Test Result</Label>
+                  <Value>{test?.testResult}</Value>
+                </LabelGroup>
+                <LabelGroup>
+                  <Label>Test Date</Label>
+                  <Value>
+                    {test?.testDate
+                      ? intl.formatDate(test?.testDate, {})
+                      : `---`}
+                  </Value>
+                </LabelGroup>
+                <LabelGroup>
+                  <Label>Test Type</Label>
+                  <Value>{test?.testType}</Value>
+                </LabelGroup>
+              </Content>
+            </>
           )}
           {vaccination && (
-            <Content>
-              <LabelGroup>
-                <Label>Vaccine Product</Label>
-                <Value>{vaccination?.vaccineProduct}</Value>
-              </LabelGroup>
-              <LabelGroup>
-                <Label>Dose Number</Label>
-                <Value>{vaccination?.doseNumber}</Value>
-              </LabelGroup>
-              <LabelGroup>
-                <Label>Date</Label>
-                <Value>
-                  {vaccination?.date
-                    ? intl.formatDate(vaccination?.date, {})
-                    : `---`}
-                </Value>
-              </LabelGroup>
-              <LabelGroup>
-                <Label>Issuer</Label>
-                <Value>{vaccination?.issuer}</Value>
-              </LabelGroup>
-              <LabelGroup>
-                <Label>Vaccine Manufacturer</Label>
-                <Value>{vaccination?.vaccineManufacturer}</Value>
-              </LabelGroup>
-              <LabelGroup>
-                <Label>Vaccine Product</Label>
-                <Value>{vaccination?.vaccineProduct}</Value>
-              </LabelGroup>
-              <LabelGroup>
-                <Label>Vaccine Type</Label>
-                <Value>{vaccination?.vaccineType}</Value>
-              </LabelGroup>
-            </Content>
+            <>
+              <SubHeader>
+                <Subtitle>
+                  <SubtitleText>{`${vaccination.disease} - Vaccination - (${vaccination.country})`}</SubtitleText>
+                </Subtitle>
+              </SubHeader>
+              <Content>
+                <LabelGroup>
+                  <Label>Vaccine Product</Label>
+                  <Value>{vaccination?.vaccineProduct}</Value>
+                </LabelGroup>
+                <LabelGroup>
+                  <Label>Date</Label>
+                  <Value>
+                    {vaccination?.date
+                      ? intl.formatDate(vaccination?.date, {})
+                      : `---`}
+                  </Value>
+                </LabelGroup>
+                <LabelGroup>
+                  <Label>Dose Number</Label>
+                  <Value>{vaccination?.doseNumber}{vaccination?.totalDoses && `/${vaccination?.totalDoses}`}</Value>
+                </LabelGroup>
+                <LabelGroup>
+                  <Label>Vaccine Type</Label>
+                  <Value>{vaccination?.vaccineType}</Value>
+                </LabelGroup>
+              </Content>
+            </>
           )}
           {recovery && (
-            <Content>
-            <LabelGroup>
-              <Label>Disease</Label>
-              <Value>{recovery?.disease}</Value>
-            </LabelGroup>
-            <LabelGroup>
-              <Label>Valid From</Label>
-              <Value>
-                {recovery?.validFrom
-                  ? intl.formatDate(recovery?.validFrom, {})
-                  : `---`}
-              </Value>
-            </LabelGroup>
-            <LabelGroup>
-              <Label>Valid Unit</Label>
-              <Value>
-                {recovery?.validUntil
-                  ? intl.formatDate(recovery?.validUntil, {})
-                  : `---`}
-              </Value>
-            </LabelGroup>
-            <LabelGroup>
-              <Label>Issuer</Label>
-              <Value>{recovery?.issuer}</Value>
-            </LabelGroup>
-            <LabelGroup>
-              <Label>First Positive Test</Label>
-              <Value>
-                {recovery?.firstPositiveTest
-                  ? intl.formatDate(recovery?.firstPositiveTest, {})
-                  : `---`}
-              </Value>
-            </LabelGroup>
-          </Content>
-          )
-          }
+            <>
+              <SubHeader>
+                <Subtitle>
+                  <SubtitleText>{`${recovery.disease} - Recovery - (${recovery.country})`}</SubtitleText>
+                </Subtitle>
+              </SubHeader>
+              <Content>
+                <LabelGroup>
+                  <Label>Disease</Label>
+                  <Value>{recovery?.disease}</Value>
+                </LabelGroup>
+                <LabelGroup>
+                  <Label>First Positive Test</Label>
+                  <Value>
+                    {recovery?.firstPositiveTest
+                      ? intl.formatDate(recovery?.firstPositiveTest, {})
+                      : `---`}
+                  </Value>
+                </LabelGroup>
+                <LabelGroup>
+                  <Label>Valid From</Label>
+                  <Value>
+                    {recovery?.validFrom
+                      ? intl.formatDate(recovery?.validFrom, {})
+                      : `---`}
+                  </Value>
+                </LabelGroup>
+                <LabelGroup>
+                  <Label>Valid Until</Label>
+                  <Value>
+                    {recovery?.validUntil
+                      ? intl.formatDate(recovery?.validUntil, {})
+                      : `---`}
+                  </Value>
+                </LabelGroup>
+              </Content>
+            </>
+          )}
         </>
       )}
     </Host>
   )
 }
-
-
-dateOfBirth: "1979-05-12"
-expiresAt: Object
-familyName: "Telokk"
-givenName: "Gry"
-issuedAt: Object
-issuer: "NO"
-recovery: Object
-certificateId: "URN:UVCI:01:NO:PRV/EV6EVFPHCEGX108VC"
-country: "NO"
-disease: "COVID-19"
-firstPositiveTest: Object
-issuer: "Norwegian Institute of Public Health"
-validFrom: Object
-validUntil: Object
-__proto__: Object
-valid: false
-version: "1.3.0"
-__proto__: Object
