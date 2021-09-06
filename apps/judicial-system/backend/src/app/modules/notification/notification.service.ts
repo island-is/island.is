@@ -2,16 +2,16 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseState,
   CaseType,
-  IntegratedCourts,
   NotificationType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
@@ -36,6 +36,7 @@ import {
 } from '../../formatters'
 import { Case } from '../case'
 import { CourtService } from '../court'
+import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
 
@@ -59,6 +60,7 @@ export class NotificationService {
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
     private readonly intlService: IntlService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -98,7 +100,7 @@ export class NotificationService {
     }
   }
 
-  private getCourtMovileNumber(courtId: string | undefined) {
+  private getCourtMobileNumber(courtId: string | undefined) {
     return (
       (courtId && environment.notifications.courtsMobileNumbers[courtId]) ??
       undefined
@@ -233,7 +235,7 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      this.getCourtMovileNumber(existingCase.courtId),
+      this.getCourtMobileNumber(existingCase.courtId),
       smsText,
     )
   }
@@ -260,7 +262,7 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      this.getCourtMovileNumber(existingCase.courtId),
+      this.getCourtMobileNumber(existingCase.courtId),
       smsText,
     )
   }
@@ -501,12 +503,18 @@ export class NotificationService {
 
     const recipients = await Promise.all(promises)
 
-    return this.recordNotification(
+    const result = await this.recordNotification(
       existingCase.id,
       NotificationType.COURT_DATE,
       recipients,
       condition,
     )
+
+    if (result.notificationSent) {
+      this.eventService.postEvent(CaseEvent.COURT_DATE, existingCase)
+    }
+
+    return result
   }
 
   /* RULING notifications */
@@ -524,7 +532,6 @@ export class NotificationService {
       existingCase.courtEndTime,
       existingCase.defenderName,
       existingCase.defenderEmail,
-      existingCase.defenderIsSpokesperson,
       existingCase.decision,
       existingCase.validToDate,
       existingCase.custodyRestrictions,
@@ -532,8 +539,6 @@ export class NotificationService {
       existingCase.prosecutorAppealDecision,
       existingCase.judge?.name,
       existingCase.judge?.title,
-      existingCase.parentCase !== null,
-      existingCase.parentCase?.decision,
       existingCase.conclusion,
       existingCase.isolationToDate,
     )
@@ -602,7 +607,7 @@ export class NotificationService {
     )
 
     return this.sendSms(
-      this.getCourtMovileNumber(existingCase.courtId),
+      this.getCourtMobileNumber(existingCase.courtId),
       smsText,
     )
   }
@@ -660,7 +665,7 @@ export class NotificationService {
 
     const courtWasNotified = await this.existsRevokableNotification(
       existingCase.id,
-      this.getCourtMovileNumber(existingCase.courtId),
+      this.getCourtMobileNumber(existingCase.courtId),
     )
 
     if (courtWasNotified) {

@@ -1,16 +1,48 @@
 import React, { useState } from 'react'
 
-import { Box, Button, Input } from '@island.is/island-ui/core'
+import { useRouter } from 'next/router'
+
+import { Box, Input, Button } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
 import * as styles from './CommentSection.treat'
+import { useMutation } from '@apollo/client'
+import { CreateApplicationEventQuery } from '@island.is/financial-aid-web/veitagraphql/sharedGql'
+import { ApplicationEventType } from '@island.is/financial-aid/shared'
 
 interface Props {
   className?: string
 }
 
 const CommentSection = ({ className }: Props) => {
+  const router = useRouter()
+
   const [showInput, setShowInput] = useState<boolean>(false)
+  const [comment, setComment] = useState<string>()
+
+  const [
+    createApplicationEventMutation,
+    { loading: isCreatingApplicationEvent },
+  ] = useMutation(CreateApplicationEventQuery)
+
+  const saveStaffComment = async (staffComment: string | undefined) => {
+    if (staffComment) {
+      const { data } = await createApplicationEventMutation({
+        variables: {
+          input: {
+            applicationId: router.query.id,
+            comment: staffComment,
+            eventType: ApplicationEventType.STAFFCOMMENT,
+          },
+        },
+      })
+
+      if (data) {
+        setComment(undefined)
+        setShowInput(false)
+      }
+    }
+  }
 
   return (
     <Box marginBottom={3} className={`${className} `}>
@@ -34,9 +66,12 @@ const CommentSection = ({ className }: Props) => {
         <Input
           backgroundColor="blue"
           label="Athugasemd"
-          name="Test5"
+          name="comment"
           rows={4}
           textarea
+          onChange={(event) => {
+            setComment(event.currentTarget.value)
+          }}
         />
         <Box marginTop={2} display="flex" justifyContent="flexEnd">
           <Button
@@ -44,8 +79,9 @@ const CommentSection = ({ className }: Props) => {
             size="small"
             iconType="outline"
             onClick={() => {
-              setShowInput(!showInput)
+              saveStaffComment(comment)
             }}
+            disabled={isCreatingApplicationEvent}
           >
             Vista athugasemd
           </Button>

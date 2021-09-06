@@ -38,5 +38,10 @@ export const whoIsTheNotificationFor = {
       defaultMessage: 'Í umboði fyrir annan einstakling',
       description: 'Label for power of attorney option',
     },
+    childInCustody: {
+      id: 'an.application:whoIsTheNotificationFor.labels.childInCustody',
+      defaultMessage: 'Fyrir barn sem ég hef forræði yfir',
+      description: 'Label for child in custody option',
+    },
   }),
 }

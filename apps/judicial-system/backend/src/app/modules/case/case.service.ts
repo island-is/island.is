@@ -7,20 +7,17 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   DokobitError,
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
-import {
-  CaseType,
-  IntegratedCourts,
-  SessionArrangements,
-  User as TUser,
-} from '@island.is/judicial-system/types'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
+import { CaseType, SessionArrangements } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import {
@@ -76,9 +73,9 @@ export class CaseService {
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
+    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    private intlService: IntlService,
   ) {}
 
   private async uploadSignedRulingPdfToCourt(
@@ -98,7 +95,7 @@ export class CaseService {
           writeFile(`${existingCase.id}-case-files.pdf`, caseFilesPdf)
         }
 
-        const buffer = Buffer.from(pdf, 'binary')
+        const buffer = Buffer.from(caseFilesPdf, 'binary')
 
         const streamId = await this.courtService.uploadStream(
           existingCase.courtId,

@@ -7,16 +7,17 @@ import {
   laws,
   formatGender,
   caseTypes,
-  formatConclusion,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseCustodyProvisions,
-  CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
   CaseType,
   SessionArrangements,
+} from '@island.is/judicial-system/types'
+import type {
+  CaseCustodyRestrictions,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 
 function custodyProvisionsOrder(p: CaseCustodyProvisions) {
@@ -277,7 +278,6 @@ export function formatPrisonRulingEmailNotification(
   courtEndTime?: Date,
   defenderName?: string,
   defenderEmail?: string,
-  defenderIsSpokesperson?: boolean,
   decision?: CaseDecision,
   validToDate?: Date,
   custodyRestrictions?: CaseCustodyRestrictions[],
@@ -285,8 +285,6 @@ export function formatPrisonRulingEmailNotification(
   prosecutorAppealDecision?: CaseAppealDecision,
   judgeName?: string,
   judgeTitle?: string,
-  isExtension?: boolean,
-  previousDecision?: CaseDecision,
   conclusion?: string,
   isolationToDate?: Date,
 ): string {
@@ -296,9 +294,7 @@ export function formatPrisonRulingEmailNotification(
   )}.<br /><br />Þinghaldi lauk kl. ${formatDate(
     courtEndTime,
     'p',
-  )}.<br /><br />Ákærandi: ${prosecutorName}.<br />${
-    defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
-  }: ${
+  )}.<br /><br />Ákærandi: ${prosecutorName}.<br />Verjandi: ${
     defenderName
       ? defenderEmail
         ? `${defenderName}, ${defenderEmail}`
@@ -306,20 +302,7 @@ export function formatPrisonRulingEmailNotification(
       : defenderEmail
       ? defenderEmail
       : 'Hefur ekki verið skráður'
-  }.<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
-    CaseType.CUSTODY,
-    accusedNationalId,
-    accusedName,
-    accusedGender,
-    decision,
-    validToDate,
-    custodyRestrictions?.includes(CaseCustodyRestrictions.ISOLATION),
-    isExtension,
-    previousDecision,
-    isolationToDate,
-  )}${
-    conclusion ? `<br /><br />${conclusion}` : ''
-  }<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
+  }.<br /><br /><strong>Úrskurðarorð</strong><br /><br />${conclusion}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
     accusedAppealDecision,
     capitalize(formatAccusedByGender(accusedGender)),
     false,

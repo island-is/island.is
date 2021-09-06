@@ -10,8 +10,8 @@ import { useRouter } from 'next/router'
 import { GetApplicationEventQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import {
   ApplicationEvent,
-  ApplicationState,
-  getState,
+  ApplicationEventType,
+  getEventType,
 } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
@@ -40,43 +40,38 @@ const History = ({ className }: Props) => {
         [`${className}`]: true,
       })}
     >
-      <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
-        Saga umsóknar
-      </Text>
-
-      {data?.applicationEvents && (
+      {data?.applicationEvents && data?.applicationEvents.length > 0 && (
         <>
+          <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
+            Saga umsóknar
+          </Text>
+
           {data?.applicationEvents.map((item, index) => {
             return (
               <Box
                 key={'timeline-' + index}
                 className={cn({
                   [`${styles.timelineContainer}`]: true,
-                  [`${styles.firstApplicationEvent}`]:
-                    index === data?.applicationEvents.length - 1,
                   [`${styles.acceptedEvent}`]:
-                    item.state === ApplicationState.APPROVED,
+                    item.eventType === ApplicationEventType.APPROVED,
                   [`${styles.rejectedEvent}`]:
-                    item.state === ApplicationState.REJECTED,
+                    item.eventType === ApplicationEventType.REJECTED,
                 })}
               >
                 <Box paddingLeft={3}>
-                  <Text variant="h5">{getState[item.state]}</Text>
+                  <Text variant="h5">
+                    {getEventType[item.eventType].header}
+                  </Text>
                   <Text marginBottom={2}>
                     {' '}
-                    Umsækjandi <strong>inn umsókn </strong>
+                    XXX <strong>{getEventType[item.eventType].text} </strong>
                   </Text>
 
-                  {/* <Box paddingLeft={3} marginBottom={2}>
-                    {/* TODO: if comment then show */}
-                  {/*    <Text variant="small">
-                      {comment} f.ex
-                      Umsækjandi hringdi og lét mig vita af því að síðustu gögnin sem 
-                      vantaði munu berast í síðasta lagi á föstudag þannig að þá getum við 
-                      farið að ganga frá þessu.
-                    </Text> 
-                 
-                  </Box> */}
+                  {item.eventType === ApplicationEventType.STAFFCOMMENT && (
+                    <Box paddingLeft={3} marginBottom={2}>
+                      <Text variant="small">{item.comment}</Text>
+                    </Box>
+                  )}
 
                   {/* TODO: if sent meessage */}
                   {/* <Box
@@ -104,6 +99,34 @@ const History = ({ className }: Props) => {
               </Box>
             )
           })}
+          <Box className={styles.fadeOutLineContainer}>
+            <svg
+              width="2"
+              height="100%"
+              viewBox="0 0 4 256"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className={styles.fadeOutLine}
+            >
+              <path
+                d="M4 256L0 256L2.23802e-05 -3.49691e-07L4.00002 0L4 256Z"
+                fill="url(#paint0_linear)"
+              />
+              <defs>
+                <linearGradient
+                  id="paint0_linear"
+                  x1="2"
+                  y1="256"
+                  x2="2.00002"
+                  y2="-1.74846e-07"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="white" />
+                  <stop offset="1" stopColor="white" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </Box>
         </>
       )}
     </Box>

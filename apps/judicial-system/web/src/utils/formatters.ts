@@ -1,4 +1,4 @@
-import { CaseTransition } from '@island.is/judicial-system/types'
+import type { CaseTransition } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
 import setHours from 'date-fns/setHours'
 import setMinutes from 'date-fns/setMinutes'

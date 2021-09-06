@@ -39,8 +39,13 @@ export const m = defineMessages({
   },
   externalDataSection: {
     id: 'dl.application:externalData.section',
-    defaultMessage: 'Ökuréttindi',
-    description: 'Driving license',
+    defaultMessage: 'Upplýsingasöfnun',
+    description: 'Information',
+  },
+  externalDataComplete: {
+    id: 'dl.application:externalData.complete',
+    defaultMessage: 'Uppfletting í lagi',
+    description: 'Information',
   },
   nationalRegistryTitle: {
     id: 'dl.application:nationalRegistry.title',
@@ -303,7 +308,7 @@ export const m = defineMessages({
   },
   applicationQualityPhotoTitle: {
     id: 'dl.application.applicationQualityPhotoTitle',
-    defaultMessage: 'Gæðamerkt mynd',
+    defaultMessage: 'Passamynd',
     description: 'title for quality photo section',
   },
   qualityPhotoTitle: {
@@ -345,16 +350,17 @@ export const m = defineMessages({
   qualityPhotoInstructions: {
     id: 'dl.application:qualityPhoto.instructions',
     defaultMessage: `
-    Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats)
-    og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi
-    á augu. Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
+    Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats) 
+    og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi 
+    á augu. Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni. 
+    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
     `,
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletOne: {
     id: 'dl.application:qualityPhoto.instructionsbulletone',
     defaultMessage: `
-    Ljósmynd af umsækjanda þarf að vera tekin beint að framan
+    Ljósmynd af umsækjanda þarf að vera tekin beint að framan.
     `,
     description: 'Description of photo requirements',
   },
@@ -375,14 +381,21 @@ export const m = defineMessages({
   qualityPhotoInstructionsBulletFour: {
     id: 'dl.application:qualityPhoto.instructionsbulletfour',
     defaultMessage: `
-    Athuga þarf að ekki glampi á gleraugu og skyggi á augu
+    Athuga þarf að ekki glampi á gleraugu og skyggi á augu.
     `,
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletFive: {
     id: 'dl.application:qualityPhoto.instructionsbulletfive',
     defaultMessage: `
-    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð
+    Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni.
+    `,
+    description: 'Description of photo requirements',
+  },
+  qualityPhotoInstructionsBulletSix: {
+    id: 'dl.application:qualityPhoto.instructionsbulletfive',
+    defaultMessage: `
+    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
     `,
     description: 'Description of photo requirements',
   },
@@ -403,7 +416,7 @@ export const m = defineMessages({
   },
   overviewDone: {
     id: 'dl.application:overview.done',
-    defaultMessage: 'Staðfesting',
+    defaultMessage: 'Umsókn móttekin',
     description: 'Confirmation',
   },
   overviewPaymentCharge: {
@@ -418,7 +431,8 @@ export const m = defineMessages({
   },
   requirementUnmetDrivingAssessmentDescription: {
     id: 'dl.application:requirementunmet.drivingassessmentdescription',
-    defaultMessage: 'Ökukennari þarf að hafa staðfest akstursmat',
+    defaultMessage:
+      'Ef þú ert búinn að fara í akstursmat hjá ökukennara biddu hann um að staðfesta það rafrænt.',
     description: 'requirement unmet assessment',
   },
   requirementUnmetDrivingSchoolTitle: {
@@ -429,7 +443,7 @@ export const m = defineMessages({
   requirementUnmetDrivingSchoolDescription: {
     id: 'dl.application:requirementunmet.drivingschooldescription',
     defaultMessage:
-      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini',
+      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini.',
     description: 'requirement unmet driving school',
   },
   requirementUnmetDeniedByServiceTitle: {
@@ -440,13 +454,12 @@ export const m = defineMessages({
   requirementUnmetDeniedByServiceDescription: {
     id: 'dl.application:requirementunmet.deniedbyservicedescription',
     defaultMessage:
-      'Ökuskírteinaskrá þarf að heimila að þú megir sækja um fullnaðarskírteini',
+      'Umsækjandi um fullnaðarskírteini má ekki hafa fengið punkt í ökuferilsskrá á síðustu 12 mánuðum. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'requirement unmet api returned false',
   },
   errorDataProvider: {
     id: 'dl.application:error.dataProvider',
-    defaultMessage:
-      'Villa kom upp við að sækja upplýsingar úr vefþjónustu. Reyndu aftur síðar',
+    defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in driving license data provider',
   },
   examplePaymentPendingField: {
@@ -511,13 +524,36 @@ export const m = defineMessages({
   },
   congratulationsTitleSuccess: {
     id: 'dl.application.congratulationsTitleSuccess',
-    defaultMessage: 'Umsókn þín um fullnaðarskírteini tókst.',
+    defaultMessage:
+      'Umsókn þín um fullnaðarskírteini tókst og verður tilbúið á afhendingarstað eftir 3 til 4 vikur. Skila þarf inn bráðabirgðaskírteini til sýslumanns við afhendingu fullnaðarskírteinis.',
     description: 'Your application for full driving license was successful.',
   },
   congratulationsTitle: {
     id: 'dl.application.congratulationsTitle',
     defaultMessage: 'Til hamingju',
     description: 'Congratulations',
+  },
+  congratulationsCertificateTitle: {
+    id: 'dl.application.congratulationsCertificateTitle',
+    defaultMessage: 'Læknisvottorð',
+    description: 'Health Certificate',
+  },
+  congratulationsQualityPictureTitle: {
+    id: 'dl.application.congratulationsQualityPictureTitle',
+    defaultMessage: 'Passamynd',
+    description: 'Quality photo',
+  },
+  congratulationsCertificateDescription: {
+    id: 'dl.application.congratulationsCertificateDescription',
+    defaultMessage:
+      'Þörf er á læknisvottorði frá heimilislækni miðað við útfyllta heilbrigðisyfirlýsingu. Læknisvottorði þarf að skila til sýslumannsembættis. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
+    description: 'Health Certificate',
+  },
+  congratulationsQualityPictureDescription: {
+    id: 'dl.application.congratulationsQualityPictureDescription',
+    defaultMessage:
+      'Skila þarf passamynd til sýslumanns. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
+    description: 'Quality photo',
   },
   paymentPendingDescription: {
     id: 'dl.application.paymentPendingDescription',
@@ -543,6 +579,11 @@ export const m = defineMessages({
     defaultMessage: `Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára umsóknina.`,
     description:
       'The payment has been confirmed, choose "Continue" to finish the application.',
+  },
+  paymentImage: {
+    id: 'dl.application.paymentApprovedContinue',
+    defaultMessage: `Skrautmynd`,
+    description: 'Company Image',
   },
   chooseDistrictCommisioner: {
     id: 'dl.application.chooseDistrictCommisioner',
