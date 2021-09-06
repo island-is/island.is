@@ -778,8 +778,6 @@ describe('formatCourtDateNotificationCondition', () => {
 describe('formatPrisonRulingEmailNotification', () => {
   test('should format prison ruling notification', () => {
     // Arrange
-    const accusedNationalId = '2411018760'
-    const accusedName = 'Biggi Börgler'
     const accusedGender = CaseGender.MALE
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
@@ -802,8 +800,6 @@ describe('formatPrisonRulingEmailNotification', () => {
 
     // Act
     const res = formatPrisonRulingEmailNotification(
-      accusedNationalId,
-      accusedName,
       accusedGender,
       court,
       prosecutorName,
@@ -829,8 +825,6 @@ describe('formatPrisonRulingEmailNotification', () => {
 
   test('should format prison ruling notification for a rejected case', () => {
     // Arrange
-    const accusedNationalId = '2411018760'
-    const accusedName = 'Biggi Börgler'
     const accusedGender = CaseGender.MALE
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
@@ -852,8 +846,6 @@ describe('formatPrisonRulingEmailNotification', () => {
 
     // Act
     const res = formatPrisonRulingEmailNotification(
-      accusedNationalId,
-      accusedName,
       accusedGender,
       court,
       prosecutorName,
@@ -878,8 +870,6 @@ describe('formatPrisonRulingEmailNotification', () => {
 
   test('should format prison ruling notification when a defender has not been set', () => {
     // Arrange
-    const accusedNationalId = '2411018760'
-    const accusedName = 'Biggi Börgler'
     const accusedGender = CaseGender.MALE
     const court = 'Héraðsdómur Vesturlands'
     const prosecutorName = 'Siggi Sakó'
@@ -900,8 +890,6 @@ describe('formatPrisonRulingEmailNotification', () => {
 
     // Act
     const res = formatPrisonRulingEmailNotification(
-      accusedNationalId,
-      accusedName,
       accusedGender,
       court,
       prosecutorName,
