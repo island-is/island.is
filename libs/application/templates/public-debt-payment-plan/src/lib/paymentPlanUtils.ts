@@ -17,7 +17,7 @@ export const prerequisitesFailed = (data: ExternalData) => {
   if (!prerequisites) return true
 
   return (
-    !prerequisites.maxDebt ||
+    prerequisites.maxDebt ||
     !prerequisites.taxReturns ||
     !prerequisites.vatReturns ||
     !prerequisites.citReturns ||

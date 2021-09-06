@@ -15,6 +15,7 @@ interface Option {
   subLabel?: string
   tooltip?: React.ReactNode
   excludeOthers?: boolean
+  illustration?: React.FC
 }
 
 interface Props {
@@ -26,6 +27,7 @@ interface Props {
   options?: Option[]
   largeButtons?: boolean
   split?: '1/1' | '1/2' | '1/3' | '1/4' | '1/5'
+  smallScreenSplit?: '1/1' | '1/2' | '1/3' | '1/4' | '1/5'
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string) => void
 }
@@ -41,6 +43,7 @@ export const RadioController: FC<Props> = ({
   onSelect = () => undefined,
   backgroundColor = 'blue',
   split = '1/1',
+  smallScreenSplit = '1/1',
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -52,7 +55,7 @@ export const RadioController: FC<Props> = ({
         <GridRow>
           {options.map((option, index) => (
             <GridColumn
-              span={['1/1', split]}
+              span={[smallScreenSplit, split]}
               paddingBottom={2}
               key={`option-${option.value}`}
             >
@@ -75,6 +78,7 @@ export const RadioController: FC<Props> = ({
                 disabled={disabled}
                 hasError={error !== undefined}
                 backgroundColor={backgroundColor}
+                illustration={option.illustration}
               />
             </GridColumn>
           ))}

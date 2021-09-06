@@ -31,6 +31,14 @@
             ]
           }
         ],
+        "no-irregular-whitespace": [
+          "error",
+          {
+            "skipStrings": true,
+            "skipComments": true,
+            "skipTemplates": true
+          }
+        ],
         "local-rules/disallow-kennitalas": 1
       }
     },

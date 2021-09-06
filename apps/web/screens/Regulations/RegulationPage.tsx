@@ -1,20 +1,18 @@
+import { ISODate, RegQueryName } from '@island.is/regulations'
 import {
   Regulation,
   RegulationRedirect,
-  ISODate,
-  RegQueryName,
   RegulationDiff,
-} from '../../components/Regulations/Regulations.types'
+  RegulationOriginalDates,
+} from '@island.is/regulations/web'
 import { RegulationPageTexts } from '../../components/Regulations/RegulationTexts.types'
 
 import React from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import getConfig from 'next/config'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { RegulationRedirectMessage } from '../../components/Regulations/RegulationRedirectMessage'
 import { RegulationDisplay } from '../../components/Regulations/RegulationDisplay'
-import { getParams } from '../../components/Regulations/regulationUtils'
 import { getUiTexts } from '../../components/Regulations/getUiTexts'
 import {
   GetRegulationQuery,
@@ -22,8 +20,6 @@ import {
   RegulationViewTypes,
 } from '@island.is/web/graphql/schema'
 import { GET_REGULATION_QUERY } from '../queries'
-
-const { publicRuntimeConfig } = getConfig()
 
 // ---------------------------------------------------------------------------
 
@@ -34,11 +30,6 @@ type RegulationPageProps = {
 }
 
 const RegulationPage: Screen<RegulationPageProps> = (props) => {
-  const { disableRegulationsPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-
   const { regulation, texts, urlDate } = props
 
   return 'redirectUrl' in regulation ? (
@@ -105,7 +96,7 @@ const assertDiff = (diff: string): true | undefined => {
 }
 
 const smellsLikeISODate = (maybeISODate: string): boolean =>
-  /\d{4}-\d{2}-\d{2}/.test(maybeISODate)
+  /^\d{4}-\d{2}-\d{2}$/.test(maybeISODate)
 
 const assertDate = (
   maybeISODate: string,
@@ -129,10 +120,10 @@ const assertDate = (
 const assertEarlierDate = (
   maybeISODate: string,
   date: ISODate | undefined,
-): 'original' | ISODate | undefined => {
+): ISODate | RegulationOriginalDates.gqlHack | undefined => {
   if (date) {
     if (maybeISODate === 'original') {
-      return 'original'
+      return RegulationOriginalDates.gqlHack
     }
     const baseDate = maybeISODate ? assertDate(maybeISODate) : undefined
     if (!baseDate || baseDate <= date) {

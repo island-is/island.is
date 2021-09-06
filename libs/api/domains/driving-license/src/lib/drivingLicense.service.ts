@@ -16,6 +16,8 @@ import {
   ApplicationEligibility,
   DrivingLicenseCategory,
   NeedsHealhCertificate,
+  QualityPhotoResult,
+  NeedsQualityPhoto,
 } from './drivingLicense.type'
 import {
   AkstursmatDto,
@@ -210,7 +212,6 @@ export class DrivingLicenseService {
     type: DrivingLicenseType['id'],
   ): Promise<ApplicationEligibility> {
     const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
-
     const hasFinishedSchoolResult: HefurLokidOkugerdiDto = await this.drivingLicenseApi.apiOkuskirteiniKennitalaFinishedokugerdiGet(
       {
         kennitala: nationalId,
@@ -274,6 +275,10 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
     input: NewDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
+    // TODO: insert the following into body
+    // needsToPresentQualityPhoto: input.needsToPresentQualityPhoto
+    // ? NeedsQualityPhoto.TRUE
+    // : NeedsQualityPhoto.FALSE,
     const response: unknown = await this.drivingLicenseApi.apiOkuskirteiniApplicationsNewCategoryPost(
       {
         category: DrivingLicenseCategory.B,
@@ -299,6 +304,30 @@ export class DrivingLicenseService {
     return {
       success,
       errorMessage: success ? null : errorMessage,
+    }
+  }
+
+  async getQualityPhoto(
+    nationalId: User['nationalId'],
+  ): Promise<QualityPhotoResult> {
+    const result = await this.drivingLicenseApi.apiOkuskirteiniKennitalaHasqualityphotoGet(
+      {
+        kennitala: nationalId,
+      },
+    )
+    const image =
+      result > 0
+        ? await this.drivingLicenseApi.apiOkuskirteiniKennitalaGetqualityphotoGet(
+            {
+              kennitala: nationalId,
+            },
+          )
+        : null
+
+    return {
+      success: result > 0,
+      qualityPhoto: image,
+      errorMessage: null,
     }
   }
 }

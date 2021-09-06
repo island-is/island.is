@@ -26,6 +26,7 @@ export function buildForm(data: {
   mode?: FormModes
   children: FormChildren[]
   renderLastScreenButton?: boolean
+  renderLastScreenBackButton?: boolean
   icon?: string
 }): Form {
   return { ...data, type: FormItemTypes.FORM }

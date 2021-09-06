@@ -544,7 +544,7 @@
     "/api/okuskirteini/embaetti": {
       "get": {
         "tags": ["Okuskirteini"],
-        "summary": "Get for all districts",
+        "summary": "Get for all districts!",
         "parameters": [
           {
             "name": "api-version",
@@ -1019,6 +1019,11 @@
         "requestBody": {
           "description": "Model of application",
           "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostNewFinalLicense"
+              }
+            },
             "application/xml": {
               "schema": {
                 "$ref": "#/components/schemas/PostNewFinalLicense"
@@ -1039,11 +1044,6 @@
                 "$ref": "#/components/schemas/PostNewFinalLicense"
               }
             },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewFinalLicense"
-              }
-            },
             "text/json": {
               "schema": {
                 "$ref": "#/components/schemas/PostNewFinalLicense"
@@ -1060,6 +1060,12 @@
           "200": {
             "description": "Success",
             "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
               "text/plain": {
                 "schema": {
                   "type": "integer",
@@ -1073,12 +1079,6 @@
                 }
               },
               "text/xml": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              },
-              "application/json": {
                 "schema": {
                   "type": "integer",
                   "format": "int32"
@@ -1170,6 +1170,11 @@
         "requestBody": {
           "description": "Driver assessment entity",
           "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostNewDrivingAssessment"
+              }
+            },
             "application/xml": {
               "schema": {
                 "$ref": "#/components/schemas/PostNewDrivingAssessment"
@@ -1186,11 +1191,6 @@
               }
             },
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostNewDrivingAssessment"
-              }
-            },
-            "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/PostNewDrivingAssessment"
               }
@@ -1634,6 +1634,21 @@
             "type": "integer",
             "description": "Does person need to present health certificate",
             "format": "int32"
+          },
+          "bringsNewPhoto": {
+            "type": "integer",
+            "description": "Applicant will bring new photo for license",
+            "format": "int32"
+          },
+          "sendLicenseInMail": {
+            "type": "integer",
+            "description": "Applicant has asked to send license in mail",
+            "format": "int32"
+          },
+          "sendToAddress": {
+            "type": "string",
+            "description": "Address to send license to",
+            "nullable": true
           }
         },
         "additionalProperties": false,

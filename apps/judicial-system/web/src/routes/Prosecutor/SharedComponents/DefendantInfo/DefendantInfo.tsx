@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
-import { Case, CaseGender } from '@island.is/judicial-system/types'
+import { CaseGender } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -138,6 +139,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           <Input
             data-testid="nationalId"
             name="accusedNationalId"
+            autoComplete="off"
             label={formatMessage(core.nationalId)}
             placeholder={formatMessage(core.nationalId)}
             defaultValue={workingCase.accusedNationalId}
@@ -151,6 +153,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
         <Input
           data-testid="accusedName"
           name="accusedName"
+          autoComplete="off"
           label={formatMessage(core.fullName)}
           placeholder={formatMessage(core.fullName)}
           defaultValue={workingCase.accusedName}
@@ -183,6 +186,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
       <Input
         data-testid="accusedAddress"
         name="accusedAddress"
+        autoComplete="off"
         label={formatMessage(core.addressOrResidence)}
         placeholder={formatMessage(core.addressOrResidence)}
         defaultValue={workingCase.accusedAddress}

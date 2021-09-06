@@ -11,10 +11,7 @@ import {
   FormContentContainer,
   CourtCaseFactsAndLegalArgumentsAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
-import {
-  getConclusion,
-  getAppealDecisionText,
-} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   formatDate,
   formatCustodyRestrictions,
@@ -29,10 +26,12 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  Case,
   CaseAppealDecision,
   CaseDecision,
   CaseType,
+} from '@island.is/judicial-system/types'
+import type {
+  Case,
   RequestSignatureResponse,
 } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
@@ -170,12 +169,9 @@ export const Confirmation: React.FC = () => {
                 </Text>
               </Box>
               <Box marginBottom={3}>
-                {getConclusion(workingCase, true)}
-                {workingCase.conclusion && (
-                  <Box marginTop={1}>
-                    <Text variant="intro">{workingCase.conclusion}</Text>
-                  </Box>
-                )}
+                <Box marginTop={1}>
+                  <Text variant="intro">{workingCase.conclusion}</Text>
+                </Box>
               </Box>
             </Box>
             <Box component="section" marginBottom={7}>

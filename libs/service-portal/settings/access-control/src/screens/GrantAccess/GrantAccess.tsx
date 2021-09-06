@@ -16,7 +16,11 @@ import {
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { Mutation, Query } from '@island.is/api/schema'
-import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
+import {
+  IntroHeader,
+  ServicePortalPath,
+  m,
+} from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
@@ -101,10 +105,7 @@ function GrantAccess() {
   return (
     <Box>
       <IntroHeader
-        title={defineMessage({
-          id: 'service.portal.settings.accessControl:grant-title',
-          defaultMessage: 'Veita aðgang',
-        })}
+        title={m.accessControlGrant}
         intro={defineMessage({
           id: 'service.portal.settings.accessControl:grant-intro',
           defaultMessage:
