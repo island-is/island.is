@@ -11,9 +11,9 @@ target 'IslandApp' do
   use_unimodules!(
     modules_paths: ['../../node_modules'],
     exclude: [
-      'unimodules-sensors-interface',
-      'unimodules-face-detector-interface',
-      'unimodules-task-manager-interface'
+      # 'unimodules-sensors-interface',
+      # 'unimodules-face-detector-interface',
+      # 'unimodules-task-manager-interface'
     ]
   )
 

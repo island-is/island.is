@@ -151,7 +151,7 @@ export const en: TranslatedMessages = {
   'walletPass.screenTitle': 'Pass',
 
   // license scanner
-  'licenseScanner.title': 'Scan driver license',
+  'licenseScanner.title': 'Scan barcode',
   'licenseScanner.helperMessage': 'Point device at barcode',
   'licenseScanner.awaitingPermission': 'Asking for camera permissions',
   'licenseScanner.noCameraAccess': 'Camera not available',
