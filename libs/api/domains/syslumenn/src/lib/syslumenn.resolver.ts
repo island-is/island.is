@@ -4,7 +4,7 @@ import { Homestay } from './models/homestay'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { SyslumennService } from './syslumenn.service'
 
-const cacheTime = process.env.CACHE_TIME || 5
+const cacheTime = process.env.CACHE_TIME || 300
 
 const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 

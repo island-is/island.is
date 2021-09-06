@@ -1,5 +1,4 @@
 import React from 'react'
-// import Illustration from './TempIllustration'
 import {
   GridContainer,
   GridRow,
@@ -60,7 +59,7 @@ export const IntroductionSection = ({
             alignItems="center"
             justifyContent="center"
           >
-            <img src={illustrationSvg} alt="" />
+            <img src={illustrationSvg} alt="" role="presentation" />
           </Box>
         </GridColumn>
         <GridColumn
