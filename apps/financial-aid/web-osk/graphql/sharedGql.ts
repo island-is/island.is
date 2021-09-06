@@ -16,24 +16,20 @@ export const CreateApplicationEventQuery = gql`
   }
 `
 
+export const CreateApplicationFiles = gql`
+  mutation createApplicationFiles($input: CreateApplicationFilesInput!) {
+    createApplicationFiles(input: $input) {
+      success
+    }
+  }
+`
+
 export const GetMunicipalityQuery = gql`
   query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
     municipality(input: $input) {
       id
       name
       settings
-    }
-  }
-`
-
-export const GetApplicationEventQuery = gql`
-  query GetApplicationEventQuery($input: ApplicationEventInput!) {
-    applicationEvents(input: $input) {
-      id
-      applicationId
-      comment
-      state
-      created
     }
   }
 `
@@ -59,6 +55,14 @@ export const CurrentUserQuery = gql`
         homeCircumstances
         usePersonalTaxCredit
       }
+    }
+  }
+`
+
+export const UpdateApplicationMutation = gql`
+  mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
+    updateApplication(input: $input) {
+      id
     }
   }
 `

@@ -3,21 +3,23 @@ import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
 import {
-  Case as TCase,
   CaseState,
   CaseTransition,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseGender,
-  User as TUser,
   CaseDecision,
   NotificationType,
   CaseType,
   UserRole,
   AccusedPleaDecision,
-  Institution as TInstitution,
   SessionArrangements,
+} from '@island.is/judicial-system/types'
+import type {
+  User as TUser,
+  Case as TCase,
+  Institution as TInstitution,
 } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
@@ -495,7 +497,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(4)
+        expect(response.body.length).toBe(5)
       })
   })
 })

@@ -7,6 +7,7 @@ import { Op } from 'sequelize'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import {
+  ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
   User,
@@ -38,7 +39,7 @@ export class ApplicationService {
     })
   }
 
-  getAll(): Promise<ApplicationModel[]> {
+  async getAll(): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({ order: [['modified', 'DESC']] })
   }
 
@@ -87,22 +88,24 @@ export class ApplicationService {
     const appModel = await this.applicationModel.create(application)
 
     //Create applicationEvent
-    const eventModel = await this.applicationEventService.create({
+    await this.applicationEventService.create({
       applicationId: appModel.id,
-      state: appModel.state,
-      comment: null,
+      eventType: ApplicationEventType[appModel.state.toUpperCase()],
     })
 
     //Create file
     if (application.files) {
-      const fileModel = await application.files.map((f) => {
-        this.fileService.createFile({
+      const promises = application.files.map((f) => {
+        return this.fileService.createFile({
           applicationId: appModel.id,
           name: f.name,
           key: f.key,
           size: f.size,
+          type: f.type,
         })
       })
+
+      await Promise.all(promises)
     }
 
     return appModel
@@ -126,8 +129,8 @@ export class ApplicationService {
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
       applicationId: id,
-      state: update.state,
-      comment: update.rejection,
+      eventType: ApplicationEventType[update.state.toUpperCase()],
+      comment: update?.rejection || update?.amount?.toLocaleString('de-DE'),
     })
 
     return { numberOfAffectedRows, updatedApplication }

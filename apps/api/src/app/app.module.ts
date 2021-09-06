@@ -207,8 +207,6 @@ const autoSchemaFile = environment.production
       },
     }),
     FinanceModule.register({
-      username: environment.fjarmalDomain.username,
-      password: environment.fjarmalDomain.password,
       ttl: environment.fjarmalDomain.ttl,
       downloadServiceBaseUrl: environment.downloadService.baseUrl,
       xroadApiPath: environment.fjarmalDomain.xroadApiPath,
