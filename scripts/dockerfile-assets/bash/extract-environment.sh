@@ -19,16 +19,16 @@ function extract_environment() {
   for env_name in $env_names; do
     env_value=${!env_name}
 
-    if [[ ! -z "$env_value" ]]; then
+    if [[ -n "$env_value" ]]; then
       environment=$(echo $environment | jq -Mc ". + {\"$env_name\": \"$env_value\"}")
     fi
   done
 
-  echo $environment
+  echo "$environment"
 }
 
 function find_placeholder() {
-  echo $(grep "$placeholder" "$file")
+  [[ -f "$file" ]] && grep "$placeholder" "$file"
 }
 
 function insert_environment() {
@@ -43,8 +43,7 @@ function insert_environment() {
 }
 
 function main() {
-  has_placeholder=$(find_placeholder)
-  if [[ ! -z "$has_placeholder" ]]; then
+  if find_placeholder; then
     echo "Extracting environment"
     environment=$(extract_environment)
 

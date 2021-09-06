@@ -1,8 +1,4 @@
-// import { AidtaxInfoListItem } from './veitaFinancialAidDefinitions'
-
-// import _taxInfo from './taxInfo.json'
-
-export const _taxInfo = {
+export const taxInfoNumbers = {
   '2021': {
     taxPercentage: 31.45,
     personalTaxAllowance: 50792,
@@ -23,7 +19,7 @@ export const calculateAidFinalAmount = (
   usePersonalTaxAllowance: boolean,
   currentYear: string,
 ): number => {
-  const taxInfoYear: TaxInfoYear = _taxInfo
+  const taxInfoYear: TaxInfoYear = taxInfoNumbers
   const taxInfo = taxInfoYear[currentYear]
 
   const taxPercentage = taxInfo.taxPercentage / 100
@@ -45,7 +41,7 @@ export const calulateTaxOfAmount = (
   amount: number,
   currentYear: string,
 ): number => {
-  const taxInfoYear: TaxInfoYear = _taxInfo
+  const taxInfoYear: TaxInfoYear = taxInfoNumbers
   const taxInfo = taxInfoYear[currentYear]
 
   const taxPercentage = taxInfo.taxPercentage / 100
@@ -58,7 +54,7 @@ export const calulatePersonalTaxAllowanceUsed = (
   usePersonalTaxAllowance: boolean,
   currentYear: string,
 ): number => {
-  const taxInfoYear: TaxInfoYear = _taxInfo
+  const taxInfoYear: TaxInfoYear = taxInfoNumbers
   const taxInfo = taxInfoYear[currentYear]
 
   const personalTaxAllowance = taxInfo.personalTaxAllowance

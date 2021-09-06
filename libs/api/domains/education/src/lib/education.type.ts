@@ -15,36 +15,30 @@ export interface ExamFamilyOverview {
 }
 
 interface Grade {
-  grade: string
-  weight?: string
+  grade?: string
+  label: string
+  weight?: number
 }
 
-interface BaseGrade {
-  grade: string
+interface GradeType {
+  label: string
+  serialGrade?: Grade
+  elementaryGrade?: Grade
+}
+
+interface CourseGrade {
+  label: string
+  gradeSum?: GradeType
   competence: string
   competenceStatus: string
-  progressText: string
-}
-
-interface MathGrade extends BaseGrade {
-  calculation: Grade
-  geometry: Grade
-  ratiosAndPercentages: Grade
-  algebra: Grade
-  numberComprehension: Grade
-  wordAndNumbers: string
-}
-
-interface LanguageGrade extends BaseGrade {
-  reading: Grade
-  grammar: Grade
+  progressText?: Grade
+  grades: GradeType[]
+  wordAndNumbers?: Grade
 }
 
 interface GradeResult {
   studentYear: string
-  englishGrade?: LanguageGrade
-  icelandicGrade?: LanguageGrade
-  mathGrade?: MathGrade
+  courses: CourseGrade[]
 }
 
 export interface ExamResult {

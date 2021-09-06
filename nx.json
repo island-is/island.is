@@ -26,13 +26,15 @@
           "schemas/openapi-generator",
           "schemas/build-graphql-schema",
           "schemas/codegen"
-        ]
+        ],
+        "cacheDirectory": ".cache/nx"
       }
     },
     "docker-test": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": []
+        "cacheableOperations": [],
+        "cacheDirectory": ".cache/nx"
       }
     }
   },
@@ -78,9 +80,6 @@
       "tags": []
     },
     "api-domains-auth": {
-      "tags": []
-    },
-    "api-domains-cms": {
       "tags": []
     },
     "api-domains-communications": {
@@ -137,6 +136,9 @@
     "api-domains-payment": {
       "tags": []
     },
+    "api-domains-payment-schedule": {
+      "tags": []
+    },
     "api-domains-regulations": {
       "tags": []
     },
@@ -147,9 +149,6 @@
       "tags": []
     },
     "api-domains-temporary-voter-registry": {
-      "tags": []
-    },
-    "api-domains-translations": {
       "tags": []
     },
     "api-domains-user-profile": {
@@ -317,6 +316,9 @@
     "clients-payment": {
       "tags": []
     },
+    "clients-payment-schedule": {
+      "tags": []
+    },
     "clients-regulations": {
       "tags": []
     },
@@ -330,6 +332,12 @@
       "tags": []
     },
     "clients-zendesk": {
+      "tags": []
+    },
+    "cms": {
+      "tags": []
+    },
+    "cms-translations": {
       "tags": []
     },
     "content-search-index-manager": {
@@ -518,6 +526,9 @@
       "tags": []
     },
     "reference-next-app": {
+      "tags": []
+    },
+    "regulations": {
       "tags": []
     },
     "service-portal": {

@@ -16,7 +16,7 @@ export enum ServicePortalPath {
 
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
-  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:nationalId',
+  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:nationalId(\\d+)',
   SettingsPersonalInformation = '/stillingar/personuupplysingar',
   SettingsPersonalInformationEditPhoneNumber = '/stillingar/personuupplysingar/breyta-simanumeri',
   SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
@@ -39,6 +39,7 @@ export enum ServicePortalPath {
   FinanceStatus = '/fjarmal/stada',
   FinanceTransactions = '/fjarmal/faerslur',
   FinanceEmployeeClaims = '/fjarmal/laungreidendakrofur',
+  FinanceLocalTax = '/fjarmal/utsvar',
   FinanceBills = '/fjarmal/greidslusedlar-og-greidslukvittanir',
   FinanceVehicles = 'https://mitt.samgongustofa.is/',
   FinancePayments = '/greidslur',

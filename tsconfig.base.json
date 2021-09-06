@@ -48,7 +48,6 @@
         "libs/api/domains/application/src/index.ts"
       ],
       "@island.is/api/domains/auth": ["libs/api/domains/auth/src/index.ts"],
-      "@island.is/api/domains/cms": ["libs/api/domains/cms/src/index.ts"],
       "@island.is/api/domains/communications": [
         "libs/api/domains/communications/src/index.ts"
       ],
@@ -109,6 +108,9 @@
       "@island.is/api/domains/payment": [
         "libs/api/domains/payment/src/index.ts"
       ],
+      "@island.is/api/domains/payment-schedule": [
+        "libs/api/domains/payment-schedule/src/index.ts"
+      ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
@@ -118,9 +120,6 @@
       ],
       "@island.is/api/domains/temporary-voter-registry": [
         "libs/api/domains/temporary-voter-registry/src/index.ts"
-      ],
-      "@island.is/api/domains/translations": [
-        "libs/api/domains/translations/src/index.ts"
       ],
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
@@ -244,6 +243,9 @@
         "libs/clients/national-registry/v2/src/index.ts"
       ],
       "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
+      "@island.is/clients/payment-schedule": [
+        "libs/clients/payment-schedule/src/index.ts"
+      ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
@@ -251,6 +253,8 @@
       "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
+      "@island.is/cms": ["libs/cms/src/index.ts"],
+      "@island.is/cms-translations": ["libs/cms-translations/src/index.ts"],
       "@island.is/content-search-index-manager": [
         "libs/content-search-index-manager/src/index.ts"
       ],
@@ -327,6 +331,8 @@
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
+      "@island.is/regulations": ["libs/regulations/src/index.ts"],
+      "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],

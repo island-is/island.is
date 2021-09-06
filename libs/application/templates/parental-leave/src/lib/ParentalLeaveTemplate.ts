@@ -259,6 +259,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_APPROVAL]: {
@@ -278,7 +279,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.EmployerApproval),
                 ),
               read: {
-                answers: ['periods', 'selectedChild', 'payments'],
+                answers: [
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                  'firstPeriodStart',
+                ],
                 externalData: ['children'],
               },
               actions: [
@@ -780,12 +786,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
+    // If the applicant is its own employer, we need to give it the `ASSIGNEE` role to be able to continue the process
+    if (id === application.applicant && application.assignees.includes(id)) {
+      return Roles.ASSIGNEE
+    }
+
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
+
     if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
+
     return undefined
   },
   answerValidators,

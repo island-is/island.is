@@ -66,6 +66,7 @@ type ScreenProps = {
   prevScreen(): void
   screen: FormScreen
   renderLastScreenButton?: boolean
+  renderLastScreenBackButton?: boolean
   goToScreen: (id: string) => void
 }
 
@@ -104,6 +105,7 @@ const Screen: FC<ScreenProps> = ({
   numberOfScreens,
   prevScreen,
   renderLastScreenButton,
+  renderLastScreenBackButton,
   screen,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
@@ -117,6 +119,7 @@ const Screen: FC<ScreenProps> = ({
       resolver({ formValue, context, formatMessage }),
     context: { dataSchema, formNode: screen },
   })
+  const [fieldLoadingState, setFieldLoadingState] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const refetch = useContext<() => void>(RefetchContext)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -245,7 +248,8 @@ const Screen: FC<ScreenProps> = ({
     window.scrollTo(0, target)
   }, [activeScreenIndex, isMobile])
 
-  const isLoadingOrPending = loading || loadingSubmit || isSubmitting
+  const isLoadingOrPending =
+    fieldLoadingState || loading || loadingSubmit || isSubmitting
 
   return (
     <FormProvider {...hookFormData}>
@@ -291,6 +295,7 @@ const Screen: FC<ScreenProps> = ({
               <FormMultiField
                 answerQuestions={answerQuestions}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
+                setFieldLoadingState={setFieldLoadingState}
                 errors={dataSchemaOrApiErrors}
                 multiField={screen}
                 application={application}
@@ -311,6 +316,7 @@ const Screen: FC<ScreenProps> = ({
               <FormField
                 autoFocus
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
+                setFieldLoadingState={setFieldLoadingState}
                 errors={dataSchemaOrApiErrors}
                 field={screen}
                 application={application}
@@ -320,10 +326,13 @@ const Screen: FC<ScreenProps> = ({
             )}
           </Box>
         </GridColumn>
+
         <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
+
         <ScreenFooter
           application={application}
           renderLastScreenButton={renderLastScreenButton}
+          renderLastScreenBackButton={renderLastScreenBackButton}
           activeScreenIndex={activeScreenIndex}
           numberOfScreens={numberOfScreens}
           mode={mode}

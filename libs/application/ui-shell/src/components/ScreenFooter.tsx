@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/core'
 
 import * as styles from './ScreenFooter.treat'
+
 interface FooterProps {
   application: Application
   mode?: FormModes
@@ -22,6 +23,7 @@ interface FooterProps {
   loading: boolean
   canProceed: boolean
   renderLastScreenButton?: boolean
+  renderLastScreenBackButton?: boolean
 }
 
 interface SubmitButton {
@@ -62,12 +64,14 @@ export const ScreenFooter: FC<FooterProps> = ({
   numberOfScreens,
   submitField,
   renderLastScreenButton,
+  renderLastScreenBackButton,
 }) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
-  const showGoBack = activeScreenIndex > 0 && !isLastScreen
+  const showGoBack =
+    activeScreenIndex > 0 && (!isLastScreen || renderLastScreenBackButton)
 
   if (
     (isLastScreen && !renderLastScreenButton) ||
@@ -83,7 +87,7 @@ export const ScreenFooter: FC<FooterProps> = ({
       return (
         <Button
           icon="checkmarkCircle"
-          disabled={!canProceed || loading}
+          loading={!canProceed || loading}
           type="submit"
         >
           {formatText(coreMessages.buttonSubmit, application, formatMessage)}
@@ -95,11 +99,12 @@ export const ScreenFooter: FC<FooterProps> = ({
       <>
         {submitField?.actions.map(({ event, type, name }) => {
           const buttonConfig = submitButtonConfig[type]
+
           return (
             <Box key={`cta-${event}`} marginX={1}>
               <Button
                 type="submit"
-                disabled={!canProceed || loading}
+                loading={!canProceed || loading}
                 colorScheme={buttonConfig.colorScheme}
                 id={typeof event === 'object' ? event.type : event}
                 variant={buttonConfig.variant}
@@ -133,7 +138,7 @@ export const ScreenFooter: FC<FooterProps> = ({
             ) : isLastScreen ? (
               <Box display="inlineFlex">
                 <Button
-                  disabled={loading}
+                  loading={loading}
                   onClick={() => history.push('/minarsidur')}
                   icon="arrowForward"
                   type="button"
@@ -148,7 +153,7 @@ export const ScreenFooter: FC<FooterProps> = ({
             ) : (
               <Box display="inlineFlex">
                 <Button
-                  disabled={!canProceed || loading}
+                  loading={!canProceed || loading}
                   icon="arrowForward"
                   type="submit"
                 >
@@ -159,7 +164,11 @@ export const ScreenFooter: FC<FooterProps> = ({
           </Box>
           <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
             {showGoBack && (
-              <Button variant="ghost" onClick={goBack}>
+              <Button
+                variant="ghost"
+                onClick={goBack}
+                disabled={!canProceed || loading}
+              >
                 {formatMessage(coreMessages.buttonBack)}
               </Button>
             )}
@@ -171,6 +180,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                 variant="ghost"
                 icon="arrowBack"
                 onClick={goBack}
+                disabled={!canProceed || loading}
               />
             )}
           </Box>

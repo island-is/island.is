@@ -81,6 +81,14 @@ export const routesTemplate = {
     is: '/s',
     en: '/en/o',
   },
+  opendatapage: {
+    is: '/gagnatorg',
+    en: '/en/gagnatorg',
+  },
+  opendatasubpage: {
+    is: '/gagnatorg/[slug]',
+    en: '/en/gagnatorg/[slug]',
+  },
   projectsubpage: {
     is: '/v/[slug]/[subSlug]',
     en: '/en/p/[slug]/[subSlug]',
@@ -104,10 +112,6 @@ export const routesTemplate = {
   organizationnewsoverview: {
     is: '/s/[organization]/frett',
     en: '/en/o/[organization]/news',
-  },
-  auction: {
-    is: '/s/syslumenn/uppbod/[id]',
-    en: '',
   },
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',

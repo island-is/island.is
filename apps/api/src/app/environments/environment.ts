@@ -93,8 +93,6 @@ const devConfig = {
       'https://reglugerdir-api.herokuapp.com/api/v1',
   },
   fjarmalDomain: {
-    username: process.env.FINANCE_USER ?? '',
-    password: process.env.FINANCE_PASS ?? '',
     xroadApiPath:
       process.env.XROAD_FINANCES_PATH ??
       'IS-DEV/GOV/10021/FJS-Public/financeIsland',
@@ -137,10 +135,19 @@ const devConfig = {
   audit: {
     defaultNamespace: '@island.is/api',
   },
+  paymentSchedule: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId:
+      process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID ??
+      'IS-DEV/GOV/10021/FJS-Public',
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+    username: process.env.PAYMENT_SCHEDULE_USER,
+    password: process.env.PAYMENT_SCHEDULE_PASSWORD,
+  },
   islykill: {
     certificateBase64: process.env.ISLYKILL_SERVICE_CERT_BASE64,
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-  },
+  }
 }
 
 const prodConfig = {
@@ -255,8 +262,6 @@ const prodConfig = {
     baseApiUrl: process.env.PARTY_LETTER_REGISTRY_BASE_API_URL,
   },
   fjarmalDomain: {
-    username: process.env.FINANCE_USER ?? '',
-    password: process.env.FINANCE_PASS ?? '',
     xroadApiPath: process.env.XROAD_FINANCES_PATH,
     ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
   },
@@ -269,6 +274,13 @@ const prodConfig = {
     defaultNamespace: '@island.is/api',
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'api',
+  },
+  paymentSchedule: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId: process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID,
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+    username: process.env.PAYMENT_SCHEDULE_USER,
+    password: process.env.PAYMENT_SCHEDULE_PASSWORD,
   },
   islykill: {
     certificateBase64: process.env.ISLYKILL_SERVICE_CERT_BASE64,

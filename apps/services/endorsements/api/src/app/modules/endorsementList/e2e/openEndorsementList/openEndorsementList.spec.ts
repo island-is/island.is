@@ -35,13 +35,13 @@ describe('openEndorsementList', () => {
       statusCode: 404,
     })
   })
-  it(`PUT /endorsement-list/:listId/open should not be able to open endorsement lists for others`, async () => {
+  it(`PUT /endorsement-list/:listId/open should fail to open existing closed endorsement list if not in any access group`, async () => {
     const app = await getAuthenticatedApp({
-      nationalId: authNationalId,
+      nationalId: '0000000000',
       scope: [EndorsementsScope.main],
     })
     const response = await request(app.getHttpServer())
-      .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba017/open')
+      .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba018/open')
       .send()
       .expect(405)
 

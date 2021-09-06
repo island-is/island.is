@@ -1,15 +1,12 @@
 import React, { useContext } from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import {
-  Case,
   CaseAppealDecision,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system/types'
-import {
-  getConclusion,
-  getAppealDecisionText,
-} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import type { Case } from '@island.is/judicial-system/types'
+import { getAppealDecisionText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
@@ -55,14 +52,9 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </Text>
         </Box>
         <Box marginBottom={3}>
-          {(workingCase.type === CaseType.CUSTODY ||
-            workingCase.type === CaseType.TRAVEL_BAN) &&
-            getConclusion(workingCase)}
-          {workingCase.conclusion && (
-            <Box marginTop={1}>
-              <Text>{workingCase.conclusion}</Text>
-            </Box>
-          )}
+          <Box marginTop={1}>
+            <Text>{workingCase.conclusion}</Text>
+          </Box>
         </Box>
         <Box marginBottom={1}>
           <Text variant="h3">

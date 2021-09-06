@@ -1,6 +1,6 @@
 import { FieldBaseProps, FormText } from '@island.is/application/core'
 import { NationalRegistryUser, UserProfile } from '@island.is/api/schema'
-import { StatusTypes } from './constants'
+import { StatusTypes } from './shared'
 
 export interface Status {
   type: StatusTypes

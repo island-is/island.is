@@ -5,7 +5,7 @@ import { FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
 import { TemplateAPIModule } from '@island.is/application/template-api-modules'
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { TranslationsModule } from '@island.is/api/domains/translations'
+import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { SigningModule } from '@island.is/dokobit-signing'
 import { AuditModule } from '@island.is/nest/audit'
 
@@ -56,7 +56,7 @@ if (process.env.INIT_SCHEMA === 'true') {
     FileStorageModule.register(environment.fileStorage),
     BullModule,
     SigningModule.register(environment.signingOptions),
-    TranslationsModule,
+    CmsTranslationsModule,
   ],
   controllers: [ApplicationController],
   providers: [
