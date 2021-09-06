@@ -47,9 +47,13 @@ export const AffectingRegulations = memo((props: AffectingRegulationsProps) => {
           dateTo: formatDate(to),
         })
 
+  const affectingLinksPrefix =
+    (affectingRegulations.length > 1 && txt('affectingLinkPrefixPlural')) ||
+    txt('affectingLinkPrefix')
+
   return (
     <div className={s.diffInfo}>
-      {interpolate(txt('affectingLinkPrefix'), { dates })}{' '}
+      {interpolate(affectingLinksPrefix, { dates }) + ' '}
       {affectingRegulations.map(({ name, title }, i) => {
         const separator =
           i === 0
