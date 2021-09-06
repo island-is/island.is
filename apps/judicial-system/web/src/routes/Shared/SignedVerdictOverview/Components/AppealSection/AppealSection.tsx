@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { Case, CaseAppealDecision } from '@island.is/judicial-system/types'
+import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import * as styles from './AppealSection.treat'
 import { BlueBox } from '@island.is/judicial-system-web/src/shared-components'
 import InfoBox from '@island.is/judicial-system-web/src/shared-components/InfoBox/InfoBox'
@@ -11,6 +13,12 @@ import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
 import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
 import { useEffectOnce } from 'react-use'
 import ProsecutorAppealDatePicker from '../Prosecutor/ProsecutorAppealDatePicker'
+import {
+  capitalize,
+  formatAccusedByGender,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 
 interface Props {
   workingCase: Case
@@ -28,6 +36,7 @@ const AppealSection: React.FC<Props> = (props) => {
     withdrawAccusedAppealDate,
     withdrawProsecutorAppealDate,
   } = props
+  const { formatMessage } = useIntl()
 
   const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
 
@@ -56,6 +65,44 @@ const AppealSection: React.FC<Props> = (props) => {
               text={`Kærufrestur rann út ${getAppealEndDate(
                 workingCase.rulingDate,
               )}`}
+              fluid
+              light
+            />
+          </BlueBox>
+        </div>
+      )}
+      {workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL && (
+        <div className={styles.appealContainer}>
+          <BlueBox>
+            <InfoBox
+              text={formatMessage(signedVerdictOverview.accusedAppealed, {
+                genderedAccused: capitalize(
+                  formatAccusedByGender(workingCase.accusedGender),
+                ),
+                courtEndTime: `${formatDate(
+                  workingCase.courtEndTime,
+                  'PP',
+                )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
+              })}
+              fluid
+              light
+            />
+          </BlueBox>
+        </div>
+      )}
+      {workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL && (
+        <div className={styles.appealContainer}>
+          <BlueBox>
+            <InfoBox
+              text={formatMessage(signedVerdictOverview.prosecutorAppealed, {
+                genderedAccused: capitalize(
+                  formatAccusedByGender(workingCase.accusedGender),
+                ),
+                courtEndTime: `${formatDate(
+                  workingCase.courtEndTime,
+                  'PP',
+                )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
+              })}
               fluid
               light
             />

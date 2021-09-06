@@ -21,16 +21,6 @@ td {
   text-align: left;
 }
 
-.errorMessage {
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 250ms ease;
-}
-
-.showErrorMessage {
-  max-height: 50px;
-}
-
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -151,4 +141,8 @@ input[type='number'] {
   content: 'kr.';
   display: inline-block;
   margin-left: 8px;
+}
+
+.logOutButtonHover:hover > svg {
+  transform: translate3d(5px, 0px, 0px);
 }

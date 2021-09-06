@@ -1,5 +1,5 @@
 import { Input } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import React, { useState } from 'react'
 import {
   removeTabsValidateAndSet,

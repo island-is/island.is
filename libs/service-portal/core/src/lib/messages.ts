@@ -373,6 +373,10 @@ export const m = defineMessages({
     id: 'service.portal:finance-employee-claims',
     defaultMessage: 'Laungreiðendakröfur',
   },
+  financeLocalTax: {
+    id: 'service.portal:finance-local-tax',
+    defaultMessage: 'Útsvar',
+  },
   actions: {
     id: 'service.portal:actions',
     defaultMessage: 'Aðgerðir',
@@ -418,6 +422,14 @@ export const m = defineMessages({
   accessControl: {
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',
+  },
+  accessControlGrant: {
+    id: 'service.portal:accessControlGrant',
+    defaultMessage: 'Veita aðgang',
+  },
+  accessControlAccess: {
+    id: 'service.portal:accessControlAccess',
+    defaultMessage: 'Aðgangur',
   },
   educationStudentAssessment: {
     id: 'service.portal:educationStudentAssessment',

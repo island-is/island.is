@@ -10,13 +10,12 @@ import {
   DocumentTypes,
   DocumentsListTypes,
   TapsControlTypes,
+  AnnualStatusTypes,
 } from './finance.types'
 
 export const FINANCE_OPTIONS = 'FINANCE_OPTIONS'
 
 export interface FinanceServiceOptions {
-  username: string
-  password: string
   xroadApiPath: string
   xroadBaseUrl: string
   xroadClientId: string
@@ -37,20 +36,20 @@ export class FinanceService extends RESTDataSource {
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
     request.headers.set('X-Road-Client', this.options.xroadClientId)
-    request.headers.set(
-      'Authorization',
-      `Basic ${Base64.encode(
-        `${this.options.username}:${this.options.password}`,
-      )}`,
-    )
   }
 
-  async getFinanceStatus(nationalID: string): Promise<FinanceStatus | null> {
+  async getFinanceStatus(
+    nationalID: string,
+    authToken: string,
+  ): Promise<FinanceStatus | null> {
     const response = await this.get<FinanceStatus | null>(
       `/customerStatusByOrganization?nationalID=${nationalID}`,
       {},
       {
         cacheOptions: { ttl: this.options.ttl },
+        headers: {
+          Authorization: authToken,
+        },
       },
     )
     return response
@@ -60,12 +59,16 @@ export class FinanceService extends RESTDataSource {
     nationalID: string,
     OrgID: string,
     chargeTypeID: string,
+    authToken: string,
   ): Promise<FinanceStatusDetails | null> {
     const response = await this.get<FinanceStatusDetails | null>(
       `/customerStatusByOrganizationDetails?nationalID=${nationalID}&OrgID=${OrgID}&chargeTypeID=${chargeTypeID}`,
       {},
       {
         cacheOptions: { ttl: this.options.ttl },
+        headers: {
+          Authorization: authToken,
+        },
       },
     )
     return response
@@ -73,12 +76,16 @@ export class FinanceService extends RESTDataSource {
 
   async getCustomerChargeType(
     nationalID: string,
+    authToken: string,
   ): Promise<CustomerChargeType | null> {
     const response = await this.get<CustomerChargeType | null>(
       `/customerChargeType?nationalID=${nationalID}`,
       {},
       {
         cacheOptions: { ttl: this.options.ttl },
+        headers: {
+          Authorization: authToken,
+        },
       },
     )
     return response
@@ -89,6 +96,7 @@ export class FinanceService extends RESTDataSource {
     chargeTypeID: string[],
     dayFrom: string,
     dayTo: string,
+    authToken: string,
   ): Promise<CustomerRecords | null> {
     const chargeTypeArray = chargeTypeID.map((item) => `&chargeTypeID=${item}`)
     const chargeTypeString = chargeTypeArray.join('')
@@ -97,6 +105,9 @@ export class FinanceService extends RESTDataSource {
       {},
       {
         cacheOptions: { ttl: this.options.ttl },
+        headers: {
+          Authorization: authToken,
+        },
       },
     )
     return response
@@ -107,12 +118,16 @@ export class FinanceService extends RESTDataSource {
     dayFrom: string,
     dayTo: string,
     listPath: string,
+    authToken: string,
   ): Promise<DocumentsListTypes> {
     const response = await this.get<DocumentsListTypes>(
       `/documentsList/${listPath}?nationalID=${nationalID}&dateFrom=${dayFrom}&dateTo=${dayTo}`,
       {},
       {
         cacheOptions: { ttl: this.options.ttl },
+        headers: {
+          Authorization: authToken,
+        },
       },
     )
     return response
@@ -121,23 +136,51 @@ export class FinanceService extends RESTDataSource {
   async getFinanceDocument(
     nationalID: string,
     documentID: string,
+    authToken: string,
   ): Promise<DocumentTypes> {
     const response = await this.get<DocumentTypes>(
       `/document?nationalID=${nationalID}&documentID=${documentID}`,
       {},
       {
         cacheOptions: { ttl: this.options.ttl },
+        headers: {
+          Authorization: authToken,
+        },
       },
     )
     return response
   }
 
-  async getCustomerTapControl(nationalID: string): Promise<TapsControlTypes> {
+  async getAnnualStatusDocument(
+    nationalID: string,
+    year: string,
+    authToken: string,
+  ): Promise<AnnualStatusTypes> {
+    const response = await this.get<AnnualStatusTypes>(
+      `/annualStatusDocument?nationalID=${nationalID}&year=${year}`,
+      {},
+      {
+        cacheOptions: { ttl: this.options.ttl },
+        headers: {
+          Authorization: authToken,
+        },
+      },
+    )
+    return response
+  }
+
+  async getCustomerTapControl(
+    nationalID: string,
+    authToken: string,
+  ): Promise<TapsControlTypes> {
     const response = await this.get<TapsControlTypes>(
       `/customerTapsControl?nationalID=${nationalID}`,
       {},
       {
         cacheOptions: { ttl: this.options.ttl },
+        headers: {
+          Authorization: authToken,
+        },
       },
     )
     return response

@@ -101,3 +101,8 @@ export const tooltipLargeContainer = style({
   marginLeft: 'auto',
   paddingLeft: theme.spacing[2],
 })
+
+export const fixJumpingContentFromFontWeightToggle = style({
+  visibility: 'hidden',
+  height: 0,
+})

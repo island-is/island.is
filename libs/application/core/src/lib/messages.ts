@@ -16,6 +16,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Senda',
     description: 'Submit',
   },
+  reviewButtonSubmit: {
+    id: 'application.system:reviewButton.submit',
+    defaultMessage: 'Vista',
+    description: 'Save',
+  },
   buttonApprove: {
     id: 'application.system:button.approve',
     defaultMessage: 'Samþykkja',
@@ -208,7 +213,7 @@ export const coreErrorMessages = defineMessages({
     description: 'Oops! Could not assign to the application',
   },
   couldNotAssignApplicationErrorDescription: {
-    id: 'application.system:could.not.assign.application.error.title',
+    id: 'application.system:could.not.assign.application.error.description',
     defaultMessage:
       'Villa koma upp við að tengjast umsókn og hefur hún verið skráð',
     description:

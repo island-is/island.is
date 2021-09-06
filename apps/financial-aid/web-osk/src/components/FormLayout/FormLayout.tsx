@@ -34,7 +34,7 @@ const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
   }, [activeSection])
 
   if (!isAuthenticated) {
-    return <Login />
+    return <Login headline="Skráðu þig inn" />
   }
   if (!user) {
     return null
@@ -46,7 +46,7 @@ const FormLayout = ({ children, activeSection, activeSubSection }: Props) => {
       background="purple100"
       className={styles.processContainer}
     >
-      {user.hasAppliedForPeriod ? (
+      {user.currentApplication ? (
         <HasApplied />
       ) : (
         <GridContainer className={styles.gridContainer}>

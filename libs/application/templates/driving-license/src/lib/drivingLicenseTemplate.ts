@@ -4,16 +4,12 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultStateLifeCycle,
   DefaultEvents,
 } from '@island.is/application/core'
-import { State } from 'xstate'
 import * as z from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
-import { useQuery, gql } from '@apollo/client'
-import { NestApplicationContext } from '@nestjs/core'
 
 type Events =
   | { type: DefaultEvents.SUBMIT }
@@ -46,7 +42,12 @@ const dataSchema = z.object({
     hasOtherDiseases: z.enum(['yes', 'no']),
   }),
   teacher: z.string().nonempty(),
-  willBringAlongData: z.array(z.enum(['certificate', 'picture'])).nonempty(),
+  willBringQualityPhoto: z.union([
+    z.array(z.enum(['yes', 'no'])),
+    z.enum(['yes', 'no']),
+  ]),
+  certificate: z.array(z.enum(['yes', 'no'])).nonempty(),
+  picture: z.array(z.enum(['yes', 'no'])).nonempty(),
 })
 
 const template: ApplicationTemplate<
@@ -55,14 +56,15 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
-  name: 'Umsókn um ökuskilríki',
+  name: 'Umsókn um fullnaðarskírteini',
   dataSchema,
+  readyForProduction: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
       [States.DRAFT]: {
         meta: {
-          name: 'Umsókn um ökuskilríki',
+          name: 'Umsókn um fullnaðarskírteini',
           progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
           roles: [
@@ -136,7 +138,7 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, application: Application): ApplicationRole {
+  mapUserToRole(): ApplicationRole {
     return 'applicant'
   },
 }

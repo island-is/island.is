@@ -1,6 +1,6 @@
-import * as z from 'zod'
-import { error } from './messages/error'
 import * as kennitala from 'kennitala'
+import * as z from 'zod'
+import { NO, YES } from '../constants'
 import {
   AccidentTypeEnum,
   AgricultureAccidentLocationEnum,
@@ -17,7 +17,7 @@ import {
   WorkAccidentTypeEnum,
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
-import { NO, YES } from '../constants'
+import { error } from './messages/error'
 
 export enum OnBehalf {
   MYSELF = 'myself',
@@ -91,6 +91,7 @@ export const AccidentNotificationSchema = z.object({
       WhoIsTheNotificationForEnum.JURIDICALPERSON,
       WhoIsTheNotificationForEnum.ME,
       WhoIsTheNotificationForEnum.POWEROFATTORNEY,
+      WhoIsTheNotificationForEnum.CHILDINCUSTODY,
     ]),
   }),
   attachments: z.object({
@@ -108,6 +109,7 @@ export const AccidentNotificationSchema = z.object({
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
   accidentDetails: z.object({
     dateOfAccident: z.string().min(1),
+    isHealthInsured: z.enum([YES, NO]),
     timeOfAccident: z
       .string()
       .refine((x) => (x ? isValid24HFormatTime(x) : false)),
@@ -200,12 +202,21 @@ export const AccidentNotificationSchema = z.object({
       .refine((x) => (x ? kennitala.isCompany(x) : false)),
     companyConfirmation: z.enum([YES]),
   }),
+  childInCustody: z.object({
+    name: z.string().min(1, error.required.defaultMessage),
+    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+    email: z.string().optional(),
+    phoneNumber: z.string().optional(),
+  }),
   powerOfAttorney: z.object({
     type: z.enum([
       PowerOfAttorneyUploadEnum.FORCHILDINCUSTODY,
       PowerOfAttorneyUploadEnum.UPLOADLATER,
       PowerOfAttorneyUploadEnum.UPLOADNOW,
     ]),
+  }),
+  comment: z.object({
+    description: z.string().optional(),
   }),
 })
 
