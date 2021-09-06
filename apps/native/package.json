@@ -13,6 +13,7 @@
     "detox:test:ios": "yarn detox:test -c ios"
   },
   "dependencies": {
+    "@fidm/x509": "1.2.1",
     "@formatjs/intl-datetimeformat": "4.1.6",
     "@formatjs/intl-getcanonicallocales": "1.7.1",
     "@formatjs/intl-locale": "2.4.33",
@@ -24,10 +25,9 @@
     "@react-native-firebase/perf": "12.1.0",
     "@react-native-segmented-control/segmented-control": "2.3.0",
     "@sentry/react-native": "2.5.2",
+    "@zxing/text-encoding": "0.9.0",
     "base45-js": "1.0.2",
     "cbor": "8.0.0",
-    "cbor-js": "0.1.0",
-    "cbor-web": "8.0.1",
     "cose-js": "0.6.0",
     "expo-barcode-scanner": "10.1.2",
     "expo-file-system": "11.0.2",
@@ -35,7 +35,7 @@
     "expo-image-loader": "2.1.1",
     "expo-local-authentication": "11.0.2",
     "expo-notifications": "0.11.6",
-    "fastestsmallesttextencoderdecoder": "1.0.22",
+    "node-libs-react-native": "1.2.1",
     "pako": "2.0.4",
     "react-intl": "5.20.4",
     "react-native-app-auth": "6.4.0",
@@ -56,7 +56,6 @@
     "react-native-unimodules": "0.13.3",
     "react-native-webview": "11.6.4",
     "rn-pdf-reader-js": "4.1.1",
-    "stream": "0.0.2",
     "styled-components": "5.3.0",
     "zustand": "3.5.4"
   },
@@ -77,6 +76,7 @@
     "react-native-flipper": "0.104.0"
   },
   "resolutions": {
-    "@types/react-native": "0.64.10"
+    "@types/react-native": "0.64.10",
+    "cbor": "8.0.0"
   }
 }

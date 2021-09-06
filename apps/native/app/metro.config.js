@@ -16,6 +16,12 @@ module.exports = (async () => {
           },
         }),
       },
+      resolver: {
+        extraNodeModules: {
+          ...require('node-libs-react-native'),
+          net: require.resolve('node-libs-react-native/mock/net'),
+        }
+      }
     },
     {
       debug: false,

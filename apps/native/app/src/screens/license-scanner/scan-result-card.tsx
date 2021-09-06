@@ -131,11 +131,13 @@ const Background = styled.Image`
 interface ScanResultCardProps {
   loading: boolean
   error?: boolean
+  valid?: boolean
   errorMessage?: string
-  birthDate?: Date;
+  birthDate?: string
   name?: string
   licenseNumber?: string
   photo?: string
+  data?: Array<{ key: string; value: any }>
   backgroundColor?: 'pink' | 'blue'
 }
 
@@ -143,10 +145,12 @@ export function ScanResultCard(props: ScanResultCardProps) {
   const {
     error,
     errorMessage,
+    valid,
     loading,
     birthDate,
     name,
     photo,
+    data,
     backgroundColor = 'pink',
   } = props
   const intl = useIntl()
@@ -157,9 +161,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
       <Background source={background} resizeMode="stretch" />
       <Header>
         <Detail>
-          <Title>
-            {intl.formatMessage({ id: 'licenseScannerResult.title' })}
-          </Title>
+          <Title>COVID-19 Certificate</Title>
           <Subtitle>
             <SubtitleIcon>
               {loading ? (
@@ -169,7 +171,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
                   size="small"
                   style={{ transform: [{ scale: 0.8 }] }}
                 />
-              ) : error ? (
+              ) : error || !valid ? (
                 <SubtitleImage source={danger} />
               ) : (
                 <SubtitleImage source={success} />
@@ -180,6 +182,8 @@ export function ScanResultCard(props: ScanResultCardProps) {
                 ? intl.formatMessage({ id: 'licenseScannerResult.loading' })
                 : error
                 ? intl.formatMessage({ id: 'licenseScannerResult.error' })
+                : !valid
+                ? 'Invalid or expired'
                 : intl.formatMessage({ id: 'licenseScannerResult.valid' })}
             </SubtitleText>
           </Subtitle>
@@ -219,11 +223,21 @@ export function ScanResultCard(props: ScanResultCardProps) {
               {loading ? (
                 <Placeholder style={{ width: 120 }} />
               ) : (
-                <Value>
-                  {birthDate ? intl.formatDate(birthDate, {}) : `---`}
-                </Value>
+                <Value>{birthDate ? birthDate : `---`}</Value>
               )}
             </LabelGroup>
+            {data?.map(({ key, value }) => {
+              return (
+                <LabelGroup key={key}>
+                  <Label>{key}</Label>
+                  {loading ? (
+                    <Placeholder style={{ width: 120 }} />
+                  ) : (
+                    <Value>{value}</Value>
+                  )}
+                </LabelGroup>
+              )
+            })}
           </Left>
           {photo && (
             <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
