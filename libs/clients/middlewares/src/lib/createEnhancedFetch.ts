@@ -150,8 +150,6 @@ export const createEnhancedFetch = (
       } as unknown) as RequestInit)
 
       if (!response.ok) {
-        console.log('response :>> ', await response.text())
-
         throw await createResponseError(response, options.logErrorResponseBody)
       }
 

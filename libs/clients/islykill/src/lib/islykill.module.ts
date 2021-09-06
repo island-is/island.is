@@ -14,7 +14,6 @@ export const ISLYKILL_OPTIONS = 'ISLYKILL_OPTIONS'
 
 export class IslykillApiModule {
   static register(config: IslykillApiModuleConfig): DynamicModule {
-    console.log('config :>> ', config)
     if (!config.certificateBase64) {
       logger.error('IslykillApiModule certificate not provided.')
     }

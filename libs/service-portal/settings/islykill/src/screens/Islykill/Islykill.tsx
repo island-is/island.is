@@ -151,8 +151,6 @@ const Info = () => {
     }),
   )
 
-  console.log('info loading?', loading)
-
   if (loading) {
     return (
       <Box padding={3}>
@@ -236,8 +234,7 @@ const Info = () => {
         </Stack>
         <Button
           onClick={async () => {
-            const result = await refetch({})
-            console.log('result :>> ', result)
+            await refetch({})
           }}
         >
           Sækja aftur
