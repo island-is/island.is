@@ -3,11 +3,11 @@ rootProject.name = 'IslandApp'
 apply from: '../../node_modules/react-native-unimodules/gradle.groovy';
 includeUnimodulesProjects([
   modulesPaths: ['../../../node_modules'],
-  exclude: [
-    'unimodules-sensors-interface',
-    'unimodules-face-detector-interface',
-    'unimodules-task-manager-interface'
-  ]
+  // exclude: [
+  //   'unimodules-sensors-interface',
+  //   'unimodules-face-detector-interface',
+  //   'unimodules-task-manager-interface'
+  // ]
 ])
 
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
@@ -54,6 +54,9 @@ project(':react-native-interactable').projectDir = new File(rootProject.projectD
 
 include ':react-native-quick-actions'
 project(':react-native-quick-actions').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-quick-actions/android')
+
+include ':react-native-randombytes'
+project(':react-native-randombytes').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-randombytes/android')
 
 include ':@react-native-firebase_app'
 project(':@react-native-firebase_app').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-firebase/app/android')

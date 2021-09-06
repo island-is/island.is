@@ -18,6 +18,10 @@
 RCT_EXPORT_MODULE()
 
 
+RCT_EXPORT_METHOD(verifyCovidCert:(NSString *)data) {
+  
+}
+
 RCT_EXPORT_METHOD(overrideUserInterfaceStyle:(NSString *)uiStyle) {
 //  UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
   NSArray<__kindof UIWindow*>* windows = [[UIApplication sharedApplication] windows];

@@ -15,7 +15,7 @@ function nationalIdToBirthDate(ssn?: string) {
   const month = Number(ssn?.substr(2, 2))
   const date = Number(ssn?.substr(0, 2))
 
-  return new Date(year, month - 1, date)
+  return [date, month, year].map((n) => n.toString().padStart(2, '0')).join('-')
 }
 
 export const DriverLicenseScanResult = ({ data }: any) => {
@@ -25,6 +25,7 @@ export const DriverLicenseScanResult = ({ data }: any) => {
   const [name, setName] = useState<string>()
   const [nationalId, setNationalId] = useState<string>()
   const [photo, setPhoto] = useState<string>()
+  const [birthDate, setBirthDate] = useState<string>()
   const intl = useIntl()
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export const DriverLicenseScanResult = ({ data }: any) => {
         },
       })
       .then((res) => {
+        console.log(res);
         if (res.errors) {
           setError(true)
           setErrorMessage(
@@ -55,9 +57,12 @@ export const DriverLicenseScanResult = ({ data }: any) => {
             setLoading(false)
           } else {
             try {
-              const { name, nationalId, photo } = JSON.parse(data)
+              const { name, nationalId, photo, birthDate } = JSON.parse(data)
+              setError(false)
+              setErrorMessage(undefined);
               setNationalId(nationalId)
               setName(name)
+              setBirthDate(birthDate ? birthDate.substr(0, 10) : nationalIdToBirthDate(nationalId));
               setPhoto(photo.mynd)
             } catch (err) {
               // whoops
@@ -84,7 +89,6 @@ export const DriverLicenseScanResult = ({ data }: any) => {
     // noop
   }
 
-  const birthDate = nationalIdToBirthDate(nationalId)
   return (
     <ScanResultCard
       loading={loading}

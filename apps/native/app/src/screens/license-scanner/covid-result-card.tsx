@@ -3,10 +3,8 @@ import React from 'react'
 import { ActivityIndicator } from 'react-native'
 import styled from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
-
 import danger from '../../../../island-ui/src/assets/card/danger.png'
 import success from '../../../../island-ui/src/assets/card/is-verified.png'
-import backgroundPink from '../../../../island-ui/src/assets/card/okuskirteini.png'
 import backgroundBlue from '../../../../island-ui/src/assets/card/covid.png'
 import { useIntl } from 'react-intl'
 
@@ -126,19 +124,18 @@ const Background = styled.Image`
   bottom: 0;
   width: 100%;
   height: 100%;
-  background-color: #e2c4d1;
-  border-radius: 16px;
+  background-color: rgba(0, 109, 193, 0.31);
 `
 
 interface ScanResultCardProps {
   loading: boolean
+  valid: boolean;
   error?: boolean
   errorMessage?: string
-  birthDate?: Date
+  birthDate?: string
   name?: string
   licenseNumber?: string
   photo?: string
-  backgroundColor?: 'pink' | 'blue'
   vaccination?: any
   test?: any
   recovery?: any
@@ -148,21 +145,19 @@ export function CovidResultCard(props: ScanResultCardProps) {
   const {
     error,
     errorMessage,
+    valid,
     loading,
     birthDate,
     name,
     vaccination,
     test,
     recovery,
-    backgroundColor = 'pink',
   } = props
   const intl = useIntl()
-  const background =
-    backgroundColor === 'pink' ? backgroundPink : backgroundBlue
 
   return (
     <Host>
-      <Background source={background} resizeMode="cover" />
+      <Background source={backgroundBlue} resizeMode="cover" />
       <Header>
         <Detail>
           <Title>Covid-19 Certification</Title>
@@ -175,7 +170,7 @@ export function CovidResultCard(props: ScanResultCardProps) {
                   size="small"
                   style={{ transform: [{ scale: 0.8 }] }}
                 />
-              ) : error ? (
+              ) : error || !valid  ? (
                 <SubtitleImage source={danger} />
               ) : (
                 <SubtitleImage source={success} />
@@ -186,6 +181,8 @@ export function CovidResultCard(props: ScanResultCardProps) {
                 ? intl.formatMessage({ id: 'licenseScannerResult.loading' })
                 : error
                 ? intl.formatMessage({ id: 'licenseScannerResult.error' })
+                : !valid
+                ? 'Invalid or expired'
                 : intl.formatMessage({ id: 'licenseScannerResult.valid' })}
             </SubtitleText>
           </Subtitle>
@@ -226,7 +223,7 @@ export function CovidResultCard(props: ScanResultCardProps) {
                 <Placeholder style={{ width: 120 }} />
               ) : (
                 <Value>
-                  {birthDate ? intl.formatDate(birthDate, {}) : `---`}
+                  {birthDate ?? `---`}
                 </Value>
               )}
             </LabelGroup>

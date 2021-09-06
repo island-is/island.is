@@ -151,7 +151,7 @@ export const en: TranslatedMessages = {
   'walletPass.screenTitle': 'Pass',
 
   // license scanner
-  'licenseScanner.title': 'Scan driver license',
+  'licenseScanner.title': 'Scan barcode',
   'licenseScanner.helperMessage': 'Point device at barcode',
   'licenseScanner.awaitingPermission': 'Asking for camera permissions',
   'licenseScanner.noCameraAccess': 'Camera not available',
@@ -165,7 +165,7 @@ export const en: TranslatedMessages = {
   // license scan results
   'licenseScannerResult.loading': 'Loading data',
   'licenseScannerResult.error': 'Error in scanning',
-  'licenseScannerResult.valid': 'Is vaild',
+  'licenseScannerResult.valid': 'Is valid',
   'licenseScannerResult.title': 'Driver license (IS)',
   'licenseScannerResult.errorMessage': 'Error message',
   'licenseScannerResult.name': 'Name',
