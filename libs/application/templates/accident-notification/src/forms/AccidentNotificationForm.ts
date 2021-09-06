@@ -156,7 +156,6 @@ export const AccidentNotificationForm: Form = buildForm({
           children: [
             buildRadioField({
               id: 'timePassedHindrance',
-              defaultValue: NO,
               title: '',
               options: [
                 { value: YES, label: application.general.yesOptionLabel },
@@ -181,7 +180,6 @@ export const AccidentNotificationForm: Form = buildForm({
             buildRadioField({
               title: '',
               id: 'carAccidentHindrance',
-              defaultValue: NO,
               options: [
                 { value: YES, label: application.general.yesOptionLabel },
                 { value: NO, label: application.general.noOptionLabel },
@@ -212,7 +210,7 @@ export const AccidentNotificationForm: Form = buildForm({
             buildTextField({
               id: 'applicant.name',
               title: applicantInformation.labels.name,
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
               disabled: true,
               required: true,
               defaultValue: (application: AccidentNotification) =>
@@ -223,7 +221,7 @@ export const AccidentNotificationForm: Form = buildForm({
               title: applicantInformation.labels.nationalId,
               format: '######-####',
               width: 'half',
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
               disabled: true,
               required: true,
               defaultValue: (application: AccidentNotification) =>
@@ -233,7 +231,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'applicant.address',
               title: applicantInformation.labels.address,
               width: 'half',
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
               disabled: true,
               required: true,
               defaultValue: (application: AccidentNotification) =>
@@ -244,7 +242,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'applicant.postalCode',
               title: applicantInformation.labels.postalCode,
               width: 'half',
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
               disabled: true,
               required: true,
               defaultValue: (application: AccidentNotification) => {
@@ -256,7 +254,7 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'applicant.city',
               title: applicantInformation.labels.city,
               width: 'half',
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
               disabled: true,
               required: true,
               defaultValue: (application: AccidentNotification) =>
@@ -267,6 +265,7 @@ export const AccidentNotificationForm: Form = buildForm({
               title: applicantInformation.labels.email,
               width: 'half',
               variant: 'email',
+              required: true,
               defaultValue: (application: AccidentNotification) =>
                 application.externalData?.userProfile?.data?.email,
             }),
@@ -513,7 +512,6 @@ export const AccidentNotificationForm: Form = buildForm({
           id: 'wasTheAccidentFatal',
           title: fatalAccident.labels.title,
           backgroundColor: 'blue',
-          defaultValue: NO,
           width: 'half',
           options: [
             { value: YES, label: application.general.yesOptionLabel },
@@ -534,7 +532,6 @@ export const AccidentNotificationForm: Form = buildForm({
           title: fatalAccidentAttachment.labels.title,
           description: fatalAccidentAttachment.labels.description,
           backgroundColor: 'blue',
-          defaultValue: NO,
           options: [
             {
               value: YES,
@@ -1005,7 +1002,6 @@ export const AccidentNotificationForm: Form = buildForm({
               id: 'workMachineRadio',
               title: '',
               backgroundColor: 'blue',
-              defaultValue: NO,
               width: 'half',
               options: [
                 { value: YES, label: application.general.yesOptionLabel },
