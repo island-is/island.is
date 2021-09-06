@@ -7,7 +7,6 @@ export const serviceSetup = (services: {
   service('endorsement-system-scripts-update-metadata')
     .namespace('endorsement-system')
     .image('services-endorsements-scripts-update-metadata')
-    .serviceAccount()
     .env({
       TEMPORARY_VOTER_REGISTRY_API_URL: ref(
         (h) => `http://${h.svc(services.servicesTemporaryVoterRegistryApi)}`,
