@@ -3,11 +3,10 @@ import React from 'react'
 import { ActivityIndicator } from 'react-native'
 import styled from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
-
 import danger from '../../../../island-ui/src/assets/card/danger.png'
 import success from '../../../../island-ui/src/assets/card/is-verified.png'
 import backgroundPink from '../../../../island-ui/src/assets/card/okuskirteini.png'
-import backgroundBlue from '../../../../island-ui/src/assets/card/skotvopnaleyfi.png'
+import backgroundBlue from '../../../../island-ui/src/assets/card/covid.png'
 import { useIntl } from 'react-intl'
 
 const Host = styled.View`
@@ -71,6 +70,8 @@ const Logo = styled.Image`
 
 const Content = styled.View`
   flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
   padding: 16px 24px;
   padding-top: 0px;
 `
@@ -94,13 +95,6 @@ const Value = styled.Text`
 
 const LabelGroup = styled.View`
   margin-bottom: 16px;
-`
-
-const Photo = styled.Image`
-  width: 79px;
-  height: 109px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
 `
 
 const Left = styled.View`
@@ -130,18 +124,20 @@ const Background = styled.Image`
 
 interface ScanResultCardProps {
   loading: boolean
+  valid: boolean;
   error?: boolean
-  valid?: boolean
   errorMessage?: string
   birthDate?: string
   name?: string
   licenseNumber?: string
   photo?: string
-  data?: Array<{ key: string; value: any }>
   backgroundColor?: 'pink' | 'blue'
+  vaccination?: any
+  test?: any
+  recovery?: any
 }
 
-export function ScanResultCard(props: ScanResultCardProps) {
+export function CovidResultCard(props: ScanResultCardProps) {
   const {
     error,
     errorMessage,
@@ -149,19 +145,26 @@ export function ScanResultCard(props: ScanResultCardProps) {
     loading,
     birthDate,
     name,
-    photo,
-    data,
+    vaccination,
+    test,
+    recovery,
     backgroundColor = 'pink',
   } = props
   const intl = useIntl()
   const background =
     backgroundColor === 'pink' ? backgroundPink : backgroundBlue
+
   return (
     <Host>
-      <Background source={background} resizeMode="stretch" />
+      <Background source={background} resizeMode="cover" />
       <Header>
         <Detail>
-          <Title>Driver License (IS)</Title>
+          <Title>
+            {test && `${test.disease} Test (${test.country})`}
+            {vaccination &&
+              `${vaccination.disease} Vaccination (${vaccination.country})`}
+            {recovery && `${recovery.disease} Recovery (${recovery.country})`}
+          </Title>
           <Subtitle>
             <SubtitleIcon>
               {loading ? (
@@ -171,7 +174,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
                   size="small"
                   style={{ transform: [{ scale: 0.8 }] }}
                 />
-              ) : error || !valid ? (
+              ) : error || !valid  ? (
                 <SubtitleImage source={danger} />
               ) : (
                 <SubtitleImage source={success} />
@@ -204,8 +207,8 @@ export function ScanResultCard(props: ScanResultCardProps) {
           </Left>
         </Content>
       ) : (
-        <Content>
-          <Left>
+        <>
+          <Content>
             <LabelGroup>
               <Label>
                 {intl.formatMessage({ id: 'licenseScannerResult.name' })}
@@ -223,26 +226,116 @@ export function ScanResultCard(props: ScanResultCardProps) {
               {loading ? (
                 <Placeholder style={{ width: 120 }} />
               ) : (
-                <Value>{birthDate ?? `---`}</Value>
+                <Value>
+                  {birthDate ?? `---`}
+                </Value>
               )}
             </LabelGroup>
-            {data?.map(({ key, value }) => {
-              return (
-                <LabelGroup key={key}>
-                  <Label>{key}</Label>
-                  {loading ? (
-                    <Placeholder style={{ width: 120 }} />
-                  ) : (
-                    <Value>{value}</Value>
-                  )}
-                </LabelGroup>
-              )
-            })}
-          </Left>
-          {photo && (
-            <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
+          </Content>
+          {test && (
+            <Content>
+              <LabelGroup>
+                <Label>Test Result</Label>
+                <Value>{test?.testResult}</Value>
+              </LabelGroup>
+              <LabelGroup>
+                <Label>Test Date</Label>
+                <Value>
+                  {test?.testDate ? intl.formatDate(test?.testDate, {}) : `---`}
+                </Value>
+              </LabelGroup>
+              <LabelGroup>
+                <Label>Test Manufacturer</Label>
+                <Value>{test?.testManufacturer}</Value>
+              </LabelGroup>
+              <LabelGroup>
+                <Label>Test Type</Label>
+                <Value>{test?.testType}</Value>
+              </LabelGroup>
+              <LabelGroup>
+                <Label>Issuer</Label>
+                <Value>{test?.issuer}</Value>
+              </LabelGroup>
+              <LabelGroup>
+                <Label>Test Center</Label>
+                <Value>{test?.testCenter}</Value>
+              </LabelGroup>
+            </Content>
           )}
-        </Content>
+          {vaccination && (
+            <Content>
+              <LabelGroup>
+                <Label>Vaccine Product</Label>
+                <Value>{vaccination?.vaccineProduct}</Value>
+              </LabelGroup>
+              <LabelGroup>
+                <Label>Dose Number</Label>
+                <Value>{vaccination?.doseNumber}</Value>
+              </LabelGroup>
+              <LabelGroup>
+                <Label>Date</Label>
+                <Value>
+                  {vaccination?.date
+                    ? intl.formatDate(vaccination?.date, {})
+                    : `---`}
+                </Value>
+              </LabelGroup>
+              <LabelGroup>
+                <Label>Issuer</Label>
+                <Value>{vaccination?.issuer}</Value>
+              </LabelGroup>
+              <LabelGroup>
+                <Label>Vaccine Manufacturer</Label>
+                <Value>{vaccination?.vaccineManufacturer}</Value>
+              </LabelGroup>
+              <LabelGroup>
+                <Label>Vaccine Product</Label>
+                <Value>{vaccination?.vaccineProduct}</Value>
+              </LabelGroup>
+              <LabelGroup>
+                <Label>Vaccine Type</Label>
+                <Value>{vaccination?.vaccineType}</Value>
+              </LabelGroup>
+            </Content>
+          )}
+          {recovery && (
+            <Content>
+            <LabelGroup>
+              <Label>Disease</Label>
+              <Value>{recovery?.disease}</Value>
+            </LabelGroup>
+            <LabelGroup>
+              <Label>Valid From</Label>
+              <Value>
+                {recovery?.validFrom
+                  ? intl.formatDate(recovery?.validFrom, {})
+                  : `---`}
+              </Value>
+            </LabelGroup>
+            <LabelGroup>
+              <Label>Valid Unit</Label>
+              <Value>
+                {recovery?.validUntil
+                  ? intl.formatDate(recovery?.validUntil, {})
+                  : `---`}
+              </Value>
+            </LabelGroup>
+            <LabelGroup>
+              <Label>Issuer</Label>
+              <Value>{recovery?.issuer}</Value>
+            </LabelGroup>
+            <LabelGroup>
+              <Label>First Positive Test</Label>
+              <Value>
+                {recovery?.firstPositiveTest
+                  ? intl.formatDate(recovery?.firstPositiveTest, {})
+                  : `---`}
+              </Value>
+            </LabelGroup>
+          </Content>
+          )
+          }
+        </>
       )}
     </Host>
   )
