@@ -1,7 +1,6 @@
 import * as s from './RegulationDisplay.treat'
 
 import React, { useState } from 'react'
-import { useRouter } from 'next/router'
 import { ISODate, prettyName } from '@island.is/regulations'
 import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
@@ -36,7 +35,6 @@ export type RegulationDisplayProps = {
 }
 
 export const RegulationDisplay = (props: RegulationDisplayProps) => {
-  const router = useRouter()
   const { regulation, texts, urlDate } = props
 
   const txt = useNamespace(texts)
@@ -94,15 +92,18 @@ export const RegulationDisplay = (props: RegulationDisplayProps) => {
               {regulation.showingDiff ? (
                 <HTMLBox
                   component="span"
-                  className={s.bodyText}
+                  className={s.titleText + ' ' + s.diffText}
                   html={regulation.title}
                 />
               ) : (
-                regulation.title
+                <span className={s.titleText}>{regulation.title}</span>
               )}
             </Text>
 
-            <HTMLBox className={s.bodyText} html={regulation.text} />
+            <HTMLBox
+              className={s.bodyText + ' ' + s.diffText}
+              html={regulation.text}
+            />
 
             <Appendixes
               key={key}
