@@ -125,6 +125,7 @@ const Background = styled.Image`
   width: 100%;
   height: 100%;
   background-color: #e2c4d1;
+  border-radius: 16px;
 `
 
 interface ScanResultCardProps {
