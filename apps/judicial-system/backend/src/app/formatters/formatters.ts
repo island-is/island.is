@@ -270,8 +270,6 @@ export function formatCourtDateNotificationCondition(
 
 // This function is only intended for case type CUSTODY
 export function formatPrisonRulingEmailNotification(
-  accusedNationalId: string,
-  accusedName?: string,
   accusedGender?: CaseGender,
   court?: string,
   prosecutorName?: string,
