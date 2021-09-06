@@ -15,12 +15,6 @@ interface Props {
 const StatusLayout = ({ children }: Props) => {
   const { isAuthenticated, user } = useContext(UserContext)
 
-  const currentState = useMemo(() => {
-    if (user?.currentApplication) {
-      return getState[user.currentApplication.state]
-    }
-  }, [user])
-
   useEffect(() => {
     document.title = 'Fjárhagsaðstoð – Staða'
   }, [])

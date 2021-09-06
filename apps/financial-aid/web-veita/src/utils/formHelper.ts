@@ -48,11 +48,6 @@ export const calcAge = (ssn: string) => {
   return differenceInYears(new Date(), birthDay)
 }
 
-export const getFileType = (fileName: string) => {
-  // TODO: hande no file type? Handle when files is ready?
-  return fileName.substring(fileName.lastIndexOf('.') + 1)
-}
-
 export const getTagByState = (state: ApplicationState) => {
   switch (state) {
     case ApplicationState.NEW:

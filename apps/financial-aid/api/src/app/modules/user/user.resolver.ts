@@ -30,6 +30,21 @@ export class UserResolver {
     private readonly logger: Logger,
   ) {}
 
+  private fakeUsers: { [key: string]: CurrentApplication } = {
+    '0000000001': {
+      id: 'dbfc6ff1-58e0-4815-8fa9-1e06ddace1c3',
+      state: ApplicationState.INPROGRESS,
+      homeCircumstances: HomeCircumstances.OWNPLACE,
+      usePersonalTaxCredit: true,
+    },
+    '0000000003': {
+      id: '5ebdb6ca-edcb-4391-bda7-f5999d2b6b08',
+      state: ApplicationState.DATANEEDED,
+      homeCircumstances: HomeCircumstances.OWNPLACE,
+      usePersonalTaxCredit: true,
+    },
+  }
+
   @Query(() => UserModel, { nullable: true })
   async currentUser(
     @CurrentGraphQlUser() user: User,
@@ -46,33 +61,11 @@ export class UserResolver {
     // Local development
     if (
       environment.auth.allowFakeUsers &&
-      AllowedFakeUsers.includes(user.nationalId)
+      AllowedFakeUsers.includes(user.nationalId) &&
+      user.nationalId in this.fakeUsers
     ) {
-      return this.fakeUser(user.nationalId)
+      return this.fakeUsers[user.nationalId]
     }
     return await this.userService.getCurrentApplication(user.nationalId)
-  }
-
-  fakeUser(nationalId: string) {
-    const fakeUsers: { [key: string]: CurrentApplication } = {
-      '0000000001': {
-        id: '00000',
-        state: ApplicationState.INPROGRESS,
-        homeCircumstances: HomeCircumstances.OWNPLACE,
-        usePersonalTaxCredit: true,
-      },
-      '0000000003': {
-        id: '00000',
-        state: ApplicationState.DATANEEDED,
-        homeCircumstances: HomeCircumstances.OWNPLACE,
-        usePersonalTaxCredit: true,
-      },
-    }
-
-    if (nationalId in fakeUsers) {
-      return fakeUsers[nationalId]
-    }
-
-    return null
   }
 }

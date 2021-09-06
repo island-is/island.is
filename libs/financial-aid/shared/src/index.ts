@@ -14,3 +14,4 @@ export type {
   GetSignedUrl,
   SignedUrl,
 } from './lib/types'
+export * from './lib/utils'
