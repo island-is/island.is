@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import {
+import type {
   Notification as TNotification,
   NotificationType,
 } from '@island.is/judicial-system/types'

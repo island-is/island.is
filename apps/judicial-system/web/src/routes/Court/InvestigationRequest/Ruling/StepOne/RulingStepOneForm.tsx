@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Case } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
   CaseNumbers,

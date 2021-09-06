@@ -16,7 +16,7 @@ import { ApplicationEventModel } from './models'
 
 import { CreateApplicationEventDto } from './dto'
 
-import { CurrentHttpUser, JwtAuthGuard } from '@island.is/financial-aid/auth'
+import { JwtAuthGuard } from '@island.is/financial-aid/auth'
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')
@@ -59,7 +59,6 @@ export class ApplicationEventController {
   create(
     @Body() applicationEvent: CreateApplicationEventDto,
   ): Promise<ApplicationEventModel> {
-    console.log('ferdu hingad?')
     return this.applicationEventService.create(applicationEvent)
   }
 }

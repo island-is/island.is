@@ -15,13 +15,4 @@ describe('/domur/stadfesta/:id', () => {
       'Samkvæmt framangreindu og rannsóknargögnum málsins og með vísan til þess sem fram kemur í greinargerð sóknaraðila er fallist á það með lögreglustjóra að varnaraðili sé undir rökstuddum grun um saknæma aðild að háttsemi sem fangelsisrefsing er lögð við. Fyrir liggur að rannsókn málsins beinist að [..] óljóst er hversu margir aðilar kunni að tengjast. Telur dómurinn að fullnægt sé skilyrðum a-liðar 1. mgr. 95. gr. laga nr. 88/2008 um meðferð sakamála til þess að varnaraðila verði gert að sæta gæsluvarðhaldi. Þá þykja ekki efni til að marka gæsluvarðhaldi skemmri tíma en krafist er. Að virtum þeim rannsóknarhagsmunum sem málið varða samkvæmt framangreindu er fallist á að nauðsynlegt sé að varnaraðili sæti einangrun á meðan á gæsluvarðhaldsvistinni stendur, skv. 2. mgr. 98. gr., sbr. b-lið 99. gr. laga nr. 88/2008. Með vísan til þessa er fallist á kröfuna eins og nánar greinir í úrskurðarorði. Kristín Gunnarsdóttir héraðsdómari kveður upp úrskurðinn.',
     )
   })
-
-  it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    cy.getByTestid('courtEndTime').type('1800')
-    cy.getByTestid('continueButton').click()
-    cy.wait('@gqlRequsestSignatureMutation')
-    cy.wait('@gqlSignatureConfirmationResponse')
-    cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', '/krofur')
-  })
 })

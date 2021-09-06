@@ -3,11 +3,12 @@ import { Box, Text, Tag } from '@island.is/island-ui/core'
 
 import { mapCaseStateToTagVariant } from './utils'
 import {
-  Case,
+  CaseDecision,
   CaseState,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import parseISO from 'date-fns/parseISO'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
@@ -80,12 +81,23 @@ const PastRequests: React.FC<Props> = (props) => {
         Header: 'Tegund',
         accessor: 'type' as keyof Case,
         Cell: (row: {
-          row: { original: { type: CaseType; parentCase: Case } }
+          row: {
+            original: {
+              type: CaseType
+              decision: CaseDecision
+              parentCase: Case
+            }
+          }
         }) => {
+          const thisRow = row.row.original
+
           return (
             <>
               <Box component="span" display="block">
-                {capitalize(caseTypes[row.row.original.type])}
+                {thisRow.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                  ? capitalize(caseTypes['TRAVEL_BAN'])
+                  : capitalize(caseTypes[thisRow.type])}
               </Box>
               {row.row.original.parentCase && (
                 <Text as="span" variant="small">
