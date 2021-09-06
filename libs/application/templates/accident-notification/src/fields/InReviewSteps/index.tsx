@@ -1,10 +1,14 @@
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box } from '@island.is/island-ui/core'
+import { useMutation } from '@apollo/client'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/core'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { States } from '../../constants'
+import { AccidentNotification } from '../../lib/dataSchema'
 import { inReview } from '../../lib/messages'
 import { ReviewSectionState } from '../../types'
+import { returnMissingDocumentsList } from '../../utils'
 import ReviewSection from './ReviewSection'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
@@ -19,6 +23,8 @@ type StatesMap = {
 const statesMap: StatesMap = {
   application: {
     [States.NEEDS_DOCUMENT_AND_REVIEW]: ReviewSectionState.received,
+    [States.NEEDS_REVIEW]: ReviewSectionState.received,
+    [States.NEEDS_DOCUMENT]: ReviewSectionState.received,
   },
   documents: {
     [States.NEEDS_DOCUMENT_AND_REVIEW]: ReviewSectionState.missing,
@@ -40,6 +46,15 @@ const statesMap: StatesMap = {
 export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
   const { formatMessage } = useLocale()
 
+  const [submitApplication, { loading: loadingSubmit }] = useMutation(
+    SUBMIT_APPLICATION,
+    {
+      onError: (e) => console.error(e.message),
+    },
+  )
+
+  const answers = application.answers as AccidentNotification
+
   const steps = [
     {
       state: statesMap['application'][application.state],
@@ -50,22 +65,19 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
     {
       state: statesMap['documents'][application.state],
       title: formatMessage(inReview.documents.title),
-      description:
-        application.state === States.NEEDS_DOCUMENT_AND_REVIEW ||
-        application.state === States.NEEDS_DOCUMENT
-          ? formatMessage(inReview.documents.summary)
-          : formatMessage(inReview.documents.summaryApproved),
+      description: formatMessage(inReview.documents.summary),
       hasActionMessage:
         application.state === States.NEEDS_DOCUMENT_AND_REVIEW ||
         application.state === States.NEEDS_DOCUMENT,
       action: {
         title: formatMessage(inReview.action.documents.title),
         description: formatMessage(inReview.action.documents.description),
-        fileNames: 'Áverkavottorð', // We need to get this from first form
+        fileNames: returnMissingDocumentsList(answers, formatMessage), // We need to get this from first form
         actionButtonTitle: formatMessage(
           inReview.action.documents.actionButtonTitle,
         ),
         hasActionButtonIcon: true,
+        showAlways: true,
       },
     },
     {
@@ -100,7 +112,36 @@ export const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
           title={formatMessage(inReview.infoMessages.applicationUpdated)}
         />
       ) */}
-      <Box marginTop={7} marginBottom={8}>
+      <Box marginTop={4} display="flex" justifyContent="flexEnd">
+        <Button
+          colorScheme="default"
+          iconType="filled"
+          size="small"
+          type="button"
+          variant="text"
+          loading={loadingSubmit}
+          disabled={loadingSubmit}
+          onClick={async () => {
+            const res = await submitApplication({
+              variables: {
+                input: {
+                  id: application.id,
+                  event: DefaultEvents.SUBMIT,
+                  answers: application.answers,
+                },
+              },
+            })
+
+            if (res?.data) {
+              // Takes them to the next state (which loads the relevant form)
+              refetch?.()
+            }
+          }}
+        >
+          {formatMessage(inReview.general.viewApplicationButton)}
+        </Button>
+      </Box>
+      <Box marginTop={4} marginBottom={8}>
         {steps.map((step, index) => (
           <ReviewSection
             key={index}

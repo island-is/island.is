@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -34,7 +34,7 @@ export const ChangeUser: React.FC = () => {
   )
 
   const {
-    courts,
+    allCourts,
     prosecutorsOffices,
     loading: institutionLoading,
     loaded: institutionLoaded,
@@ -78,7 +78,7 @@ export const ChangeUser: React.FC = () => {
       {userData?.user && institutionLoaded && (
         <UserForm
           user={userData?.user}
-          courts={courts}
+          allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
           onSave={saveUser}
           loading={saveLoading}

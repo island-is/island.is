@@ -2,7 +2,8 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
   FormContentContainer,
@@ -84,6 +85,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
+              defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
             isRCase
           />

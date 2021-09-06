@@ -11,40 +11,30 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.BACKEND_URL) {
     throw new Error('Missing BACKEND_URL environment.')
   }
-  // TODO Add validation when the values are in the parametter store
-
-  // if (!process.env.SAML_ENTRY_POINT_OSK) {
-  //   throw new Error('Missing SAML_ENTRY_POINT_OSK environment.')
-  // }
-  // if (!process.env.SAML_ENTRY_POINT_VEITA) {
-  //   throw new Error('Missing SAML_ENTRY_POINT_VEITA environment.')
-  // }
-  // if (!process.env.SAML_ENTRY_POINT_VEITA) {
-  //   throw new Error('Missing SAML_ENTRY_POINT_VEITA environment.')
-  // }
-  // if (!process.env.AUTH_AUDIENCE_OSK) {
-  //   throw new Error('Missing AUTH_AUDIENCE_OSK environment.')
-  // }
-  // if (!process.env.audienceVeita) {
-  //   throw new Error('Missing audienceVeita environment.')
-  // }
+  if (!process.env.SAML_ENTRY_POINT_OSK) {
+    throw new Error('Missing SAML_ENTRY_POINT_OSK environment.')
+  }
+  if (!process.env.SAML_ENTRY_POINT_VEITA) {
+    throw new Error('Missing SAML_ENTRY_POINT_VEITA environment.')
+  }
+  if (!process.env.SAML_ENTRY_POINT_VEITA) {
+    throw new Error('Missing SAML_ENTRY_POINT_VEITA environment.')
+  }
+  if (!process.env.AUTH_AUDIENCE_OSK) {
+    throw new Error('Missing AUTH_AUDIENCE_OSK environment.')
+  }
+  if (!process.env.AUTH_AUDIENCE_VEITA) {
+    throw new Error('Missing AUTH_AUDIENCE_VEITA environment.')
+  }
 }
 
-// TODO Remove default values when the values are in the parametter store.
 const prodConfig = {
   production: true,
   auth: {
-    samlEntryPointOsk:
-      process.env.SAML_ENTRY_POINT_OSK ??
-      'https://innskraning.island.is/?id=financial-aid-osk.development',
-    samlEntryPointVeita:
-      process.env.SAML_ENTRY_POINT_VEITA ??
-      'https://innskraning.island.is/?id=financial-aid-veita.development',
-    audienceOsk:
-      process.env.AUTH_AUDIENCE_OSK ?? 'fjarhagsadstod.dev.sveitarfelog.net',
-    audienceVeita:
-      process.env.AUTH_AUDIENCE_VEITA ??
-      'veita-fjarhagsadstod.dev.sveitarfelog.net',
+    samlEntryPointOsk: process.env.SAML_ENTRY_POINT_OSK ?? '',
+    samlEntryPointVeita: process.env.SAML_ENTRY_POINT_VEITA ?? '',
+    audienceOsk: process.env.AUTH_AUDIENCE_OSK ?? '',
+    audienceVeita: process.env.AUTH_AUDIENCE_VEITA ?? '',
     allowFakeUsers: process.env.ALLOW_FAKE_USERS === 'true',
     jwtSecret: process.env.AUTH_JWT_SECRET!,
     secretToken: process.env.SECRET_TOKEN!,

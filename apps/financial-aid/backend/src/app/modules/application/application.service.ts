@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationModel } from './models'
+import { CurrentApplicationModel, ApplicationModel } from './models'
 
 import { Op } from 'sequelize'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 import {
+  ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
   User,
@@ -23,22 +24,22 @@ export class ApplicationService {
     private readonly applicationEventService: ApplicationEventService,
   ) {}
 
-  async hasAppliedForPeriod(nationalId: string): Promise<boolean> {
+  async getCurrentApplication(
+    nationalId: string,
+  ): Promise<CurrentApplicationModel | null> {
     const date = new Date()
 
     const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
 
-    return Boolean(
-      await this.applicationModel.findOne({
-        where: {
-          nationalId,
-          created: { [Op.gte]: firstDateOfMonth },
-        },
-      }),
-    )
+    return this.applicationModel.findOne({
+      where: {
+        nationalId,
+        created: { [Op.gte]: firstDateOfMonth },
+      },
+    })
   }
 
-  getAll(): Promise<ApplicationModel[]> {
+  async getAll(): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({ order: [['modified', 'DESC']] })
   }
 
@@ -87,22 +88,24 @@ export class ApplicationService {
     const appModel = await this.applicationModel.create(application)
 
     //Create applicationEvent
-    const eventModel = await this.applicationEventService.create({
+    await this.applicationEventService.create({
       applicationId: appModel.id,
-      state: appModel.state,
-      comment: null,
+      eventType: ApplicationEventType[appModel.state.toUpperCase()],
     })
 
     //Create file
     if (application.files) {
-      const fileModel = await application.files.map((f) => {
-        this.fileService.createFile({
+      const promises = application.files.map((f) => {
+        return this.fileService.createFile({
           applicationId: appModel.id,
           name: f.name,
           key: f.key,
           size: f.size,
+          type: f.type,
         })
       })
+
+      await Promise.all(promises)
     }
 
     return appModel
@@ -126,8 +129,8 @@ export class ApplicationService {
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
       applicationId: id,
-      state: update.state,
-      comment: update.rejection,
+      eventType: ApplicationEventType[update.state.toUpperCase()],
+      comment: update?.rejection || update?.amount?.toLocaleString('de-DE'),
     })
 
     return { numberOfAffectedRows, updatedApplication }

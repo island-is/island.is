@@ -3,7 +3,7 @@ import { sign } from 'jsonwebtoken'
 import { Inject, Injectable } from '@nestjs/common'
 
 import { EXPIRES_IN_SECONDS } from '@island.is/judicial-system/consts'
-import { User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { Credentials } from './auth.types'
 

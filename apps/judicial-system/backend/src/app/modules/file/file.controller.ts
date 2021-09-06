@@ -18,12 +18,12 @@ import {
   RolesRule,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
 import {
   UserRole,
   CaseState,
   CaseAppealDecision,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { Case, CaseService } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
@@ -75,7 +75,7 @@ export class FileController {
       existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
       existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
     ) {
-      return existingCase.rulingDate
+      return existingCase.rulingDate as Date // We should have date
     }
 
     // Otherwise, use the earliest postponed appeal date
