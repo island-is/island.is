@@ -23,11 +23,11 @@ import * as styles from './Requests.treat'
 interface Props {
   cases: Case[]
   onRowClick: (id: string) => void
-  isHighcourtJudge: boolean
+  isHighCourtUser: boolean
 }
 
 const PastRequests: React.FC<Props> = (props) => {
-  const { cases, onRowClick, isHighcourtJudge } = props
+  const { cases, onRowClick, isHighCourtUser } = props
   const { user } = useContext(UserContext)
   const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
   const isCourtRole =
@@ -203,10 +203,10 @@ const PastRequests: React.FC<Props> = (props) => {
 
   const pastRequestsColumns = useMemo(
     () =>
-      isHighcourtJudge
+      isHighCourtUser
         ? [...prColumns.slice(0, -1), { ...highCourtPrColumns }]
         : prColumns,
-    [isCourtRole, isHighcourtJudge, highCourtPrColumns, prColumns],
+    [isCourtRole, isHighCourtUser, highCourtPrColumns, prColumns],
   )
 
   const pastRequestsData = useMemo(() => cases, [cases])

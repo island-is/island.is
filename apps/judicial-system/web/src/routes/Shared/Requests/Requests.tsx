@@ -36,8 +36,7 @@ export const Requests: React.FC = () => {
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
   const isRegistrar = user?.role === UserRole.REGISTRAR
-  const isHighCourtJudge =
-    user?.institution?.type === InstitutionType.HIGH_COURT
+  const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
 
   const { data, error, loading } = useQuery(CasesQuery, {
     fetchPolicy: 'no-cache',
@@ -214,7 +213,7 @@ export const Requests: React.FC = () => {
       )}
       {activeCases || pastCases ? (
         <>
-          {!isHighCourtJudge && (
+          {!isHighCourtUser && (
             <>
               <Box
                 marginBottom={3}
@@ -253,14 +252,14 @@ export const Requests: React.FC = () => {
              * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
              */}
             <Text variant="h3" id="activeRequestsTableCaption">
-              {isHighCourtJudge ? 'Kærðir úrskurðir' : 'Afgreiddar kröfur'}
+              {isHighCourtUser ? 'Kærðir úrskurðir' : 'Afgreiddar kröfur'}
             </Text>
           </Box>
           {pastCases && pastCases.length > 0 ? (
             <PastRequests
               cases={pastCases}
               onRowClick={handleRowClick}
-              isHighcourtJudge={isHighCourtJudge}
+              isHighCourtUser={isHighCourtUser}
             />
           ) : (
             <div className={styles.activeRequestsTableInfo}>
