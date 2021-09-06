@@ -2,15 +2,13 @@ import React, { useState } from 'react'
 
 import { useRouter } from 'next/router'
 
-import { Box, Input } from '@island.is/island-ui/core'
+import { Box, Input, Button } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
 import * as styles from './CommentSection.treat'
 import { useMutation } from '@apollo/client'
 import { CreateApplicationEventQuery } from '@island.is/financial-aid-web/veitagraphql/sharedGql'
 import { ApplicationEventType } from '@island.is/financial-aid/shared'
-
-import { Button } from '@island.is/financial-aid-web/veita/src/components'
 
 interface Props {
   className?: string

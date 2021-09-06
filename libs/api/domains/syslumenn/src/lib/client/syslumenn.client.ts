@@ -1,5 +1,6 @@
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { IHomestay } from './models/homestay'
+import { ISyslumennAuction } from './models/syslumennAuction'
 import { ILogin } from './models/login'
 import { Person, Attachment, DataUploadResponse } from '../models/dataUpload'
 import { constructUploadDataObject } from './models/dataUpload'
@@ -47,6 +48,23 @@ export class SyslumennClient {
     const response: { data: IHomestay[] } = await this.httpService
       .get(url)
       .toPromise()
+
+    return response.data
+  }
+
+  async getSyslumennAuctions(): Promise<ISyslumennAuction[] | null> {
+    await this.login()
+
+    const url = `${this.clientConfig.url}/api/Uppbod/${this.id}`
+
+    const headers = {
+      'Content-type': 'application/json',
+      Authorization: `Bearer ${this.accessToken}`,
+    }
+
+    const response: {
+      data: ISyslumennAuction[]
+    } = await this.httpService.get(url, { headers: headers }).toPromise()
 
     return response.data
   }

@@ -24,7 +24,7 @@ const Timeline = ({ state }: Props) => {
   ]
 
   return (
-    <Box marginBottom={[4, 4, 7]}>
+    <Box marginY={[4, 4, 5]}>
       <Text as="h3" variant="h3" marginBottom={[1, 1, 2]}>
         Umsóknarferlið
       </Text>

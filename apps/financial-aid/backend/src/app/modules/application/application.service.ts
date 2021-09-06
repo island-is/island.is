@@ -101,6 +101,7 @@ export class ApplicationService {
           name: f.name,
           key: f.key,
           size: f.size,
+          type: f.type,
         })
       })
 
