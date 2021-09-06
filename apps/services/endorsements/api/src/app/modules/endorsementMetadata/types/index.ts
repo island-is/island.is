@@ -31,7 +31,7 @@ export interface MetadataProvider {
   metadataKey: string
   getData: (
     input: MetadataInput,
-    auth: Auth,
+    auth?: Auth,
   ) => Promise<MetadataProviderResponse[keyof MetadataProviderResponse]>
 }
 
