@@ -73,9 +73,9 @@ export class CaseService {
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
+    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    private intlService: IntlService,
   ) {}
 
   private async uploadSignedRulingPdfToCourt(

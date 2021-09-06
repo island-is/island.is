@@ -4,6 +4,7 @@ import { Box, Text, Tag } from '@island.is/island-ui/core'
 import { getAppealDate, mapCaseStateToTagVariant } from './utils'
 import {
   CaseAppealDecision,
+  CaseDecision,
   CaseState,
   CaseType,
   UserRole,
@@ -75,16 +76,28 @@ const PastRequests: React.FC<Props> = (props) => {
         )
       },
     },
+
     {
       Header: 'Tegund',
       accessor: 'type' as keyof Case,
       Cell: (row: {
-        row: { original: { type: CaseType; parentCase: Case } }
+        row: {
+          original: {
+            type: CaseType
+            decision: CaseDecision
+            parentCase: Case
+          }
+        }
       }) => {
+        const thisRow = row.row.original
+
         return (
           <>
             <Box component="span" display="block">
-              {capitalize(caseTypes[row.row.original.type])}
+              {thisRow.decision ===
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                ? capitalize(caseTypes['TRAVEL_BAN'])
+                : capitalize(caseTypes[thisRow.type])}
             </Box>
             {row.row.original.parentCase && (
               <Text as="span" variant="small">
@@ -95,6 +108,7 @@ const PastRequests: React.FC<Props> = (props) => {
         )
       },
     },
+
     {
       Header: 'Staða',
       accessor: 'state' as keyof Case,

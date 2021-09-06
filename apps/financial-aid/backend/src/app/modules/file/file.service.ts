@@ -37,6 +37,7 @@ export class FileService {
         name: file.name,
         key: file.key,
         size: file.size,
+        type: file.type,
       }),
     )
     return await Promise.all(promises)
