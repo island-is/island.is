@@ -34,18 +34,49 @@ export const diffStyling = (wrapper: string) => {
 
 // ---------------------------------------------------------------------------
 
+export const regulationTitleStyling = (wrapper: string) => {
+  const styleTitle = makeGlobal(wrapper)
+
+  styleTitle('', {
+    '@media': {
+      print: {
+        fontFamily: '"Times New Roman", "Times", serif',
+        fontSize: '20pt',
+      },
+    },
+  })
+}
+
+// ---------------------------------------------------------------------------
+
 export const regulationContentStyling = (wrapper: string) => {
   const styleRegulation = makeGlobal(wrapper)
 
   styleRegulation('', {
-    lineHeight: typography.baseLineHeight + 'rem',
+    lineHeight: typography.baseLineHeight + 'em',
+
+    '@media': {
+      print: {
+        fontFamily: '"Times New Roman", "Times", serif',
+        fontSize: '12pt',
+      },
+    },
+  })
+
+  styleRegulation(' *', {
+    '@media': {
+      print: {
+        fontFamily: 'inherit',
+      },
+    },
   })
 
   styleRegulation('p,ul,ol,table,blockquote', {
-    marginBottom: typography.baseLineHeight + 'rem',
+    fontFamily: 'inherit',
+    marginBottom: typography.baseLineHeight + 'em',
   })
   styleRegulation('li', {
-    marginBottom: '1rem',
+    marginBottom: '1em',
   })
   styleRegulation(
     `
@@ -58,7 +89,7 @@ export const regulationContentStyling = (wrapper: string) => {
     li > pre
     `,
     {
-      marginBottom: '1rem',
+      marginBottom: '1em',
     },
   )
   styleRegulation('ul,ol,blockquote', {
