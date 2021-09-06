@@ -10,6 +10,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationModel } from '../../application'
+import { FileType } from '@island.is/financial-aid/shared'
 
 @Table({
   tableName: 'application_files',
@@ -60,4 +61,12 @@ export class ApplicationFileModel extends Model<ApplicationFileModel> {
   })
   @ApiProperty()
   size: number
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(FileType),
+  })
+  @ApiProperty({ enum: FileType })
+  type: FileType
 }

@@ -9,7 +9,11 @@ import {
 import { FormContext } from '@island.is/financial-aid-web/osksrc/components/FormProvider/FormProvider'
 import { useFileUpload } from '@island.is/financial-aid-web/osksrc/utils/useFileUpload'
 import { UserContext } from '@island.is/financial-aid-web/osksrc/components/UserProvider/UserProvider'
-import { Application, ApplicationState } from '@island.is/financial-aid/shared'
+import {
+  Application,
+  ApplicationState,
+  FileType,
+} from '@island.is/financial-aid/shared'
 import { useMutation } from '@apollo/client'
 import { UpdateApplicationMutation } from '@island.is/financial-aid-web/oskgraphql/sharedGql'
 
@@ -17,7 +21,7 @@ const FileUpload = () => {
   const { form } = useContext(FormContext)
   const router = useRouter()
   const [nextButtonText, setNextButtonText] = useState('Senda gögn')
-  const { uploadFiles } = useFileUpload(form.incomeFiles)
+  const { uploadFiles } = useFileUpload(form.otherFiles)
   const { user } = useContext(UserContext)
 
   const currentApplication = useMemo(() => {
@@ -31,23 +35,25 @@ const FileUpload = () => {
   )
 
   const proceed = async () => {
-    if (form?.incomeFiles.length <= 0 || currentApplication === undefined) {
+    if (form?.otherFiles.length <= 0 || currentApplication === undefined) {
       setNextButtonText('Engar skrár til staðar')
       return
     }
 
     try {
-      await uploadFiles(currentApplication.id).then(async () => {
-        await updateApplicationMutation({
-          variables: {
-            input: {
-              id: currentApplication.id,
-              state: ApplicationState.INPROGRESS,
+      await uploadFiles(currentApplication.id, FileType.OTHER).then(
+        async () => {
+          await updateApplicationMutation({
+            variables: {
+              input: {
+                id: currentApplication.id,
+                state: ApplicationState.INPROGRESS,
+              },
             },
-          },
-        })
-        setNextButtonText('Skrám hefur verið hlaðið upp')
-      })
+          })
+          setNextButtonText('Skrám hefur verið hlaðið upp')
+        },
+      )
     } catch (e) {
       setNextButtonText('Ekki tókst að hlaða upp skrám')
     }
