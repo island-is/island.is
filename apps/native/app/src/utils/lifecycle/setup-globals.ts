@@ -1,3 +1,5 @@
+import '../shim';
+
 import * as Sentry from '@sentry/react-native'
 import { LogBox, Settings } from 'react-native'
 import { Platform } from 'react-native'

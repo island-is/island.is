@@ -12,9 +12,9 @@ public class BasePackageList {
         new expo.modules.constants.ConstantsPackage(),
         new expo.modules.filesystem.FileSystemPackage(),
         new expo.modules.haptics.HapticsPackage(),
+        new expo.modules.imageloader.ImageLoaderPackage(),
         new expo.modules.localauthentication.LocalAuthenticationPackage(),
-        new expo.modules.notifications.NotificationsPackage(),
-        new expo.modules.permissions.PermissionsPackage()
+        new expo.modules.notifications.NotificationsPackage()
     );
   }
 }

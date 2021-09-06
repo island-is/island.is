@@ -3,7 +3,6 @@ import React from 'react'
 import { ActivityIndicator } from 'react-native'
 import styled from 'styled-components/native'
 import agencyLogo from '../../assets/temp/agency-logo.png'
-
 import danger from '../../../../island-ui/src/assets/card/danger.png'
 import success from '../../../../island-ui/src/assets/card/is-verified.png'
 import backgroundPink from '../../../../island-ui/src/assets/card/okuskirteini.png'
@@ -127,14 +126,14 @@ const Background = styled.Image`
   width: 100%;
   height: 100%;
   background-color: #e2c4d1;
-  border-radius: 16px;
 `
 
 interface ScanResultCardProps {
   loading: boolean
+  valid: boolean;
   error?: boolean
   errorMessage?: string
-  birthDate?: Date
+  birthDate?: string
   name?: string
   licenseNumber?: string
   photo?: string
@@ -148,6 +147,7 @@ export function CovidResultCard(props: ScanResultCardProps) {
   const {
     error,
     errorMessage,
+    valid,
     loading,
     birthDate,
     name,
@@ -175,7 +175,7 @@ export function CovidResultCard(props: ScanResultCardProps) {
                   size="small"
                   style={{ transform: [{ scale: 0.8 }] }}
                 />
-              ) : error ? (
+              ) : error || !valid  ? (
                 <SubtitleImage source={danger} />
               ) : (
                 <SubtitleImage source={success} />
@@ -186,6 +186,8 @@ export function CovidResultCard(props: ScanResultCardProps) {
                 ? intl.formatMessage({ id: 'licenseScannerResult.loading' })
                 : error
                 ? intl.formatMessage({ id: 'licenseScannerResult.error' })
+                : !valid
+                ? 'Invalid or expired'
                 : intl.formatMessage({ id: 'licenseScannerResult.valid' })}
             </SubtitleText>
           </Subtitle>
@@ -226,7 +228,7 @@ export function CovidResultCard(props: ScanResultCardProps) {
                 <Placeholder style={{ width: 120 }} />
               ) : (
                 <Value>
-                  {birthDate ? intl.formatDate(birthDate, {}) : `---`}
+                  {birthDate ?? `---`}
                 </Value>
               )}
             </LabelGroup>

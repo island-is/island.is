@@ -165,7 +165,7 @@ export const en: TranslatedMessages = {
   // license scan results
   'licenseScannerResult.loading': 'Loading data',
   'licenseScannerResult.error': 'Error in scanning',
-  'licenseScannerResult.valid': 'Is vaild',
+  'licenseScannerResult.valid': 'Is valid',
   'licenseScannerResult.title': 'Driver license (IS)',
   'licenseScannerResult.errorMessage': 'Error message',
   'licenseScannerResult.name': 'Name',

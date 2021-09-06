@@ -1,4 +1,4 @@
-import { BarCodeEvent } from 'expo-barcode-scanner'
+import { BarCodeEvent, Constants } from 'expo-barcode-scanner'
 import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import {
@@ -8,7 +8,6 @@ import {
 import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
 import { StackRegistry } from '../../utils/component-registry'
 import { CovidCertificateScanResult } from './scan-results/covid-certificate-scan-result'
-// import { CovidCertificateScanResult } from './scan-results/covid-certificate-scan-result'
 import { DriverLicenseScanResult } from './scan-results/driver-license-scan-result'
 
 enum ScanResult {
@@ -31,17 +30,16 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<BarCodeEvent> 
 
   useEffect(() => {
     try {
-      if (type === 'pdf416') {
+      if (type === Constants.BarCodeType.pdf417) {
         const parsed = JSON.parse(data)
         if (parsed?.TGLJZW) {
           setScanResult(ScanResult.DRIVER_LICENSE)
         }
-      } else if (type === 'org.iso.QRCode') {
+      } else if (type === Constants.BarCodeType.qr) {
         if (data.startsWith('HC1')) {
           setScanResult(ScanResult.COVID_CERTIFICATE)
         }
       }
-      console.log({ type, data });
     } catch (err) {
       console.log('unable to decode barcode', err)
     }
