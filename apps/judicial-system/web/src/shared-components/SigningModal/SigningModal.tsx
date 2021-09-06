@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import {
-  Case,
   CaseDecision,
   CaseState,
   CaseTransition,
   CaseType,
   NotificationType,
+} from '@island.is/judicial-system/types'
+import type {
+  Case,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'

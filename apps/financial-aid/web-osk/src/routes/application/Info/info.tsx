@@ -2,8 +2,8 @@ import React, { useState, useContext } from 'react'
 import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
+  ContentContainer,
+  Footer,
   FormLayout,
   LogoHfj,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -43,7 +43,7 @@ const ApplicationInfo = () => {
 
   return (
     <FormLayout activeSection={0}>
-      <FormContentContainer>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
           Gagnaöflun
         </Text>
@@ -109,11 +109,12 @@ const ApplicationInfo = () => {
         >
           <LogoHfj className={styles.logo} />
         </Box>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         onPrevButtonClick={() => logOut()}
         previousIsDestructive={true}
+        prevButtonText="Hætta við"
         nextButtonText="Staðfesta"
         nextButtonIcon="checkmark"
         onNextButtonClick={() => errorCheck()}

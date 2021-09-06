@@ -17,6 +17,7 @@ import {
   GenericUserLicenseStatus,
   GenericLicenseCached,
   GenericLicenseUserdataExternal,
+  PkPassVerification,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 
@@ -228,5 +229,30 @@ export class LicenseServiceService {
     }
 
     return pkPassUrl
+  }
+
+  async verifyPkPass(
+    nationalId: User['nationalId'],
+    locale: Locale,
+    licenseType: GenericLicenseType,
+    data: string,
+  ): Promise<PkPassVerification> {
+    let verification: PkPassVerification | null = null
+
+    const licenseService = await this.genericLicenseFactory(licenseType)
+
+    if (licenseService) {
+      verification = await licenseService.verifyPkPass(data)
+    } else {
+      throw new Error(`${licenseType} not supported`)
+    }
+
+    if (!verification) {
+      throw new Error(
+        `Unable to verify pkpass for ${licenseType} for nationalId ${nationalId}`,
+      )
+    }
+
+    return verification
   }
 }

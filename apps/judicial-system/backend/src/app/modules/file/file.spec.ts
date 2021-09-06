@@ -4,7 +4,8 @@ import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
 import { NotFoundException } from '@nestjs/common'
 
-import { User, UserRole } from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import { LoggingModule } from '@island.is/logging'
 
 import { Case, CaseService } from '../case'

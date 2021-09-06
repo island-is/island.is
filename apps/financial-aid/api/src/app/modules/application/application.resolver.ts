@@ -7,13 +7,16 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { BackendAPI } from '../../../services'
 
-import { ApplicationModel } from './models'
+import { ApplicationFiltersModel, ApplicationModel } from './models'
 import { CreateApplicationInput, UpdateApplicationInput } from './dto'
 import { JwtGraphQlAuthGuard } from '@island.is/financial-aid/auth'
 
 import { ApplicationInput } from './dto'
 
-import { Application } from '@island.is/financial-aid/shared'
+import {
+  Application,
+  ApplicationFilters,
+} from '@island.is/financial-aid/shared'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => ApplicationModel)
@@ -49,8 +52,7 @@ export class ApplicationResolver {
     input: CreateApplicationInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Application> {
-    this.logger.debug('Creating case')
-
+    this.logger.debug('Creating application')
     return backendApi.createApplication(input)
   }
 
@@ -65,5 +67,14 @@ export class ApplicationResolver {
     this.logger.debug(`updating application ${id}`)
 
     return backendApi.updateApplication(id, updateApplication)
+  }
+
+  @Query(() => ApplicationFiltersModel, { nullable: false })
+  applicationFilters(
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<ApplicationFilters> {
+    this.logger.debug('Getting all applications filters')
+
+    return backendApi.getApplicationFilters()
   }
 }

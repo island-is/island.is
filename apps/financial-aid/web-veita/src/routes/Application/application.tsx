@@ -3,8 +3,8 @@ import {
   LoadingDots,
   Text,
   Box,
-  Button,
   Divider,
+  Button,
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
@@ -27,7 +27,10 @@ import {
   getState,
   Municipality,
   aidCalculator,
+  months,
   calculateAidFinalAmount,
+  formatPhoneNumber,
+  FileType,
 } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
@@ -35,7 +38,6 @@ import format from 'date-fns/format'
 import {
   calcDifferenceInDate,
   calcAge,
-  translateMonth,
   getTagByState,
 } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
@@ -49,6 +51,8 @@ import {
   AdminLayout,
   StateModal,
   AidAmountModal,
+  History,
+  CommentSection,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import { NavigationElement } from '@island.is/financial-aid-web/veita/src/routes/ApplicationsOverview/applicationsOverview'
@@ -76,23 +80,20 @@ const ApplicationProfile = () => {
     return navigationItems.find((i) => i.applicationState.includes(state))
   }
 
-  const { data, error, loading } = useQuery<ApplicantData>(
-    GetApplicationQuery,
+  const { data, loading } = useQuery<ApplicantData>(GetApplicationQuery, {
+    variables: { input: { id: router.query.id } },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
+  const { data: dataMunicipality } = useQuery<MunicipalityData>(
+    GetMunicipalityQuery,
     {
-      variables: { input: { id: router.query.id } },
+      variables: { input: { id: 'hfj' } },
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
   )
-
-  const {
-    data: dataMunicipality,
-    loading: municipalityLoading,
-  } = useQuery<MunicipalityData>(GetMunicipalityQuery, {
-    variables: { input: { id: 'hfj' } },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
 
   const [application, setApplication] = useState<Application>()
 
@@ -120,7 +121,7 @@ const ApplicationProfile = () => {
       {
         title: 'Tímabil',
         content:
-          translateMonth(parseInt(format(new Date(application.created), 'M'))) +
+          months[parseInt(format(new Date(application.created), 'M'))] +
           format(new Date(application.created), ' y'),
       },
       {
@@ -179,8 +180,7 @@ const ApplicationProfile = () => {
       },
       {
         title: 'Sími',
-        content:
-          insertAt(application.phoneNumber.replace('-', ''), '-', 3) || '-',
+        content: formatPhoneNumber(application.phoneNumber),
         link: 'tel:' + application.phoneNumber,
       },
       {
@@ -362,10 +362,32 @@ const ApplicationProfile = () => {
             </Box>
             <Files
               heading="Skattframtal"
-              filesArray={application.files}
+              filesArray={application.files?.filter(
+                (f) => f.type === FileType.TAXRETURN,
+              )}
+              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+            />
+            <Files
+              heading="Tekjugögn"
+              filesArray={application.files?.filter(
+                (f) => f.type === FileType.INCOME,
+              )}
+              className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+            />
+            <Files
+              heading="Innsend gögn"
+              filesArray={application.files?.filter(
+                (f) => f.type === FileType.OTHER,
+              )}
               className={`contentUp delay-125 ${styles.widtAlmostFull}`}
             />
           </>
+
+          <CommentSection
+            className={`contentUp delay-125 ${styles.widtAlmostFull}`}
+          />
+
+          <History />
         </Box>
 
         {application.state && (

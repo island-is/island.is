@@ -2,7 +2,7 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import {
+import type {
   CaseTransition,
   TransitionCase,
 } from '@island.is/judicial-system/types'

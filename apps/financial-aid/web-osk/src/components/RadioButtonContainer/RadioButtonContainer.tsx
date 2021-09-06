@@ -16,13 +16,13 @@ interface RadioContainerProps {
   isChecked?: any
 }
 
-const RadioButtonContainer: React.FC<RadioContainerProps> = ({
+const RadioButtonContainer = ({
   options,
   className,
   error,
   onChange,
   isChecked,
-}) => {
+}: RadioContainerProps) => {
   return options ? (
     <Box
       marginBottom={[1, 1, 2]}
@@ -49,7 +49,6 @@ const RadioButtonContainer: React.FC<RadioContainerProps> = ({
                 onChange(item.value)
               }}
               large
-              filled
             />
           </Box>
         )

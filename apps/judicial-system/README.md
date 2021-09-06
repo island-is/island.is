@@ -125,10 +125,22 @@ Known users:
   - Role: Judge
     {% endhint %}
 
-### Running the tests
+### Testing strategy
+
+This project uses two types of automated tests, unit tests and e2e tests. We use [Jest](https://jestjs.io/) to write unit tests against code like utility functions. If we need to test custom components in isolation, we use [React testing library](https://testing-library.com/docs/react-testing-library/intro/). Finally, to test entire screens in our project we use [Cypress](https://www.cypress.io/).
+
+#### Running the tests
+
+##### Unit tests
 
 ```bash
 yarn test judicial-system-web
+```
+
+##### e2e tests
+
+```bash
+yarn nx e2e judicial-system-web-e2e --watch
 ```
 
 ## Code owners and maintainers

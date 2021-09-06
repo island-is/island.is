@@ -8,14 +8,15 @@ export const applicantInformation = {
       description: 'Accident notification to Sjúkratryggingar Íslands',
     },
     title: {
-      id: 'an.application:applicantInfogeneral.title',
+      id: 'an.application:applicantInfo.general.title',
       defaultMessage: 'Upplýsingar um þig',
       description: 'Information about you',
     },
     description: {
       id: 'an.application:applicantInfo.general.description',
-      defaultMessage:
-        'Sjúkratryggingar Íslands þurfa þessar upplýsingar til þess að hægt sé að hafa samband við þig á meðan umsóknin er til meðferðar og upplýsa þig um ákvörðun stofnunarinnar.',
+      defaultMessage: `<p>Sjúkratryggingar Íslands þurfa þessar upplýsingar til þess að hægt
+       sé að hafa samband við þig á meðan málið er til meðferðar og upplýsa þig um niðurstöðu þess, 
+       og til þess að tryggja örugga persónugreiningu.</p><br/><p>Þær upplýsingar sem eru stjörnumerktar þarf alltaf að gefa upp. Annað er valkvætt.</p>`,
       description: `Sjúkratryggingar Íslands needs this information in order to be able to contact you while the application is being processed and inform you of the institution's decision.`,
     },
   }),
@@ -54,6 +55,13 @@ export const applicantInformation = {
       id: 'an.application:applicantInfo.labels.tel',
       defaultMessage: 'Símanúmer',
       description: 'Telephone number',
+    },
+  }),
+  forThirdParty: defineMessages({
+    title: {
+      id: 'an.application:applicantInfo.forThirdParty.title',
+      defaultMessage: 'Upplýsingar um þann slasaða',
+      description: 'Information about the injured',
     },
   }),
 }
