@@ -459,8 +459,7 @@ export const m = defineMessages({
   },
   errorDataProvider: {
     id: 'dl.application:error.dataProvider',
-    defaultMessage:
-      'Villa kom upp við að sækja upplýsingar úr vefþjónustu. Reyndu aftur síðar',
+    defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in driving license data provider',
   },
   examplePaymentPendingField: {
@@ -580,6 +579,11 @@ export const m = defineMessages({
     defaultMessage: `Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára umsóknina.`,
     description:
       'The payment has been confirmed, choose "Continue" to finish the application.',
+  },
+  paymentImage: {
+    id: 'dl.application.paymentApprovedContinue',
+    defaultMessage: `Skrautmynd`,
+    description: 'Company Image',
   },
   chooseDistrictCommisioner: {
     id: 'dl.application.chooseDistrictCommisioner',
