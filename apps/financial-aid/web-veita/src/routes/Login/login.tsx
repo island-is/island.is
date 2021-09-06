@@ -42,14 +42,6 @@ const Login = () => {
         <Link href="/api/auth/login?nationalId=0000000002&service=veita">
           Plat notandi
         </Link>
-
-        {/* <Button
-          onClick={() => {
-            // router.push('/api/auth/login?nationalId=0000000000')
-          }}
-        >
-          Innskráning
-        </Button> */}
       </Box>
     </div>
   )

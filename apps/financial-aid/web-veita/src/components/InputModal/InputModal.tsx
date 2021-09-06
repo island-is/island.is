@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
-import { Box } from '@island.is/island-ui/core'
-
-import { Button } from '@island.is/financial-aid-web/veita/src/components'
+import { Box, Button } from '@island.is/island-ui/core'
 
 import {
   NumberInput,

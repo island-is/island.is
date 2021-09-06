@@ -308,7 +308,7 @@ export const m = defineMessages({
   },
   applicationQualityPhotoTitle: {
     id: 'dl.application.applicationQualityPhotoTitle',
-    defaultMessage: 'Gæðamerkt mynd',
+    defaultMessage: 'Passamynd',
     description: 'title for quality photo section',
   },
   qualityPhotoTitle: {
@@ -431,7 +431,8 @@ export const m = defineMessages({
   },
   requirementUnmetDrivingAssessmentDescription: {
     id: 'dl.application:requirementunmet.drivingassessmentdescription',
-    defaultMessage: 'Ökukennari þarf að hafa staðfest akstursmat',
+    defaultMessage:
+      'Ef þú ert búinn að fara í akstursmat hjá ökukennara biddu hann um að staðfesta það rafrænt.',
     description: 'requirement unmet assessment',
   },
   requirementUnmetDrivingSchoolTitle: {
@@ -442,7 +443,7 @@ export const m = defineMessages({
   requirementUnmetDrivingSchoolDescription: {
     id: 'dl.application:requirementunmet.drivingschooldescription',
     defaultMessage:
-      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini',
+      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini.',
     description: 'requirement unmet driving school',
   },
   requirementUnmetDeniedByServiceTitle: {
@@ -453,13 +454,12 @@ export const m = defineMessages({
   requirementUnmetDeniedByServiceDescription: {
     id: 'dl.application:requirementunmet.deniedbyservicedescription',
     defaultMessage:
-      'Ökuskírteinaskrá þarf að heimila að þú megir sækja um fullnaðarskírteini',
+      'Umsækjandi um fullnaðarskírteini má ekki hafa fengið punkt í ökuferilsskrá á síðustu 12 mánuðum. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'requirement unmet api returned false',
   },
   errorDataProvider: {
     id: 'dl.application:error.dataProvider',
-    defaultMessage:
-      'Villa kom upp við að sækja upplýsingar úr vefþjónustu. Reyndu aftur síðar',
+    defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in driving license data provider',
   },
   examplePaymentPendingField: {
@@ -540,7 +540,7 @@ export const m = defineMessages({
   },
   congratulationsQualityPictureTitle: {
     id: 'dl.application.congratulationsQualityPictureTitle',
-    defaultMessage: 'Gæðamerkt ljósmynd',
+    defaultMessage: 'Passamynd',
     description: 'Quality photo',
   },
   congratulationsCertificateDescription: {
@@ -552,7 +552,7 @@ export const m = defineMessages({
   congratulationsQualityPictureDescription: {
     id: 'dl.application.congratulationsQualityPictureDescription',
     defaultMessage:
-      'Skila þarf gæðamerktri ljósmynd til sýslumanns. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
+      'Skila þarf passamynd til sýslumanns. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
     description: 'Quality photo',
   },
   paymentPendingDescription: {
@@ -579,6 +579,11 @@ export const m = defineMessages({
     defaultMessage: `Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára umsóknina.`,
     description:
       'The payment has been confirmed, choose "Continue" to finish the application.',
+  },
+  paymentImage: {
+    id: 'dl.application.paymentApprovedContinue',
+    defaultMessage: `Skrautmynd`,
+    description: 'Company Image',
   },
   chooseDistrictCommisioner: {
     id: 'dl.application.chooseDistrictCommisioner',

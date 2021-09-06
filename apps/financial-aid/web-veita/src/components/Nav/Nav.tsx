@@ -3,10 +3,7 @@ import { Logo, Text, Box, Divider, Icon } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import {
-  LogoHfj,
-  Button,
-} from '@island.is/financial-aid-web/veita/src/components'
+import { LogoHfj } from '@island.is/financial-aid-web/veita/src/components'
 
 import * as styles from './Nav.treat'
 import cn from 'classnames'
@@ -70,10 +67,7 @@ const Nav = () => {
                         }
                       })
                       .reduce((a?: number, b?: number) => {
-                        if (a && b) {
-                          return a + b
-                        }
-                        return 0
+                        return (a || 0) + (b || 0)
                       })}
                   </Text>
                 </Box>
