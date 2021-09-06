@@ -136,7 +136,7 @@ const processEndorsements = async (
   }
 }
 
-const processEndorsementLists = async (index = 0) => {
+const processEndorsementLists = async (cb: () => void, index = 0) => {
   const endorsementListsChunkSize = 10
 
   // find this batch of endorsementLists that might need updating
@@ -153,14 +153,18 @@ const processEndorsementLists = async (index = 0) => {
   await processEndorsements(endorsementListFieldMap)
 
   if (endorsementLists.length === endorsementListsChunkSize) {
-    processEndorsementLists(index + 1)
+    processEndorsementLists(cb, index + 1)
+  } else {
+    cb()
   }
 }
 
 const main = async () => {
   const app = await NestFactory.create(AppModule)
   endorsementMetadataService = app.get(EndorsementMetadataService)
-  processEndorsementLists()
+  processEndorsementLists(() => {
+    app.close()
+  })
 }
 
 main()

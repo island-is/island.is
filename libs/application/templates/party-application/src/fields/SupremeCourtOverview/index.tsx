@@ -45,7 +45,7 @@ const SupremeCourtOverview: FC<FieldBaseProps> = ({ application }) => {
   const { endorsements } = useEndorsements(endorsementListId, false)
   const constituency =
     constituencyMapper[answers.constituency as EndorsementListTags].region_name
-
+  console.log('Ran!')
   return (
     <Box>
       <Text variant="h3"> {formatMessage(m.supremeCourt.subtitle)}</Text>

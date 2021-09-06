@@ -619,6 +619,9 @@
     "services-endorsements-api": {
       "tags": []
     },
+    "services-endorsements-scripts-update-metadata": {
+      "tags": []
+    },
     "services-party-letter-registry-api": {
       "tags": []
     },
