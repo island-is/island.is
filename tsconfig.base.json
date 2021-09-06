@@ -91,6 +91,9 @@
       "@island.is/api/domains/identity": [
         "libs/api/domains/identity/src/index.ts"
       ],
+      "@island.is/api/domains/islykill": [
+        "libs/api/domains/islykill/src/index.ts"
+      ],
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
@@ -229,6 +232,7 @@
         "libs/clients/driving-license/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -388,6 +392,9 @@
       ],
       "@island.is/service-portal/settings/access-control": [
         "libs/service-portal/settings/access-control/src/index.ts"
+      ],
+      "@island.is/service-portal/settings/islykill": [
+        "libs/service-portal/settings/islykill/src/index.ts"
       ],
       "@island.is/service-portal/settings/personal-information": [
         "libs/service-portal/settings/personal-information/src/index.ts"

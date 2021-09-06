@@ -311,6 +311,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         children: [
           {
             name: defineMessage({
+              id: 'service.portal:islykill',
+              defaultMessage: 'Íslykill',
+            }),
+            path: ServicePortalPath.SettingsIslykill,
+          },
+          {
+            name: defineMessage({
               id: 'service.portal:accessControl',
               defaultMessage: 'Aðgangsstýring',
             }),

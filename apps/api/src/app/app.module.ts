@@ -34,6 +34,7 @@ import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
 import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
+import { IslykillModule } from '@island.is/api/domains/islykill'
 import { AuditModule } from '@island.is/nest/audit'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
@@ -234,6 +235,10 @@ const autoSchemaFile = environment.production
         apiUrl: environment.pkpass.apiUrl,
         secretKey: environment.pkpass.secretKey,
       },
+    }),
+    IslykillModule.register({
+      certificateBase64: environment.islykill.certificateBase64,
+      passphrase: environment.islykill.passphrase,
     }),
   ],
 })

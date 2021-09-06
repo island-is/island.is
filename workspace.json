@@ -3156,6 +3156,39 @@
         }
       }
     },
+    "clients-islykill": {
+      "root": "libs/clients/islykill",
+      "sourceRoot": "libs/clients/islykill/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/islykill/tsconfig.lib.json",
+              "libs/clients/islykill/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/clients/islykill/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/islykill/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/islykill"]
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/islykill/gen/fetch -i libs/clients/islykill/src/clientConfig.yaml"
+          }
+        }
+      }
+    },
     "clients-middlewares": {
       "root": "libs/clients/middlewares",
       "sourceRoot": "libs/clients/middlewares/src",

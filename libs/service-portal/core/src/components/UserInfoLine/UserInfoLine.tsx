@@ -15,6 +15,12 @@ import { servicePortalOutboundLink } from '@island.is/plausible'
 
 import * as styles from './UserInfoLine.treat'
 
+export type EditLink = {
+  external?: boolean
+  url: string
+  title?: MessageDescriptor
+}
+
 interface Props {
   label: MessageDescriptor | string
   content?: string | JSX.Element
@@ -23,11 +29,7 @@ interface Props {
   labelColumnSpan?: GridColumnProps['span']
   valueColumnSpan?: GridColumnProps['span']
   editColumnSpan?: GridColumnProps['span']
-  editLink?: {
-    external?: boolean
-    url: string
-    title?: MessageDescriptor
-  }
+  editLink?: EditLink
 }
 
 export const UserInfoLine: FC<Props> = ({
