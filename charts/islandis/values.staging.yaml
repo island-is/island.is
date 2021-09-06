@@ -462,8 +462,6 @@ endorsement-system-scripts-update-metadata:
     repository: >-
       821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-scripts-update-metadata
   namespace: endorsement-system
-  podSecurityContext:
-    fsGroup: 65534
   replicaCount:
     default: 2
     max: 3
@@ -478,12 +476,6 @@ endorsement-system-scripts-update-metadata:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: >-
-        arn:aws:iam::261174024191:role/endorsement-system-scripts-update-metadata
-    create: true
-    name: endorsement-system-scripts-update-metadata
 global:
   env:
     AUDIT_GROUP_NAME: /island-is/audit-log
