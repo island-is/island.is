@@ -67,8 +67,10 @@ export class EducationService {
   }
 
   private isChild(familyMember: ISLFjolskyldan): boolean {
-    return !['1', '2', '7'].includes(familyMember.Kyn) &&
+    return (
+      !['1', '2', '7'].includes(familyMember.Kyn) &&
       kennitala.info(familyMember.Kennitala).age < ADULT_AGE_LIMIT
+    )
   }
 
   async getFamily(nationalId: string): Promise<ISLFjolskyldan[]> {
@@ -79,10 +81,11 @@ export class EducationService {
       return []
     }
 
-    return family
-      .filter((familyMember) =>
-        familyMember === myself || this.isChild(familyMember) && !this.isChild(myself)
-      )
+    return family.filter(
+      (familyMember) =>
+        familyMember === myself ||
+        (this.isChild(familyMember) && !this.isChild(myself)),
+    )
   }
 
   async getExamFamilyOverviews(
