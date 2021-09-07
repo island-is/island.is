@@ -28,6 +28,7 @@ import {
   accidentType,
   applicantInformation,
   application as applicationMessages,
+  childInCustody,
   injuredPersonInformation,
   juridicalPerson,
   locationAndPurpose,
@@ -38,6 +39,7 @@ import {
   getWorkplaceData,
   isMachineRelatedAccident,
   isProfessionalAthleteAccident,
+  isReportingOnBehalfOfChild,
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
   returnMissingDocumentsList,
@@ -177,6 +179,50 @@ export const FormOverview: FC<FieldBaseProps> = ({
                   value={answers.injuredPersonInformation.phoneNumber ?? ''}
                 />
               </GridColumn>
+            </GridRow>
+          </ReviewGroup>
+        </>
+      )}
+
+      {isReportingOnBehalfOfChild(answers as FormValue) && (
+        <>
+          <Text variant="h4" paddingTop={6} paddingBottom={3}>
+            {formatText(
+              childInCustody.general.sectionTitle,
+              application,
+              formatMessage,
+            )}
+          </Text>
+          <ReviewGroup isLast editAction={() => null}>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={childInCustody.labels.name}
+                  value={answers.childInCustody.name}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <ValueLine
+                  label={childInCustody.labels.nationalId}
+                  value={answers.childInCustody.nationalId}
+                />
+              </GridColumn>
+              {answers.childInCustody.email && (
+                <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <ValueLine
+                    label={childInCustody.labels.email}
+                    value={answers.childInCustody.email}
+                  />
+                </GridColumn>
+              )}
+              {answers.childInCustody.phoneNumber && (
+                <GridColumn span={['12/12', '12/12', '6/12']}>
+                  <ValueLine
+                    label={childInCustody.labels.tel}
+                    value={answers.childInCustody.phoneNumber}
+                  />
+                </GridColumn>
+              )}
             </GridRow>
           </ReviewGroup>
         </>

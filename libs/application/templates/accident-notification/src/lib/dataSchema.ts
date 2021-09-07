@@ -91,6 +91,7 @@ export const AccidentNotificationSchema = z.object({
       WhoIsTheNotificationForEnum.JURIDICALPERSON,
       WhoIsTheNotificationForEnum.ME,
       WhoIsTheNotificationForEnum.POWEROFATTORNEY,
+      WhoIsTheNotificationForEnum.CHILDINCUSTODY,
     ]),
   }),
   attachments: z.object({
@@ -200,6 +201,12 @@ export const AccidentNotificationSchema = z.object({
       .string()
       .refine((x) => (x ? kennitala.isCompany(x) : false)),
     companyConfirmation: z.enum([YES]),
+  }),
+  childInCustody: z.object({
+    name: z.string().min(1, error.required.defaultMessage),
+    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+    email: z.string().optional(),
+    phoneNumber: z.string().optional(),
   }),
   powerOfAttorney: z.object({
     type: z.enum([
