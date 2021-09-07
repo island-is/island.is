@@ -11,10 +11,8 @@ export const paymentPlan = {
     },
     pageDescription: {
       id: `pdpp.application:section.paymentPlan.pageDescription`,
-      defaultMessage: `Hér gefur að líta yfirlit yfir þær
-      skuldir þar sem boðið er upp á greiðsludreifingu.
-      Til að ganga frá greiðsludreifingu þarf að gera
-      greiðsluáætlun fyrir allar útistandandi skuldir og undirrita áætlunina rafrænt.`,
+      defaultMessage: `Hér er yfirlit yfir þær skuldir sem hægt er að setja í greiðsluáætlun.`,
+      description: 'Description on overview for debts',
     },
     paymentPlanDescription: {
       id: `pdpp.application:section.paymentPlan.paymentPlanDescription`,
@@ -145,6 +143,11 @@ export const paymentPlan = {
       id: `pdpp.application:section.paymentPlan.infoDescription`,
       defaultMessage: `Í síðasta gjalddaga fara eftirstöðvar á skuld. Til að endurnýja greiðsluáætlun þarf að hafa samband við innheimtumann. `,
       description: `Information box description`,
+    },
+    wageDeductionLaw: {
+      id: `pdpp.application:section.paymentPlan.wageDeductionLaw`,
+      defaultMessage: `Lög um launafrádrátt`,
+      description: `Wage deduction law link`,
     },
   }),
 }
