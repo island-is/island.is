@@ -139,4 +139,5 @@ export const FeatureDeploymentServices = [
   endorsement,
   partyLetterRegistry,
   temporaryVoterRegistry,
+  endorsementUpdateMetadata,
 ]
