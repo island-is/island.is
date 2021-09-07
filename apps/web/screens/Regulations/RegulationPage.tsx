@@ -5,15 +5,15 @@ import {
   RegulationDiff,
   RegulationOriginalDates,
 } from '@island.is/regulations/web'
-import { RegulationPageTexts } from '../../components/Regulations/RegulationTexts.types'
+import { RegulationPageTexts } from '@island.is/web/components'
 
 import React from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { RegulationRedirectMessage } from '../../components/Regulations/RegulationRedirectMessage'
-import { RegulationDisplay } from '../../components/Regulations/RegulationDisplay'
-import { getUiTexts } from '../../components/Regulations/getUiTexts'
+import { RegulationRedirectMessage } from '@island.is/web/components'
+import { RegulationDisplay } from '@island.is/web/components'
+import { getUiTexts } from '@island.is/web/components'
 import {
   GetRegulationQuery,
   QueryGetRegulationArgs,

@@ -10,7 +10,7 @@ export interface IconBulletProps {
   onClick?: (e: MouseEvent) => void
 }
 
-const IconBullet: FC<IconBulletProps> = ({
+export const IconBullet: FC<IconBulletProps> = ({
   variant = 'blue',
   size = 'large',
   image,
