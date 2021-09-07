@@ -224,6 +224,7 @@ const PastRequests: React.FC<Props> = (props) => {
   )
 
   const pastRequestsData = useMemo(() => cases, [cases])
+
   return (
     <Table
       columns={pastRequestsColumns}
