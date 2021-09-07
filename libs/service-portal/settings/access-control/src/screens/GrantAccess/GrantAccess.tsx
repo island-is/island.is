@@ -213,7 +213,6 @@ function GrantAccess() {
               {queryLoading ? (
                 <span
                   className={cn(styles.icon, styles.loadingIcon)}
-                  aria-hidden="false"
                   aria-label="Loading"
                 >
                   <Icon icon="reload" size="large" color="blue400" />
