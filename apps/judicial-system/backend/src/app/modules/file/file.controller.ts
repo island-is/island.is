@@ -22,10 +22,9 @@ import {
   UserRole,
   CaseState,
   CaseAppealDecision,
-  hasCaseBeenAppealed,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
-import type { User, Case as TCase } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { Case, CaseService } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
@@ -45,8 +44,6 @@ const judgeRule = UserRole.JUDGE as RolesRule
 
 // Allows registrars to perform any action
 const registrarRule = UserRole.REGISTRAR as RolesRule
-
-const sevenDays = 7 * 24 * 60 * 60 * 1000
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
@@ -79,12 +76,6 @@ export class FileController {
       : accusedPostponedAppealDate
   }
 
-  private isLessThanSevenDaysAfterAppealDate(existingCase: Case): boolean {
-    const appealDate = this.getAppealDate(existingCase)
-
-    return Date.now() < appealDate.getTime() + sevenDays
-  }
-
   private doesUserHavePermissionToViewCaseFiles(
     user: User,
     existingCase: Case,
@@ -94,23 +85,19 @@ export class FileController {
       return true
     }
 
-    // Judges have permission to view files of appealed cases for 7 days, and
+    // Judges have permission to view files of completed cases, and
     // of uncompleted received cases they have been assigned to
     if (user.role === UserRole.JUDGE) {
       return (
-        (hasCaseBeenAppealed((existingCase as unknown) as TCase) &&
-          this.isLessThanSevenDaysAfterAppealDate(existingCase)) ||
+        completedCaseStates.includes(existingCase.state) ||
         (existingCase.state === CaseState.RECEIVED &&
           user.id === existingCase.judgeId)
       )
     }
 
-    // Registrars have permission to view files of appealed cases for 7 days
+    // Registrars have permission to view files of completed cases
     if (user.role === UserRole.REGISTRAR) {
-      return (
-        hasCaseBeenAppealed((existingCase as unknown) as TCase) &&
-        this.isLessThanSevenDaysAfterAppealDate(existingCase)
-      )
+      return completedCaseStates.includes(existingCase.state)
     }
 
     // Other users do not have permission to view any case files
