@@ -3,7 +3,7 @@ import { Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './Files.treat'
 import cn from 'classnames'
-import { getFileType } from '../../utils/formHelper'
+import { getFileType } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 import { ApplicationFile } from '@island.is/financial-aid/shared'
 
 interface Props {
