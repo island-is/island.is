@@ -54,7 +54,7 @@ export const dataSchema = z.object({
   employerNationalRegistryId: z
     .string()
     .refine((n) => n && kennitala.isValid(n) && kennitala.isPerson(n), {
-      params: errorMessages.otherParentId,
+      params: errorMessages.employerNationalRegistryId,
     }),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),

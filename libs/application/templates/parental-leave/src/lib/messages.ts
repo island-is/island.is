@@ -1467,7 +1467,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Þú þarft að skilgreina netfang vinnuveitanda.',
     description: 'Invalid employer copy',
   },
-  employerNationalRegistryId: {},
+  employerNationalRegistryId: {
+    id: 'pl.application:dataSchema.invalidEmployerNationalRegistryId',
+    defaultMessage: 'Kennitala þarf að vera gild.',
+    description: 'Error message when the kennitala is invalid.',
+  },
   dateOfBirth: {
     id: 'pl.application:answerValidators.dateOfBirth',
     defaultMessage:
