@@ -1,13 +1,5 @@
 import React, { useContext } from 'react'
-import {
-  GridContainer,
-  GridColumn,
-  Text,
-  Link,
-  Button,
-  Box,
-} from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
+import { GridContainer, Link, Button, Box } from '@island.is/island-ui/core'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
@@ -33,7 +25,6 @@ export const LatestNewsSectionSlider: React.FC<LatestNewsProps> = ({
   readMoreText,
 }) => {
   const newsItems = items.slice(0, 3)
-  const { t } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
   const { linkResolver } = useLinkResolver()

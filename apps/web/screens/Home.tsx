@@ -50,13 +50,15 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
   }
-  const cards = categories.map(({ __typename, title, slug, description }) => {
-    return {
-      title,
-      description,
-      link: linkResolver(__typename as LinkType, [slug]),
-    }
-  })
+  const cards = categories.map(
+    ({ __typename: typename, title, slug, description }) => {
+      return {
+        title,
+        description,
+        link: linkResolver(typename as LinkType, [slug]),
+      }
+    },
+  )
 
   const searchContent = (
     <Box display="flex" flexDirection="column" width="full">

@@ -42,7 +42,7 @@ const useImageLoader = (url: string, shouldLoad?: boolean): boolean => {
       }
       img.src = url
     }
-  }, [url, shouldLoad])
+  }, [url])
 
   return loaded
 }
@@ -89,7 +89,7 @@ export const BackgroundImage = ({
     if (!shouldLoad && intersection?.isIntersecting) {
       setShouldLoad(true)
     }
-  }, [intersection])
+  }, [intersection, shouldLoad])
 
   const imageLoaded = useImageLoader(src, shouldLoad)
 
