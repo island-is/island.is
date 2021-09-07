@@ -8,7 +8,7 @@ import {
   Link,
   Button,
 } from '@island.is/island-ui/core'
-import illustrationSvg from '@island.is/web/assets/svg/illustration.svg'
+import illustrationSvg from '../../assets/svg/illustration.svg'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 // TODO:
