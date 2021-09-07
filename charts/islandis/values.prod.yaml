@@ -440,6 +440,7 @@ endorsement-system-api:
     privileged: false
 endorsement-system-scripts-update-metadata:
   args:
+    - '--tls-min-v1.0'
     - updateMetadata.js
   command:
     - node
