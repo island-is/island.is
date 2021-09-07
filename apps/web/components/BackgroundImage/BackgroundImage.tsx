@@ -42,7 +42,7 @@ const useImageLoader = (url: string, shouldLoad?: boolean): boolean => {
       }
       img.src = url
     }
-  }, [url])
+  }, [url, shouldLoad])
 
   return loaded
 }
