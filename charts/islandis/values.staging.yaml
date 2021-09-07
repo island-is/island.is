@@ -438,7 +438,7 @@ endorsement-system-api:
     privileged: false
 endorsement-system-scripts-update-metadata:
   args:
-    - update-metadata.js
+    - updateMetadata.js
   command:
     - node
   enabled: true
