@@ -159,12 +159,10 @@ const processEndorsementLists = async (cb: () => void, index = 0) => {
   }
 }
 
-const main = async () => {
+export default async () => {
   const app = await NestFactory.create(AppModule)
   endorsementMetadataService = app.get(EndorsementMetadataService)
   processEndorsementLists(() => {
     app.close()
   })
 }
-
-main()
