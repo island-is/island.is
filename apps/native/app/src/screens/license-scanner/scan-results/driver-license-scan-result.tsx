@@ -1,4 +1,4 @@
-import { ScanResultCard } from '../scan-result-card'
+import { ScanResultCard } from '@island.is/island-ui-native'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { client } from '../../../graphql/client'
