@@ -2,8 +2,10 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@nrwl/react-native/nx_post_install'
 require_relative '../../node_modules/react-native-unimodules/cocoapods.rb'
+# require_relative '../../node_modules/expo-modules-core/scripts/autolinking.rb'
 
 $RNFirebaseAnalyticsWithoutAdIdSupport = true
+$ExpoUseSources = ['@unimodules/core', '@unimodules/react-native-adapter']
 
 platform :ios, '11.0'
 
@@ -50,14 +52,6 @@ target 'IslandApp' do
     'Flipper-Folly' => '2.6.7',
     'Flipper-RSocket' => '1.4.3'
   })
-
-
-  # use_flipper!()
-  # use_flipper!({
-  #   'Flipper-Folly' => '2.5.3',
-  #   'Flipper' => '0.87.0',
-  #   'Flipper-RSocket' => '1.3.1'
-  # })
 
   # Define find-and-replace function
   def find_and_replace(dir, findstr, replacestr)
