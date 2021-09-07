@@ -1318,6 +1318,28 @@ export const employerFormMessages = defineMessages({
     defaultMessage: 'Samþykki vinnuveitanda fyrir umsókn um fæðingarorlof',
     description: 'Employer approval for parental leave application',
   },
+  employerNationalRegistryIdSection: {
+    id: 'pl.application:employer.nationalRegistryId.subSection',
+    defaultMessage: 'Kennitala fyrirtækis',
+    description: 'Company national registry id',
+  },
+  employerNationalRegistryId: {
+    id: 'pl.application:employer.nationalRegistryId',
+    defaultMessage: 'Kennitala fyrirtækis',
+    description: 'Company national registry id',
+  },
+  employerNationalRegistryIdDescription: {
+    id: 'pl.application:employer.nationalRegistryId.description',
+    defaultMessage:
+      'Starfsmaður með kennitöluna {nationalId} hefur sótt um fæðingarorlof. Áður en tímabil eru samþykkt þarf að gefa upp kennitölu fyrirtækis.',
+    description:
+      'An employee with national registry id {id} has applied for parental leave. Before approving you need to enter the companys national registry id',
+  },
+  confirmationSubSection: {
+    id: 'pl.application:employer.confirm.subSection',
+    defaultMessage: 'Staðfesting',
+    description: 'Confirmation',
+  },
   reviewSection: {
     id: 'pl.application:employer.review.section',
     defaultMessage: 'Samþykki vinnuveitanda',
@@ -1445,6 +1467,7 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Þú þarft að skilgreina netfang vinnuveitanda.',
     description: 'Invalid employer copy',
   },
+  employerNationalRegistryId: {},
   dateOfBirth: {
     id: 'pl.application:answerValidators.dateOfBirth',
     defaultMessage:
