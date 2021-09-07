@@ -183,6 +183,18 @@ export const HearingArrangements: React.FC = () => {
     }
   }
 
+  const handleNextButtonClick = () => {
+    if (
+      workingCase?.notifications?.find(
+        (notification) => notification.type === NotificationType.COURT_DATE,
+      )
+    ) {
+      router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+    } else {
+      setModalVisible(true)
+    }
+  }
+
   return (
     <PageLayout
       activeSection={
@@ -440,7 +452,7 @@ export const HearingArrangements: React.FC = () => {
           <FormContentContainer isFooter>
             <FormFooter
               previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
-              onNextButtonClick={() => setModalVisible(true)}
+              onNextButtonClick={handleNextButtonClick}
               nextIsDisabled={
                 workingCase.state === CaseState.DRAFT ||
                 isStepIllegal ||
