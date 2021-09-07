@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { ValueType } from 'react-select'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   AlertMessage,
@@ -19,9 +20,11 @@ import {
   DateTime,
   FormContentContainer,
   FormFooter,
+  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   CaseState,
+  NotificationType,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -54,12 +57,14 @@ interface Props {
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, users } = props
+  const [modalVisible, setModalVisible] = useState(false)
   const [courtroomEM, setCourtroomEM] = useState('')
   const [defenderEmailEM, setDefenderEmailEM] = useState('')
   const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
   const [courtDateIsValid, setCourtDateIsValid] = useState(true)
-  const { updateCase } = useCase()
+  const { updateCase, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
+  const router = useRouter()
 
   const validations: FormSettings = {
     judge: {
@@ -506,12 +511,49 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={() => {
+            setModalVisible(true)
+          }}
           nextIsLoading={isLoading}
           nextIsDisabled={!isValid || !courtDateIsValid}
-          nextButtonText="Staðfesta og senda"
         />
       </FormContentContainer>
+      {modalVisible && (
+        <Modal
+          title={formatMessage(icHearingArrangements.modal.heading)}
+          text={formatMessage(icHearingArrangements.modal.text, {
+            announcementSuffix:
+              workingCase.sessionArrangements !==
+                SessionArrangements.ALL_PRESENT || !workingCase.defenderEmail
+                ? '.'
+                : workingCase.defenderIsSpokesperson
+                ? ` og talsmann.`
+                : ` og verjanda.`,
+          })}
+          handlePrimaryButtonClick={async () => {
+            const notificationSent = await sendNotification(
+              workingCase.id,
+              NotificationType.COURT_DATE,
+            )
+
+            if (notificationSent) {
+              router.push(
+                `${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
+              )
+            }
+          }}
+          handleSecondaryButtonClick={() => {
+            router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+          }}
+          primaryButtonText={formatMessage(
+            icHearingArrangements.modal.primaryButtonText,
+          )}
+          secondaryButtonText={formatMessage(
+            icHearingArrangements.modal.secondaryButtonText,
+          )}
+          isPrimaryButtonLoading={isSendingNotification}
+        />
+      )}
     </>
   )
 }
