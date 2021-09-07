@@ -2696,10 +2696,10 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.13.8", "@babel/runtime@^7.14.0", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2", "@babel/runtime@^7.9.6":
-  version "7.14.6"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.14.6.tgz#535203bc0892efc7dec60bdc27b2ecf6e409062d"
-  integrity sha512-/PCB2uJ7oM44tz8YhC4Z/6PeOKXp4K588f+5M3clr1M4zbqztlo0XEfJ2LEzj/FgwfgGcIdl8n7YYjTCI0BYwg==
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.8", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2", "@babel/runtime@^7.9.6":
+  version "7.13.10"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.13.10.tgz#47d42a57b6095f4468da440388fdbad8bebf0d7d"
+  integrity sha512-4QPkjJq6Ns3V/RgpEahRk+AGfL0eO6RHHtTWoNNr5mO49G6B5+X6d6THgWEAvTrznU5xYpbAlVKRYcsCgh/Akw==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -2709,6 +2709,13 @@
   integrity sha512-IvfvnMdSaLBateu0jfsYIpZTxAc2cKEXEMiezGGN75QcBcecDUKd3PgLAncT0oOgxKy8dd8hrJKj9MfzgfZd6g==
   dependencies:
     regenerator-runtime "^0.12.0"
+
+"@babel/runtime@^7.13.10", "@babel/runtime@^7.14.0":
+  version "7.14.6"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.14.6.tgz#535203bc0892efc7dec60bdc27b2ecf6e409062d"
+  integrity sha512-/PCB2uJ7oM44tz8YhC4Z/6PeOKXp4K588f+5M3clr1M4zbqztlo0XEfJ2LEzj/FgwfgGcIdl8n7YYjTCI0BYwg==
+  dependencies:
+    regenerator-runtime "^0.13.4"
 
 "@babel/runtime@^7.14.8":
   version "7.15.3"
@@ -4547,6 +4554,22 @@
   dependencies:
     optional "0.1.4"
     tslib "2.3.0"
+
+"@next-auth/prisma-legacy-adapter@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@next-auth/prisma-legacy-adapter/-/prisma-legacy-adapter-0.1.2.tgz#d19b65696bf16bda5dbc88f85da98aee6f30e2f3"
+  integrity sha512-QpGcRvrnFERkvVFroqS89qDbnskw9AjhvWxO095u3xl/8QVI++Y+doluQdZWuV6PewjrV7xY+uVUEnRhnGM8yQ==
+  dependencies:
+    "@babel/runtime" "^7.14.0"
+
+"@next-auth/typeorm-legacy-adapter@0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@next-auth/typeorm-legacy-adapter/-/typeorm-legacy-adapter-0.1.4.tgz#a250498613669b736d76b36a2a46f7eafc9e6ed5"
+  integrity sha512-UDnctrPiUU0yaPNeFhD6uw0FAuWGvx6IUVwUYTEzZm26RCEe/BBjkpGLYk43M3rcnkBPfkiljomAs/O7Uzh12w==
+  dependencies:
+    "@babel/runtime" "^7.14.0"
+    require_optional "^1.0.1"
+    typeorm "^0.2.30"
 
 "@next/env@11.1.0":
   version "11.1.0"
@@ -11772,7 +11795,7 @@ core-js@^2.4.0, core-js@^2.4.1, core-js@^2.6.4:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
   integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
 
-core-js@^3, core-js@^3.0.0, core-js@^3.0.1, core-js@^3.0.4, core-js@^3.2.1, core-js@^3.6.5:
+core-js@^3.0.0, core-js@^3.0.1, core-js@^3.0.4, core-js@^3.2.1, core-js@^3.6.5:
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.9.1.tgz#cec8de593db8eb2a85ffb0dbdeb312cb6e5460ae"
   integrity sha512-gSjRvzkxQc1zjM/5paAmL4idJBFzuJoo+jDjF1tStYFMV2ERfD02HhahhCGXUyHxQRG4yFKVSdO6g62eoRMcDg==
@@ -11992,7 +12015,7 @@ crypto-browserify@3.12.0, crypto-browserify@^3.11.0:
     randombytes "^2.0.0"
     randomfill "^1.0.3"
 
-crypto-js@4.1.1, crypto-js@^4.0.0:
+crypto-js@4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
   integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
@@ -13546,7 +13569,7 @@ endent@^2.0.1:
     fast-json-parse "^1.0.3"
     objectorarray "^1.0.4"
 
-enhanced-resolve@^4.0.0, enhanced-resolve@^4.3.0:
+enhanced-resolve@^4.0.0, enhanced-resolve@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-4.5.0.tgz#2f3cfd84dbe3b487f18f2db2ef1e064a571ca5ec"
   integrity sha512-Nv9m36S/vxpsI+Hc4/ZGRs0n9mXqSWGGq49zxb/cJfPAQMbUtttJAlNPS4AQzaBdw/pKskw5bMbekT/Y7W/Wlg==
@@ -20869,12 +20892,14 @@ netmask@2.0.1, netmask@^1.0.6:
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-2.0.1.tgz#5a5cbdcbb7b6de650870e15e83d3e9553a414cf4"
   integrity sha512-gB8eG6ubxz67c7O2gaGiyWdRUIbH61q7anjgueDqCC9kvIs/b4CTtCMaQKeJbv1/Y7FT19I4zKwYmjnjInRQsg==
 
-next-auth@3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-3.3.0.tgz#ab0a4d348eda20fcb1173dcb299e983a87ec223b"
-  integrity sha512-Ur5V1WVW4K0sUUEpCqU6cyjJBpWaCcrPS22J+PDIv+7pHjIJ5B0+9IzItLr0c+ZkA6qOctd48l7S3gZjwQz4oA==
+next-auth@3.29.0:
+  version "3.29.0"
+  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-3.29.0.tgz#60ddbfc7ed8ae7d43ebb02c16dc58eebf5dcb337"
+  integrity sha512-B//4QTv/1Of0D+roZ82URmI6L2JSbkKgeaKI7Mdrioq8lAzp9ff8NdmouvZL/7zwrPe2cUyM6MLYlasfuI3ZIQ==
   dependencies:
-    crypto-js "^4.0.0"
+    "@babel/runtime" "^7.14.0"
+    "@next-auth/prisma-legacy-adapter" "0.1.2"
+    "@next-auth/typeorm-legacy-adapter" "0.1.4"
     futoin-hkdf "^1.3.2"
     jose "^1.27.2"
     jsonwebtoken "^8.5.1"
@@ -20882,10 +20907,8 @@ next-auth@3.3.0:
     oauth "^0.9.15"
     pkce-challenge "^2.1.0"
     preact "^10.4.1"
-    preact-render-to-string "^5.1.7"
+    preact-render-to-string "^5.1.14"
     querystring "^0.2.0"
-    require_optional "^1.0.1"
-    typeorm "^0.2.30"
 
 next-cookies@2.0.3:
   version "2.0.3"
@@ -23489,10 +23512,10 @@ posthtml@^0.13.4:
     posthtml-parser "^0.5.0"
     posthtml-render "^1.2.3"
 
-preact-render-to-string@^5.1.7:
-  version "5.1.16"
-  resolved "https://registry.yarnpkg.com/preact-render-to-string/-/preact-render-to-string-5.1.16.tgz#379db30e51916d45a67c00163ef812ad376aa721"
-  integrity sha512-HvO3W29Sziz9r5FZGwl2e34XJKzyRLvjhouv3cpkCGszNPdnvkO8p4B6CBpe0MT/tzR+QVbmsAKLrMK222UXew==
+preact-render-to-string@^5.1.14:
+  version "5.1.19"
+  resolved "https://registry.yarnpkg.com/preact-render-to-string/-/preact-render-to-string-5.1.19.tgz#ffae7c3bd1680be5ecf5991d41fe3023b3051e0e"
+  integrity sha512-bj8sn/oytIKO6RtOGSS/1+5CrQyRSC99eLUnEVbqUa6MzJX5dYh7wu9bmT0d6lm/Vea21k9KhCQwvr2sYN3rrQ==
   dependencies:
     pretty-format "^3.8.0"
 
@@ -29270,10 +29293,10 @@ webpack-virtual-modules@^0.2.2:
   dependencies:
     debug "^3.0.0"
 
-webpack@4, webpack@4.44.1, webpack@4.46.0:
-  version "4.44.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.44.1.tgz#17e69fff9f321b8f117d1fda714edfc0b939cc21"
-  integrity sha512-4UOGAohv/VGUNQJstzEywwNxqX417FnjZgZJpJQegddzPmTvph37eBIRbRTfdySXzVtJXLJfbMN3mMYhM6GdmQ==
+webpack@4, webpack@4.46.0:
+  version "4.46.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.46.0.tgz#bf9b4404ea20a073605e0a011d188d77cb6ad542"
+  integrity sha512-6jJuJjg8znb/xRItk7bkT0+Q7AHCYjjFnvKIWQPkNIOyRqoCGvkOs0ipeQzrqz4l5FtN5ZI/ukEHroeX/o1/5Q==
   dependencies:
     "@webassemblyjs/ast" "1.9.0"
     "@webassemblyjs/helper-module-context" "1.9.0"
@@ -29283,7 +29306,7 @@ webpack@4, webpack@4.44.1, webpack@4.46.0:
     ajv "^6.10.2"
     ajv-keywords "^3.4.1"
     chrome-trace-event "^1.0.2"
-    enhanced-resolve "^4.3.0"
+    enhanced-resolve "^4.5.0"
     eslint-scope "^4.0.3"
     json-parse-better-errors "^1.0.2"
     loader-runner "^2.4.0"

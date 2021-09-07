@@ -14,6 +14,7 @@ const graphqlPath = '/graphql'
 
 module.exports = withVanillaExtract(
   withHealthcheckConfig({
+    webpack5: false,
     webpack: (config, options) => {
       if (!options.isServer) {
         config.resolve.alias['@sentry/node'] = '@sentry/browser'

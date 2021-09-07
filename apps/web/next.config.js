@@ -16,6 +16,7 @@ const {
 
 module.exports = withVanillaExtract(
   withHealthcheckConfig({
+    webpack5: false,
     webpack: (config, { isServer }) => {
       if (!isServer) {
         config.resolve.alias['@sentry/node'] = '@sentry/browser'
