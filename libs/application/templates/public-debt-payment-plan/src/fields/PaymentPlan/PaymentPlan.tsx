@@ -130,13 +130,13 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
 
           const monthlyPayments =
             response?.paymentScheduleDistribution.payments[0].payment
-          const lastMonthsPayment =
+          const finalMonthPayment =
             response?.paymentScheduleDistribution.payments[
               response?.paymentScheduleDistribution.payments.length - 1
             ].payment
 
-          if (monthlyPayments && lastMonthsPayment)
-            setDisplayInfo(monthlyPayments < lastMonthsPayment)
+          if (monthlyPayments && finalMonthPayment)
+            setDisplayInfo(monthlyPayments < finalMonthPayment)
         })
         .catch((error) => {
           console.error(
