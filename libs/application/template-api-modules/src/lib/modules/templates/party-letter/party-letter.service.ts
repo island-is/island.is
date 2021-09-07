@@ -9,7 +9,11 @@ import {
   generateApplicationApprovedEmail,
 } from './emailGenerators'
 import { PartyLetterRegistryApi } from './gen/fetch/party-letter'
-import { EndorsementListApi } from './gen/fetch/endorsements'
+import {
+  EndorsementListApi,
+  EndorsementMetadataDtoFieldEnum,
+  EndorsementListTagsEnum,
+} from './gen/fetch/endorsements'
 
 const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 
@@ -141,8 +145,12 @@ export class PartyLetterService {
         input: {
           title: application.answers.partyName,
           description: application.answers.partyLetter,
-          endorsementMeta: ['fullName', 'address', 'signedTags'],
-          tags: ['partyLetter2021'],
+          endorsementMetadata: [
+            { field: EndorsementMetadataDtoFieldEnum.fullName },
+            { field: EndorsementMetadataDtoFieldEnum.signedTags },
+            { field: EndorsementMetadataDtoFieldEnum.address },
+          ],
+          tags: [EndorsementListTagsEnum.partyLetter2021],
           validationRules: [
             {
               type: 'minAge',
