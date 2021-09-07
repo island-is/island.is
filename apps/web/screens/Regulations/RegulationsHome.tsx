@@ -10,7 +10,7 @@ import {
   RegulationMinistryList,
   RegulationSearchResults,
 } from '@island.is/regulations/web'
-import { RegulationHomeTexts } from '@island.is/web/components'
+import { RegulationHomeTexts } from '../../components/Regulations/RegulationTexts.types'
 
 import React, { useEffect, useState, useRef } from 'react'
 import omit from 'lodash/omit'
@@ -30,12 +30,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { RegulationsSearchSection } from '@island.is/web/components'
+import { RegulationsSearchSection } from '../../components/Regulations/RegulationsSearchSection'
 import {
   RegulationSearchFilters,
   useRegulationLinkResolver,
-} from '@island.is/web/components'
-import { getUiTexts } from '@island.is/web/components'
+} from '../../components/Regulations/regulationUtils'
+import { getUiTexts } from '../../components/Regulations/getUiTexts'
 import {
   GetRegulationsSearchQuery,
   QueryGetRegulationsSearchArgs,
@@ -56,7 +56,7 @@ import {
   GET_REGULATIONS_YEARS_QUERY,
   GET_SUBPAGE_HEADER_QUERY,
 } from '../queries'
-import { RegulationsHomeIntro } from '@island.is/web/components'
+import { RegulationsHomeIntro } from '../../components/Regulations/RegulationsHomeIntro'
 
 // ---------------------------------------------------------------------------
 
