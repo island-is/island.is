@@ -191,21 +191,3 @@ export const GET_HOMESTAYS_QUERY = gql`
     }
   }
 `
-
-export const GET_SYSLUMENN_AUCTIONS_QUERY = gql`
-  query GetSyslumennAuctions {
-    getSyslumennAuctions {
-      office
-      location
-      auctionType
-      lotType
-      lotName
-      lotId
-      lotItems
-      auctionDate
-      auctionTime
-      petitioners
-      respondent
-    }
-  }
-`
