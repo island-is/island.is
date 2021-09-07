@@ -24,6 +24,7 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
     cy.getByTestid('courtroom').type('1337')
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
+    cy.getByTestid('modalSecondaryButton').click()
     cy.url().should('include', '/domur/thingbok/test_id_stadfest')
   })
 })
