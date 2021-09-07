@@ -26,7 +26,7 @@ export const serviceSetup = (services: {
       SOFFIA_PASS: settings.SOFFIA_PASS,
     })
     .command('node')
-    .args('updateMetadata.js')
+    .args('--tls-min-v1.0', 'updateMetadata.js')
     .extraAttributes({
       dev: { schedule: '1 0/1 * * *' },
       staging: { schedule: '1 0/1 * * *' },

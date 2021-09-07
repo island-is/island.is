@@ -9,6 +9,7 @@ import { EndorsementMetadataService } from '../src/app/modules/endorsementMetada
 import { EndorsementMetaField } from '../src/app/modules/endorsementMetadata/types'
 import { AppModule } from '../src/app/app.module'
 import { EndorsementMetadata } from '../src/app/modules/endorsementMetadata/endorsementMetadata.model'
+import { logger } from '@island.is/logging'
 
 interface EndorsementListFieldMap {
   [key: string]: EndorsementMetaField[]
@@ -37,7 +38,7 @@ const limiter = new Bottleneck({
 
 if (!production) {
   // Lets make sure it is clear in logs if this is running in dev mode
-  console.log('>>>RUNNING IN DEV MODE!!!<<<')
+  logger.warn('>>>RUNNING IN DEV MODE!!!<<<')
 }
 
 const createEndorsementListFieldMap = (
@@ -65,7 +66,7 @@ const getEndorsementMetadata = async (
 ): Promise<EndorsementMetadataResponse | null> => {
   // we skip endorsements with no fields to update
   if (fieldsToUpdate.length) {
-    console.log('Will update', {
+    logger.info('Will update', {
       endorsement: endorsement.id,
       fields: fieldsToUpdate,
     })
@@ -124,7 +125,7 @@ const processEndorsements = async (
     }),
   )
 
-  console.log(
+  logger.info(
     'Updated endorsements',
     endorsementUpdates.map(({ id }) => id),
   )
