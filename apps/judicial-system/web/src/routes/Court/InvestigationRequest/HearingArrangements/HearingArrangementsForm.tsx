@@ -137,6 +137,19 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   const defaultRegistrar = registrars?.find(
     (registrar: Option) => registrar.value === workingCase?.registrar?.id,
   )
+
+  const handleNextButtonClick = () => {
+    if (
+      workingCase.notifications?.find(
+        (notification) => notification.type === NotificationType.COURT_DATE,
+      )
+    ) {
+      router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+    } else {
+      setModalVisible(true)
+    }
+  }
+
   return (
     <>
       <FormContentContainer>
@@ -511,9 +524,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() => {
-            setModalVisible(true)
-          }}
+          onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
           nextIsDisabled={!isValid || !courtDateIsValid}
         />
