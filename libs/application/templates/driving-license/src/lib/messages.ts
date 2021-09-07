@@ -7,12 +7,12 @@ export const m = defineMessages({
     description: 'I understand',
   },
   externalDataTitle: {
-    id: 'dl.system:externalData.title',
+    id: 'dl.application:externalData.title',
     defaultMessage: 'Umsókn um fullnaðarskírteini',
     description: 'Title of the application',
   },
   externalDataSubTitle: {
-    id: 'dl.system:externalData.subTitle',
+    id: 'dl.application:externalData.subTitle',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'The following data will be retrieved electronically',
   },
@@ -307,32 +307,32 @@ export const m = defineMessages({
     description: 'Will bring along data to the sheriff',
   },
   applicationQualityPhotoTitle: {
-    id: 'dl.application.applicationQualityPhotoTitle',
+    id: 'dl.application:applicationQualityPhotoTitle',
     defaultMessage: 'Passamynd',
     description: 'title for quality photo section',
   },
   qualityPhotoTitle: {
-    id: 'dl.application.qualityPhotoTitle',
+    id: 'dl.application:qualityPhotoTitle',
     defaultMessage: 'Ljósmynd í ökuskírteinaskrá',
     description: 'title for quality photo section',
   },
   qualityPhotoAltText: {
-    id: 'dl.application.qualityPhotoAltText',
+    id: 'dl.application:qualityPhotoAltText',
     defaultMessage: 'Þín mynd skv. ökuskírteinaskrá',
     description: `Alt text for the user's quality photo`,
   },
   qualityPhotoSubTitle: {
-    id: 'dl.application.qualityPhotoSubTitle',
+    id: 'dl.application:qualityPhotoSubTitle',
     defaultMessage: 'Hér er núverandi ljósmynd í ökuskírteinaskrá',
     description: 'sub title for quality photo section',
   },
   qualityPhotoWarningTitle: {
-    id: 'dl.application.qualityPhotoWarningTitle',
+    id: 'dl.application:qualityPhotoWarningTitle',
     defaultMessage: 'Ljósmynd í ökuskírteinaskrá ekki gæðamerkt',
     description: 'title for quality photo warning',
   },
   qualityPhotoWarningDescription: {
-    id: 'dl.application.qualityPhotoWarningDescription',
+    id: 'dl.application:qualityPhotoWarningDescription',
     defaultMessage:
       'Núverandi ljósmynd þín í ökuskírteinaskrá stenst ekki gæðakröfur og þarf því að koma með nýja ljósmynd.',
     description: 'Description for quality photo warning',
@@ -393,7 +393,7 @@ export const m = defineMessages({
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletSix: {
-    id: 'dl.application:qualityPhoto.instructionsbulletfive',
+    id: 'dl.application:qualityPhoto.instructionsbulletsix',
     defaultMessage: `
     Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
     `,
@@ -483,124 +483,124 @@ export const m = defineMessages({
     description: 'Order driving license',
   },
   continue: {
-    id: 'dl.application.continue',
+    id: 'dl.application:continue',
     defaultMessage: 'Halda áfram',
     description: 'Continue',
   },
   payment: {
-    id: 'dl.application.DrivingLicenseApplicationPaymentForm',
+    id: 'dl.application:DrivingLicenseApplicationPaymentForm',
     defaultMessage: 'greiðsla',
     description: 'payment',
   },
   paymentCapital: {
-    id: 'dl.application.awaitingPayment',
+    id: 'dl.application:awaitingPayment',
     defaultMessage: 'Staðfesting á greiðslu',
     description: 'Payment',
   },
   forwardingToPayment: {
-    id: 'dl.application.forwardingToPayment',
+    id: 'dl.application:forwardingToPayment',
     defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
     description: 'Forwarding you to payment handler...',
   },
   paymentPendingConfirmation: {
-    id: 'dl.application.forwardingToPayment',
+    id: 'dl.application:paymentPendingConfirmation',
     defaultMessage: 'Beðið eftir staðfestingu greiðsluveitu',
     description: 'Pending confirmation from payment handler',
   },
   applicationForDrivingLicense: {
-    id: 'dl.application.applicationForDrivingLicense',
+    id: 'dl.application:applicationForDrivingLicense',
     defaultMessage: 'Umsókn um ökuskilríki',
     description: 'Application for driving license',
   },
   eligibilityRequirementTitle: {
-    id: 'dl.application.eligibilityTitle',
+    id: 'dl.application:eligibilityTitle',
     defaultMessage: 'Skilyrði sem umsækjandi þarf að uppfylla',
     description: 'title for requirement component',
   },
   applicationEligibilityTitle: {
-    id: 'dl.application.applicationEligibilityTitle',
+    id: 'dl.application:applicationEligibilityTitle',
     defaultMessage: 'Skilyrði umsóknar',
     description: 'title for requirement section',
   },
   congratulationsTitleSuccess: {
-    id: 'dl.application.congratulationsTitleSuccess',
+    id: 'dl.application:congratulationsTitleSuccess',
     defaultMessage:
       'Umsókn þín um fullnaðarskírteini tókst og verður tilbúið á afhendingarstað eftir 3 til 4 vikur. Skila þarf inn bráðabirgðaskírteini til sýslumanns við afhendingu fullnaðarskírteinis.',
     description: 'Your application for full driving license was successful.',
   },
   congratulationsTitle: {
-    id: 'dl.application.congratulationsTitle',
+    id: 'dl.application:congratulationsTitle',
     defaultMessage: 'Til hamingju',
     description: 'Congratulations',
   },
   congratulationsCertificateTitle: {
-    id: 'dl.application.congratulationsCertificateTitle',
+    id: 'dl.application:congratulationsCertificateTitle',
     defaultMessage: 'Læknisvottorð',
     description: 'Health Certificate',
   },
   congratulationsQualityPictureTitle: {
-    id: 'dl.application.congratulationsQualityPictureTitle',
+    id: 'dl.application:congratulationsQualityPictureTitle',
     defaultMessage: 'Passamynd',
     description: 'Quality photo',
   },
   congratulationsCertificateDescription: {
-    id: 'dl.application.congratulationsCertificateDescription',
+    id: 'dl.application:congratulationsCertificateDescription',
     defaultMessage:
       'Þörf er á læknisvottorði frá heimilislækni miðað við útfyllta heilbrigðisyfirlýsingu. Læknisvottorði þarf að skila til sýslumannsembættis. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
     description: 'Health Certificate',
   },
   congratulationsQualityPictureDescription: {
-    id: 'dl.application.congratulationsQualityPictureDescription',
+    id: 'dl.application:congratulationsQualityPictureDescription',
     defaultMessage:
       'Skila þarf passamynd til sýslumanns. Þegar því hefur verið skilað og aðrar kröfur uppfylltar fer skírteinið í pöntunarferli.',
     description: 'Quality photo',
   },
   paymentPendingDescription: {
-    id: 'dl.application.paymentPendingDescription',
+    id: 'dl.application:paymentPendingDescription',
     defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
     description: 'Please wait until the payment is confirmed',
   },
   paymentSuccessExtraDocuments: {
-    id: 'dl.application.paymentSuccessExtraDocuments',
+    id: 'dl.application:paymentSuccessExtraDocuments',
     defaultMessage:
       'Ef beðið var um viðbótargögn (nýja ljósmynd eða læknisvottorð) þarf að skila þeim til Sýslumanns svo að fullnaðarskírteini fari í pöntun.',
     description:
       'If extra documents are required(new photograph or doctor certificate), you must return them to district commissioner so the driving license can be ordered.',
   },
   paymentSuccessIfNotReadyFewWeeks: {
-    id: 'dl.application.paymentSuccessIfNotReadyFewWeeks',
+    id: 'dl.application:paymentSuccessIfNotReadyFewWeeks',
     defaultMessage:
       'Ef svo var ekki þá verður fullnaðarskírteinið tilbúið á afhendingarstað eftir 3 til 4 vikur.',
     description:
       'If not then the driving license will be ready at the drop off location in 3 to 4 weeks.',
   },
   paymentApprovedContinue: {
-    id: 'dl.application.paymentApprovedContinue',
+    id: 'dl.application:paymentApprovedContinue',
     defaultMessage: `Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára umsóknina.`,
     description:
       'The payment has been confirmed, choose "Continue" to finish the application.',
   },
   paymentImage: {
-    id: 'dl.application.paymentApprovedContinue',
+    id: 'dl.application:paymentImage',
     defaultMessage: `Skrautmynd`,
     description: 'Company Image',
   },
   chooseDistrictCommisioner: {
-    id: 'dl.application.chooseDistrictCommisioner',
+    id: 'dl.application:chooseDistrictCommisioner',
     defaultMessage:
       'Veldu það embætti sýslumanns þar sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
     description:
       'Choose the district jurisdiction where you will return the temporary driving license and receive permanent driving license.',
   },
   confirmationStatusOfEligability: {
-    id: 'dl.application.confirmationStatusOfEligability',
+    id: 'dl.application:confirmationStatusOfEligability',
     defaultMessage:
       'Staðfesting akstursmats, punktastaða, sviptingar, ökuréttindi og almennar upplýsingar um skilríki',
     description:
       'Confirmation driving assessment, penalties, license loss, driving license and general information about identification',
   },
   infoFromLicenseRegistry: {
-    id: 'dl.application.infoFromLicenseRegistry',
+    id: 'dl.application:infoFromLicenseRegistry',
     defaultMessage: 'Upplýsingar úr ökuskírteinaskrá',
     description: 'Information from driving license registry',
   },
