@@ -8,9 +8,7 @@ import {
   FieldRow,
   LicenceCard,
 } from '@island.is/island-ui-native'
-import { btoa } from 'js-base64'
 import React from 'react'
-import { useIntl } from 'react-intl'
 import {
   Button,
   Platform,
@@ -18,8 +16,6 @@ import {
   View,
   ActivityIndicator,
   NativeModules,
-  Text,
-  Linking,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
@@ -70,11 +66,11 @@ const LoadingOverlay = styled.View`
   opacity: 0.25;
   width: 100%;
   height: 100%;
-`;
+`
 
 const Spacer = styled.View`
   height: 150px;
-`;
+`
 
 const {
   useNavigationOptions,
@@ -191,7 +187,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     const canAddPass = await canAddPasses()
     if (Platform.OS === 'android' || canAddPass) {
       try {
-        setAddingToWallet(true);
+        setAddingToWallet(true)
         const { data } = await client.mutate({
           mutation: GENERATE_PKPASS_MUTATION,
           variables: {
@@ -199,7 +195,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               licenseType: GenericLicenseType.DriversLicense,
             },
           },
-        });
+        })
         if (Platform.OS === 'android') {
           const pkPassUri =
             FileSystem.documentDirectory! + Date.now() + '.pkpass'
@@ -211,7 +207,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             pkPassUri,
           )
           addPass(pkPassContentUri, 'com.snjallveskid')
-          setAddingToWallet(false);
+          setAddingToWallet(false)
           return
         }
         const res = await fetch(data.generatePkPass.pkpassUrl)
@@ -221,12 +217,12 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         reader.onloadend = () => {
           const passData = reader.result?.toString()!
           addPass(passData.substr(41), 'com.snjallveskid')
-          setAddingToWallet(false);
+          setAddingToWallet(false)
         }
       } catch (err) {
-        alert('Failed to fetch or add pass');
-        setAddingToWallet(false);
-        console.error(err);
+        alert('Failed to fetch or add pass')
+        setAddingToWallet(false)
+        console.error(err)
       }
     } else {
       alert('You cannot add passes on this device')
@@ -241,12 +237,12 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       <Information contentInset={{ bottom: 162 }}>
         <SafeAreaView style={{ marginHorizontal: 16 }}>
           {!data?.payload?.data && licenseRes.loading ? (
-            <ActivityIndicator size="large" style={{ marginTop: 32 }} />
+            <ActivityIndicator size="large" color="#0061FF" style={{ marginTop: 32 }} />
           ) : (
             <FieldRender data={fields} />
           )}
         </SafeAreaView>
-        <Spacer />
+        {Platform.OS === 'android' && <Spacer />}
       </Information>
       <SafeAreaView
         style={{
@@ -296,7 +292,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           <Button title="Add to Wallet" onPress={onAddPkPass} color="#111111" />
         )}
       </SafeAreaView>
-      {addingToWallet && <LoadingOverlay><ActivityIndicator size="large" style={{ marginTop: 32 }} /></LoadingOverlay>}
+      {addingToWallet && (
+        <LoadingOverlay>
+          <ActivityIndicator size="large" color="#0061FF" style={{ marginTop: 32 }} />
+        </LoadingOverlay>
+      )}
     </View>
   )
 }

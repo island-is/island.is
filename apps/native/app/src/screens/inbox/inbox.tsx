@@ -2,13 +2,13 @@ import { useQuery } from '@apollo/client'
 import {
   EmptyList,
   ListItem,
+  ListItemSkeleton,
   SearchHeader,
   TopLine,
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
-  ActivityIndicator,
   Animated,
   AppState,
   AppStateStatus,
@@ -153,6 +153,21 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client })
 
+  const isFirstLoad = !res.data
+  const isSearch = ui.inboxQuery.length > 0
+  const isLoading = res.loading
+  const isError = !!res.error
+  const isEmpty = (res?.data?.listDocuments ?? []).length === 0
+
+  const isSkeltonView = isLoading && isFirstLoad && !isError
+  const isEmptyView = !isLoading && isEmpty
+
+  const emptyItems = [{ id: '0', type: 'empty' }]
+  const skeletonItems = Array.from({ length: 11 }).map((_, id) => ({
+    id,
+    type: 'skeleton',
+  }))
+
   const onAppStateBlur = useCallback((status: AppStateStatus) => {
     if (status !== 'inactive') {
       if (keyboardRef.current) {
@@ -279,37 +294,36 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
     }
   }, [])
 
-  const keyExtractor = useCallback((item) => {
+  const keyExtractor = useCallback((item: any) => {
     return item.id
   }, [])
 
   const renderItem = useCallback(
-    ({ item }: { item: IDocument }) => (
-      <PressableListItem item={item} unread={!readItems.includes(item.id)} />
-    ),
+    ({ item }) => {
+      if (item.type === 'skeleton') {
+        return <ListItemSkeleton />
+      }
+      if (item.type === 'empty') {
+        return (
+          <View style={{ marginTop: 80 }}>
+            <EmptyList
+              title={intl.formatMessage({ id: 'inbox.emptyListTitle' })}
+              description={intl.formatMessage({
+                id: 'inbox.emptyListDescription',
+              })}
+              image={
+                <Image source={illustrationSrc} height={176} width={134} />
+              }
+            />
+          </View>
+        )
+      }
+      return (
+        <PressableListItem item={item} unread={!readItems.includes(item.id)} />
+      )
+    },
     [readItems],
   )
-
-  const isSearch = ui.inboxQuery.length > 0
-  const isLoading = res.loading
-  const isEmpty = (res?.data?.listDocuments ?? []).length === 0
-
-  if (isLoading) {
-    return <ActivityIndicator />
-  }
-
-  if (!isLoading && isEmpty) {
-    return (
-      <View style={{ flex: 1 }}>
-        <BottomTabsIndicator index={0} total={3} />
-        <EmptyList
-          title={intl.formatMessage({ id: 'inbox.emptyListTitle' })}
-          description={intl.formatMessage({ id: 'inbox.emptyListDescription' })}
-          image={<Image source={illustrationSrc} height={176} width={134} />}
-        />
-      </View>
-    )
-  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -324,7 +338,9 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
           },
         )}
         style={{ marginHorizontal: 0, flex: 1 }}
-        data={inboxItems}
+        data={
+          isSkeltonView ? skeletonItems : isEmptyView ? emptyItems : inboxItems
+        }
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         keyboardDismissMode="on-drag"

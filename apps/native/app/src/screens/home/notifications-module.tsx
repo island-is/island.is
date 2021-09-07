@@ -21,7 +21,7 @@ export const NotificationsModule = React.memo(
     const { getOrganizationLogoUrl } = useOrganizationsStore()
     const notifications = getNotifications().slice(0, 5)
     const onNotificationPress = useCallback((notification: Notification) => {
-      navigateToNotification(notification, componentId);
+      navigateToNotification(notification, componentId)
     }, [])
 
     return (

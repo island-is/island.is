@@ -1,4 +1,4 @@
-import { dynamicColor, font } from '@island.is/island-ui-native'
+import { Bubble } from '@island.is/island-ui-native'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import React, { useEffect, useState } from 'react'
@@ -13,26 +13,12 @@ import {
   useNavigationComponentDidAppear,
   useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
-import styled from 'styled-components/native'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { authStore } from '../../stores/auth-store'
 import {
   ComponentRegistry,
   StackRegistry,
 } from '../../utils/component-registry'
-
-const Bubble = styled.View`
-  padding-top: 16px;
-  padding-bottom: 16px;
-  padding-left: 32px;
-  padding-right: 32px;
-  border-radius: 32px;
-  background-color: ${dynamicColor('background')};
-`
-
-const BubbleText = styled.Text`
-  ${font()}
-`
 
 const {
   useNavigationOptions,
@@ -122,13 +108,11 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
         }}
       >
         <Bubble>
-          <BubbleText>
-            {typeof hasPermission === 'undefined'
-              ? intl.formatMessage({ id: 'licenseScanner.awaitingPermission' })
-              : hasPermission === false
-              ? intl.formatMessage({ id: 'licenseScanner.noCameraAccess' })
-              : intl.formatMessage({ id: 'licenseScanner.helperMessage' })}
-          </BubbleText>
+          {typeof hasPermission === 'undefined'
+            ? intl.formatMessage({ id: 'licenseScanner.awaitingPermission' })
+            : hasPermission === false
+            ? intl.formatMessage({ id: 'licenseScanner.noCameraAccess' })
+            : intl.formatMessage({ id: 'licenseScanner.helperMessage' })}
         </Bubble>
       </View>
     </View>

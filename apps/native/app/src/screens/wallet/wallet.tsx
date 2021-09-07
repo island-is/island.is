@@ -35,7 +35,6 @@ import {
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
 import { navigateTo } from '../../lib/deep-linking'
-import { authStore } from '../../stores/auth-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { LicenseStatus, LicenseType } from '../../types/license-type'
 import { getRightButtons } from '../../utils/get-main-root'
@@ -166,7 +165,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       res
         .refetch()
         .then(() => {
-          console.log('done')
           loadingTimeout.current = setTimeout(() => {
             setLoading(false)
           }, 1331)
@@ -199,13 +197,13 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     if (item.type === 'empty') {
       return (
         <View style={{ marginTop: 80 }}>
-        <EmptyList
-          title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
-          description={intl.formatMessage({
-            id: 'wallet.emptyListDescription',
-          })}
-          image={<Image source={illustrationSrc} height={198} width={146} />}
-        />
+          <EmptyList
+            title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
+            description={intl.formatMessage({
+              id: 'wallet.emptyListDescription',
+            })}
+            image={<Image source={illustrationSrc} height={198} width={146} />}
+          />
         </View>
       )
     }
@@ -250,7 +248,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           contentInset={{
             bottom: 32,
           }}
-          // contentContainerStyle={{ flexGrow: 1 }}
           refreshControl={
             <RefreshControl refreshing={loading} onRefresh={onRefresh} />
           }

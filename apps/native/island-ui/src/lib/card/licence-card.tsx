@@ -1,11 +1,11 @@
 import React from 'react'
+import { FormattedDate, useIntl } from 'react-intl'
 import { Image, ImageSourcePropType } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import {
   LicenseStatus,
   LicenseType,
 } from '../../../../app/src/types/license-type'
-import { FormattedDate } from 'react-intl'
 import danger from '../../assets/card/danger.png'
 import isVerifiedLogo from '../../assets/card/is-verified.png'
 import driverLicence from '../../assets/card/okuskyrteini.png'
@@ -81,7 +81,7 @@ const ImgWrap = styled.View`
 interface LicenceCardProps {
   title: string
   status: LicenseStatus
-  date?: Date | string
+  date?: Date | string
   agencyLogo: ImageSourcePropType
   type: LicenseType
   nativeID?: string
@@ -118,10 +118,10 @@ export function LicenceCard({
   date,
   status,
 }: LicenceCardProps) {
-  console.log(status, 'status')
   const theme = useTheme()
+  const intl = useIntl()
   const variant = statusIcon[status]
-  let titleString = title;
+  let titleString = title
   let textColor = {
     dark: theme.shades.dark.foreground,
     light: theme.shades.light.foreground,
@@ -165,7 +165,7 @@ export function LicenceCard({
         <Title numberOfLines={1} ellipsizeMode="tail" color={textColor}>
           {titleString}
         </Title>
-        {variant &&
+        {variant && (
           <ValidationWrap>
             <Image
               source={variant.icon as ImageSourcePropType}
@@ -174,12 +174,13 @@ export function LicenceCard({
             />
             <Validation color={textColor}>{variant.text}</Validation>
           </ValidationWrap>
-        }
-        {date &&
+        )}
+        {date && (
           <TimeStamp color={textColor}>
-            <FormattedDate dateStyle="short" timeStyle="short" value={date}  />
+            {intl.formatMessage({ id: 'walletPass.lastUpdate' })}{': '}
+            <FormattedDate dateStyle="short" timeStyle="short" value={date} />
           </TimeStamp>
-        }
+        )}
       </Content>
       <ImgWrap>{logo}</ImgWrap>
     </Host>

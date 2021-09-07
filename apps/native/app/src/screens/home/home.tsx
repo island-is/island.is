@@ -7,16 +7,14 @@ import {
   FlatList,
   Platform,
   RefreshControl,
-  StyleSheet
 } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import styled from 'styled-components/native'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { client } from '../../graphql/client'
 import {
   ListApplicationsResponse,
-  LIST_APPLICATIONS_QUERY
+  LIST_APPLICATIONS_QUERY,
 } from '../../graphql/queries/list-applications.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
@@ -30,7 +28,7 @@ import { OnboardingModule } from './onboarding-module'
 const iconInsets = {
   top: Platform.OS === 'ios' && Platform.isPad ? 8 : 16,
   bottom: Platform.OS === 'ios' && Platform.isPad ? 8 : -4,
-};
+}
 
 const {
   useNavigationOptions,
@@ -69,8 +67,6 @@ const {
     bottomTab: {
       testID: testIDs.TABBAR_TAB_HOME,
       iconInsets,
-      // iconWidth: 42,
-      // iconHeight: 42,
       disableIconTint: false,
       disableSelectedIconTint: true,
     },
@@ -142,7 +138,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         testID={testIDs.SCREEN_HOME}
         keyExtractor={keyExtractor}
         contentInset={{
-          bottom: 32
+          bottom: 32,
         }}
         data={data}
         renderItem={renderItem}

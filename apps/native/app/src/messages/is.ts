@@ -151,6 +151,7 @@ export const is = {
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
+  'walletPass.lastUpdate': 'Síðast uppfært',
 
   // license scanner
   'licenseScanner.title': 'Ökuskírteina skanni',
@@ -190,7 +191,7 @@ export const is = {
   'applications.noResultText': 'Engar niðurstöður fundust',
   'applications.emptyListTitle': 'Hér eru engir linkar sem stendur',
   'applications.emptyListDescription':
-    'Að einhverjum ástæðum þá eru engir linka aðgengilegir eins og er',
+    'Að einhverjum ástæðum þá eru engir linkar að umsóknum aðgengilegir eins og er',
 
   // cards
   'applicationStatusCard.openButtonLabel': 'Opna umsókn',
