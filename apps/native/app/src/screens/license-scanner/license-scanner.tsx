@@ -1,5 +1,5 @@
 import { Bubble } from '@island.is/island-ui-native'
-import { BarCodeScanner } from 'expo-barcode-scanner'
+import { BarCodeEvent, BarCodeScanner } from 'expo-barcode-scanner'
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -50,7 +50,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   useNavigationOptions(componentId)
   const [hasPermission, setHasPermission] = useState<boolean>()
   const [active, setActive] = useState(false)
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false)
   const intl = useIntl()
 
   useEffect(() => {
@@ -63,12 +63,12 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
 
   useNavigationComponentDidAppear(() => {
     setActive(true)
-    setVisible(true);
+    setVisible(true)
   })
 
   useNavigationComponentDidDisappear(() => {
     setActive(false)
-    setVisible(false);
+    setVisible(false)
   })
 
   useNavigationButtonPress(({ buttonId }) => {
@@ -77,13 +77,14 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
     }
   })
 
-  const handleBarCodeScanned = ({ type, data }: any) => {
+  const handleBarCodeScanned = ({ type, data }: BarCodeEvent) => {
     impactAsync(ImpactFeedbackStyle.Heavy)
     setActive(false)
     Navigation.push(StackRegistry.LicenseScannerStack, {
       component: {
         name: ComponentRegistry.LicenseScanDetailScreen,
         passProps: {
+          type,
           data,
         },
       },
@@ -108,7 +109,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
         }}
       >
         <Bubble>
-          {typeof hasPermission === 'undefined'
+          {typeof hasPermission === 'undefined' || hasPermission === null
             ? intl.formatMessage({ id: 'licenseScanner.awaitingPermission' })
             : hasPermission === false
             ? intl.formatMessage({ id: 'licenseScanner.noCameraAccess' })

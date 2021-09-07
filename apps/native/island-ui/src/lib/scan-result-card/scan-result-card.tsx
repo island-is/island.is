@@ -2,16 +2,17 @@ import React from 'react'
 import { ActivityIndicator } from 'react-native'
 import styled from 'styled-components/native'
 import agencyLogo from '../../assets/card/agency-logo.png'
-
-import danger from '../assets/card/danger.png'
-import success from '../assets/card/is-verified.png'
-import background from '../assets/card/okuskyrteini.png'
-import { font } from '../../utils/font'
+import danger from '../../../../island-ui/src/assets/card/danger.png'
+import success from '../../../../island-ui/src/assets/card/is-verified.png'
+import backgroundPink from '../../../../island-ui/src/assets/card/okuskirteini.png'
+import backgroundBlue from '../../../../island-ui/src/assets/card/skotvopnaleyfi.png'
 import { useIntl } from 'react-intl'
+import { font } from '../../utils'
 
 const Host = styled.View`
   border-radius: 16px;
   margin-bottom: 32px;
+  overflow: hidden;
 `
 
 const Header = styled.View`
@@ -123,38 +124,36 @@ const Background = styled.Image`
   width: 100%;
   height: 100%;
   background-color: #e2c4d1;
-  border-radius: 16px;
 `
 
 interface ScanResultCardProps {
   loading: boolean
   error?: boolean
+  valid?: boolean
   errorMessage?: string
-  nationalId?: string
+  birthDate?: string
   name?: string
   licenseNumber?: string
   photo?: string
-}
-
-function nationalIdToBirthDate(ssn?: string) {
-  const firstChar = ssn?.substr(0, 1)
-  if (['8', '9'].includes(firstChar ?? '8')) {
-    return null
-  }
-  const lastChar = ssn?.substr(-1)
-  const decade = lastChar === '9' ? 1900 : 2000 + Number(lastChar) * 100
-  const year = decade + Number(ssn?.substr(4, 2))
-  const month = Number(ssn?.substr(2, 2))
-  const date = Number(ssn?.substr(0, 2))
-
-  return new Date(year, month - 1, date)
+  data?: Array<{ key: string; value: any }>
+  backgroundColor?: 'pink' | 'blue'
 }
 
 export function ScanResultCard(props: ScanResultCardProps) {
-  const { error, errorMessage, loading, nationalId, name, photo } = props
+  const {
+    error,
+    errorMessage,
+    valid,
+    loading,
+    birthDate,
+    name,
+    photo,
+    data,
+    backgroundColor = 'pink',
+  } = props
   const intl = useIntl()
-  const birthDate = nationalIdToBirthDate(nationalId)
-
+  const background =
+    backgroundColor === 'pink' ? backgroundPink : backgroundBlue
   return (
     <Host>
       <Background source={background} resizeMode="stretch" />
@@ -222,13 +221,25 @@ export function ScanResultCard(props: ScanResultCardProps) {
               {loading ? (
                 <Placeholder style={{ width: 120 }} />
               ) : (
-                <Value>
-                  {birthDate ? intl.formatDate(birthDate, {}) : `---`}
-                </Value>
+                <Value>{birthDate ?? `---`}</Value>
               )}
             </LabelGroup>
+            {data?.map(({ key, value }) => {
+              return (
+                <LabelGroup key={key}>
+                  <Label>{key}</Label>
+                  {loading ? (
+                    <Placeholder style={{ width: 120 }} />
+                  ) : (
+                    <Value>{value}</Value>
+                  )}
+                </LabelGroup>
+              )
+            })}
           </Left>
-          <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
+          {photo && (
+            <Photo source={{ uri: `data:image/png;base64,${photo}` }} />
+          )}
         </Content>
       )}
     </Host>

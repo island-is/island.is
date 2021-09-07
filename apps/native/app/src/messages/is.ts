@@ -154,7 +154,7 @@ export const is = {
   'walletPass.lastUpdate': 'Síðast uppfært',
 
   // license scanner
-  'licenseScanner.title': 'Ökuskírteina skanni',
+  'licenseScanner.title': 'Skilríkjaskanni',
   'licenseScanner.helperMessage': 'Snúðu símanum að strikamerkinu',
   'licenseScanner.awaitingPermission': 'Bið um leyfi til að nota myndavél',
   'licenseScanner.noCameraAccess': 'Myndavél ekki aðgengileg',

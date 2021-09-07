@@ -1,3 +1,4 @@
+import { BarCodeEvent, Constants } from 'expo-barcode-scanner'
 import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import {
@@ -5,22 +6,21 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
-import { client } from '../../graphql/client'
-import { VERIFY_PKPASS_MUTATION } from '../../graphql/queries/verify-pkpass.mutation'
 import { StackRegistry } from '../../utils/component-registry'
-import { useIntl } from 'react-intl'
-import { ScanResultCard } from '@island.is/island-ui-native'
+import { CovidCertificateScanResult } from './scan-results/covid-certificate-scan-result'
+import { DriverLicenseScanResult } from './scan-results/driver-license-scan-result'
 
-export const LicenseScanDetailScreen: NavigationFunctionComponent<{
-  data: string
-}> = ({ componentId, data }) => {
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string>()
-  const [name, setName] = useState<string>()
-  const [nationalId, setNationalId] = useState<string>()
-  const [photo, setPhoto] = useState<string>()
-  const intl = useIntl()
+enum ScanResult {
+  COVID_CERTIFICATE,
+  DRIVER_LICENSE,
+  UNKNOWN,
+}
+
+export const LicenseScanDetailScreen: NavigationFunctionComponent<BarCodeEvent> = ({
+  data,
+  type,
+}) => {
+  const [scanResult, setScanResult] = useState<ScanResult>()
 
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === 'LICENSE_SCANNER_DONE') {
@@ -29,73 +29,30 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<{
   })
 
   useEffect(() => {
-    client
-      .mutate({
-        mutation: VERIFY_PKPASS_MUTATION,
-        variables: {
-          input: {
-            licenseType: 'DriversLicense',
-            data,
-          },
-        },
-      })
-      .then((res) => {
-        if (res.errors) {
-          setError(true)
-          setErrorMessage(
-            intl.formatMessage({ id: 'licenseScanDetail.errorUnknown' }),
-          )
-          setLoading(false)
-        } else {
-          const { data, valid } = res.data.verifyPkPass
-          if (!valid) {
-            setError(true)
-            setErrorMessage(
-              intl.formatMessage({ id: 'licenseScanDetail.errorTryToRefresh' }),
-            )
-            setLoading(false)
-          } else {
-            try {
-              const { name, nationalId, photo } = JSON.parse(data)
-              setNationalId(nationalId)
-              setName(name)
-              setPhoto(photo.mynd)
-            } catch (err) {
-              // whoops
-            }
-            setError(false)
-            setLoading(false)
-          }
+    try {
+      if (type === Constants.BarCodeType.pdf417) {
+        const parsed = JSON.parse(data)
+        if (parsed?.TGLJZW) {
+          setScanResult(ScanResult.DRIVER_LICENSE)
         }
-      })
-      .catch(() => {
-        setError(true)
-        setErrorMessage(
-          intl.formatMessage({ id: 'licenseScanDetail.errorNetwork' }),
-        )
-        setLoading(false)
-      })
-  }, [data])
-
-  let driverLicenseNumber
-  try {
-    const parsed = JSON.parse(data)
-    driverLicenseNumber = parsed?.TGLJZW
-  } catch (err) {
-    // noop
-  }
+      } else if (type === Constants.BarCodeType.qr) {
+        if (data.startsWith('HC1')) {
+          setScanResult(ScanResult.COVID_CERTIFICATE)
+        }
+      }
+    } catch (err) {
+      console.log('unable to decode barcode', err)
+    }
+  }, [data, type])
 
   return (
     <View style={{ flex: 1, padding: 16 }}>
-      <ScanResultCard
-        loading={loading}
-        error={error}
-        errorMessage={errorMessage}
-        name={name}
-        nationalId={nationalId}
-        licenseNumber={driverLicenseNumber}
-        photo={photo}
-      />
+      {scanResult === ScanResult.DRIVER_LICENSE && (
+        <DriverLicenseScanResult data={data} />
+      )}
+      {scanResult === ScanResult.COVID_CERTIFICATE && (
+        <CovidCertificateScanResult data={data} />
+      )}
     </View>
   )
 }

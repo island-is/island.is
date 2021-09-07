@@ -26,7 +26,7 @@ export function getDefaultOptions(
       animateRightButtons: false,
       animateLeftButtons: false,
       borderHeight: 0,
-      borderColor: 'transparent',
+      // borderColor: 'transparent',
     },
     navigationBar: {
       backgroundColor: theme.shade.background,
@@ -41,10 +41,10 @@ export function getDefaultOptions(
       backgroundColor:
         Platform.OS === 'android'
           ? theme.shade.background
-          : DynamicColorIOS({
+          : {
               dark: theme.shades.dark.background,
               light: theme.shades.light.background,
-            }),
+            },
     },
     layout:
       Platform.OS === 'android'

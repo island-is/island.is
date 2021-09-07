@@ -8,7 +8,7 @@ import {
 } from '../../../../app/src/types/license-type'
 import danger from '../../assets/card/danger.png'
 import isVerifiedLogo from '../../assets/card/is-verified.png'
-import driverLicence from '../../assets/card/okuskyrteini.png'
+import driverLicence from '../../assets/card/okuskirteini.png'
 import weaponLicense from '../../assets/card/skotvopnaleyfi.png'
 import ust from '../../assets/card/ust.png'
 import fishingCard from '../../assets/card/veidikort.png'

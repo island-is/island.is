@@ -28,7 +28,7 @@ const defaultOptions = (
     backgroundColor:
       Platform.OS === 'android'
         ? theme.shade.background
-        : DynamicColorIOS({
+        : ({
             dark: theme.shades.dark.background,
             light: theme.shades.light.background,
           }),
@@ -48,11 +48,11 @@ const defaultOptions = (
       textColor:
         Platform.OS === 'android'
           ? theme.shade.foreground
-          : DynamicColorIOS({ light: 'black', dark: 'white' }),
+          : { light: 'black', dark: 'white' },
       selectedTextColor:
         Platform.OS === 'android'
           ? theme.shade.foreground
-          : DynamicColorIOS({ light: 'black', dark: 'white' }),
+          : ({ light: 'black', dark: 'white' }),
     }
     if (Platform.OS === 'android') {
       options.bottomTabs = {
@@ -67,7 +67,7 @@ const defaultOptions = (
         color:
           Platform.OS === 'android'
             ? theme.shade.foreground
-            : DynamicColorIOS({ light: 'black', dark: 'white' }),
+            : ({ light: 'black', dark: 'white' }),
       },
       animateRightButtons: false,
       animateLeftButtons: false,
