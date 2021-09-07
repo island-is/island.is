@@ -195,20 +195,13 @@ const PastRequests: React.FC<Props> = (props) => {
     }) => {
       const prosecutorAppealDecision = row.row.original.prosecutorAppealDecision
       const accusedAppealDecision = row.row.original.accusedAppealDecision
+
       const prosecutorPostponedAppealDate =
         row.row.original.prosecutorPostponedAppealDate
       const accusedPostponedAppealDate =
         row.row.original.accusedPostponedAppealDate
       const rulingDate = row.row.original.rulingDate
-      console.log(
-        getAppealDate(
-          prosecutorAppealDecision,
-          accusedAppealDecision,
-          prosecutorPostponedAppealDate,
-          accusedPostponedAppealDate,
-          rulingDate,
-        ),
-      )
+
       return formatDate(
         getAppealDate(
           prosecutorAppealDecision,
