@@ -1000,6 +1000,7 @@ temporary-voter-registry-api:
     DB_USER: services_temporary_voter_registry_api
   grantNamespaces:
     - islandis
+    - endorsement-system
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
