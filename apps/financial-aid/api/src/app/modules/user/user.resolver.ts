@@ -59,11 +59,7 @@ export class UserResolver {
     @Parent() user: User,
   ): Promise<CurrentApplicationModel | null> {
     // Local development
-    if (
-      environment.auth.allowFakeUsers &&
-      AllowedFakeUsers.includes(user.nationalId) &&
-      user.nationalId in this.fakeUsers
-    ) {
+    if (environment.auth.allowFakeUsers && user.nationalId in this.fakeUsers) {
       return this.fakeUsers[user.nationalId]
     }
     return await this.userService.getCurrentApplication(user.nationalId)
