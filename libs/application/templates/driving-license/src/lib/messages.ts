@@ -350,9 +350,9 @@ export const m = defineMessages({
   qualityPhotoInstructions: {
     id: 'dl.application:qualityPhoto.instructions',
     defaultMessage: `
-    Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats) 
-    og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi 
-    á augu. Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni. 
+    Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats)
+    og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi
+    á augu. Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni.
     Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
     `,
     description: 'Description of photo requirements',
@@ -454,7 +454,7 @@ export const m = defineMessages({
   requirementUnmetDeniedByServiceDescription: {
     id: 'dl.application:requirementunmet.deniedbyservicedescription',
     defaultMessage:
-      'Umsækjandi um fullnaðarskírteini má ekki hafa fengið punkt í ökuferilsskrá á síðustu 12 mánuðum. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+      'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'requirement unmet api returned false',
   },
   errorDataProvider: {
