@@ -24,7 +24,7 @@ const mapToCSVFile = (endorsements: Endorsement[], regionNumber: number) => {
       Póstnúmer: endorsement.meta.address.postalCode ?? '',
       Borg: endorsement.meta.address.city ?? '',
       'Meðmæli í vafa':
-        regionNumber !== endorsement.meta.voterRegion.voterRegionNumber
+        regionNumber !== endorsement.meta.voterRegion?.voterRegionNumber
           ? 'X'
           : '',
       'Meðmæli á pappír': endorsement.meta.bulkEndorsement ? 'X' : '',
