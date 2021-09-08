@@ -153,6 +153,7 @@ function GrantAccess() {
                 <Input
                   name="name"
                   value={name}
+                  aria-live="assertive"
                   label={formatMessage({
                     id:
                       'service.portal.settings.accessControl:grant-form-access-holder',
@@ -161,7 +162,7 @@ function GrantAccess() {
                   disabled
                 />
               )}
-              <Box display={name ? 'none' : 'block'}>
+              <Box display={name ? 'none' : 'block'} aria-live="assertive">
                 <InputController
                   control={control}
                   id="toNationalId"
