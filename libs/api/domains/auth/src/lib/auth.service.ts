@@ -38,7 +38,7 @@ export class AuthService {
   getDelegations(user: User): Promise<DelegationDTO[]> {
     return this.delegationsApiWithAuth(
       user,
-    ).delegationsControllerFindAllCustomFrom()
+    ).delegationsControllerFindAllCustomFrom({ isValid: 'true' })
   }
 
   getApiScopes(user: User): Promise<ApiScope[]> {

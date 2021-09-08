@@ -14,7 +14,7 @@ interface Props {
   ): void
 }
 
-const OptionsModal: React.FC<Props> = ({ state, onClick }) => {
+const OptionsModal = ({ state, onClick }: Props) => {
   const statusOptions = [
     ApplicationState.NEW,
     ApplicationState.INPROGRESS,

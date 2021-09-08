@@ -137,6 +137,7 @@ judicial-system-backend:
     EMAIL_FROM_NAME: /k8s/judicial-system/EMAIL_FROM_NAME
     EMAIL_REPLY_TO: /k8s/judicial-system/EMAIL_REPLY_TO
     EMAIL_REPLY_TO_NAME: /k8s/judicial-system/EMAIL_REPLY_TO_NAME
+    EVENT_URL: /k8s/judicial-system/EVENT_URL
     NOVA_PASSWORD: /k8s/judicial-system/NOVA_PASSWORD
     NOVA_URL: /k8s/judicial-system/NOVA_URL
     NOVA_USERNAME: /k8s/judicial-system/NOVA_USERNAME

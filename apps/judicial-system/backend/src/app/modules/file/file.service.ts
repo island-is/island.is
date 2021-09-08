@@ -8,8 +8,8 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 import { AwsS3Service } from './awsS3.service'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
@@ -30,7 +30,26 @@ export class FileService {
     private readonly logger: Logger,
   ) {}
 
-  findById(id: string): Promise<CaseFile> {
+  private async deleteFileFromDatabase(id: string): Promise<boolean> {
+    this.logger.debug(`Deleting file ${id} from database`)
+
+    const nrOfRowsDeleted = await this.fileModel.destroy({ where: { id } })
+
+    return nrOfRowsDeleted > 0
+  }
+
+  private async tryDeleteFileFromS3(key: string) {
+    this.logger.debug(`Attempting to delete file ${key} from S3`)
+
+    // We don't really care if this succeeds
+    try {
+      await this.awsS3Service.deleteObject(key)
+    } catch (error) {
+      this.logger.error(`Error while deleting file ${key} from S3`, error)
+    }
+  }
+
+  async findById(id: string): Promise<CaseFile | null> {
     return this.fileModel.findByPk(id)
   }
 
@@ -45,7 +64,10 @@ export class FileService {
     )
   }
 
-  createCaseFile(caseId: string, createFile: CreateFileDto): Promise<CaseFile> {
+  async createCaseFile(
+    caseId: string,
+    createFile: CreateFileDto,
+  ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
     const { key } = createFile
@@ -63,7 +85,7 @@ export class FileService {
     })
   }
 
-  getAllCaseFiles(caseId: string): Promise<CaseFile[]> {
+  async getAllCaseFiles(caseId: string): Promise<CaseFile[]> {
     this.logger.debug(`Getting all files for case ${caseId}`)
 
     return this.fileModel.findAll({
@@ -105,24 +127,5 @@ export class FileService {
     }
 
     return { success }
-  }
-
-  private async deleteFileFromDatabase(id: string): Promise<boolean> {
-    this.logger.debug(`Deleting file ${id} from database`)
-
-    const nrOfRowsDeleted = await this.fileModel.destroy({ where: { id } })
-
-    return nrOfRowsDeleted > 0
-  }
-
-  private async tryDeleteFileFromS3(key: string) {
-    this.logger.debug(`Attempting to delete file ${key} from S3`)
-
-    // We don't really care if this succeeds
-    try {
-      await this.awsS3Service.deleteObject(key)
-    } catch (error) {
-      this.logger.error(`Error while deleting file ${key} from S3`, error)
-    }
   }
 }

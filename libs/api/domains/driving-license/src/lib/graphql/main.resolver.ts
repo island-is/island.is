@@ -18,6 +18,8 @@ import {
   Juristiction,
   DrivingLicenseDeprevationType,
   DrivingLicenseRemarkType,
+  QualityPhoto,
+  StudentAssessment,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
 
@@ -120,5 +122,15 @@ export class MainResolver {
   @Query(() => [Juristiction])
   drivingLicenseListOfJuristictions() {
     return this.drivingLicenseService.getListOfJuristictions()
+  }
+
+  @Query(() => QualityPhoto)
+  qualityPhoto(@CurrentUser() user: User) {
+    return this.drivingLicenseService.getQualityPhoto(user.nationalId)
+  }
+
+  @Query(() => StudentAssessment)
+  drivingLicenseStudentAssessment(@CurrentUser() user: User) {
+    return this.drivingLicenseService.getDrivingAssessment(user.nationalId)
   }
 }

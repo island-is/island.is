@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import type { User } from '@island.is/judicial-system/types'
 import { UserRole, NotificationType } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -43,7 +43,11 @@ const judgeNotificationRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [NotificationType.COURT_DATE, NotificationType.RULING],
+  dtoFieldValues: [
+    NotificationType.RECEIVED_BY_COURT,
+    NotificationType.COURT_DATE,
+    NotificationType.RULING,
+  ],
 } as RolesRule
 
 // Allows registrars to send court-date
@@ -51,7 +55,10 @@ const registrarNotificationRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [NotificationType.COURT_DATE],
+  dtoFieldValues: [
+    NotificationType.RECEIVED_BY_COURT,
+    NotificationType.COURT_DATE,
+  ],
 } as RolesRule
 
 @UseGuards(JwtAuthGuard, RolesGuard)

@@ -1,10 +1,8 @@
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
-import parseISO from 'date-fns/parseISO'
 
 import {
   Application,
   ExternalData,
-  extractRepeaterIndexFromField,
   Field,
   FormatMessage,
   FormValue,
@@ -22,7 +20,6 @@ import {
   SPOUSE,
   StartDateOptions,
   ParentalRelations,
-  MILLISECONDS_IN_A_DAY,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
@@ -32,7 +29,7 @@ import {
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
 import { YesOrNo, Period } from '../types'
-import { maxDaysToGiveOrReceive, daysInMonth } from '../config'
+import { maxDaysToGiveOrReceive } from '../config'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -304,27 +301,13 @@ export const isEligibleForParentalLeave = (
   )
 }
 
-const calculateMonthsBetweenDates = (start: Date, end: Date) => {
-  const daysBetween =
-    end.getTime() / MILLISECONDS_IN_A_DAY -
-    start.getTime() / MILLISECONDS_IN_A_DAY
-  const monthsBetween = daysBetween / daysInMonth
-
-  // TODO: Refactor. Rough estimate.
-  return Math.round(monthsBetween * 10) / 10
-}
-
-export const calculatePeriodPercentageBetweenDates = (
+export const calculateDaysToPercentage = (
   application: Application,
-  start: Date,
-  end: Date,
+  days: number,
 ) => {
-  const availableRights = getAvailableRightsInMonths(application)
+  const numberOfDaysInRights = getAvailableRightsInDays(application)
 
-  const numberOfMonthsBetween = calculateMonthsBetweenDates(start, end)
-  const numberOfMonthsInRights = availableRights
-
-  if (numberOfMonthsBetween <= numberOfMonthsInRights) {
+  if (days <= numberOfDaysInRights) {
     return 100
   }
 
@@ -332,47 +315,32 @@ export const calculatePeriodPercentageBetweenDates = (
     100,
     // We don't want to over estimate the percentage and end up with
     // invalid period length
-    Math.floor((numberOfMonthsInRights / numberOfMonthsBetween) * 100),
+    Math.floor((numberOfDaysInRights / days) * 100),
   )
 }
 
-export const calculatePeriodPercentage = (
-  application: Application,
-  {
-    field,
-    dates,
-  }: {
-    field?: Field
-    dates?: { startDate: string; endDate: string }
-  },
-) => {
-  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+export const getPeriodIndex = (field?: Field) => {
+  const id = field?.id
 
-  let startDate: string | undefined = undefined
-  let endDate: string | undefined = undefined
-
-  const repeaterIndex = field ? extractRepeaterIndexFromField(field) : -1
-  const index = repeaterIndex === -1 ? 0 : repeaterIndex
-  const { answers } = application
-
-  startDate = getValueViaPath(
-    answers,
-    `periods[${index}].startDate`,
-    expectedDateOfBirth,
-  ) as string
-
-  endDate = getValueViaPath(answers, `periods[${index}].endDate`) as string
-
-  if (dates) {
-    startDate = dates?.startDate
-    endDate = dates?.endDate
+  if (!id) {
+    return -1
   }
 
-  return calculatePeriodPercentageBetweenDates(
-    application,
-    parseISO(startDate),
-    parseISO(endDate),
-  )
+  if (id === 'periods') {
+    return 0
+  }
+
+  return parseInt(id.substring(id.indexOf('[') + 1, id.indexOf(']')), 10)
+}
+
+export const getPeriodPercentage = (
+  answers: Application['answers'],
+  field: Field,
+) => {
+  const { periods } = getApplicationAnswers(answers)
+  const index = getPeriodIndex(field)
+
+  return periods?.[index]?.percentage ?? '100'
 }
 
 const getOrFallback = (
@@ -513,7 +481,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const employerNationalRegistryId = getValueViaPath(
     answers,
-    'employer.nationalRegistryId',
+    'employerNationalRegistryId',
   ) as string
 
   const shareInformationWithOtherParent = getValueViaPath(

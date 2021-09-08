@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationModel } from './models'
+import { CurrentApplicationModel, ApplicationModel } from './models'
+
+import { Op } from 'sequelize'
 
 import { CreateApplicationDto, UpdateApplicationDto } from './dto'
-import { User } from '@island.is/financial-aid/shared'
+import {
+  ApplicationEventType,
+  ApplicationFilters,
+  ApplicationState,
+  User,
+} from '@island.is/financial-aid/shared'
 import { FileService } from '../file'
 import { ApplicationEventService } from '../applicationEvent'
 
@@ -17,8 +24,23 @@ export class ApplicationService {
     private readonly applicationEventService: ApplicationEventService,
   ) {}
 
-  getAll(): Promise<ApplicationModel[]> {
-    return this.applicationModel.findAll()
+  async getCurrentApplication(
+    nationalId: string,
+  ): Promise<CurrentApplicationModel | null> {
+    const date = new Date()
+
+    const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
+
+    return this.applicationModel.findOne({
+      where: {
+        nationalId,
+        created: { [Op.gte]: firstDateOfMonth },
+      },
+    })
+  }
+
+  async getAll(): Promise<ApplicationModel[]> {
+    return this.applicationModel.findAll({ order: [['modified', 'DESC']] })
   }
 
   async findById(id: string): Promise<ApplicationModel | null> {
@@ -33,6 +55,32 @@ export class ApplicationService {
     return application
   }
 
+  async getAllFilters(): Promise<ApplicationFilters> {
+    const statesToCount = [
+      ApplicationState.NEW,
+      ApplicationState.INPROGRESS,
+      ApplicationState.DATANEEDED,
+      ApplicationState.REJECTED,
+      ApplicationState.APPROVED,
+    ]
+
+    const countPromises = statesToCount.map((item) =>
+      this.applicationModel.count({
+        where: { state: { [Op.eq]: item } },
+      }),
+    )
+
+    const filterCounts = await Promise.all(countPromises)
+
+    return {
+      New: filterCounts[0],
+      InProgress: filterCounts[1],
+      DataNeeded: filterCounts[2],
+      Rejected: filterCounts[3],
+      Approved: filterCounts[4],
+    }
+  }
+
   async create(
     application: CreateApplicationDto,
     user: User,
@@ -40,22 +88,24 @@ export class ApplicationService {
     const appModel = await this.applicationModel.create(application)
 
     //Create applicationEvent
-    const eventModel = await this.applicationEventService.create({
+    await this.applicationEventService.create({
       applicationId: appModel.id,
-      state: appModel.state,
-      comment: null,
+      eventType: ApplicationEventType[appModel.state.toUpperCase()],
     })
 
     //Create file
     if (application.files) {
-      const fileModel = await application.files.map((f) => {
-        this.fileService.createFile({
+      const promises = application.files.map((f) => {
+        return this.fileService.createFile({
           applicationId: appModel.id,
           name: f.name,
           key: f.key,
           size: f.size,
+          type: f.type,
         })
       })
+
+      await Promise.all(promises)
     }
 
     return appModel
@@ -79,8 +129,8 @@ export class ApplicationService {
     //Create applicationEvent
     const eventModel = await this.applicationEventService.create({
       applicationId: id,
-      state: update.state,
-      comment: update.rejection,
+      eventType: ApplicationEventType[update.state.toUpperCase()],
+      comment: update?.rejection || update?.amount?.toLocaleString('de-DE'),
     })
 
     return { numberOfAffectedRows, updatedApplication }

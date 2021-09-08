@@ -21,7 +21,6 @@ const {
   DISABLE_API_CATALOGUE,
   DISABLE_SYSLUMENN_PAGE,
   DISABLE_ORGANIZATION_CHATBOT,
-  DISABLE_REGULATIONS_PAGE,
 } = process.env
 
 module.exports = withTreat(
@@ -95,7 +94,6 @@ module.exports = withTreat(
         disableApiCatalog: DISABLE_API_CATALOGUE,
         disableSyslumennPage: DISABLE_SYSLUMENN_PAGE,
         disableOrganizationChatbot: DISABLE_ORGANIZATION_CHATBOT,
-        disableRegulationsPage: DISABLE_REGULATIONS_PAGE,
       },
 
       env: {
