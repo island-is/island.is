@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './History.treat'
@@ -15,6 +15,7 @@ import {
 } from '@island.is/financial-aid/shared'
 
 import format from 'date-fns/format'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface ApplicationEventData {
   applicationEvents: ApplicationEvent[]
@@ -22,10 +23,12 @@ interface ApplicationEventData {
 
 interface Props {
   className?: string
+  applicantsName?: string
 }
 
-const History = ({ className }: Props) => {
+const History = ({ className, applicantsName }: Props) => {
   const router = useRouter()
+  const { admin } = useContext(AdminContext)
 
   const { data } = useQuery<ApplicationEventData>(GetApplicationEventQuery, {
     variables: { input: { id: router.query.id } },
@@ -64,7 +67,10 @@ const History = ({ className }: Props) => {
                   </Text>
                   <Text marginBottom={2}>
                     {' '}
-                    XXX <strong>{getEventType[item.eventType].text} </strong>
+                    {getEventType[item.eventType].isStaff
+                      ? admin?.name
+                      : applicantsName}{' '}
+                    <strong>{getEventType[item.eventType].text} </strong>
                   </Text>
 
                   {item.eventType === ApplicationEventType.STAFFCOMMENT && (

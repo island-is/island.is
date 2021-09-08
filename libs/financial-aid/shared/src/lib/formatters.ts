@@ -32,14 +32,22 @@ export const getState: KeyMapping<ApplicationState, string> = {
 
 export const getEventType: KeyMapping<
   ApplicationEventType,
-  { header: string; text: string }
+  { header: string; text: string; isStaff: boolean }
 > = {
-  New: { header: 'Ný umsókn', text: 'sendi inn umsókn' },
-  DataNeeded: { header: 'Vantar gögn', text: 'óskaði eftir gögnum' },
-  InProgress: { header: 'Í vinnslu', text: 'breytti stöðu' },
-  Rejected: { header: 'Synjað', text: 'synjaði umsókn' },
-  Approved: { header: 'Samþykkt', text: 'samþykkti umsókn' },
-  StaffComment: { header: 'Athugasemd', text: 'skrifaði athugasemd' },
+  New: { header: 'Ný umsókn', text: 'sendi inn umsókn', isStaff: false },
+  DataNeeded: {
+    header: 'Vantar gögn',
+    text: 'óskaði eftir gögnum',
+    isStaff: true,
+  },
+  InProgress: { header: 'Í vinnslu', text: 'breytti stöðu', isStaff: true },
+  Rejected: { header: 'Synjað', text: 'synjaði umsókn', isStaff: true },
+  Approved: { header: 'Samþykkt', text: 'samþykkti umsókn', isStaff: true },
+  StaffComment: {
+    header: 'Athugasemd',
+    text: 'skrifaði athugasemd',
+    isStaff: true,
+  },
 }
 
 export const getActiveSectionForTimeline: KeyMapping<
