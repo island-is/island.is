@@ -103,6 +103,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly translator?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly requestedValidToDate?: Date
 
   @IsOptional()

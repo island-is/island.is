@@ -18,6 +18,29 @@ export const rcRequestedHearingArrangements = {
           'Notaður sem titill fyrir "tími handtöku" hlutann á óskir um fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
+    translator: defineMessages({
+      heading: {
+        id:
+          'judicial.system.restriction_cases:requested_hearing_arrangements.translator.heading',
+        defaultMessage: 'Túlkur',
+        description:
+          'Notaður sem titill fyrir "Túlkur" hlutann á óskir um fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      label: {
+        id:
+          'judicial.system.restriction_cases:requested_hearing_arrangements.translator.label',
+        defaultMessage: 'Nafn túlks',
+        description:
+          'Notaður sem titill í textaboxi fyrir "Túlkur" á óskir um fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.restriction_cases:requested_hearing_arrangements.translator.placeholder',
+        defaultMessage: 'Fullt nafn',
+        description:
+          'Notaður sem skýritexti í textaboxi fyrir "Túlkur" á óskir um fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
   },
   modal: defineMessages({
     heading: {
