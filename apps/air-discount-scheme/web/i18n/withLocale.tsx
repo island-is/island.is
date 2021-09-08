@@ -1,6 +1,6 @@
 import React from 'react'
-import { NextComponentType } from 'next'
-import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
+import { NextComponentType, NextPageContext } from 'next'
+import { BaseContext } from 'next/dist/shared/lib/utils'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
@@ -18,39 +18,37 @@ export const GetNamespaceQuery = gql`
   }
 `
 
-export const withLocale = <
-  C extends BaseContext = NextPageContext,
-  IP = {},
-  P = {}
->(
-  locale: Locale,
-  route?: keyof Routes,
-) => (Component: NextComponentType<C, IP, P>): NextComponentType<C, IP> => {
-  const activeLocale = locale ?? defaultLanguage
-  const getInitialProps = Component.getInitialProps
-  if (!getInitialProps) {
-    return Component
-  }
-
-  const NewComponent: NextComponentType<C, IP, P> = (props) => (
-    <Component {...props} />
-  )
-
-  NewComponent.getInitialProps = async (ctx) => {
-    const newContext = { ...ctx, locale: activeLocale, route } as any
-    const [props] = await Promise.all([
-      getInitialProps(newContext),
-      getGlobalStrings(newContext),
-    ])
-    return {
-      ...props,
-      locale: activeLocale,
-      localeKey: locale,
-      route,
+export const withLocale =
+  <C extends BaseContext = NextPageContext, IP = {}, P = {}>(
+    locale: Locale,
+    route?: keyof Routes,
+  ) =>
+  (Component: NextComponentType<C, IP, P>): NextComponentType<C, IP> => {
+    const activeLocale = locale ?? defaultLanguage
+    const getInitialProps = Component.getInitialProps
+    if (!getInitialProps) {
+      return Component
     }
+
+    const NewComponent: NextComponentType<C, IP, P> = (props) => (
+      <Component {...props} />
+    )
+
+    NewComponent.getInitialProps = async (ctx) => {
+      const newContext = { ...ctx, locale: activeLocale, route } as any
+      const [props] = await Promise.all([
+        getInitialProps(newContext),
+        getGlobalStrings(newContext),
+      ])
+      return {
+        ...props,
+        locale: activeLocale,
+        localeKey: locale,
+        route,
+      }
+    }
+    return NewComponent
   }
-  return NewComponent
-}
 
 const getGlobalStrings = ({
   apolloClient,

@@ -9,14 +9,6 @@
         "project": ["apps/air-discount-scheme/web/tsconfig.*?.json"]
       },
       "rules": {}
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
     }
   ]
 }

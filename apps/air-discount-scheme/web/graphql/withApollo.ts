@@ -1,11 +1,11 @@
-import { NextComponentType } from 'next'
+import { NextComponentType, NextPageContext } from 'next'
 import initApollo from './client'
-import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
+import { BaseContext } from 'next/dist/shared/lib/utils'
 
 export const withApollo = <
   C extends BaseContext = NextPageContext,
   IP = {},
-  P = {}
+  P = {},
 >(
   Component: NextComponentType<C, IP, P>,
 ): NextComponentType<C, IP> => {

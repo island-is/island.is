@@ -6,19 +6,11 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "parserOptions": {
-        "project": ["apps/gjafakort/web/tsconfig.*?.json"]
+        "project": ["apps/gjafakort/web/tsconfig.json"]
       },
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": "off"
       }
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
     }
   ]
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import gql from 'graphql-tag'
-import { Screen } from '../../types'
+import { GetInitialPropsContext, Screen } from '../../types'
 import { Layout } from '@island.is/air-discount-scheme-web/components/Layout'
 import {
   Query,
@@ -21,6 +21,7 @@ import {
   IntroText,
 } from '@island.is/air-discount-scheme-web/components'
 import { useI18n } from '@island.is/air-discount-scheme-web/i18n'
+import { NextPageContext } from 'next'
 
 interface PropTypes {
   page?: GenericPage
@@ -84,7 +85,10 @@ const GetGenericPageQuery = gql`
   }
 `
 
-Home.getInitialProps = async ({ apolloClient, locale }) => {
+Home.getInitialProps = async ({
+  apolloClient,
+  locale,
+}: GetInitialPropsContext<NextPageContext>) => {
   const {
     data: { getGenericPage: page },
   } = await apolloClient.query<Query, QueryGetGenericPageArgs>({

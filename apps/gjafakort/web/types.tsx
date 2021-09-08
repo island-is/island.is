@@ -1,7 +1,6 @@
 import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
-import { NextComponentType } from 'next'
-import { NextPageContext } from 'next/dist/next-server/lib/utils'
+import { NextComponentType, NextPageContext } from 'next'
 
 export type GetInitialPropsContext<Context> = Context & {
   apolloClient: ApolloClient<NormalizedCacheObject>

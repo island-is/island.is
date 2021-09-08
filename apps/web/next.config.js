@@ -3,7 +3,7 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-const StatoscopeWebpackPlugin = require('@statoscope/ui-webpack')
+const StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default
 const { DuplicatesPlugin } = require('inspectpack/plugin')
 
 const { API_URL = 'http://localhost:4444', SENTRY_DSN } = process.env
@@ -16,7 +16,6 @@ const {
 
 module.exports = withVanillaExtract(
   withHealthcheckConfig({
-    webpack5: false,
     webpack: (config, { isServer }) => {
       if (!isServer) {
         config.resolve.alias['@sentry/node'] = '@sentry/browser'
@@ -57,7 +56,7 @@ module.exports = withVanillaExtract(
         'date-fns': path.resolve(modules, 'date-fns'),
         'es-abstract': path.resolve(modules, 'es-abstract'),
         'escape-string-regexp': path.resolve(modules, 'escape-string-regexp'),
-        'readable-stream': path.resolve(modules, 'readable-stream'),
+        //'readable-stream': path.resolve(modules, 'readable-stream'),
         'react-popper': path.resolve(modules, 'react-popper'),
         inherits: path.resolve(modules, 'inherits'),
         'graphql-tag': path.resolve(modules, 'graphql-tag'),

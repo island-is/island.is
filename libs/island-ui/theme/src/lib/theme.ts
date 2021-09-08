@@ -109,6 +109,14 @@ export const theme = {
   },
 }
 
+interface ResponsiveStyle {
+  xs?: StyleWithoutMediaQueries
+  sm?: StyleWithoutMediaQueries
+  md?: StyleWithoutMediaQueries
+  lg?: StyleWithoutMediaQueries
+  xl?: StyleWithoutMediaQueries
+}
+
 export type Theme = typeof theme
 export type Colors = keyof typeof color
 

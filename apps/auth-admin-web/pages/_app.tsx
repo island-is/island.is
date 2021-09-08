@@ -1,13 +1,12 @@
-import '../styles/App.scss'
-import App from 'next/app'
+import App, { AppProps } from 'next/app'
 import React from 'react'
 import getConfig from 'next/config'
 import { Provider } from 'next-auth/client'
-import { withHealthchecks } from '@island.is/web/units/Healthchecks/withHealthchecks'
 
-interface Props {}
+import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
+import '../styles/App.scss'
 
-class AuthAdminWebApp extends App<Props> {
+class AuthAdminWebApp extends App<AppProps> {
   render() {
     const { Component, pageProps } = this.props
     return (

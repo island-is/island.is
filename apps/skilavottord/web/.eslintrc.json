@@ -8,15 +8,9 @@
       "parserOptions": {
         "project": ["apps/skilavottord/web/tsconfig.*?.json"]
       },
-      "rules": {}
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
+      "rules": {
+        "@nrwl/nx/enforce-module-boundaries": "off"
+      }
     }
   ]
 }

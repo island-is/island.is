@@ -1,6 +1,8 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
+    "outDir": "../../../dist/out-tsc",
+    "types": ["node"],
     "jsx": "preserve",
     "allowJs": true,
     "strict": false,
@@ -9,15 +11,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true
   },
-  "include": [],
-  "exclude": ["node_modules"],
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.spec.tsx"],
 }

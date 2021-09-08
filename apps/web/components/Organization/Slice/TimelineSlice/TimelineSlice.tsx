@@ -21,7 +21,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import Link from 'next/link'
 import ReactDOM from 'react-dom'
 import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
-import { flatten } from '@nestjs/common'
+import flatten from 'lodash/flatten'
 
 function setDefault<K, V>(map: Map<K, V>, key: K, value: V): V {
   if (!map.has(key)) map.set(key, value)
@@ -517,7 +517,7 @@ const EventModal = ({ event, onClose }: EventModalProps) => {
             </Inline>
           )}
           {Boolean(event.body) &&
-            renderSlices([(event.body as unknown) as SliceType])}
+            renderSlices([event.body as unknown as SliceType])}
           {event.link && (
             <Link href={event.link}>
               <Button variant="text" icon="arrowForward">
