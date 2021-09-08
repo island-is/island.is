@@ -22,14 +22,32 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => console.error(e.message),
+      onError: (e) => {
+        // TODO: Log to Sentry
+        throw new Error(e.message)
+      },
     },
   )
+
+  const submitAndMoveToApplicationScreen = async () => {
+    const res = await submitApplication({
+      variables: {
+        input: {
+          id: application.id,
+          event: DefaultEvents.ABORT,
+        },
+      },
+    })
+
+    if (res?.data) {
+      history.push(`/${ApplicationConfigurations.PublicDebtPaymentPlan.slug}`)
+    }
+  }
 
   const prerequisites = (application.externalData as PaymentPlanExternalData)
     .paymentPlanPrerequisites?.data?.conditions as PaymentScheduleConditions
 
-  if (!prerequisites.maxDebt) return null
+  if (prerequisites.maxDebt) return null
 
   return (
     <ModalBase
@@ -53,22 +71,7 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
             colorScheme="destructive"
             variant="ghost"
             loading={loadingSubmit}
-            onClick={async () => {
-              const res = await submitApplication({
-                variables: {
-                  input: {
-                    id: application.id,
-                    event: DefaultEvents.ABORT,
-                  },
-                },
-              })
-
-              if (res?.data) {
-                history.push(
-                  `/${ApplicationConfigurations.PublicDebtPaymentPlan.slug}`,
-                )
-              }
-            }}
+            onClick={() => submitAndMoveToApplicationScreen()}
           >
             {formatMessage(errorModal.closeModal)}
           </Button>
