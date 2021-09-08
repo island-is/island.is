@@ -334,7 +334,9 @@ export class DrivingLicenseService {
     }
   }
 
-  async getDrivingAssessment(nationalId: string): Promise<StudentAssessment|null> {
+  async getDrivingAssessment(
+    nationalId: string,
+  ): Promise<StudentAssessment | null> {
     const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
 
     if (!assessmentResult) {
