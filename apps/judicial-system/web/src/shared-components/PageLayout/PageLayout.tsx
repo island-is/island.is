@@ -83,8 +83,12 @@ const PageLayout: React.FC<PageProps> = ({
         return 'Krafa um rannsóknarheimild samþykkt'
       } else {
         return isValidToDateInThePast
-          ? 'Gæsluvarðhaldi lokið'
-          : 'Gæsluvarðhald virkt'
+          ? `${
+              caseType === CaseType.CUSTODY ? 'Gæsluvarðhaldi' : 'Farbanni'
+            } lokið`
+          : `${
+              caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
+            } virkt`
       }
     } else if (decisionIsAcceptingAlternativeTravelBan) {
       return isValidToDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
