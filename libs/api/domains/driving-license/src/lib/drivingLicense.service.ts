@@ -334,13 +334,17 @@ export class DrivingLicenseService {
     }
   }
 
-  async getDrivingAssessment(nationalId: string): Promise<StudentAssessment> {
+  async getDrivingAssessment(nationalId: string): Promise<StudentAssessment|null> {
     const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
 
+    if (!assessmentResult) {
+      return null
+    }
+
     let teacherName: string | null
-    if (assessmentResult?.kennitalaOkukennara) {
+    if (assessmentResult.kennitalaOkukennara) {
       const teacherLicense = await this.getLicense(
-        assessmentResult?.kennitalaOkukennara,
+        assessmentResult.kennitalaOkukennara,
       )
       teacherName = teacherLicense?.name || null
     } else {
@@ -348,8 +352,8 @@ export class DrivingLicenseService {
     }
 
     return {
-      studentNationalId: assessmentResult?.kennitala ?? null,
-      teacherNationalId: assessmentResult?.kennitalaOkukennara ?? null,
+      studentNationalId: assessmentResult.kennitala ?? null,
+      teacherNationalId: assessmentResult.kennitalaOkukennara ?? null,
       teacherName,
     }
   }
