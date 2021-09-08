@@ -51,8 +51,14 @@ export class FileService {
     }
   }
 
-  async findById(id: string): Promise<CaseFile | null> {
-    return this.fileModel.findByPk(id)
+  async findById(id: string, caseId: string): Promise<CaseFile | null> {
+    return this.fileModel.findOne({
+      where: {
+        id,
+        caseId,
+        state: { [Op.not]: CaseFileState.DELETED },
+      },
+    })
   }
 
   createCasePresignedPost(

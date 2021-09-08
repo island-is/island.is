@@ -186,9 +186,9 @@ export class FileController {
       )
     }
 
-    const file = await this.fileService.findById(id)
+    const file = await this.fileService.findById(id, existingCase.id)
 
-    if (!file || file.caseId !== existingCase.id) {
+    if (!file) {
       throw new NotFoundException(
         `File ${id} of case ${existingCase.id} does not exist`,
       )
@@ -220,9 +220,9 @@ export class FileController {
       )
     }
 
-    const file = await this.fileService.findById(id)
+    const file = await this.fileService.findById(id, existingCase.id)
 
-    if (!file || file.caseId !== existingCase.id) {
+    if (!file) {
       throw new NotFoundException(
         `File ${id} of case ${existingCase.id} does not exist`,
       )

@@ -23,7 +23,7 @@ describe('FileController', () => {
   let fileModel: {
     create: jest.Mock
     findAll: jest.Mock
-    findByPk: jest.Mock
+    findOne: jest.Mock
     destroy: jest.Mock
   }
   let caseService: CaseService
@@ -34,7 +34,7 @@ describe('FileController', () => {
     fileModel = {
       create: jest.fn(),
       findAll: jest.fn(),
-      findByPk: jest.fn(),
+      findOne: jest.fn(),
       destroy: jest.fn(),
     }
 
@@ -169,8 +169,6 @@ describe('FileController', () => {
 
           const files = await fileController.getAllCaseFiles(caseId, user)
 
-          expect(files).toStrictEqual(mockFiles)
-
           expect(fileModel.findAll).toHaveBeenCalledWith({
             where: {
               caseId,
@@ -178,10 +176,12 @@ describe('FileController', () => {
             },
             order: [['created', 'DESC']],
           })
+
+          expect(files).toStrictEqual(mockFiles)
         })
       })
 
-      describe('Given a file', () => {
+      describe('Given a file...', () => {
         const fileId = uuid()
         const key = `${caseId}/${fileId}/${fileName}`
         const mockFile = {
@@ -190,56 +190,90 @@ describe('FileController', () => {
           key,
         }
 
-        beforeEach(() => {
-          fileModel.findByPk.mockImplementation((id: string) =>
-            Promise.resolve(id === fileId ? mockFile : null),
-          )
-        })
-
-        it('should delete the file', async () => {
-          fileModel.destroy.mockResolvedValueOnce(1)
-          const mockDeleteObject = jest.spyOn(awsS3Service, 'deleteObject')
-
-          const { success } = await fileController.deleteCaseFile(
-            caseId,
-            fileId,
-            user,
-          )
-
-          expect(success).toBe(true)
-
-          expect(fileModel.destroy).toHaveBeenCalledWith({
-            where: { id: fileId },
+        describe('...that exists in the database', () => {
+          beforeEach(() => {
+            fileModel.findOne.mockResolvedValueOnce(mockFile)
           })
 
-          expect(mockDeleteObject).toHaveBeenCalledTimes(1)
-          expect(mockDeleteObject).toHaveBeenCalledWith(key)
+          it('should delete the file', async () => {
+            fileModel.destroy.mockResolvedValueOnce(1)
+            const mockDeleteObject = jest.spyOn(awsS3Service, 'deleteObject')
+
+            const { success } = await fileController.deleteCaseFile(
+              caseId,
+              fileId,
+              user,
+            )
+
+            expect(fileModel.findOne).toHaveBeenCalledWith({
+              where: {
+                id: fileId,
+                caseId,
+                state: { [Op.not]: CaseFileState.DELETED },
+              },
+            })
+
+            expect(success).toBe(true)
+
+            expect(fileModel.destroy).toHaveBeenCalledWith({
+              where: { id: fileId },
+            })
+
+            expect(mockDeleteObject).toHaveBeenCalledTimes(1)
+            expect(mockDeleteObject).toHaveBeenCalledWith(key)
+          })
+
+          it('should get a signed url', async () => {
+            const mockUrl = uuid()
+            const mockGetSignedUrl = jest.spyOn(awsS3Service, 'getSignedUrl')
+            mockGetSignedUrl.mockResolvedValueOnce({ url: mockUrl })
+
+            const { url } = await fileController.getCaseFileSignedUrl(
+              caseId,
+              fileId,
+              user,
+            )
+
+            expect(fileModel.findOne).toHaveBeenCalledWith({
+              where: {
+                id: fileId,
+                caseId,
+                state: { [Op.not]: CaseFileState.DELETED },
+              },
+            })
+
+            expect(url).toBe(mockUrl)
+
+            expect(mockGetSignedUrl).toHaveBeenCalledTimes(1)
+            expect(mockGetSignedUrl).toHaveBeenCalledWith(key)
+          })
+
+          it('should throw when getting a presigned url for a file that does not exist in AWS S3', async () => {
+            const mockObjectExists = jest.spyOn(awsS3Service, 'objectExists')
+            mockObjectExists.mockResolvedValueOnce(false)
+
+            await expect(
+              fileController.getCaseFileSignedUrl(caseId, fileId, user),
+            ).rejects.toThrow(NotFoundException)
+          })
         })
 
-        it('should get a presigned url', async () => {
-          const mockUrl = uuid()
-          const mockGetSignedUrl = jest.spyOn(awsS3Service, 'getSignedUrl')
-          mockGetSignedUrl.mockResolvedValueOnce({ url: mockUrl })
+        describe('...that does not exist in the database or has been deleted', () => {
+          beforeEach(() => {
+            fileModel.findOne.mockResolvedValueOnce(null)
+          })
 
-          const { url } = await fileController.getCaseFileSignedUrl(
-            caseId,
-            fileId,
-            user,
-          )
+          it('should throw when deleting the file', async () => {
+            await expect(
+              fileController.deleteCaseFile(caseId, fileId, user),
+            ).rejects.toThrow(NotFoundException)
+          })
 
-          expect(url).toBe(mockUrl)
-
-          expect(mockGetSignedUrl).toHaveBeenCalledTimes(1)
-          expect(mockGetSignedUrl).toHaveBeenCalledWith(key)
-        })
-
-        it('should throw when getting a presigned url for a file that does not exist in AWS S3', async () => {
-          const mockObjectExists = jest.spyOn(awsS3Service, 'objectExists')
-          mockObjectExists.mockResolvedValueOnce(false)
-
-          await expect(
-            fileController.getCaseFileSignedUrl(caseId, fileId, user),
-          ).rejects.toThrow(NotFoundException)
+          it('should throw when getting a signed url', async () => {
+            await expect(
+              fileController.getCaseFileSignedUrl(caseId, fileId, user),
+            ).rejects.toThrow(NotFoundException)
+          })
         })
       })
     })
@@ -250,10 +284,12 @@ describe('FileController', () => {
 
     beforeEach(() => {
       const mockFindByIdAndUser = jest.spyOn(caseService, 'findByIdAndUser')
-      mockFindByIdAndUser.mockResolvedValue({
-        id: caseId,
-        state: CaseState.ACCEPTED,
-      } as Case)
+      mockFindByIdAndUser.mockImplementation((id: string) =>
+        Promise.resolve({
+          id,
+          state: CaseState.ACCEPTED,
+        } as Case),
+      )
     })
 
     describe('Given a prosecutor', () => {
