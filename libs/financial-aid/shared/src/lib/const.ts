@@ -12,4 +12,7 @@ export const AllowedFakeUsers = [
   '0000000003', // User with an application which needs data
 ]
 
-export const LoginStatusPage = '/stada'
+export const Routes = {
+  status: '/stada',
+  statusFileUpload: (id: string) => `/stada/${id}/gogn`,
+}
