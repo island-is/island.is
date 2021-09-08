@@ -42,6 +42,8 @@ export enum FileType {
   OTHER = 'Other',
 }
 
+export type UploadFileType = 'otherFiles' | 'incomeFiles' | 'taxReturnFiles'
+
 export interface ApplicationFilters {
   New: number
   InProgress: number

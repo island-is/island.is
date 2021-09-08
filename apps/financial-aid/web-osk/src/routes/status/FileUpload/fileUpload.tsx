@@ -62,9 +62,9 @@ const FileUpload = () => {
   return (
     <StatusLayout>
       <Files
-        headline="Senda inn gögn"
-        about="Þú getur alltaf sent okkur gögn sem þú telur hjálpa umsókninni, t.d.
-        launagögn"
+        header="Senda inn gögn"
+        fileKey="otherFiles"
+        uploadFiles={form.otherFiles}
       />
       <Footer
         previousUrl={`/${router.query.id}`}
