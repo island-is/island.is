@@ -121,12 +121,6 @@ const OFFICE_LOCATIONS: OfficeLocation[] = [
     location: 'Patreksfjörður',
   },
   {
-    filterLabel: ' - Bolungavík',
-    slugValue: 'syslumadurinn-a-vestfjordum-bolungarvik',
-    office: 'Sýslumaðurinn á Vestfjörðum',
-    location: 'Bolungavík',
-  },
-  {
     filterLabel: ' - Ísafjörður',
     slugValue: 'syslumadurinn-a-vestfjordum-isafjordur',
     office: 'Sýslumaðurinn á Vestfjörðum',
