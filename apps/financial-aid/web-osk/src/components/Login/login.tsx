@@ -3,6 +3,7 @@ import { GridContainer, Button, Text, Box } from '@island.is/island-ui/core'
 
 import { useRouter } from 'next/router'
 import * as styles from './login.treat'
+import { Routes } from '@island.is/financial-aid/shared'
 
 interface Props {
   headline?: string
@@ -11,14 +12,6 @@ interface Props {
 
 const Login = ({ headline, about }: Props) => {
   const router = useRouter()
-
-  const apiLoginRouteForFake = router.query.id
-    ? `/api/auth/login?applicationId=${router.query.id}&nationalId=`
-    : '/api/auth/login?nationalId='
-
-  const apiLoginRouteForRealUsers = router.query.id
-    ? `/api/auth/login?applicationId=${router.query.id}`
-    : '/api/auth/login'
 
   return (
     <GridContainer>
@@ -32,7 +25,9 @@ const Login = ({ headline, about }: Props) => {
 
           <Button
             onClick={() => {
-              router.push(apiLoginRouteForRealUsers)
+              router.push(
+                Routes.apiLoginRouteForRealUsers(router.query.id as string),
+              )
             }}
             data-testid="logout-button"
             preTextIconType="filled"
@@ -44,7 +39,11 @@ const Login = ({ headline, about }: Props) => {
           <Box paddingTop={4}>
             <Button
               onClick={() => {
-                router.push(`${apiLoginRouteForFake}0000000000`)
+                router.push(
+                  `${Routes.apiLoginRouteForFake(
+                    router.query.id as string,
+                  )}0000000000`,
+                )
               }}
               data-testid="logout-button"
               preTextIconType="filled"
@@ -57,7 +56,11 @@ const Login = ({ headline, about }: Props) => {
           <Box paddingTop={4}>
             <Button
               onClick={() => {
-                router.push(`${apiLoginRouteForFake}0000000001`)
+                router.push(
+                  `${Routes.apiLoginRouteForFake(
+                    router.query.id as string,
+                  )}0000000001`,
+                )
               }}
               data-testid="logout-button"
               preTextIconType="filled"
@@ -70,7 +73,11 @@ const Login = ({ headline, about }: Props) => {
           <Box paddingTop={4}>
             <Button
               onClick={() => {
-                router.push(`${apiLoginRouteForFake}0000000003`)
+                router.push(
+                  `${Routes.apiLoginRouteForFake(
+                    router.query.id as string,
+                  )}0000000003`,
+                )
               }}
               data-testid="logout-button"
               preTextIconType="filled"
