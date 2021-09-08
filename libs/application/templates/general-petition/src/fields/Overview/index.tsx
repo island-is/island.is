@@ -38,18 +38,6 @@ const Overview: FC<FieldBaseProps> = ({ application }) => {
           {answers.dateFrom + ' - ' + answers.dateTil}
         </Text>
       </Box>
-      <Box marginBottom={3}>
-        <Text variant="h4">{formatMessage(m.overview.listOnPaper)}</Text>
-        <Text variant="default">{'Nei'}</Text>
-      </Box>
-      <Box marginBottom={3}>
-        <Text variant="h4">{formatMessage(m.overview.ageInterval)}</Text>
-        <Text variant="default">{'18 - 85 ára'}</Text>
-      </Box>
-      <Box marginBottom={10}>
-        <Text variant="h4">{formatMessage(m.overview.participants)}</Text>
-        <Text variant="default">{'Kopavogur 201, 202'}</Text>
-      </Box>
     </>
   )
 }

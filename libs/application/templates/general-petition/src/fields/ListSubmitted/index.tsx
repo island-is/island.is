@@ -9,36 +9,36 @@ const ListSubmited: FC<FieldBaseProps> = () => {
   const { formatMessage } = useLocale()
 
   return (
-      <>
-       <Approved
-          title={formatMessage(m.listSubmitted.approvedTitle)}
-          subtitle={formatMessage(m.listSubmitted.approvedSubtitle)}
-        />
-        <Text marginBottom={2} variant="h3">
-          {formatMessage(m.listSubmitted.bulletListTitle)}
-        </Text>
-        <BulletList type="ul">
-          <Bullet>
-            <Link
-              href={formatMessage(m.listSubmitted.bulletLink1)}
-              color="blue400"
-              underline="small"
-              underlineVisibility="always"
-            >
-              {formatMessage(m.listSubmitted.bulletLink1Title)}
-            </Link>
-          </Bullet>
-          <Bullet>
-            <Link
-              href={formatMessage(m.listSubmitted.bulletLink2)}
-              color="blue400"
-              underline="small"
-              underlineVisibility="always"
-            >
-              {formatMessage(m.listSubmitted.bulletLink2Title)}
-            </Link>
-          </Bullet>
-        </BulletList>
+    <>
+      <Approved
+        title={formatMessage(m.listSubmitted.approvedTitle)}
+        subtitle={formatMessage(m.listSubmitted.approvedSubtitle)}
+      />
+      <Text marginBottom={2} variant="h3">
+        {formatMessage(m.listSubmitted.bulletListTitle)}
+      </Text>
+      <BulletList type="ul">
+        <Bullet>
+          <Link
+            href={formatMessage(m.listSubmitted.bulletLink1)}
+            color="blue400"
+            underline="small"
+            underlineVisibility="always"
+          >
+            {formatMessage(m.listSubmitted.bulletLink1Title)}
+          </Link>
+        </Bullet>
+        <Bullet>
+          <Link
+            href={formatMessage(m.listSubmitted.bulletLink2)}
+            color="blue400"
+            underline="small"
+            underlineVisibility="always"
+          >
+            {formatMessage(m.listSubmitted.bulletLink2Title)}
+          </Link>
+        </Bullet>
+      </BulletList>
       <Box
         display="flex"
         flexDirection="column"

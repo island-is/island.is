@@ -16,8 +16,6 @@ import {
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
-import { User } from '@island.is/api/domains/national-registry'
-import { format } from 'kennitala'
 
 export const LetterApplicationForm: Form = buildForm({
   id: 'LetterApplicationDraft',
@@ -46,7 +44,7 @@ export const LetterApplicationForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
+    /*buildSection({
       id: 'applicant',
       title: m.selectNationalId.title,
       children: [
@@ -113,7 +111,7 @@ export const LetterApplicationForm: Form = buildForm({
           ],
         }),
       ],
-    }),
+    }),*/
     buildSection({
       id: 'information',
       title: m.information.titleSidebar,
@@ -165,7 +163,7 @@ export const LetterApplicationForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
+    /*buildSection({
       id: 'participants',
       title: m.participants.titleSidebar,
       children: [
@@ -183,7 +181,7 @@ export const LetterApplicationForm: Form = buildForm({
           ],
         }),
       ],
-    }),
+    }),*/
     buildSection({
       id: 'reviewApplication',
       title: m.overview.title,
@@ -200,12 +198,12 @@ export const LetterApplicationForm: Form = buildForm({
             }),
             /*buildSubmitField({
               id: 'submit',
+              title: '',
               placement: 'footer',
-              title: m.overview.title,
               actions: [
                 {
                   event: 'SUBMIT',
-                  name: m.overview.submitButton,
+                  name: m.overviewSection.submitApplication,
                   type: 'primary',
                 },
               ],
@@ -214,16 +212,10 @@ export const LetterApplicationForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'reviewApplication',
-      title: '',
-      children: [
-        buildCustomField({
-          id: 'listSubmitted',
-          title: m.listSubmitted.title,
-          component: 'ListSubmitted',
-        }),
-      ],
+    buildCustomField({
+      id: 'listSubmitted',
+      title: m.listSubmitted.title,
+      component: 'ListSubmitted',
     }),
   ],
 })

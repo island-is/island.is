@@ -11,6 +11,7 @@ import { SectionWithImage } from '../SectionWithImage/SectionWithImage'
 import { TeamList } from '../TeamList/TeamList'
 import { ContactUs } from '../ContactUs/ContactUs'
 import { Location } from '../Location/Location'
+import GeneralPetitionLists from '../GeneralPetitionLists/GeneralPetitionLists'
 
 const renderConnectedComponent = (slice) => {
   const data = slice.json
@@ -21,6 +22,8 @@ const renderConnectedComponent = (slice) => {
         return <CompanyList recyclingPartners={data} />
       }
       break
+    case 'Undirskriftalistar/PetitionLists':
+      return <GeneralPetitionLists />
     case 'Skilavottord/CompanyListConnected':
       if (typeof data === 'object') {
         const { graphqlLink } = data

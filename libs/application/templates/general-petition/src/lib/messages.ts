@@ -391,7 +391,8 @@ export const m: MessageDir = {
     },
     approvedSubtitle: {
       id: 'gpt.application.list.submitted.subtitle',
-      defaultMessage: 'Staðfesting á móttöku verður send í pósthólf á Mínum Síðum.',
+      defaultMessage:
+        'Staðfesting á móttöku verður send í pósthólf á Mínum Síðum.',
       description: 'Subtitle for approved card',
     },
     bulletListTitle: {
