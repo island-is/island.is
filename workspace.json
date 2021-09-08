@@ -2487,6 +2487,7 @@
           "options": {
             "commands": [
               "yarn nx run application-system-api:dev-services",
+              "echo \"Waiting for databases to start...\" && sleep 2",
               "yarn nx run application-system-api:migrate",
               "yarn nx run services-party-letter-registry-api:migrate",
               "yarn nx run services-temporary-voter-registry-api:migrate",
@@ -7538,6 +7539,11 @@
             "main": "apps/services/endorsements/api/src/main.ts",
             "tsConfig": "apps/services/endorsements/api/tsconfig.app.json",
             "assets": [
+              {
+                "glob": "updateMetadata.js",
+                "input": "apps/services/endorsements/api/script-entrypoints",
+                "output": "./"
+              },
               {
                 "glob": "*",
                 "input": "apps/services/endorsements/api/migrations",

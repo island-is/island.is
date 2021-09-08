@@ -13,6 +13,7 @@ import { EndorsementModule } from './modules/endorsement/endorsement.module'
 import { EndorsementListModule } from './modules/endorsementList/endorsementList.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { AccessGuard } from './guards/accessGuard/access.guard'
+import { LoggingModule } from '@island.is/logging'
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AccessGuard } from './guards/accessGuard/access.guard'
     }),
     EndorsementModule,
     EndorsementListModule,
+    LoggingModule,
   ],
   providers: [
     {
