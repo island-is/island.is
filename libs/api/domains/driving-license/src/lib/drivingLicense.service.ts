@@ -17,7 +17,7 @@ import {
   DrivingLicenseCategory,
   NeedsHealhCertificate,
   QualityPhotoResult,
-  NeedsQualityPhoto,
+  StudentAssessment,
 } from './drivingLicense.type'
 import {
   AkstursmatDto,
@@ -30,6 +30,7 @@ import {
   TegundRettindaDto,
 } from '@island.is/clients/driving-license'
 import {
+  BLACKLISTED_JURISTICTION,
   DRIVING_ASSESSMENT_MAX_AGE,
   DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE,
   LICENSE_RESPONSE_API_VERSION,
@@ -182,11 +183,13 @@ export class DrivingLicenseService {
   async getListOfJuristictions(): Promise<Juristiction[]> {
     const embaetti = await this.drivingLicenseApi.apiOkuskirteiniEmbaettiGet({})
 
-    return embaetti.map(({ nr, postnumer, nafn }: EmbaettiDto) => ({
-      id: nr || 0,
-      zip: postnumer || 0,
-      name: nafn || '',
-    }))
+    return embaetti
+      .map(({ nr, postnumer, nafn }: EmbaettiDto) => ({
+        id: nr || 0,
+        zip: postnumer || 0,
+        name: nafn || '',
+      }))
+      .filter(({ id }) => id !== BLACKLISTED_JURISTICTION)
   }
 
   private async getDrivingAssessmentResult(
@@ -328,6 +331,32 @@ export class DrivingLicenseService {
       success: result > 0,
       qualityPhoto: image,
       errorMessage: null,
+    }
+  }
+
+  async getDrivingAssessment(
+    nationalId: string,
+  ): Promise<StudentAssessment | null> {
+    const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
+
+    if (!assessmentResult) {
+      return null
+    }
+
+    let teacherName: string | null
+    if (assessmentResult.kennitalaOkukennara) {
+      const teacherLicense = await this.getLicense(
+        assessmentResult.kennitalaOkukennara,
+      )
+      teacherName = teacherLicense?.name || null
+    } else {
+      teacherName = null
+    }
+
+    return {
+      studentNationalId: assessmentResult.kennitala ?? null,
+      teacherNationalId: assessmentResult.kennitalaOkukennara ?? null,
+      teacherName,
     }
   }
 }

@@ -9,8 +9,8 @@ import {
 import { Type } from 'class-transformer'
 import { ValidationRuleDto } from './validationRule.dto'
 import { ApiProperty } from '@nestjs/swagger'
-import { EndorsementMetaField } from '../../endorsementMetadata/types'
 import { EndorsementTag } from '../constants'
+import { EndorsementMetadataDto } from './endorsementMetadata.dto'
 export class EndorsementListDto {
   @ApiProperty()
   @IsString()
@@ -21,11 +21,12 @@ export class EndorsementListDto {
   @IsString()
   description = ''
 
-  @ApiProperty({ enum: EndorsementMetaField, isArray: true, nullable: true })
+  @ApiProperty({ type: [EndorsementMetadataDto], nullable: true })
   @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => EndorsementMetadataDto)
   @IsArray()
-  @IsEnum(EndorsementMetaField, { each: true })
-  endorsementMeta = [] as EndorsementMetaField[]
+  endorsementMetadata = [] as EndorsementMetadataDto[]
 
   @ApiProperty({ enum: EndorsementTag, isArray: true, nullable: true })
   @IsOptional()

@@ -2,15 +2,9 @@ import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import graphqlTypeJson from 'graphql-type-json'
-import {
-  EndorsementListDtoEndorsementMetaEnum,
-  EndorsementListDtoTagsEnum,
-} from '../../../gen/fetch'
+import { EndorsementListDtoTagsEnum } from '../../../gen/fetch'
 import { ValidationRuleInput } from './validationRule.input'
-
-registerEnumType(EndorsementListDtoEndorsementMetaEnum, {
-  name: 'EndorsementListDtoEndorsementMetaEnum',
-})
+import { MetadataInput } from './metadata.input'
 
 registerEnumType(EndorsementListDtoTagsEnum, {
   name: 'EndorsementListDtoTagsEnum',
@@ -27,9 +21,10 @@ export class CreateEndorsementListDto {
   @IsString()
   description!: string | null
 
-  @Field(() => [EndorsementListDtoEndorsementMetaEnum])
-  @IsEnum(EndorsementListDtoEndorsementMetaEnum, { each: true })
-  endorsementMeta!: EndorsementListDtoEndorsementMetaEnum[]
+  @Field(() => [MetadataInput])
+  @ValidateNested({ each: true })
+  @Type(() => MetadataInput)
+  endorsementMetadata!: MetadataInput[]
 
   @Field(() => [EndorsementListDtoTagsEnum])
   @IsEnum(EndorsementListDtoTagsEnum, { each: true })
