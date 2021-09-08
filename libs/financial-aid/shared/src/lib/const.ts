@@ -14,6 +14,7 @@ export const AllowedFakeUsers = [
 
 export const Routes = {
   status: '/stada',
+  statusPage: (id: string) => `/stada/${id}`,
   statusFileUpload: (id: string) => `/stada/${id}/gogn`,
   apiLoginRouteForFake: (id: string) =>
     id

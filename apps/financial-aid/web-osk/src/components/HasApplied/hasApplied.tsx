@@ -19,7 +19,9 @@ const HasApplied = () => {
 
       <Button
         onClick={() => {
-          router.push(`${Routes.status}/${user?.currentApplication?.id}`)
+          router.push(
+            `${Routes.statusPage(user?.currentApplication?.id as string)}`,
+          )
         }}
       >
         Kíktu á stöðu síðuna{' '}
