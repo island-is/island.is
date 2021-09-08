@@ -121,7 +121,7 @@ const ApplicationProfile = () => {
       {
         title: 'Tímabil',
         content:
-          months[parseInt(format(new Date(application.created), 'M'))] +
+          months[parseInt(format(new Date(application.created), 'M')) - 1] +
           format(new Date(application.created), ' y'),
       },
       {

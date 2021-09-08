@@ -66,7 +66,7 @@ const TableBody = ({ application, index }: PageProps) => {
           })}
         >
           <Text>
-            {months[parseInt(format(new Date(application.created), 'MM'))]}
+            {months[parseInt(format(new Date(application.created), 'MM')) - 1]}
           </Text>
         </td>
       </tr>
