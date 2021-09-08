@@ -66,7 +66,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómkröfur
+              {formatMessage(rcDemands.sections.demands.heading)}
             </Text>
             {workingCase.parentCase && (
               <Box marginTop={1}>
@@ -116,17 +116,21 @@ const StepThreeForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={7}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Lagaákvæði sem brot varða við
+              {formatMessage(rcDemands.sections.lawsBroken.heading)}
             </Text>
           </Box>
           <Input
             data-testid="lawsBroken"
             name="lawsBroken"
-            label={`Lagaákvæði sem ætluð brot ${formatAccusedByGender(
-              workingCase?.accusedGender,
-              NounCases.GENITIVE,
-            )} þykja varða við`}
-            placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
+            label={formatMessage(rcDemands.sections.lawsBroken.label, {
+              defendant: formatAccusedByGender(
+                workingCase?.accusedGender,
+                NounCases.GENITIVE,
+              ),
+            })}
+            placeholder={formatMessage(
+              rcDemands.sections.lawsBroken.placeholder,
+            )}
             defaultValue={workingCase?.lawsBroken}
             errorMessage={lawsBrokenErrorMessage}
             hasError={lawsBrokenErrorMessage !== ''}
@@ -159,7 +163,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Lagaákvæði sem krafan er byggð á{' '}
+              {formatMessage(rcDemands.sections.legalBasis.heading)}{' '}
               <Text as="span" color={'red600'} fontWeight="semiBold">
                 *
               </Text>
@@ -190,10 +194,22 @@ const StepThreeForm: React.FC<Props> = (props) => {
             <Box marginBottom={3}>
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
-                  Takmarkanir og tilhögun gæslu
+                  {formatMessage(
+                    rcDemands.sections.custodyRestrictions.heading,
+                    {
+                      caseType: 'gæslu',
+                    },
+                  )}
                 </Text>
               </Box>
-              <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
+              <Text>
+                {formatMessage(
+                  rcDemands.sections.custodyRestrictions.subHeading,
+                  {
+                    caseType: 'gæsla',
+                  },
+                )}
+              </Text>
             </Box>
             <BlueBox>
               <CheckboxList
@@ -216,9 +232,18 @@ const StepThreeForm: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={4}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Takmarkanir og tilhögun farbanns
+                {formatMessage(rcDemands.sections.custodyRestrictions.heading, {
+                  caseType: 'farbanns',
+                })}
               </Text>
-              <Text>Ef ekkert er valið er farbann án takmarkana.</Text>
+              <Text>
+                {formatMessage(
+                  rcDemands.sections.custodyRestrictions.subHeading,
+                  {
+                    caseType: 'farbann',
+                  },
+                )}
+              </Text>
             </Box>
             <BlueBox>
               <Box marginBottom={3}>
@@ -239,9 +264,13 @@ const StepThreeForm: React.FC<Props> = (props) => {
               <Input
                 name="requestedOtherRestrictions"
                 data-testid="requestedOtherRestrictions"
-                label="Nánari útlistun eða aðrar takmarkanir"
+                label={formatMessage(
+                  rcDemands.sections.custodyRestrictions.label,
+                )}
                 defaultValue={workingCase.requestedOtherRestrictions}
-                placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
+                placeholder={formatMessage(
+                  rcDemands.sections.custodyRestrictions.placeholder,
+                )}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'requestedOtherRestrictions',
