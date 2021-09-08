@@ -24,20 +24,40 @@ export const rcHearingArrangements = {
       },
     }),
   },
-  modal: defineMessages({
-    heading: {
-      id:
-        'judicial.system.restriction_cases:hearing_arrangements.modal.heading',
-      defaultMessage: 'Tilkynning um fyrirtökutíma hefur verið send',
-      description:
-        'Notaður sem titill fyrir "tilkynning um fyrirtökutíma hefur verið send" tilkynningagluggan á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
-    },
-    text: {
-      id: 'judicial.system.restriction_cases:hearing_arrangements.modal.text',
-      defaultMessage:
-        'Tilkynning hafi verið send á ákæranda, fangelsi og verjanda hafi verjandi verið skráður.',
-      description:
-        'Notaður sem texti í "tilkynning um fyrirtökutíma hefur verið send" tilkynningaglugganum á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
-    },
-  }),
+  modal: {
+    custodyCases: defineMessages({
+      heading: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.modal.custody_cases.heading',
+        defaultMessage: 'Tilkynning um fyrirtökutíma hefur verið send',
+        description:
+          'Notaður sem titill fyrir "tilkynning um fyrirtökutíma hefur verið send" tilkynningagluggan á fyrirtöku skrefi í gæsluvarðhaldsmálum.',
+      },
+      text: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.modal.custody_cases.text',
+        defaultMessage:
+          'Tilkynning hafi verið send á ákæranda, fangelsi og verjanda hafi verjandi verið skráður.',
+        description:
+          'Notaður sem texti í "tilkynning um fyrirtökutíma hefur verið send" tilkynningaglugganum á fyrirtöku skrefi í gæsluvarðhaldsmálum.',
+      },
+    }),
+    travelBanCases: defineMessages({
+      heading: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.modal.travel_ban_cases.heading',
+        defaultMessage: 'Tilkynning um fyrirtökutíma hefur verið send',
+        description:
+          'Notaður sem titill fyrir "tilkynning um fyrirtökutíma hefur verið send" tilkynningagluggan á fyrirtöku skrefi í farbannsmálum.',
+      },
+      text: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.modal.travel_ban_cases.text',
+        defaultMessage:
+          'Tilkynning hefur verið send á ákæranda og verjanda hafi verjandi verið skráður.',
+        description:
+          'Notaður sem texti í "tilkynning um fyrirtökutíma hefur verið send" tilkynningaglugganum á fyrirtöku skrefi í farbannsmálum.',
+      },
+    }),
+  },
 }

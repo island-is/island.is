@@ -489,8 +489,16 @@ export const CourtRecord: React.FC = () => {
           </FormContentContainer>
           {modalVisible && (
             <Modal
-              title={formatMessage(rcHearingArrangements.modal.heading)}
-              text={formatMessage(rcHearingArrangements.modal.text)}
+              title={formatMessage(
+                workingCase.type === CaseType.CUSTODY
+                  ? rcHearingArrangements.modal.custodyCases.heading
+                  : rcHearingArrangements.modal.travelBanCases.heading,
+              )}
+              text={formatMessage(
+                workingCase.type === CaseType.CUSTODY
+                  ? rcHearingArrangements.modal.custodyCases.text
+                  : rcHearingArrangements.modal.travelBanCases.text,
+              )}
               handlePrimaryButtonClick={() => {
                 setModalVisible(false)
               }}
